@@ -1,4 +1,5 @@
 #include "split.h"
+#include "contraction.h"
 #include "log.h"
 #include <config/settings.h>
 #include <debug/exceptions.h>
@@ -12,7 +13,7 @@
 #include <tid/tid.h>
 
 namespace settings {
-    inline constexpr bool debug_split = true;
+    inline constexpr bool debug_split = false;
 }
 
 template<typename Scalar>
@@ -170,10 +171,10 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     // 5) Mixture of A and B-sites, with more B's than A's
 
     if constexpr(settings::debug_split)
-        tools::log->trace("Positions {} | L {} | R {} | C {} | spins {} | spinL {} | spinR {} ", positions, positions_left, positions_right, center_position,
+        tools::log->trace("split: positions {} | L {} | R {} | C {} | spins {} | spinL {} | spinR {} ", positions, positions_left, positions_right, center_position,
                           spin_dims, spin_dims_left, spin_dims_right);
     if(positions.size() == positions_left.size()) {
-        if constexpr(settings::debug_split) tools::log->trace("Option 1");
+        if constexpr(settings::debug_split) tools::log->trace("split: option 1");
         auto t_o1    = tid::tic_scope("o1");
         mps_sites_As = internal::split_mps_into_As(multisite_mps, spin_dims_left, positions_left, chi_limit, svd_settings);
         // Remnant stash
@@ -198,7 +199,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
 
     } else if(positions.size() == positions_right.size()) {
-        if constexpr(settings::debug_split) tools::log->trace("Option 2 - sites {} become B's", positions);
+        if constexpr(settings::debug_split) tools::log->trace("split: option 2 - sites {} become B's", positions);
         auto t_o2    = tid::tic_scope("o2");
         mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, chi_limit, svd_settings);
         // Take care of stash
@@ -207,7 +208,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &S_stash = mps.get_S_stash();
         auto  pos     = mps.get_position<long>();
         if constexpr(settings::debug_split) {
-            if(S_stash){
+            if(S_stash) {
                 if(not tenx::isReal(S_stash->data)) throw except::runtime_error("S_stash is not real:\n{}", linalg::tensor::to_string(S_stash->data, 16, 18));
                 if(not tenx::isPositive(S_stash->data))
                     throw except::runtime_error("S_stash is not positive:\n{}", linalg::tensor::to_string(S_stash->data, 16, 18));
@@ -217,11 +218,11 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         if(pos == center_position + 1 and S_stash) { // The stash in S becomes the LC for the site on the left
             mps.stash_C(S_stash->data, S_stash->error, static_cast<size_t>(center_position));
             S_stash.reset();
-        } else if (U_stash) {
+        } else if(U_stash) {
             auto udim = U_stash->data.dimensions();
             if(udim[1] != udim[0] * udim[2]) {
-                auto U2 = std::array<long, 2>{udim[1], udim[0] * udim[2]};
-                std::string U_stash_str =  U_stash ? linalg::tensor::to_string(U_stash->data.reshape(U2), 6, 8) : "nullopt";
+                auto        U2          = std::array<long, 2>{udim[1], udim[0] * udim[2]};
+                std::string U_stash_str = U_stash ? linalg::tensor::to_string(U_stash->data.reshape(U2), 6, 8) : "nullopt";
                 tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"
                                              "\nU_stash:\n{}"),
                                   udim, U_stash->pos_dst, U_stash_str);
@@ -229,27 +230,26 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
 
     } else if(positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1) {
-        if constexpr(settings::debug_split) tools::log->trace("Option 3");
+        if constexpr(settings::debug_split) tools::log->trace("split: option 3");
         auto t_o3 = tid::tic_scope("o3");
         // Set up the SVD
         svd::solver svd(svd_settings);
         std::tie(U, S, V) = svd.schmidt_multisite(multisite_mps, dL, dR, chiL, chiR, chi_limit);
-        mps_sites_As.emplace_back(U.template cast<cplx>(), std::nullopt, positions.front(), 0, "AC");
+        mps_sites_As.emplace_back(U, std::nullopt, positions.front(), 0, "AC");
         mps_sites_As.back().set_LC(S.template cast<cplx>(), svd.truncation_error);
-        mps_sites_Bs.emplace_back(V.template cast<cplx>(), std::nullopt, positions.back(), 0, "B");
+        mps_sites_Bs.emplace_back(V, std::nullopt, positions.back(), 0, "B");
 
     } else if(positions_left.size() >= positions_right.size()) {
-        if constexpr(settings::debug_split) tools::log->trace("Option 4");
+        if constexpr(settings::debug_split) tools::log->trace("split: option 4");
         auto t_o4    = tid::tic_scope("o4");
         mps_sites_As = internal::split_mps_into_As(multisite_mps, spin_dims_left, positions_left, chi_limit, svd_settings);
         // We expect stashed S and V. Merge these and send onward to B's
         auto &V_stash = mps_sites_As.back().get_V_stash();
         auto &S_stash = mps_sites_As.back().get_S_stash();
         if(V_stash and S_stash) {
-            if constexpr(std::is_same_v<Scalar, real>)
-                V = tenx::asDiagonal(S_stash->data).contract(V_stash->data, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2}).real();
+            if constexpr(std::is_same_v<Scalar, real>) V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data).real();
             else
-                V = tenx::asDiagonal(S_stash->data).contract(V_stash->data, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+                V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data);
             V_stash.reset();
             S_stash.reset();
             mps_sites_Bs = internal::split_mps_into_Bs(V, spin_dims_right, positions_right, chi_limit, svd_settings);
@@ -262,17 +262,16 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             mpsA.take_stash(mps_sites_Bs.front());
         }
     } else if(positions_left.size() < positions_right.size()) {
-        if constexpr(settings::debug) tools::log->trace("Option 5");
+        if constexpr(settings::debug_split) tools::log->trace("split: option 5");
         auto t_o5    = tid::tic_scope("o5");
         mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, chi_limit, svd_settings);
         // We expect stashed U and S. Merge these and send onward to A's
         auto &U_stash = mps_sites_Bs.front().get_U_stash();
         auto &S_stash = mps_sites_Bs.front().get_S_stash();
         if(U_stash and S_stash) {
-            if constexpr(std::is_same_v<Scalar, real>)
-                U = U_stash->data.contract(tenx::asDiagonal(S_stash->data), tenx::idx({2}, {0})).real();
+            if constexpr(std::is_same_v<Scalar, real>) U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data).real();
             else
-                U = U_stash->data.contract(tenx::asDiagonal(S_stash->data), tenx::idx({2}, {0}));
+                U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data);
 
             U_stash.reset();
             S_stash.reset();
@@ -396,12 +395,12 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     svd::solver svd(svd_settings);
 
     // Declare the tensors that will catch the schmidt (SVD) decompositions
-    Eigen::Tensor<Scalar, 3>              U;                           // This will become the first site to be extracted
-    Eigen::Tensor<Scalar, 1>              S;                           // The singular values
-    Eigen::Tensor<Scalar, 3>              V = multisite_mps;           // This side contains all the remaining sites
-    Eigen::Tensor<Scalar, 3>              SV_temp;                     // Temporary for contracting S*V
-    std::optional<Eigen::Tensor<cplx, 1>> S_prev       = std::nullopt; // Starts out empty, carries the schmidt values from the previous iteration
-    double                                S_prev_error = 0;            // Truncation error from the previous iteration
+    Eigen::Tensor<Scalar, 3>                U;                           // This will become the first site to be extracted
+    Eigen::Tensor<Scalar, 1>                S;                           // The singular values
+    Eigen::Tensor<Scalar, 3>                V = multisite_mps;           // This side contains all the remaining sites
+    Eigen::Tensor<Scalar, 3>                SV_temp;                     // Temporary for contracting S*V
+    std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt; // Starts out empty, carries the schmidt values from the previous iteration
+    double                                  S_prev_error = 0;            // Truncation error from the previous iteration
     for(const auto &[idx, spin_dim] : iter::enumerate(spin_dims)) {
         /* The schmidt decomposition gives us the 3 matrices to the right of the line |:
          *                       |
@@ -418,13 +417,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         if(S_prev) {
             auto t_sv = tid::tic_token("contract_sv");
             // Let V absorb S from the previous SVD (see note below)
-            SV_temp.resize(V.dimensions());
-            if constexpr(std::is_same_v<Scalar, real>)
-                SV_temp.device(tenx::omp::getDevice()) =
-                    tenx::asDiagonal(S_prev.value().real()).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
-            else
-                SV_temp.device(tenx::omp::getDevice()) = tenx::asDiagonal(S_prev.value()).contract(V, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
-            V = SV_temp;
+            V = tools::common::contraction::contract_bnd_mps_temp(S_prev.value(), V, SV_temp);
         }
 
         if(&spin_dim == &spin_dims.back()) {
@@ -442,10 +435,10 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         // V:   Contains one site less than the it did before. That site is now in U.
         //      Before using V as the next multisite mps, it absorbs S so that the next U to pop out is a left-unitary A-type matrix.
 
-        mps_sites.emplace_back(U.template cast<cplx>(), S_prev, positions[idx], S_prev_error, "A"); // S_prev is empty in the first iteration.
+        mps_sites.emplace_back(U, S_prev, positions[idx], S_prev_error, "A"); // S_prev is empty in the first iteration.
 
         // Store the singular values for the next iteration
-        S_prev       = S.template cast<cplx>();
+        S_prev       = S;
         S_prev_error = svd.truncation_error;
     }
 
@@ -453,7 +446,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     // At the last step we have residual S and V left over. Stash them!
     auto &mps = mps_sites.back();
     auto  pos = mps.get_position();
-    if(S_prev) mps.stash_S(S_prev.value(), S_prev_error, pos + 1);
+    if(S_prev) mps.stash_S(S_prev.value().template cast<cplx>(), S_prev_error, pos + 1);
     mps.stash_V(V.template cast<cplx>(), pos + 1);
     return mps_sites;
 }
@@ -522,12 +515,12 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     svd::solver svd(svd_settings);
 
     // Declare the the tensors that will catch the schmidt (SVD) decompositions
-    Eigen::Tensor<Scalar, 3>              U = multisite_mps;                // This side contains all the sites
-    Eigen::Tensor<Scalar, 1>              S;                                // The singular values
-    Eigen::Tensor<Scalar, 3>              V;                                // This will become the first site extracted
-    Eigen::Tensor<Scalar, 3>              US_temp;                          // Temporary for contracting U*S
-    std::optional<Eigen::Tensor<cplx, 1>> S_prev       = std::nullopt;      // Starts out empty, needs to be checked outside of this split
-    double                                S_prev_error = 0;                 // Truncation error from the previous iteration
+    Eigen::Tensor<Scalar, 3>                U = multisite_mps;              // This side contains all the sites
+    Eigen::Tensor<Scalar, 1>                S;                              // The singular values
+    Eigen::Tensor<Scalar, 3>                V;                              // This will become the first site extracted
+    Eigen::Tensor<Scalar, 3>                US_temp;                        // Temporary for contracting U*S
+    std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt;    // Starts out empty, needs to be checked outside of this split
+    double                                  S_prev_error = 0;               // Truncation error from the previous iteration
     for(const auto &[idx, spin_dim] : iter::enumerate_reverse(spin_dims)) { // Iterate in reverse order
         /* The schmidt decomposition gives us the 3 matrices to the left of the line |:
          *                                                      |
@@ -541,13 +534,8 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
 
         if(S_prev) {
             auto t_sv = tid::tic_token("contract_us");
-            // Let V absorb S from the previous SVD (see note below)
-            US_temp.resize(U.dimensions());
-            if constexpr(std::is_same_v<Scalar, real>)
-                US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S_prev.value().real()), tenx::idx({2}, {0}));
-            else
-                US_temp.device(tenx::omp::getDevice()) = U.contract(tenx::asDiagonal(S_prev.value()), tenx::idx({2}, {0}));
-            U = US_temp;
+            // Let U absorb S from the previous SVD (see note below)
+            U = tools::common::contraction::contract_mps_bnd_temp(U, S_prev.value(), US_temp);
         }
 
         if(&spin_dim == &spin_dims.front()) {
@@ -565,10 +553,10 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
         // S:   A set of singular values, "L" matrix, belonging to the left site  (i.e. the next B to pop out of U)
         // V:   A right-unitary "B" matrix which is a "Gamma*Lambda" in Vidal's notation
 
-        mps_sites.emplace_front(V.template cast<cplx>(), S_prev, positions[idx], S_prev_error, "B"); // S_prev is empty the first iteration.
+        mps_sites.emplace_front(V, S_prev, positions[idx], S_prev_error, "B"); // S_prev is empty the first iteration.
 
         // Store the singular values for the next iteration
-        S_prev       = S.template cast<cplx>();
+        S_prev       = S;
         S_prev_error = svd.truncation_error;
     }
 
@@ -577,7 +565,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     auto &mps = mps_sites.front();
     auto  pos = mps.get_position();
     if(pos > 0) { // More left-normalized sites left in U
-        if(S_prev) mps.stash_S(S_prev.value(), S_prev_error, pos - 1);
+        if(S_prev) mps.stash_S(S_prev.value().template cast<cplx>(), S_prev_error, pos - 1);
         mps.stash_U(U.template cast<cplx>(), pos - 1);
     }
     return mps_sites;

@@ -8,6 +8,7 @@
 class MpsSite {
     public:
     using cplx = std::complex<double>;
+    using real = double;
 
     private:
     std::optional<Eigen::Tensor<cplx, 3>>                M                   = std::nullopt; /*!< \f$M\f$ A or B tensor (note: not a Gamma tensor!) */
@@ -27,7 +28,9 @@ class MpsSite {
     public:
     ~MpsSite(); // Read comment on implementation
     MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_);
+    MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
     MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_);
+    MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<real, 1>> L_, size_t pos, double error, std::string_view label_);
     MpsSite();                                    // ctor
     MpsSite(const MpsSite &other);                // default copy ctor
     MpsSite(MpsSite &&other) noexcept;            // default move ctor

@@ -2,6 +2,7 @@
 #include <math/tenx.h>
 #include <tensors/site/mps/MpsSite.h>
 #include <tensors/state/StateInfinite.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/split.h>
 #include <tools/common/views.h>
@@ -152,11 +153,27 @@ const Eigen::Tensor<Scalar, 2> &StateInfinite::LB_diag() const { if(cache.LB_dia
 const Eigen::Tensor<Scalar, 2> &StateInfinite::LC_diag_inv() const { if(cache.LC_diag_inv) return cache.LC_diag_inv.value(); else cache.LC_diag_inv = tenx::asDiagonalInversed(MPS_A->get_LC()); return cache.LC_diag_inv.value();}
 const Eigen::Tensor<Scalar, 2> &StateInfinite::LA_diag_inv() const { if(cache.LA_diag_inv) return cache.LA_diag_inv.value(); else cache.LA_diag_inv = tenx::asDiagonalInversed(MPS_A->get_L()); return cache.LA_diag_inv.value();}
 const Eigen::Tensor<Scalar, 2> &StateInfinite::LB_diag_inv() const { if(cache.LB_diag_inv) return cache.LB_diag_inv.value(); else cache.LB_diag_inv = tenx::asDiagonalInversed(MPS_B->get_L()); return cache.LB_diag_inv.value();}
-const Eigen::Tensor<Scalar, 3> &StateInfinite::GA() const {if(cache.GA) return cache.GA.value(); else cache.GA = MPS_A->get_M_bare().contract(tenx::asDiagonalInversed(MPS_A->get_L()), tenx::idx({1}, {1})).shuffle(tenx::array3{0, 2, 1}); return cache.GA.value();}
-const Eigen::Tensor<Scalar, 3> &StateInfinite::GB() const {if(cache.GB) return cache.GB.value(); else cache.GB = MPS_B->get_M_bare().contract(tenx::asDiagonalInversed(MPS_B->get_L()), tenx::idx({2}, {0})); return cache.GB.value();}
 const Eigen::Tensor<Scalar, 1> &StateInfinite::LC() const { return MPS_A->get_LC(); }
 const Eigen::Tensor<Scalar, 1> &StateInfinite::LA() const { return MPS_A->get_L(); }
 const Eigen::Tensor<Scalar, 1> &StateInfinite::LB() const { return MPS_B->get_L(); }
+
+const Eigen::Tensor<Scalar, 3> &StateInfinite::GA() const {
+    if(cache.GA) return cache.GA.value();
+    else {
+        Eigen::Tensor<Scalar,1> L_inv = MPS_A->get_L().inverse();
+        cache.GA = tools::common::contraction::contract_bnd_mps_temp(L_inv, MPS_A->get_M_bare());
+    }
+    return cache.GA.value();
+}
+const Eigen::Tensor<Scalar, 3> &StateInfinite::GB() const {
+    if(cache.GB) return cache.GB.value();
+    else{
+        Eigen::Tensor<Scalar,1> L_inv = MPS_B->get_L().inverse();
+        cache.GB = tools::common::contraction::contract_mps_bnd_temp(MPS_B->get_M_bare(), L_inv);
+    }
+    return cache.GB.value();
+}
+
 /* clang-format on */
 
 const Eigen::Tensor<Scalar, 3> &StateInfinite::get_2site_mps(Scalar norm) const {
@@ -177,10 +194,7 @@ const Eigen::Tensor<Scalar, 3> &StateInfinite::get_2site_mps(Scalar norm) const 
  */
 
     if(cache.twosite_mps) return cache.twosite_mps.value();
-    long dim0         = MPS_A->spin_dim() * MPS_B->spin_dim();
-    long dim1         = MPS_A->get_chiL();
-    long dim2         = MPS_B->get_chiR();
-    cache.twosite_mps = A().contract(B(), tenx::idx({2}, {1})).shuffle(tenx::array4{0, 2, 1, 3}).reshape(tenx::array3{dim0, dim1, dim2}) / norm;
+    cache.twosite_mps = tools::common::contraction::contract_mps_mps_temp(A(), B()) / norm;
     return cache.twosite_mps.value();
 }
 

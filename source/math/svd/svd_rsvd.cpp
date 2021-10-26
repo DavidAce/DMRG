@@ -1,50 +1,43 @@
-#include <complex.h>
-#undef I
-
-#include "rsvd/Constants.hpp"
-#include "rsvd/ErrorEstimators.hpp"
-#include "rsvd/RandomizedSvd.hpp"
-#include <Eigen/Dense>
 #include <math/svd.h>
-#include <tid/tid.h>
-#include <math/rnd.h>
 
-/*! \brief Performs SVD on a matrix
- *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
- *  Performs rigorous checks to ensure stability of DMRG.
- *  In some cases Eigen::BCDSVD/JacobiSVD will fail with segfault. Here we use a patched version of Eigen that throws an error
- *  instead so we get a chance to catch it and use lapack svd instead.
- *   \param mat_ptr Pointer to the matrix. Supported are double * and std::complex<double> *
- *   \param rows Rows of the matrix
- *   \param cols Columns of the matrix
- *   \param rank_max Maximum number of singular values
- *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
+#if defined(DMRG_ENABLE_RSVD)
+    #include "rsvd/Constants.hpp"
+    #include "rsvd/ErrorEstimators.hpp"
+    #include "rsvd/RandomizedSvd.hpp"
+    #include <Eigen/Dense>
+    #include <math/rnd.h>
+    #include <tid/tid.h>
+#endif
+
+/*! \brief Performs randomized SVD on a matrix
  */
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-    svd::solver::do_svd_rsvd(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+    svd::solver::do_svd_rsvd([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols,
+                             [[maybe_unused]] std::optional<long> rank_max) {
+#if !defined(DMRG_ENABLE_RSVD)
+    throw std::runtime_error("Define DMRG_ENABLE_RSVD to use rsvd");
+#else
     auto t_eigen = tid::tic_scope("rsvd");
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
     svd::log->trace("Starting SVD with RSVD");
-    MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar>> (mat_ptr, rows, cols);
+    MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar> >(mat_ptr, rows, cols);
 
     if(rows <= 0) throw std::runtime_error(fmt::format("SVD error: rows = {}", rows));
     if(cols <= 0) throw std::runtime_error(fmt::format("SVD error: cols = {}", cols));
 
-#if !defined(NDEBUG)
+    #if !defined(NDEBUG)
     // These are more expensive debugging operations
     if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
     if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
-#endif
-
-
+    #endif
 
     // Randomized SVD
-//    std::mt19937_64 randomEngine{};
-//    randomEngine.seed(777);
-//    rnd::
+    //    std::mt19937_64 randomEngine{};
+    //    randomEngine.seed(777);
+    //    rnd::
 
     Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Lu> SVD(rnd::internal::rng);
 
@@ -79,6 +72,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     svd::log->trace("SVD with Eigen finished successfully");
 
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
+#endif
 }
 
 //! \relates svd::class_SVD

@@ -8,6 +8,7 @@
 #include <math/svd.h>
 #include <tensors/site/mpo/MpoFactory.h>
 #include <tid/tid.h>
+#include <tools/common/contraction.h>
 #include <tools/finite/multisite.h>
 
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet

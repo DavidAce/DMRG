@@ -32,8 +32,7 @@ size_t tools::infinite::measure::length(const EdgesInfinite &edges) { return edg
 
 double tools::infinite::measure::norm(const StateInfinite &state) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    Eigen::Tensor<Scalar, 0> norm = state.get_2site_mps().contract(state.get_2site_mps().conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2}));
-    return std::abs(norm(0));
+    return tools::common::contraction::contract_mps_norm(state.get_2site_mps());
 }
 
 long tools::infinite::measure::bond_dimension(const StateInfinite &state) {

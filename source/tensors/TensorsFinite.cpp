@@ -182,6 +182,7 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     if constexpr(not settings::debug) return std::nullopt;
     tensors.model->clear_cache();
     tensors.measurements = MeasurementsTensorsFinite();
+    tensors.rebuild_mpo_squared();
     tensors.rebuild_edges();
     DebugStatus deb;
     deb.ene     = tools::finite::measure::energy(tensors);

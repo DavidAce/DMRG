@@ -19,7 +19,7 @@ using cplx = tools::finite::measure::cplx;
 using real = tools::finite::measure::real;
 
 void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
-    tensors.measurements.length                   = measure::length(tensors);
+    tensors.measurements.length = measure::length(tensors);
 
     // No need for energy or variance in fLBIT simulations. In fact, we don't update the ene and var environments,
     // so this operation would give an error
@@ -65,9 +65,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
         const auto &mps = state.get_mps_site(pos);
         tools::log->trace("Measuring norm using site {} with dimensions {}", pos, mps.dimensions());
-        Eigen::Tensor<cplx, 0> MM = mps.get_M().contract(mps.get_M().conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2}));
-        norm                      = std::real(MM(0));
-
+        norm = tools::common::contraction::contract_mps_norm(mps.get_M());
     } else if(not full and state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
         tools::log->trace("Measuring norm using active sites {}", state.active_sites);
         Eigen::Tensor<cplx, 2> chain;
@@ -76,7 +74,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         for(const auto &pos : state.active_sites) {
             const Eigen::Tensor<cplx, 3> &M = state.get_mps_site(pos).get_M();
             if(first) {
-                chain = M.contract(M.conjugate(), tenx::idx({0, 1}, {0, 1}));
+                chain = tools::common::contraction::contract_mps_partial(M, {0, 1});
                 first = false;
                 continue;
             }
@@ -94,7 +92,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         for(const auto &mps : state.mps_sites) {
             const auto &M = mps->get_M();
             if(first) {
-                chain = M.contract(M.conjugate(), tenx::idx({0, 1}, {0, 1}));
+                chain = tools::common::contraction::contract_mps_partial(M, {0, 1});
                 first = false;
                 continue;
             }
@@ -312,7 +310,6 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
         truncation_errors.push_back(mps.get_truncation_error());
     }
     return truncation_errors;
-
 }
 
 Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &state) {

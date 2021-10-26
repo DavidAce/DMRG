@@ -6,6 +6,7 @@
 #include <math/linalg/tensor.h>
 #include <math/num.h>
 #include <tid/tid.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <utility>
 
@@ -17,23 +18,34 @@ namespace settings {
 using cplx = MpsSite::cplx;
 
 MpsSite::MpsSite() = default;
-MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_)
-//    : M(M_), L(L_), position(pos), truncation_error(error), label(std::move(label_))
-{
+MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_) {
     set_position(pos);
     set_label(label_);
     set_M(M_);
     set_L(L_);
     set_truncation_error(error);
 }
+MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_) {
+    set_position(pos);
+    set_label(label_);
+    set_M(M_.cast<cplx>());
+    set_L(L_.cast<cplx>());
+    set_truncation_error(error);
+}
 
-MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_)
-//    : M(M_), L(std::move(L_)), position(pos), truncation_error(error), label(std::move(label_))
-{
+MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_) {
     set_position(pos);
     set_label(label_);
     set_M(M_);
     if(L_) set_L(L_.value());
+    set_truncation_error(error);
+}
+
+MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<real, 1>> L_, size_t pos, double error, std::string_view label_) {
+    set_position(pos);
+    set_label(label_);
+    set_M(M_.cast<cplx>());
+    if(L_) set_L(L_.value().cast<cplx>());
     set_truncation_error(error);
 }
 
@@ -87,19 +99,18 @@ void MpsSite::assert_dimensions() const {
 void MpsSite::assert_identity() const {
     auto t_dbg = tid::tic_token("assert_identity");
     if(get_label() == "B") {
-        Eigen::Tensor<cplx, 2> id = get_M_bare().contract(get_M_bare().conjugate(), tenx::idx({0, 2}, {0, 2}));
+        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
         if(not tenx::isIdentity(id, 1e-10)) {
             throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id));
         }
     } else {
-        Eigen::Tensor<cplx, 2> id = get_M_bare().contract(get_M_bare().conjugate(), tenx::idx({0, 1}, {0, 1}));
+        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 1});
         if(not tenx::isIdentity(id, 1e-10)) {
             throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id));
         }
     }
     if(isCenter() or get_label() == "AC") {
-        Eigen::Tensor<cplx, 0> MM   = get_M().contract(get_M().conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2}));
-        auto                   norm = std::real(MM(0));
+        auto norm = tools::common::contraction::contract_mps_norm(get_M());
         if(std::abs(norm - 1) > 1e-10)
             throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not unity at pos {1}: {2:.16f}", get_label(), get_position(), norm));
     }
@@ -121,8 +132,8 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
             if(MC.value().size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M(): MC has size 0 at position {}", get_position()));
             return MC.value();
         } else {
-            MC                                 = Eigen::Tensor<cplx, 3>(spin_dim(), get_chiL(), get_chiR());
-            MC->device(tenx::omp::getDevice()) = get_M_bare().contract(tenx::asDiagonal(get_LC()), tenx::idx({2}, {0}));
+            MC = Eigen::Tensor<cplx, 3>(spin_dim(), get_chiL(), get_chiR());
+            tools::common::contraction::contract_mps_bnd(MC.value(), get_M_bare(), get_LC());
             if(MC->size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M(): built MC with size 0 at position {}", get_position()));
             return MC.value();
         }
@@ -354,12 +365,10 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     // Sanity check to make sure we are not running into this bug:
     //      https://gitlab.com/libeigen/eigen/-/issues/2351
     if(tenx::hasNaN(L_temp)) throw std::runtime_error("L_temp has nan");
-    if(mpoDimL >= 2 and get_L().size() == 1 and L_temp.size() > 1 and std::abs(L_temp[0] - 1.0) < 1e-10){
-        for(long i = 0; i < L_temp.size(); i++) std::printf("(%.16f, %.16f)\n",L_temp[i].real(), L_temp[i].imag());
+    if(mpoDimL >= 2 and get_L().size() == 1 and L_temp.size() > 1 and std::abs(L_temp[0] - 1.0) < 1e-10) {
+        for(long i = 0; i < L_temp.size(); i++) std::printf("(%.16f, %.16f)\n", L_temp[i].real(), L_temp[i].imag());
         throw std::runtime_error("L_temp is wrong: This may be due to the broadcasting bug: https://gitlab.com/libeigen/eigen/-/issues/2351");
-
     }
-
 
     if(isCenter()) {
         Eigen::Tensor<cplx, 1> LC_temp = tenx::broadcast(get_LC(), {mpoDimR});
@@ -446,9 +455,7 @@ void MpsSite::take_stash(const MpsSite &other) {
             throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
                                                           "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)"),
                                                get_tag(), other.get_tag(), V.dimensions(), dimensions()));
-        tenx::array3           dims = {spin_dim(), V.dimension(1), get_chiR()};
-        Eigen::Tensor<cplx, 3> VM(dims);
-        VM.device(tenx::omp::getDevice()) = V.contract(get_M_bare(), tenx::idx({2}, {1})).shuffle(tenx::array4{0, 2, 1, 3}).reshape(dims);
+        auto VM = tools::common::contraction::contract_mps_mps_temp(V, get_M_bare());
         set_M(VM);
         other.V_stash = std::nullopt; // Stash has been consumed
     }
@@ -481,9 +488,7 @@ void MpsSite::take_stash(const MpsSite &other) {
                                                           "M dimensions {} | U dimensions {} |  Expected M(2) == U(1)"),
                                                get_tag(), other.get_tag(), dimensions(), U.dimensions()));
 
-        tenx::array3           dims = {spin_dim(), get_chiL(), U.dimension(2)};
-        Eigen::Tensor<cplx, 3> MU(dims);
-        MU.device(tenx::omp::getDevice()) = get_M_bare().contract(U, tenx::idx({2}, {1})).shuffle(tenx::array4{0, 2, 1, 3}).reshape(dims);
+        auto MU = tools::common::contraction::contract_mps_mps_temp(get_M_bare(), U);
         set_M(MU);
         other.U_stash = std::nullopt;
     }

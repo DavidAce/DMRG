@@ -17,6 +17,7 @@
 //
 #include <debug/exceptions.h>
 #include <math/linalg/tensor.h>
+#include <tools/common/contraction.h>
 
 namespace settings {
     inline constexpr bool debug_projection = false;
@@ -96,12 +97,12 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     // If M is a B then M_bare = M * L1, and there is no L0.
     {
         /*
-         *    |------ 0   0---[L0]---1   1---[M]---2   0---[L1]---1
-         *    |                               |
-         *    |                               0
-         *    |                               2
-         *    |                               |
-         *  [Ledge]--- 2                0---[mpo]---1
+         *    |------ 0   0---[L0]---1   1---[M]---2   0---[L1]---1--|
+         *    |                               |              |       |
+         *    |                               0              |       |----
+         *    |                               2              |       |
+         *    |                               |              |       |
+         *  [Ledge]--- 2                0---[mpo]---1  0---[ I ]--1--|
          *    |                               |
          *    |                               2
          *    |
@@ -135,16 +136,16 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         // If M is a B then M_bare = M * L (L-1 belongs on the site to the right), and the mpo was applied on M_bare
 
         /*
-         *  0---[L-1]---1  1---[M]---2  0---[L]---1   0 ------|
-         *                      |                             |
-         *                      0                             |
-         *                      2                             |
-         *                      |                             |
-         *                0---[mpo]---1               2 ---[Redge]
-         *                      |                             |
-         *                      2                             |
-         *                                                    |
-         *                                            1 ------|
+         *  |--0---[L-1]---1  1---[M]---2  0---[L]---1   0 ------|
+         *  |                      |                             |
+         *  |                      0                             |
+         *--|                      2                             |
+         *  |                      |                             |
+         *  |--0---[ I ]---1  0--[mpo]--1                2 ---[Redge]
+         *                          |                             |
+         *                          2                             |
+         *                                                        |
+         *                                                1 ------|
          */
         auto                    &mps      = state.get_mps_site(state.get_length() - 1);
         auto                     label    = mps.get_label();
@@ -296,7 +297,7 @@ double tools::finite::ops::overlap(const StateFinite &state1, const StateFinite 
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
     size_t                   pos     = 0;
-    Eigen::Tensor<Scalar, 2> overlap = state1.get_mps_site(pos).get_M().contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {0, 1}));
+    auto overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0,1});
     for(pos = 1; pos < state1.get_length(); pos++) {
         Eigen::Tensor<Scalar, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
                                             .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
@@ -306,45 +307,3 @@ double tools::finite::ops::overlap(const StateFinite &state1, const StateFinite 
     double norm_chain = std::real(tenx::MatrixMap(overlap).trace());
     return norm_chain;
 }
-
-// double tools::finite::ops::expectation_value(const StateFinite &state1, const StateFinite &state2,
-//                                              const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos,
-//                                              const Eigen::Tensor<std::complex<double>, 3> &Ledge, const Eigen::Tensor<std::complex<double>, 3> &Redge) {
-//     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
-//     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-//     auto                     mpo_it = mpos.begin();
-//     Eigen::Tensor<Scalar, 3> L      = Ledge;
-//     for(size_t pos = 0; pos < state1.get_length(); pos++) {
-//         Eigen::Tensor<Scalar, 3> temp = L.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
-//                                             .contract(*mpo_it++, tenx::idx({1, 2}, {0, 2}))
-//                                             .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 3}, {1, 0}))
-//                                             .shuffle(tenx::array3{0, 2, 1});
-//
-//         L = temp;
-//     }
-//     assert(L.dimensions() == Redge.dimensions());
-//     Eigen::Tensor<Scalar, 0> E_all_sites  = L.contract(Redge, tenx::idx({0, 1, 2}, {0, 1, 2}));
-//     double                   energy_chain = std::real(E_all_sites(0));
-//     return energy_chain;
-// }
-//
-// double tools::finite::ops::exp_sq_value(const StateFinite &state1, const StateFinite &state2,
-//                                         const std::vector<Eigen::Tensor<std::complex<double>, 4>> &mpos, const Eigen::Tensor<std::complex<double>, 4> &Ledge,
-//                                         const Eigen::Tensor<std::complex<double>, 4> &Redge) {
-//     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
-//     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-//     auto                     mpo_it = mpos.begin();
-//     Eigen::Tensor<Scalar, 4> L      = Ledge;
-//     for(size_t pos = 0; pos < state1.get_length(); pos++) {
-//         Eigen::Tensor<Scalar, 4> temp = L.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
-//                                             .contract(*mpo_it, tenx::idx({1, 3}, {0, 2}))
-//                                             .contract(*mpo_it++, tenx::idx({1, 4}, {0, 2}))
-//                                             .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 4}, {1, 0}))
-//                                             .shuffle(tenx::array4{0, 3, 1, 2});
-//
-//         L = temp;
-//     }
-//     assert(L.dimensions() == Redge.dimensions());
-//     Eigen::Tensor<Scalar, 0> H2_all_sites = L.contract(Redge, tenx::idx({0, 1, 2, 3}, {0, 1, 2, 3}));
-//     return std::real(H2_all_sites(0));
-// }

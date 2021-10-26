@@ -7,9 +7,11 @@
 #include <general/iter.h>
 #include <tensors/site/mps/MpsSite.h>
 #include <tid/tid.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
 #include <tools/finite/multisite.h>
+
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet
 
 // We need to define the destructor and other special functions
@@ -134,7 +136,8 @@ T StateFinite::get_position() const {
             return -1;
         else
             throw except::runtime_error("could not find center position in current state: {}\n"
-                                                 "hint: Call get_position<long>() to get -1", get_labels());
+                                        "hint: Call get_position<long>() to get -1",
+                                        get_labels());
     } else
         return pos.value();
 }
@@ -334,23 +337,14 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
     if constexpr(settings::debug) tools::log->trace("get_multisite_mps: sites {}", sites);
     auto                     t_mps = tid::tic_scope("gen_mps");
     Eigen::Tensor<Scalar, 3> multisite_mps;
-    constexpr auto           shuffle_idx  = tenx::array4{0, 2, 1, 3};
-    constexpr auto           contract_idx = tenx::idx({2}, {1});
-    tenx::array3             new_dims;
     Eigen::Tensor<Scalar, 3> temp;
     for(auto &site : sites) {
         if(&site == &sites.front()) { // First site
             multisite_mps = get_mps_site(site).get_M();
             continue;
         }
-        const auto &M    = get_mps_site(site).get_M();
-        long        dim0 = multisite_mps.dimension(0) * M.dimension(0);
-        long        dim1 = multisite_mps.dimension(1);
-        long        dim2 = M.dimension(2);
-        new_dims         = {dim0, dim1, dim2};
-        temp.resize(new_dims);
-        temp.device(tenx::omp::getDevice()) = multisite_mps.contract(M, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_mps                       = temp;
+        const auto &M = get_mps_site(site).get_M();
+        multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
     }
     if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
         // In this case all sites are "B" and we need to prepend the the "L" from the site on the left to make a normalized multisite mps
@@ -359,9 +353,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         if(L_left.dimension(0) != multisite_mps.dimension(1))
             throw std::logic_error(
                 fmt::format("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
-        temp.resize(multisite_mps.dimension(0), L_left.dimension(0), multisite_mps.dimension(2));
-        temp.device(tenx::omp::getDevice()) = tenx::asDiagonal(L_left).contract(multisite_mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
-        multisite_mps                       = temp;
+        multisite_mps = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
     } else if(sites.back() < get_length() - 1 and get_mps_site(sites.back()).get_label() == "A") {
         // In this case all sites are "A" and we need to append the the "L" from the site on the right to make a normalized multisite mps
         auto &mps_right = get_mps_site(sites.back() + 1);
@@ -369,23 +361,20 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         if(L_right.dimension(0) != multisite_mps.dimension(2))
             throw std::logic_error(
                 fmt::format("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
-        temp.resize(multisite_mps.dimension(0), multisite_mps.dimension(1), L_right.dimension(0));
-        temp.device(tenx::omp::getDevice()) = multisite_mps.contract(tenx::asDiagonal(L_right), tenx::idx({2}, {1}));
-        multisite_mps                       = temp;
+        multisite_mps = tools::common::contraction::contract_mps_bnd_temp(multisite_mps, L_right, temp);
     }
 
     if constexpr(settings::debug) {
         // Check the norm of the tensor on debug builds
         auto   t_dbg = tid::tic_scope("debug");
-        double norm  = tenx::norm(multisite_mps.contract(multisite_mps.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+        double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
             if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
                 // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
                 auto &mps_left = get_mps_site(sites.front() - 1);
                 auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
-                temp           = tenx::asDiagonal(L_left).contract(multisite_mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
-                multisite_mps  = temp;
-                norm           = tenx::norm(multisite_mps.contract(multisite_mps.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+                multisite_mps  = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
+                norm           = tools::common::contraction::contract_mps_norm(multisite_mps);
                 tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm);
             }
             throw std::runtime_error(fmt::format("get_multisite_mps: not normalized: sites {} | norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm));

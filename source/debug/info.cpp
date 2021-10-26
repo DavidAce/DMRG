@@ -2,6 +2,8 @@
 #include <fstream>
 #include <sstream>
 #include <tools/common/log.h>
+#include <climits>
+#include <unistd.h>
 
 std::string debug::hostname() {
     char hostname[HOST_NAME_MAX + 1];

@@ -14,6 +14,7 @@
 #include <tensors/state/StateFinite.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
+#include <tools/common/contraction.h>
 
 std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
                                                         long chi_lim, std::optional<svd::settings> svd_settings) {
@@ -115,17 +116,17 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                         M_tmp = mpsR.get_M();
                     else if(mpsR.get_label() == "A" and posL < state.get_length<size_t>() - 1) {
                         auto &LR = state.get_mps_site(posL + 1).get_L();
-                        M_tmp    = mpsR.get_M().contract(tenx::asDiagonal(LR), tenx::idx({2}, {0}));
+                        tools::common::contraction::contract_mps_bnd(M_tmp, mpsR.get_M(), LR);
                     } else
                         throw std::logic_error(fmt::format("Can't make mpsR normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
                                                            mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
 
-                    double norm_old = tenx::norm(M_tmp.contract(M_tmp.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+                    double norm_old = tools::common::contraction::contract_mps_norm(M_tmp);
                     M_tmp = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
                     mpsR.set_M(M_tmp);
                     if constexpr(settings::debug) {
                         auto   mpsR_final = state.get_multisite_mps({mpsR.get_position()});
-                        double norm_new   = tenx::norm(mpsR_final.contract(mpsR_final.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+                        double norm_new = tools::common::contraction::contract_mps_norm(mpsR_final);
                         tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), norm_old, norm_new);
                     }
                 }
@@ -194,19 +195,19 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     else if(mpsL.get_label() == "B" and posR > 0) {
                         auto &mpsLL = state.get_mps_site(posR - 1);
                         if(mpsLL.isCenter())
-                            M_tmp = tenx::asDiagonal(mpsLL.get_LC()).contract(mpsL.get_M(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+                            tools::common::contraction::contract_bnd_mps(M_tmp, mpsLL.get_LC(), mpsL.get_M());
                         else
-                            M_tmp = tenx::asDiagonal(mpsLL.get_L()).contract(mpsL.get_M(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+                            tools::common::contraction::contract_bnd_mps(M_tmp, mpsLL.get_L(), mpsL.get_M());
                     } else
                         throw std::logic_error(fmt::format("Can't make mpsL normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
                                                            mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
 
-                    double norm_old = tenx::norm(M_tmp.contract(M_tmp.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+                    double norm_old = tools::common::contraction::contract_mps_norm(M_tmp);
                     M_tmp = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
                     mpsL.set_M(M_tmp);
                     if constexpr(settings::debug) {
                         auto   mpsL_final = state.get_multisite_mps({mpsL.get_position()});
-                        double norm_new   = tenx::norm(mpsL_final.contract(mpsL_final.conjugate(), tenx::idx({0, 1, 2}, {0, 1, 2})));
+                        double norm_new = tools::common::contraction::contract_mps_norm(mpsL_final);
                         tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), norm_old, norm_new);
                     }
                 }

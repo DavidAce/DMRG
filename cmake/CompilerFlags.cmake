@@ -155,15 +155,14 @@ function(target_link_precompiled_headers tgt)
         set(PCH_HEADERS
                 <string> <string_view> <vector> <array>
                 <optional> <complex> <memory> <chrono> <algorithm>
+                <utility> <type_traits> <cmath> <iterator> <numeric>
+                <stdexcept> <filesystem>
                 <fmt/compile.h>
                 <fmt/core.h>
                 <fmt/format.h>
                 <fmt/ostream.h>
                 <fmt/ranges.h>
                 <spdlog/spdlog.h>
-                <spdlog/sinks/stdout_color_sinks.h>
-                <Eigen/Core>
-                <unsupported/Eigen/CXX11/Tensor>
                 <h5pp/h5pp.h>
                 )
 

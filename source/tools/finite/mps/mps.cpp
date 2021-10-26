@@ -13,6 +13,7 @@
 #include <tensors/site/mps/MpsSite.h>
 #include <tensors/state/StateFinite.h>
 #include <tid/tid.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/split.h>
 #include <tools/finite/measure.h>
@@ -32,11 +33,11 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
     auto t_move = tid::tic_scope("move");
     if(state.position_is_outward_edge()) {
         if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1)
-            throw std::logic_error(fmt::format("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}",
-                                               state.get_mps_site(0l).get_chiL(), state.get_mps_site(0l).dimensions()));
+            throw except::logic_error("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}", state.get_mps_site(0l).get_chiL(),
+                                      state.get_mps_site(0l).dimensions());
         if(state.get_direction() == 1 and state.get_mps_site().get_chiR() != 1)
-            throw std::logic_error(fmt::format("chiR at position {} must have dimension 1, but it has dimension {}. Mps dims {}", state.get_position(),
-                                               state.get_mps_site().get_chiR(), state.get_mps_site().dimensions()));
+            throw except::logic_error("chiR at position {} must have dimension 1, but it has dimension {}. Mps dims {}", state.get_position(),
+                                      state.get_mps_site().get_chiR(), state.get_mps_site().dimensions());
         state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
         return 0;               // No moves this time, return 0
     } else {
@@ -60,8 +61,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
             auto &mpsC    = state.get_mps_site(posC);                                                        // This becomes the new center position AC
             long  chi_new = std::min(chi_lim, mpsC.spin_dim() * std::min(mpsC.get_chiL(), mpsC.get_chiR())); // Bond dimensions growth limit
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
-            Eigen::Tensor<cplx, 3> onesite_tensor(mpsC.dimensions()); // Allocate for contraction
-            onesite_tensor.device(tenx::omp::getDevice()) = tenx::asDiagonal(LC).contract(mpsC.get_M(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+            auto onesite_tensor = tools::common::contraction::contract_bnd_mps_temp(LC, mpsC.get_M());
             tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, chi_new, svd_settings, LogPolicy::QUIET);
         } else if(state.get_direction() == -1) {
             auto  pos_ul         = static_cast<size_t>(pos);                                                     // Cast to unsigned
@@ -84,39 +84,19 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, long chi_lim, s
     } else {
         long pos = state.get_position<long>();
         if(pos < -1 or pos >= state.get_length<long>()) throw std::runtime_error(fmt::format("pos out of bounds: {}", pos));
-        long  posL = state.get_direction() == 1 ? pos + 1 : pos - 1;
-        long  posR = state.get_direction() == 1 ? pos + 2 : pos;
-        auto &mps  = state.get_mps_site();
-        auto &mpsL = state.get_mps_site(posL); // Becomes the new center position
-        auto &mpsR = state.get_mps_site(posR); // The site to the right of the new center position
-        long  dL   = mpsL.spin_dim();
-        long  dR   = mpsR.spin_dim();
-        long  chiL = mpsL.get_chiL();
-        long  chiR = mpsR.get_chiR();
+
+        long  posL    = state.get_direction() == 1 ? pos + 1 : pos - 1;
+        long  posR    = state.get_direction() == 1 ? pos + 2 : pos;
+        auto  posL_ul = static_cast<size_t>(posL);
+        auto  posR_ul = static_cast<size_t>(posR);
+        auto &mps     = state.get_mps_site();
+        auto &mpsL    = state.get_mps_site(posL); // Becomes the new center position
+        auto &mpsR    = state.get_mps_site(posR); // The site to the right of the new center position
         // Store the special LC bond in a temporary. It needs to be put back afterwards
         // Do the same with its truncation error
         Eigen::Tensor<cplx, 1> LC                  = mps.get_LC();
         double                 truncation_error_LC = mps.get_truncation_error_LC();
-        Eigen::Tensor<cplx, 3> twosite_tensor(tenx::array3{dL * dR, chiL, chiR});
-        if(state.get_direction() == 1) {
-            // Here both M_bare are B's
-            // i.e. mpsL.get_M() = GB * LB
-            // and  mpsR.get_M() = GB * GB
-            // So we have to attach LC from the left
-            twosite_tensor.device(tenx::omp::getDevice()) = tenx::asDiagonal(LC)
-                                                                .contract(mpsL.get_M(), tenx::idx({1}, {1}))
-                                                                .contract(mpsR.get_M(), tenx::idx({2}, {1}))
-                                                                .shuffle(tenx::array4{1, 2, 0, 3})
-                                                                .reshape(tenx::array3{dL * dR, chiL, chiR});
-        } else {
-            // Here both M_bare are A's
-            // The right A should be the previous position, so it has an attached
-            // LC if we ask for get_M(), i.e. mpsR.get_M() = LA * GA * LC
-            // The left A should be a simple A, i.e. mpsL.get_M() = LA * GA
-
-            twosite_tensor.device(tenx::omp::getDevice()) =
-                mpsL.get_M().contract(mpsR.get_M(), tenx::idx({2}, {1})).shuffle(tenx::array4{0, 2, 1, 3}).reshape(tenx::array3{dL * dR, chiL, chiR});
-        }
+        auto                   twosite_tensor      = state.get_multisite_mps({posL_ul, posR_ul});
         tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, static_cast<long>(posL), chi_lim,
                                                 svd_settings, LogPolicy::QUIET);
         state.clear_cache(LogPolicy::QUIET);

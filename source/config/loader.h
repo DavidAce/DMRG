@@ -2,6 +2,7 @@
 #include <config/enums.h>
 #include <io/filesystem.h>
 #include <string>
+#include <tid/enums.h>
 #include <tools/common/log.h>
 #include <unordered_map>
 
@@ -23,11 +24,11 @@ class Loader {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
             if constexpr(std::is_enum_v<T>)
-                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2sv<T>(param_value));
+                tools::log->info("Loaded parameter: {:<48} = {:<20}", param_name, enum2sv<T>(param_value));
             else
-                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
+                tools::log->info("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
 
-        } catch(std::exception &ex) { tools::log->info("Failed to read parameter [{}]: {}", param_name, ex.what()); }
+        } catch(std::exception &ex) { tools::log->warn("Failed to read parameter [{}]: {}", param_name, ex.what()); }
     }
 
     private:
@@ -38,7 +39,7 @@ class Loader {
     [[nodiscard]] static std::string_view::size_type find_comment_character(std::string_view s);
 
     template<typename T>
-    [[nodiscard]] T parse_param(const std::string & param_val, std::string_view param_name) {
+    [[nodiscard]] T parse_param(const std::string &param_val, std::string_view param_name) {
         try {
             if(param_val.empty()) throw std::range_error(fmt::format("Parameter [{}] has no value", param_name));
             if constexpr(std::is_same_v<T, unsigned int>) {
@@ -69,7 +70,6 @@ class Loader {
     template<typename T>
     [[nodiscard]] T find_parameter(std::string param_requested) {
         param_requested = remove_spaces(param_requested);
-
         std::transform(param_requested.begin(), param_requested.end(), param_requested.begin(), ::tolower);
         try {
             if(param_map.find(param_requested) != param_map.end()) {
