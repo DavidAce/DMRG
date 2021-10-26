@@ -1,11 +1,11 @@
 #pragma once
+#include <array>
 #include <numeric>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <type_traits>
-#include <string>
 #include <vector>
-#include <array>
 
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
@@ -170,23 +170,24 @@ inline bool have_common(E1 lhs, E2 rhs) {
     return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
 }
 
-/* clang-format off */
 template<typename T>
 constexpr std::string_view enum2sv(const T &item) {
     static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
-    if constexpr(std::is_same_v<T, AlgorithmType>) {
-        if(item == AlgorithmType::iDMRG)                                return "iDMRG";
-        if(item == AlgorithmType::fDMRG)                                return "fDMRG";
-        if(item == AlgorithmType::fLBIT)                                return "fLBIT";
-        if(item == AlgorithmType::xDMRG)                                return "xDMRG";
-        if(item == AlgorithmType::iTEBD)                                return "iTEBD";
-        if(item == AlgorithmType::ANY)                                  return "ANY";
+    /* clang-format off */
+    if constexpr(std::is_same_v<T, AlgorithmType>) switch(item) {
+        case AlgorithmType::iDMRG:                                       return "iDMRG";
+        case AlgorithmType::fDMRG:                                       return "fDMRG";
+        case AlgorithmType::fLBIT:                                       return "fLBIT";
+        case AlgorithmType::xDMRG:                                       return "xDMRG";
+        case AlgorithmType::iTEBD:                                       return "iTEBD";
+        case AlgorithmType::ANY:                                         return "ANY";
     }
-    if constexpr(std::is_same_v<T, MultisiteMove>) {
-        if(item == MultisiteMove::ONE)                                  return "ONE";
-        if(item == MultisiteMove::MID)                                  return "MID";
-        if(item == MultisiteMove::MAX)                                  return "MAX";
+    if constexpr(std::is_same_v<T, MultisiteMove>) switch(item){
+        case MultisiteMove::ONE :                                       return "ONE";
+        case MultisiteMove::MID :                                       return "MID";
+        case MultisiteMove::MAX :                                       return "MAX";
     }
+
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::SR)                                         return "SR";
         if(item == OptRitz::LR)                                         return "LR";
