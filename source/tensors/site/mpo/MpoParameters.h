@@ -156,7 +156,8 @@ class h5tb_lbit {
         double   J2_wdth          = 0;         /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) */
         double   J3_wdth          = 0;         /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) */
         double   J2_xcls          = 0;         /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
-        size_t   J2_span          = 0;         /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Note that J2_span + 1 MPOs are used */
+        size_t   J2_span          = 0;         /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
+        size_t   J2_ctof          = 0;         /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
         double   J1_pert          = 0;         /*!< On-site perturbation */
         double   J2_pert          = 0;         /*!< Two-body perturbation */
         double   J3_pert          = 0;         /*!< Three-body perturbation */
@@ -194,6 +195,7 @@ class h5tb_lbit {
         H5Tinsert(h5_type, "J3_wdth", HOFFSET(table, J3_wdth), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_xcls", HOFFSET(table, J2_xcls), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_ULONG);
+        H5Tinsert(h5_type, "J2_ctof", HOFFSET(table, J2_ctof), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "J1_pert", HOFFSET(table, J1_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_pert", HOFFSET(table, J2_pert), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J3_pert", HOFFSET(table, J3_pert), H5T_NATIVE_DOUBLE);
@@ -204,12 +206,12 @@ class h5tb_lbit {
     }
 
     [[nodiscard]] std::string J2_str() const {
-        return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_span + 1, ","));
+        return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_ctof + 1, ","));
     }
     [[nodiscard]] std::string fmt_value(std::string_view p) const {
         /* clang-format off */
         if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"),param.J1_rand);
-        if(p == "J2_rand")     return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_span + 1, ","));;
+        if(p == "J2_rand")     return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_ctof + 1, ","));;
         if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand);
         if(p == "J1_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_mean);
         if(p == "J2_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2_mean);
@@ -219,6 +221,7 @@ class h5tb_lbit {
         if(p == "J3_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J3_wdth);
         if(p == "J2_xcls")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_xcls);
         if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span);
+        if(p == "J2_ctof")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_ctof);
         if(p == "J1_pert")     return fmt::format(FMT_STRING("{:<+7.3f}"), param.J1_pert);
         if(p == "J2_pert")     return fmt::format(FMT_STRING("{:<+7.3f}"), param.J2_pert);
         if(p == "J3_pert")     return fmt::format(FMT_STRING("{:<+7.3f}"), param.J3_pert);
@@ -233,7 +236,7 @@ class h5tb_lbit {
 
     static std::vector<std::string> get_parameter_names() {
         return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth",  "J3_wdth",
-                "J2_xcls", "J2_span", "J1_pert", "J2_pert", "J3_pert", "f_mixer", "u_layer", "spin_dim", "distribution"};
+                "J2_xcls", "J2_span","J2_ctof", "J1_pert", "J2_pert", "J3_pert", "f_mixer", "u_layer", "spin_dim", "distribution"};
     }
 
     void print_parameter_names() const {

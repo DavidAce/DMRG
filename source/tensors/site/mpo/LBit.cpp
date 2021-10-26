@@ -25,9 +25,11 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.u_layer  = settings::model::lbit::u_layer;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
 
-    // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, and setting it to 0
-    // should automatically set it to system size
-    if(h5tb.param.J2_span == 0 or h5tb.param.J2_span > settings::model::model_size) h5tb.param.J2_span = settings::model::model_size;
+    // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
+    if(h5tb.param.J2_span == 0)
+        h5tb.param.J2_ctof = settings::model::model_size - 1;
+    else
+        h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
 
     copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -50,10 +52,18 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.J2_wdth  = std::any_cast<double>(parameters["J2_wdth"]);
     h5tb.param.J3_wdth  = std::any_cast<double>(parameters["J3_wdth"]);
     h5tb.param.J2_xcls  = std::any_cast<double>(parameters["J2_xcls"]);
+    h5tb.param.J2_span  = std::any_cast<size_t>(parameters["J2_span"]);
     h5tb.param.f_mixer  = std::any_cast<double>(parameters["f_mixer"]);
     h5tb.param.u_layer  = std::any_cast<size_t>(parameters["u_layer"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
+    // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
+    if(h5tb.param.J2_span == 0)
+        h5tb.param.J2_ctof = settings::model::model_size - 1;
+    else
+        h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
+
+
     all_mpo_parameters_have_been_set = true;
     build_mpo();
 }
@@ -68,6 +78,8 @@ LBit::TableMap LBit::get_parameters() const {
     parameters["J2_wdth"]       = h5tb.param.J2_wdth;
     parameters["J3_wdth"]       = h5tb.param.J3_wdth;
     parameters["J2_xcls"]       = h5tb.param.J2_xcls;
+    parameters["J2_span"]       = h5tb.param.J2_span;
+    parameters["J2_ctof"]       = h5tb.param.J2_ctof;
     parameters["f_mixer"]       = h5tb.param.f_mixer;
     parameters["u_layer"]       = h5tb.param.u_layer;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
@@ -163,7 +175,7 @@ void LBit::build_mpo()
 
     Eigen::Tensor<Scalar, 2> n = tenx::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<Scalar, 2> I = tenx::TensorMap(id);
-    long                     R = h5tb.param.J2_span;
+    long                     R = static_cast<long>(h5tb.param.J2_ctof);
     long                     F = R + 2l;
     mpo_internal.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
@@ -225,8 +237,11 @@ void LBit::randomize_hamiltonian() {
     // J2(i,j) = exp(-|i-j|/J2_xcls) * Random_ij(J2_mean-J2_wdth_i/2, J2_mean+J2_wdth_i/2)
     using namespace settings::model::lbit;
     for(const auto &[r, J2_rand_ref] : iter::enumerate(h5tb.param.J2_rand)) {
-        if(r > h5tb.param.J2_span) break;
-        J2_rand_ref = std::exp(-static_cast<double>(r)/settings::model::lbit::J2_xcls); // exp(-r/J2_xcls) * Random_ij, where r = |i-j|, and Random_ij is compute d below
+        if(r == 0) continue;                                         // J2 does not describe self-interaction
+        if(r > h5tb.param.J2_ctof) break;                            // Can't interact further than this
+        if(r + get_position() >= settings::model::model_size) break; // No more sites to interact with
+        J2_rand_ref = std::exp(-static_cast<double>(r) /
+                               settings::model::lbit::J2_xcls); // exp(-r/J2_xcls) * Random_ij, where r = |i-j|, and Random_ij is compute d below
     }
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
@@ -301,10 +316,11 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO();
-    long   R                          = static_cast<long>(h5tb.param.J2_span); // Range
+    auto   Rul                        = h5tb.param.J2_ctof;                    // Range unsigned long
+    long   R                          = static_cast<long>(h5tb.param.J2_ctof); // Range
     long   F                          = R + 2l;                                // Final index of mpo
     size_t pos                        = get_position();
-    auto   J2_range                   = num::range<size_t>(1, R + 1);
+    auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 to include R
     double J1_on                      = 0.0;
     double J2_on                      = 0.0;
     double J3_on                      = 0.0;
@@ -351,7 +367,7 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
             // An interaction between sites i,j could be included multiple times in different multisite mpos.
             // Here we compensate for that so time evolution operators evolve the right amount
             // Example:
-            //      Let L == 8 and J2_span <= 3 and pos == 2
+            //      Let L == 8 and R <= 3 and pos == 2
             //
             //      L               :  0,1,2,3,4,5,6,7
             //      multisite mpo[0]: [0,1,2,3]
@@ -379,7 +395,7 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
             for(size_t posL = 0; posL < settings::model::model_size - 1ul; posL++) {
                 // posI and posJ are the left and right positions of a single 2-body interaction J(i,j).
                 // posL and posR are the left and right edges of the multisite mpo
-                size_t posR = posL + h5tb.param.J2_span;
+                size_t posR = posL + Rul;
                 if(posR >= settings::model::model_size) break;
                 if(posI >= posL and posJ <= posR) J2_count[r] += 1.0; // Count if the interaction is in the multisite mpo
             }
@@ -456,6 +472,7 @@ void LBit::save_hamiltonian(h5pp::File &file, std::string_view table_path) const
     file.writeAttribute(h5tb.param.J3_wdth, "J3_wdth", table_path);
     file.writeAttribute(h5tb.param.J2_xcls, "J2_xcls", table_path);
     file.writeAttribute(h5tb.param.J2_span, "J2_span", table_path);
+    file.writeAttribute(h5tb.param.J2_ctof, "J2_ctof", table_path);
     file.writeAttribute(h5tb.param.f_mixer, "f_mixer", table_path);
     file.writeAttribute(h5tb.param.u_layer, "u_layer", table_path);
     file.writeAttribute(h5tb.param.distribution, "distribution", table_path);

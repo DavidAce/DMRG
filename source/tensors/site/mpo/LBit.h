@@ -9,7 +9,6 @@ class LBit : public MpoSite {
 
     private:
     h5tb_lbit h5tb;
-
     //    [[nodiscard]] double get_field() const;
     //    [[nodiscard]] double get_coupling() const;
 
