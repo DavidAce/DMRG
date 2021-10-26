@@ -11,6 +11,12 @@ namespace tid {
 
 namespace svd {
     inline std::shared_ptr<spdlog::logger> log;
+    namespace internal {
+        // LAPACK uses internal workspace arrays which can be reused for the duration of the program.
+        // Call clear() to recover this memory space
+        void clear_lapack();
+    }
+
     class solver {
         private:
         void copy_settings(const svd::settings &svd_settings);
@@ -30,11 +36,11 @@ namespace svd {
 
         template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_rsvd(const Scalar *mat_ptr, long rows, long cols,
-                                                                                                  std::optional<long> rank_max = std::nullopt);
+                                                                                                 std::optional<long> rank_max = std::nullopt);
 
         template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
-                                                                                            std::optional<long> rank_max = std::nullopt);
+                                                                                                std::optional<long> rank_max = std::nullopt);
 
         template<typename Scalar>
         void print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec = 8);
@@ -46,9 +52,9 @@ namespace svd {
         solver(const svd::settings &svd_settings);
         solver(std::optional<svd::settings> svd_settings);
         double threshold  = 1e-12;
-        size_t switchsize = 16;
+        size_t switchsize = 16; // Use Jacobi algorithm when rows < switchsize
         SVDLib svd_lib    = SVDLib::lapacke;
-        bool   use_bdc    = true;
+        bool   use_bdc    = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize
         bool   save_fail  = false;
 
         static std::optional<long long> count;
@@ -60,7 +66,7 @@ namespace svd {
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
 
         template<typename Derived>
-        auto do_svd(const Eigen::DenseBase<Derived> &mat,std::optional<long> rank_max = std::nullopt) {
+        auto do_svd(const Eigen::DenseBase<Derived> &mat, std::optional<long> rank_max = std::nullopt) {
             return do_svd_ptr(mat.derived().data(), mat.rows(), mat.cols(), rank_max);
         }
 
@@ -285,7 +291,7 @@ namespace svd {
             auto                     dim2      = mpo.dimension(0);
             auto                     dim3      = mpo.dimension(1);
             auto                     dim_ddm   = dim0 * dim1 * dim2;
-            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3}).real();
+            Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3});
             auto [U, S, V, rank]               = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             U *= avgS;
@@ -341,7 +347,7 @@ namespace svd {
             auto dim3    = mpo.dimension(1);
             auto dim_ddm = dim1 * dim2 * dim3;
 
-            Eigen::Tensor<double, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm}).real();
+            Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm});
             auto [U, S, V, rank]               = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1));
             auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
             V *= avgS;                                            // Rescaled singular values
