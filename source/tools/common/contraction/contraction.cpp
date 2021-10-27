@@ -65,9 +65,6 @@ template double tools::common::contraction::expectation_value(const cplx * const
 
 /* clang-format on */
 
-
-
-
 template<typename Scalar_>
 class MatrixReplacement;
 template<typename T>
@@ -284,9 +281,6 @@ template void tools::common::contraction::matrix_inverse_vector_product(
     const cplx * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
 
-
-
-
 /* clang-format off */
 template<typename Scalar>
 void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
@@ -335,7 +329,6 @@ template void tools::common::contraction::matrix_vector_product(
                             const cplx * const envL_ptr, std::array<long,3> envL_dims,
                             const cplx * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
-
 
 /* clang-format off */
 
