@@ -92,15 +92,15 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         if(tensors.active_sites.empty())
             num_moves = 1;
         else {
-            long posL_edge = 0;
-            long posR_edge = tensors.get_length<long>() - 1;
-            long posL_active = static_cast<long>(tensors.active_sites.front());
-            long posR_active = static_cast<long>(tensors.active_sites.back());
-            long num_active = static_cast<long>(tensors.active_sites.size());
+            long posL_edge     = 0;
+            long posR_edge     = tensors.get_length<long>() - 1;
+            long posL_active   = static_cast<long>(tensors.active_sites.front());
+            long posR_active   = static_cast<long>(tensors.active_sites.back());
+            long num_active    = static_cast<long>(tensors.active_sites.size());
             bool reached_edgeR = tensors.state->get_direction() == 1 and posR_edge == posR_active;
             bool reached_edgeL = tensors.state->get_direction() == -1 and posL_edge == posL_active;
 
-            if(reached_edgeL or reached_edgeR){
+            if(reached_edgeL or reached_edgeR) {
                 // In this case we have just updated from here to the edge. No point in updating
                 // closer and closer to the edge. Just move until reaching the edge without flip,
                 // then once more to flip, then once more to move the center position back from negative.
@@ -108,7 +108,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
                 // Reminder: moving to the outward edge means reaching pos == -1 and dir == -1, so all sites are "B".
                 // Moving again only flips the sign of dir. We move once more to get pos == 0, dir == 1.
                 // On the other edge this is not necessary!
-                num_moves = std::max<long>(1, num_active - 1) + 1; // to the edge without flipping, +1 to flip
+                num_moves = std::max<long>(1, num_active - 1) + 1;   // to the edge without flipping, +1 to flip
                 if(reached_edgeL) num_moves = num_moves.value() + 1; // , +1 to get pos == 0
             } else if(settings::strategy::multisite_mps_step == MultisiteMove::ONE)
                 num_moves = 1ul;
@@ -157,7 +157,7 @@ void AlgorithmFinite::reduce_mpo_energy() {
     // The reduction clears our squared mpo's. So we have to rebuild.
     rebuild_mpo_squared();
     tensors.rebuild_edges();
-    if constexpr (settings::debug) tensors.assert_validity();
+    if constexpr(settings::debug) tensors.assert_validity();
 }
 
 void AlgorithmFinite::rebuild_mpo_squared() {
@@ -259,15 +259,28 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
         if(status.sub_expansion_alpha == 0) status.sub_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_expansion_alpha);
 
         // Update alpha
-        double           old_expansion_alpha = status.sub_expansion_alpha;
-        constexpr double factor_up           = 5.0;
-        constexpr double factor_dn           = 0.1;
-        if(status.algorithm_has_stuck_for > 0) {
-            status.sub_expansion_alpha = std::min(status.sub_expansion_alpha * factor_up, settings::strategy::max_expansion_alpha);
+        double old_expansion_alpha = status.sub_expansion_alpha;
+        double factor_up           = 5.0;
+        double factor_dn           = 0.1;
+
+        bool var_recently_improved = status.energy_variance_lowest / status.sub_expansion_variance < 1e-1;
+        if(var_recently_improved) factor_dn *= 0.001;
+
+        if(status.algorithm_has_stuck_for > 0 and not var_recently_improved) {
+            status.sub_expansion_alpha *= factor_up;
         } else {
-            status.sub_expansion_alpha = std::max(status.sub_expansion_alpha * factor_dn, status.energy_variance_lowest);
+            status.sub_expansion_alpha *= factor_dn;
         }
-        tools::log->debug("Updated alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+        status.sub_expansion_alpha = std::clamp(status.sub_expansion_alpha,
+                                                std::min(status.energy_variance_lowest, settings::strategy::max_expansion_alpha),
+                                                settings::strategy::max_expansion_alpha);
+        if(status.sub_expansion_alpha < old_expansion_alpha) {
+            status.sub_expansion_step     = status.step;
+            status.sub_expansion_variance = status.energy_variance_lowest;
+            tools::log->debug("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+        }else{
+            tools::log->debug("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+        }
     }
 }
 
@@ -329,7 +342,8 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     if(status.algo_type != AlgorithmType::fLBIT) {
         tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-        tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
+        tools::log->info("-- Energy density           : {}",
+                         tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
         tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     }
 }
@@ -367,25 +381,21 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             tools::log->debug("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
             if(std::abs(spin_component_along_requested_axis) < 0.5) {
                 // Here we deem the spin component undecided enough to make a safe projection to both sides for comparison
-                auto tensors_neg = tensors;
-                auto tensors_pos = tensors;
+                auto tensors_neg  = tensors;
+                auto tensors_pos  = tensors;
                 auto variance_neg = std::numeric_limits<double>::quiet_NaN();
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
                     tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.chi_lim);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
-                } catch(const std::exception &ex) {
-                     throw except::runtime_error("Projection to -{} failed: {}",target_sector.value(), ex.what());
-                }
+                } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
                     tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.chi_lim);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
-                } catch(const std::exception &ex) {
-                    throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what());
-                }
+                } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
                 tools::log->debug("Variance after projection to -{} = {:8.2e}", target_sector.value(), variance_neg);
                 tools::log->debug("Variance after projection to +{} = {:8.2e}", target_sector.value(), variance_pos);
@@ -394,11 +404,11 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
                 if(not std::isnan(variance_neg) and variance_neg < variance_pos)
                     tensors = tensors_neg;
-                else if (not std::isnan(variance_pos))
+                else if(not std::isnan(variance_pos))
                     tensors = tensors_pos;
             } else {
                 // Here the spin component is close to one sector. We just project to the nearest sector
-                tensors.project_to_nearest_sector(target_sector.value(),  status.chi_lim);
+                tensors.project_to_nearest_sector(target_sector.value(), status.chi_lim);
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
@@ -654,12 +664,12 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format(FMT_STRING("step:{:<5} "), status.step);
     report += fmt::format(FMT_STRING("L:{} "), tensors.get_length());
     std::string site_str;
-    if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^6}"),tensors.state->get_position<long>());
+    if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.state->get_position<long>());
     if(tensors.active_sites.size() == 1) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.active_sites.front());
-    if(tensors.active_sites.size() >= 2){
+    if(tensors.active_sites.size() >= 2) {
         if(tensors.position_is_at(static_cast<long>(tensors.active_sites.front())))
             site_str = fmt::format(FMT_STRING("{:>2}.{:>2} "), tensors.active_sites.front(), tensors.active_sites.back());
-        else if (tensors.position_is_at(static_cast<long>(tensors.active_sites.back())))
+        else if(tensors.position_is_at(static_cast<long>(tensors.active_sites.back())))
             site_str = fmt::format(FMT_STRING("{:>2} {:>2}."), tensors.active_sites.front(), tensors.active_sites.back());
         else
             site_str = fmt::format(FMT_STRING("{:>2} {:>2} "), tensors.active_sites.front(), tensors.active_sites.back());
@@ -700,8 +710,7 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
     report += fmt::format(FMT_STRING("sat:[σ² {:<1} Sₑ {:<1}] "), status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format(FMT_STRING("time:{:<9} "), fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
-    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), debug::mem_rss_in_mb(),
-                          debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
+    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }
 
@@ -723,7 +732,7 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Total time                         = {:<.1f} s = {:<.2f} min", tid::get_unscoped("t_tot").get_time(),
                      tid::get_unscoped("t_tot").get_time() / 60);
 
-    if (status.algo_type != AlgorithmType::fLBIT) {
+    if(status.algo_type != AlgorithmType::fLBIT) {
         double energy_per_site = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
         tools::log->info("Energy per site E/L                = {:<.16f}", energy_per_site);
         if(status.algo_type == AlgorithmType::xDMRG)
@@ -748,7 +757,7 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Algorithm has got stuck for        = {:<}", status.algorithm_has_stuck_for);
     tools::log->info("Algorithm has converged for        = {:<}", status.algorithm_converged_for);
 
-    if(status.algo_type != AlgorithmType::fLBIT){
+    if(status.algo_type != AlgorithmType::fLBIT) {
         tools::log->info("σ²                                 = Converged : {:<4}  Saturated: {:<4}", status.variance_mpo_converged_for,
                          status.variance_mpo_saturated_for);
     }

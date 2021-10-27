@@ -514,6 +514,8 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "energy_variance_max_digits",  HOFFSET(table, energy_variance_max_digits), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "energy_variance_prec_limit",  HOFFSET(table, energy_variance_prec_limit), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "sub_expansion_alpha",         HOFFSET(table, sub_expansion_alpha),        H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "sub_expansion_variance",      HOFFSET(table, sub_expansion_variance),     H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "sub_expansion_step",          HOFFSET(table, sub_expansion_step),         H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);

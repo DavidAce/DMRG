@@ -73,7 +73,5 @@ class AlgorithmFinite : public AlgorithmBase {
     };
 
     std::vector<log_entry> algorithm_history;
-    std::vector<double>              var_mpo_step; // History of energy variances (from mpo) at each step
-//    std::vector<double>              var_mpo_iter; // History of energy variances (from mpo) at each iteration
-//    std::vector<std::vector<double>> entropy_iter; // History of entanglement entropies at each iteration
+    std::vector<double>    var_mpo_step;   // History of energy variances (from mpo) at each step
 };
