@@ -7,12 +7,12 @@ namespace tenx {
     class selfCleaningEvaluator {
         private:
         using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const Derived>, Device>;
+        using DimType   = typename Evaluator::Dimensions;
         Evaluator m_eval;
 
         public:
         using Scalar                        = typename Eigen::internal::remove_const<typename decltype(m_eval)::Scalar>::type;
-        using DimType                       = typename decltype(m_eval)::Dimensions::Base;
-        static constexpr auto NumDimensions = DimType{}.size();
+        static constexpr auto NumDimensions = Eigen::internal::array_size<DimType>::value;
 
         selfCleaningEvaluator(const Evaluator &eval) : m_eval(eval) {}
         template<int AccessLevel>
@@ -27,7 +27,8 @@ namespace tenx {
             m_eval.cleanup();
         }
 
-        constexpr auto rank() { return DimType{}.size(); }
+        //        constexpr auto rank() { return DimType{}.size(); }
+        constexpr auto rank() { return NumDimensions; }
         constexpr auto dimensions() { return m_eval.dimensions(); }
         constexpr auto size() { return m_eval.size(); }
         constexpr auto data() { return m_eval.data(); }
