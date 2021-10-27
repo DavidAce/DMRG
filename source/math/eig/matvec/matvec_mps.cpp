@@ -161,7 +161,7 @@ void MatVecMps<T>::set_shift(std::complex<double> sigma_) {
     // When we shift an MPO, all we do is subtract a diagonal matrix from
     // the botton left corner of the ij-matrix.
     auto dims = mpo.dimensions();
-    if(dims[2] != dims[3]) throw std::logic_error(fmt::format("MPO has different spin dimensions up and down: {}", dims));
+    if(dims[2] != dims[3]) throw except::logic_error("MPO has different spin dimensions up and down: {}", dims);
     auto spindim = dims[2];
 
     // Setup extents and handy objects
@@ -179,6 +179,7 @@ void MatVecMps<T>::set_shift(std::complex<double> sigma_) {
         mpo.slice(offset4, extent4).reshape(extent2) += tenx::TensorIdentity<Scalar>(spindim) * (sigma - sigma_);
 
     sigma = sigma_;
+    eig::log->debug("Shifted MPO dimensions {}", mpo.dimensions());
 
     readyShift = true;
 }
@@ -218,7 +219,7 @@ void MatVecMps<T>::compress() {
         mpo = mpo_r2l;
     }
     readyCompress = true;
-    eig::log->trace("Compressed MPO² dimensions {}", mpo.dimensions());
+    eig::log->debug("Compressed MPO dimensions {}", mpo.dimensions());
 }
 
 template<typename Scalar>

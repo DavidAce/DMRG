@@ -254,7 +254,7 @@ void ceres_direct_functor<Scalar>::compress() {
         mpo2                               = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {0}));
     }
     readyCompress = true;
-    tools::log->debug("Compressed MPO² dimensions {} -> {}", old_dimensions, mpo2.dimensions());
+    tools::log->debug("Compressed MPO dimensions {} -> {}", old_dimensions, mpo2.dimensions());
 }
 
 template<typename Scalar>
