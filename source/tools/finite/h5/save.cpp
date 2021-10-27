@@ -323,7 +323,6 @@ namespace tools::finite::h5 {
             case StorageReason::FINISHED: {
                 storage_level = settings::storage::storage_level_finished;
                 state_prefix += "/finished";
-                table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
                 break;
             }
             case StorageReason::SAVEPOINT: {
@@ -332,7 +331,6 @@ namespace tools::finite::h5 {
                     if(settings::storage::savepoint_frequency == 0 or num::mod(status.iter, settings::storage::savepoint_frequency) != 0)
                         storage_level = StorageLevel::NONE;
                 }
-                table_prefxs = {fmt::format("{}/tables", state_prefix)}; // Appends only to the common tables
                 state_prefix += "/savepoint";
                 if(settings::storage::savepoint_keep_newest_only)
                     state_prefix += "/iter_last";
@@ -346,7 +344,6 @@ namespace tools::finite::h5 {
                     if(settings::storage::checkpoint_frequency == 0 or num::mod(status.iter, settings::storage::checkpoint_frequency) != 0)
                         storage_level = StorageLevel::NONE;
                 }
-                table_prefxs = {fmt::format("{}/tables", state_prefix)}; // Appends only to the common tables
                 state_prefix += "/checkpoint";
                 if(settings::storage::checkpoint_keep_newest_only)
                     state_prefix += "/iter_last";
@@ -359,7 +356,6 @@ namespace tools::finite::h5 {
                 if(not settings::storage::checkpoint_when_chi_updates) storage_level = StorageLevel::NONE;
                 if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) storage_level = StorageLevel::NONE;
                 // If we have updated chi we may want to write a projection too
-                table_prefxs = {fmt::format("{}/tables", state_prefix)}; // Appends only to the common tables
                 state_prefix += fmt::format("/checkpoint/chi_{}", status.chi_lim);
                 break;
             }
