@@ -1,7 +1,7 @@
 #pragma once
 #include "fwd_decl.h"
 #include <memory>
-
+#include <unsupported/Eigen/CXX11/ThreadPool>
 namespace tenx {
     namespace omp {
         extern int num_threads;

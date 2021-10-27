@@ -1,6 +1,6 @@
 #include "omp.h"
 #include <memory>
-#include <unsupported/Eigen/CXX11/ThreadPool>
+#include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tenx::omp {
     int num_threads = 1;
