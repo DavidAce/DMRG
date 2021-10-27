@@ -1,7 +1,6 @@
 #include "../contraction.h"
 #include <Eigen/IterativeLinearSolvers>
 #include <io/fmt.h>
-#include <iostream>
 #include <math/tenx.h>
 #include <unsupported/Eigen/IterativeSolvers>
 
@@ -22,35 +21,29 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
     auto envL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envL_ptr,envL_dims);
     auto envR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envR_ptr,envR_dims);
 
-    if(mps.dimension(1) != envL.dimension(0))
-        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
-    if(mps.dimension(2) != envR.dimension(0))
-        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
-    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
-    if(envL.dimension(2) != mpo.dimension(0))
-        throw std::runtime_error(fmt::format("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions()));
-    if(envR.dimension(2) != mpo.dimension(1))
-        throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
+    if(mps.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
+    if(mps.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
+    if(mps.dimension(0) != mpo.dimension(2)) throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
+    if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
+    if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     Eigen::Tensor<Scalar, 0> expval;
     expval.device(tenx::omp::getDevice()) =
         envL
-            .contract(mps,                  tenx::idx({0}, {1}))
-            .contract(mpo,                  tenx::idx({2, 1}, {2, 0}))
-            .contract(mps.conjugate(),      tenx::idx({3, 0}, {0, 1}))
-            .contract(envR,                 tenx::idx({0, 2, 1}, {0, 1, 2}));
+            .contract(mps,             tenx::idx({0}, {1}))
+            .contract(mpo,             tenx::idx({2, 1}, {2, 0}))
+            .contract(mps.conjugate(), tenx::idx({3, 0}, {0, 1}))
+            .contract(envR,            tenx::idx({0, 2, 1}, {0, 1, 2}));
 
     double moment = 0;
     if constexpr(std::is_same_v<Scalar,cplx>){
         moment = std::real(expval(0));
         if(abs(std::imag(expval(0))) > 1e-10)
-//            printf("Expectation value has an imaginary part: %.16f + i %.16f", std::real(expval(0)), std::imag(expval(0)));
             fmt::print("Expectation value has an imaginary part: {:.16f} + i {:.16f}\n", std::real(expval(0)), std::imag(expval(0)));
-        //        throw std::runtime_error(fmt::format("Expectation value has an imaginary part: {:.16f} + i {:.16f}", std::real(expval(0)), std::imag(expval(0))));
+        //        throw except::runtime_error("Expectation value has an imaginary part: {:.16f} + i {:.16f}", std::real(expval(0)), std::imag(expval(0))));
     }else
         moment = expval(0);
-
-    if(std::isnan(moment) or std::isinf(moment)) throw std::runtime_error(fmt::format("First moment is invalid: {}", moment));
+    if(std::isnan(moment) or std::isinf(moment)) throw except::runtime_error("First moment is invalid: {}", moment);
     return moment;
 }
 
@@ -98,8 +91,6 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     std::array<long, 3> shape_envR;
     std::vector<Scalar> shift_mpo;
     long                mps_size;
-    //    eig::Form           form = eig::Form::SYMM;
-    //    eig::Side           side = eig::Side::R;
     // Profiling
     mutable int                 counter = 0;
     mutable std::vector<Scalar> tmp;
@@ -155,10 +146,6 @@ namespace Eigen {
                 //                auto token = mat.t_multAx->tic_token();
                 mat.tmp.resize(static_cast<size_t>(dst.size()));
                 Eigen::Map<Dest> tmp_map(mat.tmp.data(), dst.size());
-                //                std::cout << "dst size " << dst.size() << " | rhs size " << rhs.size() << std::endl;
-                //                if(dst.size() != rhs.size())
-                //                    dst.conservativeResize(rhs.size());
-
                 tools::common::contraction::matrix_vector_product(tmp_map.data(), rhs.data(), mat.shape_mps, mat.mpo, mat.shape_mpo, mat.envL, mat.shape_envL,
                                                                   mat.envR, mat.shape_envR);
 
@@ -195,14 +182,14 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
             auto envR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envR_ptr,envR_dims);
 
             if(mps.dimension(1) != envL.dimension(0))
-                throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
+                throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
             if(mps.dimension(2) != envR.dimension(0))
-                throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
-            if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
+                throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
+            if(mps.dimension(0) != mpo.dimension(2)) throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
             if(envL.dimension(2) != mpo.dimension(0))
-                throw std::runtime_error(fmt::format("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions()));
+                throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
             if(envR.dimension(2) != mpo.dimension(1))
-                throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
+                throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
         }
 
         // Define the "matrix-free" matrix replacement.
@@ -220,46 +207,14 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
             bicg.setMaxIterations(MaxIters);
             bicg.setTolerance(tolerance);
             res = bicg.solve(mps);
-//            std::cout << "BiCGSTAB: #iterations: " << bicg.iterations()
-//                << ", #count: " << matRepl.counter
-//                << ", estimated error: " << bicg.error()
-//                << std::endl;
-
         }
-//        {
-//            Eigen::ConjugateGradient<MatrixReplacement<Scalar>, Eigen::Lower|Eigen::Upper, Eigen::IdentityPreconditioner> cg;
-//            cg.setMaxIterations(20000);
-//            cg.compute(matRepl);
-//            res = cg.solve(mps);
-//            std::cout << "CG      : #iterations: " << cg.iterations()
-//                      << ", #count: " << matRepl.counter
-//                      << ", estimated error: " << cg.error()
-//                      << std::endl;
-//        }
         if constexpr (std::is_same_v<Scalar,double>){
             Eigen::MINRES<MatrixReplacement<Scalar>, Eigen::Lower|Eigen::Upper, Eigen::IdentityPreconditioner> minres;
             minres.setMaxIterations(MaxIters);
             minres.setTolerance(tolerance);
             minres.compute(matRepl);
             res = minres.solve(mps);
-//            std::cout << "MINRES:   #iterations: " << minres.iterations()
-//                      << ", #count: " << matRepl.counter
-//                      << ", norm: " << res.norm()
-//                      << ", estimated error: " << minres.error()
-//                      << std::endl;
-    //    std::cout << "x: \n" << x << std::endl;
         }
-
-//        {
-//            Eigen::ConjugateGradient<MatrixReplacement<Scalar>, Eigen::Lower|Eigen::Upper, Eigen::IdentityPreconditioner> cg;
-//            cg.setMaxIterations(20000);
-//            cg.compute(matRepl);
-//            res = cg.solve(mps);
-//            std::cout << "CG      : #iterations: " << cg.iterations()
-//                      << ", #count: " << matRepl.counter
-//                      << ", estimated error: " << cg.error()
-//                      << std::endl;
-//        }
 
 
 
@@ -273,21 +228,20 @@ template void tools::common::contraction::matrix_inverse_vector_product(
     const real * const mpo_ptr, std::array<long,4> mpo_dims,
     const real * const envL_ptr, std::array<long,3> envL_dims,
     const real * const envR_ptr, std::array<long,3> envR_dims);
-template void tools::common::contraction::matrix_inverse_vector_product(
-    cplx * res_ptr,
-    const cplx * const mps_ptr, std::array<long,3> mps_dims,
-    const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
-    const cplx * const envL_ptr, std::array<long,3> envL_dims,
-    const cplx * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_inverse_vector_product(      cplx *       res_ptr,
+                                                                        const cplx * const mps_ptr, std::array<long,3> mps_dims,
+                                                                        const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                                        const cplx * const envL_ptr, std::array<long,3> envL_dims,
+                                                                        const cplx * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
 
 /* clang-format off */
 template<typename Scalar>
-void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
-                           const Scalar * const mps_ptr, std::array<long,3> mps_dims,
-                           const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
-                           const Scalar * const envL_ptr, std::array<long,3> envL_dims,
-                           const Scalar * const envR_ptr, std::array<long,3> envR_dims){
+void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
+                                                       const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+                                                       const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                       const Scalar * const envL_ptr, std::array<long,3> envL_dims,
+                                                       const Scalar * const envR_ptr, std::array<long,3> envR_dims){
 
     // This applies the mpo's with corresponding environments to local multisite mps
     // This is usually the operation H|psi>  or H²|psi>
@@ -297,46 +251,39 @@ void tools::common::contraction::matrix_vector_product(Scalar * res_ptr,
     auto envL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envL_ptr,envL_dims);
     auto envR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envR_ptr,envR_dims);
 
-    if(mps.dimension(1) != envL.dimension(0))
-        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions()));
-    if(mps.dimension(2) != envR.dimension(0))
-        throw std::runtime_error(fmt::format("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions()));
-    if(mps.dimension(0) != mpo.dimension(2)) throw std::runtime_error(fmt::format("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions()));
-    if(envL.dimension(2) != mpo.dimension(0))
-        throw std::runtime_error(fmt::format("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions()));
-    if(envR.dimension(2) != mpo.dimension(1))
-        throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
+    if(mps.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
+    if(mps.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
+    if(mps.dimension(0) != mpo.dimension(2))  throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
+    if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
+    if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     res.device(tenx::omp::getDevice()) =
              mps
-            .contract(envL, tenx::idx({1}, {0}))
-            .contract(mpo, tenx::idx({0, 3}, {2, 0}))
-            .contract(envR, tenx::idx({0, 2}, {0, 2}))
+            .contract(envL,     tenx::idx({1}, {0}))
+            .contract(mpo,      tenx::idx({0, 3}, {2, 0}))
+            .contract(envR,     tenx::idx({0, 2}, {0, 2}))
             .shuffle(tenx::array3{1, 0, 2});
 
 }
 using namespace tools::common::contraction;
-template void tools::common::contraction::matrix_vector_product(
-                           real * res_ptr,
-                           const real * const mps_ptr, std::array<long,3> mps_dims,
-                           const real * const mpo_ptr, std::array<long,4> mpo_dims,
-                           const real * const envL_ptr, std::array<long,3> envL_dims,
-                           const real * const envR_ptr, std::array<long,3> envR_dims);
-template void tools::common::contraction::matrix_vector_product(
-                            cplx * res_ptr,
-                            const cplx * const mps_ptr, std::array<long,3> mps_dims,
-                            const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
-                            const cplx * const envL_ptr, std::array<long,3> envL_dims,
-                            const cplx * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_vector_product(      real *       res_ptr,
+                                                                const real * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const real * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                                const real * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const real * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_vector_product(      cplx *       res_ptr,
+                                                                const cplx * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                                const cplx * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const cplx * const envR_ptr, std::array<long,3> envR_dims);
 /* clang-format on */
 
 /* clang-format off */
 
 template<typename Scalar>
-void  tools::common::contraction::contract_mps_bnd(
-          Scalar * res_ptr      , std::array<long,3> res_dims,
-    const Scalar * const mps_ptr, std::array<long,3> mps_dims,
-    const Scalar * const bnd_ptr, std::array<long,1> bnd_dims){
+void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      , std::array<long,3> res_dims,
+                                                   const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+                                                   const Scalar * const bnd_ptr, std::array<long,1> bnd_dims){
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -344,15 +291,13 @@ void  tools::common::contraction::contract_mps_bnd(
     if(mps.dimensions() != res.dimensions()) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps.dimensions(), res.dimensions());
     res.device(tenx::omp::getDevice()) = mps.contract(tenx::asDiagonal(bnd), tenx::idx({2}, {0}));
 }
-template void tools::common::contraction::contract_mps_bnd(
-          cplx *       res_ptr, std::array<long,3> res_dims,
-    const cplx * const mps_ptr, std::array<long,3> mps_dims,
-    const cplx * const bnd_ptr, std::array<long,1> bnd_dims);
+template void tools::common::contraction::contract_mps_bnd(      cplx *       res_ptr, std::array<long,3> res_dims,
+                                                           const cplx * const mps_ptr, std::array<long,3> mps_dims,
+                                                           const cplx * const bnd_ptr, std::array<long,1> bnd_dims);
 
-template void tools::common::contraction::contract_mps_bnd(
-          real *       res_ptr, std::array<long,3> res_dims,
-    const real * const mps_ptr, std::array<long,3> mps_dims,
-    const real * const bnd_ptr, std::array<long,1> bnd_dims);
+template void tools::common::contraction::contract_mps_bnd(      real *       res_ptr, std::array<long,3> res_dims,
+                                                           const real * const mps_ptr, std::array<long,3> mps_dims,
+                                                           const real * const bnd_ptr, std::array<long,1> bnd_dims);
 
 
 template<typename Scalar>
@@ -368,22 +313,19 @@ void  tools::common::contraction::contract_bnd_mps(
     res.device(tenx::omp::getDevice()) = tenx::asDiagonal(bnd).contract(mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
 }
 
-template void tools::common::contraction::contract_bnd_mps(
-          cplx *       res_ptr, std::array<long,3> res_dims,
-    const cplx * const bnd_ptr, std::array<long,1> bnd_dims,
-    const cplx * const mps_ptr, std::array<long,3> mps_dims);
+template void tools::common::contraction::contract_bnd_mps(      cplx *       res_ptr, std::array<long,3> res_dims,
+                                                           const cplx * const bnd_ptr, std::array<long,1> bnd_dims,
+                                                           const cplx * const mps_ptr, std::array<long,3> mps_dims);
 
-template void tools::common::contraction::contract_bnd_mps(
-          real *       res_ptr, std::array<long,3> res_dims,
-    const real * const bnd_ptr, std::array<long,1> bnd_dims,
-    const real * const mps_ptr, std::array<long,3> mps_dims);
+template void tools::common::contraction::contract_bnd_mps(      real *       res_ptr, std::array<long,3> res_dims,
+                                                           const real * const bnd_ptr, std::array<long,1> bnd_dims,
+                                                           const real * const mps_ptr, std::array<long,3> mps_dims);
 
 
 template<typename Scalar>
-void tools::common::contraction::contract_mps_mps(
-          Scalar * res_ptr       , std::array<long,3> res_dims,
-    const Scalar * const mpsL_ptr, std::array<long,3> mpsL_dims,
-    const Scalar * const mpsR_ptr, std::array<long,3> mpsR_dims){
+void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       , std::array<long,3> res_dims,
+                                                  const Scalar * const mpsL_ptr, std::array<long,3> mpsL_dims,
+                                                  const Scalar * const mpsR_ptr, std::array<long,3> mpsR_dims){
     auto res  = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mpsL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsL_ptr, mpsL_dims);
     auto mpsR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsR_ptr, mpsR_dims);
@@ -396,22 +338,19 @@ void tools::common::contraction::contract_mps_mps(
 }
 
 
-template void tools::common::contraction::contract_mps_mps(
-          cplx * res_ptr       , std::array<long,3> res_dims,
-    const cplx * const mpsL_ptr, std::array<long,3> mpsL_dims,
-    const cplx * const mpsR_ptr, std::array<long,3> mpsR_dims);
+template void tools::common::contraction::contract_mps_mps(      cplx * res_ptr       , std::array<long,3> res_dims,
+                                                           const cplx * const mpsL_ptr, std::array<long,3> mpsL_dims,
+                                                           const cplx * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
-template void tools::common::contraction::contract_mps_mps(
-          real * res_ptr       , std::array<long,3> res_dims,
-    const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
-    const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
+template void tools::common::contraction::contract_mps_mps(      real * res_ptr       , std::array<long,3> res_dims,
+                                                           const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
+                                                           const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
 
 
 template<typename Scalar>
-double tools::common::contraction::contract_mps_mps_overlap(
-    const Scalar * const mps1_ptr, std::array<long,3> mps1_dims,
-    const Scalar * const mps2_ptr, std::array<long,3> mps2_dims){
+double tools::common::contraction::contract_mps_mps_overlap(const Scalar * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                            const Scalar * const mps2_ptr, std::array<long,3> mps2_dims){
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
     if(mps1.dimensions() != mps2.dimensions()) throw except::runtime_error("Dimension mismatch mps1 {} and mps2 {}", mps1.dimensions(), mps2.dimensions());
@@ -421,20 +360,17 @@ double tools::common::contraction::contract_mps_mps_overlap(
     return std::abs(res.coeff(0));
 }
 
-template double tools::common::contraction::contract_mps_mps_overlap(
-    const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
-    const cplx * const mps2_ptr, std::array<long,3> mps2_dims);
-template double tools::common::contraction::contract_mps_mps_overlap(
-    const real * const mps1_ptr, std::array<long,3> mps1_dims,
-    const real * const mps2_ptr, std::array<long,3> mps2_dims);
+template double tools::common::contraction::contract_mps_mps_overlap(const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                     const cplx * const mps2_ptr, std::array<long,3> mps2_dims);
+template double tools::common::contraction::contract_mps_mps_overlap(const real * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                     const real * const mps2_ptr, std::array<long,3> mps2_dims);
 
 
 template<typename Scalar>
-void tools::common::contraction::contract_mps_mps_partial(
-                                    Scalar *       res_ptr , std::array<long,2> res_dims,
-                              const Scalar * const mps1_ptr, std::array<long,3> mps1_dims,
-                              const Scalar * const mps2_ptr, std::array<long,3> mps2_dims,
-                              std::array<long,2> idx){
+void tools::common::contraction::contract_mps_mps_partial(      Scalar *       res_ptr , std::array<long,2> res_dims,
+                                                          const Scalar * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                          const Scalar * const mps2_ptr, std::array<long,3> mps2_dims,
+                                                          std::array<long,2> idx){
     auto res  = Eigen::TensorMap<Eigen::Tensor<Scalar,2>>(res_ptr,res_dims);
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
@@ -442,15 +378,13 @@ void tools::common::contraction::contract_mps_mps_partial(
     res = mps1.contract(mps2.conjugate(), idxs);
 }
 
-template void tools::common::contraction::contract_mps_mps_partial(
-          cplx *       res_ptr , std::array<long,2> res_dims,
-    const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
-    const cplx * const mps2_ptr, std::array<long,3> mps2_dims,
-    std::array<long,2> idx);
-template void tools::common::contraction::contract_mps_mps_partial(
-          real *       res_ptr , std::array<long,2> res_dims,
-    const real * const mps1_ptr, std::array<long,3> mps1_dims,
-    const real * const mps2_ptr, std::array<long,3> mps2_dims,
-    std::array<long,2> idx);
+template void tools::common::contraction::contract_mps_mps_partial(      cplx *       res_ptr , std::array<long,2> res_dims,
+                                                                   const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                   const cplx * const mps2_ptr, std::array<long,3> mps2_dims,
+                                                                   std::array<long,2> idx);
+template void tools::common::contraction::contract_mps_mps_partial(      real *       res_ptr , std::array<long,2> res_dims,
+                                                                   const real * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                   const real * const mps2_ptr, std::array<long,3> mps2_dims,
+                                                                   std::array<long,2> idx);
 
 /* clang-format on */

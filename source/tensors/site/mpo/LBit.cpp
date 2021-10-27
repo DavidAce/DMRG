@@ -24,10 +24,8 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
 
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
-    if(h5tb.param.J2_span == 0)
-        h5tb.param.J2_ctof = settings::model::model_size - 1;
-    else
-        h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
+    if(h5tb.param.J2_span == 0) h5tb.param.J2_ctof = settings::model::model_size - 1;
+    else h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
 
     copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -56,10 +54,8 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
-    if(h5tb.param.J2_span == 0)
-        h5tb.param.J2_ctof = settings::model::model_size - 1;
-    else
-        h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
+    if(h5tb.param.J2_span == 0) h5tb.param.J2_ctof = settings::model::model_size - 1;
+    else h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
 
     all_mpo_parameters_have_been_set = true;
 }

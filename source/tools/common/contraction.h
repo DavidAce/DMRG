@@ -4,7 +4,8 @@
 // Eigen goes first
 #include <complex>
 #include <debug/exceptions.h>
-#include <math/tenx.h>
+#include <math/tenx/eval.h>
+#include <math/tenx/omp.h>
 
 namespace tools::common::contraction {
     using cplx = std::complex<double>;
@@ -115,8 +116,6 @@ namespace tools::common::contraction {
     /* clang-format on */
     template<typename T>
     using OptRefWrap = std::optional<std::reference_wrapper<T>>;
-    template<typename T>
-    using TensorWriteOptRef = OptRefWrap<TensorWrite<T>>;
 
     template<typename Scalar>
     void contract_mps_bnd(Scalar *res_ptr, std::array<long, 3> res_dims, const Scalar *const mps_ptr, std::array<long, 3> mps_dims, const Scalar *const bnd_ptr,
@@ -144,11 +143,11 @@ namespace tools::common::contraction {
         static_assert(res_type::NumIndices == 3 and "Wrong res tensor rank != 3");
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(bnd_type::NumIndices == 1 and "Wrong bnd tensor rank != 1");
-        auto       &res_ref = static_cast<res_type &>(res);
-        const auto &mps_ref = static_cast<const mps_type &>(mps);
-        const auto &bnd_ref = static_cast<const bnd_type &>(bnd);
-        res_ref.resize(mps_ref.dimensions());
-        contract_bnd_mps(res_ref.data(), res_ref.dimensions(), bnd_ref.data(), bnd_ref.dimensions(), mps_ref.data(), mps_ref.dimensions());
+        auto &res_ref  = static_cast<res_type &>(res);
+        auto  mps_eval = tenx::asEval(mps, tenx::omp::getDevice());
+        auto  bnd_eval = tenx::asEval(bnd, tenx::omp::getDevice());
+        res_ref.resize(mps_eval.dimensions());
+        contract_bnd_mps(res_ref.data(), res_ref.dimensions(), bnd_eval.data(), bnd_eval.dimensions(), mps_eval.data(), mps_eval.dimensions());
     }
 
     template<typename mps_type, typename bnd_type>

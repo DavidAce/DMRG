@@ -6,16 +6,24 @@
  * \brief A collection of type-detection and type-analysis utilities using SFINAE on Eigen types
  */
 namespace tenx::sfinae {
-
+    template<typename T, typename = std::void_t<>>
+    struct has_data : public std::false_type {};
+    template<typename T>
+    struct has_data<T, std::void_t<decltype(std::declval<T>().data())>> : public std::true_type {};
+    template<typename T>
+    inline constexpr bool has_data_v = has_data<T>::value;
     template<typename T>
     struct is_std_complex : public std::false_type {};
-
     template<typename T>
     struct is_std_complex<std::complex<T>> : public std::true_type {};
-
     template<typename T>
     inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
-
+    template<typename T, typename = std::void_t<>>
+    struct has_NumIndices : public std::false_type {};
+    template<typename T>
+    struct has_NumIndices<T, std::void_t<decltype(std::declval<T>().NumIndices)>> : public std::true_type {};
+    template<typename T>
+    inline constexpr bool has_NumIndices_v = has_NumIndices<T>::value;
     template<typename T>
     using is_eigen_matrix = std::is_base_of<Eigen::MatrixBase<std::decay_t<T>>, std::decay_t<T>>;
     template<typename T>
@@ -49,7 +57,7 @@ namespace tenx::sfinae {
     template<typename T, int rows, int cols, int StorageOrder>
     struct is_eigen_core<Eigen::Matrix<T, rows, cols, StorageOrder>> : public std::true_type {};
     template<typename T, int rows, int cols, int StorageOrder>
-    struct is_eigen_core<std::Array<T, rows, cols, StorageOrder>> : public std::true_type {};
+    struct is_eigen_core<Eigen::Array<T, rows, cols, StorageOrder>> : public std::true_type {};
     template<typename T>
     inline constexpr bool is_eigen_core_v = is_eigen_core<T>::value;
     template<typename T>

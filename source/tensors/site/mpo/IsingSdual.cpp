@@ -296,8 +296,7 @@ void IsingSdual::load_hamiltonian(const h5pp::File &file, std::string_view model
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_ising_sdual::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
-    } else
-        throw except::runtime_error("could not load mpo: table [{}] does not exist", ham_table);
+    } else throw except::runtime_error("could not load mpo: table [{}] does not exist", ham_table);
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::ising_sdual;
