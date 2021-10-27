@@ -138,12 +138,15 @@ void ModelFinite::randomize() {
     for(const auto &mpo : MPO) mpo->set_averages(all_params, false);
 }
 
-bool ModelFinite::has_mpo_squared() const {
-    return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
+void ModelFinite::build_mpo() {
+    tools::log->debug("Building MPO");
+    cache.multisite_ham = std::nullopt;
+    cache.multisite_mpo = std::nullopt;
+    for(const auto &mpo : MPO) mpo->build_mpo();
 }
 
-void ModelFinite::reset_mpo_squared() {
-    tools::log->debug("Resetting MPO²");
+void ModelFinite::build_mpo_squared() {
+    tools::log->debug("Building MPO²");
     cache.multisite_mpo_squared = std::nullopt;
     cache.multisite_ham_squared = std::nullopt;
     for(const auto &mpo : MPO) mpo->build_mpo_squared();
@@ -162,6 +165,10 @@ void ModelFinite::compress_mpo_squared(std::optional<svd::settings> svd_settings
     cache.multisite_ham_squared = std::nullopt;
     auto mpo_compressed         = get_compressed_mpo_squared(svd_settings);
     for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_compressed[pos]);
+}
+
+bool ModelFinite::has_mpo_squared() const {
+    return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
 }
 
 std::vector<Eigen::Tensor<ModelFinite::Scalar, 4>> ModelFinite::get_compressed_mpo_squared(std::optional<svd::settings> svd_settings) {

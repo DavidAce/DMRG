@@ -9,8 +9,6 @@ namespace h5pp::hid {
 }
 
 class IsingSdual : public MpoSite {
-    using Scalar = std::complex<double>;
-
     private:
     h5tb_ising_sdual     h5tb;
     [[nodiscard]] double get_coupling() const;
@@ -23,14 +21,10 @@ class IsingSdual : public MpoSite {
     void set_realization_averages(double J_avrg_, double h_avrg_);
     // Functions that override the base
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_reduced_view() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_reduced_view(double site_energy) const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_left() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_right() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_left() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_right() const override;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view() const override;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view(double site_energy) const override;
     [[nodiscard]] long                     get_spin_dimension() const override;
     [[nodiscard]] TableMap                 get_parameters() const override;
     [[nodiscard]] bool                     is_perturbed() const override;

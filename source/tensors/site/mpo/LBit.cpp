@@ -1,5 +1,6 @@
 #include "LBit.h"
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
@@ -8,9 +9,6 @@
 #include <math/rnd.h>
 #include <math/tenx.h>
 #include <qm/spin.h>
-
-using namespace qm::spin::half;
-using Scalar = std::complex<double>;
 
 LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, position_) {
     h5tb.param.J1_mean  = settings::model::lbit::J1_mean;
@@ -63,9 +61,7 @@ void LBit::set_parameters(TableMap &parameters) {
     else
         h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
 
-
     all_mpo_parameters_have_been_set = true;
-    build_mpo();
 }
 
 LBit::TableMap LBit::get_parameters() const {
@@ -168,15 +164,17 @@ void LBit::build_mpo()
   */
 
 {
-    if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
+    using namespace qm::spin::half;
+    tools::log->debug("mpo({}): building lbit mpo", get_position());
+    if(not all_mpo_parameters_have_been_set)
+        throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
     if(h5tb.param.J2_span >= h5tb.param.J2_rand.size())
-        throw std::logic_error(fmt::format("expected J2_span ({}) < J2_rand.size()({})", h5tb.param.J2_span, h5tb.param.J2_rand.size()));
-    tools::log->debug("LBIT MPO ({}): Building MPO", get_position());
+        throw except::logic_error("expected J2_span ({}) < J2_rand.size()({})", h5tb.param.J2_span, h5tb.param.J2_rand.size());
 
-    Eigen::Tensor<Scalar, 2> n = tenx::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> I = tenx::TensorMap(id);
-    long                     R = static_cast<long>(h5tb.param.J2_ctof);
-    long                     F = R + 2l;
+    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);
+    long                   R = static_cast<long>(h5tb.param.J2_ctof);
+    long                   F = R + 2l;
     mpo_internal.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
 
@@ -199,38 +197,9 @@ void LBit::build_mpo()
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
-        throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
+        throw except::runtime_error("mpo({}): found nan", get_position());
     }
     unique_id = std::nullopt;
-    build_mpo_squared();
-}
-
-Eigen::Tensor<Scalar, 1> LBit::get_MPO_edge_left() const {
-    auto                     ldim = mpo_internal.dimension(0);
-    Eigen::Tensor<Scalar, 1> ledge(ldim);
-    ledge.setZero();
-    ledge(ldim - 1) = 1;
-    return ledge;
-}
-
-Eigen::Tensor<Scalar, 1> LBit::get_MPO_edge_right() const {
-    auto                     rdim = mpo_internal.dimension(1);
-    Eigen::Tensor<Scalar, 1> redge(rdim);
-    redge.setZero();
-    redge(0) = 1;
-    return redge;
-}
-
-Eigen::Tensor<Scalar, 1> LBit::get_MPO2_edge_left() const {
-    auto edge = get_MPO_edge_left();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
-}
-
-Eigen::Tensor<Scalar, 1> LBit::get_MPO2_edge_right() const {
-    auto edge = get_MPO_edge_right();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
 }
 
 void LBit::randomize_hamiltonian() {
@@ -260,7 +229,7 @@ void LBit::randomize_hamiltonian() {
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
         for(auto &J2_rand_ref : h5tb.param.J2_rand) J2_rand_ref *= settings::model::lbit::J2_mean;
     } else {
-        throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform> or <constant>");
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
     }
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
@@ -294,21 +263,21 @@ void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode p
         }
     }
     if(all_mpo_parameters_have_been_set) {
-        Eigen::Tensor<Scalar, 2> n                                             = tenx::TensorCast(0.5 * (id + sz));
-        Eigen::Tensor<Scalar, 2> I                                             = tenx::TensorMap(id);
-        long                     F                                             = mpo_internal.dimension(0) - 1;
+        using namespace qm::spin::half;
+        Eigen::Tensor<cplx, 2> n                                               = tenx::TensorCast(0.5 * (id + sz));
+        Eigen::Tensor<cplx, 2> I                                               = tenx::TensorMap(id);
+        long                   F                                               = mpo_internal.dimension(0) - 1;
         mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * I;
         mpo_squared                                                            = std::nullopt;
         unique_id                                                              = std::nullopt;
         unique_id_sq                                                           = std::nullopt;
     }
-    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
-        throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
+    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed()) throw except::runtime_error("mpo({}): should have become unperturbed!", get_position());
 }
 
 bool LBit::is_perturbed() const { return h5tb.param.J1_pert != 0.0 or h5tb.param.J2_pert != 0.0 or h5tb.param.J3_pert != 0.0; }
 
-Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
+Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would include 2-body and 3-body but exclude 1-body on-site terms.
 
@@ -354,10 +323,10 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
             }
         }
     }
-
-    Eigen::Tensor<Scalar, 4> MPO_nbody = MPO();                             // Start with the full mpo
-    Eigen::Tensor<Scalar, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
-    Eigen::Tensor<Scalar, 2> I         = tenx::TensorMap(id);               // identity
+    using namespace qm::spin::half;
+    Eigen::Tensor<cplx, 4> MPO_nbody = MPO();                             // Start with the full mpo
+    Eigen::Tensor<cplx, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
+    Eigen::Tensor<cplx, 2> I         = tenx::TensorMap(id);               // identity
 
     auto J2_count = J2_rand;
     for(const auto &r : J2_range) {
@@ -414,18 +383,19 @@ Eigen::Tensor<Scalar, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>>
     return MPO_nbody;
 }
 
-Eigen::Tensor<Scalar, 4> LBit::MPO_reduced_view() const {
+Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);
 }
 
-Eigen::Tensor<Scalar, 4> LBit::MPO_reduced_view(double site_energy) const {
+Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_reduced_view(double site_energy) const {
+    using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<Scalar, 4> temp                                      = MPO();
-    long                     row                                       = temp.dimension(0) - 1;
-    long                     col                                       = 0;
-    Eigen::Tensor<Scalar, 2> n                                         = tenx::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<Scalar, 2> i                                         = tenx::TensorMap(id);
+    Eigen::Tensor<cplx, 4> temp                                        = MPO();
+    long                   row                                         = temp.dimension(0) - 1;
+    long                   col                                         = 0;
+    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<cplx, 2> i                                           = tenx::TensorMap(id);
     temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
     return temp;
 }
@@ -484,37 +454,21 @@ void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefi
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_lbit::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
-        build_mpo();
     } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_table));
+        throw except::runtime_error("Could not load MPO. Table [{}] does not exist", ham_table);
     }
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::lbit;
-    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6)
-        throw std::runtime_error(fmt::format("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_mean, J1_mean));
-    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6)
-        throw std::runtime_error(fmt::format("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_mean, J2_mean));
-    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6)
-        throw std::runtime_error(fmt::format("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_mean, J3_mean));
-    if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6)
-        throw std::runtime_error(fmt::format("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth));
-    if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6)
-        throw std::runtime_error(fmt::format("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth));
-    if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6)
-        throw std::runtime_error(fmt::format("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth));
-    if(std::abs(h5tb.param.J2_xcls - J2_xcls) > 1e-6)
-        throw std::runtime_error(fmt::format("J2_xcls {:.16f} != {:.16f} lbit::J2_xcls", h5tb.param.J2_xcls, J2_xcls));
-    if(h5tb.param.J2_span != J2_span) throw std::runtime_error(fmt::format("J2_span {} != {} lbit::J2_span", h5tb.param.J2_span, J2_span));
-    if(std::abs(h5tb.param.f_mixer - f_mixer) > 1e-6)
-        throw std::runtime_error(fmt::format("f_mixer {:.16f} != {:.16f} lbit::f_mixer", h5tb.param.f_mixer, f_mixer));
-
-    if(h5tb.param.u_layer != u_layer) throw std::runtime_error(fmt::format("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer));
-
-    // We can use the mpo's on file here to check everything is correct
-    std::string mpo_path = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
-    if(file.linkExists(mpo_path)) {
-        auto mpo_dset = file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_path);
-        if(tenx::VectorCast(MPO()) != tenx::VectorCast(mpo_dset)) throw std::runtime_error("Built MPO does not match the MPO on file");
-    }
+    if(std::abs(h5tb.param.J1_mean - J1_mean) > 1e-6) throw except::runtime_error("J1_mean {:.16f} != {:.16f} lbit::J1_mean", h5tb.param.J1_mean, J1_mean);
+    if(std::abs(h5tb.param.J2_mean - J2_mean) > 1e-6) throw except::runtime_error("J2_mean {:.16f} != {:.16f} lbit::J2_mean", h5tb.param.J2_mean, J2_mean);
+    if(std::abs(h5tb.param.J3_mean - J3_mean) > 1e-6) throw except::runtime_error("J3_mean {:.16f} != {:.16f} lbit::J3_mean", h5tb.param.J3_mean, J3_mean);
+    if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6) throw except::runtime_error("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth);
+    if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6) throw except::runtime_error("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth);
+    if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw except::runtime_error("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth);
+    if(std::abs(h5tb.param.J2_xcls - J2_xcls) > 1e-6) throw except::runtime_error("J2_xcls {:.16f} != {:.16f} lbit::J2_xcls", h5tb.param.J2_xcls, J2_xcls);
+    if(std::abs(h5tb.param.f_mixer - f_mixer) > 1e-6) throw except::runtime_error("f_mixer {:.16f} != {:.16f} lbit::f_mixer", h5tb.param.f_mixer, f_mixer);
+    if(h5tb.param.distribution != distribution) throw except::runtime_error("distribution {} != {} lbit::distribution", h5tb.param.distribution, distribution);
+    if(h5tb.param.J2_span != J2_span) throw except::runtime_error("J2_span {} != {} lbit::J2_span", h5tb.param.J2_span, J2_span);
+    if(h5tb.param.u_layer != u_layer) throw except::runtime_error("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer);
 }

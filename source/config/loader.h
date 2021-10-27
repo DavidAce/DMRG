@@ -24,9 +24,9 @@ class Loader {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
             if constexpr(std::is_enum_v<T>)
-                tools::log->info("Loaded parameter: {:<48} = {:<20}", param_name, enum2sv<T>(param_value));
+                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2sv<T>(param_value));
             else
-                tools::log->info("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
+                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
 
         } catch(std::exception &ex) { tools::log->warn("Failed to read parameter [{}]: {}", param_name, ex.what()); }
     }

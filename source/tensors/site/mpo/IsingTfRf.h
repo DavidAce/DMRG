@@ -5,8 +5,6 @@
 #include <h5pp/details/h5ppHid.h>
 
 class IsingTfRf : public MpoSite {
-    using Scalar = std::complex<double>;
-
     private:
     h5tb_ising_tf_rf h5tb;
 
@@ -16,14 +14,10 @@ class IsingTfRf : public MpoSite {
     public:
     IsingTfRf(ModelType model_type_, size_t position_);
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
+    [[nodiscard]] Eigen::Tensor<cplx, 4> MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_reduced_view() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 4> MPO_reduced_view(double site_energy) const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_left() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO_edge_right() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_left() const override;
-    [[nodiscard]] Eigen::Tensor<Scalar, 1> get_MPO2_edge_right() const override;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view() const override;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view(double site_energy) const override;
     [[nodiscard]] long                     get_spin_dimension() const override;
     [[nodiscard]] TableMap                 get_parameters() const override;
     [[nodiscard]] bool                     is_perturbed() const override;

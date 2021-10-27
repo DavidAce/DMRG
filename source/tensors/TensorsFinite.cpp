@@ -62,7 +62,8 @@ void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, si
 
 void TensorsFinite::randomize_model() {
     model->randomize();
-    model->reset_mpo_squared();
+    model->build_mpo();
+    model->build_mpo_squared();
 }
 
 void TensorsFinite::randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
@@ -152,7 +153,7 @@ void TensorsFinite::perturb_model_params(double coupling_ptb, double field_ptb, 
     measurements = MeasurementsTensorsFinite(); // State measurements can remain
     model->clear_cache();
     model->perturb_hamiltonian(coupling_ptb, field_ptb, perturbMode);
-    model->reset_mpo_squared();
+    model->build_mpo_squared();
     model->assert_validity();
 }
 
@@ -259,7 +260,7 @@ void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optio
     if(compress.value())
         model->compress_mpo_squared(svd_settings);
     else
-        model->reset_mpo_squared();
+        model->build_mpo_squared();
     model->assert_validity();
 
 }

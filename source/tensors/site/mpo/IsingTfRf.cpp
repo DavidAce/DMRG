@@ -1,14 +1,12 @@
 #include "IsingTfRf.h"
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <math/tenx.h>
 #include <qm/spin.h>
-
-using namespace qm::spin::half;
-using Scalar = std::complex<double>;
 
 IsingTfRf::IsingTfRf(ModelType model_type_, size_t position_) : MpoSite(model_type_, position_) {
     h5tb.param.J1       = settings::model::ising_tf_rf::J1;
@@ -20,7 +18,7 @@ IsingTfRf::IsingTfRf(ModelType model_type_, size_t position_) : MpoSite(model_ty
     copy_c_str(settings::model::ising_tf_rf::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
-
+    using namespace qm::spin::half;
     qm::spin::half::SX = qm::spin::gen_manybody_spins(sx, 2);
     qm::spin::half::SY = qm::spin::gen_manybody_spins(sy, 2);
     qm::spin::half::SZ = qm::spin::gen_manybody_spins(sz, 2);
@@ -46,9 +44,8 @@ void IsingTfRf::set_parameters(TableMap &parameters) {
     h5tb.param.h_pert   = std::any_cast<double>(parameters["h_pert"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     copy_c_str(std::any_cast<std::string>(parameters["distribution"]), h5tb.param.distribution);
-    if(h5tb.param.J2 != 0.0) throw std::runtime_error("Use of [J2] - Next-nearest neighbor coupling - is not implemented yet");
+    if(h5tb.param.J2 != 0.0) throw except::runtime_error("mpo({}): use of [J2] - Next-nearest neighbor coupling - is not implemented yet", get_position());
     all_mpo_parameters_have_been_set = true;
-    build_mpo();
 }
 
 IsingTfRf::TableMap IsingTfRf::get_parameters() const {
@@ -84,7 +81,10 @@ void IsingTfRf::build_mpo()
  *
  */
 {
-    if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
+    using namespace qm::spin::half;
+    tools::log->debug("mpo({}): building tf-rf ising mpo", get_position());
+    if(not all_mpo_parameters_have_been_set)
+        throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
     mpo_internal.resize(3, 3, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
     mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
@@ -95,35 +95,9 @@ void IsingTfRf::build_mpo()
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
-        throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
+        throw except::runtime_error("mpo({}): found nan", get_position());
     }
     unique_id = std::nullopt;
-    build_mpo_squared();
-}
-
-Eigen::Tensor<Scalar, 1> IsingTfRf::get_MPO_edge_left() const {
-    Eigen::Tensor<Scalar, 1> ledge(3);
-    ledge.setZero();
-    ledge(2) = 1;
-    return ledge;
-}
-
-Eigen::Tensor<Scalar, 1> IsingTfRf::get_MPO_edge_right() const {
-    Eigen::Tensor<Scalar, 1> redge(3);
-    redge.setZero();
-    redge(0) = 1;
-    return redge;
-}
-
-Eigen::Tensor<Scalar, 1> IsingTfRf::get_MPO2_edge_left() const {
-    auto edge = get_MPO_edge_left();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
-}
-Eigen::Tensor<Scalar, 1> IsingTfRf::get_MPO2_edge_right() const {
-    auto edge = get_MPO_edge_right();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
 }
 
 void IsingTfRf::randomize_hamiltonian() {
@@ -134,7 +108,7 @@ void IsingTfRf::randomize_hamiltonian() {
     } else if(std::string(h5tb.param.distribution) == "uniform") {
         h5tb.param.h_rand = rnd::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_stdv / 2.0, h5tb.param.h_mean + h5tb.param.h_stdv / 2.0);
     } else {
-        throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform>");
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform", h5tb.param.distribution);
     }
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
@@ -162,19 +136,20 @@ void IsingTfRf::set_perturbation(double coupling_ptb, double field_ptb, PerturbM
         }
     }
     if(all_mpo_parameters_have_been_set) {
+        using namespace qm::spin::half;
         mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
         mpo_squared                                                                   = std::nullopt;
         unique_id                                                                     = std::nullopt;
         unique_id_sq                                                                  = std::nullopt;
     }
     if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
-        throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
+        throw except::runtime_error("mpo({}): should have become unperturbed!", get_position());
 }
 
 bool IsingTfRf::is_perturbed() const { return h5tb.param.h_pert != 0.0; }
 
-Eigen::Tensor<Scalar, 4> IsingTfRf::MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
-                                                   [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
+                                                          [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     if(not nbody) return MPO();
@@ -183,22 +158,24 @@ Eigen::Tensor<Scalar, 4> IsingTfRf::MPO_nbody_view(std::optional<std::vector<siz
         if(n == 1) J1 = 1.0;
         if(n == 2) J2 = 1.0;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody                                         = MPO();
+    using namespace qm::spin::half;
+    Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
     MPO_nbody.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_reduced * id);
     MPO_nbody.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
     return MPO_nbody;
 }
 
-Eigen::Tensor<Scalar, 4> IsingTfRf::MPO_reduced_view() const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);
 }
 
-Eigen::Tensor<Scalar, 4> IsingTfRf::MPO_reduced_view(double site_energy) const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_reduced_view(double site_energy) const {
+    using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<Scalar, 4> temp                                             = MPO();
-    long                     row                                              = temp.dimension(0) - 1;
-    long                     col                                              = 0;
+    Eigen::Tensor<cplx, 4> temp                                               = MPO();
+    long                   row                                                = temp.dimension(0) - 1;
+    long                   col                                                = 0;
     temp.slice(std::array<long, 4>{row, col, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - site_energy * id);
     return temp;
 }
@@ -253,26 +230,16 @@ void IsingTfRf::load_hamiltonian(const h5pp::File &file, std::string_view model_
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_ising_tf_rf::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
-        build_mpo();
     } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_table));
+        throw except::runtime_error("Could not load MPO. Table [{}] does not exist", ham_table);
     }
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::ising_tf_rf;
-    if(std::abs(h5tb.param.J1 - J1) > 1e-6) throw std::runtime_error(fmt::format("J1_rand {:.16f} != {:.16f} ising_tf_rf::J1_rand", h5tb.param.J1, J1));
-    if(std::abs(h5tb.param.J2 - J2) > 1e-6) throw std::runtime_error(fmt::format("J2_rand {:.16f} != {:.16f} ising_tf_rf::J2_rand", h5tb.param.J2, J2));
-    if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6)
-        throw std::runtime_error(fmt::format("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran));
-    if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6)
-        throw std::runtime_error(fmt::format("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean));
-    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6)
-        throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} ising_tf_rf::h_stdv", h5tb.param.h_stdv, h_stdv));
+    if(std::abs(h5tb.param.J1 - J1) > 1e-6) throw except::runtime_error("J1_rand {:.16f} != {:.16f} ising_tf_rf::J1_rand", h5tb.param.J1, J1);
+    if(std::abs(h5tb.param.J2 - J2) > 1e-6) throw except::runtime_error("J2_rand {:.16f} != {:.16f} ising_tf_rf::J2_rand", h5tb.param.J2, J2);
+    if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6) throw except::runtime_error("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran);
+    if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6) throw except::runtime_error("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean);
+    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6) throw except::runtime_error("h_stdv {:.16f} != {:.16f} ising_tf_rf::h_stdv", h5tb.param.h_stdv, h_stdv);
 
-    // We can use the mpo's on file here to check everything is correct
-    std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_prefix, get_position());
-    if(file.linkExists(mpo_dset)) {
-        if(tenx::VectorCast(MPO()) != tenx::VectorCast(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
-            throw std::runtime_error("Built MPO does not match the MPO on file");
-    }
 }

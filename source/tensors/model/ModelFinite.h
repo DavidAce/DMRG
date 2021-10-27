@@ -24,9 +24,10 @@ class ModelFinite {
     mutable Cache                         cache;
     std::vector<Eigen::Tensor<Scalar, 4>> get_compressed_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
     void                                  randomize();
-    bool                                  has_mpo_squared() const;
-    void                                  reset_mpo_squared();
+    void                                  build_mpo();
+    void                                  build_mpo_squared();
     void                                  clear_mpo_squared();
+    bool                                  has_mpo_squared() const;
     void                                  compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
     void                                  set_reduced_energy(double total_energy);
     void                                  set_reduced_energy_per_site(double site_energy);

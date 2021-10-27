@@ -66,21 +66,51 @@ class h5tb_ising_sdual {
         H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
     }
 
+
+    [[nodiscard]] std::string fmt_value(std::string_view p) const {
+        /* clang-format off */
+        if(p == "J_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_mean);
+        if(p == "J_stdv")           return fmt::format(FMT_STRING("{:<9.2e}") , param.J_stdv);
+        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_rand);
+        if(p == "J_avrg")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_avrg);
+        if(p == "J_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_pert);
+        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_mean);
+        if(p == "h_stdv")           return fmt::format(FMT_STRING("{:<9.2e}") , param.h_stdv);
+        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
+        if(p == "h_avrg")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_avrg);
+        if(p == "h_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_pert);
+        if(p == "lambda")           return fmt::format(FMT_STRING("{:<7.4f}") , param.lambda);
+        if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
+        if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
+        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        /* clang-format on */
+        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+    }
+
+
     static std::vector<std::string> get_parameter_names() {
         return {"J_mean", "J_stdv", "J_rand", "J_avrg", "J_pert", "h_mean",   "h_stdv",
                 "h_rand", "h_avrg", "h_pert", "lambda", "delta",  "spin_dim", "distribution"};
     }
+
     void print_parameter_names() const {
-        auto name = get_parameter_names();
-        tools::log->info(FMT_STRING("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0], name[1], name[2], name[3],
-                         name[4], name[5], name[6], name[7], name[8], name[9], name[10], name[11], name[12], name[13]);
+        std::string name_line;
+        for(const auto & name : get_parameter_names()){
+            name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
+        }
+        tools::log->info(name_line);
     }
+
     void print_parameter_values() const {
-        tools::log->info(
-            FMT_STRING("{:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<8} {:<8}"),
-            param.J_mean, param.J_stdv, param.J_rand, param.J_avrg, param.J_pert, param.h_mean, param.h_stdv, param.h_rand, param.h_avrg, param.h_pert,
-            param.lambda, param.delta, param.spin_dim, param.distribution);
+        std::string value_line;
+        for(const auto & name : get_parameter_names()){
+            value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
+        }
+        tools::log->info(value_line);
     }
+
+
+
 };
 
 class h5tb_ising_tf_rf {
@@ -112,8 +142,8 @@ class h5tb_ising_tf_rf {
         // Optionally set the null terminator '\0'
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-        H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J1"    , HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J2"    , HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "h_tran", HOFFSET(table, h_tran), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "h_mean", HOFFSET(table, h_mean), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "h_stdv", HOFFSET(table, h_stdv), H5T_NATIVE_DOUBLE);
@@ -123,18 +153,43 @@ class h5tb_ising_tf_rf {
         H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
     }
 
+    [[nodiscard]] std::string fmt_value(std::string_view p) const {
+        /* clang-format off */
+        if(p == "J1")               return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1);
+        if(p == "J2")               return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2);
+        if(p == "h_tran")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_tran);
+        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_mean);
+        if(p == "h_stdv")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_stdv);
+        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
+        if(p == "h_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_pert);
+        if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
+        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        /* clang-format on */
+        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+    }
+
+
     static std::vector<std::string> get_parameter_names() {
-        return {"J1_rand", "J2_rand", "h_tran", "h_mean", "h_stdv", "h_rand", "h_pert", "spin_dim", "distribution"};
+        return {"J1", "J2", "h_tran", "h_mean", "h_stdv", "h_rand", "h_pert", "spin_dim", "distribution"};
     }
+
     void print_parameter_names() const {
-        auto name = get_parameter_names();
-        tools::log->info(FMT_STRING("{:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8} {:<8}"), name[0], name[1], name[2], name[3], name[4], name[5], name[6],
-                         name[7], name[8]);
+        std::string name_line;
+        for(const auto & name : get_parameter_names()){
+            name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
+        }
+        tools::log->info(name_line);
     }
+
     void print_parameter_values() const {
-        tools::log->info(FMT_STRING("{:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+8.6f} {:<+12} {:<8}"), param.J1, param.J2, param.h_tran,
-                         param.h_mean, param.h_stdv, param.h_rand, param.h_pert, param.spin_dim, param.distribution);
+        std::string value_line;
+        for(const auto & name : get_parameter_names()){
+            value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
+        }
+        tools::log->info(value_line);
     }
+
+
 };
 
 class h5tb_lbit {

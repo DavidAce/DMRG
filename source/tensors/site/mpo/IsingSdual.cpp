@@ -1,14 +1,12 @@
 #include "IsingSdual.h"
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
 #include <iomanip>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <math/tenx.h>
 #include <qm/spin.h>
-
-using namespace qm::spin::half;
-using Scalar = std::complex<double>;
 
 double delta_to_J_mean(double delta) { return delta > 0 ? 1.0 : std::exp(delta); }
 
@@ -25,8 +23,7 @@ IsingSdual::IsingSdual(ModelType model_type_, size_t position_) : MpoSite(model_
     // Sanity check on delta, J_mean, h_mean
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
     if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
-        throw std::logic_error(
-            fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
+        throw except::logic_error("error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
 
     h5tb.param.spin_dim = settings::model::ising_sdual::spin_dim;
     copy_c_str(settings::model::ising_sdual::distribution, h5tb.param.distribution);
@@ -58,7 +55,6 @@ void IsingSdual::set_parameters(TableMap &parameters) {
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     copy_c_str(std::any_cast<std::string>(parameters["distribution"]), h5tb.param.distribution);
     all_mpo_parameters_have_been_set = true;
-    build_mpo();
 }
 
 IsingSdual::TableMap IsingSdual::get_parameters() const {
@@ -101,7 +97,10 @@ void IsingSdual::build_mpo()
  *
  */
 {
-    if(not all_mpo_parameters_have_been_set) throw std::runtime_error("Improperly built MPO: Full lattice parameters haven't been set yet.");
+    using namespace qm::spin::half;
+    tools::log->debug("mpo({}): building sdual mpo", get_position());
+    if(not all_mpo_parameters_have_been_set)
+        throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
     if(parity_sep) {
         mpo_internal.resize(6, 6, h5tb.param.spin_dim, h5tb.param.spin_dim);
         mpo_internal.setZero();
@@ -124,49 +123,9 @@ void IsingSdual::build_mpo()
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
-        throw std::runtime_error(fmt::format("MPO at position {} has NAN's", get_position()));
+        throw except::runtime_error("mpo({}): found nan", get_position());
     }
     unique_id = std::nullopt;
-    build_mpo_squared();
-}
-
-Eigen::Tensor<Scalar, 1> IsingSdual::get_MPO_edge_left() const {
-    if(parity_sep) {
-        Eigen::Tensor<Scalar, 1> ledge(6);
-        ledge.setZero();
-        ledge(4) = 1;
-        ledge(5) = psfactor;
-        return ledge;
-    } else {
-        Eigen::Tensor<Scalar, 1> ledge(5);
-        ledge.setZero();
-        ledge(4) = 1;
-        return ledge;
-    }
-}
-Eigen::Tensor<Scalar, 1> IsingSdual::get_MPO_edge_right() const {
-    if(parity_sep) {
-        Eigen::Tensor<Scalar, 1> redge(6);
-        redge.setZero();
-        redge(0) = 1;
-        redge(5) = 1;
-        return redge;
-    } else {
-        Eigen::Tensor<Scalar, 1> redge(5);
-        redge.setZero();
-        redge(0) = 1;
-        return redge;
-    }
-}
-Eigen::Tensor<Scalar, 1> IsingSdual::get_MPO2_edge_left() const {
-    auto edge = get_MPO_edge_left();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
-}
-Eigen::Tensor<Scalar, 1> IsingSdual::get_MPO2_edge_right() const {
-    auto edge = get_MPO_edge_right();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
 }
 
 void IsingSdual::randomize_hamiltonian() {
@@ -183,7 +142,7 @@ void IsingSdual::randomize_hamiltonian() {
         h5tb.param.J_rand = h5tb.param.J_mean;
         h5tb.param.h_rand = h5tb.param.h_mean;
     } else {
-        throw std::runtime_error("Wrong distribution given. Expected one of <normal>, <lognormal>, <uniform>");
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
     }
 
     all_mpo_parameters_have_been_set = false;
@@ -217,20 +176,20 @@ void IsingSdual::set_perturbation(double coupling_ptb, double field_ptb, Perturb
         }
     }
     if(all_mpo_parameters_have_been_set) {
+        using namespace qm::spin::half;
         mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
         mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_coupling() * sz);
         mpo_squared                                                                   = std::nullopt;
         unique_id                                                                     = std::nullopt;
         unique_id_sq                                                                  = std::nullopt;
     }
-    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
-        throw std::runtime_error(fmt::format("MPO({}): Should have become unperturbed!", get_position()));
+    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed()) throw except::runtime_error("mpo({}): should have become unperturbed!", get_position());
 }
 
 bool IsingSdual::is_perturbed() const { return h5tb.param.J_pert != 0.0 or h5tb.param.h_pert != 0.0; }
 
-Eigen::Tensor<Scalar, 4> IsingSdual::MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
-                                                    [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
+                                                           [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     // Next-nearest neighbor terms are counted as 3-body terms because 3 sites are involved: the skipped site counts
@@ -242,7 +201,8 @@ Eigen::Tensor<Scalar, 4> IsingSdual::MPO_nbody_view(std::optional<std::vector<si
         if(n == 2) J2 = 1.0;
         if(n == 3) J3 = 1.0;
     }
-    Eigen::Tensor<Scalar, 4> MPO_nbody                                         = MPO();
+    using namespace qm::spin::half;
+    Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
     MPO_nbody.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_reduced * id);
     MPO_nbody.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
     MPO_nbody.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * (h5tb.param.lambda * h5tb.param.h_avrg) * sx);
@@ -250,15 +210,16 @@ Eigen::Tensor<Scalar, 4> IsingSdual::MPO_nbody_view(std::optional<std::vector<si
     return MPO_nbody;
 }
 
-Eigen::Tensor<Scalar, 4> IsingSdual::MPO_reduced_view() const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_reduced_view() const {
     if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);
 }
 
-Eigen::Tensor<Scalar, 4> IsingSdual::MPO_reduced_view(double site_energy) const {
-    Eigen::Tensor<Scalar, 4> temp                                             = MPO();
-    long                     row                                              = temp.dimension(0) - 1;
-    long                     col                                              = 0;
+Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_reduced_view(double site_energy) const {
+    using namespace qm::spin::half;
+    Eigen::Tensor<cplx, 4> temp                                               = MPO();
+    long                   row                                                = temp.dimension(0) - 1;
+    long                   col                                                = 0;
     temp.slice(std::array<long, 4>{row, col, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - site_energy * id);
     return temp;
 }
@@ -335,33 +296,20 @@ void IsingSdual::load_hamiltonian(const h5pp::File &file, std::string_view model
     if(file.linkExists(ham_table)) {
         h5tb.param                       = file.readTableRecords<h5tb_ising_sdual::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
-        build_mpo();
     } else
-        throw std::runtime_error(fmt::format("Could not load MPO. Table [{}] does not exist", ham_table));
+        throw except::runtime_error("could not load mpo: table [{}] does not exist", ham_table);
 
     // Check that we are on the same point of the phase diagram
     using namespace settings::model::ising_sdual;
-    if(std::abs(h5tb.param.delta - delta) > 1e-6)
-        throw std::runtime_error(fmt::format("delta {:.16f} != {:.16f} settings::model::ising_sdual::delta", h5tb.param.delta, delta));
-    if(std::abs(h5tb.param.lambda - lambda) > 1e-6)
-        throw std::runtime_error(fmt::format("lambda {:.16f} != {:.16f} settings::model::ising_sdual::lambda", h5tb.param.lambda, lambda));
-    if(std::abs(h5tb.param.J_stdv - J_stdv) > 1e-6)
-        throw std::runtime_error(fmt::format("J_stdv {:.16f} != {:.16f} settings::model::ising_sdual::J_stdv", h5tb.param.J_stdv, J_stdv));
-    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6)
-        throw std::runtime_error(fmt::format("h_stdv {:.16f} != {:.16f} settings::model::ising_sdual::h_stdv", h5tb.param.h_stdv, h_stdv));
+    if(std::abs(h5tb.param.delta - delta) > 1e-6) throw except::runtime_error("delta  {:.16f} != {:.16f} ising_sdual::delta", h5tb.param.delta, delta);
+    if(std::abs(h5tb.param.lambda - lambda) > 1e-6) throw except::runtime_error("lambda {:.16f} != {:.16f} ising_sdual::lambda", h5tb.param.lambda, lambda);
+    if(std::abs(h5tb.param.J_stdv - J_stdv) > 1e-6) throw except::runtime_error("J_stdv {:.16f} != {:.16f} ising_sdual::J_stdv", h5tb.param.J_stdv, J_stdv);
+    if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6) throw except::runtime_error("h_stdv {:.16f} != {:.16f} ising_sdual::h_stdv", h5tb.param.h_stdv, h_stdv);
     if(h5tb.param.distribution != distribution)
-        throw std::runtime_error(fmt::format("distribution {} != {} settings::model::ising_sdual::distribution", h5tb.param.distribution, distribution));
-
-    // We can use the mpo's on file here to check everything is correct
-    std::string mpo_dset = fmt::format("{}/mpo/H_{}", model_path, get_position());
-    if(file.linkExists(mpo_dset)) {
-        if(tenx::VectorCast(MPO()) != tenx::VectorCast(file.readDataset<Eigen::Tensor<Scalar, 4>>(mpo_dset)))
-            throw std::runtime_error("Built MPO does not match the MPO on file");
-    }
+        throw except::runtime_error("distribution {} != {} ising_sdual::distribution", h5tb.param.distribution, distribution);
 
     // Sanity check on delta, J_mean, h_mean
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
     if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
-        throw std::logic_error(
-            fmt::format("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check));
+        throw except::logic_error("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
 }

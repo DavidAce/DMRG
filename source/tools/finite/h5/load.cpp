@@ -34,6 +34,8 @@ namespace tools::finite::h5 {
             load::model(h5file, state_prefix, *tensors.model);
             load::state(h5file, state_prefix, *tensors.state, status);
             tools::common::h5::load::timer(h5file, state_prefix, status);
+            tensors.rebuild_mpo_squared();
+            tensors.rebuild_edges();
             load::validate(h5file, state_prefix, tensors, algo_type);
         } catch(const std::exception &ex) { throw except::load_error(fmt::format("failed to load from state prefix [{}]: {}", state_prefix, ex.what())); }
     }

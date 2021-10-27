@@ -14,6 +14,7 @@ namespace h5pp {
 class MpoSite {
     public:
     using cplx     = std::complex<double>;
+    using real     = double;
     using TableMap = std::map<std::string, std::any>;
     const ModelType model_type;
     bool            all_mpo_parameters_have_been_set = false;
@@ -57,16 +58,16 @@ class MpoSite {
     [[nodiscard]] bool                          is_reduced() const;
     [[nodiscard]] bool                          is_compressed_mpo_squared() const;
     [[nodiscard]] double                        get_reduced_energy() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO_edge_left() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO_edge_right() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO2_edge_left() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO2_edge_right() const;
 
     [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                                                                = 0;
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                                   std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view() const                                                     = 0;
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view(double single_site_energy) const                            = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO_edge_left() const                                                    = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO_edge_right() const                                                   = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO2_edge_left() const                                                   = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 1>   get_MPO2_edge_right() const                                                  = 0;
     [[nodiscard]] virtual long                     get_spin_dimension() const                                                   = 0;
     [[nodiscard]] virtual TableMap                 get_parameters() const                                                       = 0;
     [[nodiscard]] virtual bool                     is_perturbed() const                                                         = 0;
