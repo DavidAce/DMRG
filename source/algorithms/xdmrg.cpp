@@ -22,6 +22,7 @@
 #include <tools/finite/opt.h>
 #include <tools/finite/opt_meta.h>
 #include <tools/finite/opt_mps.h>
+#include <tools/finite/print.h>
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
@@ -199,6 +200,7 @@ void xdmrg::run_preprocessing() {
     auto t_pre = tid::tic_scope("pre");
     status.clear();
     randomize_model(); // First use of random!
+    tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
     find_energy_range();
     init_energy_limits();
@@ -216,13 +218,13 @@ void xdmrg::run_algorithm() {
                      tensors.state->get_name());
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
-    
+
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-        single_xDMRG_step();   
-        print_status_update(); 
-        check_convergence();   
-        write_to_file();       
+        single_xDMRG_step();
+        print_status_update();
+        check_convergence();
+        write_to_file();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -234,11 +236,11 @@ void xdmrg::run_algorithm() {
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
-        reduce_mpo_energy();         
-        try_bond_dimension_quench(); 
-        try_hamiltonian_perturbation(); 
-        try_projection(); 
-        try_full_expansion(); 
+        reduce_mpo_energy();
+        try_bond_dimension_quench();
+        try_hamiltonian_perturbation();
+        try_projection();
+        try_full_expansion();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
@@ -261,8 +263,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) c1.optType = OptType::REAL;
-    if(c1.optType == OptType::CPLX)
-        throw std::runtime_error("");
+    if(c1.optType == OptType::CPLX) throw std::runtime_error("");
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
@@ -308,13 +309,13 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged
-//    auto &evar = tensors.measurements.energy_variance;
-//    if(status.variance_mpo_converged_for > 0 or (evar.has_value() and evar.value() < settings::precision::variance_convergence_threshold)) {
-//        // No need to do expensive operations -- just finish
-//        c1.optMode  = OptMode::VARIANCE;
-//        c1.optSpace = OptSpace::DIRECT;
-//        c1.retry    = false;
-//    }
+    //    auto &evar = tensors.measurements.energy_variance;
+    //    if(status.variance_mpo_converged_for > 0 or (evar.has_value() and evar.value() < settings::precision::variance_convergence_threshold)) {
+    //        // No need to do expensive operations -- just finish
+    //        c1.optMode  = OptMode::VARIANCE;
+    //        c1.optSpace = OptSpace::DIRECT;
+    //        c1.retry    = false;
+    //    }
 
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure to avoid SUBSPACE if the 1-site problem size is huge
@@ -531,7 +532,7 @@ void xdmrg::single_xDMRG_step() {
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
             var_mpo_step.emplace_back(var);
         }
-        if constexpr (settings::debug) tensors.assert_validity();
+        if constexpr(settings::debug) tensors.assert_validity();
     }
 }
 
@@ -645,11 +646,11 @@ void xdmrg::find_energy_range() {
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
     // We don't want it to randomize its own model, so we implant our current model before running the tasks.
 
-    std::deque<fdmrg_task> gs_tasks = {
-        fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_WRITE_MODEL,    fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-        fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT};
+    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS,
+                                       fdmrg_task::INIT_WRITE_MODEL,  fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+                                       fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT};
 
-    std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS,  fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+    std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
                                        fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT};
     // Find lowest energy state
     {
@@ -696,20 +697,20 @@ void xdmrg::create_hamiltonian_gates() {
     //    tensors.state->get_spin_dims({pos, pos + 1, pos + 2})));
     //
 
-    for(auto pos : list_1site){
-        auto sites = num::range<size_t>(pos, pos+1);
+    for(auto pos : list_1site) {
+        auto sites = num::range<size_t>(pos, pos + 1);
         auto nbody = {1ul};
         auto spins = tensors.state->get_spin_dims(sites);
         ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
-    for(auto pos : list_2site){
-        auto sites = num::range<size_t>(pos, pos+2);
+    for(auto pos : list_2site) {
+        auto sites = num::range<size_t>(pos, pos + 2);
         auto nbody = {2ul};
         auto spins = tensors.state->get_spin_dims(sites);
         ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
-    for(auto pos : list_3site){
-        auto sites = num::range<size_t>(pos, pos+3);
+    for(auto pos : list_3site) {
+        auto sites = num::range<size_t>(pos, pos + 3);
         auto nbody = {3ul};
         auto spins = tensors.state->get_spin_dims(sites);
         ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
