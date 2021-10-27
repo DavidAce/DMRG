@@ -1,8 +1,8 @@
 #include "info.h"
+#include <climits>
 #include <fstream>
 #include <sstream>
 #include <tools/common/log.h>
-#include <climits>
 #include <unistd.h>
 
 std::string debug::hostname() {
@@ -11,7 +11,7 @@ std::string debug::hostname() {
     return hostname;
 }
 
-std::string debug::cpu_info(std::string_view info){
+std::string debug::cpu_info(std::string_view info) {
     std::ifstream filestream("/proc/cpuinfo");
     std::string   line;
     while(std::getline(filestream, line)) {
@@ -20,9 +20,7 @@ std::string debug::cpu_info(std::string_view info){
         if(std::getline(is_line, key, ':')) {
             if(key == info) {
                 std::string value_str;
-                if(std::getline(is_line, value_str)) {
-                    return value_str;
-                }
+                if(std::getline(is_line, value_str)) { return value_str; }
             }
         }
     }

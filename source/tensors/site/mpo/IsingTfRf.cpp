@@ -142,8 +142,7 @@ void IsingTfRf::set_perturbation(double coupling_ptb, double field_ptb, PerturbM
         unique_id                                                                     = std::nullopt;
         unique_id_sq                                                                  = std::nullopt;
     }
-    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed())
-        throw except::runtime_error("mpo({}): should have become unperturbed!", get_position());
+    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed()) throw except::runtime_error("mpo({}): should have become unperturbed!", get_position());
 }
 
 bool IsingTfRf::is_perturbed() const { return h5tb.param.h_pert != 0.0; }
@@ -241,5 +240,4 @@ void IsingTfRf::load_hamiltonian(const h5pp::File &file, std::string_view model_
     if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6) throw except::runtime_error("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran);
     if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6) throw except::runtime_error("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean);
     if(std::abs(h5tb.param.h_stdv - h_stdv) > 1e-6) throw except::runtime_error("h_stdv {:.16f} != {:.16f} ising_tf_rf::h_stdv", h5tb.param.h_stdv, h_stdv);
-
 }

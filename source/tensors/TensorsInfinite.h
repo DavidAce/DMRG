@@ -1,8 +1,8 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
-#include <general/eigen_tensor_fwd_decl.h>
 #include <math/svd/settings.h>
+#include <math/tenx/fwd_decl.h>
 #include <measure/MeasurementsTensorsInfinite.h>
 #include <memory>
 
@@ -13,9 +13,9 @@ class EdgesInfinite;
 class TensorsInfinite {
     public:
     using Scalar = std::complex<double>;
-    std::unique_ptr<StateInfinite>   state;
-    std::unique_ptr<ModelInfinite>   model;
-    std::unique_ptr<EdgesInfinite>   edges;
+    std::unique_ptr<StateInfinite>      state;
+    std::unique_ptr<ModelInfinite>      model;
+    std::unique_ptr<EdgesInfinite>      edges;
     mutable MeasurementsTensorsInfinite measurements;
 
     // This class should have these responsibilities:

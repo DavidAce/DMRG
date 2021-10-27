@@ -7,10 +7,10 @@ opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, 
                  std::optional<double> variance_, double overlap_, size_t length_)
     : name(name_), tensor(tensor_), sites(sites_), eigval(eigval_), energy_r(energy_reduced_), energy(eigval_ + energy_reduced_), variance(variance_),
       overlap(overlap_), length(length_) {
-    norm    = get_vector().norm();
-    iter    = 0;
-    num_mv  = 0;
-    time    = 0;
+    norm   = get_vector().norm();
+    iter   = 0;
+    num_mv = 0;
+    time   = 0;
 }
 
 opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,

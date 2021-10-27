@@ -12,9 +12,7 @@
 #include <tools/finite/opt_meta.h>
 #include <tools/finite/opt_mps.h>
 
-fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) {
-    tools::log->trace("Constructing class_fdmrg");
-}
+fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg"); }
 
 void fdmrg::resume() {
     // Resume can imply many things
@@ -28,7 +26,7 @@ void fdmrg::resume() {
 
     auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type);
     if(resumable_states.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
-    for(const auto & state_prefix : resumable_states ){
+    for(const auto &state_prefix : resumable_states) {
         tools::log->info("Resuming state [{}]", state_prefix);
         tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
         // Our first task is to decide on a state name for the newly loaded state
@@ -54,7 +52,6 @@ void fdmrg::resume() {
         }
         run_task_list(task_list);
     }
-
 }
 
 void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
@@ -134,8 +131,8 @@ void fdmrg::run_algorithm() {
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
-        update_bond_dimension_limit();  // Will update bond dimension if the state precision is being limited by bond dimension
-        update_expansion_factor_alpha();  // Will update the subspace expansion factor
+        update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
+        update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
         reduce_mpo_energy();
         move_center_point();
@@ -158,7 +155,7 @@ void fdmrg::single_fdmrg_step() {
                       enum2sv(ritz));
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_size_def);
 
-    if(not tensors.active_sites.empty()){
+    if(not tensors.active_sites.empty()) {
         if(status.sub_expansion_alpha > 0) {
             // If we are doing 1-site dmrg, then we better use subspace expansion
             if(tensors.active_sites.size() == 1) alpha_expansion = status.sub_expansion_alpha;
@@ -169,8 +166,7 @@ void fdmrg::single_fdmrg_step() {
         }
 
         auto multisite_mps = tools::finite::opt::find_ground_state(tensors, status, conf);
-        if constexpr(settings::debug)
-            tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", multisite_mps.get_variance(), multisite_mps.get_norm());
+        if constexpr(settings::debug) tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", multisite_mps.get_variance(), multisite_mps.get_norm());
 
         tensors.merge_multisite_mps(multisite_mps.get_tensor(), status.chi_lim);
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
@@ -183,7 +179,7 @@ void fdmrg::single_fdmrg_step() {
             tools::log->trace("Updating variance record holder: var {:8.2e} | record {:8.2e}", var, status.energy_variance_lowest);
             if(var < status.energy_variance_lowest) status.energy_variance_lowest = var;
         }
-        if constexpr (settings::debug) tensors.assert_validity();
+        if constexpr(settings::debug) tensors.assert_validity();
     }
 }
 

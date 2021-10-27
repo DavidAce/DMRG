@@ -47,8 +47,8 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
     // If it is empty because we are resuming, check if there is a log entry on file already
     auto                                                                  tic = tid::tic_token("state");
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto dset_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
-    auto mps_prefix = fmt::format("{}/mps", state_prefix);
+    auto                                                                  dset_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
+    auto                                                                  mps_prefix   = fmt::format("{}/mps", state_prefix);
 
     bootstrap_save_log(save_log, h5file, {dset_schmidt, mps_prefix});
     auto save_point = std::make_pair(status.iter, status.step);
@@ -115,10 +115,10 @@ void tools::infinite::h5::save::edges(h5pp::File &h5file, std::string_view edges
     auto        tic = tid::tic_token("edges");
     const auto &ene = edges.get_ene_blk();
     const auto &var = edges.get_var_blk();
-    h5file.writeDataset(ene.L, fmt::format("{}/eneL",edges_prefix));
-    h5file.writeDataset(ene.R, fmt::format("{}/eneR",edges_prefix));
-    h5file.writeDataset(var.L, fmt::format("{}/varL",edges_prefix));
-    h5file.writeDataset(var.R, fmt::format("{}/varR",edges_prefix));
+    h5file.writeDataset(ene.L, fmt::format("{}/eneL", edges_prefix));
+    h5file.writeDataset(ene.R, fmt::format("{}/eneR", edges_prefix));
+    h5file.writeDataset(var.L, fmt::format("{}/varL", edges_prefix));
+    h5file.writeDataset(var.R, fmt::format("{}/varR", edges_prefix));
 }
 
 /*! Write down the Hamiltonian model type and site info as attributes */

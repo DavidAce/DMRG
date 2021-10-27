@@ -6,7 +6,7 @@
 //#undef I
 #include "../opt.h"
 #include <ceres/gradient_problem_solver.h>
-#include <general/eigen_tensor_fwd_decl.h>
+#include <math/tenx/fwd_decl.h>
 #include <tools/common/log.h>
 
 /* clang-format off */

@@ -290,11 +290,11 @@ template void eig::solver::eigs(MatVecSparse<eig::real> &matrix, size_type nev, 
 template void eig::solver::eigs(MatVecSparse<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<eig::cplx> sigma,
                                 Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
 
-template void eig::solver::eigs(MatVecMps<eig::real> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
-                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
+template void eig::solver::eigs(MatVecMps<eig::real> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<eig::cplx> sigma,
+                                Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::real *residual);
 
-template void eig::solver::eigs(MatVecMps<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side,
-                                std::optional<eig::cplx> sigma, Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
+template void eig::solver::eigs(MatVecMps<eig::cplx> &matrix, size_type nev, size_type ncv, Ritz ritz, Form form, Side side, std::optional<eig::cplx> sigma,
+                                Shinv shift_invert, Vecs compute_eigvecs, Dephase remove_phase, eig::cplx *residual);
 
 template<typename MatrixProductType>
 void eig::solver::eigs(MatrixProductType &matrix) {

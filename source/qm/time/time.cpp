@@ -120,7 +120,7 @@ namespace qm::time {
             time_evolution_gates_reverse.emplace_back(h.exp(imn * delta_t * 0.5)); // exp(-i * delta_t * h)
         }
 
-        if constexpr(settings::debug){
+        if constexpr(settings::debug) {
             // Sanity checks
             if(std::imag(delta_t) == 0) {
                 for(auto &t : time_evolution_gates_forward)
@@ -132,7 +132,6 @@ namespace qm::time {
                         throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
                     }
             }
-
         }
 
         return {time_evolution_gates_forward, time_evolution_gates_reverse};

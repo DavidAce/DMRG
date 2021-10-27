@@ -2,7 +2,7 @@
 #include "gate.h"
 #include "qm.h"
 #include <complex>
-#include <general/eigen_tensor_fwd_decl.h>
+#include <math/tenx/fwd_decl.h>
 #include <vector>
 
 namespace qm::time {

@@ -12,7 +12,7 @@
 #include <tools/common/log.h>
 #include <tools/finite/mps.h>
 
-namespace settings{
+namespace settings {
     inline constexpr bool debug_numen = false; // Deprecated. Change this in tools/finite/mps/mps.cpp // For number entropy calculation in fLBIT
 }
 

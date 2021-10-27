@@ -16,7 +16,7 @@ namespace tools::finite::opt {
                 if(previous_exit == OptExit::SUCCESS)
                     return false;
                 else
-                    return have_common(optWhen,previous_exit);
+                    return have_common(optWhen, previous_exit);
             }
         }
     }

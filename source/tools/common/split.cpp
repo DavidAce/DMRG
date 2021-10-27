@@ -171,8 +171,8 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     // 5) Mixture of A and B-sites, with more B's than A's
 
     if constexpr(settings::debug_split)
-        tools::log->trace("split: positions {} | L {} | R {} | C {} | spins {} | spinL {} | spinR {} ", positions, positions_left, positions_right, center_position,
-                          spin_dims, spin_dims_left, spin_dims_right);
+        tools::log->trace("split: positions {} | L {} | R {} | C {} | spins {} | spinL {} | spinR {} ", positions, positions_left, positions_right,
+                          center_position, spin_dims, spin_dims_left, spin_dims_right);
     if(positions.size() == positions_left.size()) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 1");
         auto t_o1    = tid::tic_scope("o1");
@@ -247,7 +247,8 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &V_stash = mps_sites_As.back().get_V_stash();
         auto &S_stash = mps_sites_As.back().get_S_stash();
         if(V_stash and S_stash) {
-            if constexpr(std::is_same_v<Scalar, real>) V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data).real();
+            if constexpr(std::is_same_v<Scalar, real>)
+                V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data).real();
             else
                 V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data);
             V_stash.reset();
@@ -269,7 +270,8 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &U_stash = mps_sites_Bs.front().get_U_stash();
         auto &S_stash = mps_sites_Bs.front().get_S_stash();
         if(U_stash and S_stash) {
-            if constexpr(std::is_same_v<Scalar, real>) U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data).real();
+            if constexpr(std::is_same_v<Scalar, real>)
+                U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data).real();
             else
                 U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data);
 

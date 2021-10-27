@@ -1,8 +1,8 @@
 #pragma once
+#include "rnd/pcg_random.hpp"
 #include <complex>
 #include <optional>
 #include <vector>
-#include "rnd/pcg_random.hpp"
 
 namespace rnd {
     namespace internal {

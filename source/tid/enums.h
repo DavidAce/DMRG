@@ -20,17 +20,14 @@ namespace tid {
     }
 }
 
-
 template<typename T>
 extern constexpr std::string_view enum2sv(const T &item);
-
 
 template<typename T>
 extern constexpr auto sv2enum(std::string_view item);
 
-
 template<>
-constexpr std::string_view enum2sv(const tid::level & item) {
+constexpr std::string_view enum2sv(const tid::level &item) {
     switch(item) {
         case(tid::level::normal): return "normal";
         case(tid::level::detail): return "detail";

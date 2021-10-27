@@ -17,8 +17,8 @@
 
 //#include <stdlib.h>
 #include <cstdlib>
-#include <debug/stacktrace.h>
 #include <debug/info.h>
+#include <debug/stacktrace.h>
 #include <math/rnd.h>
 
 AlgorithmLauncher::AlgorithmLauncher(std::shared_ptr<h5pp::File> h5ppFile_) : h5file(std::move(h5ppFile_)) {

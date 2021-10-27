@@ -3,8 +3,8 @@
 #include <array>
 #include <complex>
 #include <config/enums.h>
-#include <general/eigen_tensor_fwd_decl.h>
 #include <math/svd/settings.h>
+#include <math/tenx/fwd_decl.h>
 #include <measure/MeasurementsTensorsFinite.h>
 #include <memory>
 #include <tensors/site/env/EnvPair.h>
@@ -94,7 +94,7 @@ class TensorsFinite {
     size_t              move_center_point_to_edge(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     size_t              move_center_point_to_middle(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     void merge_multisite_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt,
-                                LogPolicy log_policy = LogPolicy::QUIET);
+                             LogPolicy log_policy = LogPolicy::QUIET);
 
     std::vector<size_t> expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     void                assert_edges() const;

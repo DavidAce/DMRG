@@ -115,10 +115,10 @@ StateFinite TensorsFinite::get_state_projected_to_nearest_sector(std::string_vie
 void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) {
     tools::finite::ops::project_to_nearest_sector(*state, sector, chi_lim, svd_settings);
     rebuild_edges();
-    if constexpr (settings::debug) assert_validity();
+    if constexpr(settings::debug) assert_validity();
 }
 
-StateFinite TensorsFinite::get_state_with_hamiltonian_applied(std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) const{
+StateFinite TensorsFinite::get_state_with_hamiltonian_applied(std::optional<long> chi_lim, std::optional<svd::settings> svd_settings) const {
     auto state_projected = *state;
     state_projected.clear_measurements(LogPolicy::QUIET);
     state_projected.clear_cache(LogPolicy::QUIET);
@@ -262,7 +262,6 @@ void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optio
     else
         model->build_mpo_squared();
     model->assert_validity();
-
 }
 
 // Active sites
@@ -285,7 +284,7 @@ void TensorsFinite::activate_sites(const std::vector<size_t> &sites) {
     clear_cache(LogPolicy::QUIET);
     clear_measurements(LogPolicy::QUIET);
     rebuild_edges();
-    if constexpr (settings::debug) assert_validity();
+    if constexpr(settings::debug) assert_validity();
 }
 
 void TensorsFinite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
@@ -365,7 +364,7 @@ size_t TensorsFinite::move_center_point_to_middle(long chi_lim, std::optional<sv
 }
 
 void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings,
-                                           LogPolicy log_policy) {
+                                        LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");

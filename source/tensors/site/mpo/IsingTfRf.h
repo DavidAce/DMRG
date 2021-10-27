@@ -1,8 +1,8 @@
 #pragma once
 
 #include "MpoSite.h"
-#include <general/eigen_tensor_fwd_decl.h>
 #include <h5pp/details/h5ppHid.h>
+#include <math/tenx/fwd_decl.h>
 
 class IsingTfRf : public MpoSite {
     private:
@@ -14,7 +14,7 @@ class IsingTfRf : public MpoSite {
     public:
     IsingTfRf(ModelType model_type_, size_t position_);
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
-    [[nodiscard]] Eigen::Tensor<cplx, 4> MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const override;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view() const override;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view(double site_energy) const override;

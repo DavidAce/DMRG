@@ -72,7 +72,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             unitaries.emplace_back(tenx::TensorMap(expifH), indices, spin_dims);
         }
     }
-    if constexpr(settings::debug){
+    if constexpr(settings::debug) {
         // Sanity check
         for(const auto &u : unitaries)
             if(not tenx::MatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
@@ -91,7 +91,7 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
     for(auto &h : hams_nsite) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-    if constexpr (settings::debug){
+    if constexpr(settings::debug) {
         for(auto &t : time_evolution_gates)
             if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
                 throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
@@ -104,11 +104,11 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
 std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite) {
     std::vector<SwapGate> time_evolution_swap_gates;
     time_evolution_swap_gates.reserve(hams_nsite.size());
-    for(auto &h : hams_nsite){
+    for(auto &h : hams_nsite) {
         time_evolution_swap_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
         time_evolution_swap_gates.back().generate_swap_sequences();
     }
-    if constexpr (settings::debug){
+    if constexpr(settings::debug) {
         for(auto &t : time_evolution_swap_gates)
             if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
                 throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));

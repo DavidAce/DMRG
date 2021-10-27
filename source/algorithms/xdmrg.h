@@ -4,7 +4,7 @@
 #include <deque>
 #include <qm/gate.h>
 
-namespace tools::finite::opt{
+namespace tools::finite::opt {
     class opt_mps;
     struct OptMeta;
 }
@@ -15,6 +15,7 @@ namespace tools::finite::opt{
 class StateFinite;
 class xdmrg : public AlgorithmFinite {
     using OptConf = tools::finite::opt::OptMeta;
+
     private:
     double                                                  energy_window_growth_factor = 1.0;
     std::optional<double>                                   variance_before_step        = std::nullopt;
@@ -25,7 +26,7 @@ class xdmrg : public AlgorithmFinite {
     std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> time_gates_2site;
     std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> time_gates_3site;
 
-    [[nodiscard]] static bool          try_again(const std::vector<tools::finite::opt::opt_mps> &results, const OptConf & conf);
+    [[nodiscard]] static bool          try_again(const std::vector<tools::finite::opt::opt_mps> &results, const OptConf &conf);
     [[nodiscard]] std::vector<OptConf> get_opt_conf_list();
 
     public:

@@ -1,4 +1,6 @@
-#include "../tenx.h"
+#include "omp.h"
+#include <memory>
+#include <unsupported/Eigen/CXX11/ThreadPool>
 
 namespace tenx::omp {
     int num_threads = 1;

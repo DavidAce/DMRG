@@ -74,7 +74,7 @@ using namespace eig;
 template<typename MatrixType>
 eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_)
     : matrix(matrix_), config(config_), result(result_) {
-        if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual pointer
+    if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual pointer
 
     t_tot        = std::make_unique<tid::ur>("total");
     t_mul        = std::make_unique<tid::ur>("matvec");
@@ -332,8 +332,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
             if(config.logTime) {
                 auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
                 if(time_since_last_log > config.logTime.value()) {
-                    eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops,
-                                  t_tot->get_time(), t_mul->get_last_interval() / nops * 1000);
+                    eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops, t_tot->get_time(),
+                                    t_mul->get_last_interval() / nops * 1000);
                     last_log_time = t_tot->get_time();
                 }
             }
@@ -361,8 +361,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
         }
     }
 
-    eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), nops, iter,
-                   t_tot->get_time(), t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
+    eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), nops, iter, t_tot->get_time(),
+                    t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
     result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
     if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");
 
@@ -494,12 +494,11 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
     }
 
     // Compute residuals
-    if(result.meta.eigvals_found){
-        if(result.meta.eigvecsR_found){
+    if(result.meta.eigvals_found) {
+        if(result.meta.eigvecsR_found) {
             compute_residual_norms<eigvec_type, eigval_type, Side::R>();
 
-        }
-        else if(result.meta.eigvecsL_found){
+        } else if(result.meta.eigvecsL_found) {
             compute_residual_norms<eigvec_type, eigval_type, Side::L>();
         }
     }
@@ -510,11 +509,10 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
     tid::get("arpack.prep") += *t_pre;
 }
 
-
 template<typename MatrixType>
 template<typename eval_t, typename evec_t, Side side>
 void eig::solver_arpack<MatrixType>::compute_residual_norms() {
-    using VType       = Eigen::Matrix<evec_t, Eigen::Dynamic, 1>;
+    using VType = Eigen::Matrix<evec_t, Eigen::Dynamic, 1>;
     if(matrix.get_side() != side) throw std::logic_error("Matrix has different side");
     auto eigvalsize_t = static_cast<size_t>(result.meta.cols);
     result.meta.residual_norms.resize(eigvalsize_t);
@@ -527,9 +525,6 @@ void eig::solver_arpack<MatrixType>::compute_residual_norms() {
         result.meta.residual_norms.at(i) = (A_eigvec_i - eigvec_i * eigvals.at(i)).norm();
     }
 }
-
-
-
 
 template class eig::solver_arpack<MatVecDense<real>>;
 template class eig::solver_arpack<MatVecDense<cplx>>;

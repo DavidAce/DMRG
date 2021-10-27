@@ -3,7 +3,7 @@
 #include <array>
 #include <complex>
 #include <deque>
-#include <general/eigen_tensor_fwd_decl.h>
+#include <math/tenx/fwd_decl.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 

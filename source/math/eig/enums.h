@@ -27,13 +27,13 @@ namespace eig {
         primme_closest_leq,
         primme_closest_abs,
         primme_largest_abs
-    };                                            // Choice of eigenvalue. LA is largest algebraic, and so on.
+    };                                         // Choice of eigenvalue. LA is largest algebraic, and so on.
     enum class Storage { DENSE, SPARSE, MPS }; // Eigen Dense or Sparse, or std::vector for container
     enum class Shinv { ON, OFF };
     enum class Dephase { ON, OFF };
     enum class Vecs { ON, OFF };
 
-    enum class PrimmeMethod{
+    enum class PrimmeMethod {
         PRIMME_DEFAULT_METHOD,
         PRIMME_DYNAMIC,
         PRIMME_DEFAULT_MIN_TIME,

@@ -59,9 +59,7 @@ namespace eig {
     template std::vector<eig::real> &solution::get_eigvals<eig::real>() const;
     template std::vector<eig::cplx> &solution::get_eigvals<eig::cplx>() const;
 
-    const std::vector<double> &solution::get_resnorms() const {
-        return meta.residual_norms;
-    }
+    const std::vector<double> &solution::get_resnorms() const { return meta.residual_norms; }
 
     void solution::reset() {
         eigvals_real.clear();

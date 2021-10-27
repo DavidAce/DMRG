@@ -1,10 +1,20 @@
 #pragma once
-#include <general/eigen_tensor_fwd_decl.h>
+#include "fwd_decl.h"
+#include <complex>
 
 /*!
  * \brief A collection of type-detection and type-analysis utilities using SFINAE on Eigen types
  */
-namespace sfinae::eigen {
+namespace tenx::sfinae {
+
+    template<typename T>
+    struct is_std_complex : public std::false_type {};
+
+    template<typename T>
+    struct is_std_complex<std::complex<T>> : public std::true_type {};
+
+    template<typename T>
+    inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
 
     template<typename T>
     using is_eigen_matrix = std::is_base_of<Eigen::MatrixBase<std::decay_t<T>>, std::decay_t<T>>;

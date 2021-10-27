@@ -15,7 +15,7 @@
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status,
                                                                                     OptMeta &meta) {
-    auto t_dir = tid::tic_scope("direct");
+    auto                t_dir = tid::tic_scope("direct");
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_state("current state", tensors.state->get_multisite_mps(), sites,
                                       tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval

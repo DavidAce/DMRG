@@ -13,8 +13,8 @@
 #include <tensors/site/mps/MpsSite.h>
 #include <tensors/state/StateFinite.h>
 #include <tid/tid.h>
-#include <tools/common/log.h>
 #include <tools/common/contraction.h>
+#include <tools/common/log.h>
 
 std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
                                                         long chi_lim, std::optional<svd::settings> svd_settings) {
@@ -126,7 +126,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     mpsR.set_M(M_tmp);
                     if constexpr(settings::debug) {
                         auto   mpsR_final = state.get_multisite_mps({mpsR.get_position()});
-                        double norm_new = tools::common::contraction::contract_mps_norm(mpsR_final);
+                        double norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
                         tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), norm_old, norm_new);
                     }
                 }
@@ -207,7 +207,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                     mpsL.set_M(M_tmp);
                     if constexpr(settings::debug) {
                         auto   mpsL_final = state.get_multisite_mps({mpsL.get_position()});
-                        double norm_new = tools::common::contraction::contract_mps_norm(mpsL_final);
+                        double norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
                         tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), norm_old, norm_new);
                     }
                 }
@@ -401,15 +401,15 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     size_t posL_active      = edges.active_sites.front();
     size_t posR_active      = edges.active_sites.back();
 
-//
-//
-//    long   current_position = state.get_position<long>();
-//    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-//    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-//    if(not edges.active_sites.empty()) {
-//        posL_active = edges.active_sites.front();
-//        posR_active = edges.active_sites.back();
-//    }
+    //
+    //
+    //    long   current_position = state.get_position<long>();
+    //    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    if(not edges.active_sites.empty()) {
+    //        posL_active = edges.active_sites.front();
+    //        posR_active = edges.active_sites.back();
+    //    }
 
     tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
                       "inspecting edges eneL from [{} to {}]",
@@ -467,8 +467,6 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
-
-
     // If there are no active sites we shouldn't be rebuilding edges.
     // For instance, the active sites are cleared after a move of center site.
     // We could always keep all edges refreshed but that would be wasteful, since the next iteration
@@ -487,14 +485,13 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     size_t posL_active      = edges.active_sites.front();
     size_t posR_active      = edges.active_sites.back();
 
-
-//    long   current_position = state.get_position<long>();
-//    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-//    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-//    if(not edges.active_sites.empty()) {
-//        posL_active = edges.active_sites.front();
-//        posR_active = edges.active_sites.back();
-//    }
+    //    long   current_position = state.get_position<long>();
+    //    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    if(not edges.active_sites.empty()) {
+    //        posL_active = edges.active_sites.front();
+    //        posR_active = edges.active_sites.back();
+    //    }
 
     tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
                       "inspecting edges varL from [{} to {}]",

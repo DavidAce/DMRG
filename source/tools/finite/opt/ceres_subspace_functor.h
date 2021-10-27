@@ -1,6 +1,6 @@
 #pragma once
 #include "ceres_base.h"
-#include <general/eigen_tensor_fwd_decl.h>
+#include <math/tenx/fwd_decl.h>
 
 namespace tools::finite::opt::internal {
     template<typename Scalar>

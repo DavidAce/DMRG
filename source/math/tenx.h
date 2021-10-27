@@ -6,10 +6,11 @@
     #define lapack_complex_double std::complex<double>
 #endif
 
-
+#include "tenx/eval.h"
+#include "tenx/omp.h"
+#include "tenx/sfinae.h"
 #include <array>
 #include <complex>
-#include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
@@ -32,32 +33,6 @@ namespace tenx {
 
     template<Eigen::Index rank>
     using array = std::array<Eigen::Index, rank>;
-
-    namespace omp {
-        extern int num_threads;
-#if defined(EIGEN_USE_THREADS)
-        extern std::unique_ptr<Eigen::ThreadPool>       tp;
-        extern std::unique_ptr<Eigen::ThreadPoolDevice> dev;
-        void                                            setNumThreads(int num);
-        Eigen::ThreadPoolDevice                        &getDevice();
-#else
-        extern std::unique_ptr<Eigen::DefaultDevice> dev;
-        void                                         setNumThreads([[maybe_unused]] int num);
-        Eigen::DefaultDevice                        &getDevice();
-#endif
-
-    }
-
-    namespace sfinae {
-        template<typename T>
-        struct is_std_complex : public std::false_type {};
-
-        template<typename T>
-        struct is_std_complex<std::complex<T>> : public std::true_type {};
-
-        template<typename T>
-        inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
-    }
 
     using array8 = array<8>;
     using array7 = array<7>;
@@ -87,7 +62,7 @@ namespace tenx {
     }
 
     template<std::size_t N, typename idxType>
-    constexpr idxlistpair<N> idx(const std::array<idxType,N> & list1, const std::array<idxType,N> & list2){
+    constexpr idxlistpair<N> idx(const std::array<idxType, N> &list1, const std::array<idxType, N> &list2) {
         // Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
         // tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
         idxlistpair<N> pairlistOut;
@@ -114,48 +89,6 @@ namespace tenx {
         idxlistpair<N> pairlistOut;
         for(size_t i = 0; i < N; i++) { pairlistOut[i] = Eigen::IndexPair<long>{idx_dim_pair_list[i].idxA, idx_dim_pair_list[i].idxB}; }
         return pairlistOut;
-    }
-
-    template<typename Derived, typename Device = Eigen::DefaultDevice>
-    class selfCleaningEvaluator {
-        private:
-        using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const Derived>, Device>;
-        Evaluator m_eval;
-
-        public:
-        selfCleaningEvaluator(const Evaluator &eval) : m_eval(eval) {}
-        selfCleaningEvaluator(const Eigen::TensorBase<Derived, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device())
-            : m_eval(Evaluator(expr.eval(), device)) {
-            m_eval.evalSubExprsIfNeeded(nullptr);
-        }
-
-        ~selfCleaningEvaluator() {
-            // This whole point of this object is to call cleanup automatically on destruct.
-            // If there are pending operations to evaluate, m_eval will allocate a buffer to hold a result,
-            // which needs to be deallocated.
-            m_eval.cleanup();
-        }
-
-        constexpr auto rank() {
-            using DimType = typename decltype(m_eval)::Dimensions::Base;
-            return DimType{}.size(); // Because Derived::Dimensions is sometimes wrong
-        }
-        const Evaluator *operator->() const { return &m_eval; }
-        Evaluator       *operator->() { return &m_eval; }
-        constexpr auto   map() {
-            // We inspect m_eval to get the type, rank and dimensions, because it has the resulting tensor,
-            // whereas Derived is the tensor type _before_ whatever operation is pending (if any).
-            using DimType       = typename decltype(m_eval)::Dimensions::Base;
-            constexpr auto rank = DimType{}.size();
-            using Scalar        = typename Eigen::internal::remove_const<typename decltype(m_eval)::Scalar>::type;
-            return Eigen::TensorMap<Eigen::Tensor<Scalar, rank>>(m_eval.data(), m_eval.dimensions());
-        }
-    };
-
-    // Evaluates expressions if needed
-    template<typename T, typename Device = Eigen::DefaultDevice>
-    auto asEval(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        return selfCleaningEvaluator(expr, device);
     }
 
     //
@@ -446,9 +379,9 @@ namespace tenx {
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
             threshold *= std::max<double>(1.0, static_cast<double>(obj.derived().size()));
-//            if(imag_sum >= threshold) {
-//                std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold);
-//            }
+            //            if(imag_sum >= threshold) {
+            //                std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold);
+            //            }
             return imag_sum < threshold;
 
         } else {

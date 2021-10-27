@@ -11,7 +11,6 @@ namespace settings {
     inline constexpr bool debug_swap = false;
 }
 
-
 qm::Swap::Swap(size_t posL, size_t posR) : posL(posL), posR(posR) {
     if(posL + 1 != posR) throw std::logic_error(fmt::format("Swap: Expected posL+1 == posR. Got posL {} and posR {}", posL, posR));
 }
@@ -23,7 +22,7 @@ bool qm::Swap::operator==(const Rwap &rwap) const { return posL == rwap.posL and
 
 bool qm::Rwap::operator==(const Swap &swap) const { return posL == swap.posL and posR == swap.posR; }
 
-qm::SwapGate  qm::SwapGate::exp(cplx alpha) const { return {op, pos, dim, alpha}; }
+qm::SwapGate qm::SwapGate::exp(cplx alpha) const { return {op, pos, dim, alpha}; }
 
 void qm::SwapGate::generate_swap_sequences() {
     // Letting i < j, a swap sequence defines the swap operators S(i,i+1) necessary to move distant sites at i,j until they are neighbors at j-1, j,
@@ -35,10 +34,10 @@ void qm::SwapGate::generate_swap_sequences() {
     if(pos.size() == 2ul and pos[0] + 1ul == pos[1]) return; // No swaps needed
     if(pos.size() >= 3) {
         for(size_t p = 0; p < pos.size() - 1ul; p++)
-            if(pos[p] + 1ul != pos[p+1]) throw std::logic_error(fmt::format("SwapGate: 3body gates are only supported for adjacent sites: pos {}", pos));
+            if(pos[p] + 1ul != pos[p + 1]) throw std::logic_error(fmt::format("SwapGate: 3body gates are only supported for adjacent sites: pos {}", pos));
         return;
     }
-    for(const auto &p : num::range<size_t>(pos.front(),pos.back())) {
+    for(const auto &p : num::range<size_t>(pos.front(), pos.back())) {
         if(p + 1ul == pos.back()) break;
         swaps.emplace_back(p, p + 1ul);
         rwaps.emplace_front(p, p + 1ul);

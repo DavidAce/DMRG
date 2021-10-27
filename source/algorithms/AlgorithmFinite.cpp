@@ -271,14 +271,13 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
         } else {
             status.sub_expansion_alpha *= factor_dn;
         }
-        status.sub_expansion_alpha = std::clamp(status.sub_expansion_alpha,
-                                                std::min(status.energy_variance_lowest, settings::strategy::max_expansion_alpha),
+        status.sub_expansion_alpha = std::clamp(status.sub_expansion_alpha, std::min(status.energy_variance_lowest, settings::strategy::max_expansion_alpha),
                                                 settings::strategy::max_expansion_alpha);
         if(status.sub_expansion_alpha < old_expansion_alpha) {
             status.sub_expansion_step     = status.step;
             status.sub_expansion_variance = status.energy_variance_lowest;
             tools::log->debug("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
-        }else{
+        } else {
             tools::log->debug("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
         }
     }

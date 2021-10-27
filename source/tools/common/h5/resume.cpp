@@ -60,28 +60,24 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
     if(state_prefix_candidates.empty()) return {};
     if(state_prefix_candidates.size() == 1) return {state_prefix_candidates[0]};
 
-
-    //Here we collect unique state names
+    // Here we collect unique state names
     std::vector<std::string> state_names;
-    for(const auto & pfx : state_prefix_candidates){
+    for(const auto &pfx : state_prefix_candidates) {
         auto name = h5file.readAttribute<std::string>(pfx, "common/state_name");
-        if(not name.empty()){
-            if(std::find(state_names.begin(), state_names.end(), name) == state_names.end()){
-                state_names.emplace_back(name);
-            }
+        if(not name.empty()) {
+            if(std::find(state_names.begin(), state_names.end(), name) == state_names.end()) { state_names.emplace_back(name); }
         }
     }
 
     // Sort state names in ascending order
     std::sort(state_names.begin(), state_names.end(), std::less<>());
 
-
     // For each state name, we find the one with highest step number
     std::vector<std::string> state_candidates_latest;
-    for(const auto & name : state_names){
+    for(const auto &name : state_names) {
         // Collect the candidates that have the current state name and their step
         std::vector<std::pair<size_t, std::string>> matching_candidates;
-        for(const auto & candidate : state_prefix_candidates){
+        for(const auto &candidate : state_prefix_candidates) {
             if(candidate.find(name) == std::string::npos) continue;
             auto steps = h5file.readAttribute<size_t>(candidate, "common/step");
             matching_candidates.emplace_back(std::make_pair(steps, candidate));
@@ -91,8 +87,10 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         std::sort(matching_candidates.begin(), matching_candidates.end(), [](auto &lhs, auto &rhs) {
             if(lhs.first != rhs.first) return lhs.first > rhs.first;
             // Take care of cases with repeated step numbers
-            else if(lhs.second.find("finished") != std::string::npos and rhs.second.find("finished") == std::string::npos) return true;
-            else if(lhs.second.find("iter") != std::string::npos and rhs.second.find("iter") == std::string::npos) return true;
+            else if(lhs.second.find("finished") != std::string::npos and rhs.second.find("finished") == std::string::npos)
+                return true;
+            else if(lhs.second.find("iter") != std::string::npos and rhs.second.find("iter") == std::string::npos)
+                return true;
             return false;
         });
         for(const auto &candidate : matching_candidates) tools::log->info("Candidate step {} : [{}]", candidate.first, candidate.second);

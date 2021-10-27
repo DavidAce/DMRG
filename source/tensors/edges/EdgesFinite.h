@@ -2,7 +2,7 @@
 #include "tensors/site/env/EnvPair.h"
 #include <complex>
 #include <config/enums.h>
-#include <general/eigen_tensor_fwd_decl.h>
+#include <math/tenx/fwd_decl.h>
 #include <memory>
 #include <optional>
 #include <vector>

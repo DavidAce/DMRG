@@ -296,8 +296,8 @@ StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFini
 double tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) {
     assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
     assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
-    size_t                   pos     = 0;
-    auto overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0,1});
+    size_t pos     = 0;
+    auto   overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0, 1});
     for(pos = 1; pos < state1.get_length(); pos++) {
         Eigen::Tensor<Scalar, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
                                             .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));

@@ -32,7 +32,7 @@ class AlgorithmBase {
     virtual void print_status_full()                                                                                                           = 0;
     virtual void clear_convergence_status()                                                                                                    = 0;
     virtual void update_variance_max_digits(std::optional<double> energy = std::nullopt)                                                       = 0;
-    virtual void update_bond_dimension_limit()                                                  = 0;
+    virtual void update_bond_dimension_limit()                                                                                                 = 0;
 
     // common functions
     void copy_from_tmp(StorageReason storage_reason = StorageReason::SAVEPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);

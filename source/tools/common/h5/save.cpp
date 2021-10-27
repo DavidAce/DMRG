@@ -96,9 +96,8 @@ namespace tools::common::h5 {
         save_log[table_path] = save_point;
     }
 
-    void save::meta(h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason, const ModelType &model_type,
-                    size_t model_size, std::string_view state_name, std::string_view state_prefix, std::string_view model_prefix,
-                    const AlgorithmStatus &status) {
+    void save::meta(h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason, const ModelType &model_type, size_t model_size,
+                    std::string_view state_name, std::string_view state_prefix, std::string_view model_prefix, const AlgorithmStatus &status) {
         // Write metadata into /common so that we can find state paths later.
         // Under /common we have the following dummy datasets defining attributes which map state_prefix to useful information:
         //

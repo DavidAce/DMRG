@@ -1,6 +1,5 @@
 #pragma once
 
-
-namespace settings{
+namespace settings {
     int parse(int argc, char *argv[]);
 }

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "MpoSite.h"
-#include <general/eigen_tensor_fwd_decl.h>
 #include <h5pp/details/h5ppHid.h>
+#include <math/tenx/fwd_decl.h>
 
 class LBit : public MpoSite {
     private:

@@ -5,7 +5,6 @@
 
 enum class SVDLib { eigen, lapacke, rsvd };
 
-
 namespace svd {
     inline std::string_view enum2sv(SVDLib lib) {
         if(lib == SVDLib::eigen) return "eigen";
@@ -15,12 +14,12 @@ namespace svd {
     }
 
     struct settings {
-        std::optional<double> threshold   = std::nullopt;
-        std::optional<size_t> switchsize  = std::nullopt;
-        std::optional<size_t> loglevel    = std::nullopt;
-        std::optional<bool>   use_bdc     = std::nullopt;
-        std::optional<SVDLib> svd_lib     = std::nullopt;
-        std::optional<bool>   save_fail   = std::nullopt;
+        std::optional<double> threshold  = std::nullopt;
+        std::optional<size_t> switchsize = std::nullopt;
+        std::optional<size_t> loglevel   = std::nullopt;
+        std::optional<bool>   use_bdc    = std::nullopt;
+        std::optional<SVDLib> svd_lib    = std::nullopt;
+        std::optional<bool>   save_fail  = std::nullopt;
         /* clang-format off */
         std::string to_string(){
             std::string msg;

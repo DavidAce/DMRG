@@ -31,7 +31,7 @@ namespace tools::finite::opt {
         std::array<long, 3>   problem_dims     = {};
         std::vector<size_t>   chosen_sites     = {};
         std::string           label;
-        std::optional<double> max_grad_tolerance = std::nullopt;
+        std::optional<double> max_grad_tolerance       = std::nullopt;
         std::optional<int>    ceres_max_num_iterations = std::nullopt;
         std::optional<int>    ceres_max_lbfgs_rank     = std::nullopt;
         std::optional<double> ceres_function_tolerance = std::nullopt;

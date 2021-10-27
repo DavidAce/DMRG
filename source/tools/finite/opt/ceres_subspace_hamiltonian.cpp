@@ -17,24 +17,6 @@ using cplx   = std::complex<double>;
 template<typename T>
 using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
-//template<typename Scalar>
-//void shift_mpo_energy(Eigen::Tensor<Scalar, 4> &mpo, double energy_shift) {
-//    tools::log->debug("ceres::subspace: setting shift: {:.16f}", energy_shift);
-//
-//    // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
-//    // rank2 matrix, where each element is also a matrix with the size
-//    // determined by the last 2 indices kl.
-//    // When we shift an MPO, all we do is subtract a diagonal matrix from
-//    // the botton left corner of the ij-matrix.
-//    // Setup extents and handy objects
-//    auto                                       shape = mpo.dimensions();
-//    std::array<long, 4>                        offset4{shape[0] - 1, 0, 0, 0};
-//    std::array<long, 4>                        extent4{1, 1, shape[2], shape[3]};
-//    std::array<long, 2>                        extent2{shape[2], shape[3]};
-//    MatrixType<Scalar>                         sigma_Id = energy_shift * MatrixType<Scalar>::Identity(extent2[0], extent2[1]);
-//    Eigen::TensorMap<Eigen::Tensor<Scalar, 2>> sigma_Id_map(sigma_Id.data(), sigma_Id.rows(), sigma_Id.cols());
-//    mpo.slice(offset4, extent4).reshape(extent2) -= sigma_Id_map;
-//}
 
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_matrix(const ModelFinite &model, const EdgesFinite &edges) {
@@ -83,8 +65,8 @@ template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonia
 template<typename T>
 MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix(const ModelFinite &model, const EdgesFinite &edges) {
     auto        t_ham = tid::tic_scope("ham²");
-    const auto &mpo2          = model.get_multisite_mpo_squared();
-    const auto &env2          = edges.get_multisite_env_var_blk();
+    const auto &mpo2  = model.get_multisite_mpo_squared();
+    const auto &env2  = edges.get_multisite_env_var_blk();
     tools::log->trace("Contracting multisite hamiltonian");
 
     long dim0 = mpo2.dimension(2);
@@ -103,9 +85,9 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_ma
     if(rows != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian rows (dim0*dim1*dim2) and size: {} != {}", cols, size));
     if(cols != size) throw std::runtime_error(fmt::format("Mismatch in multisite hamiltonian cols (dim3*dim4*dim5) and size: {} != {}", rows, size));
 
-    auto   ham2_map        = Eigen::Map<Eigen::MatrixXcd>(ham2.data(), rows, cols);
+    auto ham2_map = Eigen::Map<Eigen::MatrixXcd>(ham2.data(), rows, cols);
 
-    if constexpr (settings::debug){
+    if constexpr(settings::debug) {
         double non_hermiticity = (ham2_map - ham2_map.adjoint()).cwiseAbs().sum() / static_cast<double>(ham2_map.size());
         double sparcity        = static_cast<double>((ham2_map.array().cwiseAbs2() != 0.0).count()) / static_cast<double>(ham2_map.size());
 

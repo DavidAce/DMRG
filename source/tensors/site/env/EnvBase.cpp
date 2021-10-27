@@ -212,9 +212,11 @@ void EnvBase::assert_unique_id(const EnvBase &env, const MpsSite &mps, const Mpo
     } else {
         msg.emplace_back(fmt::format("Unrecognized tag: [{}]", tag));
     }
-    if(not msg.empty()) throw except::runtime_error("assert_unique_id: {}{}({}): unique id mismatch:\n{}\n"
-                                                    "Hint: remember to rebuild edges after operations that may modify them, "
-                                                    "like 1-site merge, move, normalization, projection, etc\n", tag, side,get_position(), fmt::join(msg, "\n"));
+    if(not msg.empty())
+        throw except::runtime_error("assert_unique_id: {}{}({}): unique id mismatch:\n{}\n"
+                                    "Hint: remember to rebuild edges after operations that may modify them, "
+                                    "like 1-site merge, move, normalization, projection, etc\n",
+                                    tag, side, get_position(), fmt::join(msg, "\n"));
 }
 
 bool EnvBase::is_real() const {

@@ -20,8 +20,8 @@
     #include <mkl_service.h>
 #endif
 #include <config/parse.h>
-#include <debug/stacktrace.h>
 #include <debug/info.h>
+#include <debug/stacktrace.h>
 #include <env/environment.h>
 #include <thread>
 
@@ -37,14 +37,11 @@ void clean_up() {
     H5Eprint(H5E_DEFAULT, stderr);
 }
 
-
-
 /*!
     \brief  Main function. Sets simulation parameters and excecutes the desired algorithms.
     \return an integer 0 upon exit success
 */
 int main(int argc, char *argv[]) {
-
     settings::parse(argc, argv);
 
     tools::log = tools::Logger::setLogger("DMRG++ main", settings::console::loglevel, settings::console::timestamp);
@@ -62,8 +59,6 @@ int main(int argc, char *argv[]) {
     // Make sure to move the file back from temp location
     std::atexit(clean_up);
     std::at_quick_exit(clean_up);
-
-
 
     // Seed with random::device initially (This also takes care of srand used by Eigen)
     // This is to make reproducible simulations

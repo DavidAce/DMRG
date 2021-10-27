@@ -1,8 +1,8 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
-#include <general/eigen_tensor_fwd_decl.h>
 #include <math/svd/settings.h>
+#include <math/tenx/fwd_decl.h>
 #include <optional>
 #include <set>
 #include <string>

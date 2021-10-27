@@ -28,7 +28,7 @@ namespace tools::finite::opt::reports {
         std::string description;
         std::string ritz;
         long        size, idx, nev, ncv;
-        double      energy, eigval, variance, overlap, norm, tol,resid, grad;
+        double      energy, eigval, variance, overlap, norm, tol, resid, grad;
         size_t      iter, counter;
         double      time;
     };

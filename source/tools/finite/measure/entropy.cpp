@@ -12,7 +12,7 @@
 #include <tools/finite/mps.h>
 #include <utility>
 
-namespace settings{
+namespace settings {
     inline constexpr bool debug_numen = false; // Deprecated. Change this in tools/finite/mps/mps.cpp // For number entropy calculation in fLBIT
 }
 
@@ -23,6 +23,7 @@ struct Amplitude {
     Eigen::Tensor<StateFinite::Scalar, 1> ampl;                // Accumulates the MPS tensors
     Amplitude(long state_size, std::bitset<64> bits, std::optional<long> site, Eigen::Tensor<StateFinite::Scalar, 1> ampl)
         : state_size(state_size), bits(bits), site(site), ampl(std::move(ampl)) {}
+
     public:
     template<bool on = settings::debug_numen>
     [[nodiscard]] std::string to_string(const std::bitset<64> &b, long num) const {
@@ -69,7 +70,7 @@ struct Amplitude {
             return {};
     }
 
-    [[nodiscard]] bool contains(const Amplitude & other, long tgt_pos)const{
+    [[nodiscard]] bool contains(const Amplitude &other, long tgt_pos) const {
         // Example. Let this amplitude be a and the other is o.
         // Consider a bitset of 8 bits, and we are checking tgt_pos == 3:
         // Then bits 0,1 and 2 need to be identical
@@ -81,12 +82,11 @@ struct Amplitude {
         // Compare with the ^ operator and check that all are zero with .none()
         //     r = (( a << (8 - tgt_pos) ) ^ (o << (8 - tgt_pos))) = 00000000
         //     return r.none()
-        const auto & a = this->bits;
-        const auto & o = other.bits;
-        const auto pos = static_cast<size_t>(tgt_pos);
-        return (( a << (a.size() - pos) ) ^ (o << (o.size() - pos))).none();
+        const auto &a   = this->bits;
+        const auto &o   = other.bits;
+        const auto  pos = static_cast<size_t>(tgt_pos);
+        return ((a << (a.size() - pos)) ^ (o << (o.size() - pos))).none();
     }
-
 
     void eval_from_A(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &cache) {
         if(not site or site.value() < tgt_pos) {
@@ -250,7 +250,7 @@ std::vector<size_t> generate_amplitude_order(long tgt_pos, const std::vector<Amp
         for(const auto &c : cache) {
             if(not c.site or c.ampl.size() == 0) continue; // This one hasn't been computed.
             // Check if c.bits is in a.bits
-            if(a.contains(c,tgt_pos)) {
+            if(a.contains(c, tgt_pos)) {
                 // Steal the index
                 idx_cache_list.emplace_back(idx);
                 idx_amplt_list.pop_back();
@@ -291,14 +291,14 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     t_figout.toc();
 
     // Create optional slots for each schmidt value
-    auto   t_slots = tid::tic_scope("slots");
-    double cutoff  = 1e-14;
-    auto amplitude_idx = generate_amplitude_order(tgt_pos, amplitudes,cache); // Optimal search order for amplitudes
+    auto   t_slots       = tid::tic_scope("slots");
+    double cutoff        = 1e-14;
+    auto   amplitude_idx = generate_amplitude_order(tgt_pos, amplitudes, cache); // Optimal search order for amplitudes
     for(long alpha = 0; alpha < schmidt_values.size(); alpha++) {
         auto sq = schmidt_values[alpha] * schmidt_values[alpha];
         for(auto &idx : amplitude_idx) {
-            auto & a = amplitudes[idx];
-            auto n = a.bits.count();
+            auto &a = amplitudes[idx];
+            auto  n = a.bits.count();
             a.eval(state, tgt_pos, cache); // Evaluate the amplitudes
             if(a.ampl.size() != schmidt_values.size()) {
                 tools::log->dump_backtrace();

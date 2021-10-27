@@ -97,7 +97,6 @@ inline primme_preset_method MethodAdapter(std::optional<eig::PrimmeMethod> metho
     return primme_preset_method::PRIMME_DEFAULT_MIN_MATVECS;
 }
 
-
 inline primme_projection stringToProj(std::optional<std::string> projstring) {
     if(not projstring.has_value()) return primme_projection::primme_proj_default;
     if(projstring.value() == "primme_proj_RR") return primme_projection::primme_proj_RR;
@@ -120,7 +119,6 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
     return matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
 }
-
 
 template<typename MatrixProductType>
 void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
@@ -207,8 +205,8 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
             *ierr   = 0;
             //            if(*isconv != 0)
             eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
-                           H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
-                           primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
+                            H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
+                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
         }
     }
 }
@@ -248,7 +246,7 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
     auto &config = solver.config;
     auto &result = solver.result;
 
-    double primme_log_time = config.logTime ? config.logTime.value() : std::numeric_limits<double>::quiet_NaN();
+    double primme_log_time     = config.logTime ? config.logTime.value() : std::numeric_limits<double>::quiet_NaN();
     double time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_time_log);
 
     if(time_since_last_log > primme_log_time or *event == primme_event_converged) {
@@ -307,9 +305,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     primme.matrix       = &matrix;
     primme.matrixMatvec = eig::solver::MultAx_wrapper<MatrixProductType>;
 
-    if(matrix.isReadyFactorOp()){
-        primme.matrixMatvec = eig::solver::MultOPv_wrapper<MatrixProductType>;
-    }
+    if(matrix.isReadyFactorOp()) { primme.matrixMatvec = eig::solver::MultOPv_wrapper<MatrixProductType>; }
 
     // Set the function which prints log output
     primme.monitorFun = monitorFun;
@@ -342,22 +338,22 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         case primme_target::primme_largest_abs: {
             // According to the manual, this is required when the target is primme_largest_abs
             config.primme_target_shifts = {0.0};
-            primme.numTargetShifts = 1;
-            primme.targetShifts    = config.primme_target_shifts.data();
+            primme.numTargetShifts      = 1;
+            primme.targetShifts         = config.primme_target_shifts.data();
             break;
         }
         case primme_target::primme_closest_geq:
         case primme_target::primme_closest_leq:
         case primme_target::primme_closest_abs: {
-            if(not config.primme_target_shifts.empty()){
+            if(not config.primme_target_shifts.empty()) {
                 primme.numTargetShifts = static_cast<int>(config.primme_target_shifts.size());
                 primme.targetShifts    = config.primme_target_shifts.data();
-            }else if(config.sigma and not matrix.isReadyShift()) {
+            } else if(config.sigma and not matrix.isReadyShift()) {
                 // We handle shifts by applying them directly on the matrix is possible. Else here:
                 config.primme_target_shifts = {std::real(config.sigma.value())};
-                primme.numTargetShifts = static_cast<int>(config.primme_target_shifts.size());
-                primme.targetShifts    = config.primme_target_shifts.data();
-            }else
+                primme.numTargetShifts      = static_cast<int>(config.primme_target_shifts.size());
+                primme.targetShifts         = config.primme_target_shifts.data();
+            } else
                 throw std::runtime_error("primme_target:primme_closest_???: no target shift given");
 
             break;

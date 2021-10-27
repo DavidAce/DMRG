@@ -46,17 +46,17 @@ template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
     auto t_svd = tid::tic_scope("svd");
-    switch(svd_lib){
-        case SVDLib::lapacke:{
+    switch(svd_lib) {
+        case SVDLib::lapacke: {
             try {
                 return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
                 svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
                 return do_svd_eigen(mat_ptr, rows, cols, rank_max);
             }
-         break;
+            break;
         }
-        case SVDLib::eigen:{
+        case SVDLib::eigen: {
             try {
                 return do_svd_eigen(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
@@ -64,7 +64,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
             }
             break;
-        }case SVDLib::rsvd:{
+        }
+        case SVDLib::rsvd: {
             try {
                 return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
@@ -77,7 +78,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     }
     throw std::logic_error("Unrecognized svd library");
 }
-
 
 template<typename Scalar>
 void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec) {
@@ -101,23 +101,18 @@ void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) {
         for(long i = 0; i < V.size(); i++) fmt::print("{1:.{0}f}\n", dec, V[i]);
 }
 
-
 using cplx = std::complex<double>;
 using real = double;
-
 
 template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, long dec);
 template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, long dec);
 template void svd::solver::print_vector<real>(const real *vec_ptr, long size, long dec);
 template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, long dec);
 
-
-
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
 template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
     svd::solver::do_svd_ptr(const double *, long, long, std::optional<long>);
-
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'

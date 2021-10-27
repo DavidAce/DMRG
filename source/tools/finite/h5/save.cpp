@@ -121,7 +121,8 @@ namespace tools::finite::h5 {
         save_log[table_path] = save_point;
     }
 
-    void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state, const AlgorithmStatus &status) {
+    void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                               const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::pedant);
 
@@ -129,20 +130,22 @@ namespace tools::finite::h5 {
     }
 
     void save::truncation_errors(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const AlgorithmStatus &status) {
+                                 const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope("truncation_errors", tid::level::pedant);
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::truncation_errors(state), "truncation_errors", "Truncation errors", "L_");
     }
 
     void save::entropies_neumann(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const AlgorithmStatus &status) {
+                                 const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::pedant);
-        save_data_as_table(h5file, table_prefix, status, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
+        save_data_as_table(h5file, table_prefix, status, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies",
+                           "Entanglement Entropies", "L_");
     }
 
-    void save::entropies_renyi(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state, const AlgorithmStatus &status) {
+    void save::entropies_renyi(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                               const AlgorithmStatus &status) {
         if(storage_level < StorageLevel::NORMAL) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::pedant);
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
@@ -152,7 +155,7 @@ namespace tools::finite::h5 {
     }
 
     void save::entropies_number(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const AlgorithmStatus &status) {
+                                const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         if(status.algo_type != AlgorithmType::fLBIT) return;
 
@@ -186,7 +189,6 @@ namespace tools::finite::h5 {
             h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetname_schmidt);
             save_log[dsetname_schmidt] = save_point;
         }
-
 
         if(save_log[mps_prefix] != save_point) {
             tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
@@ -410,7 +412,7 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::PROJ_STATE: {
-                if(storage_level != StorageLevel::NONE){
+                if(storage_level != StorageLevel::NONE) {
                     auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
                     if(std::abs(abs_spin_component - 1.0) > 1e-6) {
                         auto state_projected =

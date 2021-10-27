@@ -10,7 +10,6 @@
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
 
-
 int tools::finite::mps::init::get_sign(std::string_view sector) {
     if(sector.at(0) == '+')
         return 1;
@@ -127,7 +126,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     auto axis = get_axis(sector);
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
     std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(get_spinor(axis, +1).normalized(), 2, 1, 1),
-                                                       tenx::TensorCast(get_spinor(axis, -1).normalized(), 2, 1, 1)};
+                                                     tenx::TensorCast(get_spinor(axis, -1).normalized(), 2, 1, 1)};
     tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axis, axis);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {

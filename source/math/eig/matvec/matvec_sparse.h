@@ -40,15 +40,15 @@ class MatVecSparse {
     void              FactorOP();                                   //  Factors (A-sigma*I) into PLU
     void              MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr); //   Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void              MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
-    void              MultAx(Scalar *x_in_ptr, Scalar *x_out_ptr);  //   Computes the matrix-vector multiplication x_out <- A*x_in.
+    void              MultAx(Scalar *x_in_ptr, Scalar *x_out_ptr); //   Computes the matrix-vector multiplication x_out <- A*x_in.
     void              MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
     // Various utility functions
-    int                            counter = 0;
-    void                           print() const;
-    void                           set_shift(std::complex<double> sigma_);
-    void                           set_mode(const eig::Form form_);
-    void                           set_side(const eig::Side side_);
+    int                     counter = 0;
+    void                    print() const;
+    void                    set_shift(std::complex<double> sigma_);
+    void                    set_mode(const eig::Form form_);
+    void                    set_side(const eig::Side side_);
     [[nodiscard]] eig::Form get_form() const;
     [[nodiscard]] eig::Side get_side() const;
     [[nodiscard]] eig::Type get_type() const;
