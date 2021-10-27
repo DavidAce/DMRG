@@ -1,5 +1,5 @@
 #pragma once
-#include <exception>
+#include <stdexcept>
 #include <string_view>
 
 namespace tid {
