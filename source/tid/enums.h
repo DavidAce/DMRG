@@ -1,4 +1,5 @@
 #pragma once
+#include <exception>
 #include <string_view>
 
 namespace tid {
@@ -43,5 +44,5 @@ constexpr auto sv2enum<tid::level>(std::string_view item) {
     if(item == "detail") return tid::level::detail;
     if(item == "pedant") return tid::level::pedant;
     if(item == "parent") return tid::level::parent;
-    throw std::runtime_error("Given item is not a tid::level enum: " + std::string(item));
+    throw std::runtime_error("Given item is not a tid::level enum");
 }
