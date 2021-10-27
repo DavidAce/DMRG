@@ -93,9 +93,10 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
             CHECK
             QUIET)
 
+    # Backward for printing pretty stack traces
+    install_package(Backward)
 
     # Configure Eigen
-
     if(TARGET Eigen3::Eigen AND DMRG_ENABLE_THREADS)
         target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_THREADS)
     endif()

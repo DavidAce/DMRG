@@ -42,3 +42,7 @@ if(TARGET unwind::unwind)
     target_link_libraries(deps INTERFACE unwind::unwind)
     target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
 endif()
+
+if(TARGET Backward::Backward)
+    target_link_libraries(deps INTERFACE Backward::Backward)
+endif()

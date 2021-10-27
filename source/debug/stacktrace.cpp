@@ -1,16 +1,15 @@
 #include "stacktrace.h"
+#include <climits>
 #include <csignal>
-#include <cxxabi.h>
-#include <stdexcept>
 #include <cstdio>
 #include <cstdlib>
-#include <climits>
-
-
+#include <cxxabi.h>
+#include <stdexcept>
 
 void debug::signal_callback_handler(int status) {
     switch(status) {
         case SIGTERM: {
+            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGTERM: %d\n", status);
             break;
         }
@@ -24,7 +23,6 @@ void debug::signal_callback_handler(int status) {
         }
         case SIGKILL: {
             std::fprintf(stderr, "Exit SIGKILL: %d\n", status);
-//            std::quick_exit(status); // Does not call destructors
             break;
         }
         case SIGINT: {
@@ -40,25 +38,23 @@ void debug::signal_callback_handler(int status) {
             break;
         }
         case SIGABRT: {
+            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGABRT: %d\n", status);
             break;
         }
         case SIGILL: {
             debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGILL: %d\n", status);
-//            std::quick_exit(status); // Does not call destructors
             break;
         }
         case SIGFPE: {
             debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGFPE: %d\n", status);
-//            std::quick_exit(status); // Does not call destructors
             break;
         }
         case SIGSEGV: {
             debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGSEGV: %d\n", status);
-//            std::quick_exit(status); // Does not call destructors
             break;
         }
         default: {
@@ -70,7 +66,6 @@ void debug::signal_callback_handler(int status) {
 
     std::exit(status);
 }
-
 
 void debug::register_callbacks() {
     signal(SIGTERM, signal_callback_handler);
@@ -117,7 +112,18 @@ void debug::register_callbacks() {
     signal(137, signal_callback_handler);       //   137 /* LLDB?  */
 }
 
-#if __has_include(<libunwind.h>) && defined(DMRG_HAS_UNWIND)
+#if __has_include(<backward.hpp>)
+    #include <backward.hpp>
+void debug::print_stack_trace() {
+    backward::StackTrace st;
+    st.load_here(32);
+    // Skip this scope (1) , as well as the signal_callback_handler scope (2)
+    st.skip_n_firsts(2);
+    backward::Printer p;
+    p.print(st);
+}
+
+#elif __has_include(<libunwind.h>) && defined(DMRG_HAS_UNWIND)
 
     #define UNW_LOCAL_ONLY
     #include <array>
@@ -210,8 +216,3 @@ void debug::print_stack_trace() {
 #else
 void debug::print_stack_trace() {}
 #endif
-
-void debug::throw_stack_trace(const std::string & msg) {
-    print_stack_trace();
-    throw std::runtime_error(msg);
-}
