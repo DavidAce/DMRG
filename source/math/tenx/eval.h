@@ -12,7 +12,7 @@ namespace tenx {
         public:
         using Scalar                        = typename Eigen::internal::remove_const<typename decltype(m_eval)::Scalar>::type;
         using DimType                       = typename decltype(m_eval)::Dimensions::Base;
-        static constexpr long NumDimensions = DimType{}.size();
+        static constexpr auto NumDimensions = DimType{}.size();
 
         selfCleaningEvaluator(const Evaluator &eval) : m_eval(eval) {}
         template<int AccessLevel>
