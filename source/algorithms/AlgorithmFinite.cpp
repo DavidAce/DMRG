@@ -354,7 +354,8 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
     bool project_on_saturation = settings::strategy::project_on_saturation > 0 and status.algorithm_saturated_for > 0 and
                                  num::mod(status.algorithm_saturated_for - 1, settings::strategy::project_on_saturation) == 0;
-    bool project_on_every_iter   = settings::strategy::project_on_every_iter > 0 and num::mod(status.iter, settings::strategy::project_on_every_iter) == 0;
+    bool project_on_every_iter =
+        settings::strategy::project_on_every_iter > 0 and status.iter > 0 and num::mod(status.iter, settings::strategy::project_on_every_iter) == 0;
     bool project_to_given_sector = target_sector.has_value();
 
     if(project_on_every_iter or project_on_saturation or project_to_given_sector) {
