@@ -276,9 +276,9 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
         if(status.sub_expansion_alpha < old_expansion_alpha) {
             status.sub_expansion_step     = status.step;
             status.sub_expansion_variance = status.energy_variance_lowest;
-            tools::log->debug("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
-        } else {
-            tools::log->debug("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+            tools::log->trace("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+        } else if(status.sub_expansion_alpha > old_expansion_alpha) {
+            tools::log->trace("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
         }
     }
 }
@@ -689,6 +689,7 @@ void AlgorithmFinite::print_status_update() {
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
     report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), variance, status.energy_variance_lowest);
     report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error());
+    if(settings::strategy::multisite_mps_size_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.sub_expansion_alpha);
     report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::chi_lim_max(status.algo_type), status.chi_lim);
     size_t comma_width       = settings::strategy::multisite_mps_size_max <= 2 ? 0 : 2; // ", "
     size_t bracket_width     = 2;                                                       // The {} edges
