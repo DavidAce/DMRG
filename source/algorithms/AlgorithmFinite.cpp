@@ -260,8 +260,8 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
 
         // Update alpha
         double old_expansion_alpha = status.sub_expansion_alpha;
-        double factor_up           = std::pow(1e1, 1.0 / static_cast<double>(settings::model::model_size));
-        double factor_dn           = std::pow(1e2, 1.0 / static_cast<double>(settings::model::model_size));
+        double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
+        double factor_dn           = std::pow(1e-2, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
 
         bool var_recently_improved = status.energy_variance_lowest / status.sub_expansion_variance < 1e-1;
         if(var_recently_improved) factor_dn *= 0.001;
