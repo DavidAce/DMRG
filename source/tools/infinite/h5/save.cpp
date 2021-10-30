@@ -20,7 +20,7 @@ namespace tools::infinite::h5::save {
                 for(auto &link : links) {
                     if(h5file.linkExists(link)) {
                         auto step      = h5file.readAttribute<uint64_t>("step", link);
-                        auto iter      = h5file.readAttribute<uint64_t>("iteration", link);
+                        auto iter      = h5file.readAttribute<uint64_t>("iter", link);
                         save_log[link] = std::make_pair(iter, step);
                     }
                 }
@@ -92,7 +92,7 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
             h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
             save_log[dsetName] = save_point;
         }
-        h5file.writeAttribute(status.iter, "iteration", mps_prefix);
+        h5file.writeAttribute(status.iter, "iter", mps_prefix);
         h5file.writeAttribute(status.step, "step", mps_prefix);
     }
     /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */

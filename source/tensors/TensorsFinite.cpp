@@ -62,8 +62,8 @@ void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, si
 
 void TensorsFinite::randomize_model() {
     model->randomize();
-    model->build_mpo();
-    model->build_mpo_squared();
+    rebuild_mpo();
+    rebuild_mpo_squared();
 }
 
 void TensorsFinite::randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield,
@@ -252,6 +252,8 @@ void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_si
         }
     }
 }
+
+void TensorsFinite::rebuild_mpo() { model->build_mpo(); }
 
 void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optional<svd::settings> svd_settings) {
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain

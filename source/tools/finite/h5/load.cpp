@@ -31,12 +31,10 @@ namespace tools::finite::h5 {
             tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
 
             tools::common::h5::load::status(h5file, state_prefix, status);
-            load::model(h5file, state_prefix, *tensors.model);
-            load::state(h5file, state_prefix, *tensors.state, status);
+            tools::finite::h5::load::model(h5file, state_prefix, *tensors.model);
+            tools::finite::h5::load::state(h5file, state_prefix, *tensors.state, status);
             tools::common::h5::load::timer(h5file, state_prefix, status);
-            tensors.rebuild_mpo_squared();
-            tensors.rebuild_edges();
-            load::validate(h5file, state_prefix, tensors, algo_type);
+            tools::finite::h5::load::validate(h5file, state_prefix, tensors, algo_type);
         } catch(const std::exception &ex) { throw except::load_error(fmt::format("failed to load from state prefix [{}]: {}", state_prefix, ex.what())); }
     }
 
@@ -132,13 +130,18 @@ namespace tools::finite::h5 {
 
     void load::validate(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmType algo_type) {
         auto t_val             = tid::tic_scope("validate");
-        auto measurements_path = fmt::format("{}/measurements", state_prefix);
+        auto table_prefix      = h5file.readAttribute<std::vector<std::string>>(state_prefix, "common/table_prfxs").front();
+        auto measurements_path = fmt::format("{}/measurements", table_prefix);
+        tensors.rebuild_mpo();
+        tensors.rebuild_mpo_squared();
+        tensors.activate_sites({tensors.get_position<size_t>()});
+        tensors.rebuild_edges();
+
         if(algo_type == AlgorithmType::fLBIT) {
             // In this case we have loaded state_real from file.
             // However, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian
             // makes no sense.
             // Therefore, we have to validate using entropy, or other state-specific measurements that are independent of the hamlitonian.
-            tensors.activate_sites({tensors.get_position<size_t>()});
             auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
             tools::log->debug("Validating resumed state: [{}]", state_prefix);
             tools::log->debug("State labels: {}", tensors.state->get_labels());
@@ -148,7 +151,6 @@ namespace tools::finite::h5 {
             compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy_midchain, 1e-8,
                     "Entanglement entropy");
         } else {
-            tensors.activate_sites({tensors.get_position<size_t>()});
             auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
             tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
             tools::log->debug("State labels: {}", tensors.state->get_labels());
@@ -159,7 +161,9 @@ namespace tools::finite::h5 {
 
             if(settings::precision::use_reduced_mpo_energy) {
                 tensors.reduce_mpo_energy();
+                tensors.rebuild_mpo();
                 tensors.rebuild_mpo_squared();
+                tensors.rebuild_edges();
                 tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
                 tools::log->debug("State labels: {}", tensors.state->get_labels());
                 tensors.clear_measurements();

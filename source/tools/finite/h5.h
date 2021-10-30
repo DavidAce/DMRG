@@ -13,6 +13,8 @@ namespace h5pp {
     class File;
 }
 
+struct StorageMeta;
+
 namespace tools::finite::h5 {
     struct SavePack {
         h5pp::File                                                  &file;

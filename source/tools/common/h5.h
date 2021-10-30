@@ -33,7 +33,7 @@ namespace tools::common::h5 {
         extern void timer    (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
         extern void meta (h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason,const ModelType & model_type,
                           size_t model_size, std::string_view  state_name, std::string_view state_prefix, std::string_view model_prefix,
-                               const AlgorithmStatus &status);
+                          const std::vector<std::string> & table_prfxs, const AlgorithmStatus &status);
     }
     namespace load {
         extern void status   (const h5pp::File & h5file, std::string_view  state_prefix, AlgorithmStatus & status);

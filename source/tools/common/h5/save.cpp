@@ -1,4 +1,5 @@
 
+#include "storagemeta.h"
 #include <algorithms/AlgorithmStatus.h>
 #include <config/enums.h>
 #include <config/settings.h>
@@ -19,7 +20,7 @@ namespace tools::common::h5 {
             try {
                 if(h5file.linkExists(link)) {
                     auto step                   = h5file.readAttribute<uint64_t>("step", link);
-                    auto iter                   = h5file.readAttribute<uint64_t>("iteration", link);
+                    auto iter                   = h5file.readAttribute<uint64_t>("iter", link);
                     save_log[std::string(link)] = std::make_pair(iter, step);
                 }
             } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
@@ -65,7 +66,7 @@ namespace tools::common::h5 {
             h5file.writeTableRecords(status, table_path, tableInfo.numRecords.value() - 1);
         } else
             h5file.appendTableRecords(status, table_path);
-        h5file.writeAttribute(status.iter, "iteration", table_path);
+        h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
 
         save_log[table_path] = save_point;
@@ -91,13 +92,14 @@ namespace tools::common::h5 {
         mem_usage_entry.hwm  = debug::mem_hwm_in_mb();
         mem_usage_entry.vm   = debug::mem_vm_in_mb();
         h5file.appendTableRecords(mem_usage_entry, table_path);
-        h5file.writeAttribute(status.iter, "iteration", table_path);
+        h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
         save_log[table_path] = save_point;
     }
 
     void save::meta(h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason, const ModelType &model_type, size_t model_size,
-                    std::string_view state_name, std::string_view state_prefix, std::string_view model_prefix, const AlgorithmStatus &status) {
+                    std::string_view state_name, std::string_view state_prefix, std::string_view model_prefix, const std::vector<std::string> &table_prfxs,
+                    const AlgorithmStatus &status) {
         // Write metadata into /common so that we can find state paths later.
         // Under /common we have the following dummy datasets defining attributes which map state_prefix to useful information:
         //
@@ -151,6 +153,8 @@ namespace tools::common::h5 {
         save::attr(h5file, status.iter, state_prefix, "common/iteration", "Maps state_prefix -> iteration");
         save::attr(h5file, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
         save::attr(h5file, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
+        if(not table_prfxs.empty()) save::attr(h5file, table_prfxs, state_prefix, "common/table_prfxs", "Maps state_prefix -> one or more table prefixes");
+
         save_log[std::string(state_prefix)] = save_point;
     }
 
@@ -174,6 +178,8 @@ namespace tools::common::h5 {
             auto dsetdata = h5pp_ur::item{t->get_time(), t->get_time_avg(), t->get_tic_count()};
             h5file.writeDataset(dsetdata, dsetname, h5pp_ur::h5_type);
         }
+        h5file.writeAttribute(status.iter, "iter", timer_prefix);
+        h5file.writeAttribute(status.step, "step", timer_prefix);
         h5file.setKeepFileClosed();
         save_log[std::string(timer_prefix)] = save_point;
     }

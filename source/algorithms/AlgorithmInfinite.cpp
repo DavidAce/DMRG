@@ -333,7 +333,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     tools::infinite::h5::save::state(*h5file, state_prefix, storage_level, *tensors.state, status);
     tools::infinite::h5::save::edges(*h5file, state_prefix, storage_level, *tensors.edges);
     tools::common::h5::save::meta(*h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, tensors.state->get_name(),
-                                  state_prefix, model_prefix, status);
+                                  state_prefix, model_prefix, table_prefxs, status);
     // Some storage reasons should not go further. Like projection.
     if(storage_reason == StorageReason::PROJ_STATE) return;
 

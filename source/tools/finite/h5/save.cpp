@@ -35,7 +35,7 @@ namespace tools::finite::h5 {
                 for(auto &link : links) {
                     if(h5file.linkExists(link)) {
                         auto step                   = h5file.readAttribute<uint64_t>("step", link);
-                        auto iter                   = h5file.readAttribute<uint64_t>("iteration", link);
+                        auto iter                   = h5file.readAttribute<uint64_t>("iter", link);
                         save_log[std::string(link)] = std::make_pair(iter, step);
                     }
                 }
@@ -95,7 +95,7 @@ namespace tools::finite::h5 {
         measurement_entry.physical_time    = status.phys_time;
 
         h5file.appendTableRecords(measurement_entry, table_path);
-        h5file.writeAttribute(status.iter, "iteration", table_path);
+        h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
         save_log[table_path] = save_point;
     }
@@ -118,6 +118,8 @@ namespace tools::finite::h5 {
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, payload.data(), payload.size());
         h5file.appendTableRecords(entry, table_path);
+        h5file.writeAttribute(status.iter, "iter", table_path);
+        h5file.writeAttribute(status.step, "step", table_path);
         save_log[table_path] = save_point;
     }
 
@@ -183,7 +185,7 @@ namespace tools::finite::h5 {
             h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
             h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
             h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
-            h5file.writeAttribute(status.iter, "iteration", dsetname_schmidt);
+            h5file.writeAttribute(status.iter, "iter", dsetname_schmidt);
             h5file.writeAttribute(status.step, "step", dsetname_schmidt);
             h5file.writeAttribute(status.chi_lim, "chi_lim", dsetname_schmidt);
             h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetname_schmidt);
@@ -216,7 +218,7 @@ namespace tools::finite::h5 {
             h5file.writeAttribute(state.get_position<long>(), "position", mps_prefix);
             h5file.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
             h5file.writeAttribute(state.get_labels(), "labels", mps_prefix);
-            h5file.writeAttribute(status.iter, "iteration", mps_prefix);
+            h5file.writeAttribute(status.iter, "iter", mps_prefix);
             h5file.writeAttribute(status.step, "step", mps_prefix);
         }
 
@@ -302,7 +304,7 @@ namespace tools::finite::h5 {
         if(save_log[data_path] != save_point or status.step == 0) {
             auto layout = static_cast<H5D_layout_t>(decide_layout(data_path));
             h5file.writeDataset(data, data_path, layout);
-            h5file.writeAttribute(status.iter, "iteration", data_path);
+            h5file.writeAttribute(status.iter, "iter", data_path);
             h5file.writeAttribute(status.step, "step", data_path);
             save_log[data_path] = save_point;
             tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
@@ -449,7 +451,7 @@ namespace tools::finite::h5 {
         }
 
         tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
-                                      state_prefix, model_prefix, status);
+                                      state_prefix, model_prefix, table_prefxs, status);
 
         // The main results have now been written. Next we append data to tables
         for(const auto &table_prefix : table_prefxs) {
