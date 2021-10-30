@@ -77,7 +77,6 @@ void MatVecMps<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *env
 template<typename T>
 void MatVecMps<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
     auto token = t_multAx->tic_token();
-#pragma omp parallel for schedule(dynamic)
     for(int i = 0; i < *blockSize; i++) {
         T                                         *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
         T                                         *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
