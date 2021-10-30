@@ -56,8 +56,8 @@ class MatVecSparse {
     [[nodiscard]] bool isReadyFactorOp() const { return readyFactorOp; }
     [[nodiscard]] bool isReadyShift() const { return readyShift; }
 
-    // Profiling
-    void                     init_profiling();
+    // Timers
+    void                     init_timers();
     std::unique_ptr<tid::ur> t_factorOP;
     std::unique_ptr<tid::ur> t_multOPv;
     std::unique_ptr<tid::ur> t_multAx;

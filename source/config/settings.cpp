@@ -88,7 +88,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
 
     dmrg_config.load_parameter("storage::output_filepath"                      , storage::output_filepath);
-    dmrg_config.load_parameter("storage::save_profiling"                       , storage::save_profiling);
+    dmrg_config.load_parameter("storage::save_timers"                          , storage::save_timers);
     dmrg_config.load_parameter("storage::savepoint_keep_newest_only"           , storage::savepoint_keep_newest_only);
     dmrg_config.load_parameter("storage::savepoint_frequency"                  , storage::savepoint_frequency);
     dmrg_config.load_parameter("storage::checkpoint_keep_newest_only"          , storage::checkpoint_keep_newest_only);
@@ -260,10 +260,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("itebd::chi_lim_init"        , itebd::chi_lim_init);
     dmrg_config.load_parameter("itebd::print_freq"          , itebd::print_freq);
 
-    //Profiling
-    dmrg_config.load_parameter("profiling::on"        , profiling::on        );
-    dmrg_config.load_parameter("profiling::precision" , profiling::precision );
-    dmrg_config.load_parameter("profiling::level"     , profiling::level     );
+    //Timers
+    dmrg_config.load_parameter("timer::on"         , timer::on        );
+    dmrg_config.load_parameter("timer::precision"  , timer::precision );
+    dmrg_config.load_parameter("timer::level"      , timer::level     );
     //Console settings
     dmrg_config.load_parameter("console::loglevel"    , console::loglevel);
     dmrg_config.load_parameter("console::logh5pp"     , console::logh5pp);

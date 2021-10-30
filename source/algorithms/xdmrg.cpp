@@ -84,7 +84,7 @@ void xdmrg::resume() {
     auto                   excited_states = excited_state_number + 1;
     auto                   missing_states = std::max(0ul, settings::xdmrg::max_states - excited_states);
     for(size_t new_state_num = 0; new_state_num < missing_states; new_state_num++) {
-        task_list.emplace_back(xdmrg_task::PROF_RESET);
+        task_list.emplace_back(xdmrg_task::TIMER_RESET);
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
@@ -111,7 +111,7 @@ void xdmrg::run_default_task_list() {
 
     // Insert requested number of excited states
     for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
-        default_task_list.emplace_back(xdmrg_task::PROF_RESET);
+        default_task_list.emplace_back(xdmrg_task::TIMER_RESET);
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
@@ -156,9 +156,9 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
                 break;
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
-            case xdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(); break;
+            case xdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
-            case xdmrg_task::PROF_RESET: tid::reset("xDMRG"); break;
+            case xdmrg_task::TIMER_RESET: tid::reset("xDMRG"); break;
         }
         task_list.pop_front();
     }

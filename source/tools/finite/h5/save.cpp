@@ -317,7 +317,7 @@ namespace tools::finite::h5 {
         // Setup this save
         state_prefix  = fmt::format("{}/{}", status.algo_type_sv(), state_name); // May get modified
         model_prefix  = fmt::format("{}/model", status.algo_type_sv());
-        timer_prefix  = fmt::format("{}/profiling", state_prefix);
+        timer_prefix  = fmt::format("{}/timers", state_prefix);
         table_prefxs  = {fmt::format("{}/tables", state_prefix)}; // Common tables
         storage_level = StorageLevel::NONE;
 

@@ -78,9 +78,9 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
                 break;
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
-            case fdmrg_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(); break;
+            case fdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case fdmrg_task::POST_DEFAULT: run_postprocessing(); break;
-            case fdmrg_task::PROF_RESET: tid::reset("fDMRG"); break;
+            case fdmrg_task::TIMER_RESET: tid::reset("fDMRG"); break;
         }
         task_list.pop_front();
     }

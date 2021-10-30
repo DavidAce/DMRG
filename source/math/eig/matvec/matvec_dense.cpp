@@ -42,7 +42,7 @@ MatVecDense<Scalar>::MatVecDense(const Scalar *const A_, const long L_, const bo
         A_ptr = A_stl.data();
     }
     dense_lu::init<Scalar>();
-    init_profiling();
+    init_timers();
 }
 
 template<typename Scalar>
@@ -254,7 +254,7 @@ eig::Type MatVecDense<Scalar>::get_type() const {
 }
 
 template<typename Scalar>
-void MatVecDense<Scalar>::init_profiling() {
+void MatVecDense<Scalar>::init_timers() {
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");

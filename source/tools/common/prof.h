@@ -1,4 +1,4 @@
 #pragma once
-namespace tools::common::profile {
-    extern void print_profiling();
+namespace tools::common::timer {
+    extern void print_timers();
 }

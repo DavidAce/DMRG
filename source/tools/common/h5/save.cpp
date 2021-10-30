@@ -106,6 +106,8 @@ namespace tools::common::h5 {
         // -- storage_reason | state_prefix -> storage_reason
         // -- state_root     | state_prefix -> state_root
         // -- hamiltonian    | state_prefix -> path to hamiltonian table
+        // -- table_prefix   | state_prefix -> path to tables. There can be multiple
+        // -- timer_prefix   | state_prefix -> path to timer data
         // -- mps_prefix     | state_prefix -> mps_prefix
         // -- mpo_prefix     | state_prefix -> mpo_prefix
         // -- model_type     | state_prefix -> model_type
@@ -129,6 +131,7 @@ namespace tools::common::h5 {
         auto model_name_sv     = enum2sv(model_type);
         auto state_root        = fmt::format("{}/{}", status.algo_type_sv(), state_name);
         auto hamiltonian       = fmt::format("{}/hamiltonian", model_prefix);
+        auto timer_prefix      = fmt::format("{}/timer", state_root);
         auto mpo_prefix        = fmt::format("{}/mpo", model_prefix);
         auto mps_prefix        = fmt::format("{}/mps", state_prefix);
 
@@ -137,7 +140,8 @@ namespace tools::common::h5 {
         save::attr(h5file, storage_reason_sv, state_prefix, "common/storage_reason", "Maps state_prefix -> storage_reason");
         save::attr(h5file, state_root, state_prefix, "common/state_root", "Maps state_prefix -> state_root");
         save::attr(h5file, model_prefix, state_prefix, "common/model_prefix", "Maps state_prefix -> model_prefix");
-        save::attr(h5file, hamiltonian, state_prefix, "common/hamiltonian", "Maps state_prefix -> hamiltonian");
+        save::attr(h5file, hamiltonian, state_prefix, "common/hamiltonian", "Maps state_prefix -> hamiltonian table");
+        save::attr(h5file, timer_prefix, state_prefix, "common/timer", "Maps state_prefix -> timer group");
         save::attr(h5file, mpo_prefix, state_prefix, "common/mpo_prefix", "Maps state_prefix -> mpo_prefix");
         save::attr(h5file, mps_prefix, state_prefix, "common/mps_prefix", "Maps state_prefix -> mps_prefix");
         save::attr(h5file, model_name_sv, state_prefix, "common/model_type", "Maps state_prefix -> model_type");
@@ -151,8 +155,8 @@ namespace tools::common::h5 {
     }
 
     void save::timer(h5pp::File &h5file, std::string_view timer_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
-        if(not settings::profiling::on) return;
-        if(not settings::storage::save_profiling) return;
+        if(not settings::timer::on) return;
+        if(not settings::storage::save_timers) return;
         if(storage_level == StorageLevel::NONE) return;
         // Check if the current entry has already been appended
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
@@ -160,7 +164,7 @@ namespace tools::common::h5 {
         auto save_point = std::make_pair(status.iter, status.step);
         if(save_log[std::string(timer_prefix)] == save_point) return;
 
-        tools::log->trace("Appending profiling to: {}", timer_prefix);
+        tools::log->trace("Writing timer data to: {}", timer_prefix);
         auto t_prof = tid::tic_token("prof", tid::level::pedant);
 
         h5pp_ur::register_table_type();

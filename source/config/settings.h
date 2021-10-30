@@ -55,7 +55,7 @@ namespace settings {
      *
      *  enum StorageLevel:
      *       - `NONE`:   no data is saved at all
-     *       - `LIGHT`:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and profiling (if save_timer == true)
+     *       - `LIGHT`:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and timers (if save_timers == true)
      *       - `NORMAL`: Same as `LIGHT` + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (lambda-matrices), and model Hamiltonian parameters
      *       - `FULL`:   Same as `NORMAL` + MPS (Gamma + Lambda matrices) + MPO at each site.
      *
@@ -68,7 +68,7 @@ namespace settings {
      */
     namespace storage {
         inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
-        inline bool                save_profiling                  = true;                         /*!< Whether to save profiling information to file */
+        inline bool                save_timers                     = true;                         /*!< Whether to save timer information to file */
         inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but chi-update savepoints can still happen */
         inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
@@ -97,9 +97,9 @@ namespace settings {
     }
 
 
-    /*!  \namespace settings::profiling Settings for performance profiling */
-    namespace profiling {
-        inline bool         on        = false;                         /*!< If true, turns on profiling and timings will be shown on console. */
+    /*!  \namespace settings::timer Settings for performance profiling */
+    namespace timer {
+        inline bool         on        = false;                         /*!< If true, turns on timers. These will be shown on console. */
         inline tid::level   level     = tid::normal;                   /*!< How much detail to print on exit [normal | detail | pedant]  */
         inline size_t       precision = 5;                             /*!< Sets precision (number of decimals) of time storage. */
     }

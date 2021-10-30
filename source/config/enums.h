@@ -78,9 +78,9 @@ enum class fdmrg_task {
     FIND_HIGHEST_STATE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
-    POST_PRINT_PROFILING,
+    POST_PRINT_TIMERS,
     POST_DEFAULT,
-    PROF_RESET,
+    TIMER_RESET,
 };
 
 enum class flbit_task {
@@ -99,9 +99,9 @@ enum class flbit_task {
     TIME_EVOLVE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
-    POST_PRINT_PROFILING,
+    POST_PRINT_TIMERS,
     POST_DEFAULT,
-    PROF_RESET,
+    TIMER_RESET,
 };
 
 enum class xdmrg_task {
@@ -124,9 +124,9 @@ enum class xdmrg_task {
     FIND_EXCITED_STATE,
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
-    POST_PRINT_PROFILING,
+    POST_PRINT_TIMERS,
     POST_DEFAULT,
-    PROF_RESET,
+    TIMER_RESET,
 };
 
 template<typename T, bool B = std::is_enum<T>::value>
@@ -293,7 +293,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == fdmrg_task::POST_WRITE_RESULT)                       return "POST_WRITE_RESULT";
         if(item == fdmrg_task::POST_PRINT_RESULT)                       return "POST_PRINT_RESULT";
         if(item == fdmrg_task::POST_DEFAULT)                            return "POST_DEFAULT";
-        if(item == fdmrg_task::PROF_RESET)                              return "PROF_RESET";
+        if(item == fdmrg_task::TIMER_RESET)                             return "TIMER_RESET";
 
     }
     if constexpr(std::is_same_v<T,flbit_task>){
@@ -312,9 +312,9 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == flbit_task::TIME_EVOLVE)                           return "TIME_EVOLVE";
         if(item == flbit_task::POST_WRITE_RESULT)                     return "POST_WRITE_RESULT";
         if(item == flbit_task::POST_PRINT_RESULT)                     return "POST_PRINT_RESULT";
-        if(item == flbit_task::POST_PRINT_PROFILING)                  return "POST_PRINT_PROFILING";
+        if(item == flbit_task::POST_PRINT_TIMERS)                     return "POST_PRINT_TIMERS";
         if(item == flbit_task::POST_DEFAULT)                          return "POST_DEFAULT";
-        if(item == flbit_task::PROF_RESET)                            return "PROF_RESET";
+        if(item == flbit_task::TIMER_RESET)                           return "TIMER_RESET";
     }
     if constexpr(std::is_same_v<T,xdmrg_task>){
         if(item == xdmrg_task::INIT_RANDOMIZE_MODEL)                   return "INIT_RANDOMIZE_MODEL";
@@ -337,7 +337,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == xdmrg_task::POST_WRITE_RESULT)                      return "POST_WRITE_RESULT";
         if(item == xdmrg_task::POST_PRINT_RESULT)                      return "POST_PRINT_RESULT";
         if(item == xdmrg_task::POST_DEFAULT)                           return "POST_DEFAULT";
-        if(item == xdmrg_task::PROF_RESET)                             return "PROF_RESET";
+        if(item == xdmrg_task::TIMER_RESET)                            return "TIMER_RESET";
     }
     if constexpr(std::is_same_v<T,CopyPolicy>){
         if(item == CopyPolicy::FORCE)                                  return "FORCE";
@@ -579,7 +579,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "POST_WRITE_RESULT")                     return fdmrg_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return fdmrg_task::POST_PRINT_RESULT;
         if(item == "POST_DEFAULT")                          return fdmrg_task::POST_DEFAULT;
-        if(item == "PROF_RESET")                            return fdmrg_task::PROF_RESET;
+        if(item == "TIMER_RESET")                           return fdmrg_task::TIMER_RESET;
     }
 
     if constexpr(std::is_same_v<T,flbit_task>){
@@ -598,9 +598,9 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "TIME_EVOLVE")                           return flbit_task::TIME_EVOLVE;
         if(item == "POST_WRITE_RESULT")                     return flbit_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return flbit_task::POST_PRINT_RESULT;
-        if(item == "POST_PRINT_PROFILING")                  return flbit_task::POST_PRINT_PROFILING;
+        if(item == "POST_PRINT_TIMERS")                     return flbit_task::POST_PRINT_TIMERS;
         if(item == "POST_DEFAULT")                          return flbit_task::POST_DEFAULT;
-        if(item == "PROF_RESET")                            return flbit_task::PROF_RESET;
+        if(item == "TIMER_RESET")                           return flbit_task::TIMER_RESET;
     }
     if constexpr(std::is_same_v<T,xdmrg_task>){
         if(item == "INIT_RANDOMIZE_MODEL")                  return xdmrg_task::INIT_RANDOMIZE_MODEL;
@@ -623,7 +623,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "POST_WRITE_RESULT")                     return xdmrg_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return xdmrg_task::POST_PRINT_RESULT;
         if(item == "POST_DEFAULT")                          return xdmrg_task::POST_DEFAULT;
-        if(item == "PROF_RESET")                            return xdmrg_task::PROF_RESET;
+        if(item == "TIMER_RESET")                           return xdmrg_task::TIMER_RESET;
     }
     if constexpr(std::is_same_v<T,CopyPolicy>){
         if(item == "FORCE")                                 return CopyPolicy::FORCE;

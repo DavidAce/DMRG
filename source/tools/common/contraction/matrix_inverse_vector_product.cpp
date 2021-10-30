@@ -41,7 +41,7 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     long                mps_size;
     //    eig::Form           form = eig::Form::SYMM;
     //    eig::Side           side = eig::Side::R;
-    // Profiling
+    // Timers
     mutable int                 counter = 0;
     mutable std::vector<Scalar> tmp;
 

@@ -58,7 +58,7 @@ MatVecSparse<Scalar, sparseLU>::MatVecSparse(const Scalar *A_, long L_, bool cop
             sparse_lu::A_cplx_sparse.value().makeCompressed();
         }
     }
-    init_profiling();
+    init_timers();
 }
 
 // Function definitions
@@ -351,7 +351,7 @@ eig::Type MatVecSparse<Scalar, sparseLU>::get_type() const {
 }
 
 template<typename Scalar, bool sparseLU>
-void MatVecSparse<Scalar, sparseLU>::init_profiling() {
+void MatVecSparse<Scalar, sparseLU>::init_timers() {
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");

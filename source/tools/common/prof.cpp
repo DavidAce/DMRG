@@ -2,9 +2,9 @@
 #include <config/settings.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
-void tools::common::profile::print_profiling() {
-    if(settings::profiling::on) {
-        tid::level lvl = settings::profiling::level;
+void tools::common::timer::print_timers() {
+    if(settings::timer::on) {
+        tid::level lvl = settings::timer::level;
 
         if(settings::itebd::on)
             for(const auto &t : tid::get_tree("iTEBD"))

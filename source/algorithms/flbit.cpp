@@ -131,9 +131,9 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::TRANSFORM_TO_REAL: transform_to_real_basis(); break;
             case flbit_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case flbit_task::POST_PRINT_RESULT: print_status_full(); break;
-            case flbit_task::POST_PRINT_PROFILING: tools::common::profile::print_profiling(); break;
+            case flbit_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case flbit_task::POST_DEFAULT: run_postprocessing(); break;
-            case flbit_task::PROF_RESET: tid::reset("fLBIT"); break;
+            case flbit_task::TIMER_RESET: tid::reset("fLBIT"); break;
         }
         task_list.pop_front();
     }

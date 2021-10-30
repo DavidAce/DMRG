@@ -84,7 +84,7 @@ class MatVecMps {
     [[nodiscard]] bool isReadyShift() const;
     [[nodiscard]] bool isReadyCompress() const;
 
-    // Profiling
+    // Timers
     std::unique_ptr<tid::ur> t_factorOP;
     std::unique_ptr<tid::ur> t_multOPv;
     std::unique_ptr<tid::ur> t_multAx;

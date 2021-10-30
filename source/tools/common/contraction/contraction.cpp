@@ -91,7 +91,7 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     std::array<long, 3> shape_envR;
     std::vector<Scalar> shift_mpo;
     long                mps_size;
-    // Profiling
+    // Timers
     mutable int                 counter = 0;
     mutable std::vector<Scalar> tmp;
 
