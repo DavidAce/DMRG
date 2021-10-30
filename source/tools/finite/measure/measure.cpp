@@ -642,8 +642,8 @@ double tools::finite::measure::max_gradient(const Eigen::Tensor<Scalar, 3> &mps,
     double var    = std::abs(vH2v);
     auto   var_1  = 1.0 / var / std::log(10);
     auto   norm_1 = 1.0 / v.norm();
-    auto   pref   = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0;
-    auto   grad   = pref * var_1 * norm_1 * (H2v - vH2v * v); // Factor 2 for complex
+    auto   pref   = std::is_same_v<Scalar, double> ? 2.0 : 1.0; // Factor 2 for double, from the derivative of v^2
+    auto   grad   = pref * var_1 * norm_1 * (H2v - vH2v * v);
     return grad.template lpNorm<Eigen::Infinity>();
 }
 template double tools::finite::measure::max_gradient(const Eigen::Tensor<real, 3> &mps, const Eigen::Tensor<real, 4> &mpo2, const Eigen::Tensor<real, 3> &en2L,
