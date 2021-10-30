@@ -8,12 +8,19 @@
 #include <algorithms/AlgorithmStatus.h>
 #include <config/debug.h>
 #include <glog/logging.h>
+#include <math/num.h>
 #include <string>
 #include <tensors/model/ModelFinite.h>
 #include <tensors/TensorsFinite.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
+
+namespace settings {
+#pragma message "Revert debug_functor"
+    constexpr static bool debug_functor = false;
+}
+
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
     auto    t_opt = tid::tic_scope("opt");
     opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
@@ -78,24 +85,25 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
 
     ceres_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;
-    ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::BISECTION;
+    ceres_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     ceres_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     ceres_default_options.max_num_iterations                         = 20000;
-    ceres_default_options.max_lbfgs_rank                             = 8; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
+    ceres_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
     ceres_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     ceres_default_options.min_line_search_step_size                  = 1e-16;//std::numeric_limits<double>::epsilon();
     ceres_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
     ceres_default_options.min_line_search_step_contraction           = 0.6; // 0.6
     ceres_default_options.max_line_search_step_expansion             = 10; // 10
-    ceres_default_options.max_num_line_search_step_size_iterations   = 80;
-    ceres_default_options.max_num_line_search_direction_restarts     = 20; //5
+    ceres_default_options.max_num_line_search_step_size_iterations   = 200;
+    ceres_default_options.max_num_line_search_direction_restarts     = 10; //5
     ceres_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
-    ceres_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
+    ceres_default_options.line_search_sufficient_curvature_decrease  = 0.8;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     ceres_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
     ceres_default_options.function_tolerance                         = 1e-10; // Tested, 1e-6 seems to be a sweetspot
-    ceres_default_options.gradient_tolerance                         = 1e-0;
+    ceres_default_options.gradient_tolerance                         = 1e-1;
     ceres_default_options.parameter_tolerance                        = 1e-16;
     ceres_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
+    ceres_default_options.update_state_every_iteration               = false;
     ceres_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_stuck_for > 0){
@@ -161,7 +169,7 @@ double tools::finite::opt::internal::windowed_func_abs(double x, double window) 
 }
 double tools::finite::opt::internal::windowed_grad_abs(double x, double window) {
     if(std::abs(x) >= window)
-        return sgn(x);
+        return num::sign(x);
     else
         return 0.0;
 }
@@ -221,6 +229,13 @@ tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(
         freq_log_time = 0;
         init_log_time = 0;
     }
+
+    if constexpr(settings::debug_functor) {
+        log->set_level(spdlog::level::debug);
+        freq_log_iter = 1;
+        freq_log_time = 0;
+        init_log_time = 0;
+    }
 }
 
 template<typename FunctorType>
@@ -236,23 +251,30 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug(FMT_STRING("LBFGS: it {:>5} f {:>8.5f} |Δf| {:>3.2e} ∇fᵐᵃˣ {:>3.2e} "
-               "|ΔΨ| {:3.2e} |Ψ|-1 {:3.2e} ls {:3.2e} ops {:>4}/{:<4} "
-               "t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
+    log->debug(FMT_STRING("LBFGS: "
+               "it {:>5} f {:>8.5f} |Δf| {:>8.2e} "
+               "|∇f| {:>8.2e} |∇f|ᵐᵃˣ {:>8.2e} "
+               "|ΔΨ| {:8.2e} |Ψ|-1 {:8.2e} "
+               "ops {:>4}/{:<4} t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
+               "ls:[ss {:8.2e} fe {:>4} ge {:>4} it {:>4}] "
 //               "| energy {:<18.15f} lg var {:<6.6f}"
                ),
                summary.iteration,
                summary.cost,
                summary.cost_change,
+               summary.gradient_norm,
                summary.gradient_max_norm,
                summary.step_norm, // By lbfgs
                functor.get_norm_offset(),
-               std::abs(summary.step_size), // By line search
                functor.get_count() - last_count,
                functor.get_count(),
                summary.cumulative_time_in_seconds,
                summary.iteration_time_in_seconds,
-               static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9
+               static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9,
+               std::abs(summary.step_size), // By line search
+               summary.line_search_function_evaluations,
+               summary.line_search_gradient_evaluations,
+               summary.line_search_iterations
 //             ,functor.get_energy_per_site(),
 //               std::log10(functor.get_variance()
                );
@@ -261,7 +283,11 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     return ceres::SOLVER_CONTINUE;
 }
 
-template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_subspace_functor<double>>;
-template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_direct_functor<double>>;
-template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_subspace_functor<std::complex<double>>>;
-template class tools::finite::opt::internal::CustomLogCallback<tools::finite::opt::internal::ceres_direct_functor<std::complex<double>>>;
+namespace tools::finite::opt::internal {
+    template class CustomLogCallback<ceres_subspace_functor<double>>;
+    template class CustomLogCallback<ceres_direct_functor<double, LagrangeNorm::ON>>;
+    template class CustomLogCallback<ceres_direct_functor<double, LagrangeNorm::OFF>>;
+    template class CustomLogCallback<ceres_subspace_functor<std::complex<double>>>;
+    template class CustomLogCallback<ceres_direct_functor<std::complex<double>, LagrangeNorm::ON>>;
+    template class CustomLogCallback<ceres_direct_functor<std::complex<double>, LagrangeNorm::OFF>>;
+}

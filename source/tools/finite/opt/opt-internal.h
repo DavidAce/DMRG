@@ -109,7 +109,6 @@ namespace tools::finite::opt::internal{
     extern std::vector<int> generate_size_list(int shape);
 
 
-    template <typename T>  int sgn(const T val) {return (T(0) < val) - (val < T(0)); }
     extern double windowed_func_abs(double x,double window);
     extern double windowed_grad_abs(double x,double window);
     extern double windowed_func_pow(double x,double window);
