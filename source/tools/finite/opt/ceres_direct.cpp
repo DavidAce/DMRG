@@ -51,7 +51,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
         case OptType::CPLX: {
             // Copy the initial guess and operate directly on it
             optimized_mps.set_tensor(initial_mps.get_tensor());
-            auto *functor = new ceres_direct_functor<std::complex<double>>(tensors, status);
+            auto *functor = new ceres_direct_functor<std::complex<double>, LagrangeNorm::OFF>(tensors, status);
             if(settings::precision::use_compressed_mpo_squared_otf)
                 // Compress the virtual bond between MPO² and the environments
                 functor->compress();
@@ -74,8 +74,9 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
         }
         case OptType::REAL: {
             // Here we make a temporary
-            auto  initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
-            auto *functor            = new ceres_direct_functor<double>(tensors, status);
+            auto initial_state_real = initial_mps.get_initial_state_with_lagrange_multiplier<OptType::REAL>();
+            //            auto  initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
+            auto *functor = new ceres_direct_functor<double, LagrangeNorm::ON>(tensors, status);
             if(settings::precision::use_compressed_mpo_squared_otf)
                 // Compress the virtual bond between MPO² and the environments
                 functor->compress();
@@ -116,6 +117,5 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
                       ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
     reports::bfgs_add_entry("Direct", "opt", optimized_mps);
-
     return optimized_mps;
 }

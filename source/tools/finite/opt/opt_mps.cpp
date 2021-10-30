@@ -1,6 +1,8 @@
 #include "../opt_mps.h"
 #include <config/debug.h>
 #include <io/fmt.h>
+#include <math/num.h>
+
 using namespace tools::finite::opt;
 
 opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
@@ -45,6 +47,25 @@ Eigen::VectorXd opt_mps::get_vector_cplx_as_1xreal() const {
     if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
     return Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size()).real();
 }
+
+template<OptType optType>
+[[nodiscard]] Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier() const {
+    if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
+    auto             size_old = tensor.value().size();
+    auto             size_new = size_old + 1; // Add 1 for lagrange multiplier
+    double           lambda   = 1.0;          // The lagrange multiplier factor (a dummy)
+    Eigen::VectorXcd tensor_extended(size_new);
+    tensor_extended.topRows(size_old) = Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size());
+    tensor_extended.bottomRows(1)[0]  = lambda * std::abs(get_vector().squaredNorm() - 1.0);
+    //    tensor_extended.bottomRows(1)[0] = lambda * std::pow(get_vector().squaredNorm() - 1.0, 2.0);
+
+    if constexpr(optType == OptType::REAL) { return Eigen::Map<const Eigen::VectorXcd>(tensor_extended.data(), tensor_extended.size()).real(); }
+    if constexpr(optType == OptType::CPLX) {
+        return Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(tensor_extended.data()), 2 * tensor_extended.size());
+    }
+}
+template Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier<OptType::REAL>() const;
+template Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier<OptType::CPLX>() const;
 
 const std::vector<size_t> &opt_mps::get_sites() const {
     if(not sites) throw std::runtime_error("opt_mps: sites not set");

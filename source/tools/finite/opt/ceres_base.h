@@ -42,7 +42,7 @@ namespace tools::finite::opt::internal {
         mutable long   ops     = 0;
         size_t         length;
         size_t         iteration;
-        int            num_parameters;
+        int            num_parameters; // Includes lagrangian multiplier(s)
         bool           have_bounds_on_energy = false;
 
         public:

@@ -60,6 +60,10 @@ namespace tools::finite::opt {
         [[nodiscard]] Eigen::Map<const Eigen::VectorXcd> get_vector() const;
         [[nodiscard]] Eigen::Map<Eigen::VectorXd>        get_vector_cplx_as_2xreal();
         [[nodiscard]] Eigen::VectorXd                    get_vector_cplx_as_1xreal() const;
+
+        template<OptType optType>
+        [[nodiscard]] Eigen::VectorXd get_initial_state_with_lagrange_multiplier() const;
+
         [[nodiscard]] const std::vector<size_t>         &get_sites() const;
         [[nodiscard]] double                             get_energy() const;
         [[nodiscard]] double                             get_energy_reduced() const;

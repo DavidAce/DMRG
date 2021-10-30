@@ -4,12 +4,15 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt::internal {
-    template<typename Scalar>
+    enum class LagrangeNorm { ON, OFF };
+
+    template<typename Scalar, LagrangeNorm lagrangeNorm>
     class ceres_direct_functor : public ceres_base_functor {
         private:
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
         mutable Eigen::Tensor<Scalar, 3> Hn_tensor, H2n_tensor;
+        long                             size; // Does not include lagrange multiplier (i.e. num_paramters - 1 if LagrangeNorm::ON)
         Eigen::DSizes<long, 3>           dims;
         Eigen::Tensor<Scalar, 3>         envL, envR;
         Eigen::Tensor<Scalar, 3>         env2L, env2R;
