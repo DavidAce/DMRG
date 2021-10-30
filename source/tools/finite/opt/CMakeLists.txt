@@ -9,6 +9,7 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         ceres_subspace_filter.cpp
         ceres_subspace_functor.cpp
         ceres_subspace_hamiltonian.cpp
+#        cppoptlib_direct_functor.cpp
         ground_state.cpp
         krylov_optimization.cpp
         report.cpp
