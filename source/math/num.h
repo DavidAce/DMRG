@@ -108,6 +108,13 @@ namespace num {
     }
 
     template<typename T>
+    int sign(const T val) {
+        if(val > 0) return +1;
+        if(val < 0) return -1;
+        return 0;
+    }
+
+    template<typename T>
     bool between(const T &value, const T &low, const T &high) noexcept {
         return value >= low and value <= high;
     }
