@@ -16,7 +16,7 @@ include(cmake/SetupDependenciesConan.cmake)
 
 include(cmake/InstallPackage.cmake)
 install_package(primme MODULE)
-
+#install_package(optim MODULE)
 
 ##################################################################
 ### Link all the things!                                       ###
