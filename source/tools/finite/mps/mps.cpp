@@ -431,20 +431,33 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen
 
 template<typename GateType>
 std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<GateType> &gates, bool reverse) {
-    // Generate a list of staggered indices
-    // If 2-site gates,
-    //      * Apply non-overlapping gates [0-1],[2-3]... and then [1-2],[3-4]..., i.e. even sites first, then odd sites,
-    //      * The corresponing gate sequence would be [0,2,4,6....1,3,5,7,9...]
-    // If 3-site gates,
-    //      * Apply gates on [0-1-2], [3-4-5]... then on [1-2-3], [4-5-6]..., then on [2-3-4],[5-6-7], and so on.
-    //      * The corresponing gate sequence is [0,3,6,9...1,4,7,10...2,5,8,11...]
+    // Generate a list of staggered indices, without assuming that gates are sorted in any way
+    // Consider a sequence of short-range gates such as [0,1], [1,2], [2,3], then this function is used to generate a new sequence without overlaps:
     //
-    // To avoid having to move back between layers, one can flip odd layers to generate a zig-zag pattern.
-    // When applying the inverse operation, the whole sequence is flipped in the end.
+    //  * 2-site gates:
+    //         * layer 0: [0,1],[2,3],[4,5]... and so on,
+    //         * layer 1: [1,2],[3,4],[5,6]..., i.e. even sites first, then odd sites,
+    //  * 3-site gates:
+    //         * layer 0: [0,1,2], [3,4,5]...
+    //         * layer 1: [1,2,3], [4,5,6]...,
+    //         * layer 2: [2,3,4], [5,6,7], and so on.
     //
+    // To avoid having to move/swap all the way back between layers, one can flip odd layers to generate a zig-zag pattern.
+    // Then, when applying the inverse operation, both layers as well as gates within a layer are flipped
+    //
+    // Now consider a sequence of long-range gates such as [0,1], [0,2], ... [0,L-1], [1,2], [1,3]...., [1,L-1]
+    // To generate a performant sequence of gates with respect to swaps, it's important to note which gates commute.
+    // In this implementation we make the assumption that gates [i,j] and [i,k] always commute (i != j != k).
+    // Thus, we get the following sequence
+    //  * 2-site gates:
+    //         * layer 0: [0,1],[0,2],[0,3]... then [2,3],[2,4],[2,5]... then [4,5],[4,6][4,7]... and so on
+    //         * layer 1: [1,2],[1,3],[1,4]... then [3,4],[3,5],[3,6]... then [5,6],[5,7][5,8]... and so on
+    //
+    // This way we get as many reverse swap cancellations as possible while maintaining some support for non-commutativity
+
     // Performance note:
     // If the state is at position L-1, and the list generated has to start from 0, then L-1 moves have
-    // to be done before even starting. Additionally, if unlucky, we have to move L-1 times again to return
+    // to be done before even starting. Additionally, if unlucky, we have to move/swap L-1 times again to return
     // to the original position.
     //    if(state.get_direction() < 0 and past_middle) state.flip_direction(); // Turn direction away from middle
     //    if(state.get_direction() > 0 and not past_middle) state.flip_direction(); // Turn direction away from middle
@@ -456,11 +469,16 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
     while(not idx.empty()) {
         std::vector<size_t> layer;
         size_t              at = gates.at(idx.front()).pos.front();
-        // Collect gates that do not overlap
-        for(const auto &i : idx) {
-            if(gates.at(i).pos.front() >= at) {
-                layer.emplace_back(i);
-                at = gates.at(i).pos.back() + 1;
+        for(size_t i = 0; i < idx.size(); i++) {
+            const auto &gate_i = gates.at(idx.at(i));
+            if(gate_i.pos.front() >= at) {
+                auto back_i = gate_i.pos.back();
+                for(size_t j = i; j < idx.size(); j++) { // Look ahead
+                    // In this part we accept a gate if pos.front() == at or pos.back() >= back_i
+                    const auto &gate_j = gates.at(idx.at(j)); // gate_i == gate_j on first iteration of j, so we always accept
+                    if(gate_j.pos.front() == at and gate_j.pos.back() >= back_i) { layer.emplace_back(idx.at(j)); }
+                }
+                at = gate_i.pos.back() + 1;
             }
         }
         // Append the layer
@@ -717,22 +735,22 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
 
     auto                   order = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
     Eigen::Tensor<cplx, 3> temp;
-    // Cancel rwap: 30, Swapping sites 52
+    long                   cancel_count = 0;
+    long                   swap_count   = 0;
+    long                   rwap_count   = 0;
+
     auto gate_sequence = generate_gate_sequence(state, gates, reverse);
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto &gate = gates.at(gate_idx);
         if constexpr(settings::debug_gates) tools::log->trace("Applying swap gate {} | pos {}", gate_idx, gate.pos);
-        if(i + 1 < gate_sequence.size()) gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
+        if(i + 1 < gate_sequence.size()) cancel_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
+        swap_count += static_cast<long>(gate.swaps.size());
+        rwap_count += static_cast<long>(gate.rwaps.size());
         apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
     }
 
-    // Cancel rwap: 35, Swapping sites 42
-    //    for(auto &&[idx, gate] : iter::enumerate(gates)) {
-    //        tools::log->trace("Applying swap gate {} | pos {}", idx, gate.pos);
-    //        if(idx + 1 < gates.size()) gate.cancel_rwaps(gates[idx + 1].swaps);
-    //        apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
-    //    }
-
+    tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | cancelled {} | time {:.4f}", gates.size(), swap_count, rwap_count,
+                      swap_count + rwap_count, cancel_count, t_swapgate->get_last_interval());
     move_center_point_to_pos_dir(state, 0, 1, chi_lim, svd_settings);
     tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
 }

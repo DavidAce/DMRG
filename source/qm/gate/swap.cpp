@@ -44,31 +44,35 @@ void qm::SwapGate::generate_swap_sequences() {
     }
 }
 
-void qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
+long qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
     // exploit that S(i,j)² == 1 to cancel swaps against rwaps
+    long count = 0;
     while(true) {
-        if(other_rwaps.empty()) return;
-        if(swaps.empty()) return;
+        if(other_rwaps.empty()) return count;
+        if(swaps.empty()) return count;
         if(other_rwaps.back() == swaps.front()) {
             if constexpr(settings::debug_swap) tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
             other_rwaps.pop_back();
             swaps.pop_front();
+            count++;
         } else {
-            return;
+            return count;
         }
     }
 }
-void qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
+long qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
     // exploit that S(i,j)² == 1 to cancel swaps against rwaps
+    long count = 0;
     while(true) {
-        if(other_swaps.empty()) return;
-        if(rwaps.empty()) return;
+        if(other_swaps.empty()) return count;
+        if(rwaps.empty()) return count;
         if(other_swaps.front() == rwaps.back()) {
             if constexpr(settings::debug_swap) tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
             other_swaps.pop_front();
             rwaps.pop_back();
+            count++;
         } else {
-            return;
+            return count;
         }
     }
 }
