@@ -735,22 +735,22 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
 
     auto                   order = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
     Eigen::Tensor<cplx, 3> temp;
-    long                   cancel_count = 0;
-    long                   swap_count   = 0;
-    long                   rwap_count   = 0;
+    long                   skip_count = 0;
+    long                   swap_count = 0;
+    long                   rwap_count = 0;
 
     auto gate_sequence = generate_gate_sequence(state, gates, reverse);
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto &gate = gates.at(gate_idx);
         if constexpr(settings::debug_gates) tools::log->trace("Applying swap gate {} | pos {}", gate_idx, gate.pos);
-        if(i + 1 < gate_sequence.size()) cancel_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
+        if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
         swap_count += static_cast<long>(gate.swaps.size());
         rwap_count += static_cast<long>(gate.rwaps.size());
         apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
     }
 
-    tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | cancelled {} | time {:.4f}", gates.size(), swap_count, rwap_count,
-                      swap_count + rwap_count, cancel_count, t_swapgate->get_last_interval());
+    tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | time {:.4f}", gates.size(), swap_count, rwap_count,
+                      swap_count + rwap_count, skip_count, t_swapgate->get_last_interval());
     move_center_point_to_pos_dir(state, 0, 1, chi_lim, svd_settings);
     tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
 }
