@@ -43,7 +43,7 @@ namespace tools::common::h5 {
 
     template<typename AttrType>
     void save::attr(h5pp::File &file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText) {
-        tools::log->trace("Attribute -- {: <40} = {: <40} on dset: {}", attrName, attrData, linkPath);
+        tools::log->trace("Link {} | attribute -- {: <40} = {}", linkPath, attrName, attrData);
         if(not file.linkExists(linkPath)) file.writeDataset(linkText, linkPath);
         file.writeAttribute(attrData, attrName, linkPath);
     }
@@ -169,7 +169,7 @@ namespace tools::common::h5 {
         if(save_log[std::string(timer_prefix)] == save_point) return;
 
         tools::log->trace("Writing timer data to: {}", timer_prefix);
-        auto t_prof = tid::tic_token("prof", tid::level::pedant);
+        auto t_prof = tid::tic_token("prof", tid::level::detail);
 
         h5pp_ur::register_table_type();
         h5file.setKeepFileOpened();
