@@ -59,7 +59,7 @@ namespace tools::finite::h5 {
         if(save_log[table_path] == save_point) return;
 
         tools::log->trace("Appending to table: {}", table_path);
-        auto t_hdf = tid::tic_scope("measurements", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("measurements", tid::level::detail);
         h5pp_table_measurements_finite::register_table_type();
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
 
@@ -126,7 +126,7 @@ namespace tools::finite::h5 {
     void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::detail);
 
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::bond_dimensions(state), "bond_dimensions", "Bond Dimensions", "L_");
     }
@@ -134,14 +134,14 @@ namespace tools::finite::h5 {
     void save::truncation_errors(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                  const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf = tid::tic_scope("truncation_errors", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("truncation_errors", tid::level::detail);
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::truncation_errors(state), "truncation_errors", "Truncation errors", "L_");
     }
 
     void save::entropies_neumann(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                  const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf = tid::tic_scope("entropies", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("entropies", tid::level::detail);
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies",
                            "Entanglement Entropies", "L_");
     }
@@ -149,7 +149,7 @@ namespace tools::finite::h5 {
     void save::entropies_renyi(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                const AlgorithmStatus &status) {
         if(storage_level < StorageLevel::NORMAL) return;
-        auto t_hdf = tid::tic_scope("entropies", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("entropies", tid::level::detail);
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 3), "renyi_entropies_3", "Renyi Entropy 3", "L_");
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 4), "renyi_entropies_4", "Renyi Entropy 4", "L_");
@@ -161,14 +161,14 @@ namespace tools::finite::h5 {
         if(storage_level == StorageLevel::NONE) return;
         if(status.algo_type != AlgorithmType::fLBIT) return;
 
-        auto t_hdf = tid::tic_scope("entropies", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("entropies", tid::level::detail);
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
     }
 
     void save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                      const AlgorithmStatus &status) {
         if(storage_level <= StorageLevel::LIGHT) return;
-        auto t_hdf            = tid::tic_scope("state", tid::level::pedant);
+        auto t_hdf            = tid::tic_scope("state", tid::level::detail);
         auto dsetname_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
         auto mps_prefix       = fmt::format("{}/mps", state_prefix);
         // Checks if the current entry has already been saved
@@ -252,7 +252,7 @@ namespace tools::finite::h5 {
         if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
         tools::log->trace("Storing table: [{}]", table_path);
-        auto t_hdf = tid::tic_scope("model", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("model", tid::level::detail);
         for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5file, table_path);
         h5file.writeAttribute(enum2sv(settings::model::model_type), "model_type", table_path);
         h5file.writeAttribute(settings::model::model_size, "model_size", table_path);
@@ -264,7 +264,7 @@ namespace tools::finite::h5 {
         std::string mpo_prefix = fmt::format("{}/mpo", model_prefix);
         // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
         if(h5file.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
-        auto t_hdf = tid::tic_scope("mpo", tid::level::pedant);
+        auto t_hdf = tid::tic_scope("mpo", tid::level::detail);
         tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(storage_level));
         for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5file, mpo_prefix); }
         h5file.writeAttribute(settings::model::model_size, "model_size", mpo_prefix);

@@ -2,6 +2,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <io/fmt.h>
 #include <math/tenx.h>
+#include <tid/tid.h>
 #include <unsupported/Eigen/IterativeSolvers>
 
 using namespace tools::common::contraction;
@@ -12,6 +13,8 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
                            const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
                            const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                            const Scalar * const envR_ptr, std::array<long,3> envR_dims){
+
+    auto t_expval = tid::tic_token("expectation_value", tid::level::pedant);
 
     // This measures the expectation value of some multisite mps with respect to some mpo operator and corresponding environments.
     // This is usually the energy E = <psi|H|psi> or variance V = <psi|(H-E)²|psi>
@@ -243,6 +246,8 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
                                                        const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                                        const Scalar * const envR_ptr, std::array<long,3> envR_dims){
 
+    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::pedant);
+
     // This applies the mpo's with corresponding environments to local multisite mps
     // This is usually the operation H|psi>  or H²|psi>
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,mps_dims);
@@ -284,6 +289,7 @@ template<typename Scalar>
 void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      , std::array<long,3> res_dims,
                                                    const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                                    const Scalar * const bnd_ptr, std::array<long,1> bnd_dims){
+    auto t_con = tid::tic_token("contract_mps_bnd", tid::level::pedant);
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -305,6 +311,7 @@ void  tools::common::contraction::contract_bnd_mps(
           Scalar * res_ptr      , std::array<long,3> res_dims,
     const Scalar * const bnd_ptr, std::array<long,1> bnd_dims,
     const Scalar * const mps_ptr, std::array<long,3> mps_dims){
+    auto t_con = tid::tic_token("contract_bnd_mps", tid::level::pedant);
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -326,6 +333,7 @@ template<typename Scalar>
 void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       , std::array<long,3> res_dims,
                                                   const Scalar * const mpsL_ptr, std::array<long,3> mpsL_dims,
                                                   const Scalar * const mpsR_ptr, std::array<long,3> mpsR_dims){
+    auto t_con = tid::tic_token("contract_mps_mps", tid::level::pedant);
     auto res  = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mpsL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsL_ptr, mpsL_dims);
     auto mpsR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsR_ptr, mpsR_dims);
@@ -351,6 +359,7 @@ template void tools::common::contraction::contract_mps_mps(      real * res_ptr 
 template<typename Scalar>
 double tools::common::contraction::contract_mps_mps_overlap(const Scalar * const mps1_ptr, std::array<long,3> mps1_dims,
                                                             const Scalar * const mps2_ptr, std::array<long,3> mps2_dims){
+    auto t_con = tid::tic_token("contract_mps_mps_overlap", tid::level::pedant);
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
     if(mps1.dimensions() != mps2.dimensions()) throw except::runtime_error("Dimension mismatch mps1 {} and mps2 {}", mps1.dimensions(), mps2.dimensions());

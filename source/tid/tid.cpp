@@ -117,7 +117,7 @@ namespace tid {
         std::vector<internal::ur_ref_t> tree = {internal::ur_ref_t{key, u, 0.0, 1.0}};
         for(const auto &un : u.ur_under) {
             tree.front().sum += un.second->get_time(); // Add up times under
-            for(const auto &t : get_tree(*un.second, key)) {
+            for(const auto &t : get_tree(*un.second, key, l)) {
                 //                if(un.second->get_time() == 0) {
                 //                    // If the intermediate node did not measure time, add the times under it instead
                 //                    tree.front().sum += t.sum;

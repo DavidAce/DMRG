@@ -117,6 +117,7 @@ void MpsSite::assert_identity() const {
 }
 
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
+    auto t_get = tid::tic_scope("get_M_bare", tid::level::pedant);
     if(M) {
         if(M.value().size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M_bare(): M has size 0 at position {}", get_position()));
         return M.value();
@@ -124,6 +125,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
         throw std::runtime_error(fmt::format("MpsSite::get_M_bare(): M has not been set at position {}", get_position()));
 }
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
+    auto t_get = tid::tic_scope("get_M", tid::level::pedant);
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(fmt::format("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2),
@@ -142,6 +144,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
 }
 
 const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
+    auto t_get = tid::tic_scope("get_L", tid::level::pedant);
     if(L) {
         if constexpr(settings::debug) {
             if(L->size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_L(): L has size 0 at position {} | label {}", get_position(), get_label()));
@@ -157,6 +160,7 @@ const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
         throw std::runtime_error(fmt::format("MpsSite::get_L(): L has not been set at position {}", get_position()));
 }
 const Eigen::Tensor<cplx, 1> &MpsSite::get_LC() const {
+    auto t_get = tid::tic_scope("get_LC", tid::level::pedant);
     if(isCenter()) {
         if(LC->dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(fmt::format("MpsSite::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}",
