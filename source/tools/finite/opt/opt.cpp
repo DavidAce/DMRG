@@ -17,7 +17,6 @@
 #include <tools/finite/measure.h>
 
 namespace settings {
-#pragma message "Revert debug_functor"
     constexpr static bool debug_functor = false;
 }
 
