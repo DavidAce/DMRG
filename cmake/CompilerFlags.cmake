@@ -74,7 +74,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -fno-strict-aliasing -fdiagnostics-color=always -Wall -Wpedantic -Wextra -Wconversion -Wunused")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MARCH} ${MTUNE}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${MARCH} ${MTUNE} -ffp-contract=fast")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2") #-D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -fno-omit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2")
 
@@ -113,7 +113,7 @@ if(NOT TARGET flags)
     add_library(flags INTERFACE)
 endif()
 target_compile_options(flags INTERFACE -g -fno-strict-aliasing -fdiagnostics-color=always -Wall -Wpedantic -Wextra -Wconversion -Wunused)
-target_compile_options(flags INTERFACE $<$<CONFIG:RELEASE>:${MARCH} ${MTUNE}>)
+target_compile_options(flags INTERFACE $<$<CONFIG:RELEASE>:${MARCH} ${MTUNE} -ffp-contract=fast>)
 target_compile_options(flags INTERFACE $<$<CONFIG:DEBUG>: -fno-omit-frame-pointer -fstack-protector -D_FORTIFY_SOURCE=2>)
 target_compile_options(flags INTERFACE $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
 target_compile_options(flags INTERFACE $<$<CONFIG:RELWITHDEBINFO>:-O3 ${MARCH} ${MTUNE}>)
