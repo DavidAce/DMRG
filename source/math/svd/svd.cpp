@@ -67,7 +67,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
         case SVDLib::rsvd: {
             try {
-                return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                if(rows * cols > 768 * 768) // Make sure the problem is large enough so that it pays to use rsvd
+                    return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                else
+                    return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
                 svd::log->warn("Rsvd failed to perform SVD: {} | Trying Lapacke", ex.what());
                 return do_svd_lapacke(mat_ptr, rows, cols, rank_max);

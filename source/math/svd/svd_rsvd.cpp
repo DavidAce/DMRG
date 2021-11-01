@@ -18,8 +18,11 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 #if !defined(DMRG_ENABLE_RSVD)
     throw std::runtime_error("Define DMRG_ENABLE_RSVD to use rsvd");
 #else
-    auto t_eigen = tid::tic_scope("rsvd");
-    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
+    auto t_rsvd = tid::tic_scope("rsvd");
+    if(not rank_max.has_value())
+        rank_max = std::min(rows, cols);
+    else
+        rank_max = std::min({rank_max.value(), rows, cols});
 
     svd::log->trace("Starting SVD with RSVD");
     MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar> >(mat_ptr, rows, cols);
@@ -43,7 +46,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     svd::log->debug("Running RSVD threshold {:.4e} | rank_max {}", threshold, rank_max.value());
     // Run the svd
-    SVD.compute(mat, rank_max.value(), 10, 4U);
+    //    SVD.compute(mat, rank_max.value(), 10, 4U);
+    SVD.compute(mat, rank_max.value());
 
     if(count) count.value()++;
     long max_size = std::min(SVD.singularValues().size(), rank_max.value());
@@ -69,7 +73,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                              threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
                                              SVD.singularValues().topRows(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite()));
     }
-    svd::log->trace("SVD with Eigen finished successfully");
+    svd::log->trace("SVD with RSVD finished successfully");
 
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
 #endif

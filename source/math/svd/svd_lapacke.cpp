@@ -193,22 +193,25 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
             } else {
                 svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
                 VT.resize(rowsVT, colsVT);
+
+                rwork.resize(1ul);
 
                 svd::log->trace("Querying dgesvd");
                 info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1);
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
 
-                int lwork = static_cast<int>(rwork[0]);
-                rwork.resize(static_cast<size_t>(lwork));
+                int lrwork = static_cast<int>(rwork[0]);
+                rwork.resize(static_cast<size_t>(lrwork));
 
                 svd::log->trace("Running dgesvd");
                 auto t_dgesvd = tid::tic_token("dgesvd");
-                info =
-                    LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), lwork);
+                info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
+                                           lrwork);
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
             }
@@ -295,17 +298,19 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 S.resize(sizeS);
                 VT.resize(rowsVT, colsVT);
 
-                int lrwork = mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1);
-                int liwork = 8 * std::min(rowsA, colsA);
-                int lcwork = mn * mn + mx + 2 * mn;
+                int liwork = std::max(1, 8 * mn);
+                int lrwork = std::max(1, mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1));
+                int lcwork = std::max(1, mn * mn + 3 * mn);
+
                 iwork.resize(static_cast<size_t>(liwork));
                 rwork.resize(static_cast<size_t>(lrwork));
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Querying zgesdd");
+
                 auto t_zgesdd = tid::tic_token("zgesdd");
-                info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1,
-                                           rwork.data(), iwork.data());
+                /* clang-format off */
+                info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: could not converge: info {}", info));
 
@@ -313,10 +318,11 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Running zgesdd");
-                info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork,
-                                           rwork.data(), iwork.data());
+                info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork, rwork.data(), iwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: could not converge: info {}", info));
+                /* clang-format on */
+
             } else {
                 svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
 
@@ -324,16 +330,15 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 S.resize(sizeS);
                 VT.resize(rowsVT, colsVT);
 
-                int lrwork = 5 * std::min(rowsA, colsA);
-                int lcwork = 2 * std::min(rowsA, colsA) + std::max(rowsA, colsA);
+                int lrwork = std::max(1, 5 * mn);
+                int lcwork = std::max(1, 2 * mn + mx);
                 rwork.resize(static_cast<size_t>(lrwork));
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Querying zgesvd");
                 auto t_zgesvd = tid::tic_token("zgesvd");
-
-                info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1,
-                                           rwork.data());
+                /* clang-format off */
+                info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: could not converge: info {}", info));
 
@@ -341,10 +346,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Running zgesvd");
-                info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
-                                           lcwork, rwork.data());
+                info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork, rwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: could not converge: info {}", info));
+                /* clang-format on */
             }
         }
 
