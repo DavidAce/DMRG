@@ -209,6 +209,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max),H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "fes_is_running",              HOFFSET(table, fes_is_running),             H5T_NATIVE_UINT8);
         /* clang-format on */
     }
 };

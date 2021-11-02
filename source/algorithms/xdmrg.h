@@ -42,6 +42,7 @@ class xdmrg : public AlgorithmFinite {
     void resume() final;
     void run_default_task_list() final;
     void run_algorithm() final;
+    void run_fes_analysis() final;
     void check_convergence() final;
     void update_time_step();
     void create_hamiltonian_gates();

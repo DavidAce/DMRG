@@ -15,7 +15,7 @@ enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL };
+enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, FES_ANALYSIS };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
@@ -250,6 +250,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StorageReason::EMIN_STATE)                           return "EMIN_STATE";
         if(item == StorageReason::EMAX_STATE)                           return "EMAX_STATE";
         if(item == StorageReason::MODEL)                                return "MODEL";
+        if(item == StorageReason::FES_ANALYSIS)                         return "FES_ANALYSIS";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -536,6 +537,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "EMIN_STATE")                            return StorageReason::EMIN_STATE;
         if(item == "EMAX_STATE")                            return StorageReason::EMAX_STATE;
         if(item == "MODEL")                                 return StorageReason::MODEL;
+        if(item == "FES_ANALYSIS")                          return StorageReason::FES_ANALYSIS;
+
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == "RANDOM_PRODUCT_STATE")                  return StateInit::RANDOM_PRODUCT_STATE;

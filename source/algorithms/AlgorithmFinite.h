@@ -32,6 +32,7 @@ class AlgorithmFinite : public AlgorithmBase {
 
     public:
     virtual void run_algorithm()     = 0;
+    virtual void run_fes_analysis()  = 0;
     virtual void run_preprocessing() = 0; // Specific for each algorithm type
     virtual void run_postprocessing();
     virtual void resume()                = 0;
@@ -45,6 +46,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
+    void         reduce_bond_dimension_limit();
     void         update_expansion_factor_alpha();
     void         randomize_model();
     void         run() final;

@@ -233,6 +233,11 @@ void flbit::run_algorithm() {
     status.algorithm_has_finished = true;
 }
 
+void flbit::run_fes_analysis() {
+    if(not settings::flbit::run_fes_analysis) return;
+    throw std::logic_error("FES is not yet implemented for flbit");
+}
+
 void flbit::single_flbit_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
@@ -636,7 +641,6 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         }
         if(not urange.empty() and not frange.empty()) {
             auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
-            tools::log->info();
             h5file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
             h5file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
             h5file->writeDataset(decay, "/fLBIT/analysis/decay");

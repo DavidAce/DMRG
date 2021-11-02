@@ -89,6 +89,7 @@ namespace settings {
         inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
         inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
+        inline StorageLevel     storage_level_fes_states = StorageLevel::NORMAL; /*!< Storage level for finite entanglement scaling analysis after a simulation has finished. */
 
         namespace tmp{
             inline std::string hdf5_temp_path;
@@ -250,6 +251,7 @@ namespace settings {
         inline long     chi_lim_init        = 16;                           /*!< Initial chi limit. Only used when cfg_chi_lim_grow == true. */
         inline size_t   print_freq          = 100;                          /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     store_wavefn        = false;                        /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline bool     run_fes_analysis    = false;                        /*!< True runs a finite entanglement scaling analysis after finishing the main algorithm */
     }
 
 
@@ -272,7 +274,8 @@ namespace settings {
         inline bool     compute_lbit_length     = false;                    /*!< Calculate the characteristic length-scale of lbits */
         inline bool     compute_lbit_stats      = false;                    /*!< Calculate the statistics of characteristic length-scale for various u and f parameters */
         inline bool     store_wavefn            = false;                    /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-    }
+        inline bool     run_fes_analysis        = false;                    /*!< True runs a finite entanglement scaling analysis after finishing the main algorithm */
+}
 
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
@@ -294,7 +297,7 @@ namespace settings {
         inline bool     store_wavefn                    = false;                  /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline bool     finish_if_entanglm_saturated    = true;                   /*!< Finish early as soon as entanglement has saturated */
         inline bool     finish_if_variance_saturated    = false;                  /*!< Finish early as soon as energy variance has saturated */
-
+        inline bool     run_fes_analysis                = true;                   /*!< True runs a finite entanglement scaling analysis after finishing the main algorithm */
     }
 }
 /* clang-format on */

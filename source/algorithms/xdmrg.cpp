@@ -249,6 +249,35 @@ void xdmrg::run_algorithm() {
     status.algorithm_has_finished = true;
 }
 
+void xdmrg::run_fes_analysis() {
+    if(not settings::xdmrg::run_fes_analysis) return;
+    tools::log->info("Starting {} finite entanglement scaling analysis of model [{}] for state [{}]", status.algo_type_sv(),
+                     enum2sv(settings::model::model_type), tensors.state->get_name());
+    auto t_fes = tid::tic_scope("fes");
+    if(not status.algorithm_has_finished) throw except::logic_error("Finite entanglement scaling analysis can only be done after a finished simulation");
+    clear_convergence_status();
+    status.fes_is_running = true;
+    status.chi_lim_max    = settings::xdmrg::chi_lim_max; // Set to highest
+    status.chi_lim        = settings::xdmrg::chi_lim_max; // Set to highest
+    while(true) {
+        tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+        single_xDMRG_step();
+        print_status_update();
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+
+        reduce_bond_dimension_limit();
+        // It's important not to perform the last move, so we break now: that last state would not get optimized
+        if(status.algo_stop != AlgorithmStop::NONE) break;
+
+        move_center_point();
+        status.wall_time = tid::get_unscoped("t_tot").get_time();
+        status.algo_time = t_fes->get_time();
+    }
+    tools::log->info("Finished {} finite entanglement scaling of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(),
+                     status.algo_stop_sv());
+    status.fes_is_running = false;
+}
+
 std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
     tools::log->trace("Configuring xDMRG optimization trial");
     std::vector<OptConf> configs;
@@ -305,7 +334,12 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         c1.max_sites = settings::strategy::multisite_mps_size_def;
         c1.retry     = true;
     }
-
+    if(status.fes_is_running) {
+        // No need to do expensive operations
+        c1.optMode  = OptMode::VARIANCE;
+        c1.optSpace = OptSpace::DIRECT;
+        c1.retry    = false;
+    }
     // Setup strong overrides to normal conditions, e.g.,
     //      - for experiments like perturbation or chi quench
     //      - when the algorithm has already converged

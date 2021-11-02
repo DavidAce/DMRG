@@ -108,6 +108,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::storage_level_init_state"             , storage::storage_level_init_state);
     dmrg_config.load_parameter("storage::storage_level_emin_state"             , storage::storage_level_emin_state);
     dmrg_config.load_parameter("storage::storage_level_emax_state"             , storage::storage_level_emax_state);
+    dmrg_config.load_parameter("storage::storage_level_fes_states"             , storage::storage_level_fes_states);
 
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);
     dmrg_config.load_parameter("model::model_size"                            , model::model_size);
@@ -197,6 +198,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("fdmrg::chi_lim_init"            , fdmrg::chi_lim_init);
     dmrg_config.load_parameter("fdmrg::print_freq "             , fdmrg::print_freq);
     dmrg_config.load_parameter("fdmrg::store_wavefn"            , fdmrg::store_wavefn);
+    dmrg_config.load_parameter("fdmrg::run_fes_analysis"        , fdmrg::run_fes_analysis);
 
     //Parameters controlling finite-LBIT
     dmrg_config.load_parameter("flbit::on"                      , flbit::on);
@@ -216,6 +218,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::compute_lbit_length"     , flbit::compute_lbit_length);
     dmrg_config.load_parameter("flbit::compute_lbit_stats"      , flbit::compute_lbit_stats);
     dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
+    dmrg_config.load_parameter("flbit::run_fes_analysis"        , flbit::run_fes_analysis);
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
@@ -236,7 +239,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::max_states"                   , xdmrg::max_states);
     dmrg_config.load_parameter("xdmrg::finish_if_entanglm_saturated" , xdmrg::finish_if_entanglm_saturated);
     dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
-
+    dmrg_config.load_parameter("xdmrg::run_fes_analysis"             , xdmrg::run_fes_analysis);
     //Parameters controlling infinite-DMRG
     dmrg_config.load_parameter("idmrg::on"                  , idmrg::on);
     dmrg_config.load_parameter("idmrg::max_iters"           , idmrg::max_iters);

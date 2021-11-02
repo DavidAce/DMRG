@@ -143,6 +143,11 @@ void fdmrg::run_algorithm() {
     status.algorithm_has_finished = true;
 }
 
+void fdmrg::run_fes_analysis() {
+    if(not settings::fdmrg::run_fes_analysis) return;
+    throw std::logic_error("FES is not yet implemented for fdmrg");
+}
+
 void fdmrg::single_fdmrg_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)

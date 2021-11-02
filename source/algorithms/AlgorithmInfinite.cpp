@@ -294,6 +294,12 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
+        case StorageReason::FES_ANALYSIS: {
+            storage_level = settings::storage::storage_level_fes_states;
+            state_prefix += fmt::format("/fes/chi_{}", status.chi_lim);
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
+            break;
+        }
         case StorageReason::PROJ_STATE: {
             storage_level = settings::storage::storage_level_proj_state;
             state_prefix += "/projection";

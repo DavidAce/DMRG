@@ -84,6 +84,7 @@ void AlgorithmFinite::run_postprocessing() {
     write_to_file(StorageReason::PROJ_STATE, CopyPolicy::TRY);
     write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);
     print_status_full();
+    run_fes_analysis();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
 }
 
@@ -251,6 +252,30 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     // Last sanity check before leaving here
     if(status.chi_lim > status.chi_lim_max)
         throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
+}
+
+void AlgorithmFinite::reduce_bond_dimension_limit() {
+    // We reduce the bond dimension limit whenever entanglement has stopped changing
+    if(not tensors.position_is_inward_edge()) return;
+    check_convergence_entg_entropy();
+    if(status.entanglement_saturated_for > 0) {
+        write_to_file(StorageReason::FES_ANALYSIS);
+        algorithm_history.clear();
+        status.entanglement_saturated_for = 0;
+        status.entanglement_converged_for = 0;
+        // If chi_lim >= 128 we set it to the nearest power of 2 smaller than chi_lim. Eg 300 becomes 256.
+        // If chi_lim < 128 and chi_lim > 64 we set chi_lim = 64
+        // If chi_lim <  128 we set it to the nearest multiple of 8 smaller than chi_lim. Eg 92 becomes 88.
+        // If chi_lim == 8 we set AlgorithmStop::SUCCEEDED and return
+        if(status.chi_lim <= 8)
+            status.algo_stop = AlgorithmStop::SUCCEEDED;
+        else if(status.chi_lim <= 64)
+            status.chi_lim = num::prev_multiple<long>(status.chi_lim, 8l);
+        else if(status.chi_lim == std::clamp<long>(status.chi_lim, 65, 127))
+            status.chi_lim = 64;
+        else if(status.chi_lim >= 128)
+            status.chi_lim = num::prev_power_of_two<long>(status.chi_lim);
+    }
 }
 
 void AlgorithmFinite::update_expansion_factor_alpha() {
@@ -621,6 +646,7 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
 void AlgorithmFinite::clear_convergence_status() {
     tools::log->trace("Clearing convergence status");
     algorithm_history.clear();
+    status.algo_stop                   = AlgorithmStop::NONE;
     status.algorithm_has_finished      = false;
     status.algorithm_has_succeeded     = false;
     status.algorithm_has_to_stop       = false;

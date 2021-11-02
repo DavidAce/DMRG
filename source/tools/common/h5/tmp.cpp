@@ -142,6 +142,7 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
             case StorageReason::INIT_STATE:
             case StorageReason::EMIN_STATE:
             case StorageReason::EMAX_STATE:
+            case StorageReason::FES_ANALYSIS:
             case StorageReason::MODEL: break;
         }
         tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());

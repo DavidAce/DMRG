@@ -33,6 +33,7 @@ class flbit : public AlgorithmFinite {
     void run_default_task_list() final;
     void run_preprocessing() final;
     void run_algorithm() final;
+    void run_fes_analysis() final;
     void check_convergence() final;
     void create_time_points();
     void create_hamiltonian_gates();

@@ -52,6 +52,7 @@ class AlgorithmStatus {
     bool                 chi_lim_has_reached_chi_max = false;
     bool                 spin_parity_has_converged   = false;
     bool                 time_step_has_converged     = false;
+    bool                 fes_is_running              = false;
     void                 clear() {
         AlgorithmType algo_type_ = algo_type; // Retain the algorithm type
         *this                    = AlgorithmStatus();

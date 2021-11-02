@@ -206,4 +206,21 @@ namespace num {
     R next_power_of_two(T val) {
         return static_cast<R>(std::pow<long>(2, static_cast<long>(std::ceil(std::log2(std::real(val))))));
     }
+    template<typename R, typename T>
+    R prev_power_of_two(T val) {
+        return static_cast<R>(std::pow<long>(2, static_cast<long>(std::floor(std::log2(std::real(val - 1))))));
+    }
+
+    template<typename R, typename T>
+    inline R next_multiple(const T num, const T mult) {
+        if(mult == 0) return num;
+        return (num + mult) - mod(num, mult);
+    }
+    template<typename R, typename T>
+    inline R prev_multiple(const T num, const T mult) {
+        if(mult == 0) return num;
+        auto m = mod(num, mult);
+        if(m == 0) return prev_multiple<R>(num - 1, mult);
+        return num - m;
+    }
 }
