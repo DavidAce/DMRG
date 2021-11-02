@@ -148,7 +148,7 @@ namespace settings {
             inline double       J2_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-J2_wdth,J2_wdth) for two-body interaction */
             inline double       J3_wdth       = 0.5;            /*!< Width of the uniform box distribution U(-J3_wdth,J3_wdth) for three-body interaction */
             inline double       J2_xcls       = 1;              /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
-            inline size_t       J2_span       = 8;              /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Note that J2_span + 1 MPOs are used */
+            inline size_t       J2_span       = -1ul;           /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Use -1 for infinite. Note that J2_span + 1 MPOs are used */
             inline double       f_mixer       = 0.1;            /*!< Mixing factor for unitary transformation to real-space */
             inline size_t       u_layer       = 6;              /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
             inline long         spin_dim      = 2;              /*!< Spin dimension */

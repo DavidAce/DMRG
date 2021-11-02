@@ -18,15 +18,13 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.J2_wdth  = settings::model::lbit::J2_wdth;
     h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
     h5tb.param.J2_xcls  = settings::model::lbit::J2_xcls;
-    h5tb.param.J2_span  = settings::model::lbit::J2_span;
+    h5tb.param.J2_span  = settings::model::lbit::J2_span; // Can be 0. If -1ul = MAX then this means we want the cutoff to be full system range
     h5tb.param.f_mixer  = settings::model::lbit::f_mixer;
     h5tb.param.u_layer  = settings::model::lbit::u_layer;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
 
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
-    if(h5tb.param.J2_span == 0) h5tb.param.J2_ctof = settings::model::model_size - 1;
-    else h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
-
+    h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
     copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -54,9 +52,7 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
     std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
-    if(h5tb.param.J2_span == 0) h5tb.param.J2_ctof = settings::model::model_size - 1;
-    else h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
-
+    h5tb.param.J2_ctof               = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
     all_mpo_parameters_have_been_set = true;
 }
 
@@ -164,8 +160,8 @@ void LBit::build_mpo()
     tools::log->debug("mpo({}): building lbit mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
-    if(h5tb.param.J2_span >= h5tb.param.J2_rand.size())
-        throw except::logic_error("expected J2_span ({}) < J2_rand.size()({})", h5tb.param.J2_span, h5tb.param.J2_rand.size());
+    if(h5tb.param.J2_ctof >= h5tb.param.J2_rand.size())
+        throw except::logic_error("expected J2_ctof ({}) < J2_rand.size()({})", h5tb.param.J2_ctof, h5tb.param.J2_rand.size());
 
     Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);

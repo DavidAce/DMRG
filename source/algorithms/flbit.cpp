@@ -366,6 +366,7 @@ void flbit::create_time_points() {
 }
 
 void flbit::create_hamiltonian_gates() {
+    if(ready_hamiltonian_gates) throw std::logic_error("Hamiltonian gates have already been constructed");
     tools::log->info("Creating Hamiltonian gates");
     auto t_hamgates = tid::tic_scope("hamgates");
     ham_gates_1body.clear();
@@ -398,10 +399,11 @@ void flbit::create_hamiltonian_gates() {
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
     }
+
+    auto J2_ctof = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
     for(auto posL : list_2site) {
-        auto range = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
-        auto posR  = posL + range;
-        if(range == 0) break;
+        auto posR = posL + J2_ctof;
+        if(J2_ctof == 0) break;
         if(posR >= L) break;
         auto sites = num::range<size_t>(posL, posR + 1); // +1 to include last site, which is otherwise not included in range
         auto nbody = std::vector<size_t>{0, 2};          // zero is a flag to enable compensation for double-counting
@@ -409,6 +411,7 @@ void flbit::create_hamiltonian_gates() {
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
+
     for(auto posL : list_3site) {
         auto range = 2ul; // Distance to next-nearest neighbor when 3 sites interact
         auto posR  = posL + range;
@@ -419,6 +422,7 @@ void flbit::create_hamiltonian_gates() {
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
+
     for(const auto &[idx, ham] : iter::enumerate(ham_gates_1body)) {
         if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx)); }
     }
@@ -428,9 +432,11 @@ void flbit::create_hamiltonian_gates() {
     for(const auto &[idx, ham] : iter::enumerate(ham_gates_3body)) {
         if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
     }
+    ready_hamiltonian_gates = true;
 }
 
 void flbit::create_hamiltonian_swap_gates() {
+    if(ready_hamiltonian_swap_gates) throw std::logic_error("Hamiltonian swap gates have already been constructed");
     tools::log->info("Creating Hamiltonian swap gates");
     auto t_swaphamgates = tid::tic_scope("swaphamgates");
     ham_swap_gates_1body.clear();
@@ -450,8 +456,9 @@ void flbit::create_hamiltonian_swap_gates() {
         tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
         ham_swap_gates_1body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
     }
+    auto J2_ctof = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
     for(auto posL : list_2site) {
-        auto maxR = std::min<size_t>(posL + settings::model::lbit::J2_span, L - 1);
+        auto maxR = std::min<size_t>(posL + J2_ctof, L - 1);
         if(maxR == posL) continue;
         for(auto posR : num::range<size_t>(posL, maxR + 1)) { // maxR+1 to include the last site in range
             if(posL == posR) continue;
@@ -483,25 +490,26 @@ void flbit::create_hamiltonian_swap_gates() {
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_2body)) {
         if(tenx::isZero(ham.op)) {
             tools::log->error("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix.", idx, ham.pos);
-            tools::log->error("     This can happen if r = settings::model::lbit::J2_span = {} is too large.", settings::model::lbit::J2_span);
+            tools::log->error("     This can happen if r = J2_ctof = {} is too large.", J2_ctof);
             tools::log->error("     With the current settings:");
             tools::log->error("        x = settings::model::lbit::J2_xcls = {}", settings::model::lbit::J2_xcls);
             tools::log->error("        m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
             tools::log->error("        w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
             tools::log->error("     Values of this matrix are expected to be smaller than exp(-r/x) * (m+w/2) = {:8.2e}",
-                              std::exp(-static_cast<double>(settings::model::lbit::J2_span) / settings::model::lbit::J2_xcls) *
+                              std::exp(-static_cast<double>(J2_ctof) / settings::model::lbit::J2_xcls) *
                                   (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0));
         }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body)) {
         if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
     }
+    ready_hamiltonian_swap_gates = true;
 }
 
 void flbit::update_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
-    if(ham_gates_1body.empty() or ham_gates_2body.empty() or ham_gates_3body.empty()) create_hamiltonian_gates();
+    if(not ready_hamiltonian_gates) throw std::logic_error("Hamiltonian gates have not been constructed");
     update_time_step();
     tools::log->debug("Updating time evolution gates to iter {} | Δt = {}", status.iter, status.delta_t);
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
@@ -512,7 +520,7 @@ void flbit::update_time_evolution_gates() {
 void flbit::update_time_evolution_swap_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
-    if(ham_swap_gates_1body.empty() or ham_swap_gates_2body.empty() or ham_swap_gates_3body.empty()) create_hamiltonian_swap_gates();
+    if(not ready_hamiltonian_swap_gates) throw std::logic_error("Hamiltonian swap gates have not been constructed");
     update_time_step();
     tools::log->debug("Updating time evolution swap gates to iter {} | Δt = {}", status.iter, status.delta_t);
     time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body);
@@ -628,6 +636,7 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         }
         if(not urange.empty() and not frange.empty()) {
             auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
+            tools::log->info();
             h5file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
             h5file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
             h5file->writeDataset(decay, "/fLBIT/analysis/decay");
