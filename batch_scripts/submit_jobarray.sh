@@ -11,11 +11,12 @@ Usage            : $PROGNAME [-option | --option ] [=]<argument>
 -b | --build-type <str>            : Build type: [ Release | RelWithDebInfo | Debug | Profile ]  (default = Release)
 -c | --cluster <"a1,a2,a3...">     : Comma-separated string of clusters. At theophys: kraken | draken (default: )
      --cpus-per-task <int>         : Numer of cpu cores required per task (e.g. openmp threads) (default: 1)
-     --ntasks-per-core             : Number of tasks on each core (default: 1)
+     --ntasks-per-core             : Number of tasks on each core (default: None). Cannot be used with --hint
 -d | --dry-run                     : Do not actually submit
 -e | --exclusive                   : Use nodes in exclusive node
      --execname <str>              : Name of the executable to run (default = DMRG++)
 -f | --config <path or file>       : File or path to files containing simulation config files (suffixed .cfg) (default: input/ )
+     --hint <(no)multithread|...>  : Choose [(no)multithread | compute_bound | memory_bound]. Cannot be used with --ntasks-per-core.
 -j | --job-file <path or file>     : File containing config-seed pairs. Use for resuming failed runs
 -J | --job-name <str>              : Slurm job name. (default = DMRG)
 -m | --mem-per-cpu <int[suffix]>   : Memory per cpu core, e.g. 2000, 2000M, 2G (default: 2000)
@@ -50,6 +51,7 @@ PARSED_OPTIONS=$(getopt -n "$0"   -o hb:c:def:j:J:m:N:n:o:O:p:q:r:s:t:v \
                 exclusive\
                 execname:\
                 config:\
+                hint:\
                 job-file:\
                 job-name:\
                 mem-per-cpu:\
@@ -79,6 +81,7 @@ eval set -- "$PARSED_OPTIONS"
 execname=DMRG++
 build_type=Release
 jobname="--job-name=DMRG"
+hint=""
 configpath=input/
 startseed=0
 time="--time=0-1:00:00"
@@ -87,7 +90,7 @@ simsperarray=1000
 simspertask=1
 openmode="--open-mode=append"
 cpuspertask="--cpus-per-task=1"
-ntaskspercore="--ntasks-per-core=1"
+ntaskspercore=""
 ntasks="--ntasks=1"
 
 # Now goes through all the options with a case and using shift to analyse 1 argument at a time.
@@ -105,6 +108,7 @@ do
     -e|--exclusive)                 exclusive=--exclusive                 ; echo " * Exclusive                : ON"      ; shift   ;;
        --execname)                  execname=$2                           ; echo " * Executable name          : $2"      ; shift 2 ;;
     -f|--config)                    configpath=$2                         ; echo " * Configs                  : $2"      ; shift 2 ;;
+       --hint)                      hint="--hint=$2"                      ; echo " * Hint                     : $2"      ; shift 2 ;;
     -j|--job-file)                  jobfile=$2                            ; echo " * Job file                 : $2"      ; shift 2 ;;
     -J|--job-name)                  jobname="--job-name=$2"               ; echo " * Job name                 : $2"      ; shift 2 ;;
     -m|--mem-per-cpu)               mempercpu="--mem-per-cpu=$2"          ; echo " * Mem per cpu              : $2"      ; shift 2 ;;
@@ -136,6 +140,13 @@ if [ "$simsperarray" -gt "$simspercfg" ]; then
     echo "Cannot have array-size ($simsperarray) > sims-per-cfg ($simspercfg)"
     exit 1
 fi
+
+if [[ ! -z "$hint" ]] && [[ ! -z "$ntaskspercore" ]] ; then
+  echo "--hint cannot be used with --ntasks-per-core"
+  exit 1
+fi
+
+
 
 # Deactivate conda so that we do not get conflicting dynamic libraries
 if [ -n "$CONDA_PREFIX" ] ; then
@@ -218,17 +229,17 @@ if [ -f "$jobfile" ]; then
 
     if [ -n "$dryrun" ]; then
 cat << EOF >&2
-sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
+sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
 --array=1-$numseeds:$simspertask \
 run_jobarray.sh -e $exec -f $file
 EOF
     bash run_jobarray.sh -e $exec -f $file -d
     else
-      echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
+      echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
         --array=1-$numseeds:$simspertask \
         run_jobarray.sh -e $exec -f $file" >> job_report.txt
 
-      sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
+      sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
         --array=1-$numseeds:$simspertask \
         run_jobarray.sh -e $exec -f $file
     fi
@@ -404,17 +415,17 @@ for jobfile in $jobfiles; do
 
   if [ -n "$dryrun" ]; then
 cat << EOF >&2
-sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
+sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
 --array=1-$numseeds:$simspertask \
 run_jobarray.sh -e $exec -f $jobfile
 EOF
   bash run_jobarray.sh -e $exec -f $jobfile -d
   else
-    echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
+    echo "sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
       --array=1-$numseeds:$simspertask \
       run_jobarray.sh -e $exec -f $jobfile" >> job_report.txt
 
-    sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
+    sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
       --array=1-$numseeds:$simspertask \
       run_jobarray.sh -e $exec -f $jobfile
   fi
