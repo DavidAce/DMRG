@@ -41,12 +41,13 @@ def append_stats(stats, dir, count, bytes):
         stats[dirSum]['count'] += count
         stats[dirSum]['bytes'] += bytes
 
-
 if args.timestamp:
     args.filename = args.filename + '-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
 
 if args.filename != 'experiment' or args.outdir != 'experiments'  :
     args.save = True
+
+
 
 try:
     git_rev = "GIT INFO:\n" + str(subprocess.check_output(['git', 'log', '-1']).decode('ascii'))
@@ -102,7 +103,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
 
     if not args.summary and not args.count:
-        header = "{:<10} {:<12} {:<8} {:<6} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Algorithm", "State" ,"Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
+        header = "{:<10} {:<12} {:<6} {:<12} {:<6} {:<6} {:>12} {:>12} {:>12} {:>12} {:>12} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format("Algorithm", "State" ,"Length", "Seed", "Iter","Step", "Energy", "VarNow", "VarLow","Ent.Entr.", "Time",
                                                                                                            "Resets", "Stk", "Sat" ,"Con", "Suc", "Fin")
 
         print(header)
@@ -140,31 +141,52 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
         try:
             state_keys = []
-            for candidate in h5file["common/finished"].attrs.keys():
-                if args.finished and h5file["common/finished"].attrs[candidate] == 0:
-                    continue
-                if not args.finished and "savepoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
-                    continue
-                if not args.finished and "checkpoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
-                    continue
-                if not args.projection and "projection" in candidate:
-                    continue
-                if not any(algo in candidate for algo in args.algorithms):
-                    continue
-                if args.state and not str(args.state) in h5file["common/state_root"].attrs[candidate]:
-                    continue
-                state_keys.append(candidate)
+            if 'fLBIT' in args.algorithms:
+                state_keys.append('fLBIT/state_real/tables')
+            else:
+                for candidate in h5file["common/finished"].attrs.keys():
+                    if candidate in state_keys:
+                        continue
+                    if 'iter_' in candidate:
+                        continue
+                    if args.finished and h5file["common/finished"].attrs[candidate] == 0:
+                        print("State candidate [{}] skipped: it has not finished".format(candidate))
+                        continue
+                    if not args.finished and "savepoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
+                        print("State candidate [{}] skipped: finished state found instead [{}]".format(candidate,h5file["common/state_root"].attrs[candidate] + "/finished"))
+                        continue
+                    if not args.finished and "checkpoint" in candidate and h5file["common/state_root"].attrs[candidate] + "/finished" in h5file:
+                        print("State candidate [{}] skipped since [{}] was found".format(candidate,h5file["common/state_root"].attrs[candidate] + "/finished"))
+                        continue
+                    if not args.projection and "projection" in candidate:
+                        print("State candidate [{}] skipped since projections was not asked for", candidate)
+                        continue
+                    if not any(algo in candidate for algo in args.algorithms):
+                        print("State candidate [{}] skipped: it matches no algorithm in [{}]", candidate, args.algorithms)
+                        continue
+                    if args.state and not str(args.state) in h5file["common/state_root"].attrs[candidate]:
+                        print("State candidate [{}] skipped: it matches no state in [{}]", candidate, args.state)
+                        continue
+                    state_keys.append(candidate)
             state_keys.sort()
+        except TypeError:
+            raise
         except Exception as er:
             print("Could not gather paths in file [",h5path,"]. Reason: ", er)
+            raise
             continue
         for state_num,state_prefix in enumerate(state_keys):
             entry = []
             ententrp_zero = []
             try:
-                algo_name = h5file["common/algo_type"].attrs[state_prefix]
-                state_name = h5file["common/state_name"].attrs[state_prefix]
-                finished.append(h5file["common/finished"].attrs[state_prefix])
+                if 'fLBIT' in state_prefix:
+                    algo_name = 'fLBIT'
+                    state_name = 'state_real'
+                    finished.append(1)
+                else:
+                    algo_name = h5file["common/algo_type"].attrs[state_prefix]
+                    state_name = h5file["common/state_name"].attrs[state_prefix]
+                    finished.append(h5file["common/finished"].attrs[state_prefix])
                 if (args.finished and finished[-1] == 0):
                     continue
                 msrmnt_last_entry = h5file[state_prefix].get('measurements')[-1]
@@ -210,7 +232,7 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
                 if not args.summary and not args.count:
                     entry.append(
-                        "{:<10} {:<12} {:<8} {:<6} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
+                        "{:<10} {:<12} {:<6} {:<12} {:<6} {:<6} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>12.4f} {:>8} {:>5} {:>5} {:>5} {:>5} {:>5}".format(
                             algorithm[-1],
                             state[-1],
                             chainlen[-1],
@@ -235,7 +257,8 @@ for dirName, subdirList, fileList in os.walk(args.directory):
 
             except Exception as er:
                 print("Could not read dataset. Reason: ", er)
-                continue
+                # continue
+                raise
         h5file.close()
     if not fileList:
         continue
