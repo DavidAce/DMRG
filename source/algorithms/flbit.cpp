@@ -567,7 +567,8 @@ void flbit::transform_to_real_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}", overlap));
+        if(std::abs(overlap - 1) > 1e-4) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}", overlap));
+        if(std::abs(overlap - 1) > 1e-10) tools::log->warn("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
     }
 }
 
@@ -634,7 +635,7 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         if(settings::flbit::compute_lbit_stats) {
             sample = 50;
             urange = num::range<size_t>(1, 4);
-            frange = num::range<double>(0, 0.8, 0.05);
+            frange = num::range<double>(0, 0.4, 0.025);
         } else if(settings::flbit::compute_lbit_length) {
             urange = {settings::model::lbit::u_layer};
             frange = {settings::model::lbit::f_mixer};
