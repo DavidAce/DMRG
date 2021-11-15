@@ -7,7 +7,7 @@
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
-void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps> &subspace, double target_subspace_error, size_t max_accept) {
+void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps> &subspace, size_t max_accept) {
     // Sort the eigvec list in order of descending overlaps. If the overlaps are the same, compare instead the distance in energy to the
     // current energy
     std::sort(subspace.begin(), subspace.end(), std::greater<>());

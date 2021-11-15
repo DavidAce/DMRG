@@ -71,7 +71,7 @@ namespace tools::finite::opt::internal{
         find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta & meta);
 
         extern void
-        filter_subspace(std::vector<opt_mps> & subspace, double target_subspace_error, size_t max_accept);
+        filter_subspace(std::vector<opt_mps> & subspace, size_t max_accept);
 
 
         extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, double energy_llim_per_site, double energy_ulim_per_site);

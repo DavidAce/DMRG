@@ -414,7 +414,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      *
      */
 
-    internal::subspace::filter_subspace(subspace, settings::precision::target_subspace_error, settings::precision::max_subspace_size);
+    internal::subspace::filter_subspace(subspace, settings::precision::max_subspace_size);
 
     /*
      *
