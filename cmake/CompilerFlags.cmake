@@ -12,7 +12,7 @@ message(STATUS "CXX compiler ${CMAKE_CXX_COMPILER}")
 ### Set the  microarchitecture for OpenBLAS       ###
 #####################################################
 # Make an "enum" for valid march
-set(${PROJECT_UNAME}_MICROARCH_VALID generic haswell zen zenver1 native)
+set(${PROJECT_UNAME}_MICROARCH_VALID generic haswell skylake zen zenver1 native)
 set(${PROJECT_UNAME}_MICROARCH native CACHE STRING "CPU micro-architecture")
 set_property(CACHE ${PROJECT_UNAME}_MICROARCH PROPERTY STRINGS ${${PROJECT_UNAME}_MICROARCH_VALID})
 if (NOT ${PROJECT_UNAME}_MICROARCH IN_LIST ${PROJECT_UNAME}_MICROARCH_VALID)
