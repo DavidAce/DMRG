@@ -4,6 +4,7 @@
 #include <config/enums.h>
 #include <config/settings.h>
 #include <debug/info.h>
+#include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <string>
@@ -121,6 +122,7 @@ namespace tools::common::h5 {
         // -- position       | state_prefix -> position of the mps
 
         // Checks if the current entries have already been written
+        if(storage_level == StorageLevel::NONE) return;
         auto                                                                  t_meta = tid::tic_scope("meta", tid::level::pedant);
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
         bootstrap_meta_log(save_log, h5file, state_prefix);
@@ -158,30 +160,35 @@ namespace tools::common::h5 {
         save_log[std::string(state_prefix)] = save_point;
     }
 
-    void save::timer(h5pp::File &h5file, std::string_view timer_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
+    void save::timer(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
         if(not settings::timer::on) return;
         if(not settings::storage::save_timers) return;
         if(storage_level == StorageLevel::NONE) return;
+        auto t_timers   = tid::tic_token("timers", tid::level::detail);
+        auto table_path = fmt::format("{}/timers", table_prefix);
         // Check if the current entry has already been appended
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, timer_prefix);
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[std::string(timer_prefix)] == save_point) return;
 
-        tools::log->trace("Writing timer data to: {}", timer_prefix);
-        auto t_prof = tid::tic_token("prof", tid::level::detail);
+        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+        bootstrap_save_log(save_log, h5file, table_path);
+        auto save_point = std::make_pair(status.iter, status.step);
+        if(save_log[std::string(table_path)] == save_point) return;
+        tools::log->trace("Writing timer data to: {}", table_path);
 
         h5pp_ur::register_table_type();
         h5file.setKeepFileOpened();
-        for(const auto &t : tid::search(status.algo_type_sv())) {
-            auto dsetname = fmt::format("{}/{}", timer_prefix, t.key);
-            auto dsetdata = h5pp_ur::item{t->get_time(), t->get_time_avg(), t->get_tic_count()};
-            h5file.writeDataset(dsetdata, dsetname, h5pp_ur::h5_type);
-        }
-        h5file.writeAttribute(status.iter, "iter", timer_prefix);
-        h5file.writeAttribute(status.step, "step", timer_prefix);
+        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_ur::h5_type, table_path, fmt::format("{} Timings", status.algo_type_sv()));
+
+        auto tid_tree    = tid::search(status.algo_type_sv());
+        auto table_items = std::vector<h5pp_ur::item>();
+        table_items.reserve(tid_tree.size());
+        for(const auto &[i, t] : iter::enumerate(tid_tree))
+            table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
+
+        h5file.writeTableRecords(table_items, table_path, 0);
+        h5file.writeAttribute(status.iter, "iter", table_path);
+        h5file.writeAttribute(status.step, "step", table_path);
         h5file.setKeepFileClosed();
-        save_log[std::string(timer_prefix)] = save_point;
+        save_log[std::string(table_path)] = save_point;
     }
 
 }

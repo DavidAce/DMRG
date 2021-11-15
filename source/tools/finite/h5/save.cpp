@@ -116,10 +116,11 @@ namespace tools::finite::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
-        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, payload.data(), payload.size());
+        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.chi_lim, payload.data(), payload.size());
         h5file.appendTableRecords(entry, table_path);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
+        h5file.writeAttribute(status.chi_lim, "chi_lim", table_path);
         save_log[table_path] = save_point;
     }
 
@@ -366,7 +367,7 @@ namespace tools::finite::h5 {
             }
             case StorageReason::FES_ANALYSIS: {
                 storage_level = settings::storage::storage_level_fes_states;
-                state_prefix += fmt::format("/fes/chi_{}", status.chi_lim);
+                state_prefix += "/fes";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
@@ -454,8 +455,6 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
         } else {
             tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
-            //            tools::finite::h5::save::entgm(h5file, state_prefix, storage_level, state, status);
-            tools::common::h5::save::timer(h5file, timer_prefix, storage_level, status);
         }
 
         tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
@@ -466,6 +465,7 @@ namespace tools::finite::h5 {
             if(storage_reason == StorageReason::MODEL) break;
             tools::common::h5::save::status(h5file, table_prefix, storage_level, status);
             tools::common::h5::save::mem(h5file, table_prefix, storage_level, status);
+            tools::common::h5::save::timer(h5file, table_prefix, storage_level, status);
             tools::finite::h5::save::measurements(h5file, table_prefix, storage_level, state, model, edges, status);
             tools::finite::h5::save::bond_dimensions(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::truncation_errors(h5file, table_prefix, storage_level, state, status);

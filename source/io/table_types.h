@@ -5,6 +5,7 @@
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
 #include <hdf5_hl.h>
+#include <tid/enums.h>
 #include <vector>
 
 class h5pp_table_measurements_finite {
@@ -127,7 +128,6 @@ class h5pp_table_measurements_infinite {
         H5Tinsert(h5_type, "time_step", HOFFSET(table, time_step), h5pp::type::compound::H5T_COMPLEX<double>::h5type());
     }
 };
-
 
 class h5pp_table_algorithm_status {
     public:
@@ -255,12 +255,13 @@ class h5pp_table_data {
     public:
     static inline std::unordered_map<meta, h5pp::hid::h5t, metaHasher> h5_types;
 
-    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, const T *data, size_t data_size) {
-        size_t                 total_size = 2 * sizeof(uint64_t) + data_size * sizeof(T);
+    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t chi_lim, const T *data, size_t data_size) {
+        size_t                 total_size = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + data_size * sizeof(T);
         std::vector<std::byte> entry(total_size);
         std::memcpy(entry.data() + 0 * sizeof(uint64_t), &iter, sizeof(uint64_t));
         std::memcpy(entry.data() + 1 * sizeof(uint64_t), &step, sizeof(uint64_t));
-        std::memcpy(entry.data() + 2 * sizeof(uint64_t), data, data_size * sizeof(T));
+        std::memcpy(entry.data() + 2 * sizeof(int64_t), &chi_lim, sizeof(int64_t));
+        std::memcpy(entry.data() + 3 * sizeof(uint64_t), data, data_size * sizeof(T));
         return entry;
     }
 
@@ -271,9 +272,10 @@ class h5pp_table_data {
             h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, total_size);
             H5Tinsert(h5_type, "iter", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
             H5Tinsert(h5_type, "step", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+            H5Tinsert(h5_type, "chi_lim", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
             auto h5type = h5pp::util::getH5Type<T>();
             for(size_t elem = 0; elem < data_size; elem++) {
-                H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), 2 * sizeof(uint64_t) + elem * sizeof(T), h5type);
+                H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + elem * sizeof(T), h5type);
             }
             h5_types[m] = h5_type;
         }
@@ -284,19 +286,65 @@ class h5pp_table_data {
 class h5pp_ur {
     public:
     static inline h5pp::hid::h5t h5_type;
-
+    static inline h5pp::hid::h5t h5_level_type;
+    static constexpr size_t      nlen = 255;
     struct item {
+        char  *name;
         double time;
+        double sum;
+        double pcnt;
         double avg;
+        int    level;
         size_t count;
+        item() = default;
+        item(const item &it) : time(it.time), sum(it.sum), pcnt(it.pcnt), avg(it.avg), level(it.level), count(it.count) { copy_name(it.name); };
+        item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count)
+            : time(time), sum(sum), pcnt(pcnt), avg(avg), level(level), count(count) {
+            copy_name(name_);
+        }
+        // Automatically deallocate when no longer needed
+        ~item() { free(name); }
+
+        private:
+        void copy_name(std::string_view name_) {
+            // Note that we must use C-style malloc/free here rather than C++-style new/delete, since that is what HDF5 uses internally.
+            // This is particularly important when we read data from file, and let HDF5 allocate the vlen buffer
+            name = static_cast<char *>(malloc((name_.size() + 1) * sizeof(char))); // Add +1 for null terminator
+            strncpy(name, name_.data(), name_.size());
+            name[name_.size()] = '\0'; // Make sure name is null-terminated!
+        }
     };
 
     h5pp_ur() { register_table_type(); }
     static void register_table_type() {
         if(h5_type.valid()) return;
+        if(not h5_level_type.valid()) {
+            h5_level_type = H5Tcreate(H5T_ENUM, sizeof(tid::level));
+            int val;
+            H5Tenum_insert(h5_level_type, "parent", (val = tid::level::parent, &val));
+            H5Tenum_insert(h5_level_type, "normal", (val = tid::level::normal, &val));
+            H5Tenum_insert(h5_level_type, "detail", (val = tid::level::detail, &val));
+            H5Tenum_insert(h5_level_type, "pedant", (val = tid::level::pedant, &val));
+        }
+
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(item));
+
+        // Create a type for the char array from the template H5T_C_S1
+        // The template describes a string with a single char.
+        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
+        h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
+        H5Tset_size(h5t_custom_string, H5T_VARIABLE);
+
+        // Optionally set the null terminator or pad with '\0'
+        H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
+        H5Tset_cset(h5t_custom_string, H5T_CSET_UTF8);
+
+        H5Tinsert(h5_type, "name", HOFFSET(item, name), h5t_custom_string);
         H5Tinsert(h5_type, "time", HOFFSET(item, time), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "sum", HOFFSET(item, sum), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "pcnt", HOFFSET(item, pcnt), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "avg", HOFFSET(item, avg), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "level", HOFFSET(item, level), h5_level_type);
         H5Tinsert(h5_type, "count", HOFFSET(item, count), H5T_NATIVE_UINT64);
     }
 };
