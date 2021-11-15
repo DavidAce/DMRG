@@ -453,7 +453,8 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
     //         * layer 0: [0,1],[0,2],[0,3]... then [2,3],[2,4],[2,5]... then [4,5],[4,6][4,7]... and so on
     //         * layer 1: [1,2],[1,3],[1,4]... then [3,4],[3,5],[3,6]... then [5,6],[5,7][5,8]... and so on
     //
-    // This way we get as many reverse swap cancellations as possible while maintaining some support for non-commutativity
+    // This way we get as many reverse swap cancellations as possible while maintaining some support
+    // for non-commutativity on short-range interactions
 
     // Performance note:
     // If the state is at position L-1, and the list generated has to start from 0, then L-1 moves have
@@ -752,103 +753,5 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | time {:.4f}", gates.size(), swap_count, rwap_count,
                       swap_count + rwap_count, skip_count, t_swapgate->get_last_interval());
     move_center_point_to_pos_dir(state, 0, 1, chi_lim, svd_settings);
-    tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
-}
-
-std::vector<size_t> generate_pos_sequence_old(const StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse) {
-    // Generate a list of staggered indices
-    // If 2-site gates,
-    //      * Apply gates on [0-1],[2-3]... and then [1-2],[3-4]..., i.e. even sites first, then odd sites,
-    //      * The corresponing list is [0,2,3,4,6....1,3,5,7,9...]
-    // If 3-site gates,
-    //      * Apply gates on [0-1-2], [3-4-5]... then on [1-2-3], [4-5-6]..., then on [2-3-4],[5-6-7], and so on.
-    //      * The corresponing list is [0,3,6,9...1,4,7,10...2,5,8,11...]
-    // So the list contains the index to the "first" or left-most" leg of the unitary.
-    // When applying the inverse operation, all the indices are reversed.
-    //
-    // Performance note:
-    // If the state is at position L-1, and the list generated has to start from 0, then L-1 moves have
-    // to be done before even starting. Additionally, if unlucky, we have to move L-1 times again to return
-    // to the original position.
-    //    if(state.get_direction() < 0 and past_middle) state.flip_direction(); // Turn direction away from middle
-    //    if(state.get_direction() > 0 and not past_middle) state.flip_direction(); // Turn direction away from middle
-
-    auto                             state_len = state.get_length<long>();
-    auto                             state_pos = state.get_position<long>();
-    std::vector<std::vector<size_t>> layers;
-    std::vector<std::vector<size_t>> pos_list(gates.size());
-    for(const auto &[i, g] : iter::enumerate(gates)) pos_list[i] = g.pos;
-    while(not pos_list.empty()) {
-        // Find a gate where pos[0] == at
-        std::vector<size_t> layer;
-        std::vector<size_t> used;
-        size_t              at = pos_list.front().front();
-        for(auto &&[i, pos] : iter::enumerate(pos_list)) {
-            if(at == pos.front()) {
-                layer.emplace_back(at);
-                used.emplace_back(i);
-                at = pos.back() + 1;
-            }
-        }
-        // Append the layer
-        layers.emplace_back(layer);
-
-        // Remove the used elements from gates_pos
-        for(const auto &i : iter::reverse(used)) pos_list.erase(pos_list.begin() + static_cast<long>(i));
-    }
-
-    // Reverse every other layer to get a zigzag pattern
-    // If the state is past the middle, reverse layers 0,2,4... otherwise 1,3,5...
-    size_t past_middle = state_pos > state_len / 2 ? 0 : 1;
-    for(auto &&[i, l] : iter::enumerate(layers)) {
-        if(num::mod<size_t>(i, 2) == past_middle) std::reverse(l.begin(), l.end());
-    }
-    // Move the layers into a long sequence of positions
-    std::vector<size_t> pos_sequence;
-    for(auto &l : layers) pos_sequence.insert(pos_sequence.end(), std::make_move_iterator(l.begin()), std::make_move_iterator(l.end()));
-
-    // To apply inverse layers we reverse the whole sequence
-    if(reverse) std::reverse(pos_sequence.begin(), pos_sequence.end());
-    return pos_sequence;
-}
-
-void tools::finite::mps::apply_gates_old(StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, long chi_lim,
-                                         std::optional<svd::settings> svd_settings) {
-    if(gates.empty()) return;
-    auto pos_sequence = generate_pos_sequence_old(state, gates, reverse);
-    if constexpr(settings::debug_gates)
-        tools::log->trace("apply_gates_old: current pos {} dir {} | pos_sequence {}", state.get_position<long>(), state.get_direction(), pos_sequence);
-
-    state.clear_cache(LogPolicy::QUIET);
-    Eigen::Tensor<cplx, 3> gate_mps;
-    for(const auto &[idx, pos] : iter::enumerate(pos_sequence)) {
-        auto &gate = gates[pos];
-        if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate {} is out of bounds: {}", pos, gate.pos));
-        move_center_point_to_pos(state, static_cast<long>(gate.pos.front()), chi_lim, svd_settings);
-
-        auto multisite_mps = state.get_multisite_mps(gate.pos);
-
-        {
-            auto t_apply = tid::tic_token("apply_gate");
-            gate_mps.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-            if(reverse)
-                gate_mps.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
-            else
-                gate_mps.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
-        }
-
-        long min_position = static_cast<long>(gate.pos.front()) - 1;
-        long max_position = static_cast<long>(gate.pos.back());
-        long tgt_position = static_cast<long>(pos_sequence[std::min<size_t>(idx + 1, pos_sequence.size() - 1)]);
-        long new_position = std::clamp<long>(tgt_position, min_position, max_position);
-        tools::log->trace("Merging gate sites {} dims {}", gate.pos, multisite_mps.dimensions());
-        if constexpr(settings::debug_gates)
-            tools::log->trace("pos {} | tgt {} | new {} | from {} - {} | labels {}", gate.pos, tgt_position, new_position, state.get_position<long>(),
-                              new_position, state.get_labels());
-        tools::finite::mps::merge_multisite_mps(state, gate_mps, gate.pos, new_position, chi_lim, svd_settings, LogPolicy::QUIET);
-    }
-
-    move_center_point_to_edge(state, chi_lim, svd_settings);
-
     tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
 }
