@@ -180,11 +180,11 @@ std::vector<Eigen::Tensor<ModelFinite::Scalar, 4>> ModelFinite::get_compressed_m
     // Setup SVD
     // Here we need a lot of precision:
     //  - Use very low svd threshold
-    //  - Force the use of JacobiSVD by setting the switchsize to something large
+    //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
     if(not svd_settings) svd_settings = svd::settings();
     if(not svd_settings->threshold) svd_settings->threshold = std::numeric_limits<double>::epsilon();
-    if(not svd_settings->switchsize) svd_settings->switchsize = 4096;
+    if(not svd_settings->switchsize_bdc) svd_settings->switchsize_bdc = 4096;
     if(not svd_settings->use_bdc) svd_settings->use_bdc = false;
     if(not svd_settings->loglevel) svd_settings->loglevel = 2;
     if(not svd_settings->svd_lib) svd_settings->svd_lib = SVDLib::lapacke;

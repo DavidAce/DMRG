@@ -80,12 +80,12 @@ std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compress
     // Setup SVD
     // Here we need a lot of precision:
     //  - Use very low svd threshold
-    //  - Force the use of JacobiSVD by setting the switchsize to something large
+    //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
     svd::solver svd;
-    svd.threshold  = 1e-12;
-    svd.switchsize = 50000;
-    svd.svd_lib    = SVDLib::lapacke;
+    svd.threshold      = 1e-12;
+    svd.switchsize_bdc = 50000;
+    svd.svd_lib        = SVDLib::lapacke;
     if(svdMode == SVDMode::EIGEN) svd.svd_lib = SVDLib::eigen;
     if(svdMode == SVDMode::RSVD) svd.svd_lib = SVDLib::rsvd;
 

@@ -189,8 +189,8 @@ void MatVecMps<T>::compress() {
     svd::settings svd_settings;
     svd_settings.svd_lib    = SVDLib::lapacke;
     svd_settings.use_bdc    = false;
-    svd_settings.threshold  = 1e-12;
-    svd_settings.switchsize = 4096;
+    svd_settings.threshold      = 1e-12;
+    svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
 
     Eigen::Tensor<T, 4> mpo_tmp = mpo;

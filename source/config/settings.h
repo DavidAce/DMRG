@@ -194,7 +194,7 @@ namespace settings {
         inline double   eig_tolerance                   = 1e-14 ;   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eig_default_ncv                 = 32    ;   /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline double   svd_threshold                   = 1e-12 ;   /*!< Minimum threshold value for keeping singular values. */
-        inline size_t   svd_switchsize                  = 16    ;   /*!< Linear size of a matrix, below which BDCSVD will use slower but more precise JacobiSVD instead (default is 16 , good could be ~64) */
+        inline size_t   svd_switchsize_bdc              = 16    ;   /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline double   max_grad_tolerance              = 1e-0  ;   /*!< Keep running an opimization step (LBFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline bool     use_compressed_mpo_squared_all  = false ;   /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_squared_otf  = true  ;   /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
