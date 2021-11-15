@@ -30,7 +30,7 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
         svd_settings.threshold  = 1e-8;
         svd_settings.loglevel   = 2;
         svd_settings.use_bdc    = true;
-        svd_settings.switchsize = 16;
+        svd_settings.switchsize_bdc = 16;
 
         h5pp::File h5file(fmt::format("{}/svd-benchmark.h5", TEST_MATRIX_DIR), h5pp::FilePermission::READONLY, 2);
         double     t_split_sum = 0;

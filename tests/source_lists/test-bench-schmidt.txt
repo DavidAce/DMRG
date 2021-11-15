@@ -5,6 +5,7 @@ set(test_lnk
 set(test_inc
     $<TARGET_OBJECTS:dmrg-tools-common-log>
     $<TARGET_OBJECTS:dmrg-tools-common-split>
+    $<TARGET_OBJECTS:dmrg-tools-common-contraction>
     $<TARGET_OBJECTS:dmrg-tensors-mps>
     $<TARGET_OBJECTS:dmrg-math-svd>
     $<TARGET_OBJECTS:dmrg-math-tenx>
