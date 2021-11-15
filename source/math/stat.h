@@ -173,14 +173,11 @@ namespace stat {
         auto n            = static_cast<double>(std::distance(y_it, y_en));
         if(n == 0) return start_point.has_value() ? start_point.value() : 0;
         auto y_invalid_it = std::find_if(y_it, y_en, [](auto &val) { return std::isinf(val) or std::isnan(val); });
-        if(y_invalid_it <= y_en) {
+        if(y_invalid_it != y_en and y_invalid_it != y_it) {
             // Found an invalid point! Back-track once
             std::advance(y_invalid_it, -1);
-            if(y_it == y_invalid_it)
-                return start_point.value();
-            else
-                end_point = std::distance(Y.begin(), y_invalid_it);
         }
+        end_point = std::distance(Y.begin(), y_invalid_it);
         return end_point.value();
     }
 
