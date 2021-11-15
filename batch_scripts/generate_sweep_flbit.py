@@ -34,14 +34,14 @@ print("Generating", len(sites) * len(J) * len(w) * len(f) * len(initial_state), 
 
 for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x,f, u, r, initial_state):
     str_L = str(val_L)
-    str_J = "J[{:+.2f}_{:+.2f}_{:+.2f}]".format(val_J[0], val_J[1], val_J[2])
-    str_w = "w[{:.2f}_{:.2f}_{:.2f}]".format(val_w[0], val_w[1], val_w[2])
-    str_x = "{:.2f}".format(val_x)
-    str_f = "{:.2f}".format(val_f)
+    str_J = "J[{:+.3f}_{:+.3f}_{:+.3f}]".format(val_J[0], val_J[1], val_J[2])
+    str_w = "w[{:.3f}_{:.3f}_{:.3f}]".format(val_w[0], val_w[1], val_w[2])
+    str_x = "{:.3f}".format(val_x)
+    str_f = "{:.3f}".format(val_f)
     str_u = "{}".format(val_u)
     str_r = "{}".format(val_r)
-    str_J1,str_J2, str_J3 = "{:+.2f}".format(val_J[0]),"{:+.2f}".format(val_J[1]),"{:+.2f}".format(val_J[2])
-    str_w1,str_w2, str_w3 = "{:+.2f}".format(val_w[0]),"{:+.2f}".format(val_w[1]),"{:+.2f}".format(val_w[2])
+    str_J1,str_J2, str_J3 = "{:+.3f}".format(val_J[0]),"{:+.3f}".format(val_J[1]),"{:+.3f}".format(val_J[2])
+    str_w1,str_w2, str_w3 = "{:+.3f}".format(val_w[0]),"{:+.3f}".format(val_w[1]),"{:+.3f}".format(val_w[2])
 
     input_filename = "{}/{}_L{}_{}_{}_x{}_f{}_u{}_r{}.cfg".format(location,basename,str_L,str_J,str_w, str_x,str_f, str_u,str_r)
 
