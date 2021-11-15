@@ -20,11 +20,15 @@ namespace svd {
     class solver {
         private:
         void copy_settings(const svd::settings &svd_settings);
-
         template<typename Scalar>
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         template<typename Scalar>
         using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+
+        template<typename Scalar>
+        void save_svd(const MatrixType<Scalar> & A, const MatrixType<Scalar> & U, const VectorType<Scalar> & S,
+                           const MatrixType<Scalar> & VT, long rank_max,
+                           const std::string & lib, const std::vector<std::pair<std::string, std::string>> &details) const;
 
         template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_lapacke(const Scalar *mat_ptr, long rows, long cols,
@@ -52,10 +56,12 @@ namespace svd {
         solver(const svd::settings &svd_settings);
         solver(std::optional<svd::settings> svd_settings);
         double threshold  = 1e-12;
-        size_t switchsize = 16; // Use Jacobi algorithm when rows < switchsize
+        size_t switchsize_bdc = 16; // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
+        size_t switchsize_rnd = 1024; // Use Randomized SVD algorithm when rows < switchsize_bdc and BDC otherwise
         SVDLib svd_lib    = SVDLib::lapacke;
-        bool   use_bdc    = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize
+        bool   use_bdc    = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize_bdc
         bool   save_fail  = false;
+        bool   save_result  = false;
 
         static std::optional<long long> count;
         double                          truncation_error = 0;

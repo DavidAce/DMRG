@@ -18,13 +18,6 @@
     #include <lapacke.h>
 #endif
 
-//#if !defined(NDEBUG)
-#include <h5pp/h5pp.h>
-#include <math/linalg/matrix.h>
-#include <math/linalg/tensor.h>
-//#endif
-//
-
 namespace svd {
     static constexpr bool use_jsv = true;
     namespace internal {
@@ -54,7 +47,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
     if(rank_max.value() == 0) throw std::logic_error("rank_max == 0");
     // Setup the SVD solver
-    bool use_jacobi = static_cast<size_t>(sizeS) < switchsize;
+    bool use_jacobi = static_cast<size_t>(sizeS) < switchsize_bdc;
 
     if(use_jacobi and rows < cols) {
         // The jacobi routine needs a tall matrix
@@ -80,9 +73,25 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(rows <= 0) throw std::runtime_error("SVD error: rows() <= 0");
     if(cols <= 0) throw std::runtime_error("SVD error: cols() <= 0");
 
-    MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
-    MatrixType<Scalar> A_original;
-    if(save_fail) A_original = A;
+    MatrixType<Scalar>                               A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
+    MatrixType<Scalar>                               A_original;
+    std::vector<std::pair<std::string, std::string>> details;
+    if(save_fail or save_result) {
+        A_original = A;
+#if defined(OPENBLAS_AVAILABLE)
+        details = {{"OPENBLAS_VERSION", OPENBLAS_VERSION},
+                   {"openblas_num_threads", std::to_string(openblas_get_num_threads())},
+                   {"openblas_parallel_mode", std::to_string(openblas_get_parallel())},
+                   {"openblas_corename", openblas_get_corename()},
+                   {"openblas_config", openblas_get_config()},
+                   {"OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", OPENBLAS_GEMM_MULTITHREAD_THRESHOLD}};
+#endif
+#if defined(MKL_AVAILABLE)
+        MKLVersion Version;
+        mkl_get_version(&Version);
+        details = {{"Intel-MKL-Version", fmt::format("{}.{}.{}", Version.MajorVersion, Version.MinorVersion, Version.UpdateVersion)}};
+#endif
+    }
 
     // Initialize containers
     MatrixType<Scalar> U;
@@ -121,7 +130,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if constexpr(std::is_same<Scalar, double>::value) {
             if(use_jacobi) {
                 if constexpr(use_jsv) {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
                     // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
                     // For this routine we need rows > cols
                     S.resize(sizeS);
@@ -146,7 +155,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     VT = V.adjoint();
                     V.resize(0, 0);
                 } else {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
                     // For this routine we need rows > cols
                     S.resize(sizeS);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
@@ -165,7 +174,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     VT = V.adjoint();
                 }
             } else if(use_bdc) {
-                svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
                 int liwork = std::max(1, 8 * mn);
                 int lrwork = std::max(1, mn * (6 + 4 * mn) + mx);
                 iwork.resize(static_cast<size_t>(liwork));
@@ -192,7 +201,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesdd error: could not converge: info {}", info));
 
             } else {
-                svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
 
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
@@ -218,7 +227,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         } else if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
             if(use_jacobi) {
                 if constexpr(use_jsv) {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
                     // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
                     // For this routine we need rows > cols
                     S.resize(sizeS);
@@ -260,7 +269,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     VT = V.adjoint();
                     V.resize(0, 0);
                 } else {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
                     S.resize(sizeS);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
 
@@ -293,7 +302,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 }
 
             } else if(use_bdc) {
-                svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
                 VT.resize(rowsVT, colsVT);
@@ -324,7 +333,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 /* clang-format on */
 
             } else {
-                svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize {} | size {}", threshold, switchsize, sizeS);
+                svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
 
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
@@ -389,40 +398,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     } catch(const std::exception &ex) {
         //#if !defined(NDEBUG)
-        if(save_fail) {
-            auto file       = h5pp::File("svd-failed.h5", h5pp::FilePermission::READWRITE);
-            auto group_num  = 0;
-            auto group_name = fmt::format("svd_lapacke_{}", group_num);
-            while(file.linkExists(group_name)) group_name = fmt::format("svd_lapacke_{}", ++group_num);
-            file.writeDataset(A_original, fmt::format("{}/A", group_name));
-            file.writeDataset(U, fmt::format("{}/U", group_name));
-            file.writeDataset(S, fmt::format("{}/S", group_name));
-            file.writeDataset(VT, fmt::format("{}/V", group_name));
-            file.writeAttribute(rows, "rows", group_name);
-            file.writeAttribute(cols, "cols", group_name);
-            file.writeAttribute(rank, "rank", group_name);
-            file.writeAttribute(rank_max.value(), "rank_max", group_name);
-            file.writeAttribute(info, "info", group_name);
-            file.writeAttribute(use_bdc, "use_bdc", group_name);
-            file.writeAttribute(threshold, "threshold", group_name);
-            file.writeAttribute(switchsize, "switchsize", group_name);
-#if defined(OPENBLAS_AVAILABLE)
-            file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
-            file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
-            file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);
-            file.writeAttribute(openblas_get_corename(), "openblas_get_corename", group_name);
-            file.writeAttribute(openblas_get_config(), "openblas_get_config()", group_name);
-            file.writeAttribute(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, "OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", group_name);
-#endif
-
-#if defined(MKL_AVAILABLE)
-            MKLVersion Version;
-            mkl_get_version(&Version);
-            file.writeAttribute(Version.MajorVersion, "Intel-MKL-MajorVersion", group_name);
-            file.writeAttribute(Version.MinorVersion, "Intel-MKL-MinorVersion", group_name);
-            file.writeAttribute(Version.UpdateVersion, "Intel-MKL-UpdateVersion", group_name);
-#endif
-        }
+        if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
         throw std::runtime_error(fmt::format(FMT_STRING("Lapacke SVD error \n"
                                                         "  svd_threshold    = {:.4e}\n"
                                                         "  Truncation Error = {:.4e}\n"
@@ -432,8 +408,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                                         "  Error message    : {}\n"),
                                              threshold, truncation_error, rank, rows, cols, info, ex.what()));
     }
+    if(save_result) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
 
-    svd::log->trace("SVD with lapacke finished successfully. info = {}", info);
+    svd::log->trace("SVD with Lapacke finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
+                   threshold, rank, rank_max.value(), rows, cols, truncation_error, t_lpk->get_last_interval());
     return std::make_tuple(U, S, VT, rank);
 }
 

@@ -40,21 +40,23 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
     if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
 #endif
+    std::vector<std::pair<std::string, std::string>> details;
+    if(save_fail or save_result) details = {{"Eigen Version", fmt::format("{}.{}.{}", EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION)}};
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
     // Setup the SVD solver
-    SVD.setSwitchSize(static_cast<int>(switchsize));
+    SVD.setSwitchSize(static_cast<int>(switchsize_bdc));
     SVD.setThreshold(threshold);
-    bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize);
+    bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize_bdc);
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
-        svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
+        svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
         // Run the svd
         auto t_jcb = tid::tic_token("jcb");
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
-        svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize {} | rank_max {}", threshold, switchsize, rank_max.value());
+        svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
         // Run the svd
         auto t_bdc = tid::tic_token("bdc");
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -88,38 +90,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->critical("Eigen SVD error: S is not positive");
         }
         //#if !defined(NDEBUG)
-        if(save_fail) {
-            auto file       = h5pp::File("svd-failed.h5", h5pp::FilePermission::READWRITE);
-            auto group_num  = 0;
-            auto group_name = fmt::format("svd_eigen_{}", group_num);
-            while(file.linkExists(group_name)) group_name = fmt::format("svd_eigen_{}", ++group_num);
-            file.writeDataset(mat, fmt::format("{}/A", group_name));
-            file.writeDataset(SVD.matrixU().leftCols(rank), fmt::format("{}/U", group_name));
-            file.writeDataset(SVD.singularValues().head(rank), fmt::format("{}/S", group_name));
-            file.writeDataset(SVD.matrixV().leftCols(rank), fmt::format("{}/V", group_name));
-            file.writeAttribute(rows, "rows", group_name);
-            file.writeAttribute(cols, "cols", group_name);
-            file.writeAttribute(rank, "rank", group_name);
-            file.writeAttribute(rank_max.value(), "rank_max", group_name);
-            file.writeAttribute(use_bdc, "use_bdc", group_name);
-            file.writeAttribute(threshold, "threshold", group_name);
-#if defined(OPENBLAS_AVAILABLE)
-            file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
-            file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
-            file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);
-            file.writeAttribute(openblas_get_corename(), "openblas_get_corename", group_name);
-            file.writeAttribute(openblas_get_config(), "openblas_get_config()", group_name);
-            file.writeAttribute(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, "OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", group_name);
-#endif
-
-#if defined(MKL_AVAILABLE)
-            MKLVersion Version;
-            mkl_get_version(&Version);
-            file.writeAttribute(Version.MajorVersion, "Intel-MKL-MajorVersion", group_name);
-            file.writeAttribute(Version.MinorVersion, "Intel-MKL-MinorVersion", group_name);
-            file.writeAttribute(Version.UpdateVersion, "Intel-MKL-UpdateVersion", group_name);
-#endif
-        }
+        if(save_fail)
+            save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank_max.value(),
+                             "Eigen", details);
 
         //#endif
 
@@ -138,6 +111,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                              V_finite));
     }
 
+    if(save_result)
+        save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank_max.value(), "Eigen",
+                         details);
     svd::log->trace("SVD with Eigen finished successfully");
 
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);

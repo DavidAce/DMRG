@@ -10,7 +10,7 @@ svd::solver::solver() {
 }
 void svd::solver::copy_settings(const svd::settings &svd_settings) {
     if(svd_settings.threshold) threshold = svd_settings.threshold.value();
-    if(svd_settings.switchsize) switchsize = svd_settings.switchsize.value();
+    if(svd_settings.switchsize_bdc) switchsize_bdc = svd_settings.switchsize_bdc.value();
     if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
     if(svd_settings.svd_lib) svd_lib = svd_settings.svd_lib.value();
@@ -46,10 +46,20 @@ template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
     auto t_svd = tid::tic_scope("svd");
+    if(not rank_max.has_value())
+        rank_max = std::min(rows, cols);
+    else
+        rank_max = std::min({rank_max.value(), rows, cols});
+    auto minrc    = std::min(rows, cols);
+    bool use_rsvd = num::cmp_greater(minrc, rank_max.value() * 10) and num::cmp_greater(minrc, switchsize_rnd);
+
     switch(svd_lib) {
         case SVDLib::lapacke: {
             try {
-                return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+                if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
+                    return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                else
+                    return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
                 svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
                 return do_svd_eigen(mat_ptr, rows, cols, rank_max);
@@ -58,7 +68,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
         case SVDLib::eigen: {
             try {
-                return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+                if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
+                    return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                else
+                    return do_svd_eigen(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
                 svd::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
                 return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
@@ -67,10 +80,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
         case SVDLib::rsvd: {
             try {
-                if(rows * cols > 768 * 768) // Make sure the problem is large enough so that it pays to use rsvd
-                    return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
-                else
-                    return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+                return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
                 svd::log->warn("Rsvd failed to perform SVD: {} | Trying Lapacke", ex.what());
                 return do_svd_lapacke(mat_ptr, rows, cols, rank_max);

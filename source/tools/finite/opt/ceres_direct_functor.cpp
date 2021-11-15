@@ -282,7 +282,7 @@ void ceres_direct_functor<Scalar, lagrangeNorm>::compress() {
     svd_settings.svd_lib    = SVDLib::lapacke;
     svd_settings.use_bdc    = false;
     svd_settings.threshold  = 1e-12;
-    svd_settings.switchsize = 4096;
+    svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
     auto        old_dimensions = mpo2.dimensions();
     //    Eigen::Tensor<Scalar, 4> mpo2_l2r;
