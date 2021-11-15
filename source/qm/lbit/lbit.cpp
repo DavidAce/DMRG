@@ -10,6 +10,7 @@
 #include <math/num.h>
 #include <math/rnd.h>
 #include <math/stat.h>
+#include <tid/tid.h>
 #include <tools/common/log.h>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
@@ -305,20 +306,14 @@ std::tuple<double, double, std::vector<double>, size_t> qm::lbit::get_characteri
     Eigen::Tensor<double, 1> lbit_overlap_avg = lbit_overlap_permuted.real().mean(std::array<long, 1>{0});
     Eigen::Tensor<double, 1> lbit_overlap_log = lbit_overlap_avg.log();
     // Data becomes noisy if the exponential has decayed, so find a cutoff to get the slope using only the first part of the curve
-    auto y            = std::vector<double>(lbit_overlap_log.data(), lbit_overlap_log.data() + lbit_overlap_log.size());
-    auto x            = num::range<double>(0, y.size());
-    auto v            = stat::find_last_valid_point(y);
-    auto c            = std::count_if(y.begin(), y.begin() + static_cast<long>(v), [](auto &val) { return val > -12.0; });
-    auto [slope, res] = stat::slope(x, y, 0, c);
-    //    tools::log->debug("lbit overlap : \n{}", linalg::tensor::to_string(lbit_overlap.real(), 6));
-    //    tools::log->debug("lbit permuted: \n{}", linalg::tensor::to_string(lbit_overlap_permuted, 6));
-    //    tools::log->debug("lbit averaged: \n{}", linalg::tensor::to_string(lbit_overlap_average, 6));
-    //    tools::log->debug("lbit logged  : \n{}", linalg::tensor::to_string(lbit_overlap_log, 6));
-    //    tools::log->debug("lbit vectored: \n{}", y);
-    double cls = 1.0 / std::abs(slope);
-    tools::log->debug("Computed lbit width {:.6f} | sse {:.6f} | using {} points", cls, res, c);
-    //    auto yavg = std::vector<double>(lbit_overlap_avg.data(),lbit_overlap_avg.data() + c);
-    auto yavg = std::vector<double>(lbit_overlap_avg.data(), lbit_overlap_avg.data() + lbit_overlap_avg.size());
+    auto yavg         = std::vector<double>(lbit_overlap_avg.data(), lbit_overlap_avg.data() + lbit_overlap_avg.size());
+    auto v            = stat::find_last_valid_point(yavg);
+    auto c            = std::count_if(yavg.begin(), yavg.begin() + static_cast<long>(v), [](auto &val) { return val > 1e-16; });
+    auto x            = num::range<double>(0, c);
+    auto ylog         = std::vector<double>(lbit_overlap_log.data(), lbit_overlap_log.data() + c);
+    auto [slope, res] = stat::slope(x, ylog, 0, c);
+    double cls        = 1.0 / std::abs(slope);
+    tools::log->debug("Computed lbit cls {:>8.6f} | sse {:>8.6f} | using {} points", cls, res, c);
     return {cls, res, yavg, c};
 }
 
@@ -346,6 +341,7 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eig
     return avg;
     //    return {avg,err};
 }
+
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Tensor<double, 4>>
     qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t sites, size_t reps) {
     long                     rows = static_cast<long>(fmix_vec.size());
@@ -367,6 +363,8 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             //    for(const auto & [uidx,udep] : iter::enumerate(udepth_vec)){
 
             //        for (const auto & [fidx,fmix] : iter::enumerate(fmix_vec) ){
+            auto ur_iter = tid::ur("lbit-cls");
+            ur_iter.tic();
             auto                                fmix = fmix_vec[fidx];
             auto                                udep = udepth_vec[uidx];
             std::vector<double>                 cls_vec(reps);
@@ -382,11 +380,14 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             auto lbit_overlap_per = qm::lbit::get_lbit_overlap_permuted(lbit_overlap_avg);
 
             auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_overlap_per);
+            ur_iter.toc();
+
 #if defined(_OPENMP)
-            tools::log->info("Computed u {} | f {:.4f} | lbit width {:.6f} | sse {:.6f} | threads {} | points {}: {:.8f}", udep, fmix, cls, sse,
-                             omp_get_num_threads(), c, fmt::join(y, ", "));
+            tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | threads {} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep,
+                             fmix, cls, sse, omp_get_num_threads(), ur_iter.get_last_interval(), c, fmt::join(y, ", "));
 #else
-            tools::log->info("Computed u {} | f {:.4f} | lbit width {:.6f} | sse {:.6f} | points {}: {:.8f}", udep, fmix, cls, sse, c, fmt::join(y, ", "));
+            tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep, fmix, cls, sse,
+                             ur_iter.get_last_interval(), c, fmt::join(y, ", "));
 #endif
             cls_avg(static_cast<long>(fidx), static_cast<long>(uidx)) = cls;
             sse_avg(static_cast<long>(fidx), static_cast<long>(uidx)) = sse;
@@ -400,4 +401,29 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
         }
     }
     return {cls_avg, sse_avg, lbit_decay, lbit_lioms};
+
+    /* Example result for L = 24 result
+        u 2 | f 0.0500 | decay (5 sites) : 9.94e-01, 3.22e-03, 5.24e-06, 4.90e-09, 3.98e-12, 2.75e-18
+        u 3 | f 0.0500 | decay (6 sites) : 9.91e-01, 4.79e-03, 1.13e-05, 1.61e-08, 1.87e-11, 1.13e-14, 9.24e-18
+        u 4 | f 0.0500 | decay (6 sites) : 9.88e-01, 6.38e-03, 2.14e-05, 4.46e-08, 7.55e-11, 7.78e-14, 8.52e-17
+        u 5 | f 0.0500 | decay (7 sites) : 9.84e-01, 8.37e-03, 3.57e-05, 9.68e-08, 1.93e-10, 2.79e-13, 3.82e-16, 3.06e-19
+
+        u 2 | f 0.1000 | decay (5 sites) : 9.75e-01, 1.31e-02, 8.83e-05, 3.08e-07, 1.05e-09, -3.12e-18,
+        u 3 | f 0.1000 | decay (7 sites) : 9.62e-01, 1.99e-02, 1.90e-04, 1.17e-06, 5.83e-09, 1.33e-11, 4.27e-14, -1.83e-18
+        u 4 | f 0.1000 | decay (8 sites) : 9.52e-01, 2.48e-02, 3.22e-04, 2.67e-06, 1.74e-08, 6.49e-11, 2.82e-13, 5.23e-16, -7.32e-20
+        u 5 | f 0.1000 | decay (8 sites) : 9.43e-01, 2.94e-02, 4.72e-04, 5.15e-06, 4.15e-08, 2.37e-10, 1.27e-12, 4.61e-15, 1.69e-17
+
+        u 2 | f 0.2000 | decay (5 sites) : 9.07e-01, 4.72e-02, 1.27e-03, 1.69e-05, 2.27e-07, 1.64e-18
+        u 3 | f 0.2000 | decay (7 sites) : 8.61e-01, 6.96e-02, 2.79e-03, 6.40e-05, 1.31e-06, 1.16e-08, 1.62e-10, 1.27e-18
+        u 4 | f 0.2000 | decay (8 sites) : 8.16e-01, 9.10e-02, 5.16e-03, 1.78e-04, 4.98e-06, 8.27e-08, 1.44e-09, 9.02e-12, 1.19e-13, 2.57e-18
+        u 5 | f 0.2000 | decay (9 sites)
+       : 7.73e-01, 1.11e-01, 7.90e-03, 3.41e-04, 1.15e-05, 2.55e-07, 5.52e-09, 6.77e-11, 1.12e-12, 5.91e-15, 7.47e-17, 2.38e-18
+
+        u 2 | f 0.3000 | decay (5 sites) : 8.06e-01, 9.51e-02, 5.95e-03, 1.85e-04, 5.82e-06, 1.39e-18
+        u 3 | f 0.3000 | decay (7 sites) : 7.21e-01, 1.33e-01, 1.24e-02, 6.41e-04, 3.01e-05, 5.49e-07, 1.62e-08, 1.64e-18
+        u 4 | f 0.3000 | decay (9 sites) : 6.57e-01, 1.61e-01, 1.88e-02, 1.45e-03, 8.60e-05, 3.19e-06, 1.30e-07, 2.34e-09, 6.82e-11, -1.02e-18
+        u 5 | f 0.3000 | decay (11
+       sites): 6.27e-01, 1.70e-01, 2.44e-02, 2.36e-03, 1.80e-04, 9.49e-06, 4.92e-07, 1.53e-08, 5.85e-10, 7.55e-12, 2.20e-13, 1.39e-19
+
+      */
 }
