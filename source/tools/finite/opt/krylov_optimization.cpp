@@ -444,32 +444,10 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_optimization(co
 
     tools::log->debug("Finding excited state: minimum eigenstate of (H-E)² | dims {} = {}", dims_mps, size);
     std::vector<opt_mps> results;
-    auto                 t_var1 = tid::tic_scope("krylov1");
     switch(meta.optType) {
         case OptType::REAL: krylov_manager<real>(tensors, initial_mps, results, meta); break;
         case OptType::CPLX: krylov_manager<cplx>(tensors, initial_mps, results, meta); break;
     }
-    t_var1.toc();
-    //    tools::log->debug("Krylov optimization time 1: {:.1f}", 1000 * t_var1->get_last_interval());
-    //    auto                 t_var2 = tid::tic_scope("krylov2");
-    //    std::vector<opt_mps> results2;
-    //    switch(meta.optType) {
-    //        case OptType::REAL: krylov_manager2<real>(tensors, initial_mps, results2, meta); break;
-    //        case OptType::CPLX: krylov_manager2<cplx>(tensors, initial_mps, results2, meta); break;
-    //    }
-    //    t_var2.toc();
-    //    tools::log->debug("Krylov optimization time 2: {:.1f}", 1000 * t_var2->get_last_interval());
-    //    auto                 t_var3 = tid::tic_scope("krylov3");
-    //    std::vector<opt_mps> results3;
-    //    switch(meta.optType) {
-    //        case OptType::REAL: krylov_manager3<real>(tensors, initial_mps, results3, meta); break;
-    //        case OptType::CPLX: krylov_manager3<cplx>(tensors, initial_mps, results3, meta); break;
-    //    }
-    //    t_var3.toc();
-
-    tools::log->debug("Krylov 1 optimization time: {:.1f}", 1000 * t_var1->get_last_interval());
-    //    tools::log->debug("Krylov 2 optimization time: {:.1f}", 1000 * t_var2->get_last_interval());
-    //    tools::log->debug("Krylov 3 optimization time: {:.1f}", 1000 * t_var3->get_last_interval());
 
     if(results.empty()) {
         meta.optExit = OptExit::FAIL_ERROR;
@@ -480,17 +458,9 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_optimization(co
         if(fulldiag and num >= 8) break;
         reports::krylov_add_entry(mps);
     }
-    //    for(const auto &[num, mps] : iter::enumerate(results2)) {
-    //        if(fulldiag and num >= 8) break;
-    //        reports::krylov_add_entry(mps);
-    //    }
-    //    for(const auto &[num, mps] : iter::enumerate(results3)) {
-    //        if(fulldiag and num >= 8) break;
-    //        reports::krylov_add_entry(mps);
-    //    }
 
     if(results.size() >= 2) {
-#pragma message "Sorting according to gradient"
+#pragma message "TODO: Sorting according krylov results w.r.t. gradient. Is this the right thing to do?"
         if(results.back().get_name().find("lapack") != std::string::npos)
             std::sort(results.begin(), results.end(), comp_variance);
         else if(meta.optMode == OptMode::VARIANCE)
