@@ -44,9 +44,9 @@ void qm::SwapGate::generate_swap_sequences() {
     }
 }
 
-long qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
+size_t qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
     // exploit that S(i,j)² == 1 to cancel swaps against rwaps
-    long count = 0;
+    size_t count = 0;
     while(true) {
         if(other_rwaps.empty()) return count;
         if(swaps.empty()) return count;
@@ -60,9 +60,9 @@ long qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
         }
     }
 }
-long qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
+size_t qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
     // exploit that S(i,j)² == 1 to cancel swaps against rwaps
-    long count = 0;
+    size_t count = 0;
     while(true) {
         if(other_swaps.empty()) return count;
         if(rwaps.empty()) return count;

@@ -736,17 +736,17 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
 
     auto                   order = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
     Eigen::Tensor<cplx, 3> temp;
-    long                   skip_count = 0;
-    long                   swap_count = 0;
-    long                   rwap_count = 0;
+    size_t                 skip_count = 0;
+    size_t                 swap_count = 0;
+    size_t                 rwap_count = 0;
 
     auto gate_sequence = generate_gate_sequence(state, gates, reverse);
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto &gate = gates.at(gate_idx);
         if constexpr(settings::debug_gates) tools::log->trace("Applying swap gate {} | pos {}", gate_idx, gate.pos);
         if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
-        swap_count += static_cast<long>(gate.swaps.size());
-        rwap_count += static_cast<long>(gate.rwaps.size());
+        swap_count += gate.swaps.size();
+        rwap_count += gate.rwaps.size();
         apply_swap_gate(state, gate, temp, reverse, chi_lim, order, svd_settings);
     }
 

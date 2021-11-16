@@ -93,8 +93,8 @@ namespace qm {
         std::deque<Rwap>       rwaps; // swaps sequence and reverse swap sequence
         [[nodiscard]] SwapGate exp(cplx alpha) const;
         void                   generate_swap_sequences();
-        long                   cancel_swaps(std::deque<Rwap> &other_rwaps);
-        long                   cancel_rwaps(std::deque<Swap> &other_swaps);
+        size_t                 cancel_swaps(std::deque<Rwap> &other_rwaps);
+        size_t                 cancel_rwaps(std::deque<Swap> &other_swaps);
     };
 
 }
