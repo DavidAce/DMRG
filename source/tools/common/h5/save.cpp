@@ -44,8 +44,9 @@ namespace tools::common::h5 {
 
     template<typename AttrType>
     void save::attr(h5pp::File &file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText) {
-        tools::log->trace("Link {} | attribute -- {: <40} = {}", linkPath, attrName, attrData);
+        if(not file.linkExists(attrName)) return; // This means that there is nothing written to the state_prefix in attrName.
         if(not file.linkExists(linkPath)) file.writeDataset(linkText, linkPath);
+        tools::log->trace("Link {:<32} | attribute -- {: <40} = {}", linkPath, attrName, attrData);
         file.writeAttribute(attrData, attrName, linkPath);
     }
 

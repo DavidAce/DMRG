@@ -256,9 +256,9 @@ void flbit::single_flbit_step() {
 
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = {}", status.delta_t);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.chi_lim);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.chi_lim); // L16: false 16 | true 31 svds
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.chi_lim); // L16: false 657 | true 344 svds
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.chi_lim); // L16: false 42 | true 71 svds
     } else {
         tools::log->debug("Applying time evolution gates Δt = {}", status.delta_t);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.chi_lim);
@@ -547,7 +547,7 @@ void flbit::transform_to_real_basis() {
     tensors.state = std::make_unique<StateFinite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
-    for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim);
+    for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(*tensors.state, layer, false, status.chi_lim); // L16: true 29 | false
     for(const auto &layer : unitary_gates_2site_layers)
         for(const auto &u : layer) u.unmark_as_used();
 
@@ -581,7 +581,8 @@ void flbit::transform_to_lbit_basis() {
     tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
-    for(const auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim);
+    for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+        tools::finite::mps::apply_gates(*state_lbit, layer, true, status.chi_lim); // L16: true 28 | false 29 svds
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
         for(const auto &u : layer) u.unmark_as_used();
     [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.chi_lim, std::nullopt, NormPolicy::IFNEEDED);

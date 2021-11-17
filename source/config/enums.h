@@ -12,6 +12,7 @@ enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RAN
 enum class MultisiteMove { ONE, MID, MAX };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
 enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
+enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
@@ -202,6 +203,11 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == ChiGrow::ON_SATURATION)                              return "ON_SATURATION";
         if(item == ChiGrow::ON_ITERATION)                               return "ON_ITERATION";
     }
+    if constexpr(std::is_same_v<T, GateMove>) {
+        if(item == GateMove::OFF)                                       return "OFF";
+        if(item == GateMove::ON)                                        return "ON";
+        if(item == GateMove::AUTO)                                      return "AUTO";
+    }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
         if(item == ModelType::ising_sdual)                              return "ising_sdual";
@@ -212,12 +218,12 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == EdgeStatus::FRESH)                                   return "FRESH";
     }
     if constexpr(std::is_same_v<T, AlgorithmStop>) {
-        if(item == AlgorithmStop::SUCCEEDED)                               return "SUCCEEDED";
-        if(item == AlgorithmStop::SATURATED)                               return "SATURATED";
-        if(item == AlgorithmStop::MAX_ITERS)                               return "MAX_ITERS";
-        if(item == AlgorithmStop::MAX_RESET)                               return "MAX_RESET";
-        if(item == AlgorithmStop::RANDOMIZE)                               return "RANDOMIZE";
-        if(item == AlgorithmStop::NONE)                                    return "NONE";
+        if(item == AlgorithmStop::SUCCEEDED)                            return "SUCCEEDED";
+        if(item == AlgorithmStop::SATURATED)                            return "SATURATED";
+        if(item == AlgorithmStop::MAX_ITERS)                            return "MAX_ITERS";
+        if(item == AlgorithmStop::MAX_RESET)                            return "MAX_RESET";
+        if(item == AlgorithmStop::RANDOMIZE)                            return "RANDOMIZE";
+        if(item == AlgorithmStop::NONE)                                 return "NONE";
     }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == ResetReason::INIT)                                   return "INIT";
@@ -434,6 +440,7 @@ constexpr auto sv2enum(std::string_view item) {
         MultisiteMove,
         SVDMode,
         ChiGrow,
+        GateMove,
         ModelType,
         EdgeStatus,
         StorageLevel,
@@ -488,6 +495,11 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "OFF")                                   return ChiGrow::OFF;
         if(item == "ON_SATURATION")                         return ChiGrow::ON_SATURATION;
         if(item == "ON_ITERATION")                          return ChiGrow::ON_ITERATION;
+    }
+    if constexpr(std::is_same_v<T, GateMove>) {
+        if(item == "OFF")                                   return GateMove::OFF;
+        if(item == "ON")                                    return GateMove::ON;
+        if(item == "AUTO")                                  return GateMove::AUTO;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;

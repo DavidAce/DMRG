@@ -273,8 +273,12 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error) {
 
 void MpsSite::set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
 
-void MpsSite::set_truncation_error(double error) { truncation_error = error; }
-void MpsSite::set_truncation_error_LC(double error) { truncation_error_LC = error; }
+void MpsSite::set_truncation_error(double error /* Negative is ignored */) {
+    if(error >= 0) truncation_error = error;
+}
+void MpsSite::set_truncation_error_LC(double error /* Negative is ignored */) {
+    if(error >= 0) truncation_error_LC = error;
+}
 void MpsSite::set_label(std::string_view label_) {
     // If we are flipping the kind of site from B to non B (or vice-versa), then the L matrix
     // should be removed since it changes side.
@@ -517,6 +521,23 @@ void MpsSite::take_stash(const MpsSite &other) {
         set_LC(other.C_stash->data, other.C_stash->error);
         other.C_stash = std::nullopt;
     }
+}
+
+void MpsSite::convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR) {
+    if(label != "AL") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
+    if(get_chiR() != LR.dimension(0)) throw except::runtime_error("MpsSite::convert_AL_to_A: chiR {} != LR.dim(0) {}", get_chiR() != LR.dimension(0));
+    if(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::convert_AL_to_A: multipliying inverse L"), get_tag());
+    Eigen::Tensor<cplx, 3> tmp = get_M_bare().contract(tenx::asDiagonalInversed(LR), tenx::idx({2}, {0}));
+    set_M(tmp);
+    set_label("A");
+}
+void MpsSite::convert_LB_to_B(const Eigen::Tensor<cplx, 1> &LL) {
+    if(label != "LB") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
+    if(get_chiL() != LL.dimension(0)) throw except::runtime_error("MpsSite::convert_LB_to_B: chiL {} != LL.dim(0) {}", get_chiL() != LL.dimension(0));
+    if(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::convert_LB_to_B: multipliying inverse L"), get_tag());
+    Eigen::Tensor<cplx, 3> tmp = tenx::asDiagonalInversed(LL).contract(get_M_bare(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+    set_M(tmp);
+    set_label("B");
 }
 
 std::size_t MpsSite::get_unique_id() const {

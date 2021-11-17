@@ -101,5 +101,8 @@ class MpsSite {
     std::optional<stash<Eigen::Tensor<cplx, 1>>> &get_C_stash() const;
     std::optional<stash<Eigen::Tensor<cplx, 3>>> &get_V_stash() const;
 
+    void convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR);
+    void convert_LB_to_B(const Eigen::Tensor<cplx, 1> &LL);
+
     std::size_t get_unique_id() const;
 };
