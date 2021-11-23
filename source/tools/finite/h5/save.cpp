@@ -100,6 +100,31 @@ namespace tools::finite::h5 {
         save_log[table_path] = save_point;
     }
 
+    void save::correlations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                            const AlgorithmStatus &status) {
+        if(storage_level == StorageLevel::NONE) return;
+        auto t_hdf = tid::tic_scope("correlations", tid::level::detail);
+        tools::finite::measure::correlation_matrix_xyz(state);
+        if(state.measurements.correlation_matrix_sx)
+            save::data(h5file, state.measurements.correlation_matrix_sx.value(), "correlation_matrix_sx", state_prefix, storage_level, status);
+        if(state.measurements.correlation_matrix_sy)
+            save::data(h5file, state.measurements.correlation_matrix_sy.value(), "correlation_matrix_sy", state_prefix, storage_level, status);
+        if(state.measurements.correlation_matrix_sz)
+            save::data(h5file, state.measurements.correlation_matrix_sz.value(), "correlation_matrix_sz", state_prefix, storage_level, status);
+    }
+    void save::expectations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                            const AlgorithmStatus &status) {
+        if(storage_level == StorageLevel::NONE) return;
+        auto t_hdf = tid::tic_scope("expectations", tid::level::detail);
+        tools::finite::measure::expectation_values_xyz(state);
+        if(state.measurements.expectation_values_sx)
+            save::data(h5file, state.measurements.expectation_values_sx.value(), "expectation_values_sx", state_prefix, storage_level, status);
+        if(state.measurements.expectation_values_sy)
+            save::data(h5file, state.measurements.expectation_values_sy.value(), "expectation_values_sy", state_prefix, storage_level, status);
+        if(state.measurements.expectation_values_sz)
+            save::data(h5file, state.measurements.expectation_values_sz.value(), "expectation_values_sz", state_prefix, storage_level, status);
+    }
+
     template<typename T>
     void save::save_data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const std::vector<T> &payload,
                                   std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
@@ -273,6 +298,32 @@ namespace tools::finite::h5 {
     }
 
     template<typename T>
+    void save::data(h5pp::File &h5file, const T &data, std::string_view data_name, std::string_view prefix, const StorageLevel &storage_level,
+                    const AlgorithmStatus &status) {
+        auto t_data    = tid::tic_scope("data");
+        auto data_path = fmt::format("{}/{}", prefix, data_name);
+
+        // Checks if the current entry has already been saved
+        // If it is empty because we are resuming, check if there is a log entry on file already
+        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+        bootstrap_save_log(save_log, h5file, {data_path});
+        auto save_point = std::make_pair(status.iter, status.step);
+
+        if(save_log[data_path] != save_point or status.step == 0) {
+            auto layout = static_cast<H5D_layout_t>(decide_layout(data_path));
+            h5file.writeDataset(data, data_path, layout);
+            h5file.writeAttribute(status.iter, "iter", data_path);
+            h5file.writeAttribute(status.step, "step", data_path);
+            save_log[data_path] = save_point;
+        }
+    }
+
+    template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 2> &data, std::string_view data_name, std::string_view prefix,
+                             const StorageLevel &storage_level, const AlgorithmStatus &status);
+    template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 1> &data, std::string_view data_name, std::string_view prefix,
+                             const StorageLevel &storage_level, const AlgorithmStatus &status);
+
+    template<typename T>
     void save::data(h5pp::File &h5file, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status,
                     StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
         // Setup this save
@@ -286,30 +337,20 @@ namespace tools::finite::h5 {
         std::vector<std::string> table_prefxs;
         tools::finite::h5::save::setup_prefix(status, storage_reason, storage_level, state_name, state_prefix, model_prefix, timer_prefix, table_prefxs);
 
-        std::string data_path;
+        std::string prefix;
         switch(storage_reason) {
             case StorageReason::MODEL: {
-                data_path = fmt::format("{}/{}", model_prefix, data_name);
+                prefix = model_prefix;
                 break;
             }
             default: {
-                data_path = fmt::format("{}/{}", state_prefix, data_name);
+                prefix = state_prefix;
                 break;
             }
         }
-        // Checks if the current entry has already been saved
-        // If it is empty because we are resuming, check if there is a log entry on file already
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, {data_path});
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[data_path] != save_point or status.step == 0) {
-            auto layout = static_cast<H5D_layout_t>(decide_layout(data_path));
-            h5file.writeDataset(data, data_path, layout);
-            h5file.writeAttribute(status.iter, "iter", data_path);
-            h5file.writeAttribute(status.step, "step", data_path);
-            save_log[data_path] = save_point;
-            tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
-        }
+
+        save::data(h5file, data, data_name, prefix, storage_level, status);
+        tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
     }
 
     template void save::data(h5pp::File &h5file, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name, std::string_view state_name,
@@ -472,6 +513,8 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::entropies_neumann(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_renyi(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_number(h5file, table_prefix, storage_level, state, status);
+            tools::finite::h5::save::correlations(h5file, table_prefix, storage_level, state, status);
+            tools::finite::h5::save::expectations(h5file, table_prefix, storage_level, state, status);
         }
         h5file.setKeepFileClosed();
 

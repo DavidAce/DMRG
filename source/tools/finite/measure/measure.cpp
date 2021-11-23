@@ -49,8 +49,11 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
     state.measurements.renyi_2         = measure::renyi_entropies(state, 2);
     state.measurements.renyi_3         = measure::renyi_entropies(state, 3);
     state.measurements.renyi_4         = measure::renyi_entropies(state, 4);
-    state.measurements.renyi_100       = measure::renyi_entropies(state, 100);
+    state.measurements.renyi_inf       = measure::renyi_entropies(state, std::numeric_limits<double>::infinity());
     state.measurements.spin_components = measure::spin_components(state);
+
+    if(state.get_algorithm() == AlgorithmType::xDMRG) correlation_matrix_xyz(state);
+    if(state.get_algorithm() == AlgorithmType::xDMRG) expectation_values_xyz(state);
 }
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -206,11 +209,12 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
 }
 
 std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &state, double q) {
+    auto inf = std::numeric_limits<double>::infinity();
     if(q == 1.0) return entanglement_entropies(state);
     if(q == 2.0 and state.measurements.renyi_2) return state.measurements.renyi_2.value();
     if(q == 3.0 and state.measurements.renyi_3) return state.measurements.renyi_3.value();
     if(q == 4.0 and state.measurements.renyi_4) return state.measurements.renyi_4.value();
-    if(q == 100.0 and state.measurements.renyi_100) return state.measurements.renyi_100.value();
+    if(q == inf and state.measurements.renyi_inf) return state.measurements.renyi_inf.value();
     auto                t_ren = tid::tic_scope("renyi_entropy");
     std::vector<double> renyi_q;
     renyi_q.reserve(state.get_length() + 1);
@@ -218,11 +222,17 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
     for(const auto &mps : state.mps_sites) {
         const auto            &L = mps->get_L();
         Eigen::Tensor<cplx, 0> RE;
-        RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
+        if(q == inf)
+            RE(0) = -2.0 * std::log(L(0));
+        else
+            RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
         renyi_q.emplace_back(std::abs(RE(0)));
         if(mps->isCenter()) {
             const auto &LC = mps->get_LC();
-            RE             = (1.0 / 1.0 - q) * LC.pow(2.0 * q).sum().log();
+            if(q == inf)
+                RE(0) = -2.0 * std::log(LC(0));
+            else
+                RE = (1.0 / 1.0 - q) * LC.pow(2.0 * q).sum().log();
             renyi_q.emplace_back(std::abs(RE(0)));
         }
     }
@@ -239,9 +249,9 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
         state.measurements.renyi_4 = renyi_q;
         return state.measurements.renyi_4.value();
     }
-    if(q == 100.0) {
-        state.measurements.renyi_100 = renyi_q;
-        return state.measurements.renyi_100.value();
+    if(q == inf) {
+        state.measurements.renyi_inf = renyi_q;
+        return state.measurements.renyi_inf.value();
     }
     return renyi_q;
 }
@@ -650,3 +660,175 @@ template double tools::finite::measure::max_gradient(const Eigen::Tensor<real, 3
                                                      const Eigen::Tensor<real, 3> &en2R);
 template double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo2, const Eigen::Tensor<cplx, 3> &en2L,
                                                      const Eigen::Tensor<cplx, 3> &en2R);
+
+double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
+    tools::log->trace("Measuring local expectation value");
+    if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
+    if(ops.empty()) throw std::runtime_error("expectation_value: obs is empty");
+    auto                   d0    = state.mps_sites.front()->get_chiL();
+    Eigen::Tensor<cplx, 2> chain = tenx::TensorCast(Eigen::MatrixXcd::Identity(d0, d0));
+    Eigen::Tensor<cplx, 2> temp;
+    for(const auto &mps : state.mps_sites) {
+        const auto &M     = mps->get_M();
+        const auto  pos   = mps->get_position();
+        const auto  ob_it = std::find_if(ops.begin(), ops.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
+        temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
+        if(ob_it != ops.end()) {
+#pragma message "Should ob_it->op be transposed?"
+            auto M_op                           = ob_it->op.contract(M, tenx::idx({1}, {0}));
+            temp.device(tenx::omp::getDevice()) = chain.contract(M_op, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+            ob_it->used                         = true;
+        } else {
+            temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+        }
+        chain = temp;
+    }
+    auto expval = tenx::MatrixMap(chain).trace();
+    if(std::imag(expval) > 1e-14) tools::log->warn("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval), std::imag(expval));
+    if(std::imag(expval) > 1e-8)
+        throw except::runtime_error("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval), std::imag(expval));
+    return std::real(expval);
+}
+
+double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableMpo> &mpos) {
+    tools::log->trace("Measuring local expectation value with MPO's");
+    if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
+    if(mpos.empty()) throw std::runtime_error("expectation_value: obs is empty");
+
+    // Generate a string of mpos for each site. If a site has no local observable given in obs, insert an identity MPO there.
+    auto mpodims = mpos.front().mpo.dimensions();
+    auto mpsdimL = state.mps_sites.front()->get_chiL();
+    auto mpsdimR = state.mps_sites.back()->get_chiR();
+
+    for(auto &ob : mpos) {
+        if(ob.mpo.dimension(2) != ob.mpo.dimension(3)) throw except::runtime_error("expectation_value: given mpo's of unequal spin dimension up and down");
+        if(ob.mpo.dimension(0) != ob.mpo.dimension(1)) throw except::runtime_error("expectation_value: given mpo's of unequal bond dimension left and right");
+        if(ob.mpo.dimensions() != mpodims) throw except::runtime_error("expectation_value: given mpo's of unequal dimensions");
+    }
+
+    // Create compatible edges
+    Eigen::Tensor<cplx, 1> Ledge(mpodims[0]); // The left  edge
+    Eigen::Tensor<cplx, 1> Redge(mpodims[1]); // The right edge
+    Ledge(mpodims[0] - 1) = 1;
+    Redge(0)              = 1;
+    Eigen::Tensor<cplx, 3> Ledge3, Redge3;
+    {
+        auto mpsdims = state.mps_sites.front()->dimensions();
+        long mpsDim  = mpsdims[1];
+        long mpoDim  = mpodims[0];
+        Ledge3.resize(tenx::array3{mpsDim, mpsDim, mpoDim});
+        Ledge3.setZero();
+        for(long i = 0; i < mpsDim; i++) {
+            std::array<long, 1> extent1                     = {mpoDim};
+            std::array<long, 3> offset3                     = {i, i, 0};
+            std::array<long, 3> extent3                     = {1, 1, mpoDim};
+            Ledge3.slice(offset3, extent3).reshape(extent1) = Ledge;
+        }
+    }
+    {
+        auto mpsdims = state.mps_sites.back()->dimensions();
+        long mpsDim  = mpsdims[2];
+        long mpoDim  = mpodims[1];
+        Redge3.resize(tenx::array3{mpsDim, mpsDim, mpoDim});
+        Redge3.setZero();
+        for(long i = 0; i < mpsDim; i++) {
+            std::array<long, 1> extent1                     = {mpoDim};
+            std::array<long, 3> offset3                     = {i, i, 0};
+            std::array<long, 3> extent3                     = {1, 1, mpoDim};
+            Redge3.slice(offset3, extent3).reshape(extent1) = Redge;
+        }
+    }
+
+    // Generate an identity mpo with the same dimensions as the ones in obs
+    Eigen::Tensor<cplx, 1> ones(mpodims[0] * mpodims[2]);
+    ones.setConstant(1.0);
+    Eigen::Tensor<cplx, 4> mpoI = tenx::asDiagonal(ones).reshape(mpodims);
+
+    // Start applying the mpo or identity on each site starting from Ledge3
+    Eigen::Tensor<cplx, 3> temp;
+    for(const auto &mps : state.mps_sites) {
+        const auto  pos   = mps->get_position();
+        const auto &M     = mps->get_M();
+        const auto  ob_it = std::find_if(mpos.begin(), mpos.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
+        const auto &mpo   = ob_it != mpos.end() ? ob_it->mpo : mpoI; // Choose the operator or an identity
+        if(ob_it != mpos.end()) ob_it->used = true;
+        temp.resize(M.dimension(2), M.dimension(2), mpo.dimension(1));
+        temp   = M.contract(Ledge3, tenx::idx({0}, {1})).contract(mpo, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1, 3}, {0, 2, 3}));
+        Ledge3 = temp;
+    }
+
+    if(Ledge3.dimensions() != Redge3.dimensions())
+        throw except::runtime_error("expectation_value: Ledge3 and Redge3 dimension mismatch: {} != {}", Ledge3.dimensions(), Redge3.dimensions());
+
+    // Finish by contracting Redge3
+    Eigen::Tensor<cplx, 0> expval = Ledge3.contract(Redge3, tenx::idx({0, 1, 2}, {0, 1, 2}));
+
+    if(std::imag(expval(0)) > 1e-14)
+        tools::log->warn("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
+    if(std::imag(expval(0)) > 1e-8)
+        throw except::runtime_error("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
+    return std::real(expval(0));
+}
+
+Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op) {
+    long                     len = state.get_length<long>();
+    Eigen::Tensor<double, 1> expvals(len);
+    expvals.setZero();
+    for(long pos = 0; pos < len; pos++) {
+        LocalObservableOp ob1 = {op, pos};
+        expvals(pos)          = expectation_value(state, {ob1});
+    }
+    return expvals;
+}
+
+double tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1,
+                                           long pos2) {
+    if(pos1 == pos2) {
+        // Stack the operators
+        Eigen::Tensor<cplx, 2> op12 = op1.contract(op2, tenx::idx({0}, {1}));
+        LocalObservableOp      ob12 = {op12, pos1};
+        return expectation_value(state, {ob12});
+    } else {
+        // No need to stack
+        LocalObservableOp ob1 = {op1, pos1};
+        LocalObservableOp ob2 = {op2, pos2};
+        return expectation_value(state, {ob1, ob2});
+    }
+}
+
+Eigen::Tensor<double, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1,
+                                                                    const Eigen::Tensor<cplx, 2> &op2) {
+    long                     len = state.get_length<long>();
+    bool                     eq  = tenx::MatrixMap(op1) == tenx::MatrixMap(op2);
+    Eigen::Tensor<double, 2> C(len, len);
+    C.setZero();
+
+    for(long pos_j = 0; pos_j < len; pos_j++) {
+        for(long pos_i = pos_j; pos_i < len; pos_i++) {
+            C(pos_i, pos_j) = correlation(state, op1, op2, pos_i, pos_j);
+            if(eq)
+                C(pos_j, pos_i) = C(pos_i, pos_j);
+            else
+                C(pos_j, pos_i) = correlation(state, op1, op2, pos_j, pos_i);
+        }
+    }
+    return C;
+}
+
+void tools::finite::measure::expectation_values_xyz(const StateFinite &state) {
+    Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
+    if(not state.measurements.expectation_values_sx) state.measurements.expectation_values_sx = measure::expectation_values(state, sx);
+    if(not state.measurements.expectation_values_sy) state.measurements.expectation_values_sy = measure::expectation_values(state, sy);
+    if(not state.measurements.expectation_values_sz) state.measurements.expectation_values_sz = measure::expectation_values(state, sz);
+}
+
+void tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
+    Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
+    if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
+    if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
+    if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
+}

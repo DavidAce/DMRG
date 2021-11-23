@@ -3,7 +3,6 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
-/* clang-format off */
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;
@@ -11,11 +10,26 @@ class TensorsFinite;
 class MpoSite;
 class AlgorithmStatus;
 struct MeasurementsTensorsFinite;
-namespace tools::finite::measure{
+namespace tools::finite::measure {
     using real = double;
     using cplx = std::complex<double>;
-    extern void do_all_measurements(const TensorsFinite & tensors);
-    extern void do_all_measurements(const StateFinite & state);
+    extern void do_all_measurements(const TensorsFinite &tensors);
+    extern void do_all_measurements(const StateFinite &state);
+
+    struct LocalObservableOp {
+        Eigen::Tensor<cplx, 2> op;
+        long                   pos;
+        mutable bool           used = false;
+    };
+
+    struct LocalObservableMpo {
+        Eigen::Tensor<cplx, 4> mpo;
+        long                   pos;
+        mutable bool           used = false;
+    };
+
+    /* clang-format off */
+
 
     [[nodiscard]] extern size_t length                                      (const TensorsFinite & tensors);
     [[nodiscard]] extern size_t length                                      (const StateFinite & state);
@@ -101,6 +115,14 @@ namespace tools::finite::measure{
                                                              const Eigen::Tensor<Scalar, 3> &en2R);
 
 
+    [[nodiscard]] extern double                   expectation_value      (const StateFinite & state, const std::vector<LocalObservableOp> & ops);
+    [[nodiscard]] extern double                   expectation_value      (const StateFinite & state, const std::vector<LocalObservableMpo> & mpos);
+    [[nodiscard]] extern Eigen::Tensor<double, 1> expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op);
+    [[nodiscard]] extern Eigen::Tensor<double, 1> expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,4> &mpo);
+    [[nodiscard]] extern double                   correlation            (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2, long pos1, long pos2);
+    [[nodiscard]] extern Eigen::Tensor<double, 2> correlation_matrix     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
+                  extern void                     expectation_values_xyz (const StateFinite & state);
+                  extern void                     correlation_matrix_xyz (const StateFinite & state);
 
 }
 

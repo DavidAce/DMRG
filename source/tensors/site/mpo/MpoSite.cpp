@@ -10,7 +10,7 @@
 MpoSite::MpoSite(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
 Eigen::Tensor<MpoSite::cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
-    tools::log->debug("mpo({}): building mpo²", get_position());
+    tools::log->trace("mpo({}): building mpo²", get_position());
     const auto &mpo = MPO();
     auto        d0  = mpo.dimension(0) * mpo.dimension(0);
     auto        d1  = mpo.dimension(1) * mpo.dimension(1);
