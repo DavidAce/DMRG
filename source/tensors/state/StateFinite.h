@@ -120,6 +120,7 @@ class StateFinite {
     void                set_truncation_error(size_t pos, double error);
     void                set_truncation_error(double error);
     void                set_truncation_error_LC(double error);
+    void                keep_max_truncation_errors(std::vector<double> &other_error);
     double              get_truncation_error(size_t pos) const;
     double              get_truncation_error() const;
     double              get_truncation_error_LC() const;

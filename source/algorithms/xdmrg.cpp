@@ -262,6 +262,7 @@ void xdmrg::run_fes_analysis() {
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
+        auto truncation_errors = tensors.state->get_truncation_errors();
         print_status_update();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -270,6 +271,10 @@ void xdmrg::run_fes_analysis() {
         if(status.algo_stop != AlgorithmStop::NONE) break;
 
         move_center_point();
+
+        // Retain the max truncation error, otherwise it is lost in the next pass
+        tensors.state->keep_max_truncation_errors(truncation_errors);
+
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_fes->get_time();
     }

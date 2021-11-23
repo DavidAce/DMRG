@@ -398,6 +398,27 @@ void StateFinite::set_truncation_error_LC(double error) {
     mps.set_truncation_error_LC(error);
 }
 
+void StateFinite::keep_max_truncation_errors(std::vector<double> &other_errors) {
+    auto errors = get_truncation_errors();
+    if(other_errors.size() != errors.size()) throw except::runtime_error("keep_max_truncation_errors: size mismatch");
+    std::vector<double> max_errors(errors.size(), 0);
+    for(auto &&[i, e] : iter::enumerate(max_errors)) e = std::max({errors[i], other_errors[i]});
+    other_errors = max_errors;
+
+    // Now set the maximum errors back to each site
+    size_t past_center = 0;
+    for(const auto &mps : mps_sites) {
+        auto pos = mps->get_position<size_t>();
+        auto idx = pos + past_center;
+        set_truncation_error(pos, max_errors[idx]);
+        if(mps->isCenter()) {
+            past_center = 1;
+            idx         = pos + past_center;
+            set_truncation_error_LC(max_errors[idx]);
+        }
+    }
+}
+
 double StateFinite::get_truncation_error(size_t pos) const { return get_mps_site(pos).get_truncation_error(); }
 
 double StateFinite::get_truncation_error() const {
