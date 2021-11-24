@@ -212,8 +212,6 @@ namespace tools::finite::h5 {
             /*! Writes down the midchain "Lambda" bond matrix (singular values). */
             auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
-            if(state_prefix == "xDMRG/state_0/finished" and not h5file.linkExists(state_prefix))
-                throw except::runtime_error("link does not exist: {}", state_prefix);
             h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
             h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
             h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
