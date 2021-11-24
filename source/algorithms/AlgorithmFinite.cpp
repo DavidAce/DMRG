@@ -663,16 +663,19 @@ void AlgorithmFinite::clear_convergence_status() {
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+    if(not write_enabled) return;
     tools::finite::h5::save::simulation(*h5file, tensors, status, storage_reason, copy_policy);
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                                     std::optional<CopyPolicy> copy_policy) {
+    if(not write_enabled) return;
     tools::finite::h5::save::simulation(*h5file, state, model, edges, status, storage_reason, copy_policy);
 }
 
 template<typename T>
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy) {
+    if(not write_enabled) return;
     tools::finite::h5::save::data(*h5file, data, name, tensors.state->get_name(), status, storage_reason, copy_policy);
 }
 

@@ -16,6 +16,8 @@ namespace spdlog {
 
 class AlgorithmBase {
     protected:
+    bool write_enabled = true;
+
     public:
     using Scalar    = std::complex<double>;
     AlgorithmBase() = default;
@@ -37,6 +39,8 @@ class AlgorithmBase {
     // common functions
     void copy_from_tmp(StorageReason storage_reason = StorageReason::SAVEPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);
     void init_bond_dimension_limits();
+    void write_disable();
+    void write_enable();
 
     protected:
     //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from

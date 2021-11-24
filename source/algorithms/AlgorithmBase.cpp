@@ -33,6 +33,9 @@ void AlgorithmBase::init_bond_dimension_limits() {
     if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
 }
 
+void AlgorithmBase::write_enable() { write_enabled = true; }
+void AlgorithmBase::write_disable() { write_enabled = false; }
+
 size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx) {
     size_t count = 0;
     for(const auto &[i, y] : iter::enumerate(Y_vec)) {

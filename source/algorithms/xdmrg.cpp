@@ -685,30 +685,33 @@ void xdmrg::find_energy_range() {
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
     // We don't want it to randomize its own model, so we implant our current model before running the tasks.
 
-    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS,
-                                       fdmrg_task::INIT_WRITE_MODEL,  fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                       fdmrg_task::FIND_GROUND_STATE, fdmrg_task::POST_WRITE_RESULT};
+    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+                                       fdmrg_task::FIND_GROUND_STATE};
 
     std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                       fdmrg_task::FIND_HIGHEST_STATE, fdmrg_task::POST_WRITE_RESULT};
+                                       fdmrg_task::FIND_HIGHEST_STATE};
     // Find lowest energy state
     {
         auto  t_gs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_gs(h5file);
+        fdmrg_gs.write_disable();
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
         tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
         status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg_gs.tensors);
+        write_to_file(StorageReason::EMIN_STATE, *fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges);
     }
 
     // Find highest energy state
     {
         auto  t_hs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_hs(h5file);
+        fdmrg_hs.write_disable();
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
         tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
         status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg_hs.tensors);
+        write_to_file(StorageReason::EMAX_STATE, *fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges);
     }
 
     // Reset our logger

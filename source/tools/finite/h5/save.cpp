@@ -214,8 +214,6 @@ namespace tools::finite::h5 {
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
             if(state_prefix == "xDMRG/state_0/finished" and not h5file.linkExists(state_prefix))
                 throw except::runtime_error("link does not exist: {}", state_prefix);
-            auto schmidt_exists = h5file.linkExists(dsetname_schmidt);
-            tools::log->warn("Writing schmidt to {} | state_prefix {} | schmidt exists {}", dsetname_schmidt, state_prefix, schmidt_exists);
             h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
             h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
             h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
