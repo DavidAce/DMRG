@@ -42,12 +42,23 @@ namespace tools::common::h5 {
         }
     }
 
+    void save::bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix) {
+        if(save_log.empty()) {
+            try {
+                AlgorithmStatus status;
+                if(h5file.linkExists("common/status")) status = h5file.readAttribute<AlgorithmStatus>(state_prefix, "common/status");
+                save_log[std::string(state_prefix)] = status;
+            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
+        }
+    }
+
     template<typename AttrType>
-    void save::attr(h5pp::File &file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText) {
-        if(not file.linkExists(attrName)) return; // This means that there is nothing written to the state_prefix in attrName.
-        if(not file.linkExists(linkPath)) file.writeDataset(linkText, linkPath);
-        tools::log->trace("Link {:<32} | attribute -- {: <40} = {}", linkPath, attrName, attrData);
-        file.writeAttribute(attrData, attrName, linkPath);
+    void save::attr(h5pp::File &h5file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText,
+                    std::optional<h5pp::hid::h5t> h5type) {
+        if(not h5file.linkExists(attrName)) return; // This means that there is nothing written to the state_prefix in attrName.
+        if(not h5file.linkExists(linkPath)) h5file.writeDataset(linkText, linkPath);
+        tools::log->trace("Link {:<32} | attribute -- {: <40}", linkPath, attrName);
+        h5file.writeAttribute(attrData, attrName, linkPath, std::nullopt, h5type);
     }
 
     void save::status(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
@@ -124,12 +135,10 @@ namespace tools::common::h5 {
 
         // Checks if the current entries have already been written
         if(storage_level == StorageLevel::NONE) return;
-        auto                                                                  t_meta = tid::tic_scope("meta", tid::level::pedant);
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
+        auto                                                    t_meta = tid::tic_scope("meta", tid::level::pedant);
+        static std::unordered_map<std::string, AlgorithmStatus> save_log;
         bootstrap_meta_log(save_log, h5file, state_prefix);
-
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[std::string(state_prefix)] == save_point) return;
+        if(save_log[std::string(state_prefix)] == status) return;
 
         auto storage_level_sv  = enum2sv(storage_level);
         auto storage_reason_sv = enum2sv(storage_reason);
@@ -140,6 +149,8 @@ namespace tools::common::h5 {
         auto mpo_prefix        = fmt::format("{}/mpo", model_prefix);
         auto mps_prefix        = fmt::format("{}/mps", state_prefix);
 
+        h5pp_table_algorithm_status::register_table_type();
+        save::attr(h5file, status, state_prefix, "common/status", "Maps state_prefix -> status", h5pp_table_algorithm_status::h5_type);
         save::attr(h5file, status.algorithm_has_finished, state_prefix, "common/finished", "Maps state_prefix -> finished");
         save::attr(h5file, storage_level_sv, state_prefix, "common/storage_level", "Maps state_prefix -> storage_level");
         save::attr(h5file, storage_reason_sv, state_prefix, "common/storage_reason", "Maps state_prefix -> storage_reason");
@@ -153,12 +164,11 @@ namespace tools::common::h5 {
         save::attr(h5file, model_size, state_prefix, "common/model_size", "Maps state_prefix -> model_size");
         save::attr(h5file, status.algo_type_sv(), state_prefix, "common/algo_type", "Maps state_prefix -> algo_type");
         save::attr(h5file, state_name, state_prefix, "common/state_name", "Maps state_prefix -> state_name");
-        save::attr(h5file, status.iter, state_prefix, "common/iteration", "Maps state_prefix -> iteration");
+        save::attr(h5file, status.iter, state_prefix, "common/iter", "Maps state_prefix -> iter");
         save::attr(h5file, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
         save::attr(h5file, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
         if(not table_prfxs.empty()) save::attr(h5file, table_prfxs, state_prefix, "common/table_prfxs", "Maps state_prefix -> one or more table prefixes");
-
-        save_log[std::string(state_prefix)] = save_point;
+        save_log[std::string(state_prefix)] = status;
     }
 
     void save::timer(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {

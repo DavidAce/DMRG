@@ -225,14 +225,14 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
         if(q == inf)
             RE(0) = -2.0 * std::log(L(0));
         else
-            RE = (1.0 / 1.0 - q) * L.pow(2.0 * q).sum().log();
+            RE = 1.0 / (1.0 - q) * L.pow(2.0 * q).sum().log();
         renyi_q.emplace_back(std::abs(RE(0)));
         if(mps->isCenter()) {
             const auto &LC = mps->get_LC();
             if(q == inf)
                 RE(0) = -2.0 * std::log(LC(0));
             else
-                RE = (1.0 / 1.0 - q) * LC.pow(2.0 * q).sum().log();
+                RE = 1.0 / (1.0 - q) * LC.pow(2.0 * q).sum().log();
             renyi_q.emplace_back(std::abs(RE(0)));
         }
     }
@@ -670,11 +670,10 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
     Eigen::Tensor<cplx, 2> temp;
     for(const auto &mps : state.mps_sites) {
         const auto &M     = mps->get_M();
-        const auto  pos   = mps->get_position();
+        const auto  pos   = mps->get_position<long>();
         const auto  ob_it = std::find_if(ops.begin(), ops.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
         temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
         if(ob_it != ops.end()) {
-#pragma message "Should ob_it->op be transposed?"
             auto M_op                           = ob_it->op.contract(M, tenx::idx({1}, {0}));
             temp.device(tenx::omp::getDevice()) = chain.contract(M_op, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
             ob_it->used                         = true;
@@ -697,8 +696,6 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
 
     // Generate a string of mpos for each site. If a site has no local observable given in obs, insert an identity MPO there.
     auto mpodims = mpos.front().mpo.dimensions();
-    auto mpsdimL = state.mps_sites.front()->get_chiL();
-    auto mpsdimR = state.mps_sites.back()->get_chiR();
 
     for(auto &ob : mpos) {
         if(ob.mpo.dimension(2) != ob.mpo.dimension(3)) throw except::runtime_error("expectation_value: given mpo's of unequal spin dimension up and down");
@@ -747,7 +744,7 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
     // Start applying the mpo or identity on each site starting from Ledge3
     Eigen::Tensor<cplx, 3> temp;
     for(const auto &mps : state.mps_sites) {
-        const auto  pos   = mps->get_position();
+        const auto  pos   = mps->get_position<long>();
         const auto &M     = mps->get_M();
         const auto  ob_it = std::find_if(mpos.begin(), mpos.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
         const auto &mpo   = ob_it != mpos.end() ? ob_it->mpo : mpoI; // Choose the operator or an identity

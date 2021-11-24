@@ -1,6 +1,7 @@
 #include <algorithms/AlgorithmStatus.h>
 #include <complex>
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
 #include <io/table_types.h>
 #include <math/num.h>
@@ -102,27 +103,29 @@ namespace tools::finite::h5 {
 
     void save::correlations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                             const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+        if(storage_level <= StorageLevel::LIGHT) return;
+        if(status.algo_type != AlgorithmType::xDMRG) return;
         auto t_hdf = tid::tic_scope("correlations", tid::level::detail);
         tools::finite::measure::correlation_matrix_xyz(state);
-        if(state.measurements.correlation_matrix_sx)
-            save::data(h5file, state.measurements.correlation_matrix_sx.value(), "correlation_matrix_sx", state_prefix, storage_level, status);
-        if(state.measurements.correlation_matrix_sy)
-            save::data(h5file, state.measurements.correlation_matrix_sy.value(), "correlation_matrix_sy", state_prefix, storage_level, status);
-        if(state.measurements.correlation_matrix_sz)
-            save::data(h5file, state.measurements.correlation_matrix_sz.value(), "correlation_matrix_sz", state_prefix, storage_level, status);
+        tools::log->trace("Saving correlations to {}", state_prefix);
+        /* clang-format off */
+        if(state.measurements.correlation_matrix_sx) save::data(h5file, state.measurements.correlation_matrix_sx.value(), "correlation_matrix_sx", state_prefix, storage_level, status);
+        if(state.measurements.correlation_matrix_sy) save::data(h5file, state.measurements.correlation_matrix_sy.value(), "correlation_matrix_sy", state_prefix, storage_level, status);
+        if(state.measurements.correlation_matrix_sz) save::data(h5file, state.measurements.correlation_matrix_sz.value(), "correlation_matrix_sz", state_prefix, storage_level, status);
+        /* clang-format on */
     }
     void save::expectations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                             const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+        if(storage_level <= StorageLevel::LIGHT) return;
+        if(status.algo_type != AlgorithmType::xDMRG) return;
         auto t_hdf = tid::tic_scope("expectations", tid::level::detail);
         tools::finite::measure::expectation_values_xyz(state);
-        if(state.measurements.expectation_values_sx)
-            save::data(h5file, state.measurements.expectation_values_sx.value(), "expectation_values_sx", state_prefix, storage_level, status);
-        if(state.measurements.expectation_values_sy)
-            save::data(h5file, state.measurements.expectation_values_sy.value(), "expectation_values_sy", state_prefix, storage_level, status);
-        if(state.measurements.expectation_values_sz)
-            save::data(h5file, state.measurements.expectation_values_sz.value(), "expectation_values_sz", state_prefix, storage_level, status);
+        tools::log->trace("Saving expectations to {}", state_prefix);
+        /* clang-format off */
+        if(state.measurements.expectation_values_sx) save::data(h5file, state.measurements.expectation_values_sx.value(), "expectation_values_sx", state_prefix, storage_level, status);
+        if(state.measurements.expectation_values_sy) save::data(h5file, state.measurements.expectation_values_sy.value(), "expectation_values_sy", state_prefix, storage_level, status);
+        if(state.measurements.expectation_values_sz) save::data(h5file, state.measurements.expectation_values_sz.value(), "expectation_values_sz", state_prefix, storage_level, status);
+        /* clang-format on */
     }
 
     template<typename T>
@@ -174,12 +177,13 @@ namespace tools::finite::h5 {
 
     void save::entropies_renyi(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                const AlgorithmStatus &status) {
-        if(storage_level < StorageLevel::NORMAL) return;
+        if(storage_level <= StorageLevel::LIGHT) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::detail);
+        auto inf   = std::numeric_limits<double>::infinity();
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 3), "renyi_entropies_3", "Renyi Entropy 3", "L_");
         save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 4), "renyi_entropies_4", "Renyi Entropy 4", "L_");
-        save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 100), "renyi_entropies_100", "Renyi Entropy 100", "L_");
+        save_data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, inf), "renyi_entropies_inf", "Renyi Entropy inf", "L_");
     }
 
     void save::entropies_number(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -208,6 +212,10 @@ namespace tools::finite::h5 {
             /*! Writes down the midchain "Lambda" bond matrix (singular values). */
             auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
+            if(state_prefix == "xDMRG/state_0/finished" and not h5file.linkExists(state_prefix))
+                throw except::runtime_error("link does not exist: {}", state_prefix);
+            auto schmidt_exists = h5file.linkExists(dsetname_schmidt);
+            tools::log->warn("Writing schmidt to {} | state_prefix {} | schmidt exists {}", dsetname_schmidt, state_prefix, schmidt_exists);
             h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
             h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
             h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
@@ -300,6 +308,7 @@ namespace tools::finite::h5 {
     template<typename T>
     void save::data(h5pp::File &h5file, const T &data, std::string_view data_name, std::string_view prefix, const StorageLevel &storage_level,
                     const AlgorithmStatus &status) {
+        if(storage_level == StorageLevel::NONE) return;
         auto t_data    = tid::tic_scope("data");
         auto data_path = fmt::format("{}/{}", prefix, data_name);
 
@@ -328,7 +337,6 @@ namespace tools::finite::h5 {
                     StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
         // Setup this save
         auto                     t_h5     = tid::tic_scope("h5");
-        auto                     t_data   = tid::tic_scope("data");
         auto                     t_reason = tid::tic_scope(enum2sv(storage_reason), tid::level::detail);
         StorageLevel             storage_level;
         std::string              state_prefix;
@@ -464,6 +472,7 @@ namespace tools::finite::h5 {
             }
             case StorageReason::PROJ_STATE: {
                 if(storage_level != StorageLevel::NONE) {
+                    if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
                     auto abs_spin_component = std::abs(tools::finite::measure::spin_component(state, settings::strategy::target_sector));
                     if(std::abs(abs_spin_component - 1.0) > 1e-6) {
                         auto state_projected =
@@ -473,7 +482,37 @@ namespace tools::finite::h5 {
                 }
                 break;
             }
-            case StorageReason::FINISHED:
+            case StorageReason::FINISHED: {
+                // Either checkpoint or savepoint may already have the same data.
+                // We can look for either of those under /common/finished, and make a soft-link
+                std::string slink_prefix;
+                for(const auto &attrName : h5file.getAttributeNames("common/finished")) {
+                    if(h5file.readAttribute<bool>(attrName, "common/finished")) {
+                        tools::log->info("Searching for finished state links in {}", attrName);
+                        if(attrName.find(state.get_name()) == std::string::npos) {
+                            tools::log->info("Could not match state name [{}] in {}", state.get_name(), attrName);
+                            continue;
+                        }
+                        if(attrName.find(status.algo_type_sv()) == std::string::npos) {
+                            tools::log->info("Could not match algorithm");
+                            continue;
+                        }
+                        if(h5file.readAttribute<size_t>(attrName, "common/iter") != status.iter) {
+                            tools::log->info("Could not match iter");
+                            continue;
+                        }
+                        if(h5file.readAttribute<size_t>(attrName, "common/step") != status.step) {
+                            tools::log->info("Could not match step");
+                            continue;
+                        }
+                        // We have a match! attrName is the path to a group containing finished data already.
+                        // We make a soft link to it, and keep adding data if necessary.
+                        h5file.createSoftLink(attrName, state_prefix);
+                    }
+                }
+                break;
+            }
+
             case StorageReason::CHI_UPDATE:
             case StorageReason::INIT_STATE:
             case StorageReason::EMIN_STATE:
@@ -496,6 +535,8 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
         } else {
             tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
+            tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
+            tools::finite::h5::save::expectations(h5file, state_prefix, storage_level, state, status);
         }
 
         tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
@@ -513,8 +554,6 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::entropies_neumann(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_renyi(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_number(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::correlations(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::expectations(h5file, table_prefix, storage_level, state, status);
         }
         h5file.setKeepFileClosed();
 

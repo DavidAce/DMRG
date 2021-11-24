@@ -5,6 +5,7 @@ target_sources(dmrg-algorithms-o PRIVATE
         AlgorithmFinite.cpp
         AlgorithmInfinite.cpp
         AlgorithmLauncher.cpp
+        AlgorithmStatus.cpp
         idmrg.cpp
         fdmrg.cpp
         xdmrg.cpp

@@ -53,31 +53,12 @@ class AlgorithmStatus {
     bool                 spin_parity_has_converged   = false;
     bool                 time_step_has_converged     = false;
     bool                 fes_is_running              = false;
-    void                 clear() {
-        AlgorithmType algo_type_ = algo_type; // Retain the algorithm type
-        *this                    = AlgorithmStatus();
-        algo_type                = algo_type_;
-    }
-    void reset() {
-        // Keeps some data for simulations that follow
-        auto status = *this;
-        clear();
-        min_iters            = status.min_iters;
-        chi_lim_max          = status.chi_lim_max;
-        chi_lim_init         = status.chi_lim_init;
-        chi_lim              = status.chi_lim;
-        energy_min_per_site  = status.energy_min_per_site;
-        energy_max_per_site  = status.energy_max_per_site;
-        energy_tgt_per_site  = status.energy_tgt_per_site;
-        energy_ulim_per_site = status.energy_ulim_per_site;
-        energy_llim_per_site = status.energy_llim_per_site;
-        energy_dens          = status.energy_dens;
-        energy_dens_target   = status.energy_dens_target;
-        energy_dens_window   = status.energy_dens_window;
-        algo_type            = status.algo_type;
-    }
-    [[nodiscard]] std::string_view algo_type_sv() const { return enum2sv(algo_type); }
-    [[nodiscard]] std::string      algo_type_str() const { return std::string(algo_type_sv()); }
-    [[nodiscard]] std::string_view algo_stop_sv() const { return enum2sv(algo_stop); }
-    [[nodiscard]] std::string      algo_stop_str() const { return std::string(algo_stop_sv()); }
+
+    void                           clear();
+    void                           reset();
+    [[nodiscard]] std::string_view algo_type_sv() const;
+    [[nodiscard]] std::string      algo_type_str() const;
+    [[nodiscard]] std::string_view algo_stop_sv() const;
+    [[nodiscard]] std::string      algo_stop_str() const;
+    [[nodiscard]] bool             operator==(const AlgorithmStatus &s) const;
 };

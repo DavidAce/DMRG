@@ -25,15 +25,16 @@ namespace tools::common::h5 {
     namespace save{
         extern void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
         extern void bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
+        extern void bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
 
         template<typename AttrType>
-        extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText);
+        extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText, std::optional<h5pp::hid::h5t> h5type = std::nullopt);
         extern void status   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
         extern void mem      (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
         extern void timer    (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
-        extern void meta (h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason,const ModelType & model_type,
-                          size_t model_size, std::string_view  state_name, std::string_view state_prefix, std::string_view model_prefix,
-                          const std::vector<std::string> & table_prfxs, const AlgorithmStatus &status);
+        extern void meta     (h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason,const ModelType & model_type,
+                              size_t model_size, std::string_view  state_name, std::string_view state_prefix, std::string_view model_prefix,
+                              const std::vector<std::string> & table_prfxs, const AlgorithmStatus &status);
     }
     namespace load {
         extern void status   (const h5pp::File & h5file, std::string_view  state_prefix, AlgorithmStatus & status);
