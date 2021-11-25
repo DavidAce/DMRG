@@ -662,7 +662,6 @@ template double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3
                                                      const Eigen::Tensor<cplx, 3> &en2R);
 
 double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
-    tools::log->trace("Measuring local expectation value");
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(ops.empty()) throw std::runtime_error("expectation_value: obs is empty");
     auto                   d0    = state.mps_sites.front()->get_chiL();
@@ -690,7 +689,6 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
 }
 
 double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableMpo> &mpos) {
-    tools::log->trace("Measuring local expectation value with MPO's");
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(mpos.empty()) throw std::runtime_error("expectation_value: obs is empty");
 
@@ -768,6 +766,7 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
 }
 
 Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op) {
+    tools::log->trace("Measuring local expectation values");
     long                     len = state.get_length<long>();
     Eigen::Tensor<double, 1> expvals(len);
     expvals.setZero();
@@ -795,6 +794,8 @@ double tools::finite::measure::correlation(const StateFinite &state, const Eigen
 
 Eigen::Tensor<double, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1,
                                                                     const Eigen::Tensor<cplx, 2> &op2) {
+    tools::log->trace("Measuring correlation matrix");
+
     long                     len = state.get_length<long>();
     bool                     eq  = tenx::MatrixMap(op1) == tenx::MatrixMap(op2);
     Eigen::Tensor<double, 2> C(len, len);
