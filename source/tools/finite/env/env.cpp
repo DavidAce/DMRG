@@ -16,6 +16,10 @@
 #include <tools/common/contraction.h>
 #include <tools/common/log.h>
 
+namespace settings {
+    constexpr static bool debug_edges = false;
+}
+
 std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
                                                         long chi_lim, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
@@ -262,9 +266,10 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
     //        posR_active = edges.active_sites.back();
     //    }
 
-    tools::log->trace("assert_edges_ene: pos {} | dir {} | "
-                      "asserting edges eneL from [{} to {}]",
-                      current_position, state.get_direction(), min_pos, posL_active);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("assert_edges_ene: pos {} | dir {} | "
+                          "asserting edges eneL from [{} to {}]",
+                          current_position, state.get_direction(), min_pos, posL_active);
 
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene = edges.get_env_eneL(pos);
@@ -275,9 +280,10 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
         auto &ene_next = edges.get_env_eneL(pos + 1);
         ene_next.assert_unique_id(ene, mps, mpo);
     }
-    tools::log->trace("assert_edges_ene: pos {} | dir {} | "
-                      "asserting edges eneR from [{} to {}]",
-                      current_position, state.get_direction(), posR_active, max_pos);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("assert_edges_ene: pos {} | dir {} | "
+                          "asserting edges eneR from [{} to {}]",
+                          current_position, state.get_direction(), posR_active, max_pos);
 
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene = edges.get_env_eneR(pos);
@@ -321,9 +327,10 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
     //        posL_active = edges.active_sites.front();
     //        posR_active = edges.active_sites.back();
     //    }
-    tools::log->trace("assert_edges_var: pos {} | dir {} | "
-                      "asserting edges varL from [{} to {}]",
-                      current_position, state.get_direction(), min_pos, posL_active);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("assert_edges_var: pos {} | dir {} | "
+                          "asserting edges varL from [{} to {}]",
+                          current_position, state.get_direction(), min_pos, posL_active);
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &var = edges.get_env_varL(pos);
         if(pos == 0 and not var.has_block()) throw std::runtime_error(fmt::format("var L at pos {} does not have a block", pos));
@@ -333,9 +340,10 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
         auto &var_next = edges.get_env_varL(pos + 1);
         var_next.assert_unique_id(var, mps, mpo);
     }
-    tools::log->trace("assert_edges_var: pos {} | dir {} | "
-                      "asserting edges varR from [{} to {}]",
-                      current_position, state.get_direction(), posR_active, max_pos);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("assert_edges_var: pos {} | dir {} | "
+                          "asserting edges varR from [{} to {}]",
+                          current_position, state.get_direction(), posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &var = edges.get_env_varR(pos);
         if(pos == state.get_length() - 1 and not var.has_block()) throw std::runtime_error(fmt::format("var R at pos {} does not have a block", pos));
@@ -411,9 +419,10 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     //        posR_active = edges.active_sites.back();
     //    }
 
-    tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
-                      "inspecting edges eneL from [{} to {}]",
-                      current_position, state.get_direction(), min_pos, posL_active);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
+                          "inspecting edges eneL from [{} to {}]",
+                          current_position, state.get_direction(), min_pos, posL_active);
     std::vector<size_t> ene_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene_curr = edges.get_env_eneL(pos);
@@ -431,9 +440,10 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     if(not ene_pos_log.empty()) tools::log->trace("rebuild_edges_ene: rebuilt eneL edges: {}", ene_pos_log);
 
     ene_pos_log.clear();
-    tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
-                      "inspecting edges eneR from [{} to {}]",
-                      current_position, state.get_direction(), posR_active, max_pos);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
+                          "inspecting edges eneR from [{} to {}]",
+                          current_position, state.get_direction(), posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene_curr = edges.get_env_eneR(pos);
         if(pos == state.get_length() - 1 and not ene_curr.has_block()) {
@@ -493,9 +503,10 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     //        posR_active = edges.active_sites.back();
     //    }
 
-    tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
-                      "inspecting edges varL from [{} to {}]",
-                      current_position, state.get_direction(), min_pos, posL_active);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
+                          "inspecting edges varL from [{} to {}]",
+                          current_position, state.get_direction(), min_pos, posL_active);
 
     std::vector<size_t> var_pos_log;
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
@@ -514,9 +525,10 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
 
     if(not var_pos_log.empty()) tools::log->trace("rebuild_edges_var: rebuilt varL edges: {}", var_pos_log);
     var_pos_log.clear();
-    tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
-                      "inspecting edges varR from [{} to {}]",
-                      current_position, state.get_direction(), posR_active, max_pos);
+    if constexpr(settings::debug or settings::debug_edges)
+        tools::log->trace("rebuild_edges_var: pos {} | dir {} | "
+                          "inspecting edges varR from [{} to {}]",
+                          current_position, state.get_direction(), posR_active, max_pos);
 
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &var_curr = edges.get_env_varR(pos);
