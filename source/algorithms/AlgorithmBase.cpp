@@ -37,15 +37,20 @@ void AlgorithmBase::write_enable() { write_enabled = true; }
 void AlgorithmBase::write_disable() { write_enabled = false; }
 
 size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx) {
-    size_t count = 0;
+    size_t scount = 0; // Counts how many converged points there have been since saturation (start_idx)
     for(const auto &[i, y] : iter::enumerate(Y_vec)) {
         if(i < start_idx) continue;
-        if(y <= threshold) count++;
+        if(y <= threshold) scount++;
     }
-    return count;
-    //
-    //    auto last_nonconverged_ptr = std::find_if(Y_vec.rbegin(), Y_vec.rend(), [threshold](auto const &val) { return val > threshold; });
-    //    return static_cast<size_t>(std::distance(Y_vec.rbegin(), last_nonconverged_ptr));
+    size_t rcount = 0; // Counts in reverse how many converged points there have been in a row. Useful with noisy signals that can't saturate.
+    for(const auto &y : iter::reverse(Y_vec)) {
+        if(y <= threshold)
+            rcount++;
+        else
+            break;
+    }
+
+    return std::max(scount, rcount);
 }
 
 AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vector<double> &Y_vec, double sensitivity) {

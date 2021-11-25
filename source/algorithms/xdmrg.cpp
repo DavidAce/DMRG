@@ -305,7 +305,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
     c1.max_grad_tolerance = settings::precision::max_grad_tolerance;
 
     // When stuck we can require better accuracy on the gradient
-    if(status.algorithm_has_stuck_for > 0) c1.max_grad_tolerance = 1e-2 * settings::precision::max_grad_tolerance;
+    if(status.algorithm_has_stuck_for > 0) c1.max_grad_tolerance = 1e-1 * settings::precision::max_grad_tolerance;
 
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
