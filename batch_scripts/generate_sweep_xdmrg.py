@@ -12,9 +12,9 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([8,12,16,20])
-lambdas             = [0.000, 0.005, 0.010]
-deltas              = [-5.0, -1.0, 0.00, 1.0, 5.0]
+sites               = np.array([12])
+lambdas             = [0.000, 0.005, 0.010, 0.030]
+deltas              = [-2.000, -1.500, -1.000, -0.693 , -0.500, -0.300, 0.000, 0.300, 0.500, 0.693, 1.000, 1.500, 2.000]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
@@ -36,7 +36,7 @@ def delta(J,h):
     return np.log(J) - np.log(h)
 
 def undelta(delta):
-    if(delta > 0):
+    if delta > 0:
         return 1.0, np.exp(-delta)
     else:
         return np.exp(delta),1.0
@@ -65,8 +65,8 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
     settings = {
         "storage::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_l,str_d, basename),
         "storage::temp_dir"                  : tmp_storage,
-        "threading::stl_threads"             : "1",
-        "threading::omp_threads"             : "1",
+        "threading::stl_threads"             : "2",
+        "threading::omp_threads"             : "2",
         "console::loglevel"                  : "2",
         "model::model_size"                  : str_L,
         "model::ising_sdual::delta"          : str_d,
