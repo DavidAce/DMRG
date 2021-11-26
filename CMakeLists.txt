@@ -76,11 +76,15 @@ add_subdirectory(source)
 ### Link all the things!
 target_link_libraries(DMRG++ PRIVATE dmrg-main)
 
-### Link precompiled headers
+### Link precompiled headers. Requires DMRG_ENABLE_PCH=ON
 target_link_precompiled_headers(DMRG++)
 
+### Enable link time optimization. Requires DMRG_ENABLE_LTO=ON
+target_enable_lto(DMRG++)
+
+
 # Uninstall target
-if(NOT TARGET uninstall)
+if (NOT TARGET uninstall)
     configure_file(
             ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DMRGUninstall.cmake.in
             ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake

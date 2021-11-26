@@ -142,11 +142,25 @@ if (${PROJECT_UNAME}_ENABLE_USAN)
     target_link_libraries(flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds)
 endif ()
 
-
 ###  Link system libs statically
 if (NOT BUILD_SHARED_LIBS)
     target_link_options(flags INTERFACE -static-libgcc -static-libstdc++)
 endif ()
+
+### Enable link time optimization
+function(target_enable_lto tgt)
+    if(${PROJECT_UNAME}_ENABLE_LTO)
+        include(CheckIPOSupported)
+        check_ipo_supported(RESULT lto_supported OUTPUT lto_error)
+        if(lto_supported)
+            message(STATUS "LTO enabled")
+            set_target_properties(${tgt} PROPERTIES INTERPROCEDURAL_OPTIMIZATION ON)
+        else()
+            message(FATAL_ERROR "LTO is not supported: ${lto_error}")
+        endif()
+    endif()
+endfunction()
+
 
 
 ### Speed up compilation with precompiled headers
