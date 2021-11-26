@@ -49,7 +49,6 @@ size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double
         else
             break;
     }
-
     return std::max(scount, rcount);
 }
 

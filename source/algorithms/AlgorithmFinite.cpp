@@ -144,7 +144,6 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
     }
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
-    has_projected    = false;
 }
 
 void AlgorithmFinite::reduce_mpo_energy() {
@@ -374,18 +373,24 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
 void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     if(not tensors.position_is_inward_edge()) return;
-    if(not target_sector and has_projected) return;
+    if(not target_sector and projected_iter == status.iter) return;
     if(status.variance_mpo_converged_for > 0 and status.spin_parity_has_converged) return; // No need
+    size_t iter_since_last_projection = std::max(projected_iter, status.iter) - projected_iter;
 
-    bool project_on_saturation = settings::strategy::project_on_saturation > 0 and status.algorithm_saturated_for > 0 and
-                                 num::mod(status.algorithm_saturated_for - 1, settings::strategy::project_on_saturation) == 0;
-    bool project_on_every_iter =
-        settings::strategy::project_on_every_iter > 0 and status.iter > 0 and num::mod(status.iter, settings::strategy::project_on_every_iter) == 0;
+    bool project_on_spin_saturation = not status.spin_parity_has_converged and iter_since_last_projection >= 2;
+    bool project_on_var_saturation  = settings::strategy::project_on_saturation > 0 and
+                                     iter_since_last_projection > settings::strategy::project_on_saturation and status.algorithm_saturated_for > 0;
+    bool project_on_every_iter   = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection > settings::strategy::project_on_every_iter;
     bool project_to_given_sector = target_sector.has_value();
 
-    if(project_on_every_iter or project_on_saturation or project_to_given_sector) {
+    if(project_on_every_iter or project_on_var_saturation or project_to_given_sector or project_on_spin_saturation) {
         if(not target_sector) target_sector = settings::strategy::target_sector;
-        tools::log->info("Trying projection to {}", target_sector.value());
+        std::string msg;
+        if(project_on_spin_saturation) msg += " | spin component has not converged";
+        if(project_on_var_saturation) msg += fmt::format(" | run every {} iter on variance saturation", settings::strategy::project_on_saturation);
+        if(project_on_every_iter) msg += fmt::format(" | run every {} iter", settings::strategy::project_on_every_iter);
+        tools::log->info("Trying projection to {}{}", target_sector.value(), msg);
+
         auto sector_sign  = tools::finite::mps::init::get_sign(target_sector.value());
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
@@ -437,26 +442,27 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
-            tools::log->debug("Projection change: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
-                              fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+            tools::log->info("Projection result: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
+                             fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
         }
-        check_convergence(); // Recheck convergence, since this operation can get the algorithm unstuck
-        if(target_sector.value() == settings::strategy::target_sector) has_projected = true;
+        if(target_sector.value() == settings::strategy::target_sector) projected_iter = status.iter;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
     }
 }
 
 void AlgorithmFinite::try_full_expansion() {
     if(not tensors.position_is_inward_edge()) return;
-    if(has_expanded) return;
-    bool expand_on_saturation = settings::strategy::expand_on_saturation > 0 and status.algorithm_saturated_for > 0 and
-                                num::mod(status.algorithm_saturated_for - 1, settings::strategy::expand_on_saturation) == 0;
+    if(expanded_iter == status.iter) return;
+    size_t iter_since_last_expansion = std::max(expanded_iter, status.iter) - expanded_iter;
+    bool   expand_on_saturation      = settings::strategy::expand_on_saturation > 0 and iter_since_last_expansion > settings::strategy::expand_on_saturation and
+                                status.algorithm_saturated_for > 0;
+
     if(expand_on_saturation) {
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         tools::log->info("Trying expansion to H|psi> | pos {}", tensors.get_position());
         tensors.apply_hamiltonian_on_state(status.chi_lim);
         auto variance_new = tools::finite::measure::energy_variance(tensors);
-        has_expanded      = true;
+        expanded_iter     = status.iter;
         tools::log->info("Expansion change: variance {:8.2e} -> {:8.2e}", variance_old, variance_new);
     }
 }
@@ -637,8 +643,12 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
         auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
         status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;
         if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
-            tools::log->warn("Spin parity has converged to {} = {:.16f} but requested sector was {}", axis, spin_component_along_axis, target_sector);
-        tools::log->debug("Spin component convergence: {} = {:.16f}", target_sector, spin_component_along_axis);
+            tools::log->warn("Spin component has converged to {} = {:.16f} but requested sector was {}", axis, spin_component_along_axis, target_sector);
+        if(not status.spin_parity_has_converged) {
+            tools::log->info("Spin component not converged: {} = {:.16f} | threshold {:8.2e}", target_sector, spin_component_along_axis, threshold);
+        } else {
+            tools::log->debug("Spin component converged: {} = {:.16f} | threshold {:8.2e}", target_sector, spin_component_along_axis, threshold);
+        }
     } else
         status.spin_parity_has_converged = true; // Probably no sector was specified
 }
@@ -659,7 +669,6 @@ void AlgorithmFinite::clear_convergence_status() {
     status.variance_mpo_saturated_for  = 0;
     status.chi_lim_has_reached_chi_max = false;
     status.spin_parity_has_converged   = false;
-    has_projected                      = false;
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {

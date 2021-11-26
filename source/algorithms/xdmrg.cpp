@@ -625,9 +625,11 @@ void xdmrg::check_convergence() {
                                      status.algorithm_saturated_for >= settings::strategy::min_saturation_iters;
     status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
-    tools::log->info("Algorithm report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
-                     status.algorithm_converged_for, status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded,
-                     status.algorithm_has_to_stop, status.energy_variance_prec_limit);
+    tools::log->info(
+        "Algorithm report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
+        status.algorithm_converged_for, status.variance_mpo_converged_for, status.entanglement_converged_for, status.spin_parity_has_converged,
+        status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for, status.algorithm_has_stuck_for,
+        status.algorithm_has_succeeded, status.algorithm_has_to_stop, status.energy_variance_prec_limit);
 
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed()) {

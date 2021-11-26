@@ -17,16 +17,16 @@ class AlgorithmFinite : public AlgorithmBase {
 
     size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
 
-    bool                    has_projected        = false; /*!< True if projection has already been tried */
-    bool                    has_expanded         = false; /*!< True if full expansion has already been tried */
-    size_t                  chi_quench_steps     = 0;     /*!< Number of steps left doing chi-quenching */
-    size_t                  num_chi_quenches     = 0;     /*!< Number of bond dimension quench trials that have occurred */
-    size_t                  max_chi_quenches     = 2;     /*!< Maximum number of bond dimension quench trials allowed */
-    long                    chi_lim_quench_ahead = 32;    /*!< Bond dimension during a quench */
-    long                    chi_lim_quench_trail = 32;    /*!< Bond dimension during a quench */
-    size_t                  num_perturbations    = 0;     /*!< Number of perturbation trials done */
-    size_t                  max_perturbations    = 2;     /*!< Maximum number of perturbation trials allowed */
-    size_t                  perturbation_steps   = 0;     /*!< Number of steps left doing perturbation of MPOs */
+    size_t                  projected_iter       = 0;  /*!< The last iteration when projection was tried */
+    size_t                  expanded_iter        = 0;  /*!< The last iteration when expansion was tried */
+    size_t                  chi_quench_steps     = 0;  /*!< Number of steps left doing chi-quenching */
+    size_t                  num_chi_quenches     = 0;  /*!< Number of bond dimension quench trials that have occurred */
+    size_t                  max_chi_quenches     = 2;  /*!< Maximum number of bond dimension quench trials allowed */
+    long                    chi_lim_quench_ahead = 32; /*!< Bond dimension during a quench */
+    long                    chi_lim_quench_trail = 32; /*!< Bond dimension during a quench */
+    size_t                  num_perturbations    = 0;  /*!< Number of perturbation trials done */
+    size_t                  max_perturbations    = 2;  /*!< Maximum number of perturbation trials allowed */
+    size_t                  perturbation_steps   = 0;  /*!< Number of steps left doing perturbation of MPOs */
     std::optional<OptMode>  last_optmode         = std::nullopt;
     std::optional<OptSpace> last_optspace        = std::nullopt;
 
@@ -61,7 +61,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
-    void check_convergence_spin_parity_sector(std::string_view target_sector, double threshold = 1e-12);
+    void check_convergence_spin_parity_sector(std::string_view target_sector, double threshold = 1e-8);
     void write_to_file(StorageReason storage_reason, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                        std::optional<CopyPolicy> copy_policy = std::nullopt);
     template<typename T>
