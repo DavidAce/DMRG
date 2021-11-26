@@ -266,8 +266,9 @@ class h5pp_table_data {
     }
 
     [[nodiscard]] static h5pp::hid::h5t &register_table_type(size_t data_size, std::string_view fieldname) {
-        size_t total_size = 2 * sizeof(uint64_t) + data_size * sizeof(T);
-        meta   m          = {sizeof(T), data_size, std::string(fieldname)};
+        size_t data_offset = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t);
+        size_t total_size  = data_offset + data_size * sizeof(T);
+        meta   m           = {sizeof(T), data_size, std::string(fieldname)};
         if(h5_types.find(m) == h5_types.end()) {
             h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, total_size);
             H5Tinsert(h5_type, "iter", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
@@ -275,7 +276,7 @@ class h5pp_table_data {
             H5Tinsert(h5_type, "chi_lim", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
             auto h5type = h5pp::util::getH5Type<T>();
             for(size_t elem = 0; elem < data_size; elem++) {
-                H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + elem * sizeof(T), h5type);
+                H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), data_offset + elem * sizeof(T), h5type);
             }
             h5_types[m] = h5_type;
         }
