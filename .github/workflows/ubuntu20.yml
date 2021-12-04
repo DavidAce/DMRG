@@ -1,14 +1,11 @@
 name: Ubuntu 20.04
-# INSPIRATION https://github.com/onqtam/doctest/pull/285/files/875052e18cf5f5f0b9176e59f847b6205f3efb78#
 
 on:
   pull_request:
   push:
     branches:
       - master
-#      - development
-      - multisite_dmrg
-      - fLBIT
+      - development
 
 jobs:
   ci:
@@ -60,7 +57,7 @@ jobs:
 
       - name: Setup apt packages
         if: contains(matrix.manager,'find')
-        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev gcovr -y
+        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev gcovr ninja-build -y
 
       - name: Setup coverage
         if: contains(matrix.manager,'cmake')
@@ -81,19 +78,12 @@ jobs:
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
 
-        # ceres-solver must be compiled in release mode because it only works with glog in release mode
+        # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
-        run: |
-          ./build.sh  \
-          --enable-tests \
-          --enable-coverage \
-          --enable-ccache \
-          --enable-pch \
-          -a generic \
+        run: ./build.py  \
+          --default-actions \
           --build-type=${{ matrix.build_type }} \
-          -j 2 --verbose-cmake \
           --package-manager=${{ matrix.manager }} \
-          --compiler=${{ matrix.compiler }} \
           --shared=${{ matrix.linkage == 'shared' }}
 
       - name: Test

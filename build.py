@@ -43,6 +43,7 @@ def parse(project_name):
     parser.add_argument('--default-kraken', action='store_true', help='Set defaults for kraken cluster')
     parser.add_argument('--default-tetralith', action='store_true', help='Set defaults for tetralith cluster')
     parser.add_argument('--default-desktop', action='store_true', help='Set defaults for a regular desktop')
+    parser.add_argument('--default-actions', action='store_true', help='Set defaults for a GitHub Actions')
     parser.add_argument('--disable-color', action='store_true', help='Disable color output')
     parser.add_argument('--debug', action='store_true', help='Debug this builder script')
 
@@ -56,6 +57,9 @@ def parse(project_name):
         args = parser.parse_args()
     if args.default_desktop:
         parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='native')
+        args = parser.parse_args()
+    if args.default_desktop:
+        parser.set_defaults(mkl=False, lto=True, pch=True, ccache=True, generator=None, package_manager='conan', arch='generic', verbose=True, make_threads=2, test=True, asan=True, coverage=True, )
         args = parser.parse_args()
     return args
 
@@ -184,6 +188,9 @@ def generate_cmake_commands(project_name, args):
             cmake_tst.extend(['--build-target', args.target, '-R', args.target])  # Pattern match only the built target
         else:
             cmake_tst.extend(['-R', project_name.lower()])  # Pattern match test targets containing the project name
+
+    if args.threads:
+        cmake_cfg.extend(['-D{}_ENABLE_THREADS:BOOL=ON'.format(project_name.upper())])
 
     if args.examples:
         cmake_cfg.extend(['-D{}_BUILD_EXAMPLES:BOOL=ON'.format(project_name.upper())])
