@@ -1,5 +1,5 @@
 
-function(find_Arpackpp)
+function(find_arpackpp)
     if (NOT TARGET ARPACK::ARPACK)
         message(FATAL_ERROR "arpack++ needs to link to target [ARPACK::ARPACK]")
     endif()
@@ -7,20 +7,19 @@ function(find_Arpackpp)
         message(FATAL_ERROR "arpack++ needs to link to target [lapacke::lapacke]")
     endif()
 
-    if(ARPACKPP_NO_DEFAULT_PATH OR Arpackpp_NO_DEFAULT_PATH)
+    if(ARPACKPP_NO_DEFAULT_PATH)
         set(NO_DEFAULT_PATH NO_DEFAULT_PATH)
     endif()
-    if(ARPACKPP_NO_CMAKE_PACKAGE_REGISTRY OR Arpackpp_NO_CMAKE_PACKAGE_REGISTRY)
+    if(ARPACKPP_NO_CMAKE_PACKAGE_REGISTRY)
         set(NO_CMAKE_PACKAGE_REGISTRY NO_CMAKE_PACKAGE_REGISTRY)
     endif()
 
-    if (NOT TARGET arpack::arpack++)
+    if (NOT TARGET arpack++::arpack++)
         include(GNUInstallDirs)
         unset(ARPACKPP_LIBRARY)
         unset(ARPACKPP_LIBRARY CACHE)
         unset(ARPACKPP_INCLUDE_DIR)
         unset(ARPACKPP_INCLUDE_DIR CACHE)
-        message(DEBUG "Looking for arpack++")
         find_library(ARPACKPP_LIBRARY
                 NAMES arpackpp arpack++
                 ${NO_DEFAULT_PATH}
@@ -45,32 +44,25 @@ function(find_Arpackpp)
         if(NOT ARPACKPP_INCLUDE_DIR)
             set(ARPACKPP_INCLUDE_DIR "")
         endif()
-
-        if(ARPACKPP_INCLUDE_DIR AND EXISTS ${ARPACKPP_INCLUDE_DIR})
-            message(DEBUG "Looking for arpack++ - found: ${ARPACKPP_INCLUDE_DIR}")
-            if(ARPACKPP_LIBRARY)
-                add_library(arpack::arpack++ INTERFACE IMPORTED)
-                set_target_properties(arpack::arpack++ PROPERTIES IMPORTED_LOCATION ${ARPACKPP_LIBRARY})
-            else()
-                add_library(arpack::arpack++ INTERFACE IMPORTED)
-            endif()
-            target_include_directories(arpack::arpack++ SYSTEM INTERFACE ${ARPACKPP_INCLUDE_DIR})
-            target_link_libraries(arpack::arpack++ INTERFACE lapacke::lapacke ARPACK::ARPACK)
-        else()
-            message(DEBUG "Looking for arpack++ - not found")
-        endif()
     endif()
 endfunction()
 
 
 
-find_Arpackpp()
-if(TARGET arpack::arpack++)
-    get_target_property(ARPACKPP_INCLUDE_DIR arpack::arpack++ INTERFACE_SYSTEM_INCLUDE_DIRECTORIES)
-    set(ARPACKPP_TARGET "arpack::arpack++")
-endif()
+find_arpackpp()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(arpack++
-        DEFAULT_MSG ARPACKPP_INCLUDE_DIR ARPACKPP_TARGET
-        )
+find_package_handle_standard_args(arpack++ DEFAULT_MSG ARPACKPP_INCLUDE_DIR)
+
+if(arpack++_FOUND)
+    if(NOT TARGET arpack++::arpack++)
+        if(ARPACKPP_LIBRARY)
+            add_library(arpack++::arpack++ UNKNOWN IMPORTED)
+            set_target_properties(arpack++::arpack++ PROPERTIES IMPORTED_LOCATION ${ARPACKPP_LIBRARY})
+        else()
+            add_library(arpack++::arpack++ INTERFACE IMPORTED)
+        endif()
+    endif()
+    target_include_directories(arpack++::arpack++ SYSTEM INTERFACE ${ARPACKPP_INCLUDE_DIR})
+    target_link_libraries(arpack++::arpack++ INTERFACE lapacke::lapacke ARPACK::ARPACK)
+endif()
