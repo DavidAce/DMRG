@@ -38,7 +38,15 @@ jobs:
           path: |
             ~/.conan/data
             ~/dmrg-deps-install
+            ~/.ccache
           key: ${{ env.cache-name }}
+
+      - name: Setup ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ env.cache-name }}
+          max-size: 1000M
+
 
       - name: Setup gcc # compilers are already installed on the CI
         if: matrix.compiler == 'gcc'
@@ -63,17 +71,15 @@ jobs:
         if: contains(matrix.manager,'cmake')
         run: sudo apt install gcovr -y
 
+      - name: Setup python
+        run: |
+          pip install shutil psutil 
+
       - name: Setup conan
         if: matrix.manager == 'conan'
         run: |
           pip install conan
           conan user
-
-      - name: Setup ccache
-        uses: hendrikmuhs/ccache-action@v1
-        with:
-          key: ${{ env.cache-name }}
-          max-size: 1000M
 
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
