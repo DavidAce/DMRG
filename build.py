@@ -36,6 +36,7 @@ def parse(project_name):
     parser.add_argument('--ccache', action='store_true', help='Enable ccache to speed up repeated builds')
     parser.add_argument('--asan', action='store_true', help='Enable Address Sanitizer')
     parser.add_argument('--test', action='store_true', help='Enable CTest. Build and run tests')
+    parser.add_argument('--threads', action='store_true', help='Enable STL Threading in Eigen::Tensor')
     parser.add_argument('--loglevel', type=str, help='CMake Log Level', default=None,
                         choices=['TRACE', 'DEBUG', 'VERBOSE', 'STATUS', 'NOTICE'])
     parser.add_argument('--build-dir', type=str, help='CMake build directory', default='build')
