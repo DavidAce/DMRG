@@ -80,7 +80,7 @@ jobs:
 
         # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
-        run: ./build.py  \
+        run: python build.py  \
           --default-actions \
           --build-type=${{ matrix.build_type }} \
           --package-manager=${{ matrix.manager }} \
