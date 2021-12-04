@@ -5,7 +5,7 @@
 [requires]
 ceres-solver/2.0.0@
 glog/0.5.0@
-h5pp/1.9.1@davidace/dev
+h5pp/1.10.0@davidace/dev
 fmt/8.0.1@
 spdlog/1.9.2@
 eigen/3.4.0@
