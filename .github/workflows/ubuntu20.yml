@@ -37,7 +37,7 @@ jobs:
         with:
           path: |
             ~/.conan/data
-            ~/dmrg-deps-install
+            ~/dmrg-install
             ~/.ccache
           key: ${{ env.cache-name }}
 
@@ -92,7 +92,7 @@ jobs:
 
         # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
-        run: python build.py --default-actions --build-type=${{ matrix.build_type }} --package-manager=${{ matrix.manager }} --shared=${{ matrix.linkage == 'shared' }}
+        run: python build.py --default-actions --build-type=${{ matrix.build_type }} --package-manager=${{ matrix.manager }} --shared=${{ matrix.linkage == 'shared' }} --install-prefix=~/dmrg-install
 
       - name: Test
         run: |
