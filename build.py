@@ -230,7 +230,6 @@ def run(cmd,env, args):
 def main():
     project_name = 'DMRG'
     cmake_min_version = version.parse("3.18")
-
     assert_cmake_version(cmake_min_version=cmake_min_version)
     args = parse(project_name=project_name)
     cmake_cfg_cmd, cmake_bld_cmd, cmake_tst_cmd, cmake_env = generate_cmake_commands(project_name=project_name,
