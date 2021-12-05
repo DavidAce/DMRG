@@ -8,6 +8,10 @@ import re
 import glob
 import shutil
 import psutil
+from distutils.util import strtobool
+
+def str2bool(v):
+    return bool(strtobool(v))
 
 def parse(project_name):
     parser = argparse.ArgumentParser(description='CMake Project Builder for {}'.format(project_name))
@@ -25,7 +29,7 @@ def parse(project_name):
                         choices=[None, 'Ninja', 'Unix Makefiles'])
     parser.add_argument('-p', '--package-manager', type=str, help='Package Manager', default='conan',
                         choices=['find', 'cmake', 'find-or-cmake', 'conan'])
-    parser.add_argument('-s', '--shared', type=bool, help='Shared library linkage', default=False)
+    parser.add_argument('-s', '--shared', type=str2bool, nargs='?', const=True, default=False, help="Shared library linkage")
     parser.add_argument('-t', '--target', type=str, help='Build Target', default=None)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose build')
     parser.add_argument('-X', '--cmake-args', action='append', type=str, help='Extra CMake arguments', default=[])
