@@ -77,11 +77,12 @@ jobs:
           python-version: '3.x'
           cache: 'pip'
           cache-dependency-path: '**/requirements.txt'
+
+      - name: Install Python Requirements
         run: |
           pip install -r requirements.txt
-       
 
-      - name: Setup conan
+      - name: Install conan
         if: matrix.manager == 'conan'
         run: |
           pip install conan
