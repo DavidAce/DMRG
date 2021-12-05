@@ -72,15 +72,12 @@ jobs:
         run: sudo apt install gcovr -y
 
       - name: Setup Python
-      - uses: actions/setup-python@v2
+        uses: actions/setup-python@v2
         with:
           python-version: '3.x'
           cache: 'pip'
           cache-dependency-path: '**/requirements.txt'
-
-      - name: Install Python Requirements
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Install conan
         if: matrix.manager == 'conan'
