@@ -37,10 +37,11 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ##################################################################
     ### Install dependencies from conanfile.txt                    ###
     ##################################################################
-
+    unset(CONAN_COMMAND CACHE)
     find_program (CONAN_COMMAND conan
             HINTS ${DMRG_CONAN_CANDIDATE_PATHS}
-            PATH_SUFFIXES bin envs/dmrg/bin)
+            PATH_SUFFIXES bin envs/dmrg/bin
+            NO_CACHE)
     if(NOT CONAN_COMMAND)
         message(FATAL_ERROR "Could not find conan program executable")
     else()
@@ -68,7 +69,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     endif()
 
 
-    conan_add_remote(NAME conan-dmrg URL http://thinkstation.duckdns.org:8081/artifactory/api/conan/conan-dmrg)
+    conan_add_remote(CONAN_COMMAND ${CONAN_COMMAND} NAME conan-dmrg URL https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg)
     conan_cmake_autodetect(CONAN_AUTODETECT)
     conan_cmake_install(
             CONAN_COMMAND ${CONAN_COMMAND}
