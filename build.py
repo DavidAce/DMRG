@@ -8,10 +8,16 @@ import re
 import glob
 import shutil
 import psutil
-from distutils.util import strtobool
 
 def str2bool(v):
-    return bool(strtobool(v))
+    if isinstance(v, bool):
+            return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 def parse(project_name):
     parser = argparse.ArgumentParser(description='CMake Project Builder for {}'.format(project_name))
