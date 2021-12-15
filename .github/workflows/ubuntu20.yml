@@ -63,9 +63,12 @@ jobs:
           echo "CC=clang-10"     >> $GITHUB_ENV
           echo "CXX=clang++-10"  >> $GITHUB_ENV
 
-      - name: Setup apt packages
+      - name: Setup apt packages common
+        run: sudo apt install libdw-dev libdwarf-dev libunwind-dev ninja-build -y
+
+      - name: Setup apt packages find
         if: contains(matrix.manager,'find')
-        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev gcovr ninja-build -y
+        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev gcovr -y
 
       - name: Setup coverage
         if: contains(matrix.manager,'cmake')
@@ -79,7 +82,9 @@ jobs:
           cache-dependency-path: '**/requirements.txt'
 
       - name: Install Python Requirements
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install -r docs/requirements.txt
 
       - name: Install conan
         if: matrix.manager == 'conan'
