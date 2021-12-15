@@ -104,35 +104,37 @@ int main() {
     tools::log->info("Using Intel MKL with {} threads", mkl_get_max_threads());
 #endif
 
-    auto h5file = h5pp::File(fmt::format("{}/primme_mps.h5", TEST_MATRIX_DIR), h5pp::FilePermission::READONLY);
-
-    for(const auto &group : h5file.findGroups("mps-")) {
-        if(group.find("mps-108") == std::string::npos) continue;
-        auto dims = h5file.readAttribute<std::vector<long>>("dimensions", group);
-        if(dims[0] * dims[1] * dims[2] < 10000) {
-            tools::log->info("Skipped problem size {} = {} < 10000", dims, dims[0] * dims[1] * dims[2]);
-            continue;
+    auto filename = fmt::format("{}/primme_mps.h5", TEST_MATRIX_DIR);
+    if(h5pp::fs::exists(filename)) {
+        auto h5file = h5pp::File(filename, h5pp::FilePermission::READONLY);
+        for(const auto &group : h5file.findGroups("mps-")) {
+            if(group.find("mps-108") == std::string::npos) continue;
+            auto dims = h5file.readAttribute<std::vector<long>>("dimensions", group);
+            if(dims[0] * dims[1] * dims[2] < 10000) {
+                tools::log->info("Skipped problem size {} = {} < 10000", dims, dims[0] * dims[1] * dims[2]);
+                continue;
+            }
+            if(dims[0] * dims[1] * dims[2] > 64000) {
+                tools::log->info("Skipped problem size {} = {} > 64000", dims, dims[0] * dims[1] * dims[2]);
+                continue;
+            }
+            std::vector<std::string> msg;
+            //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_plusK));
+            //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_DYNAMIC));
+            //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_plusK));
+            //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_Olsen_plusK));
+            msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_Olsen_plusK));
+            //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JD_Olsen_plusK));
+            //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JD_Olsen_plusK));
+            //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JDQMR));
+            msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JDQMR_ETol));
+            msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_Arnoldi));
+            //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis));
+            //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis));
+            //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window));
+            //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window));
+            tools::log->debug("Result summary:");
+            for(auto &m : msg) tools::log->debug("{}", m);
         }
-        if(dims[0] * dims[1] * dims[2] > 64000) {
-            tools::log->info("Skipped problem size {} = {} > 64000", dims, dims[0] * dims[1] * dims[2]);
-            continue;
-        }
-        std::vector<std::string> msg;
-        //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_plusK));
-        //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_DYNAMIC));
-        //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_plusK));
-        //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_Olsen_plusK));
-        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_GD_Olsen_plusK));
-        //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JD_Olsen_plusK));
-        //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JD_Olsen_plusK));
-        //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JDQMR));
-        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_JDQMR_ETol));
-        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_Arnoldi));
-        //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis));
-        //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis));
-        //        msg.push_back(solve(1e-14, 1, 16, std::nullopt, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window));
-        //        msg.push_back(solve(1e-14, 1, 16, -1, 30000, h5file, group, eig::PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window));
-        tools::log->debug("Result summary:");
-        for(auto &m : msg) tools::log->debug("{}", m);
     }
 }

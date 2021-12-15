@@ -28,69 +28,64 @@ void test() {
     svd::settings svd_settings;
     svd_settings.save_fail = false;
     svd_settings.loglevel  = 2;
+    auto filename          = fmt::format("{}/svd-save.h5", TEST_MATRIX_DIR);
+    if(h5pp::fs::exists(filename)) {
+        h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
+        for(const auto &svd_group : h5file.findGroups("svd_lapacke")) {
+            auto U_original        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
+            auto S_original        = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
+            auto V_original        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/VT", svd_group));
+            auto A                 = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
+            auto rows              = A.rows();
+            auto cols              = A.cols();
+            auto rank_max          = h5file.readAttribute<long>("rank_max", svd_group);
+            svd_settings.threshold = h5file.readAttribute<double>("threshold", svd_group);
+            Eigen::MatrixXcd S_mat(rank_max, 4);
+            S_mat.setZero();
+            {
+                svd_settings.svd_lib        = SVDLib::eigen;
+                svd_settings.use_bdc        = true;
+                svd_settings.switchsize_bdc = 16;
+                svd::solver svd(svd_settings);
+                auto        t_eigen  = tid::tic_scope("eigen");
+                auto [U, S, V, rank] = svd.do_svd(A, rank_max);
+                t_eigen.toc();
+                //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
+                S_mat.col(0).topRows(S.size()) = S;
+            }
+            {
+                svd_settings.svd_lib        = SVDLib::lapacke;
+                svd_settings.use_bdc        = true;
+                svd_settings.switchsize_bdc = 16;
+                svd::solver svd(svd_settings);
+                auto        t_lapack = tid::tic_scope("lapack");
+                auto [U, S, V, rank] = svd.do_svd(A, rank_max);
+                t_lapack.toc();
+                //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
+                S_mat.col(1).topRows(S.size()) = S;
+            }
+            {
+                svd_settings.svd_lib        = SVDLib::rsvd;
+                svd_settings.use_bdc        = true;
+                svd_settings.switchsize_bdc = 16;
+                long        rsvd_rank_max   = rank_max / 10;
+                svd::solver svd(svd_settings);
+                auto        t_rsvd = tid::tic_scope("rsvd");
 
-    h5pp::File h5file(fmt::format("{}/svd-save.h5", TEST_MATRIX_DIR), h5pp::FilePermission::READONLY, 2);
-    for(const auto &svd_group : h5file.findGroups("svd_lapacke")) {
-        auto U_original        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
-        auto S_original        = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
-        auto V_original        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/VT", svd_group));
-        auto A                 = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
-        auto rows              = A.rows();
-        auto cols              = A.cols();
-        auto rank_max          = h5file.readAttribute<long>("rank_max", svd_group);
-        svd_settings.threshold = h5file.readAttribute<double>("threshold", svd_group);
-        Eigen::MatrixXcd S_mat(rank_max, 4);
-        S_mat.setZero();
-        {
-            svd_settings.svd_lib        = SVDLib::eigen;
-            svd_settings.use_bdc        = true;
-            svd_settings.switchsize_bdc = 16;
-            svd::solver svd(svd_settings);
-            auto        t_eigen  = tid::tic_scope("eigen");
-            auto [U, S, V, rank] = svd.do_svd(A, rank_max);
-            t_eigen.toc();
-            //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
-            S_mat.col(0).topRows(S.size()) = S;
-        }
-        {
-            svd_settings.svd_lib        = SVDLib::lapacke;
-            svd_settings.use_bdc        = true;
-            svd_settings.switchsize_bdc = 16;
-            svd::solver svd(svd_settings);
-            auto        t_lapack = tid::tic_scope("lapack");
-            auto [U, S, V, rank] = svd.do_svd(A, rank_max);
-            t_lapack.toc();
-            //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
-            S_mat.col(1).topRows(S.size()) = S;
-        }
-        {
-            svd_settings.svd_lib        = SVDLib::rsvd;
-            svd_settings.use_bdc        = true;
-            svd_settings.switchsize_bdc = 16;
-            long rsvd_rank_max = rank_max/10;
-            svd::solver svd(svd_settings);
-            auto        t_rsvd = tid::tic_scope("rsvd");
+                auto [U, S, V, rank] = svd.do_svd(A, rsvd_rank_max);
+                t_rsvd.toc();
+                //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
+                S_mat.col(2).topRows(S.size()) = S;
+            }
 
-            auto [U, S, V, rank] = svd.do_svd(A, rsvd_rank_max);
-            t_rsvd.toc();
-            //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
-            S_mat.col(2).topRows(S.size()) = S;
+            S_mat.col(3)  = (S_mat.col(2) - S_mat.col(0)).cwiseAbs().eval();
+            double S_diff = S_mat.col(3).sum().real();
+            fmt::print("A {:>4} x {:>4} | rank_max {:4} | eigen {:8.2e} s | lapack {:8.2e} s | rsvd {:8.2e} s | diff {:20.16f}\n", rows, cols, rank_max,
+                       tid::get("eigen").get_last_interval(), tid::get("lapack").get_last_interval(), tid::get("rsvd").get_last_interval(), S_diff);
         }
-
-        S_mat.col(3)  = (S_mat.col(2) - S_mat.col(0)).cwiseAbs().eval();
-        double S_diff = S_mat.col(3).sum().real();
-        fmt::print("A {:>4} x {:>4} | rank_max {:4} | eigen {:8.2e} s | lapack {:8.2e} s | rsvd {:8.2e} s | diff {:20.16f}\n",
-                   rows, cols, rank_max,
-                   tid::get("eigen").get_last_interval(),
-                   tid::get("lapack").get_last_interval(),
-                   tid::get("rsvd").get_last_interval(),
-                   S_diff);
+        fmt::print("Total time | eigen {:8.2e} s | lapack {:8.2e} s | rsvd {:8.2e}\n", tid::get("eigen").get_time(), tid::get("lapack").get_time(),
+                   tid::get("rsvd").get_time());
     }
-    fmt::print("Total time | eigen {:8.2e} s | lapack {:8.2e} s | rsvd {:8.2e}\n",
-               tid::get("eigen").get_time(),
-               tid::get("lapack").get_time(),
-               tid::get("rsvd").get_time()
-               );
 }
 
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
@@ -102,22 +97,24 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
         svd_settings.switchsize_bdc = 4096;
         svd_settings.save_fail      = false;
         svd_settings.svd_lib        = SVDLib::lapacke;
+        auto filename               = fmt::format("{}/svd-failed.h5", TEST_MATRIX_DIR);
+        if(h5pp::fs::exists(filename)) {
+            h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
+            for(const auto &svd_group : h5file.findGroups("svd_")) {
+                auto U_original = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
+                auto S_original = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
+                auto V_original = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/V", svd_group));
+                auto A          = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
+                fmt::print("S original \n{}\n", linalg::matrix::to_string(S_original, 16));
 
-        h5pp::File h5file(fmt::format("{}/svd-failed.h5", TEST_MATRIX_DIR), h5pp::FilePermission::READONLY, 2);
-        for(const auto &svd_group : h5file.findGroups("svd_")) {
-            auto U_original = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
-            auto S_original = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
-            auto V_original = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/V", svd_group));
-            auto A          = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
-            fmt::print("S original \n{}\n", linalg::matrix::to_string(S_original, 16));
+                auto rank_max          = h5file.readAttribute<long>("rank_max", svd_group);
+                svd_settings.threshold = h5file.readAttribute<long>("threshold", svd_group);
 
-            auto rank_max          = h5file.readAttribute<long>("rank_max", svd_group);
-            svd_settings.threshold = h5file.readAttribute<long>("threshold", svd_group);
+                svd::solver svd(svd_settings);
 
-            svd::solver svd(svd_settings);
-
-            auto [U, S, V, rank] = svd.do_svd(A, rank_max);
-            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
+                auto [U, S, V, rank] = svd.do_svd(A, rank_max);
+                fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
+            }
         }
     }
 }

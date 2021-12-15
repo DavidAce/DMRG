@@ -29,7 +29,7 @@ namespace linalg::tensor {
         return tensor.inflate(std::array<long, 1>{tensor.size() + 1}).reshape(std::array<long, 2>{tensor.size(), tensor.size()});
     }
 
-    template<typename Scalar, auto rank>
+    template<typename Scalar, int rank>
     Eigen::Tensor<Scalar, rank> mirror(const Eigen::Tensor<Scalar, rank> &tensor) {
         /*
          Returns a mirrored tensor
@@ -63,7 +63,7 @@ namespace linalg::tensor {
         }
     }
 
-    template<typename Scalar, auto rank1, auto rank2>
+    template<typename Scalar, int rank1, int rank2>
     Eigen::Tensor<Scalar, rank1 + rank2> outer(const Eigen::Tensor<Scalar, rank1> &tensor1, const Eigen::Tensor<Scalar, rank2> &tensor2) {
         std::array<Eigen::IndexPair<Eigen::Index>, 0> idx{};
         return tensor1.contract(tensor2, idx);
@@ -76,7 +76,7 @@ namespace linalg::tensor {
         return tensor1.contract(tensor2, idx);
     }
 
-    template<typename Scalar, auto rankA, auto rankB>
+    template<typename Scalar, int rankA, int rankB>
     Eigen::Tensor<Scalar, rankA + rankB> kronecker(const Eigen::Tensor<Scalar, rankA> &tensorA, const Eigen::Tensor<Scalar, rankB> &tensorB) {
         /*
          Returns the equivalent kronecker product for a tensor following left-to-right index order
@@ -88,21 +88,21 @@ namespace linalg::tensor {
                2  3       3 4 5          2 3 7 8 9          5 6 7 8 9
 
          */
-        constexpr size_t                        topA  = static_cast<size_t>(rankA) / 2;
-        constexpr size_t                        topB  = static_cast<size_t>(rankB) / 2;
-        constexpr size_t                        topAB = topA + topB;
+        constexpr Eigen::Index                  topA  = static_cast<Eigen::Index>(rankA) / 2;
+        constexpr Eigen::Index                  topB  = static_cast<Eigen::Index>(rankB) / 2;
+        constexpr Eigen::Index                  topAB = topA + topB;
         std::array<Eigen::Index, rankA + rankB> shf{};
         for(size_t i = 0; i < shf.size(); i++) {
             if(i < topAB) {
                 if(i < topA)
-                    shf[i] = i;
+                    shf[i] = static_cast<Eigen::Index>(i);
                 else
-                    shf[i] = i + (rankA - topA);
+                    shf[i] = static_cast<Eigen::Index>(i) + (rankA - topA);
             } else {
                 if(i - topAB < topA)
-                    shf[i] = i - topB;
+                    shf[i] = static_cast<Eigen::Index>(i) - topB;
                 else
-                    shf[i] = shf[i] = i;
+                    shf[i] = shf[i] = static_cast<Eigen::Index>(i);
             }
         }
         return linalg::tensor::outer(tensorA, tensorB).shuffle(shf);
@@ -114,18 +114,18 @@ namespace linalg::tensor {
         Eigen::Tensor<Scalar, 2> tensorB = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(B.data(), B.rows(), B.cols());
         return linalg::tensor::kronecker(tensorA, tensorB);
     }
-    template<typename Scalar, auto rankA>
+    template<typename Scalar, int rankA>
     Eigen::Tensor<Scalar, rankA + 2> kronecker(const Eigen::Tensor<Scalar, rankA> &tensorA, const EigenMatrix<Scalar> &B) {
         Eigen::Tensor<Scalar, 2> tensorB = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(B.data(), B.rows(), B.cols());
         return linalg::tensor::kronecker(tensorA, tensorB);
     }
-    template<typename Scalar, auto rankB>
+    template<typename Scalar, int rankB>
     Eigen::Tensor<Scalar, rankB + 2> kronecker(const EigenMatrix<Scalar> &A, const Eigen::Tensor<Scalar, rankB> &tensorB) {
         Eigen::Tensor<Scalar, 2> tensorA = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(A.data(), A.rows(), A.cols());
         return linalg::tensor::kronecker(tensorA, tensorB);
     }
 
-    template<auto rank>
+    template<int rank>
     Eigen::IndexPair<Eigen::Index> mirror_idx_pair(const Eigen::IndexPair<Eigen::Index> &idx_pair) {
         if constexpr(rank <= 2)
             return idx_pair;
@@ -141,7 +141,7 @@ namespace linalg::tensor {
         }
     }
 
-    template<typename Scalar, auto rank, auto npair>
+    template<typename Scalar, int rank, size_t npair>
     Eigen::Tensor<Scalar, rank - 2 * npair> trace(const Eigen::Tensor<Scalar, rank> &tensor, const std::array<Eigen::IndexPair<Eigen::Index>, npair> &idx_pair,
                                                   bool mirror = false) {
         /*

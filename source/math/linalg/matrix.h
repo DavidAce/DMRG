@@ -36,7 +36,7 @@ namespace linalg::matrix {
     }
 
     template<typename T>
-    std::string to_string(const Eigen::EigenBase<T> &m, int prec = 1, int flags = 0, const std::string &sep = ", ") {
+    std::string to_string(const Eigen::EigenBase<T> &m, int prec, int flags, const std::string &sep = ", ") {
         Eigen::IOFormat f(prec, flags, sep, "\n", "  [", "]");
         return to_string(m, f);
     }
