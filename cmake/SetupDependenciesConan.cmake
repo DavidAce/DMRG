@@ -39,9 +39,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ##################################################################
     unset(CONAN_COMMAND CACHE)
     find_program (CONAN_COMMAND conan
-            HINTS ${DMRG_CONAN_CANDIDATE_PATHS}
-            PATH_SUFFIXES bin envs/dmrg/bin
-            NO_CACHE)
+            HINTS ${DMRG_CONAN_HINTS}
+            PATH_SUFFIXES ${DMRG_CONAN_PATH_SUFFIXES})
     if(NOT CONAN_COMMAND)
         message(FATAL_ERROR "Could not find conan program executable")
     else()
@@ -67,7 +66,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     if(CMAKE_BUILD_TYPE MATCHES "Debug")
         list(APPEND DMRG_CONAN_OPTIONS OPTIONS "ceres-solver:use_glog=False")
     endif()
-
 
     conan_add_remote(CONAN_COMMAND ${CONAN_COMMAND} NAME conan-dmrg URL https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg)
     conan_cmake_autodetect(CONAN_AUTODETECT)

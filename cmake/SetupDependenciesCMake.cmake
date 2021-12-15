@@ -56,18 +56,19 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
         endif ()
     endif ()
 
-
     # Starting from here there should definitely be blas library that includes lapacke
     # Lapacke is needed by arpack++, included in MKL or OpenBLAS
     find_package(Lapacke REQUIRED)
 
+    # Eigen3 numerical library (needed by ceres and h5pp)
+    install_package(Eigen3 VERSION 3.4 TARGET_NAME Eigen3::Eigen)
+
+    # h5pp for writing to file binary in format
+    install_package(h5pp VERSION 1.9.0 CMAKE_ARGS ${h5pp_ARGS})
+
     # cli11 for parsing cli arguments
     install_package(cli11 VERSION 2.1.1 TARGET_NAME CLI11::CLI11 FIND_NAME CLI11)
 
-    # Eigen3 numerical library (needed by ceres and h5pp)
-    install_package(Eigen3 VERSION 3.4 TARGET_NAME Eigen3::Eigen)
-    # h5pp for writing to file binary in format
-    install_package(h5pp VERSION 1.9.0 CMAKE_ARGS ${h5pp_ARGS})
     # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
     install_package(arpack-ng VERSION 3.8.0
             TARGET_NAME ARPACK::ARPACK
@@ -95,4 +96,5 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
 
     # Backward for printing pretty stack traces
     install_package(Backward)
+
 endif ()

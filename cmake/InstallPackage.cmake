@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
 include(cmake/CheckCompile.cmake)
 
+function(pkg_message lvl msg)
+    message(${lvl} "InstallPackage[${pkg_find_name}]: ${msg} ${ARGN}")
+endfunction()
+
+macro(pkg_set var val)
+    set(${var} ${val} ${ARGN})
+    set(${var} ${val} ${ARGN} PARENT_SCOPE)
+    mark_as_advanced(${var})
+endmacro()
+
 # Dumps cached variables to PKG_INIT_CACHE_FILE so that we can propagate
 # the current build configuration to dependencies
 function(generate_init_cache)
@@ -32,7 +42,7 @@ function(install_package pkg_name)
         file(LOCK $ENV{USERPROFILE}/cmake.${PROJECT_NAME}.lock GUARD FUNCTION TIMEOUT 600)
     endif()
     set(options CONFIG MODULE CHECK QUIET DEBUG INSTALL_PREFIX_PKGNAME)
-    set(oneValueArgs VERSION INSTALL_DIR BUILD_DIR FIND_NAME TARGET_NAME)
+    set(oneValueArgs VERSION INSTALL_DIR INSTALL_SUBDIR BUILD_DIR BUILD_SUBDIR FIND_NAME TARGET_NAME LINK_TYPE)
     set(multiValueArgs HINTS PATHS PATH_SUFFIXES COMPONENTS DEPENDS CMAKE_ARGS LIBRARY_NAMES TARGET_HINTS)
     cmake_parse_arguments(PARSE_ARGV 1 PKG "${options}" "${oneValueArgs}" "${multiValueArgs}")
 
@@ -51,15 +61,31 @@ function(install_package pkg_name)
             set(PKG_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
         endif()
     endif()
+    if(IS_ABSOLUTE PKG_BUILD_SUBDIR)
+        pkg_message(FATAL_ERROR "PKG_BUILD_SUBDIR must be a relative path: ${PKG_BUILD_SUBDIR}")
+    endif()
+    if(IS_ABSOLUTE PKG_INSTALL_SUBDIR)
+        pkg_message(FATAL_ERROR "PKG_INSTALL_SUBDIR must be a relative path: ${PKG_INSTALL_SUBDIR}")
+    endif()
 
     # Further parsing / override defaults
-    set(pkg_build_dir   ${PKG_BUILD_DIR}/${pkg_name})
-    set(pkg_install_dir ${PKG_INSTALL_DIR})
+    if(PKG_BUILD_SUBDIR)
+        string(JOIN / pkg_build_dir ${PKG_BUILD_DIR} ${PKG_BUILD_SUBDIR})
+    else()
+        string(JOIN / pkg_build_dir ${PKG_BUILD_DIR} ${pkg_name})
+    endif()
+
+    if(PKG_INSTALL_SUBDIR)
+        string(JOIN / pkg_install_dir ${PKG_INSTALL_DIR} ${PKG_INSTALL_SUBDIR})
+    elseif(PKG_INSTALL_PREFIX_PKGNAME)
+        string(JOIN / pkg_install_dir ${PKG_INSTALL_DIR} ${pkg_name})
+    else()
+        set(pkg_install_dir ${PKG_INSTALL_DIR})
+    endif()
+
     set(pkg_target_name ${pkg_name}::${pkg_name})
     set(pkg_find_name   ${pkg_name})
-    if(PKG_INSTALL_PREFIX_PKGNAME)
-        set(pkg_install_dir ${pkg_install_dir}/${pkg_name})
-    endif()
+
     if(PKG_FIND_NAME)
         set(pkg_find_name ${PKG_FIND_NAME})
     endif()
@@ -76,12 +102,19 @@ function(install_package pkg_name)
     if(PKG_COMPONENTS)
         set(COMPONENTS COMPONENTS)
     endif()
-    if(BUILD_SHARED_LIBS)
+    if(PKG_LINK_TYPE)
+        set(pkg_link ${PKG_LINK_TYPE})
+    elseif(BUILD_SHARED_LIBS)
         set(pkg_link shared)
     else()
         set(pkg_link static)
     endif()
+
     if(NOT PKG_TARGET_NAME)
+        foreach(tgt ${PKG_TARGET_HINTS})
+            list(APPEND PKG_TARGET_HINTS_LINK_TYPE ${tgt}-${pkg_link})
+        endforeach()
+
         list(APPEND PKG_TARGET_HINTS
                 ${pkg_target_name}
                 ${pkg_name}::${pkg_name}
@@ -92,6 +125,7 @@ function(install_package pkg_name)
                 ${pkg_find_name}::${pkg_find_name}-${pkg_link}
                 ${pkg_name}-${pkg_link}
                 ${pkg_find_name}-${pkg_link}
+                ${PKG_TARGET_HINTS_LINK_TYPE}
                 )
     endif()
     list(REMOVE_DUPLICATES PKG_TARGET_HINTS)
@@ -102,21 +136,26 @@ function(install_package pkg_name)
         endif()
     endforeach()
     if(PKG_MISSING_TARGET)
-        message(FATAL_ERROR "Could not install ${pkg_name}: dependencies missing [${PKG_MISSING_TARGET}]")
+        pkg_message(FATAL_ERROR "Could not install ${pkg_name}: dependencies missing [${PKG_MISSING_TARGET}]")
     endif()
 
+    pkg_message(VERBOSE "Starting install")
+
     # Append to CMAKE_PREFIX_PATH so we can find the packages later
+    pkg_message(DEBUG "Appending to CMAKE_PREFIX_PATH: ${pkg_install_dir}")
     list(APPEND CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${pkg_install_dir} ${PKG_INSTALL_DIR})
     list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE INTERNAL "Paths for find_package lookup" FORCE)
 
 
     # Try finding config files before modules
+    pkg_message(DEBUG "Prefer CONFIG mode ON")
     set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
     if(PKG_LIBRARY_NAMES)
         # This attempts to find <PackageName>_LIBRARY with given names before calling find_package
         # This is necessary for ZLIB
+        pkg_message(DEBUG "Looking for library names ${PKG_LIBRARY_NAMES}")
         find_library(${pkg_find_name}_LIBRARY
                 NAMES ${PKG_LIBRARY_NAMES}
                 HINTS ${pkg_install_dir} ${${pkg_find_name}_ROOT} ${${pkg_name}_ROOT}
@@ -126,39 +165,37 @@ function(install_package pkg_name)
                 NO_CMAKE_SYSTEM_PATH
                 )
         if(${pkg_find_name}_LIBRARY)
-            message(DEBUG "Found ${pkg_find_name}_LIBRARY: ${${pkg_find_name}_LIBRARY}")
+            pkg_message(VERBOSE "Found ${pkg_find_name}_LIBRARY: ${${pkg_find_name}_LIBRARY}")
             find_package(${pkg_find_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} ${QUIET})
         endif()
     elseif(PKG_MODULE)
-        if(NOT ${pkg_find_name}_FOUND)
-            find_package(${pkg_find_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} ${QUIET})
-        endif()
+        pkg_message(DEBUG "Looking for package in MODULE mode")
+        find_package(${pkg_find_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} ${QUIET})
     else()
-        if(NOT ${pkg_find_name}_FOUND)
-            find_package(${pkg_find_name} ${PKG_VERSION}
-                    HINTS ${PKG_HINTS}
-                    PATHS ${PKG_PATHS}
-                    PATH_SUFFIXES ${PKG_PATH_SUFFIXES}
-                    ${COMPONENTS} ${PKG_COMPONENTS}
-                    ${CONFIG} ${QUIET}
-                    # These lets us ignore system packages
-                    NO_SYSTEM_ENVIRONMENT_PATH #5
-                    NO_CMAKE_PACKAGE_REGISTRY #6
-                    NO_CMAKE_SYSTEM_PATH #7
-                    NO_CMAKE_SYSTEM_PACKAGE_REGISTRY #8
-                    )
-        endif()
+        pkg_message(DEBUG "Looking for package in CONFIG mode")
+        find_package(${pkg_find_name} ${PKG_VERSION}
+                HINTS ${PKG_HINTS}
+                PATHS ${PKG_PATHS}
+                PATH_SUFFIXES ${PKG_PATH_SUFFIXES}
+                ${COMPONENTS} ${PKG_COMPONENTS}
+                ${CONFIG} ${QUIET}
+                # These lets us ignore system packages
+                NO_SYSTEM_ENVIRONMENT_PATH #5
+                NO_CMAKE_PACKAGE_REGISTRY #6
+                NO_CMAKE_SYSTEM_PATH #7
+                NO_CMAKE_SYSTEM_PACKAGE_REGISTRY #8
+                )
     endif()
     # Set _FOUND variables for alternate names and components
     if(NOT ${pkg_name}_FOUND)
         if(${pkg_find_name}_FOUND)
-            set(${pkg_name}_FOUND TRUE)
+            set(${pkg_name}_FOUND TRUE PARENT_SCOPE)
         else()
             # Some packages, such as SZIP, may only set each components as found but not the package itself,
             # with variables like SZIP_shared_FOUND and so on
             foreach(comp ${COMPONENTS})
                 if(${pkg_name}_${comp}_FOUND)
-                    set(${pkg_name}_FOUND TRUE)
+                    set(${pkg_name}_FOUND TRUE PARENT_SCOPE)
                 endif()
             endforeach()
         endif()
@@ -172,34 +209,32 @@ function(install_package pkg_name)
             check_compile(${pkg_name} ${pkg_target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
             if(PKG_DEBUG AND NOT check_compile_${pkg_name} AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
                 file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
-                message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+                pkg_message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
             endif()
         endif()
         foreach(tgt ${PKG_TARGET_HINTS})
             if(TARGET ${tgt})
-                set(PKG_${pkg_name}_TARGET ${tgt})
-                set(PKG_${pkg_name}_TARGET ${tgt} PARENT_SCOPE)
-                set(PKG_${pkg_name}_FOUND TRUE PARENT_SCOPE)
-                set(PKG_${pkg_find_name}_TARGET ${tgt} PARENT_SCOPE)
-                set(PKG_${pkg_find_name}_FOUND TRUE PARENT_SCOPE)
+                pkg_set(${pkg_name}_FOUND TRUE)
+                pkg_set(${pkg_find_name}_FOUND TRUE)
+                pkg_set(PKG_${pkg_name}_TARGET ${tgt})
+                pkg_set(PKG_${pkg_name}_FOUND TRUE)
+                pkg_set(PKG_${pkg_find_name}_TARGET ${tgt})
+                pkg_set(PKG_${pkg_find_name}_FOUND TRUE)
                 set(PKG_INSTALLED_TARGETS ${PKG_INSTALLED_TARGETS};${tgt})
                 list(REMOVE_DUPLICATES PKG_INSTALLED_TARGETS)
-                set(PKG_INSTALLED_TARGETS ${PKG_INSTALLED_TARGETS} PARENT_SCOPE)
-                mark_as_advanced(PKG_${pkg_name}_TARGET)
-                mark_as_advanced(PKG_${pkg_find_name}_TARGET)
-                mark_as_advanced(PKG_INSTALLED_TARGETS)
+                set(PKG_INSTALLED_TARGETS ${PKG_INSTALLED_TARGETS} CACHE INTERNAL "")
                 break()
             endif()
         endforeach()
         if(TARGET ${PKG_${pkg_name}_TARGET})
-            message(DEBUG "Found ${pkg_name}: [${PKG_${pkg_name}_TARGET}]")
+            pkg_message(VERBOSE "Found ${pkg_name}: [${PKG_${pkg_name}_TARGET}]")
         else()
-            message(WARNING "Found ${pkg_name} but no target matches [${PKG_TARGET_HINTS}]")
+            pkg_message(WARNING "Found ${pkg_name} but no target matches the hint list: [${PKG_TARGET_HINTS}]")
         endif()
         return()
     endif()
 
-    message(STATUS "${pkg_name} will be installed into ${pkg_install_dir}")
+    pkg_message(STATUS "${pkg_name} will be installed into ${pkg_install_dir}")
 
     set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
     set(CMAKE_CXX_STANDARD_REQUIRED TRUE CACHE BOOL "")
@@ -231,12 +266,12 @@ function(install_package pkg_name)
             RESULT_VARIABLE config_result
     )
     if(config_result)
-        message(STATUS "Got non-zero exit code while configuring ${pkg_name}")
-        message(STATUS  "pkg_build_dir         : ${pkg_build_dir}")
-        message(STATUS  "pkg_install_dir       : ${pkg_install_dir}")
-        message(STATUS  "extra_flags       : ${extra_flags}")
-        message(STATUS  "config_result     : ${config_result}")
-        message(FATAL_ERROR "Failed to configure ${pkg_name}")
+        pkg_message(STATUS "Got non-zero exit code while configuring ${pkg_name}")
+        pkg_message(STATUS "build_dir             : ${pkg_build_dir}")
+        pkg_message(STATUS "install_dir           : ${pkg_install_dir}")
+        pkg_message(STATUS "extra_flags           : ${extra_flags}")
+        pkg_message(STATUS "config_result         : ${config_result}")
+        pkg_message(FATAL_ERROR "Failed to configure ${pkg_name}")
     endif()
 
 
@@ -253,13 +288,13 @@ function(install_package pkg_name)
                     RESULT_VARIABLE build_result
                     )
             if(build_result)
-                message(STATUS "Got non-zero exit code while building package: ${pkg_name}")
-                message(STATUS  "build config      : ${config}")
-                message(STATUS  "build dir         : ${pkg_build_dir}")
-                message(STATUS  "install dir       : ${pkg_install_dir}")
-                message(STATUS  "cmake args        : ${PKG_CMAKE_ARGS}")
-                message(STATUS  "build result      : ${build_result}")
-                message(FATAL_ERROR "Failed to build package: ${pkg_name}")
+                pkg_message(STATUS "Got non-zero exit code while building package: ${pkg_name}")
+                pkg_message(STATUS  "build config      : ${config}")
+                pkg_message(STATUS  "build dir         : ${pkg_build_dir}")
+                pkg_message(STATUS  "install dir       : ${pkg_install_dir}")
+                pkg_message(STATUS  "cmake args        : ${PKG_CMAKE_ARGS}")
+                pkg_message(STATUS  "build result      : ${build_result}")
+                pkg_message(FATAL_ERROR "Failed to build package: ${pkg_name}")
             endif()
         endforeach()
     else()
@@ -269,12 +304,12 @@ function(install_package pkg_name)
                 RESULT_VARIABLE build_result
                 )
         if(build_result)
-            message(STATUS "Got non-zero exit code while building package: ${pkg_name}")
-            message(STATUS  "build dir         : ${pkg_build_dir}")
-            message(STATUS  "install dir       : ${pkg_install_dir}")
-            message(STATUS  "cmake args        : ${PKG_CMAKE_ARGS}")
-            message(STATUS  "build result      : ${build_result}")
-            message(FATAL_ERROR "Failed to build package: ${pkg_name}")
+            pkg_message(STATUS "Got non-zero exit code while building package: ${pkg_name}")
+            pkg_message(STATUS  "build dir         : ${pkg_build_dir}")
+            pkg_message(STATUS  "install dir       : ${pkg_install_dir}")
+            pkg_message(STATUS  "cmake args        : ${PKG_CMAKE_ARGS}")
+            pkg_message(STATUS  "build result      : ${build_result}")
+            pkg_message(FATAL_ERROR "Failed to build package: ${pkg_name}")
         endif()
     endif()
 
@@ -304,6 +339,7 @@ function(install_package pkg_name)
     if(PKG_MODULE)
         find_package(${pkg_find_name} ${PKG_VERSION} ${COMPONENTS} ${PKG_COMPONENTS} ${QUIET} REQUIRED)
     else()
+        set(HDF5_FIND_DEBUG ON)
         find_package(${pkg_find_name} ${PKG_VERSION}
                 HINTS ${pkg_install_dir}
                 PATH_SUFFIXES ${PKG_PATH_SUFFIXES}
@@ -319,29 +355,27 @@ function(install_package pkg_name)
         check_compile(${pkg_name} ${pkg_target_name} ${PROJECT_SOURCE_DIR}/cmake/compile/${pkg_name}.cpp)
         if(PKG_DEBUG AND NOT check_compile_${pkg_name} AND EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log")
             file(READ "${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log" ERROR_LOG)
-            message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
+            pkg_message(STATUS "CMakeError.log: \n ${ERROR_LOG}")
         endif()
     endif()
     foreach(tgt ${PKG_TARGET_HINTS})
         if(TARGET ${tgt})
-            set(PKG_${pkg_name}_TARGET ${tgt})
-            set(PKG_${pkg_name}_TARGET ${tgt} PARENT_SCOPE)
-            set(PKG_${pkg_name}_FOUND TRUE PARENT_SCOPE)
-            set(PKG_${pkg_find_name}_TARGET ${tgt} PARENT_SCOPE)
-            set(PKG_${pkg_find_name}_FOUND TRUE PARENT_SCOPE)
+            pkg_set(${pkg_name}_FOUND TRUE)
+            pkg_set(${pkg_find_name}_FOUND TRUE)
+            pkg_set(PKG_${pkg_name}_TARGET ${tgt})
+            pkg_set(PKG_${pkg_name}_FOUND TRUE)
+            pkg_set(PKG_${pkg_find_name}_TARGET ${tgt})
+            pkg_set(PKG_${pkg_find_name}_FOUND TRUE)
             set(PKG_INSTALLED_TARGETS ${PKG_INSTALLED_TARGETS};${tgt})
             list(REMOVE_DUPLICATES PKG_INSTALLED_TARGETS)
-            set(PKG_INSTALLED_TARGETS ${PKG_INSTALLED_TARGETS} PARENT_SCOPE)
-            mark_as_advanced(PKG_${pkg_name}_TARGET)
-            mark_as_advanced(PKG_${pkg_find_name}_TARGET)
-            mark_as_advanced(PKG_INSTALLED_TARGETS)
+            set(PKG_INSTALLED_TARGETS ${PKG_INSTALLED_TARGETS} CACHE INTERNAL "")
             break()
         endif()
     endforeach()
     if(TARGET ${PKG_${pkg_name}_TARGET})
-        message(DEBUG "Found ${pkg_name}: [${PKG_${pkg_name}_TARGET}]")
+        pkg_message(VERBOSE "Found ${pkg_name}: [${PKG_${pkg_name}_TARGET}]")
     else()
-        message(WARNING "Found ${pkg_name} but no target matches [${PKG_TARGET_HINTS}]")
+        pkg_message(WARNING "Found ${pkg_name} but no target matches hint list:\n [${PKG_TARGET_HINTS}]")
     endif()
 endfunction()
 

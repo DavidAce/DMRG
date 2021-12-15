@@ -49,21 +49,18 @@ endif()
 
 if (DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Paths to search for conan installation.
-    list(APPEND DMRG_CONAN_CANDIDATE_PATHS
+    list(APPEND DMRG_CONAN_HINTS
             ${CONAN_PREFIX}
             $ENV{CONAN_PREFIX}
             ${CONDA_PREFIX}
             $ENV{CONDA_PREFIX}
-            $ENV{HOME}/anaconda3/envs/dmrg
-            $ENV{HOME}/anaconda/envs/dmrg
-            $ENV{HOME}/miniconda3/envs/dmrg
-            $ENV{HOME}/miniconda/envs/dmrg
-            $ENV{HOME}/.conda/envs/dmrg
             $ENV{HOME}/anaconda3
             $ENV{HOME}/anaconda
             $ENV{HOME}/miniconda3
             $ENV{HOME}/miniconda
-            $ENV{HOME}/.conda
+            )
+    list(APPEND DMRG_CONAN_PATH_SUFFIXES
+            bin envs/dmrg/bin
             )
 endif ()
 
