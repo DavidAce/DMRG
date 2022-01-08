@@ -15,6 +15,10 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
 
+namespace settings {
+    inline constexpr bool debug_circuit = false;
+}
+
 using cplx = qm::cplx;
 
 std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmix) {
@@ -41,13 +45,21 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     std::vector<qm::Gate> unitaries;
     unitaries.reserve(sites - 1);
     for(size_t idx = 0; idx < sites - 1; idx++) {
-        double               th0 = rnd::uniform_double_box(1, -1);
-        double               th1 = rnd::uniform_double_box(1, -1);
-        double               th2 = rnd::uniform_double_box(1, -1);
-        double               th3 = rnd::uniform_double_box(1, -1);
-        std::complex<double> t(rnd::uniform_double_box(1, -1), rnd::uniform_double_box(1, -1));
-        auto                 indices = std::vector<size_t>{idx, idx + 1};
-        Eigen::Matrix4cd     H       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
+        double               th0 = rnd::uniform_double_box(-1, 1);
+        double               th1 = rnd::uniform_double_box(-1, 1);
+        double               th2 = rnd::uniform_double_box(-1, 1);
+        double               th3 = rnd::uniform_double_box(-1, 1);
+        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
+
+        //        double               th0 = rnd::normal(0, 1);
+        //        double               th1 = rnd::normal(0, 1);
+        //        double               th2 = rnd::normal(0, 1);
+        //        double               th3 = rnd::normal(0, 1);
+        //        std::complex<double> t    (rnd::normal(0, 1), rnd::normal(0, 1));
+        //
+
+        auto             indices = std::vector<size_t>{idx, idx + 1};
+        Eigen::Matrix4cd H       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
                              SP[0] * SM[1] * t + SP[1] * SM[0] * std::conj(t);
 
         if constexpr(kroneckerSwap) {
@@ -63,11 +75,11 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
         } else {
             // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
             // the kronecker product that generated two-site gates above has indexed right-to-left
-            //         0                   1      0              0      1               0
-            //         |                   |      |              |      |               |
+            //         0                   1      0              0      1                0
+            //         |                   |      |              |      |                |
             //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
-            //        |                   |      |              |      |                |
-            //        1                   3      2              2      3                1
+            //         |                   |      |              |      |                |
+            //         1                   3      2              2      3                1
             Eigen::Tensor<cplx, 2> H_shuffled = tenx::TensorMap(H, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
             Eigen::MatrixXcd       expifH     = (imn * fmix * tenx::MatrixMap(H_shuffled)).exp();
             unitaries.emplace_back(tenx::TensorMap(expifH), indices, spin_dims);
@@ -150,23 +162,47 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site
     return time_evolution_operators;
 }
 
-qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &tau, size_t pos_tau,
+qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &rho, size_t pos_rho,
                                       const Eigen::Matrix2cd &sig, size_t pos_sig) {
+    // We calculate the operator overlap = Tr(ρ' σ^z_j) / Tr(ρ') = 1/2^L Tr(σ' σ^z_j)
+    // Define
+    //      ρ = (1/2^L)  (σ^z_i + 1 ) ⊗ I_i',
+    // where I_i' is the identity matrix on sites j != i
+    // Then ρ represents a state |psi><psi| where site i is at level 0 with probability 1, and
+    // the others sites are at level 0 or 1 with probability 1/2.
+    // Eg. ρ could be a state with magnetization 1 at site i, and 0 elsewhere,
+    // or ρ could be a state with 1 particle at site i, and cat state of 0 and 1 particles elsewhere.
+    // Applying the unitary circuit gives
+    //      ρ' = U† ρ U = (1/2^L) (U† σ^z_i U + 1),
+    // where σ' = U† σ^z_i U acts non-trivially on all sites.
+    // Substitution and carrying out the trace gives Tr(ρ' σ^z_j) / Tr(ρ') = 1/2^L Tr(σ' σ^z_j).
+    //
+    // Note that when the light-cone from site i can't reach site j in the unitary circuit, then
+    // ρ'_i has no support where σ^z_j connects.  Therefore we effectively get
+    //        Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
+    //   or alternatively
+    //        Tr(ρ'_i σ^z_j) = (1/2^L) Tr([(σ^z_i +1) ⊗ I_i' ] σ^z_j) = (1/2^L) Tr( [2^L] σ^z_i ⊗ σ^z_j ) = Tr(σ^z_i) Tr(σ^z_j) = 0
+
+    // See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+
     // Generate gates for the operators
-    tools::log->trace("Computing Trace (tau_{} sig_{})", pos_tau, pos_sig);
-    //    auto tau_gate = qm::Gate{tau, {pos_tau}, {2l}};
-    //    auto sig_gate = qm::Gate{sig, {pos_sig}, {2l}};
-    auto                     tau_gate = qm::Gate(tau, {pos_tau}, {2l});
-    auto                     sig_gate = qm::Gate(sig, {pos_sig}, {2l});
-    auto                     g        = tau_gate; // Start with the bottom tau gate
-    auto                     lc2      = qm::get_lightcone_intersection(unitary_layers, pos_tau, pos_sig);
-    bool                     deb      = tools::log->level() <= spdlog::level::debug;
+    tools::log->trace("Computing Tr (ρ_{} σ_{}) / Tr(ρ_{})", pos_rho, pos_sig);
+    //    auto t_lexp   = tid::tic_scope("lbit_exp_value");
+    auto rho_gate = qm::Gate(rho, {pos_rho}, {2l});
+    auto sig_gate = qm::Gate(sig, {pos_sig}, {2l});
+    auto g        = rho_gate; // Start with the bottom rho gate
+    auto lc2      = qm::get_lightcone_intersection(unitary_layers, pos_rho, pos_sig);
+
+    // Setup debug printing of unitary circuits
+    bool                     deb = tools::log->level() <= spdlog::level::debug;
     std::vector<std::string> net; // Great for debugging
     std::vector<std::string> log; // Great for debugging
     std::string              empty_layer;
     size_t                   uw = 7; // Width of a unitary 2-site gate box
     size_t                   op = 3; // Overlap of a unitary 2-site gate box
     size_t                   tw = 6; // Tag width
+
+    // Start contracting the unitary circuit
     for(const auto &[idx_layer, layer] : iter::enumerate(unitary_layers)) {
         // Generate
         if(layer.empty()) continue;
@@ -174,12 +210,12 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
         size_t pos_max       = std::max(layer.front().pos.back(), layer.back().pos.back());
         auto   gate_sequence = qm::get_gate_sequence(layer);
         if(deb and net.empty()) {
-            auto str_tau = fmt::format("[{}]", pos_tau);
+            auto str_rho = fmt::format("[{}]", pos_rho);
             empty_layer  = fmt::format("{0:^{1}}", " ", tw + pos_max * (uw - op) + op);
             net.emplace_back(empty_layer);
-            net.back().replace(0, tw, "tau  :");
-            net.back().replace(tw + pos_tau * (uw - op), str_tau.size(), str_tau);
-            log.emplace_back(fmt::format("insert tau[{}] now{}", pos_tau, g.pos));
+            net.back().replace(0, tw, "rho  :");
+            net.back().replace(tw + pos_rho * (uw - op), str_rho.size(), str_rho);
+            log.emplace_back(fmt::format("insert rho[{}] now{}", pos_rho, g.pos));
         }
         for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
             std::string layer_str = empty_layer;
@@ -187,11 +223,11 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
             for(const auto &[idx_seq, pos_gate] : iter::enumerate(seq)) {
                 auto &u            = layer.at(pos_gate);
                 auto  idx_sublayer = num::mod<size_t>(pos_gate, gate_size);
-                if(deb) layer_str.replace(0, tw, fmt::format("u[{:^2}]:", 2 * idx_layer + idx_sublayer)); // Setup layer tag
+                if constexpr(settings::debug_circuit) layer_str.replace(0, tw, fmt::format("u[{:^2}]:", 2 * idx_layer + idx_sublayer)); // Setup layer tag
 
                 // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
                 // For a successful connection, at least one pos in g should be present in u gate.
-                // After connecting a full layer, trace away legs of g that are outside of the light-cone intersection between tau and sigma.
+                // After connecting a full layer, trace away legs of g that are outside of the light-cone intersection between rho and sigma.
 
                 // Check if g.pos and u.pos have sites in common
                 std::vector<size_t> pos_isect;
@@ -201,17 +237,15 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
                     // Found a matching u. Connect it
                     auto pos_old = g.pos;
                     g            = g.insert(u);
-                    if(deb)
+                    if constexpr(settings::debug_circuit)
                         layer_str.replace(tw + u.pos.front() * (uw - op), uw,
                                           fmt::format("[{1:^{0}}]", uw - 2, fmt::format("{:<2},{:>2}", u.pos.front(), u.pos.back())));
-                    if(deb) story_str.append(fmt::format("insert u{} ", u.pos));
+                    if constexpr(settings::debug_circuit) story_str.append(fmt::format("insert u{} ", u.pos));
                 }
             }
             // Determine the positions that are allowed
             const std::vector<size_t> &pos_needed = lc2[2 * idx_layer + idx_sublayer + 1]; // This specifies sites that are needed to connect the coming gate
-            //            if(not pos_needed.empty()){
-            //
-            //            }
+
             // Check if g.pos has non-needed sites
             std::vector<size_t> pos_outside;
             std::set_difference(g.pos.begin(), g.pos.end(), pos_needed.begin(), pos_needed.end(), back_inserter(pos_outside));
@@ -219,28 +253,38 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
                 // Found positions outside of the light cone. Trace them
                 auto pos_old = g.pos;
                 g            = g.trace_pos(pos_outside);
-                for([[maybe_unused]] const auto &p : pos_outside) g.op = g.op * g.op.constant(0.5); // Normalize
-                if(deb) story_str.append(fmt::format("trace{} ", pos_outside));
+                // Normalize by divinding the trace of each 2x2 identity.
+                // When out of the light cone, gates do not connect to the final operator, and on those sites we
+                // the unitary circuit cancels, becoming equivalent to an identity. (as in U^dagger U = I).
+                for([[maybe_unused]] const auto &p : pos_outside) g.op = g.op * g.op.constant(0.5);
+                if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_outside));
             }
-            if(deb) story_str.append(fmt::format("now{} ", g.pos));
-            if(deb) net.emplace_back(layer_str);
-            if(deb) log.emplace_back(story_str);
+            if constexpr(settings::debug_circuit) story_str.append(fmt::format("now{} ", g.pos));
+            if constexpr(settings::debug_circuit) net.emplace_back(layer_str);
+            if constexpr(settings::debug_circuit) log.emplace_back(story_str);
         }
     }
     cplx result;
     if(g.pos.empty()) {
-        if(g.op.dimension(0) * g.op.dimension(1) != 1)
+        if(g.op.dimension(0) * g.op.dimension(1) != 1) // g.op should be a rank-2 tensor of dimensions 1x1
             throw std::runtime_error(fmt::format("Expected empty gate to have cplx op: Got dims {}", g.op.dimensions()));
-        result = g.op.coeff(0);
-        if(deb) net.emplace_back(empty_layer);
-        if(deb) net.back().replace(0, tw, "sig  :");
-        if(deb) log.emplace_back(fmt::format("sigma not connected -> result = {:.1f}{:+.1f}i", result.real(), result.imag()));
+        // This happens when the light cone from site i can't reach site j within the current depth of the unitary circuit.
+        // Essentially, ρ'_i has no support where σ^z_j connects. Therefore we effectively get
+        //      Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
+
+        Eigen::Tensor<cplx, 0> g_sig_trace = g.op.trace() * sig_gate.op.trace();
+        result                             = g_sig_trace.coeff(0);
+        if constexpr(settings::debug_circuit) net.emplace_back(empty_layer);
+        if constexpr(settings::debug_circuit) net.back().replace(0, tw, "sig  :");
+        if constexpr(settings::debug_circuit) log.emplace_back(fmt::format("sigma not connected -> result = {:.1f}{:+.1f}i", result.real(), result.imag()));
     } else {
         // In the last step we connect the sigma operator and trace everything down to a cplx
-        auto num_traces = g.pos.size();
-        result          = g.connect_under(sig_gate).trace();
-        result *= std::pow(0.5, num_traces); // Normalize
-        if(deb) {
+        auto g_trace     = g.trace();
+        auto norm        = (rho * sig).trace();               // Will be 1 or 2 depending on what rho is (i.e. either sz or 0.5*(1+sz))
+        auto g_sig_trace = g.connect_under(sig_gate).trace(); //
+        if(std::abs(g_trace) > 1e-8) norm *= g_trace;
+        result = g_sig_trace / norm; // What is the correct liom normalization here?
+        if constexpr(settings::debug_circuit) {
             auto str_sig = fmt::format("[{}]", pos_sig);
             net.emplace_back(empty_layer);
             net.back().replace(0, tw, "sig  :");
@@ -249,20 +293,39 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
         }
     }
 
-    tools::log->debug("Computed Trace (tau_{} sig_{}) = {:.6f}{:+.6f}i", pos_tau, pos_sig, result.real(), result.imag());
-    if(deb)
+    tools::log->debug("Computed Tr(ρ_{} σ_{}) / Tr(ρ_{}) = {:.6f}{:+.6f}i", pos_rho, pos_sig, pos_rho, result.real(), result.imag());
+    if constexpr(settings::debug_circuit)
         for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | log: {}", layer, log[idx]);
 
     return result;
 }
 
 Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
-    Eigen::Tensor<qm::cplx, 2> lbit_overlap;
-    lbit_overlap.resize(static_cast<long>(sites), static_cast<long>(sites));
-    for(long j = 0; j < lbit_overlap.dimension(1); j++)
-        for(long i = 0; i < lbit_overlap.dimension(0); i++)
-            lbit_overlap(i, j) =
-                qm::lbit::get_lbit_exp_value(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz, static_cast<size_t>(j));
+    auto                       ssites = static_cast<long>(sites);
+    Eigen::Tensor<qm::cplx, 2> lbit_overlap(ssites, ssites);
+
+    // We calculate the operator overlap = Tr(ρ' σ^z_j) / Tr(ρ') = 1/2^L Tr(σ' σ^z_j)
+    // Define
+    //      ρ = (1/2^L)  (σ^z_i + 1 ) ⊗ I_i',
+    // where I_i' is the identity matrix on sites j != i
+    // Then ρ represents a state |psi><psi| where site i is at level 0 with probability 1, and
+    // the others sites are at level 0 or 1 with probability 1/2.
+    // Eg. ρ could be a state with magnetization 1 at site i, and 0 elsewhere,
+    // or ρ could be a state with 1 particle at site i, and cat state of 0 and 1 particles elsewhere.
+    Eigen::MatrixXcd rho = 0.5 * (qm::spin::half::sz + qm::spin::half::id);
+#pragma omp parallel for collapse(2) schedule(dynamic)
+    for(long j = 0; j < ssites; j++) {
+        for(long i = 0; i < ssites; i++) {
+            lbit_overlap(i, j) = qm::lbit::get_lbit_exp_value(unitary_layers, rho, static_cast<size_t>(i), qm::spin::half::sz, static_cast<size_t>(j));
+        }
+    }
+    // We require that lbit_overlap(i,j) has rows that sum up to 1
+    auto sums = tenx::MatrixMap(lbit_overlap).rowwise().sum();
+    if(not sums.cwiseAbs().isOnes(1e-4)) {
+        tools::log->info("lbit_overlap: \n{}\nsums\n{}\n", linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums, 6));
+        throw std::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
+    }
+
     return lbit_overlap;
 }
 
@@ -344,6 +407,8 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eig
 
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Tensor<double, 4>>
     qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t sites, size_t reps) {
+    auto t_lbit_analysis = tid::tic_scope("lbit_analysis");
+
     long                     rows = static_cast<long>(fmix_vec.size());
     long                     cols = static_cast<long>(udepth_vec.size());
     Eigen::MatrixXd          cls_avg(rows, cols);
@@ -357,7 +422,6 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
     std::array<long, 3> offset3{}, extent3{};
     std::array<long, 4> offset4{}, extent4{};
 
-#pragma omp parallel for collapse(2) schedule(dynamic)
     for(size_t uidx = 0; uidx < udepth_vec.size(); uidx++) {
         for(size_t fidx = 0; fidx < fmix_vec.size(); fidx++) {
             //    for(const auto & [uidx,udep] : iter::enumerate(udepth_vec)){
