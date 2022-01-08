@@ -1,5 +1,7 @@
 
 #include "../measure.h"
+#include "debug/exceptions.h"
+#include "math/linalg/matrix.h"
 #include <bitset>
 #include <config/debug.h>
 #include <general/iter.h>
@@ -13,7 +15,7 @@
 #include <utility>
 
 namespace settings {
-    inline constexpr bool debug_numen = false; // Deprecated. Change this in tools/finite/mps/mps.cpp // For number entropy calculation in fLBIT
+    inline constexpr bool debug_numen = false;
 }
 
 struct Amplitude {
@@ -21,6 +23,7 @@ struct Amplitude {
     std::bitset<64>                       bits;                // Bits that select spins on each MPS site
     std::optional<long>                   site = std::nullopt; // MPS site (not Schmidt site!)
     Eigen::Tensor<StateFinite::Scalar, 1> ampl;                // Accumulates the MPS tensors
+    bool                                  cache_hit = false;   // True if eval was avoided due to cache hit
     Amplitude(long state_size, std::bitset<64> bits, std::optional<long> site, Eigen::Tensor<StateFinite::Scalar, 1> ampl)
         : state_size(state_size), bits(bits), site(site), ampl(std::move(ampl)) {}
 
@@ -30,7 +33,7 @@ struct Amplitude {
         if constexpr(on) {
             if(tools::log->level() > spdlog::level::trace) return {};
             assert(num > 0 and num < 64 and "num should be in range [0,64]");
-            return fmt::format(FMT_STRING("{1:>{0}}"), state_size, b.to_string().substr(b.size() - num));
+            return fmt::format(FMT_STRING("{1:>{0}}"), state_size, b.to_string().substr(b.size() - static_cast<size_t>(num)));
         } else
             return {};
     }
@@ -111,6 +114,7 @@ struct Amplitude {
                         auto t_hit = tid::tic_scope("cache_hit");
                         site       = c.site;
                         ampl       = c.ampl;
+                        cache_hit  = c.site.value() + 1 == tgt_pos;
                         if constexpr(settings::debug_numen)
                             tools::log->trace(FMT_STRING("from A: cache hit: [site {:>2} | n {:>2} | bits {}] target [site {:>2} | n {:>2} | bits {}"),
                                               c.site.value(), bits_index.count(), to_rstring(bits_index, c.site.value() + 1), tgt_pos, bits.count(),
@@ -122,6 +126,7 @@ struct Amplitude {
             if(ampl.size() == 0) { // Initialize
                 ampl.resize(1);
                 ampl.setConstant(1.0);
+                cache_hit = false;
             }
             Eigen::Tensor<StateFinite::Scalar, 1> temp;
             // Contract the missing mps up to, but not including, the last mps at mps_site
@@ -182,6 +187,7 @@ struct Amplitude {
                         auto t_hit = tid::tic_scope("cache_hit");
                         site       = c.site;
                         ampl       = c.ampl;
+                        cache_hit  = c.site.value() + 1 == tgt_pos;
                         if constexpr(settings::debug_numen)
                             tools::log->trace(FMT_STRING("from B: cache hit: [sites {:>2} | n {:>2} | bits {}] target [sites {:>2} | n {:>2} | bits {}"),
                                               c.site.value(), bits_index.count(), to_string(bits_index, c.site.value() + 1), tgt_pos, bits.count(),
@@ -193,6 +199,7 @@ struct Amplitude {
             if(ampl.size() == 0) { // Initialize
                 ampl.resize(1);
                 ampl.setConstant(1.0);
+                cache_hit = false;
             }
             Eigen::Tensor<StateFinite::Scalar, 1> temp;
             // Contract the missing mps
@@ -235,36 +242,103 @@ struct Amplitude {
     }
 };
 
-std::vector<size_t> generate_amplitude_order(long tgt_pos, const std::vector<Amplitude> &amplitudes, const std::vector<Amplitude> &cache) {
-    // We can traverse amplitudes in a smarter order to get a performance boost by using the existing cache.
-    // The idea is to first treat bitseqs that have a calculated cache entry already
+size_t nextGreaterWithSameSetBit(size_t n) {
+    // http://graphics.stanford.edu/~seander/bithacks.html#NextBitPermutation
+    //     size_t t = n | (n - 1); // t gets v's least significant 0 bits set to 1
+    //  Next set to 1 the most significant bit to change,
+    //  set to 0 the least significant ones, and add the necessary 1 bits.
+    //     return (t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(n) + 1));
 
-    std::vector<size_t> idx_cache_list;
-    std::vector<size_t> idx_amplt_list;
-    idx_cache_list.reserve(amplitudes.size());
-    idx_amplt_list.reserve(amplitudes.size());
-    for(const auto &[idx, a] : iter::enumerate(amplitudes)) {
-        // Index goes to the amplitude index list by default
-        idx_amplt_list.emplace_back(idx);
-        // Check if there is a matching element in cache
-        for(const auto &c : cache) {
-            if(not c.site or c.ampl.size() == 0) continue; // This one hasn't been computed.
-            // Check if c.bits is in a.bits
-            if(a.contains(c, tgt_pos)) {
-                // Steal the index
-                idx_cache_list.emplace_back(idx);
-                idx_amplt_list.pop_back();
-                break;
+    // The __builtin_ctz(v) GNU C compiler intrinsic for x86 CPUs returns the number of trailing zeros. If you are using Microsoft compilers for x86, the
+    // intrinsic is _BitScanForward. These both emit a bsf instruction, but equivalents may be available for other architectures. If not, then consider using
+    // one of the methods for counting the consecutive zero bits mentioned earlier.
+    //
+    // Here is another version that tends to be slower because of its division operator, but it does not require counting the trailing zeros.
+
+    if(n == 0ul) return -1ul;
+    size_t t = (n | (n - 1)) + 1;
+    return t | ((((t & -t) / (n & -n)) >> 1) - 1);
+}
+
+// function to find the position of rightmost set bit. Returns -1 if there are no set bits
+size_t getFirstSetBitPos(size_t n) { return static_cast<size_t>((std::log2(n & -n) + 1) - 1); }
+
+// function to find the next greater integer
+size_t nextGreaterWithOneMoreSetBit(size_t n) {
+    // position of rightmost unset bit of n by passing ~n as argument
+    size_t pos = getFirstSetBitPos(~n);
+    // if n consists of unset bits, then set the rightmost unset bit
+    if(pos > -1ul) return (1 << pos) | n;
+    // n does not consists of unset bits
+    return ((n << 1) + 1);
+}
+
+size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, std::vector<bool> &nflg, std::vector<size_t> &namp,
+                                      const std::vector<Amplitude> &amplitudes) {
+    if(namp.size() != amplitudes.size()) throw except::logic_error("Size mistmatch: namp {} != amplitudes {}", namp.size(), amplitudes.size());
+    if(nflg.size() != nmax + 1) throw except::logic_error("nflg.size() != nmax+1");
+    auto t_next = tid::tic_token("next");
+    // aidx is the current index in abit
+    // nbit is the number of bits at this index, i.e. nbit = abit[aidx].
+    if(nbit == namp[aidx]) {
+        namp[aidx] = -1ul; // Mark as used
+        return aidx;       // The current index hasn't been checked, so return it
+    }
+
+    auto next_nbit = [&](size_t n) -> std::pair<size_t, bool> {
+        if(nflg.size() != nmax + 1) throw except::logic_error("nflg.size() != nmax+1");
+        bool found_all_nbit = std::all_of(nflg.begin(), nflg.end(), [](bool b) -> bool { return b; });
+        if(found_all_nbit) return {-1ul, found_all_nbit};
+        while(true) {
+            n = num::pbc<size_t>(n + 1, nmax + 1); // Advance
+            if(not nflg[n]) break;                 // Keep if it's still valid
+        }
+        return {n, found_all_nbit};
+    };
+
+    // The goal now is to find the next index aidx in abit which has nbit+1
+    size_t counter                 = 0;
+    size_t wcount                  = 0;
+    bool   found_all_nbit          = false;
+    std::tie(nbit, found_all_nbit) = next_nbit(nbit);
+
+    while(not found_all_nbit) {
+        wcount++;
+        if(nbit == namp[aidx]) {
+            namp[aidx] = -1ul; // Mark as used
+            counter    = 0;    // Reset counter when we find a match
+                               //            tools::log->info("aidx {} | nbit {} | wcount: {}",aidx, nbit, wcount);
+            return aidx;       // Return aidx. This index points to the next amplitude that has nbit increased by one.
+        }
+
+        if(namp[aidx] == -1ul and nbit == std::bitset<64>(aidx).count()) {
+            // aidx has the correct nbit but this particular aidx is already taken.
+            // We can fast-forward to the next aidx with the same nbit and try that
+            auto aidx_new = nextGreaterWithSameSetBit(aidx);
+            if(aidx_new < namp.size()) {
+                counter += aidx_new - aidx;
+                aidx = aidx_new;
+                continue; // Try this aidx instead
+            }
+        }
+        aidx = num::pbc<size_t>(aidx + 1, namp.size()); // Cycle through the whole list of amplitudes
+
+        if(counter++ >= namp.size()) {
+            // We haven't been able to find a matching index, which means that all indices with the current nbit are taken.
+            // Simply go to the next nbit and reset the counter
+            counter                        = 0;
+            nflg[nbit]                     = true; // Flag this nbit as used up
+            auto nbit_old                  = nbit;
+            std::tie(nbit, found_all_nbit) = next_nbit(nbit);
+            if(not found_all_nbit and nbit > nbit_old) {
+                // Fastforward to the next greater with one nbit increased appropriately
+                auto aidx_new = aidx;
+                for(size_t i = 0; i < nbit - nbit_old; i++) aidx_new = nextGreaterWithOneMoreSetBit(aidx_new);
+                if(aidx_new < namp.size()) aidx = aidx_new; // Take it if it's in range. Otherwise ignore.
             }
         }
     }
-
-    // Now we concatenate (splice) the lists and return a list with indices corresponding to cached elements in the beginning
-
-    idx_cache_list.insert(idx_cache_list.end(), std::make_move_iterator(idx_amplt_list.begin()), std::make_move_iterator(idx_amplt_list.end()));
-    if(idx_cache_list.size() != amplitudes.size()) throw std::logic_error(fmt::format("size mismatch {} != {}", idx_cache_list.size(), amplitudes.size()));
-
-    return idx_cache_list;
+    return -1ul;
 }
 
 std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &amplitudes, std::vector<Amplitude> &cache) {
@@ -291,44 +365,81 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     t_figout.toc();
 
     // Create optional slots for each schmidt value
-    auto   t_slots       = tid::tic_scope("slots");
-    double cutoff        = 1e-14;
-    auto   amplitude_idx = generate_amplitude_order(tgt_pos, amplitudes, cache); // Optimal search order for amplitudes
-    for(long alpha = 0; alpha < schmidt_values.size(); alpha++) {
-        auto sq = schmidt_values[alpha] * schmidt_values[alpha];
-        for(auto &idx : amplitude_idx) {
-            auto &a = amplitudes[idx];
-            auto  n = a.bits.count();
-            a.eval(state, tgt_pos, cache); // Evaluate the amplitudes
-            if(a.ampl.size() != schmidt_values.size()) {
-                tools::log->dump_backtrace();
-                throw std::logic_error(fmt::format("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_values.size()));
-            }
-            auto ampl_sqr = std::abs(std::conj(a.ampl[alpha]) * a.ampl[alpha]);
+    auto                t_slots            = tid::tic_scope("slots");
+    double              amplitude_cutoff   = 1e-12;
+    double              probability_cutoff = 1e-32;
+    std::vector<size_t> namp; // Number of bits in each amplitude
+    namp.reserve(amplitudes.size());
+    for(const auto &a : amplitudes) namp.emplace_back(a.bits.count());
+
+    auto              nmax = static_cast<size_t>(tgt_pos) + 1ul; // Maximum number of n
+    std::vector<bool> nflg(nmax + 1, false);                     // Flags for each n to tell if they have all been found in amplitudes
+
+    Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), tgt_pos + 2);
+    Eigen::VectorXi schmidt_taken    = Eigen::VectorXi::Zero(schmidt_values.size());
+    Eigen::VectorXd schmidt_squared  = tenx::VectorMap(schmidt_values).cwiseAbs2();
+    auto            idx              = 0ul; // Start amplitude index
+    auto            n                = 0ul; // Number of bits in the current amplitude
+    auto            min_alpha        = 0l;
+    auto            max_alpha        = schmidt_values.size();
+
+    while(true) {
+        idx = amplitude_next_idx_round_robin(idx, n, nmax, nflg, namp, amplitudes);
+        if(idx == -1ul) // Could not find next idx. Probably all have been checked.
+            break;
+        auto &a  = amplitudes[idx];
+        long  nl = static_cast<long>(a.bits.count());
+        if constexpr(settings::debug_numen)
+            if(n != nl) throw except::logic_error("Wrong bit number!");
+        // Evaluate the amplitude vector
+        a.eval(state, tgt_pos, cache);
+        if(a.ampl.size() != schmidt_values.size()) {
+            tools::log->dump_backtrace();
+            throw std::logic_error(fmt::format("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_values.size()));
+        }
+        // Add amplitudes to the nth column
+        auto avec = tenx::VectorMap(a.ampl);
+        ampacc_sq_matrix.col(nl) += avec.conjugate().cwiseProduct(avec).cwiseAbs();
+        //        tools::log->info("ampacc_sq: \n{}\n", linalg::matrix::to_string(ampacc_sq_matrix,8));
+
+        // Check if any amplitude element gives the signal to add probability
+        for(long alpha = min_alpha; alpha < max_alpha; alpha++) {
+            if(schmidt_taken(alpha) == 1) continue;
+            auto asq = ampacc_sq_matrix(alpha, nl); // The a²[alpha] value tells us to pick the corresponding λ²[alpha] when nonzero.
+            auto ssq = schmidt_squared[alpha];      // The value λ² is added to probability if the amplitude is greater than cutoff.
             // Check that the probability would not grow too large, in case we are erroneously considering an amplitude
             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
-            if(ampl_sqr > cutoff and probability_sum + sq <= 1.0 + 1e-8) {
-                probability[n] += sq;
-                probability_sum += sq;
-                if constexpr(settings::debug_numen)
-                    tools::log->trace(FMT_STRING("site {:>2} | n {:>2} | bits {} | cutoff {:8.2e} | 1-P {:8.2e} | a({:>4})² {:8.2e} | λ({:>4})² {:8.2e} *"),
-                                      tgt_pos, n, a.to_string(tgt_pos <= state_pos), cutoff, 1 - probability_sum, alpha, ampl_sqr, alpha, sq);
-                break;
+            bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
+            if constexpr(settings::debug_numen) {
+                char accept_ch = accept ? '*' : ' ';
+                char cacheh_ch = a.cache_hit ? 'o' : ' ';
+                tools::log->trace(
+                    FMT_STRING("site {:>2} | n {:>2} | bits {} | idx {:>5} | cutoff {:8.2e} | 1-P {:8.2e} | a({:>4})² {:8.2e} | λ({:>4})² {:8.2e} [{}|{}]"),
+                    tgt_pos, n, a.to_string(tgt_pos <= state_pos), idx, amplitude_cutoff, 1 - probability_sum, alpha, asq, alpha, ssq, accept_ch, cacheh_ch);
+            }
 
-            } else {
-                if constexpr(settings::debug_numen)
-                    tools::log->trace(FMT_STRING("site {:>2} | n {:>2} | bits {} | cutoff {:8.2e} | 1-P {:8.2e} | a({:>4})² {:8.2e} | λ({:>4})² {:8.2e}"),
-                                      tgt_pos, n, a.to_string(tgt_pos <= state_pos), cutoff, 1 - probability_sum, alpha, ampl_sqr, alpha, sq);
+            if(accept) {
+                probability[n] += ssq;
+                probability_sum += ssq;
+                schmidt_taken(alpha) = 1;
             }
         }
+        if(schmidt_taken.isOnes()) break;                                                    // All schmidt values squared have been added to probability
+        while(schmidt_taken(min_alpha) == 1) min_alpha++;                                    // Advance min_alpha to skip first taken schmidt values
+        while(schmidt_taken(max_alpha - 1) == 1 and max_alpha >= min_alpha + 1) max_alpha--; // Decrease max_alpha to skip the last taken schmidt values
     }
 
     // Sanity check on probabilities
     auto p_sum = std::accumulate(probability.begin(), probability.end(), 0.0);
-    if(std::abs(p_sum - 1.0) > 1e-8) {
+    if(std::abs(p_sum - 1.0) > 1e-4) {
         tools::log->dump_backtrace();
         tools::log->info("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
-        throw std::runtime_error(fmt::format("p_sum - 1.0 = {:.8e}", p_sum - 1.0));
+        throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
+    }
+    if(std::abs(p_sum - 1.0) > 1e-8) {
+        tools::log->dump_backtrace();
+        tools::log->warn("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
     tools::log->trace("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
     return probability;
@@ -393,7 +504,7 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
  *      * 𝛼 indexes both the schmidt values λ the amplitude vector and A({𝜎})
  *      * ϵ is a small cutoff, typically ~ 1e-14
  *      * subscript _[𝛼|A({𝜎})_𝛼 > ϵ] means that the sum only includes
- *      * 𝛼 for which the corresponding amplitude element is large enough, signaling that
+ *        𝛼 for which the corresponding amplitude element is large enough, signaling that
  *        the probability of finding n particles in the subsystem is nonzero.
  *
  *
