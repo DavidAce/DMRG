@@ -163,7 +163,9 @@ void LBit::build_mpo()
     if(h5tb.param.J2_ctof >= h5tb.param.J2_rand.size())
         throw except::logic_error("expected J2_ctof ({}) < J2_rand.size()({})", h5tb.param.J2_ctof, h5tb.param.J2_rand.size());
 
-    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
+//    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
+#pragma message "using sz instead of number operator"
+    Eigen::Tensor<cplx, 2> n = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);
     long                   R = static_cast<long>(h5tb.param.J2_ctof);
     long                   F = R + 2l;
@@ -256,7 +258,9 @@ void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode p
     }
     if(all_mpo_parameters_have_been_set) {
         using namespace qm::spin::half;
-        Eigen::Tensor<cplx, 2> n                                               = tenx::TensorCast(0.5 * (id + sz));
+#pragma message "using sz instead of number operator"
+        //        Eigen::Tensor<cplx, 2> n                                               = tenx::TensorCast(0.5 * (id + sz));
+        Eigen::Tensor<cplx, 2> n                                               = tenx::TensorMap(sz);
         Eigen::Tensor<cplx, 2> I                                               = tenx::TensorMap(id);
         long                   F                                               = mpo_internal.dimension(0) - 1;
         mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * I;
@@ -316,9 +320,11 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
         }
     }
     using namespace qm::spin::half;
-    Eigen::Tensor<cplx, 4> MPO_nbody = MPO();                             // Start with the full mpo
-    Eigen::Tensor<cplx, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
-    Eigen::Tensor<cplx, 2> I         = tenx::TensorMap(id);               // identity
+    Eigen::Tensor<cplx, 4> MPO_nbody = MPO(); // Start with the full mpo
+#pragma message "using sz instead of number operator"
+    //    Eigen::Tensor<cplx, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
+    Eigen::Tensor<cplx, 2> n = tenx::TensorMap(sz);
+    Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id); // identity
 
     auto J2_count = J2_rand;
     for(const auto &r : J2_range) {
@@ -383,10 +389,13 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_reduced_view() const {
 Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_reduced_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<cplx, 4> temp                                        = MPO();
-    long                   row                                         = temp.dimension(0) - 1;
-    long                   col                                         = 0;
-    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<cplx, 4> temp = MPO();
+    long                   row  = temp.dimension(0) - 1;
+    long                   col  = 0;
+#pragma message "using sz instead of number operator"
+
+    //    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorCast(0.5 * (id + sz));
+    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> i                                           = tenx::TensorMap(id);
     temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
     return temp;
