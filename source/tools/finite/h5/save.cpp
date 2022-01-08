@@ -482,6 +482,7 @@ namespace tools::finite::h5 {
                 // Either checkpoint or savepoint may already have the same data.
                 // We can look for either of those under /common/finished, and make a soft-link
                 std::string slink_prefix;
+                if(not h5file.linkExists("common/finished")) break;
                 for(const auto &attrName : h5file.getAttributeNames("common/finished")) {
                     if(h5file.readAttribute<bool>(attrName, "common/finished")) {
                         tools::log->info("Searching for finished state links in {}", attrName);
