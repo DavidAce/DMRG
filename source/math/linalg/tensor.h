@@ -3,6 +3,7 @@
 #include <array>
 #include <fmt/core.h>
 #include <unsupported/Eigen/CXX11/Tensor>
+
 namespace linalg::tensor {
 
     // Shorthand for the list of index pairs.
@@ -22,11 +23,90 @@ namespace linalg::tensor {
         return pairlistOut;
     }
 
+    template<typename T>
+    std::string to_string(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, int prec = 1, int width = 2, std::string_view sep = ", ") {
+        using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Eigen::DefaultDevice>;
+        using Scalar    = typename Eigen::internal::remove_const<typename Evaluator::Scalar>::type;
+
+        // Evaluate the expression if needed
+        Eigen::TensorForcedEvalOp<const T> eval = expr.eval();
+        Evaluator                          tensor(eval, Eigen::DefaultDevice());
+        tensor.evalSubExprsIfNeeded(NULL);
+        Eigen::Index total_size = Eigen::internal::array_prod(tensor.dimensions());
+
+        if(total_size > 0 and tensor.dimensions().size() > 0) {
+            Eigen::Index first_dim = tensor.dimensions()[0];
+            if constexpr(T::NumDimensions == 4) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1];
+            if constexpr(T::NumDimensions == 6) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1] * tensor.dimensions()[2];
+            if constexpr(T::NumDimensions == 8) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1] * tensor.dimensions()[2] * tensor.dimensions()[3];
+            Eigen::Index other_dim = total_size / first_dim;
+            auto matrix = Eigen::Map<Eigen::Array<typename T::Scalar, Eigen::Dynamic, Eigen::Dynamic, Evaluator::Layout>>(tensor.data(), first_dim, other_dim);
+            std::string str;
+
+            int comma = 1;
+            if constexpr(std::is_integral_v<Scalar>) {
+                comma = 0;
+                prec  = 0;
+            }
+            if constexpr(linalg::is_std_complex_v<Scalar>)
+                if constexpr(std::is_integral_v<typename Scalar::value_type>) {
+                    comma = 0;
+                    prec  = 0;
+                }
+
+            auto max_val   = static_cast<double>(matrix.cwiseAbs().maxCoeff());
+            int  min_width = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val))) + comma + prec);
+
+            int min_width_real = min_width;
+            int min_width_imag = min_width;
+            if constexpr(linalg::is_std_complex_v<Scalar>) {
+                auto max_val_real = static_cast<double>(matrix.real().cwiseAbs().maxCoeff());
+                auto max_val_imag = static_cast<double>(matrix.imag().cwiseAbs().maxCoeff());
+                min_width_real    = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val_real))) + comma + prec);
+                min_width_imag    = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val_imag))) + comma + prec);
+                if(matrix.real().minCoeff() < 0) min_width_real += 1;
+                if(matrix.imag().minCoeff() < 0) min_width_imag += 1;
+            } else {
+                if(matrix.minCoeff() < 0) min_width += 1;
+            }
+
+            for(long i = 0; i < first_dim; i++) {
+                str += fmt::format("[");
+                for(long j = 0; j < other_dim; j++) {
+                    if constexpr(linalg::is_std_complex_v<Scalar>) {
+                        if constexpr(std::is_floating_point_v<typename Scalar::value_type>) {
+                            std::string real = fmt::format("({0:.{1}f}", matrix(i, j).real(), prec);
+                            std::string imag = fmt::format("{0:.{1}f})", matrix(i, j).imag(), prec);
+                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
+                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+
+                        } else if constexpr(std::is_integral_v<typename Scalar::value_type>) {
+                            std::string real = fmt::format("({}", matrix(i, j).real());
+                            std::string imag = fmt::format("{})", matrix(i, j).imag());
+                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
+                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+                        }
+                    } else if constexpr(std::is_floating_point_v<Scalar>)
+                        str += fmt::format("{0:>{1}.{2}f}", matrix(i, j), min_width, prec);
+                    else if constexpr(std::is_integral_v<Scalar>)
+                        str += fmt::format("{0:>{1}}", matrix(i, j), min_width);
+                    if(j < other_dim - 1) str += sep;
+                }
+                if(i < first_dim - 1)
+                    str += fmt::format("]\n");
+                else
+                    str += fmt::format("]");
+            }
+            return str;
+        } else
+            return "[]";
+    }
+
     template<typename Scalar = double>
     Eigen::Tensor<Scalar, 2> identity(const Eigen::Index &dim) {
-        Eigen::Tensor<Scalar, 1> tensor(dim);
+        Eigen::Tensor<double, 1> tensor(dim);
         tensor.setConstant(1);
-        return tensor.inflate(std::array<long, 1>{tensor.size() + 1}).reshape(std::array<long, 2>{tensor.size(), tensor.size()});
+        return tensor.inflate(std::array<long, 1>{tensor.size() + 1}).reshape(std::array<long, 2>{tensor.size(), tensor.size()}).template cast<Scalar>();
     }
 
     template<typename Scalar, int rank>
@@ -146,7 +226,7 @@ namespace linalg::tensor {
                                                   bool mirror = false) {
         /*
          * Returns the partial trace of a tensor
-         * Note that a the tensor given here may be mirrored!
+         * Note that the tensor given here may be mirrored!
          */
         static_assert(rank >= 2 * npair, "Rank must be large enough");
         if constexpr(npair == 1) {
@@ -157,17 +237,26 @@ namespace linalg::tensor {
             auto                        idx1 = static_cast<size_t>(idx_pair_r.first);
             auto                        idx2 = static_cast<size_t>(idx_pair_r.second);
             std::array<Eigen::Index, 2> dim_tr{tensor.dimension(idx1), tensor.dimension(idx2)};
-
+            //            Eigen::Tensor<Scalar, rank - 2> result;
+            Eigen::Tensor<Scalar, rank - 2> result2;
             if(dim_tr[0] != dim_tr[1]) throw std::runtime_error("Traced dimensions must be equal size");
-            Eigen::Tensor<Scalar, rank - 2> result = linalg::tensor::identity<Scalar>(dim_tr[0]).contract(tensor, idx({1ul, 0ul}, {idx1, idx2}));
-            return result;
+            //
+            //            auto t_trace1 = tid::tic_scope(fmt::format("1<rank-{},npair-{}>", rank, npair));
+            //            result = linalg::tensor::identity<Scalar>(dim_tr[0]).contract(tensor, idx({1ul, 0ul}, {idx1, idx2}));
+            //
+            //
+            //            auto t_trace2 = tid::tic_scope(fmt::format("2<rank-{},npair-{}>", rank, npair));
+            //            result2 = tensor.trace(std::array<Eigen::Index,2>{idx_pair_r.first, idx_pair_r.second});
+
+            return tensor.trace(std::array<Eigen::Index, 2>{idx_pair_r.first, idx_pair_r.second});
         } else if constexpr(npair == 2) {
             std::array<long, 2> pair1{idx_pair[1].first, idx_pair[1].second};
             std::array<long, 2> pair0{idx_pair[0].first, idx_pair[0].second};
             pair0[0] -= std::count_if(pair1.begin(), pair1.end(), [&pair0](auto i) { return i < pair0[0]; });
             pair0[1] -= std::count_if(pair1.begin(), pair1.end(), [&pair0](auto i) { return i < pair0[1]; });
-            auto res1 = linalg::tensor::trace(tensor, idx({pair1[0]}, {pair1[1]}));
-            return linalg::tensor::trace(res1, idx({pair0[0]}, {pair0[1]}));
+            //            auto res1 = linalg::tensor::trace(tensor, idx({pair1[0]}, {pair1[1]}));
+            //            return linalg::tensor::trace(res1, idx({pair0[0]}, {pair0[1]}));
+            return tensor.trace(pair1).trace(pair0);
         } else if constexpr(npair == 3) {
             std::array<long, 2> pair2{idx_pair[2].first, idx_pair[2].second};
             std::array<long, 2> pair1{idx_pair[1].first, idx_pair[1].second};
@@ -182,83 +271,5 @@ namespace linalg::tensor {
             throw std::runtime_error("Trace not implemented");
     }
 
-    template<typename T>
-    std::string to_string(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, int prec = 1, int width = 2, std::string_view sep = ", ") {
-        using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Eigen::DefaultDevice>;
-        using Scalar    = typename Eigen::internal::remove_const<typename Evaluator::Scalar>::type;
-
-        // Evaluate the expression if needed
-        Eigen::TensorForcedEvalOp<const T> eval = expr.eval();
-        Evaluator                          tensor(eval, Eigen::DefaultDevice());
-        tensor.evalSubExprsIfNeeded(NULL);
-        Eigen::Index total_size = Eigen::internal::array_prod(tensor.dimensions());
-
-        if(total_size > 0) {
-            Eigen::Index first_dim = tensor.dimensions()[0];
-            if constexpr(T::NumDimensions == 4) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1];
-            if constexpr(T::NumDimensions == 6) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1] * tensor.dimensions()[2];
-            if constexpr(T::NumDimensions == 8) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1] * tensor.dimensions()[2] * tensor.dimensions()[3];
-            Eigen::Index other_dim = total_size / first_dim;
-            auto matrix = Eigen::Map<Eigen::Array<typename T::Scalar, Eigen::Dynamic, Eigen::Dynamic, Evaluator::Layout>>(tensor.data(), first_dim, other_dim);
-            std::string str;
-
-            int comma = 1;
-            if constexpr(std::is_integral_v<Scalar>) {
-                comma = 0;
-                prec  = 0;
-            }
-            if constexpr(linalg::is_std_complex_v<Scalar>)
-                if constexpr(std::is_integral_v<typename Scalar::value_type>) {
-                    comma = 0;
-                    prec  = 0;
-                }
-
-            auto max_val   = static_cast<double>(matrix.cwiseAbs().maxCoeff());
-            int  min_width = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val))) + comma + prec);
-
-            int min_width_real = min_width;
-            int min_width_imag = min_width;
-            if constexpr(linalg::is_std_complex_v<Scalar>) {
-                auto max_val_real = static_cast<double>(matrix.real().cwiseAbs().maxCoeff());
-                auto max_val_imag = static_cast<double>(matrix.imag().cwiseAbs().maxCoeff());
-                min_width_real    = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val_real))) + comma + prec);
-                min_width_imag    = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val_imag))) + comma + prec);
-                if(matrix.real().minCoeff() < 0) min_width_real += 1;
-                if(matrix.imag().minCoeff() < 0) min_width_imag += 1;
-            } else {
-                if(matrix.minCoeff() < 0) min_width += 1;
-            }
-
-            for(long i = 0; i < first_dim; i++) {
-                str += fmt::format("[");
-                for(long j = 0; j < other_dim; j++) {
-                    if constexpr(linalg::is_std_complex_v<Scalar>) {
-                        if constexpr(std::is_floating_point_v<typename Scalar::value_type>) {
-                            std::string real = fmt::format("({0:.{1}f}", matrix(i, j).real(), prec);
-                            std::string imag = fmt::format("{0:.{1}f})", matrix(i, j).imag(), prec);
-                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
-
-                        } else if constexpr(std::is_integral_v<typename Scalar::value_type>) {
-                            std::string real = fmt::format("({}", matrix(i, j).real());
-                            std::string imag = fmt::format("{})", matrix(i, j).imag());
-                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
-                        }
-                    } else if constexpr(std::is_floating_point_v<Scalar>)
-                        str += fmt::format("{0:>{1}.{2}f}", matrix(i, j), min_width, prec);
-                    else if constexpr(std::is_integral_v<Scalar>)
-                        str += fmt::format("{0:>{1}}", matrix(i, j), min_width);
-                    if(j < other_dim - 1) str += sep;
-                }
-                if(i < first_dim - 1)
-                    str += fmt::format("]\n");
-                else
-                    str += fmt::format("]");
-            }
-            return str;
-        } else
-            return "[]";
-    }
 
 }
