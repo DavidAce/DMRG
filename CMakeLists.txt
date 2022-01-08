@@ -128,6 +128,15 @@ if (DMRG_ENABLE_TESTS)
     add_subdirectory(tests)
 endif ()
 
+#############################
+## BENCHMARKS
+#############################
+# Simple testing with ctest
+if (DMRG_ENABLE_BENCH)
+    enable_testing()
+    add_subdirectory(bench)
+endif ()
+
 
 #############################
 ## DOCS
