@@ -21,7 +21,14 @@ namespace qm::spin::half {
     Eigen::Matrix2cd sm = (Eigen::Matrix2cd() <<
         0.0, 0.0,
         1.0, 0.0).finished();
-    Eigen::Matrix2cd id  = (Eigen::Matrix2cd() << 1.0, 0.0,
+    Eigen::Matrix2cd nu  = (Eigen::Matrix2cd() <<
+        1.0, 0.0,
+        0.0, 0.0).finished();
+    Eigen::Matrix2cd nd  = (Eigen::Matrix2cd() <<
+        0.0, 0.0,
+        0.0, 1.0).finished();
+    Eigen::Matrix2cd id  = (Eigen::Matrix2cd() <<
+        1.0, 0.0,
         0.0, 1.0).finished();
 
     std::array<Eigen::Vector2cd,2> sx_spinors{(Eigen::Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2),

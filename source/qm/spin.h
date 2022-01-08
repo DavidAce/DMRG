@@ -15,6 +15,8 @@ namespace qm::spin {
         extern Eigen::Matrix2cd                sz;
         extern Eigen::Matrix2cd                sp;
         extern Eigen::Matrix2cd                sm;
+        extern Eigen::Matrix2cd                nu;
+        extern Eigen::Matrix2cd                nd;
         extern Eigen::Matrix2cd                id;
         extern std::array<Eigen::Vector2cd, 2> sx_spinors;
         extern std::array<Eigen::Vector2cd, 2> sy_spinors;
