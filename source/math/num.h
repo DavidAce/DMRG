@@ -101,10 +101,37 @@ namespace num {
     inline T mod(const T x, const T y) {
         if constexpr(!ndebug)
             if(y == 0) throw("num::mod(x,y): divisor y == 0");
-        if constexpr(std::is_integral_v<T>)
-            return (x % y + y) % y;
+        if constexpr(std::is_integral_v<T>) {
+            if constexpr(std::is_unsigned_v<T>)
+                return x >= y ? x % y : x;
+            else {
+                return x >= y ? x % y : (x < 0 ? (x % y + y) % y : x);
+            }
+
+        }
+        //            return (x % y + y) % y;
         else
             return std::fmod((std::fmod(x, y) + y), y);
+    }
+
+    /*! \brief Similar to mod but faster for use with periodic boundary condition
+     *   \param x first number
+     *   \param y second number
+     *   \return modulo of x and y. Example, <code> mod(7,2)  = 1 </code> but <code> mod(-0.5,10)  = 9.5 </code>, instead of <code> -0.5 </code>  as given by
+     * x%y.
+     */
+    template<typename T>
+    inline T pbc(const T x, const T y) {
+        if constexpr(!ndebug)
+            if(y == 0) throw("num::pbc(x,y): divisor y == 0");
+        if constexpr(std::is_signed_v<T>) {
+            if(x >= 0 and x < y) return x;
+            if(x < 0 and x >= -2 * y) return x + y;
+        } else {
+            if(x < y) return x;
+        }
+        if(x >= y and x < 2 * y) return x - y;
+        return num::mod(x, y);
     }
 
     template<typename T>
