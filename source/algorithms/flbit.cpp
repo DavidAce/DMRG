@@ -270,7 +270,9 @@ void flbit::single_flbit_step() {
     transform_to_real_basis();
 
     if constexpr(settings::debug) {
-        if(settings::model::model_size <= 10) {
+        if(settings::model::model_size <= 6) {
+            if(Upsi_ed.dimension(0) != time_gates_Lsite[0].op.dimension(1))
+                throw except::logic_error("Upsi_ed may not have been initialized: Upsi_ed: {}", Upsi_ed.dimensions());
             Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
             Eigen::Tensor<Scalar, 1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, tenx::idx({1}, {0}));
             Upsi_ed                           = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0, -1));
@@ -628,15 +630,14 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
     if(storage_reason == StorageReason::MODEL) {
         auto t_h5       = tid::tic_scope("h5");
         auto t_model    = tid::tic_scope("MODEL");
-        auto t_analysis = tid::tic_scope("analysis");
         if(h5file->linkExists("/fLBIT/analysis")) return;
         std::vector<size_t> urange;
         std::vector<double> frange;
         size_t              sample = 1;
         if(settings::flbit::compute_lbit_stats) {
-            sample = 50;
-            urange = num::range<size_t>(1, 4);
-            frange = num::range<double>(0, 0.4, 0.025);
+            sample = 500;
+            urange = num::range<size_t>(1, 5);
+            frange = num::range<double>(0.025, 0.425, 0.025);
         } else if(settings::flbit::compute_lbit_length) {
             urange = {settings::model::lbit::u_layer};
             frange = {settings::model::lbit::f_mixer};
