@@ -116,7 +116,7 @@ void AlgorithmLauncher::start_h5file() {
     if(not h5file->linkExists(".env/DMRG++")) {
         // Put git metadata in file
         h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
-        h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/cpu_type");
+        h5file->writeDataset(debug::cpu_info(), ".env/DMRG++/exec/cpu_type");
         h5file->writeDataset(build::hostname, ".env/DMRG++/build/hostname");
         h5file->writeDataset(build::cpu_type, ".env/DMRG++/build/cpu_type");
         h5file->writeDataset(build::os_name, ".env/DMRG++/build/os_name");
@@ -131,7 +131,6 @@ void AlgorithmLauncher::start_h5file() {
     if(not h5file->linkExists("common")) {
         tools::log->trace("Copying config to h5pp file: {} --> {}", settings::input::config_filename, h5file->getFileName());
         h5file->writeDataset(settings::input::config_filename, "common/config_filename");
-        h5file->writeDataset(settings::input::config_file_contents, "common/config_file_contents");
         h5file->writeDataset(false, "common/finished_all");
     }
 }
