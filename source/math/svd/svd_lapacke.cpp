@@ -14,6 +14,8 @@
     #include <mkl_lapacke.h>
 #elif __has_include(<openblas/lapacke.h>)
     #include <openblas/lapacke.h>
+    #include <openblas/cblas.h>
+    #include <openblas_config.h>
 #else
     #include <lapacke.h>
 #endif
@@ -79,17 +81,18 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(save_fail or save_result) {
         A_original = A;
 #if defined(OPENBLAS_AVAILABLE)
-        details = {{"OPENBLAS_VERSION", OPENBLAS_VERSION},
+        details = {{"library", "OpenBLAS"},
+                   {"OPENBLAS_VERSION", OPENBLAS_VERSION},
                    {"openblas_num_threads", std::to_string(openblas_get_num_threads())},
                    {"openblas_parallel_mode", std::to_string(openblas_get_parallel())},
                    {"openblas_corename", openblas_get_corename()},
                    {"openblas_config", openblas_get_config()},
-                   {"OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", OPENBLAS_GEMM_MULTITHREAD_THRESHOLD}};
+                   {"OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", std::to_string(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD)}};
 #endif
 #if defined(MKL_AVAILABLE)
         MKLVersion Version;
         mkl_get_version(&Version);
-        details = {{"Intel-MKL-Version", fmt::format("{}.{}.{}", Version.MajorVersion, Version.MinorVersion, Version.UpdateVersion)}};
+        details = {{"library", "Intel MKL"}, {"Intel-MKL-Version", fmt::format("{}.{}.{}", Version.MajorVersion, Version.MinorVersion, Version.UpdateVersion)}};
 #endif
     }
 
@@ -242,7 +245,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     iwork.resize(static_cast<size_t>(liwork));
 
                     svd::log->trace("Querying zgejsv");
-                    auto t_zgejsv = tid::tic_token("zgejsv");
+                    auto t_zgejsv = tid::tic_token(fmt::format("zgejsv-{}", num::round_to_multiple_of(sizeS, 100)));
                     info          = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                         'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
                                                         'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
@@ -307,17 +310,17 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 S.resize(sizeS);
                 VT.resize(rowsVT, colsVT);
 
-                int liwork = std::max(1, 8 * mn);
-                int lrwork = std::max(1, mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1));
                 int lcwork = std::max(1, mn * mn + 3 * mn);
+                int lrwork = std::max(1, mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1));
+                int liwork = std::max(1, 8 * mn);
 
-                iwork.resize(static_cast<size_t>(liwork));
-                rwork.resize(static_cast<size_t>(lrwork));
                 cwork.resize(static_cast<size_t>(lcwork));
+                rwork.resize(static_cast<size_t>(lrwork));
+                iwork.resize(static_cast<size_t>(liwork));
 
                 svd::log->trace("Querying zgesdd");
 
-                auto t_zgesdd = tid::tic_token("zgesdd");
+                auto t_zgesdd = tid::tic_token(fmt::format("zgesdd-{}", num::round_to_multiple_of(sizeS, 100)));
                 /* clang-format off */
                 info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
