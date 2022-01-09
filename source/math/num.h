@@ -32,7 +32,7 @@ namespace num {
     // Safe integer comparison functions from C++20
 
     template<class T, class U>
-    constexpr bool cmp_equal(T t, U u) noexcept {
+    [[nodiscard]] constexpr bool cmp_equal(T t, U u) noexcept {
         if constexpr(internal::is_reference_wrapper_v<T>)
             return cmp_equal(t.get(), u);
         else if constexpr(internal::is_reference_wrapper_v<U>)
@@ -52,12 +52,12 @@ namespace num {
     }
 
     template<class T, class U>
-    constexpr bool cmp_not_equal(T t, U u) noexcept {
+    [[nodiscard]] constexpr bool cmp_not_equal(T t, U u) noexcept {
         return !cmp_equal(t, u);
     }
 
     template<class T, class U>
-    constexpr bool cmp_less(T t, U u) noexcept {
+    [[nodiscard]] constexpr bool cmp_less(T t, U u) noexcept {
         if constexpr(internal::is_reference_wrapper_v<T>)
             return cmp_less(t.get(), u);
         else if constexpr(internal::is_reference_wrapper_v<U>)
@@ -77,17 +77,17 @@ namespace num {
     }
 
     template<class T, class U>
-    constexpr bool cmp_greater(T t, U u) noexcept {
+    [[nodiscard]] constexpr bool cmp_greater(T t, U u) noexcept {
         return cmp_less(u, t);
     }
 
     template<class T, class U>
-    constexpr bool cmp_less_equal(T t, U u) noexcept {
+    [[nodiscard]] constexpr bool cmp_less_equal(T t, U u) noexcept {
         return !cmp_greater(t, u);
     }
 
     template<class T, class U>
-    constexpr bool cmp_greater_equal(T t, U u) noexcept {
+    [[nodiscard]] constexpr bool cmp_greater_equal(T t, U u) noexcept {
         return !cmp_less(t, u);
     }
 
@@ -98,7 +98,7 @@ namespace num {
      * x%y.
      */
     template<typename T>
-    inline T mod(const T x, const T y) {
+    [[nodiscard]] inline T mod(const T x, const T y) {
         if constexpr(!ndebug)
             if(y == 0) throw("num::mod(x,y): divisor y == 0");
         if constexpr(std::is_integral_v<T>) {
@@ -121,7 +121,7 @@ namespace num {
      * x%y.
      */
     template<typename T>
-    inline T pbc(const T x, const T y) {
+    [[nodiscard]] inline T pbc(const T x, const T y) {
         if constexpr(!ndebug)
             if(y == 0) throw("num::pbc(x,y): divisor y == 0");
         if constexpr(std::is_signed_v<T>) {
@@ -135,14 +135,14 @@ namespace num {
     }
 
     template<typename T>
-    int sign(const T val) {
+    [[nodiscard]] int sign(const T val) noexcept {
         if(val > 0) return +1;
         if(val < 0) return -1;
         return 0;
     }
 
     template<typename T>
-    bool between(const T &value, const T &low, const T &high) noexcept {
+    [[nodiscard]] bool between(const T &value, const T &low, const T &high) noexcept {
         return value >= low and value <= high;
     }
 
@@ -155,7 +155,7 @@ namespace num {
     }
 
     template<typename T = int, typename T1, typename T2, typename T3 = internal::int_or_dbl<T1, T2>>
-    std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) {
+    [[nodiscard]] std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) {
         if(step == 0) throw std::runtime_error("Range cannot have step size zero");
         if constexpr(std::is_signed_v<T3>) {
             if(cmp_greater(first, last) and step > 0) return range<T>(first, last, -step);
@@ -182,7 +182,7 @@ namespace num {
      *   \param b last value in range
      *   \return std::vector<T2>. Example,  <code> Linspaced(5,1,5) </code> gives a std::vector<int>: <code> [1,2,3,4,5] </code>
      */
-    inline std::vector<double> LinSpaced(std::size_t N, double a, double b) {
+    [[nodiscard]] inline std::vector<double> LinSpaced(std::size_t N, double a, double b) {
         double              h = (b - a) / static_cast<double>(N - 1);
         std::vector<double> xs(N);
         double              val = a;
@@ -193,7 +193,7 @@ namespace num {
         return xs;
     }
 
-    inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
+    [[nodiscard]] inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
         double              loga   = std::log(a) / std::log(base);
@@ -216,7 +216,7 @@ namespace num {
      *   \return std::vector<T2>. Example, let <code> my_vector = {1,2,3,4}</code>. Then <code> prod(my_vector,0,3) = 24 </code>.
      */
     template<typename Input, typename From, typename To>
-    auto prod(const Input &in, const From from, const To to) {
+    [[nodiscard]] auto prod(const Input &in, const From from, const To to) {
         return std::accumulate(in.data() + from, in.data() + to, 1, std::multiplies<>());
     }
 
@@ -225,29 +225,37 @@ namespace num {
      *   \return bool, true if all args are equal
      */
     template<typename First, typename... T>
-    bool all_equal(First &&first, T &&...t) noexcept {
+    [[nodiscard]] bool all_equal(First &&first, T &&...t) noexcept {
         return ((first == t) && ...);
     }
 
     template<typename R, typename T>
-    R next_power_of_two(T val) {
+    [[nodiscard]] R next_power_of_two(T val) {
         return static_cast<R>(std::pow<long>(2, static_cast<long>(std::ceil(std::log2(std::real(val))))));
     }
     template<typename R, typename T>
-    R prev_power_of_two(T val) {
+    [[nodiscard]] R prev_power_of_two(T val) {
         return static_cast<R>(std::pow<long>(2, static_cast<long>(std::floor(std::log2(std::real(val - 1))))));
     }
 
     template<typename R, typename T>
-    inline R next_multiple(const T num, const T mult) {
+    [[nodiscard]] inline R next_multiple(const T num, const T mult) {
         if(mult == 0) return num;
         return (num + mult) - mod(num, mult);
     }
     template<typename R, typename T>
-    inline R prev_multiple(const T num, const T mult) {
+    [[nodiscard]] inline R prev_multiple(const T num, const T mult) {
         if(mult == 0) return num;
         auto m = mod(num, mult);
         if(m == 0) return prev_multiple<R>(num - 1, mult);
         return num - m;
     }
+
+    template<typename T>
+    [[nodiscard]] inline T round_to_multiple_of(const T number, const T multiple) {
+        T result = number + multiple / 2;
+        result -= num::mod(result, multiple);
+        return result;
+    }
+
 }
