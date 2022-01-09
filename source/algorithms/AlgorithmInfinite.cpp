@@ -334,7 +334,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     }
     if(storage_level == StorageLevel::NONE) return;
     if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-    tools::log->info("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level), state_prefix);
+    tools::log->debug("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level), state_prefix);
     // Start saving tensors and metadata
     tools::infinite::h5::save::state(*h5file, state_prefix, storage_level, *tensors.state, status);
     tools::infinite::h5::save::edges(*h5file, state_prefix, storage_level, *tensors.edges);

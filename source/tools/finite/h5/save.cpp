@@ -520,8 +520,8 @@ namespace tools::finite::h5 {
 
         if(storage_level == StorageLevel::NONE) return;
         if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
-        tools::log->info("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level),
-                         state_prefix, model_prefix);
+        tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level),
+                          state_prefix, model_prefix);
 
         // The file cam be kept open during writes
         h5file.setKeepFileOpened();
