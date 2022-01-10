@@ -524,7 +524,7 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
                 for(size_t j = i; j < idx.size(); j++) { // Look ahead
                     // In this part we accept a gate if pos.front() == at or pos.back() >= back_i
                     const auto &gate_j = gates.at(idx.at(j)); // gate_i == gate_j on first iteration of j, so we always accept
-                    if(gate_j.pos.front() == at and gate_j.pos.back() >= back_i) { layer.emplace_back(idx.at(j)); }
+                    if(gate_j.pos.front() == at and gate_j.pos.back() >= back_i) layer.emplace_back(idx.at(j));
                 }
                 at = gate_i.pos.back() + 1;
             }
@@ -839,7 +839,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
                                           std::optional<svd::settings> svd_settings) {
     auto t_swapgate = tid::tic_scope("apply_swap_gates");
     if(gates.empty()) return;
-    state.clear_cache(LogPolicy::QUIET);
+    state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
     // Sanity check
     if constexpr(settings::debug_gates) {
         auto norm = tools::finite::measure::norm(state, true);
@@ -855,7 +855,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
 
     if(gm == GateMove::AUTO) {
         // It only pays to move center point if we are actually using swaps
-        // If there are any swaps or rwaps to be made, then swithc on moving of center sites.
+        // If there are any swaps or rwaps to be made, then switch on moving of center sites.
         gm = GateMove::OFF;
         for(const auto &gate : gates) {
             if(not gate.swaps.empty() or not gate.rwaps.empty()) {
