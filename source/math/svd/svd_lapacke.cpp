@@ -46,6 +46,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     int rowsA = static_cast<int>(rows);
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
+
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
     if(rank_max.value() == 0) throw std::logic_error("rank_max == 0");
     // Setup the SVD solver
@@ -95,6 +96,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         details = {{"library", "Intel MKL"}, {"Intel-MKL-Version", fmt::format("{}.{}.{}", Version.MajorVersion, Version.MinorVersion, Version.UpdateVersion)}};
 #endif
     }
+    // Add suffix for more detailed breakdown of matrix sizes
+    auto t_suffix = benchmark ? fmt::format("{}", num::round_to_multiple_of(sizeS, 10)) : "";
 
     // Initialize containers
     MatrixType<Scalar> U;
@@ -147,7 +150,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     iwork.resize(static_cast<size_t>(liwork));
 
                     svd::log->trace("Running dgesvj");
-                    auto t_dgejsv = tid::tic_token("dgejsv");
+                    auto t_dgejsv = tid::tic_token(fmt::format("dgejsv{}", t_suffix));
                     info          = LAPACKE_dgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                         'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
                                                         'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
@@ -167,7 +170,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     rwork.resize(static_cast<size_t>(lrwork));
 
                     svd::log->trace("Running dgesvj");
-                    auto t_dgesvj = tid::tic_token("dgesvj");
+                    auto t_dgesvj = tid::tic_token(fmt::format("dgesvj{}", t_suffix));
                     info =
                         LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, rwork.data(), lrwork);
                     t_dgesvj.toc();
@@ -197,7 +200,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 rwork.resize(static_cast<size_t>(lrwork));
 
                 svd::log->trace("Running dgesdd");
-                auto t_sdd = tid::tic_token("dgesdd");
+                auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix));
                 info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), lrwork,
                                            iwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesdd error: parameter {} is invalid", info));
@@ -221,7 +224,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 rwork.resize(static_cast<size_t>(lrwork));
 
                 svd::log->trace("Running dgesvd");
-                auto t_dgesvd = tid::tic_token("dgesvd");
+                auto t_dgesvd = tid::tic_token(fmt::format("dgesvd{}", t_suffix));
                 info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
                                            lrwork);
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
@@ -245,7 +248,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     iwork.resize(static_cast<size_t>(liwork));
 
                     svd::log->trace("Querying zgejsv");
-                    auto t_zgejsv = tid::tic_token(fmt::format("zgejsv-{}", num::round_to_multiple_of(sizeS, 100)));
+                    auto t_zgejsv = tid::tic_token(fmt::format("zgejsv{}", t_suffix));
                     info          = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                         'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
                                                         'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
@@ -282,7 +285,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     rwork.resize(static_cast<size_t>(lrwork));
 
                     svd::log->trace("Querying zgesvj");
-                    auto t_zgesvj = tid::tic_token("zgesvj");
+                    auto t_zgesvj = tid::tic_token(fmt::format("zgesvj{}", t_suffix));
                     info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), -1,
                                                rwork.data(), -1);
 
@@ -319,8 +322,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 iwork.resize(static_cast<size_t>(liwork));
 
                 svd::log->trace("Querying zgesdd");
-
-                auto t_zgesdd = tid::tic_token(fmt::format("zgesdd-{}", num::round_to_multiple_of(sizeS, 100)));
+                auto t_zgesdd = tid::tic_token(fmt::format("zgesdd{}", t_suffix));
                 /* clang-format off */
                 info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
@@ -348,7 +350,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Querying zgesvd");
-                auto t_zgesvd = tid::tic_token("zgesvd");
+                auto t_zgesvd = tid::tic_token(fmt::format("zgesvd{}", t_suffix));
                 /* clang-format off */
                 info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data());
                 if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));

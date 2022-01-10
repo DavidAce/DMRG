@@ -15,6 +15,7 @@ void svd::solver::copy_settings(const svd::settings &svd_settings) {
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
     if(svd_settings.svd_lib) svd_lib = svd_settings.svd_lib.value();
     if(svd_settings.save_fail) save_fail = svd_settings.save_fail.value();
+    if(svd_settings.benchmark) benchmark = svd_settings.benchmark.value();
 }
 
 svd::solver::solver(const svd::settings &svd_settings) : solver() { copy_settings(svd_settings); }
