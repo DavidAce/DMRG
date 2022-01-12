@@ -22,8 +22,9 @@ def str2bool(v):
 def parse(project_name):
     parser = argparse.ArgumentParser(description='CMake Project Builder for {}'.format(project_name))
     parser.add_argument('--arch', type=str, help='Choose microarchitecture',
+                        default='haswell', choices=['core2', 'nehalem', 'sandybridge', 'haswell', 'native', 'skylake', 'znver1', 'znver2'])
     parser.add_argument('--tune', type=str, help='Choose tuning for microarchitecture',
-                        default='haswell', choices=['core2', 'nehalem', 'sandybridge', 'haswell', 'native'])
+                        default='haswell', choices=['core2', 'nehalem', 'sandybridge', 'haswell', 'native', 'skylake', 'znver1', 'znver2'])
     parser.add_argument('-b', '--build-type', type=str, help='Build type',
                         default='Release', choices=['Release', 'Debug', 'RelWithDebInfo'])
     parser.add_argument('--clear-cmake', action='store_true', help='Delete CMake build directory before build')
