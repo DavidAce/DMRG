@@ -221,7 +221,7 @@ namespace linalg::tensor {
         }
     }
 
-    template<typename Scalar, int rank, size_t npair>
+    template<typename Scalar, int rank, auto npair>
     Eigen::Tensor<Scalar, rank - 2 * npair> trace(const Eigen::Tensor<Scalar, rank> &tensor, const std::array<Eigen::IndexPair<Eigen::Index>, npair> &idx_pair,
                                                   bool mirror = false) {
         /*
