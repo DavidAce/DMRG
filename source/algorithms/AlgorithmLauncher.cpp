@@ -117,15 +117,17 @@ void AlgorithmLauncher::start_h5file() {
         // Put git metadata in file
         h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
         h5file->writeDataset(debug::cpu_info(), ".env/DMRG++/exec/cpu_type");
-        h5file->writeDataset(build::hostname, ".env/DMRG++/build/hostname");
-        h5file->writeDataset(build::cpu_type, ".env/DMRG++/build/cpu_type");
-        h5file->writeDataset(build::os_name, ".env/DMRG++/build/os_name");
-        h5file->writeDataset(build::os_release, ".env/DMRG++/build/os_release");
-        h5file->writeDataset(build::os_version, ".env/DMRG++/build/os_version");
-        h5file->writeDataset(build::os_platform, ".env/DMRG++/build/os_platform");
-        h5file->writeDataset(git::branch, ".env/DMRG++/git/branch");
-        h5file->writeDataset(git::commit_hash, ".env/DMRG++/git/commit");
-        h5file->writeDataset(git::revision, ".env/DMRG++/git/revision");
+        h5file->writeDataset(env::build::hostname, ".env/DMRG++/build/hostname");
+        h5file->writeDataset(env::build::cpu_type, ".env/DMRG++/build/cpu_type");
+        h5file->writeDataset(env::build::os_name, ".env/DMRG++/build/os_name");
+        h5file->writeDataset(env::build::os_release, ".env/DMRG++/build/os_release");
+        h5file->writeDataset(env::build::os_version, ".env/DMRG++/build/os_version");
+        h5file->writeDataset(env::build::os_platform, ".env/DMRG++/build/os_platform");
+        h5file->writeDataset(env::build::march, ".env/DMRG++/build/march");
+        h5file->writeDataset(env::build::mtune, ".env/DMRG++/build/mtune");
+        h5file->writeDataset(env::git::branch, ".env/DMRG++/git/branch");
+        h5file->writeDataset(env::git::commit_hash, ".env/DMRG++/git/commit");
+        h5file->writeDataset(env::git::revision, ".env/DMRG++/git/revision");
     }
 
     if(not h5file->linkExists("common")) {

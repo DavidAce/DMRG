@@ -1,5 +1,7 @@
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include "nanobench.h"
+#include "env/environment.h"
+#include <fmt/core.h>
 #include <string_view>
 #include <unsupported/Eigen/CXX11/Tensor>
 
@@ -18,6 +20,7 @@ Eigen::Tensor<Scalar, 2> identity2(const Eigen::Index &dim) {
 }
 
 int main() {
+    fmt::print("Using {} {}", env::build::march, env::build::mtune);
     using real = double;
     using cplx = std::complex<double>;
     Eigen::Tensor<real, 2>        idd;

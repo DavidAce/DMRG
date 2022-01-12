@@ -48,10 +48,10 @@ int main(int argc, char *argv[]) {
 
     // print environment and git status
     tools::log->info("Hostname        : {}", debug::hostname());
-    tools::log->info("Build hostname  : {}", build::hostname);
-    tools::log->info("Git branch      : {}", git::branch);
-    tools::log->info("    commit hash : {}", git::commit_hash);
-    tools::log->info("    revision    : {}", git::revision);
+    tools::log->info("Build hostname  : {}", env::build::hostname);
+    tools::log->info("Git branch      : {}", env::git::branch);
+    tools::log->info("    commit hash : {}", env::git::commit_hash);
+    tools::log->info("    revision    : {}", env::git::revision);
 
     // Register termination codes and what to do in those cases
     debug::register_callbacks();

@@ -1,18 +1,20 @@
 #pragma once
 
 #include <string_view>
-namespace git{
-	inline std::string_view branch 		= "@GIT_BRANCH@";
-	inline std::string_view revision	= "@GIT_REVISION@";
-    inline std::string_view commit_hash = "@GIT_COMMIT_HASH@";
+namespace env{
+    namespace git{
+        inline std::string_view branch 		= "@GIT_BRANCH@";
+        inline std::string_view revision	= "@GIT_REVISION@";
+        inline std::string_view commit_hash = "@GIT_COMMIT_HASH@";
+    }
+    namespace build{
+        inline std::string_view hostname 		= "@_host_name@";
+        inline std::string_view cpu_type 		= "@_proc_type@";
+        inline std::string_view os_name 		= "@_os_name@";
+        inline std::string_view os_release 		= "@_os_release@";
+        inline std::string_view os_version 		= "@_os_version@";
+        inline std::string_view os_platform 	= "@_os_platform@";
+        inline std::string_view march       	= "@MARCH@";
+        inline std::string_view mtune       	= "@MTUNE@";
+    }
 }
-
-namespace build{
-	inline std::string_view hostname 		= "@_host_name@";
-	inline std::string_view cpu_type 		= "@_proc_type@";
-	inline std::string_view os_name 		= "@_os_name@";
-	inline std::string_view os_release 		= "@_os_release@";
-	inline std::string_view os_version 		= "@_os_version@";
-	inline std::string_view os_platform 	= "@_os_platform@";
-}
-
