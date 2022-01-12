@@ -9,7 +9,7 @@
 void debug::signal_callback_handler(int status) {
     switch(status) {
         case SIGTERM: {
-            debug::print_stack_trace();
+            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGTERM: %d\n", status);
             break;
         }
@@ -38,32 +38,31 @@ void debug::signal_callback_handler(int status) {
             break;
         }
         case SIGABRT: {
-            debug::print_stack_trace();
+            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGABRT: %d\n", status);
             break;
         }
         case SIGILL: {
-            debug::print_stack_trace();
+            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGILL: %d\n", status);
             break;
         }
         case SIGFPE: {
-            debug::print_stack_trace();
+            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGFPE: %d\n", status);
             break;
         }
         case SIGSEGV: {
-            debug::print_stack_trace();
+            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGSEGV: %d\n", status);
             break;
         }
         default: {
-            debug::print_stack_trace();
+            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit %d\n", status);
             break;
         }
     }
-
     std::exit(status);
 }
 
@@ -110,6 +109,9 @@ void debug::register_callbacks() {
     signal(SIGUSR1, signal_callback_handler);   //   30 /* User-defined signal 1.  */
     signal(SIGUSR2, signal_callback_handler);   //   31 /* User-defined signal 2.  */
     signal(137, signal_callback_handler);       //   137 /* LLDB?  */
+
+    std::atexit(debug::print_stack_trace);
+    std::at_quick_exit(debug::print_stack_trace);
 }
 
 #if __has_include(<backward.hpp>)
