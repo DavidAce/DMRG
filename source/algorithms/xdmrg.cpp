@@ -321,7 +321,10 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         c1.optSpace  = OptSpace::SUBSPACE;
         c1.max_sites = settings::strategy::multisite_mps_size_max;
         c1.retry     = true;
-        if(settings::xdmrg::chi_lim_vsub > 0) status.chi_lim = settings::xdmrg::chi_lim_vsub;
+        if(settings::xdmrg::chi_lim_vsub > 0 and status.chi_lim > settings::xdmrg::chi_lim_vsub) {
+            tools::log->info("Kept bond dimension back during variance|subspace optimization {} -> {}", status.chi_lim, settings::xdmrg::chi_lim_vsub);
+            status.chi_lim = settings::xdmrg::chi_lim_vsub;
+        }
     }
 
     if(status.iter < settings::xdmrg::olap_iters) {
@@ -443,6 +446,7 @@ void xdmrg::single_xDMRG_step() {
     std::vector<opt_mps>                results;
     std::optional<std::vector<MpsSite>> mps_original = std::nullopt;
     variance_before_step                             = std::nullopt;
+
     tools::log->debug("Starting xDMRG iter {} | step {} | pos {} | dir {} | confs {}", status.iter, status.step, status.position, status.direction,
                       confList.size());
     for(const auto &[idx_conf, meta] : iter::enumerate(confList)) {
