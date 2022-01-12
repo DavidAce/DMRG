@@ -35,15 +35,6 @@ endif ()
 include(cmake/CheckCXXOptional.cmake)
 CheckCXXOptional()
 
-
-################################################################
-### Get environment, host and git details                    ###
-### Generates a header env/environment.h                     ###
-### Include it using #include <env/environment.h>            ###
-################################################################
-include(cmake/environment.cmake)
-
-
 ### Print extra info during CMake configure
 include(cmake/PrintBuildInfo.cmake)
 
@@ -57,6 +48,14 @@ target_include_directories(flags INTERFACE source)
 include(cmake/CompilerFlags.cmake)
 
 
+################################################################
+### Get environment, host, build, exec and git details       ###
+### Generates a header env/environment.h                     ###
+### Include it using #include <env/environment.h>            ###
+################################################################
+include(cmake/environment.cmake)
+
+
 # Setup paths that find_package should search and
 # let cmake find our Find<package>.cmake modules
 include(cmake/SetupPaths.cmake)
@@ -64,7 +63,6 @@ include(cmake/SetupPaths.cmake)
 
 ### Find or install all the dependencies
 include(cmake/SetupDependencies.cmake)
-
 
 
 ###  Add all source files
@@ -145,8 +143,19 @@ if (DMRG_ENABLE_DOCS)
     add_subdirectory(docs)
 endif ()
 
-
-
-
+#############################
+## NINJA TRACING
+#############################
+if (CMAKE_GENERATOR MATCHES "Ninja")
+    add_custom_command(
+            TARGET DMRG++
+            COMMAND ninja -C ${CMAKE_BINARY_DIR} -t recompact
+            COMMAND python ${CMAKE_CURRENT_LIST_DIR}/ninjatracing --showall ${CMAKE_BINARY_DIR}/.ninja_log > ${CMAKE_BINARY_DIR}/.ninja_trace.json
+            DEPENDS ${CMAKE_BINARY_DIR}/.ninja_log
+            BYPRODUCTS ${CMAKE_BINARY_DIR}/.ninja_trace.json
+            WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+            COMMENT "Generating ninja build statistics"
+    )
+endif ()
 
 

@@ -9,31 +9,33 @@ message(STATUS "FC compiler ${CMAKE_Fortran_COMPILER}")
 message(STATUS "CXX compiler ${CMAKE_CXX_COMPILER}")
 
 #####################################################
-### Set the  microarchitecture for OpenBLAS       ###
+### Set the  MARCHitecture for OpenBLAS       ###
 #####################################################
 # Make an "enum" for valid march
-set(${PROJECT_UNAME}_MICROARCH_VALID generic haswell skylake zen zenver1 native)
-set(${PROJECT_UNAME}_MICROARCH native CACHE STRING "CPU micro-architecture")
-set_property(CACHE ${PROJECT_UNAME}_MICROARCH PROPERTY STRINGS ${${PROJECT_UNAME}_MICROARCH_VALID})
-if (NOT ${PROJECT_UNAME}_MICROARCH IN_LIST ${PROJECT_UNAME}_MICROARCH_VALID)
-    message(FATAL_ERROR "${PROJECT_UNAME}_MICROARCH must be one of ${${PROJECT_UNAME}_MICROARCH_VALID}")
+set(${PROJECT_UNAME}_MARCH_VALID generic haswell skylake zen znver1 znver2 znver3 native)
+set(${PROJECT_UNAME}_MTUNE_VALID generic haswell skylake zen znver1 znver2 znver3 native)
+set(${PROJECT_UNAME}_MARCH haswell CACHE STRING "CPU micro-architecture")
+set(${PROJECT_UNAME}_MTUNE znver3  CACHE STRING "CPU micro-architecture")
+set_property(CACHE ${PROJECT_UNAME}_MARCH PROPERTY STRINGS ${${PROJECT_UNAME}_MARCH_VALID})
+set_property(CACHE ${PROJECT_UNAME}_MTUNE PROPERTY STRINGS ${${PROJECT_UNAME}_MTUNE_VALID})
+if (NOT ${PROJECT_UNAME}_MARCH IN_LIST ${PROJECT_UNAME}_MARCH_VALID)
+    message(FATAL_ERROR "${PROJECT_UNAME}_MARCH must be one of ${${PROJECT_UNAME}_MARCH_VALID}")
+endif ()
+if (NOT ${PROJECT_UNAME}_MTUNE IN_LIST ${PROJECT_UNAME}_MTUNE_VALID)
+    message(FATAL_ERROR "${PROJECT_UNAME}_MTUNE must be one of ${${PROJECT_UNAME}_MTUNE_VALID}")
 endif ()
 
-
 cmake_host_system_information(RESULT _host_name QUERY HOSTNAME)
-set(OPENBLAS_TARGET HASWELL)
-set(OPENBLAS_DYNAMIC_ARCH ON)
-if($ENV{CI} OR $ENV{GITHUB_ACTIONS} OR ${PROJECT_UNAME}_MICROARCH MATCHES "generic")
+if($ENV{CI} OR $ENV{GITHUB_ACTIONS} OR ${PROJECT_UNAME}_MARCH MATCHES "generic")
     set(MARCH -march=x86-64)
     set(MTUNE -mtune=generic)
     set(OPENBLAS_TARGET GENERIC)
     set(OPENBLAS_DYNAMIC_ARCH OFF)
-elseif(DEFINED ${PROJECT_UNAME}_MICROARCH)
-    set(MARCH -march=${${PROJECT_UNAME}_MICROARCH})
-    set(MTUNE -mtune=${${PROJECT_UNAME}_MICROARCH})
 else()
-    set(MARCH -march=haswell)
-    set(MTUNE -mtune=native)
+    set(MARCH -march=${${PROJECT_UNAME}_MARCH})
+    set(MTUNE -mtune=${${PROJECT_UNAME}_MTUNE})
+    set(OPENBLAS_TARGET HASWELL)
+    set(OPENBLAS_DYNAMIC_ARCH ON)
 endif()
 message(DEBUG "Using ${MARCH} ${MTUNE}")
 
