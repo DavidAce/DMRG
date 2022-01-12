@@ -12,7 +12,7 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [8,12,16,20,24]
+sites               = [16]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 0.250, 0.100]]
 f                   = [0.250]
@@ -62,7 +62,7 @@ for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x
         "model::lbit::J2_span"               : str_r,
         "model::lbit::f_mixer"               : str_f,
         "model::lbit::u_layer"               : str_u,
-        "flbit::chi_lim_max"                 : "1024",
+        "flbit::chi_lim_max"                 : "64",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "1e10",
