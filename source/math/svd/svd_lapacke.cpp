@@ -97,7 +97,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 #endif
     }
     // Add suffix for more detailed breakdown of matrix sizes
-    auto t_suffix = benchmark ? fmt::format("{}", num::round_to_multiple_of(sizeS, 10)) : "";
+    auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<int>(sizeS, 5)) : "";
 
     // Initialize containers
     MatrixType<Scalar> U;

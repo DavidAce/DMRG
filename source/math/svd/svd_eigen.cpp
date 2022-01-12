@@ -48,17 +48,20 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     // Setup the SVD solver
     SVD.setSwitchSize(static_cast<int>(switchsize_bdc));
     SVD.setThreshold(threshold);
+    // Add suffix for more detailed breakdown of matrix sizes
+    auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(rank_max.value(), 5l)) : "";
+
     bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize_bdc);
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
         // Run the svd
-        auto t_jcb = tid::tic_token("jcb");
+        auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix));
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
         svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
         // Run the svd
-        auto t_bdc = tid::tic_token("bdc");
+        auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix));
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     }
     if(count) count.value()++;

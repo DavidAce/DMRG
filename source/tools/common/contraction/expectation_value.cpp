@@ -1,6 +1,28 @@
 #include <io/fmt.h>
 #include <math/tenx.h>
 #include <tools/common/contraction.h>
+
+#if defined(DMRG_SAVE_CONTRACTION)
+    #include <h5pp/h5pp.h>
+namespace settings {
+    constexpr static bool save_contraction = true;
+}
+#else
+namespace settings {
+    constexpr static bool save_contraction = false;
+}
+#endif
+#if defined(DMRG_BENCH_CONTRACTION)
+    #include <tid/tid.h>
+    #include <math/num.h>
+namespace settings {
+    constexpr static bool bench_contractions = true;
+}
+#else
+namespace settings {
+    constexpr static bool bench_contractions = false;
+}
+#endif
 using namespace tools::common::contraction;
 
 /* clang-format off */
@@ -28,6 +50,14 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
     if(envR.dimension(2) != mpo.dimension(1))
         throw std::runtime_error(fmt::format("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions()));
 
+    #if defined(DMRG_BENCH_CONTRACTION)
+        auto t_con = tid::tic_token("expval_mps-[{},{},{}]_mpo-[{}]",
+                                    mps.dimension(0),
+                                    num::round_to_multiple_of(mps.dimension(1), 10),
+                                    num::round_to_multiple_of(mps.dimension(2), 10),
+                                    mpo.dimension(2));
+    #endif
+
     Eigen::Tensor<Scalar, 0> expval;
     expval.device(tenx::omp::getDevice()) =
         envL
@@ -35,6 +65,10 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
             .contract(mpo,                  tenx::idx({2, 1}, {2, 0}))
             .contract(mps.conjugate(),      tenx::idx({3, 0}, {0, 1}))
             .contract(envR,                 tenx::idx({0, 2, 1}, {0, 1, 2}));
+
+    #if defined(DMRG_BENCH_CONTRACTION)
+        t_con.toc();
+    #endif
 
     double moment = 0;
     if constexpr(std::is_same_v<Scalar,cplx>){
@@ -47,6 +81,19 @@ double tools::common::contraction::expectation_value(const Scalar * const mps_pt
         moment = expval(0);
 
     if(std::isnan(moment) or std::isinf(moment)) throw std::runtime_error(fmt::format("First moment is invalid: {}", moment));
+
+#if defined(DMRG_SAVE_CONTRACTION)
+    if constexpr (settings::save_contraction){
+        auto file       = h5pp::File("dmrg-contractions.h5", h5pp::FilePermission::READWRITE);
+        auto group_num  = 0;
+        auto group_name = fmt::format("contraction_{}", group_num);
+        while(file.linkExists(group_name)) group_name = fmt::format("contraction_{}", ++group_num);
+        file.writeDataset(mps, fmt::format("{}/mps", group_name));
+        file.writeDataset(mpo, fmt::format("{}/mpo", group_name));
+        file.writeDataset(envL, fmt::format("{}/envL", group_name));
+        file.writeDataset(envR, fmt::format("{}/envR", group_name));
+    }
+#endif
     return moment;
 }
 
