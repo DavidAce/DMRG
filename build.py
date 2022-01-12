@@ -21,7 +21,8 @@ def str2bool(v):
 
 def parse(project_name):
     parser = argparse.ArgumentParser(description='CMake Project Builder for {}'.format(project_name))
-    parser.add_argument('-a', '--arch', type=str, help='Choose microarchitecture',
+    parser.add_argument('--arch', type=str, help='Choose microarchitecture',
+    parser.add_argument('--tune', type=str, help='Choose tuning for microarchitecture',
                         default='haswell', choices=['core2', 'nehalem', 'sandybridge', 'haswell', 'native'])
     parser.add_argument('-b', '--build-type', type=str, help='Build type',
                         default='Release', choices=['Release', 'Debug', 'RelWithDebInfo'])
@@ -60,7 +61,7 @@ def parse(project_name):
 
     args = parser.parse_args()
     if args.default_kraken:
-        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='haswell')
+        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='haswell', tune='znver2')
         args = parser.parse_args()
     if args.default_tetralith:
         parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='native', make_threads=16)
@@ -125,7 +126,9 @@ def generate_cmake_commands(project_name, args):
         cmake_cxx_flags_init.extend(['-fdiagnostics-color=always'])
 
     if args.arch:
-        cmake_cfg.extend(['-D{}_MICROARCH:STRING={}'.format(project_name.upper(), args.arch)])
+        cmake_cfg.extend(['-D{}_MARCH:STRING={}'.format(project_name.upper(), args.arch)])
+    if args.tune:
+        cmake_cfg.extend(['-D{}_MTUNE:STRING={}'.format(project_name.upper(), args.tune)])
 
     if args.build_type:
         cmake_cfg.extend(['-DCMAKE_BUILD_TYPE:STRING={}'.format(args.build_type)])
