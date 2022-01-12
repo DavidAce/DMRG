@@ -249,8 +249,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
 
     // Last sanity check before leaving here
-    if(status.chi_lim > status.chi_lim_max)
-        throw std::runtime_error(fmt::format("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max));
+    if(status.chi_lim > status.chi_lim_max) throw except::logic_error("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max);
 }
 
 void AlgorithmFinite::reduce_bond_dimension_limit() {
