@@ -367,7 +367,6 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     // Create optional slots for each schmidt value
     auto                t_slots            = tid::tic_scope("slots");
     double              amplitude_cutoff   = 1e-12;
-    double              probability_cutoff = 1e-32;
     std::vector<size_t> namp; // Number of bits in each amplitude
     namp.reserve(amplitudes.size());
     for(const auto &a : amplitudes) namp.emplace_back(a.bits.count());
