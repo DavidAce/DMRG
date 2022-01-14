@@ -74,6 +74,12 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).norm();
     }
 
+    auto [rank_tr, truncation_error_tr] = truncation_error_limited_rank(SVD.singularValues().head(max_size));
+    if(rank_tr < rank) {
+        rank             = rank_tr;
+        truncation_error = truncation_error_tr;
+    }
+
     bool U_finite   = SVD.matrixU().leftCols(rank).allFinite();
     bool S_finite   = SVD.singularValues().head(rank).allFinite();
     bool V_finite   = SVD.matrixV().leftCols(rank).allFinite();

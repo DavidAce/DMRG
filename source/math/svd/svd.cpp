@@ -10,6 +10,7 @@ svd::solver::solver() {
 }
 void svd::solver::copy_settings(const svd::settings &svd_settings) {
     if(svd_settings.threshold) threshold = svd_settings.threshold.value();
+    if(svd_settings.threshold_tr) threshold_tr = svd_settings.threshold_tr.value();
     if(svd_settings.switchsize_bdc) switchsize_bdc = svd_settings.switchsize_bdc.value();
     if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
@@ -148,3 +149,12 @@ template Eigen::Tensor<double, 2> svd::solver::pseudo_inverse(const Eigen::Tenso
 //! \relates svd::class_SVD
 //! \brief force instantiation of pseudo_inverse for type 'std::complex<double>'
 template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<cplx, 2> &tensor);
+
+// template<typename Scalar>
+std::pair<long, double> svd::solver::truncation_error_limited_rank(const VectorType<double> &S) const {
+    VectorType<double> truncations(S.size());
+    for(long s = 0; s < S.size(); s++) { truncations[s] = S.bottomRows(S.size() - s).norm(); }
+    auto rank = (truncations.array() >= threshold_tr).count();
+    //    tools::log->info("Rank {} | error {:8.2e} truncation errors: {:8.2e}", rank, truncations[rank-1], fmt::join(truncations, ", "));
+    return {rank, truncations[rank - 1]};
+}

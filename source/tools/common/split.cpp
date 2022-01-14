@@ -128,6 +128,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     // Setup the svd settings if not given explicitly
     if(not svd_settings) svd_settings = svd::settings();
     if(not svd_settings->threshold) svd_settings->threshold = settings::precision::svd_threshold;
+    if(not svd_settings->threshold_tr) svd_settings->threshold_tr = settings::precision::svd_threshold_tr;
     if(not svd_settings->switchsize_bdc) svd_settings->switchsize_bdc = settings::precision::svd_switchsize_bdc;
 
     // Split the multisite tensor at the given center position.
@@ -189,7 +190,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             auto &V_stash = mps.get_V_stash();
             if(V_stash) {
                 auto vdim = V_stash->data.dimensions();
-                if(vdim[0] * vdim[1] != vdim[2])
+                if(vdim[0] * vdim[1] > vdim[2])
                     tools::log->error(FMT_STRING("V_stash with dimensions {} for pos {} is not a diagonal matrix!"), vdim, V_stash->pos_dst);
             }
         }
@@ -216,7 +217,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             S_stash.reset();
         } else if(U_stash) {
             auto udim = U_stash->data.dimensions();
-            if(udim[1] != udim[0] * udim[2])
+            if(udim[1] < udim[0] * udim[2])
                 tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"), udim, U_stash->pos_dst);
         }
     } else if(positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1) {

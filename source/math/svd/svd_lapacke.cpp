@@ -371,10 +371,17 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if(count) count.value()++;
         long max_size = std::min(S.size(), rank_max.value());
         rank          = (S.head(max_size).array() >= threshold).count();
+
         if(rank == S.size()) {
             truncation_error = 0;
         } else {
             truncation_error = S.tail(S.size() - rank).norm();
+        }
+
+        auto [rank_tr, truncation_error_tr] = truncation_error_limited_rank(S.head(max_size));
+        if(rank_tr < rank) {
+            rank             = rank_tr;
+            truncation_error = truncation_error_tr;
         }
 
         // Do the truncation

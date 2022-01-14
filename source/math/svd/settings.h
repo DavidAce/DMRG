@@ -15,6 +15,7 @@ namespace svd {
 
     struct settings {
         std::optional<double> threshold      = std::nullopt;
+        std::optional<double> threshold_tr   = std::nullopt;
         std::optional<size_t> switchsize_bdc = std::nullopt;
         std::optional<size_t> loglevel       = std::nullopt;
         std::optional<bool>   use_bdc        = std::nullopt;
@@ -25,6 +26,7 @@ namespace svd {
         std::string to_string(){
             std::string msg;
             if(threshold       ) msg.append(fmt::format(" | threshold {:.2e}", threshold.value()));
+            if(threshold_tr    ) msg.append(fmt::format(" | threshold_tr {:.2e}", threshold_tr.value()));
             if(switchsize_bdc  ) msg.append(fmt::format(" | switchsize bdc {}", switchsize_bdc.value()));
             if(loglevel        ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
             if(use_bdc         ) msg.append(fmt::format(" | use_bdc {}", use_bdc.value()));
