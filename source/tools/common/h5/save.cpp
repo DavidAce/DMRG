@@ -20,9 +20,9 @@ namespace tools::common::h5 {
         if(save_log.empty()) {
             try {
                 if(h5file.linkExists(link)) {
-                    auto step                   = h5file.readAttribute<uint64_t>("step", link);
-                    auto iter                   = h5file.readAttribute<uint64_t>("iter", link);
-                    save_log[std::string(link)] = std::make_pair(iter, step);
+                    auto step = h5file.readAttribute<uint64_t>("step", link);
+                    auto iter = h5file.readAttribute<uint64_t>("iter", link);
+                    save_log.insert(std::make_pair(std::string(link), std::make_pair(iter, step)));
                 }
             } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
         }
@@ -36,8 +36,7 @@ namespace tools::common::h5 {
                 uint64_t iter = 0;
                 if(h5file.linkExists("common/step")) step = h5file.readAttribute<uint64_t>(state_prefix, "common/step");
                 if(h5file.linkExists("common/iteration")) iter = h5file.readAttribute<uint64_t>(state_prefix, "common/iteration");
-                save_log[std::string(state_prefix)] = std::make_pair(iter, step);
-
+                save_log.insert(std::make_pair(state_prefix, std::make_pair(iter, step)));
             } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
         }
     }
@@ -47,7 +46,7 @@ namespace tools::common::h5 {
             try {
                 AlgorithmStatus status;
                 if(h5file.linkExists("common/status")) status = h5file.readAttribute<AlgorithmStatus>(state_prefix, "common/status");
-                save_log[std::string(state_prefix)] = status;
+                save_log.insert(std::make_pair(state_prefix, status));
             } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
         }
     }
@@ -55,7 +54,10 @@ namespace tools::common::h5 {
     template<typename AttrType>
     void save::attr(h5pp::File &h5file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText,
                     std::optional<h5pp::hid::h5t> h5type) {
-        if(not h5file.linkExists(attrName)) return; // This means that there is nothing written to the state_prefix in attrName.
+        if(not h5file.linkExists(attrName)) {
+            tools::log->trace("link [{}] does not exist. Returning ...", attrName);
+            return; // This means that there is nothing written to the state_prefix in attrName.
+        }
         if(not h5file.linkExists(linkPath)) h5file.writeDataset(linkText, linkPath);
         tools::log->trace("Link {:<32} | attribute -- {: <40}", linkPath, attrName);
         h5file.writeAttribute(attrData, attrName, linkPath, std::nullopt, h5type);
@@ -73,7 +75,7 @@ namespace tools::common::h5 {
         tools::log->trace("Appending to table: {}", table_path);
         h5pp_table_algorithm_status::register_table_type();
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
-        if(save_log[table_path] == save_point) {
+        if(save_log.count(table_path) and save_log.at(table_path) == save_point) {
             // The table has been saved at this iteration, so we overwrite the last entry.
             auto tableInfo = h5file.getTableInfo(table_path);
             h5file.writeTableRecords(status, table_path, tableInfo.numRecords.value() - 1);
@@ -82,7 +84,7 @@ namespace tools::common::h5 {
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
 
-        save_log[table_path] = save_point;
+        save_log.insert({table_path, save_point});
     }
 
     void save::mem(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
@@ -92,7 +94,7 @@ namespace tools::common::h5 {
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
         bootstrap_save_log(save_log, h5file, table_path);
         auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[table_path] == save_point) return;
+        if(save_log.count(table_path) and save_log.at(table_path) == save_point) return;
         log->trace("Appending to table: {}", table_path);
         auto t_mem = tid::tic_scope("mem", tid::level::pedant);
         h5pp_table_memory_usage::register_table_type();
@@ -107,7 +109,7 @@ namespace tools::common::h5 {
         h5file.appendTableRecords(mem_usage_entry, table_path);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
-        save_log[table_path] = save_point;
+        save_log.insert({table_path, save_point});
     }
 
     void save::meta(h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason, const ModelType &model_type, size_t model_size,
@@ -133,19 +135,21 @@ namespace tools::common::h5 {
         // -- step           | state_prefix -> step
         // -- position       | state_prefix -> position of the mps
 
-        // Checks if the current entries have already been written
         if(storage_level == StorageLevel::NONE) return;
-        auto                                                    t_meta = tid::tic_scope("meta", tid::level::pedant);
+        if(storage_reason == StorageReason::MODEL) return;
+        //        if(not h5file.linkExists(state_prefix)) return; // No point in saving metadata for non-existing state prefixes
+
+        auto t_meta = tid::tic_scope("meta", tid::level::pedant);
+        // Checks if the current entries have already been written
         static std::unordered_map<std::string, AlgorithmStatus> save_log;
         bootstrap_meta_log(save_log, h5file, state_prefix);
-        if(save_log[std::string(state_prefix)] == status) return;
-
+        if(save_log.count(std::string(state_prefix)) and save_log.at(std::string(state_prefix)) == status) return;
+        tools::log->trace("Writing attribute metadata for state_prefix: [{}]", state_prefix);
         auto storage_level_sv  = enum2sv(storage_level);
         auto storage_reason_sv = enum2sv(storage_reason);
         auto model_name_sv     = enum2sv(model_type);
         auto state_root        = fmt::format("{}/{}", status.algo_type_sv(), state_name);
         auto hamiltonian       = fmt::format("{}/hamiltonian", model_prefix);
-        auto timer_prefix      = fmt::format("{}/timer", state_root);
         auto mpo_prefix        = fmt::format("{}/mpo", model_prefix);
         auto mps_prefix        = fmt::format("{}/mps", state_prefix);
 
@@ -157,7 +161,6 @@ namespace tools::common::h5 {
         save::attr(h5file, state_root, state_prefix, "common/state_root", "Maps state_prefix -> state_root");
         save::attr(h5file, model_prefix, state_prefix, "common/model_prefix", "Maps state_prefix -> model_prefix");
         save::attr(h5file, hamiltonian, state_prefix, "common/hamiltonian", "Maps state_prefix -> hamiltonian table");
-        save::attr(h5file, timer_prefix, state_prefix, "common/timer", "Maps state_prefix -> timer group");
         save::attr(h5file, mpo_prefix, state_prefix, "common/mpo_prefix", "Maps state_prefix -> mpo_prefix");
         save::attr(h5file, mps_prefix, state_prefix, "common/mps_prefix", "Maps state_prefix -> mps_prefix");
         save::attr(h5file, model_name_sv, state_prefix, "common/model_type", "Maps state_prefix -> model_type");
@@ -168,7 +171,7 @@ namespace tools::common::h5 {
         save::attr(h5file, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
         save::attr(h5file, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
         if(not table_prfxs.empty()) save::attr(h5file, table_prfxs, state_prefix, "common/table_prfxs", "Maps state_prefix -> one or more table prefixes");
-        save_log[std::string(state_prefix)] = status;
+        save_log.insert({std::string(state_prefix), status});
     }
 
     void save::timer(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
@@ -182,7 +185,7 @@ namespace tools::common::h5 {
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
         bootstrap_save_log(save_log, h5file, table_path);
         auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[std::string(table_path)] == save_point) return;
+        if(save_log.count(std::string(table_path)) and save_log.at(std::string(table_path)) == save_point) return;
         tools::log->trace("Writing timer data to: {}", table_path);
 
         h5pp_ur::register_table_type();
@@ -199,7 +202,7 @@ namespace tools::common::h5 {
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
         h5file.setKeepFileClosed();
-        save_log[std::string(table_path)] = save_point;
+        save_log.insert({std::string(table_path), save_point});
     }
 
 }

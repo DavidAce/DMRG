@@ -60,6 +60,7 @@ void AlgorithmLauncher::start_h5file() {
     // 2) The .h5 file does not exist yet -> start new simulation
 
     if(h5pp::fs::exists(settings::storage::output_filepath)) {
+        tools::log->trace("Found existing HDF5 file: {}", settings::storage::output_filepath);
         switch(settings::storage::file_collision_policy) {
             case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
@@ -70,12 +71,13 @@ void AlgorithmLauncher::start_h5file() {
                 // in which case we consult settings::storage::file_resume_policy, to either exit or keep going
                 // and consult .cfg if there is anything more to be done.
                 try {
-                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::READONLY);
-                    if(not h5file->fileIsValid()) throw std::runtime_error(fmt::format("HDF5 file is not valid: {}", settings::storage::output_filepath));
+                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READONLY);
+                    tools::log->trace("Checking if HDF5 file is valid: {}", settings::storage::output_filepath);
+                    if(not h5file->fileIsValid()) throw except::runtime_error("HDF5 file is not valid: {}", settings::storage::output_filepath);
                     if(not h5file->linkExists(".env/DMRG++"))
-                        throw std::runtime_error(fmt::format("Could not find link .env/DMRG++ in file: {}", settings::storage::output_filepath));
+                        throw except::runtime_error("Could not find link .env/DMRG++ in file: {}", settings::storage::output_filepath);
                     if(not h5file->linkExists("common/finished_all"))
-                        throw std::runtime_error(fmt::format("Could not find link common/finished_all in file: {}", settings::storage::output_filepath));
+                        throw except::runtime_error("Could not find link common/finished_all in file: {}", settings::storage::output_filepath);
                     auto finished_all = h5file->readDataset<bool>("common/finished_all");
 
                     if(settings::storage::file_resume_policy == FileResumePolicy::FAST and finished_all) {
@@ -84,57 +86,54 @@ void AlgorithmLauncher::start_h5file() {
                         tools::log->info("All simulations have finished. Nothing more to do.");
                         exit(0);
                     }
-                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::READWRITE);
+                    if(not h5file->linkExists("common/storage_level"))
+                        throw except::runtime_error("Could not find link common/storage_level in file: {}", settings::storage::output_filepath);
+
+                    tools::log->info("Found dataset [finished_all = {}]. Attempting to open file with READWRITE access", finished_all);
+                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READWRITE);
                 } catch(const std::exception &ex) {
                     tools::log->error("Failed to recover simulation with policy [{}]: {}", enum2sv(settings::storage::file_collision_policy), ex.what());
                     tools::log->info("Truncating file [{}]", settings::storage::output_filepath);
-                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::REPLACE);
+                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::REPLACE);
                 }
                 break;
             }
             case FileCollisionPolicy::RENAME: {
-                h5file                   = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::RENAME);
+                h5file                   = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::RENAME);
                 std::string new_filepath = h5file->getFilePath();
                 tools::log->info("Renamed output file: [{}] -> [{}]", settings::storage::output_filepath, new_filepath);
                 settings::storage::output_filepath = new_filepath;
                 break;
             }
             case FileCollisionPolicy::BACKUP: {
-                h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::BACKUP);
+                h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::BACKUP);
                 tools::log->info("Renamed existing file: [{}] -> [{}]", settings::storage::output_filepath, settings::storage::output_filepath + ".bak");
                 break;
             }
             case FileCollisionPolicy::REPLACE: {
-                h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::REPLACE);
+                h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::REPLACE);
                 break;
             }
         }
     } else {
-        h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FilePermission::COLLISION_FAIL);
+        h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::COLLISION_FAIL);
     }
     h5file->setCompressionLevel(settings::storage::compression_level);
-    if(not h5file->linkExists(".env/DMRG++")) {
-        // Put git metadata in file
-        h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
-        h5file->writeDataset(debug::cpu_info(), ".env/DMRG++/exec/cpu_type");
-        h5file->writeDataset(env::build::hostname, ".env/DMRG++/build/hostname");
-        h5file->writeDataset(env::build::cpu_type, ".env/DMRG++/build/cpu_type");
-        h5file->writeDataset(env::build::os_name, ".env/DMRG++/build/os_name");
-        h5file->writeDataset(env::build::os_release, ".env/DMRG++/build/os_release");
-        h5file->writeDataset(env::build::os_version, ".env/DMRG++/build/os_version");
-        h5file->writeDataset(env::build::os_platform, ".env/DMRG++/build/os_platform");
-        h5file->writeDataset(env::build::march, ".env/DMRG++/build/march");
-        h5file->writeDataset(env::build::mtune, ".env/DMRG++/build/mtune");
-        h5file->writeDataset(env::git::branch, ".env/DMRG++/git/branch");
-        h5file->writeDataset(env::git::commit_hash, ".env/DMRG++/git/commit");
-        h5file->writeDataset(env::git::revision, ".env/DMRG++/git/revision");
-    }
-
-    if(not h5file->linkExists("common")) {
-        tools::log->trace("Copying config to h5pp file: {} --> {}", settings::input::config_filename, h5file->getFileName());
-        h5file->writeDataset(settings::input::config_filename, "common/config_filename");
-        h5file->writeDataset(false, "common/finished_all");
-    }
+    // Put git metadata in file
+    h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
+    h5file->writeDataset(debug::cpu_info(), ".env/DMRG++/exec/cpu_type");
+    h5file->writeDataset(env::build::hostname, ".env/DMRG++/build/hostname");
+    h5file->writeDataset(env::build::cpu_type, ".env/DMRG++/build/cpu_type");
+    h5file->writeDataset(env::build::os_name, ".env/DMRG++/build/os_name");
+    h5file->writeDataset(env::build::os_release, ".env/DMRG++/build/os_release");
+    h5file->writeDataset(env::build::os_version, ".env/DMRG++/build/os_version");
+    h5file->writeDataset(env::build::os_platform, ".env/DMRG++/build/os_platform");
+    h5file->writeDataset(env::build::march, ".env/DMRG++/build/march");
+    h5file->writeDataset(env::build::mtune, ".env/DMRG++/build/mtune");
+    h5file->writeDataset(env::git::branch, ".env/DMRG++/git/branch");
+    h5file->writeDataset(env::git::commit_hash, ".env/DMRG++/git/commit");
+    h5file->writeDataset(env::git::revision, ".env/DMRG++/git/revision");
+    h5file->writeDataset(settings::input::config_filename, "common/config_filename");
 }
 
 void AlgorithmLauncher::setup_temp_path() {
@@ -149,7 +148,7 @@ void AlgorithmLauncher::setup_temp_path() {
     settings::storage::tmp::hdf5_final_path = tools::common::h5::tmp::get_original_filepath(h5file->getFilePath());
     settings::storage::tmp::hdf5_temp_path  = tools::common::h5::tmp::get_temporary_filepath(h5file->getFilePath());
     tools::log->info("Moving to temporary path [{}] --> [{}]", settings::storage::tmp::hdf5_final_path, settings::storage::tmp::hdf5_temp_path);
-    h5file->moveFileTo(settings::storage::tmp::hdf5_temp_path, h5pp::FilePermission::REPLACE);
+    h5file->moveFileTo(settings::storage::tmp::hdf5_temp_path, h5pp::FileAccess::REPLACE);
 }
 
 void AlgorithmLauncher::run_algorithms() {

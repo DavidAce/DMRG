@@ -3,6 +3,7 @@
 #include <h5pp/h5pp.h>
 #include <tools/common/h5.h>
 #include <tools/common/log.h>
+#include <debug/exceptions.h>
 
 std::string tools::common::h5::resume::extract_state_name(std::string_view state_prefix) {
     constexpr std::string_view state_pattern = "state_";
@@ -38,7 +39,7 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         tools::log->info("Searching for resumable states from algorithm [{}] in file [{}]", algo_name, h5file.getFilePath());
     else
         tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5file.getFilePath());
-
+    if(not h5file.linkExists("common/storage_level")) throw except::load_error("Missing dataset [common/storage_level]");
     for(const auto &candidate : h5file.getAttributeNames("common/storage_level")) {
         if(candidate.find(algo_name) != std::string::npos and h5file.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
             state_prefix_candidates.push_back(candidate);
