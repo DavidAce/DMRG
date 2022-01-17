@@ -416,7 +416,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         if(&spin_dim == &spin_dims.back()) {
             // In the last SVD, it's important that we don't truncate by threshold.
             // If we do, we risk making the V non-diagonal, which would truncate whatever site is on the right, later on.
-            svd.threshold = std::numeric_limits<double>::epsilon();
+            //            svd.threshold = std::numeric_limits<double>::epsilon();
             chi_limit     = V.dimension(0) * V.dimension(1); // V.dimension(2);
         }
 
@@ -662,7 +662,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
         if(&spin_dim == &spin_dims.front()) {
             // In the last SVD, it's important that we don't truncate by threshold.
             // If we do, we risk making the U non-diagonal, which would truncate whatever site is on the left, later on.
-            svd.threshold = std::numeric_limits<double>::epsilon();
+            //            svd.threshold = std::numeric_limits<double>::epsilon();
             chi_limit     = U.dimension(0) * U.dimension(2); // U.dimension(1);
         }
 
