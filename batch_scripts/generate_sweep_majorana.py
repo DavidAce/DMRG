@@ -7,7 +7,7 @@ import platform
 # Using the input_template.cfg, make num_copies new files enumerated as 0....num_copies,
 # while replacing the fields stated in find_replace.
 
-template_filename = 'input_template_ising_majorana.cfg'
+template_filename = 'input_template_majorana.cfg'
 basename    = 'mbl'
 location    = "input"
 
@@ -28,7 +28,7 @@ num_total = 0
 settings = []
 input_filenames = []
 
-print("Generating", len(sites) * len(lambdas) * len(deltas) * len(multisite_mps_size_def) * len(initial_state), "input files")
+print("Generating", len(sites) * len(gs) * len(deltas) * len(multisite_mps_size_def) * len(initial_state), "input files")
 
 for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,multisite_mps_size_max):
     str_L = str(val_L)
