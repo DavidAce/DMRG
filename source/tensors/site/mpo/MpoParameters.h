@@ -104,6 +104,94 @@ class h5tb_ising_sdual {
     }
 };
 
+class h5tb_ising_majorana {
+    public:
+    struct table {
+        double J_mean           = 0; /*!< Mean for the distrbution of J_rnd */
+        double J_boxw           = 0; /*!< Standard deviation for the distribution of J_rnd */
+        double J_rand           = 0; /*!< Randomly distributed nearest neighbour coupling */
+        double J_avrg           = 0; /*!< Average of J_rnd between all sites*/
+        double J_pert           = 0; /*!< Perturbation to the coupling, */
+        double h_mean           = 0; /*!< Mean for the distrbution of h_rnd */
+        double h_boxw           = 0; /*!< Standard deviation for the distribution of h_rnd */
+        double h_rand           = 0; /*!< Randomly distributed on-site field */
+        double h_avrg           = 0; /*!< Average of h_rnd on all sites */
+        double h_pert           = 0; /*!< Perturbation to the field */
+        double g                = 0; /*!< Interaction parameter for nearest ZZ and next-nearest XX neighbor coupling */
+        double delta            = 0; /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing delta = 2lnW, W = J_boxw = 1/h_boxw */
+        long   spin_dim         = 2; /*!< Spin dimension */
+        char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+    };
+    static inline h5pp::hid::h5t h5_type;
+    table                        param;
+
+    h5tb_ising_majorana() { register_table_type(); }
+    static void register_table_type() {
+        if(h5_type.valid()) return;
+
+        // Create a type for the char array from the template H5T_C_S1
+        // The template describes a string with a single char.
+        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
+        h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
+        H5Tset_size(h5t_custom_string, 16);
+
+        // Optionally set the null terminator '\0'
+        H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
+
+        h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
+        H5Tinsert(h5_type, "J_mean", HOFFSET(table, J_mean), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J_boxw", HOFFSET(table, J_boxw), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J_rand", HOFFSET(table, J_rand), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J_avrg", HOFFSET(table, J_avrg), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "J_pert", HOFFSET(table, J_pert), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "h_mean", HOFFSET(table, h_mean), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "h_boxw", HOFFSET(table, h_boxw), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "h_rand", HOFFSET(table, h_rand), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "h_avrg", HOFFSET(table, h_avrg), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "h_pert", HOFFSET(table, h_pert), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "g", HOFFSET(table, g), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "delta", HOFFSET(table, delta), H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
+    }
+
+    [[nodiscard]] std::string fmt_value(std::string_view p) const {
+        /* clang-format off */
+        if(p == "J_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_mean);
+        if(p == "J_boxw")           return fmt::format(FMT_STRING("{:<9.2e}") , param.J_boxw);
+        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_rand);
+        if(p == "J_avrg")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_avrg);
+        if(p == "J_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_pert);
+        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_mean);
+        if(p == "h_boxw")           return fmt::format(FMT_STRING("{:<9.2e}") , param.h_boxw);
+        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
+        if(p == "h_avrg")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_avrg);
+        if(p == "h_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_pert);
+        if(p == "g")                return fmt::format(FMT_STRING("{:<7.4f}") , param.g);
+        if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
+        if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
+        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        /* clang-format on */
+        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+    }
+
+    static std::vector<std::string> get_parameter_names() {
+        return {"J_mean", "J_boxw", "J_rand", "J_avrg", "J_pert", "h_mean", "h_boxw", "h_rand", "h_avrg", "h_pert", "g", "delta", "spin_dim", "distribution"};
+    }
+
+    void print_parameter_names() const {
+        std::string name_line;
+        for(const auto &name : get_parameter_names()) { name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size())); }
+        tools::log->info(name_line);
+    }
+
+    void print_parameter_values() const {
+        std::string value_line;
+        for(const auto &name : get_parameter_names()) { value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name))); }
+        tools::log->info(value_line);
+    }
+};
+
 class h5tb_ising_tf_rf {
     public:
     struct table {

@@ -380,8 +380,9 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     if(status.variance_mpo_converged_for > 0 and status.spin_parity_has_converged) return; // No need
     size_t iter_since_last_projection = std::max(projected_iter, status.iter) - projected_iter;
 
-    bool project_on_spin_saturation = not status.spin_parity_has_converged and iter_since_last_projection >= 2;
-    bool project_on_var_saturation  = settings::strategy::project_on_saturation > 0 and
+    bool project_on_spin_saturation =
+        settings::strategy::project_on_saturation > 0 and not status.spin_parity_has_converged and iter_since_last_projection >= 2;
+    bool project_on_var_saturation = settings::strategy::project_on_saturation > 0 and
                                      iter_since_last_projection > settings::strategy::project_on_saturation and status.algorithm_saturated_for > 0;
     bool project_on_every_iter   = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection > settings::strategy::project_on_every_iter;
     bool project_to_given_sector = target_sector.has_value();
@@ -643,14 +644,15 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
     if(sector_is_valid) {
         auto axis                        = tools::finite::mps::init::get_axis(settings::strategy::target_sector);
         auto sign                        = tools::finite::mps::init::get_sign(settings::strategy::target_sector);
+        auto spin_components             = tools::finite::measure::spin_components(*tensors.state);
         auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
         status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;
         if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
-            tools::log->warn("Spin component has converged to {} = {:.16f} but requested sector was {}", axis, spin_component_along_axis, target_sector);
+            tools::log->warn("Spin component {} has converged: {:.16f} but requested sector was {}", axis, fmt::join(spin_components, ", "), target_sector);
         if(not status.spin_parity_has_converged) {
-            tools::log->info("Spin component not converged: {} = {:.16f} | threshold {:8.2e}", target_sector, spin_component_along_axis, threshold);
+            tools::log->info("Spin component {} not converged: {:.16f} | threshold {:8.2e}", target_sector, fmt::join(spin_components, ", "), threshold);
         } else {
-            tools::log->debug("Spin component converged: {} = {:.16f} | threshold {:8.2e}", target_sector, spin_component_along_axis, threshold);
+            tools::log->debug("Spin component {} has converged: {:.16f} | threshold {:8.2e}", target_sector, fmt::join(spin_components, ", "), threshold);
         }
     } else
         status.spin_parity_has_converged = true; // Probably no sector was specified

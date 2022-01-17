@@ -126,6 +126,11 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::ising_sdual::parity_sep"               , model::ising_sdual::parity_sep);
     dmrg_config.load_parameter("model::ising_sdual::distribution"             , model::ising_sdual::distribution);
     dmrg_config.load_parameter("model::ising_sdual::spin_dim"                 , model::ising_sdual::spin_dim);
+    dmrg_config.load_parameter("model::ising_majorana::delta"                 , model::ising_majorana::delta);
+    dmrg_config.load_parameter("model::ising_majorana::g"                     , model::ising_majorana::g);
+    dmrg_config.load_parameter("model::ising_majorana::parity_sep"            , model::ising_majorana::parity_sep);
+    dmrg_config.load_parameter("model::ising_majorana::distribution"          , model::ising_majorana::distribution);
+    dmrg_config.load_parameter("model::ising_majorana::spin_dim"              , model::ising_majorana::spin_dim);
     dmrg_config.load_parameter("model::lbit::J1_mean"                         , model::lbit::J1_mean);
     dmrg_config.load_parameter("model::lbit::J2_mean"                         , model::lbit::J2_mean);
     dmrg_config.load_parameter("model::lbit::J3_mean"                         , model::lbit::J3_mean);
@@ -140,6 +145,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
+    dmrg_config.load_parameter("strategy::krylov_opt_grad_fix"                , strategy::krylov_opt_grad_fix);
     dmrg_config.load_parameter("strategy::krylov_opt_when_stuck"              , strategy::krylov_opt_when_stuck);
     dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
     dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);

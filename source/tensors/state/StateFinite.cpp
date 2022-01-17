@@ -254,7 +254,7 @@ void StateFinite::assert_validity() const {
     }
 
     for(const auto &mps : mps_sites) mps->assert_validity();
-    if(settings::model::model_type == ModelType::ising_sdual) {
+    if(settings::model::model_type == ModelType::ising_sdual or settings::model::model_type == ModelType::ising_majorana) {
         for(const auto &mps : mps_sites)
             if(not mps->is_real()) throw except::runtime_error("state has imaginary part at mps position {}", mps->get_position());
     }

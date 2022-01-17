@@ -13,7 +13,7 @@ enum class MultisiteMove { ONE, MID, MAX };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
 enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
 enum class GateMove { OFF, ON, AUTO };
-enum class ModelType { ising_tf_rf, ising_sdual, lbit };
+enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, FES_ANALYSIS };
@@ -211,6 +211,7 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
         if(item == ModelType::ising_sdual)                              return "ising_sdual";
+        if(item == ModelType::ising_majorana)                           return "ising_majorana";
         if(item == ModelType::lbit)                                     return "lbit";
     }
     if constexpr(std::is_same_v<T, EdgeStatus>) {
@@ -504,6 +505,7 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;
         if(item == "ising_sdual")                           return ModelType::ising_sdual;
+        if(item == "ising_majorana")                        return ModelType::ising_majorana;
         if(item == "lbit")                                  return ModelType::lbit;
     }
     if constexpr(std::is_same_v<T, EdgeStatus>) {
@@ -712,4 +714,4 @@ constexpr auto mapEnum2Str(Args... enums) {
     return enumarray_t<T, num>{pairgen(enums)...};
 }
 
-inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::lbit);
+inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::ising_majorana, ModelType::lbit);

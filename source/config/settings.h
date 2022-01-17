@@ -115,7 +115,7 @@ namespace settings {
 
     /*! \namespace settings::model Settings for the Hamiltonian spin-model */
     namespace model {
-        inline ModelType    model_type = ModelType::ising_tf_rf;   /*!< Choice of model type: {ising_tf_rf_nn, ising_selfdual_tf_rf_nn}  */
+        inline ModelType    model_type = ModelType::ising_tf_rf;   /*!< Choice of model: {ising_tf_rf,ising_sdual, ising_majorana, lbit} */
         inline size_t       model_size = 16;                       /*!< Number of sites on the chain. Only relevant for finite algorithms: fDMRG and xDMRG */
 
         /*! \namespace settings::model::ising_tf_rf Settings for the Transverse-field Ising model with a random on-site field */
@@ -140,6 +140,15 @@ namespace settings {
             inline std::string  distribution  = "lognormal";    /*!< Random distribution for couplings and fields */
         }
 
+        /*! \namespace settings::model::ising_majorana Settings for the Ising-Majorana model */
+        namespace ising_majorana {
+            inline double       g             = 0;              /*!< Interaction parameter for nearest ZZ and next-nearest XX neighbor coupling */
+            inline double       delta         = 0;              /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing delta = 2lnW, W = J_boxw = 1/h_boxw */
+            inline bool         parity_sep    = false;          /*!< Separation of +-X parity sectors */
+            inline long         spin_dim      = 2;              /*!< Spin dimension */
+            inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
+        }
+
         /*! \namespace settings::model::lbit Settings for the l-bit Hamiltonian */
         namespace lbit {
             inline double       J1_mean       = 0;              /*!< Constant offset for on-site */
@@ -159,6 +168,7 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
+        inline bool          krylov_opt_grad_fix        = true;                                   /*!< Use the krylov optimizer for (H-E/L)² when L-BFGS returns with bad gradient (works well on ill-conditioned problems) */
         inline bool          krylov_opt_when_stuck      = true;                                   /*!< Try finding the SM eigenpair of (H-E/L)² using arpack when stuck (takes longer, but gives good results) */
         inline bool          chi_quench_when_stuck      = false;                                  /*!< Reduce chi for a few iterations when stuck and increasing bond dimension would not help */
         inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */

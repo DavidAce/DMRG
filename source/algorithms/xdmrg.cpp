@@ -414,7 +414,7 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
         c2.optSpace = OptSpace::DIRECT;
         c2.retry    = false;
         configs.emplace_back(c2);
-    } else if(c1.optSpace == OptSpace::DIRECT) {
+    } else if(c1.optSpace == OptSpace::DIRECT and settings::strategy::krylov_opt_grad_fix) {
         // If we did a DIRECT optimization that terminated with gradient too high, try KRYLOV
         c2.optWhen  = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         c2.optSpace = OptSpace::KRYLOV;
