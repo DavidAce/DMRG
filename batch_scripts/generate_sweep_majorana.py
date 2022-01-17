@@ -34,8 +34,6 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
     str_L = str(val_L)
     str_d = "{:+.4f}".format(val_d)
     str_g = "{:.4f}".format(val_g)
-    str_j = "{:.6f}".format(val_j)
-    str_h = "{:.6f}".format(val_h)
 
     extra_prefix       = ""
     if len(initial_state) > 1:
