@@ -268,9 +268,9 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
         // If chi_lim >= 128 we set it to the nearest power of 2 smaller than chi_lim. Eg 300 becomes 256.
         // If chi_lim < 128 and chi_lim > 64 we set chi_lim = 64
         // If chi_lim <  128 we set it to the nearest multiple of 8 smaller than chi_lim. Eg 92 becomes 88.
-        // If chi_lim == 8 we set AlgorithmStop::SUCCEEDED and return
+        // If chi_lim == 8 we set AlgorithmStop::SUCCESS and return
         if(status.chi_lim <= 8)
-            status.algo_stop = AlgorithmStop::SUCCEEDED;
+            status.algo_stop = AlgorithmStop::SUCCESS;
         else if(status.chi_lim <= 64)
             status.chi_lim = num::prev_multiple<long>(status.chi_lim, 8l);
         else if(status.chi_lim == std::clamp<long>(status.chi_lim, 65, 127))
@@ -380,11 +380,14 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     if(status.variance_mpo_converged_for > 0 and status.spin_parity_has_converged) return; // No need
     size_t iter_since_last_projection = std::max(projected_iter, status.iter) - projected_iter;
 
-    bool project_on_spin_saturation =
-        settings::strategy::project_on_saturation > 0 and not status.spin_parity_has_converged and iter_since_last_projection >= 2;
-    bool project_on_var_saturation = settings::strategy::project_on_saturation > 0 and
-                                     iter_since_last_projection > settings::strategy::project_on_saturation and status.algorithm_saturated_for > 0;
-    bool project_on_every_iter   = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection > settings::strategy::project_on_every_iter;
+    bool project_on_spin_saturation = settings::strategy::project_on_saturation > 0 and not status.spin_parity_has_converged and
+                                      iter_since_last_projection > settings::strategy::project_on_saturation;
+
+    bool project_on_var_saturation = settings::strategy::project_on_saturation > 0 and status.algorithm_saturated_for > 0 and
+                                     iter_since_last_projection > settings::strategy::project_on_saturation;
+
+    bool project_on_every_iter = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection > settings::strategy::project_on_every_iter;
+
     bool project_to_given_sector = target_sector.has_value();
 
     if(project_on_every_iter or project_on_var_saturation or project_to_given_sector or project_on_spin_saturation) {
@@ -788,13 +791,13 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Bond dimension maximum χmax        = {}", settings::chi_lim_max(status.algo_type));
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
-    tools::log->info("Entanglement entropies Sₑ          = {:.5f}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
-    tools::log->info("Entanglement entropy   Sₑ (mid)    = {:.5f}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state), ", ");
+    tools::log->info("Entanglement entropies Sₑ          = {:8.2e}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
+    tools::log->info("Entanglement entropy   Sₑ (mid)    = {:8.2e}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state), ", ");
     if(status.algo_type == AlgorithmType::fLBIT) {
-        tools::log->info("Number entropies Sₙ                = {:.5f}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
-        tools::log->info("Number entropy   Sₙ (mid)          = {:.5f}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
+        tools::log->info("Number entropies Sₙ                = {:8.2e}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
+        tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
-    tools::log->info("Spin components                    = {:.5f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("Spin components                    = {:8.2e}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);

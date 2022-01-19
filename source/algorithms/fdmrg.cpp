@@ -152,12 +152,13 @@ void fdmrg::single_fdmrg_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    auto                  t_step = tid::tic_scope("step");
-    OptConf               conf(ritz);
+    auto    t_step = tid::tic_scope("step");
+    OptConf conf(ritz);
+    if(tensors.is_real()) conf.optType = OptType::REAL; // Can do everything in real mode if the model is real
     std::optional<double> alpha_expansion = std::nullopt;
 
-    tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {}", status.iter, status.step, status.position, status.direction,
-                      enum2sv(ritz));
+    tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
+                      enum2sv(ritz), enum2sv(conf.optType));
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_size_def);
 
     if(not tensors.active_sites.empty()) {
