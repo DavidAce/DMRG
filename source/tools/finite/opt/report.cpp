@@ -164,7 +164,7 @@ void tools::finite::opt::reports::eigs_add_entry(long nev, double max_olap, doub
 
 void tools::finite::opt::reports::krylov_add_entry(const opt_mps &mps) {
     if(tools::log->level() > spdlog::level::debug) return;
-    std::string description = fmt::format("krylov {:<24}", mps.get_name());
+    std::string description = fmt::format("{:<24}", mps.get_name());
     krylov_log.push_back(krylov_entry{description, std::string(mps.get_krylov_ritz()), mps.get_tensor().size(), mps.get_krylov_idx(), mps.get_krylov_nev(),
                                       mps.get_krylov_ncv(), mps.get_energy_per_site(), mps.get_krylov_eigval(), mps.get_variance(), mps.get_overlap(),
                                       mps.get_norm(), mps.get_krylov_tol(), mps.get_krylov_resid(), mps.get_max_grad(), mps.get_iter(), mps.get_mv(),
