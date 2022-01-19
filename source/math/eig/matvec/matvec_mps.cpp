@@ -5,6 +5,15 @@
 #include <tid/tid.h>
 #include <tools/common/contraction.h>
 
+namespace eig {
+
+#ifdef NDEBUG
+    inline constexpr bool debug = false;
+#else
+    inline constexpr bool debug = true;
+#endif
+}
+
 // template<typename Scalar_>
 // MatVecMps<Scalar_>::~MatVecMps() noexcept = default;
 
@@ -20,6 +29,11 @@ MatVecMps<Scalar_>::MatVecMps(const Eigen::Tensor<T, 3> &envL_, /*!< The left bl
         envR = envR_;
     } else if constexpr(std::is_same_v<Scalar_, eig::real> and std::is_same_v<T, eig::cplx>) {
         // This should only be done if we know for a fact that there is no imaginary component.
+        if constexpr(eig::debug) {
+            if(not tenx::isReal(mpo_)) throw std::runtime_error("mpo is not real");
+            if(not tenx::isReal(envL_)) throw std::runtime_error("envL is not real");
+            if(not tenx::isReal(envR_)) throw std::runtime_error("envR is not real");
+        }
         mpo  = mpo_.real();
         envL = envL_.real();
         envR = envR_.real();
@@ -187,9 +201,10 @@ template<typename T>
 void MatVecMps<T>::compress() {
     if(readyCompress) return;
     svd::settings svd_settings;
-    svd_settings.svd_lib    = SVDLib::lapacke;
-    svd_settings.use_bdc    = false;
+    svd_settings.svd_lib        = SVDLib::lapacke;
+    svd_settings.use_bdc        = false;
     svd_settings.threshold      = 1e-12;
+    svd_settings.threshold_tr   = 1e-12;
     svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
 
@@ -291,6 +306,22 @@ std::array<long, 3> MatVecMps<Scalar>::get_shape_envL() const {
 template<typename Scalar>
 std::array<long, 3> MatVecMps<Scalar>::get_shape_envR() const {
     return envR.dimensions();
+}
+template<typename Scalar>
+Eigen::Tensor<Scalar, 6> MatVecMps<Scalar>::get_tensor() const {
+    auto                     d0 = shape_mps[0];
+    auto                     d1 = shape_mps[1];
+    auto                     d2 = shape_mps[2];
+    Eigen::Tensor<Scalar, 6> tensor;
+    tensor.resize(tenx::array6{d0, d1, d2, d0, d1, d2});
+    tensor.device(tenx::omp::getDevice()) =
+        get_envL().contract(get_mpo(), tenx::idx({2}, {0})).contract(get_envR(), tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
+    return tensor;
+}
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 2> MatVecMps<Scalar>::get_matrix() const {
+    return get_tensor().reshape(tenx::array2{rows(), cols()});
 }
 
 template<typename Scalar>

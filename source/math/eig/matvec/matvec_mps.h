@@ -67,11 +67,10 @@ class MatVecMps {
     void set_side(eig::Side side_);
 
     template<typename T = eig::cplx>
-    [[nodiscard]] T         get_shift() const;
-    [[nodiscard]] eig::Form get_form() const;
-    [[nodiscard]] eig::Side get_side() const;
-    [[nodiscard]] eig::Type get_type() const;
-
+    [[nodiscard]] T                               get_shift() const;
+    [[nodiscard]] eig::Form                       get_form() const;
+    [[nodiscard]] eig::Side                       get_side() const;
+    [[nodiscard]] eig::Type                       get_type() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &get_mpo() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_envL() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_envR() const;
@@ -79,6 +78,8 @@ class MatVecMps {
     [[nodiscard]] std::array<long, 4>             get_shape_mpo() const;
     [[nodiscard]] std::array<long, 3>             get_shape_envL() const;
     [[nodiscard]] std::array<long, 3>             get_shape_envR() const;
+    [[nodiscard]] Eigen::Tensor<Scalar, 6>        get_tensor() const;
+    [[nodiscard]] Eigen::Tensor<Scalar, 2>        get_matrix() const;
 
     [[nodiscard]] bool isReadyFactorOp() const;
     [[nodiscard]] bool isReadyShift() const;
