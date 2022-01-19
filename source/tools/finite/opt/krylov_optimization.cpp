@@ -1,6 +1,7 @@
 
 #include "../opt_meta.h"
 #include "../opt_mps.h"
+#include "math/num.h"
 #include "opt-internal.h"
 #include "report.h"
 #include <algorithms/AlgorithmStatus.h>
@@ -23,14 +24,32 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                                                             std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only) {
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-        auto eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
-        auto eigvals = eig::view::get_eigvals<real>(solver.result, converged_only);
-        if(eigvecs.cols() == eigvals.size()) {
+        auto eigvecs  = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
+        auto eigvals  = eig::view::get_eigvals<real>(solver.result, converged_only);
+        bool fulldiag = eigvecs.rows() == eigvals.size(); /* Detects full diag*/
+        if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
             double overlap_sq_sum = 0;
-            for(long idx = 0; idx < eigvals.size(); idx++) {
+            size_t num_solutions  = 0;
+            auto   indices        = num::range<long>(0, eigvals.size());
+
+            if(meta.optRitz == OptRitz::LR)
+                std::reverse(indices.begin(), indices.end()); // Eigenvalues are normally sorted small to large, so we reverse when looking for large.
+            for(const auto &idx : indices) {
                 // It's important to normalize the eigenvectors - they are not always well normalized when we get them from the eig::solver
                 auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), dims_mps);
-                auto overlap  = std::abs(initial_mps.get_vector().dot(eigvecs.col(idx)));
+                auto overlap  = std::abs(initial_mps.get_vector().dot(tenx::VectorMap(eigvec_i)));
+                // TODO: UNCOMMENT
+                if(fulldiag) {
+                    // When doing full diagonalization, getting all the solutions is costly, and we basically never need them all. Let's instead break after a
+                    // small number of solutions
+                    //                    if(overlap < 1e-15) continue;
+                    //                    if(overlap_sq_sum < 1e-15) continue;
+                    if(overlap_sq_sum > 0.9999 /* 0.5 */ and num_solutions > 1) break;
+                }
+                overlap_sq_sum += overlap * overlap; // Sum up the contributions. Since full diag gives an orthonormal basis, this adds up to one. Normally only
+                                                     // a few eigenvectors contribute to most of the sum.
+                num_solutions++;                     // Count the number of solutions added
+
                 auto energy   = tools::finite::measure::energy(eigvec_i, tensors);
                 auto eigval   = energy - initial_mps.get_energy_reduced();
                 auto variance = tools::finite::measure::energy_variance(eigvec_i, tensors);
@@ -53,13 +72,6 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                 mps.set_optmode(meta.optMode);
                 mps.set_optspace(meta.optSpace);
                 if(not solver.result.meta.residual_norms.empty()) mps.set_krylov_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx)));
-
-                // When doing full diagonalization, getting all the solutions is costly, and we basically never need them all. Let's instead break after a small
-                // number of solutions
-                if(eigvals.size() == eigvecs.rows() /* Detects full diag*/) {
-                    overlap_sq_sum += overlap * overlap;
-                    if(overlap_sq_sum > 0.5) break;
-                }
             }
         }
     }
