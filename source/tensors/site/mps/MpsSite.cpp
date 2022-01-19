@@ -73,7 +73,7 @@ bool MpsSite::has_LC() const { return LC.has_value(); }
 Eigen::DSizes<long, 3> MpsSite::dimensions() const { return Eigen::DSizes<long, 3>{spin_dim(), get_chiL(), get_chiR()}; }
 
 bool MpsSite::is_real() const { return tenx::isReal(get_M_bare()) and tenx::isReal(get_L()); }
-bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) and tenx::hasNaN(get_L()); }
+bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) or tenx::hasNaN(get_L()); }
 void MpsSite::assert_validity() const {
     if(has_nan()) throw std::runtime_error(fmt::format("MpsSite::assert_validity(): MPS (M or L) at position {} has NaN's", get_position()));
     assert_dimensions();
