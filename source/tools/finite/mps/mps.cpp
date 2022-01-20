@@ -28,6 +28,9 @@ namespace settings {
 bool tools::finite::mps::init::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and init::used_bitfields.count(bitfield.value()) == 0;
 }
+bool tools::finite::mps::init::axis_is_valid(std::string_view sector) {
+    return std::find(valid_axis_str.begin(), valid_axis_str.end(), sector) != valid_axis_str.end();
+}
 
 size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, long chi_lim, std::optional<svd::settings> svd_settings) {
     auto t_move = tid::tic_scope("move");
@@ -363,8 +366,10 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         throw std::logic_error(fmt::format("Center position mismatch {} ! {}\nLabels: {}", current_position, center_position, state.get_labels()));
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
+
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
+        state.assert_validity();
         for(auto &pos : sites) state.get_mps_site(pos).assert_identity();
     }
     return moves;
@@ -374,6 +379,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
     // When a state needs to be normalized it's enough to "move" the center position around the whole chain.
     // Each move performs an SVD decomposition which leaves unitaries behind, effectively normalizing the state.
     // NOTE! It IS important to start with the current position.
+
     if(norm_policy == NormPolicy::IFNEEDED) {
         // We may only go ahead with a normalization if its really needed.
         auto norm = tools::finite::measure::norm(state);
@@ -418,7 +424,6 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
         }
         throw std::runtime_error(fmt::format("Norm too far from unity: {:.16f} | max allowed norm error {}", norm, settings::precision::max_norm_error));
     }
-    state.assert_validity();
     return true;
 }
 

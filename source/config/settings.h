@@ -190,11 +190,11 @@ namespace settings {
         inline size_t        multisite_mps_size_def     = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_size_max     = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_step         = MultisiteMove::MAX;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline std::string   target_sector              = "none";                                 /*!< Find an eigenstate in this parity sector. Choose between [random,randomAxis, none, x,+x,-x, y, +y,-y, z,+z,-z]  */
+        inline std::string   initial_sector             = "random";                               /*!< Initialize state in this spin pattern/parity sector. Choose between [random, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline StateInitType initial_type               = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit     initial_state              = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states           = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
-        inline std::string   target_sector              = "x";                                    /*!< Find an eigenstate in this parity sector. Choose between {x,+x,-x, y, +y,-y, z,+z,-z, randomAxis,random,none}  */
-
 }
 
 

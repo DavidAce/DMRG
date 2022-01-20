@@ -329,7 +329,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
     if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
-    if(not sector) sector = settings::strategy::target_sector;
+    if(not sector) sector = settings::strategy::initial_sector;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
@@ -339,6 +339,9 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
     }
     if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}", chi_lim.value()));
+    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
+                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type.value()), sector.value(), use_eigenspinors.value(), bitfield.value());
+
     svd::settings svd_settings;
     svd_settings.threshold = svd_threshold;
     tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_settings);

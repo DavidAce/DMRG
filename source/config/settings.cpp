@@ -168,6 +168,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::multisite_mps_size_max"             , strategy::multisite_mps_size_max);
     dmrg_config.load_parameter("strategy::multisite_mps_step"                 , strategy::multisite_mps_step);
     dmrg_config.load_parameter("strategy::target_sector"                      , strategy::target_sector);
+    dmrg_config.load_parameter("strategy::initial_sector"                     , strategy::initial_sector);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
     dmrg_config.load_parameter("strategy::secondary_states"                   , strategy::secondary_states);

@@ -1,6 +1,7 @@
 #include "../mps.h"
 #include <bitset>
 #include <config/settings.h>
+#include <debug/exceptions.h>
 #include <math/num.h>
 #include <math/rnd.h>
 #include <math/tenx.h>
@@ -20,9 +21,8 @@ int tools::finite::mps::init::get_sign(std::string_view sector) {
 }
 
 std::string_view tools::finite::mps::init::get_axis(std::string_view sector) {
-    constexpr std::array<std::string_view, 9> valid_axis_str = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
-    bool                                      axis_is_valid  = std::find(valid_axis_str.begin(), valid_axis_str.end(), sector) != valid_axis_str.end();
-    if(not axis_is_valid) throw std::runtime_error(fmt::format("Could not extract valid axis from sector string [{}]. Choose one of (+-) x,y or z.", sector));
+    if(not init::axis_is_valid(sector))
+        throw std::runtime_error(fmt::format("Could not extract valid axis from sector string [{}]. Choose one of (+-) x,y or z.", sector));
     int sign = get_sign(sector);
     if(sign == 0) {
         return sector.substr(0, 1);
@@ -58,43 +58,48 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
  * There are many ways to generate an initial product state based on the
  * arguments (sector,use_eigenspinors, bitfield) = (string,long, optional<bool> ).
  * Let
- *      * sector="+-axis" mean one of {"x","+x","-x","y","+y","-y","z","+z","-z"},
- *                        where the sign on an axis implies the global spin parity.
+ *      * sector="axis"   means one of {"x","+x","-x","y","+y","-y","z","+z","-z"},
+ *                        where the sign on an axis implies the global spin parity
+ *                        sector. When the sign is present, the last spin is chosen
+ *                        to end up in the correct sector.
  *                        In addition, sector can be defined as {"none", "random"}.
+ *      * use_eigenspinors = true selects either |up> or |down> randomly on each site (rather than a mixture).
  *      * bitfield is only enabled if it is a non-negative number. The bits in this number are interpreted as [up/down].
  * Then
  *
- *       a) ("none", ignored, ignored)        Does not randomize.
- *       b) ("random" , ignored , ignored)    Set each spinor randomly on C2
- *       c) ("axis", ignored, enabled)        Interpret seed_state as bitfield "01100010110..." and interpret these as
+ *       a) ("random" , ignored , ignored)    Set each spinor randomly on C2 (or R2 if type == REAL)
+ *       b) ("axis", ignored, enabled)        Interpret seed_state as bitfield "01100010110..." and interpret these as
  *                                            up(0)/down(1) eigenspinors of the pauli matrix corresponding to "axis".
  *                                            Note that the axis sign is ignored.
  *                                            Note that the bitfield is used only once. Subsequent calls with the same bitfield
  *                                            will verert to case
- *       d) ("+-axis", true, disabled)        Set each |spinor> = a|up> + (1-a)|down>, where a is either 0 or 1 with 50% probability,
+ *       c) ("axis", true, disabled)          Set each |spinor> = |up> or |down> with 50% probability,
  *                                            and |up/down> are eigenspinors of the pauli matrix specified in "axis". If the global
  *                                            sign (+-) is omitted, a random sign is chosen with equal probabilities. In the x and
  *                                            z cases the global state becomes entirely real, which improves performance.
- *       e) ("axis", false, disabled)         Set each |spinor> = a|up> + b|down>, where a and b are random,
+ *       d) ("axis", false, disabled)         Set each |spinor> = a|up> + b|down>, where a and b are random,
  *                                            real and normalized weights, and |up/down> are eigenspinors of the pauli matrix
  *                                            specified in "axis". Note that the axis sign is ignored.
+
 
  * Note: we "use" the bitfield only once. Subsequent calls do not keep resetting the seed.
 */
 {
-    if(sector == "none") return; // a)
     tools::log->info("Setting random product state of type {} in sector {}", enum2sv(type), sector);
     state.clear_measurements();
     state.clear_cache();
+    auto axis_valid = axis_is_valid(sector);
     if(sector == "random") {
-        init::set_random_product_state_with_random_spinors(state, type); // b)
-    } else if(init::bitfield_is_valid(bitfield)) {
-        init::set_random_product_state_on_axis_using_bitfield(state, type, sector, bitfield.value()); // c)
+        init::set_random_product_state_with_random_spinors(state, type); // a)
+    } else if(init::bitfield_is_valid(bitfield) and axis_valid) {
+        init::set_random_product_state_on_axis_using_bitfield(state, type, sector, bitfield.value()); // b)
         init::used_bitfields.insert(bitfield.value());
-    } else if(use_eigenspinors) {
-        init::set_random_product_state_in_sector_using_eigenspinors(state, type, sector); // d)
+    } else if(use_eigenspinors and axis_valid) {
+        init::set_random_product_state_in_sector_using_eigenspinors(state, type, sector); // c)
+    } else if(axis_valid) {
+        init::set_random_product_state_on_axis(state, type, sector); // d)
     } else {
-        init::set_random_product_state_on_axis(state, type, sector); // e)
+        throw except::runtime_error("Expected initial sector string: \"random\"|{}. Got \"{}\"", init::valid_axis_str, sector);
     }
 }
 
