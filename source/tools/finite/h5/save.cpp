@@ -328,7 +328,11 @@ namespace tools::finite::h5 {
         auto save_point = std::make_pair(status.iter, status.step);
 
         if(save_log[data_path] != save_point or status.step == 0) {
-            auto layout = static_cast<H5D_layout_t>(decide_layout(data_path));
+            H5D_layout_t layout;
+            if constexpr(std::is_scalar_v<T>)
+                layout = H5D_layout_t::H5D_COMPACT;
+            else
+                layout = H5D_layout_t::H5D_CHUNKED;
             h5file.writeDataset(data, data_path, layout);
             h5file.writeAttribute(status.iter, "iter", data_path);
             h5file.writeAttribute(status.step, "step", data_path);
