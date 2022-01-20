@@ -62,8 +62,8 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
         "strategy::multisite_mps_size_def"   : str(multisite_mps_size_def[0]),
         "strategy::multisite_mps_size_max"   : str(multi),
         "strategy::initial_state"            : str(init),
-        "strategy::initial_sector"           : str(initial_sector)
-        "strategy::target_sector"            : str(target_sector)
+        "strategy::initial_sector"           : str(initial_sector),
+        "strategy::target_sector"            : str(target_sector),
     }
     os.makedirs(location + extra_prefix, exist_ok=True)
     num_total = num_total + 1
