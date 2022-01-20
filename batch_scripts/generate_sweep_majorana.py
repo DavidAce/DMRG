@@ -16,6 +16,8 @@ sites               = np.array([10])
 gs                  = [0.5]
 deltas              = [-8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
+initial_sector      = "random"
+target_sector       = "none"
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
 output_prefix       = "output"
@@ -60,6 +62,8 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
         "strategy::multisite_mps_size_def"   : str(multisite_mps_size_def[0]),
         "strategy::multisite_mps_size_max"   : str(multi),
         "strategy::initial_state"            : str(init),
+        "strategy::initial_sector"           : str(initial_sector)
+        "strategy::target_sector"            : str(target_sector)
     }
     os.makedirs(location + extra_prefix, exist_ok=True)
     num_total = num_total + 1
