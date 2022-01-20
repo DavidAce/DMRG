@@ -18,6 +18,7 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/print.h>
+#include <math/tenx/span.h>
 
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
@@ -320,7 +321,6 @@ void AlgorithmFinite::randomize_model() {
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
                                       std::optional<long> chi_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
                                       std::optional<double> svd_threshold) {
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}]", tensors.state->get_name(), enum2sv(state_init), enum2sv(reason));
     auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -395,6 +395,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
     if(project_on_every_iter or project_on_var_saturation or project_to_given_sector or project_on_spin_saturation) {
         if(not target_sector) target_sector = settings::strategy::target_sector;
+        if(not tools::finite::mps::init::axis_is_valid(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
         std::string msg;
         if(project_on_spin_saturation) msg += " | spin component has not converged";
         if(project_on_var_saturation) msg += fmt::format(" | run every {} iter on variance saturation", settings::strategy::project_on_saturation);
@@ -765,7 +766,7 @@ void AlgorithmFinite::print_status_update() {
 }
 
 void AlgorithmFinite::print_status_full() {
-    tensors.do_all_measurements();
+    tensors.redo_all_measurements();
     tools::log->info("{:=^60}", "");
     tools::log->info("= {: ^56} =", fmt::format("Full status [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("{:=^60}", "");
@@ -800,7 +801,19 @@ void AlgorithmFinite::print_status_full() {
         tools::log->info("Number entropies Sₙ                = {:8.2e}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
         tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
-    tools::log->info("Spin components                    = {:8.2e}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("Spin components (global X,Y,Z)     = {:8.2e}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+
+    tools::finite::measure::expectation_values_xyz(*tensors.state);
+    tools::finite::measure::correlation_matrix_xyz(*tensors.state);
+    tools::finite::measure::structure_factors_xyz(*tensors.state);
+
+    tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}", fmt::join(tenx::span(tensors.state->measurements.expectation_values_sx.value()), ", "));
+    tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}", fmt::join(tenx::span(tensors.state->measurements.expectation_values_sy.value()), ", "));
+    tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}", fmt::join(tenx::span(tensors.state->measurements.expectation_values_sz.value()), ", "));
+    tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_x.value());
+    tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_y.value());
+    tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_z.value());
+
     tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);
@@ -814,4 +827,5 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Sₑ                                 = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for,
                      status.entanglement_saturated_for);
     tools::log->info("{:=^60}", "");
+    exit(0); // TODO: REMOVE
 }
