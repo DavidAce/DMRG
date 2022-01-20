@@ -101,6 +101,19 @@ namespace tools::finite::h5 {
         save_log[table_path] = save_point;
     }
 
+    void save::expectations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                            const AlgorithmStatus &status) {
+        if(storage_level <= StorageLevel::LIGHT) return;
+        if(status.algo_type != AlgorithmType::xDMRG) return;
+        auto t_hdf = tid::tic_scope("expectations", tid::level::detail);
+        tools::finite::measure::expectation_values_xyz(state);
+        tools::log->trace("Saving expectations to {}", state_prefix);
+        /* clang-format off */
+        if(state.measurements.expectation_values_sx) save::data(h5file, state.measurements.expectation_values_sx.value(), "expectation_values_sx", state_prefix, storage_level, status);
+        if(state.measurements.expectation_values_sy) save::data(h5file, state.measurements.expectation_values_sy.value(), "expectation_values_sy", state_prefix, storage_level, status);
+        if(state.measurements.expectation_values_sz) save::data(h5file, state.measurements.expectation_values_sz.value(), "expectation_values_sz", state_prefix, storage_level, status);
+        /* clang-format on */
+    }
     void save::correlations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                             const AlgorithmStatus &status) {
         if(storage_level <= StorageLevel::LIGHT) return;
@@ -114,17 +127,17 @@ namespace tools::finite::h5 {
         if(state.measurements.correlation_matrix_sz) save::data(h5file, state.measurements.correlation_matrix_sz.value(), "correlation_matrix_sz", state_prefix, storage_level, status);
         /* clang-format on */
     }
-    void save::expectations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const AlgorithmStatus &status) {
+    void save::structure_factors(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                                 const AlgorithmStatus &status) {
         if(storage_level <= StorageLevel::LIGHT) return;
         if(status.algo_type != AlgorithmType::xDMRG) return;
-        auto t_hdf = tid::tic_scope("expectations", tid::level::detail);
-        tools::finite::measure::expectation_values_xyz(state);
-        tools::log->trace("Saving expectations to {}", state_prefix);
+        auto t_hdf = tid::tic_scope("correlations", tid::level::detail);
+        tools::finite::measure::structure_factors_xyz(state);
+        tools::log->trace("Saving structure factors to {}", state_prefix);
         /* clang-format off */
-        if(state.measurements.expectation_values_sx) save::data(h5file, state.measurements.expectation_values_sx.value(), "expectation_values_sx", state_prefix, storage_level, status);
-        if(state.measurements.expectation_values_sy) save::data(h5file, state.measurements.expectation_values_sy.value(), "expectation_values_sy", state_prefix, storage_level, status);
-        if(state.measurements.expectation_values_sz) save::data(h5file, state.measurements.expectation_values_sz.value(), "expectation_values_sz", state_prefix, storage_level, status);
+        if(state.measurements.structure_factor_x) save::data(h5file, state.measurements.structure_factor_x.value(), "structure_factor_x", state_prefix, storage_level, status);
+        if(state.measurements.structure_factor_y) save::data(h5file, state.measurements.structure_factor_y.value(), "structure_factor_y", state_prefix, storage_level, status);
+        if(state.measurements.structure_factor_z) save::data(h5file, state.measurements.structure_factor_z.value(), "structure_factor_z", state_prefix, storage_level, status);
         /* clang-format on */
     }
 
@@ -532,8 +545,9 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
         } else {
             tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
-            tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
             tools::finite::h5::save::expectations(h5file, state_prefix, storage_level, state, status);
+            tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
+            tools::finite::h5::save::structure_factors(h5file, state_prefix, storage_level, state, status);
         }
 
         tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),

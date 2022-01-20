@@ -123,6 +123,8 @@ namespace tools::finite::measure {
     [[nodiscard]] extern Eigen::Tensor<double, 2> correlation_matrix     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
                   extern void                     expectation_values_xyz (const StateFinite & state);
                   extern void                     correlation_matrix_xyz (const StateFinite & state);
+    [[nodiscard]] extern double                   structure_factor       (const StateFinite &state, const Eigen::Tensor<double, 2> &correlation_matrix);
+                  extern void                     structure_factors_xyz  (const StateFinite &state);
 
 }
 

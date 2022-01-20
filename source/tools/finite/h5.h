@@ -55,8 +55,9 @@ namespace tools::finite::h5 {
         extern void model     (h5pp::File & h5file, std::string_view  model_prefix, const StorageLevel & storage_level, const ModelFinite & model);
         extern void mpo       (h5pp::File & h5file, std::string_view  model_prefix, const StorageLevel & storage_level, const ModelFinite & model);
 
-        extern void correlations (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void expectations (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
+        extern void correlations (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
+        extern void structure_factors (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
 
         extern void measurements        (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const TensorsFinite & tensors, const AlgorithmStatus & status);
         extern void measurements        (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, const AlgorithmStatus & status);

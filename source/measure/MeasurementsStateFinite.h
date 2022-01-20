@@ -27,4 +27,7 @@ struct MeasurementsStateFinite {
     std::optional<Eigen::Tensor<double, 2>> correlation_matrix_sx         = std::nullopt;
     std::optional<Eigen::Tensor<double, 2>> correlation_matrix_sy         = std::nullopt;
     std::optional<Eigen::Tensor<double, 2>> correlation_matrix_sz         = std::nullopt;
+    std::optional<double>                   structure_factor_x            = std::nullopt;
+    std::optional<double>                   structure_factor_y            = std::nullopt;
+    std::optional<double>                   structure_factor_z            = std::nullopt;
 };

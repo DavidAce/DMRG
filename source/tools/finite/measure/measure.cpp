@@ -28,6 +28,7 @@ void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     tensors.measurements.energy_per_site          = measure::energy_per_site(tensors);
     tensors.measurements.energy_variance          = measure::energy_variance(tensors);
     tensors.measurements.energy_variance_per_site = measure::energy_variance_per_site(tensors);
+    do_all_measurements(*tensors.state);
 }
 
 void tools::finite::measure::do_all_measurements(const StateFinite &state) {
@@ -52,8 +53,11 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
     state.measurements.renyi_inf       = measure::renyi_entropies(state, std::numeric_limits<double>::infinity());
     state.measurements.spin_components = measure::spin_components(state);
 
-    if(state.get_algorithm() == AlgorithmType::xDMRG) correlation_matrix_xyz(state);
-    if(state.get_algorithm() == AlgorithmType::xDMRG) expectation_values_xyz(state);
+    if(state.get_algorithm() == AlgorithmType::xDMRG) {
+        correlation_matrix_xyz(state);
+        expectation_values_xyz(state);
+        structure_factors_xyz(state);
+    }
 }
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -813,6 +817,15 @@ Eigen::Tensor<double, 2> tools::finite::measure::correlation_matrix(const StateF
     return C;
 }
 
+double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<double, 2> &correlation_matrix) {
+    tools::log->trace("Measuring structure factor");
+    if(correlation_matrix.dimension(0) != correlation_matrix.dimension(1))
+        throw except::logic_error("Correlation matrix is not square: dims {}", correlation_matrix.dimensions());
+    if(correlation_matrix.dimension(0) != state.get_length<long>())
+        throw except::logic_error("Expected correlation matrix of size {}. Got {}", state.get_length<long>(), correlation_matrix.dimension(0));
+    return tenx::MatrixMap(correlation_matrix).cwiseAbs2().colwise().sum().sum() / state.get_length<double>();
+}
+
 void tools::finite::measure::expectation_values_xyz(const StateFinite &state) {
     Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
     Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
@@ -829,4 +842,14 @@ void tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
     if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
     if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
     if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
+}
+
+void tools::finite::measure::structure_factors_xyz(const StateFinite &state) {
+    measure::correlation_matrix_xyz(state);
+    if(not state.measurements.structure_factor_x)
+        state.measurements.structure_factor_x = measure::structure_factor(state, state.measurements.correlation_matrix_sx.value());
+    if(not state.measurements.structure_factor_y)
+        state.measurements.structure_factor_y = measure::structure_factor(state, state.measurements.correlation_matrix_sy.value());
+    if(not state.measurements.structure_factor_z)
+        state.measurements.structure_factor_z = measure::structure_factor(state, state.measurements.correlation_matrix_sz.value());
 }
