@@ -19,20 +19,21 @@ template<typename Scalar>
 std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps &initial_mps, const TensorsFinite &tensors,
                                                const tools::finite::opt::OptMeta &meta) {
     using namespace tools::finite::opt;
-    const auto &mpo = tensors.get_multisite_mpo();
-    const auto &env = tensors.get_multisite_env_ene_blk();
-
-    eig::Ritz ritz = eig::stringToRitz(enum2sv(meta.optRitz));
+    auto      problem_size = initial_mps.get_tensor().size();
+    eig::Ritz ritz         = eig::stringToRitz(enum2sv(meta.optRitz));
 
     tools::log->trace("Defining Hamiltonian matrix-vector product");
-    MatVecMps<Scalar> matrix(env.L, env.R, mpo);
     tools::log->trace("Defining eigenvalue solver");
     eig::solver solver;
-    if(matrix.rows() < settings::precision::max_size_full_diag) {
+    if(problem_size < settings::precision::max_size_full_diag) {
         tools::log->trace("Finding ground state");
+        auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(*tensors.model, *tensors.edges);
         solver.config.tag = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
-        solver.eig(matrix.get_tensor().data(), matrix.rows());
+        solver.eig<eig::Form::SYMM>(matrix.data(), matrix.rows());
     } else {
+        const auto       &mpo = tensors.get_multisite_mpo();
+        const auto       &env = tensors.get_multisite_env_ene_blk();
+        MatVecMps<Scalar> matrix(env.L, env.R, mpo);
         solver.config.tol             = 1e-14;
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;

@@ -41,8 +41,9 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_
     long idx      = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
-        if(eigvec.get_energy_per_site() > energy_ulim_per_site) overlaps(idx) = 0.0;
-        if(eigvec.get_energy_per_site() < energy_llim_per_site) overlaps(idx) = 0.0;
+        auto energy_per_site = eigvec.get_energy_per_site();
+        if(energy_per_site > energy_ulim_per_site) overlaps(idx) = 0.0;
+        if(energy_per_site < energy_llim_per_site) overlaps(idx) = 0.0;
         idx++;
     }
     // Now we have a list of overlaps where nonzero elements correspond do eigvecs inside the energy window
