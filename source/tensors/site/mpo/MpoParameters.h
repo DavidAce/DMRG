@@ -157,15 +157,15 @@ class h5tb_ising_majorana {
 
     [[nodiscard]] std::string fmt_value(std::string_view p) const {
         /* clang-format off */
-        if(p == "J_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_mean);
-        if(p == "J_boxw")           return fmt::format(FMT_STRING("{:<9.2e}") , param.J_boxw);
-        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_rand);
-        if(p == "J_avrg")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_avrg);
+        if(p == "J_mean")           return fmt::format(FMT_STRING("{:<8.2e}"), param.J_mean);
+        if(p == "J_boxw")           return fmt::format(FMT_STRING("{:<8.2e}") , param.J_boxw);
+        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<8.2e}"), param.J_rand);
+        if(p == "J_avrg")           return fmt::format(FMT_STRING("{:<8.2e}"), param.J_avrg);
         if(p == "J_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_pert);
-        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_mean);
-        if(p == "h_boxw")           return fmt::format(FMT_STRING("{:<9.2e}") , param.h_boxw);
-        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
-        if(p == "h_avrg")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_avrg);
+        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<8.2e}"), param.h_mean);
+        if(p == "h_boxw")           return fmt::format(FMT_STRING("{:<8.2e}") , param.h_boxw);
+        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<8.2e}"), param.h_rand);
+        if(p == "h_avrg")           return fmt::format(FMT_STRING("{:<8.2e}"), param.h_avrg);
         if(p == "h_pert")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_pert);
         if(p == "g")                return fmt::format(FMT_STRING("{:<7.4f}") , param.g);
         if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
