@@ -9,6 +9,7 @@
 #include "tenx/eval.h"
 #include "tenx/omp.h"
 #include "tenx/sfinae.h"
+#include "tenx/span.h"
 #include <array>
 #include <complex>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -379,9 +380,7 @@ namespace tenx {
         if constexpr(sfinae::is_std_complex_v<Scalar>) {
             auto imag_sum = obj.derived().imag().cwiseAbs().sum();
             threshold *= std::max<double>(1.0, static_cast<double>(obj.derived().size()));
-            //            if(imag_sum >= threshold) {
-            //                std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold);
-            //            }
+            if(imag_sum >= threshold) { std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold); }
             return imag_sum < threshold;
 
         } else {
