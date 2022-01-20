@@ -827,5 +827,4 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Sₑ                                 = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for,
                      status.entanglement_saturated_for);
     tools::log->info("{:=^60}", "");
-    exit(0); // TODO: REMOVE
 }

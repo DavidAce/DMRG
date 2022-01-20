@@ -380,6 +380,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
         auto [rank_tr, truncation_error_tr] = truncation_error_limited_rank(S.head(max_size));
         if(rank_tr < rank) {
+            //            svd::log->warn("Replaced rank {} -> {}", rank, rank_tr);
             rank             = rank_tr;
             truncation_error = truncation_error_tr;
         }
