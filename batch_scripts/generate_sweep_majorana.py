@@ -13,7 +13,7 @@ location    = "input"
 
 
 sites               = np.array([10])
-gs                  = [0.000, 0.01, 0.5]
+gs                  = [0.5]
 deltas              = [-8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [1]
@@ -47,7 +47,7 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
 
     input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_g,str_d)
     settings = {
-        "storage::output_filepath"            : "{}/L_{}/l_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
+        "storage::output_filepath"            : "{}/L_{}/g_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
         "storage::temp_dir"                  : tmp_storage,
         "threading::stl_threads"             : "2",
         "threading::omp_threads"             : "2",
