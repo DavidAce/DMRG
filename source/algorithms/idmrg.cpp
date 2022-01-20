@@ -36,7 +36,7 @@ void idmrg::run_simulation() {
             break;
         }
         if(status.algorithm_has_succeeded) {
-            status.algo_stop = AlgorithmStop::SUCCEEDED;
+            status.algo_stop = AlgorithmStop::SUCCESS;
             break;
         }
         if(status.algorithm_has_to_stop) {
@@ -53,7 +53,7 @@ void idmrg::run_simulation() {
             break;
         }
         if(status.algorithm_has_succeeded) {
-            status.algo_stop = AlgorithmStop::SUCCEEDED;
+            status.algo_stop = AlgorithmStop::SUCCESS;
             break;
         }
         if(status.algorithm_has_to_stop) {

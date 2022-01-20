@@ -154,7 +154,7 @@ class h5pp_table_algorithm_status {
         if(not h5_algo_stop.valid()) {
             h5_algo_stop = H5Tcreate(H5T_ENUM, sizeof(AlgorithmStop));
             int val;
-            H5Tenum_insert(h5_algo_stop, "SUCCEEDED", (val = 0, &val));
+            H5Tenum_insert(h5_algo_stop, "SUCCESS", (val = 0, &val));
             H5Tenum_insert(h5_algo_stop, "SATURATED", (val = 1, &val));
             H5Tenum_insert(h5_algo_stop, "MAX_ITERS", (val = 2, &val));
             H5Tenum_insert(h5_algo_stop, "MAX_RESET", (val = 3, &val));

@@ -301,7 +301,7 @@ void flbit::update_time_step() {
     auto t_updtstep = tid::tic_scope("update_time_step");
     if(status.iter >= time_points.size()) {
         status.delta_t   = time_points.back();
-        status.algo_stop = AlgorithmStop::SUCCEEDED;
+        status.algo_stop = AlgorithmStop::SUCCESS;
         return;
     }
     status.delta_t = time_points[status.iter];
@@ -332,7 +332,7 @@ void flbit::check_convergence() {
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::flbit::min_iters) {
         if(status.iter >= settings::flbit::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
-        if(status.iter >= settings::flbit::time_num_steps) status.algo_stop = AlgorithmStop::SUCCEEDED;
+        if(status.iter >= settings::flbit::time_num_steps) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) status.algo_stop = AlgorithmStop::MAX_RESET;
     }

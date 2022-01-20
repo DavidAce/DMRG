@@ -8,7 +8,7 @@
 #include <vector>
 
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
-enum class AlgorithmStop : int { SUCCEEDED, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
+enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
 enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
@@ -56,7 +56,6 @@ enum class StateInit {
     RANDOMIZE_PREVIOUS_STATE,
     PRODUCT_STATE_ALIGNED,
     PRODUCT_STATE_NEEL,
-    //    ALL_DOWN_ONE_UP,
 };
 
 enum class PerturbMode {
@@ -219,7 +218,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == EdgeStatus::FRESH)                                   return "FRESH";
     }
     if constexpr(std::is_same_v<T, AlgorithmStop>) {
-        if(item == AlgorithmStop::SUCCEEDED)                            return "SUCCEEDED";
+        if(item == AlgorithmStop::SUCCESS)                              return "SUCCESS";
         if(item == AlgorithmStop::SATURATED)                            return "SATURATED";
         if(item == AlgorithmStop::MAX_ITERS)                            return "MAX_ITERS";
         if(item == AlgorithmStop::MAX_RESET)                            return "MAX_RESET";
@@ -513,7 +512,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FRESH")                                 return EdgeStatus::FRESH ;
     }
     if constexpr(std::is_same_v<T, AlgorithmStop>) {
-        if(item == "SUCCEEDED")                             return AlgorithmStop::SUCCEEDED;
+        if(item == "SUCCESS")                             return AlgorithmStop::SUCCESS;
         if(item == "SATURATED")                             return AlgorithmStop::SATURATED;
         if(item == "MAX_ITERS")                             return AlgorithmStop::MAX_ITERS;
         if(item == "MAX_RESET")                             return AlgorithmStop::MAX_RESET;

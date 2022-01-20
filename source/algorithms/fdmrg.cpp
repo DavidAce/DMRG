@@ -170,10 +170,8 @@ void fdmrg::single_fdmrg_step() {
             // Use subspace expansion if alpha_expansion was set
             if(alpha_expansion) tensors.expand_subspace(alpha_expansion.value(), status.chi_lim);
         }
-
         auto multisite_mps = tools::finite::opt::find_ground_state(tensors, status, conf);
         if constexpr(settings::debug) tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", multisite_mps.get_variance(), multisite_mps.get_norm());
-
         tensors.merge_multisite_mps(multisite_mps.get_tensor(), status.chi_lim);
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if constexpr(settings::debug)
@@ -231,7 +229,7 @@ void fdmrg::check_convergence() {
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
-        if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCEEDED;
+        if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) status.algo_stop = AlgorithmStop::MAX_RESET;
     }
