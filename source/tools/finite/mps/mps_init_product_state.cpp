@@ -21,7 +21,7 @@ int tools::finite::mps::init::get_sign(std::string_view sector) {
 }
 
 std::string_view tools::finite::mps::init::get_axis(std::string_view sector) {
-    if(not init::axis_is_valid(sector))
+    if(not init::is_valid_axis(sector))
         throw std::runtime_error(fmt::format("Could not extract valid axis from sector string [{}]. Choose one of (+-) x,y or z.", sector));
     int sign = get_sign(sector);
     if(sign == 0) {
@@ -88,7 +88,7 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     tools::log->info("Setting random product state of type {} in sector {}", enum2sv(type), sector);
     state.clear_measurements();
     state.clear_cache();
-    auto axis_valid = axis_is_valid(sector);
+    auto axis_valid = is_valid_axis(sector);
     if(sector == "random") {
         init::set_random_product_state_with_random_spinors(state, type); // a)
     } else if(init::bitfield_is_valid(bitfield) and axis_valid) {

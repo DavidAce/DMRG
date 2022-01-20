@@ -395,7 +395,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
     if(project_on_every_iter or project_on_var_saturation or project_to_given_sector or project_on_spin_saturation) {
         if(not target_sector) target_sector = settings::strategy::target_sector;
-        if(not tools::finite::mps::init::axis_is_valid(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
+        if(not tools::finite::mps::init::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
         std::string msg;
         if(project_on_spin_saturation) msg += " | spin component has not converged";
         if(project_on_var_saturation) msg += fmt::format(" | run every {} iter on variance saturation", settings::strategy::project_on_saturation);

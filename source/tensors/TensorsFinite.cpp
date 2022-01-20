@@ -73,7 +73,7 @@ void TensorsFinite::randomize_state(StateInit state_init, std::string_view secto
     tools::log->info("Randomizing state | norm {:.16f} | spins: {:+.16f}", tools::finite::measure::norm(*state),
                      fmt::join(tools::finite::measure::spin_components(*state), ", "));
     tools::finite::mps::randomize_state(*state, state_init, state_type.value(), sector, chi_lim, use_eigenspinors, bitfield);
-    if(settings::strategy::project_initial_state) {
+    if(settings::strategy::project_initial_state and tools::finite::mps::init::is_valid_axis(sector)) {
         tools::log->info("Projecting state  | norm {:.16f} | spin components: {:+.16f}", tools::finite::measure::norm(*state),
                          fmt::join(tools::finite::measure::spin_components(*state), ", "));
         tools::finite::ops::project_to_nearest_sector(*state, sector, chi_lim, svd_settings); // Normalization happens after projection

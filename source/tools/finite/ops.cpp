@@ -215,9 +215,7 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
 
 std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFinite &state, std::string_view sector) {
     auto                                      t_align         = tid::tic_scope("align");
-    constexpr std::array<std::string_view, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
-    bool                                      sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), sector) != valid_sectors.end();
-    if(sector_is_valid) {
+    if(mps::init::is_valid_axis(sector)) {
         return tools::finite::measure::spin_component(state, mps::init::get_pauli(sector));
     } else
         return std::nullopt;

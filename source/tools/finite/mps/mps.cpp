@@ -28,7 +28,7 @@ namespace settings {
 bool tools::finite::mps::init::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and init::used_bitfields.count(bitfield.value()) == 0;
 }
-bool tools::finite::mps::init::axis_is_valid(std::string_view sector) {
+bool tools::finite::mps::init::is_valid_axis(std::string_view sector) {
     return std::find(valid_axis_str.begin(), valid_axis_str.end(), sector) != valid_axis_str.end();
 }
 
