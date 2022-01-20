@@ -391,6 +391,12 @@ void TensorsFinite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, 
 void TensorsFinite::rebuild_edges_ene() { tools::finite::env::rebuild_edges_ene(*state, *model, *edges); }
 void TensorsFinite::rebuild_edges_var() { tools::finite::env::rebuild_edges_var(*state, *model, *edges); }
 void TensorsFinite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
+void TensorsFinite::redo_all_measurements() const {
+    clear_cache();
+    clear_measurements();
+    tools::finite::measure::do_all_measurements(*this);
+}
+
 void TensorsFinite::clear_measurements(LogPolicy logPolicy) const {
     measurements = MeasurementsTensorsFinite();
     state->clear_measurements(logPolicy);

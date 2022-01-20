@@ -91,6 +91,7 @@ class TensorsFinite {
     std::array<long, 3> active_problem_dims() const;
     long                active_problem_size() const;
     void                do_all_measurements() const;
+    void                redo_all_measurements() const;
     size_t              move_center_point(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     size_t              move_center_point_to_edge(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     size_t              move_center_point_to_middle(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
