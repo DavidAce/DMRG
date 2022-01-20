@@ -297,7 +297,6 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) c1.optType = OptType::REAL;
-    if(c1.optType == OptType::CPLX) throw std::runtime_error("");
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
@@ -638,7 +637,7 @@ void xdmrg::check_convergence() {
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::xdmrg::min_iters and not tensors.model->is_perturbed()) {
         if(status.iter >= settings::xdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
-        if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCEEDED;
+        if(status.algorithm_has_succeeded) status.algo_stop = AlgorithmStop::SUCCESS;
         if(status.algorithm_has_to_stop) status.algo_stop = AlgorithmStop::SATURATED;
         if(status.num_resets > settings::strategy::max_resets) status.algo_stop = AlgorithmStop::MAX_RESET;
         if(status.entanglement_saturated_for > 0 and settings::xdmrg::finish_if_entanglm_saturated) status.algo_stop = AlgorithmStop::SATURATED;
@@ -702,7 +701,8 @@ void xdmrg::find_energy_range() {
         fdmrg fdmrg_gs(h5file);
         fdmrg_gs.write_disable();
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
-        tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
+        fdmrg_gs.tensors.state->set_name("state_emin");
+        tools::log = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
         status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg_gs.tensors);
         write_to_file(StorageReason::EMIN_STATE, *fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges);
@@ -714,7 +714,8 @@ void xdmrg::find_energy_range() {
         fdmrg fdmrg_hs(h5file);
         fdmrg_hs.write_disable();
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
-        tools::log              = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
+        fdmrg_hs.tensors.state->set_name("state_emax");
+        tools::log = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
         status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg_hs.tensors);
         write_to_file(StorageReason::EMAX_STATE, *fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges);
