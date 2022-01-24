@@ -313,8 +313,19 @@ std::vector<MpsSite> StateFinite::get_mps_sites(const std::vector<size_t> &sites
     for(const auto &site : sites) mps_at_sites.emplace_back(get_mps_site(site));
     return mps_at_sites;
 }
-void StateFinite::set_mps_sites(const std::vector<MpsSite> &new_mps) {
-    for(const auto &mps : new_mps) get_mps_site(mps.get_position()) = mps;
+void StateFinite::set_mps_sites(const std::vector<MpsSite> &mps_list) {
+    for(const auto &mps_new : mps_list) {
+        auto  pos     = mps_new.get_position();
+        auto &mps_old = get_mps_site(pos);
+        if(mps_new.has_L() and mps_new.has_M() and mps_old.get_label() == mps_new.get_label())
+            mps_old = mps_new;
+        else {
+            mps_old.set_label(mps_new.get_label());
+            if(mps_new.has_M()) mps_old.set_M(mps_new.get_M_bare());
+            if(mps_new.has_L()) mps_old.set_L(mps_new.get_L());
+            if(mps_new.has_LC()) mps_old.set_LC(mps_new.get_LC());
+        }
+    }
 }
 
 std::array<long, 3> StateFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this, active_sites); }
