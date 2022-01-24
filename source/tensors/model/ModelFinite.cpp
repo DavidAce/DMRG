@@ -252,7 +252,7 @@ void ModelFinite::set_reduced_energy(double total_energy) { set_reduced_energy_p
 
 void ModelFinite::set_reduced_energy_per_site(double site_energy) {
     if(get_energy_per_site_reduced() == site_energy) return;
-    tools::log->debug("Reducing MPO energy per site by {:.16f}", site_energy);
+    tools::log->debug("Setting MPO energy shift (per site) {:.16f}", site_energy);
     for(const auto &mpo : MPO) mpo->set_reduced_energy(site_energy);
     clear_cache();
 }

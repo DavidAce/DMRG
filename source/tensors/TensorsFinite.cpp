@@ -1,5 +1,6 @@
 
 #include "TensorsFinite.h"
+#include <debug/exceptions.h>
 #include <config/debug.h>
 #include <config/settings.h>
 #include <math/num.h>
@@ -168,13 +169,13 @@ struct DebugStatus {
     [[nodiscard]] std::string msg() const {
         std::string msg;
         msg.append(fmt::format("Energy   [{:<20}] = {:>20.16f}\n", tag, ene));
-        msg.append(fmt::format("Reduce   [{:<20}] = {:>20.16f}\n", tag, red));
+        msg.append(fmt::format("Shift    [{:<20}] = {:>20.16f}\n", tag, red));
         msg.append(fmt::format("σ²H      [{:<20}] = {:<20.16f}\n", tag, var));
         return msg;
     }
     void print() const {
         tools::log->debug("Energy   [{:<20}] = {:>20.16f}", tag, ene);
-        tools::log->debug("Reduce   [{:<20}] = {:>20.16f}", tag, red);
+        tools::log->debug("Shift    [{:<20}] = {:>20.16f}", tag, red);
         tools::log->debug("σ²H      [{:<20}] = {:>20.16f}", tag, var);
     }
 };
@@ -197,18 +198,18 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
 
 void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_site) {
     std::vector<std::optional<DebugStatus>> debs;
-    debs.emplace_back(get_status(*this, "Before reduce"));
+    debs.emplace_back(get_status(*this, "Before shift"));
 
     if(not energy_reduce_per_site) energy_reduce_per_site = tools::finite::measure::energy_per_site(*this);
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->trace("Reducing MPO energy (all edges should be rebuilt after this)");
+    tools::log->trace("Setting MPO energy shift {:.16f} (all edges should be rebuilt after this)", energy_reduce_per_site.value());
     model->set_reduced_energy_per_site(energy_reduce_per_site.value());
     model->clear_mpo_squared();
     model->assert_validity();
 
-    debs.emplace_back(get_status(*this, "After reduce"));
+    debs.emplace_back(get_status(*this, "After shift"));
 
     if(energy_reduce_per_site.value() != 0) {
         auto &bef = debs.front();
@@ -247,7 +248,8 @@ void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_si
             }
             if(delta_ene_rel > 1e-8) {
                 tools::log->warn("Energy changed significantly after energy reduction+compression");
-                if(delta_ene_rel > 1e-6) throw std::runtime_error("Energy reduction changed energy level");
+                if(delta_ene_rel > 1e-6)
+                    throw except::runtime_error("Energy reduction changed energy level {:.16f} -> {:.16f} (Δ/E = {:.3f} %)", bef->ene, aft->ene, delta_ene_rel);
             }
         }
     }
