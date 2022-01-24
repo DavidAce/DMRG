@@ -165,7 +165,6 @@ Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_nbody_view(std::optional<std::vec
 }
 
 Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_reduced_view() const {
-    if(e_reduced == 0) { return MPO(); }
     return MPO_reduced_view(e_reduced);
 }
 
