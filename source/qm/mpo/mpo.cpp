@@ -7,8 +7,8 @@
 namespace qm::mpo {
     std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
     /*! Builds the MPO string for measuring  spin on many-body systems.
-     *      P = Π  s_{i}
-     * where Π is the product over all sites, and s_{i} is the given pauli matrix for site i.
+     *      P = Π  σ_{i}
+     * where Π is the product sites=0...L-1 and σ_{i} is the given pauli matrix for site i.
      *
      * MPO = | s | (a 1 by 1 matrix with a single pauli matrix element)
      *
@@ -32,21 +32,26 @@ namespace qm::mpo {
         Eigen::Tensor<cplx, 3> Redge(1, 1, 1); // The right edge
         Ledge(0, 0, 0) = 1;
         Redge(0, 0, 0) = 1;
-        return std::make_tuple(MPO, Ledge, Redge);
+        return {MPO, Ledge, Redge};
     }
 
     std::tuple<std::vector<Eigen::Tensor<cplx, 4>>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix,
                                                                                                                           size_t sites, int sign)
     /*! Builds the MPO that projects out the MPS component in a parity sector.
-     * |psi+->  = P |psi>=  1/2 (1 +- S) |psi>
-     * Here 1 = outer product of L=sites 2x2 identity matrices, i.e. Kron_(i=0)^(L-1) I_(2x2)
-     * Also S = outer product of L=sites 2x2 pauli matrices, i.e. Kron_(i=0)^(L-1) s_(2x2)
-     * The sign and the factor 1/2 is put into the left edge at the end.
+     * |psi+->  = Proj(σ,p) |psi>=  1/2 (I + pP(σ) |psi>
+     * Here
+     *      1/2 is an optional normalization constant, but note that Proj does not preserve normalization in general.
+     *      I = outer product of L 2x2 identity matrices, i.e. ⊗_{i=0}^{L-1} I_2x2
+     *      p is either +-1 to select the parity sector.
+     *      P = outer product of L 2x2 pauli matrices, i.e. ⊗_{i=0}^{L-1} σ
      *
-     *                     | I   0  |
-     *    S   =      1/2 * | 0   s  |
+     * The projection operator is sum of operator strings which can be expressed as a string of MPO's:
      *
+     *                   Ledge       O_1        O_2                               O_L       Redge
+     *                   | 1/2 |  | I   0  | | I   0  | ... repeat L times ... | I   0  |   | 1 |
+     *    Proj(σ,p)  =   | p/2 |  | 0   σ  | | 0   σ  | ... repeat L times ... | 0   σ  |   | 1 |
      *
+     * Note how the sign p and factor 1/2 are appended at the edge of the operator string
      *        2
      *        |
      *    0---O---1
@@ -73,16 +78,16 @@ namespace qm::mpo {
         Redge(0, 0, 0) = 1;
         Redge(0, 0, 1) = 1;
 
-        return std::make_tuple(mpos, Ledge, Redge);
+        return {mpos, Ledge, Redge};
     }
 
     std::tuple<std::vector<Eigen::Tensor<cplx, 4>>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> random_pauli_mpos(const Eigen::MatrixXcd &paulimatrix,
                                                                                                                       size_t                  sites)
     /*! Builds a string of random pauli matrix MPO's
      *      P = Π  O_i
-     * where Π is the product over all sites, and O_i is one of {S, I} on site i, where S and I is a pauli matrix or an identity matrix respectively
+     * where Π is the product over all sites, and O_i is one of {σ, I} on site i, where σ and I is a pauli matrix or an identity matrix, respectively
      *
-     * MPO = | s |
+     * MPO = | O |
      *
      *        2
      *        |
