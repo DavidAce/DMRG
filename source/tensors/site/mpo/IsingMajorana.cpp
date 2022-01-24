@@ -81,13 +81,13 @@ IsingMajorana::TableMap IsingMajorana::get_parameters() const {
 void IsingMajorana::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  *
- * H = Σ J_{i} sx_{i} sx_{i+1} +  h_{i} sz_{i} + g*(sz_i sz_{i+1} + sx_{i} sx_{i+2})
+ * H = Σ J_{i} σx_{i} σx_{i+1} + h_{i} σz_{i} + g*(σz_i σz_{i+1} + σx_{i} σx_{i+2})
  *
  *  |    I           0          0          0         0   |
- *  |    sx          0          0          0         0   |
- *  |    sz          0          0          0         0   |
+ *  |    σx          0          0          0         0   |
+ *  |    σz          0          0          0         0   |
  *  |    0           I          0          0         0   |
- *  | h_rand*sz  J_rand*sx     g*sz      g*sx        I   |
+ *  | h_rand*σz  J_rand*σx     g*σz      g*σx        I   |
  *
  *        2
  *        |
