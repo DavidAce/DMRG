@@ -556,42 +556,46 @@ double tools::finite::measure::energy_normalized(const TensorsFinite &tensors, d
     return tools::finite::measure::energy_normalized(*tensors.state, *tensors.model, *tensors.edges, emin, emax);
 }
 
-double tools::finite::measure::energy_minus_energy_reduced(const StateFinite &state, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_minus_energy_reduced(state, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_minus_energy_reduced(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_minus_energy_reduced(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy(const StateFinite &state, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy(state, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_per_site(const StateFinite &state, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_per_site(state, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_per_site(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_per_site(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_variance(const StateFinite &state, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_variance(state, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_variance(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_variance(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_variance_per_site(const StateFinite &state, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_variance_per_site(state, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_variance_per_site(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_variance_per_site(state, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_normalized(const StateFinite &state, const TensorsFinite &tensors, double emin, double emax) {
-    return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax);
+double tools::finite::measure::energy_normalized(const StateFinite &state, const TensorsFinite &tensors, double emin, double emax,
+                                                 MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax, measurements);
 }
 
-double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_minus_energy_reduced(mps, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors,
+                                                           MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_minus_energy_reduced(mps, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_per_site(mps, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_per_site(mps, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_variance(mps, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_variance(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_variance(mps, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
-    return tools::finite::measure::energy_variance_per_site(mps, *tensors.model, *tensors.edges);
+double tools::finite::measure::energy_variance_per_site(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors,
+                                                        MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_variance_per_site(mps, *tensors.model, *tensors.edges, measurements);
 }
-double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, double emin, double emax) {
-    return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax);
+double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, double emin, double emax,
+                                                 MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_normalized(mps, *tensors.model, *tensors.edges, emin, emax, measurements);
 }
 
 double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors) {
@@ -671,20 +675,37 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
     auto                   d0    = state.mps_sites.front()->get_chiL();
     Eigen::Tensor<cplx, 2> chain = tenx::TensorCast(Eigen::MatrixXcd::Identity(d0, d0));
     Eigen::Tensor<cplx, 2> temp;
+    //    for(const auto &mps : state.mps_sites) {
+    //        const auto &M     = mps->get_M();
+    //        const auto  pos   = mps->get_position<long>();
+    //        const auto  ob_it = std::find_if(ops.begin(), ops.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
+    //        temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
+    //        if(ob_it != ops.end()) {
+    //            auto M_op                           = ob_it->op.contract(M, tenx::idx({1}, {0}));
+    //            temp.device(tenx::omp::getDevice()) = chain.contract(M_op, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+    //            ob_it->used                         = true;
+    //        } else {
+    //            temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+    //        }
+    //        chain = temp;
+    //    }
+    Eigen::Tensor<cplx, 3> M;
     for(const auto &mps : state.mps_sites) {
-        const auto &M     = mps->get_M();
-        const auto  pos   = mps->get_position<long>();
-        const auto  ob_it = std::find_if(ops.begin(), ops.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
-        temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-        if(ob_it != ops.end()) {
-            auto M_op                           = ob_it->op.contract(M, tenx::idx({1}, {0}));
-            temp.device(tenx::omp::getDevice()) = chain.contract(M_op, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
-            ob_it->used                         = true;
+        const auto pos   = mps->get_position<long>();
+        const auto op_it = std::find_if(ops.begin(), ops.end(), [&pos](const LocalObservableOp &op) { return op.pos == pos and not op.used; });
+        //        M.resize(mps->dimensions());
+        if(op_it != ops.end()) {
+            //            M.device(tenx::omp::getDevice()) = op_it->op.contract(mps->get_M(), tenx::idx({1}, {0}));
+            M           = op_it->op.contract(mps->get_M(), tenx::idx({1}, {0}));
+            op_it->used = true;
         } else {
-            temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+            M = mps->get_M();
         }
-        chain = temp;
+        temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
+        temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
+        chain                               = temp;
     }
+
     auto expval = tenx::MatrixMap(chain).trace();
     if(std::imag(expval) > 1e-14) tools::log->warn("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval), std::imag(expval));
     if(std::imag(expval) > 1e-8)
