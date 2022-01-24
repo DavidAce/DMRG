@@ -540,9 +540,45 @@ Eigen::Tensor<ModelFinite::Scalar, 2> ModelFinite::get_multisite_ham_squared(con
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
     if(sites == active_sites and cache.multisite_ham and not nbody) return cache.multisite_ham.value();
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
+    auto edgeL = get_mpo(sites.front()).get_MPO2_edge_left();
+    auto edgeR = get_mpo(sites.back()).get_MPO2_edge_right();
+
+    if(sites == num::range<size_t>(0, get_length()) and not nbody) {
+        // We want the full hamiltonian. We save time by not including the mpo edges.
+        constexpr auto shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
+        constexpr auto contract_idx = tenx::idx({1}, {0});
+        auto           bulk_sites   = num::range<size_t>(1, get_length() - 1);
+        auto           mpo_front    = get_mpo(sites.front()).MPO2();
+        auto           dim_front    = mpo_front.dimensions();
+        auto           mpo_back     = get_mpo(sites.back()).MPO2();
+        auto           dim_back     = mpo_back.dimensions();
+        dim_front[0]                = edgeL.dimension(0) * edgeL.dimension(1);
+        dim_back[0]                 = edgeR.dimension(0) * edgeR.dimension(1);
+
+        Eigen::Tensor<Scalar, 4> mpo_edgeL = edgeL.contract(mpo_front, tenx::idx({2}, {0})).reshape(mpo_front.dimensions());
+        Eigen::Tensor<Scalar, 4> mpo_edgeR = edgeR.contract(mpo_back, tenx::idx({2}, {1})).shuffle(tenx::array5{2, 0, 1, 3, 4}).reshape(mpo_back.dimensions());
+        Eigen::Tensor<Scalar, 4> mpo_temp;
+        for(const auto &pos : bulk_sites) {
+            const auto  &mpo      = get_mpo(pos);
+            long         dim0     = mpo_edgeL.dimension(0);
+            long         dim1     = mpo.MPO2().dimension(1);
+            long         dim2     = mpo_edgeL.dimension(2) * mpo.MPO2().dimension(2);
+            long         dim3     = mpo_edgeL.dimension(3) * mpo.MPO2().dimension(3);
+            tenx::array4 new_dims = {dim0, dim1, dim2, dim3};
+            mpo_temp.resize(new_dims);
+            mpo_temp.device(tenx::omp::getDevice()) = mpo_edgeL.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            mpo_edgeL                               = mpo_temp;
+        }
+        long         dim0     = mpo_edgeL.dimension(0);
+        long         dim1     = mpo_edgeR.dimension(1);
+        long         dim2     = mpo_edgeL.dimension(2) * mpo_edgeR.dimension(2);
+        long         dim3     = mpo_edgeL.dimension(3) * mpo_edgeR.dimension(3);
+        tenx::array4 new_dims = {dim0, dim1, dim2, dim3};
+        mpo_temp.resize(new_dims);
+        mpo_temp.device(tenx::omp::getDevice()) = mpo_edgeL.contract(mpo_edgeR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        return mpo_temp;
+    }
     auto multisite_mpo_squared = get_multisite_mpo_squared(sites, nbody);
-    auto edgeL                 = get_mpo(sites.front()).get_MPO2_edge_left();
-    auto edgeR                 = get_mpo(sites.back()).get_MPO2_edge_right();
     return multisite_mpo_squared.contract(edgeL, tenx::idx({0}, {0}))
         .contract(edgeR, tenx::idx({0}, {0}))
         .reshape(tenx::array2{multisite_mpo_squared.dimension(2), multisite_mpo_squared.dimension(3)});
