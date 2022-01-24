@@ -8,6 +8,7 @@ target_link_precompiled_headers(dmrg-tools-finite-ops)
 target_link_precompiled_headers(dmrg-tools-finite-print)
 
 add_subdirectory(h5)
+add_subdirectory(ed)
 add_subdirectory(measure)
 add_subdirectory(multisite)
 add_subdirectory(env)
@@ -23,6 +24,7 @@ target_link_libraries(dmrg-tools-finite INTERFACE
         $<TARGET_OBJECTS:dmrg-tools-finite-opt>
         $<TARGET_OBJECTS:dmrg-tools-finite-print>
         $<TARGET_OBJECTS:dmrg-tools-finite-h5>
+        $<TARGET_OBJECTS:dmrg-tools-finite-ed>
         $<TARGET_OBJECTS:dmrg-tools-finite-measure>
         )
 target_link_libraries(dmrg-tools-finite INTERFACE deps flags)
