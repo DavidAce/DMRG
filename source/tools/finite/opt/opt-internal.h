@@ -48,7 +48,8 @@ namespace tools::finite::opt::internal{
                                          const eig::solver &solver,
                                          std::vector<opt_mps> &results,
                                          const OptMeta & meta,
-                                         bool converged_only = true);
+                                         bool converged_only = true,
+                                         double max_overlap_sq_sum = 0.9999);
     extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const TensorsFinite & tensors, const OptMeta & meta);
     extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const StateFinite & state);
 

@@ -21,7 +21,8 @@
 //#include <h5pp/h5pp.h>
 
 void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite &tensors, const opt_mps &initial_mps, const eig::solver &solver,
-                                                            std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only) {
+                                                            std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only,
+                                                            double max_overlap_sq_sum) {
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
         auto eigvecs  = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
@@ -44,22 +45,28 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                     // small number of solutions
                     //                    if(overlap < 1e-15) continue;
                     //                    if(overlap_sq_sum < 1e-15) continue;
-                    if(overlap_sq_sum > 0.9999 /* 0.5 */ and num_solutions > 1) break;
+                    if(overlap_sq_sum > max_overlap_sq_sum /* 0.5 */ and num_solutions > 1) break;
                 }
                 overlap_sq_sum += overlap * overlap; // Sum up the contributions. Since full diag gives an orthonormal basis, this adds up to one. Normally only
                                                      // a few eigenvectors contribute to most of the sum.
                 num_solutions++;                     // Count the number of solutions added
-
-                auto energy   = tools::finite::measure::energy(eigvec_i, tensors);
-                auto eigval   = energy - initial_mps.get_energy_reduced();
-                auto variance = tools::finite::measure::energy_variance(eigvec_i, tensors);
+                auto   measurements = MeasurementsTensorsFinite();
+                double eigval       = eigvals[idx];
+                double variance     = std::numeric_limits<double>::quiet_NaN();
+                double reldiff      = 100 * std::abs(eigval - initial_mps.get_eigval()) / std::abs(0.5 * (eigval + initial_mps.get_eigval()));
+                if(overlap > 1e-4 or reldiff < 1e-1) {
+                    auto energy = tools::finite::measure::energy(eigvec_i, tensors, &measurements);
+                    eigval      = energy - initial_mps.get_energy_reduced();
+                    variance    = tools::finite::measure::energy_variance(eigvec_i, tensors, &measurements);
+                }
                 results.emplace_back(fmt::format("{:<8} eigenvector {}", solver.config.tag, idx), eigvec_i, tensors.active_sites, eigval,
                                      initial_mps.get_energy_reduced(), variance, overlap, tensors.get_length());
                 auto &mps = results.back();
                 mps.set_time(solver.result.meta.time_total);
                 mps.set_mv(static_cast<size_t>(solver.result.meta.num_mv));
                 mps.set_iter(static_cast<size_t>(solver.result.meta.iter));
-                mps.set_max_grad(tools::finite::measure::max_gradient(eigvec_i, tensors));
+                mps.set_max_grad(std::numeric_limits<double>::quiet_NaN());
+                if(not fulldiag) mps.set_max_grad(tools::finite::measure::max_gradient(eigvec_i, tensors));
                 mps.is_basis_vector = true;
                 mps.validate_basis_vector();
                 mps.set_krylov_idx(idx);
