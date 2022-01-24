@@ -174,10 +174,10 @@ namespace settings {
         inline bool          perturb_when_stuck         = false;                                  /*!< Perturb MPO parameters to get unstuck from local minima */
         inline bool          expand_subspace_when_stuck = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        expand_on_saturation       = 5 ;                                     /*!< Expand to H|psi> every nth iteration when stuck. (0 = turn off) */
-        inline size_t        project_on_saturation      = 10;                                     /*!< Project to target parity sector every nth iteration when stuck. (0 = turn off) */
-        inline size_t        project_on_every_iter      = 5;                                      /*!< Project to target parity sector at the end of every iteration. This implies doing it when stuck also. */
-        inline bool          project_on_chi_update      = true;                                   /*!< Project to target parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
-        inline bool          project_initial_state      = false;                                  /*!< Project to target parity sector when initializing a state. */
+        inline size_t        project_on_saturation      = 10;                                     /*!< Project to target axis/parity sector every nth iteration when stuck. (0 = turn off) */
+        inline size_t        project_on_every_iter      = 5;                                      /*!< Project to target axis/parity sector at the end of every iteration. This implies doing it when stuck also. */
+        inline bool          project_on_chi_update      = true;                                   /*!< Project to target axis/parity sector when bond dimension is increased (only works if cfg_chi_lim_grow == true). */
+        inline bool          project_initial_state      = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
         inline bool          randomize_on_chi_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing chi */
         inline bool          randomize_early            = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors           = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
@@ -219,8 +219,6 @@ namespace settings {
         inline long     max_size_part_diag              = 4096  ;   /*!< Maximum linear size allowed for partial diagonalization of the local hamiltonian matrix. */
         inline long     max_size_direct                 = 131072;   /*!< Maximum linear size for direct multisite dmrg. If the linear size is larger than this, the algorithm prefers 2-site dmrg. */
         inline double   max_norm_error                  = 1e-10 ;   /*!< Maximum norm deviation from unity during integrity checks */
-        inline double   overlap_high                    = 0.99  ;
-        inline double   overlap_cat                     = 0.70710678;
     }
 
 
