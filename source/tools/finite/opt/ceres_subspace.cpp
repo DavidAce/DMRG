@@ -35,23 +35,23 @@ std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tens
     } else {
         double eigval_target;
         double energy_target = tools::finite::measure::energy(tensors);
-        if(model.is_reduced()) {
-            eigval_target = tools::finite::measure::energy_minus_energy_reduced(tensors);
-            tools::log->trace("Energy reduce = {:.16f} | per site = {:.16f}", model.get_energy_reduced(), model.get_energy_per_site_reduced());
+        if(model.is_shifted()) {
+            eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors);
+            tools::log->trace("Energy shift  = {:.16f} | per site = {:.16f}", model.get_energy_shift(), model.get_energy_shift_per_site());
             tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);
             tools::log->trace("Eigval target = {:.16f} | per site = {:.16f}", eigval_target, eigval_target / dbl_length);
-            tools::log->trace("Eigval target + Energy reduce = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length,
-                              model.get_energy_per_site_reduced(), energy_target / dbl_length);
+            tools::log->trace("Eigval target + Energy shift = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length,
+                              model.get_energy_shift_per_site(), energy_target / dbl_length);
         } else {
             eigval_target = energy_target;
         }
         std::tie(eigvecs, eigvals) = find_subspace_part<Scalar>(tensors, eigval_target, target_subspace_error, meta);
     }
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
-    tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_reduced(),
-                      eigvals.maxCoeff() + model.get_energy_reduced());
-    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_per_site_reduced(),
-                      eigvals.maxCoeff() / dbl_length + model.get_energy_per_site_reduced());
+    tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_shift(),
+                      eigvals.maxCoeff() + model.get_energy_shift());
+    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_shift_per_site(),
+                      eigvals.maxCoeff() / dbl_length + model.get_energy_shift_per_site());
     reports::print_eigs_report();
 
     if constexpr(std::is_same<Scalar, double>::value) {
@@ -63,7 +63,7 @@ std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tens
 
     const auto     &multisite_mps  = state.get_multisite_mps();
     const auto      multisite_vec  = Eigen::Map<const Eigen::VectorXcd>(multisite_mps.data(), multisite_mps.size());
-    auto            energy_reduced = model.get_energy_reduced();
+    auto            energy_shift   = model.get_energy_shift();
     Eigen::VectorXd overlaps       = (multisite_vec.adjoint() * eigvecs).cwiseAbs().real();
 
     double eigvec_time = 0;
@@ -74,7 +74,7 @@ std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tens
     for(long idx = 0; idx < eigvals.size(); idx++) {
         // Important to normalize the eigenvectors that we get from the solver: they are not always well normalized when we get them!
         auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), state.active_dimensions());
-        subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_reduced, std::nullopt, overlaps(idx),
+        subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_shift, std::nullopt, overlaps(idx),
                               tensors.get_length());
         subspace.back().set_time(eigvec_time);
         subspace.back().set_mv(reports::eigs_log.size());
@@ -139,7 +139,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
                 real             vv                  = subspace_vector.squaredNorm();
                 cplx             ene                 = vHv / vv;
                 cplx             var                 = vH2v / vv - ene * ene;
-                real             ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
+                real             ene_init_san        = std::real(ene + model.get_energy_shift()) / static_cast<double>(state.get_length());
                 real             var_init_san        = std::real(var) / static_cast<double>(state.get_length());
                 std::string      description         = fmt::format("{:<8} {:<16} {}", "Subspace", optimized_mps.get_name(), "matrix check");
                 reports::bfgs_add_entry(description, subspace_vector.size(), subspace_vector.size(), ene_init_san, var_init_san, overlap_sbsp,
@@ -250,8 +250,8 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
 opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_mps("current state", tensors.get_multisite_mps(), sites,
-                                    tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                                    tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                                    tools::finite::measure::energy(tensors) - tensors.model->get_energy_shift(), // Eigval
+                                    tensors.model->get_energy_shift(),                                           // Energy shift for full system
                                     tools::finite::measure::energy_variance(tensors),
                                     1.0, // Overlap
                                     tensors.get_length());
@@ -466,7 +466,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                 real             vv                  = subspace_vector.squaredNorm();
                 cplx             ene                 = vHv / vv;
                 cplx             var                 = vH2v / vv - ene * ene;
-                real             ene_init_san        = std::real(ene + model.get_energy_reduced()) / static_cast<double>(state.get_length());
+                real             ene_init_san        = std::real(ene + model.get_energy_shift()) / static_cast<double>(state.get_length());
                 real             var_init_san        = std::real(var) / static_cast<double>(state.get_length());
                 std::string      description         = fmt::format("{:<8} {:<16} {}", "Subspace", eigvec.get_name(), "matrix check");
                 reports::bfgs_add_entry(description, subspace_vector.size(), subspace_size, ene_init_san, var_init_san, overlap_sbsp,
@@ -500,7 +500,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
         optimized_mps.set_name(eigvec.get_name());
         optimized_mps.set_sites(eigvec.get_sites());
         optimized_mps.set_length(eigvec.get_length());
-        optimized_mps.set_energy_reduced(eigvec.get_energy_reduced());
+        optimized_mps.set_energy_shift(eigvec.get_energy_shift());
         auto t_lbfgs = tid::tic_scope("lbfgs");
         switch(meta.optType) {
             case OptType::CPLX: {

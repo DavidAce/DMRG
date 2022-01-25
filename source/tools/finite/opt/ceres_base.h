@@ -24,7 +24,7 @@ namespace tools::finite::opt::internal {
         mutable double energy_per_site;
         mutable double variance;
         mutable double variance_per_site;
-        mutable double energy_reduced;
+        mutable double energy_shift;
         mutable double energy_llim_per_site;
         mutable double energy_ulim_per_site;
         mutable double energy_tgt_per_site;

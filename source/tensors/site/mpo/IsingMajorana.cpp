@@ -115,7 +115,7 @@ void IsingMajorana::build_mpo()
     mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
     mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
     mpo_internal.slice(std::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - e_reduced * id);
+    mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - e_shift * id);
     mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_coupling() * sx);
     mpo_internal.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(h5tb.param.g * sz);
     mpo_internal.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(h5tb.param.g * sx);
@@ -177,7 +177,7 @@ void IsingMajorana::set_perturbation(double coupling_ptb, double field_ptb, Pert
     }
     if(all_mpo_parameters_have_been_set) {
         using namespace qm::spin::half;
-        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - e_reduced * id);
+        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - e_shift * id);
         mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_coupling() * sx);
         mpo_squared                                                                   = std::nullopt;
         unique_id                                                                     = std::nullopt;
@@ -203,18 +203,16 @@ Eigen::Tensor<MpoSite::cplx, 4> IsingMajorana::MPO_nbody_view(std::optional<std:
     }
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
-    MPO_nbody.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J1 * get_field() * sz - e_reduced * id);
+    MPO_nbody.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J1 * get_field() * sz - e_shift * id);
     MPO_nbody.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * get_coupling() * sx);
     MPO_nbody.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J2 * h5tb.param.g * sz);
     MPO_nbody.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J3 * h5tb.param.g * sx);
     return MPO_nbody;
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingMajorana::MPO_reduced_view() const {
-    return MPO_reduced_view(e_reduced);
-}
+Eigen::Tensor<MpoSite::cplx, 4> IsingMajorana::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingMajorana::MPO_reduced_view(double site_energy) const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingMajorana::MPO_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> temp                                               = MPO();
     long                   row                                                = temp.dimension(0) - 1;

@@ -131,7 +131,7 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
     //    var = std::abs(var);
     //    var = std::real(var) == 0.0 ? eps : var;
 
-    energy            = std::real(nHn + energy_reduced);
+    energy            = std::real(nHn + energy_shift);
     energy_per_site   = energy / static_cast<double>(length);
     variance          = std::abs(var);
     variance_per_site = variance / static_cast<double>(length);
@@ -196,7 +196,7 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
         tools::log->warn("nHn             = {:.16f} + i{:.16f}", std::real(nHn), std::imag(nHn));
         tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
         tools::log->warn("energy offset   = {:.16f}", energy_offset);
-        tools::log->warn("energy reduced  = {:.16f}", energy_reduced);
+        tools::log->warn("energy shift    = {:.16f}", energy_shift);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
         throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));

@@ -180,7 +180,7 @@ void LBit::build_mpo()
         for(const auto &i : num::range<long>(2, R + 1)) { mpo_internal.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
 
     mpo_internal.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = n;
-    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * n - e_reduced * I;
+    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * n - e_shift * I;
 
     if(R >= 1)
         for(const auto &i : num::range<long>(1, R + 1)) {
@@ -263,7 +263,7 @@ void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode p
         Eigen::Tensor<cplx, 2> n                                               = tenx::TensorMap(sz);
         Eigen::Tensor<cplx, 2> I                                               = tenx::TensorMap(id);
         long                   F                                               = mpo_internal.dimension(0) - 1;
-        mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_reduced * I;
+        mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_shift * I;
         mpo_squared                                                            = std::nullopt;
         unique_id                                                              = std::nullopt;
         unique_id_sq                                                           = std::nullopt;
@@ -371,7 +371,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
         J2_rand[r] /= J2_count[r];
     }
 
-    MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_reduced * I);
+    MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_shift * I);
 
     if(R >= 1)
         for(const auto &r : J2_range) { MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * n; }
@@ -381,11 +381,9 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
     return MPO_nbody;
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_reduced_view() const {
-    return MPO_reduced_view(e_reduced);
-}
+Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
 
-Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_reduced_view(double site_energy) const {
+Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<cplx, 4> temp = MPO();

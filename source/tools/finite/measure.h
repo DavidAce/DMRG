@@ -59,7 +59,7 @@ namespace tools::finite::measure {
 
 
     template<typename state_or_mps_type>
-    [[nodiscard]] double energy_minus_energy_reduced             (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] double energy_minus_energy_shift               (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     template<typename state_or_mps_type>
     [[nodiscard]] double energy                                  (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
     template<typename state_or_mps_type>
@@ -73,16 +73,16 @@ namespace tools::finite::measure {
     [[nodiscard]] double energy_normalized                       (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, double energy_minimum, double energy_maximum, MeasurementsTensorsFinite * measurements = nullptr);
 
 
-    [[nodiscard]] extern double energy_reduced                  (const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy_per_site_reduced         (const TensorsFinite & tensors);
-    [[nodiscard]] extern double energy_minus_energy_reduced     (const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_shift                    (const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_shift_per_site           (const TensorsFinite & tensors);
+    [[nodiscard]] extern double energy_minus_energy_shift       (const TensorsFinite & tensors);
     [[nodiscard]] extern double energy                          (const TensorsFinite & tensors);
     [[nodiscard]] extern double energy_per_site                 (const TensorsFinite & tensors);
     [[nodiscard]] extern double energy_variance                 (const TensorsFinite & tensors);
     [[nodiscard]] extern double energy_variance_per_site        (const TensorsFinite & tensors);
     [[nodiscard]] extern double energy_normalized               (const TensorsFinite & tensors, double energy_minimum, double energy_maximum);
 
-    [[nodiscard]] extern double energy_minus_energy_reduced(const StateFinite & state, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] extern double energy_minus_energy_shift  (const StateFinite & state, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy                     (const StateFinite & state, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_per_site            (const StateFinite & state, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_variance            (const StateFinite & state, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
@@ -90,7 +90,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double energy_normalized          (const StateFinite & state, const TensorsFinite & tensors, double energy_minimum, double energy_maximum, MeasurementsTensorsFinite * measurements = nullptr);
 
 
-    [[nodiscard]] extern double energy_minus_energy_reduced (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] extern double energy_minus_energy_shift   (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy                      (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_per_site             (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_variance             (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);

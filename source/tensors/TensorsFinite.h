@@ -57,7 +57,7 @@ class TensorsFinite {
     void                      apply_hamiltonian_on_state(std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
 
     void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
-    void reduce_mpo_energy(std::optional<double> energy_reduce_per_site = std::nullopt);
+    void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
     void rebuild_mpo();
     void rebuild_mpo_squared(std::optional<bool> compress = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
     void compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);

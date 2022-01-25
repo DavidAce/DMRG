@@ -21,7 +21,7 @@ namespace tools::infinite::measure {
     extern double entanglement_entropy            (const StateInfinite & state);
 
     template<typename state_or_mps_type>
-    double energy_minus_energy_reduced     (const state_or_mps_type & state, const ModelInfinite & model, const EdgesInfinite & edges);
+    double energy_minus_energy_shift     (const state_or_mps_type & state, const ModelInfinite & model, const EdgesInfinite & edges);
     template<typename state_or_mps_type>
     double energy_mpo                      (const state_or_mps_type & state, const ModelInfinite & model, const EdgesInfinite & edges);
     template<typename state_or_mps_type>

@@ -42,7 +42,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         try_bond_dimension_quench();
     void         try_hamiltonian_perturbation();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
-    void         reduce_mpo_energy();
+    void         shift_mpo_energy();
     void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;

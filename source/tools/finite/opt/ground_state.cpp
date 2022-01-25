@@ -45,7 +45,7 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
         solver.config.maxNev          = static_cast<eig::size_type>(std::min(matrix.rows() - 1, 2));
         solver.config.maxNcv          = static_cast<eig::size_type>(512);
         solver.config.primme_locking  = false;
-        // Since we use reduced energy mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
+        // Since we use energy-shifted mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
         // would otherwise cause trouble for the eigenvalue solver. This equates to subtracting sigma * identity from the bottom corner of the mpo.
         // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
         solver.config.sigma = 1.0;
@@ -86,10 +86,10 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status,
                                                                                     OptMeta &meta) {
-    double  energy_reduced = 0.0;
+    double  energy_shift = 0.0;
     opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
-                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
-                        energy_reduced,                                           // Energy reduced for full system
+                        tools::finite::measure::energy(tensors) - energy_shift, // Eigval
+                        energy_shift,                                           // Shifted energy for full system
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap
                         tensors.get_length());

@@ -18,8 +18,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     auto                t_dir = tid::tic_scope("direct");
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_state("current state", tensors.state->get_multisite_mps(), sites,
-                                      tools::finite::measure::energy(tensors) - tensors.model->get_energy_reduced(), // Eigval
-                                      tensors.model->get_energy_reduced(),                                           // Energy reduced for full system
+                                      tools::finite::measure::energy(tensors) - tensors.model->get_energy_shift(), // Eigval
+                                      tensors.model->get_energy_shift(),                                           // Shifted energy for full system
                                       tools::finite::measure::energy_variance(tensors),
                                       1.0, // Overlap
                                       tensors.get_length());
@@ -44,7 +44,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     optimized_mps.set_name(initial_mps.get_name());
     optimized_mps.set_sites(initial_mps.get_sites());
     optimized_mps.set_length(initial_mps.get_length());
-    optimized_mps.set_energy_reduced(initial_mps.get_energy_reduced());
+    optimized_mps.set_energy_shift(initial_mps.get_energy_shift());
 
     auto t_lbfgs = tid::tic_scope("lbfgs");
     switch(meta.optType) {

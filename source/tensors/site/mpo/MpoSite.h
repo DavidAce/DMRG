@@ -23,7 +23,7 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id;
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
-    double e_reduced  = 0;     /*!< "Reduced" energy offset for this mpo (to make energy-reduced MPO views) */
+    double e_shift    = 0;     /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
     double psfactor   = 0;     /*!< Parity sector separation factor */
     bool   parity_sep = false; /*!< Parity sector separation on/off */
 
@@ -39,7 +39,7 @@ class MpoSite {
 
     void                                        set_position(size_t new_pos);
     void                                        assert_validity() const;
-    void                                        set_reduced_energy(double site_energy);
+    void                                        set_energy_shift(double site_energy);
     void                                        build_mpo_squared();
     void                                        set_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_sq);
     void                                        clear_mpo_squared();
@@ -55,9 +55,9 @@ class MpoSite {
     [[nodiscard]] std::vector<std::any>         get_parameter_values() const;
     [[nodiscard]] bool                          is_real() const;
     [[nodiscard]] bool                          has_nan() const;
-    [[nodiscard]] bool                          is_reduced() const;
+    [[nodiscard]] bool                          is_shifted() const;
     [[nodiscard]] bool                          is_compressed_mpo_squared() const;
-    [[nodiscard]] double                        get_reduced_energy() const;
+    [[nodiscard]] double                        get_energy_shift() const;
     [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO_edge_left() const;
     [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO_edge_right() const;
     [[nodiscard]] Eigen::Tensor<cplx, 1>        get_MPO2_edge_left() const;
@@ -66,8 +66,8 @@ class MpoSite {
     [[nodiscard]] virtual std::unique_ptr<MpoSite> clone() const                                                                = 0;
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                                   std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view() const                                                     = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_reduced_view(double single_site_energy) const                            = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view() const                                                     = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view(double single_site_energy) const                            = 0;
     [[nodiscard]] virtual long                     get_spin_dimension() const                                                   = 0;
     [[nodiscard]] virtual TableMap                 get_parameters() const                                                       = 0;
     [[nodiscard]] virtual bool                     is_perturbed() const                                                         = 0;

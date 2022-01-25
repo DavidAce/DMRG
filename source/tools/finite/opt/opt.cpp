@@ -23,9 +23,9 @@ namespace settings {
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
     auto    t_opt = tid::tic_scope("opt");
     opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
-                        //                        tools::finite::measure::energy(tensors) - energy_reduced, // Eigval
-                        tools::finite::measure::energy_minus_energy_reduced(tensors), // Eigval
-                        tools::finite::measure::energy_reduced(tensors),              // Energy reduced for full system
+                        //                        tools::finite::measure::energy(tensors) - energy_shift, // Eigval
+                        tools::finite::measure::energy_minus_energy_shift(tensors), // Eigval
+                        tools::finite::measure::energy_shift(tensors),              // Shifted energy for full system
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap
                         tensors.get_length());
@@ -109,7 +109,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
         // Eigenvalue bfgs scaling performs badly when the problem is ill-conditioned (sensitive to some parameters).
         // Empirically, we observe that the gradient is still large when lbfgs has finished,
         // and often the result is a tiny bit worse than what we started with.
-        // When this happens, it's not worth trying to get LBFGS to converge: instead, try an eigensolver on the reduced operator H²
+        // When this happens, it's not worth trying to get LBFGS to converge: instead, try an eigensolver on the energy-shifted operator H²
         ceres_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     }
 

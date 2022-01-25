@@ -23,8 +23,8 @@ class IsingSdual : public MpoSite {
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const override;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view() const override;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_reduced_view(double site_energy) const override;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view() const override;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view(double site_energy) const override;
     [[nodiscard]] long                     get_spin_dimension() const override;
     [[nodiscard]] TableMap                 get_parameters() const override;
     [[nodiscard]] bool                     is_perturbed() const override;

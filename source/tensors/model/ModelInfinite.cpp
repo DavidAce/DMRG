@@ -165,17 +165,17 @@ Eigen::DSizes<long, 4> ModelInfinite::dimensions() const {
     return Eigen::DSizes<long, 4>{dim0, dim1, dim2, dim3};
 }
 
-bool ModelInfinite::is_reduced() const { return HA->is_reduced() and HB->is_reduced(); }
+bool ModelInfinite::is_shifted() const { return HA->is_shifted() and HB->is_shifted(); }
 
-double ModelInfinite::get_energy_per_site_reduced() const {
-    if(not num::all_equal(HA->get_reduced_energy(), HB->get_reduced_energy()))
-        throw std::runtime_error(fmt::format("Reduced energy mismatch: HA {:.16f} != HB {:.16f}", HA->get_reduced_energy(), HB->get_reduced_energy()));
-    return HA->get_reduced_energy();
+double ModelInfinite::get_energy_shift_per_site() const {
+    if(not num::all_equal(HA->get_energy_shift(), HB->get_energy_shift()))
+        throw std::runtime_error(fmt::format("Energy shift mismatch: HA {:.16f} != HB {:.16f}", HA->get_energy_shift(), HB->get_energy_shift()));
+    return HA->get_energy_shift();
 }
 
-void ModelInfinite::set_reduced_energy_per_site(double site_energy) {
-    HA->set_reduced_energy(site_energy);
-    HB->set_reduced_energy(site_energy);
+void ModelInfinite::set_energy_shift_per_site(double energy_shift_per_site) {
+    HA->set_energy_shift(energy_shift_per_site);
+    HB->set_energy_shift(energy_shift_per_site);
 }
 
 const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_AB() const {

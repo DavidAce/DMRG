@@ -56,11 +56,11 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                 double reldiff      = 100 * std::abs(eigval - initial_mps.get_eigval()) / std::abs(0.5 * (eigval + initial_mps.get_eigval()));
                 if(overlap > 1e-4 or reldiff < 1e-1) {
                     auto energy = tools::finite::measure::energy(eigvec_i, tensors, &measurements);
-                    eigval      = energy - initial_mps.get_energy_reduced();
+                    eigval      = energy - initial_mps.get_energy_shift();
                     variance    = tools::finite::measure::energy_variance(eigvec_i, tensors, &measurements);
                 }
                 results.emplace_back(fmt::format("{:<8} eigenvector {}", solver.config.tag, idx), eigvec_i, tensors.active_sites, eigval,
-                                     initial_mps.get_energy_reduced(), variance, overlap, tensors.get_length());
+                                     initial_mps.get_energy_shift(), variance, overlap, tensors.get_length());
                 auto &mps = results.back();
                 mps.set_time(solver.result.meta.time_total);
                 mps.set_mv(static_cast<size_t>(solver.result.meta.num_mv));
@@ -290,7 +290,7 @@ namespace tools::finite::opt::internal {
         } else {
             auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
             for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
-            tools::log->trace("Defining reduced Hamiltonian-squared matrix-vector product");
+            tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
             if(tensors.model->is_compressed_mpo_squared()) {
                 tools::log->warn("Finding excited state using H² with ritz SM because all MPO²'s are compressed!");
@@ -454,7 +454,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_optimization(co
     using namespace internal;
     using namespace settings::precision;
     initial_mps.validate_basis_vector();
-    if(not tensors.model->is_reduced()) throw std::runtime_error("krylov_optimization requires energy-reduced MPO²");
+    if(not tensors.model->is_shifted()) throw std::runtime_error("krylov_optimization requires energy-shifted MPO²");
     if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_optimization requires non-compressed MPO²");
 
     auto t_var    = tid::tic_scope("krylov");

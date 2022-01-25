@@ -89,7 +89,7 @@ void IsingTfRf::build_mpo()
     mpo_internal.setZero();
     mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
     mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
-    mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
+    mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_shift * id);
     mpo_internal.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_coupling() * sz);
     mpo_internal.slice(std::array<long, 4>{2, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
     if(tenx::hasNaN(mpo_internal)) {
@@ -137,7 +137,7 @@ void IsingTfRf::set_perturbation(double coupling_ptb, double field_ptb, PerturbM
     }
     if(all_mpo_parameters_have_been_set) {
         using namespace qm::spin::half;
-        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
+        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_shift * id);
         mpo_squared                                                                   = std::nullopt;
         unique_id                                                                     = std::nullopt;
         unique_id_sq                                                                  = std::nullopt;
@@ -159,16 +159,14 @@ Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_nbody_view(std::optional<std::vec
     }
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
-    MPO_nbody.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_reduced * id);
+    MPO_nbody.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_shift * id);
     MPO_nbody.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
     return MPO_nbody;
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_reduced_view() const {
-    return MPO_reduced_view(e_reduced);
-}
+Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_reduced_view(double site_energy) const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingTfRf::MPO_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<cplx, 4> temp                                               = MPO();

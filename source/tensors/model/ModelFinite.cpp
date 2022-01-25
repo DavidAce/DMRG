@@ -98,15 +98,14 @@ void ModelFinite::assert_validity() const {
     }
 }
 
-// For reduced energy MPO's
-
-bool ModelFinite::is_reduced() const {
-    bool reduced = MPO.front()->is_reduced();
+// For energy-shifted MPO's
+bool ModelFinite::is_shifted() const {
+    bool shifted = MPO.front()->is_shifted();
     for(const auto &mpo : MPO)
-        if(reduced != mpo->is_reduced())
+        if(shifted != mpo->is_shifted())
             throw std::runtime_error(
-                fmt::format("First MPO has is_reduced: {}, but MPO at pos {} has is_reduced: {}", reduced, mpo->get_position(), mpo->is_reduced()));
-    return reduced;
+                fmt::format("First MPO has is_shifted: {}, but MPO at pos {} has is_shifted: {}", shifted, mpo->get_position(), mpo->is_shifted()));
+    return shifted;
 }
 
 bool ModelFinite::is_compressed_mpo_squared() const {
@@ -118,14 +117,14 @@ bool ModelFinite::is_compressed_mpo_squared() const {
     return compressed;
 }
 
-double ModelFinite::get_energy_reduced() const { return get_energy_per_site_reduced() * static_cast<double>(get_length()); }
+double ModelFinite::get_energy_shift() const { return get_energy_shift_per_site() * static_cast<double>(get_length()); }
 
-double ModelFinite::get_energy_per_site_reduced() const {
+double ModelFinite::get_energy_shift_per_site() const {
     // Check that all energies are the same
-    double e_reduced = MPO.front()->get_reduced_energy();
+    double e_shift = MPO.front()->get_energy_shift();
     for(const auto &mpo : MPO)
-        if(mpo->get_reduced_energy() != e_reduced) throw std::runtime_error("Reduced energy mismatch!");
-    return e_reduced;
+        if(mpo->get_energy_shift() != e_shift) throw std::runtime_error("Shifted energy mismatch!");
+    return e_shift;
 }
 
 void ModelFinite::randomize() {
@@ -248,12 +247,12 @@ std::vector<Eigen::Tensor<ModelFinite::Scalar, 4>> ModelFinite::get_compressed_m
     return mpos_sq;
 }
 
-void ModelFinite::set_reduced_energy(double total_energy) { set_reduced_energy_per_site(total_energy / static_cast<double>(get_length())); }
+void ModelFinite::set_energy_shift(double total_energy) { set_energy_shift_per_site(total_energy / static_cast<double>(get_length())); }
 
-void ModelFinite::set_reduced_energy_per_site(double site_energy) {
-    if(get_energy_per_site_reduced() == site_energy) return;
-    tools::log->debug("Setting MPO energy shift (per site) {:.16f}", site_energy);
-    for(const auto &mpo : MPO) mpo->set_reduced_energy(site_energy);
+void ModelFinite::set_energy_shift_per_site(double energy_shift_per_site) {
+    if(get_energy_shift_per_site() == energy_shift_per_site) return;
+    tools::log->debug("Setting MPO energy shift (per site) {:.16f}", energy_shift_per_site);
+    for(const auto &mpo : MPO) mpo->set_energy_shift(energy_shift_per_site);
     clear_cache();
 }
 
@@ -424,14 +423,14 @@ const Eigen::Tensor<ModelFinite::Scalar, 2> &ModelFinite::get_multisite_ham() co
     return cache.multisite_ham.value();
 }
 
-Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_reduced_view(double energy_per_site) const {
+Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_shifted_view(double energy_per_site) const {
     auto                     t_mpo = tid::tic_scope("mpo");
     Eigen::Tensor<Scalar, 4> multisite_mpo, temp;
     constexpr auto           shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = tenx::idx({1}, {0});
     for(const auto &site : active_sites) {
         if(multisite_mpo.size() == 0) {
-            multisite_mpo = get_mpo(site).MPO_reduced_view(energy_per_site);
+            multisite_mpo = get_mpo(site).MPO_shifted_view(energy_per_site);
             continue;
         }
         const auto         &mpo      = get_mpo(site);
@@ -442,23 +441,23 @@ Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_reduced_vie
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
         temp.device(tenx::omp::getDevice()) =
-            multisite_mpo.contract(mpo.MPO_reduced_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            multisite_mpo.contract(mpo.MPO_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo = temp;
     }
     return multisite_mpo;
 }
 
-Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_squared_reduced_view(double energy_per_site) const {
-    auto                     multisite_mpo_reduced = get_multisite_mpo_reduced_view(energy_per_site);
-    long                     dim0                  = multisite_mpo_reduced.dimension(0) * multisite_mpo_reduced.dimension(0);
-    long                     dim1                  = multisite_mpo_reduced.dimension(1) * multisite_mpo_reduced.dimension(1);
-    long                     dim2                  = multisite_mpo_reduced.dimension(2);
-    long                     dim3                  = multisite_mpo_reduced.dimension(3);
+Eigen::Tensor<ModelFinite::Scalar, 4> ModelFinite::get_multisite_mpo_squared_shifted_view(double energy_per_site) const {
+    auto                     multisite_mpo_shifted = get_multisite_mpo_shifted_view(energy_per_site);
+    long                     dim0                  = multisite_mpo_shifted.dimension(0) * multisite_mpo_shifted.dimension(0);
+    long                     dim1                  = multisite_mpo_shifted.dimension(1) * multisite_mpo_shifted.dimension(1);
+    long                     dim2                  = multisite_mpo_shifted.dimension(2);
+    long                     dim3                  = multisite_mpo_shifted.dimension(3);
     std::array<long, 4>      mpo_squared_dims      = {dim0, dim1, dim2, dim3};
-    Eigen::Tensor<Scalar, 4> multisite_mpo_squared_reduced(mpo_squared_dims);
-    multisite_mpo_squared_reduced.device(tenx::omp::getDevice()) =
-        multisite_mpo_reduced.contract(multisite_mpo_reduced, tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(mpo_squared_dims);
-    return multisite_mpo_squared_reduced;
+    Eigen::Tensor<Scalar, 4> multisite_mpo_squared_shifted(mpo_squared_dims);
+    multisite_mpo_squared_shifted.device(tenx::omp::getDevice()) =
+        multisite_mpo_shifted.contract(multisite_mpo_shifted, tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(mpo_squared_dims);
+    return multisite_mpo_squared_shifted;
 }
 
 std::array<long, 4> ModelFinite::active_dimensions_squared() const { return tools::finite::multisite::get_dimensions_squared(*this); }

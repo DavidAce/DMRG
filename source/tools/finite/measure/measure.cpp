@@ -355,14 +355,14 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &sta
 }
 
 template<typename state_or_mps_type>
-double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
-                                                           MeasurementsTensorsFinite *measurements) {
-    if(measurements != nullptr and measurements->energy_minus_energy_reduced) return measurements->energy_minus_energy_reduced.value();
+double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
+                                                         MeasurementsTensorsFinite *measurements) {
+    if(measurements != nullptr and measurements->energy_minus_energy_shift) return measurements->energy_minus_energy_shift.value();
     if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
             throw std::runtime_error(fmt::format("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
                                                  model.active_sites, edges.active_sites));
-        return tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges, measurements);
+        return tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements);
     } else {
         auto        t_msr = tid::tic_scope("measure");
         const auto &mpo   = model.get_multisite_mpo();
@@ -372,30 +372,30 @@ double tools::finite::measure::energy_minus_energy_reduced(const state_or_mps_ty
                               model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
         auto   t_ene        = tid::tic_scope("ene");
         double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
-        if(measurements != nullptr) measurements->energy_minus_energy_reduced = e_minus_ered;
+        if(measurements != nullptr) measurements->energy_minus_energy_shift = e_minus_ered;
         return e_minus_ered;
     }
 }
 
-template double tools::finite::measure::energy_minus_energy_reduced(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                    MeasurementsTensorsFinite *measurements);
-template double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
-                                                                    MeasurementsTensorsFinite *measurements);
+template double tools::finite::measure::energy_minus_energy_shift(const StateFinite &, const ModelFinite &model, const EdgesFinite &edges,
+                                                                  MeasurementsTensorsFinite *measurements);
+template double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges,
+                                                                  MeasurementsTensorsFinite *measurements);
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
                                       MeasurementsTensorsFinite *measurements) {
     if(measurements != nullptr and measurements->energy) return measurements->energy.value();
-    // This measures the actual energy of the system regardless of the reduced/non-reduced state of the MPO's
-    // If they are reduced, then
-    //      "Actual energy" = (E - E_reduced) + E_reduced = (~0) + E_reduced = E
+    // This measures the actual energy of the system regardless of the energy shift in the MPO's
+    // If they are shifted, then
+    //      "Actual energy" = (E - E_shift) + E_shift = (~0) + E_shift = E
     // Else
-    //      "Actual energy" = (E - E_reduced) + E_reduced = E  + 0 = E
+    //      "Actual energy" = (E - E_shift) + E_shift = E  + 0 = E
     double energy;
     if constexpr(std::is_same_v<state_or_mps_type, StateFinite>)
-        energy = tools::finite::measure::energy_minus_energy_reduced(state.get_multisite_mps(), model, edges, measurements) + model.get_energy_reduced();
+        energy = tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements) + model.get_energy_shift();
     else
-        energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements) + model.get_energy_reduced();
+        energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements) + model.get_energy_shift();
 
     if(measurements != nullptr) measurements->energy = energy;
     return energy;
@@ -422,17 +422,17 @@ template double tools::finite::measure::energy_per_site(const Eigen::Tensor<cplx
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_variance(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,
                                                MeasurementsTensorsFinite *measurements) {
-    // Here we show that the variance calculated with reduced-energy mpo's is equivalent to the usual way.
-    // If mpo's are reduced:
-    //      Var H = <(H-E_red)²> - <H-E_red>²     = <H²>  - 2<H>E_red + E_red² - (<H> - E_red)²
-    //                                            = H2    - 2*E*E_red + E_red² - E² + 2*E*E_red - E_red²
+    // Here we show that the variance calculated with energy-shifted mpo's is equivalent to the usual way.
+    // If mpo's are shifted:
+    //      Var H = <(H-E_shf)²> - <H-E_shf>²     = <H²>  - 2<H>E_shf + E_shf² - (<H> - E_shf)²
+    //                                            = H2    - 2*E*E_shf + E_shf² - E² + 2*E*E_shf - E_shf²
     //                                            = H2    - E²
     //      Note that in the last line, H2-E² is a subtraction of two large numbers --> catastrophic cancellation --> loss of precision.
-    //      On the other hand Var H = <(H-E_red)²> - energy_minus_energy_reduced² = <(H-E_red)²> - ~dE², where both terms are always  << 1.
-    //      The first term computed from a double-layer of reduced mpo's.
+    //      On the other hand Var H = <(H-E_red)²> - energy_minus_energy_shift² = <(H-E_red)²> - ~dE², where both terms are always  << 1.
+    //      The first term computed from a double-layer of shifted mpo's.
     //      In the second term dE is usually small, in fact identically zero immediately after an energy-reduction operation,
     //      but may grow if the optimization steps make significant progress refining E.
-    // Else, if E_red = 0 (i.e. not reduced) we get the usual formula:
+    // Else, if E_red = 0 (i.e. not shifted) we get the usual formula:
     //      Var H = <(H - 0)²> - <H - 0>² = H2 - E²
     if(measurements != nullptr and measurements->energy_variance) return measurements->energy_variance.value();
 
@@ -444,8 +444,8 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         return tools::finite::measure::energy_variance(state.get_multisite_mps(), model, edges, measurements);
     } else {
         double energy = 0;
-        if(model.is_reduced())
-            energy = tools::finite::measure::energy_minus_energy_reduced(state, model, edges, measurements);
+        if(model.is_shifted())
+            energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
         else
             energy = tools::finite::measure::energy(state, model, edges, measurements);
 
@@ -502,12 +502,12 @@ template double tools::finite::measure::energy_normalized(const StateFinite &, c
 template double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &, const ModelFinite &model, const EdgesFinite &edges, double, double,
                                                           MeasurementsTensorsFinite *measurements);
 
-extern double tools::finite::measure::energy_reduced(const TensorsFinite &tensors) { return tensors.model->get_energy_reduced(); }
-extern double tools::finite::measure::energy_per_site_reduced(const TensorsFinite &tensors) { return tensors.model->get_energy_per_site_reduced(); }
+extern double tools::finite::measure::energy_shift(const TensorsFinite &tensors) { return tensors.model->get_energy_shift(); }
+extern double tools::finite::measure::energy_shift_per_site(const TensorsFinite &tensors) { return tensors.model->get_energy_shift_per_site(); }
 
-double tools::finite::measure::energy_minus_energy_reduced(const TensorsFinite &tensors) {
+double tools::finite::measure::energy_minus_energy_shift(const TensorsFinite &tensors) {
     tensors.assert_edges_ene();
-    return energy_minus_energy_reduced(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
+    return energy_minus_energy_shift(*tensors.state, *tensors.model, *tensors.edges, &tensors.measurements);
 }
 
 double tools::finite::measure::energy(const TensorsFinite &tensors) {
@@ -556,8 +556,8 @@ double tools::finite::measure::energy_normalized(const TensorsFinite &tensors, d
     return tools::finite::measure::energy_normalized(*tensors.state, *tensors.model, *tensors.edges, emin, emax);
 }
 
-double tools::finite::measure::energy_minus_energy_reduced(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_minus_energy_reduced(state, *tensors.model, *tensors.edges, measurements);
+double tools::finite::measure::energy_minus_energy_shift(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_minus_energy_shift(state, *tensors.model, *tensors.edges, measurements);
 }
 double tools::finite::measure::energy(const StateFinite &state, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy(state, *tensors.model, *tensors.edges, measurements);
@@ -576,9 +576,9 @@ double tools::finite::measure::energy_normalized(const StateFinite &state, const
     return tools::finite::measure::energy_normalized(state, *tensors.model, *tensors.edges, emin, emax, measurements);
 }
 
-double tools::finite::measure::energy_minus_energy_reduced(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors,
-                                                           MeasurementsTensorsFinite *measurements) {
-    return tools::finite::measure::energy_minus_energy_reduced(mps, *tensors.model, *tensors.edges, measurements);
+double tools::finite::measure::energy_minus_energy_shift(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors,
+                                                         MeasurementsTensorsFinite *measurements) {
+    return tools::finite::measure::energy_minus_energy_shift(mps, *tensors.model, *tensors.edges, measurements);
 }
 double tools::finite::measure::energy(const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite &tensors, MeasurementsTensorsFinite *measurements) {
     return tools::finite::measure::energy(mps, *tensors.model, *tensors.edges, measurements);

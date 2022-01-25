@@ -115,7 +115,7 @@ void IsingSdual::build_mpo()
     mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
     mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
     mpo_internal.slice(std::array<long, 4>{3, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
-    mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
+    mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_shift * id);
     mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_coupling() * sz);
     mpo_internal.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-(h5tb.param.lambda * h5tb.param.h_avrg) * sx);
     mpo_internal.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-(h5tb.param.lambda * h5tb.param.J_avrg) * sz);
@@ -177,7 +177,7 @@ void IsingSdual::set_perturbation(double coupling_ptb, double field_ptb, Perturb
     }
     if(all_mpo_parameters_have_been_set) {
         using namespace qm::spin::half;
-        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_reduced * id);
+        mpo_internal.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_field() * sx - e_shift * id);
         mpo_internal.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-get_coupling() * sz);
         mpo_squared                                                                   = std::nullopt;
         unique_id                                                                     = std::nullopt;
@@ -203,18 +203,16 @@ Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_nbody_view(std::optional<std::ve
     }
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> MPO_nbody                                           = MPO();
-    MPO_nbody.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_reduced * id);
+    MPO_nbody.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J1 * get_field() * sx - e_shift * id);
     MPO_nbody.slice(std::array<long, 4>{4, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
     MPO_nbody.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * (h5tb.param.lambda * h5tb.param.h_avrg) * sx);
     MPO_nbody.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J3 * (h5tb.param.lambda * h5tb.param.J_avrg) * sz);
     return MPO_nbody;
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_reduced_view() const {
-    return MPO_reduced_view(e_reduced);
-}
+Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_reduced_view(double site_energy) const {
+Eigen::Tensor<MpoSite::cplx, 4> IsingSdual::MPO_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> temp                                               = MPO();
     long                   row                                                = temp.dimension(0) - 1;

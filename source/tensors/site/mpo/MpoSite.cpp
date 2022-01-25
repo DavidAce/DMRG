@@ -122,7 +122,7 @@ size_t MpoSite::get_position() const {
     }
 }
 
-bool MpoSite::is_reduced() const { return e_reduced != 0.0; }
+bool MpoSite::is_shifted() const { return e_shift != 0.0; }
 
 bool MpoSite::is_compressed_mpo_squared() const {
     // When H² = mpo*mpo is compressed, we typically find that the virtual bonds
@@ -141,12 +141,12 @@ bool MpoSite::is_compressed_mpo_squared() const {
     return bond_mpo_sq < bond_mpo * bond_mpo;
 }
 
-double MpoSite::get_reduced_energy() const { return e_reduced; }
+double MpoSite::get_energy_shift() const { return e_shift; }
 
-void MpoSite::set_reduced_energy(double site_energy) {
-    if(e_reduced != site_energy) {
-        e_reduced    = site_energy;
-        mpo_internal = MPO_reduced_view();
+void MpoSite::set_energy_shift(double site_energy) {
+    if(e_shift != site_energy) {
+        e_shift      = site_energy;
+        mpo_internal = MPO_shifted_view();
         mpo_squared  = std::nullopt;
         unique_id    = std::nullopt;
         unique_id_sq = std::nullopt;

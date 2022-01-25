@@ -53,8 +53,8 @@ class ModelInfinite {
 
     Eigen::DSizes<long, 4> dimensions() const;
 
-    [[nodiscard]] bool   is_reduced() const;
-    [[nodiscard]] double get_energy_per_site_reduced() const;
-    void                 set_reduced_energy_per_site(double site_energy);
+    [[nodiscard]] bool   is_shifted() const;
+    [[nodiscard]] double get_energy_shift_per_site() const;
+    void                 set_energy_shift_per_site(double energy_shift_per_site);
     void                 clear_cache();
 };

@@ -5,9 +5,9 @@
 
 using namespace tools::finite::opt;
 
-opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
+opt_mps::opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_shift_,
                  std::optional<double> variance_, double overlap_, size_t length_)
-    : name(name_), tensor(tensor_), sites(sites_), eigval(eigval_), energy_r(energy_reduced_), energy(eigval_ + energy_reduced_), variance(variance_),
+    : name(name_), tensor(tensor_), sites(sites_), eigval(eigval_), energy_r(energy_shift_), energy(eigval_ + energy_shift_), variance(variance_),
       overlap(overlap_), length(length_) {
     norm   = get_vector().norm();
     iter   = 0;
@@ -79,7 +79,7 @@ double opt_mps::get_energy() const {
         throw std::runtime_error("opt_mps: energy not set");
 }
 
-double opt_mps::get_energy_reduced() const {
+double opt_mps::get_energy_shift() const {
     if(energy_r)
         return energy_r.value();
     else
@@ -272,8 +272,8 @@ void opt_mps::set_eigval(double eigval_) {
     if(energy and not energy_r) energy_r = energy.value() - eigval.value();
     if(energy_r and not energy) energy = eigval.value() + energy_r.value();
 }
-void opt_mps::set_energy_reduced(double energy_reduced_) {
-    energy_r = energy_reduced_;
+void opt_mps::set_energy_shift(double energy_shift_) {
+    energy_r = energy_shift_;
     if(energy and not eigval) eigval = energy.value() - energy_r.value();
     if(eigval and not energy) energy = eigval.value() + energy_r.value();
 }
@@ -382,7 +382,7 @@ bool opt_mps::operator<(const opt_mps &rhs) const {
 
     // If we reached this point then the overlaps are equal (probably 0) and there are no variances defined
     // To disambiguate we can use the eigenvalue, which should
-    // be spread around 0 as well (because we use reduced energies)
+    // be spread around 0 as well (because we use shifted energies)
     // Eigenvalues nearest 0 are near the target energy, and while
     // not strictly relevant, it's probably the best we can do here.
     // Of course this is only valid if the eigenvalues are defined

@@ -22,7 +22,7 @@ namespace tools::finite::ed {
         auto tensors_ed = tensors;
         tensors_ed.clear_cache();
         tensors_ed.clear_measurements();
-        tensors_ed.reduce_mpo_energy(0);
+        tensors_ed.shift_mpo_energy(0);
         // The reduction clears our squared mpo's. So we have to rebuild.
         tensors_ed.rebuild_mpo_squared();
         tensors_ed.rebuild_edges();
@@ -33,9 +33,9 @@ namespace tools::finite::ed {
         auto t_tgt = tid::tic_scope("tgt_mps");
 
         tools::finite::opt::opt_mps target_mps("target_mps", tensors_ed.state->get_multisite_mps(), sites,
-                                               //                        tools::finite::measure::energy(tensors_ed) - energy_reduced, // Eigval
-                                               tools::finite::measure::energy_minus_energy_reduced(tensors_ed), // Eigval
-                                               tools::finite::measure::energy_reduced(tensors_ed),              // Energy reduced for full system
+                                               //                        tools::finite::measure::energy(tensors_ed) - energy_shift, // Eigval
+                                               tools::finite::measure::energy_minus_energy_shift(tensors_ed), // Eigval
+                                               tools::finite::measure::energy_shift(tensors_ed),              // Energy shift for full system
                                                tools::finite::measure::energy_variance(tensors_ed),
                                                1.0, // Overlap
                                                tensors_ed.get_length());

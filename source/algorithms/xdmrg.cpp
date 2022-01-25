@@ -236,7 +236,7 @@ void xdmrg::run_algorithm() {
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
-        reduce_mpo_energy();
+        shift_mpo_energy();
         try_bond_dimension_quench();
         try_hamiltonian_perturbation();
         try_projection();

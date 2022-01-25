@@ -139,7 +139,7 @@ void TensorsFinite::apply_hamiltonian_on_state(std::optional<long> chi_lim, std:
     if(not chi_lim) chi_lim = state->find_largest_chi();
     tools::finite::mps::normalize_state(*state, chi_lim.value(), svd_settings, NormPolicy::IFNEEDED);
     std::vector<Eigen::Tensor<Scalar, 4>> mpos;
-    for(const auto &mpo : model->MPO) mpos.emplace_back(mpo->MPO_reduced_view(0.0));
+    for(const auto &mpo : model->MPO) mpos.emplace_back(mpo->MPO_shifted_view(0.0));
     auto                     chiL  = state->mps_sites.front()->get_chiL();
     auto                     chiR  = state->mps_sites.back()->get_chiR();
     auto                     mpoL  = model->MPO.front()->MPO().dimension(0);
@@ -188,7 +188,7 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     tensors.rebuild_edges();
     DebugStatus deb;
     deb.ene     = tools::finite::measure::energy(tensors);
-    deb.red     = tools::finite::measure::energy_reduced(tensors);
+    deb.red     = tools::finite::measure::energy_shift(tensors);
     deb.var     = tools::finite::measure::energy_variance(tensors);
     deb.tag     = tag;
     deb.env_ids = tensors.edges->get_active_ids();
@@ -196,22 +196,22 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
     return deb;
 }
 
-void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_site) {
+void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site) {
     std::vector<std::optional<DebugStatus>> debs;
     debs.emplace_back(get_status(*this, "Before shift"));
 
-    if(not energy_reduce_per_site) energy_reduce_per_site = tools::finite::measure::energy_per_site(*this);
+    if(not energy_shift_per_site) energy_shift_per_site = tools::finite::measure::energy_per_site(*this);
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->trace("Setting MPO energy shift {:.16f} (all edges should be rebuilt after this)", energy_reduce_per_site.value());
-    model->set_reduced_energy_per_site(energy_reduce_per_site.value());
+    tools::log->trace("Setting MPO energy shift {:.16f} (all edges should be rebuilt after this)", energy_shift_per_site.value());
+    model->set_energy_shift_per_site(energy_shift_per_site.value());
     model->clear_mpo_squared();
     model->assert_validity();
 
     debs.emplace_back(get_status(*this, "After shift"));
 
-    if(energy_reduce_per_site.value() != 0) {
+    if(energy_shift_per_site.value() != 0) {
         auto &bef = debs.front();
         auto &aft = debs.back();
         if(bef and aft) {
@@ -236,7 +236,7 @@ void TensorsFinite::reduce_mpo_energy(std::optional<double> energy_reduce_per_si
             double delta_ene_rel = delta_ene / std::abs(aft->ene) * 100;
             double delta_var_rel = delta_var / std::abs(aft->var) * 100;
             double critical_cancellation_max_decimals =
-                std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(get_length<double>() * energy_reduce_per_site.value(), 2)));
+                std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(get_length<double>() * energy_shift_per_site.value(), 2)));
             double critical_cancellation_error = std::pow(10, -critical_cancellation_max_decimals);
             tools::log->debug("Variance change              {:>20.16f}", delta_var);
             tools::log->debug("Variance change percent      {:>20.16f}", delta_var_rel);

@@ -49,7 +49,7 @@ namespace tools::finite::opt {
 
         opt_mps() = default;
         // Constructor used for candidates
-        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_reduced_,
+        opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double eigval_, double energy_shift_,
                 std::optional<double> variance_, double overlap_, size_t length);
         // Constructor used for results
         opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
@@ -66,7 +66,7 @@ namespace tools::finite::opt {
 
         [[nodiscard]] const std::vector<size_t>         &get_sites() const;
         [[nodiscard]] double                             get_energy() const;
-        [[nodiscard]] double                             get_energy_reduced() const;
+        [[nodiscard]] double                             get_energy_shift() const;
         [[nodiscard]] double                             get_energy_per_site() const;
         [[nodiscard]] double                             get_eigval() const;
         [[nodiscard]] double                             get_variance() const;
@@ -100,7 +100,7 @@ namespace tools::finite::opt {
         void                                             set_tensor(const Eigen::VectorXcd &vector, const Eigen::DSizes<long, 3> &dims);
         void                                             set_sites(const std::vector<size_t> &sites_);
         void                                             set_eigval(double eigval_);
-        void                                             set_energy_reduced(double energy_reduced_);
+        void                                             set_energy_shift(double energy_shift_);
         void                                             set_energy(double energy_);
         void                                             set_energy_per_site(double energy_per_site_);
         void                                             set_variance(double variance_);

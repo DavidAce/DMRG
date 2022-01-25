@@ -134,7 +134,7 @@ void fdmrg::run_algorithm() {
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
-        reduce_mpo_energy();
+        shift_mpo_energy();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();

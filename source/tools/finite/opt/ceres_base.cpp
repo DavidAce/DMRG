@@ -15,8 +15,8 @@ ceres_base_functor::ceres_base_functor(const TensorsFinite &tensors, const Algor
     t_Hn   = std::make_unique<tid::ur>();
     t_nHn  = std::make_unique<tid::ur>();
 
-    length         = tensors.get_length();
-    energy_reduced = tensors.model->get_energy_reduced();
+    length       = tensors.get_length();
+    energy_shift = tensors.model->get_energy_shift();
 
     // All energies in status are per site!
     energy_tgt_per_site  = status.energy_tgt_per_site;
