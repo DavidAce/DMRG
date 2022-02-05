@@ -50,10 +50,10 @@ namespace tools::finite::ed {
         std::vector<tools::finite::opt::opt_mps> results;
         auto                                     t_ext = tid::tic_scope("extract");
 
-        tools::finite::opt::internal::krylov_extract_solutions(tensors_ed, target_mps, solver, results, meta, true, 1.5);
+        tools::finite::opt::internal::eigs_extract_solutions(tensors_ed, target_mps, solver, results, meta, true, 1.5);
         t_ext.toc();
-        for(const auto &[num, mps] : iter::enumerate(results)) { tools::finite::opt::reports::krylov_add_entry(mps); }
-        tools::finite::opt::reports::print_krylov_report();
+        for(const auto &[num, mps] : iter::enumerate(results)) { tools::finite::opt::reports::eigs_add_entry(mps); }
+        tools::finite::opt::reports::print_eigs_report();
 
         auto comparator = [](const tools::finite::opt::opt_mps &lhs, const tools::finite::opt::opt_mps &rhs) {
             return lhs.get_overlap() > rhs.get_overlap();
@@ -65,7 +65,7 @@ namespace tools::finite::ed {
         auto  centerpos     = tensors_ed.get_position<long>();
         auto &state_ed      = *tensors_ed.state;
         auto &multisite_mps = results.front().get_tensor();
-        auto  mps_list      = tools::common::split::split_mps(multisite_mps, spin_dims, positions, centerpos, status.chi_lim);
+        auto  mps_list      = tools::common::split::split_mps(multisite_mps, spin_dims, positions, centerpos, status.bond_limit);
         state_ed.set_name("state_ed");
         state_ed.set_mps_sites(mps_list);
         tools::finite::measure::do_all_measurements(state_ed);
