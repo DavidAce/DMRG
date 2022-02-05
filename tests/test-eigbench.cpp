@@ -1,7 +1,7 @@
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <math/eig.h>
-#include <math/eig/matvec/matvec_mps.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <math/tenx.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
@@ -20,8 +20,8 @@ std::string solve(double tol, size_t nev, size_t ncv, std::optional<int> maxInne
     for(const auto &mps_name : h5file.findDatasets("mps_init_", group))
         mps_init.emplace_back(h5file.readDataset<Eigen::Tensor<eig::real, 3>>(fmt::format("{}/{}", group, mps_name)));
 
-    auto ham  = MatVecMps<double>(envL, envR, mpo);
-    auto ham2 = MatVecMps<double>(envL2, envR2, mpo2);
+    auto ham  = MatVecMPO<double>(envL, envR, mpo);
+    auto ham2 = MatVecMPO<double>(envL2, envR2, mpo2);
     auto dims = ham2.get_shape_mps();
 
     eig::solver s;

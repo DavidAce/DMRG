@@ -149,7 +149,7 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
 std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFinite &state) {
     // Here we calculate the bond dimensions of the bonds that were merged into the full state in the last step
     // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
-    auto t_chi = tid::tic_scope("chi_merged");
+    auto t_chi = tid::tic_scope("bond_merged");
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // Because of subspace expansion, the only bond dimension that grows is the one directly behind
@@ -274,10 +274,7 @@ double tools::finite::measure::spin_component(const StateFinite &state, const Ei
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::Tensor<cplx, 3> temp;
     for(const auto &mps : state.mps_sites) {
-        const auto &M = mps->get_M();
-        temp.resize(M.dimension(2), M.dimension(2), mpo.dimension(1));
-        temp.device(tenx::omp::getDevice()) =
-            L.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0}, {1})).contract(mpo, tenx::idx({0, 1, 3}, {0, 2, 3}));
+        tools::common::contraction::contract_env_mps_mpo(temp, L, mps->get_M(), mpo);
         L = temp;
     }
 

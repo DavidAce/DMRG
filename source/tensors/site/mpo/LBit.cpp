@@ -229,50 +229,6 @@ void LBit::randomize_hamiltonian() {
     mpo_squared                      = std::nullopt;
 }
 
-void LBit::set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode) {
-    switch(ptbMode) {
-        case PerturbMode::ABSOLUTE: {
-            h5tb.param.J1_pert = field_ptb;
-            h5tb.param.J2_pert = coupling_ptb;
-            h5tb.param.J3_pert = coupling_ptb;
-            break;
-        }
-        case PerturbMode::PERCENTAGE: {
-            h5tb.param.J1_pert = h5tb.param.J1_pert * field_ptb;
-            h5tb.param.J2_pert = h5tb.param.J2_pert * coupling_ptb;
-            h5tb.param.J3_pert = h5tb.param.J3_pert * coupling_ptb;
-            break;
-        }
-        case PerturbMode::UNIFORM_RANDOM_ABSOLUTE: {
-            h5tb.param.J1_pert = rnd::uniform_double_box(-field_ptb, field_ptb);
-            h5tb.param.J2_pert = rnd::uniform_double_box(-coupling_ptb, coupling_ptb);
-            h5tb.param.J3_pert = rnd::uniform_double_box(-coupling_ptb, coupling_ptb);
-            break;
-        }
-        case PerturbMode::UNIFORM_RANDOM_PERCENTAGE: {
-            h5tb.param.J1_pert = h5tb.param.J1_pert * rnd::uniform_double_box(-field_ptb, field_ptb);
-            h5tb.param.J2_pert = h5tb.param.J2_pert * rnd::uniform_double_box(-coupling_ptb, coupling_ptb);
-            h5tb.param.J3_pert = h5tb.param.J3_pert * rnd::uniform_double_box(-coupling_ptb, coupling_ptb);
-            break;
-        }
-    }
-    if(all_mpo_parameters_have_been_set) {
-        using namespace qm::spin::half;
-#pragma message "using sz instead of number operator"
-        //        Eigen::Tensor<cplx, 2> n                                               = tenx::TensorCast(0.5 * (id + sz));
-        Eigen::Tensor<cplx, 2> n                                               = tenx::TensorMap(sz);
-        Eigen::Tensor<cplx, 2> I                                               = tenx::TensorMap(id);
-        long                   F                                               = mpo_internal.dimension(0) - 1;
-        mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - e_shift * I;
-        mpo_squared                                                            = std::nullopt;
-        unique_id                                                              = std::nullopt;
-        unique_id_sq                                                           = std::nullopt;
-    }
-    if(coupling_ptb == 0.0 and field_ptb == 0 and is_perturbed()) throw except::runtime_error("mpo({}): should have become unperturbed!", get_position());
-}
-
-bool LBit::is_perturbed() const { return h5tb.param.J1_pert != 0.0 or h5tb.param.J2_pert != 0.0 or h5tb.param.J3_pert != 0.0; }
-
 Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would include 2-body and 3-body but exclude 1-body on-site terms.
@@ -389,6 +345,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_shifted_view(double site_energy) const
     Eigen::Tensor<cplx, 4> temp = MPO();
     long                   row  = temp.dimension(0) - 1;
     long                   col  = 0;
+    if(parity_sep) row = temp.dimension(0) - 2;
 #pragma message "using sz instead of number operator"
 
     //    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorCast(0.5 * (id + sz));
@@ -402,12 +359,8 @@ std::unique_ptr<MpoSite> LBit::clone() const { return std::make_unique<LBit>(*th
 
 long LBit::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
-void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite, bool reverse) {
+void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite) {
     tools::log->debug("LBIT MPO ({}): Setting averages", get_position());
-    if(reverse) {
-        std::reverse(lattice_parameters.begin(), lattice_parameters.end());
-        for(size_t pos = 0; pos < lattice_parameters.size(); pos++) lattice_parameters[pos]["position"] = pos;
-    }
     if(not infinite) {
         lattice_parameters.back()["J2_rand"]    = h5tb_lbit::J2Type{0};
         lattice_parameters.back()["J3_rand"]    = 0.0;
@@ -422,7 +375,7 @@ void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameter
         J_sum += J1_ + J3_;
         for(const auto &j2 : J2_) J_sum += j2;
     }
-    if(parity_sep) psfactor = J_sum;
+    if(parity_sep) throw std::runtime_error("Parity sector separation is not supported on LBIT MPO");
     set_parameters(lattice_parameters[get_position()]);
 }
 

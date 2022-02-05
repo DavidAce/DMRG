@@ -71,7 +71,7 @@ void tools::common::h5::tmp::register_new_file(std::string_view filepath) { inte
 //        }else{
 //            concat_filepath = temp_path / output_filepath;
 //        }
-//        // The filename may be relative or full, just make sure to replace .. with __
+//        // The filename may be relative or absolute, just make sure to replace .. with __
 //        fs::path new_filepath = replace_substr(concat_filepath, "..", "__");
 //        tools::log->debug("Temp path       [{}]", temp_path.string());
 //        tools::log->debug("output_filepath [{}]", output_filepath);
@@ -137,7 +137,7 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
             case StorageReason::CHECKPOINT:
                 if(status.iter % settings::storage::copy_from_temp_freq != 0) return; // Check that we write according to the frequency given
             case StorageReason::FINISHED:
-            case StorageReason::CHI_UPDATE:
+            case StorageReason::BOND_UPDATE:
             case StorageReason::PROJ_STATE:
             case StorageReason::INIT_STATE:
             case StorageReason::EMIN_STATE:
@@ -178,7 +178,7 @@ void tools::common::h5::tmp::copy_file(std::string_view src, std::string_view tg
         tools::log->warn("Could not copy: source file does not exist [{}]", src);
         return;
     }
-    auto t_copy = tid::tic_token("copy", tid::level::detail);
+    auto t_copy = tid::tic_token("copy", tid::level::extra);
     if(not fs::exists(target_path.parent_path())) { tools::common::h5::tmp::create_directory(target_path.string()); }
     if(fs::exists(target_path)) {
         std::ifstream                          target_stream(target_path.string(), std::ios_base::binary);

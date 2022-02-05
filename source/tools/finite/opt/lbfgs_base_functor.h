@@ -18,35 +18,37 @@ namespace spdlog {
 }
 namespace tools::finite::opt::internal {
 
-    class ceres_base_functor : public ceres::FirstOrderFunction {
+    class lbfgs_base_functor : public ceres::FirstOrderFunction {
         protected:
-        mutable double energy;
-        mutable double energy_per_site;
-        mutable double variance;
-        mutable double variance_per_site;
-        mutable double energy_shift;
-        mutable double energy_llim_per_site;
-        mutable double energy_ulim_per_site;
-        mutable double energy_tgt_per_site;
-        mutable double energy_min_per_site;
-        mutable double energy_max_per_site;
-        mutable double energy_dens;
-        mutable double energy_dens_target;
-        mutable double energy_dens_window;
-        mutable double energy_offset;
-        mutable double delta_f;
-        mutable double max_grad_norm = 0;
-        mutable double norm_offset;
-        mutable double norm;
-        mutable size_t counter = 0;
-        mutable long   ops     = 0;
-        size_t         length;
-        size_t         iteration;
-        int            num_parameters; // Includes lagrangian multiplier(s)
-        bool           have_bounds_on_energy = false;
+        int                    num_parameters; // Includes lagrangian multiplier(s)
+        long                   size;           // Does not include lagrange multiplier (i.e. size + 1 = num_parameters if LagrangeNorm::ON)
+        Eigen::DSizes<long, 3> dims;
+        mutable double         energy;
+        mutable double         energy_per_site;
+        mutable double         variance;
+        mutable double         variance_per_site;
+        mutable double         energy_shift;
+        mutable double         energy_llim_per_site;
+        mutable double         energy_ulim_per_site;
+        mutable double         energy_tgt_per_site;
+        mutable double         energy_min_per_site;
+        mutable double         energy_max_per_site;
+        mutable double         energy_dens;
+        mutable double         energy_dens_target;
+        mutable double         energy_dens_window;
+        mutable double         energy_offset;
+        mutable double         delta_f;
+        mutable double         max_grad_norm = 0;
+        mutable double         norm_offset;
+        mutable double         norm;
+        mutable size_t         counter = 0;
+        mutable long           ops     = 0;
+        size_t                 length;
+        size_t                 iteration;
+        bool                   have_bounds_on_energy = false;
 
         public:
-        explicit ceres_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
+        explicit lbfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
 
         double get_energy() const;
         double get_energy_per_site() const;

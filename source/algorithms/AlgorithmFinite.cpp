@@ -5,6 +5,7 @@
 #include <general/iter.h>
 #include <h5pp/h5pp.h>
 #include <math/num.h>
+#include <math/tenx/span.h>
 #include <tensors/edges/EdgesFinite.h>
 #include <tensors/model/ModelFinite.h>
 #include <tensors/state/StateFinite.h>
@@ -18,7 +19,6 @@
 #include <tools/finite/mps.h>
 #include <tools/finite/ops.h>
 #include <tools/finite/print.h>
-#include <math/tenx/span.h>
 
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
@@ -134,10 +134,10 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
     try {
         long moves = 0;
         while(num_moves > moves++) {
-            if(chi_quench_steps > 0) chi_quench_steps--;
+            if(bond_quench_steps > 0) bond_quench_steps--;
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
-            status.step += tensors.move_center_point(status.chi_lim);
+            status.step += tensors.move_center_point(status.bond_limit);
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
@@ -188,20 +188,20 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
 
 void AlgorithmFinite::update_bond_dimension_limit() {
     if(not tensors.position_is_inward_edge()) return;
-    status.chi_lim_max                 = settings::chi_lim_max(status.algo_type);
-    status.chi_lim_has_reached_chi_max = status.chi_lim >= status.chi_lim_max;
-    if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF) {
-        status.chi_lim = status.chi_lim_max;
+    status.bond_max                   = settings::get_bond_max(status.algo_type);
+    status.bond_limit_has_reached_max = status.bond_limit >= status.bond_max;
+    if(settings::get_bond_grow(status.algo_type) == BondGrow::OFF) {
+        status.bond_limit = status.bond_max;
         return;
     }
-    if(status.chi_lim_has_reached_chi_max) return;
-    auto tic = tid::tic_scope("chi_grow");
+    if(status.bond_limit_has_reached_max) return;
+    auto tic = tid::tic_scope("get_bond_grow");
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
             double truncation_threshold = 2 * settings::precision::svd_threshold;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
-            size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
+            size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_limit);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
             tools::log->trace("Truncation errors     : {}", tensors.state->get_truncation_errors());
             tools::log->trace("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*tensors.state));
@@ -213,48 +213,42 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
-    //      * No experiments are on-going like perturbation
     //      * the state precision is limited by bond dimension
-    // In addition, if chi_lim_grow == ChiGrow::ON_SATURATION we add the condition
+    // In addition, if get_bond_grow == BondGrow::ON_SATURATION we add the condition
     //      * the algorithm has got stuck
 
     // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
     // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
     bool is_saturated       = status.entanglement_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
-    bool is_exp_ongoing     = tensors.model->is_perturbed();
-    bool is_bond_limited    = tensors.state->is_bond_limited(status.chi_lim, 2 * settings::precision::svd_threshold);
-    bool grow_on_saturation = settings::chi_lim_grow(status.algo_type) == ChiGrow::ON_SATURATION;
-    if(is_exp_ongoing) {
-        tools::log->info("State is undergoing perturbation -- cannot increase bond dimension yet");
-        return;
-    }
+    bool is_bond_limited    = tensors.state->is_limited_by_bond(status.bond_limit, 2 * settings::precision::svd_threshold);
+    bool grow_on_saturation = settings::get_bond_grow(status.algo_type) == BondGrow::ON_SATURATION;
     if(grow_on_saturation and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.chi_lim);
+        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.bond_limit);
         return;
     }
 
     if(not is_bond_limited) {
-        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.chi_lim);
+        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_limit);
         return;
     }
 
     // If we got to this point we will update the bond dimension by a factor
-    auto factor = settings::chi_lim_grow_factor(status.algo_type);
-    if(factor <= 1.0) throw std::runtime_error(fmt::format("Error: chi_lim_grow_factor == {:.3f} | must be larger than one", factor));
+    auto factor = settings::get_bond_grow_factor(status.algo_type);
+    if(factor <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_factor == {:.3f} | must be larger than one", factor));
 
     // Write current results before updating bond dimension
-    write_to_file(StorageReason::CHI_UPDATE);
-    if(settings::strategy::randomize_on_chi_update and status.chi_lim >= 32)
-        randomize_state(ResetReason::CHI_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.chi_lim);
+    write_to_file(StorageReason::BOND_UPDATE);
+    if(settings::strategy::randomize_on_bond_update and status.bond_limit >= 32)
+        randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.bond_limit);
 
-    double chi_prod = std::ceil(factor * static_cast<double>(status.chi_lim));
-    long   chi_new  = std::min(static_cast<long>(chi_prod), status.chi_lim_max);
-    tools::log->info("Updating bond dimension limit {} -> {}", status.chi_lim, chi_new);
-    status.chi_lim                     = chi_new;
-    status.chi_lim_has_reached_chi_max = status.chi_lim == status.chi_lim_max;
+    double bond_prod = std::ceil(factor * static_cast<double>(status.bond_limit));
+    long   bond_new  = std::min(static_cast<long>(bond_prod), status.bond_max);
+    tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
+    status.bond_limit                 = bond_new;
+    status.bond_limit_has_reached_max = status.bond_limit == status.bond_max;
 
     // Last sanity check before leaving here
-    if(status.chi_lim > status.chi_lim_max) throw except::logic_error("chi_lim is larger than chi_lim_max! {} > {}", status.chi_lim, status.chi_lim_max);
+    if(status.bond_limit > status.bond_max) throw except::logic_error("bond_limit is larger than get_bond_max! {} > {}", status.bond_limit, status.bond_max);
 }
 
 void AlgorithmFinite::reduce_bond_dimension_limit() {
@@ -266,18 +260,18 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
         algorithm_history.clear();
         status.entanglement_saturated_for = 0;
         status.entanglement_converged_for = 0;
-        // If chi_lim >= 128 we set it to the nearest power of 2 smaller than chi_lim. Eg 300 becomes 256.
-        // If chi_lim < 128 and chi_lim > 64 we set chi_lim = 64
-        // If chi_lim <  128 we set it to the nearest multiple of 8 smaller than chi_lim. Eg 92 becomes 88.
-        // If chi_lim == 8 we set AlgorithmStop::SUCCESS and return
-        if(status.chi_lim <= 8)
+        // If bond_limit >= 128 we set it to the nearest power of 2 smaller than bond_limit. Eg 300 becomes 256.
+        // If bond_limit < 128 and bond_limit > 64 we set bond_limit = 64
+        // If bond_limit <  128 we set it to the nearest multiple of 8 smaller than bond_limit. Eg 92 becomes 88.
+        // If bond_limit == 8 we set AlgorithmStop::SUCCESS and return
+        if(status.bond_limit <= 8)
             status.algo_stop = AlgorithmStop::SUCCESS;
-        else if(status.chi_lim <= 64)
-            status.chi_lim = num::prev_multiple<long>(status.chi_lim, 8l);
-        else if(status.chi_lim == std::clamp<long>(status.chi_lim, 65, 127))
-            status.chi_lim = 64;
-        else if(status.chi_lim >= 128)
-            status.chi_lim = num::prev_power_of_two<long>(status.chi_lim);
+        else if(status.bond_limit <= 64)
+            status.bond_limit = num::prev_multiple<long>(status.bond_limit, 8l);
+        else if(status.bond_limit == std::clamp<long>(status.bond_limit, 65, 127))
+            status.bond_limit = 64;
+        else if(status.bond_limit >= 128)
+            status.bond_limit = num::prev_power_of_two<long>(status.bond_limit);
     }
 }
 
@@ -319,7 +313,7 @@ void AlgorithmFinite::randomize_model() {
 }
 
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
-                                      std::optional<long> chi_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
+                                      std::optional<long> bond_limit, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
                                       std::optional<double> svd_threshold) {
     auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {
@@ -333,40 +327,51 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
-    if(not chi_lim) {
-        chi_lim = settings::chi_lim_init(status.algo_type);
-        if(settings::chi_lim_grow(status.algo_type) == ChiGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
-            chi_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_chi())))); // Nearest power of two from below
+    if(not bond_limit) {
+        bond_limit = settings::get_bond_init(status.algo_type);
+        if(settings::get_bond_grow(status.algo_type) == BondGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
+            bond_limit = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
-    if(chi_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid chi_lim: {}", chi_lim.value()));
+    if(bond_limit.value() <= 0) throw std::runtime_error(fmt::format("Invalid bond_limit: {}", bond_limit.value()));
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type.value()), sector.value(), use_eigenspinors.value(), bitfield.value());
 
     svd::settings svd_settings;
     svd_settings.threshold = svd_threshold;
-    tensors.randomize_state(state_init, sector.value(), chi_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt, svd_settings);
-    //    tensors.move_center_point_to_edge(chi_lim.value());
+
+    tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites so that asserts and measurements work
+    tensors.rebuild_edges();
+
+    tensors.randomize_state(state_init, sector.value(), bond_limit.value(), use_eigenspinors.value(), bitfield, std::nullopt);
+
+    if(settings::strategy::project_initial_state and tools::finite::mps::init::is_valid_axis(sector.value())) {
+        tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
+                         tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+        tensors.project_to_nearest_sector(sector.value(), status.bond_limit, svd_settings);
+        // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
+    }
+
     clear_convergence_status();
     status.reset();
     status.iter       = 0;
     status.step       = 0;
     status.position   = tensors.state->get_position<long>();
     status.direction  = tensors.state->get_direction();
-    num_perturbations = 0;
-    num_chi_quenches  = 0;
+    num_bond_quenches = 0;
     status.algo_stop  = AlgorithmStop::NONE;
-    if(settings::chi_lim_grow(status.algo_type) != ChiGrow::OFF) status.chi_lim = chi_lim.value();
+    if(settings::get_bond_grow(status.algo_type) != BondGrow::OFF) status.bond_limit = bond_limit.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
-    if(tensors.state->find_largest_chi() > chi_lim.value())
-        //        tools::log->warn("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(),
-        //        chi_lim.value());
-        throw std::runtime_error(
-            fmt::format("Faulty truncation after randomize. Max found chi is {}, but chi limit is {}", tensors.state->find_largest_chi(), chi_lim.value()));
+    if(tensors.state->find_largest_bond() > bond_limit.value())
+        //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
+        //        bond_limit.value());
+        throw std::runtime_error(fmt::format("Faulty truncation after randomize. Max found bond dimension is {}, but bond limit is {}",
+                                             tensors.state->find_largest_bond(), bond_limit.value()));
 
-    tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites to make some measurements
+    tensors.rebuild_edges();
+    tools::log->info("Randomization successful:");
     tools::log->info("-- State labels             : {}", tensors.state->get_labels());
     tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
-    tools::log->info("-- Spin components          : {:.6f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("-- Spin components (X,Y,Z)  : {:.16f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
 
     if(status.algo_type != AlgorithmType::fLBIT) {
@@ -384,12 +389,12 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     size_t iter_since_last_projection = std::max(projected_iter, status.iter) - projected_iter;
 
     bool project_on_spin_saturation = settings::strategy::project_on_saturation > 0 and not status.spin_parity_has_converged and
-                                      iter_since_last_projection > settings::strategy::project_on_saturation;
+                                      iter_since_last_projection >= settings::strategy::project_on_saturation;
 
     bool project_on_var_saturation = settings::strategy::project_on_saturation > 0 and status.algorithm_saturated_for > 0 and
-                                     iter_since_last_projection > settings::strategy::project_on_saturation;
+                                     iter_since_last_projection >= settings::strategy::project_on_saturation;
 
-    bool project_on_every_iter = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection > settings::strategy::project_on_every_iter;
+    bool project_on_every_iter = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection >= settings::strategy::project_on_every_iter;
 
     bool project_to_given_sector = target_sector.has_value();
 
@@ -397,9 +402,9 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         if(not target_sector) target_sector = settings::strategy::target_sector;
         if(not tools::finite::mps::init::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
         std::string msg;
-        if(project_on_spin_saturation) msg += " | spin component has not converged";
-        if(project_on_var_saturation) msg += fmt::format(" | run every {} iter on variance saturation", settings::strategy::project_on_saturation);
-        if(project_on_every_iter) msg += fmt::format(" | run every {} iter", settings::strategy::project_on_every_iter);
+        if(project_on_spin_saturation) msg += " | reason: spin component has not converged";
+        if(project_on_var_saturation) msg += fmt::format(" | reason: run every {} iter on variance saturation", settings::strategy::project_on_saturation);
+        if(project_on_every_iter) msg += fmt::format(" | reason: run every {} iter", settings::strategy::project_on_every_iter);
         tools::log->info("Trying projection to {}{}", target_sector.value(), msg);
 
         auto sector_sign  = tools::finite::mps::init::get_sign(target_sector.value());
@@ -407,7 +412,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
 
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(target_sector.value(), status.chi_lim);
+            tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit);
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -428,13 +433,13 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.chi_lim);
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.bond_limit);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.chi_lim);
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.bond_limit);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
@@ -449,7 +454,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                     tensors = tensors_pos;
             } else {
                 // Here the spin component is close to one sector. We just project to the nearest sector
-                tensors.project_to_nearest_sector(target_sector.value(), status.chi_lim);
+                tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit);
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
@@ -471,7 +476,7 @@ void AlgorithmFinite::try_full_expansion() {
     if(expand_on_saturation) {
         auto variance_old = tools::finite::measure::energy_variance(tensors);
         tools::log->info("Trying expansion to H|psi> | pos {}", tensors.get_position());
-        tensors.apply_hamiltonian_on_state(status.chi_lim);
+        tensors.apply_hamiltonian_on_state(status.bond_limit);
         auto variance_new = tools::finite::measure::energy_variance(tensors);
         expanded_iter     = status.iter;
         tools::log->info("Expansion change: variance {:8.2e} -> {:8.2e}", variance_old, variance_new);
@@ -479,64 +484,45 @@ void AlgorithmFinite::try_full_expansion() {
 }
 
 void AlgorithmFinite::try_bond_dimension_quench() {
-    if(not settings::strategy::chi_quench_when_stuck) return;
-    if(chi_quench_steps > 0) clear_convergence_status();
+    if(not settings::strategy::bond_quench_when_stuck) return;
+    if(bond_quench_steps > 0) clear_convergence_status();
     if(not tensors.position_is_inward_edge()) return;
-    if(chi_quench_steps >= tensors.get_length()) {
-        tools::log->info("Chi quench continues -- {} steps left", chi_quench_steps);
-        tools::finite::mps::truncate_all_sites(*tensors.state, chi_lim_quench_ahead);
+    if(bond_quench_steps >= tensors.get_length()) {
+        tools::log->info("Bond quench continues -- {} steps left", bond_quench_steps);
+        tools::finite::mps::truncate_all_sites(*tensors.state, bond_lim_quench_ahead);
         return;
     }
     if(status.algorithm_has_stuck_for <= 2) {
-        tools::log->info("Chi quench skipped: simulation not been stuck for long enough");
+        tools::log->info("Bond quench skipped: simulation not been stuck for long enough");
         return;
     }
-    if(num_chi_quenches >= max_chi_quenches) {
-        tools::log->trace("Chi quench skipped: max number of chi quenches ({}) have been made already", num_chi_quenches);
+    if(num_bond_quenches >= max_bond_quenches) {
+        tools::log->trace("Bond quench skipped: max number of quenches ({}) have been made already", num_bond_quenches);
         return;
     }
     if(tools::finite::measure::energy_variance(tensors) < 10 * std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold))
         return;
     double truncation_threshold = 5 * settings::precision::svd_threshold;
     size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
-    size_t bond_at_lim_count    = tensors.state->num_bonds_reached_chi(status.chi_lim);
+    size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_limit);
     tools::log->trace("Truncation threshold : {:.4e}", std::pow(truncation_threshold, 2));
     tools::log->trace("Truncation errors    : {}", tensors.state->get_truncation_errors());
     tools::log->trace("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->trace("Entanglement entr    : {}", tools::finite::measure::entanglement_entropies(*tensors.state));
     tools::log->trace("Truncated bond count : {} ", trunc_bond_count);
     tools::log->trace("Bonds at limit  count: {} ", bond_at_lim_count);
-    if(tensors.state->is_bond_limited(status.chi_lim, truncation_threshold)) {
-        tools::log->info("Chi quench skipped: state is bond limited - prefer updating bond dimension");
+    if(tensors.state->is_limited_by_bond(status.bond_limit, truncation_threshold)) {
+        tools::log->info("Bond quench skipped: state is bond limited - prefer updating bond dimension");
         return;
     }
     auto bond_dimensions    = tools::finite::measure::bond_dimensions(*tensors.state);
     auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
-    tools::log->info("Chi quench started");
+    tools::log->info("Bond quench started");
     tools::finite::mps::truncate_all_sites(*tensors.state, max_bond_dimension / 2);
     tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));
     clear_convergence_status();
-    chi_quench_steps = 1 * tensors.get_length();
-    num_chi_quenches++;
-}
-
-void AlgorithmFinite::try_hamiltonian_perturbation() {
-    if(not settings::strategy::perturb_when_stuck) return;
-    if(perturbation_steps-- > 0) return;
-    if(status.algorithm_has_stuck_for == 0) {
-        tools::log->info("Perturbation skipped: algorithm not stuck");
-        return;
-    }
-    if(num_perturbations >= max_perturbations) {
-        tools::log->info("Perturbation skipped: max number of perturbation trials ({}) have been made already", num_perturbations);
-        return;
-    }
-    if(tensors.model->is_perturbed()) {
-        tensors.perturb_model_params(0, 0, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
-    } else {
-        tensors.perturb_model_params(1e-2, 1e-2, PerturbMode::UNIFORM_RANDOM_PERCENTAGE);
-        perturbation_steps = 2 * (tensors.get_length() - 1);
-    }
+    bond_quench_steps = 1 * tensors.get_length();
+    num_bond_quenches++;
 }
 
 AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFinite &t)
@@ -679,7 +665,7 @@ void AlgorithmFinite::clear_convergence_status() {
     status.entanglement_saturated_for  = 0;
     status.variance_mpo_converged_for  = 0;
     status.variance_mpo_saturated_for  = 0;
-    status.chi_lim_has_reached_chi_max = false;
+    status.bond_limit_has_reached_max  = false;
     status.spin_parity_has_converged   = false;
 }
 
@@ -741,10 +727,10 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), variance, status.energy_variance_lowest);
     report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error());
     if(settings::strategy::multisite_mps_size_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.sub_expansion_alpha);
-    report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::chi_lim_max(status.algo_type), status.chi_lim);
+    report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_limit);
     size_t comma_width       = settings::strategy::multisite_mps_size_max <= 2 ? 0 : 2; // ", "
     size_t bracket_width     = 2;                                                       // The {} edges
-    size_t bond_single_width = static_cast<size_t>(std::log10(settings::chi_lim_max(status.algo_type))) + 1;
+    size_t bond_single_width = static_cast<size_t>(std::log10(settings::get_bond_max(status.algo_type))) + 1;
     size_t bond_num_elements = settings::strategy::multisite_mps_size_max == 1 ? 1 : settings::strategy::multisite_mps_size_max - 1;
     size_t bond_string_width = bracket_width + (bond_single_width + comma_width) // The width of an element like " 54,"
                                                    * bond_num_elements;          // Number of bonds
@@ -784,15 +770,17 @@ void AlgorithmFinite::print_status_full() {
                      tid::get_unscoped("t_tot").get_time() / 60);
 
     if(status.algo_type != AlgorithmType::fLBIT) {
-        double energy_per_site = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
-        tools::log->info("Energy per site E/L                = {:<.16f}", energy_per_site);
+        double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
+        double epsite = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
+        tools::log->info("Energy          E                  = {:<.16f}", energy);
+        tools::log->info("Energy per site E/L                = {:<.16f}", epsite);
         if(status.algo_type == AlgorithmType::xDMRG)
             tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
                              tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
         double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
         tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
     }
-    tools::log->info("Bond dimension maximum χmax        = {}", settings::chi_lim_max(status.algo_type));
+    tools::log->info("Bond dimension maximum χmax        = {}", settings::get_bond_max(status.algo_type));
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
     tools::log->info("Entanglement entropies Sₑ          = {:8.2e}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
@@ -801,7 +789,7 @@ void AlgorithmFinite::print_status_full() {
         tools::log->info("Number entropies Sₙ                = {:8.2e}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
         tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
     }
-    tools::log->info("Spin components (global X,Y,Z)     = {:8.2e}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("Spin components (global X,Y,Z)     = {:.16f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
 
     tools::finite::measure::expectation_values_xyz(*tensors.state);
     tools::finite::measure::correlation_matrix_xyz(*tensors.state);

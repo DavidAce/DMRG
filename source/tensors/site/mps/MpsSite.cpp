@@ -117,7 +117,7 @@ void MpsSite::assert_identity() const {
 }
 
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
-    auto t_get = tid::tic_scope("get_M_bare", tid::level::pedant);
+    auto t_get = tid::tic_scope("get_M_bare", tid::level::detailed);
     if(M) {
         if(M.value().size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M_bare(): M has size 0 at position {}", get_position()));
         return M.value();
@@ -125,7 +125,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
         throw std::runtime_error(fmt::format("MpsSite::get_M_bare(): M has not been set at position {}", get_position()));
 }
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
-    auto t_get = tid::tic_scope("get_M", tid::level::pedant);
+    auto t_get = tid::tic_scope("get_M", tid::level::detailed);
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(fmt::format("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2),
@@ -144,7 +144,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
 }
 
 const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
-    auto t_get = tid::tic_scope("get_L", tid::level::pedant);
+    auto t_get = tid::tic_scope("get_L", tid::level::detailed);
     if(L) {
         if constexpr(settings::debug) {
             if(L->size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_L(): L has size 0 at position {} | label {}", get_position(), get_label()));
@@ -160,7 +160,7 @@ const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
         throw std::runtime_error(fmt::format("MpsSite::get_L(): L has not been set at position {}", get_position()));
 }
 const Eigen::Tensor<cplx, 1> &MpsSite::get_LC() const {
-    auto t_get = tid::tic_scope("get_LC", tid::level::pedant);
+    auto t_get = tid::tic_scope("get_LC", tid::level::detailed);
     if(isCenter()) {
         if(LC->dimension(0) != get_M_bare().dimension(2))
             throw std::runtime_error(fmt::format("MpsSite::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}",
@@ -298,7 +298,7 @@ void MpsSite::unset_L() {
 }
 
 void MpsSite::fuse_mps(const MpsSite &other) {
-    auto t_fuse = tid::tic_scope("fuse", tid::level::pedant);
+    auto t_fuse = tid::tic_scope("fuse", tid::level::detailed);
     // This operation is done when merging mps after an svd split, for instance
     auto tag  = get_tag();       // tag, (example: A[3])
     auto otag = other.get_tag(); // other tag, (example: AC[3])
@@ -435,7 +435,7 @@ void MpsSite::drop_stash() const {
 }
 
 void MpsSite::take_stash(const MpsSite &other) {
-    auto t_stash = tid::tic_token("take_stash", tid::level::pedant);
+    auto t_stash = tid::tic_token("take_stash", tid::level::detailed);
     if(other.V_stash and other.V_stash->pos_dst == get_position()) {
         /* Left-to-right move.
          * In this case there is a "V" in "other" that should be absorbed into this site from the left.

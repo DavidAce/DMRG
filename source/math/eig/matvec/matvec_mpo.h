@@ -12,7 +12,7 @@ namespace tid {
 struct primme_params;
 
 template<class Scalar_>
-class MatVecMps {
+class MatVecMPO {
     public:
     using Scalar                                   = Scalar_;
     constexpr static bool         can_shift_invert = true;
@@ -37,9 +37,9 @@ class MatVecMps {
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
     public:
-    MatVecMps() = default;
+    MatVecMPO() = default;
     template<typename T>
-    MatVecMps(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
+    MatVecMPO(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
               const Eigen::Tensor<T, 3> &envR_, /*!< The right block tensor.  */
               const Eigen::Tensor<T, 4> &mpo_   /*!< The Hamiltonian MPO's  */
     );
@@ -62,7 +62,7 @@ class MatVecMps {
     int  counter = 0;
     void print() const;
     void reset();
-    void set_shift(std::complex<double> sigma_);
+    void set_shift(std::complex<double> shift);
     void set_mode(eig::Form form_);
     void set_side(eig::Side side_);
 

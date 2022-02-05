@@ -1,6 +1,6 @@
 #include "../opt.h"
 #include <math/eig.h>
-#include <math/eig/matvec/matvec_mps.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <math/tenx.h>
 #include <tensors/edges/EdgesInfinite.h>
 #include <tensors/model/ModelInfinite.h>
@@ -25,7 +25,7 @@ namespace tools::infinite::opt {
         const auto &mpo       = tensors.model->get_2site_mpo_AB();
         const auto &env       = tensors.edges->get_ene_blk();
 
-        MatVecMps<cplx> matrix(env.L, env.R, mpo);
+        MatVecMPO<cplx> matrix(env.L, env.R, mpo);
         eig::solver     solver;
         solver.config.maxNev  = 1;
         solver.config.maxNcv  = static_cast<eig::size_type>(settings::precision::eig_default_ncv);

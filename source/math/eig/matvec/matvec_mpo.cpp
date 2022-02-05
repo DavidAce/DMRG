@@ -1,4 +1,4 @@
-#include "matvec_mps.h"
+#include "matvec_mpo.h"
 #include "../log.h"
 #include <math/svd.h>
 #include <math/tenx.h>
@@ -15,11 +15,11 @@ namespace eig {
 }
 
 // template<typename Scalar_>
-// MatVecMps<Scalar_>::~MatVecMps() noexcept = default;
+// MatVecMPO<Scalar_>::~MatVecMPO() noexcept = default;
 
 template<typename Scalar_>
 template<typename T>
-MatVecMps<Scalar_>::MatVecMps(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
+MatVecMPO<Scalar_>::MatVecMPO(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
                               const Eigen::Tensor<T, 3> &envR_, /*!< The right block tensor.  */
                               const Eigen::Tensor<T, 4> &mpo_   /*!< The Hamiltonian MPO's  */
 ) {
@@ -50,17 +50,17 @@ MatVecMps<Scalar_>::MatVecMps(const Eigen::Tensor<T, 3> &envL_, /*!< The left bl
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
 
-template MatVecMps<eig::cplx>::MatVecMps(const Eigen::Tensor<eig::real, 3> &envL_, const Eigen::Tensor<eig::real, 3> &envR_,
+template MatVecMPO<eig::cplx>::MatVecMPO(const Eigen::Tensor<eig::real, 3> &envL_, const Eigen::Tensor<eig::real, 3> &envR_,
                                          const Eigen::Tensor<eig::real, 4> &mpo_);
-template MatVecMps<eig::real>::MatVecMps(const Eigen::Tensor<eig::real, 3> &envL_, const Eigen::Tensor<eig::real, 3> &envR_,
+template MatVecMPO<eig::real>::MatVecMPO(const Eigen::Tensor<eig::real, 3> &envL_, const Eigen::Tensor<eig::real, 3> &envR_,
                                          const Eigen::Tensor<eig::real, 4> &mpo_);
-template MatVecMps<eig::cplx>::MatVecMps(const Eigen::Tensor<eig::cplx, 3> &envL_, const Eigen::Tensor<eig::cplx, 3> &envR_,
+template MatVecMPO<eig::cplx>::MatVecMPO(const Eigen::Tensor<eig::cplx, 3> &envL_, const Eigen::Tensor<eig::cplx, 3> &envR_,
                                          const Eigen::Tensor<eig::cplx, 4> &mpo_);
-template MatVecMps<eig::real>::MatVecMps(const Eigen::Tensor<eig::cplx, 3> &envL_, const Eigen::Tensor<eig::cplx, 3> &envR_,
+template MatVecMPO<eig::real>::MatVecMPO(const Eigen::Tensor<eig::cplx, 3> &envL_, const Eigen::Tensor<eig::cplx, 3> &envR_,
                                          const Eigen::Tensor<eig::cplx, 4> &mpo_);
 
 template<typename Scalar>
-void MatVecMps<Scalar>::FactorOP()
+void MatVecMPO<Scalar>::FactorOP()
 /* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
 {
     if(readyFactorOp) return; // happens only once
@@ -71,7 +71,7 @@ void MatVecMps<Scalar>::FactorOP()
 }
 
 template<typename T>
-void MatVecMps<T>::MultAx(T *mps_in_, T *mps_out_) {
+void MatVecMPO<T>::MultAx(T *mps_in_, T *mps_out_) {
     auto                                       token = t_multAx->tic_token();
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
@@ -80,7 +80,7 @@ void MatVecMps<T>::MultAx(T *mps_in_, T *mps_out_) {
 }
 
 template<typename T>
-void MatVecMps<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_, std::array<long, 4> shape_mpo_) {
+void MatVecMPO<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_, std::array<long, 4> shape_mpo_) {
     auto                token       = t_multAx->tic_token();
     std::array<long, 3> shape_envL_ = {shape_mps_[1], shape_mps_[1], shape_mpo_[0]};
     std::array<long, 3> shape_envR_ = {shape_mps_[2], shape_mps_[2], shape_mpo_[1]};
@@ -89,7 +89,7 @@ void MatVecMps<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *env
 }
 
 template<typename T>
-void MatVecMps<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
+void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
     auto token = t_multAx->tic_token();
     for(int i = 0; i < *blockSize; i++) {
         T                                         *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
@@ -104,7 +104,7 @@ void MatVecMps<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, 
 }
 
 template<typename T>
-void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
+void MatVecMPO<T>::MultOPv(T *mps_in_, T *mps_out_) {
     auto                                       token = t_multOPv->tic_token();
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
@@ -125,7 +125,7 @@ void MatVecMps<T>::MultOPv(T *mps_in_, T *mps_out_) {
 }
 
 template<typename T>
-void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
+void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *err) {
     auto token = t_multOPv->tic_token();
     switch(side) {
         case eig::Side::R: {
@@ -151,10 +151,10 @@ void MatVecMps<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
 }
 
 template<typename Scalar>
-void MatVecMps<Scalar>::print() const {}
+void MatVecMPO<Scalar>::print() const {}
 
 template<typename Scalar>
-void MatVecMps<Scalar>::reset() {
+void MatVecMPO<Scalar>::reset() {
     if(t_factorOP) t_factorOP->reset();
     if(t_multOPv) t_multOPv->reset();
     if(t_multAx) t_multAx->reset();
@@ -162,8 +162,10 @@ void MatVecMps<Scalar>::reset() {
 }
 
 template<typename T>
-void MatVecMps<T>::set_shift(std::complex<double> sigma_) {
-    readyShift = sigma == sigma_;
+void MatVecMPO<T>::set_shift(std::complex<double> shift) {
+    // Here we set an energy shift directly on the MPO.
+    // This only works if the MPO is not compressed already.
+    readyShift = sigma == shift;
 
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the matrix: it is already compressed!");
@@ -176,29 +178,28 @@ void MatVecMps<T>::set_shift(std::complex<double> sigma_) {
     auto dims = mpo.dimensions();
     if(dims[2] != dims[3]) throw except::logic_error("MPO has different spin dimensions up and down: {}", dims);
     auto spindim = dims[2];
+    long offset1 = dims[0] - 1;
 
     // Setup extents and handy objects
-    std::array<long, 4> offset4{dims[0] - 1, 0, 0, 0};
+    std::array<long, 4> offset4{offset1, 0, 0, 0};
     std::array<long, 4> extent4{1, 1, spindim, spindim};
     std::array<long, 2> extent2{spindim, spindim};
 
-    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> sigma_Id;
-    auto                                             sigma_ID = tenx::TensorIdentity<Scalar>(spindim);
-
-    // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*sigma_]
+    auto id = tenx::TensorIdentity<Scalar>(spindim);
+    // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*shift]
     if constexpr(std::is_same_v<T, eig::real>)
-        mpo.slice(offset4, extent4).reshape(extent2) += tenx::TensorIdentity<Scalar>(spindim) * std::real(sigma - sigma_);
+        mpo.slice(offset4, extent4).reshape(extent2) += id * std::real(sigma - shift);
     else
-        mpo.slice(offset4, extent4).reshape(extent2) += tenx::TensorIdentity<Scalar>(spindim) * (sigma - sigma_);
+        mpo.slice(offset4, extent4).reshape(extent2) += id * (sigma - shift);
 
-    sigma = sigma_;
+    sigma = shift;
     eig::log->debug("Shifted MPO dimensions {}", mpo.dimensions());
 
     readyShift = true;
 }
 
 template<typename T>
-void MatVecMps<T>::compress() {
+void MatVecMPO<T>::compress() {
     if(readyCompress) return;
     svd::settings svd_settings;
     svd_settings.svd_lib        = SVDLib::lapacke;
@@ -237,17 +238,17 @@ void MatVecMps<T>::compress() {
 }
 
 template<typename Scalar>
-void MatVecMps<Scalar>::set_mode(const eig::Form form_) {
+void MatVecMPO<Scalar>::set_mode(const eig::Form form_) {
     form = form_;
 }
 template<typename Scalar>
-void MatVecMps<Scalar>::set_side(const eig::Side side_) {
+void MatVecMPO<Scalar>::set_side(const eig::Side side_) {
     side = side_;
 }
 
 template<typename Scalar>
 template<typename T>
-T MatVecMps<Scalar>::get_shift() const {
+T MatVecMPO<Scalar>::get_shift() const {
     if constexpr(std::is_same_v<T, eig::cplx>)
         return sigma;
     else if constexpr(std::is_floating_point_v<T>)
@@ -256,21 +257,21 @@ T MatVecMps<Scalar>::get_shift() const {
         return static_cast<T>(sigma);
 }
 
-template eig::real MatVecMps<eig::real>::get_shift<eig::real>() const;
-template eig::real MatVecMps<eig::cplx>::get_shift<eig::real>() const;
-template eig::cplx MatVecMps<eig::real>::get_shift<eig::cplx>() const;
-template eig::cplx MatVecMps<eig::cplx>::get_shift<eig::cplx>() const;
+template eig::real MatVecMPO<eig::real>::get_shift<eig::real>() const;
+template eig::real MatVecMPO<eig::cplx>::get_shift<eig::real>() const;
+template eig::cplx MatVecMPO<eig::real>::get_shift<eig::cplx>() const;
+template eig::cplx MatVecMPO<eig::cplx>::get_shift<eig::cplx>() const;
 
 template<typename Scalar>
-eig::Form MatVecMps<Scalar>::get_form() const {
+eig::Form MatVecMPO<Scalar>::get_form() const {
     return form;
 }
 template<typename Scalar>
-eig::Side MatVecMps<Scalar>::get_side() const {
+eig::Side MatVecMPO<Scalar>::get_side() const {
     return side;
 }
 template<typename Scalar>
-eig::Type MatVecMps<Scalar>::get_type() const {
+eig::Type MatVecMPO<Scalar>::get_type() const {
     if constexpr(std::is_same_v<Scalar, eig::real>)
         return eig::Type::REAL;
     else if constexpr(std::is_same_v<Scalar, eig::cplx>)
@@ -280,35 +281,35 @@ eig::Type MatVecMps<Scalar>::get_type() const {
 }
 
 template<typename Scalar>
-const Eigen::Tensor<Scalar, 4> &MatVecMps<Scalar>::get_mpo() const {
+const Eigen::Tensor<Scalar, 4> &MatVecMPO<Scalar>::get_mpo() const {
     return mpo;
 }
 template<typename Scalar>
-const Eigen::Tensor<Scalar, 3> &MatVecMps<Scalar>::get_envL() const {
+const Eigen::Tensor<Scalar, 3> &MatVecMPO<Scalar>::get_envL() const {
     return envL;
 }
 template<typename Scalar>
-const Eigen::Tensor<Scalar, 3> &MatVecMps<Scalar>::get_envR() const {
+const Eigen::Tensor<Scalar, 3> &MatVecMPO<Scalar>::get_envR() const {
     return envR;
 }
 template<typename Scalar>
-std::array<long, 3> MatVecMps<Scalar>::get_shape_mps() const {
+std::array<long, 3> MatVecMPO<Scalar>::get_shape_mps() const {
     return shape_mps;
 }
 template<typename Scalar>
-std::array<long, 4> MatVecMps<Scalar>::get_shape_mpo() const {
+std::array<long, 4> MatVecMPO<Scalar>::get_shape_mpo() const {
     return mpo.dimensions();
 }
 template<typename Scalar>
-std::array<long, 3> MatVecMps<Scalar>::get_shape_envL() const {
+std::array<long, 3> MatVecMPO<Scalar>::get_shape_envL() const {
     return envL.dimensions();
 }
 template<typename Scalar>
-std::array<long, 3> MatVecMps<Scalar>::get_shape_envR() const {
+std::array<long, 3> MatVecMPO<Scalar>::get_shape_envR() const {
     return envR.dimensions();
 }
 template<typename Scalar>
-Eigen::Tensor<Scalar, 6> MatVecMps<Scalar>::get_tensor() const {
+Eigen::Tensor<Scalar, 6> MatVecMPO<Scalar>::get_tensor() const {
     auto                     d0 = shape_mps[0];
     auto                     d1 = shape_mps[1];
     auto                     d2 = shape_mps[2];
@@ -320,23 +321,23 @@ Eigen::Tensor<Scalar, 6> MatVecMps<Scalar>::get_tensor() const {
 }
 
 template<typename Scalar>
-Eigen::Tensor<Scalar, 2> MatVecMps<Scalar>::get_matrix() const {
+Eigen::Tensor<Scalar, 2> MatVecMPO<Scalar>::get_matrix() const {
     return get_tensor().reshape(tenx::array2{rows(), cols()});
 }
 
 template<typename Scalar>
-bool MatVecMps<Scalar>::isReadyFactorOp() const {
+bool MatVecMPO<Scalar>::isReadyFactorOp() const {
     return readyFactorOp;
 }
 template<typename Scalar>
-bool MatVecMps<Scalar>::isReadyShift() const {
+bool MatVecMPO<Scalar>::isReadyShift() const {
     return readyShift;
 }
 template<typename Scalar>
-bool MatVecMps<Scalar>::isReadyCompress() const {
+bool MatVecMPO<Scalar>::isReadyCompress() const {
     return readyCompress;
 }
 
 // Explicit instantiations
-template class MatVecMps<double>;
-template class MatVecMps<std::complex<double>>;
+template class MatVecMPO<double>;
+template class MatVecMPO<std::complex<double>>;

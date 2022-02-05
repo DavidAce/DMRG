@@ -67,20 +67,18 @@ class MpoSite {
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                                   std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view() const                                                     = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view(double single_site_energy) const                            = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const                         = 0;
     [[nodiscard]] virtual long                     get_spin_dimension() const                                                   = 0;
     [[nodiscard]] virtual TableMap                 get_parameters() const                                                       = 0;
-    [[nodiscard]] virtual bool                     is_perturbed() const                                                         = 0;
 
-    virtual void print_parameter_names() const                                                                   = 0;
-    virtual void print_parameter_values() const                                                                  = 0;
-    virtual void set_parameters(TableMap &parameters)                                                            = 0;
-    virtual void set_perturbation(double coupling_ptb, double field_ptb, PerturbMode ptbMode)                    = 0;
-    virtual void build_mpo()                                                                                     = 0;
-    virtual void randomize_hamiltonian()                                                                         = 0;
-    virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false, bool reverse = false) = 0;
-    virtual void save_hamiltonian(h5pp::File &file, std::string_view model_prefix) const                         = 0;
-    virtual void load_hamiltonian(const h5pp::File &file, std::string_view model_prefix)                         = 0;
+    virtual void print_parameter_names() const                                             = 0;
+    virtual void print_parameter_values() const                                            = 0;
+    virtual void set_parameters(TableMap &parameters)                                      = 0;
+    virtual void build_mpo()                                                               = 0;
+    virtual void randomize_hamiltonian()                                                   = 0;
+    virtual void set_averages(std::vector<TableMap> all_parameters, bool infinite = false) = 0;
+    virtual void save_hamiltonian(h5pp::File &file, std::string_view model_prefix) const   = 0;
+    virtual void load_hamiltonian(const h5pp::File &file, std::string_view model_prefix)   = 0;
     void         save_mpo(h5pp::File &file, std::string_view model_prefix) const;
     void         load_mpo(const h5pp::File &file, std::string_view model_prefix);
     std::size_t  get_unique_id() const;

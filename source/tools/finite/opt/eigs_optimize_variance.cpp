@@ -8,7 +8,7 @@
 #include <config/settings.h>
 #include <general/iter.h>
 #include <math/eig.h>
-#include <math/eig/matvec/matvec_mps.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <math/tenx.h>
 #include <tensors/model/ModelFinite.h>
 #include <tensors/state/StateFinite.h>
@@ -20,9 +20,8 @@
 // Temporary
 //#include <h5pp/h5pp.h>
 
-void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite &tensors, const opt_mps &initial_mps, const eig::solver &solver,
-                                                            std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only,
-                                                            double max_overlap_sq_sum) {
+void tools::finite::opt::internal::eigs_extract_solutions(const TensorsFinite &tensors, const opt_mps &initial_mps, const eig::solver &solver,
+                                                          std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only, double max_overlap_sq_sum) {
     auto dims_mps = initial_mps.get_tensor().dimensions();
     if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
         auto eigvecs  = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
@@ -57,7 +56,7 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                 if(overlap > 1e-4 or reldiff < 1e-1) {
                     auto energy = tools::finite::measure::energy(eigvec_i, tensors, &measurements);
                     eigval      = energy - initial_mps.get_energy_shift();
-                    variance    = tools::finite::measure::energy_variance(eigvec_i, tensors, &measurements);
+                    if(not fulldiag) variance = tools::finite::measure::energy_variance(eigvec_i, tensors, &measurements);
                 }
                 results.emplace_back(fmt::format("{:<8} eigenvector {}", solver.config.tag, idx), eigvec_i, tensors.active_sites, eigval,
                                      initial_mps.get_energy_shift(), variance, overlap, tensors.get_length());
@@ -69,16 +68,16 @@ void tools::finite::opt::internal::krylov_extract_solutions(const TensorsFinite 
                 if(not fulldiag) mps.set_max_grad(tools::finite::measure::max_gradient(eigvec_i, tensors));
                 mps.is_basis_vector = true;
                 mps.validate_basis_vector();
-                mps.set_krylov_idx(idx);
-                mps.set_krylov_nev(solver.result.meta.nev_converged);
-                mps.set_krylov_ncv(solver.result.meta.ncv);
-                mps.set_krylov_tol(solver.result.meta.tol);
-                mps.set_krylov_eigval(eigvals(idx));
-                mps.set_krylov_ritz(solver.result.meta.ritz);
-                mps.set_krylov_shift(solver.result.meta.sigma);
+                mps.set_eigs_idx(idx);
+                mps.set_eigs_nev(solver.result.meta.nev_converged);
+                mps.set_eigs_ncv(solver.result.meta.ncv);
+                mps.set_eigs_tol(solver.result.meta.tol);
+                mps.set_eigs_eigval(eigvals(idx));
+                mps.set_eigs_ritz(solver.result.meta.ritz);
+                mps.set_eigs_shift(solver.result.meta.sigma);
                 mps.set_optmode(meta.optMode);
-                mps.set_optspace(meta.optSpace);
-                if(not solver.result.meta.residual_norms.empty()) mps.set_krylov_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx)));
+                mps.set_optsolver(meta.optSolver);
+                if(not solver.result.meta.residual_norms.empty()) mps.set_eigs_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx)));
             }
         }
     }
@@ -94,17 +93,17 @@ namespace tools::finite::opt::internal {
 
     // Make a handy variance comparator
     auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_krylov_idx() != rhs.get_krylov_idx()) return lhs.get_krylov_idx() < rhs.get_krylov_idx();
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
         return lhs.get_variance() < rhs.get_variance();
     };
     auto comp_gradient = [](const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_krylov_idx() != rhs.get_krylov_idx()) return lhs.get_krylov_idx() < rhs.get_krylov_idx();
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
         return lhs.get_max_grad() < rhs.get_max_grad();
     };
     auto comp_gradient_ref = [](const std::reference_wrapper<const opt_mps> &lhs_ref, const std::reference_wrapper<const opt_mps> &rhs_ref) {
         const auto &lhs = lhs_ref.get();
         const auto &rhs = rhs_ref.get();
-        if(lhs.get_krylov_idx() != rhs.get_krylov_idx()) return lhs.get_krylov_idx() < rhs.get_krylov_idx();
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
         return lhs.get_max_grad() < rhs.get_max_grad();
     };
 
@@ -117,7 +116,7 @@ namespace tools::finite::opt::internal {
     //        long   found_elem_idx  = -1;
     //        long   elem_idx        = 0;
     //        for(const auto &e : elems) {
-    //            if(e.get_krylov_idx() == idx and e.get_max_grad() < found_grad_norm) {
+    //            if(e.get_eigs_idx() == idx and e.get_max_grad() < found_grad_norm) {
     //                found_grad_norm = e.get_max_grad();
     //                found_elem_idx  = elem_idx;
     //            }
@@ -162,7 +161,7 @@ namespace tools::finite::opt::internal {
                 // Start by collecting the results with the correct index
                 std::vector<std::reference_wrapper<const opt_mps>> results_idx_n;
                 for(const auto &r : results) {
-                    if(r.get_krylov_idx() == n) results_idx_n.emplace_back(r);
+                    if(r.get_eigs_idx() == n) results_idx_n.emplace_back(r);
                 }
                 if(not results_idx_n.empty()) {
                     if constexpr(std::is_same_v<Scalar, real>) {
@@ -207,12 +206,12 @@ namespace tools::finite::opt::internal {
         // It's important that we only consider the "eigenvector 0" results, i.e. idx == 0.
         std::vector<std::reference_wrapper<const opt_mps>> results_eig0;
         for(const auto &r : results) {
-            if(r.get_krylov_idx() == 0) results_eig0.emplace_back(r);
+            if(r.get_eigs_idx() == 0) results_eig0.emplace_back(r);
         }
 
         const auto &back0 = results_eig0.back().get();
-        if(back0.get_krylov_tol() <= 1.1 * settings::precision::eig_tolerance) { // 1.1 so to get a non-exact match as well
-            tools::log->debug("Try harder: false | minimum tolerance reached: {:8.2e}", back0.get_krylov_tol());
+        if(back0.get_eigs_tol() <= 1.1 * settings::precision::eig_tolerance) { // 1.1 to get a non-exact match as well
+            tools::log->debug("Try harder: false | minimum tolerance reached: {:8.2e}", back0.get_eigs_tol());
             return false;
         }
 
@@ -231,7 +230,7 @@ namespace tools::finite::opt::internal {
     template<typename Scalar>
     double get_largest_eigenvalue_hamiltonian_squared(const TensorsFinite &tensors) {
         const auto &env2                = tensors.get_multisite_env_var_blk();
-        auto        hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
+        auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
         tools::log->trace("Finding largest-magnitude eigenvalue");
         eig::solver solver; // Define a solver just to find the maximum eigenvalue
         solver.config.tol             = settings::precision::eig_tolerance;
@@ -248,16 +247,14 @@ namespace tools::finite::opt::internal {
     }
 
     template<typename Scalar>
-    void krylov_executor(eig::solver &solver, MatVecMps<Scalar> &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
-                         std::vector<opt_mps> &results, const OptMeta &meta) {
-        if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL)
-            throw std::logic_error("krylov_launcher error: Mixed Scalar:cplx with OptType::REAL");
-        if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX)
-            throw std::logic_error("krylov_launcher error: Mixed Scalar:real with OptType::CPLX");
+    void eigs_executor(eig::solver &solver, MatVecMPO<Scalar> &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
+                       std::vector<opt_mps> &results, const OptMeta &meta) {
+        if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL) throw std::logic_error("eigs_launcher error: Mixed Scalar:cplx with OptType::REAL");
+        if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX) throw std::logic_error("eigs_launcher error: Mixed Scalar:real with OptType::CPLX");
 
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
-        MatVecMps<Scalar> hamiltonian(env.L, env.R, mpo);
+        MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
         solver.config.primme_extra = &hamiltonian;
 
         //        h5pp::File  h5file("../output/primme_mps.h5", h5pp::FilePermission::READWRITE);
@@ -282,11 +279,15 @@ namespace tools::finite::opt::internal {
         hamiltonian_squared.reset();
         auto size = tensors.active_problem_size();
 
-        if(size <= 1024) {
+        if(size <= settings::precision::max_size_full_diag) {
             tools::log->trace("Full diagonalization of (H-E)²");
-            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
+            //            hamiltonian_squared.set_shift(1.0);
+            auto matrix = hamiltonian_squared.get_matrix();
+
+            //            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
             solver.config.tag = "lapack";
-            solver.eig(matrix.data(), matrix.rows());
+            solver.eig(matrix.data(), matrix.dimension(0));
+            //            solver.eig(matrix.data(), matrix.rows());
         } else {
             auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
             for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
@@ -315,157 +316,74 @@ namespace tools::finite::opt::internal {
                 }
             }
         }
-        krylov_extract_solutions(tensors, initial_mps, solver, results, meta, false);
+        eigs_extract_solutions(tensors, initial_mps, solver, results, meta, false);
     }
 
     template<typename Scalar>
-    void krylov_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
+    void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::settings config_primme;
-        config_primme.tol             = settings::precision::eig_tolerance;
-        config_primme.maxIter         = 80000;
+        config_primme.tol             = 1e4 * settings::precision::eig_tolerance;
+        config_primme.maxIter         = 200000;
         config_primme.maxTime         = 60 * 60;
         config_primme.maxNev          = 1;
-        config_primme.maxNcv          = 16; // 128
+        config_primme.maxNcv          = 1024; // 128
         config_primme.compress        = settings::precision::use_compressed_mpo_squared_otf;
         config_primme.lib             = eig::Lib::PRIMME;
         config_primme.ritz            = eig::Ritz::SA;
         config_primme.compute_eigvecs = eig::Vecs::ON;
         config_primme.tag             = "primme";
         config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
-        config_primme.loglevel        = 2;
-        std::vector<eig::settings> configs(2);
+        //        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_JDQMR;
 
         config_primme.primme_grad_tol  = meta.max_grad_tolerance;
         config_primme.primme_grad_iter = 100;
         config_primme.primme_grad_time = 5;
+        config_primme.loglevel         = 2;
 
-        configs[0]                             = config_primme;
-        configs[0].tol                         = 1e3 * settings::precision::eig_tolerance;
-        configs[0].maxNcv                      = 16;
-        configs[0].primme_max_inner_iterations = -1;
+        std::vector<eig::settings> configs(1);
 
-        configs[1]                             = config_primme;
-        configs[1].tol                         = 1e0 * settings::precision::eig_tolerance;
-        configs[1].maxNcv                      = 32;
-        configs[1].primme_max_inner_iterations = -1;
+        configs[0]     = config_primme;
+        configs[0].tol = 1e0 * settings::precision::eig_tolerance;
+        //        configs[0].maxNcv                      = 16;
+        //        configs[0].primme_max_inner_iterations = -1;
+
+        //        configs[1]                             = config_primme;
+        //        config_primme.maxIter                  = 10000;
+        //        configs[1].tol                         = 1e0 * settings::precision::eig_tolerance;
+        //        configs[1].maxNcv                      = 16;
+        //        configs[1].primme_max_inner_iterations = -1;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();
-        std::optional<MatVecMps<Scalar>> hamiltonian_squared;
+        std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
         for(const auto &config : configs) {
             eig::solver solver;
             solver.config = config;
-            if(not hamiltonian_squared) hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-            krylov_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
+            if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
+            eigs_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
 
             if(not try_harder(results, meta)) break;
             //            if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
         }
     }
-
-    template<typename Scalar>
-    void krylov_manager2(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        eig::settings config_primme;
-        config_primme.tol             = settings::precision::eig_tolerance;
-        config_primme.maxIter         = 80000;
-        config_primme.maxTime         = 60 * 60;
-        config_primme.maxNev          = 1;
-        config_primme.maxNcv          = 16; // 128
-        config_primme.compress        = settings::precision::use_compressed_mpo_squared_otf;
-        config_primme.lib             = eig::Lib::PRIMME;
-        config_primme.ritz            = eig::Ritz::SA;
-        config_primme.compute_eigvecs = eig::Vecs::ON;
-        config_primme.tag             = "primme";
-        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
-        config_primme.loglevel        = 2;
-        std::vector<eig::settings> configs(2);
-
-        config_primme.primme_grad_tol  = meta.max_grad_tolerance;
-        config_primme.primme_grad_iter = 0;
-        config_primme.primme_grad_time = 0;
-
-        configs[0]                             = config_primme;
-        configs[0].tol                         = 1e3 * settings::precision::eig_tolerance;
-        configs[0].maxNcv                      = 16;
-        configs[0].primme_max_inner_iterations = 100;
-
-        configs[1]                             = config_primme;
-        configs[1].tol                         = 1e0 * settings::precision::eig_tolerance;
-        configs[1].maxNcv                      = 32;
-        configs[1].primme_max_inner_iterations = 100;
-
-        const auto                      &env2 = tensors.get_multisite_env_var_blk();
-        std::optional<MatVecMps<Scalar>> hamiltonian_squared;
-        for(const auto &config : configs) {
-            eig::solver solver;
-            solver.config = config;
-            if(not hamiltonian_squared) hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-            krylov_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-
-            if(not try_harder(results, meta)) break;
-            if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
-        }
-    }
-
-    template<typename Scalar>
-    void krylov_manager3(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        eig::settings config_primme;
-        config_primme.tol             = settings::precision::eig_tolerance;
-        config_primme.maxIter         = 80000;
-        config_primme.maxTime         = 60 * 60;
-        config_primme.maxNev          = 1;
-        config_primme.maxNcv          = 16; // 128
-        config_primme.compress        = settings::precision::use_compressed_mpo_squared_otf;
-        config_primme.lib             = eig::Lib::PRIMME;
-        config_primme.ritz            = eig::Ritz::SA;
-        config_primme.compute_eigvecs = eig::Vecs::ON;
-        config_primme.tag             = "primme";
-        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
-        config_primme.loglevel        = 2;
-        std::vector<eig::settings> configs(2);
-
-        config_primme.primme_grad_tol          = meta.max_grad_tolerance;
-        config_primme.primme_grad_iter         = 10;
-        config_primme.primme_grad_time         = 1;
-        configs[0]                             = config_primme;
-        configs[0].tol                         = 1e3 * settings::precision::eig_tolerance;
-        configs[0].maxNcv                      = 16;
-        configs[0].primme_max_inner_iterations = -1;
-
-        configs[1]                             = config_primme;
-        configs[1].tol                         = 1e0 * settings::precision::eig_tolerance;
-        configs[1].maxNcv                      = 32;
-        configs[1].primme_max_inner_iterations = -1;
-
-        const auto                      &env2 = tensors.get_multisite_env_var_blk();
-        std::optional<MatVecMps<Scalar>> hamiltonian_squared;
-        for(const auto &config : configs) {
-            eig::solver solver;
-            solver.config = config;
-            if(not hamiltonian_squared) hamiltonian_squared = MatVecMps<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-            krylov_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-            if(not try_harder(results, meta)) break;
-            if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
-        }
-    }
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_optimization(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                                              [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
+tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps,
+                                                                                 [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
     using namespace internal;
     using namespace settings::precision;
     initial_mps.validate_basis_vector();
-    if(not tensors.model->is_shifted()) throw std::runtime_error("krylov_optimization requires energy-shifted MPO²");
-    if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("krylov_optimization requires non-compressed MPO²");
+    if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
+    if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance requires non-compressed MPO²");
 
-    auto t_var    = tid::tic_scope("krylov");
+    auto t_var    = tid::tic_scope("eigs-var");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     auto size     = initial_mps.get_tensor().size();
 
     tools::log->debug("Finding excited state: minimum eigenstate of (H-E)² | dims {} = {}", dims_mps, size);
     std::vector<opt_mps> results;
     switch(meta.optType) {
-        case OptType::REAL: krylov_manager<real>(tensors, initial_mps, results, meta); break;
-        case OptType::CPLX: krylov_manager<cplx>(tensors, initial_mps, results, meta); break;
+        case OptType::REAL: eigs_manager<real>(tensors, initial_mps, results, meta); break;
+        case OptType::CPLX: eigs_manager<cplx>(tensors, initial_mps, results, meta); break;
     }
 
     if(results.empty()) {
@@ -475,11 +393,11 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::krylov_optimization(co
     bool fulldiag = results.back().get_name().find("lapack") != std::string::npos;
     for(const auto &[num, mps] : iter::enumerate(results)) {
         if(fulldiag and num >= 8) break;
-        reports::krylov_add_entry(mps);
+        reports::eigs_add_entry(mps);
     }
 
     if(results.size() >= 2) {
-#pragma message "TODO: Sorting according krylov results w.r.t. gradient. Is this the right thing to do?"
+#pragma message "TODO: Sorting according eigs results w.r.t. gradient. Is this the right thing to do?"
         if(results.back().get_name().find("lapack") != std::string::npos)
             std::sort(results.begin(), results.end(), comp_variance);
         else if(meta.optMode == OptMode::VARIANCE)

@@ -11,13 +11,13 @@ bool settings::algorithm_is_on(AlgorithmType algo_type) {
         default: return false;
     }
 }
-long settings::chi_lim_max(AlgorithmType algo_type) {
+long settings::get_bond_max(AlgorithmType algo_type) {
     switch(algo_type) {
-        case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_max;
-        case AlgorithmType::fDMRG: return settings::fdmrg::chi_lim_max;
-        case AlgorithmType::xDMRG: return settings::xdmrg::chi_lim_max;
-        case AlgorithmType::iTEBD: return settings::itebd::chi_lim_max;
-        case AlgorithmType::fLBIT: return settings::flbit::chi_lim_max;
+        case AlgorithmType::iDMRG: return settings::idmrg::bond_max;
+        case AlgorithmType::fDMRG: return settings::fdmrg::bond_max;
+        case AlgorithmType::xDMRG: return settings::xdmrg::bond_max;
+        case AlgorithmType::iTEBD: return settings::itebd::bond_max;
+        case AlgorithmType::fLBIT: return settings::flbit::bond_max;
         default: return 64;
     }
 }
@@ -31,34 +31,34 @@ size_t settings::print_freq(AlgorithmType algo_type) {
         default: return 1;
     }
 }
-ChiGrow settings::chi_lim_grow(AlgorithmType algo_type) {
+BondGrow settings::get_bond_grow(AlgorithmType algo_type) {
     switch(algo_type) {
-        case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_grow;
-        case AlgorithmType::fDMRG: return settings::fdmrg::chi_lim_grow;
-        case AlgorithmType::xDMRG: return settings::xdmrg::chi_lim_grow;
-        case AlgorithmType::iTEBD: return settings::itebd::chi_lim_grow;
-        case AlgorithmType::fLBIT: return settings::flbit::chi_lim_grow;
-        default: return ChiGrow::OFF;
+        case AlgorithmType::iDMRG: return settings::idmrg::bond_grow;
+        case AlgorithmType::fDMRG: return settings::fdmrg::bond_grow;
+        case AlgorithmType::xDMRG: return settings::xdmrg::bond_grow;
+        case AlgorithmType::iTEBD: return settings::itebd::bond_grow;
+        case AlgorithmType::fLBIT: return settings::flbit::bond_grow;
+        default: return BondGrow::OFF;
     }
 }
-double settings::chi_lim_grow_factor(AlgorithmType algo_type) {
+double settings::get_bond_grow_factor(AlgorithmType algo_type) {
     switch(algo_type) {
-        case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_grow_factor;
-        case AlgorithmType::fDMRG: return settings::fdmrg::chi_lim_grow_factor;
-        case AlgorithmType::xDMRG: return settings::xdmrg::chi_lim_grow_factor;
-        case AlgorithmType::iTEBD: return settings::itebd::chi_lim_grow_factor;
-        case AlgorithmType::fLBIT: return settings::flbit::chi_lim_grow_factor;
+        case AlgorithmType::iDMRG: return settings::idmrg::bond_grow_factor;
+        case AlgorithmType::fDMRG: return settings::fdmrg::bond_grow_factor;
+        case AlgorithmType::xDMRG: return settings::xdmrg::bond_grow_factor;
+        case AlgorithmType::iTEBD: return settings::itebd::bond_grow_factor;
+        case AlgorithmType::fLBIT: return settings::flbit::bond_grow_factor;
         default: return 1.5;
     }
 }
 
-long settings::chi_lim_init(AlgorithmType algo_type) {
+long settings::get_bond_init(AlgorithmType algo_type) {
     switch(algo_type) {
-        case AlgorithmType::iDMRG: return settings::idmrg::chi_lim_init;
-        case AlgorithmType::fDMRG: return settings::fdmrg::chi_lim_init;
-        case AlgorithmType::xDMRG: return settings::xdmrg::chi_lim_init;
-        case AlgorithmType::iTEBD: return settings::itebd::chi_lim_init;
-        case AlgorithmType::fLBIT: return settings::flbit::chi_lim_init;
+        case AlgorithmType::iDMRG: return settings::idmrg::bond_init;
+        case AlgorithmType::fDMRG: return settings::fdmrg::bond_init;
+        case AlgorithmType::xDMRG: return settings::xdmrg::bond_init;
+        case AlgorithmType::iTEBD: return settings::itebd::bond_init;
+        case AlgorithmType::fLBIT: return settings::flbit::bond_init;
         default: return 8;
     }
 }
@@ -92,7 +92,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::savepoint_keep_newest_only"           , storage::savepoint_keep_newest_only);
     dmrg_config.load_parameter("storage::savepoint_frequency"                  , storage::savepoint_frequency);
     dmrg_config.load_parameter("storage::checkpoint_keep_newest_only"          , storage::checkpoint_keep_newest_only);
-    dmrg_config.load_parameter("storage::checkpoint_when_chi_updates"          , storage::checkpoint_when_chi_updates);
+    dmrg_config.load_parameter("storage::checkpoint_when_bond_updates"         , storage::checkpoint_when_bond_updates);
     dmrg_config.load_parameter("storage::checkpoint_frequency"                 , storage::checkpoint_frequency);
     dmrg_config.load_parameter("storage::use_temp_dir"                         , storage::use_temp_dir);
     dmrg_config.load_parameter("storage::copy_from_temp_freq"                  , storage::copy_from_temp_freq);
@@ -116,13 +116,11 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::ising_tf_rf::J2"                       , model::ising_tf_rf::J2);
     dmrg_config.load_parameter("model::ising_tf_rf::h_tran"                   , model::ising_tf_rf::h_tran);
     dmrg_config.load_parameter("model::ising_tf_rf::h_mean"                   , model::ising_tf_rf::h_mean);
-    dmrg_config.load_parameter("model::ising_tf_rf::h_stdv"                   , model::ising_tf_rf::h_stdv);
+    dmrg_config.load_parameter("model::ising_tf_rf::h_wdth"                   , model::ising_tf_rf::h_wdth);
     dmrg_config.load_parameter("model::ising_tf_rf::spin_dim"                 , model::ising_tf_rf::spin_dim);
     dmrg_config.load_parameter("model::ising_tf_rf::distribution"             , model::ising_tf_rf::distribution);
     dmrg_config.load_parameter("model::ising_sdual::delta"                    , model::ising_sdual::delta);
     dmrg_config.load_parameter("model::ising_sdual::lambda"                   , model::ising_sdual::lambda);
-    dmrg_config.load_parameter("model::ising_sdual::J_stdv"                   , model::ising_sdual::J_stdv);
-    dmrg_config.load_parameter("model::ising_sdual::h_stdv"                   , model::ising_sdual::h_stdv);
     dmrg_config.load_parameter("model::ising_sdual::parity_sep"               , model::ising_sdual::parity_sep);
     dmrg_config.load_parameter("model::ising_sdual::distribution"             , model::ising_sdual::distribution);
     dmrg_config.load_parameter("model::ising_sdual::spin_dim"                 , model::ising_sdual::spin_dim);
@@ -145,17 +143,16 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
-    dmrg_config.load_parameter("strategy::krylov_opt_grad_fix"                , strategy::krylov_opt_grad_fix);
-    dmrg_config.load_parameter("strategy::krylov_opt_when_stuck"              , strategy::krylov_opt_when_stuck);
-    dmrg_config.load_parameter("strategy::chi_quench_when_stuck"              , strategy::chi_quench_when_stuck);
-    dmrg_config.load_parameter("strategy::perturb_when_stuck"                 , strategy::perturb_when_stuck);
+    dmrg_config.load_parameter("strategy::lbfgs_fix_gradient_w_eigs"          , strategy::lbfgs_fix_gradient_w_eigs);
+    dmrg_config.load_parameter("strategy::prefer_eigs_when_stuck"             , strategy::prefer_eigs_when_stuck);
+    dmrg_config.load_parameter("strategy::bond_quench_when_stuck"             , strategy::bond_quench_when_stuck);
     dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
     dmrg_config.load_parameter("strategy::expand_on_saturation"               , strategy::expand_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
-    dmrg_config.load_parameter("strategy::project_on_chi_update"              , strategy::project_on_chi_update);
+    dmrg_config.load_parameter("strategy::project_on_bond_update"             , strategy::project_on_bond_update);
     dmrg_config.load_parameter("strategy::project_initial_state"              , strategy::project_initial_state);
-    dmrg_config.load_parameter("strategy::randomize_on_chi_update"            , strategy::randomize_on_chi_update);
+    dmrg_config.load_parameter("strategy::randomize_on_bond_update"           , strategy::randomize_on_bond_update);
     dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);
     dmrg_config.load_parameter("strategy::max_resets"                         , strategy::max_resets);
@@ -190,7 +187,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::max_subspace_size"                 , precision::max_subspace_size);
     dmrg_config.load_parameter("precision::max_size_full_diag"                , precision::max_size_full_diag);
     dmrg_config.load_parameter("precision::max_size_part_diag"                , precision::max_size_part_diag);
-    dmrg_config.load_parameter("precision::max_size_direct"                   , precision::max_size_direct);
+    dmrg_config.load_parameter("precision::max_size_multisite"                , precision::max_size_multisite);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
 
     dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
@@ -200,10 +197,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("fdmrg::on"                      , fdmrg::on);
     dmrg_config.load_parameter("fdmrg::max_iters"               , fdmrg::max_iters);
     dmrg_config.load_parameter("fdmrg::min_iters"               , fdmrg::min_iters);
-    dmrg_config.load_parameter("fdmrg::chi_lim_max"             , fdmrg::chi_lim_max);
-    dmrg_config.load_parameter("fdmrg::chi_lim_grow"            , fdmrg::chi_lim_grow);
-    dmrg_config.load_parameter("fdmrg::chi_lim_grow_factor"     , fdmrg::chi_lim_grow_factor);
-    dmrg_config.load_parameter("fdmrg::chi_lim_init"            , fdmrg::chi_lim_init);
+    dmrg_config.load_parameter("fdmrg::bond_max"                , fdmrg::bond_max);
+    dmrg_config.load_parameter("fdmrg::bond_grow"               , fdmrg::bond_grow);
+    dmrg_config.load_parameter("fdmrg::bond_grow_factor"        , fdmrg::bond_grow_factor);
+    dmrg_config.load_parameter("fdmrg::bond_init"               , fdmrg::bond_init);
     dmrg_config.load_parameter("fdmrg::print_freq "             , fdmrg::print_freq);
     dmrg_config.load_parameter("fdmrg::store_wavefn"            , fdmrg::store_wavefn);
     dmrg_config.load_parameter("fdmrg::run_fes_analysis"        , fdmrg::run_fes_analysis);
@@ -213,10 +210,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::max_iters"               , flbit::max_iters);
     dmrg_config.load_parameter("flbit::min_iters"               , flbit::min_iters);
     dmrg_config.load_parameter("flbit::use_swap_gates"          , flbit::use_swap_gates);
-    dmrg_config.load_parameter("flbit::chi_lim_max"             , flbit::chi_lim_max);
-    dmrg_config.load_parameter("flbit::chi_lim_grow"            , flbit::chi_lim_grow);
-    dmrg_config.load_parameter("flbit::chi_lim_grow_factor"     , flbit::chi_lim_grow_factor);
-    dmrg_config.load_parameter("flbit::chi_lim_init"            , flbit::chi_lim_init);
+    dmrg_config.load_parameter("flbit::bond_max"                , flbit::bond_max);
+    dmrg_config.load_parameter("flbit::bond_grow"               , flbit::bond_grow);
+    dmrg_config.load_parameter("flbit::bond_grow_factor"        , flbit::bond_grow_factor);
+    dmrg_config.load_parameter("flbit::bond_init"               , flbit::bond_init);
     dmrg_config.load_parameter("flbit::time_start_real"         , flbit::time_start_real);
     dmrg_config.load_parameter("flbit::time_start_imag"         , flbit::time_start_imag);
     dmrg_config.load_parameter("flbit::time_final_real"         , flbit::time_final_real);
@@ -232,14 +229,15 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
     dmrg_config.load_parameter("xdmrg::max_iters"                    , xdmrg::max_iters);
     dmrg_config.load_parameter("xdmrg::min_iters"                    , xdmrg::min_iters);
-    dmrg_config.load_parameter("xdmrg::olap_iters"                   , xdmrg::olap_iters);
-    dmrg_config.load_parameter("xdmrg::vsub_iters"                   , xdmrg::vsub_iters);
-    dmrg_config.load_parameter("xdmrg::chi_lim_max"                  , xdmrg::chi_lim_max);
-    dmrg_config.load_parameter("xdmrg::chi_lim_grow"                 , xdmrg::chi_lim_grow);
-    dmrg_config.load_parameter("xdmrg::chi_lim_grow_factor"          , xdmrg::chi_lim_grow_factor);
-    dmrg_config.load_parameter("xdmrg::chi_lim_init"                 , xdmrg::chi_lim_init);
-    dmrg_config.load_parameter("xdmrg::chi_lim_olap"                 , xdmrg::chi_lim_olap);
-    dmrg_config.load_parameter("xdmrg::chi_lim_vsub"                 , xdmrg::chi_lim_vsub);
+    dmrg_config.load_parameter("xdmrg::opt_overlap_iters"            , xdmrg::opt_overlap_iters);
+    dmrg_config.load_parameter("xdmrg::opt_overlap_bond_limit"       , xdmrg::opt_overlap_bond_limit);
+    dmrg_config.load_parameter("xdmrg::opt_subspace_iters"           , xdmrg::opt_subspace_iters);
+    dmrg_config.load_parameter("xdmrg::opt_subspace_bond_limit"      , xdmrg::opt_subspace_bond_limit);
+    dmrg_config.load_parameter("xdmrg::bond_max"                     , xdmrg::bond_max);
+    dmrg_config.load_parameter("xdmrg::bond_grow"                    , xdmrg::bond_grow);
+    dmrg_config.load_parameter("xdmrg::bond_grow_factor"             , xdmrg::bond_grow_factor);
+    dmrg_config.load_parameter("xdmrg::bond_init"                    , xdmrg::bond_init);
+
     dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
     dmrg_config.load_parameter("xdmrg::store_wavefn"                 , xdmrg::store_wavefn);
     dmrg_config.load_parameter("xdmrg::energy_density_target"        , xdmrg::energy_density_target);
@@ -249,27 +247,27 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::finish_if_variance_saturated" , xdmrg::finish_if_variance_saturated);
     dmrg_config.load_parameter("xdmrg::run_fes_analysis"             , xdmrg::run_fes_analysis);
     //Parameters controlling infinite-DMRG
-    dmrg_config.load_parameter("idmrg::on"                  , idmrg::on);
-    dmrg_config.load_parameter("idmrg::max_iters"           , idmrg::max_iters);
-    dmrg_config.load_parameter("idmrg::chi_lim_max"         , idmrg::chi_lim_max);
-    dmrg_config.load_parameter("idmrg::chi_lim_grow"        , idmrg::chi_lim_grow);
-    dmrg_config.load_parameter("idmrg::chi_lim_grow_factor" , idmrg::chi_lim_grow_factor);
-    dmrg_config.load_parameter("idmrg::chi_lim_init"        , idmrg::chi_lim_init);
-    dmrg_config.load_parameter("idmrg::print_freq"          , idmrg::print_freq);
+    dmrg_config.load_parameter("idmrg::on"                           , idmrg::on);
+    dmrg_config.load_parameter("idmrg::max_iters"                    , idmrg::max_iters);
+    dmrg_config.load_parameter("idmrg::bond_max"                     , idmrg::bond_max);
+    dmrg_config.load_parameter("idmrg::bond_grow"                    , idmrg::bond_grow);
+    dmrg_config.load_parameter("idmrg::bond_grow_factor"             , idmrg::bond_grow_factor);
+    dmrg_config.load_parameter("idmrg::bond_init"                    , idmrg::bond_init);
+    dmrg_config.load_parameter("idmrg::print_freq"                   , idmrg::print_freq);
 
 
     //Parameters controlling imaginary TEBD (Zero temperature)
-    dmrg_config.load_parameter("itebd::on"                  , itebd::on       );
-    dmrg_config.load_parameter("itebd::max_iters"           , itebd::max_iters);
-    dmrg_config.load_parameter("itebd::time_step_init_real" , itebd::time_step_init_real  );
-    dmrg_config.load_parameter("itebd::time_step_init_imag" , itebd::time_step_init_imag  );
-    dmrg_config.load_parameter("itebd::time_step_min"       , itebd::time_step_min);
-    dmrg_config.load_parameter("itebd::suzuki_order"        , itebd::suzuki_order);
-    dmrg_config.load_parameter("itebd::chi_lim_max"         , itebd::chi_lim_max  );
-    dmrg_config.load_parameter("itebd::chi_lim_grow"        , itebd::chi_lim_grow);
-    dmrg_config.load_parameter("itebd::chi_lim_grow_factor" , itebd::chi_lim_grow_factor);
-    dmrg_config.load_parameter("itebd::chi_lim_init"        , itebd::chi_lim_init);
-    dmrg_config.load_parameter("itebd::print_freq"          , itebd::print_freq);
+    dmrg_config.load_parameter("itebd::on"                   , itebd::on       );
+    dmrg_config.load_parameter("itebd::max_iters"            , itebd::max_iters);
+    dmrg_config.load_parameter("itebd::time_step_init_real"  , itebd::time_step_init_real  );
+    dmrg_config.load_parameter("itebd::time_step_init_imag"  , itebd::time_step_init_imag  );
+    dmrg_config.load_parameter("itebd::time_step_min"        , itebd::time_step_min);
+    dmrg_config.load_parameter("itebd::suzuki_order"         , itebd::suzuki_order);
+    dmrg_config.load_parameter("itebd::bond_max"             , itebd::bond_max  );
+    dmrg_config.load_parameter("itebd::bond_grow"            , itebd::bond_grow);
+    dmrg_config.load_parameter("itebd::bond_grow_factor"     , itebd::bond_grow_factor);
+    dmrg_config.load_parameter("itebd::bond_init"            , itebd::bond_init);
+    dmrg_config.load_parameter("itebd::print_freq"           , itebd::print_freq);
 
     //Timers
     dmrg_config.load_parameter("timer::on"         , timer::on        );

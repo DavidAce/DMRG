@@ -16,7 +16,7 @@ namespace tools::common::split {
                                            const std::vector<long>         & spin_dims,
                                            const std::vector<size_t>       & positions,
                                            long                            center_position,
-                                           long                            chi_limit,
+                                           long                            bond_limit,
                                            std::optional<svd::settings>    svd_settings = std::nullopt);
 
 
@@ -26,28 +26,28 @@ namespace tools::common::split {
                     split_mps_into_As(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
-                                      long                            chi_limit,
+                                      long                            bond_limit,
                                       std::optional<svd::settings>    svd_settings = std::nullopt);
 //        template<typename Scalar>
 //        extern std::vector<MpsSite>
 //                    split_mps_into_As2(const Eigen::Tensor<Scalar,3> & multisite_mps,
 //                                      const std::vector<long>       & spin_dims,
 //                                      const std::vector<size_t>     & positions,
-//                                      long                            chi_limit,
+//                                      long                            bond_limit,
 //                                      std::optional<svd::settings>    svd_settings = std::nullopt);
         template<typename Scalar>
         extern std::deque<MpsSite>
                     split_mps_into_Bs(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
-                                      long                            chi_limit,
+                                      long                            bond_limit,
                                       std::optional<svd::settings>    svd_settings = std::nullopt);
 //        template<typename Scalar>
 //        extern std::deque<MpsSite>
 //                    split_mps_into_Bs2(const Eigen::Tensor<Scalar,3> & multisite_mps,
 //                                      const std::vector<long>       & spin_dims,
 //                                      const std::vector<size_t>     & positions,
-//                                      long                            chi_limit,
+//                                      long                            bond_limit,
 //                                      std::optional<svd::settings>    svd_settings = std::nullopt);
     }
 

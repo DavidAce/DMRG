@@ -57,7 +57,7 @@ void itebd::single_TEBD_step() {
     auto t_step = tid::tic_scope("step");
     for(auto &U : unitary_time_evolving_operators) {
         Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state, U);
-        tensors.merge_twosite_tensor(twosite_tensor, status.chi_lim);
+        tensors.merge_twosite_tensor(twosite_tensor, status.bond_limit);
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
     status.phys_time += std::abs(status.delta_t);
@@ -72,7 +72,7 @@ void itebd::check_convergence() {
     update_bond_dimension_limit();
     check_convergence_time_step();
     if(status.entanglement_converged_for > 0 and status.variance_ham_converged_for > 0 and status.variance_mom_converged_for > 0 and
-       status.chi_lim_has_reached_chi_max and status.time_step_has_converged) {
+       status.bond_limit_has_reached_max and status.time_step_has_converged) {
         status.algorithm_converged_for++;
     } else
         status.algorithm_converged_for = 0;
@@ -81,7 +81,7 @@ void itebd::check_convergence() {
 void itebd::check_convergence_time_step() {
     if(std::abs(status.delta_t) <= settings::itebd::time_step_min) {
         status.time_step_has_converged = true;
-    } else if(status.chi_lim_has_reached_chi_max and status.entanglement_converged_for > 0) {
+    } else if(status.bond_limit_has_reached_max and status.entanglement_converged_for > 0) {
         status.delta_t                  = std::max(settings::itebd::time_step_min, std::abs(status.delta_t) * 0.5);
         unitary_time_evolving_operators = qm::time::get_twosite_time_evolution_operators(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
         //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);

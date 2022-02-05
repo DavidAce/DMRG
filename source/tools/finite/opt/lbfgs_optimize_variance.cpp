@@ -1,6 +1,6 @@
 #include "../opt_meta.h"
 #include "../opt_mps.h"
-#include "ceres_direct_functor.h"
+#include "lbfgs_variance_functor.h"
 #include "opt-internal.h"
 #include "report.h"
 #include <algorithms/AlgorithmStatus.h>
@@ -13,9 +13,8 @@
 #include <tools/common/log.h>
 #include <tools/finite/measure.h>
 
-tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status,
-                                                                                    OptMeta &meta) {
-    auto                t_dir = tid::tic_scope("direct");
+tools::finite::opt::opt_mps tools::finite::opt::internal::lbfgs_optimize_variance(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
+    auto                t_var = tid::tic_scope("variance");
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_state("current state", tensors.state->get_multisite_mps(), sites,
                                       tools::finite::measure::energy(tensors) - tensors.model->get_energy_shift(), // Eigval
@@ -23,14 +22,14 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
                                       tools::finite::measure::energy_variance(tensors),
                                       1.0, // Overlap
                                       tensors.get_length());
-    t_dir.toc(); // The next call to ceres_direct_optimization opens the "direct" scope again.
-    return ceres_direct_optimization(tensors, initial_state, status, meta);
+    t_var.toc(); // The next call to lbfgs_optimize_variance opens the "direct" scope again.
+    return lbfgs_optimize_variance(tensors, initial_state, status, meta);
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimization(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                                                    const AlgorithmStatus &status, OptMeta &meta) {
-    tools::log->trace("Optimizing in DIRECT mode");
-    auto t_dir = tid::tic_scope("direct");
+tools::finite::opt::opt_mps tools::finite::opt::internal::lbfgs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps,
+                                                                                  const AlgorithmStatus &status, OptMeta &meta) {
+    tools::log->trace("Optimizing variance");
+    auto t_var = tid::tic_scope("variance");
     initial_mps.validate_basis_vector();
     if constexpr(settings::debug)
         if(initial_mps.has_nan()) throw std::runtime_error("initial_mps has nan's");
@@ -38,7 +37,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     const auto &current_mps = tensors.state->get_multisite_mps();
     const auto  current_map = Eigen::Map<const Eigen::VectorXcd>(current_mps.data(), current_mps.size());
 
-    auto    options = internal::ceres_default_options;
+    auto    options = internal::lbfgs_default_options;
     auto    summary = ceres::GradientProblemSolver::Summary();
     opt_mps optimized_mps;
     optimized_mps.set_name(initial_mps.get_name());
@@ -49,9 +48,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     auto t_lbfgs = tid::tic_scope("lbfgs");
     switch(meta.optType) {
         case OptType::CPLX: {
-            // Copy the initial guess and operate directly on it
-            optimized_mps.set_tensor(initial_mps.get_tensor());
-            auto *functor = new ceres_direct_functor<std::complex<double>, LagrangeNorm::OFF>(tensors, status);
+            auto  initial_guess = initial_mps.get_initial_state_with_lagrange_multiplier<OptType::CPLX>();
+            auto *functor       = new lbfgs_variance_functor<std::complex<double>, LagrangeNorm::ON>(tensors, status);
             if(settings::precision::use_compressed_mpo_squared_otf)
                 // Compress the virtual bond between MPO² and the environments
                 functor->compress();
@@ -60,11 +58,13 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running LBFGS direct cplx");
+
             ceres::Solve(options, problem, optimized_mps.get_vector_cplx_as_2xreal().data(), &summary);
             // Copy the results from the functor
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
             optimized_mps.set_max_grad(functor->get_max_grad_norm());
+            optimized_mps.set_tensor_cplx(initial_guess.data(), initial_mps.get_tensor().dimensions());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
             tid::get("vH") += *functor->t_Hn;
@@ -74,25 +74,21 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
         }
         case OptType::REAL: {
             // Here we make a temporary
-            auto initial_state_real = initial_mps.get_initial_state_with_lagrange_multiplier<OptType::REAL>();
-            //            auto  initial_state_real = initial_mps.get_vector_cplx_as_1xreal();
-            auto *functor = new ceres_direct_functor<double, LagrangeNorm::ON>(tensors, status);
+            auto  initial_guess = initial_mps.get_initial_state_with_lagrange_multiplier<OptType::REAL>();
+            auto *functor       = new lbfgs_variance_functor<double, LagrangeNorm::ON>(tensors, status);
             if(settings::precision::use_compressed_mpo_squared_otf)
                 // Compress the virtual bond between MPO² and the environments
                 functor->compress();
-
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
             tools::log->trace("Running LBFGS direct real");
-            if constexpr(settings::debug)
-                if(initial_state_real.hasNaN()) throw std::runtime_error("initial_state_real has nan's");
-            ceres::Solve(options, problem, initial_state_real.data(), &summary);
+            ceres::Solve(options, problem, initial_guess.data(), &summary);
             // Copy the results from the functor
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
             optimized_mps.set_max_grad(functor->get_max_grad_norm());
-            optimized_mps.set_tensor_real(initial_state_real.data(), initial_mps.get_tensor().dimensions());
+            optimized_mps.set_tensor_real(initial_guess.data(), initial_mps.get_tensor().dimensions());
             tid::get("vH2") += *functor->t_H2n;
             tid::get("vH2v") += *functor->t_nH2n;
             tid::get("vH") += *functor->t_Hn;
@@ -101,7 +97,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
             break;
         }
     }
-    reports::time_add_opt_entry();
+    reports::time_add_entry();
     t_lbfgs.toc();
     // Copy and set the rest of the tensor metadata
     optimized_mps.normalize();
@@ -116,6 +112,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ceres_direct_optimizat
     double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
     tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
                       ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
-    reports::bfgs_add_entry("Direct", "opt", optimized_mps);
+    reports::bfgs_add_entry("variance", "opt", optimized_mps);
     return optimized_mps;
 }

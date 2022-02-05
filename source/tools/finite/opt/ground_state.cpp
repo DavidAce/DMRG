@@ -9,7 +9,7 @@
 #include <config/settings.h>
 #include <general/iter.h>
 #include <math/eig.h>
-#include <math/eig/matvec/matvec_mps.h>
+#include <math/eig/matvec/matvec_mpo.h>
 #include <tensors/TensorsFinite.h>
 #include <tid/tid.h>
 #include <tools/common/log.h>
@@ -27,13 +27,13 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
     eig::solver solver;
     if(problem_size < settings::precision::max_size_full_diag) {
         tools::log->trace("Finding ground state");
-        auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_matrix<Scalar>(*tensors.model, *tensors.edges);
-        solver.config.tag = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
-        solver.eig<eig::Form::SYMM>(matrix.data(), matrix.rows());
+        const auto &matrix = tensors.template get_effective_hamiltonian<Scalar>();
+        solver.config.tag  = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
+        solver.eig<eig::Form::SYMM>(matrix.data(), matrix.dimension(0));
     } else {
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
-        MatVecMps<Scalar> matrix(env.L, env.R, mpo);
+        MatVecMPO<Scalar> matrix(env.L, env.R, mpo);
         solver.config.tol             = 1e-14;
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;
@@ -66,7 +66,7 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
     }
 
     std::vector<opt_mps> results;
-    internal::krylov_extract_solutions(tensors, initial_mps, solver, results, meta, true);
+    internal::eigs_extract_solutions(tensors, initial_mps, solver, results, meta, true);
 
     auto comparator = [&ritz, &meta](const opt_mps &lhs, const opt_mps &rhs) {
         auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
@@ -108,9 +108,9 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimizat
     constexpr size_t max_print = settings::debug ? 32 : 4;
     for(const auto &[num, mps] : iter::enumerate(results)) {
         if(num >= max_print) break;
-        reports::krylov_add_entry(mps);
+        reports::eigs_add_entry(mps);
     }
-    reports::print_krylov_report();
+    reports::print_eigs_report();
 
     if(results.empty())
         return initial_mps; // Solver failed

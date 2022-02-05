@@ -77,7 +77,7 @@ void idmrg::single_iDMRG_step() {
      */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(ritz));
     Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, ritz);
-    tensors.merge_twosite_tensor(twosite_tensor, status.chi_lim);
+    tensors.merge_twosite_tensor(twosite_tensor, status.bond_limit);
 }
 
 void idmrg::check_convergence() {
@@ -88,7 +88,7 @@ void idmrg::check_convergence() {
     check_convergence_variance_ham();
     check_convergence_variance_mom();
     if(status.entanglement_converged_for > 0 and status.variance_mpo_converged_for > 0 and status.variance_ham_converged_for > 0 and
-       status.variance_mom_converged_for > 0 and status.chi_lim_has_reached_chi_max) {
+       status.variance_mom_converged_for > 0 and status.bond_limit_has_reached_max) {
         status.algorithm_converged_for++;
     } else
         status.algorithm_converged_for = 0;

@@ -6,15 +6,15 @@
 class AlgorithmStatus {
     public:
     // common variables
-    size_t               iter                        = 0; // In idmrg and itebd: iterations, in fdmrg and xdmrg: full sweeps along the chain.
+    size_t               iter                        = 0; // In idmrg and itebd: iterations, in fdmrg and xdmrg: sweeps along the chain.
     size_t               step                        = 0; // How many dmrg steps have been taken (each step may cover multiple sites)
     long                 position                    = 0;
     int                  direction                   = 1;
     size_t               num_resets                  = 0;
     size_t               min_iters                   = 0;
-    long                 chi_lim_max                 = 0; /*!< Maximum allowable bond dimension during an algorithm run */
-    long                 chi_lim_init                = 0; /*!< Initial limit on bond dimension when an algorithm starts */
-    long                 chi_lim                     = 0; /*!< Current limit on bond dimension, can be increased dynamically */
+    long                 bond_max                    = 0; /*!< Maximum allowable bond dimension during an algorithm run */
+    long                 bond_init                   = 0; /*!< Initial limit on bond dimension when an algorithm starts */
+    long                 bond_limit                  = 0; /*!< Current limit on bond dimension, can be increased dynamically */
     double               energy_min_per_site         = 0;
     double               energy_max_per_site         = 0;
     double               energy_tgt_per_site         = 0;
@@ -49,7 +49,7 @@ class AlgorithmStatus {
     size_t               variance_ham_saturated_for  = 0;
     size_t               variance_mom_converged_for  = 0;
     size_t               variance_mom_saturated_for  = 0;
-    bool                 chi_lim_has_reached_chi_max = false;
+    bool                 bond_limit_has_reached_max  = false;
     bool                 spin_parity_has_converged   = false;
     bool                 time_step_has_converged     = false;
     bool                 fes_is_running              = false;

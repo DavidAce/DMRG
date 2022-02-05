@@ -11,14 +11,14 @@ enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
-enum class ChiGrow { OFF, ON_ITERATION, ON_SATURATION };
+enum class BondGrow { OFF, ON_ITERATION, ON_SATURATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, CHI_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, FES_ANALYSIS };
+enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, BOND_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, FES_ANALYSIS };
 enum class CopyPolicy { FORCE, TRY, OFF };
-enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, CHI_UPDATE };
+enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy {
     RESUME, /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
@@ -31,8 +31,8 @@ enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
-enum class OptMode { VARIANCE, OVERLAP };
-enum class OptSpace { SUBSPACE, DIRECT, KRYLOV };
+enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE };
+enum class OptSolver { EIGS, LBFGS };
 enum class OptRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class OptWhen : int { NEVER = 0, PREV_FAIL_GRADIENT = 1, PREV_FAIL_NOCHANGE = 2, PREV_FAIL_WORSENED = 4, PREV_FAIL_ERROR = 8, ALWAYS = 16 };
 
@@ -56,13 +56,6 @@ enum class StateInit {
     RANDOMIZE_PREVIOUS_STATE,
     PRODUCT_STATE_ALIGNED,
     PRODUCT_STATE_NEEL,
-};
-
-enum class PerturbMode {
-    PERCENTAGE,                // J_ptb = couplingPtb * J_rnd
-    ABSOLUTE,                  // J_ptb = couplingPtb
-    UNIFORM_RANDOM_PERCENTAGE, // J_ptb = std::random_uniform(-couplingPtb, couplingPtb) * J_rnd
-    UNIFORM_RANDOM_ABSOLUTE,   // J_ptb = std::random_uniform(-couplingPtb, couplingPtb)
 };
 
 enum class fdmrg_task {
@@ -197,10 +190,10 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == SVDMode::LAPACKE)                                    return "LAPACKE";
         if(item == SVDMode::RSVD)                                       return "RSVD";
     }
-    if constexpr(std::is_same_v<T, ChiGrow>) {
-        if(item == ChiGrow::OFF)                                        return "OFF";
-        if(item == ChiGrow::ON_SATURATION)                              return "ON_SATURATION";
-        if(item == ChiGrow::ON_ITERATION)                               return "ON_ITERATION";
+    if constexpr(std::is_same_v<T, BondGrow>) {
+        if(item == BondGrow::OFF)                                       return "OFF";
+        if(item == BondGrow::ON_SATURATION)                             return "ON_SATURATION";
+        if(item == BondGrow::ON_ITERATION)                              return "ON_ITERATION";
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == GateMove::OFF)                                       return "OFF";
@@ -230,7 +223,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == ResetReason::FIND_WINDOW)                            return "FIND_WINDOW";
         if(item == ResetReason::SATURATED)                              return "SATURATED";
         if(item == ResetReason::NEW_STATE)                              return "NEW_STATE";
-        if(item == ResetReason::CHI_UPDATE)                             return "CHI_UPDATE";
+        if(item == ResetReason::BOND_UPDATE)                            return "BOND_UPDATE";
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == NormPolicy::ALWAYS)                                  return "ALWAYS";
@@ -250,7 +243,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StorageReason::SAVEPOINT)                            return "SAVEPOINT";
         if(item == StorageReason::CHECKPOINT)                           return "CHECKPOINT";
         if(item == StorageReason::FINISHED)                             return "FINISHED";
-        if(item == StorageReason::CHI_UPDATE)                           return "CHI_UPDATE";
+        if(item == StorageReason::BOND_UPDATE)                          return "BOND_UPDATE";
         if(item == StorageReason::PROJ_STATE)                           return "PROJ_STATE";
         if(item == StorageReason::INIT_STATE)                           return "INIT_STATE";
         if(item == StorageReason::EMIN_STATE)                           return "EMIN_STATE";
@@ -268,12 +261,6 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T, StateInitType>) {
         if(item == StateInitType::REAL)   return "REAL";
         if(item == StateInitType::CPLX)   return "CPLX";
-    }
-    if constexpr(std::is_same_v<T, PerturbMode>) {
-        if(item == PerturbMode::PERCENTAGE)                             return "PERCENTAGE";
-        if(item == PerturbMode::ABSOLUTE)                               return "ABSOLUTE";
-        if(item == PerturbMode::UNIFORM_RANDOM_PERCENTAGE)              return "UNIFORM_RANDOM_PERCENTAGE";
-        if(item == PerturbMode::UNIFORM_RANDOM_ABSOLUTE)                return "UNIFORM_RANDOM_ABSOLUTE";
     }
     if constexpr(std::is_same_v<T, FileCollisionPolicy>) {
         if(item == FileCollisionPolicy::RESUME)                         return "RESUME";
@@ -361,13 +348,14 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptType::CPLX)                                      return "CPLX";
     }
     if constexpr(std::is_same_v<T,OptMode>){
+        if(item == OptMode::ENERGY  )                                  return "ENERGY";
         if(item == OptMode::VARIANCE)                                  return "VARIANCE";
         if(item == OptMode::OVERLAP)                                   return "OVERLAP";
+        if(item == OptMode::SUBSPACE)                                  return "SUBSPACE";
     }
-    if constexpr(std::is_same_v<T,OptSpace>){
-        if(item == OptSpace::SUBSPACE)                                 return "SUBSPACE";
-        if(item == OptSpace::DIRECT)                                   return "DIRECT";
-        if(item == OptSpace::KRYLOV)                                   return "KRYLOV";
+    if constexpr(std::is_same_v<T,OptSolver>){
+        if(item == OptSolver::EIGS)                                    return "EIGS";
+        if(item == OptSolver::LBFGS)                                   return "LBFGS";
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == OptWhen::NEVER)                                     return "NEVER";
@@ -439,7 +427,7 @@ constexpr auto sv2enum(std::string_view item) {
         AlgorithmStop,
         MultisiteMove,
         SVDMode,
-        ChiGrow,
+        BondGrow,
         GateMove,
         ModelType,
         EdgeStatus,
@@ -454,7 +442,7 @@ constexpr auto sv2enum(std::string_view item) {
         RandomizerMode,
         OptType,
         OptMode,
-        OptSpace,
+        OptSolver,
         OptRitz,
         OptWhen,
         OptExit,
@@ -462,7 +450,6 @@ constexpr auto sv2enum(std::string_view item) {
         OptInit,
         StateInitType,
         StateInit,
-        PerturbMode,
         fdmrg_task,
         xdmrg_task,
         flbit_task>);
@@ -491,10 +478,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "LAPACKE")                               return SVDMode::LAPACKE;
         if(item == "RSVD")                                  return SVDMode::RSVD;
     }
-    if constexpr(std::is_same_v<T, ChiGrow>) {
-        if(item == "OFF")                                   return ChiGrow::OFF;
-        if(item == "ON_SATURATION")                         return ChiGrow::ON_SATURATION;
-        if(item == "ON_ITERATION")                          return ChiGrow::ON_ITERATION;
+    if constexpr(std::is_same_v<T, BondGrow>) {
+        if(item == "OFF")                                   return BondGrow::OFF;
+        if(item == "ON_SATURATION")                         return BondGrow::ON_SATURATION;
+        if(item == "ON_ITERATION")                          return BondGrow::ON_ITERATION;
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == "OFF")                                   return GateMove::OFF;
@@ -524,7 +511,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FIND_WINDOW")                           return ResetReason::FIND_WINDOW;
         if(item == "SATURATED")                             return ResetReason::SATURATED;
         if(item == "NEW_STATE")                             return ResetReason::NEW_STATE;
-        if(item == "CHI_UPDATE")                            return ResetReason::CHI_UPDATE;
+        if(item == "BOND_UPDATE")                            return ResetReason::BOND_UPDATE;
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS")                                return NormPolicy::ALWAYS;
@@ -544,7 +531,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "SAVEPOINT")                             return StorageReason::SAVEPOINT;
         if(item == "CHECKPOINT")                            return StorageReason::CHECKPOINT;
         if(item == "FINISHED")                              return StorageReason::FINISHED;
-        if(item == "CHI_UPDATE")                            return StorageReason::CHI_UPDATE;
+        if(item == "BOND_UPDATE")                            return StorageReason::BOND_UPDATE;
         if(item == "PROJ_STATE")                            return StorageReason::PROJ_STATE;
         if(item == "INIT_STATE")                            return StorageReason::INIT_STATE;
         if(item == "EMIN_STATE")                            return StorageReason::EMIN_STATE;
@@ -563,12 +550,6 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, StateInitType>) {
         if(item ==  "REAL")                                 return StateInitType::REAL;
         if(item ==  "CPLX")                                 return StateInitType::CPLX;
-    }
-    if constexpr(std::is_same_v<T, PerturbMode>) {
-        if(item == "PERCENTAGE")                            return PerturbMode::PERCENTAGE;
-        if(item == "ABSOLUTE")                              return PerturbMode::ABSOLUTE;
-        if(item == "UNIFORM_RANDOM_PERCENTAGE")             return PerturbMode::UNIFORM_RANDOM_PERCENTAGE;
-        if(item == "UNIFORM_RANDOM_ABSOLUTE")               return PerturbMode::UNIFORM_RANDOM_ABSOLUTE;
     }
     if constexpr(std::is_same_v<T, FileCollisionPolicy>) {
         if(item == "RESUME")                                return FileCollisionPolicy::RESUME;
@@ -656,13 +637,14 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "CPLX")                                  return OptType::CPLX;
     }
     if constexpr(std::is_same_v<T,OptMode>){
+        if(item == "ENERGY")                                return OptMode::ENERGY;
         if(item == "VARIANCE")                              return OptMode::VARIANCE;
         if(item == "OVERLAP")                               return OptMode::OVERLAP;
+        if(item == "SUBSPACE")                              return OptMode::SUBSPACE;
     }
-    if constexpr(std::is_same_v<T,OptSpace>){
-        if(item == "SUBSPACE")                              return OptSpace::SUBSPACE;
-        if(item == "DIRECT")                                return OptSpace::DIRECT;
-        if(item == "KRYLOV")                                return OptSpace::KRYLOV;
+    if constexpr(std::is_same_v<T,OptSolver>){
+        if(item == "EIGS")                                  return OptSolver::EIGS;
+        if(item == "LBFGS")                                 return OptSolver::LBFGS;
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == "NEVER")                                 return OptWhen::NEVER;

@@ -103,7 +103,7 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
     }
     tools::log->trace("Candidate sites {}", sites);
     tools::log->trace("Candidate sizes {}", sizes);
-    // Evaluate best cost. Threshold depends on optSpace
+    // Evaluate best cost. Threshold depends on optSolver
     // Case 1: All costs are equal              -> take all sites
     // Case 2: Costs increase indefinitely      -> take until threshold
     // Case 3: Costs increase and saturate      -> take until threshold
@@ -154,7 +154,7 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
     return sites;
 }
 
-std::vector<size_t> tools::finite::multisite::generate_truncated_site_list(StateFinite &state, long threshold, long chi_lim, const size_t max_sites,
+std::vector<size_t> tools::finite::multisite::generate_truncated_site_list(StateFinite &state, long threshold, long bond_limit, const size_t max_sites,
                                                                            const size_t min_sites) {
     auto active_sites = generate_site_list(state, threshold, max_sites, min_sites);
     if(active_sites.size() == max_sites) return active_sites; // Fastest outcome
@@ -168,14 +168,14 @@ std::vector<size_t> tools::finite::multisite::generate_truncated_site_list(State
     size_t best_num_sites = min_sites;
     for(size_t num_sites = min_sites; num_sites <= max_sites; num_sites++) {
         auto state_copy = state;
-        tools::finite::mps::truncate_next_sites(state_copy, chi_lim, num_sites);
+        tools::finite::mps::truncate_next_sites(state_copy, bond_limit, num_sites);
         auto new_active_sites = generate_site_list(state_copy, threshold, num_sites, min_sites);
         if(new_active_sites.size() > active_sites.size()) {
             best_num_sites = num_sites;
             active_sites   = new_active_sites;
         }
     }
-    tools::finite::mps::truncate_next_sites(state, chi_lim, best_num_sites);
+    tools::finite::mps::truncate_next_sites(state, bond_limit, best_num_sites);
     auto resulting_sites = generate_site_list(state, threshold, max_sites, min_sites);
     tools::log->info("Problem size {} | active sites: {}", get_problem_size(state, resulting_sites), resulting_sites);
     tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(state));

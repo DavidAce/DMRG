@@ -87,29 +87,8 @@ long StateInfinite::chiC() const { return MPS_A->get_LC().dimension(0); }
 long StateInfinite::chiA() const { return MPS_A->get_L().dimension(0); }
 long StateInfinite::chiB() const { return MPS_B->get_L().dimension(0); }
 
-// long StateInfinite::get_chi_lim() const {
-//    // Should get the the current limit on allowed bond dimension
-//    return chi_lim.value();
-//}
-// long StateInfinite::get_chi_max() const {
-//    // Should get the the current limit on allowed bond dimension for the duration of the simulation
-//    return chi_max.value();
-//}
-
 long StateInfinite::get_spin_dimA() const { return MPS_A->spin_dim(); }
 long StateInfinite::get_spin_dimB() const { return MPS_B->spin_dim(); }
-//
-// void StateInfinite::set_chi_lim(long chi_lim_) {
-//    // Should set the the current limit on allowed bond dimension
-//    if(chi_lim_ == 0) throw std::runtime_error("Can't set chi limit to zero!");
-//    chi_lim = chi_lim_;
-//}
-//
-// void StateInfinite::set_chi_max(long chi_max_) {
-//    // Should set the the current limit on allowed bond dimension for the duration of the simulation
-//    if(chi_max_ == 0) throw std::runtime_error("Can't set chi max to zero!");
-//    chi_max = chi_max_;
-//}
 
 double StateInfinite::get_truncation_error() const {
     // Should get the the current limit on allowed bond dimension for the duration of the simulation
@@ -310,8 +289,8 @@ void StateInfinite::set_positions(size_t position) {
     MPS_B->set_position(position + 1);
 }
 
-void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<svd::settings> svd_settings) {
-    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, chi_lim, svd_settings);
+void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_limit, std::optional<svd::settings> svd_settings) {
+    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, bond_limit, svd_settings);
 }
 
 void StateInfinite::set_mps(const std::vector<MpsSite> &mps_list) {
@@ -343,10 +322,10 @@ void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Ten
     clear_cache();
 }
 
-bool StateInfinite::is_bond_limited(long chi_lim, double truncation_threshold) const {
-    bool has_truncated       = get_truncation_error() > truncation_threshold;
-    bool has_reached_chi_max = chiC() >= chi_lim;
-    return has_truncated or has_reached_chi_max;
+bool StateInfinite::is_bond_limited(long bond_limit, double truncation_threshold) const {
+    bool has_truncated   = get_truncation_error() > truncation_threshold;
+    bool has_reached_max = chiC() >= bond_limit;
+    return has_truncated or has_reached_max;
 }
 
 void StateInfinite::clear_cache() const { cache = Cache(); }

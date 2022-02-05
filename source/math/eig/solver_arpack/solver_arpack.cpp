@@ -20,7 +20,7 @@
 #include "solver_arpack.h"
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
-#include "../matvec/matvec_mps.h"
+#include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_sparse.h"
 #include <algorithm>
 #include <arpack++/arrseig.h>
@@ -530,5 +530,5 @@ template class eig::solver_arpack<MatVecDense<real>>;
 template class eig::solver_arpack<MatVecDense<cplx>>;
 template class eig::solver_arpack<MatVecSparse<real>>;
 template class eig::solver_arpack<MatVecSparse<cplx>>;
-template class eig::solver_arpack<MatVecMps<real>>;
-template class eig::solver_arpack<MatVecMps<cplx>>;
+template class eig::solver_arpack<MatVecMPO<real>>;
+template class eig::solver_arpack<MatVecMPO<cplx>>;

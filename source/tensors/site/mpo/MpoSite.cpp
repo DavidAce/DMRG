@@ -159,6 +159,7 @@ Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_left() const {
     Eigen::Tensor<cplx, 1> ledge(ldim);
     ledge.setZero();
     ledge(ldim - 1) = 1;
+    if(parity_sep) ledge(ldim - 2) = 1;
     return ledge;
 }
 
@@ -168,6 +169,7 @@ Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_right() const {
     Eigen::Tensor<cplx, 1> redge(rdim);
     redge.setZero();
     redge(0) = 1;
+    if(parity_sep) redge(rdim - 1) = psfactor; // Add the parity separation factor here
     return redge;
 }
 

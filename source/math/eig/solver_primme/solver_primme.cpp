@@ -1,6 +1,6 @@
 #include "../log.h"
 #include "../matvec/matvec_dense.h"
-#include "../matvec/matvec_mps.h"
+#include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_sparse.h"
 #include "../sfinae.h"
 #include "../solver.h"
@@ -171,6 +171,7 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
         }
 
         if(iter_since_last >= grad_iter or time_since_last >= grad_time) {
+            auto t_grad  = tid::tic_token("primme.grad");
             auto H_ptr   = static_cast<MatrixProductType *>(config.primme_extra);
             auto H2_ptr  = static_cast<MatrixProductType *>(primme->matrix);
             using Scalar = typename MatrixProductType::Scalar;
@@ -211,6 +212,19 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
     }
 }
 
+std::string getLogMessage(struct primme_params *primme) {
+    if(primme->monitor == nullptr) {
+        return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op"), primme->stats.numMatvecs,
+                           primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
+                           primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
+    }
+    auto &solver = *static_cast<eig::solver *>(primme->monitor);
+    auto &result = solver.result;
+    return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, result.meta.last_grad_max,
+                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
+}
+
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
                 [[maybe_unused]] int *blockSize, [[maybe_unused]] void *basisNorms, [[maybe_unused]] int *numConverged, [[maybe_unused]] void *lockedEvals,
                 [[maybe_unused]] int *numLocked, [[maybe_unused]] int *lockedFlags, [[maybe_unused]] void *lockedNorms, [[maybe_unused]] int *inner_its,
@@ -219,50 +233,38 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
     if(event == nullptr) return;
     if(*event == primme_event_inner_iteration) return; // No need to log that often
 
-    std::string event_msg;
+    std::string eventMessage;
     /* clang-format off */
-    if(*event == primme_event_outer_iteration)  event_msg = "event_outer_iteration";
-    if(*event == primme_event_restart)          event_msg = "event_restart";
-    if(*event == primme_event_reset)            event_msg = "event_reset";
-    if(*event == primme_event_converged)        event_msg = "event_converged";
-    if(*event == primme_event_locked)           event_msg = "event_locked";
-    if(*event == primme_event_message)          event_msg = "event_message";
-    if(*event == primme_event_profile)          event_msg = "event_profile";
+    if(*event == primme_event_outer_iteration)      eventMessage = "event_outer_iteration";
+    else if(*event == primme_event_inner_iteration) eventMessage = "event_inner_iteration";
+    else if(*event == primme_event_restart)         eventMessage = "event_restart";
+    else if(*event == primme_event_reset)           eventMessage = "event_reset";
+    else if(*event == primme_event_converged)       eventMessage = "event_converged";
+    else if(*event == primme_event_locked)          eventMessage = "event_locked";
+    else if(*event == primme_event_message)         eventMessage = "event_message";
+    else if(*event == primme_event_profile)         eventMessage = "event_profile";
     /* clang-format on */
 
-    std::string basisMsg, blockMsg;
-    if(basisSize != nullptr) basisMsg = fmt::format("| basis {:<3}", *basisSize);
-    if(blockSize != nullptr) blockMsg = fmt::format("| block {:<3}", *blockSize);
-    if(msg != nullptr) { event_msg += ": " + std::string(msg); }
-
-    if(primme->monitor == nullptr) {
-        eig::log->trace(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op {} {} | {}"), primme->stats.numMatvecs,
-                        primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
-                        primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, basisMsg, blockMsg, event_msg);
-        return;
+    auto logMessage = getLogMessage(primme);
+    auto level      = spdlog::level::trace;
+    if(primme->monitor != nullptr) {
+        auto  &solver              = *static_cast<eig::solver *>(primme->monitor);
+        auto  &config              = solver.config;
+        auto  &result              = solver.result;
+        double primme_log_time     = config.logTime ? config.logTime.value() : std::numeric_limits<double>::quiet_NaN();
+        double time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_time_log);
+        if(time_since_last_log > primme_log_time or *event == primme_event_converged) {
+            level                     = (config.logTime and time_since_last_log > 60) ? spdlog::level::info : spdlog::level::debug;
+            result.meta.last_time_log = primme->stats.elapsedTime;
+            result.meta.last_iter_log = primme->stats.numMatvecs;
+        }
+        // Terminate if its taking too long
+        if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
+            eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
+            primme->maxMatvecs = 0;
+        }
     }
-
-    auto &solver = *static_cast<eig::solver *>(primme->monitor);
-    auto &config = solver.config;
-    auto &result = solver.result;
-
-    double primme_log_time     = config.logTime ? config.logTime.value() : std::numeric_limits<double>::quiet_NaN();
-    double time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_time_log);
-
-    if(time_since_last_log > primme_log_time or *event == primme_event_converged) {
-        auto level = (config.logTime and time_since_last_log > 60) ? spdlog::level::info : spdlog::level::debug;
-        eig::log->log(level, FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op {} {} | {}"),
-                      primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, result.meta.last_grad_max,
-                      result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000, basisMsg, blockMsg,
-                      event_msg);
-        result.meta.last_time_log = primme->stats.elapsedTime;
-        result.meta.last_iter_log = primme->stats.numMatvecs;
-    }
-    // Terminate if its taking too long
-    if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
-        eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
-        primme->maxMatvecs = 0;
-    }
+    eig::log->log(level, FMT_STRING("{} | {}"), logMessage, eventMessage);
 }
 
 template<typename MatrixProductType>
@@ -326,6 +328,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
     if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(static_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
     if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();
+    if(config.maxIter) primme.maxMatvecs = config.maxIter.value(); // TODO: IS THIS RIGHT?
     if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
     if(config.primme_locking) primme.locking = config.primme_locking.value();
     // Shifts
@@ -420,7 +423,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         switch(info) {
             case -1: msg = "PRIMME_UNEXPECTED_FAILURE: set printLevel > 0 to see the call stack"; break;
             case -2: msg = "PRIMME_MALLOC_FAILURE: either CPU or GPU"; break;
-            case -3: msg = "PRIMME_MAIN_ITER_FAILURE: maxOuterIterations or maxMatvecs reached"; break;
+            case -3: msg = fmt::format("PRIMME_MAIN_ITER_FAILURE: {}", getLogMessage(&primme)); break;
             case -4: msg = "Argument primme is null"; break;
             case -5: msg = "n < 0 or nLocal < 0 or nLocal > n"; break;
             case -6: msg = "numProcs < 1"; break;
@@ -451,20 +454,20 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.type           = config.type.value();
     result.meta.time_total     = t_tot.get_time();
 
-    tid::get("primme") += t_tot.get_time();
-    tid::get("primme").add_count(1ul);
-    tid::get("primme.prep") += t_pre.get_time();
-    tid::get("primme.prep").add_count(1ul);
-    tid::get("primme.elapsed") += primme.stats.elapsedTime;
-    tid::get("primme.elapsed").add_count(1ul);
-    tid::get("primme.matvec") += primme.stats.timeMatvec;
-    tid::get("primme.matvec").add_count(static_cast<size_t>(primme.stats.numMatvecs));
+    tid::get(config.tag) += t_tot.get_time();
+    tid::get(config.tag).add_count(1ul);
+    tid::get(fmt::format("{}.prep", config.tag)) += t_pre.get_time();
+    tid::get(fmt::format("{}.prep", config.tag)).add_count(1ul);
+    tid::get(fmt::format("{}.elapsed", config.tag)) += primme.stats.elapsedTime;
+    tid::get(fmt::format("{}.elapsed", config.tag)).add_count(1ul);
+    tid::get(fmt::format("{}.matvec", config.tag)) += primme.stats.timeMatvec;
+    tid::get(fmt::format("{}.matvec", config.tag)).add_count(static_cast<size_t>(primme.stats.numMatvecs));
     primme_free(&primme);
     return info;
 }
 
-template int eig::solver::eigs_primme(MatVecMps<eig::real> &matrix);
-template int eig::solver::eigs_primme(MatVecMps<eig::cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<eig::real> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<eig::cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecDense<eig::real> &matrix);
 template int eig::solver::eigs_primme(MatVecDense<eig::cplx> &matrix);
 template int eig::solver::eigs_primme(MatVecSparse<eig::real> &matrix);

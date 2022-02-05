@@ -12,9 +12,9 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([12])
-lambdas             = [0.000, 0.005, 0.010, 0.020]
-deltas              = [-2.000, -1.500, -1.000, -0.693 , -0.500, -0.300, 0.000, 0.300, 0.500, 0.693, 1.000, 1.500, 2.000]
+sites               = np.array([10])
+lambdas             = [0.5]
+deltas              = np.arange(-8,8+0.5,0.5)
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
@@ -24,10 +24,6 @@ tmp_storage = "/tmp"
 if "lith" in  platform.node():
     tmp_storage = "/scratch/local"
 
-# sites        = np.array([16,20,24])
-# lambdas      = [0.000,0.005,0.010, 0.015,0.020]
-# deltas       = [-0.1, -0.05, 0.0, 0.05, 0.1]
-
 num_total = 0
 settings = []
 input_filenames = []
@@ -36,10 +32,9 @@ def delta(J,h):
     return np.log(J) - np.log(h)
 
 def undelta(delta):
-    if delta > 0:
-        return 1.0, np.exp(-delta)
-    else:
-        return np.exp(delta),1.0
+    J = np.min(1.0, np.exp(delta))
+    h = np.min(1.0, np.exp(-delta))
+    return J,h
 
 print("Generating", len(sites) * len(lambdas) * len(deltas) * len(multisite_mps_size_def) * len(initial_state), "input files")
 
@@ -71,8 +66,6 @@ for val_L,val_l, val_d, init, multi in  product(sites,lambdas,deltas,initial_sta
         "model::model_size"                  : str_L,
         "model::ising_sdual::delta"          : str_d,
         "model::ising_sdual::lambda"         : str_l,
-        "model::ising_sdual::J_stdv"         : "1.0",
-        "model::ising_sdual::h_stdv"         : "1.0",
         "xdmrg::chi_lim_max"                 : "1024",
         "xdmrg::max_states"                  : "1",
         "strategy::multisite_mps_size_def"   : str(multisite_mps_size_def[0]),

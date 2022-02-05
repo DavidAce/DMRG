@@ -1,4 +1,4 @@
-#include "ceres_direct_functor.h"
+#include "lbfgs_variance_functor.h"
 #include "opt-internal.h"
 #include <config/debug.h>
 #include <math/num.h>
@@ -24,8 +24,8 @@ namespace debug {
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-ceres_direct_functor<Scalar, lagrangeNorm>::ceres_direct_functor(const TensorsFinite &tensors, const AlgorithmStatus &status)
-    : ceres_base_functor(tensors, status) {
+lbfgs_variance_functor<Scalar, lagrangeNorm>::lbfgs_variance_functor(const TensorsFinite &tensors, const AlgorithmStatus &status)
+    : lbfgs_base_functor(tensors, status) {
     tools::log->trace("Constructing direct functor");
 
     if constexpr(std::is_same<Scalar, double>::value) {
@@ -63,21 +63,18 @@ ceres_direct_functor<Scalar, lagrangeNorm>::ceres_direct_functor(const TensorsFi
     }
 
     tools::log->trace("- Allocating memory for matrix-vector products");
-    dims = tensors.active_problem_dims();
     Hn_tensor.resize(dims);
     H2n_tensor.resize(dims);
     // Reminder
     // size below is the number of scalars to optimize excluding lagrange multipliers
     // num_parameters is the number of doubles to optimize (i.e. 2x if complex) including lagrange multipliers
-
-    size           = dims[0] * dims[1] * dims[2];
     num_parameters = static_cast<int>(size);
     if(lagrangeNorm == LagrangeNorm::ON) num_parameters += 1; // Include lagrange multiplier(s) here
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
+bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
     t_step->tic();
     Scalar                       var;
     Scalar                       nHn, nH2n;
@@ -85,7 +82,7 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), size); // v does not include the lagrange multiplier
 
     if constexpr(settings::debug) {
-        if(v.hasNaN()) throw std::runtime_error(fmt::format("ceres_direct_functor::Evaluate: v has nan's at counter {}\n{}", counter, v));
+        if(v.hasNaN()) throw std::runtime_error(fmt::format("lbfgs_variance_functor::Evaluate: v has nan's at counter {}\n{}", counter, v));
     }
 
     VectorType n_temp;
@@ -120,7 +117,7 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
     //    var        = nH2n;
     double eps = std::numeric_limits<double>::epsilon();
     if((std::real(var) < -eps or std::real(nH2n) < -eps))
-        tools::log->trace("Counter = {} | DIRECT | "
+        tools::log->trace("Counter = {} | LBFGS | "
                           "negative: "
                           "var  {:.16f} + {:.16f}i | "
                           "nHn  {:.16f} + {:.16f}i | "
@@ -155,7 +152,7 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
     if(fx != nullptr) { fx[0] = log10var; }
 
     if constexpr(lagrangeNorm == LagrangeNorm::ON) {
-        // Here we define the norm constraint by using the a lagrange multiplier trick:
+        // Here we define the norm constraint by using the lagrange multiplier trick:
         //      f(x)
         // is replaced with
         //      L(x,lambda) = f(x) + lambda * g(x)
@@ -168,23 +165,8 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
             Eigen::Map<VectorType> grad_w_multiplier(reinterpret_cast<Scalar *>(grad_double_double), size + 1);
             grad_w_multiplier.topRows(size) += lambda * pref * num::sign(vv - 1.0) * v; // aka  += lambda * dg(x)/dx = lambda * sign(x) * x
             grad_w_multiplier.bottomRows(1)[0] = constraint;
-            //            max_grad_norm           = grad_w_multiplier.template lpNorm<Eigen::Infinity>();
         }
     }
-
-    //    tools::log->debug("Counter = {} | DIRECT | "
-    //                      "f {:8.4e} | "
-    //                      "var {:8.4e} {:8.4e} | "
-    //                      "grad {:8.4e} | "
-    //                      "max(H2n) {:8.4e} | "
-    //                      "max(Hn) {:8.4e} | "
-    //                      "max(n) {:8.4e} | "
-    //                      "norm {:.16f}",
-    //                      counter, fx[0], std::real(var), std::imag(var), max_grad_norm,
-    //                      H2n.template lpNorm<Eigen::Infinity>(),
-    //                      Hn.template lpNorm<Eigen::Infinity>(),
-    //                      n.template lpNorm<Eigen::Infinity>(),
-    //                      norm);
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("σ²H is invalid");
@@ -208,7 +190,7 @@ bool ceres_direct_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void ceres_direct_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) const {
+void lbfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) const {
     t_H2n->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2n_tensor, v_tensor, mpo2, env2L, env2R);
@@ -267,7 +249,7 @@ void ceres_direct_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) co
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void ceres_direct_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) const {
+void lbfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) const {
     t_Hn->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hn_tensor, v_tensor, mpo, envL, envR);
@@ -275,13 +257,13 @@ void ceres_direct_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) con
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void ceres_direct_functor<Scalar, lagrangeNorm>::compress() {
+void lbfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
     if(readyCompress) return;
 
     svd::settings svd_settings;
-    svd_settings.svd_lib    = SVDLib::lapacke;
-    svd_settings.use_bdc    = false;
-    svd_settings.threshold  = 1e-12;
+    svd_settings.svd_lib        = SVDLib::lapacke;
+    svd_settings.use_bdc        = false;
+    svd_settings.threshold      = 1e-12;
     svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
     auto        old_dimensions = mpo2.dimensions();
@@ -305,7 +287,7 @@ void ceres_direct_functor<Scalar, lagrangeNorm>::compress() {
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void ceres_direct_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
+void lbfgs_variance_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the mpo: it is already compressed!");
     shift = shift_;
@@ -343,7 +325,7 @@ void ceres_direct_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
     readyShift = true;
 }
 
-template class tools::finite::opt::internal::ceres_direct_functor<double, LagrangeNorm::ON>;
-template class tools::finite::opt::internal::ceres_direct_functor<double, LagrangeNorm::OFF>;
-template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>, LagrangeNorm::ON>;
-template class tools::finite::opt::internal::ceres_direct_functor<std::complex<double>, LagrangeNorm::OFF>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<double, LagrangeNorm::ON>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<double, LagrangeNorm::OFF>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<std::complex<double>, LagrangeNorm::ON>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<std::complex<double>, LagrangeNorm::OFF>;

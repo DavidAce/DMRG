@@ -57,8 +57,6 @@ template<OptType optType>
     Eigen::VectorXcd tensor_extended(size_new);
     tensor_extended.topRows(size_old) = Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size());
     tensor_extended.bottomRows(1)[0]  = lambda * std::abs(get_vector().squaredNorm() - 1.0);
-    //    tensor_extended.bottomRows(1)[0] = lambda * std::pow(get_vector().squaredNorm() - 1.0, 2.0);
-
     if constexpr(optType == OptType::REAL) { return Eigen::Map<const Eigen::VectorXcd>(tensor_extended.data(), tensor_extended.size()).real(); }
     if constexpr(optType == OptType::CPLX) {
         return Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(tensor_extended.data()), 2 * tensor_extended.size());
@@ -145,58 +143,58 @@ double opt_mps::get_relchange() const {
         return std::numeric_limits<double>::quiet_NaN();
 }
 
-long opt_mps::get_krylov_idx() const {
-    if(krylov_idx)
-        return krylov_idx.value();
+long opt_mps::get_eigs_idx() const {
+    if(eigs_idx)
+        return eigs_idx.value();
     else
         return -1;
 }
 
-long opt_mps::get_krylov_nev() const {
-    if(krylov_nev)
-        return krylov_nev.value();
+long opt_mps::get_eigs_nev() const {
+    if(eigs_nev)
+        return eigs_nev.value();
     else
         return -1;
 }
 
-long opt_mps::get_krylov_ncv() const {
-    if(krylov_ncv)
-        return krylov_ncv.value();
+long opt_mps::get_eigs_ncv() const {
+    if(eigs_ncv)
+        return eigs_ncv.value();
     else
         return -1;
 }
 
-double opt_mps::get_krylov_tol() const {
-    if(krylov_tol)
-        return krylov_tol.value();
+double opt_mps::get_eigs_tol() const {
+    if(eigs_tol)
+        return eigs_tol.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
 
-double opt_mps::get_krylov_eigval() const {
-    if(krylov_eigval)
-        return krylov_eigval.value();
+double opt_mps::get_eigs_eigval() const {
+    if(eigs_eigval)
+        return eigs_eigval.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
 
-std::string_view opt_mps::get_krylov_ritz() const {
-    if(krylov_ritz)
-        return krylov_ritz.value();
+std::string_view opt_mps::get_eigs_ritz() const {
+    if(eigs_ritz)
+        return eigs_ritz.value();
     else
         return "--";
 }
 
-opt_mps::cplx opt_mps::get_krylov_shift() const {
-    if(krylov_shift)
-        return krylov_shift.value();
+opt_mps::cplx opt_mps::get_eigs_shift() const {
+    if(eigs_shift)
+        return eigs_shift.value();
     else
         return opt_mps::cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
-double opt_mps::get_krylov_resid() const {
-    if(krylov_resid)
-        return krylov_resid.value();
+double opt_mps::get_eigs_resid() const {
+    if(eigs_resid)
+        return eigs_resid.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
@@ -229,11 +227,11 @@ size_t opt_mps::get_length() const {
         throw std::runtime_error("opt_mps: length not set");
 }
 
-OptSpace opt_mps::get_optspace() const {
-    if(optSpace)
-        return optSpace.value();
+OptSolver opt_mps::get_optsolver() const {
+    if(optSolver)
+        return optSolver.value();
     else
-        throw std::runtime_error("opt_mps: optSpace not set");
+        throw std::runtime_error("opt_mps: optSolver not set");
 }
 OptMode opt_mps::get_optmode() const {
     if(optMode)
@@ -296,14 +294,14 @@ void opt_mps::set_time(double time_) { time = time_; }
 void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
 void opt_mps::set_max_grad(double grad_norm_) { max_grad = grad_norm_; }
 void opt_mps::set_relchange(double relative_change_) { relchange = relative_change_; }
-void opt_mps::set_krylov_idx(long idx_) { krylov_idx = idx_; }
-void opt_mps::set_krylov_nev(long nev_) { krylov_nev = nev_; }
-void opt_mps::set_krylov_ncv(long ncv_) { krylov_ncv = ncv_; }
-void opt_mps::set_krylov_tol(double tol_) { krylov_tol = tol_; }
-void opt_mps::set_krylov_eigval(double krylov_eigval_) { krylov_eigval = krylov_eigval_; }
-void opt_mps::set_krylov_ritz(std::string_view krylov_ritz_) { krylov_ritz = std::string(krylov_ritz_); }
-void opt_mps::set_krylov_shift(const cplx &krylov_shift_) { krylov_shift = krylov_shift_; }
-void opt_mps::set_krylov_resid(const double &krylov_resid_) { krylov_resid = krylov_resid_; }
+void opt_mps::set_eigs_idx(long idx_) { eigs_idx = idx_; }
+void opt_mps::set_eigs_nev(long nev_) { eigs_nev = nev_; }
+void opt_mps::set_eigs_ncv(long ncv_) { eigs_ncv = ncv_; }
+void opt_mps::set_eigs_tol(double tol_) { eigs_tol = tol_; }
+void opt_mps::set_eigs_eigval(double eigval_) { eigs_eigval = eigval_; }
+void opt_mps::set_eigs_ritz(std::string_view ritz_) { eigs_ritz = std::string(ritz_); }
+void opt_mps::set_eigs_shift(const cplx &shift_) { eigs_shift = shift_; }
+void opt_mps::set_eigs_resid(const double &resid_) { eigs_resid = resid_; }
 
 void opt_mps::set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims) {
     // Here we set a complex tensor from double data.
@@ -320,7 +318,7 @@ void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &
     norm   = get_vector().norm();
 }
 
-void opt_mps::set_optspace(OptSpace optSpace_) { optSpace = optSpace_; }
+void opt_mps::set_optsolver(OptSolver optSpace_) { optSolver = optSpace_; }
 void opt_mps::set_optmode(OptMode optMode_) { optMode = optMode_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 

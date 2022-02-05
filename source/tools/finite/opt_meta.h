@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-enum class OptSpace;
+enum class OptSolver;
 enum class OptType;
 enum class OptMode;
 enum class OptInit;
@@ -16,7 +16,7 @@ enum class OptRitz;
 namespace tools::finite::opt {
     struct OptMeta {
         OptMode               optMode;
-        OptSpace              optSpace;
+        OptSolver             optSolver;
         OptType               optType;
         OptInit               optInit;
         OptWhen               optWhen;
@@ -32,13 +32,14 @@ namespace tools::finite::opt {
         std::vector<size_t>   chosen_sites     = {};
         std::string           label;
         std::optional<double> max_grad_tolerance       = std::nullopt;
-        std::optional<int>    ceres_max_num_iterations = std::nullopt;
-        std::optional<int>    ceres_max_lbfgs_rank     = std::nullopt;
-        std::optional<double> ceres_function_tolerance = std::nullopt;
-        std::optional<bool>   ceres_eigenvalue_scaling = std::nullopt;
+        std::optional<int>    lbfgs_max_terations      = std::nullopt;
+        std::optional<int>    lbfgs_max_rank           = std::nullopt;
+        std::optional<double> lbfgs_function_tolerance = std::nullopt;
+        std::optional<bool>   lbfgs_eigenvalue_scaling = std::nullopt;
 
         OptMeta();
         explicit OptMeta(OptRitz ritz);
         [[nodiscard]] bool should_proceed(OptExit previous_exit) const;
+        void               validate() const;
     };
 }

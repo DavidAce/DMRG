@@ -10,28 +10,27 @@ class TensorsFinite;
 
 class ModelFinite {
     public:
-    using Scalar = std::complex<double>;
+    using cplx = std::complex<double>;
 
     private:
     friend TensorsFinite;
     struct Cache {
-        std::optional<std::vector<size_t>>      cached_sites          = std::nullopt;
-        std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo         = std::nullopt;
-        std::optional<Eigen::Tensor<Scalar, 2>> multisite_ham         = std::nullopt;
-        std::optional<Eigen::Tensor<Scalar, 4>> multisite_mpo_squared = std::nullopt;
-        std::optional<Eigen::Tensor<Scalar, 2>> multisite_ham_squared = std::nullopt;
+        std::optional<std::vector<size_t>>    cached_sites          = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 4>> multisite_mpo         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>> multisite_ham         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 4>> multisite_mpo_squared = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>> multisite_ham_squared = std::nullopt;
     };
-    mutable Cache                         cache;
-    std::vector<Eigen::Tensor<Scalar, 4>> get_compressed_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
-    void                                  randomize();
-    void                                  build_mpo();
-    void                                  build_mpo_squared();
-    void                                  clear_mpo_squared();
-    bool                                  has_mpo_squared() const;
-    void                                  compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
-    void                                  set_energy_shift(double total_energy);
-    void                                  set_energy_shift_per_site(double energy_shift_per_site);
-    void                                  perturb_hamiltonian(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
+    mutable Cache                       cache;
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
+    void                                randomize();
+    void                                build_mpo();
+    void                                build_mpo_squared();
+    void                                clear_mpo_squared();
+    bool                                has_mpo_squared() const;
+    void                                compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
+    void                                set_energy_shift(double total_energy);
+    void                                set_energy_shift_per_site(double energy_shift_per_site);
 
     public:
     std::vector<std::unique_ptr<MpoSite>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */
@@ -55,27 +54,26 @@ class ModelFinite {
     MpoSite       &get_mpo(size_t pos);
 
     [[nodiscard]] bool   is_shifted() const; // For shifted energy MPO's
-    [[nodiscard]] bool   is_perturbed() const;
     [[nodiscard]] bool   is_compressed_mpo_squared() const;
     [[nodiscard]] double get_energy_shift() const;
     [[nodiscard]] double get_energy_shift_per_site() const;
 
     // For multisite
-    std::array<long, 4>             active_dimensions() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    Eigen::Tensor<Scalar, 2>        get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    const Eigen::Tensor<Scalar, 4> &get_multisite_mpo() const;
-    const Eigen::Tensor<Scalar, 2> &get_multisite_ham() const;
+    std::array<long, 4>           active_dimensions() const;
+    Eigen::Tensor<cplx, 4>        get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<cplx, 2>        get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    const Eigen::Tensor<cplx, 4> &get_multisite_mpo() const;
+    const Eigen::Tensor<cplx, 2> &get_multisite_ham() const;
 
-    Eigen::Tensor<Scalar, 4> get_multisite_mpo_shifted_view(double energy_per_site) const;
-    Eigen::Tensor<Scalar, 4> get_multisite_mpo_squared_shifted_view(double energy_per_site) const;
+    Eigen::Tensor<cplx, 4> get_multisite_mpo_shifted_view(double energy_per_site) const;
+    Eigen::Tensor<cplx, 4> get_multisite_mpo_squared_shifted_view(double energy_per_site) const;
 
-    std::array<long, 4>             active_dimensions_squared() const;
-    Eigen::Tensor<Scalar, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    Eigen::Tensor<Scalar, 2>        get_multisite_ham_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    const Eigen::Tensor<Scalar, 4> &get_multisite_mpo_squared() const;
-    const Eigen::Tensor<Scalar, 2> &get_multisite_ham_squared() const;
-    void                            clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
+    std::array<long, 4>           active_dimensions_squared() const;
+    Eigen::Tensor<cplx, 4>        get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<cplx, 2>        get_multisite_ham_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    const Eigen::Tensor<cplx, 4> &get_multisite_mpo_squared() const;
+    const Eigen::Tensor<cplx, 2> &get_multisite_ham_squared() const;
+    void                          clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
 
     std::vector<size_t> get_active_ids() const;
 };

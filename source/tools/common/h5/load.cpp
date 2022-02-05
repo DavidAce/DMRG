@@ -8,7 +8,7 @@
 namespace tools::common::h5 {
 
     void load::status(const h5pp::File &h5file, std::string_view state_prefix, AlgorithmStatus &status) {
-        auto tic          = tid::tic_scope("status", tid::level::pedant);
+        auto tic          = tid::tic_scope("status", tid::level::detailed);
         auto table_prefix = h5file.readAttribute<std::vector<std::string>>(state_prefix, "common/table_prfxs").front();
 
         std::string table_path = fmt::format("{}/status", table_prefix);

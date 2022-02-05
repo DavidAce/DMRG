@@ -22,15 +22,15 @@ void AlgorithmBase::copy_from_tmp(StorageReason storage_reason, std::optional<Co
 }
 
 void AlgorithmBase::init_bond_dimension_limits() {
-    status.chi_lim_init = settings::chi_lim_init(status.algo_type);
-    status.chi_lim_max  = settings::chi_lim_max(status.algo_type);
-    if(settings::chi_lim_grow(status.algo_type) != ChiGrow::OFF)
-        status.chi_lim = settings::chi_lim_init(status.algo_type);
+    status.bond_init = settings::get_bond_init(status.algo_type);
+    status.bond_max  = settings::get_bond_max(status.algo_type);
+    if(settings::get_bond_grow(status.algo_type) != BondGrow::OFF)
+        status.bond_limit = settings::get_bond_init(status.algo_type);
     else
-        status.chi_lim = settings::chi_lim_max(status.algo_type);
+        status.bond_limit = settings::get_bond_max(status.algo_type);
 
     // Sanity check
-    if(status.chi_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.chi_lim));
+    if(status.bond_limit == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.bond_limit));
 }
 
 void AlgorithmBase::write_enable() { write_enabled = true; }

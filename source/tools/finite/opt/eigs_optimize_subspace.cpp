@@ -1,103 +1,25 @@
-#include <math/tenx.h>
+#include "math/tenx.h"
 // -- (textra first)
-#include "../opt_meta.h"
-#include "../opt_mps.h"
-#include "ceres_subspace_functor.h"
-#include "opt-internal.h"
-#include "report.h"
-#include <algorithms/AlgorithmStatus.h>
+#include "algorithms/AlgorithmStatus.h"
+#include "config/settings.h"
+#include "tensors/model/ModelFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
+#include "tools/finite/opt/lbfgs_subspace_functor.h"
+#include "tools/finite/opt/opt-internal.h"
+#include "tools/finite/opt/report.h"
+#include "tools/finite/opt_meta.h"
+#include "tools/finite/opt_mps.h"
 #include <ceres/gradient_problem.h>
-#include <config/settings.h>
-#include <tensors/model/ModelFinite.h>
-#include <tensors/state/StateFinite.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
 
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
-template<typename Scalar>
-std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta) {
-    const auto &state = *tensors.state;
-    const auto &model = *tensors.model;
-    tools::log->trace("Finding subspace");
-    auto t_find     = tid::tic_scope("find");
-    auto dbl_length = static_cast<double>(state.get_length());
-
-    Eigen::MatrixXcd eigvecs;
-    Eigen::VectorXd  eigvals;
-
-    // If the mps is small enough you can afford full diag.
-    if(tensors.state->active_problem_size() <= settings::precision::max_size_full_diag) {
-        std::tie(eigvecs, eigvals) = find_subspace_full<Scalar>(tensors);
-    } else {
-        double eigval_target;
-        double energy_target = tools::finite::measure::energy(tensors);
-        if(model.is_shifted()) {
-            eigval_target = tools::finite::measure::energy_minus_energy_shift(tensors);
-            tools::log->trace("Energy shift  = {:.16f} | per site = {:.16f}", model.get_energy_shift(), model.get_energy_shift_per_site());
-            tools::log->trace("Energy target = {:.16f} | per site = {:.16f}", energy_target, energy_target / dbl_length);
-            tools::log->trace("Eigval target = {:.16f} | per site = {:.16f}", eigval_target, eigval_target / dbl_length);
-            tools::log->trace("Eigval target + Energy shift = Energy: {:.16f} + {:.16f} = {:.16f}", eigval_target / dbl_length,
-                              model.get_energy_shift_per_site(), energy_target / dbl_length);
-        } else {
-            eigval_target = energy_target;
-        }
-        std::tie(eigvecs, eigvals) = find_subspace_part<Scalar>(tensors, eigval_target, target_subspace_error, meta);
-    }
-    tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
-    tools::log->trace("Energy range         : {:.16f} --> {:.16f}", eigvals.minCoeff() + model.get_energy_shift(),
-                      eigvals.maxCoeff() + model.get_energy_shift());
-    tools::log->trace("Energy range per site: {:.16f} --> {:.16f}", eigvals.minCoeff() / dbl_length + model.get_energy_shift_per_site(),
-                      eigvals.maxCoeff() / dbl_length + model.get_energy_shift_per_site());
-    reports::print_eigs_report();
-
-    if constexpr(std::is_same<Scalar, double>::value) {
-        tenx::subtract_phase(eigvecs);
-        double trunc = eigvecs.imag().cwiseAbs().sum();
-        if(trunc > 1e-12) tools::log->warn("truncating imag of eigvecs, sum: {}", trunc);
-        eigvecs = eigvecs.real();
-    }
-
-    const auto     &multisite_mps  = state.get_multisite_mps();
-    const auto      multisite_vec  = Eigen::Map<const Eigen::VectorXcd>(multisite_mps.data(), multisite_mps.size());
-    auto            energy_shift   = model.get_energy_shift();
-    Eigen::VectorXd overlaps       = (multisite_vec.adjoint() * eigvecs).cwiseAbs().real();
-
-    double eigvec_time = 0;
-    for(const auto &item : reports::eigs_log) { eigvec_time += item.ham_time + item.lu_time + item.eig_time; }
-
-    std::vector<opt_mps> subspace;
-    subspace.reserve(static_cast<size_t>(eigvals.size()));
-    for(long idx = 0; idx < eigvals.size(); idx++) {
-        // Important to normalize the eigenvectors that we get from the solver: they are not always well normalized when we get them!
-        auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), state.active_dimensions());
-        subspace.emplace_back(fmt::format("eigenvector {}", idx), eigvec_i, tensors.active_sites, eigvals(idx), energy_shift, std::nullopt, overlaps(idx),
-                              tensors.get_length());
-        subspace.back().set_time(eigvec_time);
-        subspace.back().set_mv(reports::eigs_log.size());
-        subspace.back().set_iter(reports::eigs_log.size());
-        subspace.back().is_basis_vector = true;
-
-        subspace.back().set_krylov_idx(idx);
-        subspace.back().set_krylov_eigval(eigvals(idx));
-        subspace.back().set_krylov_ritz(enum2sv(meta.optRitz));
-        subspace.back().set_optmode(meta.optMode);
-        subspace.back().set_optspace(meta.optSpace);
-
-        subspace.back().validate_basis_vector();
-    }
-    return subspace;
-}
-
-template std::vector<opt_mps> internal::subspace::find_subspace<cplx>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
-
-template std::vector<opt_mps> internal::subspace::find_subspace<real>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
-
-opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps, const std::vector<opt_mps> &subspace,
-                                                              const Eigen::MatrixXcd &H2_subspace, const AlgorithmStatus &status, OptMeta &meta) {
+opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps, const std::vector<opt_mps> &subspace,
+                                                             const Eigen::MatrixXcd &H2_subspace, const AlgorithmStatus &status, OptMeta &meta) {
     auto t_sub = tid::tic_scope("subspace");
     initial_mps.validate_basis_vector();
 
@@ -167,13 +89,13 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
      *
      */
 
-    auto options = internal::ceres_default_options;
+    auto options = internal::lbfgs_default_options;
     auto summary = ceres::GradientProblemSolver::Summary();
     auto t_lbfgs = tid::tic_scope("lbfgs");
     switch(meta.optType) {
         case OptType::CPLX: {
             Eigen::VectorXd subspace_vector_cast = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
-            auto           *functor              = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
+            auto           *functor              = new lbfgs_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
@@ -193,7 +115,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
         case OptType::REAL: {
             Eigen::VectorXd   subspace_vector_cast = subspace_vector.real();
             Eigen::MatrixXd   H2_subspace_real     = H2_subspace.real();
-            auto             *functor              = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
+            auto             *functor              = new lbfgs_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
@@ -210,7 +132,7 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
             break;
         }
     }
-    reports::time_add_opt_entry();
+    reports::time_add_entry();
     t_lbfgs.toc();
     // Copy and set the rest of the tensor metadata
     optimized_mps.normalize();
@@ -239,15 +161,12 @@ opt_mps tools::finite::opt::internal::ceres_optimize_subspace(const TensorsFinit
     //    std::cout << summary.FullReport() << "\n";
     if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_mps, subspace_vector.size()); }
 
-    //    if(optSpace == OptSpace::SUBSPACE) {
-    //        tools::log->trace("SUBSPACE optimization done. Starting fine tuning with DIRECT optimization");
-    //        optimized_mps = ceres_direct_optimization(tensors, optimized_mps, status, optType, optMode, optSpace);
-    //    }
     // Return the optimized result
     return optimized_mps;
 }
 
-opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
+opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
+    auto                t_sub = tid::tic_scope("subspace");
     std::vector<size_t> sites(tensors.active_sites.begin(), tensors.active_sites.end());
     opt_mps             initial_mps("current state", tensors.get_multisite_mps(), sites,
                                     tools::finite::measure::energy(tensors) - tensors.model->get_energy_shift(), // Eigval
@@ -255,12 +174,13 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                                     tools::finite::measure::energy_variance(tensors),
                                     1.0, // Overlap
                                     tensors.get_length());
-    return ceres_subspace_optimization(tensors, initial_mps, status, meta);
+    t_sub.toc();
+    return eigs_optimize_subspace(tensors, initial_mps, status, meta);
 }
 
-opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
-                                                                  OptMeta &meta) {
-    tools::log->trace("Optimizing in SUBSPACE mode");
+opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
+                                                             OptMeta &meta) {
+    tools::log->trace("Optimizing in SHINV mode");
     auto t_sub = tid::tic_scope("subspace");
     initial_mps.validate_basis_vector();
 
@@ -361,7 +281,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
      *              Also, the subspace_error is no longer a good measure of how useful the subspace is to us, since it's only
      *              measuring how well the old state can be described, but the old state is likely very different from what
      *              we're looking for.
-     *              So to address all three cases, do DIRECT optimization with best_overlap_theta as initial guess.
+     *              So to address all three cases, do LBFGS optimization with best_overlap_theta as initial guess.
      *
      * In particular, notice that we never use the eigvec that happens to have the best variance.
      */
@@ -395,16 +315,16 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
             auto &eigvec_max_overlap = *std::next(subspace.begin(), static_cast<long>(max_overlap_idx.value()));
             eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors));
             if(tools::log->level() == spdlog::level::trace) {
-                tools::log->trace("ceres_subspace_optimization: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}",
+                tools::log->trace("eigs_optimize_subspace: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}",
                                   max_overlap_idx.value(), eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy_per_site(),
                                   eigvec_max_overlap.get_variance());
             }
             if(eigvec_max_overlap.get_overlap() < 0.1)
-                tools::log->debug("ceres_subspace_optimization: Overlap fell below < 0.1: {:20.16f}", eigvec_max_overlap.get_overlap());
+                tools::log->debug("eigs_optimize_subspace: Overlap fell below < 0.1: {:20.16f}", eigvec_max_overlap.get_overlap());
             return eigvec_max_overlap;
         } else {
             // (OB)
-            tools::log->warn("ceres_subspace_optimization: No overlapping states in energy range. Returning old tensor");
+            tools::log->warn("eigs_optimize_subspace: No overlapping states in energy range. Returning old tensor");
             return initial_mps;
         }
     }
@@ -493,7 +413,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
          *
          */
 
-        auto options = internal::ceres_default_options;
+        auto options = internal::lbfgs_default_options;
         auto summary = ceres::GradientProblemSolver::Summary();
         optimized_results.emplace_back(opt_mps());
         auto &optimized_mps = optimized_results.back();
@@ -506,7 +426,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
             case OptType::CPLX: {
                 Eigen::VectorXd subspace_vector_cast =
                     Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
-                auto             *functor = new ceres_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
+                auto             *functor = new lbfgs_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
                 CustomLogCallback ceres_logger(*functor);
                 options.callbacks.emplace_back(&ceres_logger);
                 ceres::GradientProblem problem(functor);
@@ -529,7 +449,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
             case OptType::REAL: {
                 Eigen::VectorXd   subspace_vector_cast = subspace_vector.real();
                 Eigen::MatrixXd   H2_subspace_real     = H2_subspace.real();
-                auto             *functor              = new ceres_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
+                auto             *functor              = new lbfgs_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
                 CustomLogCallback ceres_logger(*functor);
                 options.callbacks.emplace_back(&ceres_logger);
                 ceres::GradientProblem problem(functor);
@@ -548,7 +468,7 @@ opt_mps tools::finite::opt::internal::ceres_subspace_optimization(const TensorsF
                 break;
             }
         }
-        reports::time_add_opt_entry();
+        reports::time_add_entry();
         t_lbfgs.toc();
         // Copy and set the rest of the tensor metadata
         optimized_mps.normalize();

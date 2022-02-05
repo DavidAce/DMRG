@@ -1,4 +1,4 @@
-#include "ceres_subspace_functor.h"
+#include "lbfgs_subspace_functor.h"
 #include "opt-internal.h"
 #include <tensors/edges/EdgesFinite.h>
 #include <tensors/state/StateFinite.h>
@@ -8,11 +8,11 @@
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
-tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_functor(const TensorsFinite &tensors, const AlgorithmStatus &status,
+tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::lbfgs_subspace_functor(const TensorsFinite &tensors, const AlgorithmStatus &status,
                                                                                      const MatrixType &H2_subspace, const Eigen::VectorXd &eigvals_)
-    : ceres_base_functor(tensors, status), H2(H2_subspace), eigvals(eigvals_) {
+    : lbfgs_base_functor(tensors, status), H2(H2_subspace), eigvals(eigvals_) {
     double nonhermiticity = (H2 - H2.adjoint()).cwiseAbs().sum() / static_cast<double>(H2.size());
-    if(nonhermiticity > 1e-12) tools::log->error("ceres_subspace_functor(): H2 is not Hermitian: {:.16f}", nonhermiticity);
+    if(nonhermiticity > 1e-12) tools::log->error("lbfgs_subspace_functor(): H2 is not Hermitian: {:.16f}", nonhermiticity);
 
     num_parameters = static_cast<int>(eigvals.size());
 
@@ -21,7 +21,7 @@ tools::finite::opt::internal::ceres_subspace_functor<Scalar>::ceres_subspace_fun
 }
 
 template<typename Scalar>
-bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
+bool tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
     auto       t_step_token = t_step->tic_token();
     Scalar     nH2n, nHn, var;
     double     vv, log10var;
@@ -54,7 +54,7 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
     var        = nH2n - nHn * nHn;
     double eps = std::numeric_limits<double>::epsilon();
     if(std::real(var) < -eps or std::real(nH2n) < -eps)
-        tools::log->trace("Counter = {} | SUBSPACE | "
+        tools::log->trace("Counter = {} | SHINV | "
                           "negative: "
                           "var  {:.16f} + {:.16f}i | "
                           "nHn  {:.16f} + {:.16f}i | "
@@ -101,10 +101,9 @@ bool tools::finite::opt::internal::ceres_subspace_functor<Scalar>::Evaluate(cons
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
         throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
     }
-
     counter++;
     return true;
 }
 
-template class tools::finite::opt::internal::ceres_subspace_functor<double>;
-template class tools::finite::opt::internal::ceres_subspace_functor<std::complex<double>>;
+template class tools::finite::opt::internal::lbfgs_subspace_functor<double>;
+template class tools::finite::opt::internal::lbfgs_subspace_functor<std::complex<double>>;

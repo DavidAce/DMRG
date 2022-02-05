@@ -1,19 +1,17 @@
 #pragma once
 
-#include "ceres_base.h"
+#include "lbfgs_base_functor.h"
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt::internal {
     enum class LagrangeNorm { ON, OFF };
 
     template<typename Scalar, LagrangeNorm lagrangeNorm>
-    class ceres_direct_functor : public ceres_base_functor {
+    class lbfgs_variance_functor : public lbfgs_base_functor {
         private:
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
         mutable Eigen::Tensor<Scalar, 3> Hn_tensor, H2n_tensor;
-        long                             size; // Does not include lagrange multiplier (i.e. num_paramters - 1 if LagrangeNorm::ON)
-        Eigen::DSizes<long, 3>           dims;
         Eigen::Tensor<Scalar, 3>         envL, envR;
         Eigen::Tensor<Scalar, 3>         env2L, env2R;
         Eigen::Tensor<Scalar, 4>         mpo, mpo2;
@@ -25,7 +23,7 @@ namespace tools::finite::opt::internal {
         void                             get_H2n(const VectorType &v) const;
 
         public:
-        explicit ceres_direct_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
+        explicit lbfgs_variance_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
         bool Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const final;
         void compress();
         void set_shift(double shift_);

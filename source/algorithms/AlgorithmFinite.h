@@ -17,18 +17,15 @@ class AlgorithmFinite : public AlgorithmBase {
 
     size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
 
-    size_t                  projected_iter       = 0;  /*!< The last iteration when projection was tried */
-    size_t                  expanded_iter        = 0;  /*!< The last iteration when expansion was tried */
-    size_t                  chi_quench_steps     = 0;  /*!< Number of steps left doing chi-quenching */
-    size_t                  num_chi_quenches     = 0;  /*!< Number of bond dimension quench trials that have occurred */
-    size_t                  max_chi_quenches     = 2;  /*!< Maximum number of bond dimension quench trials allowed */
-    long                    chi_lim_quench_ahead = 32; /*!< Bond dimension during a quench */
-    long                    chi_lim_quench_trail = 32; /*!< Bond dimension during a quench */
-    size_t                  num_perturbations    = 0;  /*!< Number of perturbation trials done */
-    size_t                  max_perturbations    = 2;  /*!< Maximum number of perturbation trials allowed */
-    size_t                  perturbation_steps   = 0;  /*!< Number of steps left doing perturbation of MPOs */
-    std::optional<OptMode>  last_optmode         = std::nullopt;
-    std::optional<OptSpace> last_optspace        = std::nullopt;
+    size_t                   projected_iter        = 0;  /*!< The last iteration when projection was tried */
+    size_t                   expanded_iter         = 0;  /*!< The last iteration when expansion was tried */
+    size_t                   bond_quench_steps     = 0;  /*!< Number of steps left doing bond dimension quenching */
+    size_t                   num_bond_quenches     = 0;  /*!< Number of bond dimension quench trials that have occurred */
+    size_t                   max_bond_quenches     = 2;  /*!< Maximum number of bond dimension quench trials allowed */
+    long                     bond_lim_quench_ahead = 32; /*!< Bond dimension during a quench */
+    long                     bond_lim_quench_trail = 32; /*!< Bond dimension during a quench */
+    std::optional<OptMode>   last_optmode          = std::nullopt;
+    std::optional<OptSolver> last_optspace         = std::nullopt;
 
     public:
     virtual void run_algorithm()     = 0;
@@ -40,7 +37,6 @@ class AlgorithmFinite : public AlgorithmBase {
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
     void         try_full_expansion();
     void         try_bond_dimension_quench();
-    void         try_hamiltonian_perturbation();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         shift_mpo_energy();
     void         rebuild_mpo_squared();
@@ -52,7 +48,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         run() final;
     void         clear_convergence_status() override;
     void         randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
-                                 std::optional<std::string> sector = std::nullopt, std::optional<long> chi_lim = std::nullopt,
+                                 std::optional<std::string> sector = std::nullopt, std::optional<long> bond_limit = std::nullopt,
                                  std::optional<bool> use_eigenspinors = std::nullopt, std::optional<long> bitfield = std::nullopt,
                                  std::optional<double> svd_threshold = std::nullopt);
 

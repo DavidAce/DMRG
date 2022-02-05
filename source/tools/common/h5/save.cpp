@@ -68,7 +68,7 @@ namespace tools::common::h5 {
         // Check if the current entry has already been appended
         // Status is special, flags can be updated without changing iter or step
         std::string                                                           table_path = fmt::format("{}/status", table_prefix);
-        auto                                                                  t_hdf      = tid::tic_scope("status", tid::level::pedant);
+        auto                                                                  t_hdf      = tid::tic_scope("status", tid::level::detailed);
         static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
         bootstrap_save_log(save_log, h5file, table_path);
         auto save_point = std::make_pair(status.iter, status.step);
@@ -96,7 +96,7 @@ namespace tools::common::h5 {
         auto save_point = std::make_pair(status.iter, status.step);
         if(save_log.count(table_path) and save_log.at(table_path) == save_point) return;
         log->trace("Appending to table: {}", table_path);
-        auto t_mem = tid::tic_scope("mem", tid::level::pedant);
+        auto t_mem = tid::tic_scope("mem", tid::level::detailed);
         h5pp_table_memory_usage::register_table_type();
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_memory_usage::h5_type, table_path, "memory usage");
 
@@ -139,7 +139,7 @@ namespace tools::common::h5 {
         if(storage_reason == StorageReason::MODEL) return;
         //        if(not h5file.linkExists(state_prefix)) return; // No point in saving metadata for non-existing state prefixes
 
-        auto t_meta = tid::tic_scope("meta", tid::level::pedant);
+        auto t_meta = tid::tic_scope("meta", tid::level::detailed);
         // Checks if the current entries have already been written
         static std::unordered_map<std::string, AlgorithmStatus> save_log;
         bootstrap_meta_log(save_log, h5file, state_prefix);
@@ -178,7 +178,7 @@ namespace tools::common::h5 {
         if(not settings::timer::on) return;
         if(not settings::storage::save_timers) return;
         if(storage_level == StorageLevel::NONE) return;
-        auto t_timers   = tid::tic_token("timers", tid::level::detail);
+        auto t_timers   = tid::tic_token("timers", tid::level::extra);
         auto table_path = fmt::format("{}/timers", table_prefix);
         // Check if the current entry has already been appended
 

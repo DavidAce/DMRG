@@ -1,5 +1,5 @@
 #include "../opt_mps.h"
-#include "ceres_subspace_functor.h"
+#include "lbfgs_subspace_functor.h"
 #include "opt-internal.h"
 #include <general/iter.h>
 #include <tools/common/log.h>

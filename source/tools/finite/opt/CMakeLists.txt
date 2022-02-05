@@ -1,17 +1,16 @@
 add_library(dmrg-tools-finite-opt OBJECT)
 target_sources(dmrg-tools-finite-opt PRIVATE
-        ceres_base.cpp
-        ceres_direct.cpp
-        ceres_direct_functor.cpp
-        ceres_subspace.cpp
-        ceres_subspace_find_full.cpp
-        ceres_subspace_find_part.cpp
-        ceres_subspace_filter.cpp
-        ceres_subspace_functor.cpp
-        ceres_subspace_hamiltonian.cpp
-#        cppoptlib_direct_functor.cpp
+        lbfgs_base_functor.cpp
+        lbfgs_optimize_variance.cpp
+        lbfgs_variance_functor.cpp
+        eigs_optimize_subspace.cpp
+        eigs_filter_subspace.cpp
+        lbfgs_subspace_functor.cpp
         ground_state.cpp
-        krylov_optimization.cpp
+        eigs_optimize_variance.cpp
+        eigs_optimize_overlap.cpp
+        eigs_optimize_subspace.cpp
+        eigs_find_subspace.cpp
         report.cpp
         opt.cpp
         opt_mps.cpp

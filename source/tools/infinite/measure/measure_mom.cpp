@@ -14,11 +14,11 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     using Scalar                = StateInfinite::Scalar;
     StateInfinite state_evolved = state_original;
 
-    long chi_lim = 5 * state_evolved.chiC();
+    long bond_limit = 5 * state_evolved.chiC();
     for(auto &Op : Op_vec) {
         // Evolve
         Eigen::Tensor<Scalar, 3> mps_evo = Op.contract(state_evolved.get_2site_mps(), tenx::idx({0}, {0}));
-        state_evolved.set_mps(mps_evo, chi_lim);
+        state_evolved.set_mps(mps_evo, bond_limit);
         if(&Op != &Op_vec.back()) { state_evolved.swap_AB(); }
     }
 

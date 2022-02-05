@@ -13,8 +13,20 @@ class ModelFinite;
 class EdgesFinite;
 
 class TensorsFinite {
+    private:
+    using cplx = std::complex<double>;
+    using real = double;
+    struct Cache {
+        std::optional<std::vector<size_t>>    cached_sites_hamiltonian           = std::nullopt;
+        std::optional<std::vector<size_t>>    cached_sites_hamiltonian_squared   = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>> effective_hamiltonian_cplx         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>> effective_hamiltonian_squared_cplx = std::nullopt;
+        std::optional<Eigen::Tensor<real, 2>> effective_hamiltonian_real         = std::nullopt;
+        std::optional<Eigen::Tensor<real, 2>> effective_hamiltonian_squared_real = std::nullopt;
+    };
+    mutable Cache cache;
+
     public:
-    using Scalar = std::complex<double>;
     std::unique_ptr<StateFinite> state;
     std::unique_ptr<ModelFinite> model;
     std::unique_ptr<EdgesFinite> edges;
@@ -39,24 +51,27 @@ class TensorsFinite {
 
     void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
-    void randomize_state(StateInit state_init, std::string_view sector, long chi_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
-                         std::optional<StateInitType> state_type = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
-    void normalize_state(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
+    void randomize_state(StateInit state_init, std::string_view sector, long bond_limit, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
+                         std::optional<StateInitType> state_type = std::nullopt);
+    void normalize_state(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
 
-    [[nodiscard]] const Eigen::Tensor<Scalar, 3>          &get_multisite_mps() const;
-    [[nodiscard]] const Eigen::Tensor<Scalar, 4>          &get_multisite_mpo() const;
-    [[nodiscard]] const Eigen::Tensor<Scalar, 4>          &get_multisite_mpo_squared() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_env_ene_blk() const;
-    [[nodiscard]] env_pair<const Eigen::Tensor<Scalar, 3>> get_multisite_env_var_blk() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 3>          &get_multisite_mps() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4>          &get_multisite_mpo() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 4>          &get_multisite_mpo_squared() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3>> get_multisite_env_ene_blk() const;
+    [[nodiscard]] env_pair<const Eigen::Tensor<cplx, 3>> get_multisite_env_var_blk() const;
+    /* clang-format off */
+    template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian() const;
+    template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
+    /* clang-format on */
 
-    [[nodiscard]] StateFinite get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim,
+    [[nodiscard]] StateFinite get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit,
                                                                     std::optional<svd::settings> svd_settings = std::nullopt) const;
-    void project_to_nearest_sector(std::string_view sector, std::optional<long> chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
-    [[nodiscard]] StateFinite get_state_with_hamiltonian_applied(std::optional<long>          chi_lim      = std::nullopt,
+    void project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    [[nodiscard]] StateFinite get_state_with_hamiltonian_applied(std::optional<long>          bond_limit   = std::nullopt,
                                                                  std::optional<svd::settings> svd_settings = std::nullopt) const;
-    void                      apply_hamiltonian_on_state(std::optional<long> chi_lim = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
+    void apply_hamiltonian_on_state(std::optional<long> bond_limit = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
 
-    void perturb_model_params(double coupling_ptb, double field_ptb, PerturbMode perturbMode);
     void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
     void rebuild_mpo();
     void rebuild_mpo_squared(std::optional<bool> compress = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
@@ -92,13 +107,13 @@ class TensorsFinite {
     long                active_problem_size() const;
     void                do_all_measurements() const;
     void                redo_all_measurements() const;
-    size_t              move_center_point(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
-    size_t              move_center_point_to_edge(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
-    size_t              move_center_point_to_middle(long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
-    void merge_multisite_mps(const Eigen::Tensor<Scalar, 3> &multisite_tensor, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt,
+    size_t              move_center_point(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    size_t              move_center_point_to_edge(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    size_t              move_center_point_to_middle(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    void merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt,
                              LogPolicy log_policy = LogPolicy::QUIET);
 
-    std::vector<size_t> expand_subspace(std::optional<double> alpha, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    std::vector<size_t> expand_subspace(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
     void                assert_edges() const;
     void                assert_edges_ene() const;
     void                assert_edges_var() const;

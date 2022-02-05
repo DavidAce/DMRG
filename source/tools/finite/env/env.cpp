@@ -21,15 +21,14 @@ namespace settings {
 }
 
 std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                        long chi_lim, std::optional<svd::settings> svd_settings) {
+                                                        long bond_limit, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
-        throw std::runtime_error(
-            fmt::format("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
+        throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-        throw std::runtime_error(
-            fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
+        throw except::runtime_error("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites,
+                                    edges.active_sites);
     //    if(alpha < 1e-12) return;
-    if(state.active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
+    if(state.active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
     std::vector<size_t> pos_expanded;
 
     if(not alpha) {
@@ -98,8 +97,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
-                chi_lim = std::min(chi_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), chi_lim);
+                bond_limit =
+                    std::min(bond_limit, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_limit);
                 mpsL.set_M(U);
                 mpsL.stash_V(V, mpsR.get_position());
                 mpsR.set_M(MR_P0);
@@ -122,8 +122,8 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                         auto &LR = state.get_mps_site(posL + 1).get_L();
                         tools::common::contraction::contract_mps_bnd(M_tmp, mpsR.get_M(), LR);
                     } else
-                        throw std::logic_error(fmt::format("Can't make mpsR normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
-                                                           mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
+                        throw except::logic_error("Can't make mpsR normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
+                                                  mpsL.get_position(), mpsR.get_label(), mpsR.get_position());
 
                     double norm_old = tools::common::contraction::contract_mps_norm(M_tmp);
                     M_tmp = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
@@ -141,11 +141,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 const auto &dimL_new = mpsL_new.dimensions();
                 const auto &dimR_new = mpsR_new.dimensions();
                 tools::log->debug("Subspace expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
-                                  ML_PL.dimension(2), chiL_new, chi_lim);
-                if(dimL_old[1] != dimL_new[1])
-                    throw std::runtime_error(fmt::format("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new));
-                if(dimR_old[2] != dimR_new[2])
-                    throw std::runtime_error(fmt::format("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new));
+                                  ML_PL.dimension(2), chiL_new, bond_limit);
+                if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
+                if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
             }
         }
     }
@@ -177,8 +175,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
-                chi_lim = std::min(chi_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), chi_lim);
+                bond_limit =
+                    std::min(bond_limit, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_limit);
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 mpsR.stash_U(U, mpsL.get_position());
@@ -203,8 +202,8 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                         else
                             tools::common::contraction::contract_bnd_mps(M_tmp, mpsLL.get_L(), mpsL.get_M());
                     } else
-                        throw std::logic_error(fmt::format("Can't make mpsL normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
-                                                           mpsL.get_position(), mpsR.get_label(), mpsR.get_position()));
+                        throw except::logic_error("Can't make mpsL normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
+                                                  mpsL.get_position(), mpsR.get_label(), mpsR.get_position());
 
                     double norm_old = tools::common::contraction::contract_mps_norm(M_tmp);
                     M_tmp = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
@@ -223,11 +222,9 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 const auto &dimL_new = mpsL_new.dimensions();
 
                 tools::log->debug("Subspace expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
-                                  MR_PR.dimension(1), chiR_new, chi_lim);
-                if(dimL_old[1] != dimL_new[1])
-                    throw std::runtime_error(fmt::format("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new));
-                if(dimR_old[2] != dimR_new[2])
-                    throw std::runtime_error(fmt::format("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new));
+                                  MR_PR.dimension(1), chiR_new, bond_limit);
+                if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
+                if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);
             }
         }
     }
@@ -236,8 +233,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
 }
 
 void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
-    if(state.get_algorithm() == AlgorithmType::fLBIT)
-        throw std::logic_error(fmt::format("assert_edges_var: fLBIT algorithm should never assert energy edges!"));
+    if(state.get_algorithm() == AlgorithmType::fLBIT) throw except::logic_error("assert_edges_var: fLBIT algorithm should never assert energy edges!");
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
@@ -273,7 +269,7 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
 
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &ene = edges.get_env_eneL(pos);
-        if(pos == 0 and not ene.has_block()) throw std::runtime_error(fmt::format("ene L at pos {} does not have a block", pos));
+        if(pos == 0 and not ene.has_block()) throw except::runtime_error("ene L at pos {} does not have a block", pos);
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
@@ -287,7 +283,7 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
 
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &ene = edges.get_env_eneR(pos);
-        if(pos == state.get_length() - 1 and not ene.has_block()) throw std::runtime_error(fmt::format("ene R at pos {} does not have a block", pos));
+        if(pos == state.get_length() - 1 and not ene.has_block()) throw except::runtime_error("ene R at pos {} does not have a block", pos);
         if(pos <= std::max(posR_active, 0ul)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
@@ -297,8 +293,7 @@ void tools::finite::env::assert_edges_ene(const StateFinite &state, const ModelF
 }
 
 void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges) {
-    if(state.get_algorithm() == AlgorithmType::fLBIT)
-        throw std::logic_error(fmt::format("assert_edges_var: fLBIT algorithm should never assert variance edges!"));
+    if(state.get_algorithm() == AlgorithmType::fLBIT) throw except::logic_error("assert_edges_var: fLBIT algorithm should never assert variance edges!");
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
 
@@ -333,7 +328,7 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
                           current_position, state.get_direction(), min_pos, posL_active);
     for(size_t pos = min_pos; pos <= posL_active; pos++) {
         auto &var = edges.get_env_varL(pos);
-        if(pos == 0 and not var.has_block()) throw std::runtime_error(fmt::format("var L at pos {} does not have a block", pos));
+        if(pos == 0 and not var.has_block()) throw except::runtime_error("var L at pos {} does not have a block", pos);
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
@@ -346,7 +341,7 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
                           current_position, state.get_direction(), posR_active, max_pos);
     for(size_t pos = max_pos; pos >= posR_active and pos < state.get_length(); pos--) {
         auto &var = edges.get_env_varR(pos);
-        if(pos == state.get_length() - 1 and not var.has_block()) throw std::runtime_error(fmt::format("var R at pos {} does not have a block", pos));
+        if(pos == state.get_length() - 1 and not var.has_block()) throw except::runtime_error("var R at pos {} does not have a block", pos);
         if(pos <= std::max(posR_active, 0ul)) continue;
         auto &mps      = state.get_mps_site(pos);
         auto &mpo      = model.get_mpo(pos);
@@ -362,14 +357,12 @@ void tools::finite::env::assert_edges(const StateFinite &state, const ModelFinit
 }
 
 void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
-    if(state.get_algorithm() == AlgorithmType::fLBIT)
-        throw std::logic_error(fmt::format("rebuild_edges_ene: fLBIT algorithm should never rebuild energy edges!"));
+    if(state.get_algorithm() == AlgorithmType::fLBIT) throw except::logic_error("rebuild_edges_ene: fLBIT algorithm should never rebuild energy edges!");
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
-        throw std::runtime_error(
-            fmt::format("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length()));
+        throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-        throw std::runtime_error(
-            fmt::format("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites, edges.active_sites));
+        throw except::runtime_error("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites,
+                                    edges.active_sites);
     auto   t_reb   = tid::tic_scope("rebuild_edges");
     size_t min_pos = 0;
     size_t max_pos = state.get_length() - 1;
@@ -429,7 +422,7 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
         if(pos == 0 and not ene_curr.has_block()) {
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
-            if(not ene_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
+            if(not ene_curr.has_block()) throw except::runtime_error("No edge detected after setting edge");
         }
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
         auto &ene_next = edges.get_env_eneL(pos + 1);
@@ -449,7 +442,7 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
         if(pos == state.get_length() - 1 and not ene_curr.has_block()) {
             ene_pos_log.emplace_back(pos);
             ene_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
-            if(not ene_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
+            if(not ene_curr.has_block()) throw except::runtime_error("No edge detected after setting edge");
         }
         if(pos <= std::max(posR_active, 0ul)) continue;
         auto &ene_prev = edges.get_env_eneR(pos - 1);
@@ -459,19 +452,18 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     }
     std::reverse(ene_pos_log.begin(), ene_pos_log.end());
     if(not ene_pos_log.empty()) tools::log->trace("rebuild_edges_ene: rebuilt eneR edges: {}", ene_pos_log);
-    if(not edges.get_env_eneL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active ene edge has undefined block"));
-    if(not edges.get_env_eneR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active ene edge has undefined block"));
+    if(not edges.get_env_eneL(posL_active).has_block()) throw except::logic_error("Left active ene edge has undefined block");
+    if(not edges.get_env_eneR(posR_active).has_block()) throw except::logic_error("Right active ene edge has undefined block");
 }
 
 void tools::finite::env::rebuild_edges_var(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {
-    if(state.get_algorithm() == AlgorithmType::fLBIT)
-        throw std::logic_error(fmt::format("rebuild_edges_var: fLBIT algorithm should never rebuild variance edges!"));
+    if(state.get_algorithm() == AlgorithmType::fLBIT) throw except::logic_error("rebuild_edges_var: fLBIT algorithm should never rebuild variance edges!");
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
-        throw std::runtime_error(fmt::format("rebuild_edges_var: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
-                                             edges.get_length()));
+        throw except::runtime_error("rebuild_edges_var: All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(),
+                                    edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-        throw std::runtime_error(fmt::format("rebuild_edges_var: All active sites are not equal: state {} | model {} | edges {}", state.active_sites,
-                                             model.active_sites, edges.active_sites));
+        throw except::runtime_error("rebuild_edges_var: All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites,
+                                    edges.active_sites);
     auto t_reb = tid::tic_scope("rebuild_edges");
 
     size_t min_pos = 0;
@@ -514,7 +506,7 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
         if(pos == 0 and not var_curr.has_block()) {
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
-            if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
+            if(not var_curr.has_block()) throw except::runtime_error("No edge detected after setting edge");
         }
         if(pos >= std::min(posL_active, state.get_length() - 1)) continue;
         auto &var_next = edges.get_env_varL(pos + 1);
@@ -535,7 +527,7 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
         if(pos == state.get_length() - 1 and not var_curr.has_block()) {
             var_pos_log.emplace_back(pos);
             var_curr.set_edge_dims(state.get_mps_site(pos), model.get_mpo(pos));
-            if(not var_curr.has_block()) throw std::runtime_error("No edge detected after setting edge");
+            if(not var_curr.has_block()) throw except::runtime_error("No edge detected after setting edge");
         }
         if(pos <= std::max(posR_active, 0ul)) continue;
         auto &var_prev = edges.get_env_varR(pos - 1);
@@ -545,8 +537,8 @@ void tools::finite::env::rebuild_edges_var(const StateFinite &state, const Model
     }
     std::reverse(var_pos_log.begin(), var_pos_log.end());
     if(not var_pos_log.empty()) tools::log->trace("rebuild_edges_var: rebuilt varR edges: {}", var_pos_log);
-    if(not edges.get_env_varL(posL_active).has_block()) throw std::logic_error(fmt::format("Left active var edge has undefined block"));
-    if(not edges.get_env_varR(posR_active).has_block()) throw std::logic_error(fmt::format("Right active var edge has undefined block"));
+    if(not edges.get_env_varL(posL_active).has_block()) throw except::logic_error("Left active var edge has undefined block");
+    if(not edges.get_env_varR(posR_active).has_block()) throw except::logic_error("Right active var edge has undefined block");
 }
 
 void tools::finite::env::rebuild_edges(const StateFinite &state, const ModelFinite &model, EdgesFinite &edges) {

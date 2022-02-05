@@ -69,19 +69,17 @@ class StateInfinite {
     [[nodiscard]] long                      chiC() const;
     [[nodiscard]] long                      chiA() const;
     [[nodiscard]] long                      chiB() const;
-    //    [[nodiscard]] long                            get_chi_lim() const;
-    //    [[nodiscard]] long                            get_chi_max() const;
-    [[nodiscard]] long                   get_spin_dimA() const;
-    [[nodiscard]] long                   get_spin_dimB() const;
-    [[nodiscard]] Eigen::DSizes<long, 3> dimensions() const;
-    [[nodiscard]] const MpsSite         &get_mps_siteA() const;
-    [[nodiscard]] const MpsSite         &get_mps_siteB() const;
-    [[nodiscard]] MpsSite               &get_mps_siteA();
-    [[nodiscard]] MpsSite               &get_mps_siteB();
-    [[nodiscard]] const MpsSite         &get_mps_site(size_t pos) const;
-    [[nodiscard]] MpsSite               &get_mps_site(size_t pos);
-    [[nodiscard]] const MpsSite         &get_mps_site(std::string_view pos) const;
-    [[nodiscard]] MpsSite               &get_mps_site(std::string_view pos);
+    [[nodiscard]] long                      get_spin_dimA() const;
+    [[nodiscard]] long                      get_spin_dimB() const;
+    [[nodiscard]] Eigen::DSizes<long, 3>    dimensions() const;
+    [[nodiscard]] const MpsSite            &get_mps_siteA() const;
+    [[nodiscard]] const MpsSite            &get_mps_siteB() const;
+    [[nodiscard]] MpsSite                  &get_mps_siteA();
+    [[nodiscard]] MpsSite                  &get_mps_siteB();
+    [[nodiscard]] const MpsSite            &get_mps_site(size_t pos) const;
+    [[nodiscard]] MpsSite                  &get_mps_site(size_t pos);
+    [[nodiscard]] const MpsSite            &get_mps_site(std::string_view pos) const;
+    [[nodiscard]] MpsSite                  &get_mps_site(std::string_view pos);
 
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &A_bare() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &A() const;
@@ -102,7 +100,7 @@ class StateInfinite {
     void                                          set_positions(size_t position);
 
     void swap_AB(); /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
-    void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long chi_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
     void set_mps(const std::vector<MpsSite> &mps_list);
     void set_mps(const MpsSite &mpsA, const MpsSite &mpsB);
     void set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB);
@@ -114,7 +112,7 @@ class StateInfinite {
     //    template<typename T>
     //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_sq_matrix() const;
 
-    bool is_bond_limited(long chi_limit, double truncation_threshold) const;
+    bool is_bond_limited(long bond_limit, double truncation_threshold) const;
 
     void do_all_measurements() const;
     void clear_measurements() const;

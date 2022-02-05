@@ -169,9 +169,9 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "direction",                   HOFFSET(table, direction),                  H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets",                  HOFFSET(table, num_resets),                 H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "chi_lim_max",                 HOFFSET(table, chi_lim_max),                H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "chi_lim_init",                HOFFSET(table, chi_lim_init),               H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "chi_lim",                     HOFFSET(table, chi_lim),                    H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_init",                   HOFFSET(table, bond_init),                  H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_limit",                  HOFFSET(table, bond_limit),                 H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "energy_min_per_site",         HOFFSET(table, energy_min_per_site),        H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max_per_site",         HOFFSET(table, energy_max_per_site),        H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_tgt_per_site",         HOFFSET(table, energy_tgt_per_site),        H5T_NATIVE_DOUBLE);
@@ -206,7 +206,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "variance_ham_saturated_for",  HOFFSET(table, variance_ham_saturated_for), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "variance_mom_converged_for",  HOFFSET(table, variance_mom_converged_for), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "variance_mom_saturated_for",  HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "chi_lim_has_reached_chi_max", HOFFSET(table, chi_lim_has_reached_chi_max),H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "bond_limit_has_reached_max",  HOFFSET(table, bond_limit_has_reached_max), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "fes_is_running",              HOFFSET(table, fes_is_running),             H5T_NATIVE_UINT8);
@@ -255,12 +255,12 @@ class h5pp_table_data {
     public:
     static inline std::unordered_map<meta, h5pp::hid::h5t, metaHasher> h5_types;
 
-    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t chi_lim, const T *data, size_t data_size) {
+    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t bond_limit, const T *data, size_t data_size) {
         size_t                 total_size = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + data_size * sizeof(T);
         std::vector<std::byte> entry(total_size);
         std::memcpy(entry.data() + 0 * sizeof(uint64_t), &iter, sizeof(uint64_t));
         std::memcpy(entry.data() + 1 * sizeof(uint64_t), &step, sizeof(uint64_t));
-        std::memcpy(entry.data() + 2 * sizeof(int64_t), &chi_lim, sizeof(int64_t));
+        std::memcpy(entry.data() + 2 * sizeof(int64_t), &bond_limit, sizeof(int64_t));
         std::memcpy(entry.data() + 3 * sizeof(uint64_t), data, data_size * sizeof(T));
         return entry;
     }
@@ -273,7 +273,7 @@ class h5pp_table_data {
             h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, total_size);
             H5Tinsert(h5_type, "iter", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
             H5Tinsert(h5_type, "step", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-            H5Tinsert(h5_type, "chi_lim", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
+            H5Tinsert(h5_type, "bond_limit", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
             auto h5type = h5pp::util::getH5Type<T>();
             for(size_t elem = 0; elem < data_size; elem++) {
                 H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), data_offset + elem * sizeof(T), h5type);
@@ -324,8 +324,8 @@ class h5pp_ur {
             int val;
             H5Tenum_insert(h5_level_type, "parent", (val = tid::level::parent, &val));
             H5Tenum_insert(h5_level_type, "normal", (val = tid::level::normal, &val));
-            H5Tenum_insert(h5_level_type, "detail", (val = tid::level::detail, &val));
-            H5Tenum_insert(h5_level_type, "pedant", (val = tid::level::pedant, &val));
+            H5Tenum_insert(h5_level_type, "extra", (val = tid::level::extra, &val));
+            H5Tenum_insert(h5_level_type, "detailed", (val = tid::level::detailed, &val));
         }
 
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(item));

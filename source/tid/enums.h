@@ -4,18 +4,18 @@
 
 namespace tid {
     enum level : int {
-        parent = -1,
-        normal = 0,
-        detail = 1,
-        pedant = 2,
+        parent   = -1,
+        normal   = 0,
+        extra    = 1,
+        detailed = 2,
     };
 
     constexpr std::string_view level2sv(level l) noexcept {
         switch(l) {
-            case normal: return "normal";
-            case detail: return "detail";
-            case pedant: return "pedant";
-            case parent: return "parent";
+            case parent: return "parent  ";
+            case normal: return "normal  ";
+            case extra: return "extra   ";
+            case detailed: return "detailed";
             default: return "unknown";
         }
     }
@@ -31,8 +31,8 @@ template<>
 constexpr std::string_view enum2sv(const tid::level &item) {
     switch(item) {
         case(tid::level::normal): return "normal";
-        case(tid::level::detail): return "detail";
-        case(tid::level::pedant): return "pedant";
+        case(tid::level::extra): return "extra";
+        case(tid::level::detailed): return "detailed";
         case(tid::level::parent): return "parent";
         default: throw std::runtime_error("Unrecognized tid::level enum");
     }
@@ -41,8 +41,8 @@ constexpr std::string_view enum2sv(const tid::level &item) {
 template<>
 constexpr auto sv2enum<tid::level>(std::string_view item) {
     if(item == "normal") return tid::level::normal;
-    if(item == "detail") return tid::level::detail;
-    if(item == "pedant") return tid::level::pedant;
+    if(item == "extra") return tid::level::extra;
+    if(item == "detailed") return tid::level::detailed;
     if(item == "parent") return tid::level::parent;
     throw std::runtime_error("Given item is not a tid::level enum");
 }

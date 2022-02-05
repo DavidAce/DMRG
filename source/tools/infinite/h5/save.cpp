@@ -58,8 +58,8 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
         h5file.writeDataset(state.LC(), dset_schmidt, layout);
         h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dset_schmidt);
-        h5file.writeAttribute(status.chi_lim, "chi_lim", dset_schmidt);
-        h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dset_schmidt);
+        h5file.writeAttribute(status.bond_limit, "bond_limit", dset_schmidt);
+        h5file.writeAttribute(status.bond_max, "bond_max", dset_schmidt);
         save_log[dset_schmidt] = save_point;
     }
     if(storage_level < StorageLevel::NORMAL) return;
@@ -70,8 +70,8 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
             h5file.writeDataset(state.LA(), dsetName);
             h5file.writeAttribute(state.LA().dimensions(), "dimensions", dsetName);
             h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-            h5file.writeAttribute(status.chi_lim, "chi_lim", dsetName);
-            h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
+            h5file.writeAttribute(status.bond_limit, "bond_limit", dsetName);
+            h5file.writeAttribute(status.bond_max, "bond_max", dsetName);
             save_log[dsetName] = save_point;
         }
         dsetName = mps_prefix + "/L_B";
@@ -79,8 +79,8 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
             h5file.writeDataset(state.LB(), dsetName);
             h5file.writeAttribute(state.LB().dimensions(), "dimensions", dsetName);
             h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-            h5file.writeAttribute(status.chi_lim, "chi_lim", dsetName);
-            h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
+            h5file.writeAttribute(status.bond_limit, "bond_limit", dsetName);
+            h5file.writeAttribute(status.bond_max, "bond_max", dsetName);
             save_log[dsetName] = save_point;
         }
         dsetName = mps_prefix + "/L_C";
@@ -88,8 +88,8 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
             h5file.writeDataset(state.LC(), dsetName);
             h5file.writeAttribute(state.LC().dimensions(), "dimensions", dsetName);
             h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-            h5file.writeAttribute(status.chi_lim, "chi_lim", dsetName);
-            h5file.writeAttribute(status.chi_lim_max, "chi_lim_max", dsetName);
+            h5file.writeAttribute(status.bond_limit, "bond_limit", dsetName);
+            h5file.writeAttribute(status.bond_max, "bond_max", dsetName);
             save_log[dsetName] = save_point;
         }
         h5file.writeAttribute(status.iter, "iter", mps_prefix);
@@ -173,8 +173,8 @@ void tools::infinite::h5::save::measurements(h5pp::File &h5file, std::string_vie
     measurement_entry.position               = static_cast<int64_t>(status.position);
     measurement_entry.length                 = static_cast<uint64_t>(tools::infinite::measure::length(tensors));
     measurement_entry.bond_dimension         = tools::infinite::measure::bond_dimension(state);
-    measurement_entry.bond_dimension_limit   = status.chi_lim;
-    measurement_entry.bond_dimension_maximum = status.chi_lim_max;
+    measurement_entry.bond_dimension_limit   = status.bond_limit;
+    measurement_entry.bond_dimension_maximum = status.bond_max;
     measurement_entry.entanglement_entropy   = tools::infinite::measure::entanglement_entropy(state);
     measurement_entry.norm                   = tools::infinite::measure::norm(*tensors.state);
     if(std::abs(status.delta_t) == 0) {

@@ -21,35 +21,36 @@ namespace tools::finite::opt::internal{
     using TensorType = Eigen::Tensor<T, rank>;
 
     extern opt_mps
-    ceres_direct_optimization(const TensorsFinite & tensors, const AlgorithmStatus &status, OptMeta & meta);
+    lbfgs_optimize_variance(const TensorsFinite & tensors, const AlgorithmStatus &status, OptMeta & meta);
 
     extern opt_mps
-    ceres_direct_optimization(const TensorsFinite & tensors, const opt_mps &initial_mps,
+    lbfgs_optimize_variance(const TensorsFinite & tensors, const opt_mps &initial_mps,
                               const AlgorithmStatus &status, OptMeta & meta);
 
     extern opt_mps
-    ceres_subspace_optimization (const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
+    eigs_optimize_subspace (const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
 
     extern opt_mps
-    ceres_subspace_optimization(const TensorsFinite & tensors, const opt_mps &initial_mps,
+    eigs_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps,
                                 const AlgorithmStatus &status, OptMeta & meta);
 
     extern opt_mps
-    ceres_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps, const std::vector<opt_mps> & subspace,
+    eigs_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps, const std::vector<opt_mps> & subspace,
                             const Eigen::MatrixXcd &H2_subspace, const AlgorithmStatus &status, OptMeta & meta);
 
 
     extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const TensorsFinite & tensors, const AlgorithmStatus & status);
     extern opt_mps ground_state_optimization  (const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps ground_state_optimization  (const opt_mps & initial_mps,const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps krylov_optimization(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta & meta);
-    extern void krylov_extract_solutions(const TensorsFinite &tensors,
-                                         const opt_mps &initial_mps,
-                                         const eig::solver &solver,
-                                         std::vector<opt_mps> &results,
-                                         const OptMeta & meta,
-                                         bool converged_only = true,
-                                         double max_overlap_sq_sum = 0.9999);
+    extern opt_mps eigs_optimize_variance          (const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta & meta);
+    extern opt_mps eigs_optimize_overlap  (const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta);
+    extern void eigs_extract_solutions        (const TensorsFinite &tensors,
+                                               const opt_mps &initial_mps,
+                                               const eig::solver &solver,
+                                               std::vector<opt_mps> &results,
+                                               const OptMeta & meta,
+                                               bool converged_only = true,
+                                               double max_overlap_sq_sum = 0.9999);
     extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const TensorsFinite & tensors, const OptMeta & meta);
     extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const StateFinite & state);
 
@@ -57,11 +58,7 @@ namespace tools::finite::opt::internal{
     namespace subspace{
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
-        find_subspace_part(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & conf);
-
-        template<typename Scalar>
-        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
-        find_subspace_part2(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & conf);
+        find_subspace_part(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
 
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
@@ -100,10 +97,10 @@ namespace tools::finite::opt::internal{
     template <typename T>
     Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite & model,
                                                                                                      const EdgesFinite & edges,
-                                                                                                     const std::vector<opt_mps> & candidate_list);
+                                                                                                     const std::vector<opt_mps> & eigvecs);
 
 
-    inline ceres::GradientProblemSolver::Options ceres_default_options;
+    inline ceres::GradientProblemSolver::Options lbfgs_default_options;
 
     inline bool no_state_in_window = false;
 

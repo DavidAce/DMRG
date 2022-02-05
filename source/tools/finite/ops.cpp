@@ -186,7 +186,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> chi_lim,
+void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> bond_limit,
                                            std::optional<svd::settings> svd_settings) {
     // This function applies the projection MPO operator  "0.5 * ( 1 - prod s)", where
     // 1 is understood as a 2^L x 2^L tensor and "prod s" is the outer product of pauli matrices, one for each site.
@@ -198,7 +198,7 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
     if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
     tools::log->debug("Projecting state to sector with sign {}", sign);
     auto t_prj = tid::tic_scope("projection");
-    tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(state, bond_limit, svd_settings, NormPolicy::IFNEEDED);
 
     auto spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
@@ -207,7 +207,7 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
     // Do the projection
     const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state.get_length(), sign);
     apply_mpos(state, mpos, L, R);
-    tools::finite::mps::normalize_state(state, chi_lim, svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
+    tools::finite::mps::normalize_state(state, bond_limit, svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
     spin_components = tools::finite::measure::spin_components(state);
     tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
     if constexpr(settings::debug) state.assert_validity();
@@ -221,7 +221,7 @@ std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFini
         return std::nullopt;
 }
 
-void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<long> chi_lim,
+void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<long> bond_limit,
                                                    std::optional<svd::settings> svd_settings) {
     /*
      * When projecting, there is one bad thing that may happen: that the norm of the state vanishes.
@@ -245,13 +245,13 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
         tools::log->debug("Spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
         if(spin_alignment > 0)
             // In this case the state has an aligned component along the requested axis --> safe
-            project_to_sector(state, paulimatrix, sector_sign, chi_lim, svd_settings);
+            project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);
         else if(spin_alignment < 0) {
             constexpr auto spin_alignment_threshold = 1e-3;
             // In this case the state has an anti-aligned component along the requested axis --> safe if spin_component < 1 - spin_component_threshold
             // Remember that  spin_alignment == -1 means orthogonal!
             if(std::abs(spin_alignment) < 1.0 - spin_alignment_threshold)
-                project_to_sector(state, paulimatrix, sector_sign, chi_lim, svd_settings);
+                project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);
             else
                 return tools::log->warn("Skipping projection to [{0}]: State spin is orthogonal to the requested projection axis: <{0}|Ψ> = {1:.16f}", sector,
                                         spin_alignment);
@@ -261,33 +261,33 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
                 sector_sign = 1;
             else
                 sector_sign = -1;
-            project_to_sector(state, paulimatrix, sector_sign, chi_lim, svd_settings);
+            project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);
         }
     } else if(sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
         std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, possibilities.size() - 1)];
-        project_to_nearest_sector(state, chosen_axis, chi_lim, svd_settings);
+        project_to_nearest_sector(state, chosen_axis, bond_limit, svd_settings);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
         Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spin::half::sx + coeffs(1) * qm::spin::half::sy + coeffs(2) * qm::spin::half::sz;
-        return project_to_sector(state, random_c2, 1, chi_lim, svd_settings);
+        return project_to_sector(state, random_c2, 1, bond_limit, svd_settings);
     } else if(sector == "none") {
         return;
     } else
         throw std::runtime_error(fmt::format("Could not parse sector string [{}]", sector));
 }
 
-StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> chi_lim,
-                                                         std::optional<svd::settings> svd_settings) {
+StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign,
+                                                         std::optional<long> bond_limit, std::optional<svd::settings> svd_settings) {
     auto state_projected = state;
-    project_to_sector(state_projected, paulimatrix, sign, chi_lim, svd_settings);
+    project_to_sector(state_projected, paulimatrix, sign, bond_limit, svd_settings);
     return state_projected;
 }
 
-StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<long> chi_lim,
+StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<long> bond_limit,
                                                                  std::optional<svd::settings> svd_settings) {
     auto state_projected = state;
-    project_to_nearest_sector(state_projected, sector, chi_lim, svd_settings);
+    project_to_nearest_sector(state_projected, sector, bond_limit, svd_settings);
     return state_projected;
 }
 

@@ -144,7 +144,7 @@ T StateFinite::get_position() const {
 template size_t StateFinite::get_position<size_t>() const;
 template long   StateFinite::get_position<long>() const;
 
-long StateFinite::find_largest_chi() const {
+long StateFinite::find_largest_bond() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
     return *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
 }
@@ -459,14 +459,14 @@ size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
     return trunc_bond_count;
 }
 
-size_t StateFinite::num_bonds_reached_chi(long chi_level) const {
+size_t StateFinite::num_bonds_at_limit(long bond_level) const {
     auto bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [chi_level](auto const &val) { return val >= chi_level; }));
+    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [bond_level](auto const &val) { return val >= bond_level; }));
     return bonds_at_lim;
 }
 
-bool StateFinite::is_bond_limited(long chi_lim, double truncation_threshold) const {
-    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_reached_chi(chi_lim) > 0;
+bool StateFinite::is_limited_by_bond(long bond_limit, double truncation_threshold) const {
+    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_at_limit(bond_limit) > 0;
 }
 
 void StateFinite::clear_measurements(LogPolicy logPolicy) const {

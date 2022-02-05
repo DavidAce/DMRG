@@ -81,7 +81,7 @@ class StateFinite {
     [[nodiscard]] long                          size_1site() const;
     [[nodiscard]] long                          size_2site() const;
     [[nodiscard]] long                          size_nsite() const;
-    [[nodiscard]] long                          find_largest_chi() const;
+    [[nodiscard]] long                          find_largest_bond() const;
     [[nodiscard]] bool                          position_is_the_middle() const;
     [[nodiscard]] bool                          position_is_the_middle_any_direction() const;
     [[nodiscard]] bool                          position_is_outward_edge_left(size_t nsite = 1) const;
@@ -129,8 +129,8 @@ class StateFinite {
     std::vector<double> get_truncation_errors_active() const;
 
     size_t num_sites_truncated(double truncation_threshold) const;
-    size_t num_bonds_reached_chi(long chi_level) const;
-    bool   is_bond_limited(long chi_limit, double truncation_threshold) const;
+    size_t num_bonds_at_limit(long bond_level) const;
+    bool   is_limited_by_bond(long bond_limit, double truncation_threshold) const;
 
     void clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
     void clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
