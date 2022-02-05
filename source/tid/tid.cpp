@@ -59,8 +59,10 @@ namespace tid {
         }
 
         if(prefix_key.empty()) {
+            // No earlier prefix so just use key as prefix
             prefix_key = std::string(parsed_key);
         } else
+            // Append to get prefix.key
             prefix_key = fmt::format("{}.{}", prefix_key, parsed_key);
         // If the element does not exist we insert it here
         if(prefix_key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", prefix_key));
@@ -82,7 +84,11 @@ namespace tid {
         //        return ur;
     }
 
-    token tic_token(std::string_view key, level l) { return tid::get(key, l).tic_token(); }
+    token tic_token(std::string_view key, level l) {
+        if(internal::ur_prefix.size() >= 200) printf("ur prefix: %s\n", internal::ur_prefix.c_str());
+
+        return tid::get(key, l).tic_token();
+    }
 
     token tic_scope(std::string_view key, level l) { return tid::get(key, l).tic_token(key); }
 
@@ -170,7 +176,7 @@ namespace tid {
 
     std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match) {
         std::vector<internal::ur_ref_t> matches;
-        for(const auto &t : get_tree(u, "", level::pedant)) {
+        for(const auto &t : get_tree(u, "", level::detailed)) {
             if(t.key.find(match) != std::string_view::npos) matches.push_back(t);
         }
         return matches;
@@ -178,7 +184,7 @@ namespace tid {
 
     std::vector<internal::ur_ref_t> search(std::string_view match) {
         std::vector<internal::ur_ref_t> matches;
-        for(const auto &t : get_tree("", level::pedant)) {
+        for(const auto &t : get_tree("", level::detailed)) {
             if(t.key.find(match) != std::string_view::npos) matches.push_back(t);
         }
         return matches;
