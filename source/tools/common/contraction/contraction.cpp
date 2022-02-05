@@ -40,7 +40,7 @@ double tools::common::contraction::expectation_value(
         bench_suffix = fmt::format("_mps-[{},{},{}]_mpo-[{}]", spin, chiL, chiR, mdim);
     }
 #endif
-    auto t_expval = tid::tic_token(fmt::format("expval{}",bench_suffix), tid::level::pedant);
+    auto t_expval = tid::tic_token(fmt::format("expval{}",bench_suffix), tid::level::detailed);
 
     // This measures the expectation value of some multisite mps with respect to some mpo operator and corresponding environments.
     // This is usually the energy E = <psi|H|psi> or variance V = <psi|(H-E)²|psi>
@@ -287,7 +287,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
                                                        const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                                        const Scalar * const envR_ptr, std::array<long,3> envR_dims){
 
-    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::pedant);
+    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::detailed);
 
     // This applies the mpo's with corresponding environments to local multisite mps
     // This is usually the operation H|psi>  or H²|psi>
@@ -312,25 +312,22 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
 
 }
 using namespace tools::common::contraction;
-template void tools::common::contraction::matrix_vector_product(      real *       res_ptr,
-                                                                const real * const mps_ptr, std::array<long,3> mps_dims,
-                                                                const real * const mpo_ptr, std::array<long,4> mpo_dims,
-                                                                const real * const envL_ptr, std::array<long,3> envL_dims,
-                                                                const real * const envR_ptr, std::array<long,3> envR_dims);
 template void tools::common::contraction::matrix_vector_product(      cplx *       res_ptr,
                                                                 const cplx * const mps_ptr, std::array<long,3> mps_dims,
                                                                 const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
                                                                 const cplx * const envL_ptr, std::array<long,3> envL_dims,
                                                                 const cplx * const envR_ptr, std::array<long,3> envR_dims);
-/* clang-format on */
-
-/* clang-format off */
+template void tools::common::contraction::matrix_vector_product(      real *       res_ptr,
+                                                                const real * const mps_ptr, std::array<long,3> mps_dims,
+                                                                const real * const mpo_ptr, std::array<long,4> mpo_dims,
+                                                                const real * const envL_ptr, std::array<long,3> envL_dims,
+                                                                const real * const envR_ptr, std::array<long,3> envR_dims);
 
 template<typename Scalar>
 void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      , std::array<long,3> res_dims,
                                                    const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                                    const Scalar * const bnd_ptr, std::array<long,1> bnd_dims){
-    auto t_con = tid::tic_token("contract_mps_bnd", tid::level::pedant);
+    auto t_con = tid::tic_token("contract_mps_bnd", tid::level::detailed);
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -352,7 +349,7 @@ void  tools::common::contraction::contract_bnd_mps(
           Scalar * res_ptr      , std::array<long,3> res_dims,
     const Scalar * const bnd_ptr, std::array<long,1> bnd_dims,
     const Scalar * const mps_ptr, std::array<long,3> mps_dims){
-    auto t_con = tid::tic_token("contract_bnd_mps", tid::level::pedant);
+    auto t_con = tid::tic_token("contract_bnd_mps", tid::level::detailed);
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -374,7 +371,7 @@ template<typename Scalar>
 void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       , std::array<long,3> res_dims,
                                                   const Scalar * const mpsL_ptr, std::array<long,3> mpsL_dims,
                                                   const Scalar * const mpsR_ptr, std::array<long,3> mpsR_dims){
-    auto t_con = tid::tic_token("contract_mps_mps", tid::level::pedant);
+    auto t_con = tid::tic_token("contract_mps_mps", tid::level::detailed);
     auto res  = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mpsL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsL_ptr, mpsL_dims);
     auto mpsR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsR_ptr, mpsR_dims);
@@ -391,16 +388,16 @@ template void tools::common::contraction::contract_mps_mps(      cplx * res_ptr 
                                                            const cplx * const mpsL_ptr, std::array<long,3> mpsL_dims,
                                                            const cplx * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
-template void tools::common::contraction::contract_mps_mps(      real * res_ptr       , std::array<long,3> res_dims,
-                                                           const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
-                                                           const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
+//template void tools::common::contraction::contract_mps_mps(      real * res_ptr       , std::array<long,3> res_dims,
+//                                                           const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
+//                                                           const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
 
 
 template<typename Scalar>
 double tools::common::contraction::contract_mps_mps_overlap(const Scalar * const mps1_ptr, std::array<long,3> mps1_dims,
                                                             const Scalar * const mps2_ptr, std::array<long,3> mps2_dims){
-    auto t_con = tid::tic_token("contract_mps_mps_overlap", tid::level::pedant);
+    auto t_con = tid::tic_token("contract_mps_mps_overlap", tid::level::detailed);
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
     if(mps1.dimensions() != mps2.dimensions()) throw except::runtime_error("Dimension mismatch mps1 {} and mps2 {}", mps1.dimensions(), mps2.dimensions());
@@ -412,8 +409,8 @@ double tools::common::contraction::contract_mps_mps_overlap(const Scalar * const
 
 template double tools::common::contraction::contract_mps_mps_overlap(const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
                                                                      const cplx * const mps2_ptr, std::array<long,3> mps2_dims);
-template double tools::common::contraction::contract_mps_mps_overlap(const real * const mps1_ptr, std::array<long,3> mps1_dims,
-                                                                     const real * const mps2_ptr, std::array<long,3> mps2_dims);
+//template double tools::common::contraction::contract_mps_mps_overlap(const real * const mps1_ptr, std::array<long,3> mps1_dims,
+//                                                                     const real * const mps2_ptr, std::array<long,3> mps2_dims);
 
 
 template<typename Scalar>
@@ -425,16 +422,93 @@ void tools::common::contraction::contract_mps_mps_partial(      Scalar *       r
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
     auto idxs = tenx::idx(idx,idx);
-    res = mps1.contract(mps2.conjugate(), idxs);
+    res.device(tenx::omp::getDevice()) = mps1.contract(mps2.conjugate(), idxs);
 }
 
 template void tools::common::contraction::contract_mps_mps_partial(      cplx *       res_ptr , std::array<long,2> res_dims,
                                                                    const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
                                                                    const cplx * const mps2_ptr, std::array<long,3> mps2_dims,
                                                                    std::array<long,2> idx);
-template void tools::common::contraction::contract_mps_mps_partial(      real *       res_ptr , std::array<long,2> res_dims,
-                                                                   const real * const mps1_ptr, std::array<long,3> mps1_dims,
-                                                                   const real * const mps2_ptr, std::array<long,3> mps2_dims,
-                                                                   std::array<long,2> idx);
+//template void tools::common::contraction::contract_mps_mps_partial(      real *       res_ptr , std::array<long,2> res_dims,
+//                                                                   const real * const mps1_ptr, std::array<long,3> mps1_dims,
+//                                                                   const real * const mps2_ptr, std::array<long,3> mps2_dims,
+//                                                                   std::array<long,2> idx);
 
+
+template<typename Scalar>
+void tools::common::contraction::contract_env_mps_mpo(      Scalar *      res_ptr, std::array<long, 2> res_dims,
+                                                      const Scalar *const env_ptr, std::array<long, 2> env_dims,
+                                                      const Scalar *const mps_ptr, std::array<long, 3> mps_dims,
+                                                      const Scalar *const mpo_ptr, std::array<long, 2> mpo_dims) {
+    auto res = Eigen::TensorMap<Eigen::Tensor<Scalar, 2>>(res_ptr, res_dims);
+    auto env = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(env_ptr, env_dims);
+    auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
+    auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(mpo_ptr, mpo_dims);
+    res.device(tenx::omp::getDevice()) = env.contract(mps,             tenx::idx({0}, {1}))
+                                            .contract(mpo,             tenx::idx({1}, {0}))
+                                            .contract(mps.conjugate(), tenx::idx({0, 2}, {1, 0}));
+}
+
+template void tools::common::contraction::contract_env_mps_mpo(      cplx *       res_ptr , std::array<long,2> res_dims,
+                                                               const cplx * const env_ptr , std::array<long,2> env_dims,
+                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cplx * const mpo_ptr , std::array<long,2> mpo_dims);
+
+template<typename Scalar>
+void tools::common::contraction::contract_env_mps_mpo(      Scalar *      res_ptr, std::array<long, 3> res_dims,
+                                                      const Scalar *const env_ptr, std::array<long, 3> env_dims,
+                                                      const Scalar *const mps_ptr, std::array<long, 3> mps_dims,
+                                                      const Scalar *const mpo_ptr, std::array<long, 4> mpo_dims) {
+    auto res                           = Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(res_ptr, res_dims);
+    auto env                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(env_ptr, env_dims);
+    auto mps                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
+    auto mpo                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 4>>(mpo_ptr, mpo_dims);
+    res.device(tenx::omp::getDevice()) = env.contract(mps,             tenx::idx({0}, {1}))
+                                            .contract(mpo,             tenx::idx({1, 2}, {0, 2}))
+                                            .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
+                                            .shuffle(                  tenx::array3{0, 2, 1});
+}
+
+template void tools::common::contraction::contract_env_mps_mpo(      cplx *       res_ptr , std::array<long,3> res_dims,
+                                                               const cplx * const env_ptr , std::array<long,3> env_dims,
+                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cplx * const mpo_ptr , std::array<long,4> mpo_dims);
+
+template<typename Scalar>
+void tools::common::contraction::contract_mps_mpo_env(      Scalar *      res_ptr, std::array<long, 2> res_dims,
+                                                      const Scalar *const env_ptr, std::array<long, 2> env_dims,
+                                                      const Scalar *const mps_ptr, std::array<long, 3> mps_dims,
+                                                      const Scalar *const mpo_ptr, std::array<long, 2> mpo_dims) {
+    auto res = Eigen::TensorMap<Eigen::Tensor<Scalar, 2>>(res_ptr, res_dims);
+    auto env = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(env_ptr, env_dims);
+    auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
+    auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(mpo_ptr, mpo_dims);
+    res.device(tenx::omp::getDevice()) =
+        env.contract(mps,             tenx::idx({0}, {2}))
+           .contract(mpo,             tenx::idx({1}, {0}))
+           .contract(mps.conjugate(), tenx::idx({0, 2}, {2, 0}));
+}
+template void tools::common::contraction::contract_mps_mpo_env(      cplx *       res_ptr , std::array<long,2> res_dims,
+                                                               const cplx * const env_ptr , std::array<long,2> env_dims,
+                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cplx * const mpo_ptr , std::array<long,2> mpo_dims);
+template<typename Scalar>
+void tools::common::contraction::contract_mps_mpo_env(      Scalar *      res_ptr, std::array<long, 3> res_dims,
+                                                      const Scalar *const env_ptr, std::array<long, 3> env_dims,
+                                                      const Scalar *const mps_ptr, std::array<long, 3> mps_dims,
+                                                      const Scalar *const mpo_ptr, std::array<long, 4> mpo_dims) {
+    auto res                           = Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(res_ptr, res_dims);
+    auto env                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(env_ptr, env_dims);
+    auto mps                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
+    auto mpo                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 4>>(mpo_ptr, mpo_dims);
+    res.device(tenx::omp::getDevice()) = env.contract(mps,             tenx::idx({0}, {2}))
+                                            .contract(mpo,             tenx::idx({1, 2}, {1, 2}))
+                                            .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
+                                            .shuffle(                  tenx::array3{0, 2, 1});
+}
+
+template void tools::common::contraction::contract_mps_mpo_env(      cplx *       res_ptr , std::array<long,3> res_dims,
+                                                               const cplx * const env_ptr , std::array<long,3> env_dims,
+                                                               const cplx * const mps_ptr , std::array<long,3> mps_dims,
+                                                               const cplx * const mpo_ptr , std::array<long,4> mpo_dims);
 /* clang-format on */
