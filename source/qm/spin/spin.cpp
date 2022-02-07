@@ -1,8 +1,8 @@
 #include "../spin.h"
+#include "math/linalg/matrix.h"
 #include <Eigen/Core>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
-#include <math/linalg/matrix.h>
 
 Eigen::MatrixXcd qm::spin::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool mirror)
 /*

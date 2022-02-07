@@ -1,7 +1,7 @@
 #include "prof.h"
-#include <config/settings.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
+#include "config/settings.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
 void tools::common::timer::print_timers() {
     if(settings::timer::on) {
         tid::level lvl = settings::timer::level;

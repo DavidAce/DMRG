@@ -6,7 +6,7 @@
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #include <stdexcept>
-#include <tools/common/log.h>
+#include "tools/common/log.h"
 
 template<typename SrcType, typename TgtType, size_t size>
 void copy_c_str(const SrcType &src, TgtType (&tgt)[size])

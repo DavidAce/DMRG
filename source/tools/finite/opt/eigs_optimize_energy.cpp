@@ -1,19 +1,17 @@
 #include "../opt_meta.h"
 #include "../opt_mps.h"
+#include "config/settings.h"
 #include "debug/exceptions.h"
+#include "general/iter.h"
+#include "math/eig.h"
+#include "math/eig/matvec/matvec_mpo.h"
 #include "math/linalg/matrix.h"
-#include "math/linalg/tensor.h"
-#include "math/tenx.h"
 #include "opt-internal.h"
 #include "report.h"
-#include <config/settings.h>
-#include <general/iter.h>
-#include <math/eig.h>
-#include <math/eig/matvec/matvec_mpo.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
 
 template<typename Scalar>
 std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, const tools::finite::opt::opt_mps &initial_mps,

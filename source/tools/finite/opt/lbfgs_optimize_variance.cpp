@@ -1,17 +1,17 @@
-#include "../opt_meta.h"
-#include "../opt_mps.h"
+#include "algorithms/AlgorithmStatus.h"
+#include "ceres/gradient_problem.h"
+#include "config/settings.h"
 #include "lbfgs_variance_functor.h"
-#include "opt-internal.h"
-#include "report.h"
-#include <algorithms/AlgorithmStatus.h>
-#include <ceres/gradient_problem.h>
-#include <config/settings.h>
-#include <tensors/model/ModelFinite.h>
-#include <tensors/state/StateFinite.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
+#include "tensors/model/ModelFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
+#include "tools/finite/opt/opt-internal.h"
+#include "tools/finite/opt/report.h"
+#include "tools/finite/opt_meta.h"
+#include "tools/finite/opt_mps.h"
 
 tools::finite::opt::opt_mps tools::finite::opt::internal::lbfgs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps,
                                                                                   const AlgorithmStatus &status, OptMeta &meta) {

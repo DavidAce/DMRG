@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../config/enums.h"
+#include "math/tenx/fwd_decl.h"
 #include "qm.h"
-#include <math/tenx/fwd_decl.h>
 #include <vector>
 
 namespace qm::mpo {

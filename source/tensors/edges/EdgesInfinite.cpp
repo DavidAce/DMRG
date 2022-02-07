@@ -1,8 +1,8 @@
 #include "EdgesInfinite.h"
+#include "math/num.h"
 #include "tensors/site/env/EnvEne.h"
 #include "tensors/site/env/EnvVar.h"
-#include <math/num.h>
-#include <tools/common/log.h>
+#include "tools/common/log.h"
 
 EdgesInfinite::EdgesInfinite()
     : eneL(std::make_unique<EnvEne>()), eneR(std::make_unique<EnvEne>()), varL(std::make_unique<EnvVar>()), varR(std::make_unique<EnvVar>()) {}

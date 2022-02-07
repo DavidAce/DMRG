@@ -1,14 +1,14 @@
-#include "../measure.h"
-#include <math/eig.h>
-#include <math/tenx.h>
-#include <qm/time.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/site/mpo/MpoSite.h>
-#include <tensors/state/StateInfinite.h>
-#include <tensors/TensorsInfinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/common/views.h>
+#include "math/eig.h"
+#include "math/tenx.h"
+#include "qm/time.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/site/mpo/MpoSite.h"
+#include "tensors/state/StateInfinite.h"
+#include "tensors/TensorsInfinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/common/views.h"
+#include "tools/infinite/measure.h"
 
 StateInfinite::Scalar moment_generating_function(const StateInfinite &state_original, std::vector<Eigen::Tensor<StateInfinite::Scalar, 2>> &Op_vec) {
     using Scalar                = StateInfinite::Scalar;

@@ -6,9 +6,9 @@
 #include "enums.h"
 #include "loader.h"
 #include "settings.h"
+#include "tools/common/log.h"
 #include <CLI/CLI.hpp>
 #include <h5pp/h5pp.h>
-#include <tools/common/log.h>
 
 std::string filename_append_number(const std::string &filename, const long number) {
     if(number < 0) return filename;

@@ -1,13 +1,13 @@
 #include "../mps.h"
+#include "config/settings.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "qm/spin.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateFinite.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
 #include <bitset>
-#include <config/settings.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <qm/spin.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateFinite.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
 
 std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_limit) {
     // Construct a valid set of bond dimensions

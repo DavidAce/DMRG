@@ -1,12 +1,12 @@
 #include "EdgesFinite.h"
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "general/iter.h"
+#include "math/num.h"
 #include "tensors/site/env/EnvEne.h"
 #include "tensors/site/env/EnvPair.h"
 #include "tensors/site/env/EnvVar.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
-#include <general/iter.h>
-#include <math/num.h>
-#include <tools/common/log.h>
+#include "tools/common/log.h"
 
 EdgesFinite::EdgesFinite() = default; // Can't initialize lists since we don't know the model size yet
 

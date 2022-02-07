@@ -1,15 +1,14 @@
 #include <math/tenx.h>
 // -- (textra first)
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "general/iter.h"
+#include "math/linalg/tensor.h"
+#include "math/svd.h"
 #include "ModelFinite.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
-#include <general/iter.h>
-#include <math/linalg/tensor.h>
-#include <math/svd.h>
-#include <tensors/site/mpo/MpoFactory.h>
-#include <tid/tid.h>
-#include <tools/common/contraction.h>
-#include <tools/finite/multisite.h>
+#include "tensors/site/mpo/MpoFactory.h"
+#include "tid/tid.h"
+#include "tools/finite/multisite.h"
 
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
 

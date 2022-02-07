@@ -1,9 +1,9 @@
 #pragma once
 #include <config/enums.h>
-#include <io/filesystem.h>
+#include "io/filesystem.h"
 #include <string>
-#include <tid/enums.h>
-#include <tools/common/log.h>
+#include "tid/enums.h"
+#include "tools/common/log.h"
 #include <unordered_map>
 
 class Loader {

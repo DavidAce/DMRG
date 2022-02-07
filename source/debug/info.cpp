@@ -1,8 +1,8 @@
 #include "info.h"
+#include "tools/common/log.h"
 #include <climits>
 #include <fstream>
 #include <sstream>
-#include <tools/common/log.h>
 #include <unistd.h>
 
 std::string debug::hostname() {

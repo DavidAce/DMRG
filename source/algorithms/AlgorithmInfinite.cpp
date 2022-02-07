@@ -1,16 +1,16 @@
 #include "AlgorithmInfinite.h"
-#include <config/settings.h>
-#include <debug/info.h>
-#include <math/num.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/state/StateInfinite.h>
-#include <tid/tid.h>
-#include <tools/common/h5.h>
-#include <tools/common/log.h>
-#include <tools/common/prof.h>
-#include <tools/infinite/h5.h>
-#include <tools/infinite/measure.h>
-#include <tools/infinite/mps.h>
+#include "config/settings.h"
+#include "debug/info.h"
+#include "math/num.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/state/StateInfinite.h"
+#include "tid/tid.h"
+#include "tools/common/h5.h"
+#include "tools/common/log.h"
+#include "tools/common/prof.h"
+#include "tools/infinite/h5.h"
+#include "tools/infinite/measure.h"
+#include "tools/infinite/mps.h"
 
 AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing algorithm infinite");
@@ -137,21 +137,21 @@ void AlgorithmInfinite::clear_convergence_status() {
     var_ham_iter.clear();
     var_mom_iter.clear();
     entropy_iter.clear();
-    status.algorithm_has_finished      = false;
-    status.algorithm_has_succeeded     = false;
-    status.algorithm_has_to_stop       = false;
-    status.algorithm_has_stuck_for     = 0;
-    status.algorithm_saturated_for     = 0;
-    status.algorithm_converged_for     = 0;
-    status.entanglement_converged_for  = 0;
-    status.entanglement_saturated_for  = 0;
-    status.variance_mpo_converged_for  = 0;
-    status.variance_mpo_saturated_for  = 0;
-    status.variance_ham_converged_for  = 0;
-    status.variance_ham_saturated_for  = 0;
-    status.variance_mom_converged_for  = 0;
-    status.variance_mom_saturated_for  = 0;
-    status.bond_limit_has_reached_max  = false;
+    status.algorithm_has_finished     = false;
+    status.algorithm_has_succeeded    = false;
+    status.algorithm_has_to_stop      = false;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
+    status.algorithm_converged_for    = 0;
+    status.entanglement_converged_for = 0;
+    status.entanglement_saturated_for = 0;
+    status.variance_mpo_converged_for = 0;
+    status.variance_mpo_saturated_for = 0;
+    status.variance_ham_converged_for = 0;
+    status.variance_ham_saturated_for = 0;
+    status.variance_mom_converged_for = 0;
+    status.variance_mom_saturated_for = 0;
+    status.bond_limit_has_reached_max = false;
 }
 
 // void class_algorithm_infinite::enlarge_environment() {

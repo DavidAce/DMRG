@@ -3,14 +3,14 @@
 //
 
 #include "../measure.h"
+#include "general/iter.h"
+#include "math/tenx.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/mps.h"
 #include <bitset>
-#include <general/iter.h>
-#include <math/tenx.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/mps.h>
 
 namespace settings {
     inline constexpr bool debug_numen = false; // Deprecated. Change this in tools/finite/mps/mps.cpp // For number entropy calculation in fLBIT

@@ -1,12 +1,12 @@
 /*! \file */
 
-#include <algorithms/AlgorithmLauncher.h>
-#include <config/settings.h>
+#include "algorithms/AlgorithmLauncher.h"
+#include "config/settings.h"
+#include "io/filesystem.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "tools/common/log.h"
 #include <h5pp/h5pp.h>
-#include <io/filesystem.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <tools/common/log.h>
 
 #if defined(OPENBLAS_AVAILABLE)
     #include <openblas/cblas.h>
@@ -19,10 +19,10 @@
     #include <mkl.h>
     #include <mkl_service.h>
 #endif
-#include <config/parse.h>
-#include <debug/info.h>
-#include <debug/stacktrace.h>
-#include <env/environment.h>
+#include "config/parse.h"
+#include "debug/info.h"
+#include "debug/stacktrace.h"
+#include "env/environment.h"
 #include <thread>
 
 void clean_up() {

@@ -1,12 +1,12 @@
 #include "IsingSelfDual.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "math/num.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "qm/spin.h"
 #include <h5pp/h5pp.h>
 #include <iomanip>
-#include <math/num.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <qm/spin.h>
 
 double delta_to_J_mean(double delta) { return std::min(1.0, std::exp(delta)); }
 

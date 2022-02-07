@@ -1,10 +1,10 @@
 #pragma once
 
 #include "svd/settings.h"
-#include <math/num.h>
-#include <math/tenx.h>
+#include "math/num.h"
+#include "math/tenx.h"
 #include <optional>
-#include <tools/common/log.h>
+#include "tools/common/log.h"
 namespace tid {
     class ur;
 }

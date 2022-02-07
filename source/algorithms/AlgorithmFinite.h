@@ -1,8 +1,8 @@
 #pragma once
 
-#include <algorithms/AlgorithmBase.h>
-#include <measure/MeasurementsStateFinite.h>
-#include <tensors/TensorsFinite.h>
+#include "algorithms/AlgorithmBase.h"
+#include "measure/MeasurementsStateFinite.h"
+#include "tensors/TensorsFinite.h"
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;
@@ -17,10 +17,10 @@ class AlgorithmFinite : public AlgorithmBase {
 
     size_t excited_state_number = 0; /*!< Keeps track of found excited states. */
 
-    size_t                   projected_iter        = 0;  /*!< The last iteration when projection was tried */
-    size_t                   expanded_iter         = 0;  /*!< The last iteration when expansion was tried */
-    std::optional<OptMode>   last_optmode          = std::nullopt;
-    std::optional<OptSolver> last_optspace         = std::nullopt;
+    size_t                   projected_iter = 0; /*!< The last iteration when projection was tried */
+    size_t                   expanded_iter  = 0; /*!< The last iteration when expansion was tried */
+    std::optional<OptMode>   last_optmode   = std::nullopt;
+    std::optional<OptSolver> last_optspace  = std::nullopt;
 
     public:
     virtual void run_algorithm()     = 0;

@@ -1,23 +1,23 @@
-#include <config/debug.h>
-#include <general/iter.h>
-#include <io/fmt.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <qm/mpo.h>
-#include <qm/spin.h>
-#include <tensors/site/mpo/MpoSite.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
-#include <tools/finite/mps.h>
-#include <tools/finite/ops.h>
+#include "tools/finite/ops.h"
+#include "config/debug.h"
+#include "general/iter.h"
+#include "io/fmt.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "qm/mpo.h"
+#include "qm/spin.h"
+#include "tensors/site/mpo/MpoSite.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
+#include "tools/finite/mps.h"
 
 //
-#include <debug/exceptions.h>
-#include <math/linalg/tensor.h>
-#include <tools/common/contraction.h>
+#include "debug/exceptions.h"
+#include "math/linalg/tensor.h"
+#include "tools/common/contraction.h"
 
 namespace settings {
     inline constexpr bool debug_projection = false;
@@ -214,7 +214,7 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
 }
 
 std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFinite &state, std::string_view sector) {
-    auto                                      t_align         = tid::tic_scope("align");
+    auto t_align = tid::tic_scope("align");
     if(mps::init::is_valid_axis(sector)) {
         return tools::finite::measure::spin_component(state, mps::init::get_pauli(sector));
     } else

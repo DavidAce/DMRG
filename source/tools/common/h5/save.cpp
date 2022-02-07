@@ -1,17 +1,15 @@
 
-#include "storagemeta.h"
-#include <algorithms/AlgorithmStatus.h>
-#include <config/enums.h>
-#include <config/settings.h>
-#include <debug/info.h>
-#include <general/iter.h>
+#include "algorithms/AlgorithmStatus.h"
+#include "config/enums.h"
+#include "config/settings.h"
+#include "debug/info.h"
+#include "general/iter.h"
+#include "io/table_types.h"
+#include "tid/tid.h"
+#include "tools/common/h5.h"
+#include "tools/common/log.h"
 #include <h5pp/h5pp.h>
-#include <io/table_types.h>
 #include <string>
-#include <tid/tid.h>
-#include <tools/common/h5.h>
-#include <tools/common/log.h>
-#include <tools/common/prof.h>
 
 namespace tools::common::h5 {
 

@@ -1,12 +1,12 @@
-#include "../measure.h"
-#include <math/tenx.h>
-#include <tensors/edges/EdgesInfinite.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/state/StateInfinite.h>
-#include <tensors/TensorsInfinite.h>
-#include <tid/tid.h>
-#include <tools/common/contraction.h>
-#include <tools/common/log.h>
+#include "tools/infinite/measure.h"
+#include "math/tenx.h"
+#include "tensors/edges/EdgesInfinite.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/state/StateInfinite.h"
+#include "tensors/TensorsInfinite.h"
+#include "tid/tid.h"
+#include "tools/common/contraction.h"
+#include "tools/common/log.h"
 
 void tools::infinite::measure::do_all_measurements(const TensorsInfinite &tensors) {
     tensors.measurements.length                       = tools::infinite::measure::length(tensors);

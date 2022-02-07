@@ -1,9 +1,9 @@
 #include "matvec_mpo.h"
 #include "../log.h"
-#include <math/svd.h>
-#include <math/tenx.h>
-#include <tid/tid.h>
-#include <tools/common/contraction.h>
+#include "math/svd.h"
+#include "math/tenx.h"
+#include "tid/tid.h"
+#include "tools/common/contraction.h"
 
 namespace eig {
 

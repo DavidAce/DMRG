@@ -1,13 +1,13 @@
 #include <math/tenx.h>
 // tenx must appear first
+#include "config/debug.h"
+#include "math/hash.h"
+#include "math/linalg/tensor.h"
+#include "math/num.h"
 #include "MpsSite.h"
-#include <config/debug.h>
-#include <math/hash.h>
-#include <math/linalg/tensor.h>
-#include <math/num.h>
-#include <tid/tid.h>
-#include <tools/common/contraction.h>
-#include <tools/common/log.h>
+#include "tid/tid.h"
+#include "tools/common/contraction.h"
+#include "tools/common/log.h"
 #include <utility>
 
 namespace settings {

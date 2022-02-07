@@ -1,8 +1,8 @@
 #pragma once
+#include "math/tenx/fwd_decl.h"
 #include "qm.h"
 #include <array>
 #include <complex>
-#include <math/tenx/fwd_decl.h>
 #include <vector>
 
 namespace qm::spin {

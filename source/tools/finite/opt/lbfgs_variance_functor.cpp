@@ -1,12 +1,12 @@
 #include "lbfgs_variance_functor.h"
+#include "config/debug.h"
+#include "math/num.h"
+#include "math/svd.h"
 #include "opt-internal.h"
-#include <config/debug.h>
-#include <math/num.h>
-#include <math/svd.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
-#include <tools/common/contraction.h>
-#include <tools/common/log.h>
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
+#include "tools/common/contraction.h"
+#include "tools/common/log.h"
 
 namespace debug {
     template<typename Derived>

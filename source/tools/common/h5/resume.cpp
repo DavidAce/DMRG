@@ -1,9 +1,9 @@
 
-#include <config/enums.h>
+#include "config/enums.h"
+#include "debug/exceptions.h"
+#include "tools/common/h5.h"
+#include "tools/common/log.h"
 #include <h5pp/h5pp.h>
-#include <tools/common/h5.h>
-#include <tools/common/log.h>
-#include <debug/exceptions.h>
 
 std::string tools::common::h5::resume::extract_state_name(std::string_view state_prefix) {
     constexpr std::string_view state_pattern = "state_";

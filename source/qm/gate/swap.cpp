@@ -2,10 +2,10 @@
 // Created by david on 2021-09-10.
 //
 #include "../gate.h"
-#include <config/debug.h>
-#include <general/iter.h>
-#include <math/num.h>
-#include <tools/common/log.h>
+#include "config/debug.h"
+#include "general/iter.h"
+#include "math/num.h"
+#include "tools/common/log.h"
 
 namespace settings {
     inline constexpr bool debug_swap = false;

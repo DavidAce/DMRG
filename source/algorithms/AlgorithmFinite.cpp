@@ -1,24 +1,24 @@
 #include "AlgorithmFinite.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
-#include <debug/info.h>
-#include <general/iter.h>
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "debug/info.h"
+#include "general/iter.h"
+#include "math/num.h"
+#include "math/tenx/span.h"
+#include "tensors/edges/EdgesFinite.h"
+#include "tensors/model/ModelFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tid/tid.h"
+#include "tools/common/h5.h"
+#include "tools/common/log.h"
+#include "tools/common/prof.h"
+#include "tools/finite/env.h"
+#include "tools/finite/h5.h"
+#include "tools/finite/measure.h"
+#include "tools/finite/mps.h"
+#include "tools/finite/ops.h"
+#include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
-#include <math/num.h>
-#include <math/tenx/span.h>
-#include <tensors/edges/EdgesFinite.h>
-#include <tensors/model/ModelFinite.h>
-#include <tensors/state/StateFinite.h>
-#include <tid/tid.h>
-#include <tools/common/h5.h>
-#include <tools/common/log.h>
-#include <tools/common/prof.h>
-#include <tools/finite/env.h>
-#include <tools/finite/h5.h>
-#include <tools/finite/measure.h>
-#include <tools/finite/mps.h>
-#include <tools/finite/ops.h>
-#include <tools/finite/print.h>
 
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
@@ -353,11 +353,11 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     clear_convergence_status();
     status.reset();
-    status.iter       = 0;
-    status.step       = 0;
-    status.position   = tensors.state->get_position<long>();
-    status.direction  = tensors.state->get_direction();
-    status.algo_stop  = AlgorithmStop::NONE;
+    status.iter      = 0;
+    status.step      = 0;
+    status.position  = tensors.state->get_position<long>();
+    status.direction = tensors.state->get_direction();
+    status.algo_stop = AlgorithmStop::NONE;
     if(settings::get_bond_grow(status.algo_type) != BondGrow::OFF) status.bond_limit = bond_limit.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
     if(tensors.state->find_largest_bond() > bond_limit.value())
@@ -597,19 +597,19 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
 void AlgorithmFinite::clear_convergence_status() {
     tools::log->trace("Clearing convergence status");
     algorithm_history.clear();
-    status.algo_stop                   = AlgorithmStop::NONE;
-    status.algorithm_has_finished      = false;
-    status.algorithm_has_succeeded     = false;
-    status.algorithm_has_to_stop       = false;
-    status.algorithm_has_stuck_for     = 0;
-    status.algorithm_saturated_for     = 0;
-    status.algorithm_converged_for     = 0;
-    status.entanglement_converged_for  = 0;
-    status.entanglement_saturated_for  = 0;
-    status.variance_mpo_converged_for  = 0;
-    status.variance_mpo_saturated_for  = 0;
-    status.bond_limit_has_reached_max  = false;
-    status.spin_parity_has_converged   = false;
+    status.algo_stop                  = AlgorithmStop::NONE;
+    status.algorithm_has_finished     = false;
+    status.algorithm_has_succeeded    = false;
+    status.algorithm_has_to_stop      = false;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
+    status.algorithm_converged_for    = 0;
+    status.entanglement_converged_for = 0;
+    status.entanglement_saturated_for = 0;
+    status.variance_mpo_converged_for = 0;
+    status.variance_mpo_saturated_for = 0;
+    status.bond_limit_has_reached_max = false;
+    status.spin_parity_has_converged  = false;
 }
 
 void AlgorithmFinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "gate.h"
+#include "math/tenx/fwd_decl.h"
 #include "qm.h"
 #include <complex>
-#include <math/tenx/fwd_decl.h>
 #include <vector>
 
 namespace qm::lbit {

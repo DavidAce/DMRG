@@ -1,16 +1,16 @@
 #include <math/tenx.h>
 
 // -- (textra first)
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "general/iter.h"
 #include "StateFinite.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
-#include <general/iter.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tid/tid.h>
-#include <tools/common/contraction.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
-#include <tools/finite/multisite.h>
+#include "tensors/site/mps/MpsSite.h"
+#include "tid/tid.h"
+#include "tools/common/contraction.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
+#include "tools/finite/multisite.h"
 
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet
 

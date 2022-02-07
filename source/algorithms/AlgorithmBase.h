@@ -1,8 +1,8 @@
 #pragma once
 
-#include <algorithms/AlgorithmStatus.h>
+#include "algorithms/AlgorithmStatus.h"
+#include "config/enums.h"
 #include <complex>
-#include <config/enums.h>
 #include <memory>
 #include <optional>
 #include <vector>

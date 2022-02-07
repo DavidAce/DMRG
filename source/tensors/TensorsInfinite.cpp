@@ -1,12 +1,12 @@
 #include "TensorsInfinite.h"
-#include <tensors/edges/EdgesInfinite.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateInfinite.h>
-#include <tools/common/log.h>
-#include <tools/infinite/env.h>
-#include <tools/infinite/measure.h>
-#include <tools/infinite/mps.h>
+#include "tensors/edges/EdgesInfinite.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateInfinite.h"
+#include "tools/common/log.h"
+#include "tools/infinite/env.h"
+#include "tools/infinite/measure.h"
+#include "tools/infinite/mps.h"
 
 TensorsInfinite::TensorsInfinite()
     : state(std::make_unique<StateInfinite>()), model(std::make_unique<ModelInfinite>()), edges(std::make_unique<EdgesInfinite>()) {

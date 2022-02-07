@@ -1,17 +1,17 @@
 
 #include "../measure.h"
+#include "config/debug.h"
 #include "debug/exceptions.h"
+#include "general/iter.h"
 #include "math/linalg/matrix.h"
+#include "math/num.h"
+#include "math/tenx.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/mps.h"
 #include <bitset>
-#include <config/debug.h>
-#include <general/iter.h>
-#include <math/num.h>
-#include <math/tenx.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/mps.h>
 #include <utility>
 
 namespace settings {
@@ -365,8 +365,8 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     t_figout.toc();
 
     // Create optional slots for each schmidt value
-    auto                t_slots            = tid::tic_scope("slots");
-    double              amplitude_cutoff   = 1e-12;
+    auto                t_slots          = tid::tic_scope("slots");
+    double              amplitude_cutoff = 1e-12;
     std::vector<size_t> namp; // Number of bits in each amplitude
     namp.reserve(amplitudes.size());
     for(const auto &a : amplitudes) namp.emplace_back(a.bits.count());

@@ -1,10 +1,10 @@
 #include "lbfgs_subspace_functor.h"
-#include "opt-internal.h"
-#include <tensors/edges/EdgesFinite.h>
-#include <tensors/state/StateFinite.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
+#include "tensors/edges/EdgesFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/opt/opt-internal.h"
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
