@@ -25,7 +25,7 @@
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
     svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
-    auto t_eigen = tid::tic_scope("eigen");
+    auto t_eigen = tid::tic_scope("eigen", tid::extra);
     if(not rank_max.has_value()) rank_max = std::min(rows, cols);
 
     svd::log->trace("Starting SVD with Eigen");
@@ -56,12 +56,12 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
         // Run the svd
-        auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix));
+        auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix), tid::detailed);
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
         svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
         // Run the svd
-        auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix));
+        auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix), tid::detailed);
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     }
     if(count) count.value()++;

@@ -149,7 +149,7 @@ namespace tid {
     ur &ur::operator+=(const ur &rhs) noexcept {
         if constexpr(tid::enable) {
             this->measured_time += rhs.measured_time;
-            this->delta_time = rhs.measured_time;
+            this->delta_time = rhs.delta_time;
             this->count += rhs.count;
         }
         return *this;
@@ -158,7 +158,7 @@ namespace tid {
     ur &ur::operator-=(const ur &rhs) noexcept {
         if constexpr(tid::enable) {
             measured_time -= rhs.measured_time;
-            delta_time = rhs.measured_time;
+            delta_time = rhs.delta_time;
             count -= std::min(rhs.count, count);
         }
         return *this;

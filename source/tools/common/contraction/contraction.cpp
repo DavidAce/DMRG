@@ -287,7 +287,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
                                                        const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                                        const Scalar * const envR_ptr, std::array<long,3> envR_dims){
 
-    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::detailed);
+    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::extra);
 
     // This applies the mpo's with corresponding environments to local multisite mps
     // This is usually the operation H|psi>  or H²|psi>
