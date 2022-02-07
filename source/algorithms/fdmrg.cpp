@@ -162,9 +162,9 @@ void fdmrg::single_fdmrg_step() {
             // If we are doing 1-site dmrg, then we better use subspace expansion
             if(tensors.active_sites.size() == 1) alpha_expansion = status.sub_expansion_alpha;
             // If we are stuck and enabled subspace expansion when stuck
-            if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_stuck_for > 0) alpha_expansion = status.sub_expansion_alpha;
+            if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0) alpha_expansion = status.sub_expansion_alpha;
             // Use subspace expansion if alpha_expansion was set
-            if(alpha_expansion) tensors.expand_subspace(alpha_expansion.value(), status.bond_limit);
+            if(alpha_expansion) tensors.expand_environment(alpha_expansion.value(), status.bond_limit);
         }
         auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
         auto result_mps  = tools::finite::opt::find_ground_state(tensors, initial_mps, status, conf);

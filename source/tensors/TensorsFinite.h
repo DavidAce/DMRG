@@ -113,7 +113,7 @@ class TensorsFinite {
     void merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt,
                              LogPolicy log_policy = LogPolicy::QUIET);
 
-    std::vector<size_t> expand_subspace(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    std::vector<size_t> expand_environment(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
     void                assert_edges() const;
     void                assert_edges_ene() const;
     void                assert_edges_var() const;

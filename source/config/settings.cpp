@@ -145,7 +145,7 @@ void settings::load(Loader &dmrg_config) {
 
     dmrg_config.load_parameter("strategy::lbfgs_fix_gradient_w_eigs"          , strategy::lbfgs_fix_gradient_w_eigs);
     dmrg_config.load_parameter("strategy::prefer_eigs_when_stuck"             , strategy::prefer_eigs_when_stuck);
-    dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
+    dmrg_config.load_parameter("strategy::expand_envs_when_stuck"             , strategy::expand_envs_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_bond_update"             , strategy::project_on_bond_update);
@@ -158,7 +158,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::max_saturation_iters"               , strategy::max_saturation_iters);
     dmrg_config.load_parameter("strategy::min_saturation_iters"               , strategy::min_saturation_iters);
     dmrg_config.load_parameter("strategy::min_converged_iters"                , strategy::min_converged_iters);
-    dmrg_config.load_parameter("strategy::max_expansion_alpha"                , strategy::max_expansion_alpha);
+    dmrg_config.load_parameter("strategy::max_env_expansion_alpha"            , strategy::max_env_expansion_alpha);
     dmrg_config.load_parameter("strategy::multisite_mps_size_def"             , strategy::multisite_mps_size_def);
     dmrg_config.load_parameter("strategy::multisite_mps_size_max"             , strategy::multisite_mps_size_max);
     dmrg_config.load_parameter("strategy::multisite_mps_step"                 , strategy::multisite_mps_step);

@@ -117,7 +117,7 @@ namespace settings {
     namespace strategy {
         inline bool          lbfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when LBFGS returns with bad gradient (works well on ill-conditioned problems) */
         inline bool          prefer_eigs_when_stuck      = true;                                   /*!< Prefer using an eigenvalue solver rather than LBFGS when stuck (takes longer, but gives good results) */
-        inline bool          expand_subspace_when_stuck  = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
+        inline bool          expand_envs_when_stuck  = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when stuck. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector when the bond dimension limit is increased (only works if bond_grow == true). */
@@ -130,7 +130,7 @@ namespace settings {
         inline size_t        max_saturation_iters        = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
         inline size_t        min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
         inline size_t        min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
-        inline double        max_expansion_alpha         = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
+        inline double        max_env_expansion_alpha         = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
         inline size_t        multisite_mps_size_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_size_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_step          = MultisiteMove::MAX;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */

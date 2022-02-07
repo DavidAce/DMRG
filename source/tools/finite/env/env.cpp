@@ -20,15 +20,15 @@ namespace settings {
     constexpr static bool debug_edges = false;
 }
 
-std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                        long bond_limit, std::optional<svd::settings> svd_settings) {
+std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
+                                                           long bond_limit, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
         throw except::runtime_error("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites,
                                     edges.active_sites);
     //    if(alpha < 1e-12) return;
-    if(state.active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
+    if(state.active_sites.empty()) throw except::runtime_error("No active sites for environment expansion");
     std::vector<size_t> pos_expanded;
 
     if(not alpha) {
@@ -61,7 +61,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
 
     state.clear_cache();
 
-    // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+    // Follows the environment expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     {
         // When direction is -->
         // The expanded bond sits between envL and the mps:
@@ -139,7 +139,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 const auto &chiL_new = mpsL_new.get_chiR();
                 const auto &dimL_new = mpsL_new.dimensions();
                 const auto &dimR_new = mpsR_new.dimensions();
-                tools::log->debug("Subspace expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
+                tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
                                   ML_PL.dimension(2), chiL_new, bond_limit);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
@@ -220,7 +220,7 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 const auto &dimR_new = mpsR_new.dimensions();
                 const auto &dimL_new = mpsL_new.dimensions();
 
-                tools::log->debug("Subspace expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
+                tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
                                   MR_PR.dimension(1), chiR_new, bond_limit);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);

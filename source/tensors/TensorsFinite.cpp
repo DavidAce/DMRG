@@ -461,10 +461,10 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
     normalize_state(bond_limit, svd_settings, NormPolicy::IFNEEDED);
 }
 
-std::vector<size_t> TensorsFinite::expand_subspace(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings) {
+std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings) {
     if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-    auto pos_expanded = tools::finite::env::expand_subspace(*state, *model, *edges, alpha, bond_limit, svd_settings);
+    auto pos_expanded = tools::finite::env::expand_environment(*state, *model, *edges, alpha, bond_limit, svd_settings);
     if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
     if constexpr(settings::debug) assert_validity();
     return pos_expanded;

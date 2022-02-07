@@ -370,7 +370,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         // If we are doing 1-site dmrg, then we better use subspace expansion
         if(m1.chosen_sites.size() == 1 and status.sub_expansion_alpha > 0) m1.alpha_expansion = status.sub_expansion_alpha;
         // If we are stuck and enabled subspace expansion when stuck
-        if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_stuck_for > 0 and status.sub_expansion_alpha > 0)
+        if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0 and status.sub_expansion_alpha > 0)
             m1.alpha_expansion = status.sub_expansion_alpha;
     }
 
@@ -439,9 +439,9 @@ void xdmrg::single_xDMRG_step() {
         // Use subspace expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(meta.alpha_expansion) {
-            auto pos_expanded = tensors.expand_subspace(std::nullopt, status.bond_limit); // nullopt implies a pos query
+            auto pos_expanded = tensors.expand_environment(std::nullopt, status.bond_limit); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_subspace(meta.alpha_expansion, status.bond_limit);
+            tensors.expand_environment(meta.alpha_expansion, status.bond_limit);
         }
 
         // Announce the current configuration for optimization
@@ -467,8 +467,8 @@ void xdmrg::single_xDMRG_step() {
         // so that we may use them if this result turns out to be the winner
         if(meta.alpha_expansion) {
             results.back().set_alpha(meta.alpha_expansion);
-            auto pos_expanded         = tensors.expand_subspace(std::nullopt, status.bond_limit); // nullopt implies a pos query
-            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);               // Backup the mps sites that this run was compatible with
+            auto pos_expanded         = tensors.expand_environment(std::nullopt, status.bond_limit); // nullopt implies a pos query
+            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);                  // Backup the mps sites that this run was compatible with
         }
 
         // Reset the mps to the original if they were backed up earlier
