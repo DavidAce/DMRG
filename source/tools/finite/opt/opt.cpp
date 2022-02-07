@@ -8,8 +8,8 @@
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/opt/lbfgs_base_functor.h"
-#include "tools/finite/opt/lbfgs_variance_functor.h"
 #include "tools/finite/opt/lbfgs_subspace_functor.h"
+#include "tools/finite/opt/lbfgs_variance_functor.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
@@ -21,18 +21,16 @@ namespace settings {
     constexpr static bool debug_functor = false;
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &meta) {
-    auto    t_opt = tid::tic_scope("opt");
-    opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
-                        //                        tools::finite::measure::energy(tensors) - energy_shift, // Eigval
+tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
+    auto    t_init = tid::tic_scope("initial_mps");
+    opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
                         tools::finite::measure::energy_minus_energy_shift(tensors), // Eigval
                         tools::finite::measure::energy_shift(tensors),              // Shifted energy for full system
                         tools::finite::measure::energy_variance(tensors),
-                        1.0, // Overlap
+                        1.0, // Overlap to initial state (self) is obviously 1
                         tensors.get_length());
-    initial_mps.set_max_grad(tools::finite::measure::max_gradient(initial_mps.get_tensor(), tensors));
-    t_opt.toc(); // The next call to find_excited state opens the "opt" scope again.
-    return find_excited_state(tensors, initial_mps, status, meta);
+    //    initial_mps.set_max_grad(tools::finite::measure::max_gradient(initial_mps.get_tensor(), tensors));
+    return initial_mps;
 }
 
 tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
@@ -99,8 +97,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     lbfgs_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     lbfgs_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     lbfgs_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
-    lbfgs_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
-    lbfgs_default_options.gradient_tolerance                         = 1e-0;
+    lbfgs_default_options.function_tolerance                         = 1e-8; // Tested, 1e-6 seems to be a sweetspot
+    lbfgs_default_options.gradient_tolerance                         = 1e-4; // This is the max gradient on f = log Var H
     lbfgs_default_options.parameter_tolerance                        = 1e-14;
     lbfgs_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     lbfgs_default_options.update_state_every_iteration               = false;
@@ -138,7 +136,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     opt_mps result;
     if     (meta.optMode == OptMode::OVERLAP  and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_overlap(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::SUBSPACE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta);
-    else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta);
+    else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta); // TODO: Implement energy mode
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::LBFGS) result = internal::lbfgs_optimize_variance(tensors, initial_mps, status, meta);
     else
@@ -157,8 +155,9 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     return result;
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsFinite &tensors, const AlgorithmStatus &status, OptMeta &conf) {
-    return internal::ground_state_optimization(tensors, status, conf);
+tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
+                                                                  OptMeta &meta) {
+    return internal::eigs_optimize_energy(tensors, initial_mps, status, meta);
 }
 
 double tools::finite::opt::internal::windowed_func_abs(double x, double window) {
@@ -221,6 +220,64 @@ long tools::finite::opt::internal::get_ops(long d, long chiL, long chiR, long m)
 }
 
 template<typename FunctorType>
+tools::finite::opt::internal::NormParametrization<FunctorType>::NormParametrization(const FunctorType &functor_) : functor(functor_) {}
+
+template<typename FunctorType>
+bool tools::finite::opt::internal::NormParametrization<FunctorType>::Plus(const double *v_double_double, const double *d_double_double,
+                                                                          double *v_plus_d) const {
+    auto t_plus      = tid::tic_scope("plus");
+    using VectorType = typename FunctorType::VectorType;
+    using ScalarType = typename VectorType::Scalar;
+
+    auto v = Eigen::Map<const VectorType>(reinterpret_cast<const ScalarType *>(v_double_double), functor.size);
+    auto d = Eigen::Map<const VectorType>(reinterpret_cast<const ScalarType *>(d_double_double), functor.size);
+    auto p = Eigen::Map<VectorType>(reinterpret_cast<ScalarType *>(v_plus_d), functor.size);
+    p      = (v + d).normalized();
+    return true;
+}
+
+template<typename FunctorType>
+bool tools::finite::opt::internal::NormParametrization<FunctorType>::ComputeJacobian(const double *v_double_double, double *jac_double_double) const {
+    auto t_jac       = tid::tic_scope("jac");
+    using VectorType = typename FunctorType::VectorType;
+    using ScalarType = typename VectorType::Scalar;
+    using MatrixType = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
+
+    auto   v           = Eigen::Map<const VectorType>(reinterpret_cast<const ScalarType *>(v_double_double), functor.size);
+    auto   jac         = Eigen::Map<MatrixType>(reinterpret_cast<ScalarType *>(jac_double_double), functor.size, functor.size);
+    double n           = v.norm();
+    double one_over_n  = 1.0 / n;
+    double one_over_nn = one_over_n * one_over_n;
+    //    jac      = (MatrixType::Identity(v.size(), v.size()) - v * v.transpose() / (n * n)) / n;
+#pragma omp parallel for schedule(dynamic)
+    for(long i = 0; i < jac.rows(); i++) {
+        for(long j = i; j < jac.cols(); j++) {
+            auto id   = static_cast<double>(i == j);
+            auto res  = (id - v[i] * v[j] * one_over_nn) * one_over_n;
+            jac(i, j) = res;
+            jac(j, i) = res;
+        }
+    }
+    return true;
+}
+
+template<typename FunctorType>
+int tools::finite::opt::internal::NormParametrization<FunctorType>::GlobalSize() const {
+    return functor.num_parameters;
+}
+template<typename FunctorType>
+int tools::finite::opt::internal::NormParametrization<FunctorType>::LocalSize() const {
+    return functor.num_parameters;
+}
+
+namespace tools::finite::opt::internal {
+    template class NormParametrization<lbfgs_variance_functor<real, LagrangeNorm::OFF>>;
+    template class NormParametrization<lbfgs_variance_functor<cplx, LagrangeNorm::OFF>>;
+    template class NormParametrization<lbfgs_subspace_functor<real>>;
+    template class NormParametrization<lbfgs_subspace_functor<cplx>>;
+}
+
+template<typename FunctorType>
 tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
     if(not log) log = tools::Logger::setLogger("xDMRG");
     log->set_level(tools::log->level());
@@ -253,7 +310,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     /* clang-format off */
     log->debug(FMT_STRING("LBFGS: "
                "it {:>5} f {:>8.5f} |Δf| {:>8.2e} "
-               "|∇f| {:>8.2e} |∇f|ᵐᵃˣ {:>8.2e} "
+               "|∇f| {:>8.2e} |∇f|ᵐᵃˣ {:>8.2e} |∇Ψ|ᵐᵃˣ {:>8.2e} "
                "|ΔΨ| {:8.2e} |Ψ|-1 {:8.2e} "
                "ops {:>4}/{:<4} t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
                "ls:[ss {:8.2e} fe {:>4} ge {:>4} it {:>4}] "
@@ -264,6 +321,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                summary.cost_change,
                summary.gradient_norm,
                summary.gradient_max_norm,
+               functor.get_max_grad_norm(),
                summary.step_norm, // By lbfgs
                functor.get_norm_offset(),
                functor.get_count() - last_count,

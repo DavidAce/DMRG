@@ -1,13 +1,9 @@
 #pragma once
-// This trick avoids collision between the preprocessor
-// symbol I and a template type size_t I in Eigen getting
-// overridden and causing trouble at compile time.
-//#include <complex.h>
-//#undef I
-#include "../opt.h"
+#include "math/tenx/fwd_decl.h"
+#include "tools/common/log.h"
+#include "tools/finite/opt.h"
+#include "tools/finite/opt_mps.h"
 #include <ceres/gradient_problem_solver.h>
-#include <math/tenx/fwd_decl.h>
-#include <tools/common/log.h>
 
 /* clang-format off */
 namespace tools::finite::opt::internal{
@@ -20,42 +16,18 @@ namespace tools::finite::opt::internal{
     template<typename T, auto rank = 3>
     using TensorType = Eigen::Tensor<T, rank>;
 
-    extern opt_mps
-    lbfgs_optimize_variance(const TensorsFinite & tensors, const AlgorithmStatus &status, OptMeta & meta);
-
-    extern opt_mps
-    lbfgs_optimize_variance(const TensorsFinite & tensors, const opt_mps &initial_mps,
-                              const AlgorithmStatus &status, OptMeta & meta);
-
-    extern opt_mps
-    eigs_optimize_subspace (const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
-
-    extern opt_mps
-    eigs_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps,
-                                const AlgorithmStatus &status, OptMeta & meta);
-
-    extern opt_mps
-    eigs_optimize_subspace(const TensorsFinite & tensors, const opt_mps &initial_mps, const std::vector<opt_mps> & subspace,
-                            const Eigen::MatrixXcd &H2_subspace, const AlgorithmStatus &status, OptMeta & meta);
-
-
-    extern Eigen::Tensor<std::complex<double>,3> cppoptlib_optimization      (const TensorsFinite & tensors, const AlgorithmStatus & status);
-    extern opt_mps ground_state_optimization  (const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps ground_state_optimization  (const opt_mps & initial_mps,const TensorsFinite & tensors, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eigs_optimize_variance          (const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta & meta);
-    extern opt_mps eigs_optimize_overlap  (const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta);
-    extern void eigs_extract_solutions        (const TensorsFinite &tensors,
-                                               const opt_mps &initial_mps,
-                                               const eig::solver &solver,
-                                               std::vector<opt_mps> &results,
-                                               const OptMeta & meta,
-                                               bool converged_only = true,
-                                               double max_overlap_sq_sum = 0.9999);
-    extern Eigen::Tensor<std::complex<double>,3> ham_sq_optimization         (const TensorsFinite & tensors, const OptMeta & meta);
-    extern Eigen::Tensor<std::complex<double>,3> ceres_rosenbrock_optimization (const StateFinite & state);
+    extern opt_mps lbfgs_optimize_variance    (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eigs_optimize_energy       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eigs_optimize_subspace     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eigs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eigs_optimize_overlap      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern void eigs_extract_results          (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
+                                               std::vector<opt_mps> &results, bool converged_only = true, double max_overlap_sq_sum = 0.7);
 
 
     namespace subspace{
+        extern std::vector<int> generate_nev_list(int shape);
+
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
         find_subspace_part(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
@@ -88,23 +60,16 @@ namespace tools::finite::opt::internal{
         extern Eigen::VectorXcd get_vector_in_subspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
         extern Eigen::VectorXcd get_vector_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector);
         extern TensorType<cplx,3> get_tensor_in_fullspace(const std::vector<opt_mps> & eigvecs, const Eigen::VectorXcd & subspace_vector, const std::array<Eigen::Index,3> & dims);
+        template <typename T>
+        Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_hamiltonian_squared_in_subspace(const ModelFinite & model,
+                                                                                                         const EdgesFinite & edges,
+                                                                                                         const std::vector<opt_mps> & eigvecs);
     }
-
-    template <typename T>
-    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_matrix(const ModelFinite & model, const EdgesFinite & edges);
-    template <typename T>
-    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_matrix(const ModelFinite & model, const EdgesFinite & edges);
-    template <typename T>
-    Eigen::Matrix<T,Eigen::Dynamic,Eigen::Dynamic> get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite & model,
-                                                                                                     const EdgesFinite & edges,
-                                                                                                     const std::vector<opt_mps> & eigvecs);
-
 
     inline ceres::GradientProblemSolver::Options lbfgs_default_options;
 
     inline bool no_state_in_window = false;
 
-    extern std::vector<int> generate_size_list(int shape);
 
 
     extern double windowed_func_abs(double x,double window);

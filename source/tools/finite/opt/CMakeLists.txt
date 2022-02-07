@@ -3,10 +3,11 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         lbfgs_base_functor.cpp
         lbfgs_optimize_variance.cpp
         lbfgs_variance_functor.cpp
-        eigs_optimize_subspace.cpp
-        eigs_filter_subspace.cpp
         lbfgs_subspace_functor.cpp
-        ground_state.cpp
+        eigs_optimize_subspace.cpp
+        eigs_extract_results.cpp
+        eigs_filter_subspace.cpp
+        eigs_optimize_energy.cpp
         eigs_optimize_variance.cpp
         eigs_optimize_overlap.cpp
         eigs_optimize_subspace.cpp

@@ -76,14 +76,15 @@ bool tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::Evaluate(cons
     double var_offset = std::clamp(std::real(var) + 1e-12, eps, std::abs(var) + 1e-12);
     log10var          = std::log10(var_offset);
     if(fx != nullptr) { fx[0] = log10var; }
-
+    double pref = 1.0; // Prefactor
+    if constexpr(std::is_same<Scalar, double>::value) pref = 2.0;
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
         auto one_over_norm = 1.0 / norm;
         auto var_1         = 1.0 / var_offset / std::log(10);
-        grad               = var_1 * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
-        if constexpr(std::is_same<Scalar, double>::value) { grad *= 2.0; }
-        max_grad_norm = grad.template lpNorm<Eigen::Infinity>();
+        grad               = pref * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
+        max_grad_norm      = grad.template lpNorm<Eigen::Infinity>(); // To monitor the actual gradient norm of the optimization (not its logarithm)
+        grad *= var_1;                                                // Because we are optimizing the logarithm.
     }
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
@@ -105,5 +106,5 @@ bool tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::Evaluate(cons
     return true;
 }
 
-template class tools::finite::opt::internal::lbfgs_subspace_functor<double>;
-template class tools::finite::opt::internal::lbfgs_subspace_functor<std::complex<double>>;
+template class tools::finite::opt::internal::lbfgs_subspace_functor<real>;
+template class tools::finite::opt::internal::lbfgs_subspace_functor<cplx>;

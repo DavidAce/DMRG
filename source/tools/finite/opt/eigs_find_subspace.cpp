@@ -17,22 +17,20 @@
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 
-namespace tools::finite::opt::internal {
-    std::vector<int> generate_size_list(int shape) {
-        std::vector<int> nev_list = {8};
-        if(shape <= 1024) nev_list = {32, 128, 256};
-        if(1024 < shape and shape <= 2048) nev_list = {8, 64, 128};
-        if(2048 < shape and shape <= 3072) nev_list = {16, 64, 256};
-        if(3072 < shape and shape <= 4096) nev_list = {16, 128};
-        return nev_list;
-    }
-}
-
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
+std::vector<int> subspace::generate_nev_list(int shape) {
+    std::vector<int> nev_list = {8};
+    if(shape <= 1024) nev_list = {32, 128, 256};
+    if(1024 < shape and shape <= 2048) nev_list = {8, 64, 128};
+    if(2048 < shape and shape <= 3072) nev_list = {16, 64, 256};
+    if(3072 < shape and shape <= 4096) nev_list = {16, 128};
+    return nev_list;
+}
+
 template<typename Scalar>
-std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta) {
+std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta) {
     const auto &state = *tensors.state;
     const auto &model = *tensors.model;
     tools::log->trace("Finding subspace");
@@ -102,9 +100,9 @@ std::vector<opt_mps> internal::subspace::find_subspace(const TensorsFinite &tens
     return subspace;
 }
 
-template std::vector<opt_mps> internal::subspace::find_subspace<cplx>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
+template std::vector<opt_mps> subspace::find_subspace<cplx>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
 
-template std::vector<opt_mps> internal::subspace::find_subspace<real>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
+template std::vector<opt_mps> subspace::find_subspace<real>(const TensorsFinite &tensors, double target_subspace_error, const OptMeta &meta);
 
 template<typename Scalar>
 std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
@@ -143,7 +141,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
     // Initialize eigvals/eigvecs containers that store the results
     Eigen::VectorXd  eigvals;
     Eigen::MatrixXcd eigvecs;
-    for(auto nev : generate_size_list(static_cast<int>(problem_size))) {
+    for(auto nev : generate_nev_list(static_cast<int>(problem_size))) {
         eig::solver solver;
         solver.config        = config;
         solver.config.maxNev = nev;
@@ -223,8 +221,7 @@ template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_fu
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full<real>(const TensorsFinite &tensors);
 
 template<typename T>
-MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                              const std::vector<opt_mps> &eigvecs) {
+MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &model, const EdgesFinite &edges, const std::vector<opt_mps> &eigvecs) {
     // First, make sure every candidate is actually a basis vector, otherwise this computation would turn difficult if we have to skip rows and columns
     auto t_ham = tid::tic_scope("ham²_sub");
     for(const auto &eigvec : eigvecs)
@@ -261,7 +258,7 @@ MatrixType<T> tools::finite::opt::internal::get_multisite_hamiltonian_squared_su
 }
 
 // Explicit instantiations
-template MatrixType<real> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                                          const std::vector<opt_mps> &eigvecs);
-template MatrixType<cplx> tools::finite::opt::internal::get_multisite_hamiltonian_squared_subspace_matrix(const ModelFinite &model, const EdgesFinite &edges,
-                                                                                                          const std::vector<opt_mps> &eigvecs);
+template MatrixType<real> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &model, const EdgesFinite &edges,
+                                                                        const std::vector<opt_mps> &eigvecs);
+template MatrixType<cplx> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &model, const EdgesFinite &edges,
+                                                                        const std::vector<opt_mps> &eigvecs);

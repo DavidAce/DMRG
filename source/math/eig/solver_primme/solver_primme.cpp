@@ -159,7 +159,7 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
         long   iter_since_last = primme->stats.numMatvecs - result.meta.last_iter_grad;
         double time_since_last = primme->stats.elapsedTime - result.meta.last_time_grad;
 
-        double grad_tol  = config.primme_grad_tol ? config.primme_grad_tol.value() : 1e0;
+        double grad_tol  = config.primme_grad_tol ? config.primme_grad_tol.value() : 1e-6;
         long   grad_iter = config.primme_grad_iter ? config.primme_grad_iter.value() : 100;
         double grad_time = config.primme_grad_time ? config.primme_grad_time.value() : 5.0;
 
@@ -190,11 +190,9 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
             if(H2_ptr->template get_shift<Scalar>() != 0.0) H2v += v * H2_ptr->template get_shift<Scalar>();
             auto vHv      = v.dot(Hv);
             auto vH2v     = v.dot(H2v);
-            auto var      = std::abs(vH2v - vHv * vHv);
-            auto var_1    = 1.0 / var / std::log(10);
             auto norm_1   = 1.0 / v.norm();
             auto pref     = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0; // Factor 2 for complex
-            auto grad     = pref * var_1 * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
+            auto grad     = pref * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
             auto grad_max = grad.template lpNorm<Eigen::Infinity>();
 
             // Store gradient info
@@ -458,8 +456,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     tid::get(config.tag).add_count(1ul);
     tid::get(fmt::format("{}.prep", config.tag)) += t_pre.get_time();
     tid::get(fmt::format("{}.prep", config.tag)).add_count(1ul);
-    tid::get(fmt::format("{}.elapsed", config.tag)) += primme.stats.elapsedTime;
-    tid::get(fmt::format("{}.elapsed", config.tag)).add_count(1ul);
     tid::get(fmt::format("{}.matvec", config.tag)) += primme.stats.timeMatvec;
     tid::get(fmt::format("{}.matvec", config.tag)).add_count(static_cast<size_t>(primme.stats.numMatvecs));
     primme_free(&primme);

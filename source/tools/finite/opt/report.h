@@ -2,6 +2,7 @@
 #include <optional>
 #include <string>
 #include <vector>
+#include "tools/common/log.h"
 namespace tools::finite::opt {
     class opt_mps;
 }
@@ -25,12 +26,13 @@ namespace tools::finite::opt::reports {
     };
 
     struct eigs_entry {
-        std::string description;
-        std::string ritz;
-        long        size, idx, nev, ncv;
-        double      energy, eigval, variance, overlap, norm, tol, resid, grad;
-        size_t      iter, counter;
-        double      time;
+        std::string               description;
+        std::string               ritz;
+        long                      size, idx, nev, ncv;
+        double                    energy, eigval, variance, overlap, norm, tol, resid, grad;
+        size_t                    iter, counter;
+        double                    time;
+        spdlog::level::level_enum level = spdlog::level::debug;
     };
 
     inline std::vector<bfgs_entry> bfgs_log;
@@ -47,5 +49,5 @@ namespace tools::finite::opt::reports {
     extern void bfgs_add_entry(std::string_view mode, std::string_view tag, const opt_mps &mps, std::optional<long> space = std::nullopt);
     extern void time_add_entry();
     extern void subs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time, size_t steps);
-    extern void eigs_add_entry(const opt_mps &mps);
+    extern void eigs_add_entry(const opt_mps &mps, spdlog::level::level_enum level = spdlog::level::debug);
 }

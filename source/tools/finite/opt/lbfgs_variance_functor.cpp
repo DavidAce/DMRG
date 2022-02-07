@@ -113,7 +113,7 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
     t_nH2n->toc();
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
-    var        = nH2n - nHn * nHn;
+    var = nH2n - nHn * nHn;
     //    var        = nH2n;
     double eps = std::numeric_limits<double>::epsilon();
     if((std::real(var) < -eps or std::real(nH2n) < -eps))
@@ -146,8 +146,9 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
     if(grad_double_double != nullptr) {
         auto one_over_norm = 1.0 / norm;
         auto var_1         = 1.0 / std::real(var) / std::log(10);
-        grad               = var_1 * pref * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
-        max_grad_norm      = grad.template lpNorm<Eigen::Infinity>();
+        grad               = pref * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
+        max_grad_norm      = grad.template lpNorm<Eigen::Infinity>(); // To monitor the actual gradient norm of the optimization (not its logarithm)
+        grad *= var_1;                                                // Because we are optimizing the logarithm.
     }
     if(fx != nullptr) { fx[0] = log10var; }
 
@@ -325,7 +326,7 @@ void lbfgs_variance_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
     readyShift = true;
 }
 
-template class tools::finite::opt::internal::lbfgs_variance_functor<double, LagrangeNorm::ON>;
-template class tools::finite::opt::internal::lbfgs_variance_functor<double, LagrangeNorm::OFF>;
-template class tools::finite::opt::internal::lbfgs_variance_functor<std::complex<double>, LagrangeNorm::ON>;
-template class tools::finite::opt::internal::lbfgs_variance_functor<std::complex<double>, LagrangeNorm::OFF>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<real, LagrangeNorm::ON>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<real, LagrangeNorm::OFF>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<cplx, LagrangeNorm::ON>;
+template class tools::finite::opt::internal::lbfgs_variance_functor<cplx, LagrangeNorm::OFF>;

@@ -2,6 +2,7 @@
 #pragma once
 #include <ceres/first_order_function.h>
 #include <ceres/iteration_callback.h>
+#include <ceres/local_parameterization.h>
 #include <memory>
 class StateFinite;
 class ModelFinite;
@@ -17,6 +18,7 @@ namespace spdlog {
     class logger;
 }
 namespace tools::finite::opt::internal {
+    enum class LagrangeNorm { ON, OFF };
 
     class lbfgs_base_functor : public ceres::FirstOrderFunction {
         protected:
@@ -48,6 +50,7 @@ namespace tools::finite::opt::internal {
         bool                   have_bounds_on_energy = false;
 
         public:
+        //        template<typename> friend class NormParametrization;
         explicit lbfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
 
         double get_energy() const;
@@ -72,6 +75,27 @@ namespace tools::finite::opt::internal {
         std::unique_ptr<tid::ur> t_nHn;
     };
     /* clang-format on */
+
+    template<typename FunctorType>
+    class NormParametrization : public ceres::LocalParameterization {
+        public:
+        const FunctorType &functor;
+        explicit NormParametrization(const FunctorType &functor_);
+
+        // Generalization of the addition operation,
+        //
+        //   x_plus_delta = Plus(x, delta)
+        //
+        // with the condition that Plus(x, 0) = x.
+        bool Plus(const double *x, const double *delta, double *x_plus_delta) const final;
+
+        // The jacobian of Plus(x, delta) w.r.t delta at delta = 0.
+        // jacobian is a row-major GlobalSize() x LocalSize() matrix.
+        bool ComputeJacobian(const double *x, double *jacobian) const final;
+
+        int GlobalSize() const final; // Size of x.
+        int LocalSize() const final;  // Size of delta.
+    };
 
     template<typename FunctorType>
     class CustomLogCallback : public ceres::IterationCallback {

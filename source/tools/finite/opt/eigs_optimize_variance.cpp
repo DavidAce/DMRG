@@ -1,87 +1,24 @@
 
 #include "../opt_meta.h"
 #include "../opt_mps.h"
+#include "algorithms/AlgorithmStatus.h"
+#include "config/settings.h"
+#include "general/iter.h"
+#include "math/eig.h"
+#include "math/eig/matvec/matvec_mpo.h"
 #include "math/num.h"
-#include "opt-internal.h"
-#include "report.h"
-#include <algorithms/AlgorithmStatus.h>
-#include <config/settings.h>
-#include <general/iter.h>
-#include <math/eig.h>
-#include <math/eig/matvec/matvec_mpo.h>
-#include <math/tenx.h>
-#include <tensors/model/ModelFinite.h>
-#include <tensors/state/StateFinite.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
-#include <tools/common/log.h>
-#include <tools/finite/measure.h>
+#include "math/tenx.h"
+#include "tensors/model/ModelFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
+#include "tools/finite/measure.h"
+#include "tools/finite/opt/opt-internal.h"
+#include "tools/finite/opt/report.h"
 
 // Temporary
 //#include <h5pp/h5pp.h>
-
-void tools::finite::opt::internal::eigs_extract_solutions(const TensorsFinite &tensors, const opt_mps &initial_mps, const eig::solver &solver,
-                                                          std::vector<opt_mps> &results, const OptMeta &meta, bool converged_only, double max_overlap_sq_sum) {
-    auto dims_mps = initial_mps.get_tensor().dimensions();
-    if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
-        auto eigvecs  = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, converged_only);
-        auto eigvals  = eig::view::get_eigvals<real>(solver.result, converged_only);
-        bool fulldiag = eigvecs.rows() == eigvals.size(); /* Detects full diag*/
-        if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
-            double overlap_sq_sum = 0;
-            size_t num_solutions  = 0;
-            auto   indices        = num::range<long>(0, eigvals.size());
-
-            if(meta.optRitz == OptRitz::LR)
-                std::reverse(indices.begin(), indices.end()); // Eigenvalues are normally sorted small to large, so we reverse when looking for large.
-            for(const auto &idx : indices) {
-                // It's important to normalize the eigenvectors - they are not always well normalized when we get them from the eig::solver
-                auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), dims_mps);
-                auto overlap  = std::abs(initial_mps.get_vector().dot(tenx::VectorMap(eigvec_i)));
-                // TODO: UNCOMMENT
-                if(fulldiag) {
-                    // When doing full diagonalization, getting all the solutions is costly, and we basically never need them all. Let's instead break after a
-                    // small number of solutions
-                    //                    if(overlap < 1e-15) continue;
-                    //                    if(overlap_sq_sum < 1e-15) continue;
-                    if(overlap_sq_sum > max_overlap_sq_sum /* 0.5 */ and num_solutions > 1) break;
-                }
-                overlap_sq_sum += overlap * overlap; // Sum up the contributions. Since full diag gives an orthonormal basis, this adds up to one. Normally only
-                                                     // a few eigenvectors contribute to most of the sum.
-                num_solutions++;                     // Count the number of solutions added
-                auto   measurements = MeasurementsTensorsFinite();
-                double eigval       = eigvals[idx];
-                double variance     = std::numeric_limits<double>::quiet_NaN();
-                double reldiff      = 100 * std::abs(eigval - initial_mps.get_eigval()) / std::abs(0.5 * (eigval + initial_mps.get_eigval()));
-                if(overlap > 1e-4 or reldiff < 1e-1) {
-                    auto energy = tools::finite::measure::energy(eigvec_i, tensors, &measurements);
-                    eigval      = energy - initial_mps.get_energy_shift();
-                    if(not fulldiag) variance = tools::finite::measure::energy_variance(eigvec_i, tensors, &measurements);
-                }
-                results.emplace_back(fmt::format("{:<8} eigenvector {}", solver.config.tag, idx), eigvec_i, tensors.active_sites, eigval,
-                                     initial_mps.get_energy_shift(), variance, overlap, tensors.get_length());
-                auto &mps = results.back();
-                mps.set_time(solver.result.meta.time_total);
-                mps.set_mv(static_cast<size_t>(solver.result.meta.num_mv));
-                mps.set_iter(static_cast<size_t>(solver.result.meta.iter));
-                mps.set_max_grad(std::numeric_limits<double>::quiet_NaN());
-                if(not fulldiag) mps.set_max_grad(tools::finite::measure::max_gradient(eigvec_i, tensors));
-                mps.is_basis_vector = true;
-                mps.validate_basis_vector();
-                mps.set_eigs_idx(idx);
-                mps.set_eigs_nev(solver.result.meta.nev_converged);
-                mps.set_eigs_ncv(solver.result.meta.ncv);
-                mps.set_eigs_tol(solver.result.meta.tol);
-                mps.set_eigs_eigval(eigvals(idx));
-                mps.set_eigs_ritz(solver.result.meta.ritz);
-                mps.set_eigs_shift(solver.result.meta.sigma);
-                mps.set_optmode(meta.optMode);
-                mps.set_optsolver(meta.optSolver);
-                if(not solver.result.meta.residual_norms.empty()) mps.set_eigs_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx)));
-            }
-        }
-    }
-}
 
 namespace tools::finite::opt::internal {
 
@@ -99,6 +36,10 @@ namespace tools::finite::opt::internal {
     auto comp_gradient = [](const opt_mps &lhs, const opt_mps &rhs) {
         if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
         return lhs.get_max_grad() < rhs.get_max_grad();
+    };
+    auto comp_eigval = [](const opt_mps &lhs, const opt_mps &rhs) {
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        return lhs.get_eigs_eigval() < rhs.get_eigs_eigval();
     };
     auto comp_gradient_ref = [](const std::reference_wrapper<const opt_mps> &lhs_ref, const std::reference_wrapper<const opt_mps> &rhs_ref) {
         const auto &lhs = lhs_ref.get();
@@ -301,8 +242,7 @@ namespace tools::finite::opt::internal {
                 if(solver.config.lib == eig::Lib::ARPACK) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
                     if(not solver.config.sigma) {
-                        double largest_eigval = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-                        solver.config.sigma   = largest_eigval;
+                        solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
                     }
                     tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | arpack {} | init on",
                                       std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
@@ -316,53 +256,55 @@ namespace tools::finite::opt::internal {
                 }
             }
         }
-        eigs_extract_solutions(tensors, initial_mps, solver, results, meta, false);
+        eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
     }
 
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::settings config_primme;
-        config_primme.tol             = 1e4 * settings::precision::eig_tolerance;
-        config_primme.maxIter         = 200000;
-        config_primme.maxTime         = 60 * 60;
-        config_primme.maxNev          = 1;
-        config_primme.maxNcv          = 1024; // 128
-        config_primme.compress        = settings::precision::use_compressed_mpo_squared_otf;
-        config_primme.lib             = eig::Lib::PRIMME;
-        config_primme.ritz            = eig::Ritz::SA;
-        config_primme.compute_eigvecs = eig::Vecs::ON;
-        config_primme.tag             = "primme";
-        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
-        //        config_primme.primme_method   = eig::PrimmeMethod::PRIMME_JDQMR;
+        config_primme.tol                         = 1e-10;
+        config_primme.maxIter                     = 200000;
+        config_primme.maxTime                     = 60 * 60;
+        config_primme.maxNev                      = 1;
+        config_primme.maxNcv                      = 16; // 128
+        config_primme.compress                    = settings::precision::use_compressed_mpo_squared_otf;
+        config_primme.lib                         = eig::Lib::PRIMME;
+        config_primme.ritz                        = eig::Ritz::SA;
+        config_primme.compute_eigvecs             = eig::Vecs::ON;
+        config_primme.tag                         = "primme";
+        config_primme.primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+        config_primme.primme_max_inner_iterations = -1;
+        config_primme.primme_grad_tol             = meta.max_grad_tolerance;
+        config_primme.primme_grad_iter            = 100;
+        config_primme.primme_grad_time            = 5;
+        config_primme.loglevel                    = 2;
 
-        config_primme.primme_grad_tol  = meta.max_grad_tolerance;
-        config_primme.primme_grad_iter = 100;
-        config_primme.primme_grad_time = 5;
-        config_primme.loglevel         = 2;
+        std::vector<eig::settings> configs(2);
 
-        std::vector<eig::settings> configs(1);
-
-        configs[0]     = config_primme;
-        configs[0].tol = 1e0 * settings::precision::eig_tolerance;
-        //        configs[0].maxNcv                      = 16;
-        //        configs[0].primme_max_inner_iterations = -1;
-
-        //        configs[1]                             = config_primme;
-        //        config_primme.maxIter                  = 10000;
-        //        configs[1].tol                         = 1e0 * settings::precision::eig_tolerance;
-        //        configs[1].maxNcv                      = 16;
-        //        configs[1].primme_max_inner_iterations = -1;
+        configs[0]                 = config_primme;
+        configs[0].tol             = 1e-10; // By default this is 1e4*eps according to primme docs
+        configs[0].maxNcv          = 16;
+        configs[0].maxIter         = 200000;
+        configs[0].tag             = "primme-t1";
+        configs[0].primme_grad_tol = 1e-6;
+        configs[1]                 = config_primme;
+        configs[1].tol             = 1e-12;
+        configs[1].maxNcv          = 32;
+        configs[1].maxIter         = 20000;
+        configs[1].tag             = "primme-t2";
+        configs[0].primme_grad_tol = 1e-6;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();
         std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
         for(const auto &config : configs) {
             eig::solver solver;
             solver.config = config;
-            if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
+            if(not hamiltonian_squared)
+                hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
+            else
+                tools::log->info("try harder");
             eigs_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-
             if(not try_harder(results, meta)) break;
-            //            if(solver.config.lib == eig::Lib::ARPACK) hamiltonian_squared.reset();
         }
     }
 }
@@ -375,7 +317,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
     if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance requires non-compressed MPO²");
 
-    auto t_var    = tid::tic_scope("eigs-var");
+    auto t_var    = tid::tic_scope("variance");
     auto dims_mps = initial_mps.get_tensor().dimensions();
     auto size     = initial_mps.get_tensor().size();
 
@@ -385,26 +327,22 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
         case OptType::REAL: eigs_manager<real>(tensors, initial_mps, results, meta); break;
         case OptType::CPLX: eigs_manager<cplx>(tensors, initial_mps, results, meta); break;
     }
-
+    auto t_post = tid::tic_scope("post");
     if(results.empty()) {
         meta.optExit = OptExit::FAIL_ERROR;
         return initial_mps; // The solver failed
-    }
-    bool fulldiag = results.back().get_name().find("lapack") != std::string::npos;
-    for(const auto &[num, mps] : iter::enumerate(results)) {
-        if(fulldiag and num >= 8) break;
-        reports::eigs_add_entry(mps);
     }
 
     if(results.size() >= 2) {
 #pragma message "TODO: Sorting according eigs results w.r.t. gradient. Is this the right thing to do?"
         if(results.back().get_name().find("lapack") != std::string::npos)
-            std::sort(results.begin(), results.end(), comp_variance);
+            std::sort(results.begin(), results.end(), comp_eigval);
         else if(meta.optMode == OptMode::VARIANCE)
             std::sort(results.begin(), results.end(), comp_gradient);
         else if(meta.optMode == OptMode::OVERLAP)
             std::sort(results.begin(), results.end(), comp_overlap);
     }
 
+    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
     return results.front();
 }

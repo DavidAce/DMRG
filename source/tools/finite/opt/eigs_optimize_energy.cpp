@@ -16,7 +16,7 @@
 #include <tools/finite/measure.h>
 
 template<typename Scalar>
-std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps &initial_mps, const TensorsFinite &tensors,
+std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, const tools::finite::opt::opt_mps &initial_mps,
                                                const tools::finite::opt::OptMeta &meta) {
     using namespace tools::finite::opt;
     auto      problem_size = initial_mps.get_tensor().size();
@@ -34,7 +34,8 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
         MatVecMPO<Scalar> matrix(env.L, env.R, mpo);
-        solver.config.tol             = 1e-14;
+        // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
+        solver.config.tol             = 1e-10; // This is the target residual norm. 1e-10 seems to be sufficient:
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
@@ -42,14 +43,15 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
         solver.config.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
         solver.config.maxIter         = 80000;
         solver.config.maxTime         = 60 * 60;
-        solver.config.maxNev          = static_cast<eig::size_type>(std::min(matrix.rows() - 1, 2));
-        solver.config.maxNcv          = static_cast<eig::size_type>(512);
+        solver.config.maxNev          = static_cast<eig::size_type>(1);
+        solver.config.maxNcv          = static_cast<eig::size_type>(16); // arpack needs ncv ~512 to handle all cases. Primme seems content with 16.
         solver.config.primme_locking  = false;
         // Since we use energy-shifted mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
         // would otherwise cause trouble for the eigenvalue solver. This equates to subtracting sigma * identity from the bottom corner of the mpo.
         // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
-        solver.config.sigma = 1.0;
-        solver.setLogLevel(0);
+        solver.config.sigma    = 1.0;
+        solver.config.loglevel = 2;
+
         Eigen::Tensor<Scalar, 3> init;
         if constexpr(std::is_same_v<Scalar, double>) {
             init               = initial_mps.get_tensor().real();
@@ -60,13 +62,11 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
         }
 
         solver.config.initial_guess.push_back({init.data(), 0});
-
         tools::log->trace("Finding ground state");
         solver.eigs(matrix);
     }
-
     std::vector<opt_mps> results;
-    internal::eigs_extract_solutions(tensors, initial_mps, solver, results, meta, true);
+    tools::finite::opt::internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, true);
 
     auto comparator = [&ritz, &meta](const opt_mps &lhs, const opt_mps &rhs) {
         auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
@@ -79,39 +79,20 @@ std::vector<tools::finite::opt::opt_mps> solve(const tools::finite::opt::opt_mps
             default: throw std::runtime_error(fmt::format("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz)));
         }
     };
-
     if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
+    for(const auto &mps : results) reports::eigs_add_entry(mps);
     return results;
 }
 
-tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimization(const TensorsFinite &tensors, const AlgorithmStatus &status,
-                                                                                    OptMeta &meta) {
-    double  energy_shift = 0.0;
-    opt_mps initial_mps("current state", tensors.get_multisite_mps(), tensors.active_sites,
-                        tools::finite::measure::energy(tensors) - energy_shift, // Eigval
-                        energy_shift,                                           // Shifted energy for full system
-                        tools::finite::measure::energy_variance(tensors),
-                        1.0, // Overlap
-                        tensors.get_length());
-
-    return ground_state_optimization(initial_mps, tensors, status, meta);
-}
-
-tools::finite::opt::opt_mps tools::finite::opt::internal::ground_state_optimization(const opt_mps &initial_mps, const TensorsFinite &tensors,
-                                                                                    [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
+tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_energy(const TensorsFinite &tensors, const opt_mps &initial_mps,
+                                                                               [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
     tools::log->debug("Ground state optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
     auto                 t_gs = tid::tic_scope("gs");
     std::vector<opt_mps> results;
-    if(meta.optType == OptType::REAL) results = solve<real>(initial_mps, tensors, meta);
-    if(meta.optType == OptType::CPLX) results = solve<cplx>(initial_mps, tensors, meta);
+    if(meta.optType == OptType::REAL) results = solve<real>(tensors, initial_mps, meta);
+    if(meta.optType == OptType::CPLX) results = solve<cplx>(tensors, initial_mps, meta);
 
-    constexpr size_t max_print = settings::debug ? 32 : 4;
-    for(const auto &[num, mps] : iter::enumerate(results)) {
-        if(num >= max_print) break;
-        reports::eigs_add_entry(mps);
-    }
     reports::print_eigs_report();
-
     if(results.empty())
         return initial_mps; // Solver failed
     else

@@ -1,8 +1,5 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
-#include "tensors/model/ModelFinite.h"
-#include "tensors/state/StateFinite.h"
-#include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
@@ -18,117 +15,57 @@ using namespace tools::finite::opt::internal;
 opt_mps tools::finite::opt::internal::eigs_optimize_overlap(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
                                                             OptMeta &meta) {
     tools::log->trace("Optimizing in OVERLAP mode");
-    auto t_sub = tid::tic_scope("eigs-ovl");
-    initial_mps.validate_basis_vector();
-
+    auto t_olap = tid::tic_scope("overlap");
+    initial_mps.validate_initial_mps();
     /*
      * Overlap optimization
      *
-     * Introduction
-     * In subspace optimization we consider a "local" subsection of the "global" L-site system,
-     * usually this corresponds to n=2 local sites but in multisite dmrg we may consider
-     * any n=[2,8] adjacent sites.
+     * In overlap optimization we consider a local set of sites l of the L-site system,
+     * usually this corresponds to l = 1 or up to l = 8 adjacent sites.
      *
-     * The point here is to minimize the global energy variance Var H_global, by tuning only the parameters of
-     * the local wavefunction |psi>_local corresponding to the local Hamiltonian H_local for n sites.
-     * In other words, we seek the local vector which minimizes the global energy variance.
+     * A subspace in this context is a truncated basis, i.e. a small subset of eigenvectors
+     * of the local "effective" Hamiltonian. The subspace is a set of k eigenvectors [x]
+     * which have significant overlap with the current state |y⟩, i.e. we define k such that
      *
-     * It is worth noting some properties which hold when the DMRG process is fully converged:
-     *      - If {x} are all the eigenvectors of H_local, only one of them has overlap <x_i|y> = 1
-     *        where y is the current local vector for n sites.
+     *          ε > 1 - Σ_i^k |⟨x_i|y⟩|²,
+     *
+     * where ε is a small number that controls error of the truncation. A value ε ~1e-10 is
+     * reasonable. Note that the truncation implies that k is smaller than the local
+     * Hilbert space dimension.
+     *
+     * After having found a good subspace, the objective is to find the eigenvector that has
+     * highest overlap toward the current state.
+     *
+     * It is worth noting some observations. Let {x} be the set of all eigenvectors
+     * to the local effective Hamiltonian H_local.
+     * Then, when the DMRG process is fully converged:
+     *      - only one x_i has overlap ⟨x_i|y⟩ = 1
      *        Since the sum of all overlaps must add to 1, the rest have <x_j|y> = 0 when i != j.
-     *      - This particular eigenvector is also the one that minimizes the Var H_global,
-     *        and no further optimization should be needed.
+     *      - This x is also the one that minimizes the energy variance.
      *
      * However, before the DMRG process has converged this is not true. Instead:
-     *      - If {x} are all the eigenvectors of H_local we have <x_i|y> > 0 for several i.
-     *      - None {x} minimizes Var H_global, but a linear combination of several x could.
+     *      - we have ⟨x_i|y⟩ > 0 for several i.
+     *      - a linear combination of several x can have lower variance than any
+     *        single x.
      *
      * Fully diagonalizing H_local yields all K eigenvectors {x}, but if H_local is too big this operation
      * becomes prohibitively expensive. Instead we resort to finding a subset with k << K eigenvectors [x],
      * whose eigenvalues are the k energies closest to the current energy. Usually the eigenvectors
-     * which have some overlap <x_i|y> > 0 are found in the subset [x] if k is large enough.
+     * which have some overlap ⟨x_i|y⟩ > 0 are found in the subset [x] if k is large enough.
      *
-     * In Subspace Optimization we find a linear combination eigenvectors in the subspace [x] which
-     * minimizes Var H_global, hence the name.
+     * Overlap optimization steps
      *
+     * Step 1)  Find a subspace [x], i.e. take a set of k eigenvectors of the local effective Hamiltonian.
+     *          Empirically, eigenvectors whose eigenvalues (energy) are closest to the current energy,
+     *          tend to have nonzero overlap with the current vector |y⟩.
+     *          On an iterative solver we keep increasing "nev" (number of requested eigenvectors) until
+     *          the subspace error ε is small enough, or an eigenstate is found with overlap > 0.5.
      *
-     *
-     * Subspace optimization steps
-     *
-     * Step 0)  Find a subspace, i.e. a set of k eigenvectors [x] to the local Hamiltonian H_local with
-     *          energy eigenvalue closest to the current energy. Note that H_local is a K * K matrix,
-     *          and k << K. The set [x] is sorted in order of descending overlap <x_i|y>,
-     *          where y is the current vector.
-     *
-     *
-     * Step 1)
-     *      - (O) If  OptMode::OVERLAP:
-     *            Find the index for the best eigvec inside of the energy window:
-     *              - OA) idx >= 0: eigvec found in window. Return that eigvec
-     *              - OB) idx = -1: No eigvec found in window. Return old tensor
-     *       -(V) If OptMode::SUBSPACE
-     *          Make sure k is as small as possible. I.e. filter out eigenvectors from [x] down
-     *          to an even smaller set of "relevant" eigvecs for doing subspace optimization.
-     *          Allowing a maximum of k == 64 eigvecs keeps ram below 2GB when the problem
-     *          size == 4096 (the linear size of H_local and the mps multisite_tensor).
-     *          This means that we filter out
-     *              * eigvecs outside of the energy window (if one is enabled)
-     *              * eigvecs with little or no overlap to the current state.
-     *          The filtering process collects the eigvec state with best overlap until
-     *          either of these two criteria is met:
-     *              * More than N=max_accept eigvecs have been collected
-     *              * The subspace error "eps" is low enough¹
-     *          The filtering returns the eigvecs sorted in decreasing overlap.
-     *          ¹ We define eps = 1 - Σ_i |<x_i|y>|². A value eps ~1e-10 is reasonable.
-     *
-     * Step 2)
-     *          Find the index for the best eigvec inside of the energy window:
-     *              - VA) idx = -1: No eigvec found in window. Return old tensor
-     *              - VB) We have many eigvecs, including the current tensor.
-     *                    They should be viewed as good starting guesses for LBFGS optimization.
-     *                    Optimize them one by one, and keep the
-     *
-     * Step 2)  Find the best overlapping state among the relevant eigvecs.
-     * Step 3)  We can now make different decisions based on the overlap.
-     *          A)  If best_overlap_idx == -1
-     *              No state is in energy window -> discard! Return old multisite_mps_tensor.
-     *          B)  If overlap_high <= best_overlap.
-     *              This can happen if the environments have been modified just slightly since the last time considered
-     *              these sites, but the signal is still clear -- we are still targeting the same state.
-     *              However we can't be sure that the contributions from nearby states is just noise. Instead of just
-     *              keeping the state we should optimize its variance. This is important in the later stages when variance
-     *              is low and we don't want to ruin those last decimals.
-     *              We just need to decide which initial guess to use.
-     *                  B1) If best_overlap_variance <= theta_variance: set theta_initial = best_overlap_theta.
-     *                  B2) Else, set theta_initial = multisite_mps_tensor.
-     *          C)  If overlap_cat <= best_overlap and best_overlap < overlap_high
-     *              This can happen for one reasons:
-     *                  1) There are a few eigvec states with significant overlap (superposition)
-     *              It's clear that we need to optimize, but we have to think carefully about the initial guess.
-     *              Right now it makes sense to always choose best overlap theta, since that forces the algorithm to
-     *              choose a particular state and not get stuck in superposition. Choosing the old theta may just entrench
-     *              the algorithm into a local minima.
-     *          D)  If 0 <= best_overlap and best_overlap < overlap_cat
-     *              This can happen for three reasons, most often early in the simulation.
-     *                  1) There are several eigvec states with significant overlap (superposition)
-     *                  2) The highest overlapping states were outside of the energy window, leaving just these eigvecs.
-     *                  3) The energy targeting of states has failed for some reason, perhaps the spectrum is particularly dense_lu.
-     *              In any case, it is clear we are lost Hilbert space.
-     *              Also, the subspace_error is no longer a good measure of how useful the subspace is to us, since it's only
-     *              measuring how well the old state can be described, but the old state is likely very different from what
-     *              we're looking for.
-     *              So to address all three cases, do LBFGS optimization with best_overlap_theta as initial guess.
-     *
-     * In particular, notice that we never use the eigvec that happens to have the best variance.
+     * Step 2) Return the eigenstate with the highest overlap to the current state.
      */
-    // Handy references
-    const auto &state = *tensors.state;
-    const auto &model = *tensors.model;
-    const auto &edges = *tensors.edges;
 
     /*
-     *  Step 0) Find the subspace.
+     *  Step 1) Find the subspace.
      *  The subspace set of eigenstates obtained from full or partial diagonalization
      */
 
@@ -139,6 +76,10 @@ opt_mps tools::finite::opt::internal::eigs_optimize_overlap(const TensorsFinite 
     }
 
     tools::log->trace("eigs_optimize_overlap: subspace found with {} eigenvectors", subspace.size());
+
+    /*
+     *  Step 2) Return the eigenvector with the highest overlap, or the current one if none is found.
+     */
 
     auto max_overlap_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, status.energy_llim_per_site, status.energy_ulim_per_site);
     if(max_overlap_idx) {

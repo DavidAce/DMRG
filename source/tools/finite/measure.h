@@ -97,7 +97,6 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, double energy_minimum, double energy_maximum, MeasurementsTensorsFinite * measurements = nullptr);
 
-    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<cplx,3> & mps, const TensorsFinite & tensors);
 
     template<typename Scalar>
     [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<Scalar, 3> &mps,
@@ -113,6 +112,8 @@ namespace tools::finite::measure {
                                                              const Eigen::Tensor<Scalar, 4> &mpo2,
                                                              const Eigen::Tensor<Scalar, 3> &en2L,
                                                              const Eigen::Tensor<Scalar, 3> &en2R);
+
+    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<cplx,3> & mps, const TensorsFinite & tensors);
 
 
     [[nodiscard]] extern double                   expectation_value      (const StateFinite & op, const std::vector<LocalObservableOp> & ops);

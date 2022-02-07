@@ -4,8 +4,6 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt::internal {
-    enum class LagrangeNorm { ON, OFF };
-
     template<typename Scalar, LagrangeNorm lagrangeNorm>
     class lbfgs_variance_functor : public lbfgs_base_functor {
         private:
@@ -23,6 +21,8 @@ namespace tools::finite::opt::internal {
         void                             get_H2n(const VectorType &v) const;
 
         public:
+        template<typename>
+        friend class NormParametrization;
         explicit lbfgs_variance_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
         bool Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const final;
         void compress();

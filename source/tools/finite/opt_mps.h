@@ -16,7 +16,7 @@ namespace tools::finite::opt {
         std::optional<Eigen::Tensor<cplx, 3>> tensor      = std::nullopt;
         std::optional<std::vector<size_t>>    sites       = std::nullopt;
         std::optional<double>                 eigval      = std::nullopt;
-        std::optional<double>                 energy_r    = std::nullopt;
+        std::optional<double>                 eshift      = std::nullopt;
         std::optional<double>                 energy      = std::nullopt;
         std::optional<double>                 variance    = std::nullopt;
         std::optional<double>                 overlap     = std::nullopt;
@@ -55,10 +55,11 @@ namespace tools::finite::opt {
         opt_mps(std::string_view name_, const Eigen::Tensor<cplx, 3> &tensor_, const std::vector<size_t> &sites_, double energy_, double variance_,
                 double overlap_, size_t length, size_t iter_, size_t counter_, size_t time_);
 
+        [[nodiscard]] bool                               is_initialized() const;
         [[nodiscard]] std::string_view                   get_name() const;
         [[nodiscard]] const Eigen::Tensor<cplx, 3>      &get_tensor() const;
         [[nodiscard]] Eigen::Map<const Eigen::VectorXcd> get_vector() const;
-        [[nodiscard]] Eigen::Map<Eigen::VectorXd>        get_vector_cplx_as_2xreal();
+        [[nodiscard]] Eigen::Map<const Eigen::VectorXd>  get_vector_cplx_as_2xreal() const;
         [[nodiscard]] Eigen::VectorXd                    get_vector_cplx_as_1xreal() const;
 
         template<OptType optType>
@@ -128,6 +129,7 @@ namespace tools::finite::opt {
         void                                     set_optsolver(OptSolver optspace_);
         void                                     set_optmode(OptMode optmode_);
         void                                     set_optexit(OptExit optexit_);
+        void                                     validate_initial_mps() const;
         void                                     validate_basis_vector() const;
         void                                     validate_result() const;
         bool                                     operator<(const opt_mps &rhs) const;
