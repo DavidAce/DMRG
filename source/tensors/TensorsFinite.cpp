@@ -236,9 +236,9 @@ struct DebugStatus {
 
     [[nodiscard]] std::string msg() const {
         std::string msg;
-        msg.append(fmt::format("Energy   [{:<20}] = {:>20.16f}\n", tag, ene));
-        msg.append(fmt::format("Shift    [{:<20}] = {:>20.16f}\n", tag, red));
-        msg.append(fmt::format("σ²H      [{:<20}] = {:<20.16f}\n", tag, var));
+        msg.append(fmt::format("Energy {:<20} = {:>20.16f}\n", tag, ene));
+        msg.append(fmt::format("Shift  {:<20} = {:>20.16f}\n", tag, red));
+        msg.append(fmt::format("σ²H    {:<20} = {:>20.16f}\n", tag, var));
         return msg;
     }
     void print() const {
@@ -265,10 +265,14 @@ std::optional<DebugStatus> get_status(TensorsFinite &tensors, std::string_view t
 }
 
 void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site) {
+    if(not energy_shift_per_site) energy_shift_per_site = tools::finite::measure::energy_per_site(*this);
+    if(std::abs(model->get_energy_shift_per_site() - energy_shift_per_site.value()) <= std::numeric_limits<double>::epsilon()) {
+        tools::log->debug("Energy per site is already shifted by {:.16f}: No shift needed.", energy_shift_per_site.value());
+        return;
+    }
     std::vector<std::optional<DebugStatus>> debs;
     debs.emplace_back(get_status(*this, "Before shift"));
 
-    if(not energy_shift_per_site) energy_shift_per_site = tools::finite::measure::energy_per_site(*this);
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
@@ -283,7 +287,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
         auto &bef = debs.front();
         auto &aft = debs.back();
         if(bef and aft) {
-            if(bef->red != aft->red) {
+            if(std::abs(bef->red - aft->red) > std::numeric_limits<double>::epsilon()) {
                 if(bef->mpo_ids == aft->mpo_ids)
                     throw std::runtime_error(fmt::format("MPO id's are unchanged after energy reduction\n{}\n{}", bef->msg(), aft->msg()));
                 if(bef->env_ids == aft->env_ids)
