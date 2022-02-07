@@ -238,7 +238,6 @@ void xdmrg::run_algorithm() {
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         shift_mpo_energy();
-        try_bond_dimension_quench();
         try_projection();
         try_full_expansion();
         move_center_point();
@@ -284,28 +283,22 @@ void xdmrg::run_fes_analysis() {
     status.fes_is_running = false;
 }
 
-std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
+std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     tools::log->trace("Configuring xDMRG optimization trial");
-    std::vector<OptConf> configs;
+    std::vector<OptMeta> metas;
 
     /*
      *
      *  First trial
      *
      */
-    OptConf c1;
-    c1.label = "c1";
+    OptMeta m1;
+    m1.label = "m1";
 
     // The first decision is easy. Real or complex optimization
-    if(tensors.is_real()) c1.optType = OptType::REAL;
+    if(tensors.is_real()) m1.optType = OptType::REAL;
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    c1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
-
-    // Set the default gradient precision
-    c1.max_grad_tolerance = settings::precision::max_grad_tolerance;
-
-    // When stuck we can require better accuracy on the gradient
-    //    if(status.algorithm_has_stuck_for > 0) c1.max_grad_tolerance = 1e-1 * settings::precision::max_grad_tolerance;
+    m1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
 
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
@@ -317,10 +310,10 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
-        c1.optSolver = OptSolver::EIGS;
-        c1.optMode   = OptMode::SUBSPACE;
-        c1.max_sites = settings::strategy::multisite_mps_size_max;
-        c1.retry     = true;
+        m1.optSolver = OptSolver::EIGS;
+        m1.optMode   = OptMode::SUBSPACE;
+        m1.max_sites = settings::strategy::multisite_mps_size_max;
+        m1.retry     = true;
         if(settings::xdmrg::opt_subspace_bond_limit > 0 and status.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
             tools::log->info("Kept bond dimension back during variance|shift-invert optimization {} -> {}", status.bond_limit,
                              settings::xdmrg::opt_subspace_bond_limit);
@@ -330,98 +323,96 @@ std::vector<xdmrg::OptConf> xdmrg::get_opt_conf_list() {
 
     if(status.iter < settings::xdmrg::opt_overlap_iters) {
         // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
-        c1.optMode   = OptMode::OVERLAP;
-        c1.optSolver = OptSolver::EIGS;
-        c1.max_sites = settings::strategy::multisite_mps_size_max;
-        c1.retry     = false;
+        m1.optMode   = OptMode::OVERLAP;
+        m1.optSolver = OptSolver::EIGS;
+        m1.max_sites = settings::strategy::multisite_mps_size_max;
+        m1.retry     = false;
         if(settings::xdmrg::opt_overlap_bond_limit > 0) status.bond_limit = settings::xdmrg::opt_overlap_bond_limit;
     }
 
     if(settings::strategy::prefer_eigs_when_stuck and status.algorithm_has_stuck_for > 0) {
-        c1.optMode   = OptMode::VARIANCE;
-        c1.optSolver = OptSolver::EIGS;
-        c1.max_sites = settings::strategy::multisite_mps_size_def;
-        c1.retry     = true;
+        m1.optMode   = OptMode::VARIANCE;
+        m1.optSolver = OptSolver::EIGS;
+        m1.max_sites = settings::strategy::multisite_mps_size_def;
+        m1.retry     = true;
     }
     if(status.fes_is_running) {
         // No need to do expensive operations
-        c1.optMode   = OptMode::VARIANCE;
-        c1.optSolver = OptSolver::LBFGS;
-        c1.retry     = false;
+        m1.optMode   = OptMode::VARIANCE;
+        m1.optSolver = OptSolver::LBFGS;
+        m1.retry     = false;
     }
-    // Setup strong overrides to normal conditions, e.g.,
-    //      - for experiments like bond dimension quench
-    //      - when the algorithm has already converged
+    // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
 
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
         // When this happens, we should use optimize VARIANCE using EIGS or LBFGS instead.
-        c1.optMode = OptMode::VARIANCE;
+        m1.optMode = OptMode::VARIANCE;
     }
 
     // Setup the maximum problem size here
-    switch(c1.optMode) {
+    switch(m1.optMode) {
         case OptMode::OVERLAP:
         case OptMode::SUBSPACE:
-        case OptMode::ENERGY: c1.max_problem_size = settings::precision::max_size_part_diag; break;
-        case OptMode::VARIANCE: c1.max_problem_size = settings::precision::max_size_multisite; break;
+        case OptMode::ENERGY: m1.max_problem_size = settings::precision::max_size_part_diag; break;
+        case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
     }
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_stuck_for > settings::strategy::max_stuck_iters / 2) c1.max_sites = settings::strategy::multisite_mps_size_max;
-    if(status.algorithm_has_succeeded) c1.max_sites = c1.min_sites; // No need to do expensive operations -- just finish
+    if(status.algorithm_has_stuck_for > settings::strategy::max_stuck_iters / 2) m1.max_sites = settings::strategy::multisite_mps_size_max;
+    if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
 
-    c1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, c1.max_problem_size, c1.max_sites, c1.min_sites);
-    c1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, c1.chosen_sites);
-    c1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, c1.chosen_sites);
+    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites);
+    m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
+    m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
     if(status.sub_expansion_alpha > 0) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
-        if(c1.chosen_sites.size() == 1 and status.sub_expansion_alpha > 0) c1.alpha_expansion = status.sub_expansion_alpha;
+        if(m1.chosen_sites.size() == 1 and status.sub_expansion_alpha > 0) m1.alpha_expansion = status.sub_expansion_alpha;
         // If we are stuck and enabled subspace expansion when stuck
         if(settings::strategy::expand_subspace_when_stuck and status.algorithm_has_stuck_for > 0 and status.sub_expansion_alpha > 0)
-            c1.alpha_expansion = status.sub_expansion_alpha;
+            m1.alpha_expansion = status.sub_expansion_alpha;
     }
 
-    configs.emplace_back(c1);
-    if(not c1.retry) return configs;
+    metas.emplace_back(m1);
+    if(not m1.retry) return metas;
     /*
      *
      *  Second trial
      *
      *  NOTES
      *      1) OVERLAP does not get a second chance: It is supposed to pick best overlap, not improve variance
-     *      2) By default, the result from c1 is used as a starting point for c2.
-     *         However, if you change the number of sites, i.e. c2.max_sites,  then you need to start from scratch with the "current state"
+     *      2) By default, the result from m1 is used as a starting point for m2.
+     *         However, if you change the number of sites, i.e. m2.max_sites,  then you need to start from scratch with the "current state"
      */
 
-    OptConf c2 = c1; // Start with c1 as a baseline
-    c2.label   = "c2";
-    c2.optInit = OptInit::LAST_RESULT;
-    if(c1.optMode == OptMode::SUBSPACE) {
+    OptMeta m2 = m1; // Start with m1 as a baseline
+    m2.label   = "m2";
+    m2.optInit = OptInit::LAST_RESULT;
+    if(m1.optMode == OptMode::SUBSPACE) {
         // I.e. if we did a SUBSPACE run that did not result in better variance, try VARIANCE optimization
         // This usually helps to fine-tune the result if the subspace had bad quality.
-        c2.optWhen   = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
-        c2.optMode   = OptMode::VARIANCE;
-        c2.optSolver = OptSolver::LBFGS;
-        c2.retry     = false;
-        configs.emplace_back(c2);
-    } else if(c1.optSolver == OptSolver::LBFGS and settings::strategy::lbfgs_fix_gradient_w_eigs) {
+        m2.optWhen   = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
+        m2.optMode   = OptMode::VARIANCE;
+        m2.optSolver = OptSolver::LBFGS;
+        m2.retry     = false;
+        metas.emplace_back(m2);
+    } else if(m1.optSolver == OptSolver::LBFGS and settings::strategy::lbfgs_fix_gradient_w_eigs) {
         // If we did a LBFGS optimization that terminated with gradient too high, try EIGS
-        c2.optWhen   = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
-        c2.optSolver = OptSolver::EIGS;
-        c2.retry     = false;
-        configs.emplace_back(c2);
+        m2.optWhen   = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
+        m2.optSolver = OptSolver::EIGS;
+        m2.retry     = false;
+        metas.emplace_back(m2);
     }
-    for(const auto &config : configs) config.validate();
-    return configs;
+    for(const auto &config : metas) config.validate();
+    return metas;
 }
 
-bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, const xdmrg::OptConf &conf) {
+bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, const xdmrg::OptMeta &meta) {
     if(results.empty()) return true;
-    bool should = conf.should_proceed(results.back().get_optexit());
-    tools::log->trace("Should try again: {} | when {} | previous exit {}", should, flag2str(conf.optWhen), flag2str(results.back().get_optexit()));
+    bool should = meta.should_proceed(results.back().get_optexit());
+    tools::log->trace("Should try again: {} | when {} | previous exit {}", should, flag2str(meta.optWhen), flag2str(results.back().get_optexit()));
     return should;
 }
 
@@ -462,7 +453,8 @@ void xdmrg::single_xDMRG_step() {
         // Run the optimization
         switch(meta.optInit) {
             case OptInit::CURRENT_STATE: {
-                results.emplace_back(opt::find_excited_state(tensors, status, meta));
+                auto initial_state = opt::get_opt_initial_mps(tensors);
+                results.emplace_back(opt::find_excited_state(tensors, initial_state, status, meta));
                 break;
             }
             case OptInit::LAST_RESULT: {
@@ -492,8 +484,7 @@ void xdmrg::single_xDMRG_step() {
 
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
-        double grad_tol = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e0;
-        if(results.back().get_max_grad()       > grad_tol               ) meta.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_max_grad()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
         if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
         else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;
         results.back().set_optexit(meta.optExit);
@@ -518,6 +509,8 @@ void xdmrg::single_xDMRG_step() {
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
+            if(std::isnan(lhs.get_variance())) throw except::logic_error("Result error: state [{}] has variance NAN", lhs.get_name());
+            if(std::isnan(rhs.get_variance())) throw except::logic_error("Result error: state [{}] has variance NAN", rhs.get_name());
             return lhs.get_variance() < rhs.get_variance();
         };
         std::sort(results.begin(), results.end(), comp_variance);
@@ -538,8 +531,7 @@ void xdmrg::single_xDMRG_step() {
         tensors.merge_multisite_mps(winner.get_tensor(), status.bond_limit);
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if(tools::log->level() <= spdlog::level::debug) {
-            auto truncation_errors = tensors.state->get_truncation_errors_active();
-            tools::log->debug("Truncation errors: {:8.2e}", fmt::join(truncation_errors, ", "));
+            tools::log->debug("Truncation errors: {:8.2e}", fmt::join(tensors.state->get_truncation_errors_active(), ", "));
         }
 
         if constexpr(settings::debug) {

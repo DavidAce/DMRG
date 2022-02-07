@@ -19,11 +19,6 @@ class AlgorithmFinite : public AlgorithmBase {
 
     size_t                   projected_iter        = 0;  /*!< The last iteration when projection was tried */
     size_t                   expanded_iter         = 0;  /*!< The last iteration when expansion was tried */
-    size_t                   bond_quench_steps     = 0;  /*!< Number of steps left doing bond dimension quenching */
-    size_t                   num_bond_quenches     = 0;  /*!< Number of bond dimension quench trials that have occurred */
-    size_t                   max_bond_quenches     = 2;  /*!< Maximum number of bond dimension quench trials allowed */
-    long                     bond_lim_quench_ahead = 32; /*!< Bond dimension during a quench */
-    long                     bond_lim_quench_trail = 32; /*!< Bond dimension during a quench */
     std::optional<OptMode>   last_optmode          = std::nullopt;
     std::optional<OptSolver> last_optspace         = std::nullopt;
 
@@ -36,7 +31,6 @@ class AlgorithmFinite : public AlgorithmBase {
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
     void         try_full_expansion();
-    void         try_bond_dimension_quench();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         shift_mpo_energy();
     void         rebuild_mpo_squared();

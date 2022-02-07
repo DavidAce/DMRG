@@ -145,7 +145,6 @@ void settings::load(Loader &dmrg_config) {
 
     dmrg_config.load_parameter("strategy::lbfgs_fix_gradient_w_eigs"          , strategy::lbfgs_fix_gradient_w_eigs);
     dmrg_config.load_parameter("strategy::prefer_eigs_when_stuck"             , strategy::prefer_eigs_when_stuck);
-    dmrg_config.load_parameter("strategy::bond_quench_when_stuck"             , strategy::bond_quench_when_stuck);
     dmrg_config.load_parameter("strategy::expand_subspace_when_stuck"         , strategy::expand_subspace_when_stuck);
     dmrg_config.load_parameter("strategy::expand_on_saturation"               , strategy::expand_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);

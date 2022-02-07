@@ -117,7 +117,6 @@ namespace settings {
     namespace strategy {
         inline bool          lbfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when LBFGS returns with bad gradient (works well on ill-conditioned problems) */
         inline bool          prefer_eigs_when_stuck      = true;                                   /*!< Prefer using an eigenvalue solver rather than LBFGS when stuck (takes longer, but gives good results) */
-        inline bool          bond_quench_when_stuck      = false;                                  /*!< Reduce bond for a few iterations when stuck and increasing bond dimension would not help */
         inline bool          expand_subspace_when_stuck  = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        expand_on_saturation        = 5 ;                                     /*!< Expand to H|psi> every nth iteration when stuck. (0 = turn off) */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when stuck. (0 = turn off) */

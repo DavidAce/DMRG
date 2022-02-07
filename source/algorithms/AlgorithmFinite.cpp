@@ -134,7 +134,6 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
     try {
         long moves = 0;
         while(num_moves > moves++) {
-            if(bond_quench_steps > 0) bond_quench_steps--;
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
             status.step += tensors.move_center_point(status.bond_limit);
@@ -357,7 +356,6 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     status.step       = 0;
     status.position   = tensors.state->get_position<long>();
     status.direction  = tensors.state->get_direction();
-    num_bond_quenches = 0;
     status.algo_stop  = AlgorithmStop::NONE;
     if(settings::get_bond_grow(status.algo_type) != BondGrow::OFF) status.bond_limit = bond_limit.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
@@ -481,48 +479,6 @@ void AlgorithmFinite::try_full_expansion() {
         expanded_iter     = status.iter;
         tools::log->info("Expansion change: variance {:8.2e} -> {:8.2e}", variance_old, variance_new);
     }
-}
-
-void AlgorithmFinite::try_bond_dimension_quench() {
-    if(not settings::strategy::bond_quench_when_stuck) return;
-    if(bond_quench_steps > 0) clear_convergence_status();
-    if(not tensors.position_is_inward_edge()) return;
-    if(bond_quench_steps >= tensors.get_length()) {
-        tools::log->info("Bond quench continues -- {} steps left", bond_quench_steps);
-        tools::finite::mps::truncate_all_sites(*tensors.state, bond_lim_quench_ahead);
-        return;
-    }
-    if(status.algorithm_has_stuck_for <= 2) {
-        tools::log->info("Bond quench skipped: simulation not been stuck for long enough");
-        return;
-    }
-    if(num_bond_quenches >= max_bond_quenches) {
-        tools::log->trace("Bond quench skipped: max number of quenches ({}) have been made already", num_bond_quenches);
-        return;
-    }
-    if(tools::finite::measure::energy_variance(tensors) < 10 * std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold))
-        return;
-    double truncation_threshold = 5 * settings::precision::svd_threshold;
-    size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
-    size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_limit);
-    tools::log->trace("Truncation threshold : {:.4e}", std::pow(truncation_threshold, 2));
-    tools::log->trace("Truncation errors    : {}", tensors.state->get_truncation_errors());
-    tools::log->trace("Bond dimensions      : {}", tools::finite::measure::bond_dimensions(*tensors.state));
-    tools::log->trace("Entanglement entr    : {}", tools::finite::measure::entanglement_entropies(*tensors.state));
-    tools::log->trace("Truncated bond count : {} ", trunc_bond_count);
-    tools::log->trace("Bonds at limit  count: {} ", bond_at_lim_count);
-    if(tensors.state->is_limited_by_bond(status.bond_limit, truncation_threshold)) {
-        tools::log->info("Bond quench skipped: state is bond limited - prefer updating bond dimension");
-        return;
-    }
-    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*tensors.state);
-    auto max_bond_dimension = *max_element(std::begin(bond_dimensions), std::end(bond_dimensions));
-    tools::log->info("Bond quench started");
-    tools::finite::mps::truncate_all_sites(*tensors.state, max_bond_dimension / 2);
-    tools::log->debug("Bond dimensions: {}", tools::finite::measure::bond_dimensions(*tensors.state));
-    clear_convergence_status();
-    bond_quench_steps = 1 * tensors.get_length();
-    num_bond_quenches++;
 }
 
 AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFinite &t)
