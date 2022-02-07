@@ -14,7 +14,7 @@ namespace tools::finite::opt {
 
 class StateFinite;
 class xdmrg : public AlgorithmFinite {
-    using OptConf = tools::finite::opt::OptMeta;
+    using OptMeta = tools::finite::opt::OptMeta;
 
     private:
     double                                                  energy_window_growth_factor = 1.0;
@@ -26,8 +26,8 @@ class xdmrg : public AlgorithmFinite {
     std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> time_gates_2site;
     std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> time_gates_3site;
 
-    [[nodiscard]] static bool          try_again(const std::vector<tools::finite::opt::opt_mps> &results, const OptConf &conf);
-    [[nodiscard]] std::vector<OptConf> get_opt_conf_list();
+    [[nodiscard]] static bool          try_again(const std::vector<tools::finite::opt::opt_mps> &results, const OptMeta &meta);
+    [[nodiscard]] std::vector<OptMeta> get_opt_conf_list();
 
     public:
     // Inherit the constructor of class_algorithm_base
