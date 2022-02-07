@@ -467,23 +467,6 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     }
 }
 
-void AlgorithmFinite::try_full_expansion() {
-    if(not tensors.position_is_inward_edge()) return;
-    if(expanded_iter == status.iter) return;
-    size_t iter_since_last_expansion = std::max(expanded_iter, status.iter) - expanded_iter;
-    bool   expand_on_saturation      = settings::strategy::expand_on_saturation > 0 and iter_since_last_expansion > settings::strategy::expand_on_saturation and
-                                status.algorithm_saturated_for > 0;
-
-    if(expand_on_saturation) {
-        auto variance_old = tools::finite::measure::energy_variance(tensors);
-        tools::log->info("Trying expansion to H|psi> | pos {}", tensors.get_position());
-        tensors.apply_hamiltonian_on_state(status.bond_limit);
-        auto variance_new = tools::finite::measure::energy_variance(tensors);
-        expanded_iter     = status.iter;
-        tools::log->info("Expansion change: variance {:8.2e} -> {:8.2e}", variance_old, variance_new);
-    }
-}
-
 AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFinite &t)
     : status(s), variance(status.algo_type == AlgorithmType::fLBIT ? 0.0 : tools::finite::measure::energy_variance(t)),
       entropies(tools::finite::measure::entanglement_entropies(*t.state)) {}

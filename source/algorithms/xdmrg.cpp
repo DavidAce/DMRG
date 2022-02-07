@@ -239,7 +239,6 @@ void xdmrg::run_algorithm() {
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         shift_mpo_energy();
         try_projection();
-        try_full_expansion();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();

@@ -30,7 +30,6 @@ class AlgorithmFinite : public AlgorithmBase {
     virtual void resume()                = 0;
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
-    void         try_full_expansion();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         shift_mpo_energy();
     void         rebuild_mpo_squared();
