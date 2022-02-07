@@ -451,6 +451,12 @@ double StateFinite::get_truncation_error_midchain() const {
 
 std::vector<double> StateFinite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
 std::vector<double> StateFinite::get_truncation_errors_active() const { return tools::finite::measure::truncation_errors_active(*this); }
+double              StateFinite::get_truncation_error_active_max() const {
+    auto   truncation_errors_active = get_truncation_errors_active();
+    double truncation_error         = 0;
+    if(not truncation_errors_active.empty()) truncation_error = *std::max_element(truncation_errors_active.begin(), truncation_errors_active.end());
+    return truncation_error;
+}
 
 size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
     auto truncation_errors = get_truncation_errors();
@@ -465,8 +471,9 @@ size_t StateFinite::num_bonds_at_limit(long bond_level) const {
     return bonds_at_lim;
 }
 
-bool StateFinite::is_limited_by_bond(long bond_limit, double truncation_threshold) const {
-    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_at_limit(bond_limit) > 0;
+bool StateFinite::is_limited_by_bond(long bond_limit, [[maybe_unused]] double truncation_threshold) const {
+    return num_bonds_at_limit(bond_limit) > 0;
+    //    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_at_limit(bond_limit) > 0;
 }
 
 void StateFinite::clear_measurements(LogPolicy logPolicy) const {

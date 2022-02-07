@@ -127,10 +127,10 @@ class StateFinite {
     double              get_truncation_error_midchain() const;
     std::vector<double> get_truncation_errors() const;
     std::vector<double> get_truncation_errors_active() const;
-
-    size_t num_sites_truncated(double truncation_threshold) const;
-    size_t num_bonds_at_limit(long bond_level) const;
-    bool   is_limited_by_bond(long bond_limit, double truncation_threshold) const;
+    double              get_truncation_error_active_max() const;
+    size_t              num_sites_truncated(double truncation_threshold) const;
+    size_t              num_bonds_at_limit(long bond_level) const;
+    bool                is_limited_by_bond(long bond_limit, double truncation_threshold) const;
 
     void clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
     void clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
