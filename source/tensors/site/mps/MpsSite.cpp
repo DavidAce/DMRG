@@ -232,7 +232,7 @@ void MpsSite::set_M(const Eigen::Tensor<cplx, 3> &M_) {
     } else
         throw std::runtime_error("MpsSite::set_M(const Eigen::Tensor<cplx, 3> &): Can't set M: Position hasn't been set yet");
 }
-void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error) {
+void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error /* Negative is ignored */) {
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(L_).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_L(): Norm of L is too far from unity: {:.16f}", norm);
@@ -244,15 +244,15 @@ void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error) {
     }
 
     if(position) {
-        L                = L_;
-        truncation_error = error;
-        unique_id        = std::nullopt;
+        if(error >= 0) truncation_error = error;
+        L         = L_;
+        unique_id = std::nullopt;
     } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
 }
 void MpsSite::set_L(const std::pair<Eigen::Tensor<cplx, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
 
-void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error) {
+void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative is ignored */) {
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(LC_).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_LC(): Norm of LC is too far from unity: {:.16f}", norm);
@@ -262,10 +262,10 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error) {
         }
     }
     if(position) {
+        if(error >= 0) truncation_error_LC = error;
         LC = LC_;
         MC.reset();
-        truncation_error_LC = error;
-        unique_id           = std::nullopt;
+        unique_id = std::nullopt;
         set_label("AC");
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
