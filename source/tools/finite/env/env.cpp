@@ -68,7 +68,6 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
         //      * Usually, the first active mps site is an "AC". We call this "mpsR".
         //      * We call the inactive site which belongs in envL "mpsL"
         //      * Then, mpsL.chiR and mpsR.chiL get updated
-        //      * The truncation error can be found in
 
         auto posL = state.active_sites.front();
         // Construct PL = alpha * eneL(i-1) * mps(i-1) * mpo(i-1)
@@ -105,10 +104,10 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 mpsR.set_M(MR_P0);
                 if(mpsL.isCenter()) {
                     // Here we expect mpsL to be "AC" and mpsR to be a "B"
-                    mpsL.set_LC(S, svd.truncation_error);
+                    mpsL.set_LC(S, -1);
                 } else {
                     // Here we expect mpsL to be "A" and mpsR to be an "A" or "AC"
-                    mpsL.stash_S(S, svd.truncation_error, mpsR.get_position());
+                    mpsL.stash_S(S, -1, mpsR.get_position());
                 }
                 mpsR.take_stash(mpsL);
                 if constexpr(settings::debug) mpsL.assert_identity();
@@ -182,10 +181,10 @@ std::vector<size_t> tools::finite::env::expand_subspace(StateFinite &state, cons
                 mpsR.set_M(V);
                 mpsR.stash_U(U, mpsL.get_position());
                 if(mpsL.isCenter()) {
-                    mpsR.stash_C(S, svd.truncation_error, mpsL.get_position());
+                    mpsR.stash_C(S, -1, mpsL.get_position());
                 } else {
                     // Here we expect mpsL to be a "B" as well
-                    mpsR.stash_S(S, svd.truncation_error, mpsL.get_position());
+                    mpsR.stash_S(S, -1, mpsL.get_position());
                 }
                 mpsL.take_stash(mpsR);
                 if constexpr(settings::debug) mpsR.assert_identity();
