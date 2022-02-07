@@ -450,9 +450,12 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                     tensors = tensors_neg;
                 else if(not std::isnan(variance_pos))
                     tensors = tensors_pos;
-            } else {
+            } else if(spin_component_along_requested_axis <= 1.0 - 1e-8) {
                 // Here the spin component is close to one sector. We just project to the nearest sector
                 tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit);
+            } else {
+                tools::log->info("Projection not needed: variance {:8.2e} | spin components {:.16f}", variance_old, fmt::join(spincomp_old, ", "));
+                return;
             }
             auto variance_new = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
