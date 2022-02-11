@@ -1,4 +1,5 @@
 #pragma once
+#include "math/svd/settings.h"
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 class StateFinite;
