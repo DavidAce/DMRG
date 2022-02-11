@@ -203,24 +203,24 @@ void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int 
             *isconv = std::max<int>(*isconv, grad_max < grad_tol);
             *ierr   = 0;
             //            if(*isconv != 0)
-            eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
+            eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
                             H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
-                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
+                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
         }
     }
 }
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2f} ms/op"), primme->stats.numMatvecs,
+        return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2e} s/op"), primme->stats.numMatvecs,
                            primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
-                           primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
+                           primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
     auto &solver = *static_cast<eig::solver *>(primme->monitor);
     auto &result = solver.result;
-    return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2f} ms/op"),
+    return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
                        primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, result.meta.last_grad_max,
-                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs * 1000);
+                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
