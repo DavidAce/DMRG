@@ -35,6 +35,7 @@ enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE };
 enum class OptSolver { EIGS, LBFGS };
 enum class OptRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class OptWhen : int { NEVER = 0, PREV_FAIL_GRADIENT = 1, PREV_FAIL_NOCHANGE = 2, PREV_FAIL_WORSENED = 4, PREV_FAIL_ERROR = 8, ALWAYS = 16 };
+enum class OptEigs { ALWAYS, WHEN_STUCK }; // When to prefer eigs over LBFGS (the default)
 
 enum class OptExit : int {
     SUCCESS       = 0,
@@ -365,6 +366,10 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptWhen::PREV_FAIL_ERROR)                           return "PREV_FAIL_ERROR";
         if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
     }
+    if constexpr(std::is_same_v<T,OptEigs>){
+        if(item == OptEigs::ALWAYS)                                    return "ALWAYS";
+        if(item == OptEigs::WHEN_STUCK)                                return "WHEN_STUCK";
+    }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == OptMark::PASS)                                      return "PASS";
         if(item == OptMark::FAIL)                                      return "FAIL";
@@ -448,6 +453,7 @@ constexpr auto sv2enum(std::string_view item) {
         OptExit,
         OptMark,
         OptInit,
+        OptEigs,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -653,6 +659,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "PREV_FAIL_WORSENED")                    return OptWhen::PREV_FAIL_WORSENED;
         if(item == "PREV_FAIL_ERROR")                       return OptWhen::PREV_FAIL_ERROR;
         if(item == "ALWAYS")                                return OptWhen::ALWAYS;
+    }
+    if constexpr(std::is_same_v<T,OptEigs>){
+        if(item == "ALWAYS")                                return OptEigs::ALWAYS;
+        if(item == "WHEN_STUCK")                            return OptEigs::WHEN_STUCK;
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == "PASS")                                  return OptMark::PASS;

@@ -115,9 +115,9 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
-        inline bool          lbfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when LBFGS returns with bad gradient (works well on ill-conditioned problems) */
-        inline bool          prefer_eigs_when_stuck      = true;                                   /*!< Prefer using an eigenvalue solver rather than LBFGS when stuck (takes longer, but gives good results) */
-        inline bool          expand_envs_when_stuck  = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
+        inline bool          lbfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when LBFGS returns with bad gradient */
+        inline OptEigs       prefer_eigs_over_lbfgs      = OptEigs::WHEN_STUCK;                    /*!< Prefer using the eigenvalue solver for (H-E/L)² over LBFGS. Choose [ALWAYS | WHEN_STUCK] */
+        inline bool          expand_envs_when_stuck      = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when stuck. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector when the bond dimension limit is increased (only works if bond_grow == true). */
@@ -150,7 +150,7 @@ namespace settings {
         inline double   svd_threshold                   = 1e-12 ;                  /*!< Minimum threshold value for keeping singular values. */
         inline double   svd_threshold_tr                = 1e-12 ;                  /*!< Maximum acceptable threshold for truncation error (Does nothing if smaller than svd_threshold) */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
-        inline double   max_grad_tolerance              = 1e-0  ;                  /*!< Keep running an opimization step (LBFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
+        inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (LBFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_squared_otf  = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
         inline bool     use_mpo_energy_shift            = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */

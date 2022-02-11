@@ -306,6 +306,19 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         status.bond_limit = std::max<long>(tensors.state->find_largest_bond(), settings::get_bond_init(status.algo_type));
     }
 
+    if(settings::strategy::prefer_eigs_over_lbfgs == OptEigs::ALWAYS) {
+        m1.optMode   = OptMode::VARIANCE;
+        m1.optSolver = OptSolver::EIGS;
+        m1.max_sites = settings::strategy::multisite_mps_size_def;
+        m1.retry     = false;
+    }
+    if(settings::strategy::prefer_eigs_over_lbfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0) {
+        m1.optMode   = OptMode::VARIANCE;
+        m1.optSolver = OptSolver::EIGS;
+        m1.max_sites = settings::strategy::multisite_mps_size_def;
+        m1.retry     = true;
+    }
+
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
         m1.optSolver = OptSolver::EIGS;
@@ -328,12 +341,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         if(settings::xdmrg::opt_overlap_bond_limit > 0) status.bond_limit = settings::xdmrg::opt_overlap_bond_limit;
     }
 
-    if(settings::strategy::prefer_eigs_when_stuck and status.algorithm_has_stuck_for > 0) {
-        m1.optMode   = OptMode::VARIANCE;
-        m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_size_def;
-        m1.retry     = true;
-    }
     if(status.fes_is_running) {
         // No need to do expensive operations
         m1.optMode   = OptMode::VARIANCE;
