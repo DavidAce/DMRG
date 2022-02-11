@@ -244,7 +244,7 @@ void xdmrg::run_algorithm() {
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
     status.algorithm_has_finished = true;
-    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
+    //    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
 }
 
 void xdmrg::run_fes_analysis() {
@@ -296,8 +296,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    m1.max_sites = std::min(2ul, settings::strategy::multisite_mps_size_def);
-
+    m1.max_sites          = std::min(2ul, settings::strategy::multisite_mps_size_def);
+    m1.max_grad_tolerance = settings::precision::max_grad_tolerance;
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
