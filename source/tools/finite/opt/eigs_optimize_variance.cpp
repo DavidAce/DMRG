@@ -135,13 +135,13 @@ namespace tools::finite::opt::internal {
         return init;
     }
 
-    bool try_harder(const std::vector<opt_mps> &results, const OptMeta &meta) {
+    bool try_harder(const std::vector<opt_mps> &results, [[maybe_unused]] const OptMeta &meta, spdlog::level::level_enum level = spdlog::level::debug) {
         if(results.empty()) {
             tools::log->debug("Try harder: true | first run");
             return true;
         }
         if(results.back().get_name().find("lapack") != std::string::npos) {
-            tools::log->debug("Try harder: false | full diagonalization is good enough");
+            tools::log->log(level, "Try harder: false | full diagonalization is good enough");
             return false; // Full diag. You are finished.
         }
         // It's important that we only consider the "eigenvector 0" results, i.e. idx == 0.
@@ -151,20 +151,14 @@ namespace tools::finite::opt::internal {
         }
 
         const auto &back0 = results_eig0.back().get();
-        if(back0.get_eigs_tol() <= 1.1 * settings::precision::eig_tolerance) { // 1.1 to get a non-exact match as well
-            tools::log->debug("Try harder: false | minimum tolerance reached: {:8.2e}", back0.get_eigs_tol());
-            return false;
-        }
 
-        auto results_eig0_min_it = std::min_element(results_eig0.begin(), results_eig0.end(), comp_gradient_ref);
-        if(results_eig0_min_it == results_eig0.end()) {
-            tools::log->debug("Try harder: true | could not find minimum");
-            return true;
-        }
-        const auto &result_eig0_min_grad_norm = results_eig0_min_it->get();
-        double      grad_tol                  = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e0;
-        bool        tryharder                 = result_eig0_min_grad_norm.get_max_grad() >= grad_tol;
-        tools::log->debug("Try harder: {} | grad norm {:8.2e} threshold = {:<8.2e}", tryharder, result_eig0_min_grad_norm.get_max_grad(), grad_tol);
+        // TODO: The test below is wrong.  eigs_tol is eps, but the convergence condition is actually res <= eps * aNorm * invBnorm
+        //        if(back0.get_eigs_resid() <= back0.get_eigs_tol()) { // 1.1 to get a non-exact match as well
+        //            tools::log->debug("Try harder: false | residual tolerance reached: {:8.2e}", back0.get_eigs_tol());
+        //            return false;
+        //        }
+        bool tryharder = back0.get_grad_max() >= back0.get_grad_tol();
+        tools::log->log(level, "Try harder: {} | grad norm {:8.2e} threshold = {:<8.2e}", tryharder, back0.get_grad_max(), back0.get_grad_tol());
         return tryharder;
     }
 
@@ -280,32 +274,30 @@ namespace tools::finite::opt::internal {
         config_primme.primme_grad_time            = 5;
         config_primme.loglevel                    = 2;
 
-        std::vector<eig::settings> configs(2);
+        std::vector<eig::settings> configs(1);
 
-        configs[0]                 = config_primme;
-        configs[0].tol             = 1e-10; // By default this is 1e4*eps according to primme docs
-        configs[0].maxNcv          = 16;
+        configs[0]     = config_primme;
+        configs[0].tol = 1e-12; // By default this is 1e4*eps according to primme docs
+#pragma message "reset to ncv = 16"
+        configs[0].maxNcv          = 4;
         configs[0].maxIter         = 200000;
         configs[0].tag             = "primme-t1";
-        configs[0].primme_grad_tol = 1e-6;
-        configs[1]                 = config_primme;
-        configs[1].tol             = 1e-12;
-        configs[1].maxNcv          = 32;
-        configs[1].maxIter         = 20000;
-        configs[1].tag             = "primme-t2";
-        configs[0].primme_grad_tol = 1e-6;
+        configs[0].primme_grad_tol = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e-12;
+        //        configs[1]                 = config_primme;
+        //        configs[1].tol             = 1e-12;
+        //        configs[1].maxNcv          = 32;
+        //        configs[1].maxIter         = 80000;
+        //        configs[1].tag             = "primme-t2";
+        //        configs[1].primme_grad_tol = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e-12;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();
         std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
         for(const auto &config : configs) {
             eig::solver solver;
             solver.config = config;
-            if(not hamiltonian_squared)
-                hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-            else
-                tools::log->info("try harder");
+            if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
             eigs_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-            if(not try_harder(results, meta)) break;
+            //            if(not try_harder(results, meta, spdlog::level::info)) break;
         }
     }
 }
@@ -335,15 +327,9 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     }
 
     if(results.size() >= 2) {
-#pragma message "TODO: Sorting according eigs results w.r.t. gradient. Is this the right thing to do?"
-        if(results.back().get_name().find("lapack") != std::string::npos)
-            std::sort(results.begin(), results.end(), comp_eigval);
-        else if(meta.optMode == OptMode::VARIANCE)
-            std::sort(results.begin(), results.end(), comp_gradient);
-        else if(meta.optMode == OptMode::OVERLAP)
-            std::sort(results.begin(), results.end(), comp_overlap);
+        std::sort(results.begin(), results.end(), comp_eigval); // Smallest eigenvalue (i.e. variance) wins
     }
 
-    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
+    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
     return results.front();
 }
