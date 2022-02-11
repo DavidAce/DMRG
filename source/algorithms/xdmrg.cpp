@@ -489,7 +489,7 @@ void xdmrg::single_xDMRG_step() {
 
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
-        if(results.back().get_max_grad()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
         if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
         else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;
         results.back().set_optexit(meta.optExit);

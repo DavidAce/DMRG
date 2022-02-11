@@ -131,9 +131,16 @@ double opt_mps::get_delta_f() const {
         return std::numeric_limits<double>::quiet_NaN();
 }
 
-double opt_mps::get_max_grad() const {
-    if(max_grad)
-        return max_grad.value();
+double opt_mps::get_grad_max() const {
+    if(grad_max)
+        return grad_max.value();
+    else
+        return std::numeric_limits<double>::quiet_NaN();
+}
+
+double opt_mps::get_grad_tol() const {
+    if(grad_tol)
+        return grad_tol.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
@@ -294,7 +301,8 @@ void opt_mps::set_op(size_t op_) { num_op = op_; }
 void opt_mps::set_mv(size_t mv_) { num_mv = mv_; }
 void opt_mps::set_time(double time_) { time = time_; }
 void opt_mps::set_delta_f(double delta_f_) { delta_f = delta_f_; }
-void opt_mps::set_max_grad(double grad_norm_) { max_grad = grad_norm_; }
+void opt_mps::set_grad_tol(double grad_tol_) { grad_tol = grad_tol_; }
+void opt_mps::set_grad_max(double grad_max_) { grad_max = grad_max_; }
 void opt_mps::set_relchange(double relative_change_) { relchange = relative_change_; }
 void opt_mps::set_eigs_idx(long idx_) { eigs_idx = idx_; }
 void opt_mps::set_eigs_nev(long nev_) { eigs_nev = nev_; }

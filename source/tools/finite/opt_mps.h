@@ -28,7 +28,8 @@ namespace tools::finite::opt {
         std::optional<size_t>                 num_mv      = std::nullopt;
         std::optional<double>                 time        = std::nullopt;
         std::optional<double>                 delta_f     = std::nullopt;
-        std::optional<double>                 max_grad    = std::nullopt;
+        std::optional<double>                 grad_tol    = std::nullopt;
+        std::optional<double>                 grad_max    = std::nullopt;
         std::optional<double>                 relchange   = std::nullopt;
         std::optional<long>                   eigs_idx    = std::nullopt;
         std::optional<long>                   eigs_nev    = std::nullopt;
@@ -81,7 +82,8 @@ namespace tools::finite::opt {
         [[nodiscard]] size_t                     get_mv() const;
         [[nodiscard]] double                     get_time() const;
         [[nodiscard]] double                     get_delta_f() const;
-        [[nodiscard]] double                     get_max_grad() const;
+        [[nodiscard]] double                     get_grad_tol() const;
+        [[nodiscard]] double                     get_grad_max() const;
         [[nodiscard]] double                     get_relchange() const;
         [[nodiscard]] long                       get_eigs_idx() const;
         [[nodiscard]] long                       get_eigs_nev() const;
@@ -114,7 +116,8 @@ namespace tools::finite::opt {
         void                                     set_mv(size_t mv_);
         void                                     set_time(double time_);
         void                                     set_delta_f(double delta_f_);
-        void                                     set_max_grad(double grad_norm_);
+        void                                     set_grad_tol(double grad_tol_);
+        void                                     set_grad_max(double grad_max_);
         void                                     set_relchange(double relative_change_);
         void                                     set_eigs_idx(long idx_);
         void                                     set_eigs_nev(long nev_);

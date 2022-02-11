@@ -54,18 +54,20 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                 mps.set_eigs_shift(solver.result.meta.sigma);
                 mps.set_optmode(meta.optMode);
                 mps.set_optsolver(meta.optSolver);
-                if(not solver.result.meta.residual_norms.empty()) mps.set_eigs_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx)));
+                if(solver.config.primme_grad_tol) mps.set_grad_tol(solver.config.primme_grad_tol.value());
+                if(not solver.result.meta.residual_norms.empty())
+                    mps.set_eigs_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
                 double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, &measurements);
-                double max_grad     = std::numeric_limits<double>::quiet_NaN();
-                if(not fulldiag) { max_grad = tools::finite::measure::max_gradient(mps.get_tensor(), tensors); }
+                double grad_max     = std::numeric_limits<double>::quiet_NaN();
+                if(not fulldiag) { grad_max = tools::finite::measure::max_gradient(mps.get_tensor(), tensors); }
 
                 mps.set_energy(energy);
                 mps.set_eigval(eigval);
                 mps.set_variance(variance);
-                mps.set_max_grad(max_grad);
+                mps.set_grad_max(grad_max);
                 mps.validate_basis_vector();
 
                 // Sum up the contributions. Since full diag gives an orthonormal basis, this adds up to one. Normally only

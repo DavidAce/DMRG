@@ -35,7 +35,7 @@ namespace tools::finite::opt::internal {
     };
     auto comp_gradient = [](const opt_mps &lhs, const opt_mps &rhs) {
         if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_max_grad() < rhs.get_max_grad();
+        return lhs.get_grad_max() < rhs.get_grad_max();
     };
     auto comp_eigval = [](const opt_mps &lhs, const opt_mps &rhs) {
         if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
@@ -45,7 +45,7 @@ namespace tools::finite::opt::internal {
         const auto &lhs = lhs_ref.get();
         const auto &rhs = rhs_ref.get();
         if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_max_grad() < rhs.get_max_grad();
+        return lhs.get_grad_max() < rhs.get_grad_max();
     };
 
     auto comp_overlap = [](const opt_mps &lhs, const opt_mps &rhs) {
@@ -57,8 +57,8 @@ namespace tools::finite::opt::internal {
     //        long   found_elem_idx  = -1;
     //        long   elem_idx        = 0;
     //        for(const auto &e : elems) {
-    //            if(e.get_eigs_idx() == idx and e.get_max_grad() < found_grad_norm) {
-    //                found_grad_norm = e.get_max_grad();
+    //            if(e.get_eigs_idx() == idx and e.get_grad_max() < found_grad_norm) {
+    //                found_grad_norm = e.get_grad_max();
     //                found_elem_idx  = elem_idx;
     //            }
     //            elem_idx++;
@@ -78,9 +78,9 @@ namespace tools::finite::opt::internal {
             auto it = std::min_element(results.begin(), results.end(), comp_gradient);
             if(it == results.end()) return get_initial_guess<Scalar>(initial_mps, {});
 
-            if(it->get_max_grad() < initial_mps.get_max_grad()) {
+            if(it->get_grad_max() < initial_mps.get_grad_max()) {
                 tools::log->debug("Previous result is a good initial guess: {} | var {:8.2e}  ∇fᵐᵃˣ {:8.2e}", it->get_name(), it->get_variance(),
-                                  it->get_max_grad());
+                                  it->get_grad_max());
                 return get_initial_guess<Scalar>(*it, {});
             } else
                 return get_initial_guess<Scalar>(initial_mps, {});
@@ -122,7 +122,7 @@ namespace tools::finite::opt::internal {
                 //                    auto &res = results.at(static_cast<size_t>(min_idx));
                 //                    tools::log->debug("Found good initial guess for nev {}: idx {} {:<34} | lg var {:.8f}  ∇fᵐᵃˣ {:8.2e}", n, min_idx,
                 //                    res.get_name(),
-                //                                      std::log10(res.get_variance()), res.get_max_grad());
+                //                                      std::log10(res.get_variance()), res.get_grad_max());
                 //
                 //                    if constexpr(std::is_same_v<Scalar, real>)
                 //                        init.push_back({res.get_tensor().real(), idx});
@@ -262,9 +262,10 @@ namespace tools::finite::opt::internal {
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         eig::settings config_primme;
-        config_primme.tol                         = 1e-10;
-        config_primme.maxIter                     = 200000;
-        config_primme.maxTime                     = 60 * 60;
+        config_primme.tol     = 1e-12; // Sets "eps" in primme https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
+        config_primme.maxIter = 200000;
+        config_primme.maxTime = 60 * 60;
+        //#pragma message "reset to nev = 1"
         config_primme.maxNev                      = 1;
         config_primme.maxNcv                      = 16; // 128
         config_primme.compress                    = settings::precision::use_compressed_mpo_squared_otf;

@@ -51,7 +51,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::lbfgs_optimize_varianc
             optimized_mps.set_name("lbfgs-cplx");
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
-            optimized_mps.set_max_grad(functor->get_max_grad_norm());
+            optimized_mps.set_grad_max(functor->get_max_grad_norm());
             optimized_mps.set_tensor_cplx(initial_guess.data(), initial_mps.get_tensor().dimensions());
             break;
         }
@@ -72,7 +72,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::lbfgs_optimize_varianc
             optimized_mps.set_name("lbfgs-real");
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
-            optimized_mps.set_max_grad(functor->get_max_grad_norm());
+            optimized_mps.set_grad_max(functor->get_max_grad_norm());
             optimized_mps.set_tensor_real(initial_guess.data(), initial_mps.get_tensor().dimensions());
             break;
         }

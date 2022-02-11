@@ -29,7 +29,7 @@ tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const Tensor
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap to initial state (self) is obviously 1
                         tensors.get_length());
-    //    initial_mps.set_max_grad(tools::finite::measure::max_gradient(initial_mps.get_tensor(), tensors));
+    //    initial_mps.set_grad_max(tools::finite::measure::max_gradient(initial_mps.get_tensor(), tensors));
     return initial_mps;
 }
 

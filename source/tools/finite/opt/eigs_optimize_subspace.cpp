@@ -153,7 +153,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
             optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
-            optimized_mps.set_max_grad(functor->get_max_grad_norm());
+            optimized_mps.set_grad_max(functor->get_max_grad_norm());
             break;
         }
         case OptType::REAL: {
@@ -170,7 +170,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
             optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
-            optimized_mps.set_max_grad(functor->get_max_grad_norm());
+            optimized_mps.set_grad_max(functor->get_max_grad_norm());
             break;
         }
     }
@@ -401,7 +401,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
 //                optimized_mps.set_mv(functor->get_count());
 //                optimized_mps.set_delta_f(functor->get_delta_f());
-//                optimized_mps.set_max_grad(functor->get_max_grad_norm());
+//                optimized_mps.set_grad_max(functor->get_max_grad_norm());
 //                tid::get("vH2") += *functor->t_H2n;
 //                tid::get("vH2v") += *functor->t_nH2n;
 //                tid::get("vH") += *functor->t_Hn;
@@ -422,7 +422,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
 //                optimized_mps.set_mv(functor->get_count());
 //                optimized_mps.set_delta_f(functor->get_delta_f());
-//                optimized_mps.set_max_grad(functor->get_max_grad_norm());
+//                optimized_mps.set_grad_max(functor->get_max_grad_norm());
 //                tid::get("vH2") += *functor->t_H2n;
 //                tid::get("vH2v") += *functor->t_nH2n;
 //                tid::get("vH") += *functor->t_Hn;
