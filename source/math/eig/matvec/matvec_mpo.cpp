@@ -1,9 +1,11 @@
 #include "matvec_mpo.h"
 #include "../log.h"
+#include "math/eig/solver.h"
 #include "math/svd.h"
 #include "math/tenx.h"
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
+#include <primme/primme.h>
 
 namespace eig {
 
@@ -322,8 +324,9 @@ Eigen::Tensor<Scalar, 6> MatVecMPO<Scalar>::get_tensor() const {
 }
 
 template<typename Scalar>
-Eigen::Tensor<Scalar, 2> MatVecMPO<Scalar>::get_matrix() const {
-    return get_tensor().reshape(tenx::array2{rows(), cols()});
+typename MatVecMPO<Scalar>::MatrixType MatVecMPO<Scalar>::get_matrix() const {
+    return tenx::MatrixCast(get_tensor(), rows(), cols());
+    //    return get_tensor().reshape(tenx::array2{rows(), cols()});
 }
 
 template<typename Scalar>

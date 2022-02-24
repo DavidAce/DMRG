@@ -21,6 +21,7 @@ class MatVecMPO {
     constexpr static eig::Storage storage          = eig::Storage::MPS;
 
     private:
+    using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     Eigen::Tensor<Scalar, 3> envL;
     Eigen::Tensor<Scalar, 3> envR;
     Eigen::Tensor<Scalar, 4> mpo;
@@ -79,7 +80,7 @@ class MatVecMPO {
     [[nodiscard]] std::array<long, 3>             get_shape_envL() const;
     [[nodiscard]] std::array<long, 3>             get_shape_envR() const;
     [[nodiscard]] Eigen::Tensor<Scalar, 6>        get_tensor() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 2>        get_matrix() const;
+    [[nodiscard]] MatrixType                      get_matrix() const;
 
     [[nodiscard]] bool isReadyFactorOp() const;
     [[nodiscard]] bool isReadyShift() const;
