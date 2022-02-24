@@ -31,6 +31,7 @@ class ModelFinite {
     void                                compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
     void                                set_energy_shift(double total_energy);
     void                                set_energy_shift_per_site(double energy_shift_per_site);
+    void                                set_psfactor(double psfactor);
 
     public:
     std::vector<std::unique_ptr<MpoSite>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */

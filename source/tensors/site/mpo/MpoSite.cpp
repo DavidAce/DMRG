@@ -153,6 +153,24 @@ void MpoSite::set_energy_shift(double site_energy) {
     }
 }
 
+void MpoSite::set_psfactor(double psfactor_) {
+    if(psfactor != 0 and psfactor_ == 0) {
+        parity_sep = false;
+        psfactor   = psfactor_;
+        build_mpo();
+        mpo_squared  = std::nullopt;
+        unique_id    = std::nullopt;
+        unique_id_sq = std::nullopt;
+    } else if(psfactor_ != psfactor) {
+        parity_sep = true;
+        psfactor   = psfactor_;
+        build_mpo();
+        mpo_squared  = std::nullopt;
+        unique_id    = std::nullopt;
+        unique_id_sq = std::nullopt;
+    }
+}
+
 Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_left() const {
     if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build left edge: mpo has not been built yet", get_position());
     auto                   ldim = mpo_internal.dimension(0);

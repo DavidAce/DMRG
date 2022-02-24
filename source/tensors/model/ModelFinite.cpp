@@ -255,6 +255,11 @@ void ModelFinite::set_energy_shift_per_site(double energy_shift_per_site) {
     clear_cache();
 }
 
+void ModelFinite::set_psfactor(double psfactor) {
+    for(const auto &mpo : MPO) mpo->set_psfactor(psfactor);
+    clear_cache();
+}
+
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
 Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {

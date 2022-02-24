@@ -40,6 +40,7 @@ class MpoSite {
     void                                        set_position(size_t new_pos);
     void                                        assert_validity() const;
     void                                        set_energy_shift(double site_energy);
+    void                                        set_psfactor(double psfactor);
     void                                        build_mpo_squared();
     void                                        set_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_sq);
     void                                        clear_mpo_squared();

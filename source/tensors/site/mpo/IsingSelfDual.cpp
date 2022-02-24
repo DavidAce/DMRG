@@ -186,7 +186,7 @@ long IsingSelfDual::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
 void IsingSelfDual::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
-    if(parity_sep) psfactor = 2.0 * (h5tb.param.J_mean + h5tb.param.h_mean) * (1.0 + h5tb.param.lambda) * static_cast<double>(all_parameters.size());
+    if(parity_sep) set_psfactor(2.0 * (h5tb.param.J_mean + h5tb.param.h_mean) * (1.0 + h5tb.param.lambda) * static_cast<double>(all_parameters.size()));
     set_parameters(all_parameters[get_position()]);
 }
 
