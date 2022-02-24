@@ -12,7 +12,7 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([10])
+sites               = np.array([8,10,12])
 gs                  = [0.5]
 deltas              = [-8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
