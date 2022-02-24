@@ -3,6 +3,9 @@
 #include <array>
 #include <optional>
 #include <vector>
+
+struct primme_params;
+
 namespace eig {
 
     class settings {
@@ -46,7 +49,11 @@ namespace eig {
         std::optional<int32_t>      primme_grad_iter            = std::nullopt;
         std::optional<double>       primme_grad_time            = std::nullopt;
         std::vector<double>         primme_target_shifts        = {};
-        void                       *primme_extra                = nullptr;
+        void                       *primme_effective_ham        = nullptr;
+        void                       *primme_effective_ham_sq     = nullptr;
+        std::optional<void (*)(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr)> primme_preconditioner = std::nullopt;
+        std::optional<void (*)(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr)> primme_convTestFun =
+            std::nullopt;
 
         void clear();
         // Sanity checks
