@@ -6,8 +6,6 @@
 #include "general/iter.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_mpo.h"
-#include "math/num.h"
-#include "math/tenx.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -16,7 +14,7 @@
 #include "tools/finite/measure.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
-
+#include <primme/primme.h>
 // Temporary
 //#include <h5pp/h5pp.h>
 
@@ -135,12 +133,105 @@ namespace tools::finite::opt::internal {
         return init;
     }
 
+    template<typename MatrixProductType>
+    void GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
+        if(rNorm == nullptr) return;
+        if(primme == nullptr) return;
+
+        double problemNorm;
+        if(not primme->massMatrixMatvec) {
+            problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
+        } else {
+            problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
+        }
+        double prec         = primme->eps * problemNorm;
+        int    default_crit = *rNorm < prec;
+
+        *isconv = default_crit;
+        *ierr   = 0;
+
+        if(eval == nullptr) return;
+        if(evec == nullptr) return;
+        if(primme->convtest == nullptr) return;
+        auto &solver = *static_cast<eig::solver *>(primme->convtest);
+        auto &config = solver.config;
+        auto &result = solver.result;
+
+        // Store rNorm
+        result.meta.last_res_norm = *rNorm;
+
+        // Terminate if its taking too long
+        if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
+            solver.log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
+            primme->maxMatvecs = 0;
+        }
+
+        if constexpr(MatrixProductType::storage == eig::Storage::MPS) {
+            if(config.primme_effective_ham == nullptr) return;
+            if(config.primme_effective_ham_sq == nullptr) return;
+            long   iter_since_last = primme->stats.numMatvecs - result.meta.last_iter_grad;
+            double time_since_last = primme->stats.elapsedTime - result.meta.last_time_grad;
+
+            double grad_tol  = config.primme_grad_tol ? config.primme_grad_tol.value() : 1e-6;
+            long   grad_iter = config.primme_grad_iter ? config.primme_grad_iter.value() : 100;
+            double grad_time = config.primme_grad_time ? config.primme_grad_time.value() : 5.0;
+
+            // If we do inner iterations we better check gradient convergence every outer iteration instead, so we override the
+            // iter/time periods given in config.
+            if(primme->correctionParams.maxInnerIterations != 0) {
+                grad_iter = 0;
+                grad_time = 0;
+            }
+
+            if(iter_since_last >= grad_iter or time_since_last >= grad_time) {
+                auto t_grad  = tid::tic_token("primme.grad");
+                auto H_ptr   = static_cast<MatrixProductType *>(config.primme_effective_ham);
+                auto H2_ptr  = static_cast<MatrixProductType *>(config.primme_effective_ham_sq);
+                using Scalar = typename MatrixProductType::Scalar;
+                using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+                if(H2_ptr->rows() != H_ptr->rows()) throw std::logic_error("H2 and H size mismatch");
+                H_ptr->compress();
+                long mps_size = static_cast<long>(H2_ptr->rows());
+                auto v        = Eigen::Map<Vector>(static_cast<Scalar *>(evec), mps_size);
+
+                Vector Hv(mps_size), H2v(mps_size);
+
+                H_ptr->MultAx(v.data(), Hv.data());
+                H2_ptr->MultAx(v.data(), H2v.data());
+
+                if(H_ptr->template get_shift<Scalar>() != 0.0) Hv += v * H_ptr->template get_shift<Scalar>();
+                if(H2_ptr->template get_shift<Scalar>() != 0.0) H2v += v * H2_ptr->template get_shift<Scalar>();
+                auto vHv      = v.dot(Hv);
+                auto vH2v     = v.dot(H2v);
+                auto norm_1   = 1.0 / v.norm();
+                auto pref     = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0; // Factor 2 for complex
+                auto grad     = pref * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
+                auto grad_max = grad.template lpNorm<Eigen::Infinity>();
+
+                // Store gradient info
+                result.meta.last_grad_max  = grad_max;
+                result.meta.last_iter_grad = primme->stats.numMatvecs;
+                result.meta.last_time_grad = primme->stats.elapsedTime;
+
+                *isconv = std::max<int>(*isconv, grad_max < grad_tol);
+                *ierr   = 0;
+                //            if(*isconv != 0)
+                solver.log->debug(
+                    FMT_STRING("ops {:< 5} | mv {:<5} | iter {:<4} | λ {:20.16f} | res {:8.2e} | ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
+                    H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, *rNorm, grad_max,
+                    primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
+            }
+        }
+    }
+
     bool try_harder(const std::vector<opt_mps> &results, [[maybe_unused]] const OptMeta &meta, spdlog::level::level_enum level = spdlog::level::debug) {
         if(results.empty()) {
             tools::log->debug("Try harder: true | first run");
             return true;
         }
-        if(results.back().get_name().find("lapack") != std::string::npos) {
+        static constexpr auto full_str     = std::array<std::string_view, 3>{"lapack", "dsyevd", "zheevd"};
+        bool                  is_full_diag = std::find(full_str.begin(), full_str.end(), results.back().get_name()) != full_str.end();
+        if(is_full_diag) {
             tools::log->log(level, "Try harder: false | full diagonalization is good enough");
             return false; // Full diag. You are finished.
         }
@@ -190,7 +281,8 @@ namespace tools::finite::opt::internal {
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
         MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
-        solver.config.primme_extra = &hamiltonian;
+        solver.config.primme_effective_ham    = &hamiltonian;
+        solver.config.primme_effective_ham_sq = &hamiltonian_squared;
 
         //        h5pp::File  h5file("../output/primme_mps.h5", h5pp::FilePermission::READWRITE);
         //        long        number = 0;
@@ -220,8 +312,8 @@ namespace tools::finite::opt::internal {
             auto matrix = hamiltonian_squared.get_matrix();
 
             //            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
-            solver.config.tag = "lapack";
-            solver.eig(matrix.data(), matrix.dimension(0));
+            solver.config.tag = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
+            solver.eig(matrix.data(), matrix.rows());
             //            solver.eig(matrix.data(), matrix.rows());
         } else {
             auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
@@ -229,23 +321,28 @@ namespace tools::finite::opt::internal {
             tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
             if(tensors.model->is_compressed_mpo_squared()) {
-                tools::log->warn("Finding excited state using H² with ritz SM because all MPO²'s are compressed!");
+                tools::log->warn("Finding excited state minimum of (H-E)² with ritz SM because all MPO²'s are compressed!");
                 solver.config.ritz = eig::Ritz::SM;
                 solver.eigs(hamiltonian_squared);
             } else {
                 if(solver.config.lib == eig::Lib::ARPACK) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
-                    if(not solver.config.sigma) {
+                    if(not solver.config.sigma)
                         solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-                    }
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | arpack {} | init on",
-                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
+                    tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
+                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
+                                      hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 } else if(solver.config.lib == eig::Lib::PRIMME) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
                     if(not solver.config.sigma) solver.config.sigma = 1.0;
-                    tools::log->debug("Finding excited state using shifted operator [(H-E)²-σ], with σ = {:.16f} | primme {} | init on",
-                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()));
+                    //                    if(not solver.config.sigma)
+                    //                        solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make
+                    //                        sure we shift enough
+
+                    tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
+                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
+                                      hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 }
             }
@@ -255,40 +352,38 @@ namespace tools::finite::opt::internal {
 
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        eig::settings config_primme;
-        config_primme.tol     = 1e-12; // Sets "eps" in primme https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        config_primme.maxIter = 200000;
-        config_primme.maxTime = 60 * 60;
-        //#pragma message "reset to nev = 1"
-        config_primme.maxNev                      = 1;
-        config_primme.maxNcv                      = 16; // 128
-        config_primme.compress                    = settings::precision::use_compressed_mpo_squared_otf;
-        config_primme.lib                         = eig::Lib::PRIMME;
-        config_primme.ritz                        = eig::Ritz::SA;
-        config_primme.compute_eigvecs             = eig::Vecs::ON;
-        config_primme.tag                         = "primme";
-        config_primme.primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-        config_primme.primme_max_inner_iterations = -1;
-        config_primme.primme_grad_tol             = meta.max_grad_tolerance;
-        config_primme.primme_grad_iter            = 100;
-        config_primme.primme_grad_time            = 5;
-        config_primme.loglevel                    = 2;
-
         std::vector<eig::settings> configs(1);
+        // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
+        configs[0].tol                         = settings::precision::eig_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        configs[0].maxIter                     = settings::precision::eig_max_iter;
+        configs[0].maxTime                     = 2 * 60 * 60; // Two hours
+        configs[0].maxNev                      = 1;
+        configs[0].maxNcv                      = settings::precision::eig_default_ncv;
+        configs[0].compress                    = settings::precision::use_compressed_mpo_squared_otf;
+        configs[0].lib                         = eig::Lib::PRIMME;
+        configs[0].ritz                        = eig::Ritz::SA;
+        configs[0].compute_eigvecs             = eig::Vecs::ON;
+        configs[0].loglevel                    = 2;
+        configs[0].tag                         = "primme";
+        configs[0].primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+        configs[0].primme_max_inner_iterations = 0;                                        // 0 is default for GD
 
-        configs[0]     = config_primme;
-        configs[0].tol = 1e-12; // By default this is 1e4*eps according to primme docs
-#pragma message "reset to ncv = 16"
-        configs[0].maxNcv          = 4;
-        configs[0].maxIter         = 200000;
-        configs[0].tag             = "primme-t1";
-        configs[0].primme_grad_tol = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e-12;
-        //        configs[1]                 = config_primme;
-        //        configs[1].tol             = 1e-12;
-        //        configs[1].maxNcv          = 32;
-        //        configs[1].maxIter         = 80000;
-        //        configs[1].tag             = "primme-t2";
-        //        configs[1].primme_grad_tol = meta.max_grad_tolerance ? meta.max_grad_tolerance.value() : 1e-12;
+        // configs[0].primme_convTestFun          = GradientConvTest<MatVecMPO<Scalar>>;
+        // configs[0].primme_grad_tol             = meta.lbfgs_grad_tol;
+        // configs[0].primme_grad_iter            = 100;
+        // configs[0].primme_grad_time            = 5;
+
+        if(meta.eigs_max_tol) configs[0].tol = meta.eigs_max_tol;
+        if(meta.eigs_max_iter) configs[0].maxIter = meta.eigs_max_iter;
+        if(meta.eigs_grad_tol) configs[0].primme_grad_tol = meta.eigs_grad_tol;
+
+        //         configs[1] = configs[0];
+        // configs[1]                 = config_primme;
+        // configs[1].tol             = 1e-12;
+        // configs[1].maxNcv          = 32;
+        // configs[1].maxIter         = 80000;
+        // configs[1].tag             = "primme-t2";
+        // configs[1].primme_grad_tol = meta.lbfgs_grad_tol ? meta.lbfgs_grad_tol.value() : 1e-12;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();
         std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
@@ -310,11 +405,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
     if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance requires non-compressed MPO²");
 
-    auto t_var    = tid::tic_scope("variance");
-    auto dims_mps = initial_mps.get_tensor().dimensions();
-    auto size     = initial_mps.get_tensor().size();
-
-    tools::log->debug("Finding excited state: minimum eigenstate of (H-E)² | dims {} = {}", dims_mps, size);
+    auto                 t_var = tid::tic_scope("variance");
     std::vector<opt_mps> results;
     switch(meta.optType) {
         case OptType::REAL: eigs_manager<real>(tensors, initial_mps, results, meta); break;
