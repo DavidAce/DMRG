@@ -42,6 +42,5 @@ double lbfgs_base_functor::get_delta_f() const { return delta_f; }
 double lbfgs_base_functor::get_max_grad_norm() const { return max_grad_norm; }
 long   lbfgs_base_functor::get_ops() const { return ops; }
 int    lbfgs_base_functor::NumParameters() const { return num_parameters; }
-
-void lbfgs_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
-void lbfgs_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }
+void   lbfgs_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
+void   lbfgs_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }
