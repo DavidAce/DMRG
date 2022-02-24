@@ -583,8 +583,8 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
 }
 
 void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view target_sector, double threshold) {
-    constexpr std::array<std::string_view, 9> valid_sectors   = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
-    bool                                      sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
+    static constexpr std::array<std::string_view, 9> valid_sectors = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+    bool sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
     if(sector_is_valid) {
         auto axis                        = tools::finite::mps::init::get_axis(settings::strategy::target_sector);
         auto sign                        = tools::finite::mps::init::get_sign(settings::strategy::target_sector);
