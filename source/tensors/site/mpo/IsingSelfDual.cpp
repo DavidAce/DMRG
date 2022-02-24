@@ -120,23 +120,23 @@ void IsingSelfDual::build_mpo()
 void IsingSelfDual::randomize_hamiltonian() {
     if(std::string_view(h5tb.param.distribution) == "normal") {
         h5tb.param.J_wdth = 1.0;
-        h5tb.param.J_wdth = 1.0;
+        h5tb.param.h_wdth = 1.0;
         h5tb.param.J_rand = rnd::normal(h5tb.param.J_mean, h5tb.param.J_wdth);
-        h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.J_wdth);
+        h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_wdth);
     } else if(std::string_view(h5tb.param.distribution) == "lognormal") {
         // See http://arxiv.org/abs/1711.00020
         h5tb.param.J_wdth = 1.0;
-        h5tb.param.J_wdth = 1.0;
+        h5tb.param.h_wdth = 1.0;
         h5tb.param.J_rand = rnd::log_normal(h5tb.param.J_mean, h5tb.param.J_wdth);
-        h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.J_wdth);
+        h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_wdth);
     } else if(std::string_view(h5tb.param.distribution) == "uniform") {
         h5tb.param.J_wdth = 2.0 * h5tb.param.J_mean;
-        h5tb.param.J_wdth = 2.0 * h5tb.param.h_mean;
+        h5tb.param.h_wdth = 2.0 * h5tb.param.h_mean;
         h5tb.param.J_rand = rnd::uniform_double_box(0, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::uniform_double_box(0, h5tb.param.h_wdth);
     } else if(std::string_view(h5tb.param.distribution) == "constant") {
         h5tb.param.J_wdth = 0.0;
-        h5tb.param.J_wdth = 0.0;
+        h5tb.param.h_wdth = 0.0;
         h5tb.param.J_rand = h5tb.param.J_mean;
         h5tb.param.h_rand = h5tb.param.h_mean;
     } else {
