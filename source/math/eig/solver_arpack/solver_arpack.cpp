@@ -263,7 +263,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = solver.GetShift();
     result.meta.time_total    = t_tot->get_time();
-    result.meta.time_matvec   = t_mul->get_time() + t_fnd->get_time();
+    result.meta.time_mv       = t_mul->get_time() + t_fnd->get_time();
     result.meta.time_prep     = t_pre->get_time();
 
     /* clang-format off */
@@ -283,7 +283,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     eig::log->trace("- {:<30} = {}"     ,"ritz",           result.meta.ritz);
     eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
     eig::log->trace("- {:<30} = {:.3f}s","time total",     result.meta.time_total);
-    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_matvec);
+    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_mv);
     eig::log->trace("- {:<30} = {:.3f}s","time prep",      result.meta.time_prep);
     /* clang-format on */
 
@@ -405,7 +405,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = (config.sigma ? config.sigma.value() : result.meta.sigma); // solver.GetShift() is only for shift-invert
     result.meta.time_total    = t_tot->get_time();
-    result.meta.time_matvec   = t_mul->get_time() + t_fnd->get_time();
+    result.meta.time_mv       = t_mul->get_time() + t_fnd->get_time();
     result.meta.time_prep     = t_pre->get_time();
 
     /* clang-format off */
@@ -426,7 +426,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     eig::log->trace("- {:<30} = {}"     ,"ritz",           result.meta.ritz);
     eig::log->trace("- {:<30} = {}"     ,"sigma",          result.meta.sigma);
     eig::log->trace("- {:<30} = {:.3f}s","time total",     result.meta.time_total);
-    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_matvec);
+    eig::log->trace("- {:<30} = {:.3f}s","time matprod",   result.meta.time_mv);
     eig::log->trace("- {:<30} = {:.3f}s","time prep",      result.meta.time_prep);
 
     /* clang-format on */

@@ -117,110 +117,24 @@ template<typename MatrixProductType>
 void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
     if(primme->matrix == nullptr) throw std::logic_error("primme->matrix == nullptr");
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
-    return matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
-}
-
-template<typename MatrixProductType>
-void eig::solver::GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
-    if(rNorm == nullptr) return;
-    if(primme == nullptr) return;
-
-    double problemNorm;
-    if(not primme->massMatrixMatvec) {
-        problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
-    } else {
-        problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
-    }
-    double prec         = primme->eps * problemNorm;
-    int    default_crit = *rNorm < prec;
-
-    *isconv = default_crit;
-    *ierr   = 0;
-
-    if(eval == nullptr) return;
-    if(evec == nullptr) return;
-    if(primme->convtest == nullptr) return;
-    auto &solver = *static_cast<eig::solver *>(primme->convtest);
-    auto &config = solver.config;
-    auto &result = solver.result;
-
-    // Store rNorm
-    result.meta.last_res_norm = *rNorm;
-
-    // Terminate if its taking too long
-    if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
-        eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
-        primme->maxMatvecs = 0;
-    }
-
-    if constexpr(MatrixProductType::storage == eig::Storage::MPS) {
-        if(config.primme_extra == nullptr) return;
-        if(primme->matrix == nullptr) return;
-        long   iter_since_last = primme->stats.numMatvecs - result.meta.last_iter_grad;
-        double time_since_last = primme->stats.elapsedTime - result.meta.last_time_grad;
-
-        double grad_tol  = config.primme_grad_tol ? config.primme_grad_tol.value() : 1e-6;
-        long   grad_iter = config.primme_grad_iter ? config.primme_grad_iter.value() : 100;
-        double grad_time = config.primme_grad_time ? config.primme_grad_time.value() : 5.0;
-
-        // If we do inner iterations we better check gradient convergence every outer iteration instead, so we override the
-        // iter/time periods given in config.
-        if(primme->correctionParams.maxInnerIterations != 0) {
-            grad_iter = 0;
-            grad_time = 0;
-        }
-
-        if(iter_since_last >= grad_iter or time_since_last >= grad_time) {
-            auto t_grad  = tid::tic_token("primme.grad");
-            auto H_ptr   = static_cast<MatrixProductType *>(config.primme_extra);
-            auto H2_ptr  = static_cast<MatrixProductType *>(primme->matrix);
-            using Scalar = typename MatrixProductType::Scalar;
-            using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-            if(H2_ptr->rows() != H_ptr->rows()) throw std::logic_error("H2 and H size mismatch");
-            H_ptr->compress();
-            long mps_size = static_cast<long>(H2_ptr->rows());
-            auto v        = Eigen::Map<Vector>(static_cast<Scalar *>(evec), mps_size);
-
-            Vector Hv(mps_size), H2v(mps_size);
-
-            H_ptr->MultAx(v.data(), Hv.data());
-            H2_ptr->MultAx(v.data(), H2v.data());
-
-            if(H_ptr->template get_shift<Scalar>() != 0.0) Hv += v * H_ptr->template get_shift<Scalar>();
-            if(H2_ptr->template get_shift<Scalar>() != 0.0) H2v += v * H2_ptr->template get_shift<Scalar>();
-            auto vHv      = v.dot(Hv);
-            auto vH2v     = v.dot(H2v);
-            auto norm_1   = 1.0 / v.norm();
-            auto pref     = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0; // Factor 2 for complex
-            auto grad     = pref * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
-            auto grad_max = grad.template lpNorm<Eigen::Infinity>();
-
-            // Store gradient info
-            result.meta.last_grad_max  = grad_max;
-            result.meta.last_iter_grad = primme->stats.numMatvecs;
-            result.meta.last_time_grad = primme->stats.elapsedTime;
-
-            *isconv = std::max<int>(*isconv, grad_max < grad_tol);
-            *ierr   = 0;
-            //            if(*isconv != 0)
-            eig::log->debug(FMT_STRING("mv {:< 5} | ops {:<5} | iter {:<4} | λ {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
-                            H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, grad_max, *rNorm,
-                            primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
-        }
-    }
+    matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
 }
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2e} s/op"), primme->stats.numMatvecs,
-                           primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
+        return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2e} s/op"), primme->stats.numMatvecs,
+                           primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.estimateMaxEVal, primme->stats.elapsedTime,
                            primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
-    auto &solver = *static_cast<eig::solver *>(primme->monitor);
-    auto &result = solver.result;
-    return fmt::format(FMT_STRING("ops {:<5} | iter {:<4} | f {:20.16f} | ∇fᵐᵃˣ {:8.2e} | res {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, result.meta.last_grad_max,
-                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
+    auto       &solver  = *static_cast<eig::solver *>(primme->monitor);
+    auto       &result  = solver.result;
+    auto       &eigvals = result.get_eigvals<eig::Form::SYMM>();
+    std::string msg_gap;
+    if(eigvals.size() >= 2) msg_gap = fmt::format(" | df {:20.16f}", std::abs(eigvals[0] - eigvals[1]));
+
+    return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | res {:8.2e} | f {:20.16f}{}| ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, result.meta.last_res_norm, primme->stats.estimateMinEVal, msg_gap,
+                       result.meta.last_grad_max, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -307,16 +221,19 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
 
     if(matrix.isReadyFactorOp()) { primme.matrixMatvec = eig::solver::MultOPv_wrapper<MatrixProductType>; }
 
-    // Set the function which prints log output
-    primme.monitorFun = monitorFun;
+    primme.monitorFun = monitorFun; // Set the function which prints log output
+    primme.monitor    = this;       // Make eig objects visible from within monitorFun
 
-    // Make eig objects visible from within monitorFun
-    primme.monitor = this;
-
-    // Set the function to make convergence tests
-    if constexpr(MatrixProductType::storage == eig::Storage::MPS) {
-        primme.convTestFun = eig::solver::GradientConvTest<MatrixProductType>;
+    // Set custom convergence test if given
+    if(config.primme_convTestFun) {
+        primme.convTestFun = config.primme_convTestFun.value();
         primme.convtest    = this;
+    }
+    // Set custom preconditioner if given
+    if(config.primme_preconditioner) {
+        primme.applyPreconditioner           = config.primme_preconditioner.value();
+        primme.preconditioner                = this;
+        primme.correctionParams.precondition = true;
     }
 
     /* Set problem parameters */
@@ -326,7 +243,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
     if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(static_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
     if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();
-    if(config.maxIter) primme.maxMatvecs = config.maxIter.value(); // TODO: IS THIS RIGHT?
     if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
     if(config.primme_locking) primme.locking = config.primme_locking.value();
     // Shifts
@@ -347,10 +263,12 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         case primme_target::primme_closest_leq:
         case primme_target::primme_closest_abs: {
             if(not config.primme_target_shifts.empty()) {
+                eig::log->debug("Setting target shifts: {:.8f}", fmt::join(config.primme_target_shifts, ", "));
                 primme.numTargetShifts = static_cast<int>(config.primme_target_shifts.size());
                 primme.targetShifts    = config.primme_target_shifts.data();
             } else if(config.sigma and not matrix.isReadyShift()) {
                 // We handle shifts by applying them directly on the matrix is possible. Else here:
+                eig::log->debug("Setting target shift: {:.8f}", std::real(config.sigma.value()));
                 config.primme_target_shifts = {std::real(config.sigma.value())};
                 primme.numTargetShifts      = static_cast<int>(config.primme_target_shifts.size());
                 primme.targetShifts         = config.primme_target_shifts.data();
@@ -417,22 +335,20 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
             case -3: eig::log->debug("Recommended method for next run: DYNAMIC (close call)\n"); break;
         }
     } else {
-        std::string msg;
         switch(info) {
-            case -1: msg = "PRIMME_UNEXPECTED_FAILURE: set printLevel > 0 to see the call stack"; break;
-            case -2: msg = "PRIMME_MALLOC_FAILURE: either CPU or GPU"; break;
-            case -3: msg = fmt::format("PRIMME_MAIN_ITER_FAILURE: {}", getLogMessage(&primme)); break;
-            case -4: msg = "Argument primme is null"; break;
-            case -5: msg = "n < 0 or nLocal < 0 or nLocal > n"; break;
-            case -6: msg = "numProcs < 1"; break;
-            case -40: msg = "PRIMME_LAPACK_FAILURE"; break;
-            case -41: msg = "PRIMME_USER_FAILURE"; break;
-            case -42: msg = "PRIMME_ORTHO_CONST_FAILURE"; break;
-            case -43: msg = "PRIMME_PARALLEL_FAILURE"; break;
-            case -44: msg = "PRIMME_FUNCTION_UNAVAILABLE"; break;
-            default: msg = "Unknown error code: Go to http://www.cs.wm.edu/~andreas/software/doc/appendix.html?highlight=primme_main_iter_failure";
+            case -1: eig::log->error("PRIMME_UNEXPECTED_FAILURE (exit {}): set printLevel > 0 to see the call stack", info); break;
+            case -2: eig::log->error("PRIMME_MALLOC_FAILURE (exit {}): either CPU or GPU", info); break;
+            case -3: eig::log->info("PRIMME_MAIN_ITER_FAILURE (exit {}): {}", info, getLogMessage(&primme)); break;
+            case -4: eig::log->error("PRIMME_ARGUMENT_IS_NULL (exit {})", info); break;
+            case -5: eig::log->error("PRIMME_INVALID_ARG n < 0 or nLocal < 0 or nLocal > n (exit {})", info); break;
+            case -6: eig::log->error("PRIMME_INVALID_ARG numProcs < 1 (exit {})", info); break;
+            case -40: eig::log->error("PRIMME_LAPACK_FAILURE (exit {})", info); break;
+            case -41: eig::log->error("PRIMME_USER_FAILURE (exit {})", info); break;
+            case -42: eig::log->error("PRIMME_ORTHO_CONST_FAILURE (exit {})", info); break;
+            case -43: eig::log->error("PRIMME_PARALLEL_FAILURE (exit {})", info); break;
+            case -44: eig::log->error("PRIMME_FUNCTION_UNAVAILABLE (exit {})", info); break;
+            default: eig::log->error("Unknown error code: Go to http://www.cs.wm.edu/~andreas/software/doc/appendix.html?highlight=primme_main_iter_failure");
         }
-        eig::log->warn("Primme returned with nonzero exit status {}: {}", info, msg);
     }
     result.meta.eigvecsR_found = true; // We can use partial results
     result.meta.eigvals_found  = true; // We can use partial results
@@ -443,8 +359,11 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.ncv            = primme.maxBasisSize;
     result.meta.tol            = primme.eps;
     result.meta.iter           = primme.stats.numOuterIterations;
-    result.meta.num_mv         = matrix.counter;
-    result.meta.num_op         = primme.stats.numMatvecs;
+    result.meta.num_mv         = primme.stats.numMatvecs;
+    result.meta.num_pc         = primme.stats.numPreconds;
+    result.meta.num_op         = matrix.counter;
+    result.meta.time_mv        = primme.stats.timeMatvec;
+    result.meta.time_pc        = primme.stats.timePrecond;
     result.meta.n              = primme.n;
     result.meta.tag            = config.tag;
     result.meta.ritz           = TargetToString(primme.target);
@@ -458,6 +377,10 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     tid::get(fmt::format("{}.prep", config.tag)).add_count(1ul);
     tid::get(fmt::format("{}.matvec", config.tag)) += primme.stats.timeMatvec;
     tid::get(fmt::format("{}.matvec", config.tag)).add_count(static_cast<size_t>(primme.stats.numMatvecs));
+    if(config.primme_preconditioner) {
+        tid::get(fmt::format("{}.precond", config.tag)) += primme.stats.timePrecond;
+        tid::get(fmt::format("{}.precond", config.tag)).add_count(static_cast<size_t>(primme.stats.numPreconds));
+    }
     primme_free(&primme);
     return info;
 }
