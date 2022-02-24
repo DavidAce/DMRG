@@ -82,13 +82,21 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                     if(overlap_sq_sum > max_overlap_sq_sum and num_solutions > 1) break; // Mainly used in eigs_optimize_energy
                 }
                 if(fulldiag and meta.optMode == OptMode::VARIANCE) {
-                    // This happens when we optimize variance of (i.e. <(H-E)>²) using full diagonalization.
+                    // This happens when we optimize variance (i.e. <(H-E)>²) using full diagonalization.
                     // Since the eigenvalues are actually the same thing as the energy variance, the result we
                     // are looking for is naturally the eigenpair with smallest eigenvalue.
                     // Lapack gives us the results sorted in order of increasing eigenvalue, so it's enough
                     // to keep the first few eigenvectors here.
                     if(num_solutions >= 2) break;
                 }
+                //                if(fulldiag and meta.optMode == OptMode::ENERGY) {
+                //                    // This happens when we optimize energy (i.e. <(H-E)>) using full diagonalization.
+                //                    // Since the eigenvalues are actually the same thing as the energy variance, the result we
+                //                    // are looking for is naturally the eigenpair with smallest eigenvalue.
+                //                    // Lapack gives us the results sorted in order of increasing eigenvalue, so it's enough
+                //                    // to keep the first few eigenvectors here.
+                //                    if(num_solutions >= 16) break;
+                //                }
             }
         }
     }
