@@ -468,6 +468,14 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     }
 }
 
+void AlgorithmFinite::try_parity_sep() {
+    if(not tensors.position_is_inward_edge()) return;
+    size_t iter_since_last_projection = std::max(projected_iter, status.iter) - projected_iter;
+    bool   project_on_every_iter = settings::strategy::project_on_every_iter > 0 and iter_since_last_projection >= settings::strategy::project_on_every_iter;
+
+    if(project_on_every_iter and status.iter >= 10) { tensors.set_psfactor(1.0); }
+}
+
 AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFinite &t)
     : status(s), variance(status.algo_type == AlgorithmType::fLBIT ? 0.0 : tools::finite::measure::energy_variance(t)),
       entropies(tools::finite::measure::entanglement_entropies(*t.state)) {}

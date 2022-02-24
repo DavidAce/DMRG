@@ -73,6 +73,7 @@ class TensorsFinite {
     void apply_hamiltonian_on_state(std::optional<long> bond_limit = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
 
     void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
+    void set_psfactor(double psfactor);
     void rebuild_mpo();
     void rebuild_mpo_squared(std::optional<bool> compress = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
     void compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
