@@ -7,7 +7,10 @@ namespace tools::finite::opt {
         : optMode(OptMode::VARIANCE), optSolver(OptSolver::LBFGS), optType(OptType::CPLX), optInit(OptInit::CURRENT_STATE), optWhen(OptWhen::ALWAYS),
           optRitz(OptRitz::SR), optExit(OptExit::NONE) {}
 
-    OptMeta::OptMeta(OptRitz ritz) : OptMeta() { optRitz = ritz; }
+    OptMeta::OptMeta(OptRitz ritz, OptMode mode) : OptMeta() {
+        optRitz = ritz;
+        optMode = mode;
+    }
 
     bool OptMeta::should_proceed(OptExit previous_exit) const {
         switch(optWhen) {

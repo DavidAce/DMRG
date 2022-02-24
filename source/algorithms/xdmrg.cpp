@@ -296,8 +296,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    m1.max_sites          = std::min(2ul, settings::strategy::multisite_mps_size_def);
-    m1.max_grad_tolerance = settings::precision::max_grad_tolerance;
+    m1.max_sites      = std::min(2ul, settings::strategy::multisite_mps_size_def);
+    m1.lbfgs_grad_tol = settings::precision::max_grad_tolerance;
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
