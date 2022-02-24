@@ -24,9 +24,8 @@ EnvBase::EnvBase(EnvBase &&other) noexcept = default;                           
 EnvBase &EnvBase::operator=(EnvBase &&other) noexcept = default;                             // default move assign
 
 EnvBase::EnvBase(const EnvBase &other)
-    : edge_has_been_set(other.edge_has_been_set), block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position),
-      side(other.side), tag(other.tag), unique_id(other.unique_id), unique_id_mps(other.unique_id_mps), unique_id_mpo(other.unique_id_mpo),
-      unique_id_env(other.unique_id_env) {
+    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position), side(other.side), tag(other.tag),
+      unique_id(other.unique_id), unique_id_mps(other.unique_id_mps), unique_id_mpo(other.unique_id_mpo), unique_id_env(other.unique_id_env) {
     assert_block();
 }
 
@@ -44,7 +43,6 @@ EnvBase::EnvBase(std::string side_, std::string tag_, const MpsSite &MPS, const 
 
 EnvBase &EnvBase::operator=(const EnvBase &other) {
     if(this != &other) {
-        edge_has_been_set = other.edge_has_been_set;
         block             = std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block);
         sites             = other.sites;
         position          = other.position;
@@ -165,13 +163,18 @@ void EnvBase::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<S
 }
 
 void EnvBase::clear() {
-    // Do not clear the empty edge
     assert_block();
-    if(sites > 0) {
-        block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
-        tools::log->trace("Ejected env{} pos {}", side, get_position());
-        unique_id = std::nullopt;
-    }
+    block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
+    tools::log->trace("Ejected env{} pos {}", side, get_position());
+    unique_id = std::nullopt;
+
+    // Do not clear the empty edge
+    //    if(sites > 0) {
+    //        block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
+    //        tools::log->trace("Ejected env{} pos {}", side, get_position());
+    //        unique_id = std::nullopt;
+    //    }
+
     unique_id_env = std::nullopt;
     unique_id_mps = std::nullopt;
     unique_id_mpo = std::nullopt;
@@ -239,7 +242,7 @@ size_t EnvBase::get_position() const {
 size_t EnvBase::get_sites() const { return sites; }
 
 void EnvBase::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO, const Eigen::Tensor<Scalar, 1> &edge) {
-    if(edge_has_been_set) return;
+    if(block and block->size() != 0) return;
     assert_block();
     if(side == "L") {
         long mpsDim = MPS.dimension(1);
@@ -266,7 +269,6 @@ void EnvBase::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Te
         }
     }
     sites             = 0;
-    edge_has_been_set = true;
     unique_id         = std::nullopt;
     unique_id_env     = std::nullopt;
     unique_id_mps     = std::nullopt;

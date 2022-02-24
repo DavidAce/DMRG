@@ -17,7 +17,7 @@ EnvVar EnvVar::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
 
     EnvVar env = *this;
 
-    if(env.sites == 0 and not env.edge_has_been_set) {
+    if(env.sites == 0 and (not block or block->size() == 0)) {
         env.set_edge_dims(mps, mpo);
         env.position = mps.get_position();
         return env;
@@ -118,7 +118,7 @@ void EnvVar::refresh(const EnvVar &env, const MpsSite &mps, const MpoSite &mpo) 
 }
 
 void EnvVar::set_edge_dims(const MpsSite &MPS, const MpoSite &MPO) {
-    if(edge_has_been_set) return;
+    if(block and block->size() != 0) return;
     if constexpr(settings::debug) tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
     if(side == "L")
         set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_left());

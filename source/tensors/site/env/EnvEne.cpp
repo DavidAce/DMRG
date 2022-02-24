@@ -1,4 +1,5 @@
 #include "EnvEne.h"
+#include "EnvEne.h"
 #include <config/debug.h>
 #include <math/num.h>
 #include <tensors/site/mpo/MpoSite.h>
@@ -16,8 +17,7 @@ EnvEne EnvEne::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
 
     EnvEne env = *this;
-
-    if(env.sites == 0 and not env.edge_has_been_set) {
+    if(env.sites == 0 and (not block or block->size() == 0)) {
         env.set_edge_dims(mps, mpo);
         env.position = mps.get_position();
         return env;
@@ -118,7 +118,8 @@ void EnvEne::refresh(const EnvEne &env, const MpsSite &mps, const MpoSite &mpo) 
 }
 
 void EnvEne::set_edge_dims(const MpsSite &MPS, const MpoSite &MPO) {
-    if(edge_has_been_set) return;
+    //    if(edge_has_been_set) return;
+    if(block and block->size() != 0) return;
     tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
     if(side == "L")
         set_edge_dims(MPS.get_M_bare(), MPO.MPO(), MPO.get_MPO_edge_left());
