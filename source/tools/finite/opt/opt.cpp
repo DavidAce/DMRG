@@ -114,10 +114,10 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
     /* clang-format off */
     // Apply overrides if there are any
-    if(meta.max_grad_tolerance)       lbfgs_default_options.gradient_tolerance                      = meta.max_grad_tolerance.value();
-    if(meta.lbfgs_max_terations)      lbfgs_default_options.max_num_iterations                      = meta.lbfgs_max_terations.value();
-    if(meta.lbfgs_max_rank)           lbfgs_default_options.max_lbfgs_rank                          = meta.lbfgs_max_rank.value();
-    if(meta.lbfgs_function_tolerance) lbfgs_default_options.function_tolerance                      = meta.lbfgs_function_tolerance.value();
+    if(meta.lbfgs_max_iter) lbfgs_default_options.max_num_iterations  = meta.lbfgs_max_iter.value();
+    if(meta.lbfgs_max_rank) lbfgs_default_options.max_lbfgs_rank      = meta.lbfgs_max_rank.value();
+    if(meta.lbfgs_func_tol) lbfgs_default_options.function_tolerance  = meta.lbfgs_func_tol.value();
+    if(meta.lbfgs_grad_tol) lbfgs_default_options.gradient_tolerance  = meta.lbfgs_grad_tol.value();
     if(meta.lbfgs_eigenvalue_scaling) lbfgs_default_options.use_approximate_eigenvalue_bfgs_scaling = meta.lbfgs_eigenvalue_scaling.value();
     /* clang-format on */
 
@@ -136,7 +136,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     opt_mps result;
     if     (meta.optMode == OptMode::OVERLAP  and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_overlap(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::SUBSPACE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta);
-    else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta); // TODO: Implement energy mode
+    else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_energy(tensors, initial_mps, status, meta); // TODO: Implement energy mode
+    else if(meta.optMode == OptMode::SIMPS    and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta); // TODO: Implement simps mode
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::LBFGS) result = internal::lbfgs_optimize_variance(tensors, initial_mps, status, meta);
     else
@@ -275,77 +276,4 @@ namespace tools::finite::opt::internal {
     template class NormParametrization<lbfgs_variance_functor<cplx, LagrangeNorm::OFF>>;
     template class NormParametrization<lbfgs_subspace_functor<real>>;
     template class NormParametrization<lbfgs_subspace_functor<cplx>>;
-}
-
-template<typename FunctorType>
-tools::finite::opt::internal::CustomLogCallback<FunctorType>::CustomLogCallback(const FunctorType &functor_) : functor(functor_) {
-    if(not log) log = tools::Logger::setLogger("xDMRG");
-    log->set_level(tools::log->level());
-    if constexpr(settings::debug) {
-        freq_log_iter = 1;
-        freq_log_time = 0;
-        init_log_time = 0;
-    }
-
-    if constexpr(settings::debug_functor) {
-        log->set_level(spdlog::level::debug);
-        freq_log_iter = 1;
-        freq_log_time = 0;
-        init_log_time = 0;
-    }
-}
-
-template<typename FunctorType>
-ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<FunctorType>::operator()(const ceres::IterationSummary &summary) {
-    functor.set_delta_f(std::abs(summary.cost_change / summary.cost));
-    if(not log) return ceres::SOLVER_CONTINUE;
-    if(log->level() >= spdlog::level::info) return ceres::SOLVER_CONTINUE;
-    bool log_iter = summary.iteration - last_log_iter >= freq_log_iter and                  // log every freq_log_iter
-                    summary.iteration >= init_log_iter;                                     // when at least init_log_iter have passed
-    bool log_time = summary.cumulative_time_in_seconds - last_log_time >= freq_log_time and // log every last_log_time
-                    summary.cumulative_time_in_seconds >= init_log_time;                    // when at least init_log_time have passed
-    if(not log_iter or not log_time) return ceres::SOLVER_CONTINUE;
-    last_log_time = summary.cumulative_time_in_seconds;
-    last_log_iter = summary.iteration;
-    /* clang-format off */
-    log->debug(FMT_STRING("LBFGS: "
-               "it {:>5} f {:>8.5f} |Δf| {:>8.2e} "
-               "|∇f| {:>8.2e} |∇f|ᵐᵃˣ {:>8.2e} |∇Ψ|ᵐᵃˣ {:>8.2e} "
-               "|ΔΨ| {:8.2e} |Ψ|-1 {:8.2e} "
-               "ops {:>4}/{:<4} t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
-               "ls:[ss {:8.2e} fe {:>4} ge {:>4} it {:>4}] "
-//               "| energy {:<18.15f} lg var {:<6.6f}"
-               ),
-               summary.iteration,
-               summary.cost,
-               summary.cost_change,
-               summary.gradient_norm,
-               summary.gradient_max_norm,
-               functor.get_max_grad_norm(),
-               summary.step_norm, // By lbfgs
-               functor.get_norm_offset(),
-               functor.get_count() - last_count,
-               functor.get_count(),
-               summary.cumulative_time_in_seconds,
-               summary.iteration_time_in_seconds,
-               static_cast<double>(functor.get_ops()) / functor.t_H2n->get_last_interval()/1e9,
-               std::abs(summary.step_size), // By line search
-               summary.line_search_function_evaluations,
-               summary.line_search_gradient_evaluations,
-               summary.line_search_iterations
-//             ,functor.get_energy_per_site(),
-//               std::log10(functor.get_variance()
-               );
-    last_count = functor.get_count();
-    /* clang-format on */
-    return ceres::SOLVER_CONTINUE;
-}
-
-namespace tools::finite::opt::internal {
-    template class CustomLogCallback<lbfgs_subspace_functor<double>>;
-    template class CustomLogCallback<lbfgs_variance_functor<double, LagrangeNorm::ON>>;
-    template class CustomLogCallback<lbfgs_variance_functor<double, LagrangeNorm::OFF>>;
-    template class CustomLogCallback<lbfgs_subspace_functor<std::complex<double>>>;
-    template class CustomLogCallback<lbfgs_variance_functor<std::complex<double>, LagrangeNorm::ON>>;
-    template class CustomLogCallback<lbfgs_variance_functor<std::complex<double>, LagrangeNorm::OFF>>;
 }
