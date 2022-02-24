@@ -31,9 +31,9 @@ enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
-enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE };
+enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE, SIMPS };
 enum class OptSolver { EIGS, LBFGS };
-enum class OptRitz { LR, SR }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
+enum class OptRitz { LR, SR, SM }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
 enum class OptWhen : int { NEVER = 0, PREV_FAIL_GRADIENT = 1, PREV_FAIL_NOCHANGE = 2, PREV_FAIL_WORSENED = 4, PREV_FAIL_ERROR = 8, ALWAYS = 16 };
 enum class OptEigs { ALWAYS, WHEN_STUCK }; // When to prefer eigs over LBFGS (the default)
 
@@ -185,6 +185,7 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::SR)                                         return "SR";
         if(item == OptRitz::LR)                                         return "LR";
+        if(item == OptRitz::SM)                                         return "SM";
     }
     if constexpr(std::is_same_v<T, SVDMode>) {
         if(item == SVDMode::EIGEN)                                      return "EIGEN";
@@ -478,6 +479,7 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "SR")                                    return OptRitz::SR;
         if(item == "LR")                                    return OptRitz::LR;
+        if(item == "SM")                                    return OptRitz::SM;
     }
     if constexpr(std::is_same_v<T, SVDMode>) {
         if(item == "EIGEN")                                 return SVDMode::EIGEN;

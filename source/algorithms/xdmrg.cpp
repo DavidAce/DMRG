@@ -358,8 +358,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // Setup the maximum problem size here
     switch(m1.optMode) {
         case OptMode::OVERLAP:
-        case OptMode::SUBSPACE:
-        case OptMode::ENERGY: m1.max_problem_size = settings::precision::max_size_part_diag; break;
+        case OptMode::SUBSPACE: m1.max_problem_size = settings::precision::max_size_part_diag; break;
+        case OptMode::ENERGY:
+        case OptMode::SIMPS:
         case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
     }
 
@@ -408,6 +409,14 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         // If we did a LBFGS optimization that terminated with gradient too high, try EIGS
         m2.optWhen   = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
+        m2.retry     = false;
+        metas.emplace_back(m2);
+    } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::ENERGY) {
+        // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
+        m2.optWhen   = OptWhen::PREV_FAIL_WORSENED;
+        m2.optSolver = OptSolver::EIGS;
+        m2.optMode   = OptMode::VARIANCE;
+        m2.optInit   = OptInit::LAST_RESULT;
         m2.retry     = false;
         metas.emplace_back(m2);
     }

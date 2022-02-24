@@ -9,6 +9,7 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
+#include "tools/finite/opt/lbfgs_callback.h"
 #include "tools/finite/opt/lbfgs_subspace_functor.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"

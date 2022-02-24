@@ -19,6 +19,7 @@ namespace tools::finite::opt::internal{
     extern opt_mps lbfgs_optimize_variance    (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_energy       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_subspace     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eigs_optimize_simps        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_overlap      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern void eigs_extract_results          (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
@@ -26,11 +27,16 @@ namespace tools::finite::opt::internal{
 
 
     namespace subspace{
-        extern std::vector<int> generate_nev_list(int shape);
+        extern std::vector<int> generate_nev_list(int rows);
 
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
         find_subspace_part(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
+
+        template<typename Scalar>
+        extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>
+        find_subspace_prec(const TensorsFinite & tensors, double energy_target, double target_subspace_error, const OptMeta & meta);
+
 
         template<typename Scalar>
         extern std::pair<Eigen::MatrixXcd, Eigen::VectorXd>

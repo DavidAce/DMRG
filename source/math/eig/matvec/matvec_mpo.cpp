@@ -105,12 +105,13 @@ void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, 
 
 template<typename T>
 void MatVecMPO<T>::MultOPv(T *mps_in_, T *mps_out_) {
-    auto                                       token = t_multOPv->tic_token();
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
+    auto                                  token = t_multOPv->tic_token();
+    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
+    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
     switch(side) {
         case eig::Side::R: {
-            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+            //            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+            tools::common::contraction::matrix_inverse_vector_product_lbfgs(mps_out, mps_in, mpo, envL, envR);
             break;
         }
         case eig::Side::L: {
@@ -130,11 +131,11 @@ void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
     switch(side) {
         case eig::Side::R: {
             for(int i = 0; i < *blockSize; i++) {
-                T                                         *mps_in_  = static_cast<T *>(x) + *ldx * i;
-                T                                         *mps_out_ = static_cast<T *>(y) + *ldy * i;
-                Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
-                Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
-                tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+                T                                    *mps_in_  = static_cast<T *>(x) + *ldx * i;
+                T                                    *mps_out_ = static_cast<T *>(y) + *ldy * i;
+                Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
+                Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
+                tools::common::contraction::matrix_inverse_vector_product_lbfgs(mps_out, mps_in, mpo, envL, envR);
                 counter++;
             }
             break;

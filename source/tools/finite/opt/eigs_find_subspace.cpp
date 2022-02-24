@@ -4,6 +4,7 @@
 #include "config/settings.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_dense.h"
+#include "math/eig/matvec/matvec_mpo.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
@@ -17,15 +18,30 @@
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
 
+//
+#include "tools/finite/opt/lbfgs_callback.h"
+#include "tools/finite/opt/lbfgs_simps_functor.h"
+#include <ceres/gradient_problem.h>
+#include <Eigen/QR>
+#include <primme/primme.h>
+
 using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
-std::vector<int> subspace::generate_nev_list(int shape) {
-    std::vector<int> nev_list = {8};
-    if(shape <= 1024) nev_list = {32, 128, 256};
-    if(1024 < shape and shape <= 2048) nev_list = {8, 64, 128};
-    if(2048 < shape and shape <= 3072) nev_list = {16, 64, 256};
-    if(3072 < shape and shape <= 4096) nev_list = {16, 128};
+std::vector<int> subspace::generate_nev_list(int rows) {
+    std::vector<int> nev_list = {4, 8};
+    if(32 < rows and rows <= 64) nev_list = {16, 32};
+    if(64 < rows and rows <= 128) nev_list = {32, 64};
+    if(128 < rows and rows <= 512) nev_list = {64, 256};
+    if(512 < rows and rows <= 1024) nev_list = {64, 256, 512};
+    if(1024 < rows and rows <= 2048) nev_list = {16, 256, 512};
+    if(2048 < rows and rows <= 3072) nev_list = {16, 256};
+    if(3072 < rows and rows <= 4096) nev_list = {16};
+    if(4096 < rows) nev_list = {4};
+
+    while(nev_list.size() > 1 and (nev_list.back() * 2 > rows or static_cast<size_t>(nev_list.back()) > settings::precision::max_subspace_size))
+        nev_list.pop_back();
+    if(nev_list.empty()) throw std::logic_error("nev_list is empty");
     return nev_list;
 }
 
@@ -148,7 +164,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
         // Set the new initial guess if we are doing one more round
         if(eigvecs.cols() != 0) {
             solver.config.initial_guess.clear();
-            for(long n = 0; n < eigvecs.cols(); n++) { config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
+            for(long n = 0; n < eigvecs.cols(); n++) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
         }
 
         solver.eigs(hamiltonian);
@@ -164,7 +180,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
         double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
         double          subspace_error = 1.0 - sq_sum_overlap;
         reports::subs_add_entry(nev, max_overlap, min_overlap, subspace_error, solver.result.meta.time_total, time_ham, t_lu.get_last_interval(),
-                                static_cast<size_t>(solver.result.meta.num_mv));
+                                solver.result.meta.iter, solver.result.meta.num_mv, solver.result.meta.num_pc);
         time_ham = 0;
         if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));
         if(sq_sum_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("eps larger than one: {:.16f}", sq_sum_overlap));
@@ -185,6 +201,144 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part<cplx>(const TensorsFinite &tensors, double energy_target,
                                                                                          double target_subspace_error, const OptMeta &meta);
 template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part<real>(const TensorsFinite &tensors, double energy_target,
+                                                                                         double target_subspace_error, const OptMeta &meta);
+
+template<typename MatrixProductType>
+void subs_lbfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+    if(x == nullptr) return;
+    if(y == nullptr) return;
+    if(primme == nullptr) return;
+    using T               = typename MatrixProductType::Scalar;
+    auto        H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
+    auto        shape_mps = H_ptr->get_shape_mps();
+    const auto &mpo       = H_ptr->get_mpo();
+    const auto &envL      = H_ptr->get_envL();
+    const auto &envR      = H_ptr->get_envR();
+
+    for(int i = 0; i < *blockSize; i++) {
+        auto  xt                    = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
+        auto  yt                    = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
+        auto  summary               = ceres::GradientProblemSolver::Summary();
+        auto *functor               = new tools::finite::opt::internal::lbfgs_simps_functor<T>(xt, envL, envR, mpo);
+        auto  problem               = ceres::GradientProblem(functor);
+        auto  options               = tools::finite::opt::internal::lbfgs_default_options;
+        options.max_num_iterations  = 1000;
+        options.function_tolerance  = 1e-6;
+        options.gradient_tolerance  = 1e-6;
+        options.parameter_tolerance = 1e-6;
+        if constexpr(std::is_same_v<T, double>) {
+            ceres::Solve(options, problem, yt.data(), &summary);
+        } else {
+            auto y_cplx_as_2x_real = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(yt.data()), 2 * yt.size());
+            ceres::Solve(options, problem, y_cplx_as_2x_real.data(), &summary);
+        }
+
+        tools::log->info("LBFGS Preconditioner: i {} | f {:8.5e} | size {} | time {:8.5e} | it {} | exit: {}. Message: {}", i, summary.final_cost,
+                         summary.num_parameters, summary.total_time_in_seconds, summary.iterations.size(),
+                         ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
+    }
+    *ierr = 0;
+}
+
+template<typename Scalar>
+std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_prec(const TensorsFinite &tensors, double energy_target, double target_subspace_error,
+                                                                          const OptMeta &meta) {
+    tools::log->trace("Finding subspace -- partial");
+    auto  t_iter = tid::tic_scope("part");
+    auto &t_lu   = tid::get("lu_decomp");
+
+    // Initial mps and a vector map
+    const auto &multisite_mps    = tensors.state->get_multisite_mps();
+    const auto  multisite_vector = Eigen::Map<const Eigen::VectorXcd>(multisite_mps.data(), multisite_mps.size());
+    const auto  problem_size     = multisite_mps.size();
+
+    // Mutable initial mps vector used for initial guess in arpack
+    Eigen::Tensor<Scalar, 3> init;
+    if constexpr(std::is_same_v<Scalar, real>) init = multisite_mps.real();
+    if constexpr(std::is_same_v<Scalar, cplx>) init = multisite_mps;
+
+    // Get the local effective Hamiltonian as a matrix
+    //    const auto &effective_hamiltonian = tensors.get_effective_hamiltonian<Scalar>();
+    //    double      time_ham              = tid::get("ham").get_last_interval();
+    double time_ham = 0;
+
+    // Create the dense matrix object for the eigenvalue solver
+    //    MatVecDense<Scalar> hamiltonian(effective_hamiltonian.data(), effective_hamiltonian.dimension(0), false, eig::Form::SYMM, eig::Side::R);
+    const auto       &mpo = tensors.get_multisite_mpo();
+    const auto       &env = tensors.get_multisite_env_ene_blk();
+    MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
+
+    // Create a reusable config for multiple nev trials
+    eig::settings config;
+    config.tol                   = 1e-10; // settings::precision::eig_tolerance;
+    config.maxIter               = 5000;
+    config.maxTime               = 60 * 60;
+    config.compute_eigvecs       = eig::Vecs::ON;
+    config.compress              = settings::precision::use_compressed_mpo_squared_otf;
+    config.lib                   = eig::Lib::PRIMME;
+    config.ritz                  = eig::Ritz::primme_closest_abs;
+    config.primme_target_shifts  = {energy_target};
+    config.primme_method         = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
+    config.primme_preconditioner = subs_lbfgs_preconditioner<MatVecMPO<Scalar>>;
+    config.primme_projection     = "primme_proj_refined";
+    config.primme_locking        = true;
+
+    //    config.maxNcv               = static_cast<eig::size_type>(16); // arpack needs ncv ~512 to handle all cases. Primme seems content with 16.
+    config.loglevel = 2;
+    config.initial_guess.push_back({init.data(), 0});
+
+    std::string reason = "exhausted";
+
+    // Initialize eigvals/eigvecs containers that store the results
+    Eigen::VectorXd  eigvals;
+    Eigen::MatrixXcd eigvecs;
+    for(auto nev : generate_nev_list(static_cast<int>(problem_size))) {
+        eig::solver solver;
+        solver.config        = config;
+        solver.config.maxNev = nev;
+        solver.config.maxNcv = std::clamp(8 * nev, nev + 1, static_cast<int>(problem_size));
+
+        // Set the new initial guess if we are doing one more round
+        if(eigvecs.cols() != 0) {
+            solver.config.initial_guess.clear();
+            for(long n = 0; n < eigvecs.cols(); n++) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
+        }
+
+        solver.eigs(hamiltonian);
+        t_lu += *hamiltonian.t_factorOP;
+
+        eigvals = eig::view::get_eigvals<eig::real>(solver.result, false);
+        eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R, false);
+
+        // Check the quality of the subspace
+        Eigen::VectorXd overlaps       = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();
+        double          max_overlap    = overlaps.maxCoeff();
+        double          min_overlap    = overlaps.minCoeff();
+        double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
+        double          subspace_error = 1.0 - sq_sum_overlap;
+        reports::subs_add_entry(nev, max_overlap, min_overlap, subspace_error, solver.result.meta.time_total, time_ham, t_lu.get_last_interval(),
+                                solver.result.meta.iter, solver.result.meta.num_mv, solver.result.meta.num_pc);
+        time_ham = 0;
+        if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));
+        if(sq_sum_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("eps larger than one: {:.16f}", sq_sum_overlap));
+        if(min_overlap < 0.0) throw std::runtime_error(fmt::format("min_overlap smaller than zero: {:.16f}", min_overlap));
+        if(subspace_error < target_subspace_error) {
+            reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, target_subspace_error);
+            break;
+        }
+        if(meta.optMode == OptMode::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
+            reason = fmt::format("Overlap is sufficient:  {:.16f} >= threshold {:.16f}", max_overlap, 1.0 / std::sqrt(2.0));
+            break;
+        }
+        hamiltonian.reset();
+    }
+    tools::log->debug("Finished iterative eigensolver -- reason: {}", reason);
+    return {eigvecs, eigvals};
+}
+
+template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_prec<cplx>(const TensorsFinite &tensors, double energy_target,
+                                                                                         double target_subspace_error, const OptMeta &meta);
+template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_prec<real>(const TensorsFinite &tensors, double energy_target,
                                                                                          double target_subspace_error, const OptMeta &meta);
 
 template<typename Scalar>
@@ -213,7 +367,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const 
     long            nev            = eigvecs.cols();
     auto            time_eig       = tid::get("eig").get_last_interval();
     auto            time_ham       = tid::get("ham").get_last_interval();
-    reports::subs_add_entry(nev, max_overlap, min_overlap, subspace_error, time_eig, time_ham, 0, 1);
+    reports::subs_add_entry(nev, max_overlap, min_overlap, subspace_error, time_eig, time_ham, 0, 1, 0, 0);
     return {eigvecs, eigvals};
 }
 
