@@ -12,13 +12,9 @@ eig::solver::solver() {
     else
         eig::setLevel(2);
     eig::setTimeStamp();
+    log = eig::log;
 }
 
-eig::solver::solver(size_t loglevel) : solver() {
-    config.loglevel = loglevel;
-    eig::setLevel(loglevel);
-    eig::setTimeStamp();
-}
 void eig::solver::setLogLevel(size_t loglevel) {
     config.loglevel = loglevel;
     eig::setLevel(loglevel);
@@ -137,7 +133,6 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
 
     if(config.maxNev.value() < 1) config.maxNev = 1;
     if(config.maxNcv.value() <= config.maxNev.value()) config.maxNcv = std::min(L, std::max(2l * config.maxNev.value() + 1l, 32l));
-    ;
     config.maxNcv.value() = std::clamp(config.maxNcv.value(), config.maxNev.value(), L);
     if(config.form == Form::NSYM) {
         if(config.maxNev.value() == 1) { config.maxNev = 2; }

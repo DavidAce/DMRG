@@ -3,17 +3,19 @@
 #include "settings.h"
 #include "solution.h"
 
+namespace spdlog {
+    class logger;
+}
 struct primme_params;
 
 namespace eig {
 
     class solver {
         public:
-        eig::settings config;
-        eig::solution result;
-
+        eig::settings                   config;
+        eig::solution                   result;
+        std::shared_ptr<spdlog::logger> log;
         solver();
-        explicit solver(size_t loglevel);
         void setLogLevel(size_t loglevel);
         template<typename Scalar>
         void subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size_type nev);
@@ -58,8 +60,5 @@ namespace eig {
         static void MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
         template<typename MatrixProductType>
         static void MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr);
-
-        template<typename MatrixProductType>
-        static void GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr);
     };
 }
