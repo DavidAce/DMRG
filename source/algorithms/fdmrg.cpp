@@ -150,11 +150,11 @@ void fdmrg::run_fes_analysis() {
 
 void fdmrg::single_fdmrg_step() {
     auto    t_step = tid::tic_scope("step");
-    OptConf conf(ritz);
-    if(tensors.is_real()) conf.optType = OptType::REAL; // Can do everything in real mode if the model is real
+    OptMeta meta(ritz, OptMode::ENERGY);
+    if(tensors.is_real()) meta.optType = OptType::REAL; // Can do everything in real mode if the model is real
     std::optional<double> alpha_expansion = std::nullopt;
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
-                      enum2sv(ritz), enum2sv(conf.optType));
+                      enum2sv(ritz), enum2sv(meta.optType));
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_size_def);
 
     if(not tensors.active_sites.empty()) {
@@ -167,7 +167,7 @@ void fdmrg::single_fdmrg_step() {
             if(alpha_expansion) tensors.expand_environment(alpha_expansion.value(), status.bond_limit);
         }
         auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
-        auto result_mps  = tools::finite::opt::find_ground_state(tensors, initial_mps, status, conf);
+        auto result_mps  = tools::finite::opt::find_ground_state(tensors, initial_mps, status, meta);
         if constexpr(settings::debug) tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", result_mps.get_variance(), result_mps.get_norm());
         tensors.merge_multisite_mps(result_mps.get_tensor(), status.bond_limit);
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
