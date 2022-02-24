@@ -1,8 +1,8 @@
 #pragma once
+#include "tools/common/log.h"
 #include <optional>
 #include <string>
 #include <vector>
-#include "tools/common/log.h"
 namespace tools::finite::opt {
     class opt_mps;
 }
@@ -22,7 +22,7 @@ namespace tools::finite::opt::reports {
     struct subs_entry {
         long   nev;
         double max_olap, min_olap, eps, eig_time, ham_time, lu_time;
-        size_t steps;
+        long   iter, mv, pc;
     };
 
     struct eigs_entry {
@@ -48,6 +48,7 @@ namespace tools::finite::opt::reports {
                                double delta_f, double grad_norm, size_t iter, size_t counter, double time);
     extern void bfgs_add_entry(std::string_view mode, std::string_view tag, const opt_mps &mps, std::optional<long> space = std::nullopt);
     extern void time_add_entry();
-    extern void subs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time, size_t steps);
+    extern void subs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time, long iter, long mv,
+                               long pc);
     extern void eigs_add_entry(const opt_mps &mps, spdlog::level::level_enum level = spdlog::level::debug);
 }

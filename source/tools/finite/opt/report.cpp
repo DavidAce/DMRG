@@ -40,7 +40,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
 void tools::finite::opt::reports::print_subs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (subs_log.empty()) return;
-    tools::log->debug(FMT_STRING("- {:<5} {:<18} {:<18} {:<18} {:<11} {:<11} {:<11} {:<6}"),
+    tools::log->debug(FMT_STRING("- {:<5} {:<18} {:<18} {:<18} {:<11} {:<11} {:<11} {:<6} {:<6} {:<6}"),
                        "nev",
                        "max <φ_i|ψ>",
                        "min <φ_i|ψ>",
@@ -48,10 +48,12 @@ void tools::finite::opt::reports::print_subs_report(){
                        "eig time[s]",
                        "ham time[s]",
                        "lu Time[s]",
-                       "steps" );
+                       "iter",
+                       "mv",
+                       "pc");
 
     for(auto &entry : subs_log){
-        tools::log->debug(FMT_STRING("- {:<5} {:<18.16f} {:<18.16f} {:<18.2e} {:<11.2e} {:<11.2e} {:<11.2e} {:<6}"),
+        tools::log->debug(FMT_STRING("- {:<5} {:<18.16f} {:<18.16f} {:<18.2e} {:<11.2e} {:<11.2e} {:<11.2e} {:<6} {:<6} {:<6}"),
                           entry.nev,
                           entry.max_olap,
                           entry.min_olap,
@@ -59,8 +61,10 @@ void tools::finite::opt::reports::print_subs_report(){
                           entry.eig_time,
                           entry.ham_time,
                           entry.lu_time ,
-                          entry.steps
-                            );
+                          entry.iter,
+                          entry.mv,
+                          entry.pc
+                          );
     }
     subs_log.clear();
 }
@@ -127,7 +131,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
 
     for(const auto &[idx,entry] : iter::enumerate(eigs_log)){
         if(max_entries and max_entries.value() <= idx) break;
-        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<22.15f} {:<22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<10.2e} {:<10.2e}"),
+        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<10.2e} {:<10.2e}"),
                           entry.description,
                           entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol, entry.resid, entry.grad,
                           entry.energy,entry.eigval,
@@ -161,9 +165,9 @@ void tools::finite::opt::reports::time_add_entry() {
 }
 
 void tools::finite::opt::reports::subs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time,
-                                                 size_t steps) {
+                                                 long iter, long mv, long pc) {
     if(tools::log->level() > spdlog::level::debug) return;
-    subs_log.push_back({nev, max_olap, min_olap, eps, eig_time, ham_time, lu_time, steps});
+    subs_log.push_back({nev, max_olap, min_olap, eps, eig_time, ham_time, lu_time, iter, mv, pc});
 }
 
 void tools::finite::opt::reports::eigs_add_entry(const opt_mps &mps, spdlog::level::level_enum level) {
