@@ -25,7 +25,7 @@ class h5tb_ising_selfdual {
         double h_wdth           = 0;         /*!< Width for the distrbution of h_rand */
         double h_rand           = 0;         /*!< Randomly distributed on-site field */
         double lambda           = 0;         /*!< Factor involved in next-nearest neighbor interaction */
-        double delta            = 0;         /*!< Difference log(J_mean) - log(h_mean)  */
+        double delta            = 0;         /*!< Difference log(J_mean) - log(h_mean) */
         long   spin_dim         = 2;         /*!< Spin dimension */
         char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
