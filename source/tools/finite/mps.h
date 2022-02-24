@@ -45,7 +45,7 @@ namespace tools::finite::mps {
     namespace init{
         inline std::set<long> used_bitfields;
         extern bool bitfield_is_valid (std::optional<long> bitfield);
-        inline constexpr std::array<std::string_view, 9> valid_axis_str = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+        inline static constexpr std::array<std::string_view, 9> valid_axis_str = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
         extern bool is_valid_axis(std::string_view sector);
 
         extern int get_sign(std::string_view sector);

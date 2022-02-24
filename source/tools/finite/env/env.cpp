@@ -17,7 +17,7 @@
 #include "tools/common/log.h"
 
 namespace settings {
-    constexpr static bool debug_edges = false;
+    static constexpr bool debug_edges = false;
 }
 
 std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
@@ -375,7 +375,7 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
      *          1)  active_sites [A(L-1), AC(L)] are updated, left edge exist for A(L-1), right edge exists for AC(L)
      *          2)  move dir -1, clear active sites
      *          3)  assert_edges checks up to AC(L-1), but this site has a stale right edge.
-     *      Therefore one would have to rebuild edges between steps 2) and 3) to solve this issue
+     *      Therefore, one would have to rebuild edges between steps 2) and 3) to solve this issue
      *
      *      One solution would be to always rebuild edges up to the current position from both sides, but that would be
      *      wasteful. Instead, we could just accept that some edges are stale after moving the center-point,
@@ -401,15 +401,6 @@ void tools::finite::env::rebuild_edges_ene(const StateFinite &state, const Model
     size_t posL_active      = edges.active_sites.front();
     size_t posR_active      = edges.active_sites.back();
 
-    //
-    //
-    //    long   current_position = state.get_position<long>();
-    //    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    //    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    //    if(not edges.active_sites.empty()) {
-    //        posL_active = edges.active_sites.front();
-    //        posR_active = edges.active_sites.back();
-    //    }
 
     if constexpr(settings::debug or settings::debug_edges)
         tools::log->trace("rebuild_edges_ene: pos {} | dir {} | "
