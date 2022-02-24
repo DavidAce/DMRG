@@ -157,26 +157,33 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
     else if(*event == primme_event_profile)         eventMessage = "event_profile";
     /* clang-format on */
 
-    auto logMessage = getLogMessage(primme);
-    auto level      = spdlog::level::trace;
     if(primme->monitor != nullptr) {
-        auto  &solver              = *static_cast<eig::solver *>(primme->monitor);
-        auto  &config              = solver.config;
-        auto  &result              = solver.result;
-        double primme_log_time     = config.logTime ? config.logTime.value() : std::numeric_limits<double>::quiet_NaN();
-        double time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_time_log);
-        if(time_since_last_log > primme_log_time or *event == primme_event_converged) {
-            level                     = (config.logTime and time_since_last_log > 60) ? spdlog::level::info : spdlog::level::debug;
-            result.meta.last_time_log = primme->stats.elapsedTime;
-            result.meta.last_iter_log = primme->stats.numMatvecs;
-        }
-        // Terminate if its taking too long
+        auto &solver              = *static_cast<eig::solver *>(primme->monitor);
+        auto &config              = solver.config;
+        auto &result              = solver.result;
+        auto  level               = spdlog::level::trace;
+        auto  iter_since_last_log = std::abs(primme->stats.numOuterIterations - result.meta.last_log_iter);
+        auto  time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_log_time);
+        if(*event == primme_event_outer_iteration) {
+            if(config.logTime and config.logTime.value() < time_since_last_log) level = eig::log->level();
+            if(config.logIter and config.logIter.value() < iter_since_last_log) level = eig::log->level();
+        } else if(*event == primme_event_converged)
+            level = spdlog::level::debug;
+
+        // Terminate if it's taking too long
         if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
             eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
             primme->maxMatvecs = 0;
         }
+
+        if(eig::log->level() <= level) {
+            eig::log->log(level, FMT_STRING("{} | {}"), getLogMessage(primme), eventMessage);
+            result.meta.last_log_time = primme->stats.elapsedTime;
+            result.meta.last_log_iter = primme->stats.numOuterIterations;
+        }
+    } else {
+        eig::log->trace(FMT_STRING("{} | {}"), getLogMessage(primme), eventMessage);
     }
-    eig::log->log(level, FMT_STRING("{} | {}"), logMessage, eventMessage);
 }
 
 template<typename MatrixProductType>

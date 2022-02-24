@@ -132,30 +132,29 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     /* clang-format on */
 
     if(config.maxNev.value() < 1) config.maxNev = 1;
-    if(config.maxNcv.value() <= config.maxNev.value()) config.maxNcv = std::min(L, std::max(2l * config.maxNev.value() + 1l, 32l));
-    config.maxNcv.value() = std::clamp(config.maxNcv.value(), config.maxNev.value(), L);
     if(config.form == Form::NSYM) {
         if(config.maxNev.value() == 1) { config.maxNev = 2; }
     }
+    // If ncv < nev we should set a new one as recommended
+    if(config.maxNcv.value() <= config.maxNev.value()) config.maxNcv = std::clamp<long>(2l * config.maxNev.value() + 1, config.maxNev.value() + 1, L);
+    // Make sure ncv is valid
+    config.maxNcv = std::clamp<long>(config.maxNcv.value(), config.maxNev.value() + 1, L);
 
-    assert(config.maxNcv.value() <= L and "Ncv > L");
-    assert(config.maxNcv.value() >= config.maxNev.value() and "Ncv < Nev");
-    assert(config.maxNev.value() <= L and "Nev > L");
+    if(config.maxNcv.value() > L) throw std::logic_error("ncv > L");
+    if(config.maxNev.value() > L) throw std::logic_error("nev > L");
+    if(config.maxNcv.value() <= config.maxNev.value()) throw std::logic_error("ncv <= nev");
 
     if(config.shift_invert == Shinv::ON and not config.sigma) throw std::runtime_error("Sigma must be set to use shift-invert mode");
     config.checkRitz();
 
     if(not config.logTime) {
-        if(eig::log->level() == spdlog::level::trace) config.logTime = 0.0;
-        if(eig::log->level() == spdlog::level::debug) config.logTime = 1.0;
-        if(eig::log->level() == spdlog::level::info) config.logTime = 5.0;
-        if(eig::log->level() >= spdlog::level::warn) config.logTime = 60.0;
+        if(eig::log->level() == spdlog::level::trace) config.logTime = 10.0;
+        if(eig::log->level() == spdlog::level::debug) config.logTime = 60.0;
+        if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+        if(eig::log->level() == spdlog::level::trace) config.logIter = 100;
+        if(eig::log->level() == spdlog::level::debug) config.logIter = 1000;
+        if(eig::log->level() == spdlog::level::info) config.logIter = 10000;
     }
-
-    //    if(not config.iter_ncv_x.empty()) // Sort in descending order
-    //        std::sort(config.iter_ncv_x.begin(), config.iter_ncv_x.end(), std::greater<>());
-    //    if(not config.time_tol_x10.empty()) // Sort in descending order
-    //        std::sort(config.time_tol_x10.begin(), config.time_tol_x10.end(), std::greater<>());
 }
 template void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
                                      Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase, real *residual, Lib lib);
@@ -208,16 +207,13 @@ void eig::solver::set_default_config(const MatrixProductType &matrix) {
     config.checkRitz();
 
     if(not config.logTime) {
-        if(eig::log->level() == spdlog::level::trace) config.logTime = 0.0;
-        if(eig::log->level() == spdlog::level::debug) config.logTime = 1.0;
-        if(eig::log->level() == spdlog::level::info) config.logTime = 5.0;
-        if(eig::log->level() >= spdlog::level::warn) config.logTime = 60.0;
+        if(eig::log->level() == spdlog::level::trace) config.logTime = 10.0;
+        if(eig::log->level() == spdlog::level::debug) config.logTime = 60.0;
+        if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+        if(eig::log->level() == spdlog::level::trace) config.logIter = 100;
+        if(eig::log->level() == spdlog::level::debug) config.logIter = 1000;
+        if(eig::log->level() == spdlog::level::info) config.logIter = 10000;
     }
-
-    //    if(not config.iter_ncv_x.empty()) // Sort in descending order
-    //        std::sort(config.iter_ncv_x.begin(), config.iter_ncv_x.end(), std::greater<>());
-    //    if(not config.time_tol_x10.empty()) // Sort in descending order
-    //        std::sort(config.time_tol_x10.begin(), config.time_tol_x10.end(), std::greater<>());
 }
 
 template void eig::solver::set_default_config(const MatVecDense<eig::real> &matrix);

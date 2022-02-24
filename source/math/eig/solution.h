@@ -55,10 +55,10 @@ namespace eig {
 
             double last_res_norm  = std::numeric_limits<double>::quiet_NaN();
             double last_grad_max  = std::numeric_limits<double>::quiet_NaN();
-            long   last_iter_grad = 0;
-            double last_time_grad = 0;
-            long   last_iter_log  = 0;
-            double last_time_log  = 0;
+            long   last_grad_iter = 0;
+            double last_grad_time = 0;
+            long   last_log_iter  = 0;
+            double last_log_time  = 0;
 
             Form                 form;
             Type                 type;

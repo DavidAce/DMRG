@@ -39,6 +39,7 @@ namespace eig {
         std::string           tag;                // Handy when you are using many instances
         std::optional<size_t> loglevel = std::nullopt;
         std::optional<double> logTime  = std::nullopt;
+        std::optional<long>   logIter  = std::nullopt;
 
         // Primme settings
         std::optional<PrimmeMethod> primme_method               = std::nullopt;

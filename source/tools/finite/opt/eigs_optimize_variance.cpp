@@ -169,8 +169,8 @@ namespace tools::finite::opt::internal {
         if constexpr(MatrixProductType::storage == eig::Storage::MPS) {
             if(config.primme_effective_ham == nullptr) return;
             if(config.primme_effective_ham_sq == nullptr) return;
-            long   iter_since_last = primme->stats.numMatvecs - result.meta.last_iter_grad;
-            double time_since_last = primme->stats.elapsedTime - result.meta.last_time_grad;
+            long   iter_since_last = primme->stats.numMatvecs - result.meta.last_grad_iter;
+            double time_since_last = primme->stats.elapsedTime - result.meta.last_grad_time;
 
             double grad_tol  = config.primme_grad_tol ? config.primme_grad_tol.value() : 1e-6;
             long   grad_iter = config.primme_grad_iter ? config.primme_grad_iter.value() : 100;
@@ -210,8 +210,8 @@ namespace tools::finite::opt::internal {
 
                 // Store gradient info
                 result.meta.last_grad_max  = grad_max;
-                result.meta.last_iter_grad = primme->stats.numMatvecs;
-                result.meta.last_time_grad = primme->stats.elapsedTime;
+                result.meta.last_grad_iter = primme->stats.numMatvecs;
+                result.meta.last_grad_time = primme->stats.elapsedTime;
 
                 *isconv = std::max<int>(*isconv, grad_max < grad_tol);
                 *ierr   = 0;

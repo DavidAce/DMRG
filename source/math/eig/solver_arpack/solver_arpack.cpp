@@ -325,16 +325,14 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     int           step          = 0;
     int           nops          = 0;
     int           iter          = 0;
-    static double last_log_time = 0;
-    if(last_log_time > t_tot->get_time()) last_log_time = 0; // If this function has been run before
     while(not solver.ArnoldiBasisFound()) {
         if(step == 0) {
             if(config.logTime) {
-                auto time_since_last_log = std::abs(t_tot->get_time() - last_log_time);
+                auto time_since_last_log = std::abs(t_tot->get_time() - result.meta.last_log_time);
                 if(time_since_last_log > config.logTime.value()) {
                     eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops, t_tot->get_time(),
                                     t_mul->get_last_interval() / nops * 1000);
-                    last_log_time = t_tot->get_time();
+                    result.meta.last_log_time = t_tot->get_time();
                 }
             }
         }
