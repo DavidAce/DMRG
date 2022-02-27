@@ -101,6 +101,45 @@ template void eig::solver::eig<eig::Form::NSYM>(const real *matrix, size_type, V
 template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, Vecs, Dephase);
 template void eig::solver::eig<eig::Form::NSYM>(const cplx *matrix, size_type, Vecs, Dephase);
 
+template<eig::Form form, typename Scalar>
+void eig::solver::eig(const Scalar *matrix, size_type L, char range, int il, int iu, double vl, double vu, Vecs compute_eigvecs_, Dephase remove_phase_) {
+    auto t_eig = tid::tic_scope("eig");
+    int  info  = 0;
+    try {
+        if constexpr(std::is_same_v<Scalar, real>) {
+            eig_init(form, Type::REAL, compute_eigvecs_, remove_phase_);
+            if constexpr(form == Form::SYMM) info = dsyevx(matrix, L, range, il, iu, vl, vu);
+            if constexpr(form == Form::NSYM) throw std::logic_error("?sygvx not implemented");
+        } else if constexpr(std::is_same_v<Scalar, cplx>) {
+            eig_init(form, Type::CPLX, compute_eigvecs_, remove_phase_);
+            if constexpr(form == Form::SYMM) throw std::logic_error("zheevx not implemented");
+            if constexpr(form == Form::NSYM) throw std::logic_error("?sygvx not implemented");
+        } else {
+            throw std::runtime_error("Unknown type");
+        }
+
+    } catch(std::exception &ex) {
+        eig::log->error("Eigenvalue solver failed: {}", ex.what());
+        throw std::runtime_error(fmt::format("Eigenvalue solver Failed: {}", ex.what()));
+    }
+
+    result.build_eigvals_cplx();
+    result.build_eigvecs_cplx();
+
+    if(info == 0 and config.remove_phase and config.remove_phase.value() == Dephase::OFF) {
+        // The solution to  the eigenvalue equation Av = l*v is determined up to a constant phase factor, i.e., if v
+        // is a solution, so is v*exp(i*theta). By computing the complex angle of the first element in v, one can then
+        // remove it from all other elements of v.
+        subtract_phase(result.eigvecsL_cplx, L, result.meta.nev);
+        subtract_phase(result.eigvecsR_cplx, L, result.meta.nev);
+    }
+}
+template void eig::solver::eig<eig::Form::SYMM>(const real *matrix, size_type, char, int, int, double, double, Vecs, Dephase);
+template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, char, int, int, double, double, Vecs, Dephase);
+// template void eig::solver::eig<eig::Form::NSYM>(const real *matrix, size_type, Vecs, Dephase);
+// template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, Vecs, Dephase);
+// template void eig::solver::eig<eig::Form::NSYM>(const cplx *matrix, size_type, Vecs, Dephase);
+
 template<typename Scalar>
 void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
                             Shinv shift_invert, Storage storage, Vecs compute_eigvecs, Dephase remove_phase, Scalar *residual, Lib lib) {
