@@ -26,6 +26,7 @@ class MpoSite {
     double e_shift    = 0;     /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
     double psfactor   = 0;     /*!< Parity sector separation factor */
     bool   parity_sep = false; /*!< Parity sector separation on/off */
+    bool   mpo2_projz = false; /*!< Set MPO2 = (H + iP)(H - iP) = H² + P², where P is a projection operator to +- parity sector */
 
     std::array<long, 4>                   extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
     std::array<long, 2>                   extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */

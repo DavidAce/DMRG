@@ -1,22 +1,68 @@
 #include "MpoSite.h"
-#include <debug/exceptions.h>
+#include "debug/exceptions.h"
+#include "math/hash.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "qm/qm.h"
+#include "qm/spin.h"
 #include <h5pp/h5pp.h>
-#include <math/hash.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <qm/qm.h>
 #include <utility>
 
 MpoSite::MpoSite(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
 Eigen::Tensor<MpoSite::cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     tools::log->trace("mpo({}): building mpo²", get_position());
-    const auto &mpo = MPO();
-    auto        d0  = mpo.dimension(0) * mpo.dimension(0);
-    auto        d1  = mpo.dimension(1) * mpo.dimension(1);
-    auto        d2  = mpo.dimension(2);
-    auto        d3  = mpo.dimension(3);
-    return mpo.contract(mpo, tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{d0, d1, d2, d3});
+    Eigen::Tensor<cplx, 4> mpo = MPO();
+    Eigen::Tensor<cplx, 4> mpo2;
+
+    {
+        auto d0 = mpo.dimension(0) * mpo.dimension(0);
+        auto d1 = mpo.dimension(1) * mpo.dimension(1);
+        auto d2 = mpo.dimension(2);
+        auto d3 = mpo.dimension(3);
+        mpo2    = mpo.contract(mpo.conjugate(), tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{d0, d1, d2, d3});
+    }
+
+    if(mpo2_projz) {
+        using namespace qm::spin::half;
+        auto                   d0 = mpo2.dimension(0);
+        auto                   d1 = mpo2.dimension(1);
+        auto                   d2 = mpo2.dimension(2);
+        auto                   d3 = mpo2.dimension(3);
+        auto                   s  = position == 0 ? -1.0 : +1.0; // Selects sector sign
+        Eigen::Tensor<cplx, 4> mpo2p(d0 + 2, d1 + 2, d2, d3);
+        mpo2p.setZero();
+        mpo2p.slice(tenx::array4{0, 0, 0, 0}, mpo2.dimensions())                  = mpo2;
+        mpo2p.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorCast(-id);
+        mpo2p.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(s * sz); // Project the opposite sign here
+        return mpo2p;
+    }
+    return mpo2;
+    //    Eigen::Tensor<cplx, 4> mpo_pos;
+    //    Eigen::Tensor<cplx, 4> mpo_neg;
+    //    if(mpo2_projz) {
+    //        using namespace qm::spin::half;
+    //        auto d0 = mpo.dimension(0);
+    //        auto d1 = mpo.dimension(1);
+    //        auto d2 = mpo.dimension(2);
+    //        auto d3 = mpo.dimension(3);
+    //        mpo_pos.resize(d0 + 2, d1 + 2, d2, d3);
+    //        mpo_neg.resize(d0 + 2, d1 + 2, d2, d3);
+    //        mpo_pos.setZero();
+    //        mpo_neg.setZero();
+    //        auto s                                                                      = position != 0 ? 1.0 : -1.0; // Selects sector sign
+    //        mpo_pos.slice(tenx::array4{0, 0, 0, 0}, mpo.dimensions())                   = mpo;
+    //        mpo_pos.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorCast(1.0 * id);
+    //        mpo_pos.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(1.0 * s * sz);
+    //        mpo_neg.slice(tenx::array4{0, 0, 0, 0}, mpo.dimensions())                   = mpo;
+    //        mpo_neg.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorCast(-1.0 * id);
+    //        mpo_neg.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-1.0 * s * sz);
+    //    }
+
+    //    auto                   d0 = mpo_pos.dimension(0) * mpo_neg.dimension(0);
+    //    auto                   d1 = mpo_pos.dimension(1) * mpo_neg.dimension(1);
+    //    auto                   d2 = mpo_pos.dimension(2);
+    //    auto                   d3 = mpo_neg.dimension(3);
 }
 
 void MpoSite::build_mpo_squared() {
@@ -93,11 +139,11 @@ void MpoSite::assert_validity() const {
                 print_parameter_values();
                 throw std::runtime_error(fmt::format("Param [{}] = {}", param.first, std::any_cast<double>(param.second)));
             }
-    if(tenx::hasNaN(mpo_internal)) throw std::runtime_error(fmt::format("MPO has NAN on position {}", get_position()));
-    if(not tenx::isReal(mpo_internal)) throw std::runtime_error(fmt::format("MPO has IMAG on position {}", get_position()));
+    if(tenx::hasNaN(mpo_internal)) throw except::runtime_error("MPO has NAN on position {}", get_position());
+    if(not tenx::isReal(mpo_internal)) throw except::runtime_error("MPO has IMAG on position {}", get_position());
     if(mpo_squared) {
-        if(tenx::hasNaN(mpo_squared.value())) throw std::runtime_error(fmt::format("MPO2 squared has NAN on position {}", get_position()));
-        if(not tenx::isReal(mpo_squared.value())) throw std::runtime_error(fmt::format("MPO2 squared has IMAG on position {}", get_position()));
+        if(tenx::hasNaN(mpo_squared.value())) throw except::runtime_error("MPO2 squared has NAN on position {}", get_position());
+        if(not tenx::isReal(mpo_squared.value())) throw except::runtime_error("MPO2 squared has IMAG on position {}", get_position());
     }
 }
 
@@ -136,9 +182,12 @@ bool MpoSite::is_compressed_mpo_squared() const {
 
     const auto &mpo         = MPO();
     const auto &mpo_sq      = MPO2();
-    const auto  bond_mpo    = std::min(mpo.dimension(0), mpo.dimension(1));
-    const auto  bond_mpo_sq = std::min(mpo_sq.dimension(0), mpo_sq.dimension(1));
-    return bond_mpo_sq < bond_mpo * bond_mpo;
+    auto        bond_mpo    = std::min(mpo.dimension(0), mpo.dimension(1));
+    auto        bond_mpo_sq = std::min(mpo_sq.dimension(0), mpo_sq.dimension(1));
+    if(mpo2_projz)
+        return bond_mpo_sq < bond_mpo * bond_mpo + 2;
+    else
+        bond_mpo_sq < bond_mpo *bond_mpo;
 }
 
 double MpoSite::get_energy_shift() const { return e_shift; }
@@ -193,14 +242,54 @@ Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_right() const {
 
 Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO2_edge_left() const {
     auto edge = get_MPO_edge_left();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
+    //    if(mpo2_projz) {
+    //        auto                   d0 = edge.dimension(0);
+    //        Eigen::Tensor<cplx, 1> edge_projz(d0 + 2);
+    //        edge_projz.setZero();
+    //        edge_projz.slice(tenx::array1{0}, edge.dimensions()) = edge;
+    //        edge_projz(d0 + 0)                                   = 1.0;
+    //        edge_projz(d0 + 1)                                   = 1.0;
+    //        edge                                                 = edge_projz;
+    //    }
+
+    auto d0 = edge.dimension(0);
+    //    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
+    Eigen::Tensor<cplx, 1> edge2 = edge.contract(edge, tenx::idx()).reshape(tenx::array1{d0 * d0});
+    if(mpo2_projz) {
+        Eigen::Tensor<cplx, 1> edge2_projz(d0 * d0 + 2);
+        edge2_projz.setZero();
+        edge2_projz.slice(tenx::array1{0}, edge2.dimensions()) = edge2;
+        edge2_projz(d0 * d0 + 0)                               = 1.0;
+        edge2_projz(d0 * d0 + 1)                               = 1.0;
+        return edge2_projz;
+    }
+    return edge2;
 }
 
 Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO2_edge_right() const {
     auto edge = get_MPO_edge_right();
-    auto dim  = edge.dimension(0);
-    return edge.contract(edge, tenx::idx()).reshape(tenx::array1{dim * dim});
+    //    if(mpo2_projz) {
+    //        using namespace qm::spin::half;
+    //        auto                   d0 = edge.dimension(0);
+    //        Eigen::Tensor<cplx, 1> edge_projz(d0 + 2);
+    //        edge_projz.setZero();
+    //        edge_projz.slice(tenx::array1{0}, edge.dimensions()) = edge;
+    //        edge_projz(d0 + 0)                                   = 0.5;
+    //        edge_projz(d0 + 1)                                   = 0.5;
+    //        edge                                                 = edge_projz;
+    //    }
+    auto d0 = edge.dimension(0);
+    //    return edge.contract(edge.conjugate(), tenx::idx()).reshape(tenx::array1{d0 * d0});
+    Eigen::Tensor<cplx, 1> edge2 = edge.contract(edge.conjugate(), tenx::idx()).reshape(tenx::array1{d0 * d0});
+    if(mpo2_projz) {
+        Eigen::Tensor<cplx, 1> edge2_projz(d0 * d0 + 2);
+        edge2_projz.setZero();
+        edge2_projz.slice(tenx::array1{0}, edge2.dimensions()) = edge2;
+        edge2_projz(d0 * d0 + 0)                               = 0.5;
+        edge2_projz(d0 * d0 + 1)                               = 0.5;
+        return edge2_projz;
+    }
+    return edge2;
 }
 
 void MpoSite::print_parameter_names() const {

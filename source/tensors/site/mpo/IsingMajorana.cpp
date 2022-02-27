@@ -1,12 +1,12 @@
 #include "IsingMajorana.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "math/num.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "qm/spin.h"
 #include <h5pp/h5pp.h>
 #include <iomanip>
-#include <math/num.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <qm/spin.h>
 
 double delta_to_J_wdth(double delta) { return std::exp(delta / 2.0); }
 
@@ -32,6 +32,8 @@ IsingMajorana::IsingMajorana(ModelType model_type_, size_t position_) : MpoSite(
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     h5tb_ising_majorana::register_table_type();
+#pragma message "Testing projection in MPO²"
+    mpo2_projz = true;
 }
 
 double IsingMajorana::get_coupling() const { return h5tb.param.J_rand; }
@@ -142,7 +144,6 @@ void IsingMajorana::randomize_hamiltonian() {
     unique_id_sq                     = std::nullopt;
 }
 
-
 Eigen::Tensor<MpoSite::cplx, 4> IsingMajorana::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
                                                               [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
@@ -180,6 +181,7 @@ long IsingMajorana::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
 void IsingMajorana::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
+    //    if(parity_sep) psfactor = 0.5;
     if(parity_sep) psfactor = 2.0 * (h5tb.param.J_mean + h5tb.param.h_mean) * (1.0 + h5tb.param.g) * static_cast<double>(all_parameters.size());
     set_parameters(all_parameters[get_position()]);
 }
