@@ -16,11 +16,14 @@
 #endif
 #include "../log.h"
 #include "../solver.h"
+#include <chrono>
 
 using namespace eig;
 
 int eig::solver::dsyevd(const real *matrix, size_type L) {
     eig::log->trace("Starting eig dsyevd");
+    auto t_start = std::chrono::high_resolution_clock::now();
+
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::REAL>();
     eigvals.resize(static_cast<size_t>(L));
@@ -47,10 +50,10 @@ int eig::solver::dsyevd(const real *matrix, size_type L) {
 
     std::vector<double> work(static_cast<size_t>(lwork));
     std::vector<int>    iwork(static_cast<size_t>(liwork));
-
+    auto                t_prep = std::chrono::high_resolution_clock::now();
     info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR, jobz, 'U', static_cast<int>(L), eigvecs.data(), static_cast<int>(L), eigvals.data(), work.data(), lwork,
                                iwork.data(), liwork);
-
+    auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         result.meta.eigvecsR_found = true;
         result.meta.eigvals_found  = true;
@@ -61,6 +64,8 @@ int eig::solver::dsyevd(const real *matrix, size_type L) {
         result.meta.n              = L;
         result.meta.form           = Form::SYMM;
         result.meta.type           = Type::REAL;
+        result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
+        result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
     } else {
         throw std::runtime_error("LAPACK dsyevd failed with error: " + std::to_string(info));
     }

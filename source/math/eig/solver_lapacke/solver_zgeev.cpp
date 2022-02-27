@@ -17,9 +17,11 @@
 
 #include "../log.h"
 #include "../solver.h"
+#include <chrono>
 
 int eig::solver::zgeev(const cplx *matrix, size_type L) {
     eig::log->trace("Starting eig_zgeev");
+    auto  t_start  = std::chrono::high_resolution_clock::now();
     auto &eigvals  = result.get_eigvals<Form::NSYM>();
     auto &eigvecsR = result.get_eigvecs<Form::NSYM, Type::CPLX, Side::R>();
     auto &eigvecsL = result.get_eigvecs<Form::NSYM, Type::CPLX, Side::L>();
@@ -44,10 +46,10 @@ int eig::solver::zgeev(const cplx *matrix, size_type L) {
                               static_cast<int>(L), eigvecsR_ptr, static_cast<int>(L), lwork_query_ptr, -1, rwork.data());
     int                                lwork = (int) std::real(2.0 * lwork_query); // Make it twice as big for performance.
     std::vector<lapack_complex_double> work((unsigned long) lwork);
-
-    info = LAPACKE_zgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), matrix_ptr, static_cast<int>(L), eigvals_ptr, eigvecsL_ptr,
-                              static_cast<int>(L), eigvecsR_ptr, static_cast<int>(L), work.data(), lwork, rwork.data());
-
+    auto                               t_prep = std::chrono::high_resolution_clock::now();
+    info         = LAPACKE_zgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), matrix_ptr, static_cast<int>(L), eigvals_ptr, eigvecsL_ptr,
+                                      static_cast<int>(L), eigvecsR_ptr, static_cast<int>(L), work.data(), lwork, rwork.data());
+    auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         result.meta.eigvecsR_found = true;
         result.meta.eigvecsL_found = true;
@@ -59,6 +61,8 @@ int eig::solver::zgeev(const cplx *matrix, size_type L) {
         result.meta.n              = L;
         result.meta.form           = Form::NSYM;
         result.meta.type           = Type::CPLX;
+        result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
+        result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
     } else {
         throw std::runtime_error("LAPACK zgeev failed with error: " + std::to_string(info));
     }
