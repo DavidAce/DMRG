@@ -123,18 +123,25 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
         return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2e} s/op"), primme->stats.numMatvecs,
-                           primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.estimateMaxEVal, primme->stats.elapsedTime,
+                           primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
     auto       &solver  = *static_cast<eig::solver *>(primme->monitor);
     auto       &result  = solver.result;
     auto       &eigvals = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_gap;
-    if(eigvals.size() >= 2) msg_gap = fmt::format(" | df {:20.16f}", std::abs(eigvals[0] - eigvals[1]));
+    if(eigvals.size() >= 2) msg_gap = fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1]));
+    auto res = std::numeric_limits<double>::quiet_NaN();
+    if(result.meta.last_res_norm > 0)
+        res = result.meta.last_res_norm;
+    else if(result.meta.residual_norms[0] > 0)
+        res = result.meta.residual_norms[0];
+    else if(primme->stats.estimateResidualError > 0)
+        res = primme->stats.estimateResidualError;
 
     return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | res {:8.2e} | f {:20.16f}{}| ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, result.meta.last_res_norm, primme->stats.estimateMinEVal, msg_gap,
-                       result.meta.last_grad_max, primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, res, primme->stats.estimateMinEVal, msg_gap, result.meta.last_grad_max,
+                       primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -165,8 +172,8 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
         auto  iter_since_last_log = std::abs(primme->stats.numOuterIterations - result.meta.last_log_iter);
         auto  time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_log_time);
         if(*event == primme_event_outer_iteration) {
-            if(config.logTime and config.logTime.value() < time_since_last_log) level = eig::log->level();
-            if(config.logIter and config.logIter.value() < iter_since_last_log) level = eig::log->level();
+            if(config.logTime and config.logTime.value() <= time_since_last_log) level = eig::log->level();
+            if(config.logIter and config.logIter.value() <= iter_since_last_log) level = eig::log->level();
         } else if(*event == primme_event_converged)
             level = spdlog::level::debug;
 
