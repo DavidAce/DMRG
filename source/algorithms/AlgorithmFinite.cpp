@@ -85,6 +85,7 @@ void AlgorithmFinite::run()
 void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
+    if(settings::strategy::project_final_state) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_limit);
     write_to_file(StorageReason::CHECKPOINT, CopyPolicy::TRY);
     write_to_file(StorageReason::PROJ_STATE, CopyPolicy::TRY);
     write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);

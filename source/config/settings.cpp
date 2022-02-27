@@ -150,6 +150,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_bond_update"             , strategy::project_on_bond_update);
     dmrg_config.load_parameter("strategy::project_initial_state"              , strategy::project_initial_state);
+    dmrg_config.load_parameter("strategy::project_final_state"                , strategy::project_final_state);
     dmrg_config.load_parameter("strategy::randomize_on_bond_update"           , strategy::randomize_on_bond_update);
     dmrg_config.load_parameter("strategy::randomize_early"                    , strategy::randomize_early);
     dmrg_config.load_parameter("strategy::use_eigenspinors"                   , strategy::use_eigenspinors);

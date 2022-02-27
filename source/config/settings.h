@@ -122,6 +122,7 @@ namespace settings {
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every iteration. This implies doing it when stuck also. */
         inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector when the bond dimension limit is increased (only works if bond_grow == true). */
         inline bool          project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
+        inline bool          project_final_state         = false;                                  /*!< Project to target axis/parity sector when finished calculating a state. */
         inline bool          randomize_on_bond_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing the bond dimension */
         inline bool          randomize_early             = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
@@ -150,7 +151,7 @@ namespace settings {
         inline double   svd_threshold                   = 1e-12 ;                  /*!< Minimum threshold value for keeping singular values. */
         inline double   svd_threshold_tr                = 1e-12 ;                  /*!< Maximum acceptable threshold for truncation error (Does nothing if smaller than svd_threshold) */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
-        inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (LBFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
+        inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (BFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_squared_otf  = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
         inline bool     use_mpo_energy_shift            = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
