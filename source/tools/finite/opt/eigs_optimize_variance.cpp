@@ -10,6 +10,7 @@
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
+#include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/opt/opt-internal.h"
@@ -48,6 +49,12 @@ namespace tools::finite::opt::internal {
 
     auto comp_overlap = [](const opt_mps &lhs, const opt_mps &rhs) {
         return lhs.get_overlap() > rhs.get_overlap();
+    };
+    auto comp_eigval_and_overlap = [](const opt_mps &lhs, const opt_mps &rhs) {
+        double ratio = std::max(lhs.get_eigs_eigval(), rhs.get_eigs_eigval()) / std::min(lhs.get_eigs_eigval(), rhs.get_eigs_eigval());
+        if(ratio < 10 and lhs.get_overlap() >= std::sqrt(0.5)) return lhs.get_overlap() > rhs.get_overlap();
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        return lhs.get_eigs_eigval() < rhs.get_eigs_eigval();
     };
 
     //    auto min_gradient_idx = [](const std::vector<opt_mps> &elems, long idx) {
@@ -134,6 +141,25 @@ namespace tools::finite::opt::internal {
     }
 
     template<typename MatrixProductType>
+    void simps_bfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        using T               = typename MatrixProductType::Scalar;
+        const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
+        const auto  shape_mps = H_ptr->get_shape_mps();
+        const auto &mpo       = H_ptr->get_mpo();
+        const auto &envL      = H_ptr->get_envL();
+        const auto &envR      = H_ptr->get_envR();
+        for(int i = 0; i < *blockSize; i++) {
+            auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
+            auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
+            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+        }
+        *ierr = 0;
+    }
+
+    template<typename MatrixProductType>
     void GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
         if(rNorm == nullptr) return;
         if(primme == nullptr) return;
@@ -217,9 +243,9 @@ namespace tools::finite::opt::internal {
                 *ierr   = 0;
                 //            if(*isconv != 0)
                 solver.log->debug(
-                    FMT_STRING("ops {:< 5} | mv {:<5} | iter {:<4} | λ {:20.16f} | res {:8.2e} | ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
-                    H2_ptr->counter, primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, *rNorm, grad_max,
-                    primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
+                    FMT_STRING("ops {:< 5} | mv {:<5} | iter {:<4} | λ {:20.16f} | res {:8.2e} | ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"), H2_ptr->mv,
+                    primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, *rNorm, grad_max, primme->stats.elapsedTime,
+                    primme->stats.timeMatvec / primme->stats.numMatvecs);
             }
         }
     }
@@ -229,8 +255,12 @@ namespace tools::finite::opt::internal {
             tools::log->debug("Try harder: true | first run");
             return true;
         }
-        static constexpr auto full_str     = std::array<std::string_view, 3>{"lapack", "dsyevd", "zheevd"};
-        bool                  is_full_diag = std::find(full_str.begin(), full_str.end(), results.back().get_name()) != full_str.end();
+
+        //        static constexpr auto full_str     = std::array<std::string_view, 3>{"lapack", "dsyevd", "zheevd"};
+        //        bool                  is_full_diag = std::find(full_str.begin(), full_str.end(), results.back().get_name()) != full_str.end();
+        const auto &name  = results.back().get_name();
+        bool is_full_diag = name.find("lapack") != std::string::npos or name.find("dsyevd") != std::string::npos or name.find("dsyevx") != std::string::npos or
+                            name.find("zheevd") != std::string::npos;
         if(is_full_diag) {
             tools::log->log(level, "Try harder: false | full diagonalization is good enough");
             return false; // Full diag. You are finished.
@@ -242,6 +272,23 @@ namespace tools::finite::opt::internal {
         }
 
         const auto &back0 = results_eig0.back().get();
+
+        // When there is a degeneracy, we may get a situation like this:
+        //
+        // E/L                    λ                      σ²H      overlap
+        // +5.565233108953220     +0.000000000001958     2.74e-12 0.695437332511797
+        // +5.565233122209704     +0.000000000003793     2.75e-12 0.718586749494365
+        //
+        // We are really looking for the state in the second line, but since nev == 1 we don't see the next state.
+        // The only way to detect this scenario is to check if the overlap is below 0.7071...
+        // If that is true, we should get the next state with nev == 2 and check its overlap too.
+        // If their variance is about the same we know that we have met this scenario and should pick
+        // the one with highest overlap.
+        // TODO: One could perhaps try SVD on each state to check if the entropy changes drastically?
+        if(back0.get_overlap() <= std::sqrt(0.5)) {
+            tools::log->log(level, "Try harder: true | nearly degenerate");
+            return true;
+        }
 
         // TODO: The test below is wrong.  eigs_tol is eps, but the convergence condition is actually res <= eps * aNorm * invBnorm
         //        if(back0.get_eigs_resid() <= back0.get_eigs_tol()) { // 1.1 to get a non-exact match as well
@@ -313,8 +360,8 @@ namespace tools::finite::opt::internal {
 
             //            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
             solver.config.tag = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
-            solver.eig(matrix.data(), matrix.rows());
             //            solver.eig(matrix.data(), matrix.rows());
+            solver.eig(matrix.data(), matrix.rows(), 'I', 1, static_cast<int>(solver.config.maxNev.value()), 0.0, 1.0);
         } else {
             auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
             for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
@@ -329,20 +376,16 @@ namespace tools::finite::opt::internal {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
                     if(not solver.config.sigma)
                         solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-                    tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
-                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
-                                      hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
+                    tools::log->info("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
+                                     std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
+                                     hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 } else if(solver.config.lib == eig::Lib::PRIMME) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
                     if(not solver.config.sigma) solver.config.sigma = 1.0;
-                    //                    if(not solver.config.sigma)
-                    //                        solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make
-                    //                        sure we shift enough
-
-                    tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
-                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
-                                      hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
+                    tools::log->info("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
+                                     std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
+                                     hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 }
             }
@@ -352,24 +395,30 @@ namespace tools::finite::opt::internal {
 
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        std::vector<eig::settings> configs(1);
+        std::vector<eig::settings> configs(2);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        configs[0].tol                         = settings::precision::eig_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        configs[0].maxIter                     = settings::precision::eig_max_iter;
-        configs[0].maxTime                     = 2 * 60 * 60; // Two hours
-        configs[0].maxNev                      = 1;
-        configs[0].maxNcv                      = settings::precision::eig_default_ncv;
-        configs[0].compress                    = settings::precision::use_compressed_mpo_squared_otf;
-        configs[0].lib                         = eig::Lib::PRIMME;
-        configs[0].ritz                        = eig::Ritz::SA;
-        configs[0].compute_eigvecs             = eig::Vecs::ON;
-        configs[0].loglevel                    = 2;
-        configs[0].tag                         = "primme";
-        configs[0].primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-        configs[0].primme_max_inner_iterations = 0;                                        // 0 is default for GD
+        configs[0].tol             = settings::precision::eig_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        configs[0].maxIter         = settings::precision::eig_max_iter;
+        configs[0].maxTime         = 2 * 60 * 60; // Two hours
+        configs[0].maxNev          = 2;
+        configs[0].maxNcv          = settings::precision::eig_default_ncv;
+        configs[0].compress        = settings::precision::use_compressed_mpo_squared_otf;
+        configs[0].lib             = eig::Lib::PRIMME;
+        configs[0].ritz            = eig::Ritz::SA;
+        configs[0].compute_eigvecs = eig::Vecs::ON;
+        configs[0].loglevel        = 2;
+        configs[0].tag             = "primme";
+        configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+
+        //        configs[0].primme_max_inner_iterations = 10;   // 0 is default for GD
+
+        configs[0].sigma = 0.0;
+        configs[0].ritz  = eig::Ritz::primme_closest_geq;
+        //        configs[0].primme_preconditioner = simps_bfgs_preconditioner<MatVecMPO<Scalar>>;
+        configs[0].primme_target_shifts = {0.0};
 
         // configs[0].primme_convTestFun          = GradientConvTest<MatVecMPO<Scalar>>;
-        // configs[0].primme_grad_tol             = meta.lbfgs_grad_tol;
+        // configs[0].primme_grad_tol             = meta.bfgs_grad_tol;
         // configs[0].primme_grad_iter            = 100;
         // configs[0].primme_grad_time            = 5;
 
@@ -377,13 +426,13 @@ namespace tools::finite::opt::internal {
         if(meta.eigs_max_iter) configs[0].maxIter = meta.eigs_max_iter;
         if(meta.eigs_grad_tol) configs[0].primme_grad_tol = meta.eigs_grad_tol;
 
-        //         configs[1] = configs[0];
+        configs[1]        = configs[0];
+        configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
+        configs[1].tag    = "primme-run2";
         // configs[1]                 = config_primme;
-        // configs[1].tol             = 1e-12;
-        // configs[1].maxNcv          = 32;
-        // configs[1].maxIter         = 80000;
-        // configs[1].tag             = "primme-t2";
-        // configs[1].primme_grad_tol = meta.lbfgs_grad_tol ? meta.lbfgs_grad_tol.value() : 1e-12;
+        configs[1].tol    = 1e-12;
+        configs[1].maxNcv = 32;
+        // configs[1].primme_grad_tol = meta.bfgs_grad_tol ? meta.bfgs_grad_tol.value() : 1e-12;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();
         std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
@@ -392,7 +441,8 @@ namespace tools::finite::opt::internal {
             solver.config = config;
             if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
             eigs_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-            //            if(not try_harder(results, meta, spdlog::level::info)) break;
+            if(&config == &configs.back()) break;
+            if(not try_harder(results, meta, spdlog::level::info)) break;
         }
     }
 }
@@ -418,7 +468,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     }
 
     if(results.size() >= 2) {
-        std::sort(results.begin(), results.end(), comp_eigval); // Smallest eigenvalue (i.e. variance) wins
+        std::sort(results.begin(), results.end(), comp_eigval_and_overlap); // Smallest eigenvalue (i.e. variance) wins
     }
 
     for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
