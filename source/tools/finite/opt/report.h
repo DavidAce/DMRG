@@ -30,7 +30,7 @@ namespace tools::finite::opt::reports {
         std::string               ritz;
         long                      size, idx, nev, ncv;
         double                    energy, eigval, variance, overlap, norm, tol, resid, grad;
-        size_t                    iter, counter;
+        size_t                    iter, mv, pc;
         double                    time;
         spdlog::level::level_enum level = spdlog::level::debug;
     };

@@ -109,7 +109,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
         eigs_log.clear();
         return;
     }
-    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<8} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<5} {:<7} {:<10} {:<10}"),
+    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<8} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<5} {:<7} {:<7} {:<10} {:<10}"),
                       "Optimization report",
                       "size",
                       "ritz",
@@ -126,20 +126,21 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                       "norm",
                       "iter",
                       "mv",
+                      "pc",
                       "time [s]",
                       "avg [s/op]");
 
     for(const auto &[idx,entry] : iter::enumerate(eigs_log)){
         if(max_entries and max_entries.value() <= idx) break;
-        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<10.2e} {:<10.2e}"),
+        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}"),
                           entry.description,
                           entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol, entry.resid, entry.grad,
                           entry.energy,entry.eigval,
                           entry.variance,
                           entry.overlap,entry.norm,
-                          entry.iter, entry.counter,
+                          entry.iter, entry.mv, entry.pc,
                           entry.time,
-                          entry.time/std::max(1.0,static_cast<double>(entry.counter)));
+                          entry.time/std::max(1.0,static_cast<double>(entry.mv)));
     }
     eigs_log.clear();
 }
@@ -175,5 +176,6 @@ void tools::finite::opt::reports::eigs_add_entry(const opt_mps &mps, spdlog::lev
     std::string description = fmt::format("{:<24}", mps.get_name());
     eigs_log.push_back(eigs_entry{description, std::string(mps.get_eigs_ritz()), mps.get_tensor().size(), mps.get_eigs_idx(), mps.get_eigs_nev(),
                                   mps.get_eigs_ncv(), mps.get_energy_per_site(), mps.get_eigs_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                  mps.get_eigs_tol(), mps.get_eigs_resid(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_time(), level});
+                                  mps.get_eigs_tol(), mps.get_eigs_resid(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(),
+                                  level});
 }

@@ -84,7 +84,7 @@ void MatVecDense<Scalar>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr) {
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
-    counter++;
+    num_op++;
 }
 
 template<typename T>
@@ -100,7 +100,7 @@ void MatVecDense<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSiz
                 Eigen::Map<VectorType<Scalar>> x_out(x_out_ptr, L);
                 if constexpr(std::is_same_v<Scalar, double>) x_out.noalias() = dense_lu::lu_real.value().solve(x_in);
                 if constexpr(std::is_same_v<Scalar, std::complex<double>>) x_out.noalias() = dense_lu::lu_cplx.value().solve(x_in);
-                counter++;
+                num_op++;
             }
 
             break;
@@ -113,7 +113,7 @@ void MatVecDense<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSiz
                 Eigen::Map<VectorType<Scalar>> x_out(x_out_ptr, L);
                 if constexpr(std::is_same_v<Scalar, double>) x_out.noalias() = x_in * dense_lu::lu_real.value().inverse();
                 if constexpr(std::is_same_v<Scalar, std::complex<double>>) x_out.noalias() = x_in * dense_lu::lu_cplx.value().inverse();
-                counter++;
+                num_op++;
             }
             break;
         }
@@ -155,7 +155,7 @@ void MatVecDense<Scalar>::MultAx(Scalar *x_in, Scalar *x_out) {
             break;
         }
     }
-    counter++;
+    num_mv++;
 }
 
 template<typename T>
@@ -172,7 +172,7 @@ void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize
                         Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
                         Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
                         x_vec_out.noalias() = A_matrix * x_vec_in;
-                        counter++;
+                        num_mv++;
                     }
                     break;
                 }
@@ -183,7 +183,7 @@ void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize
                         Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
                         Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
                         x_vec_out.noalias() = x_vec_in * A_matrix;
-                        counter++;
+                        num_mv++;
                     }
                     break;
                 }
@@ -199,7 +199,7 @@ void MatVecDense<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize
                 Eigen::Map<VectorType<Scalar>> x_vec_in(x_in, L);
                 Eigen::Map<VectorType<Scalar>> x_vec_out(x_out, L);
                 x_vec_out.noalias() = A_matrix.template selfadjointView<Eigen::Lower>() * x_vec_in;
-                counter++;
+                num_mv++;
             }
             break;
         }

@@ -78,7 +78,7 @@ void MatVecMPO<T>::MultAx(T *mps_in_, T *mps_out_) {
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
     tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
-    counter++;
+    num_mv++;
 }
 
 template<typename T>
@@ -87,7 +87,7 @@ void MatVecMPO<T>::MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *env
     std::array<long, 3> shape_envL_ = {shape_mps_[1], shape_mps_[1], shape_mpo_[0]};
     std::array<long, 3> shape_envR_ = {shape_mps_[2], shape_mps_[2], shape_mpo_[1]};
     tools::common::contraction::matrix_vector_product(mps_out, mps_in, shape_mps, mpo_ptr, shape_mpo_, envL_ptr, shape_envL_, envR_ptr, shape_envR_);
-    counter++;
+    num_mv++;
 }
 
 template<typename T>
@@ -101,7 +101,7 @@ void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, 
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
     }
 
-    counter += *blockSize;
+    num_mv += *blockSize;
     *err = 0;
 }
 
@@ -112,8 +112,8 @@ void MatVecMPO<T>::MultOPv(T *mps_in_, T *mps_out_) {
     Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
     switch(side) {
         case eig::Side::R: {
-            //            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
-            tools::common::contraction::matrix_inverse_vector_product_lbfgs(mps_out, mps_in, mpo, envL, envR);
+            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+            //            tools::common::contraction::matrix_inverse_vector_product_bfgs(mps_out, mps_in, mpo, envL, envR);
             break;
         }
         case eig::Side::L: {
@@ -124,7 +124,7 @@ void MatVecMPO<T>::MultOPv(T *mps_in_, T *mps_out_) {
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
-    counter++;
+    num_op++;
 }
 
 template<typename T>
@@ -137,8 +137,8 @@ void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
                 T                                    *mps_out_ = static_cast<T *>(y) + *ldy * i;
                 Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
                 Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
-                tools::common::contraction::matrix_inverse_vector_product_lbfgs(mps_out, mps_in, mpo, envL, envR);
-                counter++;
+                tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+                num_op++;
             }
             break;
         }
@@ -161,7 +161,8 @@ void MatVecMPO<Scalar>::reset() {
     if(t_factorOP) t_factorOP->reset();
     if(t_multOPv) t_multOPv->reset();
     if(t_multAx) t_multAx->reset();
-    counter = 0;
+    num_mv = 0;
+    num_op = 0;
 }
 
 template<typename T>

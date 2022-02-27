@@ -125,7 +125,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr
             throw std::runtime_error("eigs cannot handle sides L and R simultaneously");
         }
     }
-    counter++;
+    num_op++;
 }
 
 template<typename Scalar, bool sparseLU>
@@ -148,7 +148,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ld
                     x_out.noalias() = sparse_lu::lu_real_sparse.value().solve(x_in);
                 else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
                     x_out.noalias() = sparse_lu::lu_cplx_sparse.value().solve(x_in);
-                counter++;
+                num_op++;
             }
             break;
         }
@@ -165,7 +165,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ld
                 else {
                     throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet");
                 }
-                counter++;
+                num_op++;
             }
             break;
         }
@@ -223,7 +223,7 @@ void MatVecSparse<Scalar, sparseLU>::MultAx(Scalar *x_in, Scalar *x_out) {
             break;
         }
     }
-    counter++;
+    num_mv++;
 }
 
 template<typename T, bool sparseLU>
@@ -246,7 +246,7 @@ void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int
                             x_vec_out.noalias() = sparse_lu::A_real_sparse.value() * x_vec_in;
                         else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
                             x_vec_out.noalias() = sparse_lu::A_cplx_sparse.value() * x_vec_in;
-                        counter++;
+                        num_mv++;
                     }
                     break;
                 }
@@ -263,7 +263,7 @@ void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int
                             x_vec_out.noalias() = x_vec_in * sparse_lu::A_real_sparse.value();
                         else if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
                             x_vec_out.noalias() = x_vec_in * sparse_lu::A_cplx_sparse.value();
-                        counter++;
+                        num_mv++;
                     }
                     break;
                 }
@@ -284,7 +284,7 @@ void MatVecSparse<T, sparseLU>::MultAx(void *x, int *ldx, void *y, int *ldy, int
                     x_vec_out.noalias() = sparse_lu::A_real_sparse.value().template selfadjointView<Eigen::Upper>() * x_vec_in;
                 if constexpr(std::is_same_v<Scalar, std::complex<double>> and sparseLU)
                     x_vec_out.noalias() = sparse_lu::A_cplx_sparse.value().template selfadjointView<Eigen::Upper>() * x_vec_in;
-                counter++;
+                num_mv++;
             }
             break;
         }

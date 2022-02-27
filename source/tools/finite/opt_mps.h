@@ -24,8 +24,9 @@ namespace tools::finite::opt {
         std::optional<double>                 norm        = std::nullopt;
         std::optional<size_t>                 length      = std::nullopt;
         std::optional<size_t>                 iter        = std::nullopt;
-        std::optional<size_t>                 num_op      = std::nullopt;
-        std::optional<size_t>                 num_mv      = std::nullopt;
+        std::optional<size_t>                 num_op      = std::nullopt; // Number of inverse-matrix-vector products
+        std::optional<size_t>                 num_mv      = std::nullopt; // Number of matrix-vector products
+        std::optional<size_t>                 num_pc      = std::nullopt; // Number of preconditioner calls
         std::optional<double>                 time        = std::nullopt;
         std::optional<double>                 delta_f     = std::nullopt;
         std::optional<double>                 grad_tol    = std::nullopt;
@@ -80,6 +81,7 @@ namespace tools::finite::opt {
         [[nodiscard]] size_t                     get_iter() const;
         [[nodiscard]] size_t                     get_op() const;
         [[nodiscard]] size_t                     get_mv() const;
+        [[nodiscard]] size_t                     get_pc() const;
         [[nodiscard]] double                     get_time() const;
         [[nodiscard]] double                     get_delta_f() const;
         [[nodiscard]] double                     get_grad_tol() const;
@@ -114,6 +116,7 @@ namespace tools::finite::opt {
         void                                     set_iter(size_t iter_);
         void                                     set_op(size_t op_);
         void                                     set_mv(size_t mv_);
+        void                                     set_pc(size_t pc_);
         void                                     set_time(double time_);
         void                                     set_delta_f(double delta_f_);
         void                                     set_grad_tol(double grad_tol_);

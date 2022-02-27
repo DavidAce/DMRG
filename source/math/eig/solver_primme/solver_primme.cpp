@@ -368,7 +368,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.iter           = primme.stats.numOuterIterations;
     result.meta.num_mv         = primme.stats.numMatvecs;
     result.meta.num_pc         = primme.stats.numPreconds;
-    result.meta.num_op         = matrix.counter;
+    result.meta.num_op         = matrix.num_op;
     result.meta.time_mv        = primme.stats.timeMatvec;
     result.meta.time_pc        = primme.stats.timePrecond;
     result.meta.n              = primme.n;

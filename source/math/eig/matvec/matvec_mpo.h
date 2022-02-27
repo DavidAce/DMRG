@@ -60,7 +60,8 @@ class MatVecMPO {
     void compress(); //  Compresses the MPO virtual bond so that x_out <-- A*x_in can happen faster
 
     // Various utility functions
-    int  counter = 0;
+    long num_mv = 0;
+    long num_op = 0;
     void print() const;
     void reset();
     void set_shift(std::complex<double> shift);

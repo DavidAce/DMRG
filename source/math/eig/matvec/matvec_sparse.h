@@ -44,7 +44,8 @@ class MatVecSparse {
     void              MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
     // Various utility functions
-    int                     counter = 0;
+    long                    num_mv = 0;
+    long                    num_op = 0;
     void                    print() const;
     void                    set_shift(std::complex<double> sigma_);
     void                    set_mode(const eig::Form form_);

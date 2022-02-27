@@ -43,7 +43,9 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                 mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));
                 mps.set_length(initial_mps.get_length());
                 mps.set_time(solver.result.meta.time_total);
+                mps.set_op(static_cast<size_t>(solver.result.meta.num_op));
                 mps.set_mv(static_cast<size_t>(solver.result.meta.num_mv));
+                mps.set_pc(static_cast<size_t>(solver.result.meta.num_pc));
                 mps.set_iter(static_cast<size_t>(solver.result.meta.iter));
                 mps.set_eigs_idx(idx);
                 mps.set_eigs_nev(solver.result.meta.nev_converged);
@@ -61,8 +63,7 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
                 double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, &measurements);
-                double grad_max     = std::numeric_limits<double>::quiet_NaN();
-                if(not fulldiag) { grad_max = tools::finite::measure::max_gradient(mps.get_tensor(), tensors); }
+                double grad_max     = tools::finite::measure::max_gradient(mps.get_tensor(), tensors);
 
                 mps.set_energy(energy);
                 mps.set_eigval(eigval);

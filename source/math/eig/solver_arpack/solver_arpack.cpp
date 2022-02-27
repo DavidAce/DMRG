@@ -248,8 +248,8 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
         result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
 
     result.meta.eigvals_found = solver.EigenvaluesFound(); // BOOL!
-    result.meta.num_mv        = matrix.counter;
-    result.meta.num_op        = matrix.counter;
+    result.meta.num_mv        = matrix.num_mv;
+    result.meta.num_op        = matrix.num_op;
     result.meta.iter          = solver.GetIter();
     result.meta.n             = solver.GetN();
     result.meta.nev           = std::min(nev, static_cast<eig::size_type>(solver.GetNev()));
@@ -387,8 +387,8 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
         result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
     result.meta.eigvals_found = solver.EigenvaluesFound();       // BOOL!
 
-    result.meta.num_mv        = matrix.counter;
-    result.meta.num_op        = nops;
+    result.meta.num_mv        = matrix.num_mv;
+    result.meta.num_op        = matrix.num_op;
     result.meta.iter          = solver.GetIter();
     result.meta.n             = solver.GetN();
     result.meta.nev           = solver.GetNev();
