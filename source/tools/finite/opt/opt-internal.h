@@ -16,7 +16,7 @@ namespace tools::finite::opt::internal{
     template<typename T, auto rank = 3>
     using TensorType = Eigen::Tensor<T, rank>;
 
-    extern opt_mps lbfgs_optimize_variance    (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps bfgs_optimize_variance    (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_energy       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_subspace     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_simps        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
@@ -72,7 +72,7 @@ namespace tools::finite::opt::internal{
                                                                                                          const std::vector<opt_mps> & eigvecs);
     }
 
-    inline ceres::GradientProblemSolver::Options lbfgs_default_options;
+    inline ceres::GradientProblemSolver::Options bfgs_default_options;
 
     inline bool no_state_in_window = false;
 

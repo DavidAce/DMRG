@@ -11,7 +11,7 @@ namespace spdlog {
 }
 namespace tools::finite::opt::internal {
     template<typename Scalar>
-    class lbfgs_simps_functor : public ceres::FirstOrderFunction {
+    class bfgs_simps_functor : public ceres::FirstOrderFunction {
         private:
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
@@ -30,10 +30,10 @@ namespace tools::finite::opt::internal {
         void compute_Hm(const VectorType &m) const; // Computes  H|φ>
 
         public:
-        explicit lbfgs_simps_functor(const TensorMap3 &mps_,  /*!< The current mps  */
-                                     const TensorMap3 &envL_, /*!< The left block tensor for H.  */
-                                     const TensorMap3 &envR_, /*!< The right block tensor for H.  */
-                                     const TensorMap4 &mpo_   /*!< The H MPO's  */
+        explicit bfgs_simps_functor(const TensorMap3 &mps_,  /*!< The current mps  */
+                                    const TensorMap3 &envL_, /*!< The left block tensor for H.  */
+                                    const TensorMap3 &envR_, /*!< The right block tensor for H.  */
+                                    const TensorMap4 &mpo_   /*!< The H MPO's  */
         );
         int  NumParameters() const final;
         bool Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const final;

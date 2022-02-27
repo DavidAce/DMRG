@@ -19,7 +19,7 @@ namespace spdlog {
 namespace tools::finite::opt::internal {
     enum class LagrangeNorm { ON, OFF };
 
-    class lbfgs_base_functor : public ceres::FirstOrderFunction {
+    class bfgs_base_functor : public ceres::FirstOrderFunction {
         protected:
         int                    num_parameters; // Includes lagrangian multiplier(s)
         long                   size;           // Does not include lagrange multiplier (i.e. size + 1 = num_parameters if LagrangeNorm::ON)
@@ -50,7 +50,7 @@ namespace tools::finite::opt::internal {
 
         public:
         //        template<typename> friend class NormParametrization;
-        explicit lbfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
+        explicit bfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
 
         double get_energy() const;
         double get_energy_per_site() const;

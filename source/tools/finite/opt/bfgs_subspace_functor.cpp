@@ -1,4 +1,4 @@
-#include "lbfgs_subspace_functor.h"
+#include "bfgs_subspace_functor.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -8,11 +8,11 @@
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
-tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::lbfgs_subspace_functor(const TensorsFinite &tensors, const AlgorithmStatus &status,
-                                                                                     const MatrixType &H2_subspace, const Eigen::VectorXd &eigvals_)
-    : lbfgs_base_functor(tensors, status), H2(H2_subspace), eigvals(eigvals_) {
+tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::bfgs_subspace_functor(const TensorsFinite &tensors, const AlgorithmStatus &status,
+                                                                                   const MatrixType &H2_subspace, const Eigen::VectorXd &eigvals_)
+    : bfgs_base_functor(tensors, status), H2(H2_subspace), eigvals(eigvals_) {
     double nonhermiticity = (H2 - H2.adjoint()).cwiseAbs().sum() / static_cast<double>(H2.size());
-    if(nonhermiticity > 1e-12) tools::log->error("lbfgs_subspace_functor(): H2 is not Hermitian: {:.16f}", nonhermiticity);
+    if(nonhermiticity > 1e-12) tools::log->error("bfgs_subspace_functor(): H2 is not Hermitian: {:.16f}", nonhermiticity);
 
     num_parameters = static_cast<int>(eigvals.size());
 
@@ -21,7 +21,7 @@ tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::lbfgs_subspace_fun
 }
 
 template<typename Scalar>
-bool tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
+bool tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
     auto       t_step_token = t_step->tic_token();
     Scalar     nH2n, nHn, var;
     double     vv, log10var;
@@ -90,7 +90,7 @@ bool tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::Evaluate(cons
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("σ²H is invalid");
         tools::log->warn("σ²H             = {:8.2e}", variance);
-        tools::log->warn("counter          = {}", counter);
+        tools::log->warn("mv          = {}", counter);
         tools::log->warn("vecsize         = {}", vecSize);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
@@ -100,11 +100,11 @@ bool tools::finite::opt::internal::lbfgs_subspace_functor<Scalar>::Evaluate(cons
         tools::log->warn("energy shift    = {:.16f}", energy_shift);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
+        throw std::runtime_error("Direct functor failed at mv = " + std::to_string(counter));
     }
     counter++;
     return true;
 }
 
-template class tools::finite::opt::internal::lbfgs_subspace_functor<real>;
-template class tools::finite::opt::internal::lbfgs_subspace_functor<cplx>;
+template class tools::finite::opt::internal::bfgs_subspace_functor<real>;
+template class tools::finite::opt::internal::bfgs_subspace_functor<cplx>;

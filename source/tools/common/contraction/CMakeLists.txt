@@ -1,6 +1,5 @@
 add_library(dmrg-tools-common-contraction OBJECT)
-#target_sources(dmrg-tools-common-contraction PRIVATE expectation_value.cpp matrix_inverse_vector_product.cpp matrix_vector_product.cpp)
-target_sources(dmrg-tools-common-contraction PRIVATE contraction.cpp matrix_inverse_vector_product_lbfgs.cpp)
+target_sources(dmrg-tools-common-contraction PRIVATE contraction.cpp matrix_inverse_vector_product.cpp matrix_inverse_vector_product_bfgs.cpp)
 target_link_libraries(dmrg-tools-common-contraction PUBLIC deps flags)
 target_link_precompiled_headers(dmrg-tools-common-contraction)
 

@@ -115,8 +115,8 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
-        inline bool          lbfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when LBFGS returns with bad gradient */
-        inline OptEigs       prefer_eigs_over_lbfgs      = OptEigs::WHEN_STUCK;                    /*!< Prefer using the eigenvalue solver for (H-E/L)² over LBFGS. Choose [ALWAYS | WHEN_STUCK] */
+        inline bool          bfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
+        inline OptEigs       prefer_eigs_over_bfgs      = OptEigs::WHEN_STUCK;                    /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose [ALWAYS | WHEN_STUCK] */
         inline bool          expand_envs_when_stuck      = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when stuck. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every iteration. This implies doing it when stuck also. */

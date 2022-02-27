@@ -1,4 +1,4 @@
-#include "lbfgs_variance_functor.h"
+#include "bfgs_variance_functor.h"
 #include "config/debug.h"
 #include "math/num.h"
 #include "math/svd.h"
@@ -24,8 +24,8 @@ namespace debug {
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-lbfgs_variance_functor<Scalar, lagrangeNorm>::lbfgs_variance_functor(const TensorsFinite &tensors, const AlgorithmStatus &status)
-    : lbfgs_base_functor(tensors, status) {
+bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const TensorsFinite &tensors, const AlgorithmStatus &status)
+    : bfgs_base_functor(tensors, status) {
     tools::log->trace("Constructing direct functor");
 
     if constexpr(std::is_same<Scalar, double>::value) {
@@ -74,7 +74,7 @@ lbfgs_variance_functor<Scalar, lagrangeNorm>::lbfgs_variance_functor(const Tenso
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
+bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
     t_step->tic();
     Scalar                       var;
     Scalar                       nHn, nH2n;
@@ -82,7 +82,7 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), size); // v does not include the lagrange multiplier
 
     if constexpr(settings::debug) {
-        if(v.hasNaN()) throw std::runtime_error(fmt::format("lbfgs_variance_functor::Evaluate: v has nan's at counter {}\n{}", counter, v));
+        if(v.hasNaN()) throw std::runtime_error(fmt::format("bfgs_variance_functor::Evaluate: v has nan's at mv {}\n{}", counter, v));
     }
 
     VectorType n_temp;
@@ -117,7 +117,7 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
     //    var        = nH2n;
     double eps = std::numeric_limits<double>::epsilon();
     if((std::real(var) < -eps or std::real(nH2n) < -eps))
-        tools::log->trace("Counter = {} | LBFGS | "
+        tools::log->trace("Counter = {} | BFGS | "
                           "negative: "
                           "var  {:.16f} + {:.16f}i | "
                           "nHn  {:.16f} + {:.16f}i | "
@@ -172,7 +172,7 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("σ²H is invalid");
         tools::log->warn("σ²H             = {:8.2e}", variance);
-        tools::log->warn("counter         = {}", counter);
+        tools::log->warn("mv         = {}", counter);
         tools::log->warn("size            = {}", size);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
@@ -182,7 +182,7 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
         tools::log->warn("energy shift    = {:.16f}", energy_shift);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw std::runtime_error("Direct functor failed at counter = " + std::to_string(counter));
+        throw std::runtime_error("Direct functor failed at mv = " + std::to_string(counter));
     }
 
     counter++;
@@ -191,7 +191,7 @@ bool lbfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doub
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void lbfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) const {
+void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) const {
     t_H2n->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2n_tensor, v_tensor, mpo2, env2L, env2R);
@@ -250,7 +250,7 @@ void lbfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) 
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void lbfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) const {
+void bfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) const {
     t_Hn->tic();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hn_tensor, v_tensor, mpo, envL, envR);
@@ -258,7 +258,7 @@ void lbfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) c
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void lbfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
+void bfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
     if(readyCompress) return;
 
     svd::settings svd_settings;
@@ -288,7 +288,7 @@ void lbfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void lbfgs_variance_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
+void bfgs_variance_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
     if(readyShift) return; // This only happens once!!
     if(readyCompress) throw std::runtime_error("Cannot shift the mpo: it is already compressed!");
     shift = shift_;
@@ -326,7 +326,7 @@ void lbfgs_variance_functor<Scalar, lagrangeNorm>::set_shift(double shift_) {
     readyShift = true;
 }
 
-template class tools::finite::opt::internal::lbfgs_variance_functor<real, LagrangeNorm::ON>;
-template class tools::finite::opt::internal::lbfgs_variance_functor<real, LagrangeNorm::OFF>;
-template class tools::finite::opt::internal::lbfgs_variance_functor<cplx, LagrangeNorm::ON>;
-template class tools::finite::opt::internal::lbfgs_variance_functor<cplx, LagrangeNorm::OFF>;
+template class tools::finite::opt::internal::bfgs_variance_functor<real, LagrangeNorm::ON>;
+template class tools::finite::opt::internal::bfgs_variance_functor<real, LagrangeNorm::OFF>;
+template class tools::finite::opt::internal::bfgs_variance_functor<cplx, LagrangeNorm::ON>;
+template class tools::finite::opt::internal::bfgs_variance_functor<cplx, LagrangeNorm::OFF>;

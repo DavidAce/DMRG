@@ -1,11 +1,11 @@
-#include "lbfgs_callback.h"
+#include "bfgs_callback.h"
 #include "config/debug.h"
 #include "debug/exceptions.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
-#include "tools/finite/opt/lbfgs_base_functor.h"
-#include "tools/finite/opt/lbfgs_subspace_functor.h"
-#include "tools/finite/opt/lbfgs_variance_functor.h"
+#include "tools/finite/opt/bfgs_base_functor.h"
+#include "tools/finite/opt/bfgs_subspace_functor.h"
+#include "tools/finite/opt/bfgs_variance_functor.h"
 
 namespace settings {
     constexpr static bool debug_callback = false;
@@ -42,7 +42,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     last_log_time = summary.cumulative_time_in_seconds;
     last_log_iter = summary.iteration;
     /* clang-format off */
-    log->debug(FMT_STRING("LBFGS: "
+    log->debug(FMT_STRING("BFGS: "
                "it {:>5} f {:>8.5f} |Δf| {:>8.2e} "
                "|∇f| {:>8.2e} |∇f|ᵐᵃˣ {:>8.2e} |∇Ψ|ᵐᵃˣ {:>8.2e} "
                "|ΔΨ| {:8.2e} |Ψ|-1 {:8.2e} "
@@ -56,7 +56,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                summary.gradient_norm,
                summary.gradient_max_norm,
                functor.get_max_grad_norm(),
-               summary.step_norm, // By lbfgs
+               summary.step_norm, // By bfgs
                functor.get_norm_offset(),
                functor.get_count() - last_count,
                functor.get_count(),
@@ -76,10 +76,10 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
 }
 
 namespace tools::finite::opt::internal {
-    template class CustomLogCallback<lbfgs_subspace_functor<real>>;
-    template class CustomLogCallback<lbfgs_variance_functor<real, LagrangeNorm::ON>>;
-    template class CustomLogCallback<lbfgs_variance_functor<real, LagrangeNorm::OFF>>;
-    template class CustomLogCallback<lbfgs_subspace_functor<cplx>>;
-    template class CustomLogCallback<lbfgs_variance_functor<cplx, LagrangeNorm::ON>>;
-    template class CustomLogCallback<lbfgs_variance_functor<cplx, LagrangeNorm::OFF>>;
+    template class CustomLogCallback<bfgs_subspace_functor<real>>;
+    template class CustomLogCallback<bfgs_variance_functor<real, LagrangeNorm::ON>>;
+    template class CustomLogCallback<bfgs_variance_functor<real, LagrangeNorm::OFF>>;
+    template class CustomLogCallback<bfgs_subspace_functor<cplx>>;
+    template class CustomLogCallback<bfgs_variance_functor<cplx, LagrangeNorm::ON>>;
+    template class CustomLogCallback<bfgs_variance_functor<cplx, LagrangeNorm::OFF>>;
 }

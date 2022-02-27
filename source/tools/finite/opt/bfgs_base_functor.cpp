@@ -1,4 +1,4 @@
-#include "lbfgs_base_functor.h"
+#include "bfgs_base_functor.h"
 #include <algorithms/AlgorithmStatus.h>
 #include <config/settings.h>
 #include <tensors/model/ModelFinite.h>
@@ -8,7 +8,7 @@
 
 using namespace tools::finite::opt::internal;
 
-lbfgs_base_functor::lbfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status) {
+bfgs_base_functor::bfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status) {
     t_step         = std::make_unique<tid::ur>();
     t_H2n          = std::make_unique<tid::ur>();
     t_nH2n         = std::make_unique<tid::ur>();
@@ -31,16 +31,16 @@ lbfgs_base_functor::lbfgs_base_functor(const TensorsFinite &tensors, const Algor
     iteration            = status.iter;
 }
 
-double lbfgs_base_functor::get_energy() const { return energy; }
-double lbfgs_base_functor::get_energy_per_site() const { return energy_per_site; }
-double lbfgs_base_functor::get_variance() const { return variance; }
-double lbfgs_base_functor::get_variance_per_site() const { return variance_per_site; }
-size_t lbfgs_base_functor::get_count() const { return counter; }
-double lbfgs_base_functor::get_norm() const { return norm; }
-double lbfgs_base_functor::get_norm_offset() const { return norm_offset; }
-double lbfgs_base_functor::get_delta_f() const { return delta_f; }
-double lbfgs_base_functor::get_max_grad_norm() const { return max_grad_norm; }
-long   lbfgs_base_functor::get_ops() const { return ops; }
-int    lbfgs_base_functor::NumParameters() const { return num_parameters; }
-void   lbfgs_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
-void   lbfgs_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }
+double bfgs_base_functor::get_energy() const { return energy; }
+double bfgs_base_functor::get_energy_per_site() const { return energy_per_site; }
+double bfgs_base_functor::get_variance() const { return variance; }
+double bfgs_base_functor::get_variance_per_site() const { return variance_per_site; }
+size_t bfgs_base_functor::get_count() const { return counter; }
+double bfgs_base_functor::get_norm() const { return norm; }
+double bfgs_base_functor::get_norm_offset() const { return norm_offset; }
+double bfgs_base_functor::get_delta_f() const { return delta_f; }
+double bfgs_base_functor::get_max_grad_norm() const { return max_grad_norm; }
+long   bfgs_base_functor::get_ops() const { return ops; }
+int    bfgs_base_functor::NumParameters() const { return num_parameters; }
+void   bfgs_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
+void   bfgs_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }

@@ -143,8 +143,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
-    dmrg_config.load_parameter("strategy::lbfgs_fix_gradient_w_eigs"          , strategy::lbfgs_fix_gradient_w_eigs);
-    dmrg_config.load_parameter("strategy::prefer_eigs_over_lbfgs"             , strategy::prefer_eigs_over_lbfgs);
+    dmrg_config.load_parameter("strategy::bfgs_fix_gradient_w_eigs"           , strategy::bfgs_fix_gradient_w_eigs);
+    dmrg_config.load_parameter("strategy::prefer_eigs_over_bfgs"              , strategy::prefer_eigs_over_bfgs);
     dmrg_config.load_parameter("strategy::expand_envs_when_stuck"             , strategy::expand_envs_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);

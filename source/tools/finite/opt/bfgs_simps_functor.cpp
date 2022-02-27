@@ -1,4 +1,4 @@
-#include "lbfgs_simps_functor.h"
+#include "bfgs_simps_functor.h"
 #include "config/debug.h"
 #include "opt-internal.h"
 #include "tid/tid.h"
@@ -16,16 +16,21 @@ namespace debug {
         Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
         return hasNaN(vector, name);
     }
+    template<typename Scalar, auto rank>
+    bool hasNaN(const Eigen::TensorMap<const Eigen::Tensor<Scalar, rank>> &tensor, std::string_view name = "") {
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
+        return hasNaN(vector, name);
+    }
 }
 
 using namespace tools::finite::opt::internal;
 
 template<typename Scalar>
-lbfgs_simps_functor<Scalar>::lbfgs_simps_functor(const TensorMap3 &mps_,  /*!< The current mps  */
-                                                 const TensorMap3 &envL_, /*!< The left block tensor for H.  */
-                                                 const TensorMap3 &envR_, /*!< The right block tensor for H.  */
-                                                 const TensorMap4 &mpo_   /*!< The H MPO's  */
-                                                 )
+bfgs_simps_functor<Scalar>::bfgs_simps_functor(const TensorMap3 &mps_,  /*!< The current mps  */
+                                               const TensorMap3 &envL_, /*!< The left block tensor for H.  */
+                                               const TensorMap3 &envR_, /*!< The right block tensor for H.  */
+                                               const TensorMap4 &mpo_   /*!< The H MPO's  */
+                                               )
     : mps(mps_), envL(envL_), envR(envR_), mpo(mpo_)
 
 {
@@ -51,16 +56,16 @@ lbfgs_simps_functor<Scalar>::lbfgs_simps_functor(const TensorMap3 &mps_,  /*!< T
 }
 
 template<typename Scalar>
-int lbfgs_simps_functor<Scalar>::NumParameters() const {
+int bfgs_simps_functor<Scalar>::NumParameters() const {
     return num_parameters;
 }
 
 template<typename Scalar>
-bool lbfgs_simps_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
+bool bfgs_simps_functor<Scalar>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), size); // |φ>
     Eigen::Map<const VectorType> m(mps.data(), mps.size());                                  // |Ψ>
     if constexpr(settings::debug) {
-        if(v.hasNaN()) throw std::runtime_error(fmt::format("lbfgs_simps_functor::Evaluate: v has nan's\n{}", v));
+        if(v.hasNaN()) throw std::runtime_error(fmt::format("bfgs_simps_functor::Evaluate: v has nan's\n{}", v));
     }
 
     compute_Hv(v);
@@ -81,17 +86,17 @@ bool lbfgs_simps_functor<Scalar>::Evaluate(const double *v_double_double, double
 }
 
 template<typename Scalar>
-void lbfgs_simps_functor<Scalar>::compute_Hv(const VectorType &v) const {
+void bfgs_simps_functor<Scalar>::compute_Hv(const VectorType &v) const {
     // Computes  Hv_tensor = H|v>
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hv_tensor, v_tensor, mpo, envL, envR);
 }
 template<typename Scalar>
-void lbfgs_simps_functor<Scalar>::compute_Hm(const VectorType &m) const {
+void bfgs_simps_functor<Scalar>::compute_Hm(const VectorType &m) const {
     // Computes  Hm_tensor = H|m>
     auto m_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(m.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hm_tensor, m_tensor, mpo, envL, envR);
 }
 
-template class tools::finite::opt::internal::lbfgs_simps_functor<real>;
-template class tools::finite::opt::internal::lbfgs_simps_functor<cplx>;
+template class tools::finite::opt::internal::bfgs_simps_functor<real>;
+template class tools::finite::opt::internal::bfgs_simps_functor<cplx>;

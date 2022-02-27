@@ -36,7 +36,7 @@ namespace tools::common::contraction {
                                const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                const Scalar * const envR_ptr, std::array<long,3> envR_dims);
     template<typename Scalar>
-    void matrix_inverse_vector_product_lbfgs(
+    void matrix_inverse_vector_product_bfgs(
                                Scalar * res_ptr,
                                const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
@@ -121,7 +121,7 @@ namespace tools::common::contraction {
     }
 
     template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
-    void matrix_inverse_vector_product_lbfgs(
+    void matrix_inverse_vector_product_bfgs(
         TensorWrite<res_type> &res,
         const TensorRead<mps_type> & mps,
         const TensorRead<mpo_type> & mpo,
@@ -137,7 +137,7 @@ namespace tools::common::contraction {
         const auto & envL_ref = static_cast<const env_type&>(envL);
         const auto & envR_ref = static_cast<const env_type&>(envR);
 
-        matrix_inverse_vector_product_lbfgs(
+        matrix_inverse_vector_product_bfgs(
             res_ref.data(),
             mps_ref.data(), mps_ref.dimensions(),
             mpo_ref.data(), mpo_ref.dimensions(),

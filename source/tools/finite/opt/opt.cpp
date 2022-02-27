@@ -7,9 +7,9 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
-#include "tools/finite/opt/lbfgs_base_functor.h"
-#include "tools/finite/opt/lbfgs_subspace_functor.h"
-#include "tools/finite/opt/lbfgs_variance_functor.h"
+#include "tools/finite/opt/bfgs_base_functor.h"
+#include "tools/finite/opt/bfgs_subspace_functor.h"
+#include "tools/finite/opt/bfgs_variance_functor.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
@@ -82,43 +82,43 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
      */
 
 
-    lbfgs_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;
-    lbfgs_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
-    lbfgs_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
-    lbfgs_default_options.max_num_iterations                         = 10000;
-    lbfgs_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
-    lbfgs_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
-    lbfgs_default_options.min_line_search_step_size                  = std::numeric_limits<double>::epsilon();
-    lbfgs_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
-    lbfgs_default_options.min_line_search_step_contraction           = 0.6; // 0.6
-    lbfgs_default_options.max_line_search_step_expansion             = 10; // 10
-    lbfgs_default_options.max_num_line_search_step_size_iterations   = 200;
-    lbfgs_default_options.max_num_line_search_direction_restarts     = 5; //5
-    lbfgs_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
-    lbfgs_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
-    lbfgs_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
-    lbfgs_default_options.function_tolerance                         = 1e-8; // Tested, 1e-6 seems to be a sweetspot
-    lbfgs_default_options.gradient_tolerance                         = 1e-4; // This is the max gradient on f = log Var H
-    lbfgs_default_options.parameter_tolerance                        = 1e-14;
-    lbfgs_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
-    lbfgs_default_options.update_state_every_iteration               = false;
-    lbfgs_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
+    bfgs_default_options.line_search_type                           = ceres::LineSearchType::WOLFE;
+    bfgs_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
+    bfgs_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
+    bfgs_default_options.max_num_iterations                         = 10000;
+    bfgs_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
+    bfgs_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
+    bfgs_default_options.min_line_search_step_size                  = std::numeric_limits<double>::epsilon();
+    bfgs_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
+    bfgs_default_options.min_line_search_step_contraction           = 0.6; // 0.6
+    bfgs_default_options.max_line_search_step_expansion             = 10; // 10
+    bfgs_default_options.max_num_line_search_step_size_iterations   = 200;
+    bfgs_default_options.max_num_line_search_direction_restarts     = 5; //5
+    bfgs_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
+    bfgs_default_options.line_search_sufficient_curvature_decrease  = 0.9;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
+    bfgs_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
+    bfgs_default_options.function_tolerance                         = 1e-8; // Tested, 1e-6 seems to be a sweetspot
+    bfgs_default_options.gradient_tolerance                         = 1e-4; // This is the max gradient on f = log Var H
+    bfgs_default_options.parameter_tolerance                        = 1e-14;
+    bfgs_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
+    bfgs_default_options.update_state_every_iteration               = false;
+    bfgs_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
     if(status.algorithm_has_stuck_for > 0){
         // Eigenvalue bfgs scaling performs badly when the problem is ill-conditioned (sensitive to some parameters).
-        // Empirically, we observe that the gradient is still large when lbfgs has finished,
+        // Empirically, we observe that the gradient is still large when bfgs has finished,
         // and often the result is a tiny bit worse than what we started with.
-        // When this happens, it's not worth trying to get LBFGS to converge: instead, try an eigensolver on the energy-shifted operator H²
-        lbfgs_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+        // When this happens, it's not worth trying to get BFGS to converge: instead, try an eigensolver on the energy-shifted operator H²
+        bfgs_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     }
 
     /* clang-format off */
     // Apply overrides if there are any
-    if(meta.lbfgs_max_iter) lbfgs_default_options.max_num_iterations  = meta.lbfgs_max_iter.value();
-    if(meta.lbfgs_max_rank) lbfgs_default_options.max_lbfgs_rank      = meta.lbfgs_max_rank.value();
-    if(meta.lbfgs_func_tol) lbfgs_default_options.function_tolerance  = meta.lbfgs_func_tol.value();
-    if(meta.lbfgs_grad_tol) lbfgs_default_options.gradient_tolerance  = meta.lbfgs_grad_tol.value();
-    if(meta.lbfgs_eigenvalue_scaling) lbfgs_default_options.use_approximate_eigenvalue_bfgs_scaling = meta.lbfgs_eigenvalue_scaling.value();
+    if(meta.bfgs_max_iter) bfgs_default_options.max_num_iterations  = meta.bfgs_max_iter.value();
+    if(meta.bfgs_max_rank) bfgs_default_options.max_lbfgs_rank      = meta.bfgs_max_rank.value();
+    if(meta.bfgs_func_tol) bfgs_default_options.function_tolerance  = meta.bfgs_func_tol.value();
+    if(meta.bfgs_grad_tol) bfgs_default_options.gradient_tolerance  = meta.bfgs_grad_tol.value();
+    if(meta.bfgs_eigenvalue_scaling) bfgs_default_options.use_approximate_eigenvalue_bfgs_scaling = meta.bfgs_eigenvalue_scaling.value();
     /* clang-format on */
 
     //    Progress log definitions:
@@ -139,7 +139,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_energy(tensors, initial_mps, status, meta); // TODO: Implement energy mode
     else if(meta.optMode == OptMode::SIMPS    and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta); // TODO: Implement simps mode
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta);
-    else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::LBFGS) result = internal::lbfgs_optimize_variance(tensors, initial_mps, status, meta);
+    else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::BFGS)  result = internal::bfgs_optimize_variance(tensors, initial_mps, status, meta);
     else
         throw except::logic_error("Incompatible: OptMode [{}] and OptSolver [{}]", enum2sv(meta.optMode), enum2sv(meta.optSolver));
     /* clang-format on */
@@ -272,8 +272,8 @@ int tools::finite::opt::internal::NormParametrization<FunctorType>::LocalSize() 
 }
 
 namespace tools::finite::opt::internal {
-    template class NormParametrization<lbfgs_variance_functor<real, LagrangeNorm::OFF>>;
-    template class NormParametrization<lbfgs_variance_functor<cplx, LagrangeNorm::OFF>>;
-    template class NormParametrization<lbfgs_subspace_functor<real>>;
-    template class NormParametrization<lbfgs_subspace_functor<cplx>>;
+    template class NormParametrization<bfgs_variance_functor<real, LagrangeNorm::OFF>>;
+    template class NormParametrization<bfgs_variance_functor<cplx, LagrangeNorm::OFF>>;
+    template class NormParametrization<bfgs_subspace_functor<real>>;
+    template class NormParametrization<bfgs_subspace_functor<cplx>>;
 }

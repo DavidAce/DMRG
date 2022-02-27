@@ -75,7 +75,7 @@ void tools::finite::opt::reports::print_subs_report(){
 void tools::finite::opt::reports::print_time_report(){
     if (tools::log->level() > spdlog::level::trace) return;
     if(time_log.empty()) return;
-    tools::log->trace(FMT_STRING("LBFGS Time report [s] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"),
+    tools::log->trace(FMT_STRING("BFGS Time report [s] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"),
                       "<ψ|H²|ψ>",
                       "<ψ|H|ψ>",
                       "H²|ψ>",
@@ -161,7 +161,7 @@ void tools::finite::opt::reports::bfgs_add_entry(std::string_view mode, std::str
 void tools::finite::opt::reports::time_add_entry() {
     if(tools::log->level() > spdlog::level::trace) return;
     time_log.push_back({tid::get("vH2v").get_last_interval(), tid::get("vHv").get_last_interval(), tid::get("vH2").get_last_interval(),
-                        tid::get("vH").get_last_interval(), tid::get("lbfgs").get_last_interval(), tid::get("step").get_last_interval()});
+                        tid::get("vH").get_last_interval(), tid::get("bfgs").get_last_interval(), tid::get("step").get_last_interval()});
 }
 
 void tools::finite::opt::reports::subs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time,

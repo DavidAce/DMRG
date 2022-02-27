@@ -2,7 +2,7 @@
 // Eigen goes first
 #include "debug/exceptions.h"
 #include "tools/common/contraction.h"
-#include "tools/finite/opt/lbfgs_simps_functor.h"
+#include "tools/finite/opt/bfgs_simps_functor.h"
 #include "tools/finite/opt/opt-internal.h"
 #include <ceres/gradient_problem.h>
 #include <ceres/gradient_problem_solver.h>
@@ -10,7 +10,7 @@
 
 /* clang-format off */
 template<typename Scalar>
-void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
+void tools::common::contraction::matrix_inverse_vector_product_bfgs(
                                     Scalar * res_ptr,
                                     const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                     const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
@@ -19,7 +19,7 @@ void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
     /* clang-format on */
 
     // Here we apply the inverse operation y = A⁻¹ * x
-    // In this case we use lbfgs for unconstrained minimization of f = |Aφ - ψ|², where
+    // In this case we use bfgs for unconstrained minimization of f = |Aφ - ψ|², where
     //      φ = res
     //      ψ = mps
     //      A = (H-E) = effective hamiltonian (from mpo and env)
@@ -40,8 +40,8 @@ void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     auto  summary               = ceres::GradientProblemSolver::Summary();
-    auto *functor               = new tools::finite::opt::internal::lbfgs_simps_functor<Scalar>(mps, envL, envR, mpo);
-    auto  options               = tools::finite::opt::internal::lbfgs_default_options;
+    auto *functor               = new tools::finite::opt::internal::bfgs_simps_functor<Scalar>(mps, envL, envR, mpo);
+    auto  options               = tools::finite::opt::internal::bfgs_default_options;
     options.max_lbfgs_rank      = 8;
     options.max_num_iterations  = 10000;
     options.function_tolerance  = 1e-6;
@@ -56,9 +56,9 @@ void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
         ceres::Solve(options, problem, y_cplx_as_2x_real.data(), &summary);
     }
     if(not summary.iterations.empty()) {
-        tools::log->info("LBFGS Preconditioner: f: {:8.5e} | size {} | time {:8.5e} | it {} | exit: {}. Message: {}", summary.final_cost,
-                         summary.num_parameters, summary.total_time_in_seconds, summary.iterations.size(),
-                         ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
+        tools::log->info("BFGS Preconditioner: f: {:8.5e} | size {} | time {:8.5e} | it {} | exit: {}. Message: {}", summary.final_cost, summary.num_parameters,
+                         summary.total_time_in_seconds, summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type),
+                         summary.message.c_str());
     }
 
     /* clang-format off */
@@ -66,13 +66,13 @@ void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
 }
 
 using namespace tools::common::contraction;
-template void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
+template void tools::common::contraction::matrix_inverse_vector_product_bfgs(
                                             real * res_ptr,
                                             const real * const mps_ptr, std::array<long,3> mps_dims,
                                             const real * const mpo_ptr, std::array<long,4> mpo_dims,
                                             const real * const envL_ptr, std::array<long,3> envL_dims,
                                             const real * const envR_ptr, std::array<long,3> envR_dims);
-template void tools::common::contraction::matrix_inverse_vector_product_lbfgs(
+template void tools::common::contraction::matrix_inverse_vector_product_bfgs(
                                             cplx * res_ptr,
                                             const cplx * const mps_ptr, std::array<long,3> mps_dims,
                                             const cplx * const mpo_ptr, std::array<long,4> mpo_dims,

@@ -406,10 +406,10 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         if(project_on_every_iter) msg += fmt::format(" | reason: run every {} iter", settings::strategy::project_on_every_iter);
         tools::log->info("Trying projection to {}{}", target_sector.value(), msg);
 
-        auto sector_sign  = tools::finite::mps::init::get_sign(target_sector.value());
-        auto variance_old = tools::finite::measure::energy_variance(tensors);
-        auto spincomp_old = tools::finite::measure::spin_components(*tensors.state);
-
+        auto sector_sign   = tools::finite::mps::init::get_sign(target_sector.value());
+        auto variance_old  = tools::finite::measure::energy_variance(tensors);
+        auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
+        auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
         if(sector_sign != 0) {
             tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit);
         } else {
@@ -458,10 +458,15 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 tools::log->info("Projection not needed: variance {:8.2e} | spin components {:.16f}", variance_old, fmt::join(spincomp_old, ", "));
                 return;
             }
-            auto variance_new = tools::finite::measure::energy_variance(tensors);
-            auto spincomp_new = tools::finite::measure::spin_components(*tensors.state);
+            auto variance_new  = tools::finite::measure::energy_variance(tensors);
+            auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
+            auto entropies_new = tools::finite::measure::entanglement_entropies(*tensors.state);
             tools::log->info("Projection result: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
                              fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+
+            for(const auto &[i, e] : iter::enumerate(entropies_old)) {
+                tools::log->info("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
+            }
         }
         if(target_sector.value() == settings::strategy::target_sector) projected_iter = status.iter;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);

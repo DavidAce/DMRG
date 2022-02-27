@@ -296,8 +296,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    m1.max_sites      = std::min(2ul, settings::strategy::multisite_mps_size_def);
-    m1.lbfgs_grad_tol = settings::precision::max_grad_tolerance;
+    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_size_def);
+    m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
@@ -306,13 +306,13 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         status.bond_limit = std::max<long>(tensors.state->find_largest_bond(), settings::get_bond_init(status.algo_type));
     }
 
-    if(settings::strategy::prefer_eigs_over_lbfgs == OptEigs::ALWAYS) {
+    if(settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_size_def;
         m1.retry     = false;
     }
-    if(settings::strategy::prefer_eigs_over_lbfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0) {
+    if(settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_size_def;
@@ -344,14 +344,14 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(status.fes_is_running) {
         // No need to do expensive operations
         m1.optMode   = OptMode::VARIANCE;
-        m1.optSolver = OptSolver::LBFGS;
+        m1.optSolver = OptSolver::BFGS;
         m1.retry     = false;
     }
     // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
 
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
-        // When this happens, we should use optimize VARIANCE using EIGS or LBFGS instead.
+        // When this happens, we should use optimize VARIANCE using EIGS or BFGS instead.
         m1.optMode = OptMode::VARIANCE;
     }
 
@@ -402,11 +402,11 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         // This usually helps to fine-tune the result if the subspace had bad quality.
         m2.optWhen   = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
         m2.optMode   = OptMode::VARIANCE;
-        m2.optSolver = OptSolver::LBFGS;
+        m2.optSolver = OptSolver::BFGS;
         m2.retry     = false;
         metas.emplace_back(m2);
-    } else if(m1.optSolver == OptSolver::LBFGS and settings::strategy::lbfgs_fix_gradient_w_eigs) {
-        // If we did a LBFGS optimization that terminated with gradient too high, try EIGS
+    } else if(m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_gradient_w_eigs) {
+        // If we did a BFGS optimization that terminated with gradient too high, try EIGS
         m2.optWhen   = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
         m2.retry     = false;
