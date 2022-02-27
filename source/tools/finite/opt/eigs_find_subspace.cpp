@@ -19,8 +19,8 @@
 #include "tools/finite/opt_mps.h"
 
 //
-#include "tools/finite/opt/lbfgs_callback.h"
-#include "tools/finite/opt/lbfgs_simps_functor.h"
+#include "tools/finite/opt/bfgs_callback.h"
+#include "tools/finite/opt/bfgs_simps_functor.h"
 #include <ceres/gradient_problem.h>
 #include <Eigen/QR>
 #include <primme/primme.h>
@@ -204,7 +204,7 @@ template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_pa
                                                                                          double target_subspace_error, const OptMeta &meta);
 
 template<typename MatrixProductType>
-void subs_lbfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+void subs_bfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
     if(x == nullptr) return;
     if(y == nullptr) return;
     if(primme == nullptr) return;
@@ -219,9 +219,9 @@ void subs_lbfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockS
         auto  xt                    = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
         auto  yt                    = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
         auto  summary               = ceres::GradientProblemSolver::Summary();
-        auto *functor               = new tools::finite::opt::internal::lbfgs_simps_functor<T>(xt, envL, envR, mpo);
+        auto *functor               = new tools::finite::opt::internal::bfgs_simps_functor<T>(xt, envL, envR, mpo);
         auto  problem               = ceres::GradientProblem(functor);
-        auto  options               = tools::finite::opt::internal::lbfgs_default_options;
+        auto  options               = tools::finite::opt::internal::bfgs_default_options;
         options.max_num_iterations  = 1000;
         options.function_tolerance  = 1e-6;
         options.gradient_tolerance  = 1e-6;
@@ -279,7 +279,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_prec(const 
     config.ritz                  = eig::Ritz::primme_closest_abs;
     config.primme_target_shifts  = {energy_target};
     config.primme_method         = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
-    config.primme_preconditioner = subs_lbfgs_preconditioner<MatVecMPO<Scalar>>;
+    config.primme_preconditioner = subs_bfgs_preconditioner<MatVecMPO<Scalar>>;
     config.primme_projection     = "primme_proj_refined";
     config.primme_locking        = true;
 

@@ -11,7 +11,7 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
-#include "tools/finite/opt/lbfgs_simps_functor.h"
+#include "tools/finite/opt/bfgs_simps_functor.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
@@ -21,7 +21,7 @@
 #include <primme/primme.h>
 
 template<typename MatrixProductType>
-void simps_lbfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+void simps_bfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
     if(x == nullptr) return;
     if(y == nullptr) return;
     if(primme == nullptr) return;
@@ -34,7 +34,7 @@ void simps_lbfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *block
     for(int i = 0; i < *blockSize; i++) {
         auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
         auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
-        tools::common::contraction::matrix_inverse_vector_product_lbfgs(mps_out, mps_in, mpo, envL, envR);
+        tools::common::contraction::matrix_inverse_vector_product_bfgs(mps_out, mps_in, mpo, envL, envR);
     }
     *ierr = 0;
 }
@@ -96,7 +96,7 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
             solver.config.ritz                  = eig::Ritz::primme_closest_abs;
             solver.config.primme_projection     = "primme_proj_harmonic";
             solver.config.primme_target_shifts  = {tools::finite::measure::energy_minus_energy_shift(tensors)};
-            solver.config.primme_preconditioner = simps_lbfgs_preconditioner<MatVecMPO<Scalar>>;
+            solver.config.primme_preconditioner = simps_bfgs_preconditioner<MatVecMPO<Scalar>>;
             tools::log->trace("Finding excited state state");
             solver.eigs(hamiltonian);
         } else {

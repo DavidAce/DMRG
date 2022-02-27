@@ -9,8 +9,8 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
-#include "tools/finite/opt/lbfgs_callback.h"
-#include "tools/finite/opt/lbfgs_subspace_functor.h"
+#include "tools/finite/opt/bfgs_callback.h"
+#include "tools/finite/opt/bfgs_subspace_functor.h"
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
@@ -77,7 +77,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
      *          from the end.
      *
      * Step 2)  Project the squared effective K*K Hamiltonian, down to the k*k subspace, H².
-     *          Using LBFGS, find the linear combination |w⟩ of eigenvectors that minimizes the variance.
+     *          Using BFGS, find the linear combination |w⟩ of eigenvectors that minimizes the variance.
      *
      *              min_w Var H = ⟨H²⟩ - ⟨H⟩² = ⟨w|H²|w⟩ - ⟨E⟩²
      *
@@ -121,11 +121,11 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
     Eigen::VectorXcd subspace_vector = internal::subspace::get_vector_in_subspace(subspace, initial_mps.get_vector());
     long             subspace_size   = subspace_vector.size();
     reports::bfgs_add_entry("Subspace", "init", initial_mps, subspace_size);
-    tools::log->trace("Starting LBFGS optimization of subspace");
+    tools::log->trace("Starting BFGS optimization of subspace");
 
     /*
      *
-     *  Start the LBFGS optimization process for the subspace
+     *  Start the BFGS optimization process for the subspace
      *
      */
     opt_mps optimized_mps;
@@ -134,23 +134,23 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
     optimized_mps.set_energy_shift(initial_mps.get_energy_shift());
 
     opt_mps subspace_mps;
-    auto    options = internal::lbfgs_default_options;
+    auto    options = internal::bfgs_default_options;
     auto    summary = ceres::GradientProblemSolver::Summary();
-    auto    t_lbfgs = tid::tic_scope("lbfgs");
+    auto    t_bfgs  = tid::tic_scope("bfgs");
     switch(meta.optType) {
         case OptType::CPLX: {
             auto  H2_subspace               = subspace::get_hamiltonian_squared_in_subspace<cplx>(model, edges, subspace);
             auto  subspace_vector_as_2xreal = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
-            auto *functor                   = new lbfgs_subspace_functor<cplx>(tensors, status, H2_subspace, eigvals);
+            auto *functor                   = new bfgs_subspace_functor<cplx>(tensors, status, H2_subspace, eigvals);
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
-            tools::log->trace("Running LBFGS subspace cplx");
+            tools::log->trace("Running BFGS subspace cplx");
             ceres::Solve(options, problem, subspace_vector_as_2xreal.data(), &summary);
             subspace_vector =
                 Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<cplx *>(subspace_vector_as_2xreal.data()), subspace_vector_as_2xreal.size() / 2).normalized();
             // Copy the results from the functor
-            optimized_mps.set_name("lbfgs cplx");
+            optimized_mps.set_name("bfgs cplx");
             optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
@@ -160,14 +160,14 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
         case OptType::REAL: {
             Eigen::MatrixXd   H2_subspace          = subspace::get_hamiltonian_squared_in_subspace<real>(model, edges, subspace);
             Eigen::VectorXd   subspace_vector_cast = subspace_vector.real(); // Copy into a temporary
-            auto             *functor              = new lbfgs_subspace_functor<real>(tensors, status, H2_subspace, eigvals);
+            auto             *functor              = new bfgs_subspace_functor<real>(tensors, status, H2_subspace, eigvals);
             CustomLogCallback ceres_logger(*functor);
             options.callbacks.emplace_back(&ceres_logger);
             ceres::GradientProblem problem(functor);
-            tools::log->trace("Running LBFGS subspace real");
+            tools::log->trace("Running BFGS subspace real");
             ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
             subspace_vector = subspace_vector_cast.normalized().cast<cplx>();
-            optimized_mps.set_name("lbfgs real");
+            optimized_mps.set_name("bfgs real");
             optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
             optimized_mps.set_mv(functor->get_count());
             optimized_mps.set_delta_f(functor->get_delta_f());
@@ -176,7 +176,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
         }
     }
     reports::time_add_entry();
-    t_lbfgs.toc();
+    t_bfgs.toc();
     // Copy and set the rest of the tensor metadata
     optimized_mps.normalize();
     optimized_mps.set_energy(tools::finite::measure::energy(optimized_mps.get_tensor(), tensors));
@@ -200,7 +200,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
     int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
     int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
     double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
-    tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
+    tools::log->debug("Finished BFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec, summary.iterations.size(),
                       ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
     reports::bfgs_add_entry("Subspace", "opt", optimized_mps, subspace_size);
 
@@ -266,7 +266,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //     *          from the end.
 //     *
 //     * Step 2)  Project the squared effective K*K Hamiltonian, down to the k*k subspace, H².
-//     *          Using LBFGS, find the linear combination |w⟩ of eigenvectors that minimizes the variance.
+//     *          Using BFGS, find the linear combination |w⟩ of eigenvectors that minimizes the variance.
 //     *
 //     *              min_w Var H = ⟨H²⟩ - ⟨H⟩² = ⟨w|H²|w⟩ - ⟨E⟩²
 //     *
@@ -331,7 +331,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //    size_t               eigvec_count = 0;
 //    for(auto &idx : eigvecs_top_idx) {
 //        const auto &eigvec = *std::next(subspace.begin(), static_cast<long>(idx));
-//        tools::log->trace("Starting LBFGS with eigvec {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>8.2e} | eigvec {}", idx,
+//        tools::log->trace("Starting BFGS with eigvec {:<2} as initial guess: overlap {:.16f} | energy {:>20.16f} | variance: {:>8.2e} | eigvec {}", idx,
 //                          eigvec.get_overlap(), eigvec.get_energy_per_site(), eigvec.get_variance(), eigvec.is_basis_vector);
 //        Eigen::VectorXcd        subspace_vector = internal::subspace::get_vector_in_subspace(subspace, idx);
 //        long                    subspace_size   = subspace_vector.size();
@@ -373,11 +373,11 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //
 //        /*
 //         *
-//         *  Start the LBFGS optimization process for the subspace
+//         *  Start the BFGS optimization process for the subspace
 //         *
 //         */
 //
-//        auto options = internal::lbfgs_default_options;
+//        auto options = internal::bfgs_default_options;
 //        auto summary = ceres::GradientProblemSolver::Summary();
 //        optimized_results.emplace_back(opt_mps());
 //        auto &optimized_mps = optimized_results.back();
@@ -385,16 +385,16 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //        optimized_mps.set_sites(eigvec.get_sites());
 //        optimized_mps.set_length(eigvec.get_length());
 //        optimized_mps.set_energy_shift(eigvec.get_energy_shift());
-//        auto t_lbfgs = tid::tic_scope("lbfgs");
+//        auto t_bfgs = tid::tic_scope("bfgs");
 //        switch(meta.optType) {
 //            case OptType::CPLX: {
 //                Eigen::VectorXd subspace_vector_cast =
 //                    Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(subspace_vector.data()), 2 * subspace_vector.size());
-//                auto             *functor = new lbfgs_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
+//                auto             *functor = new bfgs_subspace_functor<std::complex<double>>(tensors, status, H2_subspace, eigvals);
 //                CustomLogCallback ceres_logger(*functor);
 //                options.callbacks.emplace_back(&ceres_logger);
 //                ceres::GradientProblem problem(functor);
-//                tools::log->trace("Running LBFGS subspace cplx");
+//                tools::log->trace("Running BFGS subspace cplx");
 //                ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
 //                subspace_vector =
 //                    Eigen::Map<Eigen::VectorXcd>(reinterpret_cast<cplx *>(subspace_vector_cast.data()), subspace_vector_cast.size() / 2).normalized();
@@ -413,11 +413,11 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //            case OptType::REAL: {
 //                Eigen::VectorXd   subspace_vector_cast = subspace_vector.real();
 //                Eigen::MatrixXd   H2_subspace_real     = H2_subspace.real();
-//                auto             *functor              = new lbfgs_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
+//                auto             *functor              = new bfgs_subspace_functor<double>(tensors, status, H2_subspace_real, eigvals);
 //                CustomLogCallback ceres_logger(*functor);
 //                options.callbacks.emplace_back(&ceres_logger);
 //                ceres::GradientProblem problem(functor);
-//                tools::log->trace("Running LBFGS subspace real");
+//                tools::log->trace("Running BFGS subspace real");
 //                ceres::Solve(options, problem, subspace_vector_cast.data(), &summary);
 //                subspace_vector = subspace_vector_cast.normalized().cast<cplx>();
 //                optimized_mps.set_tensor(subspace::get_vector_in_fullspace(subspace, subspace_vector), initial_mps.get_tensor().dimensions());
@@ -433,7 +433,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //            }
 //        }
 //        reports::time_add_entry();
-//        t_lbfgs.toc();
+//        t_bfgs.toc();
 //        // Copy and set the rest of the tensor metadata
 //        optimized_mps.normalize();
 //        optimized_mps.set_energy(tools::finite::measure::energy(optimized_mps.get_tensor(), tensors));
@@ -457,7 +457,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //        int    hrs = static_cast<int>(summary.total_time_in_seconds / 3600);
 //        int    min = static_cast<int>(std::fmod(summary.total_time_in_seconds, 3600) / 60);
 //        double sec = std::fmod(std::fmod(summary.total_time_in_seconds, 3600), 60);
-//        tools::log->debug("Finished LBFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec,
+//        tools::log->debug("Finished BFGS in {:0<2}:{:0<2}:{:0<.1f} seconds and {} iters. Exit status: {}. Message: {}", hrs, min, sec,
 //                          summary.iterations.size(), ceres::TerminationTypeToString(summary.termination_type), summary.message.c_str());
 //        //    std::cout << summary.FullReport() << "\n";
 //        if(tools::log->level() <= spdlog::level::debug) { reports::bfgs_add_entry("Subspace", "opt", optimized_mps, subspace_size); }

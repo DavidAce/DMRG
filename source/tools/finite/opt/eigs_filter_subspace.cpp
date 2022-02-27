@@ -1,6 +1,6 @@
 #include "../opt_mps.h"
 #include "general/iter.h"
-#include "lbfgs_subspace_functor.h"
+#include "bfgs_subspace_functor.h"
 #include "tools/common/log.h"
 #include "tools/finite/opt/opt-internal.h"
 
