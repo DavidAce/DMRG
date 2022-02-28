@@ -400,7 +400,7 @@ namespace tools::finite::opt::internal {
         configs[0].tol             = settings::precision::eig_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
         configs[0].maxIter         = settings::precision::eig_max_iter;
         configs[0].maxTime         = 2 * 60 * 60; // Two hours
-        configs[0].maxNev          = 2;
+        configs[0].maxNev          = 1;
         configs[0].maxNcv          = settings::precision::eig_default_ncv;
         configs[0].compress        = settings::precision::use_compressed_mpo_squared_otf;
         configs[0].lib             = eig::Lib::PRIMME;
@@ -430,7 +430,7 @@ namespace tools::finite::opt::internal {
         configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
         configs[1].tag    = "primme-run2";
         // configs[1]                 = config_primme;
-        configs[1].tol    = 1e-12;
+        configs[1].tol    = 0.1 * settings::precision::eig_tolerance;
         configs[1].maxNcv = 32;
         // configs[1].primme_grad_tol = meta.bfgs_grad_tol ? meta.bfgs_grad_tol.value() : 1e-12;
 

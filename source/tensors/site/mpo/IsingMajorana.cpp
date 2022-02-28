@@ -32,8 +32,6 @@ IsingMajorana::IsingMajorana(ModelType model_type_, size_t position_) : MpoSite(
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     h5tb_ising_majorana::register_table_type();
-#pragma message "Testing projection in MPO²"
-    mpo2_projz = true;
 }
 
 double IsingMajorana::get_coupling() const { return h5tb.param.J_rand; }
