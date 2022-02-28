@@ -65,8 +65,6 @@ class TensorsFinite {
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
     /* clang-format on */
 
-    [[nodiscard]] StateFinite get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit,
-                                                                    std::optional<svd::settings> svd_settings = std::nullopt) const;
     void project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
     [[nodiscard]] StateFinite get_state_with_hamiltonian_applied(std::optional<long>          bond_limit   = std::nullopt,
                                                                  std::optional<svd::settings> svd_settings = std::nullopt) const;

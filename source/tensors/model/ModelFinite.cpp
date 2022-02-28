@@ -9,7 +9,7 @@
 #include "tensors/site/mpo/MpoFactory.h"
 #include "tid/tid.h"
 #include "tools/finite/multisite.h"
-
+#include "qm/spin.h"
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
 
 // We need to define the destructor and other special functions
@@ -258,6 +258,14 @@ void ModelFinite::set_energy_shift_per_site(double energy_shift_per_site) {
 void ModelFinite::set_psfactor(double psfactor) {
     for(const auto &mpo : MPO) mpo->set_psfactor(psfactor);
     clear_cache();
+}
+
+void ModelFinite::set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli) {
+    for(const auto &mpo : MPO) mpo->set_mpo2_proj(sign, pauli);
+}
+
+void ModelFinite::set_mpo2_proj(int sign, std::string_view sector) {
+    if(qm::spin::half::is_valid_axis(sector)) set_mpo2_proj(sign, qm::spin::half::get_pauli(sector));
 }
 
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }

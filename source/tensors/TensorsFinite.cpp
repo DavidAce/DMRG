@@ -179,15 +179,9 @@ env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisi
     return std::as_const(*edges).get_multisite_env_var_blk();
 }
 
-StateFinite TensorsFinite::get_state_projected_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit,
-                                                                 std::optional<svd::settings> svd_settings) const {
-    auto state_projected = *state;
-    tools::finite::ops::project_to_nearest_sector(state_projected, sector, bond_limit, svd_settings);
-    return state_projected;
-}
-
 void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<svd::settings> svd_settings) {
-    tools::finite::ops::project_to_nearest_sector(*state, sector, bond_limit, svd_settings);
+    auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, bond_limit, svd_settings);
+    if(settings::precision::use_projection_on_mpo_squared) { model->set_mpo2_proj(sign, sector); }
     sync_active_sites();
     if(not active_sites.empty()) {
         rebuild_edges();
