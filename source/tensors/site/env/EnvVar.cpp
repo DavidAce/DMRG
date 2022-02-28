@@ -1,4 +1,6 @@
 #include "EnvVar.h"
+#include "debug/exceptions.h"
+#include "math/hash.h"
 #include <config/debug.h>
 #include <math/num.h>
 #include <tensors/site/mpo/MpoSite.h>
@@ -8,12 +10,12 @@
 EnvVar::EnvVar(std::string side_, const MpsSite &mps, const MpoSite &mpo) : EnvBase(std::move(side_), "var", mps, mpo) { set_edge_dims(mps, mpo); }
 
 EnvVar EnvVar::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
-    tools::log->trace("class_env_{}::enlarge(mps,mpo): side({}), pos({})", tag, side, get_position());
+    tools::log->trace("EnvVar::enlarge(mps,mpo): {}{}[{}]", tag, side, get_position());
     // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
-            throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}): All positions are not equal: env {} | mps {} | mpo {}", tag, side,
-                                               get_position(), get_position(), mps.get_position(), mpo.get_position()));
+            throw std::logic_error(fmt::format("EnvVar::enlarge: {}{}[{}]: All positions are not equal: env {} | mps {} | mpo {}", tag, side, get_position(),
+                                               get_position(), mps.get_position(), mpo.get_position()));
 
     EnvVar env = *this;
 
@@ -105,6 +107,7 @@ void EnvVar::refresh(const EnvVar &env, const MpsSite &mps, const MpoSite &mpo) 
         }
 
         build_block(*env.block, mps.get_M_bare(), mpo.MPO2());
+        // Store id's to objects used to create this env.
         unique_id_env = env.get_unique_id();
         unique_id_mps = mps.get_unique_id();
         unique_id_mpo = mpo.get_unique_id_sq();
@@ -117,13 +120,19 @@ void EnvVar::refresh(const EnvVar &env, const MpsSite &mps, const MpoSite &mpo) 
     }
 }
 
-void EnvVar::set_edge_dims(const MpsSite &MPS, const MpoSite &MPO) {
-    if(block and block->size() != 0) return;
-    if constexpr(settings::debug) tools::log->trace("Setting edge dims on env{}({}) {}", side, get_position(), tag);
-    if(side == "L")
-        set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_left());
-    else if(side == "R")
-        set_edge_dims(MPS.get_M_bare(), MPO.MPO2(), MPO.get_MPO2_edge_right());
-    else
-        throw std::runtime_error(fmt::format("Wrong side: {}", side));
+void EnvVar::set_edge_dims(const MpsSite &mps, const MpoSite &mpo) {
+    Eigen::Tensor<cplx, 1> edge;
+    if(side == "L") edge = mpo.get_MPO2_edge_left();
+    if(side == "R") edge = mpo.get_MPO2_edge_right();
+    std::size_t unique_id_edge = hash::hash_buffer(edge.data(), static_cast<size_t>(edge.size()));
+    if(unique_id_env and unique_id_env.value() == unique_id_edge) return;
+    if constexpr(settings::debug) {
+        if(side != "L" and side != "R") throw except::runtime_error("Wrong side: {}", side);
+        tools::log->trace("EnvEne::set_edge_dims: {}{}({}) {}", tag, side, get_position());
+    }
+    set_edge_dims(mps.get_M_bare(), mpo.MPO2(), edge);
+    unique_id     = get_unique_id();
+    unique_id_env = unique_id_edge;
+    unique_id_mps = mps.get_unique_id();
+    unique_id_mpo = mpo.get_unique_id_sq();
 }

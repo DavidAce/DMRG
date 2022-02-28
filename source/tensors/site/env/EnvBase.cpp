@@ -18,23 +18,23 @@
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-EnvBase::EnvBase() : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()) { assert_block(); } // default ctor
-EnvBase::~EnvBase()                        = default;                                        // default dtor
-EnvBase::EnvBase(EnvBase &&other) noexcept = default;                                        // default move ctor
-EnvBase &EnvBase::operator=(EnvBase &&other) noexcept = default;                             // default move assign
+EnvBase::EnvBase() : block(std::make_unique<Eigen::Tensor<cplx, 3>>()) { assert_block(); } // default ctor
+EnvBase::~EnvBase()                        = default;                                      // default dtor
+EnvBase::EnvBase(EnvBase &&other) noexcept = default;                                      // default move ctor
+EnvBase &EnvBase::operator=(EnvBase &&other) noexcept = default;                           // default move assign
 
 EnvBase::EnvBase(const EnvBase &other)
-    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block)), sites(other.sites), position(other.position), side(other.side), tag(other.tag),
+    : block(std::make_unique<Eigen::Tensor<cplx, 3>>(*other.block)), sites(other.sites), position(other.position), side(other.side), tag(other.tag),
       unique_id(other.unique_id), unique_id_mps(other.unique_id_mps), unique_id_mpo(other.unique_id_mpo), unique_id_env(other.unique_id_env) {
     assert_block();
 }
 
 EnvBase::EnvBase(size_t position_, std::string side_, std::string tag_)
-    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), position(position_), side(std::move(side_)), tag(std::move(tag_)) {
+    : block(std::make_unique<Eigen::Tensor<cplx, 3>>()), position(position_), side(std::move(side_)), tag(std::move(tag_)) {
     assert_block();
 }
 EnvBase::EnvBase(std::string side_, std::string tag_, const MpsSite &MPS, const MpoSite &MPO)
-    : block(std::make_unique<Eigen::Tensor<Scalar, 3>>()), side(std::move(side_)), tag(std::move(tag_)) {
+    : block(std::make_unique<Eigen::Tensor<cplx, 3>>()), side(std::move(side_)), tag(std::move(tag_)) {
     if(MPS.get_position() != MPO.get_position())
         throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
     position = MPS.get_position();
@@ -43,29 +43,29 @@ EnvBase::EnvBase(std::string side_, std::string tag_, const MpsSite &MPS, const 
 
 EnvBase &EnvBase::operator=(const EnvBase &other) {
     if(this != &other) {
-        block             = std::make_unique<Eigen::Tensor<Scalar, 3>>(*other.block);
-        sites             = other.sites;
-        position          = other.position;
-        side              = other.side;
-        tag               = other.tag;
-        unique_id         = other.unique_id;
-        unique_id_mps     = other.unique_id_mps;
-        unique_id_mpo     = other.unique_id_mpo;
-        unique_id_env     = other.unique_id_env;
+        block         = std::make_unique<Eigen::Tensor<cplx, 3>>(*other.block);
+        sites         = other.sites;
+        position      = other.position;
+        side          = other.side;
+        tag           = other.tag;
+        unique_id     = other.unique_id;
+        unique_id_mps = other.unique_id_mps;
+        unique_id_mpo = other.unique_id_mpo;
+        unique_id_env = other.unique_id_env;
     }
     assert_block();
     return *this;
 }
 
-using Scalar = EnvBase::Scalar;
+using cplx = EnvBase::cplx;
 
 void EnvBase::assert_block() const {
-    if(side != "L" and side != "R") throw std::runtime_error("Expected side [L|R]. Got: [" + side + "]");
-    if(tag != "ene" and tag != "var") throw std::runtime_error("Expected tag [var|ene]. Got: [" + tag + "]");
-    if(not block) throw std::runtime_error(fmt::format("env {} {} at pos {} is null", tag, side, get_position()));
+    if(side != "L" and side != "R") throw except::runtime_error("Expected side [L|R]. Got: [{}]", side);
+    if(tag != "ene" and tag != "var") throw except::runtime_error("Expected tag [var|ene]. Got: [{}]", tag);
+    if(not block) throw except::runtime_error("env block {} {} at pos {} is nullptr", tag, side, get_position());
 }
 
-void EnvBase::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
+void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo) {
     /*!< Contracts a site into the block-> */
     // Note that otherblock, mps and mpo should correspond to the same site! I.e. their "get_position()" are all equal.
     // This can't be checked here though, so do that before calling this function.
@@ -75,7 +75,7 @@ void EnvBase::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Ten
     unique_id_mps = std::nullopt;
     unique_id_mpo = std::nullopt;
 
-    if(not block) block = std::make_unique<Eigen::Tensor<Scalar, 3>>();
+    if(not block) block = std::make_unique<Eigen::Tensor<cplx, 3>>();
     if(side == "L") {
         /*! # Left environment block contraction
          *   [       ]--0         [       ]--0 0--[LB]--1 1--[  GA    ]--2
@@ -142,7 +142,7 @@ void EnvBase::build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Ten
     }
 }
 
-void EnvBase::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo) {
+void EnvBase::enlarge(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo) {
     /*!< Contracts a site into the current block-> */
 
     // NOTE:
@@ -151,7 +151,7 @@ void EnvBase::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<S
     // There is no way to check the positions here, so checks should be done before calling this function
 
     assert_block();
-    Eigen::Tensor<Scalar, 3> thisblock = *block;
+    Eigen::Tensor<cplx, 3> thisblock = *block;
     build_block(thisblock, mps, mpo);
     sites++;
     if(position) {
@@ -164,13 +164,13 @@ void EnvBase::enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<S
 
 void EnvBase::clear() {
     assert_block();
-    block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
+    block->resize(0, 0, 0); // = Eigen::Tensor<cplx,3>();
     tools::log->trace("Ejected env{} pos {}", side, get_position());
     unique_id = std::nullopt;
 
     // Do not clear the empty edge
     //    if(sites > 0) {
-    //        block->resize(0, 0, 0); // = Eigen::Tensor<Scalar,3>();
+    //        block->resize(0, 0, 0); // = Eigen::Tensor<cplx,3>();
     //        tools::log->trace("Ejected env{} pos {}", side, get_position());
     //        unique_id = std::nullopt;
     //    }
@@ -180,11 +180,11 @@ void EnvBase::clear() {
     unique_id_mpo = std::nullopt;
 }
 
-const Eigen::Tensor<Scalar, 3> &EnvBase::get_block() const {
+const Eigen::Tensor<cplx, 3> &EnvBase::get_block() const {
     assert_block();
     return *block;
 }
-Eigen::Tensor<Scalar, 3> &EnvBase::get_block() {
+Eigen::Tensor<cplx, 3> &EnvBase::get_block() {
     assert_block();
     return *block;
 }
@@ -241,8 +241,7 @@ size_t EnvBase::get_position() const {
 
 size_t EnvBase::get_sites() const { return sites; }
 
-void EnvBase::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Tensor<Scalar, 4> &MPO, const Eigen::Tensor<Scalar, 1> &edge) {
-    if(block and block->size() != 0) return;
+void EnvBase::set_edge_dims(const Eigen::Tensor<cplx, 3> &MPS, const Eigen::Tensor<cplx, 4> &MPO, const Eigen::Tensor<cplx, 1> &edge) {
     assert_block();
     if(side == "L") {
         long mpsDim = MPS.dimension(1);
@@ -268,11 +267,11 @@ void EnvBase::set_edge_dims(const Eigen::Tensor<Scalar, 3> &MPS, const Eigen::Te
             block->slice(offset3, extent3).reshape(extent1) = edge;
         }
     }
-    sites             = 0;
-    unique_id         = std::nullopt;
-    unique_id_env     = std::nullopt;
-    unique_id_mps     = std::nullopt;
-    unique_id_mpo     = std::nullopt;
+    sites         = 0;
+    unique_id     = std::nullopt;
+    unique_id_env = std::nullopt;
+    unique_id_mps = std::nullopt;
+    unique_id_mpo = std::nullopt;
 }
 
 std::size_t EnvBase::get_unique_id() const {
@@ -285,13 +284,13 @@ std::optional<std::size_t> EnvBase::get_unique_id_env() const { return unique_id
 std::optional<std::size_t> EnvBase::get_unique_id_mps() const { return unique_id_mps; }
 std::optional<std::size_t> EnvBase::get_unique_id_mpo() const { return unique_id_mpo; }
 
-Eigen::Tensor<Scalar, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha) const {
+Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha) const {
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
             throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
                                                get_position(), get_position(), mps.get_position(), mpo.get_position()));
 
-    Eigen::Tensor<Scalar, 4> mpo_tensor;
+    Eigen::Tensor<cplx, 4> mpo_tensor;
     if(tag == "ene")
         mpo_tensor = mpo.MPO();
     else if(tag == "var")
@@ -304,11 +303,11 @@ Eigen::Tensor<Scalar, 3> EnvBase::get_expansion_term(const MpsSite &mps, const M
         long chiL = mps.get_chiL();
         long chiR = mps.get_chiR() * mpo_tensor.dimension(1);
         if(get_block().dimension(0) != chiL) throw std::logic_error("block dim 0 != chiL");
-        Eigen::Tensor<Scalar, 3> PL = get_block()
-                                          .contract(mps.get_M_bare(), tenx::idx({0}, {1}))
-                                          .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
-                                          .shuffle(tenx::array4{3, 0, 1, 2})
-                                          .reshape(tenx::array3{spin, chiL, chiR});
+        Eigen::Tensor<cplx, 3> PL = get_block()
+                                        .contract(mps.get_M_bare(), tenx::idx({0}, {1}))
+                                        .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
+                                        .shuffle(tenx::array4{3, 0, 1, 2})
+                                        .reshape(tenx::array3{spin, chiL, chiR});
         PL = tenx::asNormalized(PL);
         return PL * PL.constant(alpha);
 
@@ -317,11 +316,11 @@ Eigen::Tensor<Scalar, 3> EnvBase::get_expansion_term(const MpsSite &mps, const M
         long chiL = mps.get_chiL() * mpo_tensor.dimension(0);
         long chiR = mps.get_chiR();
         if(get_block().dimension(0) != chiR) throw std::logic_error("block dim 0 != chiR");
-        Eigen::Tensor<Scalar, 3> PR = get_block()
-                                          .contract(mps.get_M_bare(), tenx::idx({0}, {2}))
-                                          .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))
-                                          .shuffle(tenx::array4{3, 0, 1, 2})
-                                          .reshape(tenx::array3{spin, chiL, chiR});
+        Eigen::Tensor<cplx, 3> PR = get_block()
+                                        .contract(mps.get_M_bare(), tenx::idx({0}, {2}))
+                                        .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))
+                                        .shuffle(tenx::array4{3, 0, 1, 2})
+                                        .reshape(tenx::array3{spin, chiL, chiR});
         PR = tenx::asNormalized(PR);
         return PR * PR.constant(alpha);
 

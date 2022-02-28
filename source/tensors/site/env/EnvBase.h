@@ -15,22 +15,22 @@ class MpoSite;
 
 class EnvBase {
     public:
-    using Scalar = std::complex<double>;
+    using cplx = std::complex<double>;
 
     protected:
-    void build_block(Eigen::Tensor<Scalar, 3> &otherblock, const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo);
-    void enlarge(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo);
-    void set_edge_dims(const Eigen::Tensor<Scalar, 3> &mps, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 1> &edge);
+    void build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo);
+    void enlarge(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo);
+    void set_edge_dims(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 1> &edge);
 
-    std::unique_ptr<Eigen::Tensor<Scalar, 3>> block;        /*!< The environment block. */
-    size_t                                    sites    = 0; /*!< Number of particles that have been contracted into this environment. */
-    std::optional<size_t>                     position = std::nullopt;
-    std::string                               side;
-    std::string                               tag;
-    mutable std::optional<std::size_t>        unique_id;
-    mutable std::optional<std::size_t>        unique_id_mps; // Unique identifiers of the neighboring site which are used to build this block
-    mutable std::optional<std::size_t>        unique_id_mpo; // Unique identifiers of the neighboring site which are used to build this block
-    mutable std::optional<std::size_t>        unique_id_env; // Unique identifiers of the neighboring site which are used to build this block
+    std::unique_ptr<Eigen::Tensor<cplx, 3>> block;        /*!< The environment block. */
+    size_t                                  sites    = 0; /*!< Number of particles that have been contracted into this environment. */
+    std::optional<size_t>                   position = std::nullopt;
+    std::string                             side;
+    std::string                             tag;
+    mutable std::optional<std::size_t>      unique_id;
+    mutable std::optional<std::size_t>      unique_id_mps; // Unique identifiers of the neighboring site which are used to build this block
+    mutable std::optional<std::size_t>      unique_id_mpo; // Unique identifiers of the neighboring site which are used to build this block
+    mutable std::optional<std::size_t>      unique_id_env; // Unique identifiers of the neighboring site which are used to build this block
 
     public:
     EnvBase();
@@ -50,13 +50,13 @@ class EnvBase {
     void assert_validity() const;
     void assert_unique_id(const EnvBase &env, const MpsSite &mps, const MpoSite &mpo) const;
 
-    [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_block() const;
-    [[nodiscard]] Eigen::Tensor<Scalar, 3>       &get_block();
-    [[nodiscard]] bool                            has_block() const;
-    [[nodiscard]] bool                            is_real() const;
-    [[nodiscard]] bool                            has_nan() const;
-    [[nodiscard]] size_t                          get_position() const;
-    [[nodiscard]] size_t                          get_sites() const;
+    [[nodiscard]] const Eigen::Tensor<cplx, 3> &get_block() const;
+    [[nodiscard]] Eigen::Tensor<cplx, 3>       &get_block();
+    [[nodiscard]] bool                          has_block() const;
+    [[nodiscard]] bool                          is_real() const;
+    [[nodiscard]] bool                          has_nan() const;
+    [[nodiscard]] size_t                        get_position() const;
+    [[nodiscard]] size_t                        get_sites() const;
 
     virtual void set_edge_dims(const MpsSite &MPS, const MpoSite &MPO) = 0;
 
@@ -65,5 +65,5 @@ class EnvBase {
     std::optional<std::size_t> get_unique_id_mps() const;
     std::optional<std::size_t> get_unique_id_mpo() const;
 
-    Eigen::Tensor<Scalar, 3> get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha = 0) const;
+    Eigen::Tensor<cplx, 3> get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha = 0) const;
 };
