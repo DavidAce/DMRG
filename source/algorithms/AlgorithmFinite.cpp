@@ -345,7 +345,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     tensors.randomize_state(state_init, sector.value(), bond_limit.value(), use_eigenspinors.value(), bitfield, std::nullopt);
 
-    if(settings::strategy::project_initial_state and tools::finite::mps::init::is_valid_axis(sector.value())) {
+    if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
                          tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
         tensors.project_to_nearest_sector(sector.value(), status.bond_limit, svd_settings);
@@ -400,14 +400,14 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
     if(project_on_every_iter or project_on_var_saturation or project_to_given_sector or project_on_spin_saturation) {
         if(not target_sector) target_sector = settings::strategy::target_sector;
-        if(not tools::finite::mps::init::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
+        if(not qm::spin::half::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
         std::string msg;
         if(project_on_spin_saturation) msg += " | reason: spin component has not converged";
         if(project_on_var_saturation) msg += fmt::format(" | reason: run every {} iter on variance saturation", settings::strategy::project_on_saturation);
         if(project_on_every_iter) msg += fmt::format(" | reason: run every {} iter", settings::strategy::project_on_every_iter);
         tools::log->info("Trying projection to {}{}", target_sector.value(), msg);
 
-        auto sector_sign   = tools::finite::mps::init::get_sign(target_sector.value());
+        auto sector_sign   = qm::spin::half::get_sign(target_sector.value());
         auto variance_old  = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
@@ -592,8 +592,8 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
     static constexpr std::array<std::string_view, 9> valid_sectors = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
     if(sector_is_valid) {
-        auto axis                        = tools::finite::mps::init::get_axis(settings::strategy::target_sector);
-        auto sign                        = tools::finite::mps::init::get_sign(settings::strategy::target_sector);
+        auto axis                        = qm::spin::half::get_axis(settings::strategy::target_sector);
+        auto sign                        = qm::spin::half::get_sign(settings::strategy::target_sector);
         auto spin_components             = tools::finite::measure::spin_components(*tensors.state);
         auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
         status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;

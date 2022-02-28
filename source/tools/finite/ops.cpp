@@ -215,19 +215,19 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
 
 std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFinite &state, std::string_view sector) {
     auto t_align = tid::tic_scope("align");
-    if(mps::init::is_valid_axis(sector)) {
-        return tools::finite::measure::spin_component(state, mps::init::get_pauli(sector));
+    if(qm::spin::half::is_valid_axis(sector)) {
+        return tools::finite::measure::spin_component(state, qm::spin::half::get_pauli(sector));
     } else
         return std::nullopt;
 }
 
-void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<long> bond_limit,
-                                                   std::optional<svd::settings> svd_settings) {
+int tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<long> bond_limit,
+                                                  std::optional<svd::settings> svd_settings) {
     /*
      * When projecting, there is one bad thing that may happen: that the norm of the state vanishes.
      *
      * This can happen in a couple of different scenarios:
-     *      - The global state has spin component X = -1.0 and we project to X = +1.0 (or vice versa)
+     *      - The global state has spin component Z = -1.0 and we project to Z = +1.0 (or vice versa)
      *
      * Therefore the projection is only done if the state has a chance of surviving
      * Otherwise emit a warning and return
@@ -238,23 +238,27 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
     auto t_prj                    = tid::tic_scope("proj");
     auto spin_component_in_sector = get_spin_component_in_sector(state, sector);
     if(spin_component_in_sector.has_value()) {
-        auto sector_sign    = mps::init::get_sign(sector);
-        auto paulimatrix    = mps::init::get_pauli(sector);
+        auto sector_sign    = qm::spin::half::get_sign(sector);
+        auto paulimatrix    = qm::spin::half::get_pauli(sector);
         auto spin_alignment = sector_sign * spin_component_in_sector.value();
         // Now we have to check that the intended projection is safe
         tools::log->debug("Spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
-        if(spin_alignment > 0)
+        if(spin_alignment > 0) {
             // In this case the state has an aligned component along the requested axis --> safe
             project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);
-        else if(spin_alignment < 0) {
+            return sector_sign;
+        } else if(spin_alignment < 0) {
             constexpr auto spin_alignment_threshold = 1e-3;
             // In this case the state has an anti-aligned component along the requested axis --> safe if spin_component < 1 - spin_component_threshold
             // Remember that  spin_alignment == -1 means orthogonal!
-            if(std::abs(spin_alignment) < 1.0 - spin_alignment_threshold)
+            if(std::abs(spin_alignment) < 1.0 - spin_alignment_threshold) {
                 project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);
-            else
-                return tools::log->warn("Skipping projection to [{0}]: State spin is orthogonal to the requested projection axis: <{0}|Ψ> = {1:.16f}", sector,
-                                        spin_alignment);
+                return sector_sign;
+            } else {
+                tools::log->warn("Skipping projection to [{0}]: State spin is orthogonal to the requested projection axis: <{0}|Ψ> = {1:.16f}", sector,
+                                 spin_alignment);
+                return 0;
+            }
         } else if(spin_alignment == 0) {
             // No sector sign was specified, so we select the one along which there is a component
             if(spin_component_in_sector.value() >= 0)
@@ -262,19 +266,22 @@ void tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::stri
             else
                 sector_sign = -1;
             project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);
+            return sector_sign;
         }
     } else if(sector == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
         std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, possibilities.size() - 1)];
-        project_to_nearest_sector(state, chosen_axis, bond_limit, svd_settings);
+        return project_to_nearest_sector(state, chosen_axis, bond_limit, svd_settings);
     } else if(sector == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
         Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spin::half::sx + coeffs(1) * qm::spin::half::sy + coeffs(2) * qm::spin::half::sz;
-        return project_to_sector(state, random_c2, 1, bond_limit, svd_settings);
+        project_to_sector(state, random_c2, 1, bond_limit, svd_settings);
+        return 0;
     } else if(sector == "none") {
-        return;
+        return 0;
     } else
         throw std::runtime_error(fmt::format("Could not parse sector string [{}]", sector));
+    return 0;
 }
 
 StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign,
@@ -287,7 +294,7 @@ StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &stat
 StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<long> bond_limit,
                                                                  std::optional<svd::settings> svd_settings) {
     auto state_projected = state;
-    project_to_nearest_sector(state_projected, sector, bond_limit, svd_settings);
+    auto sign            = project_to_nearest_sector(state_projected, sector, bond_limit, svd_settings);
     return state_projected;
 }
 

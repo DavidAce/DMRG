@@ -10,6 +10,7 @@
 #include "math/svd.h"
 #include "qm/gate.h"
 #include "qm/mpo.h"
+#include "qm/spin.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
@@ -27,9 +28,6 @@ namespace settings {
 
 bool tools::finite::mps::init::bitfield_is_valid(std::optional<long> bitfield) {
     return bitfield.has_value() and bitfield.value() > 0 and init::used_bitfields.count(bitfield.value()) == 0;
-}
-bool tools::finite::mps::init::is_valid_axis(std::string_view sector) {
-    return std::find(valid_axis_str.begin(), valid_axis_str.end(), sector) != valid_axis_str.end();
 }
 
 size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, long bond_limit, std::optional<svd::settings> svd_settings) {
@@ -446,7 +444,7 @@ void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vect
 
 void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vector<std::string> &paulistrings) {
     std::vector<Eigen::Matrix2cd> paulimatrices;
-    for(const auto &str : paulistrings) paulimatrices.emplace_back(init::get_pauli(str));
+    for(const auto &str : paulistrings) paulimatrices.emplace_back(qm::spin::half::get_pauli(str));
     apply_random_paulis(state, paulimatrices);
 }
 

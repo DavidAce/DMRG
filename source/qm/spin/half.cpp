@@ -62,4 +62,47 @@ namespace qm::spin::half {
         return S;
     }
 
+    bool is_valid_axis(std::string_view sector) { return std::find(valid_axis_str.begin(), valid_axis_str.end(), sector) != valid_axis_str.end(); }
+
+    int get_sign(std::string_view sector) {
+        if(sector.at(0) == '+')
+            return 1;
+        else if(sector.at(0) == '-')
+            return -1;
+        else
+            return 0;
+    }
+
+    std::string_view get_axis(std::string_view sector) {
+        if(not is_valid_axis(sector))
+            throw std::runtime_error(fmt::format("Could not extract valid axis from sector string [{}]. Choose one of (+-) x,y or z.", sector));
+        int sign = get_sign(sector);
+        if(sign == 0) {
+            return sector.substr(0, 1);
+        } else {
+            return sector.substr(1, 1);
+        }
+    }
+
+    Eigen::Vector2cd get_spinor(std::string_view axis, int sign) {
+        if(axis == "x" and sign >= 0) return sx_spinors[0];
+        if(axis == "x" and sign < 0) return sx_spinors[1];
+        if(axis == "y" and sign >= 0) return sy_spinors[0];
+        if(axis == "y" and sign < 0) return sy_spinors[1];
+        if(axis == "z" and sign >= 0) return sz_spinors[0];
+        if(axis == "z" and sign < 0) return sz_spinors[1];
+        throw std::runtime_error(fmt::format("get_spinor given invalid axis: {}", axis));
+    }
+
+    Eigen::Vector2cd get_spinor(std::string_view sector) { return get_spinor(get_axis(sector), get_sign(sector)); }
+
+    Eigen::Matrix2cd get_pauli(std::string_view axis) {
+        if(axis.find('x') != std::string::npos) return sx;
+        if(axis.find('y') != std::string::npos) return sy;
+        if(axis.find('z') != std::string::npos) return sz;
+        if(axis.find('I') != std::string::npos) return id;
+        if(axis.find('i') != std::string::npos) return id;
+        throw std::runtime_error(fmt::format("get_pauli given invalid axis: {}", axis));
+    }
+
 }

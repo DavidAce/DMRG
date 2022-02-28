@@ -27,6 +27,14 @@ namespace qm::spin {
         extern std::vector<Eigen::MatrixXcd>   II;
         extern Eigen::MatrixXcd                gen_embedded_spin_half_operator(const Eigen::Matrix2cd &s, size_t at, size_t sites, bool swap = false);
         extern std::vector<Eigen::Matrix4cd>   gen_twobody_spins(const Eigen::Matrix2cd &s, bool swap = false);
+
+        inline static constexpr std::array<std::string_view, 9> valid_axis_str = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
+        extern bool                                             is_valid_axis(std::string_view sector);
+        extern int                                              get_sign(std::string_view sector);
+        extern std::string_view                                 get_axis(std::string_view sector);
+        extern Eigen::Vector2cd                                 get_spinor(std::string_view axis, int sign);
+        extern Eigen::Vector2cd                                 get_spinor(std::string_view sector);
+        extern Eigen::Matrix2cd                                 get_pauli(std::string_view axis);
     }
 
     namespace qm::spin::one {
