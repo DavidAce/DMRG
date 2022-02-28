@@ -5,17 +5,16 @@
 #include "general/iter.h"
 #include "math/num.h"
 #include "math/tenx/span.h"
+#include "qm/spin.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
-#include "tools/common/prof.h"
 #include "tools/finite/env.h"
 #include "tools/finite/h5.h"
 #include "tools/finite/measure.h"
-#include "tools/finite/mps.h"
 #include "tools/finite/ops.h"
 #include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
@@ -255,7 +254,11 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
     // We reduce the bond dimension limit whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
     check_convergence_entg_entropy();
-    if(status.entanglement_saturated_for > 0) {
+
+    static size_t iter_last_reduce = 0;
+    if(iter_last_reduce == 0) iter_last_reduce = status.iter;
+    size_t iter_since_reduce = status.iter - iter_last_reduce;
+    if(status.entanglement_saturated_for > 0 or iter_since_reduce >= 8) {
         write_to_file(StorageReason::FES_ANALYSIS);
         algorithm_history.clear();
         status.entanglement_saturated_for = 0;
@@ -272,6 +275,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
             status.bond_limit = 64;
         else if(status.bond_limit >= 128)
             status.bond_limit = num::prev_power_of_two<long>(status.bond_limit);
+        iter_last_reduce = status.iter;
     }
 }
 
