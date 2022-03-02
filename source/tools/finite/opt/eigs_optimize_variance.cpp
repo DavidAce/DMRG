@@ -413,9 +413,9 @@ namespace tools::finite::opt::internal {
         //        configs[0].primme_max_inner_iterations = 10;   // 0 is default for GD
 
         configs[0].sigma = 0.0;
-        configs[0].ritz  = eig::Ritz::primme_closest_geq;
+        configs[0].ritz  = eig::Ritz::primme_smallest;
         //        configs[0].primme_preconditioner = simps_bfgs_preconditioner<MatVecMPO<Scalar>>;
-        configs[0].primme_target_shifts = {0.0};
+        // configs[0].primme_target_shifts = {0.0};
 
         // configs[0].primme_convTestFun          = GradientConvTest<MatVecMPO<Scalar>>;
         // configs[0].primme_grad_tol             = meta.bfgs_grad_tol;
@@ -430,7 +430,7 @@ namespace tools::finite::opt::internal {
         configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
         configs[1].tag    = "primme-run2";
         // configs[1]                 = config_primme;
-        configs[1].tol    = 0.1 * settings::precision::eig_tolerance;
+        configs[1].tol    = 0.01 * settings::precision::eig_tolerance;
         configs[1].maxNcv = 32;
         // configs[1].primme_grad_tol = meta.bfgs_grad_tol ? meta.bfgs_grad_tol.value() : 1e-12;
 
