@@ -34,16 +34,25 @@ enum class OptType { REAL, CPLX };
 enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE, SIMPS };
 enum class OptSolver { EIGS, BFGS };
 enum class OptRitz { LR, SR, SM }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
-enum class OptWhen : int { NEVER = 0, PREV_FAIL_GRADIENT = 1, PREV_FAIL_NOCHANGE = 2, PREV_FAIL_WORSENED = 4, PREV_FAIL_ERROR = 8, ALWAYS = 16 };
+enum class OptWhen : int {
+    NEVER              = 0,
+    PREV_FAIL_GRADIENT = 1,
+    PREV_FAIL_OVERLAP  = 2,
+    PREV_FAIL_NOCHANGE = 4,
+    PREV_FAIL_WORSENED = 8,
+    PREV_FAIL_ERROR    = 16,
+    ALWAYS             = 32
+};
 enum class OptEigs { ALWAYS, WHEN_STUCK }; // When to prefer eigs over bfgs (the default)
 
 enum class OptExit : int {
     SUCCESS       = 0,
     FAIL_GRADIENT = 1,
-    FAIL_NOCHANGE = 2,
-    FAIL_WORSENED = 4,
-    FAIL_ERROR    = 8,
-    NONE          = 16,
+    FAIL_OVERLAP  = 2,
+    FAIL_NOCHANGE = 4,
+    FAIL_WORSENED = 8,
+    FAIL_ERROR    = 16,
+    NONE          = 32,
 };
 enum class OptMark {
     PASS,
@@ -362,6 +371,7 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == OptWhen::NEVER)                                     return "NEVER";
         if(item == OptWhen::PREV_FAIL_GRADIENT)                        return "PREV_FAIL_GRADIENT";
+        if(item == OptWhen::PREV_FAIL_OVERLAP)                         return "PREV_FAIL_OVERLAP";
         if(item == OptWhen::PREV_FAIL_NOCHANGE)                        return "PREV_FAIL_NOCHANGE";
         if(item == OptWhen::PREV_FAIL_WORSENED)                        return "PREV_FAIL_WORSENED";
         if(item == OptWhen::PREV_FAIL_ERROR)                           return "PREV_FAIL_ERROR";
@@ -382,6 +392,7 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T,OptExit>){
         if(item == OptExit::SUCCESS)                                   return "SUCCESS";
         if(item == OptExit::FAIL_GRADIENT)                             return "FAIL_GRADIENT";
+        if(item == OptExit::FAIL_OVERLAP)                              return "FAIL_OVERLAP";
         if(item == OptExit::FAIL_NOCHANGE)                             return "FAIL_NOCHANGE";
         if(item == OptExit::FAIL_WORSENED)                             return "FAIL_WORSENED";
         if(item == OptExit::FAIL_ERROR)                                return "FAIL_ERROR";
@@ -398,6 +409,7 @@ std::string flag2str(const T &item) {
     std::vector<std::string> v;
     if constexpr(std::is_same_v<T,OptExit>){
         if(has_flag(item,OptExit::FAIL_GRADIENT)) v.emplace_back("FAIL_GRADIENT");
+        if(has_flag(item,OptExit::FAIL_OVERLAP))  v.emplace_back("FAIL_OVERLAP");
         if(has_flag(item,OptExit::FAIL_NOCHANGE)) v.emplace_back("FAIL_NOCHANGE");
         if(has_flag(item,OptExit::FAIL_WORSENED)) v.emplace_back("FAIL_WORSENED");
         if(has_flag(item,OptExit::FAIL_ERROR))    v.emplace_back("FAIL_ERROR");
@@ -406,6 +418,7 @@ std::string flag2str(const T &item) {
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(has_flag(item,OptWhen::PREV_FAIL_GRADIENT)) v.emplace_back("PREV_FAIL_GRADIENT");
+        if(has_flag(item,OptWhen::PREV_FAIL_OVERLAP))  v.emplace_back("PREV_FAIL_OVERLAP");
         if(has_flag(item,OptWhen::PREV_FAIL_NOCHANGE)) v.emplace_back("PREV_FAIL_NOCHANGE");
         if(has_flag(item,OptWhen::PREV_FAIL_WORSENED)) v.emplace_back("PREV_FAIL_WORSENED");
         if(has_flag(item,OptWhen::PREV_FAIL_ERROR))    v.emplace_back("PREV_FAIL_ERROR");
@@ -657,6 +670,7 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == "NEVER")                                 return OptWhen::NEVER;
         if(item == "PREV_FAIL_GRADIENT")                    return OptWhen::PREV_FAIL_GRADIENT;
+        if(item == "PREV_FAIL_OVERLAP")                     return OptWhen::PREV_FAIL_OVERLAP;
         if(item == "PREV_FAIL_NOCHANGE")                    return OptWhen::PREV_FAIL_NOCHANGE;
         if(item == "PREV_FAIL_WORSENED")                    return OptWhen::PREV_FAIL_WORSENED;
         if(item == "PREV_FAIL_ERROR")                       return OptWhen::PREV_FAIL_ERROR;
@@ -676,6 +690,7 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T,OptExit>){
         if(item == "SUCCESS")                               return OptExit::SUCCESS;
+        if(item == "FAIL_OVERLAP")                          return OptExit::FAIL_OVERLAP;
         if(item == "FAIL_GRADIENT")                         return OptExit::FAIL_GRADIENT;
         if(item == "FAIL_NOCHANGE")                         return OptExit::FAIL_NOCHANGE;
         if(item == "FAIL_WORSENED")                         return OptExit::FAIL_WORSENED;

@@ -422,6 +422,18 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optInit   = OptInit::LAST_RESULT;
         m2.retry     = false;
         metas.emplace_back(m2);
+    } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::VARIANCE) {
+        // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
+        m2.optWhen      = OptWhen::PREV_FAIL_OVERLAP;
+        m2.optSolver    = OptSolver::EIGS;
+        m2.optMode      = OptMode::VARIANCE;
+        m2.optInit      = OptInit::CURRENT_STATE;
+        m2.max_sites    = settings::strategy::multisite_mps_site_max;
+        m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites);
+        m2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
+        m2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
+        m2.retry        = false;
+        metas.emplace_back(m2);
     }
     for(const auto &config : metas) config.validate();
     return metas;
@@ -503,6 +515,7 @@ void xdmrg::single_xDMRG_step() {
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
         if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_overlap()        < 0.010                  ) meta.optExit |= OptExit::FAIL_OVERLAP;
         if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
         else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;
         results.back().set_optexit(meta.optExit);
