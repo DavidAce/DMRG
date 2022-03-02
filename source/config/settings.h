@@ -131,9 +131,9 @@ namespace settings {
         inline size_t        max_saturation_iters        = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
         inline size_t        min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
         inline size_t        min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
-        inline double        max_env_expansion_alpha         = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
-        inline size_t        multisite_mps_size_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
-        inline size_t        multisite_mps_size_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
+        inline double        max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
+        inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
+        inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_step          = MultisiteMove::MAX;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
         inline std::string   target_sector               = "none";                                 /*!< Find an eigenstate in this parity sector. Choose between [random,randomAxis, none, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline std::string   initial_sector              = "random";                               /*!< Initialize state in this spin pattern/parity sector. Choose between [random, x,+x,-x, y, +y,-y, z,+z,-z]  */

@@ -296,7 +296,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
     // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_size_def);
+    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def);
     m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
@@ -309,13 +309,13 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_size_def;
-        m1.retry     = false;
+        m1.max_sites = settings::strategy::multisite_mps_site_def;
+        m1.retry     = true;
     }
     if(settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_size_def;
+        m1.max_sites = settings::strategy::multisite_mps_site_def;
         m1.retry     = true;
     }
 
@@ -323,7 +323,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
         m1.optSolver = OptSolver::EIGS;
         m1.optMode   = OptMode::SUBSPACE;
-        m1.max_sites = settings::strategy::multisite_mps_size_max;
+        m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = true;
         if(settings::xdmrg::opt_subspace_bond_limit > 0 and status.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
             tools::log->info("Kept bond dimension back during variance|shift-invert optimization {} -> {}", status.bond_limit,
@@ -336,7 +336,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
         m1.optMode   = OptMode::OVERLAP;
         m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_size_max;
+        m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = false;
         if(settings::xdmrg::opt_overlap_bond_limit > 0) status.bond_limit = settings::xdmrg::opt_overlap_bond_limit;
     }
@@ -367,7 +367,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
     if(status.algorithm_has_stuck_for > 0) {
-        m1.max_sites     = settings::strategy::multisite_mps_size_max;
+        m1.max_sites     = settings::strategy::multisite_mps_site_max;
         m1.eigs_max_iter = 200000;
         m1.bfgs_max_iter = 200000;
     }
