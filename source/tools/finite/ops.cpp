@@ -293,8 +293,8 @@ StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &stat
 
 StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<long> bond_limit,
                                                                  std::optional<svd::settings> svd_settings) {
-    auto state_projected = state;
-    auto sign            = project_to_nearest_sector(state_projected, sector, bond_limit, svd_settings);
+    auto                  state_projected = state;
+    [[maybe_unused]] auto sign            = project_to_nearest_sector(state_projected, sector, bond_limit, svd_settings);
     return state_projected;
 }
 
