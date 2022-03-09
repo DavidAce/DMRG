@@ -48,7 +48,8 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
             extra_prefix = extra_prefix + "_multi" + str(multi)
 
 #     input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_g,str_d)
-    input_filename = "{}_L{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix, str_L, basename, str_L, str_g, str_d)
+    input_dirname = "{}{}_L{}".format(location, extra_prefix, str_L)
+    input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(input_dirname, basename, str_L, str_g, str_d)
     settings = {
         "storage::output_filepath"            : "{}/L_{}/g_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
         "storage::temp_dir"                  : tmp_storage,
@@ -66,7 +67,7 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
         "strategy::initial_sector"           : str(initial_sector),
         "strategy::target_sector"            : str(target_sector),
     }
-    os.makedirs(location + extra_prefix, exist_ok=True)
+    os.makedirs(input_dirname, exist_ok=True)
     num_total = num_total + 1
     print(input_filename, "L:", str_L,"g:",str_g, "d:", str_d)
     generate_input_file(settings, input_filename, template_filename)
