@@ -227,7 +227,7 @@ void MpoSite::set_psfactor(double psfactor_) {
 void MpoSite::set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli) {
     if(std::abs(sign) > 1) throw except::logic_error("MpoSite::set_mpo2_proj_sign: wrong value [{}] | expected -1, 0 or 1", sign);
     if(sign != mpo2_proj_sign or pauli != mpo2_proj_pauli) {
-        tools::log->info("Setting MPO2 proj: {:+}", sign);
+        tools::log->trace("MpoSite[{}]: Setting MPO2 proj: {:+}", get_position(), sign);
         mpo2_proj_sign  = sign;
         mpo2_proj_pauli = pauli;
         build_mpo_squared();

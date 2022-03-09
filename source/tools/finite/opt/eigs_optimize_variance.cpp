@@ -367,25 +367,34 @@ namespace tools::finite::opt::internal {
             for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
             tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
-            if(tensors.model->is_compressed_mpo_squared()) {
-                tools::log->warn("Finding excited state minimum of (H-E)² with ritz SM because all MPO²'s are compressed!");
-                solver.config.ritz = eig::Ritz::SM;
-                solver.eigs(hamiltonian_squared);
-            } else {
+            //            if(tensors.model->is_compressed_mpo_squared()) {
+
+            //            } else
+            {
+                //                tools::log->warn("Finding excited state minimum of (H-E)² with ritz SM because all MPO²'s are compressed!");
+                //                solver.config.ritz = eig::Ritz::SM;
+                //                solver.eigs(hamiltonian_squared);
                 if(solver.config.lib == eig::Lib::ARPACK) {
+                    if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance with ARPACK requires non-compressed MPO²");
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
                     if(not solver.config.sigma)
                         solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-                    tools::log->info("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
-                                     std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
-                                     hamiltonian_squared.rows());
+                    tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
+                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
+                                      hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 } else if(solver.config.lib == eig::Lib::PRIMME) {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
-                    if(not solver.config.sigma) solver.config.sigma = 1.0;
-                    tools::log->info("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
-                                     std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
-                                     hamiltonian_squared.rows());
+                    if(solver.config.sigma and tensors.model->is_compressed_mpo_squared())
+                        throw except::logic_error("eigs_optimize_variance with PRIMME with given sigma requires non-compressed MPO²");
+                    if(solver.config.sigma)
+                        tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
+                                          std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
+                                          hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
+
+                    else
+                        tools::log->debug("Finding excited state minimum of [(H-E)²] | primme {} | init on | dims {} = {}",
+                                          eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 }
             }
@@ -412,10 +421,12 @@ namespace tools::finite::opt::internal {
 
         //        configs[0].primme_max_inner_iterations = 10;   // 0 is default for GD
 
-        configs[0].sigma = 0.0;
-        configs[0].ritz  = eig::Ritz::primme_smallest;
+        //        configs[0].sigma = 0.0;
+        //        configs[0].ritz  = eig::Ritz::primme_smallest;
+        //        configs[0].ritz  = eig::Ritz::primme_closest_geq;
+        //        configs[0].primme_projection  = "primme_proj_refined";
+        //        configs[0].primme_target_shifts = {0.0};
         //        configs[0].primme_preconditioner = simps_bfgs_preconditioner<MatVecMPO<Scalar>>;
-        // configs[0].primme_target_shifts = {0.0};
 
         // configs[0].primme_convTestFun          = GradientConvTest<MatVecMPO<Scalar>>;
         // configs[0].primme_grad_tol             = meta.bfgs_grad_tol;
@@ -442,7 +453,7 @@ namespace tools::finite::opt::internal {
             if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
             eigs_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
             if(&config == &configs.back()) break;
-            if(not try_harder(results, meta, spdlog::level::info)) break;
+            if(not try_harder(results, meta, spdlog::level::debug)) break;
         }
     }
 }
@@ -453,7 +464,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     using namespace settings::precision;
     initial_mps.validate_basis_vector();
     if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
-    if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance requires non-compressed MPO²");
 
     auto                 t_var = tid::tic_scope("variance");
     std::vector<opt_mps> results;
@@ -471,6 +481,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
         std::sort(results.begin(), results.end(), comp_eigval_and_overlap); // Smallest eigenvalue (i.e. variance) wins
     }
 
-    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
     return results.front();
 }

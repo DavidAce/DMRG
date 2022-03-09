@@ -165,6 +165,7 @@ void AlgorithmFinite::shift_mpo_energy() {
 }
 
 void AlgorithmFinite::rebuild_mpo_squared() {
+    tools::log->info("Rebuilding MPO²");
     if(not tensors.position_is_inward_edge()) return;
     bool compress = settings::precision::use_compressed_mpo_squared_all;
     tensors.rebuild_mpo_squared(compress);
@@ -468,10 +469,10 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             auto entropies_new = tools::finite::measure::entanglement_entropies(*tensors.state);
             tools::log->info("Projection result: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
                              fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
-
-            for(const auto &[i, e] : iter::enumerate(entropies_old)) {
-                tools::log->info("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
-            }
+            if(tools::log->level() <= spdlog::level::debug)
+                for(const auto &[i, e] : iter::enumerate(entropies_old)) {
+                    tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
+                }
         }
         if(target_sector.value() == settings::strategy::target_sector) projected_iter = status.iter;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);

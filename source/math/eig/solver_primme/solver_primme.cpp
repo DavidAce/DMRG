@@ -122,26 +122,26 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | dt {:8.2e} s/op"), primme->stats.numMatvecs,
+        return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"), primme->stats.numMatvecs,
                            primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
-                           primme->stats.timeMatvec / primme->stats.numMatvecs);
+                           primme->stats.elapsedTime / primme->stats.numOuterIterations, primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
-    auto       &solver  = *static_cast<eig::solver *>(primme->monitor);
-    auto       &result  = solver.result;
-    auto       &eigvals = result.get_eigvals<eig::Form::SYMM>();
-    std::string msg_gap;
-    if(eigvals.size() >= 2) msg_gap = fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1]));
-    auto res = std::numeric_limits<double>::quiet_NaN();
+    auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
+    auto       &result   = solver.result;
+    auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
+    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1])) : "";
+    std::string msg_grad = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
+    auto        res      = std::numeric_limits<double>::quiet_NaN();
     if(result.meta.last_res_norm > 0)
         res = result.meta.last_res_norm;
     else if(result.meta.residual_norms[0] > 0)
         res = result.meta.residual_norms[0];
     else if(primme->stats.estimateResidualError > 0)
         res = primme->stats.estimateResidualError;
-
-    return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | res {:8.2e} | f {:20.16f}{}| ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, res, primme->stats.estimateMinEVal, msg_gap, result.meta.last_grad_max,
-                       primme->stats.elapsedTime, primme->stats.timeMatvec / primme->stats.numMatvecs);
+    return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | res {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"),
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, res, primme->stats.estimateMinEVal, msg_diff, msg_grad,
+                       primme->stats.elapsedTime, primme->stats.elapsedTime / primme->stats.numOuterIterations,
+                       primme->stats.timeMatvec / primme->stats.numMatvecs);
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -163,6 +163,7 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
     else if(*event == primme_event_message)         eventMessage = "event_message";
     else if(*event == primme_event_profile)         eventMessage = "event_profile";
     /* clang-format on */
+    std::string basisMessage = basisSize != nullptr ? fmt::format(" | {:3}", *basisSize) : "";
 
     if(primme->monitor != nullptr) {
         auto &solver              = *static_cast<eig::solver *>(primme->monitor);
@@ -182,9 +183,8 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
             eig::log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
             primme->maxMatvecs = 0;
         }
-
         if(eig::log->level() <= level) {
-            eig::log->log(level, FMT_STRING("{} | {}"), getLogMessage(primme), eventMessage);
+            eig::log->log(level, FMT_STRING("{}{} | {}"), getLogMessage(primme), basisMessage, eventMessage);
             result.meta.last_log_time = primme->stats.elapsedTime;
             result.meta.last_log_iter = primme->stats.numOuterIterations;
         }

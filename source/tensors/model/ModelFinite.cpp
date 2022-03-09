@@ -111,8 +111,8 @@ bool ModelFinite::is_compressed_mpo_squared() const {
     bool compressed = MPO.front()->is_compressed_mpo_squared();
     for(const auto &mpo : MPO)
         if(compressed != mpo->is_compressed_mpo_squared())
-            throw std::runtime_error(fmt::format("First MPO has is_compressed_mpo_squared: {}, but MPO at pos {} has is_compressed_mpo_squared: {}", compressed,
-                                                 mpo->get_position(), mpo->is_compressed_mpo_squared()));
+            throw except::runtime_error("First MPO has is_compressed_mpo_squared: {}, but MPO at pos {} has is_compressed_mpo_squared: {}", compressed,
+                                        mpo->get_position(), mpo->is_compressed_mpo_squared());
     return compressed;
 }
 
@@ -194,7 +194,7 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
     if(tools::log->level() == spdlog::level::trace)
         for(const auto &mpo : mpos_sq) report.emplace_back(fmt::format("{}", mpo.dimensions()));
 
-    for(size_t iter = 0; iter < 1; iter++) {
+    for(size_t iter = 0; iter < 4; iter++) {
         // Next compress from left to right
         Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
         Eigen::Tensor<cplx, 4> T_mpo_sq;
@@ -261,6 +261,7 @@ void ModelFinite::set_psfactor(double psfactor) {
 }
 
 void ModelFinite::set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli) {
+    tools::log->debug("ModelFinite: Setting MPO² proj: sign {:+}", sign);
     for(const auto &mpo : MPO) mpo->set_mpo2_proj(sign, pauli);
 }
 

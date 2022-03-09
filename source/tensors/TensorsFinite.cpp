@@ -282,10 +282,8 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
         auto &aft = debs.back();
         if(bef and aft) {
             if(std::abs(bef->red - aft->red) > std::numeric_limits<double>::epsilon()) {
-                if(bef->mpo_ids == aft->mpo_ids)
-                    throw std::runtime_error(fmt::format("MPO id's are unchanged after energy reduction\n{}\n{}", bef->msg(), aft->msg()));
-                if(bef->env_ids == aft->env_ids)
-                    throw std::runtime_error(fmt::format("ENV id's are unchanged after energy reduction\n{}\n{}", bef->msg(), aft->msg()));
+                if(bef->mpo_ids == aft->mpo_ids) throw except::runtime_error("MPO id's are unchanged after energy shift\n{}\n{}", bef->msg(), aft->msg());
+                if(bef->env_ids == aft->env_ids) throw except::runtime_error("ENV id's are unchanged after energy shift\n{}\n{}", bef->msg(), aft->msg());
             }
         }
     }
@@ -309,13 +307,13 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
             tools::log->debug("Critical cancellation decs   {:>20.16f}", critical_cancellation_max_decimals);
             tools::log->debug("Critical cancellation error  {:>20.16f}", critical_cancellation_error);
             if(delta_var > 1e3 * critical_cancellation_error) {
-                tools::log->warn("Variance changed significantly after energy reduction+compression");
+                tools::log->warn("Variance changed significantly after energy shift+compression");
                 if(delta_var > 1e6 * critical_cancellation_error) throw std::runtime_error("Energy reduction destroyed variance precision");
             }
             if(delta_ene_rel > 1e-8) {
-                tools::log->warn("Energy changed significantly after energy reduction+compression");
+                tools::log->warn("Energy changed significantly after energy shift+compression");
                 if(delta_ene_rel > 1e-6)
-                    throw except::runtime_error("Energy reduction changed energy level {:.16f} -> {:.16f} (Δ/E = {:.3f} %)", bef->ene, aft->ene, delta_ene_rel);
+                    throw except::runtime_error("Energy shift changed energy level {:.16f} -> {:.16f} (Δ/E = {:.3f} %)", bef->ene, aft->ene, delta_ene_rel);
             }
         }
     }

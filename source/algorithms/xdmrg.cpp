@@ -366,7 +366,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_stuck_for > 0) {
+    if(status.algorithm_has_stuck_for > 0 and tools::finite::measure::energy_variance(tensors) > settings::precision::variance_convergence_threshold) {
         m1.max_sites     = settings::strategy::multisite_mps_site_max;
         m1.eigs_max_iter = 200000;
         m1.bfgs_max_iter = 200000;
