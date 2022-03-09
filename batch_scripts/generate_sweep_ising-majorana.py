@@ -47,7 +47,8 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
     if len(multisite_mps_size_def) > 1:
             extra_prefix = extra_prefix + "_multi" + str(multi)
 
-    input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_g,str_d)
+#     input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_g,str_d)
+    input_filename = "{}_L{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix, str_L, basename, str_L, str_g, str_d)
     settings = {
         "storage::output_filepath"            : "{}/L_{}/g_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
         "storage::temp_dir"                  : tmp_storage,
