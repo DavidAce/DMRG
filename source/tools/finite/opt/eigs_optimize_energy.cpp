@@ -114,7 +114,7 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
 
     auto comparator = [&ritz, &meta, &tensors](const opt_mps &lhs, const opt_mps &rhs) {
         auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
-        if(diff < settings::precision::eig_tolerance) return lhs.get_overlap() > rhs.get_overlap();
+        if(diff < settings::precision::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
         switch(ritz) {
             case eig::Ritz::SA:
             case eig::Ritz::SR: return lhs.get_energy() < rhs.get_energy();

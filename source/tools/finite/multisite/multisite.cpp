@@ -60,9 +60,10 @@ long tools::finite::multisite::get_problem_size(const StateFinite &state, std::o
     return (dims[0] * dims[1] * dims[2]);
 }
 
-std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &state, long threshold, size_t max_sites, const size_t min_sites) {
+std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &state, long threshold, size_t max_sites, const size_t min_sites,
+                                                                 const std::string &tag) {
     if(max_sites < min_sites) throw std::runtime_error("generate site list: asked for max sites < min sites");
-    tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {}", state.get_position<long>(),
+    tools::log->trace("Multisite activation {} | site {} | direction {} | sites min {} max {} | max problem size {}", tag, state.get_position<long>(),
                       state.get_direction(), min_sites, max_sites, threshold);
 
     const auto initial_position = state.get_position<long>();

@@ -1,12 +1,12 @@
 #include "xdmrg.h"
-#include "fdmrg.h"
-#include "qm/spin.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "fdmrg.h"
 #include "general/iter.h"
 #include "io/fmt.h"
 #include "math/num.h"
 #include "math/rnd.h"
+#include "qm/spin.h"
 #include "qm/time.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
@@ -319,14 +319,14 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.retry     = true;
     }
 
-    if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters) {
+    if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
         m1.optSolver = OptSolver::EIGS;
         m1.optMode   = OptMode::SUBSPACE;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = true;
         if(settings::xdmrg::opt_subspace_bond_limit > 0 and status.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
-            tools::log->info("Kept bond dimension back during variance|shift-invert optimization {} -> {}", status.bond_limit,
+            tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", status.bond_limit,
                              settings::xdmrg::opt_subspace_bond_limit);
             status.bond_limit = settings::xdmrg::opt_subspace_bond_limit;
         }
@@ -366,14 +366,17 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.algorithm_has_stuck_for > 0 and tools::finite::measure::energy_variance(tensors) > settings::precision::variance_convergence_threshold) {
-        m1.max_sites     = settings::strategy::multisite_mps_site_max;
-        m1.eigs_max_iter = 200000;
-        m1.bfgs_max_iter = 200000;
+    if(status.variance_mpo_saturated_for > 0 and status.energy_variance_lowest > settings::precision::variance_convergence_threshold) {
+        size_t iter_factor = settings::precision::eigs_max_iter * static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for));
+        m1.eigs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
+        m1.bfgs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
+        m1.max_sites =
+            std::clamp(status.variance_mpo_saturated_for + 1, settings::strategy::multisite_mps_site_def, settings::strategy::multisite_mps_site_max);
     }
+
     if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
 
-    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites);
+    m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
@@ -429,7 +432,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optMode      = OptMode::VARIANCE;
         m2.optInit      = OptInit::CURRENT_STATE;
         m2.max_sites    = settings::strategy::multisite_mps_site_max;
-        m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites);
+        m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
         m2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
         m2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
         m2.retry        = false;

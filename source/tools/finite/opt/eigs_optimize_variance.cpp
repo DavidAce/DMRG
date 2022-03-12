@@ -306,7 +306,7 @@ namespace tools::finite::opt::internal {
         auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
         tools::log->trace("Finding largest-magnitude eigenvalue");
         eig::solver solver; // Define a solver just to find the maximum eigenvalue
-        solver.config.tol             = settings::precision::eig_tolerance;
+        solver.config.tol             = settings::precision::eigs_tolerance;
         solver.config.maxIter         = 200;
         solver.config.maxNev          = 1;
         solver.config.maxNcv          = 16;
@@ -406,11 +406,11 @@ namespace tools::finite::opt::internal {
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         std::vector<eig::settings> configs(2);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        configs[0].tol             = settings::precision::eig_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        configs[0].maxIter         = settings::precision::eig_max_iter;
+        configs[0].tol             = settings::precision::eigs_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        configs[0].maxIter         = settings::precision::eigs_max_iter;
         configs[0].maxTime         = 2 * 60 * 60; // Two hours
         configs[0].maxNev          = 1;
-        configs[0].maxNcv          = settings::precision::eig_default_ncv;
+        configs[0].maxNcv          = settings::precision::eigs_default_ncv;
         configs[0].compress        = settings::precision::use_compressed_mpo_squared_otf;
         configs[0].lib             = eig::Lib::PRIMME;
         configs[0].ritz            = eig::Ritz::SA;
@@ -441,7 +441,7 @@ namespace tools::finite::opt::internal {
         configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
         configs[1].tag    = "primme-run2";
         // configs[1]                 = config_primme;
-        configs[1].tol    = 0.01 * settings::precision::eig_tolerance;
+        configs[1].tol    = 0.01 * settings::precision::eigs_tolerance;
         configs[1].maxNcv = 32;
         // configs[1].primme_grad_tol = meta.bfgs_grad_tol ? meta.bfgs_grad_tol.value() : 1e-12;
 
@@ -481,6 +481,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
         std::sort(results.begin(), results.end(), comp_eigval_and_overlap); // Smallest eigenvalue (i.e. variance) wins
     }
 
-    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
+    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
     return results.front();
 }

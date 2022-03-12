@@ -29,7 +29,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     using namespace settings::precision;
     eig::solver solver;
     auto        nev = static_cast<eig::size_type>(1);
-    auto        ncv = static_cast<eig::size_type>(eig_default_ncv);
+    auto        ncv = static_cast<eig::size_type>(eigs_default_ncv);
 
     solver.eigs(transfer_matrix_theta_evn.data(), sizeLB, nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
                 eig::Dephase::OFF);
@@ -45,7 +45,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     // Compute the characteristic function G(a).
     solver.eigs(transfer_matrix_G.data(), transfer_matrix_G.dimension(0), nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF,
                 eig::Vecs::OFF, eig::Dephase::OFF);
-    //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eig_default_ncv, Ritz::LM, Side::R, false);
+    //    solver.eig(transfer_matrix_G.data(),(int)transfer_matrix_G.dimension(0), 1, eigs_default_ncv, Ritz::LM, Side::R, false);
     auto lambdaG = eig::view::get_eigval<eig::cplx>(solver.result, 0);
     return lambdaG;
 }

@@ -146,7 +146,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
 
     // Create a reusable config for multiple nev trials
     eig::settings config;
-    config.tol             = settings::precision::eig_tolerance;
+    config.tol             = settings::precision::eigs_tolerance;
     config.sigma           = energy_target;
     config.shift_invert    = eig::Shinv::ON;
     config.compute_eigvecs = eig::Vecs::ON;
@@ -270,7 +270,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_prec(const 
 
     // Create a reusable config for multiple nev trials
     eig::settings config;
-    config.tol                   = 1e-10; // settings::precision::eig_tolerance;
+    config.tol                   = 1e-10; // settings::precision::eigs_tolerance;
     config.maxIter               = 5000;
     config.maxTime               = 60 * 60;
     config.compute_eigvecs       = eig::Vecs::ON;

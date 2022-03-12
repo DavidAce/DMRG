@@ -122,8 +122,8 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | f {:20.16f} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"), primme->stats.numMatvecs,
-                           primme->stats.numOuterIterations, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
+        return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | size {} | f {:20.16f} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"), primme->stats.numMatvecs,
+                           primme->stats.numOuterIterations, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.elapsedTime / primme->stats.numOuterIterations, primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
     auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
@@ -138,8 +138,8 @@ std::string getLogMessage(struct primme_params *primme) {
         res = result.meta.residual_norms[0];
     else if(primme->stats.estimateResidualError > 0)
         res = primme->stats.estimateResidualError;
-    return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | res {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, res, primme->stats.estimateMinEVal, msg_diff, msg_grad,
+    return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | size {} | res {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"),
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, res, primme->stats.estimateMinEVal, msg_diff, msg_grad,
                        primme->stats.elapsedTime, primme->stats.elapsedTime / primme->stats.numOuterIterations,
                        primme->stats.timeMatvec / primme->stats.numMatvecs);
 }
@@ -163,7 +163,7 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
     else if(*event == primme_event_message)         eventMessage = "event_message";
     else if(*event == primme_event_profile)         eventMessage = "event_profile";
     /* clang-format on */
-    std::string basisMessage = basisSize != nullptr ? fmt::format(" | {:3}", *basisSize) : "";
+    std::string basisMessage = basisSize != nullptr ? fmt::format(" | ncv {:3}", *basisSize) : "";
 
     if(primme->monitor != nullptr) {
         auto &solver              = *static_cast<eig::solver *>(primme->monitor);
