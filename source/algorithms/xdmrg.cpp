@@ -366,13 +366,13 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // We can make trials with different number of sites.
     // Eg if the simulation is stuck we may try with more sites.
-    if(status.variance_mpo_saturated_for > 0 and status.energy_variance_lowest > settings::precision::variance_convergence_threshold) {
-        size_t iter_factor = settings::precision::eigs_max_iter * static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for));
-        m1.eigs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
-        m1.bfgs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
-        m1.max_sites =
-            std::clamp(status.variance_mpo_saturated_for + 1, settings::strategy::multisite_mps_site_def, settings::strategy::multisite_mps_site_max);
-    }
+    //    if(status.variance_mpo_saturated_for > 0 and status.energy_variance_lowest > settings::precision::variance_convergence_threshold) {
+    //        size_t iter_factor = settings::precision::eigs_max_iter * static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for));
+    //        m1.eigs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
+    //        m1.bfgs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
+    //        m1.max_sites =
+    //            std::clamp(status.variance_mpo_saturated_for + 1, settings::strategy::multisite_mps_site_def, settings::strategy::multisite_mps_site_max);
+    //    }
 
     if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
 
@@ -426,16 +426,23 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.retry     = false;
         metas.emplace_back(m2);
     } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::VARIANCE) {
-        // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
-        m2.optWhen      = OptWhen::PREV_FAIL_OVERLAP;
-        m2.optSolver    = OptSolver::EIGS;
-        m2.optMode      = OptMode::VARIANCE;
-        m2.optInit      = OptInit::CURRENT_STATE;
-        m2.max_sites    = settings::strategy::multisite_mps_site_max;
+        // If we did a EIGS|VARIANCE optimization whose residual did not really converge, or the overlap is very poor, then run again for longer and more sites
+        m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP;
+        m2.optSolver = OptSolver::EIGS;
+        m2.optMode   = OptMode::VARIANCE;
+        // The longer variance has saturated for, the longer we should run.
+        size_t iter_factor = settings::precision::eigs_max_iter * static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for + 1));
+        m2.eigs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
+        m2.eigs_max_ncv    = 64; // 16 is default
+        m2.optInit         = OptInit::CURRENT_STATE;
+        // The longer variance has saturated for, the more sites we should add
+        m2.max_sites    = std::clamp(settings::strategy::multisite_mps_site_def + status.variance_mpo_saturated_for + 1,
+                                     settings::strategy::multisite_mps_site_def, settings::strategy::multisite_mps_site_max);
         m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
         m2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
         m2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
-        m2.retry        = false;
+
+        m2.retry = false;
         metas.emplace_back(m2);
     }
     for(const auto &config : metas) config.validate();
@@ -518,6 +525,7 @@ void xdmrg::single_xDMRG_step() {
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
         if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_eigs_resid()     > 1e-6                   ) meta.optExit |= OptExit::FAIL_RESIDUAL;
         if(results.back().get_overlap()        < 0.010                  ) meta.optExit |= OptExit::FAIL_OVERLAP;
         if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
         else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;

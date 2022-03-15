@@ -33,6 +33,7 @@ namespace tools::finite::opt {
         std::string           label;
         std::optional<double> eigs_max_tol            = std::nullopt;
         std::optional<int>    eigs_max_iter           = std::nullopt;
+        std::optional<int>    eigs_max_ncv            = std::nullopt;
         std::optional<double> eigs_grad_tol           = std::nullopt;
         std::optional<double> bfgs_grad_tol           = std::nullopt;
         std::optional<int>    bfgs_max_iter           = std::nullopt;

@@ -20,8 +20,8 @@ namespace settings {
     static constexpr bool debug_edges = false;
 }
 
-std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                           long bond_limit, std::optional<svd::settings> svd_settings) {
+std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
+                                                               long bond_limit, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -171,6 +171,218 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
                 //                Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
                 Eigen::Tensor<Scalar, 3> P0    = tenx::TensorRandom<double>(mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1)).cast<Scalar>();
                 P0                             = P0 * P0.constant(1e-10);
+                Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
+                Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
+
+                bond_limit =
+                    std::min(bond_limit, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_limit);
+                mpsL.set_M(ML_P0);
+                mpsR.set_M(V);
+                mpsR.stash_U(U, mpsL.get_position());
+                if(mpsL.isCenter()) {
+                    mpsR.stash_C(S, -1, mpsL.get_position());
+                } else {
+                    // Here we expect mpsL to be a "B" as well
+                    mpsR.stash_S(S, -1, mpsL.get_position());
+                }
+                mpsL.take_stash(mpsR);
+                if constexpr(settings::debug) mpsR.assert_identity();
+
+                // Make mpsL normalized
+                {
+                    Eigen::Tensor<Scalar, 3> M_tmp; // A one-site "theta" i.e. we want this object to have norm 1, but currently it does not, so we rescale mpsL
+                    if(mpsL.isCenter() or posR == 0)
+                        M_tmp = mpsL.get_M();
+                    else if(mpsL.get_label() == "B" and posR > 0) {
+                        auto &mpsLL = state.get_mps_site(posR - 1);
+                        if(mpsLL.isCenter())
+                            tools::common::contraction::contract_bnd_mps(M_tmp, mpsLL.get_LC(), mpsL.get_M());
+                        else
+                            tools::common::contraction::contract_bnd_mps(M_tmp, mpsLL.get_L(), mpsL.get_M());
+                    } else
+                        throw except::logic_error("Can't make mpsL normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
+                                                  mpsL.get_position(), mpsR.get_label(), mpsR.get_position());
+
+                    double norm_old = tools::common::contraction::contract_mps_norm(M_tmp);
+                    M_tmp = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
+                    mpsL.set_M(M_tmp);
+                    if constexpr(settings::debug) {
+                        auto   mpsL_final = state.get_multisite_mps({mpsL.get_position()});
+                        double norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
+                        tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), norm_old, norm_new);
+                    }
+                }
+
+                const auto &mpsR_new = state.get_mps_site(posR + 1);
+                const auto &mpsL_new = state.get_mps_site(posR);
+                const auto &chiR_new = mpsR_new.get_chiL();
+                const auto &dimR_new = mpsR_new.dimensions();
+                const auto &dimL_new = mpsL_new.dimensions();
+
+                tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
+                                  MR_PR.dimension(1), chiR_new, bond_limit);
+                if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
+                if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);
+            }
+        }
+    }
+    env::rebuild_edges(state, model, edges);
+    return pos_expanded;
+}
+
+std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
+                                                               long bond_limit, std::optional<svd::settings> svd_settings) {
+    if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
+        throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
+    if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
+        throw except::runtime_error("All active sites are not equal: state {} | model {} | edges {}", state.active_sites, model.active_sites,
+                                    edges.active_sites);
+    //    if(alpha < 1e-12) return;
+    if(state.active_sites.empty()) throw except::runtime_error("No active sites for environment expansion");
+    std::vector<size_t> pos_expanded;
+
+    if(not alpha) {
+        // When alpha == std::nullopt this turns into a position query
+        // Just return the positions that would get modified if alpha had been defined
+        auto posL = state.active_sites.front();
+        auto posR = state.active_sites.back();
+        // Construct PL = alpha * eneL(i-1) * mps(i-1) * mpo(i-1)
+        if(posL > 0 and posL < state.get_length<size_t>()) {
+            auto &mpsL = state.get_mps_site(posL - 1); // The site to the left
+            if(mpsL.get_label() == "A" or mpsL.get_label() == "AC") {
+                pos_expanded.emplace_back(posL - 1);
+                pos_expanded.emplace_back(posL);
+            }
+        }
+        // Construct PL = alpha * eneL(i+1) * mps(i+1) * mpo(i+1)
+        if(posR < state.get_length<size_t>() - 1) {
+            auto &mpsR = state.get_mps_site(posR + 1); // The the site to the right
+            if(mpsR.get_label() == "B") {
+                pos_expanded.emplace_back(posR);
+                pos_expanded.emplace_back(posR + 1);
+            }
+        }
+        return pos_expanded;
+    }
+    using Scalar = StateFinite::Scalar;
+
+    // Set up the SVD
+    svd::solver svd(svd_settings);
+
+    state.clear_cache();
+
+    // Follows the environment expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
+    {
+        // When direction is -->
+        // The expanded bond sits between envL and the mps:
+        //      * Usually, the first active mps site is an "AC". We call this "mpsR".
+        //      * We call the inactive site which belongs in envL "mpsL"
+        //      * Then, mpsL.chiR and mpsR.chiL get updated
+
+        auto posL = state.active_sites.front();
+        // Construct PL = alpha * eneL(i-1) * mps(i-1) * mpo(i-1)
+        if(posL > 0 and posL < state.get_length<size_t>() and state.get_direction() == 1) {
+            auto &mpsL = state.get_mps_site(posL - 1); // The site to the left
+            auto &mpsR = state.get_mps_site(posL);     // The site to the right
+            if(mpsL.get_label() == "A" or mpsL.get_label() == "AC") {
+                pos_expanded.emplace_back(posL - 1);
+                pos_expanded.emplace_back(posL);
+                auto  chiL_old = mpsL.get_chiR();
+                auto  dimL_old = mpsL.dimensions();
+                auto  dimR_old = mpsR.dimensions();
+                auto &mpoL     = model.get_mpo(posL - 1);
+                //                auto &eneL     = edges.get_env_eneL(posL - 1);
+                auto &varL = edges.get_env_varL(posL - 1);
+
+                mpsL.set_M(state.get_multisite_mps({mpsL.get_position()}));
+                //                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
+                //                Eigen::Tensor<Scalar, 3> PL2      = varL.get_expansion_term(mpsL, mpoL, alpha.value());
+                //                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
+                //                Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
+                Eigen::Tensor<Scalar, 3> PL = varL.get_expansion_term(mpsL, mpoL, alpha.value());
+
+                Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+                //                Eigen::Tensor<Scalar, 3> P0    = tenx::TensorRandom<double>(mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR()).cast<Scalar>();
+                //                P0                             = P0 * P0.constant(1e-10);
+                Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
+                Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
+
+                bond_limit =
+                    std::min(bond_limit, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_limit);
+                mpsL.set_M(U);
+                mpsL.stash_V(V, mpsR.get_position());
+                mpsR.set_M(MR_P0);
+                if(mpsL.isCenter()) {
+                    // Here we expect mpsL to be "AC" and mpsR to be a "B"
+                    mpsL.set_LC(S, -1);
+                } else {
+                    // Here we expect mpsL to be "A" and mpsR to be an "A" or "AC"
+                    mpsL.stash_S(S, -1, mpsR.get_position());
+                }
+                mpsR.take_stash(mpsL);
+                if constexpr(settings::debug) mpsL.assert_identity();
+
+                // Make mpsR normalized
+                {
+                    Eigen::Tensor<Scalar, 3> M_tmp; // A one-site "theta" i.e. a we want this to have norm 1, but currently it does not, so we rescale mpsR
+                    if(mpsR.isCenter() or posL == state.get_length<size_t>() - 1)
+                        M_tmp = mpsR.get_M();
+                    else if(mpsR.get_label() == "A" and posL < state.get_length<size_t>() - 1) {
+                        auto &LR = state.get_mps_site(posL + 1).get_L();
+                        tools::common::contraction::contract_mps_bnd(M_tmp, mpsR.get_M(), LR);
+                    } else
+                        throw except::logic_error("Can't make mpsR normalized: Unknown case: mpsL = {}({}) | mpsR {}({})", mpsL.get_label(),
+                                                  mpsL.get_position(), mpsR.get_label(), mpsR.get_position());
+
+                    double norm_old = tools::common::contraction::contract_mps_norm(M_tmp);
+                    M_tmp = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Do the rescale (use the tmp object to save memory)
+                    mpsR.set_M(M_tmp);
+                    if constexpr(settings::debug) {
+                        auto   mpsR_final = state.get_multisite_mps({mpsR.get_position()});
+                        double norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
+                        tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), norm_old, norm_new);
+                    }
+                }
+
+                const auto &mpsL_new = state.get_mps_site(posL - 1); // The site to the left
+                const auto &mpsR_new = state.get_mps_site(posL);     // The site to the right
+                const auto &chiL_new = mpsL_new.get_chiR();
+                const auto &dimL_new = mpsL_new.dimensions();
+                const auto &dimR_new = mpsR_new.dimensions();
+                tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
+                                  ML_PL.dimension(2), chiL_new, bond_limit);
+                if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
+                if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
+            }
+        }
+    }
+    {
+        auto posR = state.active_sites.back();
+        // Construct PL = alpha * eneL(i+1) * mps(i+1) * mpo(i+1)
+        if(posR < state.get_length<size_t>() - 1 and state.get_direction() == -1) {
+            auto &mpsR = state.get_mps_site(posR + 1); // The the site to the right
+            auto &mpsL = state.get_mps_site(posR);     // The site to the left
+            if(mpsR.get_label() == "B") {
+                pos_expanded.emplace_back(posR);
+                pos_expanded.emplace_back(posR + 1);
+                auto  chiR_old = mpsR.get_chiL();
+                auto  dimR_old = mpsR.dimensions();
+                auto  dimL_old = mpsL.dimensions();
+                auto &mpoR     = model.get_mpo(posR + 1);
+                //                auto &eneR     = edges.get_env_eneR(posR + 1);
+                auto &varR = edges.get_env_varR(posR + 1);
+
+                mpsR.set_M(state.get_multisite_mps({mpsR.get_position()}));
+                //                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
+                //                Eigen::Tensor<Scalar, 3> PR2      = varR.get_expansion_term(mpsR, mpoR, alpha.value());
+                //                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
+                Eigen::Tensor<Scalar, 3> PR = varR.get_expansion_term(mpsR, mpoR, alpha.value());
+                //                Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
+                Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+                //                Eigen::Tensor<Scalar, 3> P0    = tenx::TensorRandom<double>(mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1)).cast<Scalar>();
+                //                P0                             = P0 * P0.constant(1e-10);
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 

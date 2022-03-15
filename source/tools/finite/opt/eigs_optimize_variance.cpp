@@ -404,7 +404,7 @@ namespace tools::finite::opt::internal {
 
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        std::vector<eig::settings> configs(2);
+        std::vector<eig::settings> configs(1);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
         configs[0].tol             = settings::precision::eigs_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
         configs[0].maxIter         = settings::precision::eigs_max_iter;
@@ -434,15 +434,16 @@ namespace tools::finite::opt::internal {
         // configs[0].primme_grad_time            = 5;
 
         if(meta.eigs_max_tol) configs[0].tol = meta.eigs_max_tol;
+        if(meta.eigs_max_ncv) configs[0].maxNcv = meta.eigs_max_ncv;
         if(meta.eigs_max_iter) configs[0].maxIter = meta.eigs_max_iter;
         if(meta.eigs_grad_tol) configs[0].primme_grad_tol = meta.eigs_grad_tol;
 
-        configs[1]        = configs[0];
-        configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
-        configs[1].tag    = "primme-run2";
+        //        configs[1]        = configs[0];
+        //        configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
+        //        configs[1].tag    = "primme-run2";
         // configs[1]                 = config_primme;
-        configs[1].tol    = 0.01 * settings::precision::eigs_tolerance;
-        configs[1].maxNcv = 32;
+        //        configs[1].tol    = 0.01 * settings::precision::eigs_tolerance;
+        //        configs[1].maxNcv = 32;
         // configs[1].primme_grad_tol = meta.bfgs_grad_tol ? meta.bfgs_grad_tol.value() : 1e-12;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();

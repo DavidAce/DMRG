@@ -384,6 +384,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.form           = config.form.value();
     result.meta.type           = config.type.value();
     result.meta.time_total     = t_tot.get_time();
+    result.meta.last_res_norm  = *std::max_element(result.meta.residual_norms.begin(), result.meta.residual_norms.end());
 
     tid::get(config.tag) += t_tot.get_time();
     tid::get(config.tag).add_count(1ul);
