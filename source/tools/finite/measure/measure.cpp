@@ -661,6 +661,21 @@ double tools::finite::measure::max_gradient(const Eigen::Tensor<cplx, 3> &mps, c
     //    return grad.template lpNorm<Eigen::Infinity>();
 }
 
+double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &envL,
+                                             const Eigen::Tensor<cplx, 3> &envR) {
+    // Calculate the residual_norm r = |Hv - Ev|, where v is an mps
+    auto Hv = tools::common::contraction::matrix_vector_product(mps, mpo, envL, envR);
+    auto E  = tools::common::contraction::expectation_value(mps, mpo, envL, envR);
+    return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();
+}
+
+double tools::finite::measure::residual(const TensorsFinite &tensors) {
+    const auto &mps = tensors.get_multisite_mps();
+    const auto &mpo = tensors.get_multisite_mpo();
+    const auto &env = tensors.get_multisite_env_ene_blk();
+    return residual_norm(mps, mpo, env.L, env.R);
+}
+
 double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(ops.empty()) throw std::runtime_error("expectation_value: obs is empty");

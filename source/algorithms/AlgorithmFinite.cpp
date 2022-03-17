@@ -353,7 +353,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
                          tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
-        tensors.project_to_nearest_sector(sector.value(), status.bond_limit, svd_settings);
+        tensors.project_to_nearest_sector(sector.value(), status.bond_limit, std::nullopt, svd_settings);
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
 
@@ -416,8 +416,9 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto variance_old  = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
+        bool use_mpo2_proj = status.algo_type == AlgorithmType::xDMRG and settings::precision::use_projection_on_mpo_squared;
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit);
+            tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit, use_mpo2_proj);
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -438,13 +439,13 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.bond_limit);
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.bond_limit, use_mpo2_proj);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.bond_limit);
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.bond_limit, use_mpo2_proj);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
@@ -457,12 +458,12 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                     tensors = tensors_neg;
                 else if(not std::isnan(variance_pos))
                     tensors = tensors_pos;
-            } else if(spin_component_along_requested_axis <= 1.0 - 1e-8) {
-                // Here the spin component is close to one sector. We just project to the nearest sector
-                tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit);
             } else {
-                tools::log->info("Projection not needed: variance {:8.2e} | spin components {:.16f}", variance_old, fmt::join(spincomp_old, ", "));
-                return;
+                // Here the spin component is close to one sector. We just project to the nearest sector
+                // It may turn out that the spin component is almost exactly +-1 already, then no projection happens, but other
+                // routines may go through, such as sign selection on MPO² projection.
+
+                tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit, use_mpo2_proj);
             }
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);

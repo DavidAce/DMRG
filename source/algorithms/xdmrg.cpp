@@ -295,9 +295,19 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
-    // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
-    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def);
+
+    // Set up a multiplier for number of iterations
+    auto iter_multiplier = static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for));
+
+    // Copy settings
+    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
+    m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
     m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
+    m1.bfgs_max_iter = settings::precision::bfgs_max_iter * iter_multiplier;
+    m1.eigs_max_iter = settings::precision::eigs_max_iter * iter_multiplier;
+    m1.eigs_max_tol  = settings::precision::eigs_tolerance;
+    m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;
+
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
@@ -321,8 +331,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
-        m1.optSolver = OptSolver::EIGS;
         m1.optMode   = OptMode::SUBSPACE;
+        m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = true;
         if(settings::xdmrg::opt_subspace_bond_limit > 0 and status.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
@@ -348,7 +358,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.retry     = false;
     }
     // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
-
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
         // When this happens, we should use optimize VARIANCE using EIGS or BFGS instead.
@@ -379,6 +388,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
+
+    // Do eigs instead of bfgs when its cheap
+    if(m1.optSolver == OptSolver::BFGS and m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
 
     if(status.sub_expansion_alpha > 0) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -411,12 +423,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optSolver = OptSolver::BFGS;
         m2.retry     = false;
         metas.emplace_back(m2);
-    } else if(m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_gradient_w_eigs) {
-        // If we did a BFGS optimization that terminated with gradient too high, try EIGS
-        m2.optWhen   = OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
-        m2.optSolver = OptSolver::EIGS;
-        m2.retry     = false;
-        metas.emplace_back(m2);
     } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::ENERGY) {
         // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
         m2.optWhen   = OptWhen::PREV_FAIL_WORSENED;
@@ -425,22 +431,25 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optInit   = OptInit::LAST_RESULT;
         m2.retry     = false;
         metas.emplace_back(m2);
-    } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::VARIANCE) {
-        // If we did a EIGS|VARIANCE optimization whose residual did not really converge, or the overlap is very poor, then run again for longer and more sites
-        m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP;
+    } else if(m1.optMode == OptMode::VARIANCE and
+              (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_gradient_w_eigs))) {
+        // If we did a VARIANCE optimization whose residual_norm did succeed, then run again for longer and more sites
+        m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP | OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
         m2.optMode   = OptMode::VARIANCE;
         // The longer variance has saturated for, the longer we should run.
-        size_t iter_factor = settings::precision::eigs_max_iter * static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for + 1));
-        m2.eigs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
-        m2.eigs_max_ncv    = 64; // 16 is default
-        m2.optInit         = OptInit::CURRENT_STATE;
+        if(status.variance_mpo_saturated_for > 0) m2.eigs_max_ncv = 32; // 16 is default
         // The longer variance has saturated for, the more sites we should add
-        m2.max_sites    = std::clamp(settings::strategy::multisite_mps_site_def + status.variance_mpo_saturated_for + 1,
-                                     settings::strategy::multisite_mps_site_def, settings::strategy::multisite_mps_site_max);
-        m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
-        m2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
-        m2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
+        m2.eigs_max_iter = std::min(m1.eigs_max_iter.value() * 10, 200000);
+        m2.max_sites     = std::min(settings::strategy::multisite_mps_site_def + status.variance_mpo_saturated_for, settings::strategy::multisite_mps_site_max);
+        m2.chosen_sites  = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
+        m2.problem_dims  = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
+        m2.problem_size  = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
+        if(m2.chosen_sites.size() > 1) m2.alpha_expansion = std::nullopt;
+        if(m2.chosen_sites == m1.chosen_sites)
+            m2.optInit = OptInit::LAST_RESULT;
+        else
+            m2.optInit = OptInit::CURRENT_STATE;
 
         m2.retry = false;
         metas.emplace_back(m2);
@@ -477,7 +486,7 @@ void xdmrg::single_xDMRG_step() {
         // Hold the variance before the optimization step for comparison
         if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
 
-        // Use subspace expansion if alpha_expansion is set
+        // Use environment expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(meta.alpha_expansion) {
             auto pos_expanded = tensors.expand_environment(std::nullopt, status.bond_limit); // nullopt implies a pos query
@@ -488,7 +497,7 @@ void xdmrg::single_xDMRG_step() {
         // Announce the current configuration for optimization
         tools::log->debug("Running meta {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | alpha {:.3e}", idx_conf + 1,
                           confList.size(), meta.label, enum2sv(meta.optInit), enum2sv(meta.optMode), enum2sv(meta.optSolver), enum2sv(meta.optType),
-                          meta.chosen_sites, meta.problem_dims, meta.problem_size,
+                          meta.chosen_sites, tensors.state->active_dimensions(), tensors.state->active_problem_size(),
                           (meta.alpha_expansion ? meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         // Run the optimization
         switch(meta.optInit) {
@@ -525,10 +534,13 @@ void xdmrg::single_xDMRG_step() {
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
         if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
-        if(results.back().get_eigs_resid()     > 1e-6                   ) meta.optExit |= OptExit::FAIL_RESIDUAL;
+        if(results.back().get_eigs_rnorm()     > 1e-6                   ) meta.optExit |= OptExit::FAIL_RESIDUAL;
+        if(results.back().get_eigs_nev()       == 0 and
+                          meta.optSolver       == OptSolver::EIGS       ) meta.optExit |= OptExit::FAIL_RESIDUAL;
         if(results.back().get_overlap()        < 0.010                  ) meta.optExit |= OptExit::FAIL_OVERLAP;
         if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
         else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;
+
         results.back().set_optexit(meta.optExit);
         /* clang-format on */
 
@@ -541,13 +553,13 @@ void xdmrg::single_xDMRG_step() {
     if(not results.empty()) {
         if(tools::log->level() <= spdlog::level::debug)
             for(const auto &r : results)
-                tools::log->debug(FMT_STRING("Candidate: {:<24} | E/L {:<10.6f}| σ²H {:<8.2e}| sites [{:>2}-{:<2}] | "
+                tools::log->debug(FMT_STRING("Candidate: {:<24} | E/L {:<10.6f}| σ²H {:<8.2e} | res {:8.2e} | sites [{:>2}-{:<2}] | "
                                              "alpha {:8.2e} | "
                                              "overlap {:.16f} | "
                                              "{:20} | {} | time {:.4f} ms"),
-                                  r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_sites().front(), r.get_sites().back(), r.get_alpha(),
-                                  r.get_overlap(), fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optsolver())), flag2str(r.get_optexit()),
-                                  1000 * r.get_time());
+                                  r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_eigs_rnorm(), r.get_sites().front(), r.get_sites().back(),
+                                  r.get_alpha(), r.get_overlap(), fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optsolver())),
+                                  flag2str(r.get_optexit()), 1000 * r.get_time());
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {

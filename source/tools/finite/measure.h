@@ -40,6 +40,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern std::vector<long> bond_dimensions_merged           (const StateFinite & state);
     [[nodiscard]] extern std::vector<long> bond_dimensions                  (const StateFinite & state);
     [[nodiscard]] extern double norm                                        (const StateFinite & state, bool full = false);
+
 //  [[nodiscard]]  extern double norm_fast                                   (const StateFinite & state);
 
 
@@ -56,7 +57,6 @@ namespace tools::finite::measure {
     [[nodiscard]] extern std::array<double,3> spin_components               (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> truncation_errors              (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> truncation_errors_active       (const StateFinite & state);
-
 
     template<typename state_or_mps_type>
     [[nodiscard]] double energy_minus_energy_shift               (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
@@ -113,7 +113,13 @@ namespace tools::finite::measure {
                                                              const Eigen::Tensor<Scalar, 3> &en2L,
                                                              const Eigen::Tensor<Scalar, 3> &en2R);
 
-    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<cplx,3> & mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite & tensors);
+    [[nodiscard]] extern double residual_norm                    (const Eigen::Tensor<cplx, 3> &mps,
+                                                             const Eigen::Tensor<cplx, 4> &mpo,
+                                                             const Eigen::Tensor<cplx, 3> &envL,
+                                                             const Eigen::Tensor<cplx, 3> &envR);
+    [[nodiscard]] extern double residual                    (const TensorsFinite & tensors);
+
 
 
     [[nodiscard]] extern double                   expectation_value      (const StateFinite & op, const std::vector<LocalObservableOp> & ops);

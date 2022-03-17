@@ -179,45 +179,15 @@ env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisi
     return std::as_const(*edges).get_multisite_env_var_blk();
 }
 
-void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<svd::settings> svd_settings) {
+void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<bool> use_mpo2_proj,
+                                              std::optional<svd::settings> svd_settings) {
     auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, bond_limit, svd_settings);
-    if(settings::precision::use_projection_on_mpo_squared) { model->set_mpo2_proj(sign, sector); }
+    if(use_mpo2_proj and use_mpo2_proj.value()) { model->set_mpo2_proj(sign, sector); }
     sync_active_sites();
     if(not active_sites.empty()) {
         rebuild_edges();
         if constexpr(settings::debug) assert_validity();
     }
-}
-
-StateFinite TensorsFinite::get_state_with_hamiltonian_applied(std::optional<long> bond_limit, std::optional<svd::settings> svd_settings) const {
-    auto state_projected = *state;
-    state_projected.clear_measurements(LogPolicy::QUIET);
-    state_projected.clear_cache(LogPolicy::QUIET);
-    if(not bond_limit) bond_limit = state_projected.find_largest_bond();
-    tools::finite::mps::normalize_state(state_projected, bond_limit.value(), svd_settings, NormPolicy::IFNEEDED);
-    std::vector<Eigen::Tensor<cplx, 4>> mpos;
-    for(const auto &mpo : model->MPO) mpos.emplace_back(mpo->MPO());
-    auto Ledge = model->MPO.front()->get_MPO_edge_left();
-    auto Redge = model->MPO.back()->get_MPO_edge_right();
-    tools::finite::ops::apply_mpos(state_projected, mpos, Ledge, Redge);
-    tools::finite::mps::normalize_state(state_projected, bond_limit.value(), svd_settings, NormPolicy::ALWAYS);
-    return state_projected;
-}
-
-void TensorsFinite::apply_hamiltonian_on_state(std::optional<long> bond_limit, std::optional<svd::settings> svd_settings) {
-    clear_measurements();
-    if(not bond_limit) bond_limit = state->find_largest_bond();
-    tools::finite::mps::normalize_state(*state, bond_limit.value(), svd_settings, NormPolicy::IFNEEDED);
-    std::vector<Eigen::Tensor<cplx, 4>> mpos;
-    for(const auto &mpo : model->MPO) mpos.emplace_back(mpo->MPO_shifted_view(0.0));
-    auto                   chiL  = state->mps_sites.front()->get_chiL();
-    auto                   chiR  = state->mps_sites.back()->get_chiR();
-    auto                   mpoL  = model->MPO.front()->MPO().dimension(0);
-    auto                   mpoR  = model->MPO.front()->MPO().dimension(1);
-    Eigen::Tensor<cplx, 3> Ledge = model->MPO.front()->get_MPO_edge_left().reshape(std::array<long, 3>{chiL, chiL, mpoL});
-    Eigen::Tensor<cplx, 3> Redge = model->MPO.back()->get_MPO_edge_right().reshape(std::array<long, 3>{chiR, chiR, mpoR});
-    tools::finite::ops::apply_mpos(*state, mpos, Ledge, Redge);
-    normalize_state(bond_limit.value(), svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, applying H|psi> ruins normalization!
 }
 
 struct DebugStatus {

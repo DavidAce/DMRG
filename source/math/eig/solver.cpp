@@ -69,12 +69,24 @@ void eig::solver::eig(const Scalar *matrix, size_type L, Vecs compute_eigvecs_, 
     try {
         if constexpr(std::is_same_v<Scalar, real>) {
             eig_init(form, Type::REAL, compute_eigvecs_, remove_phase_);
-            if constexpr(form == Form::SYMM) info = dsyevd(matrix, L);
-            if constexpr(form == Form::NSYM) info = dgeev(matrix, L);
+            if constexpr(form == Form::SYMM) {
+                if(config.tag.empty()) config.tag = "dsyevd";
+                info = dsyevd(matrix, L);
+            }
+            if constexpr(form == Form::NSYM) {
+                if(config.tag.empty()) config.tag = "dgeev";
+                info = dgeev(matrix, L);
+            }
         } else if constexpr(std::is_same_v<Scalar, cplx>) {
             eig_init(form, Type::CPLX, compute_eigvecs_, remove_phase_);
-            if constexpr(form == Form::SYMM) info = zheevd(matrix, L);
-            if constexpr(form == Form::NSYM) info = zgeev(matrix, L);
+            if constexpr(form == Form::SYMM) {
+                if(config.tag.empty()) config.tag = "zheevd";
+                info = zheevd(matrix, L);
+            }
+            if constexpr(form == Form::NSYM) {
+                if(config.tag.empty()) config.tag = "zgeev";
+                info = zgeev(matrix, L);
+            }
         } else {
             throw std::runtime_error("Unknown type");
         }
@@ -108,7 +120,10 @@ void eig::solver::eig(const Scalar *matrix, size_type L, char range, int il, int
     try {
         if constexpr(std::is_same_v<Scalar, real>) {
             eig_init(form, Type::REAL, compute_eigvecs_, remove_phase_);
-            if constexpr(form == Form::SYMM) info = dsyevx(matrix, L, range, il, iu, vl, vu);
+            if constexpr(form == Form::SYMM) {
+                if(config.tag.empty()) config.tag = "dsyevx";
+                info = dsyevx(matrix, L, range, il, iu, vl, vu);
+            }
             if constexpr(form == Form::NSYM) throw std::logic_error("?sygvx not implemented");
         } else if constexpr(std::is_same_v<Scalar, cplx>) {
             eig_init(form, Type::CPLX, compute_eigvecs_, remove_phase_);
@@ -333,11 +348,13 @@ void eig::solver::eigs(MatrixProductType &matrix) {
     set_default_config(matrix);
     switch(config.lib.value()) {
         case Lib::ARPACK: {
+            if(config.tag.empty()) config.tag = "arpack";
             solver_arpack<MatrixProductType> solver(matrix, config, result);
             solver.eigs();
             break;
         }
         case Lib::PRIMME: {
+            if(config.tag.empty()) config.tag = "primme";
             eigs_primme(matrix);
             break;
         }

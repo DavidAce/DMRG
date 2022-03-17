@@ -54,11 +54,11 @@ template<OptType optType>
 [[nodiscard]] Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier() const {
     if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
     auto             size_old = tensor.value().size();
-    auto             size_new = size_old + 1; // Add 1 for lagrange multiplier
-    double           lambda   = 1.0;          // The lagrange multiplier factor (a dummy)
+    auto             size_new = size_old + 2; // Add 2 for both lagrange multipliers (we have 2 constraints)
     Eigen::VectorXcd tensor_extended(size_new);
     tensor_extended.topRows(size_old) = Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size());
-    tensor_extended.bottomRows(1)[0]  = lambda * std::abs(get_vector().squaredNorm() - 1.0);
+    tensor_extended.bottomRows(2)[0]  = 0;
+    tensor_extended.bottomRows(2)[1]  = 0;
     if constexpr(optType == OptType::REAL) { return Eigen::Map<const Eigen::VectorXcd>(tensor_extended.data(), tensor_extended.size()).real(); }
     if constexpr(optType == OptType::CPLX) {
         return Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(tensor_extended.data()), 2 * tensor_extended.size());
@@ -208,7 +208,7 @@ opt_mps::cplx opt_mps::get_eigs_shift() const {
         return opt_mps::cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
-double opt_mps::get_eigs_resid() const {
+double opt_mps::get_eigs_rnorm() const {
     if(eigs_resid)
         return eigs_resid.value();
     else

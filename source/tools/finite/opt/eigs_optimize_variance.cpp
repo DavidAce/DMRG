@@ -291,8 +291,8 @@ namespace tools::finite::opt::internal {
         }
 
         // TODO: The test below is wrong.  eigs_tol is eps, but the convergence condition is actually res <= eps * aNorm * invBnorm
-        //        if(back0.get_eigs_resid() <= back0.get_eigs_tol()) { // 1.1 to get a non-exact match as well
-        //            tools::log->debug("Try harder: false | residual tolerance reached: {:8.2e}", back0.get_eigs_tol());
+        //        if(back0.get_eigs_rnorm() <= back0.get_eigs_tol()) { // 1.1 to get a non-exact match as well
+        //            tools::log->debug("Try harder: false | residual_norm tolerance reached: {:8.2e}", back0.get_eigs_tol());
         //            return false;
         //        }
         bool tryharder = back0.get_grad_max() >= back0.get_grad_tol();
@@ -359,7 +359,6 @@ namespace tools::finite::opt::internal {
             auto matrix = hamiltonian_squared.get_matrix();
 
             //            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
-            solver.config.tag = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
             //            solver.eig(matrix.data(), matrix.rows());
             solver.eig(matrix.data(), matrix.rows(), 'I', 1, static_cast<int>(solver.config.maxNev.value()), 0.0, 1.0);
         } else {
@@ -406,45 +405,23 @@ namespace tools::finite::opt::internal {
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         std::vector<eig::settings> configs(1);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        configs[0].tol             = settings::precision::eigs_tolerance; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        configs[0].maxIter         = settings::precision::eigs_max_iter;
-        configs[0].maxTime         = 2 * 60 * 60; // Two hours
+        configs[0].tol             = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        configs[0].maxIter         = 1000;
         configs[0].maxNev          = 1;
-        configs[0].maxNcv          = settings::precision::eigs_default_ncv;
-        configs[0].compress        = settings::precision::use_compressed_mpo_squared_otf;
+        configs[0].maxNcv          = 16;
+        configs[0].compress        = false;
+        configs[0].maxTime         = 2 * 60 * 60; // Two hours
         configs[0].lib             = eig::Lib::PRIMME;
         configs[0].ritz            = eig::Ritz::SA;
         configs[0].compute_eigvecs = eig::Vecs::ON;
         configs[0].loglevel        = 2;
-        configs[0].tag             = "primme";
         configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-
-        //        configs[0].primme_max_inner_iterations = 10;   // 0 is default for GD
-
-        //        configs[0].sigma = 0.0;
-        //        configs[0].ritz  = eig::Ritz::primme_smallest;
-        //        configs[0].ritz  = eig::Ritz::primme_closest_geq;
-        //        configs[0].primme_projection  = "primme_proj_refined";
-        //        configs[0].primme_target_shifts = {0.0};
-        //        configs[0].primme_preconditioner = simps_bfgs_preconditioner<MatVecMPO<Scalar>>;
-
-        // configs[0].primme_convTestFun          = GradientConvTest<MatVecMPO<Scalar>>;
-        // configs[0].primme_grad_tol             = meta.bfgs_grad_tol;
-        // configs[0].primme_grad_iter            = 100;
-        // configs[0].primme_grad_time            = 5;
-
+        // Overrides from default
+        if(meta.compress_otf) configs[0].compress = meta.compress_otf;
         if(meta.eigs_max_tol) configs[0].tol = meta.eigs_max_tol;
         if(meta.eigs_max_ncv) configs[0].maxNcv = meta.eigs_max_ncv;
         if(meta.eigs_max_iter) configs[0].maxIter = meta.eigs_max_iter;
         if(meta.eigs_grad_tol) configs[0].primme_grad_tol = meta.eigs_grad_tol;
-
-        //        configs[1]        = configs[0];
-        //        configs[1].maxNev = 2; // Get one more eigenstate to try to resolve a degeneracy
-        //        configs[1].tag    = "primme-run2";
-        // configs[1]                 = config_primme;
-        //        configs[1].tol    = 0.01 * settings::precision::eigs_tolerance;
-        //        configs[1].maxNcv = 32;
-        // configs[1].primme_grad_tol = meta.bfgs_grad_tol ? meta.bfgs_grad_tol.value() : 1e-12;
 
         const auto                      &env2 = tensors.get_multisite_env_var_blk();
         std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
@@ -465,6 +442,7 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     using namespace settings::precision;
     initial_mps.validate_basis_vector();
     if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
+    reports::eigs_add_entry(initial_mps, spdlog::level::info);
 
     auto                 t_var = tid::tic_scope("variance");
     std::vector<opt_mps> results;

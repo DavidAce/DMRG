@@ -74,7 +74,7 @@ using namespace eig;
 template<typename MatrixType>
 eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_)
     : matrix(matrix_), config(config_), result(result_) {
-    if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual pointer
+    if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual_norm pointer
 
     t_tot        = std::make_unique<tid::ur>("total");
     t_mul        = std::make_unique<tid::ur>("matvec");

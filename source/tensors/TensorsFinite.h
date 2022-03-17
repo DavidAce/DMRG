@@ -65,16 +65,12 @@ class TensorsFinite {
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
     /* clang-format on */
 
-    void project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
-    [[nodiscard]] StateFinite get_state_with_hamiltonian_applied(std::optional<long>          bond_limit   = std::nullopt,
-                                                                 std::optional<svd::settings> svd_settings = std::nullopt) const;
-    void apply_hamiltonian_on_state(std::optional<long> bond_limit = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
-
+    void project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<bool> use_mpo2_proj = std::nullopt,
+                                   std::optional<svd::settings> svd_settings = std::nullopt);
     void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
     void set_psfactor(double psfactor);
     void rebuild_mpo();
     void rebuild_mpo_squared(std::optional<bool> compress = std::nullopt, std::optional<svd::settings> svd_settings = std::nullopt);
-    void compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
 
     void assert_validity() const;
 

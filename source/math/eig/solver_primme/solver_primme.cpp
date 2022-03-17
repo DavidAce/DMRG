@@ -126,18 +126,17 @@ std::string getLogMessage(struct primme_params *primme) {
                            primme->stats.numOuterIterations, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.elapsedTime / primme->stats.numOuterIterations, primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
-    auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
-    auto       &result   = solver.result;
-    auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
-    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1])) : "";
-    std::string msg_grad = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
-    auto        res      = std::numeric_limits<double>::quiet_NaN();
-    if(result.meta.last_res_norm > 0)
-        res = result.meta.last_res_norm;
-    else if(result.meta.residual_norms[0] > 0)
-        res = result.meta.residual_norms[0];
-    else if(primme->stats.estimateResidualError > 0)
-        res = primme->stats.estimateResidualError;
+    auto       &solver     = *static_cast<eig::solver *>(primme->monitor);
+    auto       &result     = solver.result;
+    auto       &eigvals    = result.get_eigvals<eig::Form::SYMM>();
+    std::string msg_diff   = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1])) : "";
+    std::string msg_grad   = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
+    auto        res        = std::numeric_limits<double>::quiet_NaN();
+    auto        max_res_it = std::max_element(result.meta.residual_norms.begin(), result.meta.residual_norms.end());
+    if(max_res_it != result.meta.residual_norms.end()) {
+        res                       = *max_res_it;
+        result.meta.last_res_norm = res;
+    }
     return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | size {} | res {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"),
                        primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, res, primme->stats.estimateMinEVal, msg_diff, msg_grad,
                        primme->stats.elapsedTime, primme->stats.elapsedTime / primme->stats.numOuterIterations,
@@ -351,7 +350,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     } else {
         switch(info) {
             case -1: eig::log->error("PRIMME_UNEXPECTED_FAILURE (exit {}): set printLevel > 0 to see the call stack", info); break;
-            case -2: eig::log->error("PRIMME_MALLOC_FAILURE (exit {}): either CPU or GPU", info); break;
+            case -2: eig::log->error("PRIMME_MALLOC_FAILURE (exit {}): eith<er CPU or GPU", info); break;
             case -3: eig::log->info("PRIMME_MAIN_ITER_FAILURE (exit {}): {}", info, getLogMessage(&primme)); break;
             case -4: eig::log->error("PRIMME_ARGUMENT_IS_NULL (exit {})", info); break;
             case -5: eig::log->error("PRIMME_INVALID_ARG n < 0 or nLocal < 0 or nLocal > n (exit {})", info); break;

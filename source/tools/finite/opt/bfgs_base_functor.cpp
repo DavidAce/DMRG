@@ -11,6 +11,7 @@ using namespace tools::finite::opt::internal;
 bfgs_base_functor::bfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status) {
     t_step         = std::make_unique<tid::ur>();
     t_H2n          = std::make_unique<tid::ur>();
+    t_H2r          = std::make_unique<tid::ur>();
     t_nH2n         = std::make_unique<tid::ur>();
     t_Hn           = std::make_unique<tid::ur>();
     t_nHn          = std::make_unique<tid::ur>();
@@ -38,6 +39,7 @@ double bfgs_base_functor::get_variance_per_site() const { return variance_per_si
 size_t bfgs_base_functor::get_count() const { return counter; }
 double bfgs_base_functor::get_norm() const { return norm; }
 double bfgs_base_functor::get_norm_offset() const { return norm_offset; }
+double bfgs_base_functor::get_resnorm() const { return resnorm; }
 double bfgs_base_functor::get_delta_f() const { return delta_f; }
 double bfgs_base_functor::get_max_grad_norm() const { return max_grad_norm; }
 long   bfgs_base_functor::get_ops() const { return ops; }

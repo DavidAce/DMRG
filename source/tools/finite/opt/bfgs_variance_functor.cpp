@@ -65,11 +65,15 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
     tools::log->trace("- Allocating memory for matrix-vector products");
     Hn_tensor.resize(dims);
     H2n_tensor.resize(dims);
+    if constexpr(lagrangeNorm == LagrangeNorm::ON) {
+        H2r_tensor.resize(dims);
+        residual.resize(size);
+    }
     // Reminder
     // size below is the number of scalars to optimize excluding lagrange multipliers
     // num_parameters is the number of doubles to optimize (i.e. 2x if complex) including lagrange multipliers
     num_parameters = static_cast<int>(size);
-    if(lagrangeNorm == LagrangeNorm::ON) num_parameters += 1; // Include lagrange multiplier(s) here
+    if constexpr(lagrangeNorm == LagrangeNorm::ON) num_parameters += 2; // Include lagrange multiplier(s) here
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
 }
 
@@ -156,16 +160,25 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
         // Here we define the norm constraint by using the lagrange multiplier trick:
         //      f(x)
         // is replaced with
-        //      L(x,lambda) = f(x) + lambda * g(x)
+        //      L(x,lambda) = f(x) + lambda1 * g(x) + lambda2 * h(x)
         // where g(x) = | <x|x> - 1 |
+        // where h(x) = |r| = | H²x - E²x | (the 2-norm of the residual on the eigenvalue eq H²x = E²x )
+        // Note that dh(x)/dx = 1/2sqrt(f) * (H²r-E²r)
+        residual = H2n - nH2n * n; // aka r
+        resnorm  = residual.norm();
 
-        double lambda     = 1.0;                // a dummy
-        double constraint = std::abs(vv - 1.0); // aka g(x)
-        if(fx != nullptr) fx[0] += lambda * constraint;
+        double g = std::abs(vv - 1.0); // aka g(x)
+        double h = resnorm;            // aka h(x)
+
+        if(fx != nullptr) fx[0] += g + std::log10(h);
         if(grad_double_double != nullptr) {
-            Eigen::Map<VectorType> grad_w_multiplier(reinterpret_cast<Scalar *>(grad_double_double), size + 1);
-            grad_w_multiplier.topRows(size) += lambda * pref * num::sign(vv - 1.0) * v; // aka  += lambda * dg(x)/dx = lambda * sign(x) * x
-            grad_w_multiplier.bottomRows(1)[0] = constraint;
+            get_H2r(residual);
+            auto H2r               = Eigen::Map<VectorType>(H2r_tensor.data(), H2r_tensor.size());
+            auto grad_w_multiplier = Eigen::Map<VectorType>(reinterpret_cast<Scalar *>(grad_double_double), size + 2);
+            grad_w_multiplier.topRows(size) += pref * num::sign(vv - 1.0) * v; // aka  += lambda * dg(x)/dx = lambda * sign(x) * x
+            grad_w_multiplier.topRows(size) += (H2r - nH2n * residual) / (2 * std::pow(resnorm, 1.5) * std::log(10)); // aka dh(x)/dx = (H²r-E²r) / 2sqrt(f)
+            grad_w_multiplier.bottomRows(2)[0] = g;
+            grad_w_multiplier.bottomRows(2)[1] = std::log10(h);
         }
     }
 
@@ -255,6 +268,14 @@ void bfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) co
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hn_tensor, v_tensor, mpo, envL, envR);
     t_Hn->toc();
+}
+
+template<typename Scalar, LagrangeNorm lagrangeNorm>
+void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2r(const VectorType &r) const {
+    t_H2r->tic();
+    auto r_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(r.derived().data(), dims);
+    tools::common::contraction::matrix_vector_product(H2r_tensor, r_tensor, mpo2, env2L, env2R);
+    t_H2r->toc();
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>

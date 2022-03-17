@@ -145,9 +145,10 @@ namespace settings {
 
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
-        inline size_t   eigs_max_iter                   = 1000  ;                  /*!< Maximum number of steps for eigenvalue solver. */
+        inline size_t   eigs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for eigenvalue solver. */
         inline double   eigs_tolerance                  = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_default_ncv                = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
+        inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
         inline double   svd_threshold                   = 1e-12 ;                  /*!< Minimum threshold value for keeping singular values. */
         inline double   svd_threshold_tr                = 1e-12 ;                  /*!< Maximum acceptable threshold for truncation error (Does nothing if smaller than svd_threshold) */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */

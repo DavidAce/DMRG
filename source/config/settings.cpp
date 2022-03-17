@@ -172,6 +172,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eigs_max_iter"                     , precision::eigs_max_iter);
     dmrg_config.load_parameter("precision::eigs_tolerance"                    , precision::eigs_tolerance);
     dmrg_config.load_parameter("precision::eigs_default_ncv"                  , precision::eigs_default_ncv);
+    dmrg_config.load_parameter("precision::bfgs_max_iter"                     , precision::bfgs_max_iter);
     dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
     dmrg_config.load_parameter("precision::svd_threshold_tr"                  , precision::svd_threshold_tr);
     dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);

@@ -94,7 +94,7 @@ namespace tools::finite::opt {
         [[nodiscard]] double                     get_eigs_eigval() const;
         [[nodiscard]] std::string_view           get_eigs_ritz() const;
         [[nodiscard]] cplx                       get_eigs_shift() const;
-        [[nodiscard]] double                     get_eigs_resid() const;
+        [[nodiscard]] double                     get_eigs_rnorm() const;
         [[nodiscard]] OptSolver                  get_optsolver() const;
         [[nodiscard]] OptMode                    get_optmode() const;
         [[nodiscard]] OptExit                    get_optexit() const;

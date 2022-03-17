@@ -35,8 +35,9 @@ namespace eig {
             void *ptr = nullptr; // Points to the initial guess for an eigenvector
             long  idx = 0;       // The index of the eigenpair;
         };
-        std::vector<init_t>   initial_guess = {}; // Use these as initial guess. In arpack, the first element ptr can be used as the residual pointer "residp".
-        std::string           tag;                // Handy when you are using many instances
+        std::vector<init_t> initial_guess =
+            {};                    // Use these as initial guess. In arpack, the first element ptr can be used as the residual_norm pointer "residp".
+        std::string           tag; // Handy when you are using many instances
         std::optional<size_t> loglevel = std::nullopt;
         std::optional<double> logTime  = std::nullopt;
         std::optional<long>   logIter  = std::nullopt;

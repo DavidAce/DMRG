@@ -8,9 +8,9 @@
 #include "math/num.h"
 #include "math/tenx.h"
 //#include "tensors/model/ModelFinite.h"
-#include "tensors/state/StateFinite.h"
-//#include "tensors/TensorsFinite.h"
 #include "measure/MeasurementsTensorsFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tensors/TensorsFinite.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
@@ -57,7 +57,10 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                 mps.set_optmode(meta.optMode);
                 mps.set_optsolver(meta.optSolver);
                 if(solver.config.primme_grad_tol) mps.set_grad_tol(solver.config.primme_grad_tol.value());
-                if(not solver.result.meta.residual_norms.empty())
+                if(solver.result.meta.residual_norms.empty())
+                    mps.set_eigs_resid(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
+                                                                             tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
+                else
                     mps.set_eigs_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);

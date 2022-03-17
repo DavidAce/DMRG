@@ -57,18 +57,25 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
     if(problem_size < settings::precision::max_size_full_diag) {
         tools::log->trace("Finding ground state");
         const auto &matrix = tensors.get_effective_hamiltonian<Scalar>();
-        solver.config.tag  = std::is_same_v<double, Scalar> ? "dsyevd" : "zheevd";
-        solver.eig<eig::Form::SYMM>(matrix.data(), matrix.dimension(0));
+        int         SR_il  = 1; // min nev index (starts from 1)
+        int         SR_iu  = 1; // max nev index
+        int         LR_il  = static_cast<int>(matrix.dimension(0));
+        int         LR_iu  = static_cast<int>(matrix.dimension(0));
+        switch(meta.optRitz) {
+            case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
+            case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;
+            case OptRitz::SM: solver.eig<eig::Form::SYMM>(matrix.data(), matrix.dimension(0)); break;
+        }
+        if(meta.optRitz == OptRitz::SR) {}
     } else {
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
         MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        solver.config.tol             = 1e-10; // This is the target residual norm. 1e-10 seems to be sufficient:
+        solver.config.tol             = 1e-10; // This is the target residual_norm norm. 1e-10 seems to be sufficient:
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.tag             = "primme";
         solver.config.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
         solver.config.maxIter         = 4000;
         solver.config.maxTime         = 60 * 60;

@@ -51,7 +51,7 @@ namespace eig {
             bool           eigvecsL_found = false;
             bool           arnoldi_found  = false;
 
-            std::vector<double> residual_norms = {}; /*!< For each eigenpair, stores the norm of its residual vector (Ax - λx) */
+            std::vector<double> residual_norms = {}; /*!< For each eigenpair, stores the norm of its residual_norm vector (Ax - λx) */
 
             double last_res_norm  = std::numeric_limits<double>::quiet_NaN();
             double last_grad_max  = std::numeric_limits<double>::quiet_NaN();

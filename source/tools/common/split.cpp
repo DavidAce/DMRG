@@ -437,7 +437,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     }
 
     // Now we have a series of A-A-A-A matrices and their corresponding L's
-    // At the last step we have residual S and V left over. Stash them!
+    // At the last step we have residual_norm S and V left over. Stash them!
     auto &mps = mps_sites.back();
     auto  pos = mps.get_position();
     if(S_prev) mps.stash_S(S_prev.value().template cast<cplx>(), S_prev_error, pos + 1);
@@ -557,7 +557,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     }
 
     // Now we have a series of B-B-B-B matrices and their corresponding L's
-    // At the last step we have residual U and S left over. Stash them!
+    // At the last step we have residual_norm U and S left over. Stash them!
     auto &mps = mps_sites.front();
     auto  pos = mps.get_position();
     if(pos > 0) { // More left-normalized sites left in U

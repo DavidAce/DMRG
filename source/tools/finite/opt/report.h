@@ -11,7 +11,7 @@ namespace tools::finite::opt::reports {
     struct bfgs_entry {
         std::string description;
         long        size, space;
-        double      energy, variance, overlap, norm;
+        double      energy, variance, overlap, norm, rnorm;
         double      delta_f, max_grad_norm;
         size_t      iter, counter;
         double      time;
@@ -29,7 +29,7 @@ namespace tools::finite::opt::reports {
         std::string               description;
         std::string               ritz;
         long                      size, idx, nev, ncv;
-        double                    energy, eigval, variance, overlap, norm, tol, resid, grad;
+        double                    energy, eigval, variance, overlap, norm, rnorm, tol, grad;
         size_t                    iter, mv, pc;
         double                    time;
         spdlog::level::level_enum level = spdlog::level::debug;
@@ -44,7 +44,7 @@ namespace tools::finite::opt::reports {
     extern void print_time_report();
     extern void print_subs_report();
     extern void print_eigs_report(std::optional<size_t> max_entries = std::nullopt);
-    extern void bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap, double norm,
+    extern void bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap, double norm, double rnorm,
                                double delta_f, double grad_norm, size_t iter, size_t counter, double time);
     extern void bfgs_add_entry(std::string_view mode, std::string_view tag, const opt_mps &mps, std::optional<long> space = std::nullopt);
     extern void time_add_entry();

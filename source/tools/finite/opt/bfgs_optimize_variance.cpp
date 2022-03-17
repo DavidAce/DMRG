@@ -37,7 +37,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::bfgs_optimize_variance
         case OptType::CPLX: {
             auto  initial_guess = initial_mps.get_initial_state_with_lagrange_multiplier<OptType::CPLX>();
             auto *functor       = new bfgs_variance_functor<cplx, LagrangeNorm::ON>(tensors, status);
-            //            auto *param         = new NormParametrization(*functor);
             if(settings::precision::use_compressed_mpo_squared_otf)
                 // Compress the virtual bond between MPO² and the environments
                 functor->compress();
@@ -60,7 +59,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::bfgs_optimize_variance
             // Here we make a temporary
             auto  initial_guess = initial_mps.get_initial_state_with_lagrange_multiplier<OptType::REAL>();
             auto *functor       = new bfgs_variance_functor<real, LagrangeNorm::ON>(tensors, status);
-            //            auto *param         = new NormParametrization(*functor);
             if(settings::precision::use_compressed_mpo_squared_otf)
                 // Compress the virtual bond between MPO² and the environments
                 functor->compress();
@@ -84,6 +82,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::bfgs_optimize_variance
     optimized_mps.normalize();
     optimized_mps.set_energy(tools::finite::measure::energy(optimized_mps.get_tensor(), tensors));
     optimized_mps.set_variance(tools::finite::measure::energy_variance(optimized_mps.get_tensor(), tensors));
+    optimized_mps.set_eigs_resid(tools::finite::measure::residual_norm(optimized_mps.get_tensor(), tensors.get_multisite_mpo_squared(),
+                                                                       tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
     optimized_mps.set_overlap(std::abs(current_map.dot(optimized_mps.get_vector())));
     optimized_mps.set_iter(summary.iterations.size());
     optimized_mps.set_time(summary.total_time_in_seconds);

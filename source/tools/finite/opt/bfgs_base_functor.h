@@ -42,6 +42,7 @@ namespace tools::finite::opt::internal {
         mutable double         max_grad_norm = 0;
         mutable double         norm_offset;
         mutable double         norm;
+        mutable double         resnorm = 0;
         mutable size_t         counter = 0;
         mutable long           ops     = 0;
         size_t                 length;
@@ -59,6 +60,7 @@ namespace tools::finite::opt::internal {
         size_t get_count() const;
         double get_norm() const;
         double get_norm_offset() const;
+        double get_resnorm() const;
         double get_delta_f() const;
         double get_max_grad_norm() const;
         long   get_ops() const;
@@ -69,6 +71,7 @@ namespace tools::finite::opt::internal {
 
         std::unique_ptr<tid::ur> t_step;
         std::unique_ptr<tid::ur> t_H2n;
+        std::unique_ptr<tid::ur> t_H2r;
         std::unique_ptr<tid::ur> t_nH2n;
         std::unique_ptr<tid::ur> t_Hn;
         std::unique_ptr<tid::ur> t_nHn;

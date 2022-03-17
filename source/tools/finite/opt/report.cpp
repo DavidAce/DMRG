@@ -9,7 +9,7 @@
 void tools::finite::opt::reports::print_bfgs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
     if (bfgs_log.empty()) return;
-    tools::log->debug(FMT_STRING("{:<52} {:<7} {:<7} {:<22} {:<8} {:<18} {:<18} {:<5} {:<7} {:<8} {:<8} {:<10} {:<10}"),
+    tools::log->debug(FMT_STRING("{:<52} {:<7} {:<7} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<8} {:<8} {:<10} {:<10}"),
                       "Optimization report",
                       "size",
                       "space",
@@ -17,6 +17,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
                       "σ²H", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
                       "norm",
+                      "rnorm",
                       "iter",
                       "ops",
                       "|Δf|",
@@ -24,11 +25,11 @@ void tools::finite::opt::reports::print_bfgs_report(){
                       "time [s]",
                       "avg [s/op]");
     for(auto &entry : bfgs_log){
-        tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<7} {:<22.16f} {:<8.2e} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<10.2e} {:<10.2e}"),
+        tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<7} {:<22.16f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<10.2e} {:<10.2e}"),
         entry.description, entry.size,
         entry.space, entry.energy,
         entry.variance,
-        entry.overlap,entry.norm,
+        entry.overlap,entry.norm, entry.rnorm,
         entry.iter, entry.counter,
         entry.delta_f, entry.max_grad_norm,
         entry.time,
@@ -109,7 +110,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
         eigs_log.clear();
         return;
     }
-    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<8} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<5} {:<7} {:<7} {:<10} {:<10}"),
+    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}"),
                       "Optimization report",
                       "size",
                       "ritz",
@@ -117,13 +118,13 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                       "nev",
                       "ncv",
                       "tol",
-                      "res",
                       "|∇Ψ|ᵐᵃˣ",
                       "E/L",
                       "λ",
                       "σ²H", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
                       "norm",
+                      "rnorm",
                       "iter",
                       "mv",
                       "pc",
@@ -132,12 +133,12 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
 
     for(const auto &[idx,entry] : iter::enumerate(eigs_log)){
         if(max_entries and max_entries.value() <= idx) break;
-        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}"),
+        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}"),
                           entry.description,
-                          entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol, entry.resid, entry.grad,
+                          entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol, entry.grad,
                           entry.energy,entry.eigval,
                           entry.variance,
-                          entry.overlap,entry.norm,
+                          entry.overlap,entry.norm, entry.rnorm,
                           entry.iter, entry.mv, entry.pc,
                           entry.time,
                           entry.time/std::max(1.0,static_cast<double>(entry.mv)));
@@ -147,16 +148,16 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
 
 /* clang-format on */
 void tools::finite::opt::reports::bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap,
-                                                 double norm, double delta_f, double grad_norm, size_t iter, size_t counter, double time) {
+                                                 double norm, double rnorm, double delta_f, double grad_norm, size_t iter, size_t counter, double time) {
     if(tools::log->level() > spdlog::level::debug) return;
-    bfgs_log.push_back({description, size, space, energy, variance, overlap, norm, delta_f, grad_norm, iter, counter, time});
+    bfgs_log.push_back({description, size, space, energy, variance, overlap, norm, rnorm, delta_f, grad_norm, iter, counter, time});
 }
 void tools::finite::opt::reports::bfgs_add_entry(std::string_view mode, std::string_view tag, const opt_mps &mps, std::optional<long> space) {
     if(tools::log->level() > spdlog::level::debug) return;
     if(not space) space = mps.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}", mode, mps.get_name(), tag);
     bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(), space.value(), mps.get_energy_per_site(), mps.get_variance(), mps.get_overlap(),
-                                  mps.get_norm(), mps.get_delta_f(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_time()});
+                                  mps.get_norm(), mps.get_eigs_rnorm(), mps.get_delta_f(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_time()});
 }
 
 void tools::finite::opt::reports::time_add_entry() {
@@ -176,6 +177,6 @@ void tools::finite::opt::reports::eigs_add_entry(const opt_mps &mps, spdlog::lev
     std::string description = fmt::format("{:<24}", mps.get_name());
     eigs_log.push_back(eigs_entry{description, std::string(mps.get_eigs_ritz()), mps.get_tensor().size(), mps.get_eigs_idx(), mps.get_eigs_nev(),
                                   mps.get_eigs_ncv(), mps.get_energy_per_site(), mps.get_eigs_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                  mps.get_eigs_tol(), mps.get_eigs_resid(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(),
+                                  mps.get_eigs_rnorm(), mps.get_eigs_tol(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(),
                                   level});
 }

@@ -43,14 +43,15 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
     last_log_iter = summary.iteration;
     /* clang-format off */
     log->debug(FMT_STRING("BFGS: "
-               "it {:>5} f {:>8.5f} |Δf| {:>8.2e} "
+               "it {:>5} σ² {:>8.2e} f {:>8.5f} |Δf| {:>8.2e} "
                "|∇f| {:>8.2e} |∇f|ᵐᵃˣ {:>8.2e} |∇Ψ|ᵐᵃˣ {:>8.2e} "
-               "|ΔΨ| {:8.2e} |Ψ|-1 {:8.2e} "
+               "|ΔΨ| {:8.2e} |Ψ|-1 {:8.2e} rnorm {:8.2e} "
                "ops {:>4}/{:<4} t {:>8.2e} s op {:>8.2e} s Gop/s {:>5.1f} "
                "ls:[ss {:8.2e} fe {:>4} ge {:>4} it {:>4}] "
 //               "| energy {:<18.15f} lg var {:<6.6f}"
                ),
                summary.iteration,
+               functor.get_variance(),
                summary.cost,
                summary.cost_change,
                summary.gradient_norm,
@@ -58,6 +59,7 @@ ceres::CallbackReturnType tools::finite::opt::internal::CustomLogCallback<Functo
                functor.get_max_grad_norm(),
                summary.step_norm, // By bfgs
                functor.get_norm_offset(),
+               functor.get_resnorm(),
                functor.get_count() - last_count,
                functor.get_count(),
                summary.cumulative_time_in_seconds,
