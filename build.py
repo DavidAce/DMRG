@@ -41,6 +41,7 @@ def parse(project_name):
     parser.add_argument('-t', '--target', type=str, help='Build Target', default=None)
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose build')
     parser.add_argument('-X', '--cmake-args', action='append', type=str, help='Extra CMake arguments', default=[])
+    parser.add_argument('--tblis', action='store_true', help='Enable TBLIS for tensor contractions')
     parser.add_argument('--mkl', action='store_true', help='Use Intel Math Kernel Library as instead of OpenBLAS')
     parser.add_argument('--coverage', action='store_true', help='Enable test Coverage')
     parser.add_argument('--lto', action='store_true', help='Enable Link Time Optimization')
@@ -170,6 +171,9 @@ def generate_cmake_commands(project_name, args):
 
     if args.cmake_args:
         cmake_cfg.extend(args.cmake_args)
+
+    if args.tblis:
+        cmake_cfg.extend(['-D{}_ENABLE_TBLIS:BOOL=ON'.format(project_name.upper())])
 
     if args.mkl:
         cmake_cfg.extend(['-D{}_ENABLE_MKL:BOOL=ON'.format(project_name.upper())])
