@@ -17,7 +17,7 @@
 #include "tools/finite/opt/report.h"
 #include <primme/primme.h>
 // Temporary
-//#include <h5pp/h5pp.h>
+#include <h5pp/h5pp.h>
 
 namespace tools::finite::opt::internal {
 
@@ -370,7 +370,7 @@ namespace tools::finite::opt::internal {
 
             //            } else
             {
-                //                tools::log->warn("Finding excited state minimum of (H-E)² with ritz SM because all MPO²'s are compressed!");
+                //                tools::log->warn("Finding excited state as minimum of (H-E)² with ritz SM because all MPO²'s are compressed!");
                 //                solver.config.ritz = eig::Ritz::SM;
                 //                solver.eigs(hamiltonian_squared);
                 if(solver.config.lib == eig::Lib::ARPACK) {
@@ -378,7 +378,7 @@ namespace tools::finite::opt::internal {
                     if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
                     if(not solver.config.sigma)
                         solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-                    tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
+                    tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
                                       std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
                                       hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
@@ -387,12 +387,12 @@ namespace tools::finite::opt::internal {
                     if(solver.config.sigma and tensors.model->is_compressed_mpo_squared())
                         throw except::logic_error("eigs_optimize_variance with PRIMME with given sigma requires non-compressed MPO²");
                     if(solver.config.sigma)
-                        tools::log->debug("Finding excited state minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
+                        tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
                                           std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
                                           hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
 
                     else
-                        tools::log->debug("Finding excited state minimum of [(H-E)²] | primme {} | init on | dims {} = {}",
+                        tools::log->debug("Finding excited state as minimum of [(H-E)²] | primme {} | init on | dims {} = {}",
                                           eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
                     solver.eigs(hamiltonian_squared);
                 }
@@ -408,14 +408,14 @@ namespace tools::finite::opt::internal {
         configs[0].tol             = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
         configs[0].maxIter         = 1000;
         configs[0].maxNev          = 1;
-        configs[0].maxNcv          = 16;
+        configs[0].maxNcv          = 4;
         configs[0].compress        = false;
         configs[0].maxTime         = 2 * 60 * 60; // Two hours
         configs[0].lib             = eig::Lib::PRIMME;
         configs[0].ritz            = eig::Ritz::SA;
         configs[0].compute_eigvecs = eig::Vecs::ON;
         configs[0].loglevel        = 2;
-        configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+        configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
         // Overrides from default
         if(meta.compress_otf) configs[0].compress = meta.compress_otf;
         if(meta.eigs_max_tol) configs[0].tol = meta.eigs_max_tol;
@@ -433,6 +433,35 @@ namespace tools::finite::opt::internal {
             if(&config == &configs.back()) break;
             if(not try_harder(results, meta, spdlog::level::debug)) break;
         }
+        //        for(const auto &[ridx, rval] : iter::enumerate(results)) {
+        //            if(rval.get_iter() >= 1000) {
+        //                h5pp::File  h5file("../output/eigs.h5", h5pp::FilePermission::READWRITE);
+        //                long        number = 0;
+        //                std::string groupname;
+        //                while(true) {
+        //                    groupname = fmt::format("eigs-{}", number++);
+        //                    if(not h5file.linkExists(groupname)) {
+        //                        h5file.writeDataset(hamiltonian_squared->get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
+        //                        h5file.writeDataset(hamiltonian_squared->get_envL(), groupname + "/envL2", H5D_CHUNKED);
+        //                        h5file.writeDataset(hamiltonian_squared->get_envR(), groupname + "/envR2", H5D_CHUNKED);
+        //                        h5file.writeDataset(initial_mps.get_tensor(), groupname + "/mps", H5D_CHUNKED);
+        //                        h5file.writeDataset(rval.get_tensor(), fmt::format("{}/result_{}", groupname, ridx));
+        //                        h5file.writeAttribute(tensors.active_problem_dims(), "dims", groupname);
+        //                        h5file.writeAttribute(tensors.active_problem_size(), "size", groupname);
+        //                        h5file.writeAttribute(rval.get_time(), "time", groupname);
+        //                        h5file.writeAttribute(rval.get_iter(), "iter", groupname);
+        //                        h5file.writeAttribute(rval.get_eigs_eigval(), "eval", groupname);
+        //                        h5file.writeAttribute(rval.get_eigs_rnorm(), "rnorm", groupname);
+        //                        h5file.writeAttribute(rval.get_variance(), "variance", groupname);
+        //                        h5file.writeAttribute(rval.get_energy(), "energy", groupname);
+        //                        h5file.writeAttribute(rval.get_op(), "op", groupname);
+        //                        h5file.writeAttribute(rval.get_mv(), "mv", groupname);
+        //                        h5file.writeAttribute(eig::MethodToString(configs[0].primme_method.value()), "primme_method", groupname);
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
     }
 }
 
@@ -461,5 +490,6 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance
     }
 
     for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+
     return results.front();
 }

@@ -122,7 +122,7 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | size {} | f {:20.16f} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"), primme->stats.numMatvecs,
+        return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | f {:20.16f} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"), primme->stats.numMatvecs,
                            primme->stats.numOuterIterations, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.elapsedTime / primme->stats.numOuterIterations, primme->stats.timeMatvec / primme->stats.numMatvecs);
     }
@@ -131,16 +131,16 @@ std::string getLogMessage(struct primme_params *primme) {
     auto       &eigvals    = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff   = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1])) : "";
     std::string msg_grad   = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
-    auto        res        = std::numeric_limits<double>::quiet_NaN();
+    auto        rnorm      = std::numeric_limits<double>::quiet_NaN();
     auto        max_res_it = std::max_element(result.meta.residual_norms.begin(), result.meta.residual_norms.end());
     if(max_res_it != result.meta.residual_norms.end()) {
-        res                       = *max_res_it;
-        result.meta.last_res_norm = res;
+        rnorm                     = *max_res_it;
+        result.meta.last_res_norm = rnorm;
     }
-    return fmt::format(FMT_STRING("mv {:<5} | iter {:<4} | size {} | res {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, res, primme->stats.estimateMinEVal, msg_diff, msg_grad,
+    return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | rnorm {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv | {}"),
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, rnorm, primme->stats.estimateMinEVal, msg_diff, msg_grad,
                        primme->stats.elapsedTime, primme->stats.elapsedTime / primme->stats.numOuterIterations,
-                       primme->stats.timeMatvec / primme->stats.numMatvecs);
+                       primme->stats.timeMatvec / primme->stats.numMatvecs, eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
