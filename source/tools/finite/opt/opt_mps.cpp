@@ -108,20 +108,28 @@ size_t opt_mps::get_iter() const {
     if(iter)
         return iter.value();
     else
-        return 0.0;
+        return 0;
 }
+
+size_t opt_mps::get_op() const {
+    if(num_op)
+        return num_op.value();
+    else
+        return 0;
+}
+
 size_t opt_mps::get_mv() const {
     if(num_mv)
         return num_mv.value();
     else
-        return 0.0;
+        return 0;
 }
 
 size_t opt_mps::get_pc() const {
     if(num_pc)
         return num_pc.value();
     else
-        return 0.0;
+        return 0;
 }
 
 double opt_mps::get_time() const {

@@ -16,6 +16,9 @@ include(cmake/SetupDependenciesConan.cmake)
 # Install dependencies that are not in conan.
 include(cmake/InstallPackage.cmake)
 install_package(primme MODULE)
+if(DMRG_ENABLE_TBLIS)
+    install_package(tblis MODULE)
+endif()
 
 # Link dependencies
 if(NOT TARGET deps)
@@ -36,6 +39,9 @@ endif()
 
 if(TARGET Backward::Backward)
     target_link_libraries(deps INTERFACE Backward::Backward)
+endif()
+if(TARGET tblis::tblis)
+    target_link_libraries(deps INTERFACE tblis::tblis)
 endif()
 
 

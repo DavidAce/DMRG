@@ -4,7 +4,6 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         bfgs_optimize_variance.cpp
         bfgs_variance_functor.cpp
         bfgs_subspace_functor.cpp
-        bfgs_simps_functor.cpp
         bfgs_callback.cpp
         eigs_optimize_subspace.cpp
         eigs_extract_results.cpp

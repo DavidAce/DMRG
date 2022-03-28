@@ -1,0 +1,13 @@
+diff --git a/src/iface/1t/reduce.h b/src/iface/1t/reduce.h
+index e44ac2a..6adfe52 100644
+--- a/src/iface/1t/reduce.h
++++ b/src/iface/1t/reduce.h
+@@ -313,7 +313,7 @@ struct data_type_helper
+     #if defined(EIGEN_CXX11_TENSOR_TENSOR_FORWARD_DECLARATIONS_H)
+ 
+     template <typename D, int A>
+-    static std::decay_t<Eigen::TensorBase<D,A>::Scalar> check(Eigen::TensorBase<D,A>&);
++    static std::decay_t<typename Eigen::TensorBase<D,A>::Scalar> check(Eigen::TensorBase<D,A>&);
+ 
+     #endif
+ 

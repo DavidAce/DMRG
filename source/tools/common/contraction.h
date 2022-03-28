@@ -120,31 +120,6 @@ namespace tools::common::contraction {
             envR_ref.data(), envR_ref.dimensions());
     }
 
-    template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
-    void matrix_inverse_vector_product_bfgs(
-        TensorWrite<res_type> &res,
-        const TensorRead<mps_type> & mps,
-        const TensorRead<mpo_type> & mpo,
-        const TensorRead<env_type> & envL,
-        const TensorRead<env_type> & envR){
-        static_assert(res_type::NumIndices == 3 and "Wrong res tensor rank != 3 passed to calculation of matrix_vector_product");
-        static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3 passed to calculation of matrix_vector_product");
-        static_assert(mpo_type::NumIndices == 4 and "Wrong mpo tensor rank != 4 passed to calculation of matrix_vector_product");
-        static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of matrix_vector_product");
-        auto & res_ref = static_cast<res_type&>(res);
-        const auto & mps_ref  = static_cast<const mps_type&>(mps);
-        const auto & mpo_ref  = static_cast<const mpo_type&>(mpo);
-        const auto & envL_ref = static_cast<const env_type&>(envL);
-        const auto & envR_ref = static_cast<const env_type&>(envR);
-
-        matrix_inverse_vector_product_bfgs(
-            res_ref.data(),
-            mps_ref.data(), mps_ref.dimensions(),
-            mpo_ref.data(), mpo_ref.dimensions(),
-            envL_ref.data(), envL_ref.dimensions(),
-            envR_ref.data(), envR_ref.dimensions());
-    }
-
     /* clang-format on */
     template<typename T>
     using OptRefWrap = std::optional<std::reference_wrapper<T>>;
