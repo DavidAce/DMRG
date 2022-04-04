@@ -72,20 +72,24 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
     //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow == BondGrow::ON_SATURATION we add the condition
+    // In addition, if get_bond_grow == BondGrow::IF_SATURATED we add the condition
     //      * the algorithm has got stuck
 
     // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
     // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
-    bool is_saturated       = status.entanglement_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
-    bool is_bond_limited    = tensors.state->is_bond_limited(status.bond_limit, 2 * settings::precision::svd_threshold);
-    bool grow_on_saturation = settings::get_bond_grow(status.algo_type) == BondGrow::ON_SATURATION;
-
-    if(grow_on_saturation and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current bond dimension limit {}", status.bond_limit);
+    bool is_stuck          = status.algorithm_has_stuck_for > 0;
+    bool is_saturated      = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
+    bool is_bond_limited   = tensors.state->is_bond_limited(status.bond_limit, 2 * settings::precision::svd_threshold);
+    bool grow_if_stuck     = settings::get_bond_grow(status.algo_type) == BondGrow::IF_STUCK;
+    bool grow_if_saturated = settings::get_bond_grow(status.algo_type) == BondGrow::IF_SATURATED;
+    if(grow_if_stuck and not is_stuck) {
+        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.bond_limit);
         return;
     }
-
+    if(grow_if_saturated and not is_saturated) {
+        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.bond_limit);
+        return;
+    }
     if(not is_bond_limited) {
         tools::log->info("State is not limited by its bond dimension. Kept current bond dimension limit {}", status.bond_limit);
         return;

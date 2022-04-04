@@ -225,7 +225,7 @@ namespace settings {
         inline bool     on                  = false;                               /*!< Turns iDMRG simulation on/off. */
         inline size_t   max_iters           = 5000;                                /*!< Maximum number of iDMRG iterations before forced termination */
         inline long     bond_max            = 32;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline BondGrow bond_grow           = BondGrow::ON_SATURATION;             /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline BondGrow bond_grow           = BondGrow::IF_SATURATED;             /*!< How to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
         inline double   bond_grow_factor    = 1.25;                                /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long     bond_init           = 16;                                  /*!< Initial bond dimension limit. Only used when bond_grow == true. */
         inline size_t   print_freq          = 1000;                                /*!< Print frequency for console output. In units of iterations.  (0 = off). */
@@ -241,7 +241,7 @@ namespace settings {
         inline double    time_step_min         = 0.00001;                          /*!< (Absolute value) Minimum and final time step for iTEBD time evolution. */
         inline size_t    suzuki_order          = 1;                                /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long      bond_max              = 8;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline BondGrow  bond_grow             = BondGrow::OFF;                    /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline BondGrow  bond_grow             = BondGrow::OFF;                    /*!< How to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
         inline double    bond_grow_factor      = 1.25;                             /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long      bond_init             = 16;                               /*!< Initial bond dimension limit. Only used when bond_grow == true. */
         inline size_t    print_freq            = 5000;                             /*!< Print frequency for console output. In units of iterations. (0 = off).*/
@@ -253,7 +253,7 @@ namespace settings {
         inline size_t    max_iters           = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t    min_iters           = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
         inline long      bond_max            = 8;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline BondGrow  bond_grow           = BondGrow::ON_SATURATION;            /*!< How to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline BondGrow  bond_grow           = BondGrow::IF_SATURATED;            /*!< How to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
         inline double    bond_grow_factor    = 1.25;                               /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long      bond_init           = 16;                                 /*!< Initial bond dimension limit. Only used when bond_grow == true. */
         inline size_t    print_freq          = 100;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
@@ -268,7 +268,7 @@ namespace settings {
         inline size_t   max_iters               = 10000;                           /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                               /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates          = true;                            /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
-        inline BondGrow bond_grow               = BondGrow::ON_ITERATION;          /*!< When to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline BondGrow bond_grow               = BondGrow::ITERATION;          /*!< When to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
         inline double   bond_grow_factor        = 1.25;                            /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long     bond_max                = 16;                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline long     bond_init               = 16;                              /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow == true, or starting from an entangled state */
@@ -289,7 +289,7 @@ namespace settings {
         inline bool     on                              = false;                   /*!< Turns xDMRG simulation on/off. */
         inline size_t   max_iters                       = 10;                      /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters                       = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
-        inline BondGrow bond_grow                       = BondGrow::ON_ITERATION;  /*!< When to increase the bond dimension limit. Choose OFF, ON_SATURATION or ON_ITERATION. */
+        inline BondGrow bond_grow                       = BondGrow::ITERATION;     /*!< When to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
         inline double   bond_grow_factor                = 1.25;                    /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long     bond_max                        = 768;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline long     bond_init                       = 16;                      /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow == true, or starting from an entangled state */

@@ -11,7 +11,7 @@ enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
-enum class BondGrow { OFF, ON_ITERATION, ON_SATURATION };
+enum class BondGrow { OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2, ITERATION4 };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
@@ -205,8 +205,11 @@ constexpr std::string_view enum2sv(const T &item) {
     }
     if constexpr(std::is_same_v<T, BondGrow>) {
         if(item == BondGrow::OFF)                                       return "OFF";
-        if(item == BondGrow::ON_SATURATION)                             return "ON_SATURATION";
-        if(item == BondGrow::ON_ITERATION)                              return "ON_ITERATION";
+        if(item == BondGrow::IF_SATURATED)                              return "IF_SATURATED";
+        if(item == BondGrow::IF_STUCK)                                  return "IF_STUCK";
+        if(item == BondGrow::ITERATION)                                 return "ITERATION";
+        if(item == BondGrow::ITERATION2)                                return "ITERATION2";
+        if(item == BondGrow::ITERATION4)                                return "ITERATION4";
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == GateMove::OFF)                                       return "OFF";
@@ -507,8 +510,11 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, BondGrow>) {
         if(item == "OFF")                                   return BondGrow::OFF;
-        if(item == "ON_SATURATION")                         return BondGrow::ON_SATURATION;
-        if(item == "ON_ITERATION")                          return BondGrow::ON_ITERATION;
+        if(item == "IF_SATURATED")                          return BondGrow::IF_SATURATED;
+        if(item == "IF_STUCK")                              return BondGrow::IF_STUCK;
+        if(item == "ITERATION")                             return BondGrow::ITERATION;
+        if(item == "ITERATION2")                            return BondGrow::ITERATION2;
+        if(item == "ITERATION4")                            return BondGrow::ITERATION4;
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == "OFF")                                   return GateMove::OFF;

@@ -214,19 +214,36 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
     //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow == BondGrow::ON_SATURATION we add the condition
+    // In addition, if get_bond_grow == BondGrow::IF_STUCK we add the condition
     //      * the algorithm has got stuck
 
     // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
     // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
-    bool is_saturated       = status.entanglement_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
+    bool is_stuck           = status.algorithm_has_stuck_for > 0;
+    bool is_saturated       = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
     bool is_bond_limited    = tensors.state->is_limited_by_bond(status.bond_limit, 2 * settings::precision::svd_threshold);
-    bool grow_on_saturation = settings::get_bond_grow(status.algo_type) == BondGrow::ON_SATURATION;
-    if(grow_on_saturation and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.bond_limit);
+    bool is_iteration2      = num::mod(status.iter, 2ul) == 0;
+    bool is_iteration4      = num::mod(status.iter, 4ul) == 0;
+    bool grow_if_stuck      = settings::get_bond_grow(status.algo_type) == BondGrow::IF_STUCK;
+    bool grow_if_saturated  = settings::get_bond_grow(status.algo_type) == BondGrow::IF_SATURATED;
+    bool grow_if_iteration2 = settings::get_bond_grow(status.algo_type) == BondGrow::ITERATION2;
+    bool grow_if_iteration4 = settings::get_bond_grow(status.algo_type) == BondGrow::ITERATION4;
+    if(grow_if_stuck and not is_stuck) {
+        tools::log->info("Algorithm is not stuck yet. Kept current bond limit {}", status.bond_limit);
         return;
     }
-
+    if(grow_if_saturated and not is_saturated) {
+        tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_limit);
+        return;
+    }
+    if(grow_if_iteration2 and not is_iteration2) {
+        tools::log->info("Iteration not divisible by 2. Kept current bond limit {}", status.bond_limit);
+        return;
+    }
+    if(grow_if_iteration4 and not is_iteration4) {
+        tools::log->info("Iteration not divisible by 4. Kept current bond limit {}", status.bond_limit);
+        return;
+    }
     if(not is_bond_limited) {
         tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_limit);
         return;
@@ -518,7 +535,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
 
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Energy variance convergence: saturated {} iters (since iter {})", report.saturated_count, report.saturated_point);
-        if(tools::log->level() == spdlog::level::trace) {
+        if(tools::log->level() <= spdlog::level::trace) {
             tools::log->trace("Energy variance slope details:");
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
             tools::log->trace(" -- threshold          = {:7.4e}", threshold.value());
@@ -576,7 +593,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Entanglement ent. convergence at site {}: saturated {} iters (since {})", last_saturated_site, report.saturated_count,
                               report.saturated_point);
-        if(tools::log->level() == spdlog::level::trace) {
+        if(tools::log->level() <= spdlog::level::trace) {
             tools::log->trace("Entanglement slope details:");
             tools::log->trace(" -- site               = {}", last_saturated_site);
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
