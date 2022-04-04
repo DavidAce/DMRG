@@ -21,7 +21,7 @@
 using namespace eig;
 
 int eig::solver::dsyevr(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m) {
-    eig::log->info("Starting eig dsyevr | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
+    eig::log->trace("Starting eig dsyevr | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
     auto t_start = std::chrono::high_resolution_clock::now();
 
     auto A    = std::vector<real>(matrix, matrix + L * L);
@@ -62,7 +62,7 @@ int eig::solver::dsyevr(const real *matrix, size_type L, char range, int il, int
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         m = std::min(m, m_found);
-        eig::log->info("Found {} eigenvalues | requested {}", m_found, m);
+        eig::log->trace("Found {} eigenvalues | requested {}", m_found, m);
         eigvals.resize(static_cast<size_t>(m_found));
         eigvecs.resize(static_cast<size_t>(m_found) * static_cast<size_t>(ldz));
         result.meta.eigvecsR_found = true;
@@ -77,8 +77,7 @@ int eig::solver::dsyevr(const real *matrix, size_type L, char range, int il, int
         result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
         result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
     } else {
-        throw std::runtime_error("LAPACK dsyevx failed with error: " + std::to_string(info));
+        throw std::runtime_error("LAPACK dsyevr failed with error: " + std::to_string(info));
     }
-    eig::log->info("Returning from eig");
     return info;
 }

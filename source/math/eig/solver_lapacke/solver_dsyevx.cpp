@@ -21,7 +21,7 @@
 using namespace eig;
 
 int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m) {
-    eig::log->info("Starting eig dsyevx | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
+    eig::log->trace("Starting eig dsyevx | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
     auto t_start = std::chrono::high_resolution_clock::now();
     auto A       = std::vector<real>(matrix, matrix + L * L);
     char jobz    = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
@@ -60,7 +60,7 @@ int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int
 
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
-        eig::log->info("Found {} eigenvalues | requested {}", m_found, m);
+        eig::log->trace("Found {} eigenvalues | requested {}", m_found, m);
         eigvals.resize(static_cast<size_t>(m_found));
         eigvecs.resize(static_cast<size_t>(m_found) * static_cast<size_t>(ldz));
         result.meta.eigvecsR_found = true;
