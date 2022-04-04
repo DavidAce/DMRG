@@ -130,7 +130,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
                                                        const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                                        const Scalar * const envR_ptr, std::array<long,3> envR_dims){
 
-    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::extra);
+//    auto t_matvec = tid::tic_token("matrix_vector_product", tid::level::extra);
 
     // This applies the mpo's with corresponding environments to local multisite mps
     // This is usually the operation H|psi>  or H²|psi>
@@ -146,12 +146,21 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
-    Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
-    Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
+    if constexpr(std::is_same_v<Scalar, real>){
+        tblis_set_num_threads(tenx::omp::num_threads);
+        Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
+        Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
 
-    contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd");
-    contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl");
-    contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk");
+        contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd");
+        contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl");
+        contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk");
+    }else{
+        res.device(tenx::omp::getDevice()) = mps
+                                            .contract(envL,     tenx::idx({1}, {0}))
+                                            .contract(mpo,      tenx::idx({0, 3}, {2, 0}))
+                                            .contract(envR,     tenx::idx({0, 2}, {0, 2}))
+                                            .shuffle(tenx::array3{1, 0, 2});
+    }
 }
 
 using namespace tools::common::contraction;

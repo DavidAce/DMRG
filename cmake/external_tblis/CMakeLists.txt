@@ -7,8 +7,8 @@ if(INIT_CACHE_FILE)
 endif()
 include(ExternalProject)
 
-set(cflags "-O3 -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
-set(cxxflags "-O3 -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
+set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
+set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
 
 # the configure.ac script in tblis is allergic to the "cc" compiler, complaining that
 # it cannot resolve the compiler vendor. Normally the cc compiler

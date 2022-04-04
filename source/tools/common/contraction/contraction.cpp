@@ -100,7 +100,6 @@ template double tools::common::contraction::expectation_value(const cplx * const
 
 /* clang-format on */
 
-
 /* clang-format off */
 template<typename Scalar>
 void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
@@ -124,14 +123,19 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(mps.dimension(0) != mpo.dimension(2))  throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
     if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
-
-    res.device(tenx::omp::getDevice()) =
-             mps
-            .contract(envL,     tenx::idx({1}, {0}))
-            .contract(mpo,      tenx::idx({0, 3}, {2, 0}))
-            .contract(envR,     tenx::idx({0, 2}, {0, 2}))
-            .shuffle(tenx::array3{1, 0, 2});
-
+    if (mps.dimension(1) >= mps.dimension(2)){
+        res.device(tenx::omp::getDevice()) = mps
+                                            .contract(envL, tenx::idx({1}, {0}))
+                                            .contract(mpo,  tenx::idx({3, 0}, {0, 2}))
+                                            .contract(envR, tenx::idx({0, 2}, {0, 2}))
+                                            .shuffle(tenx::array3{1, 0, 2});
+    }else{
+        res.device(tenx::omp::getDevice()) = mps
+                                            .contract(envR, tenx::idx({2}, {0}))
+                                            .contract(mpo,  tenx::idx({3, 0}, {1, 2}))
+                                            .contract(envL, tenx::idx({0, 2}, {0, 2}))
+                                            .shuffle(tenx::array3{1, 2, 0});
+    }
 }
 using namespace tools::common::contraction;
 template void tools::common::contraction::matrix_vector_product(      cplx *       res_ptr,
