@@ -21,7 +21,7 @@ target_sector       = "z"
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
 output_prefix       = "output"
-separate_input_dir  = false
+separate_input_dir  = False
 
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
