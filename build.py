@@ -66,7 +66,7 @@ def parse(project_name):
         parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='haswell', tune='znver2')
         args = parser.parse_args()
     if args.default_tetralith:
-        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=False, generator='Ninja', package_manager='conan', arch='native', make_threads=16)
+        parser.set_defaults(mkl=True, lto=True, pch=True, ccache=False, generator='Ninja', package_manager='conan', arch='native', tune='native', make_threads=16)
         args = parser.parse_args()
     if args.default_desktop:
         parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='native')
