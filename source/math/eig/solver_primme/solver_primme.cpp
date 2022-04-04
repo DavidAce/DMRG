@@ -122,9 +122,9 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | f {:20.16f} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv"), primme->stats.numMatvecs,
+        return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | f {:20.16f} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s"), primme->stats.numMatvecs,
                            primme->stats.numOuterIterations, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
-                           primme->stats.elapsedTime / primme->stats.numOuterIterations, primme->stats.timeMatvec / primme->stats.numMatvecs);
+                           primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
     auto       &solver     = *static_cast<eig::solver *>(primme->monitor);
     auto       &result     = solver.result;
@@ -137,10 +137,10 @@ std::string getLogMessage(struct primme_params *primme) {
         rnorm                     = *max_res_it;
         result.meta.last_res_norm = rnorm;
     }
-    return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | rnorm {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} s/it | {:8.2e} s/mv | {}"),
+    return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | rnorm {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s | {}"),
                        primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, rnorm, primme->stats.estimateMinEVal, msg_diff, msg_grad,
-                       primme->stats.elapsedTime, primme->stats.elapsedTime / primme->stats.numOuterIterations,
-                       primme->stats.timeMatvec / primme->stats.numMatvecs, eig::MethodToString(solver.config.primme_method));
+                       primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
+                       primme->stats.numMatvecs / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -302,7 +302,8 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.primme_max_inner_iterations) primme.correctionParams.maxInnerIterations = config.primme_max_inner_iterations.value();
     //    primme.restartingParams.maxPrevRetain = 2;
     //    primme.minRestartSize = 2;
-    //    primme.maxBlockSize = 1;
+    //    primme.maxBlockSize = 8;
+    //    primme.orth = primme_orth_explicit_I;
 
     // Allocate space
     auto &eigvals = result.get_eigvals<eig::Form::SYMM>();

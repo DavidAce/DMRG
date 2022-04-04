@@ -3,10 +3,33 @@
 #include <math/eig.h>
 #include <math/eig/matvec/matvec_mpo.h>
 #include <math/tenx.h>
+#include <primme/primme.h>
 #include <tid/tid.h>
+#include <tools/common/contraction.h>
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt_mps.h>
+#include <cblas.h>
+
+template<typename MatrixProductType>
+void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+    if(x == nullptr) return;
+    if(y == nullptr) return;
+    if(primme == nullptr) return;
+    using T = typename MatrixProductType::Scalar;
+    // When optimizing variance, the objects below refer to the ones to construct (H-E)², as in the second moment
+    const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
+    const auto  shape_mps = H_ptr->get_shape_mps();
+    const auto &mpo       = H_ptr->get_mpo();
+    const auto &envL      = H_ptr->get_envL();
+    const auto &envR      = H_ptr->get_envR();
+    for(int i = 0; i < *blockSize; i++) {
+        auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
+        auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
+        tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+    }
+    *ierr = 0;
+}
 
 std::string solve(const eig::settings &config, const h5pp::File &h5file, std::string_view group) {
     std::string tgt;
@@ -53,11 +76,9 @@ std::string solve(const eig::settings &config, const h5pp::File &h5file, std::st
 }
 
 namespace threading {
-    int stl_threads = 4;
-    int omp_threads = 4;
+    int stl_threads = 1;
+    int omp_threads = 1;
 }
-
-struct Params {};
 
 int main() {
     tools::Logger::setLogger(tools::log, "bench", 0, true);
@@ -108,8 +129,13 @@ int main() {
     configs[0].compute_eigvecs             = eig::Vecs::ON;
     configs[0].loglevel                    = 2;
     configs[0].primme_max_inner_iterations = 0;
-    configs[0].primme_method               = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-                                                                                 //    configs[0].primme_projection
+    configs[0].primme_method               = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+
+    //    configs[0].primme_preconditioner = simps_preconditioner<MatVecMPO<double>>;
+    //    configs[0].primme_target_shifts = {0};
+    //    configs[0].ritz = eig::Ritz::primme_closest_geq;
+    //    configs[0].primme_projection = "primme_proj_refined";
+
     auto filename = fmt::format("{}/eigs.h5", TEST_MATRIX_DIR);
     if(h5pp::fs::exists(filename)) {
         auto                     h5file = h5pp::File(filename, h5pp::FilePermission::READONLY);
@@ -117,7 +143,10 @@ int main() {
 
         for(const auto &group : h5file.findGroups("eigs-")) {
             if(group.find("eigs-0") != std::string::npos) continue;
-            tools::log->info("Running group: {}", group);
+            if(group.find("eigs-1") != std::string::npos) continue;
+            auto size = h5file.readAttribute<long>("size", group);
+            auto dims = h5file.readAttribute<std::array<long, 3>>("dims", group);
+            tools::log->info("Running group: {} | size {} | dims {}", group, size, dims);
             for(const auto &config : configs) { msg.push_back(solve(config, h5file, group)); }
         }
         tools::log->debug("Result summary:");

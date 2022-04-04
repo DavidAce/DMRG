@@ -141,11 +141,12 @@ namespace tools::finite::opt::internal {
     }
 
     template<typename MatrixProductType>
-    void simps_bfgs_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+    void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
         if(x == nullptr) return;
         if(y == nullptr) return;
         if(primme == nullptr) return;
-        using T               = typename MatrixProductType::Scalar;
+        using T = typename MatrixProductType::Scalar;
+        // When optimizing variance, the objects below refer to the ones to construct (H-E)², as in the second moment
         const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
         const auto  shape_mps = H_ptr->get_shape_mps();
         const auto &mpo       = H_ptr->get_mpo();
@@ -360,7 +361,7 @@ namespace tools::finite::opt::internal {
 
             //            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
             //            solver.eig(matrix.data(), matrix.rows());
-            solver.eig(matrix.data(), matrix.rows(), 'I', 1, static_cast<int>(solver.config.maxNev.value()), 0.0, 1.0);
+            solver.eig(matrix.data(), matrix.rows(), 'I', 1, static_cast<int>(solver.config.maxNev.value()), 0.0, 1.0, 1);
         } else {
             auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
             for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
@@ -416,6 +417,9 @@ namespace tools::finite::opt::internal {
         configs[0].compute_eigvecs = eig::Vecs::ON;
         configs[0].loglevel        = 2;
         configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+
+        //        configs[0].primme_preconditioner = simps_preconditioner<MatVecMPO<Scalar>>;
+
         // Overrides from default
         if(meta.compress_otf) configs[0].compress = meta.compress_otf;
         if(meta.eigs_max_tol) configs[0].tol = meta.eigs_max_tol;
@@ -433,35 +437,36 @@ namespace tools::finite::opt::internal {
             if(&config == &configs.back()) break;
             if(not try_harder(results, meta, spdlog::level::debug)) break;
         }
-        //        for(const auto &[ridx, rval] : iter::enumerate(results)) {
-        //            if(rval.get_iter() >= 1000) {
-        //                h5pp::File  h5file("../output/eigs.h5", h5pp::FilePermission::READWRITE);
-        //                long        number = 0;
-        //                std::string groupname;
-        //                while(true) {
-        //                    groupname = fmt::format("eigs-{}", number++);
-        //                    if(not h5file.linkExists(groupname)) {
-        //                        h5file.writeDataset(hamiltonian_squared->get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
-        //                        h5file.writeDataset(hamiltonian_squared->get_envL(), groupname + "/envL2", H5D_CHUNKED);
-        //                        h5file.writeDataset(hamiltonian_squared->get_envR(), groupname + "/envR2", H5D_CHUNKED);
-        //                        h5file.writeDataset(initial_mps.get_tensor(), groupname + "/mps", H5D_CHUNKED);
-        //                        h5file.writeDataset(rval.get_tensor(), fmt::format("{}/result_{}", groupname, ridx));
-        //                        h5file.writeAttribute(tensors.active_problem_dims(), "dims", groupname);
-        //                        h5file.writeAttribute(tensors.active_problem_size(), "size", groupname);
-        //                        h5file.writeAttribute(rval.get_time(), "time", groupname);
-        //                        h5file.writeAttribute(rval.get_iter(), "iter", groupname);
-        //                        h5file.writeAttribute(rval.get_eigs_eigval(), "eval", groupname);
-        //                        h5file.writeAttribute(rval.get_eigs_rnorm(), "rnorm", groupname);
-        //                        h5file.writeAttribute(rval.get_variance(), "variance", groupname);
-        //                        h5file.writeAttribute(rval.get_energy(), "energy", groupname);
-        //                        h5file.writeAttribute(rval.get_op(), "op", groupname);
-        //                        h5file.writeAttribute(rval.get_mv(), "mv", groupname);
-        //                        h5file.writeAttribute(eig::MethodToString(configs[0].primme_method.value()), "primme_method", groupname);
-        //                        break;
-        //                    }
-        //                }
-        //            }
-        //        }
+        for(const auto &[ridx, rval] : iter::enumerate(results)) {
+            if(rval.get_iter() >= 1000) {
+                h5pp::File  h5file("../output/eigs.h5", h5pp::FilePermission::READWRITE);
+                long        number = 0;
+                std::string groupname;
+                while(true) {
+                    groupname = fmt::format("eigs-{}", number++);
+                    if(not h5file.linkExists(groupname)) {
+                        h5file.writeDataset(hamiltonian_squared->get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
+                        h5file.writeDataset(hamiltonian_squared->get_envL(), groupname + "/envL2", H5D_CHUNKED);
+                        h5file.writeDataset(hamiltonian_squared->get_envR(), groupname + "/envR2", H5D_CHUNKED);
+                        h5file.writeDataset(initial_mps.get_tensor(), groupname + "/mps", H5D_CHUNKED);
+                        h5file.writeDataset(rval.get_tensor(), fmt::format("{}/result_{}", groupname, ridx));
+                        h5file.writeAttribute(tensors.active_problem_dims(), "dims", groupname);
+                        h5file.writeAttribute(tensors.active_problem_size(), "size", groupname);
+                        h5file.writeAttribute(rval.get_time(), "time", groupname);
+                        h5file.writeAttribute(rval.get_iter(), "iter", groupname);
+                        h5file.writeAttribute(rval.get_eigs_ncv(), "ncv", groupname);
+                        h5file.writeAttribute(rval.get_eigs_eigval(), "eval", groupname);
+                        h5file.writeAttribute(rval.get_eigs_rnorm(), "rnorm", groupname);
+                        h5file.writeAttribute(rval.get_variance(), "variance", groupname);
+                        h5file.writeAttribute(rval.get_energy(), "energy", groupname);
+                        h5file.writeAttribute(rval.get_op(), "op", groupname);
+                        h5file.writeAttribute(rval.get_mv(), "mv", groupname);
+                        h5file.writeAttribute(eig::MethodToString(configs[0].primme_method.value()), "primme_method", groupname);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -115,6 +115,16 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
         // Where A^-1 * b is obtained by solving
         //       A*x = b
         // using an iterative matrix-free solver.
+
+        // We have previously tried using bfgs for unconstrained minimization of f = |Aφ - ψ|², where
+        //      φ = res
+        //      ψ = mps
+        //      A = (H-E) = effective hamiltonian (from mpo and env)
+        //
+        // The gradient is ∇f = (H-E)²φ - (H-E)ψ (note that the (H-E)² is just (H-E) applied twice, not the second moment).
+        // After minimization we have φ ~ (H-E)⁻¹ψ = A⁻¹ * x
+        // The result was not better than using BiCGSTAB or MINRES
+
         {
             auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
             auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(mpo_ptr,mpo_dims);
@@ -136,30 +146,33 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
         MatrixReplacement<Scalar> matRepl;
         matRepl.attachTensors(envL_ptr, envR_ptr, mpo_ptr, mps_dims, mpo_dims);
 
-        Eigen::Index MaxIters = 200000;
-        double tolerance = 1e-2;
+        Eigen::Index MaxIters = 40000;
+        double tolerance = 1e-8;
         Eigen::Map<tenx::VectorType<Scalar>> res(res_ptr, matRepl.rows());
         Eigen::Map<const tenx::VectorType<Scalar>> mps(mps_ptr, matRepl.rows());
+        static tenx::VectorType<Scalar> guess;
+        if(guess.size() != res.size()) guess = res;
         if constexpr (std::is_same_v<Scalar,std::complex<double>>){
+//            tools::log->info("BiCGSTAB Preconditioner: size {} started ...",  mps.size());
             Eigen::BiCGSTAB<MatrixReplacement<Scalar>, Eigen::IdentityPreconditioner> solver;
             solver.compute(matRepl);
             solver.setMaxIterations(MaxIters);
             solver.setTolerance(tolerance);
-//            res = solver.solve(mps);
-            res = solver.solveWithGuess(mps,res);
+            res = solver.solveWithGuess(mps,guess);
             tools::log->info("BiCGSTAB Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {}",  mps.size(), solver.info(), solver.tolerance(), solver.error(), solver.iterations());
         }
         if constexpr (std::is_same_v<Scalar,double>){
+//            tools::log->info("MINRES Preconditioner: size {} started ...",  mps.size());
 //            Eigen::MINRES<MatrixReplacement<Scalar>, Eigen::Lower|Eigen::Upper, Eigen::IdentityPreconditioner> solver;
-            Eigen::MINRES<MatrixReplacement<Scalar>, Eigen::Lower|Eigen::Upper, Eigen::IdentityPreconditioner> solver;
+            Eigen::BiCGSTAB<MatrixReplacement<Scalar>, Eigen::IdentityPreconditioner> solver;
+
             solver.setMaxIterations(MaxIters);
             solver.setTolerance(tolerance);
             solver.compute(matRepl);
-//            res = solver.solve(mps);
-            res = solver.solveWithGuess(mps,res);
-            tools::log->info("MINRES Preconditioner:  size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {}",  mps.size(), solver.info(), solver.tolerance(), solver.error(), solver.iterations());
+            res = solver.solveWithGuess(mps,guess);
+            tools::log->info("MINRES Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {}",  mps.size(), solver.info(), solver.tolerance(), solver.error(), solver.iterations());
         }
-
+        guess = res;
 
 
 }

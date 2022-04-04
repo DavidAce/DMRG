@@ -113,7 +113,6 @@ void MatVecMPO<T>::MultOPv(T *mps_in_, T *mps_out_) {
     switch(side) {
         case eig::Side::R: {
             tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
-            //            tools::common::contraction::matrix_inverse_vector_product_bfgs(mps_out, mps_in, mpo, envL, envR);
             break;
         }
         case eig::Side::L: {
@@ -209,7 +208,7 @@ void MatVecMPO<T>::compress() {
     svd_settings.svd_lib        = SVDLib::lapacke;
     svd_settings.use_bdc        = false;
     svd_settings.threshold      = 1e-12;
-    svd_settings.threshold_tr   = 1e-12;
+    svd_settings.threshold_tr   = 1e-4;
     svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
 
@@ -238,7 +237,7 @@ void MatVecMPO<T>::compress() {
         mpo = mpo_r2l;
     }
     readyCompress = true;
-    eig::log->debug("Compressed MPO dimensions {}", mpo.dimensions());
+    eig::log->debug("Compressed MPO dimensions {} -> {}", mpo.dimensions(), mpo_tmp.dimensions());
 }
 
 template<typename Scalar>

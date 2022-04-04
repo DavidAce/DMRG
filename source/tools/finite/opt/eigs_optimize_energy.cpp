@@ -53,7 +53,7 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
     tools::log->trace("Defining Hamiltonian matrix-vector product");
     tools::log->trace("Defining eigenvalue solver");
     eig::solver solver;
-    if(problem_size < settings::precision::max_size_full_diag) {
+    if(problem_size <= settings::precision::max_size_full_diag) {
         tools::log->trace("Finding ground state");
         const auto &matrix = tensors.get_effective_hamiltonian<Scalar>();
         int         SR_il  = 1; // min nev index (starts from 1)
@@ -61,11 +61,23 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
         int         LR_il  = static_cast<int>(matrix.dimension(0));
         int         LR_iu  = static_cast<int>(matrix.dimension(0));
         switch(meta.optRitz) {
-            case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
-            case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;
-            case OptRitz::SM: solver.eig<eig::Form::SYMM>(matrix.data(), matrix.dimension(0)); break;
+            case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0, 1); break;
+            case OptRitz::LR:
+                solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0, 1);
+                break;
+
+                //            case OptRitz::SM:
+                //                solver.eig<eig::Form::SYMM>(matrix.data(), matrix.dimension(0));
+                //                break;
+            case OptRitz::SM: {
+                auto eigval = initial_mps.get_eigval();
+                auto eigvar = initial_mps.get_variance();
+                auto vl     = eigval - 2 * eigvar;
+                auto vu     = eigval + 2 * eigvar;
+                solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu, 10);
+                break;
+            }
         }
-        if(meta.optRitz == OptRitz::SR) {}
     } else {
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
@@ -96,13 +108,13 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
 
         MatVecMPO<Scalar> hamiltonian_squared;
         if(meta.optRitz == OptRitz::SM) {
-            solver.config.maxIter               = 8000;
-            solver.config.maxNev                = static_cast<eig::size_type>(1);
-            solver.config.maxNcv                = static_cast<eig::size_type>(16);
-            solver.config.ritz                  = eig::Ritz::primme_closest_abs;
-            solver.config.primme_projection     = "primme_proj_harmonic";
-            solver.config.primme_target_shifts  = {tools::finite::measure::energy_minus_energy_shift(tensors)};
-            solver.config.primme_preconditioner = simps_preconditioner<MatVecMPO<Scalar>>;
+            solver.config.maxIter              = 100000;
+            solver.config.maxNev               = static_cast<eig::size_type>(8);
+            solver.config.maxNcv               = static_cast<eig::size_type>(32);
+            solver.config.primme_projection    = "primme_proj_refined";
+            solver.config.primme_locking       = false;
+            solver.config.primme_target_shifts = {initial_mps.get_eigval()};
+            solver.config.ritz                 = eig::Ritz::primme_closest_abs;
             tools::log->trace("Finding excited state state");
             solver.eigs(hamiltonian);
         } else {
@@ -110,7 +122,6 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
             // would otherwise cause trouble for the eigenvalue solver. This equates to subtracting sigma * identity from the bottom corner of the mpo.
             // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
             solver.config.sigma = 1.0;
-
             tools::log->trace("Finding ground state");
             solver.eigs(hamiltonian);
         }
@@ -118,7 +129,7 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
     std::vector<opt_mps> results;
     tools::finite::opt::internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
 
-    auto comparator = [&ritz, &meta, &tensors](const opt_mps &lhs, const opt_mps &rhs) {
+    auto comparator = [&ritz, &meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
         auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
         if(diff < settings::precision::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
         switch(ritz) {
@@ -128,10 +139,10 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
             case eig::Ritz::LR: return lhs.get_energy() > rhs.get_energy();
             case eig::Ritz::SM:
             case eig::Ritz::primme_closest_abs: {
-                return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
-                //                auto diff_energy_lhs = std::abs(lhs.get_energy() - tools::finite::measure::energy(tensors));
-                //                auto diff_energy_rhs = std::abs(rhs.get_energy() - tools::finite::measure::energy(tensors));
-                //                return diff_energy_lhs < diff_energy_rhs;
+                // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
+                auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
+                auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
+                return diff_energy_lhs < diff_energy_rhs;
             }
             default: throw std::runtime_error(fmt::format("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz)));
         }
