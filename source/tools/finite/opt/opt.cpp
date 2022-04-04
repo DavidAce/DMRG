@@ -17,10 +17,6 @@
 #include <glog/logging.h>
 #include <string>
 
-namespace settings {
-    constexpr static bool debug_functor = false;
-}
-
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
     auto    t_init = tid::tic_scope("initial_mps");
     opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
@@ -29,7 +25,6 @@ tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const Tensor
                         tools::finite::measure::energy_variance(tensors),
                         1.0, // Overlap to initial state (self) is obviously 1
                         tensors.get_length());
-    //    initial_mps.set_grad_max(tools::finite::measure::max_gradient(initial_mps.get_tensor(), tensors));
     return initial_mps;
 }
 
@@ -92,7 +87,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     bfgs_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
     bfgs_default_options.min_line_search_step_contraction           = 0.6; // 0.6
     bfgs_default_options.max_line_search_step_expansion             = 10; // 10
-    bfgs_default_options.max_num_line_search_step_size_iterations   = 50;
+    bfgs_default_options.max_num_line_search_step_size_iterations   = 20;
     bfgs_default_options.max_num_line_search_direction_restarts     = 5; //5
     bfgs_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
     bfgs_default_options.line_search_sufficient_curvature_decrease  = 1-1e-3;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
