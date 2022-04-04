@@ -20,46 +20,48 @@
 
 using namespace eig;
 
-int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m) {
-    eig::log->info("Starting eig dsyevx | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
+int eig::solver::dsyevr(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m) {
+    eig::log->info("Starting eig dsyevr | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
     auto t_start = std::chrono::high_resolution_clock::now();
-    auto A       = std::vector<real>(matrix, matrix + L * L);
-    char jobz    = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
-    int  info    = 0;
-    int  n       = static_cast<int>(L);
-    int  lda     = std::max(1, n);
-    int  ldz     = std::max(1, n);
-    int  liwork  = std::max(1, 5 * n);
-    auto lifail  = std::max(1ul, static_cast<size_t>(n));
 
-    if(range == 'I') m = iu - il + 1;
+    auto A    = std::vector<real>(matrix, matrix + L * L);
+    char jobz = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
+    int  info = 0;
+    int  n    = static_cast<int>(L);
+    int  lda  = std::max(1, n);
+    int  ldz  = std::max(1, n);
+    if(range == 'I') m = std::max(iu, il) - std::min(iu, il) + 1;
     m = std::min(m, n);
 
     int              m_found = m;
+    int              iwork_query[1];
     double           lwork_query[1];
-    std::vector<int> iwork(static_cast<size_t>(liwork));
-    std::vector<int> ifail(lifail);
+    std::vector<int> isuppz(static_cast<size_t>(2 * m));
+    std::vector<int> ifail(static_cast<unsigned long>(L));
 
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::REAL>();
     eigvals.resize(static_cast<size_t>(ldz));
     eigvecs.resize(static_cast<size_t>(ldz) * static_cast<size_t>(ldz)); // Docs claim ldz * m, but it segfaults when 'V' finds more than m eigvals
 
-    info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', static_cast<int>(L), A.data(), lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found,
-                               eigvals.data(), eigvecs.data(), ldz, lwork_query, -1, iwork.data(), ifail.data());
+    info = LAPACKE_dsyevr_work(LAPACK_COL_MAJOR, jobz, range, 'U', lda, A.data(), lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found, eigvals.data(),
+                               eigvecs.data(), ldz, isuppz.data(), lwork_query, -1, iwork_query, -1);
 
-    int lwork = static_cast<int>(lwork_query[0]);
+    int lwork  = static_cast<int>(lwork_query[0]);
+    int liwork = static_cast<int>(iwork_query[0]);
+
     eig::log->trace(" lwork  = {}", lwork);
     eig::log->trace(" liwork = {}", liwork);
+
     std::vector<double> work(static_cast<size_t>(lwork));
-
-    auto t_prep = std::chrono::high_resolution_clock::now();
-
-    info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', static_cast<int>(L), A.data(), lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found,
-                               eigvals.data(), eigvecs.data(), ldz, work.data(), lwork, iwork.data(), ifail.data());
+    std::vector<int>    iwork(static_cast<size_t>(liwork));
+    auto                t_prep = std::chrono::high_resolution_clock::now();
+    info = LAPACKE_dsyevr_work(LAPACK_COL_MAJOR, jobz, range, 'U', static_cast<int>(L), A.data(), lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found,
+                               eigvals.data(), eigvecs.data(), ldz, isuppz.data(), work.data(), lwork, iwork.data(), liwork);
 
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
+        m = std::min(m, m_found);
         eig::log->info("Found {} eigenvalues | requested {}", m_found, m);
         eigvals.resize(static_cast<size_t>(m_found));
         eigvecs.resize(static_cast<size_t>(m_found) * static_cast<size_t>(ldz));
@@ -77,5 +79,6 @@ int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int
     } else {
         throw std::runtime_error("LAPACK dsyevx failed with error: " + std::to_string(info));
     }
+    eig::log->info("Returning from eig");
     return info;
 }

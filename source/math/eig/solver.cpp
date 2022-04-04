@@ -114,15 +114,16 @@ template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, V
 template void eig::solver::eig<eig::Form::NSYM>(const cplx *matrix, size_type, Vecs, Dephase);
 
 template<eig::Form form, typename Scalar>
-void eig::solver::eig(const Scalar *matrix, size_type L, char range, int il, int iu, double vl, double vu, Vecs compute_eigvecs_, Dephase remove_phase_) {
+void eig::solver::eig(const Scalar *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m, Vecs compute_eigvecs_,
+                      Dephase remove_phase_) {
     auto t_eig = tid::tic_scope("eig");
     int  info  = 0;
     try {
         if constexpr(std::is_same_v<Scalar, real>) {
             eig_init(form, Type::REAL, compute_eigvecs_, remove_phase_);
             if constexpr(form == Form::SYMM) {
-                if(config.tag.empty()) config.tag = "dsyevx";
-                info = dsyevx(matrix, L, range, il, iu, vl, vu);
+                if(config.tag.empty()) config.tag = "dsyevr";
+                info = dsyevr(matrix, L, range, il, iu, vl, vu, m);
             }
             if constexpr(form == Form::NSYM) throw std::logic_error("?sygvx not implemented");
         } else if constexpr(std::is_same_v<Scalar, cplx>) {
@@ -149,8 +150,8 @@ void eig::solver::eig(const Scalar *matrix, size_type L, char range, int il, int
         subtract_phase(result.eigvecsR_cplx, L, result.meta.nev);
     }
 }
-template void eig::solver::eig<eig::Form::SYMM>(const real *matrix, size_type, char, int, int, double, double, Vecs, Dephase);
-template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, char, int, int, double, double, Vecs, Dephase);
+template void eig::solver::eig<eig::Form::SYMM>(const real *matrix, size_type, char, int, int, double, double, int, Vecs, Dephase);
+template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, char, int, int, double, double, int, Vecs, Dephase);
 // template void eig::solver::eig<eig::Form::NSYM>(const real *matrix, size_type, Vecs, Dephase);
 // template void eig::solver::eig<eig::Form::SYMM>(const cplx *matrix, size_type, Vecs, Dephase);
 // template void eig::solver::eig<eig::Form::NSYM>(const cplx *matrix, size_type, Vecs, Dephase);

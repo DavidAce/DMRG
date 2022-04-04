@@ -22,7 +22,8 @@ namespace eig {
 
         // Functions for full diagonalization of explicit matrix
         int dsyevd(const real *matrix, size_type L);
-        int dsyevx(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu);
+        int dsyevr(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m);
+        int dsyevx(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m);
         int zheevd(const cplx *matrix, size_type L);
         int dgeev(const real *matrix, size_type L);
         int zgeev(const cplx *matrix, size_type L);
@@ -32,7 +33,7 @@ namespace eig {
         void eig(const Scalar *matrix, size_type L, Vecs compute_eigvecs = Vecs::ON, Dephase remove_phase_ = Dephase::OFF);
 
         template<Form form = Form::SYMM, typename Scalar>
-        void eig(const Scalar *matrix, size_type L, char range, int il, int iu, double vl, double vu, Vecs compute_eigvecs = Vecs::ON,
+        void eig(const Scalar *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m, Vecs compute_eigvecs = Vecs::ON,
                  Dephase remove_phase_ = Dephase::OFF);
 
         // Functions for few eigensolutions

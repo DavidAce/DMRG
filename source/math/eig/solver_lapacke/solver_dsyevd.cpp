@@ -43,8 +43,8 @@ int eig::solver::dsyevd(const real *matrix, size_type L) {
     info = LAPACKE_dsyevd_work(LAPACK_COL_MAJOR, jobz, 'U', static_cast<int>(L), eigvecs.data(), static_cast<int>(L), eigvals.data(), lwork_query, -1,
                                liwork_query, -1);
 
-    int lwork  = static_cast<int>(2 * lwork_query[0]);  // Make it twice as big for performance.
-    int liwork = static_cast<int>(3 * liwork_query[0]); // Make it thrice as big for performance.
+    int lwork  = static_cast<int>(lwork_query[0]);
+    int liwork = static_cast<int>(liwork_query[0]);
     eig::log->trace(" lwork  = {}", lwork);
     eig::log->trace(" liwork = {}", liwork);
 
