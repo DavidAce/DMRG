@@ -21,6 +21,7 @@ target_sector       = "z"
 multisite_mps_size_def  = [1]
 multisite_mps_size_max  = [2]
 output_prefix       = "output"
+separate_input_dir  = false
 
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
@@ -48,7 +49,10 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
             extra_prefix = extra_prefix + "_multi" + str(multi)
 
 #     input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(location+extra_prefix,basename,str_L,str_g,str_d)
-    input_dirname = "{}{}_L{}".format(location, extra_prefix, str_L)
+    if separate_input_dir:
+        input_dirname = "{}{}_L{}".format(location, extra_prefix, str_L)
+    else:
+        input_dirname = "{}{}".format(location, extra_prefix)
     input_filename = "{}/{}_L{}_g{}_d{}.cfg".format(input_dirname, basename, str_L, str_g, str_d)
     settings = {
         "storage::output_filepath"            : "{}/L_{}/g_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
