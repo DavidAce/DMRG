@@ -258,4 +258,14 @@ namespace num {
         return result;
     }
 
+    template<typename T>
+    [[nodiscard]] inline T round_up_to_multiple_of(const T number, const T multiple) {
+        if(multiple == 0) return number;
+        auto remainder = num::mod(std::abs(number), multiple);
+        if(remainder == 0) return number;
+        if(number < 0)
+            return -(std::abs(number) - remainder);
+        else
+            return number + multiple - remainder;
+    }
 }

@@ -258,8 +258,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(settings::strategy::randomize_on_bond_update and status.bond_limit >= 32)
         randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.bond_limit);
 
-    double bond_prod = std::ceil(factor * static_cast<double>(status.bond_limit));
-    long   bond_new  = std::min(static_cast<long>(bond_prod), status.bond_max);
+    long bond_prod = static_cast<long>(std::ceil(factor * static_cast<double>(status.bond_limit)));
+    long bond_new  = std::min(num::round_up_to_multiple_of<long>(bond_prod, 4), status.bond_max);
     tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
     status.bond_limit                 = bond_new;
     status.bond_limit_has_reached_max = status.bond_limit == status.bond_max;
