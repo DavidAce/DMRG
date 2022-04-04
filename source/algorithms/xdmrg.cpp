@@ -297,14 +297,14 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(tensors.is_real()) m1.optType = OptType::REAL;
 
     // Set up a multiplier for number of iterations
-    auto iter_multiplier = static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for));
+    auto iter_multiplier = std::max<size_t>(1, 10 * status.algorithm_saturated_for);
 
     // Copy settings
     m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
     m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
     m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
-    m1.bfgs_max_iter = settings::precision::bfgs_max_iter * iter_multiplier;
-    m1.eigs_max_iter = settings::precision::eigs_max_iter * iter_multiplier;
+    m1.bfgs_max_iter = std::min<size_t>(200000, settings::precision::bfgs_max_iter * iter_multiplier);
+    m1.eigs_max_iter = std::min<size_t>(200000, settings::precision::eigs_max_iter * iter_multiplier);
     m1.eigs_max_tol  = settings::precision::eigs_tolerance;
     m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;
 
@@ -328,6 +328,15 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.max_sites = settings::strategy::multisite_mps_site_def;
         m1.retry     = true;
     }
+
+    //
+    //    if(status.bond_limit >= 32 ){
+    //        m1.optMode = OptMode::ENERGY;
+    //        m1.optSolver = OptSolver::EIGS;
+    //        m1.optRitz   = OptRitz::SM;
+    //        m1.max_sites = settings::strategy::multisite_mps_site_def;
+    //        m1.retry     = true;
+    //    }
 
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
@@ -438,10 +447,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optSolver = OptSolver::EIGS;
         m2.optMode   = OptMode::VARIANCE;
         // The longer variance has saturated for, the longer we should run.
-        if(status.variance_mpo_saturated_for > 0) m2.eigs_max_ncv = 32; // 16 is default
+        if(status.algorithm_has_stuck_for > 0) m2.eigs_max_ncv = 16; // 4 is default
         // The longer variance has saturated for, the more sites we should add
         m2.eigs_max_iter = std::min(m1.eigs_max_iter.value() * 10, 200000);
-        m2.max_sites     = std::min(settings::strategy::multisite_mps_site_def + status.variance_mpo_saturated_for, settings::strategy::multisite_mps_site_max);
+        m2.max_sites     = std::min(settings::strategy::multisite_mps_site_def + status.algorithm_has_stuck_for, settings::strategy::multisite_mps_site_max);
         m2.chosen_sites  = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
         m2.problem_dims  = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
         m2.problem_size  = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
@@ -633,8 +642,8 @@ void xdmrg::check_convergence() {
     check_convergence_variance();
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_sector);
-    //    std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > max_saturation_iters or
-    if(status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)
+    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturation_iters or
+       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
         status.algorithm_saturated_for++;
     else
         status.algorithm_saturated_for = 0;

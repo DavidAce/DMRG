@@ -192,7 +192,8 @@ void fdmrg::check_convergence() {
     check_convergence_entg_entropy();
     check_convergence_spin_parity_sector(settings::strategy::target_sector);
 
-    if(status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0)
+    if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturation_iters or
+       (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
         status.algorithm_saturated_for++;
     else
         status.algorithm_saturated_for = 0;
