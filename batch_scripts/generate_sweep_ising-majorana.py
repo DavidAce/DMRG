@@ -12,8 +12,8 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = np.array([14,16,18,20])
-gs                  = [0.5]
+sites               = np.array([8,10,12,14])
+gs                  = [0.0,0.1,0.2]
 deltas              = [-8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 initial_sector      = "z"
@@ -53,16 +53,16 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
     settings = {
         "storage::output_filepath"            : "{}/L_{}/g_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
         "storage::temp_dir"                  : tmp_storage,
-        "threading::stl_threads"             : "2",
-        "threading::omp_threads"             : "2",
+        "threading::stl_threads"             : "1",
+        "threading::omp_threads"             : "1",
         "console::loglevel"                  : "2",
         "model::model_size"                  : str_L,
         "model::ising_majorana::delta"       : str_d,
         "model::ising_majorana::g"           : str_g,
-        "xdmrg::chi_lim_max"                 : "1024",
+        "xdmrg::bond_max"                    : "64",
         "xdmrg::max_states"                  : "1",
-        "strategy::multisite_mps_size_def"   : str(multisite_mps_size_def[0]),
-        "strategy::multisite_mps_size_max"   : str(multi),
+        "strategy::multisite_mps_site_def"   : str(multisite_mps_size_def[0]),
+        "strategy::multisite_mps_site_max"   : str(multi),
         "strategy::initial_state"            : str(init),
         "strategy::initial_sector"           : str(initial_sector),
         "strategy::target_sector"            : str(target_sector),
