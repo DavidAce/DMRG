@@ -100,7 +100,7 @@ def generate_sbatch_commands(project_name, args):
     sbatch_env = os.environ.copy()  # Add environment variables here
 
     # Find executable
-    exec = '../build/{}'.format(args.execname)
+    exec = '../build/{}/{}'.format(args.build_type, args.execname)
     if(os.access(exec, os.X_OK)):
         print('Found executable:', exec)
     else:
