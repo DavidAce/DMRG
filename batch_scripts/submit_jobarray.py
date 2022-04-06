@@ -38,7 +38,7 @@ def parse(project_name):
     parser.add_argument('-N', '--sims-per-cfg', type=int, help='Number of simulations per config file. Can be split up into chunks with -n', default=10)
     parser.add_argument('-n', '--sims-per-array', type=int, help='Number of simulations in each job-array (splits -N into -N/-n chunks)', default=1000)
     parser.add_argument('--sims-per-task', type=int, help='Number of simulations per job-array task. This is equivalent to the step, or stride in the array', default=10)
-    parser.add_argument('--ntasks', type=int, help='Number of tasks per simulation (e.g. mpi threads)', default=10)
+    parser.add_argument('--ntasks', type=int, help='Number of tasks per simulation (e.g. mpi threads)', default=1)
     parser.add_argument('-o', '--other', type=str, help='Other options for sbatch (verbatim)', default=None)
     parser.add_argument('--open-mode', type=str, help='Access mode for logs', default='append', choices=['append','truncate'])
     parser.add_argument('-p','--partition', type=str, help='Partition name', default=None)
