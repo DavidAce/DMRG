@@ -19,31 +19,6 @@
 
 namespace tools::finite::h5 {
 
-    int save::decide_layout(std::string_view prefix_path) {
-        return H5D_CHUNKED; // Let everything be chunked a while. When resuming, rewriting into savepoint/iter_? can lead datasets of different sizes
-        std::string str(prefix_path);
-        if(prefix_path.find("_last") == std::string_view::npos) {
-            return H5D_CHUNKED; // Needs to be resizeable because we can overwrite it with data of different dims
-        } else {
-            return H5D_CONTIGUOUS;
-        }
-    }
-
-    void save::bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file,
-                                  const std::vector<std::string_view> &links) {
-        if(save_log.empty()) {
-            try {
-                for(auto &link : links) {
-                    if(h5file.linkExists(link)) {
-                        auto step                   = h5file.readAttribute<uint64_t>("step", link);
-                        auto iter                   = h5file.readAttribute<uint64_t>("iter", link);
-                        save_log[std::string(link)] = std::make_pair(iter, step);
-                    }
-                }
-            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
-        }
-    }
-
     void tools::finite::h5::save::measurements(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level,
                                                const TensorsFinite &tensors, const AlgorithmStatus &status) {
         save::measurements(h5file, table_prefix, storage_level, *tensors.state, *tensors.model, *tensors.edges, status);
@@ -52,12 +27,12 @@ namespace tools::finite::h5 {
     void save::measurements(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                             const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        // Check if the current entry has already been appended
-        std::string                                                           table_path = fmt::format("{}/measurements", table_prefix);
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, {table_path});
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[table_path] == save_point) return;
+        std::string table_path = fmt::format("{}/measurements", table_prefix);
+
+        // Check if the current entry has already been saved
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return; // Already saved
 
         tools::log->trace("Appending to table: {}", table_path);
         auto t_hdf = tid::tic_scope("measurements", tid::level::extra);
@@ -98,7 +73,6 @@ namespace tools::finite::h5 {
         h5file.appendTableRecords(measurement_entry, table_path);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
-        save_log[table_path] = save_point;
     }
 
     void save::expectations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -147,10 +121,9 @@ namespace tools::finite::h5 {
         auto table_path = fmt::format("{}/{}", table_prefix, table_name);
         tools::log->trace("Appending to table: {}", table_path);
         // Check if the current entry has already been appended
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, {table_path});
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log[std::string(table_path)] == save_point) return;
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return;
 
         // Register the table and create if it doesnt exist
         auto h5_type = h5pp_table_data<T>::register_table_type(payload.size(), fieldname);
@@ -162,7 +135,7 @@ namespace tools::finite::h5 {
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
         h5file.writeAttribute(status.bond_limit, "bond_limit", table_path);
-        save_log[table_path] = save_point;
+        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
     }
 
     void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -214,48 +187,45 @@ namespace tools::finite::h5 {
         auto t_hdf            = tid::tic_scope("state", tid::level::extra);
         auto dsetname_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
         auto mps_prefix       = fmt::format("{}/mps", state_prefix);
-        // Checks if the current entry has already been saved
-        // If it is empty because we are resuming, check if there is a log entry on file already
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, {dsetname_schmidt, mps_prefix});
 
-        auto save_point = std::make_pair(status.iter, status.step);
+        // Check if the current entry has already been saved
+        auto h5_save_point_schmidt = tools::common::h5::save::get_last_save_point(h5file, dsetname_schmidt);
+        auto h5_save_point_mps     = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
+        auto save_point            = std::make_pair(status.iter, status.step);
 
-        if(save_log[dsetname_schmidt] != save_point) {
+        bool skip_schmidt = h5_save_point_schmidt and h5_save_point_schmidt.value() == save_point;
+        bool skip_mps     = h5_save_point_mps and h5_save_point_mps.value() == save_point;
+
+        if(not skip_schmidt) {
             /*! Writes down the midchain "Lambda" bond matrix (singular values). */
-            auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
-            h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, layout);
+            h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, H5D_CHUNKED);
             h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
             h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
             h5file.writeAttribute(status.iter, "iter", dsetname_schmidt);
             h5file.writeAttribute(status.step, "step", dsetname_schmidt);
             h5file.writeAttribute(status.bond_limit, "bond_limit", dsetname_schmidt);
-            h5file.writeAttribute(status.bond_max, "get_bond_max", dsetname_schmidt);
-            save_log[dsetname_schmidt] = save_point;
+            h5file.writeAttribute(status.bond_max, "bond_max", dsetname_schmidt);
         }
 
-        if(save_log[mps_prefix] != save_point) {
+        if(not skip_mps) {
             tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
             // There should be one more sites+1 number of L's, because there is also a center bond
             // However L_i always belongs M_i. Stick to this rule!
             // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
-            auto layout = static_cast<H5D_layout_t>(decide_layout(state_prefix));
             for(const auto &mps : state.mps_sites) {
                 auto dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position<long>());
-                if(save_log[dsetName] == save_point) continue;
-                h5file.writeDataset(mps->get_L(), dsetName, layout);
+                h5file.writeDataset(mps->get_L(), dsetName, H5D_CHUNKED);
                 h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
                 h5file.writeAttribute(mps->get_L().dimensions(), "dimensions", dsetName);
                 h5file.writeAttribute(mps->get_truncation_error(), "truncation_error", dsetName);
                 if(mps->isCenter()) {
                     dsetName = fmt::format("{}/L_C", mps_prefix);
-                    h5file.writeDataset(mps->get_LC(), dsetName, layout);
+                    h5file.writeDataset(mps->get_LC(), dsetName, H5D_CHUNKED);
                     h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
                     h5file.writeAttribute(mps->get_LC().dimensions(), "dimensions", dsetName);
                     h5file.writeAttribute(mps->get_truncation_error_LC(), "truncation_error", dsetName);
                 }
-                save_log[dsetName] = save_point;
             }
             h5file.writeAttribute(state.get_length(), "model_size", mps_prefix);
             h5file.writeAttribute(state.get_position<long>(), "position", mps_prefix);
@@ -266,25 +236,18 @@ namespace tools::finite::h5 {
         }
 
         /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
-        if(storage_level < StorageLevel::FULL) {
-            save_log[mps_prefix] = save_point;
-            return;
-        }
+        if(storage_level < StorageLevel::FULL) { return; }
 
-        if(save_log[mps_prefix] != save_point) {
+        if(not skip_mps) {
             tools::log->trace("Storing [{: ^6}]: mps tensors", enum2sv(storage_level));
-            auto layout = H5D_CHUNKED; // These matrices are large enough to benefit from chunking anyway
             for(const auto &mps : state.mps_sites) {
                 auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
-                if(save_log[dsetName] == save_point) continue;
-                h5file.writeDataset(mps->get_M_bare(), dsetName, layout); // Important to write bare matrices!!
+                h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
                 h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
                 h5file.writeAttribute(mps->get_M_bare().dimensions(), "dimensions", dsetName);
                 h5file.writeAttribute(mps->get_label(), "label", dsetName);
                 h5file.writeAttribute(mps->get_unique_id(), "unique_id", dsetName);
-                save_log[dsetName] = save_point;
             }
-            save_log[mps_prefix] = save_point;
         }
     }
 
@@ -321,23 +284,19 @@ namespace tools::finite::h5 {
         auto t_data    = tid::tic_scope("data");
         auto data_path = fmt::format("{}/{}", prefix, data_name);
 
-        // Checks if the current entry has already been saved
-        // If it is empty because we are resuming, check if there is a log entry on file already
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, {data_path});
-        auto save_point = std::make_pair(status.iter, status.step);
+        // Check if the current entry has already been saved
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, data_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return; // Already saved
 
-        if(save_log[data_path] != save_point or status.step == 0) {
-            H5D_layout_t layout;
-            if constexpr(std::is_scalar_v<T>)
-                layout = H5D_layout_t::H5D_COMPACT;
-            else
-                layout = H5D_layout_t::H5D_CHUNKED;
-            h5file.writeDataset(data, data_path, layout);
-            h5file.writeAttribute(status.iter, "iter", data_path);
-            h5file.writeAttribute(status.step, "step", data_path);
-            save_log[data_path] = save_point;
-        }
+        H5D_layout_t layout;
+        if(std::is_scalar_v<T>)
+            layout = H5D_layout_t::H5D_COMPACT;
+        else
+            layout = H5D_layout_t::H5D_CHUNKED;
+        h5file.writeDataset(data, data_path, layout);
+        h5file.writeAttribute(status.iter, "iter", data_path);
+        h5file.writeAttribute(status.step, "step", data_path);
     }
 
     template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 2> &data, std::string_view data_name, std::string_view prefix,
@@ -394,10 +353,10 @@ namespace tools::finite::h5 {
             }
             case StorageReason::SAVEPOINT: {
                 storage_level = settings::storage::storage_level_savepoint;
-                if(status.algo_stop == AlgorithmStop::NONE) {
-                    if(settings::storage::savepoint_frequency == 0 or num::mod(status.iter, settings::storage::savepoint_frequency) != 0)
-                        storage_level = StorageLevel::NONE;
-                }
+                if(settings::storage::savepoint_frequency == 0) storage_level = StorageLevel::NONE;
+                if(settings::storage::savepoint_frequency > 0 and num::mod(status.iter, settings::storage::savepoint_frequency) != 0)
+                    storage_level = StorageLevel::NONE;
+
                 state_prefix += "/savepoint";
                 if(settings::storage::savepoint_keep_newest_only)
                     state_prefix += "/iter_last";
@@ -407,10 +366,10 @@ namespace tools::finite::h5 {
             }
             case StorageReason::CHECKPOINT: {
                 storage_level = settings::storage::storage_level_checkpoint;
-                if(status.algo_stop == AlgorithmStop::NONE) {
-                    if(settings::storage::checkpoint_frequency == 0 or num::mod(status.iter, settings::storage::checkpoint_frequency) != 0)
-                        storage_level = StorageLevel::NONE;
-                }
+                if(settings::storage::checkpoint_frequency == 0) storage_level = StorageLevel::NONE;
+                if(settings::storage::checkpoint_frequency > 0 and num::mod(status.iter, settings::storage::checkpoint_frequency) != 0)
+                    storage_level = StorageLevel::NONE;
+
                 state_prefix += "/checkpoint";
                 if(settings::storage::checkpoint_keep_newest_only)
                     state_prefix += "/iter_last";
@@ -476,6 +435,7 @@ namespace tools::finite::h5 {
         std::string              timer_prefix;
         std::vector<std::string> table_prefxs;
         tools::finite::h5::save::setup_prefix(status, storage_reason, storage_level, state.get_name(), state_prefix, model_prefix, timer_prefix, table_prefxs);
+
         // Additional constraints
         switch(storage_reason) {
             case StorageReason::SAVEPOINT:
@@ -497,30 +457,14 @@ namespace tools::finite::h5 {
             case StorageReason::FINISHED: {
                 // Either checkpoint or savepoint may already have the same data.
                 // We can look for either of those under /common/finished, and make a soft-link
-                std::string slink_prefix;
-                if(not h5file.linkExists("common/finished")) break;
-                for(const auto &attrName : h5file.getAttributeNames("common/finished")) {
-                    if(h5file.readAttribute<bool>(attrName, "common/finished")) {
-                        tools::log->info("Searching for finished state links in {}", attrName);
-                        if(attrName.find(state.get_name()) == std::string::npos) {
-                            tools::log->info("Could not match state name [{}] in {}", state.get_name(), attrName);
-                            continue;
-                        }
-                        if(attrName.find(status.algo_type_sv()) == std::string::npos) {
-                            tools::log->info("Could not match algorithm");
-                            continue;
-                        }
-                        if(h5file.readAttribute<size_t>(attrName, "common/iter") != status.iter) {
-                            tools::log->info("Could not match iter");
-                            continue;
-                        }
-                        if(h5file.readAttribute<size_t>(attrName, "common/step") != status.step) {
-                            tools::log->info("Could not match step");
-                            continue;
-                        }
+                // If /finished has a higher storage level, it will write what is missing into the soft link
+                if(not h5file.linkExists(state_prefix)) {
+                    auto duplicate_prefix = common::h5::find::find_duplicate_save(h5file, state_prefix, status);
+                    if(duplicate_prefix) {
                         // We have a match! attrName is the path to a group containing finished data already.
                         // We make a soft link to it, and keep adding data if necessary.
-                        h5file.createSoftLink(attrName, state_prefix);
+                        tools::log->debug("Creating soft link {} -> {}", state_prefix, duplicate_prefix.value());
+                        h5file.createSoftLink(duplicate_prefix.value(), state_prefix);
                     }
                 }
                 break;

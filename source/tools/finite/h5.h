@@ -16,33 +16,9 @@ namespace h5pp {
 struct StorageMeta;
 
 namespace tools::finite::h5 {
-    struct SavePack {
-        h5pp::File                                                  &file;
-        std::string                                                  target_prefix;
-        std::optional<std::reference_wrapper<const StateFinite>>     state;
-        std::optional<std::reference_wrapper<const ModelFinite>>     model;
-        std::optional<std::reference_wrapper<const EdgesFinite>>     edges;
-        std::optional<std::reference_wrapper<const AlgorithmStatus>> status;
-        StorageLevel                                                 storage_level;
-        StorageReason                                                storage_reason;
-        std::optional<CopyPolicy>                                    copy_policy;
-        SavePack(h5pp::File &file) : file(file) {}
-    };
-    struct LoadPack {
-        const h5pp::File                                      &file;
-        std::string                                            target_prefix;
-        std::optional<std::reference_wrapper<StateFinite>>     state;
-        std::optional<std::reference_wrapper<ModelFinite>>     model;
-        std::optional<std::reference_wrapper<EdgesFinite>>     edges;
-        std::optional<std::reference_wrapper<AlgorithmStatus>> status;
-        StorageLevel                                           storage_level;
-        StorageReason                                          storage_reason;
-        LoadPack(const h5pp::File &file) : file(file) {}
-    };
-
     /* clang-format off */
     namespace save {
-        void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, const std::vector<std::string_view> &links);
+//        void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, const std::vector<std::string_view> &links);
 //        void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
         template<typename T>
         void save_data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status,const std::vector<T> & payload, std::string_view table_name, std::string_view table_title, std::string_view fieldname);

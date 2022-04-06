@@ -12,32 +12,33 @@
 #include <string>
 
 namespace tools::common::h5 {
+    //
+    //    void save::bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view
+    //    link) {
+    //        // from h5table
+    //        if(save_log.empty()) {
+    //            try {
+    //                if(h5file.linkExists(link)) {
+    //                    auto step = h5file.readAttribute<uint64_t>("step", link);
+    //                    auto iter = h5file.readAttribute<uint64_t>("iter", link);
+    //                    save_log.insert(std::make_pair(std::string(link), std::make_pair(iter, step)));
+    //                }
+    //            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
+    //        }
+    //    }
 
-    void save::bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link) {
-        // from h5table
-        if(save_log.empty()) {
-            try {
-                if(h5file.linkExists(link)) {
-                    auto step = h5file.readAttribute<uint64_t>("step", link);
-                    auto iter = h5file.readAttribute<uint64_t>("iter", link);
-                    save_log.insert(std::make_pair(std::string(link), std::make_pair(iter, step)));
-                }
-            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
-        }
-    }
-
-    void save::bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file,
-                                  std::string_view state_prefix) {
-        if(save_log.empty()) {
-            try {
-                uint64_t step = 0;
-                uint64_t iter = 0;
-                if(h5file.linkExists("common/step")) step = h5file.readAttribute<uint64_t>(state_prefix, "common/step");
-                if(h5file.linkExists("common/iteration")) iter = h5file.readAttribute<uint64_t>(state_prefix, "common/iteration");
-                save_log.insert(std::make_pair(state_prefix, std::make_pair(iter, step)));
-            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
-        }
-    }
+    //    void save::bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file,
+    //                                  std::string_view state_prefix) {
+    //        if(save_log.empty()) {
+    //            try {
+    //                uint64_t step = 0;
+    //                uint64_t iter = 0;
+    //                if(h5file.linkExists("common/step")) step = h5file.readAttribute<uint64_t>(state_prefix, "common/step");
+    //                if(h5file.linkExists("common/iteration")) iter = h5file.readAttribute<uint64_t>(state_prefix, "common/iteration");
+    //                save_log.insert(std::make_pair(state_prefix, std::make_pair(iter, step)));
+    //            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
+    //        }
+    //    }
 
     void save::bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix) {
         if(save_log.empty()) {
@@ -65,49 +66,89 @@ namespace tools::common::h5 {
         if(storage_level == StorageLevel::NONE) return;
         // Check if the current entry has already been appended
         // Status is special, flags can be updated without changing iter or step
-        std::string                                                           table_path = fmt::format("{}/status", table_prefix);
-        auto                                                                  t_hdf      = tid::tic_scope("status", tid::level::detailed);
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, table_path);
-        auto save_point = std::make_pair(status.iter, status.step);
-        tools::log->trace("Appending to table: {}", table_path);
+        std::string table_path    = fmt::format("{}/status", table_prefix);
+        auto        t_hdf         = tid::tic_scope("status", tid::level::detailed);
+        auto        h5_save_point = save::get_last_save_point(h5file, table_path);
+        auto        save_point    = std::make_pair(status.iter, status.step);
         h5pp_table_algorithm_status::register_table_type();
-        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
-        if(save_log.count(table_path) and save_log.at(table_path) == save_point) {
-            // The table has been saved at this iteration, so we overwrite the last entry.
-            auto tableInfo = h5file.getTableInfo(table_path);
-            h5file.writeTableRecords(status, table_path, tableInfo.numRecords.value() - 1);
-        } else
-            h5file.appendTableRecords(status, table_path);
+        if(not h5_save_point) h5file.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
+        auto info   = h5file.getTableInfo(table_path);
+        auto offset = h5_save_point and h5_save_point.value() == save_point ? info.numRecords.value() - 1 : info.numRecords.value();
+        h5pp::hdf5::writeTableRecords(status, info, offset, 1);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
-
-        save_log.insert({table_path, save_point});
     }
 
     void save::mem(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
         // Check if the current entry has already been appended
-        std::string                                                           table_path = fmt::format("{}/mem_usage", table_prefix);
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, table_path);
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log.count(table_path) and save_log.at(table_path) == save_point) return;
-        log->trace("Appending to table: {}", table_path);
-        auto t_mem = tid::tic_scope("mem", tid::level::detailed);
-        h5pp_table_memory_usage::register_table_type();
-        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_memory_usage::h5_type, table_path, "memory usage");
-
+        std::string                    table_path = fmt::format("{}/mem_usage", table_prefix);
         h5pp_table_memory_usage::table mem_usage_entry{};
         mem_usage_entry.iter = status.iter;
         mem_usage_entry.step = status.step;
         mem_usage_entry.rss  = debug::mem_rss_in_mb();
         mem_usage_entry.hwm  = debug::mem_hwm_in_mb();
         mem_usage_entry.vm   = debug::mem_vm_in_mb();
-        h5file.appendTableRecords(mem_usage_entry, table_path);
+
+        auto h5_save_point = save::get_last_save_point(h5file, table_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        h5pp_table_memory_usage::register_table_type();
+        if(not h5_save_point) h5file.createTable(h5pp_table_memory_usage::h5_type, table_path, "Memory usage");
+        auto info   = h5file.getTableInfo(table_path);
+        auto offset = h5_save_point and h5_save_point.value() == save_point ? info.numRecords.value() - 1 : info.numRecords.value();
+        h5pp::hdf5::writeTableRecords(mem_usage_entry, info, offset, 1);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
-        save_log.insert({table_path, save_point});
+    }
+
+    std::optional<std::string> find::find_duplicate_save(const h5pp::File &h5file, std::string_view state_prefix, const AlgorithmStatus &status) {
+        if(not h5file.linkExists("common/status")) return std::nullopt;
+        if(not h5file.linkExists("common/state_root")) return std::nullopt;
+        h5pp::Options opt_status;
+        opt_status.h5Type   = h5pp_table_algorithm_status::h5_type;
+        opt_status.linkPath = "common/status";
+        AlgorithmStatus h5_status;
+        for(const auto &h5_state_prefix : h5file.getAttributeNames("common/status")) {
+            if(state_prefix == h5_state_prefix) continue; // Skip self
+            auto h5_state_root_exists = h5pp::hdf5::checkIfAttrExists(h5file.openFileHandle(), "common/state_root", h5_state_prefix);
+            if(not h5_state_root_exists) return std::nullopt;
+
+            auto h5_state_root = h5file.readAttribute<std::string>(h5_state_prefix, "common/state_root");
+            tools::log->debug("Found h5_state_root: {}", h5_state_root);
+            if(state_prefix.find(h5_state_root) != std::string_view::npos) {
+                // We have a match! A state on file with the same root as the given state prefix
+                // A state_prefix is something like xDMRG/state_0/checkpoint/iter_last
+                // A state_root   is something like xDMRG/state_0
+                // If roots match they are trying to describe the same state.
+
+                // Now read the status of the found state prefix
+                opt_status.attrName = h5_state_prefix;
+                h5file.readAttribute(h5_status, opt_status);
+
+                if(status.algo_type != h5_status.algo_type) continue;
+                if(status.iter != h5_status.iter) continue;
+                if(status.step != h5_status.step) continue;
+                if(status.position != h5_status.position) continue;
+                if(status.bond_limit != h5_status.bond_limit) continue;
+                // We have a match: Saving state_prefix would create a duplicate of h5_state_prefix!
+                return h5_state_prefix;
+            }
+        }
+        return std::nullopt;
+    }
+
+    std::optional<std::pair<uint64_t, uint64_t>> save::get_last_save_point(const h5pp::File &h5file, std::string_view link_path) {
+        auto link_info = h5file.getLinkInfo(link_path);
+        if(link_info.linkExists.value()) {
+            auto iter_exists = h5pp::hdf5::checkIfAttrExists(link_info.getLocId(), link_path, "iter");
+            auto step_exists = h5pp::hdf5::checkIfAttrExists(link_info.getLocId(), link_path, "step");
+            if(iter_exists and step_exists) {
+                auto iter = h5file.readAttribute<uint64_t>("iter", link_path);
+                auto step = h5file.readAttribute<uint64_t>("step", link_path);
+                return std::make_pair(iter, step);
+            }
+        }
+        return std::nullopt;
     }
 
     void save::meta(h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason, const ModelType &model_type, size_t model_size,
@@ -178,29 +219,24 @@ namespace tools::common::h5 {
         if(storage_level == StorageLevel::NONE) return;
         auto t_timers   = tid::tic_token("timers", tid::level::extra);
         auto table_path = fmt::format("{}/timers", table_prefix);
-        // Check if the current entry has already been appended
 
-        static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-        bootstrap_save_log(save_log, h5file, table_path);
-        auto save_point = std::make_pair(status.iter, status.step);
-        if(save_log.count(std::string(table_path)) and save_log.at(std::string(table_path)) == save_point) return;
-        tools::log->trace("Writing timer data to: {}", table_path);
+        auto h5_save_point = save::get_last_save_point(h5file, table_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return;
 
-        h5pp_ur::register_table_type();
-        h5file.setKeepFileOpened();
-        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_ur::h5_type, table_path, fmt::format("{} Timings", status.algo_type_sv()));
-
+        // Make a table entry
         auto tid_tree    = tid::search(status.algo_type_sv());
         auto table_items = std::vector<h5pp_ur::item>();
         table_items.reserve(tid_tree.size());
         for(const auto &[i, t] : iter::enumerate(tid_tree))
             table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
 
+        h5pp_ur::register_table_type();
+        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_ur::h5_type, table_path, fmt::format("{} Timings", status.algo_type_sv()));
         h5file.writeTableRecords(table_items, table_path, 0);
+
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
-        h5file.setKeepFileClosed();
-        save_log.insert({std::string(table_path), save_point});
     }
 
 }

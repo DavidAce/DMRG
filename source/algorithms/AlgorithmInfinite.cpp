@@ -108,7 +108,9 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
     status.bond_limit                 = bond_new;
     status.bond_limit_has_reached_max = status.bond_limit == status.bond_max;
-
+    // Restart counters (so that we don't finish immedately
+    status.algorithm_has_stuck_for = 0;
+    status.algorithm_converged_for = 0;
     // Last sanity check before leaving here
     if(status.bond_limit > status.bond_max)
         throw std::runtime_error(fmt::format("bond_limit is larger than get_bond_max! {} > {}", status.bond_limit, status.bond_max));
