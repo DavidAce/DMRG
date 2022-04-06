@@ -20,9 +20,6 @@ def chunks(iterable, n):
        except StopIteration:
            return
 
-
-
-
 def parse(project_name):
     parser = argparse.ArgumentParser(description='SLURM batch submission for {}'.format(project_name))
     parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release', choices=['Debug', 'Release', 'RelWithDebInfo', 'Profile'])
@@ -35,9 +32,9 @@ def parse(project_name):
     parser.add_argument('--exclusive', action='store_true', help='Reserve whole node')
     parser.add_argument('--execname', type=str, help='Name of executable', default='DMRG++')
     parser.add_argument('--hint', type=str, default=None, help='Slurm parallelization hint. Cannot be used with --ntasks-per-core', choices=['multithread', 'nomultithread', 'compute_bound', 'memory_bound'])
-    parser.add_argument('-j', '--job-file', type=str, help='File containing config-seed pairs. Use for resuming failed runs')
+    parser.add_argument('-j', '--job-dir', type=str, help='Directory with existing .job files. Use for resuming failed runs')
     parser.add_argument('-J', '--job-name', type=str, help='Slurm job name', default='DMRG')
-    parser.add_argument('-m', '--mem-per-cpu', type=int, help='Memory per core, e.g 2000, 2000M or 2G', default=1000)
+    parser.add_argument('-m', '--mem-per-cpu', type=str, help='Memory per core, e.g 2000, 2000M or 2G', default='1G')
     parser.add_argument('-N', '--sims-per-cfg', type=int, help='Number of simulations per config file. Can be split up into chunks with -n', default=10)
     parser.add_argument('-n', '--sims-per-array', type=int, help='Number of simulations in each job-array (splits -N into -N/-n chunks)', default=1000)
     parser.add_argument('--sims-per-task', type=int, help='Number of simulations per job-array task. This is equivalent to the step, or stride in the array', default=10)
@@ -47,7 +44,6 @@ def parse(project_name):
     parser.add_argument('--partition', type=str, help='Partition name', default=None)
     parser.add_argument('--qos', type=str, help='Quality of service', default=None)
     parser.add_argument('--requeue', action='store_true', help='Requeue job in case of failure')
-    parser.add_argument('--seedfile', type=str, help='File or path to files containing a list of seeds (suffixed .seed). Basenames should match the corresponding input files in -f', default=None)
     parser.add_argument('--startseed', type=int, help='Starting seed for random number generator', default=0)
     parser.add_argument('--shuffle', action='store_true', help='Shuffle all seeeds and config files')
     parser.add_argument('-t', '--time', type=str, help='Time limit for each job', default='0-01:00:00' )
@@ -86,6 +82,17 @@ def run(cmd,env,args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STD
         if p.returncode:
             raise subprocess.CalledProcessError(p.returncode, ' '.join(p.args))
 
+def write_joblists(superlist, sims_per_array, jobdir):
+    # Write the super job list to job files in chunks of size sims_per_array
+    for i,joblist in enumerate(chunks(superlist, sims_per_array)):
+        bgn = i * sims_per_array
+        end = i * sims_per_array + sims_per_array - 1
+        end = min(end, len(superlist)-1)
+        jobfile = '{}/part.{:0>4}.[{}-{}].job'.format(jobdir, i, bgn,end)
+        with open(jobfile,'w+') as f:
+            for job in joblist:
+                f.writelines(job)
+
 
 def generate_sbatch_commands(project_name, args):
     sbatch_cmd = []
@@ -107,12 +114,6 @@ def generate_sbatch_commands(project_name, args):
       raise FileNotFoundError(errno.ENOENT, "Some dynamic libraries were not found. Perhaps a module needs to be loaded.", exec)
 
 
-
-
-
-#     sbatch $jobname $cluster $partition $qos $mempercpu $requeue $exclusive $time $other $hint $openmode $verbosity $ntasks $cpuspertask $ntaskspercore \
-#       --array=1-$numseeds:$simspertask \
-#       run_jobarray.sh -e $exec -f $jobfile
 
     if args.cluster:
         sbatch_arg.extend(['--cluster={}'.format(args.cluster)])
@@ -141,21 +142,28 @@ def generate_sbatch_commands(project_name, args):
     if args.verbose:
         sbatch_arg.extend(['-v'])
 
-
-    if args.job_file:
+    jobdir = None
+    if args.job_dir:
         # If we are using a job-file we can use it directly and then skip generating new ones
-        numseeds = sum(1 for line in open(args.job_file))
-        jobstem  = Path(args.job_file).stem
-        jobext   = Path(args.job_file).suffix
-        jobdir   = Path(args.job_file).parent
-        if numseeds > args.sims_per_array:
-            # Let's split up the job-file into chunks
-            with open(args.job_file) as jobfile:
-                for i, lines in enumerate(chunks(jobfile, args.sims_per_array)):
-                    jobchnk = '{}/{}.{}.job'.format(jobdir, jobstem,i)
-                    with open(jobchnk, 'w') as f:
-                        f.writelines(lines)
-            os.rename(args.job_file, '{}/{}.bak'.format(jobdir,jobstem)) # Back up the job file
+        jobfiles = sorted(list(Path(args.job_dir).glob('*.job')))
+        if not jobfiles:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT) + ' (no .job files found in)', args.job_dir)
+        jobdir = args.job_dir
+        # Read all the jobs into a superlist
+        print("Loading existing job dir:", jobdir)
+        superlist=[]
+        for jobfile in jobfiles:
+            with open(jobfile,'r') as f:
+                superlist.extend(f.readlines())
+
+        # Erase old .job files to avoid duplication
+        for jobfile in jobfiles:
+            jobfile.unlink()
+
+        # Generate new job lists
+        print("Writing {} jobs in job arrays of size {}".format(len(superlist), args.sims_per_array))
+        write_joblists(superlist, args.sims_per_array,jobdir)
+
     else:
         cfgfiles = list(Path(args.config).glob('*.cfg')) #TODO: may have to sort this list
         if not cfgfiles:
@@ -183,19 +191,9 @@ def generate_sbatch_commands(project_name, args):
                     superlist.append(['{} {}\n'.format(cfg,seedcount)])
                     seedcount = seedcount + 1
 
-
         # Generate job files
         print("Generating {} seeds per .cfg file ({} files in total) split into job arrays of size {}".format(args.sims_per_cfg, len(cfgfiles), args.sims_per_array))
-
-        # Write the super job list to job files in chunks of size sims_per_array
-        for i,joblist in enumerate(chunks(superlist, args.sims_per_array)):
-            bgn = i * args.sims_per_array
-            end = i * args.sims_per_array + args.sims_per_array - 1
-            end = min(end, len(superlist)) - 1
-            jobfile = '{}/part.{:0>4}.[{}-{}].job'.format(jobdir, i, bgn,end)
-            with open(jobfile,'w+') as f:
-                for job in joblist:
-                    f.writelines(job)
+        write_joblists(superlist, args.sims_per_array, jobdir)
 
 
     # From this point on we are guaranteed to have a set of job files jobs/part.[###-###].job
@@ -203,7 +201,7 @@ def generate_sbatch_commands(project_name, args):
     # Now collect all .job files and create separate sbatch commands for each
     jobfiles = sorted(list(Path(jobdir).glob('*.job')))
     if not jobfiles:
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT) + ' (no job files found in)', jobdir)
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT) + ' (no .job files found in)', jobdir)
 
     for jobfile in jobfiles:
         numseeds = sum(1 for line in open(jobfile))
