@@ -22,7 +22,7 @@ def chunks(iterable, n):
 
 def parse(project_name):
     parser = argparse.ArgumentParser(description='SLURM batch submission for {}'.format(project_name))
-    parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release', choices=['Debug', 'Release', 'RelWithDebInfo', 'Profile'])
+    parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release', choices=['None', 'Debug', 'Release', 'RelWithDebInfo', 'Profile'])
     parser.add_argument('-c', '--cluster', type=str, help='Comma separated list of Slurm clusters', default=None, choices=['kraken', 'draken', 'kthulu', 'tetralith'])
     parser.add_argument('--config', type=str, help='File or path to files containing simulation config files (suffixed .cfg)', default='input')
     parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task (sims)', default=1)
@@ -100,7 +100,10 @@ def generate_sbatch_commands(project_name, args):
     sbatch_env = os.environ.copy()  # Add environment variables here
 
     # Find executable
-    exec = '../build/{}/{}'.format(args.build_type, args.execname)
+    if args.build_type == 'None':
+        exec = '../build/{}'.format(args.execname)
+    else:
+        exec = '../build/{}/{}'.format(args.build_type, args.execname)
     if(os.access(exec, os.X_OK)):
         print('Found executable:', exec)
     else:
@@ -179,7 +182,7 @@ def generate_sbatch_commands(project_name, args):
         # When --shuffle is given, we assign seeds in round-robin instead of actually
         # shuffling, which would take too long for lists of this size.
         superlist = []
-        seedcount = args.startseed
+        seedcount = args.start_seed
         if args.shuffle:
             for sim in range(args.sims_per_cfg):
                 for cfg in cfgfiles:
