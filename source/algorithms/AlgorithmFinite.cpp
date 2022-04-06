@@ -229,6 +229,10 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     bool grow_if_saturated  = settings::get_bond_grow(status.algo_type) == BondGrow::IF_SATURATED;
     bool grow_if_iteration2 = settings::get_bond_grow(status.algo_type) == BondGrow::ITERATION2;
     bool grow_if_iteration4 = settings::get_bond_grow(status.algo_type) == BondGrow::ITERATION4;
+    if(not is_bond_limited) {
+        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_limit);
+        return;
+    }
     if(grow_if_stuck and not is_stuck) {
         tools::log->info("Algorithm is not stuck yet. Kept current bond limit {}", status.bond_limit);
         return;
@@ -237,16 +241,17 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_limit);
         return;
     }
+
     if(grow_if_iteration2 and not is_iteration2) {
         tools::log->info("Iteration not divisible by 2. Kept current bond limit {}", status.bond_limit);
+        status.algorithm_has_stuck_for = 0;
+        status.algorithm_saturated_for = 0;
         return;
     }
     if(grow_if_iteration4 and not is_iteration4) {
         tools::log->info("Iteration not divisible by 4. Kept current bond limit {}", status.bond_limit);
-        return;
-    }
-    if(not is_bond_limited) {
-        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_limit);
+        status.algorithm_has_stuck_for = 0;
+        status.algorithm_saturated_for = 0;
         return;
     }
 
@@ -264,6 +269,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
     status.bond_limit                 = bond_new;
     status.bond_limit_has_reached_max = status.bond_limit == status.bond_max;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
     if(status.bond_limit > status.bond_max) throw except::logic_error("bond_limit is larger than get_bond_max! {} > {}", status.bond_limit, status.bond_max);
