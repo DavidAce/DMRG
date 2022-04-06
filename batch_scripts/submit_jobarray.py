@@ -6,7 +6,7 @@ from pathlib import Path
 from itertools import zip_longest
 from itertools import chain, islice
 from datetime import datetime
-
+import socket
 
 
 def chunks(iterable, n):
@@ -98,7 +98,6 @@ def generate_sbatch_commands(project_name, args):
     sbatch_cmd = []
     sbatch_arg = []
     sbatch_env = os.environ.copy()  # Add environment variables here
-
     # Find executable
     if args.build_type == 'None':
         exec = '../build/{}'.format(args.execname)
@@ -175,7 +174,7 @@ def generate_sbatch_commands(project_name, args):
 
 
         # Generate a new unique directory for seed files
-        jobdir = "jobs-{}".format(datetime.now().strftime("%Y-%m-%dT%H.%M.%S"))
+        jobdir = "jobs-{}-{}".format(socket.gethostname(), datetime.now().strftime("%Y-%m-%dT%H.%M.%S"))
         os.makedirs(jobdir, exist_ok=True)
 
         # Generate a super job list of .cfg and seed pairs.
@@ -225,7 +224,7 @@ def main():
     sbatch_cmd, sbatch_env = generate_sbatch_commands(project_name=project_name,args=args)
 
     if not args.dryrun:
-        with open('job_report.txt','a') as f:
+        with open('job-report-{}.txt'.format(socket.gethostname()),'a') as f:
             f.write('\n------------------------------------\n')
             f.write('Running sbatch - {}\n'.format(datetime.now().strftime("%Y-%m-%dT%H.%M.%S")))
             f.flush()
