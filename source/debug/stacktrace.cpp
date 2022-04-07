@@ -63,18 +63,11 @@ void debug::signal_callback_handler(int status) {
             break;
         }
     }
+    if(status != 0) debug::print_stack_trace();
     std::exit(status);
 }
 
 void debug::register_callbacks() {
-    signal(SIGTERM, signal_callback_handler);
-    signal(SIGKILL, signal_callback_handler);
-    signal(SIGINT, signal_callback_handler);
-    signal(SIGHUP, signal_callback_handler);
-    signal(SIGQUIT, signal_callback_handler);
-    signal(SIGABRT, signal_callback_handler);
-    signal(SIGSEGV, signal_callback_handler);
-
     /* ISO C99 signals.  */
     signal(SIGINT, signal_callback_handler);  //	 2	/* Interactive attention signal.  */
     signal(SIGILL, signal_callback_handler);  //	 4	/* Illegal instruction.  */
@@ -109,9 +102,6 @@ void debug::register_callbacks() {
     signal(SIGUSR1, signal_callback_handler);   //   30 /* User-defined signal 1.  */
     signal(SIGUSR2, signal_callback_handler);   //   31 /* User-defined signal 2.  */
     signal(137, signal_callback_handler);       //   137 /* LLDB?  */
-
-    std::atexit(debug::print_stack_trace);
-    std::at_quick_exit(debug::print_stack_trace);
 }
 
 #if __has_include(<backward.hpp>)
