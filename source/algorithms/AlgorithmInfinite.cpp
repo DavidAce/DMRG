@@ -99,8 +99,8 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     write_to_file(StorageReason::BOND_UPDATE);
 
     // If we got to this point we will update the bond dimension by a factor
-    auto factor = settings::get_bond_grow_factor(status.algo_type);
-    if(factor <= 1.0) throw std::logic_error(fmt::format("Error: get_bond_grow_factor == {:.3f} | must be larger than one", factor));
+    auto factor = settings::get_bond_grow_rate(status.algo_type);
+    if(factor <= 1.0) throw std::logic_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor));
 
     // Update chi
     double bond_prod = std::ceil(factor * static_cast<double>(status.bond_limit));

@@ -41,13 +41,13 @@ BondGrow settings::get_bond_grow(AlgorithmType algo_type) {
         default: return BondGrow::OFF;
     }
 }
-double settings::get_bond_grow_factor(AlgorithmType algo_type) {
+double settings::get_bond_grow_rate(AlgorithmType algo_type) {
     switch(algo_type) {
-        case AlgorithmType::iDMRG: return settings::idmrg::bond_grow_factor;
-        case AlgorithmType::fDMRG: return settings::fdmrg::bond_grow_factor;
-        case AlgorithmType::xDMRG: return settings::xdmrg::bond_grow_factor;
-        case AlgorithmType::iTEBD: return settings::itebd::bond_grow_factor;
-        case AlgorithmType::fLBIT: return settings::flbit::bond_grow_factor;
+        case AlgorithmType::iDMRG: return settings::idmrg::bond_grow_rate;
+        case AlgorithmType::fDMRG: return settings::fdmrg::bond_grow_rate;
+        case AlgorithmType::xDMRG: return settings::xdmrg::bond_grow_rate;
+        case AlgorithmType::iTEBD: return settings::itebd::bond_grow_rate;
+        case AlgorithmType::fLBIT: return settings::flbit::bond_grow_rate;
         default: return 1.5;
     }
 }
@@ -200,7 +200,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("fdmrg::min_iters"               , fdmrg::min_iters);
     dmrg_config.load_parameter("fdmrg::bond_max"                , fdmrg::bond_max);
     dmrg_config.load_parameter("fdmrg::bond_grow"               , fdmrg::bond_grow);
-    dmrg_config.load_parameter("fdmrg::bond_grow_factor"        , fdmrg::bond_grow_factor);
+    dmrg_config.load_parameter("fdmrg::bond_grow_rate"          , fdmrg::bond_grow_rate);
     dmrg_config.load_parameter("fdmrg::bond_init"               , fdmrg::bond_init);
     dmrg_config.load_parameter("fdmrg::print_freq "             , fdmrg::print_freq);
     dmrg_config.load_parameter("fdmrg::store_wavefn"            , fdmrg::store_wavefn);
@@ -213,7 +213,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::use_swap_gates"          , flbit::use_swap_gates);
     dmrg_config.load_parameter("flbit::bond_max"                , flbit::bond_max);
     dmrg_config.load_parameter("flbit::bond_grow"               , flbit::bond_grow);
-    dmrg_config.load_parameter("flbit::bond_grow_factor"        , flbit::bond_grow_factor);
+    dmrg_config.load_parameter("flbit::bond_grow_rate"          , flbit::bond_grow_rate);
     dmrg_config.load_parameter("flbit::bond_init"               , flbit::bond_init);
     dmrg_config.load_parameter("flbit::time_start_real"         , flbit::time_start_real);
     dmrg_config.load_parameter("flbit::time_start_imag"         , flbit::time_start_imag);
@@ -236,7 +236,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::opt_subspace_bond_limit"      , xdmrg::opt_subspace_bond_limit);
     dmrg_config.load_parameter("xdmrg::bond_max"                     , xdmrg::bond_max);
     dmrg_config.load_parameter("xdmrg::bond_grow"                    , xdmrg::bond_grow);
-    dmrg_config.load_parameter("xdmrg::bond_grow_factor"             , xdmrg::bond_grow_factor);
+    dmrg_config.load_parameter("xdmrg::bond_grow_rate"               , xdmrg::bond_grow_rate);
     dmrg_config.load_parameter("xdmrg::bond_init"                    , xdmrg::bond_init);
 
     dmrg_config.load_parameter("xdmrg::print_freq "                  , xdmrg::print_freq);
@@ -252,7 +252,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("idmrg::max_iters"                    , idmrg::max_iters);
     dmrg_config.load_parameter("idmrg::bond_max"                     , idmrg::bond_max);
     dmrg_config.load_parameter("idmrg::bond_grow"                    , idmrg::bond_grow);
-    dmrg_config.load_parameter("idmrg::bond_grow_factor"             , idmrg::bond_grow_factor);
+    dmrg_config.load_parameter("idmrg::bond_grow_rate"               , idmrg::bond_grow_rate);
     dmrg_config.load_parameter("idmrg::bond_init"                    , idmrg::bond_init);
     dmrg_config.load_parameter("idmrg::print_freq"                   , idmrg::print_freq);
 
@@ -266,7 +266,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("itebd::suzuki_order"         , itebd::suzuki_order);
     dmrg_config.load_parameter("itebd::bond_max"             , itebd::bond_max  );
     dmrg_config.load_parameter("itebd::bond_grow"            , itebd::bond_grow);
-    dmrg_config.load_parameter("itebd::bond_grow_factor"     , itebd::bond_grow_factor);
+    dmrg_config.load_parameter("itebd::bond_grow_rate"       , itebd::bond_grow_rate);
     dmrg_config.load_parameter("itebd::bond_init"            , itebd::bond_init);
     dmrg_config.load_parameter("itebd::print_freq"           , itebd::print_freq);
 
