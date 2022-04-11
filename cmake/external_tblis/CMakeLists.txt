@@ -45,7 +45,7 @@ ExternalProject_Add(external_tblis
             export CXX=${CMAKE_CXX_COMPILER_REALPATH} &&
             echo "CC=${CMAKE_C_COMPILER_REALPATH}" &&
             echo "CXX=${CMAKE_CXX_COMPILER_REALPATH}" &&
-            ./configure CC=${CMAKE_C_COMPILER_REALPATH} CXX=${CMAKE_CXX_COMPILER_REALPATH}  --enable-config=intel,amd,haswell,zen --prefix=<INSTALL_DIR>
+            ./configure CC=${CMAKE_C_COMPILER_REALPATH} CXX=${CMAKE_CXX_COMPILER_REALPATH}  --enable-config=intel,amd --prefix=<INSTALL_DIR>
 
         BUILD_COMMAND
             cd <SOURCE_DIR> &&
