@@ -21,7 +21,7 @@
 #include <chrono>
 
 int eig::solver::zheevd(const cplx *matrix, size_type L) {
-    eig::log->trace("Starting eig zheevd. Eigvecs: {}", config.compute_eigvecs.value());
+    eig::log->trace("Starting eig zheevd. Eigvecs: {}", config.compute_eigvecs.value() == eig::Vecs::ON);
     auto  t_start = std::chrono::high_resolution_clock::now();
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::CPLX>();
