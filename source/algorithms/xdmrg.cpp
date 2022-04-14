@@ -248,9 +248,9 @@ void xdmrg::run_algorithm() {
 }
 
 void xdmrg::run_fes_analysis() {
-    if(not settings::xdmrg::run_fes_analysis) return;
-    tools::log->info("Starting {} finite entanglement scaling analysis of model [{}] for state [{}]", status.algo_type_sv(),
-                     enum2sv(settings::model::model_type), tensors.state->get_name());
+    if(settings::strategy::fes_decrement == 0) return;
+    tools::log->info("Starting {} finite entanglement scaling analysis with bond size step {} of model [{}] for state [{}]", status.algo_type_sv(),
+                     settings::strategy::fes_decrement, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_fes = tid::tic_scope("fes");
     if(not status.algorithm_has_finished) throw except::logic_error("Finite entanglement scaling analysis can only be done after a finished simulation");
     clear_convergence_status();
@@ -262,6 +262,8 @@ void xdmrg::run_fes_analysis() {
         single_xDMRG_step();
         auto truncation_errors = tensors.state->get_truncation_errors();
         print_status_update();
+        check_convergence();
+
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         reduce_bond_dimension_limit();
@@ -296,6 +298,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
 
+    // Set the default bond limit
+    m1.bond_limit = status.bond_limit;
+
     // Set up a multiplier for number of iterations
     auto iter_multiplier = std::max<size_t>(1, 10 * status.algorithm_saturated_for);
 
@@ -311,32 +316,16 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
 
-    if(status.iter <= 1) {
-        // On the zeroth iteration, the rest of the chain is probably just randomized, so don't focus on growing the bond dimension yet.
-        status.bond_limit = std::max<long>(tensors.state->find_largest_bond(), settings::get_bond_init(status.algo_type));
-    }
+    bool prefer_eigs_always    = settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
+    bool prefer_eigs_saturated = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
+    bool prefer_eigs_stuck     = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0;
 
-    if(settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS) {
+    if(prefer_eigs_always or prefer_eigs_saturated or prefer_eigs_stuck) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_def;
         m1.retry     = true;
     }
-    if(settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0) {
-        m1.optMode   = OptMode::VARIANCE;
-        m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_site_def;
-        m1.retry     = true;
-    }
-
-    //
-    //    if(status.bond_limit >= 32 ){
-    //        m1.optMode = OptMode::ENERGY;
-    //        m1.optSolver = OptSolver::EIGS;
-    //        m1.optRitz   = OptRitz::SM;
-    //        m1.max_sites = settings::strategy::multisite_mps_site_def;
-    //        m1.retry     = true;
-    //    }
 
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
@@ -344,10 +333,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = true;
-        if(settings::xdmrg::opt_subspace_bond_limit > 0 and status.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
-            tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", status.bond_limit,
+        if(settings::xdmrg::opt_subspace_bond_limit > 0 and m1.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
+            tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_limit,
                              settings::xdmrg::opt_subspace_bond_limit);
-            status.bond_limit = settings::xdmrg::opt_subspace_bond_limit;
+            m1.bond_limit = settings::xdmrg::opt_subspace_bond_limit;
         }
     }
 
@@ -357,7 +346,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = false;
-        if(settings::xdmrg::opt_overlap_bond_limit > 0) status.bond_limit = settings::xdmrg::opt_overlap_bond_limit;
+        if(settings::xdmrg::opt_overlap_bond_limit > 0 and m1.bond_limit > settings::xdmrg::opt_overlap_bond_limit) {
+            tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_limit, settings::xdmrg::opt_subspace_bond_limit);
+            m1.bond_limit = settings::xdmrg::opt_subspace_bond_limit;
+        }
     }
 
     if(status.fes_is_running) {
@@ -447,13 +439,12 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optSolver = OptSolver::EIGS;
         m2.optMode   = OptMode::VARIANCE;
         // The longer variance has saturated for, the longer we should run.
-        if(status.algorithm_has_stuck_for > 0) m2.eigs_max_ncv = 16; // 4 is default
+        if(status.algorithm_saturated_for > 0) m2.eigs_max_ncv = std::max(16, m2.eigs_max_ncv.value() * 2); // 4 is default
         // The longer variance has saturated for, the more sites we should add
-        m2.eigs_max_iter = std::min(m1.eigs_max_iter.value() * 10, 200000);
-        m2.max_sites     = std::min(settings::strategy::multisite_mps_site_def + status.algorithm_has_stuck_for, settings::strategy::multisite_mps_site_max);
-        m2.chosen_sites  = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
-        m2.problem_dims  = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
-        m2.problem_size  = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
+        m2.max_sites    = std::min(settings::strategy::multisite_mps_site_def + status.algorithm_has_stuck_for, settings::strategy::multisite_mps_site_max);
+        m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
+        m2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
+        m2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
         if(m2.chosen_sites.size() > 1) m2.alpha_expansion = std::nullopt;
         if(m2.chosen_sites == m1.chosen_sites)
             m2.optInit = OptInit::LAST_RESULT;
@@ -498,9 +489,9 @@ void xdmrg::single_xDMRG_step() {
         // Use environment expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(meta.alpha_expansion) {
-            auto pos_expanded = tensors.expand_environment(std::nullopt, status.bond_limit); // nullopt implies a pos query
+            auto pos_expanded = tensors.expand_environment(std::nullopt, meta.bond_limit); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_environment(meta.alpha_expansion, status.bond_limit);
+            tensors.expand_environment(meta.alpha_expansion, meta.bond_limit);
         }
 
         // Announce the current configuration for optimization
@@ -526,8 +517,8 @@ void xdmrg::single_xDMRG_step() {
         // so that we may use them if this result turns out to be the winner
         if(meta.alpha_expansion) {
             results.back().set_alpha(meta.alpha_expansion);
-            auto pos_expanded         = tensors.expand_environment(std::nullopt, status.bond_limit); // nullopt implies a pos query
-            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);                  // Backup the mps sites that this run was compatible with
+            auto pos_expanded         = tensors.expand_environment(std::nullopt, meta.bond_limit); // nullopt implies a pos query
+            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);                // Backup the mps sites that this run was compatible with
         }
 
         // Reset the mps to the original if they were backed up earlier
@@ -539,11 +530,11 @@ void xdmrg::single_xDMRG_step() {
 
         // We can now decide if we are happy with the result or not.
         results.back().set_relchange(results.back().get_variance() / variance_before_step.value());
-
+        results.back().set_bond_limit(meta.bond_limit);
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
         if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
-        if(results.back().get_eigs_rnorm()     > 1e-6                   ) meta.optExit |= OptExit::FAIL_RESIDUAL;
+        if(results.back().get_eigs_rnorm()     > 1e-10                  ) meta.optExit |= OptExit::FAIL_RESIDUAL;
         if(results.back().get_eigs_nev()       == 0 and
                           meta.optSolver       == OptSolver::EIGS       ) meta.optExit |= OptExit::FAIL_RESIDUAL;
         if(results.back().get_overlap()        < 0.010                  ) meta.optExit |= OptExit::FAIL_OVERLAP;
@@ -591,7 +582,7 @@ void xdmrg::single_xDMRG_step() {
         }
 
         // Do the truncation with SVD
-        tensors.merge_multisite_mps(winner.get_tensor(), status.bond_limit);
+        tensors.merge_multisite_mps(winner.get_tensor(), winner.get_bond_limit());
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if(tools::log->level() <= spdlog::level::debug) {
             tools::log->debug("Truncation errors: {:8.2e}", fmt::join(tensors.state->get_truncation_errors_active(), ", "));

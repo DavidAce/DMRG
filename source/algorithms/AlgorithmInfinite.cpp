@@ -62,17 +62,17 @@ void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy)
 void AlgorithmInfinite::update_bond_dimension_limit() {
     status.bond_max                   = settings::get_bond_max(status.algo_type);
     status.bond_limit_has_reached_max = status.bond_limit >= status.bond_max;
-    if(settings::get_bond_grow(status.algo_type) == BondGrow::OFF) {
+    if(settings::strategy::bond_grow_mode == BondGrow::OFF) {
         status.bond_limit = status.bond_max;
         return;
     }
     if(status.bond_limit_has_reached_max) return;
-    auto tic = tid::tic_scope("bond_grow");
+    auto tic = tid::tic_scope("bond_grow_mode");
 
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
     //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow == BondGrow::IF_SATURATED we add the condition
+    // In addition, if get_bond_grow_mode == BondGrow::IF_SATURATED we add the condition
     //      * the algorithm has got stuck
 
     // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
@@ -80,8 +80,8 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     bool is_stuck          = status.algorithm_has_stuck_for > 0;
     bool is_saturated      = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
     bool is_bond_limited   = tensors.state->is_bond_limited(status.bond_limit, 2 * settings::precision::svd_threshold);
-    bool grow_if_stuck     = settings::get_bond_grow(status.algo_type) == BondGrow::IF_STUCK;
-    bool grow_if_saturated = settings::get_bond_grow(status.algo_type) == BondGrow::IF_SATURATED;
+    bool grow_if_stuck     = settings::strategy::bond_grow_mode == BondGrow::IF_STUCK;
+    bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::IF_SATURATED;
     if(grow_if_stuck and not is_stuck) {
         tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.bond_limit);
         return;
@@ -99,7 +99,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     write_to_file(StorageReason::BOND_UPDATE);
 
     // If we got to this point we will update the bond dimension by a factor
-    auto factor = settings::get_bond_grow_rate(status.algo_type);
+    auto factor = settings::strategy::bond_grow_rate;
     if(factor <= 1.0) throw std::logic_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor));
 
     // Update chi
@@ -247,7 +247,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             break;
         }
         case StorageReason::BOND_UPDATE: {
-            if(settings::get_bond_grow(status.algo_type) == BondGrow::OFF) return;
+            if(settings::strategy::bond_grow_mode == BondGrow::OFF) return;
             storage_level = settings::storage::storage_level_checkpoint;
             state_prefix += fmt::format("/checkpoint/bond_{}", status.bond_limit);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own

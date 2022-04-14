@@ -182,7 +182,7 @@ env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisi
 void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<bool> use_mpo2_proj,
                                               std::optional<svd::settings> svd_settings) {
     auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, bond_limit, svd_settings);
-    if(use_mpo2_proj and use_mpo2_proj.value()) { model->set_mpo2_proj(sign, sector); }
+    if(use_mpo2_proj and use_mpo2_proj.value()) model->set_mpo2_proj(sign, sector);
     sync_active_sites();
     if(not active_sites.empty()) {
         rebuild_edges();

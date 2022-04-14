@@ -255,7 +255,7 @@ class h5pp_table_data {
     public:
     static inline std::unordered_map<meta, h5pp::hid::h5t, metaHasher> h5_types;
 
-    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t bond_limit, const T *data, size_t data_size) {
+    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t bond_limit, const T *const data, size_t data_size) {
         size_t                 total_size = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + data_size * sizeof(T);
         std::vector<std::byte> entry(total_size);
         std::memcpy(entry.data() + 0 * sizeof(uint64_t), &iter, sizeof(uint64_t));
@@ -275,9 +275,12 @@ class h5pp_table_data {
             H5Tinsert(h5_type, "step", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
             H5Tinsert(h5_type, "bond_limit", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
             auto h5type = h5pp::util::getH5Type<T>();
-            for(size_t elem = 0; elem < data_size; elem++) {
-                H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), data_offset + elem * sizeof(T), h5type);
-            }
+            if(data_size == 1)
+                H5Tinsert(h5_type, std::string(fieldname).c_str(), data_offset, h5type);
+            else
+                for(size_t elem = 0; elem < data_size; elem++) {
+                    H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), data_offset + elem * sizeof(T), h5type);
+                }
             h5_types[m] = h5_type;
         }
         return h5_types[m];

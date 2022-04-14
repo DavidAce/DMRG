@@ -44,6 +44,7 @@ namespace tools::finite::opt {
         std::optional<OptSolver>              optSolver   = std::nullopt;
         std::optional<OptRitz>                optRitz     = std::nullopt;
         std::optional<OptExit>                optExit     = std::nullopt;
+        std::optional<long>                   bond_limit  = std::nullopt;
 
         public:
         bool                 is_basis_vector = false;
@@ -98,6 +99,8 @@ namespace tools::finite::opt {
         [[nodiscard]] OptSolver                  get_optsolver() const;
         [[nodiscard]] OptMode                    get_optmode() const;
         [[nodiscard]] OptExit                    get_optexit() const;
+        [[nodiscard]] long                       get_bond_limit() const;
+
         void                                     clear();
         void                                     normalize();
         void                                     set_name(std::string_view name_);
@@ -135,6 +138,7 @@ namespace tools::finite::opt {
         void                                     set_optsolver(OptSolver optspace_);
         void                                     set_optmode(OptMode optmode_);
         void                                     set_optexit(OptExit optexit_);
+        void                                     set_bond_limit(long bond_);
         void                                     validate_initial_mps() const;
         void                                     validate_basis_vector() const;
         void                                     validate_result() const;

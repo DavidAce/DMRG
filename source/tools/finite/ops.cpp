@@ -243,7 +243,7 @@ int tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::strin
         auto spin_alignment = sector_sign * spin_component_in_sector.value();
         // Now we have to check that the intended projection is safe
         tools::log->debug("Spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
-        if(spin_alignment > 1.0 - 1e-8) {
+        if(spin_alignment > 1.0 - 1e-14) {
             tools::log->info("Projection not needed: spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
             return sector_sign;
         } else if(spin_alignment > 0) {
@@ -269,7 +269,7 @@ int tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::strin
             else
                 sector_sign = -1;
             spin_alignment = sector_sign * spin_component_in_sector.value();
-            if(spin_alignment > 1.0 - 1e-12) {
+            if(spin_alignment > 1.0 - 1e-14) {
                 tools::log->info("Projection not needed: spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
             } else {
                 project_to_sector(state, paulimatrix, sector_sign, bond_limit, svd_settings);

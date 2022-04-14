@@ -25,8 +25,6 @@ namespace settings {
 
     extern bool     algorithm_is_on(AlgorithmType algo_type);
     extern size_t   print_freq(AlgorithmType algo_type);
-    extern BondGrow get_bond_grow(AlgorithmType algo_type);
-    extern double   get_bond_grow_rate(AlgorithmType algo_type);
     extern long     get_bond_init(AlgorithmType algo_type);
     extern long     get_bond_max(AlgorithmType algo_type);
     extern bool     store_wave_function(AlgorithmType algo_type);
@@ -72,8 +70,8 @@ namespace settings {
         inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but bond-update savepoints can still happen */
         inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline bool                checkpoint_when_bond_updates    = true;                         /*!< If true, a checkpoint is written to file before the bond dimension is updated */
         inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables checkpoints but bond-update checkpoints can still happen */
+        inline bool                bondpoint_enabled               = true;                         /*!< If true, a bondpoint is made, writing results to file before the bond dimension is updated */
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
@@ -89,6 +87,7 @@ namespace settings {
         inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
         inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
+        inline StorageLevel     storage_level_bondpoint  = StorageLevel::NORMAL; /*!< Storage level for checkpoints made when updating the bond dimension */
         inline StorageLevel     storage_level_fes_states = StorageLevel::NORMAL; /*!< Storage level for finite entanglement scaling analysis after a simulation has finished. */
 
         namespace tmp{
@@ -115,14 +114,14 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
-        inline bool          bfgs_fix_gradient_w_eigs   = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
-        inline OptEigs       prefer_eigs_over_bfgs      = OptEigs::WHEN_STUCK;                    /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose [ALWAYS | WHEN_STUCK] */
-        inline bool          expand_envs_when_stuck      = true;                                   /*!< Use subspace expansion when stuck in local minima. alpha == lowest_variance */
-        inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when stuck. (0 = turn off) */
-        inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every iteration. This implies doing it when stuck also. */
-        inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector when the bond dimension limit is increased (only works if bond_grow == true). */
+        inline bool          bfgs_fix_gradient_w_eigs   = true;                                    /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
+        inline OptEigs       prefer_eigs_over_bfgs      = OptEigs::WHEN_STUCK;                     /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose [ALWAYS | WHEN_SATURATED | WHEN_STUCK] */
+        inline bool          expand_envs_when_stuck      = true;                                   /*!< Use environment expansion when stuck in local minima. alpha == lowest_variance */
+        inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
+        inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
+        inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_grow_mode == true). */
         inline bool          project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
-        inline bool          project_final_state         = false;                                  /*!< Project to target axis/parity sector when finished calculating a state. */
+        inline bool          project_final_state         = false;                                  /*!< Project to target axis/parity sector before writing down the final state */
         inline bool          randomize_on_bond_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing the bond dimension */
         inline bool          randomize_early             = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
         inline bool          use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
@@ -140,6 +139,10 @@ namespace settings {
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit     initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
+
+        inline double   fes_decrement                    = 2;                       /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
+        inline BondGrow bond_grow_mode                   = BondGrow::ITERATION;     /*!< If and when to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
+        inline double   bond_grow_rate                   = 8;                       /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
     }
 
 
@@ -225,9 +228,7 @@ namespace settings {
         inline bool     on                  = false;                               /*!< Turns iDMRG simulation on/off. */
         inline size_t   max_iters           = 5000;                                /*!< Maximum number of iDMRG iterations before forced termination */
         inline long     bond_max            = 32;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline BondGrow bond_grow           = BondGrow::IF_SATURATED;             /*!< How to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
-        inline double   bond_grow_rate    = 1.25;                                /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
-        inline long     bond_init           = 16;                                  /*!< Initial bond dimension limit. Only used when bond_grow == true. */
+        inline long     bond_init           = 16;                                  /*!< Initial bond dimension limit. Only used when bond_grow_mode == true. */
         inline size_t   print_freq          = 1000;                                /*!< Print frequency for console output. In units of iterations.  (0 = off). */
     }
 
@@ -241,9 +242,7 @@ namespace settings {
         inline double    time_step_min         = 0.00001;                          /*!< (Absolute value) Minimum and final time step for iTEBD time evolution. */
         inline size_t    suzuki_order          = 1;                                /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long      bond_max              = 8;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline BondGrow  bond_grow             = BondGrow::OFF;                    /*!< How to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
-        inline double    bond_grow_rate      = 1.25;                             /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
-        inline long      bond_init             = 16;                               /*!< Initial bond dimension limit. Only used when bond_grow == true. */
+        inline long      bond_init             = 16;                               /*!< Initial bond dimension limit. Only used when bond_grow_mode == true. */
         inline size_t    print_freq            = 5000;                             /*!< Print frequency for console output. In units of iterations. (0 = off).*/
     }
 
@@ -253,12 +252,9 @@ namespace settings {
         inline size_t    max_iters           = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t    min_iters           = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
         inline long      bond_max            = 8;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline BondGrow  bond_grow           = BondGrow::IF_SATURATED;            /*!< How to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
-        inline double    bond_grow_rate    = 1.25;                               /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
-        inline long      bond_init           = 16;                                 /*!< Initial bond dimension limit. Only used when bond_grow == true. */
+        inline long      bond_init           = 16;                                 /*!< Initial bond dimension limit. Only used when bond_grow_mode == true. */
         inline size_t    print_freq          = 100;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool      store_wavefn        = false;                              /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool      run_fes_analysis    = false;                              /*!< True runs a finite entanglement scaling analysis after finishing the main algorithm */
     }
 
 
@@ -268,10 +264,8 @@ namespace settings {
         inline size_t   max_iters               = 10000;                           /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                               /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates          = true;                            /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
-        inline BondGrow bond_grow               = BondGrow::ITERATION;          /*!< When to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
-        inline double   bond_grow_rate        = 1.25;                            /*!< Factor by which to grow the bond dimension limit. Must be larger than 1 */
         inline long     bond_max                = 16;                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init               = 16;                              /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow == true, or starting from an entangled state */
+        inline long     bond_init               = 16;                              /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow_mode == true, or starting from an entangled state */
         inline double   time_start_real         = 1e-1;                            /*!< Starting time point (real) */
         inline double   time_start_imag         = 0;                               /*!< Starting time point (imag) */
         inline double   time_final_real         = 1e6;                             /*!< Finishing time point (real) */
@@ -281,7 +275,6 @@ namespace settings {
         inline bool     compute_lbit_length     = false;                           /*!< Calculate the characteristic length-scale of lbits */
         inline bool     compute_lbit_stats      = false;                           /*!< Calculate the statistics of characteristic length-scale for various u and f parameters */
         inline bool     store_wavefn            = false;                           /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool     run_fes_analysis        = false;                           /*!< True runs a finite entanglement scaling analysis after finishing the main algorithm */
 }
 
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
@@ -289,10 +282,8 @@ namespace settings {
         inline bool     on                              = false;                   /*!< Turns xDMRG simulation on/off. */
         inline size_t   max_iters                       = 10;                      /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters                       = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
-        inline BondGrow bond_grow                       = BondGrow::ITERATION;     /*!< When to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
-        inline double   bond_grow_rate                  = 8;                       /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise */
         inline long     bond_max                        = 768;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init                       = 16;                      /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow == true, or starting from an entangled state */
+        inline long     bond_init                       = 8;                       /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow_mode == true, or starting from an entangled state */
         inline size_t   opt_overlap_iters               = 2;                       /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
         inline long     opt_overlap_bond_limit          = 16;                      /*!< Bond limit during initial OVERLAP optimization. set to <= 0 for unlimited */
         inline size_t   opt_subspace_iters              = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
@@ -304,7 +295,6 @@ namespace settings {
         inline bool     store_wavefn                    = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline bool     finish_if_entanglm_saturated    = true;                    /*!< Finish early as soon as entanglement has saturated */
         inline bool     finish_if_variance_saturated    = false;                   /*!< Finish early as soon as energy variance has saturated */
-        inline bool     run_fes_analysis                = true;                    /*!< True runs a finite entanglement scaling analysis after finishing the main algorithm */
     }
 }
 /* clang-format on */

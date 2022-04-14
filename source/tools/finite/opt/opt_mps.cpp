@@ -271,6 +271,13 @@ OptExit opt_mps::get_optexit() const {
         throw std::runtime_error("opt_mps: optMode not set");
 }
 
+long opt_mps::get_bond_limit() const {
+    if(bond_limit)
+        return bond_limit.value();
+    else
+        throw std::runtime_error("opt_mps: bond_limit not set");
+}
+
 void opt_mps::clear() { tensor = std::nullopt; }
 void opt_mps::normalize() {
     if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
@@ -347,6 +354,7 @@ void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &
 void opt_mps::set_optsolver(OptSolver optSpace_) { optSolver = optSpace_; }
 void opt_mps::set_optmode(OptMode optMode_) { optMode = optMode_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
+void opt_mps::set_bond_limit(long bond_) { bond_limit = bond_; }
 
 void opt_mps::validate_basis_vector() const {
     std::string error_msg;

@@ -10,6 +10,13 @@
 namespace sfinae {
 
     // SFINAE detection
+    // helper constant for static asserts
+    template<class>
+    inline constexpr bool always_false_v = false;
+    template<class>
+    inline constexpr bool unrecognized_type_v = false;
+    template<class>
+    inline constexpr bool invalid_type_v = false;
 
     template<typename T, typename = std::void_t<>>
     struct has_size : public std::false_type {};
@@ -106,6 +113,8 @@ namespace sfinae {
     struct is_specialization : std::false_type {};
     template<template<typename...> class Ref, typename... Args>
     struct is_specialization<Ref<Args...>, Ref> : std::true_type {};
+    template<typename T, template<typename...> class Ref>
+    inline constexpr bool is_specialization_v = is_specialization<T, Ref>::value;
 
     template<typename T>
     struct is_std_vector : public std::false_type {};

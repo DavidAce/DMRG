@@ -191,13 +191,13 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(not tensors.position_is_inward_edge()) return;
     status.bond_max                   = settings::get_bond_max(status.algo_type);
     status.bond_limit_has_reached_max = status.bond_limit >= status.bond_max;
-    if(settings::get_bond_grow(status.algo_type) == BondGrow::OFF) {
+    if(settings::strategy::bond_grow_mode == BondGrow::OFF) {
         status.bond_limit                 = status.bond_max;
         status.bond_limit_has_reached_max = true;
         return;
     }
     if(status.bond_limit_has_reached_max) return;
-    auto tic = tid::tic_scope("get_bond_grow");
+    auto tic = tid::tic_scope("get_bond_grow_mode");
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
@@ -216,20 +216,19 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
     //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow == BondGrow::IF_STUCK we add the condition
+    // In addition, if get_bond_grow_mode == BondGrow::IF_STUCK we add the condition
     //      * the algorithm has got stuck
 
-    // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
-    // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
-    bool is_stuck           = status.algorithm_has_stuck_for > 0;
+    bool is_stuck =
+        status.algorithm_has_stuck_for > 0 or (status.algorithm_saturated_for > 0 and status.algorithm_converged_for > 0); // Should update even if converged
     bool is_saturated       = status.algorithm_saturated_for > 0;
     bool is_truncated       = tensors.state->is_limited_by_bond(status.bond_limit, 2 * settings::precision::svd_threshold);
     bool is_iteration2      = num::mod(status.iter, 2ul) == 0;
     bool is_iteration4      = num::mod(status.iter, 4ul) == 0;
-    bool grow_if_stuck      = settings::get_bond_grow(status.algo_type) == BondGrow::IF_STUCK;
-    bool grow_if_saturated  = settings::get_bond_grow(status.algo_type) == BondGrow::IF_SATURATED;
-    bool grow_if_iteration2 = settings::get_bond_grow(status.algo_type) == BondGrow::ITERATION2;
-    bool grow_if_iteration4 = settings::get_bond_grow(status.algo_type) == BondGrow::ITERATION4;
+    bool grow_if_stuck      = settings::strategy::bond_grow_mode == BondGrow::IF_STUCK;
+    bool grow_if_saturated  = settings::strategy::bond_grow_mode == BondGrow::IF_SATURATED;
+    bool grow_if_iteration2 = settings::strategy::bond_grow_mode == BondGrow::ITERATION2;
+    bool grow_if_iteration4 = settings::strategy::bond_grow_mode == BondGrow::ITERATION4;
     //    if(not is_truncated) {
     //        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_limit);
     //        return;
@@ -257,8 +256,11 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     }
 
     // If we got to this point we will update the bond dimension by a factor
-    auto grow_rate = settings::get_bond_grow_rate(status.algo_type);
+    auto grow_rate = settings::strategy::bond_grow_rate;
     if(grow_rate <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate));
+
+    // Do a projection to make sure the saved data is in the correct sector
+    if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_limit);
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_UPDATE);
@@ -270,7 +272,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         bond_new = std::ceil(bond_new * grow_rate);
         bond_new = num::round_up_to_multiple_of<double>(bond_new, 4);
     } else if(grow_rate > 2.0) {
-        bond_new = std::ceil(bond_new + grow_rate);
+        bond_new = bond_new + grow_rate;
     } else
         throw except::logic_error("Expected grow_rate > 1.0. Got {}", grow_rate);
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
@@ -289,29 +291,30 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 void AlgorithmFinite::reduce_bond_dimension_limit() {
     // We reduce the bond dimension limit whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
-    check_convergence_entg_entropy();
-
-    static size_t iter_last_reduce = 0;
-    if(iter_last_reduce == 0) iter_last_reduce = status.iter;
-    size_t iter_since_reduce = status.iter - iter_last_reduce;
-    if(status.entanglement_saturated_for > 0 or iter_since_reduce >= 8) {
+    if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
+    size_t iter_since_reduce = status.iter - iter_last_bond_reduce;
+    if(status.algorithm_has_stuck_for > 0 or status.algorithm_converged_for > 0 or iter_since_reduce >= 8) {
         write_to_file(StorageReason::FES_ANALYSIS);
-        algorithm_history.clear();
-        status.entanglement_saturated_for = 0;
-        status.entanglement_converged_for = 0;
-        // If bond_limit >= 128 we set it to the nearest power of 2 smaller than bond_limit. Eg 300 becomes 256.
-        // If bond_limit < 128 and bond_limit > 64 we set bond_limit = 64
-        // If bond_limit <  128 we set it to the nearest multiple of 8 smaller than bond_limit. Eg 92 becomes 88.
-        // If bond_limit == 8 we set AlgorithmStop::SUCCESS and return
-        if(status.bond_limit <= 8)
+
+        auto grow_rate = std::abs(settings::strategy::fes_decrement);
+        auto bond_new  = static_cast<double>(status.bond_limit);
+        if(grow_rate > 0.0 and grow_rate < 1.0)
+            bond_new *= grow_rate;
+        else if(grow_rate >= 1.0)
+            bond_new -= grow_rate;
+        else
+            throw except::logic_error("invalid grow rate {}", grow_rate);
+        bond_new = std::floor(std::max(bond_new, static_cast<double>(status.bond_init)));
+
+        if(bond_new == static_cast<double>(status.bond_limit))
             status.algo_stop = AlgorithmStop::SUCCESS;
-        else if(status.bond_limit <= 64)
-            status.bond_limit = num::prev_multiple<long>(status.bond_limit, 8l);
-        else if(status.bond_limit == std::clamp<long>(status.bond_limit, 65, 127))
-            status.bond_limit = 64;
-        else if(status.bond_limit >= 128)
-            status.bond_limit = num::prev_power_of_two<long>(status.bond_limit);
-        iter_last_reduce = status.iter;
+        else {
+            tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
+            status.bond_limit              = static_cast<long>(bond_new);
+            status.algorithm_has_stuck_for = 0;
+            status.algorithm_saturated_for = 0;
+        }
+        iter_last_bond_reduce = status.iter;
     }
 }
 
@@ -370,7 +373,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
     if(not bond_limit) {
         bond_limit = settings::get_bond_init(status.algo_type);
-        if(settings::get_bond_grow(status.algo_type) == BondGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
+        if(settings::strategy::bond_grow_mode == BondGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             bond_limit = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
     if(bond_limit.value() <= 0) throw std::runtime_error(fmt::format("Invalid bond_limit: {}", bond_limit.value()));
@@ -399,7 +402,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
     status.algo_stop = AlgorithmStop::NONE;
-    if(settings::get_bond_grow(status.algo_type) != BondGrow::OFF) status.bond_limit = bond_limit.value();
+    if(settings::strategy::bond_grow_mode != BondGrow::OFF) status.bond_limit = bond_limit.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
     if(tensors.state->find_largest_bond() > bond_limit.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
@@ -743,7 +746,8 @@ void AlgorithmFinite::print_status_update() {
     if(last_optmode and last_optspace)
         report += fmt::format(FMT_STRING("opt:[{}|{}] "), enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
     report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
-    report += fmt::format(FMT_STRING("sat:[σ² {:<1} Sₑ {:<1}] "), status.variance_mpo_saturated_for, status.entanglement_saturated_for);
+    report += fmt::format(FMT_STRING("sat:{:<1}[σ² {:<1} Sₑ {:<1}] "), status.algorithm_saturated_for, status.variance_mpo_saturated_for,
+                          status.entanglement_saturated_for);
     report += fmt::format(FMT_STRING("time:{:<9} "), fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);

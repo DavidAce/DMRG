@@ -144,7 +144,7 @@ void fdmrg::run_algorithm() {
 }
 
 void fdmrg::run_fes_analysis() {
-    if(not settings::fdmrg::run_fes_analysis) return;
+    if(not settings::strategy::fes_decrement) return;
     throw std::logic_error("FES is not yet implemented for fdmrg");
 }
 

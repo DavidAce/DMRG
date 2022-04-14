@@ -24,7 +24,7 @@ void AlgorithmBase::copy_from_tmp(StorageReason storage_reason, std::optional<Co
 void AlgorithmBase::init_bond_dimension_limits() {
     status.bond_init = settings::get_bond_init(status.algo_type);
     status.bond_max  = settings::get_bond_max(status.algo_type);
-    if(settings::get_bond_grow(status.algo_type) != BondGrow::OFF)
+    if(settings::strategy::bond_grow_mode != BondGrow::OFF)
         status.bond_limit = settings::get_bond_init(status.algo_type);
     else
         status.bond_limit = settings::get_bond_max(status.algo_type);
