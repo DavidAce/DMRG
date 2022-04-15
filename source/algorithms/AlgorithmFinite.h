@@ -45,7 +45,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         run() final;
     void         clear_convergence_status() override;
     void         randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
-                                 std::optional<std::string> sector = std::nullopt, std::optional<long> bond_limit = std::nullopt,
+                                 std::optional<std::string> sector = std::nullopt, std::optional<long> bond_lim = std::nullopt,
                                  std::optional<bool> use_eigenspinors = std::nullopt, std::optional<long> bitfield = std::nullopt,
                                  std::optional<double> svd_threshold = std::nullopt);
 

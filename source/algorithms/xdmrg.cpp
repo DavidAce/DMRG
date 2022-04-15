@@ -136,7 +136,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN:
                 randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
                 break;
-            case xdmrg_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
+            case xdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
             case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
@@ -256,7 +256,7 @@ void xdmrg::run_fes_analysis() {
     clear_convergence_status();
     status.fes_is_running = true;
     status.bond_max       = settings::xdmrg::bond_max; // Set to highest
-    status.bond_limit     = settings::xdmrg::bond_max; // Set to highest
+    status.bond_lim       = settings::xdmrg::bond_max; // Set to highest
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
@@ -299,7 +299,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(tensors.is_real()) m1.optType = OptType::REAL;
 
     // Set the default bond limit
-    m1.bond_limit = status.bond_limit;
+    m1.bond_lim = status.bond_lim;
 
     // Set up a multiplier for number of iterations
     auto iter_multiplier = std::max<size_t>(1, 10 * status.algorithm_saturated_for);
@@ -333,10 +333,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = true;
-        if(settings::xdmrg::opt_subspace_bond_limit > 0 and m1.bond_limit > settings::xdmrg::opt_subspace_bond_limit) {
-            tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_limit,
+        if(settings::xdmrg::opt_subspace_bond_limit > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_limit) {
+            tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_lim,
                              settings::xdmrg::opt_subspace_bond_limit);
-            m1.bond_limit = settings::xdmrg::opt_subspace_bond_limit;
+            m1.bond_lim = settings::xdmrg::opt_subspace_bond_limit;
         }
     }
 
@@ -346,9 +346,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = false;
-        if(settings::xdmrg::opt_overlap_bond_limit > 0 and m1.bond_limit > settings::xdmrg::opt_overlap_bond_limit) {
-            tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_limit, settings::xdmrg::opt_subspace_bond_limit);
-            m1.bond_limit = settings::xdmrg::opt_subspace_bond_limit;
+        if(settings::xdmrg::opt_overlap_bond_limit > 0 and m1.bond_lim > settings::xdmrg::opt_overlap_bond_limit) {
+            tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_lim, settings::xdmrg::opt_subspace_bond_limit);
+            m1.bond_lim = settings::xdmrg::opt_subspace_bond_limit;
         }
     }
 
@@ -489,9 +489,9 @@ void xdmrg::single_xDMRG_step() {
         // Use environment expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(meta.alpha_expansion) {
-            auto pos_expanded = tensors.expand_environment(std::nullopt, meta.bond_limit); // nullopt implies a pos query
+            auto pos_expanded = tensors.expand_environment(std::nullopt, meta.bond_lim); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_environment(meta.alpha_expansion, meta.bond_limit);
+            tensors.expand_environment(meta.alpha_expansion, meta.bond_lim);
         }
 
         // Announce the current configuration for optimization
@@ -517,8 +517,8 @@ void xdmrg::single_xDMRG_step() {
         // so that we may use them if this result turns out to be the winner
         if(meta.alpha_expansion) {
             results.back().set_alpha(meta.alpha_expansion);
-            auto pos_expanded         = tensors.expand_environment(std::nullopt, meta.bond_limit); // nullopt implies a pos query
-            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);                // Backup the mps sites that this run was compatible with
+            auto pos_expanded         = tensors.expand_environment(std::nullopt, meta.bond_lim); // nullopt implies a pos query
+            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);              // Backup the mps sites that this run was compatible with
         }
 
         // Reset the mps to the original if they were backed up earlier
@@ -530,7 +530,7 @@ void xdmrg::single_xDMRG_step() {
 
         // We can now decide if we are happy with the result or not.
         results.back().set_relchange(results.back().get_variance() / variance_before_step.value());
-        results.back().set_bond_limit(meta.bond_limit);
+        results.back().set_bond_limit(meta.bond_lim);
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
         if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
@@ -715,10 +715,10 @@ void xdmrg::find_energy_range() {
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
     // We don't want it to randomize its own model, so we implant our current model before running the tasks.
 
-    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
                                        fdmrg_task::FIND_GROUND_STATE};
 
-    std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_DIM_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
+    std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
                                        fdmrg_task::FIND_HIGHEST_STATE};
     // Find lowest energy state
     {

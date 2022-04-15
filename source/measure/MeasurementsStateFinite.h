@@ -5,9 +5,9 @@
 
 struct MeasurementsStateFinite {
     std::optional<size_t>                   length                        = std::nullopt;
-    std::optional<long>                     bond_dimension_midchain       = std::nullopt;
-    std::optional<long>                     bond_dimension_current        = std::nullopt;
-    std::optional<std::vector<long>>        bond_dimensions               = std::nullopt;
+    std::optional<long>                     bond_mid                      = std::nullopt;
+    std::optional<long>                     bond_dim                      = std::nullopt;
+    std::optional<std::vector<long>>        bond_dims                     = std::nullopt;
     std::optional<double>                   norm                          = std::nullopt;
     std::optional<std::array<double, 3>>    spin_components               = std::nullopt;
     std::optional<std::vector<double>>      truncation_errors             = std::nullopt;

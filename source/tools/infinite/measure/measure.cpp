@@ -22,7 +22,7 @@ void tools::infinite::measure::do_all_measurements(const TensorsInfinite &tensor
 
 void tools::infinite::measure::do_all_measurements(const StateInfinite &state) {
     state.measurements.norm                 = tools::infinite::measure::norm(state);
-    state.measurements.bond_dimension       = tools::infinite::measure::bond_dimension(state);
+    state.measurements.bond_dim             = tools::infinite::measure::bond_dimension(state);
     state.measurements.entanglement_entropy = tools::infinite::measure::entanglement_entropy(state);
     state.measurements.truncation_error     = tools::infinite::measure::truncation_error(state);
 }
@@ -36,9 +36,9 @@ double tools::infinite::measure::norm(const StateInfinite &state) {
 }
 
 long tools::infinite::measure::bond_dimension(const StateInfinite &state) {
-    if(state.measurements.bond_dimension) return state.measurements.bond_dimension.value();
-    state.measurements.bond_dimension = state.chiC();
-    return state.measurements.bond_dimension.value();
+    if(state.measurements.bond_dim) return state.measurements.bond_dim.value();
+    state.measurements.bond_dim = state.chiC();
+    return state.measurements.bond_dim.value();
 }
 
 double tools::infinite::measure::truncation_error(const StateInfinite &state) {

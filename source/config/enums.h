@@ -74,7 +74,7 @@ enum class fdmrg_task {
     INIT_RANDOMIZE_MODEL,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
-    INIT_BOND_DIM_LIMITS,
+    INIT_BOND_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
     INIT_CLEAR_CONVERGENCE,
@@ -92,7 +92,7 @@ enum class flbit_task {
     INIT_RANDOMIZE_MODEL,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
-    INIT_BOND_DIM_LIMITS,
+    INIT_BOND_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
     INIT_CLEAR_CONVERGENCE,
@@ -115,7 +115,7 @@ enum class xdmrg_task {
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
     INIT_RANDOMIZE_INTO_STATE_IN_WIN,
     INIT_RANDOMIZE_FROM_CURRENT_STATE,
-    INIT_BOND_DIM_LIMITS,
+    INIT_BOND_LIMITS,
     INIT_ENERGY_LIMITS,
     INIT_WRITE_MODEL,
     INIT_CLEAR_STATUS,
@@ -293,7 +293,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == fdmrg_task::INIT_RANDOMIZE_MODEL)                    return "INIT_RANDOMIZE_MODEL";
         if(item == fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)       return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
         if(item == fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)     return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
-        if(item == fdmrg_task::INIT_BOND_DIM_LIMITS)                    return "INIT_BOND_DIM_LIMITS";
+        if(item == fdmrg_task::INIT_BOND_LIMITS)                        return "INIT_BOND_LIMITS";
         if(item == fdmrg_task::INIT_WRITE_MODEL)                        return "INIT_WRITE_MODEL";
         if(item == fdmrg_task::INIT_CLEAR_STATUS)                       return "INIT_CLEAR_STATUS";
         if(item == fdmrg_task::INIT_CLEAR_CONVERGENCE)                  return "INIT_CLEAR_CONVERGENCE";
@@ -310,7 +310,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == flbit_task::INIT_RANDOMIZE_MODEL)                  return "INIT_RANDOMIZE_MODEL";
         if(item == flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE)     return "INIT_RANDOMIZE_INTO_PRODUCT_STATE";
         if(item == flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)   return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
-        if(item == flbit_task::INIT_BOND_DIM_LIMITS)                  return "INIT_BOND_DIM_LIMITS";
+        if(item == flbit_task::INIT_BOND_LIMITS)                      return "INIT_BOND_LIMITS";
         if(item == flbit_task::INIT_WRITE_MODEL)                      return "INIT_WRITE_MODEL";
         if(item == flbit_task::INIT_CLEAR_STATUS)                     return "INIT_CLEAR_STATUS";
         if(item == flbit_task::INIT_CLEAR_CONVERGENCE)                return "INIT_CLEAR_CONVERGENCE";
@@ -332,7 +332,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE)    return "INIT_RANDOMIZE_INTO_ENTANGLED_STATE";
         if(item == xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN)       return "INIT_RANDOMIZE_INTO_STATE_IN_WIN";
         if(item == xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE)      return "INIT_RANDOMIZE_FROM_CURRENT_STATE";
-        if(item == xdmrg_task::INIT_BOND_DIM_LIMITS)                   return "INIT_BOND_DIM_LIMITS";
+        if(item == xdmrg_task::INIT_BOND_LIMITS)                   return "INIT_BOND_LIMITS";
         if(item == xdmrg_task::INIT_ENERGY_LIMITS)                     return "INIT_ENERGY_LIMITS";
         if(item == xdmrg_task::INIT_WRITE_MODEL)                       return "INIT_WRITE_MODEL";
         if(item == xdmrg_task::INIT_CLEAR_STATUS)                      return "INIT_CLEAR_STATUS";
@@ -533,7 +533,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FRESH")                                 return EdgeStatus::FRESH ;
     }
     if constexpr(std::is_same_v<T, AlgorithmStop>) {
-        if(item == "SUCCESS")                             return AlgorithmStop::SUCCESS;
+        if(item == "SUCCESS")                               return AlgorithmStop::SUCCESS;
         if(item == "SATURATED")                             return AlgorithmStop::SATURATED;
         if(item == "MAX_ITERS")                             return AlgorithmStop::MAX_ITERS;
         if(item == "MAX_RESET")                             return AlgorithmStop::MAX_RESET;
@@ -545,7 +545,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FIND_WINDOW")                           return ResetReason::FIND_WINDOW;
         if(item == "SATURATED")                             return ResetReason::SATURATED;
         if(item == "NEW_STATE")                             return ResetReason::NEW_STATE;
-        if(item == "BOND_UPDATE")                            return ResetReason::BOND_UPDATE;
+        if(item == "BOND_UPDATE")                           return ResetReason::BOND_UPDATE;
     }
     if constexpr(std::is_same_v<T, NormPolicy>) {
         if(item == "ALWAYS")                                return NormPolicy::ALWAYS;
@@ -600,7 +600,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_RANDOMIZE_MODEL")                  return fdmrg_task::INIT_RANDOMIZE_MODEL;
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")     return fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
         if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")   return fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
-        if(item == "INIT_BOND_DIM_LIMITS")                  return fdmrg_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_BOND_LIMITS")                      return fdmrg_task::INIT_BOND_LIMITS;
         if(item == "INIT_WRITE_MODEL")                      return fdmrg_task::INIT_WRITE_MODEL;
         if(item == "INIT_CLEAR_STATUS")                     return fdmrg_task::INIT_CLEAR_STATUS;
         if(item == "INIT_CLEAR_CONVERGENCE")                return fdmrg_task::INIT_CLEAR_CONVERGENCE;
@@ -617,7 +617,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_RANDOMIZE_MODEL")                  return flbit_task::INIT_RANDOMIZE_MODEL;
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")     return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
         if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")   return flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
-        if(item == "INIT_BOND_DIM_LIMITS")                  return flbit_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_BOND_LIMITS")                      return flbit_task::INIT_BOND_LIMITS;
         if(item == "INIT_WRITE_MODEL")                      return flbit_task::INIT_WRITE_MODEL;
         if(item == "INIT_CLEAR_STATUS")                     return flbit_task::INIT_CLEAR_STATUS;
         if(item == "INIT_CLEAR_CONVERGENCE")                return flbit_task::INIT_CLEAR_CONVERGENCE;
@@ -639,7 +639,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")   return xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
         if(item == "INIT_RANDOMIZE_INTO_STATE_IN_WIN")      return xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN;
         if(item == "INIT_RANDOMIZE_FROM_CURRENT_STATE")     return xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE;
-        if(item == "INIT_BOND_DIM_LIMITS")                  return xdmrg_task::INIT_BOND_DIM_LIMITS;
+        if(item == "INIT_BOND_LIMITS")                      return xdmrg_task::INIT_BOND_LIMITS;
         if(item == "INIT_ENERGY_LIMITS")                    return xdmrg_task::INIT_ENERGY_LIMITS;
         if(item == "INIT_WRITE_MODEL")                      return xdmrg_task::INIT_WRITE_MODEL;
         if(item == "INIT_CLEAR_STATUS")                     return xdmrg_task::INIT_CLEAR_STATUS;

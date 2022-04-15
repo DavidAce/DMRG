@@ -55,7 +55,7 @@ void itebd::single_TEBD_step() {
     auto t_step = tid::tic_scope("step");
     for(auto &U : unitary_time_evolving_operators) {
         Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::time_evolve_state(*tensors.state, U);
-        tensors.merge_twosite_tensor(twosite_tensor, status.bond_limit);
+        tensors.merge_twosite_tensor(twosite_tensor, status.bond_lim);
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
     status.phys_time += std::abs(status.delta_t);

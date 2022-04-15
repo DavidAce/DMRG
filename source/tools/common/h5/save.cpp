@@ -77,6 +77,8 @@ namespace tools::common::h5 {
         h5pp::hdf5::writeTableRecords(status, info, offset, 1);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
+        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
+        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
     }
 
     void save::mem(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
@@ -84,11 +86,12 @@ namespace tools::common::h5 {
         // Check if the current entry has already been appended
         std::string                    table_path = fmt::format("{}/mem_usage", table_prefix);
         h5pp_table_memory_usage::table mem_usage_entry{};
-        mem_usage_entry.iter = status.iter;
-        mem_usage_entry.step = status.step;
-        mem_usage_entry.rss  = debug::mem_rss_in_mb();
-        mem_usage_entry.hwm  = debug::mem_hwm_in_mb();
-        mem_usage_entry.vm   = debug::mem_vm_in_mb();
+        mem_usage_entry.iter     = status.iter;
+        mem_usage_entry.step     = status.step;
+        mem_usage_entry.bond_lim = status.bond_lim;
+        mem_usage_entry.rss      = debug::mem_rss_in_mb();
+        mem_usage_entry.hwm      = debug::mem_hwm_in_mb();
+        mem_usage_entry.vm       = debug::mem_vm_in_mb();
 
         auto h5_save_point = save::get_last_save_point(h5file, table_path);
         auto save_point    = std::make_pair(status.iter, status.step);
@@ -99,6 +102,8 @@ namespace tools::common::h5 {
         h5pp::hdf5::writeTableRecords(mem_usage_entry, info, offset, 1);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
+        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
+        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
     }
 
     std::optional<std::string> find::find_duplicate_save(const h5pp::File &h5file, std::string_view state_prefix, const AlgorithmStatus &status) {
@@ -129,7 +134,7 @@ namespace tools::common::h5 {
                 if(status.iter != h5_status.iter) continue;
                 if(status.step != h5_status.step) continue;
                 if(status.position != h5_status.position) continue;
-                if(status.bond_limit != h5_status.bond_limit) continue;
+                if(status.bond_lim != h5_status.bond_lim) continue;
                 // We have a match: Saving state_prefix would create a duplicate of h5_state_prefix!
                 return h5_state_prefix;
             }
@@ -237,6 +242,8 @@ namespace tools::common::h5 {
 
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
+        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
+        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
     }
 
 }

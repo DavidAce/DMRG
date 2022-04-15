@@ -51,9 +51,9 @@ class TensorsFinite {
 
     void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
-    void randomize_state(StateInit state_init, std::string_view sector, long bond_limit, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
+    void randomize_state(StateInit state_init, std::string_view sector, long bond_lim, bool use_eigenspinors, std::optional<long> bitfield = std::nullopt,
                          std::optional<StateInitType> state_type = std::nullopt);
-    void normalize_state(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
+    void normalize_state(long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
 
     [[nodiscard]] const Eigen::Tensor<cplx, 3>          &get_multisite_mps() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4>          &get_multisite_mpo() const;
@@ -65,7 +65,7 @@ class TensorsFinite {
     template<typename Scalar> [[nodiscard]] const Eigen::Tensor<Scalar, 2> &get_effective_hamiltonian_squared() const;
     /* clang-format on */
 
-    void project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<bool> use_mpo2_proj = std::nullopt,
+    void project_to_nearest_sector(std::string_view sector, std::optional<long> bond_lim, std::optional<bool> use_mpo2_proj = std::nullopt,
                                    std::optional<svd::settings> svd_settings = std::nullopt);
     void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
     void set_psfactor(double psfactor);
@@ -102,13 +102,13 @@ class TensorsFinite {
     long                active_problem_size() const;
     void                do_all_measurements() const;
     void                redo_all_measurements() const;
-    size_t              move_center_point(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
-    size_t              move_center_point_to_edge(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
-    size_t              move_center_point_to_middle(long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
-    void merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt,
+    size_t              move_center_point(long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    size_t              move_center_point_to_edge(long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    size_t              move_center_point_to_middle(long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    void merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt,
                              LogPolicy log_policy = LogPolicy::QUIET);
 
-    std::vector<size_t> expand_environment(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    std::vector<size_t> expand_environment(std::optional<double> alpha, long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     void                assert_edges() const;
     void                assert_edges_ene() const;
     void                assert_edges_var() const;

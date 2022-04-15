@@ -12,7 +12,7 @@ void AlgorithmStatus::reset() {
     min_iters            = status.min_iters;
     bond_max             = status.bond_max;
     bond_init            = status.bond_init;
-    bond_limit           = status.bond_limit;
+    bond_lim             = status.bond_lim;
     energy_min_per_site  = status.energy_min_per_site;
     energy_max_per_site  = status.energy_max_per_site;
     energy_tgt_per_site  = status.energy_tgt_per_site;
@@ -39,7 +39,7 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->min_iters                     == s.min_iters and
         this->bond_max                      == s.bond_max and
         this->bond_init                     == s.bond_init and
-        this->bond_limit                    == s.bond_limit and
+        this->bond_lim                    == s.bond_lim and
         this->energy_min_per_site           == s.energy_min_per_site and
         this->energy_max_per_site           == s.energy_max_per_site and
         this->energy_tgt_per_site           == s.energy_tgt_per_site and

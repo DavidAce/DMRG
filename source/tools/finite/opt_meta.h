@@ -24,7 +24,7 @@ namespace tools::finite::opt {
         OptExit               optExit;
         size_t                max_sites        = 2;
         size_t                min_sites        = 1;
-        long                  bond_limit       = -1;
+        long                  bond_lim         = -1;
         long                  max_problem_size = 0;
         long                  problem_size     = 0;
         bool                  retry            = true;

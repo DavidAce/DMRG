@@ -69,7 +69,7 @@ void TensorsFinite::randomize_model() {
     rebuild_mpo_squared();
 }
 
-void TensorsFinite::randomize_state(StateInit state_init, std::string_view sector, long bond_limit, bool use_eigenspinors, std::optional<long> bitfield,
+void TensorsFinite::randomize_state(StateInit state_init, std::string_view sector, long bond_lim, bool use_eigenspinors, std::optional<long> bitfield,
                                     std::optional<StateInitType> state_type) {
     state->clear_measurements();
     if(not state_type) state_type = state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
@@ -77,15 +77,15 @@ void TensorsFinite::randomize_state(StateInit state_init, std::string_view secto
     tools::log->debug("Randomizing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
 
-    tools::finite::mps::randomize_state(*state, state_init, state_type.value(), sector, bond_limit, use_eigenspinors, bitfield);
+    tools::finite::mps::randomize_state(*state, state_init, state_type.value(), sector, bond_lim, use_eigenspinors, bitfield);
 
     tools::log->debug("Randomizing state - After : norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
 }
 
-void TensorsFinite::normalize_state(long bond_limit, std::optional<svd::settings> svd_settings, NormPolicy norm_policy) {
+void TensorsFinite::normalize_state(long bond_lim, std::optional<svd::settings> svd_settings, NormPolicy norm_policy) {
     // Normalize if unity was lost for some reason (numerical error buildup)
-    auto has_normalized = tools::finite::mps::normalize_state(*state, bond_limit, svd_settings, norm_policy);
+    auto has_normalized = tools::finite::mps::normalize_state(*state, bond_lim, svd_settings, norm_policy);
     if(has_normalized) {
         state->clear_cache();
         clear_measurements();
@@ -179,9 +179,9 @@ env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisi
     return std::as_const(*edges).get_multisite_env_var_blk();
 }
 
-void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> bond_limit, std::optional<bool> use_mpo2_proj,
+void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<long> bond_lim, std::optional<bool> use_mpo2_proj,
                                               std::optional<svd::settings> svd_settings) {
-    auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, bond_limit, svd_settings);
+    auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, bond_lim, svd_settings);
     if(use_mpo2_proj and use_mpo2_proj.value()) model->set_mpo2_proj(sign, sector);
     sync_active_sites();
     if(not active_sites.empty()) {
@@ -414,30 +414,30 @@ bool   TensorsFinite::position_is_inward_edge(size_t nsite) const { return state
 bool   TensorsFinite::position_is_at(long pos) const { return state->position_is_at(pos); }
 bool   TensorsFinite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
 bool   TensorsFinite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
-size_t TensorsFinite::move_center_point(long bond_limit, std::optional<svd::settings> svd_settings) {
-    return tools::finite::mps::move_center_point_single_site(*state, bond_limit, svd_settings);
+size_t TensorsFinite::move_center_point(long bond_lim, std::optional<svd::settings> svd_settings) {
+    return tools::finite::mps::move_center_point_single_site(*state, bond_lim, svd_settings);
 }
-size_t TensorsFinite::move_center_point_to_edge(long bond_limit, std::optional<svd::settings> svd_settings) {
-    return tools::finite::mps::move_center_point_to_edge(*state, bond_limit, svd_settings);
+size_t TensorsFinite::move_center_point_to_edge(long bond_lim, std::optional<svd::settings> svd_settings) {
+    return tools::finite::mps::move_center_point_to_edge(*state, bond_lim, svd_settings);
 }
-size_t TensorsFinite::move_center_point_to_middle(long bond_limit, std::optional<svd::settings> svd_settings) {
-    return tools::finite::mps::move_center_point_to_middle(*state, bond_limit, svd_settings);
+size_t TensorsFinite::move_center_point_to_middle(long bond_lim, std::optional<svd::settings> svd_settings) {
+    return tools::finite::mps::move_center_point_to_middle(*state, bond_lim, svd_settings);
 }
 
-void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, long bond_limit, std::optional<svd::settings> svd_settings,
+void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, long bond_lim, std::optional<svd::settings> svd_settings,
                                         LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
     clear_measurements(LogPolicy::QUIET);
-    tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), bond_limit, svd_settings, log_policy);
-    normalize_state(bond_limit, svd_settings, NormPolicy::IFNEEDED);
+    tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), bond_lim, svd_settings, log_policy);
+    normalize_state(bond_lim, svd_settings, NormPolicy::IFNEEDED);
 }
 
-std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, long bond_limit, std::optional<svd::settings> svd_settings) {
+std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, long bond_lim, std::optional<svd::settings> svd_settings) {
     if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
-    auto pos_expanded = tools::finite::env::expand_environment_var(*state, *model, *edges, alpha, bond_limit, svd_settings);
+    auto pos_expanded = tools::finite::env::expand_environment_var(*state, *model, *edges, alpha, bond_lim, svd_settings);
     if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
     if constexpr(settings::debug) assert_validity();
     return pos_expanded;

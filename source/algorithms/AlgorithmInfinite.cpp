@@ -61,9 +61,9 @@ void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy)
 
 void AlgorithmInfinite::update_bond_dimension_limit() {
     status.bond_max                   = settings::get_bond_max(status.algo_type);
-    status.bond_limit_has_reached_max = status.bond_limit >= status.bond_max;
+    status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
     if(settings::strategy::bond_grow_mode == BondGrow::OFF) {
-        status.bond_limit = status.bond_max;
+        status.bond_lim = status.bond_max;
         return;
     }
     if(status.bond_limit_has_reached_max) return;
@@ -79,19 +79,19 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
     bool is_stuck          = status.algorithm_has_stuck_for > 0;
     bool is_saturated      = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
-    bool is_bond_limited   = tensors.state->is_bond_limited(status.bond_limit, 2 * settings::precision::svd_threshold);
+    bool is_bond_limited   = tensors.state->is_bond_limited(status.bond_lim, 2 * settings::precision::svd_threshold);
     bool grow_if_stuck     = settings::strategy::bond_grow_mode == BondGrow::IF_STUCK;
     bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::IF_SATURATED;
     if(grow_if_stuck and not is_stuck) {
-        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.bond_limit);
+        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.bond_lim);
         return;
     }
     if(grow_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.bond_limit);
+        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.bond_lim);
         return;
     }
     if(not is_bond_limited) {
-        tools::log->info("State is not limited by its bond dimension. Kept current bond dimension limit {}", status.bond_limit);
+        tools::log->info("State is not limited by its bond dimension. Kept current bond dimension limit {}", status.bond_lim);
         return;
     }
 
@@ -103,17 +103,17 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     if(factor <= 1.0) throw std::logic_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor));
 
     // Update chi
-    double bond_prod = std::ceil(factor * static_cast<double>(status.bond_limit));
+    double bond_prod = std::ceil(factor * static_cast<double>(status.bond_lim));
     long   bond_new  = std::min(static_cast<long>(bond_prod), status.bond_max);
-    tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
-    status.bond_limit                 = bond_new;
-    status.bond_limit_has_reached_max = status.bond_limit == status.bond_max;
+    tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
+    status.bond_lim                   = bond_new;
+    status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
     // Restart counters (so that we don't finish immedately
     status.algorithm_has_stuck_for = 0;
     status.algorithm_converged_for = 0;
     // Last sanity check before leaving here
-    if(status.bond_limit > status.bond_max)
-        throw std::runtime_error(fmt::format("bond_limit is larger than get_bond_max! {} > {}", status.bond_limit, status.bond_max));
+    if(status.bond_lim > status.bond_max)
+        throw std::runtime_error(fmt::format("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max));
 }
 
 void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
@@ -249,13 +249,13 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
         case StorageReason::BOND_UPDATE: {
             if(settings::strategy::bond_grow_mode == BondGrow::OFF) return;
             storage_level = settings::storage::storage_level_checkpoint;
-            state_prefix += fmt::format("/checkpoint/bond_{}", status.bond_limit);
+            state_prefix += fmt::format("/checkpoint/bond_{}", status.bond_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
         case StorageReason::FES_ANALYSIS: {
             storage_level = settings::storage::storage_level_fes_states;
-            state_prefix += fmt::format("/fes/bond_{}", status.bond_limit);
+            state_prefix += fmt::format("/fes/bond_{}", status.bond_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
@@ -348,7 +348,7 @@ void AlgorithmInfinite::print_status_update() {
     }
     report += fmt::format("ε: {:<8.2e} ", tools::infinite::measure::truncation_error(*tensors.state));
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::infinite::measure::entanglement_entropy(*tensors.state));
-    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", settings::get_bond_max(status.algo_type), status.bond_limit,
+    report += fmt::format("χmax: {:<3} χlim: {:<3} χ: {:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
                           tools::infinite::measure::bond_dimension(*tensors.state));
     report += fmt::format("Sites: {:6}", tensors.get_length());
 

@@ -9,9 +9,9 @@
 #include "tools/finite/measure.h"
 #include <bitset>
 
-std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_limit) {
+std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_lim) {
     // Construct a valid set of bond dimensions
-    std::vector<long> bond_dimensions(sizeplusone, bond_limit);
+    std::vector<long> bond_dimensions(sizeplusone, bond_lim);
     bond_dimensions.front() = 1;
     bond_dimensions.back()  = 1;
     for(size_t i = 1; i < bond_dimensions.size() / 2; i++) {
@@ -25,18 +25,18 @@ std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t siz
     return bond_dimensions;
 }
 
-void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view sector, long bond_limit,
+void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view sector, long bond_lim,
                                                       bool use_eigenspinors) {
     if(use_eigenspinors)
-        set_random_entangled_state_with_random_spinors(state, type, bond_limit);
+        set_random_entangled_state_with_random_spinors(state, type, bond_lim);
     else
-        set_random_entangled_state_with_random_spinors(state, type, bond_limit);
+        set_random_entangled_state_with_random_spinors(state, type, bond_lim);
 }
 
-void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_limit) {
+void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_lim) {
     tools::log->info("Setting random entangled state with random unit spinors");
     const auto  spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
-    auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_limit);
+    auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     bool        pastCenter      = false;
     std::string label           = "A";
     for(auto &mps_ptr : state.mps_sites) {
@@ -73,9 +73,9 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
 }
 
 void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view sector,
-                                                                                       long bond_limit) {
+                                                                                       long bond_lim) {
     const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
-    auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_limit);
+    auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     auto       axis            = qm::spin::half::get_axis(sector);
     auto       sign            = qm::spin::half::get_sign(sector);
     tools::log->info("Setting random entangled state in sector {} using eigenspinors of the pauli matrix σ{}", sector, axis);

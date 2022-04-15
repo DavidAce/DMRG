@@ -48,7 +48,7 @@ class TensorsInfinite {
     void reset_edges();
     void eject_edges();
 
-    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     void enlarge();
     void do_all_measurements() const;
     void clear_measurements() const;

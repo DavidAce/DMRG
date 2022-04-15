@@ -1,12 +1,12 @@
 #include "AlgorithmBase.h"
-#include <complex>
 #include "config/settings.h"
 #include "general/iter.h"
-#include <h5pp/h5pp.h>
 #include "math/num.h"
 #include "math/stat.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
+#include <complex>
+#include <h5pp/h5pp.h>
 
 using Scalar = AlgorithmBase::Scalar;
 
@@ -25,12 +25,12 @@ void AlgorithmBase::init_bond_dimension_limits() {
     status.bond_init = settings::get_bond_init(status.algo_type);
     status.bond_max  = settings::get_bond_max(status.algo_type);
     if(settings::strategy::bond_grow_mode != BondGrow::OFF)
-        status.bond_limit = settings::get_bond_init(status.algo_type);
+        status.bond_lim = settings::get_bond_init(status.algo_type);
     else
-        status.bond_limit = settings::get_bond_max(status.algo_type);
+        status.bond_lim = settings::get_bond_max(status.algo_type);
 
     // Sanity check
-    if(status.bond_limit == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.bond_limit));
+    if(status.bond_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.bond_lim));
 }
 
 void AlgorithmBase::write_enable() { write_enabled = true; }

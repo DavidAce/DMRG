@@ -21,7 +21,7 @@ namespace settings {
 }
 
 std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                               long bond_limit, std::optional<svd::settings> svd_settings) {
+                                                               long bond_lim, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -96,9 +96,8 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
-                bond_limit =
-                    std::min(bond_limit, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_limit);
+                bond_lim = std::min(bond_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_lim);
                 mpsL.set_M(U);
                 mpsL.stash_V(V, mpsR.get_position());
                 mpsR.set_M(MR_P0);
@@ -140,7 +139,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 const auto &dimL_new = mpsL_new.dimensions();
                 const auto &dimR_new = mpsR_new.dimensions();
                 tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
-                                  ML_PL.dimension(2), chiL_new, bond_limit);
+                                  ML_PL.dimension(2), chiL_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
             }
@@ -174,9 +173,8 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
-                bond_limit =
-                    std::min(bond_limit, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_limit);
+                bond_lim = std::min(bond_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_lim);
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 mpsR.stash_U(U, mpsL.get_position());
@@ -221,7 +219,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 const auto &dimL_new = mpsL_new.dimensions();
 
                 tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
-                                  MR_PR.dimension(1), chiR_new, bond_limit);
+                                  MR_PR.dimension(1), chiR_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);
             }
@@ -232,7 +230,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
 }
 
 std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                               long bond_limit, std::optional<svd::settings> svd_settings) {
+                                                               long bond_lim, std::optional<svd::settings> svd_settings) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -308,9 +306,8 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
-                bond_limit =
-                    std::min(bond_limit, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_limit);
+                bond_lim = std::min(bond_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_lim);
                 mpsL.set_M(U);
                 mpsL.stash_V(V, mpsR.get_position());
                 mpsR.set_M(MR_P0);
@@ -352,7 +349,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 const auto &dimL_new = mpsL_new.dimensions();
                 const auto &dimR_new = mpsR_new.dimensions();
                 tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
-                                  ML_PL.dimension(2), chiL_new, bond_limit);
+                                  ML_PL.dimension(2), chiL_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
             }
@@ -386,9 +383,8 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
-                bond_limit =
-                    std::min(bond_limit, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_limit);
+                bond_lim = std::min(bond_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
+                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_lim);
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 mpsR.stash_U(U, mpsL.get_position());
@@ -433,7 +429,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 const auto &dimL_new = mpsL_new.dimensions();
 
                 tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
-                                  MR_PR.dimension(1), chiR_new, bond_limit);
+                                  MR_PR.dimension(1), chiR_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);
             }

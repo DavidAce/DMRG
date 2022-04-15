@@ -471,9 +471,9 @@ size_t StateFinite::num_bonds_at_limit(long bond_level) const {
     return bonds_at_lim;
 }
 
-bool StateFinite::is_limited_by_bond(long bond_limit, [[maybe_unused]] double truncation_threshold) const {
-    return num_bonds_at_limit(bond_limit) > 0;
-    //    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_at_limit(bond_limit) > 0;
+bool StateFinite::is_limited_by_bond(long bond_lim, [[maybe_unused]] double truncation_threshold) const {
+    return num_bonds_at_limit(bond_lim) > 0;
+    //    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_at_limit(bond_lim) > 0;
 }
 
 void StateFinite::clear_measurements(LogPolicy logPolicy) const {

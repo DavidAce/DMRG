@@ -77,7 +77,7 @@ void idmrg::single_iDMRG_step() {
      */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(ritz));
     Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, ritz);
-    tensors.merge_twosite_tensor(twosite_tensor, status.bond_limit);
+    tensors.merge_twosite_tensor(twosite_tensor, status.bond_lim);
 }
 
 void idmrg::check_convergence() {

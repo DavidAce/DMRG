@@ -100,19 +100,14 @@ class StateInfinite {
     void                                          set_positions(size_t position);
 
     void swap_AB(); /*!< Swap the roles of A and B. Used in the infinite-DMRG stage.*/
-    void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_limit, std::optional<svd::settings> svd_settings = std::nullopt);
+    void set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     void set_mps(const std::vector<MpsSite> &mps_list);
     void set_mps(const MpsSite &mpsA, const MpsSite &mpsB);
     void set_mps(const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB);
     void set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB,
                  const Eigen::Tensor<Scalar, 1> &LB);
 
-    //    template<typename T>
-    //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_matrix() const;
-    //    template<typename T>
-    //    Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> get_H_local_sq_matrix() const;
-
-    bool is_bond_limited(long bond_limit, double truncation_threshold) const;
+    bool is_bond_limited(long bond_lim, double truncation_threshold) const;
 
     void do_all_measurements() const;
     void clear_measurements() const;

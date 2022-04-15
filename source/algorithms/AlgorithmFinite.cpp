@@ -84,7 +84,7 @@ void AlgorithmFinite::run()
 void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
-    if(settings::strategy::project_final_state) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_limit);
+    if(settings::strategy::project_final_state) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
     write_to_file(StorageReason::BOND_UPDATE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
     write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);  // To update checkpoint/iter_# or iter_last
     write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);  // To compare the finished state to a projected one
@@ -137,7 +137,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
-            status.step += tensors.move_center_point(status.bond_limit);
+            status.step += tensors.move_center_point(status.bond_lim);
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
@@ -190,9 +190,9 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
 void AlgorithmFinite::update_bond_dimension_limit() {
     if(not tensors.position_is_inward_edge()) return;
     status.bond_max                   = settings::get_bond_max(status.algo_type);
-    status.bond_limit_has_reached_max = status.bond_limit >= status.bond_max;
+    status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
     if(settings::strategy::bond_grow_mode == BondGrow::OFF) {
-        status.bond_limit                 = status.bond_max;
+        status.bond_lim                   = status.bond_max;
         status.bond_limit_has_reached_max = true;
         return;
     }
@@ -203,7 +203,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         if(tools::log->level() == spdlog::level::trace) {
             double truncation_threshold = 2 * settings::precision::svd_threshold;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
-            size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_limit);
+            size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_lim);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
             tools::log->trace("Truncation errors     : {}", tensors.state->get_truncation_errors());
             tools::log->trace("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*tensors.state));
@@ -222,7 +222,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     bool is_stuck =
         status.algorithm_has_stuck_for > 0 or (status.algorithm_saturated_for > 0 and status.algorithm_converged_for > 0); // Should update even if converged
     bool is_saturated       = status.algorithm_saturated_for > 0;
-    bool is_truncated       = tensors.state->is_limited_by_bond(status.bond_limit, 2 * settings::precision::svd_threshold);
+    bool is_truncated       = tensors.state->is_limited_by_bond(status.bond_lim, 2 * settings::precision::svd_threshold);
     bool is_iteration2      = num::mod(status.iter, 2ul) == 0;
     bool is_iteration4      = num::mod(status.iter, 4ul) == 0;
     bool grow_if_stuck      = settings::strategy::bond_grow_mode == BondGrow::IF_STUCK;
@@ -230,26 +230,26 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     bool grow_if_iteration2 = settings::strategy::bond_grow_mode == BondGrow::ITERATION2;
     bool grow_if_iteration4 = settings::strategy::bond_grow_mode == BondGrow::ITERATION4;
     //    if(not is_truncated) {
-    //        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_limit);
+    //        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_lim);
     //        return;
     //    }
     if(grow_if_stuck and not is_stuck) {
-        tools::log->info("Algorithm is not stuck yet. Kept current bond limit {}", status.bond_limit);
+        tools::log->info("Algorithm is not stuck yet. Kept current bond limit {}", status.bond_lim);
         return;
     }
     if(grow_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_limit);
+        tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_lim);
         return;
     }
 
     if(grow_if_iteration2 and not is_iteration2) {
-        tools::log->info("Iteration not divisible by 2. Kept current bond limit {}", status.bond_limit);
+        tools::log->info("Iteration not divisible by 2. Kept current bond limit {}", status.bond_lim);
         status.algorithm_has_stuck_for = 0;
         status.algorithm_saturated_for = 0;
         return;
     }
     if(grow_if_iteration4 and not is_iteration4) {
-        tools::log->info("Iteration not divisible by 4. Kept current bond limit {}", status.bond_limit);
+        tools::log->info("Iteration not divisible by 4. Kept current bond limit {}", status.bond_lim);
         status.algorithm_has_stuck_for = 0;
         status.algorithm_saturated_for = 0;
         return;
@@ -260,14 +260,14 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(grow_rate <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate));
 
     // Do a projection to make sure the saved data is in the correct sector
-    if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_limit);
+    if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_UPDATE);
-    if(settings::strategy::randomize_on_bond_update and status.bond_limit >= 32)
-        randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.bond_limit);
+    if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
+        randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.bond_lim);
 
-    auto bond_new = static_cast<double>(status.bond_limit);
+    auto bond_new = static_cast<double>(status.bond_lim);
     if(grow_rate <= 2.0 and grow_rate > 1.0) {
         bond_new = std::ceil(bond_new * grow_rate);
         bond_new = num::round_up_to_multiple_of<double>(bond_new, 4);
@@ -277,15 +277,15 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         throw except::logic_error("Expected grow_rate > 1.0. Got {}", grow_rate);
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
 
-    tools::log->info("Updating bond dimension limit {} -> {} | bond limited {} | saturated {} | stuck {}", status.bond_limit, bond_new, is_truncated,
+    tools::log->info("Updating bond dimension limit {} -> {} | bond limited {} | saturated {} | stuck {}", status.bond_lim, bond_new, is_truncated,
                      is_saturated, is_stuck);
-    status.bond_limit                 = static_cast<long>(bond_new);
-    status.bond_limit_has_reached_max = status.bond_limit == status.bond_max;
+    status.bond_lim                   = static_cast<long>(bond_new);
+    status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
     status.algorithm_has_stuck_for    = 0;
     status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
-    if(status.bond_limit > status.bond_max) throw except::logic_error("bond_limit is larger than get_bond_max! {} > {}", status.bond_limit, status.bond_max);
+    if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
 void AlgorithmFinite::reduce_bond_dimension_limit() {
@@ -297,7 +297,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
         write_to_file(StorageReason::FES_ANALYSIS);
 
         auto grow_rate = std::abs(settings::strategy::fes_decrement);
-        auto bond_new  = static_cast<double>(status.bond_limit);
+        auto bond_new  = static_cast<double>(status.bond_lim);
         if(grow_rate > 0.0 and grow_rate < 1.0)
             bond_new *= grow_rate;
         else if(grow_rate >= 1.0)
@@ -306,11 +306,11 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
             throw except::logic_error("invalid grow rate {}", grow_rate);
         bond_new = std::floor(std::max(bond_new, static_cast<double>(status.bond_init)));
 
-        if(bond_new == static_cast<double>(status.bond_limit))
+        if(bond_new == static_cast<double>(status.bond_lim))
             status.algo_stop = AlgorithmStop::SUCCESS;
         else {
-            tools::log->info("Updating bond dimension limit {} -> {}", status.bond_limit, bond_new);
-            status.bond_limit              = static_cast<long>(bond_new);
+            tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
+            status.bond_lim                = static_cast<long>(bond_new);
             status.algorithm_has_stuck_for = 0;
             status.algorithm_saturated_for = 0;
         }
@@ -357,7 +357,7 @@ void AlgorithmFinite::randomize_model() {
 }
 
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
-                                      std::optional<long> bond_limit, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
+                                      std::optional<long> bond_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
                                       std::optional<double> svd_threshold) {
     auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {
@@ -371,12 +371,12 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
-    if(not bond_limit) {
-        bond_limit = settings::get_bond_init(status.algo_type);
+    if(not bond_lim) {
+        bond_lim = settings::get_bond_init(status.algo_type);
         if(settings::strategy::bond_grow_mode == BondGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
-            bond_limit = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
+            bond_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
-    if(bond_limit.value() <= 0) throw std::runtime_error(fmt::format("Invalid bond_limit: {}", bond_limit.value()));
+    if(bond_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid bond_lim: {}", bond_lim.value()));
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type.value()), sector.value(), use_eigenspinors.value(), bitfield.value());
 
@@ -386,12 +386,12 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
 
-    tensors.randomize_state(state_init, sector.value(), bond_limit.value(), use_eigenspinors.value(), bitfield, std::nullopt);
+    tensors.randomize_state(state_init, sector.value(), bond_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt);
 
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
                          tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
-        tensors.project_to_nearest_sector(sector.value(), status.bond_limit, std::nullopt, svd_settings);
+        tensors.project_to_nearest_sector(sector.value(), status.bond_lim, std::nullopt, svd_settings);
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
 
@@ -402,13 +402,13 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
     status.algo_stop = AlgorithmStop::NONE;
-    if(settings::strategy::bond_grow_mode != BondGrow::OFF) status.bond_limit = bond_limit.value();
+    if(settings::strategy::bond_grow_mode != BondGrow::OFF) status.bond_lim = bond_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
-    if(tensors.state->find_largest_bond() > bond_limit.value())
+    if(tensors.state->find_largest_bond() > bond_lim.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
-        //        bond_limit.value());
+        //        bond_lim.value());
         throw std::runtime_error(fmt::format("Faulty truncation after randomize. Max found bond dimension is {}, but bond limit is {}",
-                                             tensors.state->find_largest_bond(), bond_limit.value()));
+                                             tensors.state->find_largest_bond(), bond_lim.value()));
 
     tensors.rebuild_edges();
     tools::log->info("Randomization successful:");
@@ -456,7 +456,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
         bool use_mpo2_proj = status.algo_type == AlgorithmType::xDMRG and settings::precision::use_projection_on_mpo_squared;
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit, use_mpo2_proj);
+            tensors.project_to_nearest_sector(target_sector.value(), status.bond_lim, use_mpo2_proj);
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -477,13 +477,13 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.bond_limit, use_mpo2_proj);
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.bond_lim, use_mpo2_proj);
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.bond_limit, use_mpo2_proj);
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.bond_lim, use_mpo2_proj);
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
@@ -501,7 +501,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 // It may turn out that the spin component is almost exactly +-1 already, then no projection happens, but other
                 // routines may go through, such as sign selection on MPO² projection.
 
-                tensors.project_to_nearest_sector(target_sector.value(), status.bond_limit, use_mpo2_proj);
+                tensors.project_to_nearest_sector(target_sector.value(), status.bond_lim, use_mpo2_proj);
             }
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
@@ -728,7 +728,7 @@ void AlgorithmFinite::print_status_update() {
     report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), variance, status.energy_variance_lowest);
     report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error_active_max());
     if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.sub_expansion_alpha);
-    report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_limit);
+    report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_lim);
     size_t comma_width       = settings::strategy::multisite_mps_site_max <= 2 ? 0 : 2; // ", "
     size_t bracket_width     = 2;                                                       // The {} edges
     size_t bond_single_width = static_cast<size_t>(std::log10(settings::get_bond_max(status.algo_type))) + 1;

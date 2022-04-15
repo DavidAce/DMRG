@@ -65,7 +65,7 @@ void flbit::resume() {
             }
         }
         clear_convergence_status();
-        tensors.move_center_point_to_edge(status.bond_limit);
+        tensors.move_center_point_to_edge(status.bond_lim);
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
@@ -102,7 +102,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
-            case flbit_task::INIT_BOND_DIM_LIMITS: init_bond_dimension_limits(); break;
+            case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;
             case flbit_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
@@ -162,7 +162,7 @@ void flbit::run_preprocessing() {
 
     // Create a state in the l-bit basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    tensors.move_center_point_to_edge(status.bond_limit);
+    tensors.move_center_point_to_edge(status.bond_lim);
     tools::finite::print::model(*tensors.model);
     create_time_points();
     update_time_step();
@@ -246,7 +246,7 @@ void flbit::single_flbit_step() {
     if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
-        tools::finite::mps::normalize_state(*state_lbit_init, status.bond_limit, std::nullopt, NormPolicy::ALWAYS);
+        tools::finite::mps::normalize_state(*state_lbit_init, status.bond_lim, std::nullopt, NormPolicy::ALWAYS);
     }
     *state_lbit = *state_lbit_init;
 
@@ -256,14 +256,14 @@ void flbit::single_flbit_step() {
 
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = {}", status.delta_t);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.bond_limit); // L16: false 16 | true 31 svds
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_limit); // L16: false 657 | true 344 svds
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.bond_limit); // L16: false 42 | true 71 svds
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.bond_lim); // L16: false 16 | true 31 svds
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_lim); // L16: false 657 | true 344 svds
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.bond_lim); // L16: false 42 | true 71 svds
     } else {
         tools::log->debug("Applying time evolution gates Δt = {}", status.delta_t);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.bond_limit);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_limit);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_limit);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.bond_lim);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_lim);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_lim);
     }
 
     t_evo.toc();
@@ -549,14 +549,13 @@ void flbit::transform_to_real_basis() {
     tensors.state = std::make_unique<StateFinite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
-    for(const auto &layer : unitary_gates_2site_layers)
-        tools::finite::mps::apply_gates(*tensors.state, layer, false, status.bond_limit); // L16: true 29 | false
+    for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(*tensors.state, layer, false, status.bond_lim); // L16: true 29 | false
     for(const auto &layer : unitary_gates_2site_layers)
         for(const auto &u : layer) u.unmark_as_used();
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    tools::finite::mps::normalize_state(*tensors.state, status.bond_limit, std::nullopt, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*tensors.state, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
 
@@ -565,7 +564,7 @@ void flbit::transform_to_real_basis() {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
-        for(const auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.bond_limit);
+        for(const auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.bond_lim);
         for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
@@ -585,17 +584,17 @@ void flbit::transform_to_lbit_basis() {
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-        tools::finite::mps::apply_gates(*state_lbit, layer, true, status.bond_limit); // L16: true 28 | false 29 svds
+        tools::finite::mps::apply_gates(*state_lbit, layer, true, status.bond_lim); // L16: true 28 | false 29 svds
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
         for(const auto &u : layer) u.unmark_as_used();
-    [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.bond_limit, std::nullopt, NormPolicy::IFNEEDED);
+    [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug_swap");
         // Double check the that transform operation backwards is equal to to the original state
         auto state_real_debug = *state_lbit;
         for(auto &layer : unitary_gates_2site_layers)
             for(auto &g : layer) g.unmark_as_used();
-        for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.bond_limit);
+        for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.bond_lim);
         for(const auto &layer : unitary_gates_2site_layers)
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
@@ -689,7 +688,7 @@ void flbit::print_status_update() {
     if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
         report += fmt::format("Sₙ(L/2) lbit:{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
 
-    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_limit,
+    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
                           tools::finite::measure::bond_dimension_midchain(*tensors.state));
     report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time));

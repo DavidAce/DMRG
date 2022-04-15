@@ -1,11 +1,11 @@
 #pragma once
 
 #include "algorithms/AlgorithmStatus.h"
+#include "tid/enums.h"
 #include <array>
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
 #include <hdf5_hl.h>
-#include "tid/enums.h"
 #include <vector>
 
 class h5pp_table_measurements_finite {
@@ -13,30 +13,24 @@ class h5pp_table_measurements_finite {
     static inline h5pp::hid::h5t h5_type;
 
     struct table {
-        uint64_t              iter                            = 0;
-        uint64_t              step                            = 0;
-        long                  position                        = 0;
-        uint64_t              length                          = 0;
-        long                  bond_dimension_midchain         = 0;
-        long                  bond_dimension_current          = 0;
-        long                  bond_dimension_limit            = 0;
-        long                  bond_dimension_maximum          = 0;
-        double                entanglement_entropy_midchain   = 0;
-        double                entanglement_entropy_current    = 0;
-        double                number_entropy_midchain         = 0;
-        double                number_entropy_current          = 0;
-        double                norm                            = 0;
-        double                energy                          = 0;
-        double                energy_per_site                 = 0;
-        double                energy_variance                 = 0;
-        double                energy_variance_per_site        = 0;
-        double                energy_variance_lowest          = 0;
-        double                energy_variance_per_site_lowest = 0;
-        std::array<double, 3> spin_components                 = {0};
-        double                truncation_error                = 0;
-        double                total_time                      = 0;
-        double                algorithm_time                  = 0;
-        double                physical_time                   = 0;
+        uint64_t              iter                          = 0;
+        uint64_t              step                          = 0;
+        long                  position                      = 0;
+        uint64_t              length                        = 0;
+        long                  bond_mid                      = 0;
+        long                  bond_lim                      = 0;
+        long                  bond_max                      = 0;
+        double                entanglement_entropy_midchain = 0;
+        double                number_entropy_midchain       = 0;
+        double                norm                          = 0;
+        double                energy                        = 0;
+        double                energy_variance               = 0;
+        double                energy_variance_lowest        = 0;
+        std::array<double, 3> spin_components               = {0};
+        double                truncation_error              = 0;
+        double                total_time                    = 0;
+        double                algorithm_time                = 0;
+        double                physical_time                 = 0;
     };
 
     h5pp_table_measurements_finite() { register_table_type(); }
@@ -50,21 +44,15 @@ class h5pp_table_measurements_finite {
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "length", HOFFSET(table, length), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "bond_dimension_midchain", HOFFSET(table, bond_dimension_midchain), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_dimension_current", HOFFSET(table, bond_dimension_current), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_dimension_limit", HOFFSET(table, bond_dimension_limit), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_dimension_maximum", HOFFSET(table, bond_dimension_maximum), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_mid", HOFFSET(table, bond_mid), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_lim", HOFFSET(table, bond_lim), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_max", HOFFSET(table, bond_max), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "entanglement_entropy_midchain", HOFFSET(table, entanglement_entropy_midchain), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "entanglement_entropy_current", HOFFSET(table, entanglement_entropy_current), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "number_entropy_midchain", HOFFSET(table, number_entropy_midchain), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "number_entropy_current", HOFFSET(table, number_entropy_current), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "norm", HOFFSET(table, norm), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy", HOFFSET(table, energy), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_per_site", HOFFSET(table, energy_per_site), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_variance", HOFFSET(table, energy_variance), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_variance_per_site", HOFFSET(table, energy_variance_per_site), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_variance_lowest", HOFFSET(table, energy_variance_lowest), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_variance_per_site_lowest", HOFFSET(table, energy_variance_per_site_lowest), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "spin_components", HOFFSET(table, spin_components), H5_SPIN_TYPE);
         H5Tinsert(h5_type, "truncation_error", HOFFSET(table, truncation_error), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "total_time", HOFFSET(table, total_time), H5T_NATIVE_DOUBLE);
@@ -82,9 +70,9 @@ class h5pp_table_measurements_infinite {
         uint64_t             step                         = 0;
         long                 position                     = 0;
         uint64_t             length                       = 0;
-        long                 bond_dimension               = 0;
-        long                 bond_dimension_limit         = 0;
-        long                 bond_dimension_maximum       = 0;
+        long                 bond_dim                     = 0;
+        long                 bond_lim                     = 0;
+        long                 bond_max                     = 0;
         double               entanglement_entropy         = 0;
         double               norm                         = 0;
         double               energy_mpo                   = 0;
@@ -109,9 +97,9 @@ class h5pp_table_measurements_infinite {
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "position", HOFFSET(table, position), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "length", HOFFSET(table, length), H5T_NATIVE_UINT64);
-        H5Tinsert(h5_type, "bond_dimension", HOFFSET(table, bond_dimension), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_dimension_limit", HOFFSET(table, bond_dimension_limit), H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_dimension_maximum", HOFFSET(table, bond_dimension_maximum), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_dim", HOFFSET(table, bond_dim), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_lim", HOFFSET(table, bond_lim), H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "bond_max", HOFFSET(table, bond_max), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "entanglement_entropy", HOFFSET(table, entanglement_entropy), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "norm", HOFFSET(table, norm), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_mpo", HOFFSET(table, energy_mpo), H5T_NATIVE_DOUBLE);
@@ -169,9 +157,9 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "direction",                   HOFFSET(table, direction),                  H5T_NATIVE_INT);
         H5Tinsert(h5_type, "num_resets",                  HOFFSET(table, num_resets),                 H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "min_iters",                   HOFFSET(table, min_iters),                  H5T_NATIVE_ULONG);
+        H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_init",                   HOFFSET(table, bond_init),                  H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "bond_limit",                  HOFFSET(table, bond_limit),                 H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "energy_min_per_site",         HOFFSET(table, energy_min_per_site),        H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max_per_site",         HOFFSET(table, energy_max_per_site),        H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_tgt_per_site",         HOFFSET(table, energy_tgt_per_site),        H5T_NATIVE_DOUBLE);
@@ -221,6 +209,7 @@ class h5pp_table_memory_usage {
     struct table {
         uint64_t iter;
         uint64_t step;
+        int64_t  bond_lim;
         double   rss;
         double   hwm;
         double   vm;
@@ -232,6 +221,7 @@ class h5pp_table_memory_usage {
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "iter", HOFFSET(table, iter), H5T_NATIVE_UINT64);
         H5Tinsert(h5_type, "step", HOFFSET(table, step), H5T_NATIVE_UINT64);
+        H5Tinsert(h5_type, "bond_lim", HOFFSET(table, bond_lim), H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "rss", HOFFSET(table, rss), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "hwm", HOFFSET(table, hwm), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "vm", HOFFSET(table, vm), H5T_NATIVE_DOUBLE);
@@ -255,12 +245,12 @@ class h5pp_table_data {
     public:
     static inline std::unordered_map<meta, h5pp::hid::h5t, metaHasher> h5_types;
 
-    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t bond_limit, const T *const data, size_t data_size) {
+    static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t bond_lim, const T *const data, size_t data_size) {
         size_t                 total_size = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + data_size * sizeof(T);
         std::vector<std::byte> entry(total_size);
         std::memcpy(entry.data() + 0 * sizeof(uint64_t), &iter, sizeof(uint64_t));
         std::memcpy(entry.data() + 1 * sizeof(uint64_t), &step, sizeof(uint64_t));
-        std::memcpy(entry.data() + 2 * sizeof(int64_t), &bond_limit, sizeof(int64_t));
+        std::memcpy(entry.data() + 2 * sizeof(int64_t), &bond_lim, sizeof(int64_t));
         std::memcpy(entry.data() + 3 * sizeof(uint64_t), data, data_size * sizeof(T));
         return entry;
     }
@@ -273,7 +263,7 @@ class h5pp_table_data {
             h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, total_size);
             H5Tinsert(h5_type, "iter", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
             H5Tinsert(h5_type, "step", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-            H5Tinsert(h5_type, "bond_limit", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
+            H5Tinsert(h5_type, "bond_lim", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
             auto h5type = h5pp::util::getH5Type<T>();
             if(data_size == 1)
                 H5Tinsert(h5_type, std::string(fieldname).c_str(), data_offset, h5type);

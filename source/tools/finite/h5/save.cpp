@@ -44,25 +44,17 @@ namespace tools::finite::h5 {
         measurement_entry.iter     = static_cast<uint64_t>(status.iter);
         measurement_entry.position = static_cast<long>(status.position);
         measurement_entry.length   = static_cast<uint64_t>(tools::finite::measure::length(state));
+        measurement_entry.bond_lim = status.bond_lim;
+        measurement_entry.bond_max = status.bond_max;
+        measurement_entry.bond_mid = static_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
         measurement_entry.norm     = tools::finite::measure::norm(state);
         if(status.algo_type != AlgorithmType::fLBIT) {
-            measurement_entry.energy                          = tools::finite::measure::energy(state, model, edges);
-            measurement_entry.energy_per_site                 = tools::finite::measure::energy_per_site(state, model, edges);
-            measurement_entry.energy_variance                 = tools::finite::measure::energy_variance(state, model, edges);
-            measurement_entry.energy_variance_per_site        = tools::finite::measure::energy_variance_per_site(state, model, edges);
-            measurement_entry.energy_variance_lowest          = status.energy_variance_lowest;
-            measurement_entry.energy_variance_per_site_lowest = status.energy_variance_lowest / state.get_length<double>();
+            measurement_entry.energy                 = tools::finite::measure::energy(state, model, edges);
+            measurement_entry.energy_variance        = tools::finite::measure::energy_variance(state, model, edges);
+            measurement_entry.energy_variance_lowest = status.energy_variance_lowest;
         }
-        if(status.algo_type == AlgorithmType::fLBIT) {
-            measurement_entry.number_entropy_midchain = tools::finite::measure::number_entropy_midchain(state);
-            measurement_entry.number_entropy_current  = tools::finite::measure::number_entropy_current(state);
-        }
+        if(status.algo_type == AlgorithmType::fLBIT) { measurement_entry.number_entropy_midchain = tools::finite::measure::number_entropy_midchain(state); }
         measurement_entry.entanglement_entropy_midchain = tools::finite::measure::entanglement_entropy_midchain(state);
-        measurement_entry.entanglement_entropy_current  = tools::finite::measure::entanglement_entropy_current(state);
-        measurement_entry.bond_dimension_midchain       = static_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
-        measurement_entry.bond_dimension_current        = static_cast<long>(tools::finite::measure::bond_dimension_current(state));
-        measurement_entry.bond_dimension_limit          = status.bond_limit;
-        measurement_entry.bond_dimension_maximum        = status.bond_max;
 
         measurement_entry.spin_components  = tools::finite::measure::spin_components(state);
         measurement_entry.truncation_error = state.get_truncation_error_midchain();
@@ -73,6 +65,8 @@ namespace tools::finite::h5 {
         h5file.appendTableRecords(measurement_entry, table_path);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
+        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
+        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
     }
 
     void save::correlations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -117,19 +111,19 @@ namespace tools::finite::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
-        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_limit, data, size);
+        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_lim, data, size);
         h5file.appendTableRecords(entry, table_path);
         h5file.writeAttribute(status.iter, "iter", table_path);
         h5file.writeAttribute(status.step, "step", table_path);
-        h5file.writeAttribute(status.bond_limit, "bond_limit", table_path);
+        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
         h5file.writeAttribute(status.bond_max, "bond_max", table_path);
     }
 
     void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::extra);
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::bond_dimensions(state), "bond_dimensions", "Bond Dimensions", "L_");
+        auto t_hdf = tid::tic_scope("bond_dims", tid::level::extra);
+        data_as_table(h5file, table_prefix, status, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
     }
 
     void save::truncation_errors(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -204,7 +198,7 @@ namespace tools::finite::h5 {
             h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
             h5file.writeAttribute(status.iter, "iter", dsetname_schmidt);
             h5file.writeAttribute(status.step, "step", dsetname_schmidt);
-            h5file.writeAttribute(status.bond_limit, "bond_limit", dsetname_schmidt);
+            h5file.writeAttribute(status.bond_lim, "bond_lim", dsetname_schmidt);
             h5file.writeAttribute(status.bond_max, "bond_max", dsetname_schmidt);
         }
 
@@ -233,6 +227,8 @@ namespace tools::finite::h5 {
             h5file.writeAttribute(state.get_labels(), "labels", mps_prefix);
             h5file.writeAttribute(status.iter, "iter", mps_prefix);
             h5file.writeAttribute(status.step, "step", mps_prefix);
+            h5file.writeAttribute(status.bond_lim, "bond_lim", mps_prefix);
+            h5file.writeAttribute(status.bond_max, "bond_max", mps_prefix);
         }
 
         /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
@@ -297,6 +293,8 @@ namespace tools::finite::h5 {
         h5file.writeDataset(data, data_path, layout);
         h5file.writeAttribute(status.iter, "iter", data_path);
         h5file.writeAttribute(status.step, "step", data_path);
+        h5file.writeAttribute(status.bond_lim, "bond_lim", data_path);
+        h5file.writeAttribute(status.bond_max, "bond_max", data_path);
     }
 
     template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 2> &data, std::string_view data_name, std::string_view prefix,
@@ -445,7 +443,7 @@ namespace tools::finite::h5 {
             case StorageReason::PROJ_STATE: {
                 if(storage_level != StorageLevel::NONE) {
                     if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
-                    auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(state, settings::strategy::target_sector, status.bond_limit);
+                    auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(state, settings::strategy::target_sector, status.bond_lim);
                     return save::simulation(h5file, state_projected, model, edges, status, storage_reason, copy_policy);
                 }
                 break;

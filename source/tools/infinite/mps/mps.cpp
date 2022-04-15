@@ -6,13 +6,13 @@
 #include <tools/common/split.h>
 using Scalar = std::complex<double>;
 
-void tools::infinite::mps::merge_twosite_tensor(StateInfinite &state, const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_limit,
+void tools::infinite::mps::merge_twosite_tensor(StateInfinite &state, const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim,
                                                 std::optional<svd::settings> svd_settings) {
     long   dA       = state.get_spin_dimA();
     long   dB       = state.get_spin_dimB();
     size_t posA     = state.get_positionA();
     size_t posB     = state.get_positionB();
-    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, static_cast<long>(posA), bond_limit, svd_settings);
+    auto   mps_list = tools::common::split::split_mps(twosite_tensor, {dA, dB}, {posA, posB}, static_cast<long>(posA), bond_lim, svd_settings);
     if(mps_list.size() != 2) throw std::logic_error(fmt::format("Got {} MPS sites from two-site tensor.", mps_list.size()));
     state.get_mps_siteA().fuse_mps(mps_list.front());
     state.get_mps_siteB().fuse_mps(mps_list.back());

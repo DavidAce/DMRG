@@ -16,7 +16,7 @@ double tools::infinite::measure::energy_per_site_ham(const TensorsInfinite &tens
     const auto &state     = *tensors.state;
     const auto &model     = *tensors.model;
     if(tensors.measurements.energy_per_site_ham) return tensors.measurements.energy_per_site_ham.value();
-    if(state.measurements.bond_dimension <= 2) return std::numeric_limits<double>::quiet_NaN();
+    if(state.measurements.bond_dim <= 2) return std::numeric_limits<double>::quiet_NaN();
     if(state.chiA() != state.chiB()) return std::numeric_limits<double>::quiet_NaN();
     if(state.chiA() != state.chiC()) return std::numeric_limits<double>::quiet_NaN();
     if(state.chiB() != state.chiC()) return std::numeric_limits<double>::quiet_NaN();

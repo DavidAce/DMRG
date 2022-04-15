@@ -289,8 +289,8 @@ void StateInfinite::set_positions(size_t position) {
     MPS_B->set_position(position + 1);
 }
 
-void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_limit, std::optional<svd::settings> svd_settings) {
-    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, bond_limit, svd_settings);
+void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim, std::optional<svd::settings> svd_settings) {
+    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, bond_lim, svd_settings);
 }
 
 void StateInfinite::set_mps(const std::vector<MpsSite> &mps_list) {
@@ -322,9 +322,9 @@ void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Ten
     clear_cache();
 }
 
-bool StateInfinite::is_bond_limited(long bond_limit, double truncation_threshold) const {
+bool StateInfinite::is_bond_limited(long bond_lim, double truncation_threshold) const {
     bool has_truncated   = get_truncation_error() > truncation_threshold;
-    bool has_reached_max = chiC() >= bond_limit;
+    bool has_reached_max = chiC() >= bond_lim;
     return has_truncated or has_reached_max;
 }
 
