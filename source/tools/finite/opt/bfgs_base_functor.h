@@ -24,24 +24,14 @@ namespace tools::finite::opt::internal {
         int                    num_parameters; // Includes lagrangian multiplier(s)
         long                   size;           // Does not include lagrange multiplier (i.e. size + 1 = num_parameters if LagrangeNorm::ON)
         Eigen::DSizes<long, 3> dims;
-        mutable double         energy;
-        mutable double         energy_per_site;
-        mutable double         variance;
-        mutable double         variance_per_site;
+        mutable double         energy{};
+        mutable double         variance{};
         mutable double         energy_shift;
-        mutable double         energy_llim_per_site;
-        mutable double         energy_ulim_per_site;
-        mutable double         energy_tgt_per_site;
-        mutable double         energy_min_per_site;
-        mutable double         energy_max_per_site;
-        mutable double         energy_dens;
-        mutable double         energy_dens_target;
-        mutable double         energy_dens_window;
-        mutable double         energy_offset;
-        mutable double         delta_f;
+        mutable double         energy_offset{};
+        mutable double         delta_f{};
         mutable double         max_grad_norm = 0;
-        mutable double         norm_offset;
-        mutable double         norm;
+        mutable double         norm_offset{};
+        mutable double         norm{};
         mutable double         resnorm = 0;
         mutable size_t         counter = 0;
         mutable long           ops     = 0;
@@ -54,9 +44,7 @@ namespace tools::finite::opt::internal {
         explicit bfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
 
         double get_energy() const;
-        double get_energy_per_site() const;
         double get_variance() const;
-        double get_variance_per_site() const;
         size_t get_count() const;
         double get_norm() const;
         double get_norm_offset() const;

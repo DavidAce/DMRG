@@ -22,20 +22,11 @@ bfgs_base_functor::bfgs_base_functor(const TensorsFinite &tensors, const Algorit
     energy_shift   = tensors.model->get_energy_shift();
 
     // All energies in status are per site!
-    energy_tgt_per_site  = status.energy_tgt_per_site;
-    energy_max_per_site  = status.energy_max_per_site;
-    energy_min_per_site  = status.energy_min_per_site;
-    energy_llim_per_site = status.energy_llim_per_site;
-    energy_ulim_per_site = status.energy_ulim_per_site;
-    energy_dens_target   = status.energy_dens_target;
-    energy_dens_window   = status.energy_dens_window;
     iteration            = status.iter;
 }
 
 double bfgs_base_functor::get_energy() const { return energy; }
-double bfgs_base_functor::get_energy_per_site() const { return energy_per_site; }
 double bfgs_base_functor::get_variance() const { return variance; }
-double bfgs_base_functor::get_variance_per_site() const { return variance_per_site; }
 size_t bfgs_base_functor::get_count() const { return counter; }
 double bfgs_base_functor::get_norm() const { return norm; }
 double bfgs_base_functor::get_norm_offset() const { return norm_offset; }

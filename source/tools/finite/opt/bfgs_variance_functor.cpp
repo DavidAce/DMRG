@@ -132,11 +132,9 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     //    var = std::abs(var);
     //    var = std::real(var) == 0.0 ? eps : var;
 
-    energy            = std::real(nHn + energy_shift);
-    energy_per_site   = energy / static_cast<double>(length);
-    variance          = std::abs(var);
-    variance_per_site = variance / static_cast<double>(length);
-    norm_offset       = std::abs(vv - 1.0);
+    energy      = std::real(nHn + energy_shift);
+    variance    = std::abs(var);
+    norm_offset = std::abs(vv - 1.0);
     //    log10var          = std::log10(variance);
     // Here we work with a small offset on the variance:
     //      When the variance is very low, numerical noise will sometimes cause nH2n < 0 or var < 0.
