@@ -28,7 +28,7 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
     : bfgs_base_functor(tensors, status) {
     tools::log->trace("Constructing direct functor");
 
-    if constexpr(std::is_same<Scalar, double>::value) {
+    if constexpr(std::is_same_v<Scalar, real>) {
         tools::log->trace("- Generating real-valued multisite components");
         mpo                 = tensors.get_multisite_mpo().real();
         mpo2                = tensors.get_multisite_mpo_squared().real();
@@ -38,9 +38,7 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
         envR                = env_ene.R.real();
         env2L               = env_var.L.real();
         env2R               = env_var.R.real();
-    }
-
-    if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
+    } else if constexpr(std::is_same_v<Scalar, cplx>) {
         tools::log->trace("- Generating complex-valued multisite components");
         mpo                 = tensors.get_multisite_mpo();
         mpo2                = tensors.get_multisite_mpo_squared();
@@ -74,7 +72,7 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
     // num_parameters is the number of doubles to optimize (i.e. 2x if complex) including lagrange multipliers
     num_parameters = static_cast<int>(size);
     if constexpr(lagrangeNorm == LagrangeNorm::ON) num_parameters += 2; // Include lagrange multiplier(s) here
-    if constexpr(std::is_same<Scalar, std::complex<double>>::value) { num_parameters *= 2; }
+    if constexpr(std::is_same_v<Scalar, cplx>) { num_parameters *= 2; }
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
@@ -140,9 +138,8 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     //      When the variance is very low, numerical noise will sometimes cause nH2n < 0 or var < 0.
     //      I think this is caused by H2 being slightly non-symmetric
     //    double var_offset = std::clamp(std::real(var) + 1e-12, eps, std::abs(var) + 1e-12);
-    log10var    = std::log10(std::abs(var));
-    double pref = 1.0; // Prefactor
-    if constexpr(std::is_same<Scalar, double>::value) pref = 2.0;
+    log10var  = std::log10(std::abs(var));
+    auto pref = std::is_same_v<Scalar, real> ? 2.0 : 1.0; // Factor 2 for real
 
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), size);
     if(grad_double_double != nullptr) {

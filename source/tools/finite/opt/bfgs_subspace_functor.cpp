@@ -17,7 +17,7 @@ tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::bfgs_subspace_funct
     num_parameters = static_cast<int>(eigvals.size());
 
     // If the scalar is complex we optimize a problem of twice the linear size
-    if constexpr(std::is_same<Scalar, std::complex<double>>::value) num_parameters *= 2;
+    if constexpr(std::is_same_v<Scalar, cplx>) num_parameters *= 2;
 }
 
 template<typename Scalar>
@@ -27,7 +27,7 @@ bool tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::Evaluate(const
     double     vv, log10var;
     VectorType Hn, H2n;
     int        vecSize = NumParameters();
-    if constexpr(std::is_same<Scalar, std::complex<double>>::value) { vecSize = NumParameters() / 2; }
+    if constexpr(std::is_same_v<Scalar, cplx>) vecSize = NumParameters() / 2;
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), vecSize);
 
     VectorType n = v.normalized();
@@ -74,8 +74,8 @@ bool tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::Evaluate(const
     double var_offset = std::clamp(std::real(var) + 1e-12, eps, std::abs(var) + 1e-12);
     log10var          = std::log10(var_offset);
     if(fx != nullptr) { fx[0] = log10var; }
-    double pref = 1.0; // Prefactor
-    if constexpr(std::is_same<Scalar, double>::value) pref = 2.0;
+    auto pref = std::is_same_v<Scalar, real> ? 2.0 : 1.0; // Factor 2 for real
+
     Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), vecSize);
     if(grad_double_double != nullptr) {
         auto one_over_norm = 1.0 / norm;
