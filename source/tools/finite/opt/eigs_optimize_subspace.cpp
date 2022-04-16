@@ -97,7 +97,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
     std::vector<opt_mps> subspace;
     switch(meta.optType) {
         case OptType::CPLX: subspace = internal::subspace::find_subspace<cplx>(tensors, settings::precision::target_subspace_error, meta); break;
-        case OptType::REAL: subspace = internal::subspace::find_subspace<double>(tensors, settings::precision::target_subspace_error, meta); break;
+        case OptType::REAL: subspace = internal::subspace::find_subspace<real>(tensors, settings::precision::target_subspace_error, meta); break;
     }
 
     tools::log->trace("Subspace found with {} eigenvectors", subspace.size());
@@ -314,7 +314,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
 //    if(meta.optType == OptType::REAL) H2_subspace = H2_subspace.real();
 //
 //    // Find the best eigenvectors and compute their variance
-//    auto eigvecs_top_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, 5, status.energy_llim_per_site, status.energy_ulim_per_site);
+//    auto eigvecs_top_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, 5, status.energy_llim, status.energy_ulim);
 //    for(auto &idx : eigvecs_top_idx) {
 //        auto &eigvec = *std::next(subspace.begin(), static_cast<long>(idx));
 //        eigvec.set_variance(tools::finite::measure::energy_variance(eigvec.get_tensor(), tensors));

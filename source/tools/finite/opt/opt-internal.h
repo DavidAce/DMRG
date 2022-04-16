@@ -16,7 +16,9 @@ namespace tools::finite::opt::internal{
     template<typename T, auto rank = 3>
     using TensorType = Eigen::Tensor<T, rank>;
 
-    extern opt_mps bfgs_optimize_variance    (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps bfgs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eig_optimize_energy        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps eig_optimize_variance      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_energy       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_subspace     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_simps        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
@@ -24,7 +26,24 @@ namespace tools::finite::opt::internal{
     extern opt_mps eigs_optimize_overlap      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern void eigs_extract_results          (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
                                                std::vector<opt_mps> &results, bool converged_only = true, double max_overlap_sq_sum = 0.7);
+    template<typename Scalar>
+    extern void eig_executor                  (const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta);
 
+    namespace comparator{
+        extern bool energy              (const opt_mps &lhs, const opt_mps &rhs);
+        extern bool energy_distance     (const opt_mps &lhs, const opt_mps &rhs, double target);
+        extern bool variance            (const opt_mps &lhs, const opt_mps &rhs);
+        extern bool gradient            (const opt_mps &lhs, const opt_mps &rhs);
+        extern bool eigval              (const opt_mps &lhs, const opt_mps &rhs);
+        extern bool overlap             (const opt_mps &lhs, const opt_mps &rhs);
+        extern bool eigval_and_overlap  (const opt_mps &lhs, const opt_mps &rhs);
+    }
+    struct Comparator{
+        const OptMeta * const meta = nullptr;
+        double target_energy;
+        Comparator(const OptMeta &meta_, double initial_energy_ = std::numeric_limits<double>::quiet_NaN());
+        bool operator() (const opt_mps &lhs, const opt_mps &rhs);
+    };
 
     namespace subspace{
         extern std::vector<int> generate_nev_list(int rows);

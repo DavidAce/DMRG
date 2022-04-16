@@ -81,7 +81,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_overlap(const TensorsFinite 
      *  Step 2) Return the eigenvector with the highest overlap, or the current one if none is found.
      */
 
-    auto max_overlap_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, status.energy_llim_per_site, status.energy_ulim_per_site);
+    auto max_overlap_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, status.energy_llim, status.energy_ulim);
     if(max_overlap_idx) {
         auto &eigvec_max_overlap = *std::next(subspace.begin(), static_cast<long>(max_overlap_idx.value()));
         eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors));

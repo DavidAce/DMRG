@@ -1,5 +1,6 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/debug.h"
+#include "config/settings.h"
 #include "debug/exceptions.h"
 #include "math/num.h"
 #include "tensors/model/ModelFinite.h"
@@ -130,8 +131,8 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     /* clang-format off */
     opt_mps result;
     if     (meta.optMode == OptMode::OVERLAP  and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_overlap(tensors, initial_mps, status, meta);
-    else if(meta.optMode == OptMode::SUBSPACE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_energy(tensors, initial_mps, status, meta); // TODO: Implement energy mode
+    else if(meta.optMode == OptMode::SUBSPACE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::SIMPS    and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta); // TODO: Implement simps mode
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::BFGS)  result = internal::bfgs_optimize_variance(tensors, initial_mps, status, meta);
@@ -272,3 +273,61 @@ namespace tools::finite::opt::internal {
     template class NormParametrization<bfgs_subspace_functor<real>>;
     template class NormParametrization<bfgs_subspace_functor<cplx>>;
 }
+
+namespace tools::finite::opt::internal {
+    bool comparator::energy(const opt_mps &lhs, const opt_mps &rhs) {
+        // The eigenvalue solver on H gives results sorted in energy
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        return lhs.get_energy() < rhs.get_energy();
+    }
+
+    bool comparator::energy_distance(const opt_mps &lhs, const opt_mps &rhs, double target) {
+        if(std::isnan(target)) throw except::logic_error("Energy target for comparison is NAN");
+        auto diff_energy_lhs = std::abs(lhs.get_energy() - target);
+        auto diff_energy_rhs = std::abs(rhs.get_energy() - target);
+        return diff_energy_lhs < diff_energy_rhs;
+    }
+
+    bool comparator::variance(const opt_mps &lhs, const opt_mps &rhs) {
+        // The eigenvalue solver on (H-E)² gives results sorted in variance
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        return lhs.get_variance() < rhs.get_variance();
+    }
+
+    bool comparator::gradient(const opt_mps &lhs, const opt_mps &rhs) {
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        return lhs.get_grad_max() < rhs.get_grad_max();
+    }
+    bool comparator::eigval(const opt_mps &lhs, const opt_mps &rhs) {
+        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
+        return lhs.get_eigs_eigval() < rhs.get_eigs_eigval();
+    }
+
+    bool comparator::overlap(const opt_mps &lhs, const opt_mps &rhs) { return lhs.get_overlap() > rhs.get_overlap(); }
+
+    bool comparator::eigval_and_overlap(const opt_mps &lhs, const opt_mps &rhs) {
+        double ratio = std::max(lhs.get_eigs_eigval(), rhs.get_eigs_eigval()) / std::min(lhs.get_eigs_eigval(), rhs.get_eigs_eigval());
+        if(ratio < 10 and lhs.get_overlap() >= std::sqrt(0.5)) return comparator::overlap(lhs, rhs);
+        return comparator::eigval(lhs, rhs);
+    }
+
+    Comparator::Comparator(const OptMeta &meta_, double target_energy_) : meta(&meta_), target_energy(target_energy_) {}
+    bool Comparator::operator()(const opt_mps &lhs, const opt_mps &rhs) {
+        if(not meta) throw except::logic_error("No opt_meta given to comparator");
+        // The variance case first
+        if(meta->optMode == OptMode::VARIANCE) {
+            return comparator::eigval_and_overlap(lhs, rhs);
+        } else {
+            auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
+            if(diff < settings::precision::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
+            switch(meta->optRitz) {
+                case OptRitz::SR: return comparator::energy(lhs, rhs);
+                case OptRitz::LR: return comparator::energy(rhs, lhs);
+                case OptRitz::SM: return comparator::energy_distance(lhs, rhs, target_energy);
+            }
+        }
+        return comparator::eigval(lhs, rhs);
+    }
+}
+
+namespace tools::finite::opt::internal {}

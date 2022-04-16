@@ -13,6 +13,8 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         eigs_optimize_overlap.cpp
         eigs_optimize_subspace.cpp
         eigs_find_subspace.cpp
+        eig_optimize_energy.cpp
+        eig_optimize_variance.cpp
         report.cpp
         opt.cpp
         opt_mps.cpp

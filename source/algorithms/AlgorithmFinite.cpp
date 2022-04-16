@@ -218,40 +218,17 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     //      * the state precision is limited by bond dimension
     // In addition, if get_bond_grow_mode == BondGrow::IF_STUCK we add the condition
     //      * the algorithm has got stuck
+    bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim, 2 * settings::precision::svd_threshold);
+    bool grow_if_truncated = settings::strategy::bond_grow_mode == BondGrow::TRUNCATED;
+    bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::SATURATED;
 
-    bool is_stuck =
-        status.algorithm_has_stuck_for > 0 or (status.algorithm_saturated_for > 0 and status.algorithm_converged_for > 0); // Should update even if converged
-    bool is_saturated       = status.algorithm_saturated_for > 0;
-    bool is_truncated       = tensors.state->is_limited_by_bond(status.bond_lim, 2 * settings::precision::svd_threshold);
-    bool is_iteration2      = num::mod(status.iter, 2ul) == 0;
-    bool is_iteration4      = num::mod(status.iter, 4ul) == 0;
-    bool grow_if_stuck      = settings::strategy::bond_grow_mode == BondGrow::IF_STUCK;
-    bool grow_if_saturated  = settings::strategy::bond_grow_mode == BondGrow::IF_SATURATED;
-    bool grow_if_iteration2 = settings::strategy::bond_grow_mode == BondGrow::ITERATION2;
-    bool grow_if_iteration4 = settings::strategy::bond_grow_mode == BondGrow::ITERATION4;
-    //    if(not is_truncated) {
-    //        tools::log->info("State is not limited by its bond dimension. Kept current limit {}", status.bond_lim);
-    //        return;
-    //    }
-    if(grow_if_stuck and not is_stuck) {
-        tools::log->info("Algorithm is not stuck yet. Kept current bond limit {}", status.bond_lim);
+    if(grow_if_truncated and not is_truncated) {
+        tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
         return;
     }
     if(grow_if_saturated and not is_saturated) {
         tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_lim);
-        return;
-    }
-
-    if(grow_if_iteration2 and not is_iteration2) {
-        tools::log->info("Iteration not divisible by 2. Kept current bond limit {}", status.bond_lim);
-        status.algorithm_has_stuck_for = 0;
-        status.algorithm_saturated_for = 0;
-        return;
-    }
-    if(grow_if_iteration4 and not is_iteration4) {
-        tools::log->info("Iteration not divisible by 4. Kept current bond limit {}", status.bond_lim);
-        status.algorithm_has_stuck_for = 0;
-        status.algorithm_saturated_for = 0;
         return;
     }
 
@@ -277,8 +254,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         throw except::logic_error("Expected grow_rate > 1.0. Got {}", grow_rate);
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
 
-    tools::log->info("Updating bond dimension limit {} -> {} | bond limited {} | saturated {} | stuck {}", status.bond_lim, bond_new, is_truncated,
-                     is_saturated, is_stuck);
+    tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
     status.bond_lim                   = static_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
     status.algorithm_has_stuck_for    = 0;
@@ -716,8 +692,8 @@ void AlgorithmFinite::print_status_update() {
         report += fmt::format("l:⟨{}| ", site_str);
     }
 
-    double energy = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
-    report += fmt::format(FMT_STRING("E/L:{:<20.16f} "), energy);
+    double epsite = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
+    report += fmt::format(FMT_STRING("E/L:{:<20.16f} "), epsite);
 
     if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("e:{:<6.4f} "), status.energy_dens); }
     report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(),
@@ -726,7 +702,7 @@ void AlgorithmFinite::print_status_update() {
     double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
     report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), variance, status.energy_variance_lowest);
     report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error_active_max());
-    if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.sub_expansion_alpha);
+    if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.env_expansion_alpha);
     report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_lim);
     size_t comma_width       = settings::strategy::multisite_mps_site_max <= 2 ? 0 : 2; // ", "
     size_t bracket_width     = 2;                                                       // The {} edges
@@ -777,7 +753,7 @@ void AlgorithmFinite::print_status_full() {
         tools::log->info("Energy per site E/L                = {:<.16f}", epsite);
         if(status.algo_type == AlgorithmType::xDMRG)
             tools::log->info("Energy density (rescaled 0 to 1) ε = {:<6.4f}",
-                             tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
+                             tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
         double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
         tools::log->info("Energy variance σ²(H)              = {:<8.2e}", variance);
     }

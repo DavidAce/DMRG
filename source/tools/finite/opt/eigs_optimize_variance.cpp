@@ -19,57 +19,13 @@
 // Temporary
 //#include <h5pp/h5pp.h>
 
-namespace tools::finite::opt::internal {
+namespace tools::finite::opt {
 
     template<typename Scalar>
     struct opt_init_t {
         Eigen::Tensor<Scalar, 3> mps = {};
         long                     idx = 0;
     };
-
-    // Make a handy variance comparator
-    auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_variance() < rhs.get_variance();
-    };
-    auto comp_gradient = [](const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_grad_max() < rhs.get_grad_max();
-    };
-    auto comp_eigval = [](const opt_mps &lhs, const opt_mps &rhs) {
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_eigs_eigval() < rhs.get_eigs_eigval();
-    };
-    auto comp_gradient_ref = [](const std::reference_wrapper<const opt_mps> &lhs_ref, const std::reference_wrapper<const opt_mps> &rhs_ref) {
-        const auto &lhs = lhs_ref.get();
-        const auto &rhs = rhs_ref.get();
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_grad_max() < rhs.get_grad_max();
-    };
-
-    auto comp_overlap = [](const opt_mps &lhs, const opt_mps &rhs) {
-        return lhs.get_overlap() > rhs.get_overlap();
-    };
-    auto comp_eigval_and_overlap = [](const opt_mps &lhs, const opt_mps &rhs) {
-        double ratio = std::max(lhs.get_eigs_eigval(), rhs.get_eigs_eigval()) / std::min(lhs.get_eigs_eigval(), rhs.get_eigs_eigval());
-        if(ratio < 10 and lhs.get_overlap() >= std::sqrt(0.5)) return lhs.get_overlap() > rhs.get_overlap();
-        if(lhs.get_eigs_idx() != rhs.get_eigs_idx()) return lhs.get_eigs_idx() < rhs.get_eigs_idx();
-        return lhs.get_eigs_eigval() < rhs.get_eigs_eigval();
-    };
-
-    //    auto min_gradient_idx = [](const std::vector<opt_mps> &elems, long idx) {
-    //        double found_grad_norm = 1e20;
-    //        long   found_elem_idx  = -1;
-    //        long   elem_idx        = 0;
-    //        for(const auto &e : elems) {
-    //            if(e.get_eigs_idx() == idx and e.get_grad_max() < found_grad_norm) {
-    //                found_grad_norm = e.get_grad_max();
-    //                found_elem_idx  = elem_idx;
-    //            }
-    //            elem_idx++;
-    //        }
-    //        return found_elem_idx;
-    //    };
 
     template<typename Scalar>
     Eigen::Tensor<Scalar, 3> get_initial_guess(const opt_mps &initial_mps, const std::vector<opt_mps> &results) {
@@ -80,7 +36,7 @@ namespace tools::finite::opt::internal {
                 return initial_mps.get_tensor();
         } else {
             // Return whichever of initial_mps or results that has the lowest variance or gradient
-            auto it = std::min_element(results.begin(), results.end(), comp_gradient);
+            auto it = std::min_element(results.begin(), results.end(), internal::comparator::gradient);
             if(it == results.end()) return get_initial_guess<Scalar>(initial_mps, {});
 
             if(it->get_grad_max() < initial_mps.get_grad_max()) {
@@ -321,8 +277,8 @@ namespace tools::finite::opt::internal {
     }
 
     template<typename Scalar>
-    void eigs_executor(eig::solver &solver, MatVecMPO<Scalar> &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
-                       std::vector<opt_mps> &results, const OptMeta &meta) {
+    void eigs_variance_executor(eig::solver &solver, MatVecMPO<Scalar> &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
+                                std::vector<opt_mps> &results, const OptMeta &meta) {
         if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL) throw std::logic_error("eigs_launcher error: Mixed Scalar:cplx with OptType::REAL");
         if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX) throw std::logic_error("eigs_launcher error: Mixed Scalar:real with OptType::CPLX");
 
@@ -332,74 +288,36 @@ namespace tools::finite::opt::internal {
         solver.config.primme_effective_ham    = &hamiltonian;
         solver.config.primme_effective_ham_sq = &hamiltonian_squared;
 
-        //        h5pp::File  h5file("../output/primme_mps.h5", h5pp::FilePermission::READWRITE);
-        //        long        number = 0;
-        //        std::string groupname;
-        //        while(true) {
-        //            groupname = fmt::format("mps-{}", number++);
-        //            if(not h5file.linkExists(groupname)) {
-        //                h5file.writeDataset(hamiltonian.get_mpo(), groupname + "/mpo", H5D_CHUNKED);
-        //                h5file.writeDataset(hamiltonian.get_envL(), groupname + "/envL", H5D_CHUNKED);
-        //                h5file.writeDataset(hamiltonian.get_envR(), groupname + "/envR", H5D_CHUNKED);
-        //                h5file.writeDataset(hamiltonian_squared.get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
-        //                h5file.writeDataset(hamiltonian_squared.get_envL(), groupname + "/envL2", H5D_CHUNKED);
-        //                h5file.writeDataset(hamiltonian_squared.get_envR(), groupname + "/envR2", H5D_CHUNKED);
-        //                auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this
-        //                scope for(auto &i : init) h5file.writeDataset(i.mps, fmt::format("{}/mps_init_{}", groupname, i.idx), H5D_CHUNKED);
-        //                h5file.writeAttribute(tensors.active_problem_dims(), "dimensions", groupname);
-        //                break;
-        //            }
-        //        }
-
         hamiltonian_squared.reset();
-        auto size = tensors.active_problem_size();
+        auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
+        for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
+        tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
 
-        if(size <= settings::precision::max_size_full_diag) {
-            tools::log->trace("Full diagonalization of (H-E)²");
-            //            hamiltonian_squared.set_shift(1.0);
-            auto matrix = hamiltonian_squared.get_matrix();
+        if(solver.config.lib == eig::Lib::ARPACK) {
+            if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance with ARPACK requires non-compressed MPO²");
+            if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
+            if(not solver.config.sigma)
+                solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
+            tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
+                              std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
+                              hamiltonian_squared.rows());
+            solver.eigs(hamiltonian_squared);
+        } else if(solver.config.lib == eig::Lib::PRIMME) {
+            if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
+            if(solver.config.sigma and tensors.model->is_compressed_mpo_squared())
+                throw except::logic_error("eigs_optimize_variance with PRIMME with given sigma requires non-compressed MPO²");
+            if(solver.config.sigma)
+                tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
+                                  std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
+                                  hamiltonian_squared.rows());
 
-            //            auto matrix       = tools::finite::opt::internal::get_multisite_hamiltonian_squared_matrix<double>(*tensors.model, *tensors.edges);
-            //            solver.eig(matrix.data(), matrix.rows());
-            solver.eig(matrix.data(), matrix.rows(), 'I', 1, static_cast<int>(solver.config.maxNev.value()), 0.0, 1.0, 1);
-        } else {
-            auto init = get_initial_guesses<Scalar>(initial_mps, results, solver.config.maxNev.value()); // Init holds the data in memory for this scope
-            for(auto &i : init) solver.config.initial_guess.push_back({i.mps.data(), i.idx});
-            tools::log->trace("Defining energy-shifted Hamiltonian-squared matrix-vector product");
-
-            //            if(tensors.model->is_compressed_mpo_squared()) {
-
-            //            } else
-            {
-                //                tools::log->warn("Finding excited state as minimum of (H-E)² with ritz SM because all MPO²'s are compressed!");
-                //                solver.config.ritz = eig::Ritz::SM;
-                //                solver.eigs(hamiltonian_squared);
-                if(solver.config.lib == eig::Lib::ARPACK) {
-                    if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance with ARPACK requires non-compressed MPO²");
-                    if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
-                    if(not solver.config.sigma)
-                        solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-                    tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
-                                      std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
-                                      hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
-                    solver.eigs(hamiltonian_squared);
-                } else if(solver.config.lib == eig::Lib::PRIMME) {
-                    if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
-                    if(solver.config.sigma and tensors.model->is_compressed_mpo_squared())
-                        throw except::logic_error("eigs_optimize_variance with PRIMME with given sigma requires non-compressed MPO²");
-                    if(solver.config.sigma)
-                        tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
-                                          std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()),
-                                          hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
-
-                    else
-                        tools::log->debug("Finding excited state as minimum of [(H-E)²] | primme {} | init on | dims {} = {}",
-                                          eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
-                    solver.eigs(hamiltonian_squared);
-                }
-            }
+            else
+                tools::log->debug("Finding excited state as minimum of [(H-E)²] | primme {} | init on | dims {} = {}",
+                                  eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
+            solver.eigs(hamiltonian_squared);
         }
-        eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
+
+        internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
     }
 
     template<typename Scalar>
@@ -417,7 +335,6 @@ namespace tools::finite::opt::internal {
         configs[0].compute_eigvecs = eig::Vecs::ON;
         configs[0].loglevel        = 2;
         configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-
         //        configs[0].primme_preconditioner = simps_preconditioner<MatVecMPO<Scalar>>;
 
         // Overrides from default
@@ -433,68 +350,41 @@ namespace tools::finite::opt::internal {
             eig::solver solver;
             solver.config = config;
             if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-            eigs_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
+            eigs_variance_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
             if(&config == &configs.back()) break;
             if(not try_harder(results, meta, spdlog::level::debug)) break;
         }
-        //        for(const auto &[ridx, rval] : iter::enumerate(results)) {
-        //            if(rval.get_iter() >= 1000) {
-        //                h5pp::File  h5file("../output/eigs.h5", h5pp::FilePermission::READWRITE);
-        //                long        number = 0;
-        //                std::string groupname;
-        //                while(true) {
-        //                    groupname = fmt::format("eigs-{}", number++);
-        //                    if(not h5file.linkExists(groupname)) {
-        //                        h5file.writeDataset(hamiltonian_squared->get_mpo(), groupname + "/mpo2", H5D_CHUNKED);
-        //                        h5file.writeDataset(hamiltonian_squared->get_envL(), groupname + "/envL2", H5D_CHUNKED);
-        //                        h5file.writeDataset(hamiltonian_squared->get_envR(), groupname + "/envR2", H5D_CHUNKED);
-        //                        h5file.writeDataset(initial_mps.get_tensor(), groupname + "/mps", H5D_CHUNKED);
-        //                        h5file.writeDataset(rval.get_tensor(), fmt::format("{}/result_{}", groupname, ridx));
-        //                        h5file.writeAttribute(tensors.active_problem_dims(), "dims", groupname);
-        //                        h5file.writeAttribute(tensors.active_problem_size(), "size", groupname);
-        //                        h5file.writeAttribute(rval.get_time(), "time", groupname);
-        //                        h5file.writeAttribute(rval.get_iter(), "iter", groupname);
-        //                        h5file.writeAttribute(rval.get_eigs_ncv(), "ncv", groupname);
-        //                        h5file.writeAttribute(rval.get_eigs_eigval(), "eval", groupname);
-        //                        h5file.writeAttribute(rval.get_eigs_rnorm(), "rnorm", groupname);
-        //                        h5file.writeAttribute(rval.get_variance(), "variance", groupname);
-        //                        h5file.writeAttribute(rval.get_energy(), "energy", groupname);
-        //                        h5file.writeAttribute(rval.get_op(), "op", groupname);
-        //                        h5file.writeAttribute(rval.get_mv(), "mv", groupname);
-        //                        h5file.writeAttribute(eig::MethodToString(configs[0].primme_method.value()), "primme_method", groupname);
-        //                        break;
-        //                    }
-        //                }
-        //            }
-        //        }
-    }
-}
-
-tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                                                 [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
-    using namespace internal;
-    using namespace settings::precision;
-    initial_mps.validate_basis_vector();
-    if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
-    reports::eigs_add_entry(initial_mps, spdlog::level::info);
-
-    auto                 t_var = tid::tic_scope("variance");
-    std::vector<opt_mps> results;
-    switch(meta.optType) {
-        case OptType::REAL: eigs_manager<real>(tensors, initial_mps, results, meta); break;
-        case OptType::CPLX: eigs_manager<cplx>(tensors, initial_mps, results, meta); break;
-    }
-    auto t_post = tid::tic_scope("post");
-    if(results.empty()) {
-        meta.optExit = OptExit::FAIL_ERROR;
-        return initial_mps; // The solver failed
     }
 
-    if(results.size() >= 2) {
-        std::sort(results.begin(), results.end(), comp_eigval_and_overlap); // Smallest eigenvalue (i.e. variance) wins
+    opt_mps internal::eigs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
+                                             OptMeta &meta) {
+        if(tensors.active_problem_size() <= settings::precision::max_size_full_diag) return internal::eig_optimize_variance(tensors, initial_mps, status, meta);
+
+        using namespace internal;
+        using namespace settings::precision;
+        initial_mps.validate_basis_vector();
+        if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
+        reports::eigs_add_entry(initial_mps, spdlog::level::info);
+
+        auto                 t_var = tid::tic_scope("eigs-var");
+        std::vector<opt_mps> results;
+        switch(meta.optType) {
+            case OptType::REAL: eigs_manager<real>(tensors, initial_mps, results, meta); break;
+            case OptType::CPLX: eigs_manager<cplx>(tensors, initial_mps, results, meta); break;
+        }
+        auto t_post = tid::tic_scope("post");
+        if(results.empty()) {
+            meta.optExit = OptExit::FAIL_ERROR;
+            return initial_mps; // The solver failed
+        }
+
+        if(results.size() >= 2) {
+            std::sort(results.begin(), results.end(), internal::Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
+        }
+
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+
+        return results.front();
     }
 
-    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
-
-    return results.front();
 }

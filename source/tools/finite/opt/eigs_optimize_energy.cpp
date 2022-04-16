@@ -15,70 +15,42 @@
 #include "tools/finite/opt/report.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
-#include <ceres/gradient_problem.h>
-#include <ceres/gradient_problem_solver.h>
 #include <primme/primme.h>
 
-template<typename MatrixProductType>
-void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
-    if(x == nullptr) return;
-    if(y == nullptr) return;
-    if(primme == nullptr) return;
-    using T               = typename MatrixProductType::Scalar;
-    const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
-    const auto  shape_mps = H_ptr->get_shape_mps();
-    const auto &mpo       = H_ptr->get_mpo();
-    const auto &envL      = H_ptr->get_envL();
-    const auto &envR      = H_ptr->get_envR();
-    for(int i = 0; i < *blockSize; i++) {
-        auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
-        auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
-        tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
-    }
-    *ierr = 0;
-}
+namespace tools::finite::opt {
 
-template<typename Scalar>
-std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, const tools::finite::opt::opt_mps &initial_mps,
-                                               const tools::finite::opt::OptMeta &meta) {
-    using namespace tools::finite::opt;
-    if(meta.optMode != OptMode::ENERGY)
-        throw except::runtime_error("Wrong optimization mode [{}]. Expected [{}]", enum2sv(meta.optMode), enum2sv(OptMode::ENERGY));
-    if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
-        throw std::runtime_error("eigs_optimize_energy with ritz [SM] requires energy-shifted MPO ");
-
-    auto      problem_size = initial_mps.get_tensor().size();
-    eig::Ritz ritz         = eig::stringToRitz(enum2sv(meta.optRitz));
-
-    tools::log->trace("Defining Hamiltonian matrix-vector product");
-    tools::log->trace("Defining eigenvalue solver");
-    eig::solver solver;
-    if(problem_size <= settings::precision::max_size_full_diag) {
-        tools::log->trace("Finding ground state");
-        const auto &matrix = tensors.get_effective_hamiltonian<Scalar>();
-        int         SR_il  = 1; // min nev index (starts from 1)
-        int         SR_iu  = 1; // max nev index
-        int         LR_il  = static_cast<int>(matrix.dimension(0));
-        int         LR_iu  = static_cast<int>(matrix.dimension(0));
-        switch(meta.optRitz) {
-            case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0, 1); break;
-            case OptRitz::LR:
-                solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0, 1);
-                break;
-
-                //            case OptRitz::SM:
-                //                solver.eig<eig::Form::SYMM>(matrix.data(), matrix.dimension(0));
-                //                break;
-            case OptRitz::SM: {
-                auto eigval = initial_mps.get_eigval();
-                auto eigvar = initial_mps.get_variance();
-                auto vl     = eigval - 2 * eigvar;
-                auto vu     = eigval + 2 * eigvar;
-                solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu, 10);
-                break;
-            }
+    template<typename MatrixProductType>
+    void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+        if(x == nullptr) return;
+        if(y == nullptr) return;
+        if(primme == nullptr) return;
+        using T               = typename MatrixProductType::Scalar;
+        const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
+        const auto  shape_mps = H_ptr->get_shape_mps();
+        const auto &mpo       = H_ptr->get_mpo();
+        const auto &envL      = H_ptr->get_envL();
+        const auto &envR      = H_ptr->get_envR();
+        for(int i = 0; i < *blockSize; i++) {
+            auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
+            auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
+            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
         }
-    } else {
+        *ierr = 0;
+    }
+
+    template<typename Scalar>
+    std::vector<opt_mps> eigs_energy_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta) {
+        if(meta.optMode != OptMode::ENERGY)
+            throw except::runtime_error("Wrong optimization mode [{}]. Expected [{}]", enum2sv(meta.optMode), enum2sv(OptMode::ENERGY));
+        if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
+            throw std::runtime_error("eigs_optimize_energy with ritz [SM] requires energy-shifted MPO ");
+
+        eig::Ritz ritz = eig::stringToRitz(enum2sv(meta.optRitz));
+
+        tools::log->trace("Defining Hamiltonian matrix-vector product");
+        tools::log->trace("Defining eigenvalue solver");
+        eig::solver solver;
+
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();
         MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
@@ -105,8 +77,8 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
         }
         solver.config.ritz = ritz;
         solver.config.initial_guess.push_back({init.data(), 0});
+        tools::log->trace("Finding energy eigenstate {}", enum2sv(meta.optRitz));
 
-        MatVecMPO<Scalar> hamiltonian_squared;
         if(meta.optRitz == OptRitz::SM) {
             solver.config.maxIter              = 100000;
             solver.config.maxNev               = static_cast<eig::size_type>(8);
@@ -115,54 +87,57 @@ std::vector<tools::finite::opt::opt_mps> solve(const TensorsFinite &tensors, con
             solver.config.primme_locking       = false;
             solver.config.primme_target_shifts = {initial_mps.get_eigval()};
             solver.config.ritz                 = eig::Ritz::primme_closest_abs;
-            tools::log->trace("Finding excited state state");
+            if(meta.optMode == OptMode::SIMPS) solver.config.primme_preconditioner = simps_preconditioner<MatVecMPO<Scalar>>;
+
             solver.eigs(hamiltonian);
         } else {
             // Since we use energy-shifted mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
             // would otherwise cause trouble for the eigenvalue solver. This equates to subtracting sigma * identity from the bottom corner of the mpo.
             // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
-            solver.config.sigma = 1.0;
-            tools::log->trace("Finding ground state");
+            //        solver.config.sigma = 1.0;
             solver.eigs(hamiltonian);
         }
-    }
-    std::vector<opt_mps> results;
-    tools::finite::opt::internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
 
-    auto comparator = [&ritz, &meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
-        auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
-        if(diff < settings::precision::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
-        switch(ritz) {
-            case eig::Ritz::SA:
-            case eig::Ritz::SR: return lhs.get_energy() < rhs.get_energy();
-            case eig::Ritz::LA:
-            case eig::Ritz::LR: return lhs.get_energy() > rhs.get_energy();
-            case eig::Ritz::SM:
-            case eig::Ritz::primme_closest_abs: {
-                // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
-                auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
-                auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
-                return diff_energy_lhs < diff_energy_rhs;
+        std::vector<opt_mps> results;
+        internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
+
+        auto comparator = [&ritz, &meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
+            auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
+            if(diff < settings::precision::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
+            switch(ritz) {
+                case eig::Ritz::SA:
+                case eig::Ritz::SR: return lhs.get_energy() < rhs.get_energy();
+                case eig::Ritz::LA:
+                case eig::Ritz::LR: return lhs.get_energy() > rhs.get_energy();
+                case eig::Ritz::SM:
+                case eig::Ritz::primme_closest_abs: {
+                    // return std::abs(lhs.get_eigs_eigval()) < std::abs(rhs.get_eigs_eigval());
+                    auto diff_energy_lhs = std::abs(lhs.get_energy() - initial_mps.get_energy());
+                    auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
+                    return diff_energy_lhs < diff_energy_rhs;
+                }
+                default: throw std::runtime_error(fmt::format("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz)));
             }
-            default: throw std::runtime_error(fmt::format("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz)));
-        }
-    };
-    if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
-    for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
-    return results;
-}
+        };
+        if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+        return results;
+    }
 
-tools::finite::opt::opt_mps tools::finite::opt::internal::eigs_optimize_energy(const TensorsFinite &tensors, const opt_mps &initial_mps,
-                                                                               [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
-    tools::log->debug("Ground state optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
-    auto                 t_gs = tid::tic_scope("gs");
-    std::vector<opt_mps> results;
-    if(meta.optType == OptType::REAL) results = solve<real>(tensors, initial_mps, meta);
-    if(meta.optType == OptType::CPLX) results = solve<cplx>(tensors, initial_mps, meta);
+    opt_mps internal::eigs_optimize_energy(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta) {
+        if(tensors.active_problem_size() <= settings::precision::max_size_full_diag) return eig_optimize_energy(tensors, initial_mps, status, meta);
 
-    reports::print_eigs_report();
-    if(results.empty())
-        return initial_mps; // Solver failed
-    else
-        return results.front();
+        tools::log->debug("Energy optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
+        auto                 t_eigs = tid::tic_scope("eigs-ene");
+        std::vector<opt_mps> results;
+        if(meta.optType == OptType::REAL) results = eigs_energy_executor<real>(tensors, initial_mps, meta);
+        if(meta.optType == OptType::CPLX) results = eigs_energy_executor<cplx>(tensors, initial_mps, meta);
+
+        reports::print_eigs_report();
+        if(results.empty())
+            return initial_mps; // Solver failed
+        else
+            return results.front();
+    }
+
 }
