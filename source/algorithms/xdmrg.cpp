@@ -433,7 +433,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.retry     = false;
         metas.emplace_back(m2);
     } else if(m1.optMode == OptMode::VARIANCE and
-              (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_gradient_w_eigs))) {
+              (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_rnorm_w_eigs))) {
         // If we did a VARIANCE optimization whose residual_norm did succeed, then run again for longer and more sites
         m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP | OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
