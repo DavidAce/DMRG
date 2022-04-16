@@ -15,11 +15,11 @@ class AlgorithmStatus {
     long                 bond_lim                   = 0; /*!< Current limit on bond dimension, can be increased dynamically */
     long                 bond_max                   = 0; /*!< Maximum allowable bond dimension during an algorithm run */
     long                 bond_init                  = 0; /*!< Initial limit on bond dimension when an algorithm starts */
-    double               energy_min_per_site        = 0;
-    double               energy_max_per_site        = 0;
-    double               energy_tgt_per_site        = 0;
-    double               energy_ulim_per_site       = 0;
-    double               energy_llim_per_site       = 0;
+    double               energy_min                 = 0;
+    double               energy_max                 = 0;
+    double               energy_tgt                 = 0;
+    double               energy_ulim                = 0;
+    double               energy_llim                = 0;
     double               energy_dens                = 0;
     double               energy_dens_target         = 0;
     double               energy_dens_window         = 0;

@@ -160,11 +160,11 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_init",                   HOFFSET(table, bond_init),                  H5T_NATIVE_LONG);
-        H5Tinsert(h5_type, "energy_min_per_site",         HOFFSET(table, energy_min_per_site),        H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_max_per_site",         HOFFSET(table, energy_max_per_site),        H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_tgt_per_site",         HOFFSET(table, energy_tgt_per_site),        H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_ulim_per_site",        HOFFSET(table, energy_ulim_per_site),       H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "energy_llim_per_site",        HOFFSET(table, energy_llim_per_site),       H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_min",                  HOFFSET(table, energy_min),                 H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_max",                  HOFFSET(table, energy_max),                 H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_tgt",                  HOFFSET(table, energy_tgt),                 H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_ulim",                 HOFFSET(table, energy_ulim),                H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "energy_llim",                 HOFFSET(table, energy_llim),                H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens",                 HOFFSET(table, energy_dens),                H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_target",          HOFFSET(table, energy_dens_target),         H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_dens_window",          HOFFSET(table, energy_dens_window),         H5T_NATIVE_DOUBLE);

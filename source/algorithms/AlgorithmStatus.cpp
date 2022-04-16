@@ -9,19 +9,19 @@ void AlgorithmStatus::reset() {
     // Keeps some data for simulations that follow
     auto status = *this;
     clear();
-    min_iters            = status.min_iters;
-    bond_max             = status.bond_max;
-    bond_init            = status.bond_init;
-    bond_lim             = status.bond_lim;
-    energy_min_per_site  = status.energy_min_per_site;
-    energy_max_per_site  = status.energy_max_per_site;
-    energy_tgt_per_site  = status.energy_tgt_per_site;
-    energy_ulim_per_site = status.energy_ulim_per_site;
-    energy_llim_per_site = status.energy_llim_per_site;
-    energy_dens          = status.energy_dens;
-    energy_dens_target   = status.energy_dens_target;
-    energy_dens_window   = status.energy_dens_window;
-    algo_type            = status.algo_type;
+    min_iters          = status.min_iters;
+    bond_max           = status.bond_max;
+    bond_init          = status.bond_init;
+    bond_lim           = status.bond_lim;
+    energy_min         = status.energy_min;
+    energy_max         = status.energy_max;
+    energy_tgt         = status.energy_tgt;
+    energy_ulim        = status.energy_ulim;
+    energy_llim        = status.energy_llim;
+    energy_dens        = status.energy_dens;
+    energy_dens_target = status.energy_dens_target;
+    energy_dens_window = status.energy_dens_window;
+    algo_type          = status.algo_type;
 }
 std::string_view AlgorithmStatus::algo_type_sv() const { return enum2sv(algo_type); }
 std::string      AlgorithmStatus::algo_type_str() const { return std::string(algo_type_sv()); }
@@ -39,12 +39,12 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->min_iters                     == s.min_iters and
         this->bond_max                      == s.bond_max and
         this->bond_init                     == s.bond_init and
-        this->bond_lim                    == s.bond_lim and
-        this->energy_min_per_site           == s.energy_min_per_site and
-        this->energy_max_per_site           == s.energy_max_per_site and
-        this->energy_tgt_per_site           == s.energy_tgt_per_site and
-        this->energy_ulim_per_site          == s.energy_ulim_per_site and
-        this->energy_llim_per_site          == s.energy_llim_per_site and
+        this->bond_lim                      == s.bond_lim and
+        this->energy_min                    == s.energy_min and
+        this->energy_max                    == s.energy_max and
+        this->energy_tgt                    == s.energy_tgt and
+        this->energy_ulim                   == s.energy_ulim and
+        this->energy_llim                   == s.energy_llim and
         this->energy_dens                   == s.energy_dens and
         this->energy_dens_target            == s.energy_dens_target and
         this->energy_dens_window            == s.energy_dens_window and

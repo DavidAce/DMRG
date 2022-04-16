@@ -181,18 +181,18 @@ void xdmrg::init_energy_limits(std::optional<double> energy_density_target, std:
     status.energy_dens_window = energy_density_window.value();
 
     // Set energy boundaries. This function is supposed to run after find_energy_range!
-    if(status.energy_max_per_site == status.energy_min_per_site)
-        throw std::runtime_error(fmt::format("Could not set energy limits because energy_max_per_site == {} and energy_min_per_site == {}\n"
+    if(status.energy_max == status.energy_min)
+        throw std::runtime_error(fmt::format("Could not set energy limits because energy_max == {} and energy_min == {}\n"
                                              "Try running find_energy_range() first",
-                                             status.energy_max_per_site, status.energy_min_per_site));
-    status.energy_tgt_per_site  = status.energy_min_per_site + status.energy_dens_target * (status.energy_max_per_site - status.energy_min_per_site);
-    status.energy_ulim_per_site = status.energy_tgt_per_site + status.energy_dens_window * (status.energy_max_per_site - status.energy_min_per_site);
-    status.energy_llim_per_site = status.energy_tgt_per_site - status.energy_dens_window * (status.energy_max_per_site - status.energy_min_per_site);
-    tools::log->info("Energy minimum     (per site) = {:.8f}", status.energy_min_per_site);
-    tools::log->info("Energy maximum     (per site) = {:.8f}", status.energy_max_per_site);
-    tools::log->info("Energy target      (per site) = {:.8f}", status.energy_tgt_per_site);
-    tools::log->info("Energy lower limit (per site) = {:.8f}", status.energy_llim_per_site);
-    tools::log->info("Energy upper limit (per site) = {:.8f}", status.energy_ulim_per_site);
+                                             status.energy_max, status.energy_min));
+    status.energy_tgt  = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
+    status.energy_ulim = status.energy_tgt + status.energy_dens_window * (status.energy_max - status.energy_min);
+    status.energy_llim = status.energy_tgt - status.energy_dens_window * (status.energy_max - status.energy_min);
+    tools::log->info("Energy minimum     = {:.8f}", status.energy_min);
+    tools::log->info("Energy maximum     = {:.8f}", status.energy_max);
+    tools::log->info("Energy target      = {:.8f}", status.energy_tgt);
+    tools::log->info("Energy lower limit = {:.8f}", status.energy_llim);
+    tools::log->info("Energy upper limit = {:.8f}", status.energy_ulim);
 }
 
 void xdmrg::run_preprocessing() {

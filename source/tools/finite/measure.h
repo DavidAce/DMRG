@@ -70,7 +70,7 @@ namespace tools::finite::measure {
     [[nodiscard]] double energy_variance_per_site                (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, MeasurementsTensorsFinite * measurements = nullptr);
 
     template<typename state_or_mps_type>
-    [[nodiscard]] double energy_normalized                       (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, double energy_minimum, double energy_maximum, MeasurementsTensorsFinite * measurements = nullptr);
+    [[nodiscard]] double energy_normalized                       (const state_or_mps_type & state, const ModelFinite & model, const EdgesFinite & edges, double energy_min, double energy_max, MeasurementsTensorsFinite * measurements = nullptr);
 
 
     [[nodiscard]] extern double energy_shift                    (const TensorsFinite & tensors);

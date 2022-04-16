@@ -419,8 +419,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     if(status.algo_type != AlgorithmType::fLBIT) {
         tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-        tools::log->info("-- Energy density           : {}",
-                         tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site));
+        tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
         tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     }
 }
