@@ -393,12 +393,12 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // Do eigs instead of bfgs when its cheap
     if(m1.optSolver == OptSolver::BFGS and m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
 
-    if(status.sub_expansion_alpha > 0) {
+    if(status.env_expansion_alpha > 0) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
-        if(m1.chosen_sites.size() == 1 and status.sub_expansion_alpha > 0) m1.alpha_expansion = status.sub_expansion_alpha;
+        if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
         // If we are stuck and enabled subspace expansion when stuck
-        if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0 and status.sub_expansion_alpha > 0)
-            m1.alpha_expansion = status.sub_expansion_alpha;
+        if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0 and status.env_expansion_alpha > 0)
+            m1.alpha_expansion = status.env_expansion_alpha;
     }
 
     metas.emplace_back(m1);

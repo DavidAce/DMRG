@@ -321,30 +321,30 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
 void AlgorithmFinite::update_expansion_factor_alpha() {
     if(settings::strategy::max_env_expansion_alpha > 0) {
         // Set a good initial value to start with
-        if(status.sub_expansion_alpha == 0) status.sub_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
+        if(status.env_expansion_alpha == 0) status.env_expansion_alpha = std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha);
 
         // Update alpha
-        double old_expansion_alpha = status.sub_expansion_alpha;
+        double old_expansion_alpha = status.env_expansion_alpha;
         double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
         double factor_dn           = std::pow(1e-2, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
 
-        bool var_recently_improved = status.energy_variance_lowest / status.sub_expansion_variance < 1e-1;
+        bool var_recently_improved = status.energy_variance_lowest / status.env_expansion_variance < 1e-1;
         if(var_recently_improved) factor_dn *= 0.001;
 
         if(status.algorithm_has_stuck_for > 0 and not var_recently_improved) {
-            status.sub_expansion_alpha *= factor_up;
+            status.env_expansion_alpha *= factor_up;
         } else {
-            status.sub_expansion_alpha *= factor_dn;
+            status.env_expansion_alpha *= factor_dn;
         }
-        status.sub_expansion_alpha =
-            std::clamp(status.sub_expansion_alpha, std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha),
+        status.env_expansion_alpha =
+            std::clamp(status.env_expansion_alpha, std::min(status.energy_variance_lowest, settings::strategy::max_env_expansion_alpha),
                        settings::strategy::max_env_expansion_alpha);
-        if(status.sub_expansion_alpha < old_expansion_alpha) {
-            status.sub_expansion_step     = status.step;
-            status.sub_expansion_variance = status.energy_variance_lowest;
-            tools::log->trace("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
-        } else if(status.sub_expansion_alpha > old_expansion_alpha) {
-            tools::log->trace("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.sub_expansion_alpha);
+        if(status.env_expansion_alpha < old_expansion_alpha) {
+            status.env_expansion_step     = status.step;
+            status.env_expansion_variance = status.energy_variance_lowest;
+            tools::log->trace("Decreased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
+        } else if(status.env_expansion_alpha > old_expansion_alpha) {
+            tools::log->trace("Increased alpha {:8.2e} -> {:8.2e}", old_expansion_alpha, status.env_expansion_alpha);
         }
     }
 }

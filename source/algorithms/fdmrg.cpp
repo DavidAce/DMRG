@@ -158,11 +158,11 @@ void fdmrg::single_fdmrg_step() {
     tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_site_def);
 
     if(not tensors.active_sites.empty()) {
-        if(status.sub_expansion_alpha > 0) {
+        if(status.env_expansion_alpha > 0) {
             // If we are doing 1-site dmrg, then we better use subspace expansion
-            if(tensors.active_sites.size() == 1) alpha_expansion = status.sub_expansion_alpha;
+            if(tensors.active_sites.size() == 1) alpha_expansion = status.env_expansion_alpha;
             // If we are stuck and enabled subspace expansion when stuck
-            if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0) alpha_expansion = status.sub_expansion_alpha;
+            if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0) alpha_expansion = status.env_expansion_alpha;
             // Use subspace expansion if alpha_expansion was set
             if(alpha_expansion) tensors.expand_environment(alpha_expansion.value(), status.bond_lim);
         }
