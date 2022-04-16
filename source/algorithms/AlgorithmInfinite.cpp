@@ -1,5 +1,6 @@
 #include "AlgorithmInfinite.h"
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "debug/info.h"
 #include "math/num.h"
 #include "tensors/model/ModelInfinite.h"
@@ -72,28 +73,28 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
     //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow_mode == BondGrow::IF_SATURATED we add the condition
+    // In addition, if get_bond_grow_mode == BondGrow::SATURATED we add the condition
     //      * the algorithm has got stuck
 
     // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
     // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
-    bool is_stuck          = status.algorithm_has_stuck_for > 0;
     bool is_saturated      = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
-    bool is_bond_limited   = tensors.state->is_bond_limited(status.bond_lim, 2 * settings::precision::svd_threshold);
-    bool grow_if_stuck     = settings::strategy::bond_grow_mode == BondGrow::IF_STUCK;
-    bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::IF_SATURATED;
-    if(grow_if_stuck and not is_stuck) {
-        tools::log->info("Algorithm is not stuck yet. Kept current limit {}", status.bond_lim);
+    bool is_truncated      = tensors.state->is_bond_limited(status.bond_lim, 2 * settings::precision::svd_threshold);
+    bool grow_if_truncated = settings::strategy::bond_grow_mode == BondGrow::TRUNCATED;
+    bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::SATURATED;
+
+    if(grow_if_truncated and not is_truncated) {
+        tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
         return;
     }
     if(grow_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current limit {}", status.bond_lim);
+        tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_lim);
         return;
     }
-    if(not is_bond_limited) {
-        tools::log->info("State is not limited by its bond dimension. Kept current bond dimension limit {}", status.bond_lim);
-        return;
-    }
+
+    // If we got to this point we will update the bond dimension by a factor
+    auto grow_rate = settings::strategy::bond_grow_rate;
+    if(grow_rate <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate));
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_UPDATE);
@@ -102,15 +103,21 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     auto factor = settings::strategy::bond_grow_rate;
     if(factor <= 1.0) throw std::logic_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor));
 
-    // Update chi
-    double bond_prod = std::ceil(factor * static_cast<double>(status.bond_lim));
-    long   bond_new  = std::min(static_cast<long>(bond_prod), status.bond_max);
-    tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
-    status.bond_lim                   = bond_new;
+    auto bond_new = static_cast<double>(status.bond_lim);
+    if(grow_rate <= 2.0 and grow_rate > 1.0) {
+        bond_new = std::ceil(bond_new * grow_rate);
+        bond_new = num::round_up_to_multiple_of<double>(bond_new, 4);
+    } else if(grow_rate > 2.0) {
+        bond_new = bond_new + grow_rate;
+    } else
+        throw except::logic_error("Expected grow_rate > 1.0. Got {}", grow_rate);
+    bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
+
+    tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
+    status.bond_lim                   = static_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
-    // Restart counters (so that we don't finish immedately
-    status.algorithm_has_stuck_for = 0;
-    status.algorithm_converged_for = 0;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
     if(status.bond_lim > status.bond_max)
         throw std::runtime_error(fmt::format("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max));

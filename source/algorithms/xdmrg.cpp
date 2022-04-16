@@ -313,17 +313,26 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.eigs_max_tol  = settings::precision::eigs_tolerance;
     m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;
 
+    // Adjust the maximum number of sites to consider
+    if(status.algorithm_has_succeeded)
+        m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
+    else {
+        using namespace settings::strategy;
+        switch(multisite_mps_rise) {
+            case MultisiteRise::OFF: break;
+            case MultisiteRise::SATURATED: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for, multisite_mps_site_max); break;
+            case MultisiteRise::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for + 1, multisite_mps_site_max); break;
+        }
+    }
+
     // Next we setup the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
-
     bool prefer_eigs_always    = settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
     bool prefer_eigs_saturated = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
-    bool prefer_eigs_stuck     = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0;
 
-    if(prefer_eigs_always or prefer_eigs_saturated or prefer_eigs_stuck) {
+    if(prefer_eigs_always or prefer_eigs_saturated) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
-        m1.max_sites = settings::strategy::multisite_mps_site_def;
         m1.retry     = true;
     }
 
@@ -352,12 +361,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         }
     }
 
-    if(status.fes_is_running) {
-        // No need to do expensive operations
-        m1.optMode   = OptMode::VARIANCE;
-        m1.optSolver = OptSolver::BFGS;
-        m1.retry     = false;
-    }
     // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
     if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
@@ -374,24 +377,12 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
     }
 
-    // We can make trials with different number of sites.
-    // Eg if the simulation is stuck we may try with more sites.
-    //    if(status.variance_mpo_saturated_for > 0 and status.energy_variance_lowest > settings::precision::variance_convergence_threshold) {
-    //        size_t iter_factor = settings::precision::eigs_max_iter * static_cast<size_t>(std::pow(10, status.variance_mpo_saturated_for));
-    //        m1.eigs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
-    //        m1.bfgs_max_iter   = std::clamp<size_t>(iter_factor, settings::precision::eigs_max_iter, 2e5);
-    //        m1.max_sites =
-    //            std::clamp(status.variance_mpo_saturated_for + 1, settings::strategy::multisite_mps_site_def, settings::strategy::multisite_mps_site_max);
-    //    }
-
-    if(status.algorithm_has_succeeded) m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
-
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
-    // Do eigs instead of bfgs when its cheap
-    if(m1.optSolver == OptSolver::BFGS and m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
+    // Do eig instead of eigs/bfgs when its cheap
+    if(m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
 
     if(status.env_expansion_alpha > 0) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -438,19 +429,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP | OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
         m2.optMode   = OptMode::VARIANCE;
-        // The longer variance has saturated for, the longer we should run.
-        if(status.algorithm_saturated_for > 0) m2.eigs_max_ncv = std::max(16, m2.eigs_max_ncv.value() * 2); // 4 is default
-        // The longer variance has saturated for, the more sites we should add
-        m2.max_sites    = std::min(settings::strategy::multisite_mps_site_def + status.algorithm_has_stuck_for, settings::strategy::multisite_mps_site_max);
-        m2.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m2.max_problem_size, m2.max_sites, m2.min_sites, "meta 2");
-        m2.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m2.chosen_sites);
-        m2.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m2.chosen_sites);
-        if(m2.chosen_sites.size() > 1) m2.alpha_expansion = std::nullopt;
-        if(m2.chosen_sites == m1.chosen_sites)
-            m2.optInit = OptInit::LAST_RESULT;
-        else
-            m2.optInit = OptInit::CURRENT_STATE;
+        m2.optInit   = OptInit::LAST_RESULT;
 
+        // The longer variance has saturated for, the longer we should run.
+        if(status.algorithm_has_stuck_for > 0) m2.eigs_max_ncv = std::max(16, m2.eigs_max_ncv.value() * 2); // 4 is default
         m2.retry = false;
         metas.emplace_back(m2);
     }
@@ -597,8 +579,7 @@ void xdmrg::single_xDMRG_step() {
         }
 
         // Update current energy density ε
-        status.energy_dens =
-            (tools::finite::measure::energy_per_site(tensors) - status.energy_min_per_site) / (status.energy_max_per_site - status.energy_min_per_site);
+        status.energy_dens = (tools::finite::measure::energy_per_site(tensors) - status.energy_min) / (status.energy_max - status.energy_min);
 
         if(not tensors.active_sites.empty()) {
             tools::log->trace("Updating variance record holder");
@@ -688,7 +669,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
     tensors.activate_sites(settings::precision::max_size_full_diag, 2);
     while(true) {
         randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, -1); // Do not use the bitfield: set to -1
-        status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min_per_site, status.energy_max_per_site);
+        status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);
         if(not outside_of_window) break;
@@ -702,8 +683,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
             status.energy_dens_window = new_energy_dens_window;
         }
     }
-    tools::log->info("Energy initial (per site) = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy_per_site(tensors),
-                     status.energy_dens, counter);
+    tools::log->info("Energy initial = {:.16f} | density = {:.8f} | retries = {}", tools::finite::measure::energy(tensors), status.energy_dens, counter);
     clear_convergence_status();
     init_energy_limits(std::nullopt, status.energy_dens_window);
     tools::log->info("Number of product state resets: {}", status.num_resets);
@@ -729,7 +709,7 @@ void xdmrg::find_energy_range() {
         fdmrg_gs.tensors.state->set_name("state_emin");
         tools::log = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
-        status.energy_min_per_site = tools::finite::measure::energy_per_site(fdmrg_gs.tensors);
+        status.energy_min = tools::finite::measure::energy(fdmrg_gs.tensors);
         write_to_file(StorageReason::EMIN_STATE, *fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges);
     }
 
@@ -742,7 +722,7 @@ void xdmrg::find_energy_range() {
         fdmrg_hs.tensors.state->set_name("state_emax");
         tools::log = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
-        status.energy_max_per_site = tools::finite::measure::energy_per_site(fdmrg_hs.tensors);
+        status.energy_max = tools::finite::measure::energy(fdmrg_hs.tensors);
         write_to_file(StorageReason::EMAX_STATE, *fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges);
     }
 

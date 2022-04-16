@@ -114,8 +114,8 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
-        inline bool          bfgs_fix_gradient_w_eigs   = true;                                    /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
-        inline OptEigs       prefer_eigs_over_bfgs      = OptEigs::WHEN_STUCK;                     /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose [ALWAYS | WHEN_SATURATED | WHEN_STUCK] */
+        inline bool          bfgs_fix_rnorm_w_eigs       = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
+        inline OptEigs       prefer_eigs_over_bfgs       = OptEigs::WHEN_SATURATED;                /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose [ALWAYS | WHEN_SATURATED] */
         inline bool          expand_envs_when_stuck      = true;                                   /*!< Use environment expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
@@ -134,6 +134,7 @@ namespace settings {
         inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_step          = MultisiteMove::MAX;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline MultisiteRise multisite_mps_rise          = MultisiteRise::SATURATED;               /*!< When to rise the number of sites in a DMRG step {OFF, SATURATED, ALWAYS} */
         inline std::string   target_sector               = "none";                                 /*!< Find an eigenstate in this parity sector. Choose between [random,randomAxis, none, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline std::string   initial_sector              = "random";                               /*!< Initialize state in this spin pattern/parity sector. Choose between [random, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
@@ -141,7 +142,7 @@ namespace settings {
         inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
 
         inline double   fes_decrement                    = 2;                       /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
-        inline BondGrow bond_grow_mode                   = BondGrow::ITERATION;     /*!< If and when to increase the bond dimension limit. Choose OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
+        inline BondGrow bond_grow_mode                   = BondGrow::ITERATION;     /*!< If and when to increase the bond dimension limit. Choose OFF, SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
         inline double   bond_grow_rate                   = 8;                       /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
     }
 
@@ -290,7 +291,7 @@ namespace settings {
         inline long     opt_subspace_bond_limit         = 32;                      /*!< Bond limit during initial SUBSPACE optimization. set to <= 0 for unlimited */
         inline size_t   print_freq                      = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline double   energy_density_target           = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double   energy_density_window           = 0.05;                    /*!< Accept states inside of energy_tgt_per_site +- energy_dens_window. */
+        inline double   energy_density_window           = 0.05;                    /*!< Accept states inside of energy_tgt +- energy_dens_window. */
         inline size_t   max_states                      = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
         inline bool     store_wavefn                    = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         inline bool     finish_if_entanglm_saturated    = true;                    /*!< Finish early as soon as entanglement has saturated */

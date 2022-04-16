@@ -10,8 +10,9 @@
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
+enum class MultisiteRise { OFF, SATURATED, ALWAYS };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
-enum class BondGrow { OFF, IF_SATURATED, IF_STUCK, ITERATION, ITERATION2, ITERATION4 };
+enum class BondGrow { OFF, TRUNCATED, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
@@ -33,7 +34,7 @@ enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
 enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE, SIMPS };
 enum class OptSolver { EIGS, BFGS };
-enum class OptRitz { LR, SR, SM }; // Smallest Real or Largest Real, i.e. ground state or max state. Relevant for fdmrg.
+enum class OptRitz { LR, SR, SM }; // Smallest Real or Largest Real, i.e. ground state or max state. Use SM for middle of spectrum states.
 enum class OptWhen : int {
     NEVER              = 0,
     PREV_FAIL_GRADIENT = 1,
@@ -44,7 +45,7 @@ enum class OptWhen : int {
     PREV_FAIL_ERROR    = 32,
     ALWAYS             = 64
 };
-enum class OptEigs { ALWAYS, WHEN_SATURATED, WHEN_STUCK }; // When to prefer eigs over bfgs (the default)
+enum class OptEigs { ALWAYS, WHEN_SATURATED }; // When to prefer eigs over bfgs (the default)
 
 enum class OptExit : int {
     SUCCESS       = 0,
@@ -192,7 +193,11 @@ constexpr std::string_view enum2sv(const T &item) {
         case MultisiteMove::MID :                                       return "MID";
         case MultisiteMove::MAX :                                       return "MAX";
     }
-
+    if constexpr(std::is_same_v<T, MultisiteRise>) switch(item){
+        case MultisiteRise::OFF :                                       return "OFF";
+        case MultisiteRise::SATURATED :                                 return "SATURATED";
+        case MultisiteRise::ALWAYS :                                    return "ALWAYS";
+    }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::SR)                                         return "SR";
         if(item == OptRitz::LR)                                         return "LR";
@@ -205,11 +210,9 @@ constexpr std::string_view enum2sv(const T &item) {
     }
     if constexpr(std::is_same_v<T, BondGrow>) {
         if(item == BondGrow::OFF)                                       return "OFF";
-        if(item == BondGrow::IF_SATURATED)                              return "IF_SATURATED";
-        if(item == BondGrow::IF_STUCK)                                  return "IF_STUCK";
+        if(item == BondGrow::TRUNCATED)                                 return "TRUNCATED";
+        if(item == BondGrow::SATURATED)                                 return "SATURATED";
         if(item == BondGrow::ITERATION)                                 return "ITERATION";
-        if(item == BondGrow::ITERATION2)                                return "ITERATION2";
-        if(item == BondGrow::ITERATION4)                                return "ITERATION4";
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == GateMove::OFF)                                       return "OFF";
@@ -386,7 +389,6 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T,OptEigs>){
         if(item == OptEigs::ALWAYS)                                    return "ALWAYS";
         if(item == OptEigs::WHEN_SATURATED)                            return "WHEN_SATURATED";
-        if(item == OptEigs::WHEN_STUCK)                                return "WHEN_STUCK";
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == OptMark::PASS)                                      return "PASS";
@@ -455,6 +457,7 @@ constexpr auto sv2enum(std::string_view item) {
         AlgorithmType,
         AlgorithmStop,
         MultisiteMove,
+        MultisiteRise,
         SVDMode,
         BondGrow,
         GateMove,
@@ -499,6 +502,11 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "MID")                                   return MultisiteMove::MID;
         if(item == "MAX")                                   return MultisiteMove::MAX;
     }
+    if constexpr(std::is_same_v<T, MultisiteRise>) {
+        if(item == "OFF")                                   return MultisiteRise::OFF;
+        if(item == "SATURATED")                             return MultisiteRise::SATURATED;
+        if(item == "ALWAYS")                                return MultisiteRise::ALWAYS;
+    }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "SR")                                    return OptRitz::SR;
         if(item == "LR")                                    return OptRitz::LR;
@@ -511,11 +519,9 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, BondGrow>) {
         if(item == "OFF")                                   return BondGrow::OFF;
-        if(item == "IF_SATURATED")                          return BondGrow::IF_SATURATED;
-        if(item == "IF_STUCK")                              return BondGrow::IF_STUCK;
+        if(item == "TRUNCATED")                             return BondGrow::TRUNCATED;
+        if(item == "SATURATED")                             return BondGrow::SATURATED;
         if(item == "ITERATION")                             return BondGrow::ITERATION;
-        if(item == "ITERATION2")                            return BondGrow::ITERATION2;
-        if(item == "ITERATION4")                            return BondGrow::ITERATION4;
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == "OFF")                                   return GateMove::OFF;
@@ -693,7 +699,6 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T,OptEigs>){
         if(item == "ALWAYS")                                return OptEigs::ALWAYS;
         if(item == "WHEN_SATURATED")                        return OptEigs::WHEN_SATURATED;
-        if(item == "WHEN_STUCK")                            return OptEigs::WHEN_STUCK;
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == "PASS")                                  return OptMark::PASS;
