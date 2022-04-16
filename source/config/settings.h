@@ -141,9 +141,9 @@ namespace settings {
         inline StateInit     initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
 
-        inline double   fes_decrement                    = 2;                       /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
-        inline BondGrow bond_grow_mode                   = BondGrow::ITERATION;     /*!< If and when to increase the bond dimension limit. Choose OFF, SATURATED, IF_STUCK, ITERATION, ITERATION2 or ITERATION4. */
-        inline double   bond_grow_rate                   = 8;                       /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
+        inline double   fes_decrement                    = 2;                                      /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
+        inline BondGrow bond_grow_mode                   = BondGrow::OFF;                          /*!< If and when to increase the bond dimension limit. Choose OFF, TRUNCATED, SATURATED, ITERATION. */
+        inline double   bond_grow_rate                   = 8;                                      /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
     }
 
 
