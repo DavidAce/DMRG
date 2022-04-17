@@ -40,9 +40,9 @@ jobitem = {
 with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
     sacct_command = ["sacct","-X", "--parsable2", "--noheader", '--format=jobid,jobidraw,jobname,exitcode,state']
     if args.logscan:
-        sacct_command.append("--state=failed,timeout,deadline,node_fail,completed")
+        sacct_command.append("--state=oom,failed,timeout,deadline,node_fail,completed")
     else:
-        sacct_command.append("--state=failed,timeout,deadline,node_fail")
+        sacct_command.append("--state=oom,failed,timeout,deadline,node_fail")
 
     sacct_command.extend(["-u", args.user])
     if args.jobname:
