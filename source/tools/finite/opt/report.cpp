@@ -23,7 +23,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
                       "|Δf|",
                       "|∇Ψ|ᵐᵃˣ",
                       "time [s]",
-                      "avg [s/op]");
+                      "avg [op/s]");
     for(auto &entry : bfgs_log){
         tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<7} {:<22.16f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<10.2e} {:<10.2e}"),
         entry.description, entry.size,
@@ -33,7 +33,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
         entry.iter, entry.counter,
         entry.delta_f, entry.max_grad_norm,
         entry.time,
-        entry.time/std::max(1.0,static_cast<double>(entry.counter)));
+        entry.counter/entry.time);
     }
     bfgs_log.clear();
 }
@@ -129,7 +129,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                       "mv",
                       "pc",
                       "time [s]",
-                      "avg [s/op]");
+                      "avg [mv/s]");
 
     for(const auto &[idx,entry] : iter::enumerate(eigs_log)){
         if(max_entries and max_entries.value() <= idx) break;
@@ -141,7 +141,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                           entry.overlap,entry.norm, entry.rnorm,
                           entry.iter, entry.mv, entry.pc,
                           entry.time,
-                          entry.time/std::max(1.0,static_cast<double>(entry.mv)));
+                          entry.mv/entry.time));
     }
     eigs_log.clear();
 }
