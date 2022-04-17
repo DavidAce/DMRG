@@ -122,7 +122,7 @@ namespace tools::finite::h5 {
     void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf = tid::tic_scope("bond_dims", tid::level::extra);
+        auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::extra);
         data_as_table(h5file, table_prefix, status, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
     }
 
