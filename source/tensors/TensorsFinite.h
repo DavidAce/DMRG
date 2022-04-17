@@ -1,13 +1,13 @@
 #pragma once
 
+#include "config/enums.h"
+#include "math/svd/settings.h"
+#include "measure/MeasurementsTensorsFinite.h"
+#include "tensors/site/env/EnvPair.h"
 #include <array>
 #include <complex>
-#include <config/enums.h>
-#include <math/svd/settings.h>
-#include <math/tenx/fwd_decl.h>
-#include <measure/MeasurementsTensorsFinite.h>
 #include <memory>
-#include <tensors/site/env/EnvPair.h>
+#include <unsupported/Eigen/CXX11/Tensor>
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;

@@ -2,7 +2,7 @@
 #include <array>
 #include <optional>
 #include <vector>
-
+#include <unsupported/Eigen/CXX11/Tensor>
 struct MeasurementsStateFinite {
     std::optional<size_t>                   length                        = std::nullopt;
     std::optional<long>                     bond_mid                      = std::nullopt;

@@ -1,5 +1,6 @@
 
 #pragma once
+#include <array>
 #include <ceres/first_order_function.h>
 #include <ceres/local_parameterization.h>
 #include <memory>
@@ -21,23 +22,23 @@ namespace tools::finite::opt::internal {
 
     class bfgs_base_functor : public ceres::FirstOrderFunction {
         protected:
-        int                    num_parameters; // Includes lagrangian multiplier(s)
-        long                   size;           // Does not include lagrange multiplier (i.e. size + 1 = num_parameters if LagrangeNorm::ON)
-        Eigen::DSizes<long, 3> dims;
-        mutable double         energy{};
-        mutable double         variance{};
-        mutable double         energy_shift;
-        mutable double         energy_offset{};
-        mutable double         delta_f{};
-        mutable double         max_grad_norm = 0;
-        mutable double         norm_offset{};
-        mutable double         norm{};
-        mutable double         resnorm = 0;
-        mutable size_t         counter = 0;
-        mutable long           ops     = 0;
-        size_t                 length;
-        size_t                 iteration;
-        bool                   have_bounds_on_energy = false;
+        int                 num_parameters; // Includes lagrangian multiplier(s)
+        long                size;           // Does not include lagrange multiplier (i.e. size + 1 = num_parameters if LagrangeNorm::ON)
+        std::array<long, 3> dims;
+        mutable double      energy{};
+        mutable double      variance{};
+        mutable double      energy_shift;
+        mutable double      energy_offset{};
+        mutable double      delta_f{};
+        mutable double      max_grad_norm = 0;
+        mutable double      norm_offset{};
+        mutable double      norm{};
+        mutable double      resnorm = 0;
+        mutable size_t      counter = 0;
+        mutable long        ops     = 0;
+        size_t              length;
+        size_t              iteration;
+        bool                have_bounds_on_energy = false;
 
         public:
         //        template<typename> friend class NormParametrization;

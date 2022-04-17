@@ -1,9 +1,10 @@
 #pragma once
 
+#include "general/iter.h"
 #include "num.h"
+#include <algorithm>
 #include <cmath>
 #include <complex>
-#include <general/iter.h>
 #include <iterator>
 #include <numeric>
 #include <optional>

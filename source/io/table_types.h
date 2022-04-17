@@ -3,9 +3,11 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "tid/enums.h"
 #include <array>
-#include <h5pp/details/h5ppHid.h>
-#include <hdf5.h>
-#include <hdf5_hl.h>
+#include <cstdio>
+#include <fmt/core.h>
+#include <h5pp/h5pp.h>
+#include <memory>
+#include <unordered_map>
 #include <vector>
 
 class h5pp_table_measurements_finite {

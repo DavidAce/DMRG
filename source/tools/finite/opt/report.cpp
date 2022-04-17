@@ -33,7 +33,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
         entry.iter, entry.counter,
         entry.delta_f, entry.max_grad_norm,
         entry.time,
-        entry.counter/entry.time);
+        static_cast<double>(entry.counter)/entry.time);
     }
     bfgs_log.clear();
 }
@@ -141,7 +141,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                           entry.overlap,entry.norm, entry.rnorm,
                           entry.iter, entry.mv, entry.pc,
                           entry.time,
-                          entry.mv/entry.time));
+                          static_cast<double>(entry.mv)/entry.time);
     }
     eigs_log.clear();
 }

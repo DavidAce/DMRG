@@ -1,6 +1,9 @@
 #pragma once
+#include <h5pp/details/h5ppHid.h>
 #include <map>
 #include <string>
+#include <unordered_map>
+
 class AlgorithmStatus;
 enum class StorageLevel;
 enum class ModelType;

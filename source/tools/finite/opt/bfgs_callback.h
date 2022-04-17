@@ -1,6 +1,9 @@
 
 
 #include <ceres/iteration_callback.h>
+#include <complex>
+#include <memory>
+
 namespace spdlog {
     class logger;
 }

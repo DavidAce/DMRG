@@ -12,34 +12,6 @@
 #include <string>
 
 namespace tools::common::h5 {
-    //
-    //    void save::bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view
-    //    link) {
-    //        // from h5table
-    //        if(save_log.empty()) {
-    //            try {
-    //                if(h5file.linkExists(link)) {
-    //                    auto step = h5file.readAttribute<uint64_t>("step", link);
-    //                    auto iter = h5file.readAttribute<uint64_t>("iter", link);
-    //                    save_log.insert(std::make_pair(std::string(link), std::make_pair(iter, step)));
-    //                }
-    //            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log: {}", ex.what()); }
-    //        }
-    //    }
-
-    //    void save::bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file,
-    //                                  std::string_view state_prefix) {
-    //        if(save_log.empty()) {
-    //            try {
-    //                uint64_t step = 0;
-    //                uint64_t iter = 0;
-    //                if(h5file.linkExists("common/step")) step = h5file.readAttribute<uint64_t>(state_prefix, "common/step");
-    //                if(h5file.linkExists("common/iteration")) iter = h5file.readAttribute<uint64_t>(state_prefix, "common/iteration");
-    //                save_log.insert(std::make_pair(state_prefix, std::make_pair(iter, step)));
-    //            } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
-    //        }
-    //    }
-
     void save::bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix) {
         if(save_log.empty()) {
             try {

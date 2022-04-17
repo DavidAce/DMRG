@@ -2,6 +2,7 @@
 #include "enums.h"
 #include "settings.h"
 #include "solution.h"
+#include <memory>
 
 namespace spdlog {
     class logger;
