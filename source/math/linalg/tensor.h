@@ -31,7 +31,7 @@ namespace linalg::tensor {
         // Evaluate the expression if needed
         Eigen::TensorForcedEvalOp<const T> eval = expr.eval();
         Evaluator                          tensor(eval, Eigen::DefaultDevice());
-        tensor.evalSubExprsIfNeeded(NULL);
+        tensor.evalSubExprsIfNeeded(nullptr);
         Eigen::Index total_size = Eigen::internal::array_prod(tensor.dimensions());
 
         if(total_size > 0 and tensor.dimensions().size() > 0) {
@@ -97,9 +97,12 @@ namespace linalg::tensor {
                 else
                     str += fmt::format("]");
             }
+            tensor.cleanup();
             return str;
-        } else
+        } else {
+            tensor.cleanup();
             return "[]";
+        }
     }
 
     template<typename Scalar = double>

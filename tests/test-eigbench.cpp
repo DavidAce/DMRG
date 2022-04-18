@@ -34,13 +34,13 @@ void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, 
 std::string solve(const eig::settings &config, const h5pp::File &h5file, std::string_view group) {
     std::string tgt;
     {
-        auto dims  = h5file.readAttribute<std::array<long, 3>>("dims", group);
-        auto time  = h5file.readAttribute<double>("time", group);
-        auto iter  = h5file.readAttribute<long>("iter", group);
-        auto eval  = h5file.readAttribute<double>("eval", group);
-        auto rnorm = h5file.readAttribute<double>("rnorm", group);
-        auto mv    = h5file.readAttribute<long>("mv", group);
-        auto op    = h5file.readAttribute<long>("op", group);
+        auto dims  = h5file.readAttribute<std::array<long, 3>>(group, "dims");
+        auto time  = h5file.readAttribute<double>(group, "time");
+        auto iter  = h5file.readAttribute<long>(group, "iter");
+        auto eval  = h5file.readAttribute<double>(group, "eval");
+        auto rnorm = h5file.readAttribute<double>(group, "rnorm");
+        auto mv    = h5file.readAttribute<long>(group, "mv");
+        auto op    = h5file.readAttribute<long>(group, "op");
         tgt = fmt::format("Target | iter {:>5} | op {:>5} | mv {:>7} | rnorm {:8.2e} | var {:>12.6e} | time {:>10.3f} s | dims {}", iter, op, mv, rnorm, eval,
                           time, dims);
     }
@@ -119,7 +119,7 @@ int main() {
     std::vector<eig::settings> configs(1);
     // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
     configs[0].tol                         = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
-    configs[0].maxIter                     = 20000;
+    configs[0].maxIter                     = 10;    // TODO: Should be thousands
     configs[0].maxNev                      = 1;
     configs[0].maxNcv                      = 4;
     configs[0].compress                    = false;
@@ -142,11 +142,13 @@ int main() {
         std::vector<std::string> msg;
 
         for(const auto &group : h5file.findGroups("eigs-")) {
-            if(group.find("eigs-0") != std::string::npos) continue;
-            if(group.find("eigs-1") != std::string::npos) continue;
-            auto size = h5file.readAttribute<long>("size", group);
-            auto dims = h5file.readAttribute<std::array<long, 3>>("dims", group);
+            auto size = h5file.readAttribute<long>(group, "size");
+            auto dims = h5file.readAttribute<std::array<long, 3>>(group, "dims");
             tools::log->info("Running group: {} | size {} | dims {}", group, size, dims);
+            if(size > 1024) {
+                tools::log->warn("Skipping large problem. Comment this line to run more benchmarks.");
+                continue;
+            }
             for(const auto &config : configs) { msg.push_back(solve(config, h5file, group)); }
         }
         tools::log->debug("Result summary:");
