@@ -28,7 +28,7 @@ namespace tools::finite::h5 {
             if constexpr(sfinae::is_specialization_v<T, std::optional>){
                 if(data.has_value()) data_as_table(h5file, table_prefix, status, data.value(), table_name, table_title, fieldname);
             }
-            else if constexpr (sfinae::has_data_v<T> and sfinae::has_size_v<T>) data_as_table(h5file, table_prefix, status, data.data(), data.size(), table_name, table_title, fieldname);
+            else if constexpr (sfinae::has_data_v<T> and sfinae::has_size_v<T>) data_as_table(h5file, table_prefix, status, data.data(), static_cast<size_t>(data.size()), table_name, table_title, fieldname);
             else if constexpr (std::is_arithmetic_v<T>) data_as_table(h5file, table_prefix, status, &data, 1, table_name, table_title, fieldname);
             else static_assert(sfinae::invalid_type_v<T> and "Datatype must have .data() and .size() (or be std::optional of such)");
         }
