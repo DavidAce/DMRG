@@ -234,8 +234,8 @@ void flbit::run_algorithm() {
 }
 
 void flbit::run_fes_analysis() {
-    if(not settings::strategy::fes_decrement) return;
-    throw std::logic_error("FES is not yet implemented for flbit");
+    if(settings::strategy::fes_decrement == 0) return;
+    tools::log->warn("FES is not yet implemented for flbit");
 }
 
 void flbit::single_flbit_step() {
