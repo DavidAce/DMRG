@@ -14,8 +14,9 @@ option(DYNAMIC_ARCH "" ON)
 
 
 ExternalProject_Add(external_OpenBLAS
-        URL      https://github.com/xianyi/OpenBLAS/archive/v0.3.17.tar.gz
-        URL_MD5  5429954163bcbaccaa13e11fe30ca5b6
+        URL      https://github.com/xianyi/OpenBLAS/releases/download/v0.3.20/OpenBLAS-0.3.20.tar.gz
+#        URL_MD5  5429954163bcbaccaa13e11fe30ca5b6 # 0.3.17
+        URL_MD5  abfaa43d995046ca4c56ccf14165c93c # 0.3.20
         PREFIX      ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         #Give Ninja access to the terminal.

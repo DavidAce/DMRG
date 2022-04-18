@@ -28,7 +28,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     if (NOT MKL_FOUND)
         # If MKL is not on openblas will be used instead. Includes blas, lapack and lapacke
         if(NOT DEFINED OPENBLAS_DYNAMIC_ARCH)
-            set(OPENBLAS_DYNAMIC_ARCH ON)
+            set(OPENBLAS_DYNAMIC_ARCH OFF)
         endif()
         if(NOT DEFINED OPENBLAS_TARGET)
             set(OPENBLAS_TARGET HASWELL)

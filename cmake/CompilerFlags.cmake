@@ -35,7 +35,7 @@ else()
     set(MARCH -march=${${PROJECT_UNAME}_MARCH})
     set(MTUNE -mtune=${${PROJECT_UNAME}_MTUNE})
     set(OPENBLAS_TARGET HASWELL)
-    set(OPENBLAS_DYNAMIC_ARCH ON)
+    set(OPENBLAS_DYNAMIC_ARCH OFF)
 endif()
 message(DEBUG "Using ${MARCH} ${MTUNE}")
 
