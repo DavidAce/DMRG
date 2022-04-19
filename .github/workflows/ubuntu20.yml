@@ -92,8 +92,8 @@ jobs:
           pip install conan
           conan user
 
-      - name: Setup OpenBLAS core type
-        run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
+#      - name: Setup OpenBLAS core type
+#        run: echo "OPENBLAS_CORETYPE=Haswell" >> $GITHUB_ENV
 
         # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
