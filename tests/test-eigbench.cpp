@@ -9,7 +9,18 @@
 #include <tools/common/log.h>
 #include <tools/common/prof.h>
 #include <tools/finite/opt_mps.h>
-#include <cblas.h>
+
+#if defined(OPENBLAS_AVAILABLE)
+    #include <openblas/cblas.h>
+    #include <openblas/openblas_config.h>
+#endif
+
+#if defined(MKL_AVAILABLE)
+    #define MKL_Complex8  std::complex<float>
+    #define MKL_Complex16 std::complex<double>
+    #include <mkl.h>
+    #include <mkl_service.h>
+#endif
 
 template<typename MatrixProductType>
 void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {

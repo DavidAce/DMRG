@@ -33,9 +33,14 @@ target_link_libraries(deps INTERFACE
         BLAS::BLAS
         )
 if(TARGET unwind::unwind)
-    target_link_libraries(deps INTERFACE unwind::unwind)
     target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
+    target_link_libraries(deps INTERFACE unwind::unwind)
+    target_link_libraries(Ceres::ceres INTERFACE unwind::unwind)
+    if(TARGET glog::glog)
+        target_link_libraries(glog::glog INTERFACE unwind::unwind)
+    endif()
 endif()
+
 
 if(TARGET Backward::Backward)
     target_link_libraries(deps INTERFACE Backward::Backward)
