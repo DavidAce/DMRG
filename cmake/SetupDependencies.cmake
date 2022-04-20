@@ -32,6 +32,9 @@ target_link_libraries(deps INTERFACE
         Ceres::ceres
         BLAS::BLAS
         )
+if(TARGET libunwind::unwind) # This is the library name from conan
+    add_library(unwind::unwind ALIAS libunwind::unwind)
+endif()
 if(TARGET unwind::unwind)
     target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
     target_link_libraries(deps INTERFACE unwind::unwind)
