@@ -72,7 +72,7 @@ def parse(project_name):
         parser.set_defaults(mkl=True, lto=True, pch=True, ccache=True, generator='Ninja', package_manager='conan', arch='native')
         args = parser.parse_args()
     if args.default_actions:
-        parser.set_defaults(mkl=False, lto=False, pch=False, ccache=True, generator=None, package_manager='conan', arch='generic', verbose=True, loglevel='DEBUG', make_threads=2, test=True, asan=True, coverage=True )
+        parser.set_defaults(mkl=False, lto=False, pch=False, ccache=False, generator=None, package_manager='conan', arch='generic', verbose=True, loglevel='DEBUG', make_threads=2, test=True, asan=True, coverage=True )
         args = parser.parse_args()
     return args
 
