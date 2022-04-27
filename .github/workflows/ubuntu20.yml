@@ -106,10 +106,10 @@ jobs:
           ctest -C ${{ matrix.build_type }} --extra-verbose -R dmrg
 
       - name: Upload conan binaries
-          if: matrix.manager == 'conan'
-          run: |
-            conan upload hdf5     --all --confirm -r conan-dmrg
-            conan upload openblas --all --confirm -r conan-dmrg
+        if: matrix.manager == 'conan'
+        run: |
+          conan upload hdf5     --all --confirm -r conan-dmrg
+          conan upload openblas --all --confirm -r conan-dmrg
 
 
       - name: Coverage
