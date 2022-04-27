@@ -69,7 +69,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         list(APPEND DMRG_CONAN_OPTIONS OPTIONS "ceres-solver:use_glog=False")
     endif()
 
-    conan_add_remote(CONAN_COMMAND ${CONAN_COMMAND} NAME conan-dmrg URL https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg)
+    conan_add_remote(CONAN_COMMAND ${CONAN_COMMAND} NAME conan-dmrg INDEX 0 URL https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg)
     conan_cmake_autodetect(CONAN_AUTODETECT)
     conan_cmake_install(
             CONAN_COMMAND ${CONAN_COMMAND}

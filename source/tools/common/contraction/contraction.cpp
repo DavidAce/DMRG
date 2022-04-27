@@ -1,14 +1,14 @@
 #include "../contraction.h"
-#include <io/fmt.h>
-#include <math/tenx.h>
-#include <tid/tid.h>
+#include "io/fmt.h"
+#include "math/tenx.h"
+#include "tid/tid.h"
 
 #if defined(DMRG_SAVE_CONTRACTION)
     #include <h5pp/h5pp.h>
 #endif
 #if defined(DMRG_BENCH_CONTRACTION)
-    #include <math/num.h>
-    #include <tid/tid.h>
+    #include "math/num.h"
+    #include "tid/tid.h"
 namespace settings {
     constexpr static bool bench_expval = true;
 }

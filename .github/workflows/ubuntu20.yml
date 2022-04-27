@@ -91,6 +91,7 @@ jobs:
         run: |
           pip install conan
           conan user
+          conan remote add conan-dmrg https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg --insert
 
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=NEHALEM" >> $GITHUB_ENV
@@ -103,6 +104,13 @@ jobs:
         run: |
           cd build/${{ matrix.build_type }}
           ctest -C ${{ matrix.build_type }} --extra-verbose -R dmrg
+
+      - name: Upload conan binaries
+          if: matrix.manager == 'conan'
+          run: |
+            conan upload hdf5     --all --confirm -r conan-dmrg
+            conan upload openblas --all --confirm -r conan-dmrg
+
 
       - name: Coverage
         if: matrix.compiler == 'gcc' && matrix.linkage == 'static' && matrix.manager == 'cmake'
