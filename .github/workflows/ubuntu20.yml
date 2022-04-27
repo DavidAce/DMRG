@@ -14,7 +14,7 @@ jobs:
     env:
       cache-name: cache-v1-${{ matrix.compiler }}-${{ matrix.linkage }}-${{ matrix.manager }}
     strategy:
-      fail-fast: true # True stops all on first error. Stick to false when debugging
+      fail-fast: false # True stops all on first error. Stick to false when debugging
       matrix:
         include:
           - { compiler: gcc,   manager: cmake        , build_type: Debug   , linkage: static}
@@ -107,9 +107,12 @@ jobs:
 
       - name: Upload conan binaries
         if: matrix.manager == 'conan'
+        continue-on-error: true
         run: |
-          conan upload hdf5     --all --confirm -r conan-dmrg
-          conan upload openblas --all --confirm -r conan-dmrg
+          conan user david --remote conan-dmrg --password ${{ secrets.CONAN_PASSSWORD }}
+          conan upload hdf5         --all --confirm -r conan-dmrg
+          conan upload openblas     --all --confirm -r conan-dmrg
+          conan upload ceres-solver --all --confirm -r conan-dmrg
 
 
       - name: Coverage
