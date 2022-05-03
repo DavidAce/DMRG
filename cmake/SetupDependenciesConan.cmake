@@ -52,9 +52,9 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Download cmake-conan integrator
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan/conan.cmake")
         message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/release/0.17/conan.cmake"
+        file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
                 "${CMAKE_BINARY_DIR}/conan/conan.cmake"
-                EXPECTED_HASH MD5=52a255a933397fdce3d0937f9c737e98
+                EXPECTED_HASH MD5=81d5eab13a49f43527e35a90bfac6960
                 TLS_VERIFY ON)
     endif()
     include(${CMAKE_BINARY_DIR}/conan/conan.cmake)
@@ -80,6 +80,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             ENV libunwind:LDFLAGS=-fcommon
             ENV libunwind:CXXFLAGS=-fcommon
             ENV libunwind:CFLAGS=-fcommon
+            ENV CC=${CMAKE_C_COMPILER} # Fixes issue with CMake not detecting the right compiler when not building from scratch
+            ENV CXX=${CMAKE_CXX_COMPILER} # Fixes issue with CMake not detecting the right compiler when not building from scratch
             ${DMRG_CONAN_OPTIONS}
             PATH_OR_REFERENCE ${CMAKE_SOURCE_DIR}
     )
