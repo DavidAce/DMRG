@@ -11,6 +11,8 @@
       "hidden": true,
       "displayName": "Default Config",
       "description": "Default build using Ninja generator",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_CXX_STANDARD": {
           "type": "STRING",
