@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <complex>
+#include <exception>
 #include <iterator>
 #include <numeric>
 #include <vector>
@@ -100,7 +101,7 @@ namespace num {
     template<typename T>
     [[nodiscard]] inline T mod(const T x, const T y) {
         if constexpr(!ndebug)
-            if(y == 0) throw("num::mod(x,y): divisor y == 0");
+            if(y == 0) throw std::logic_error("num::mod(x,y): divisor y == 0");
         if constexpr(std::is_integral_v<T>) {
             if constexpr(std::is_unsigned_v<T>)
                 return x >= y ? x % y : x;
@@ -123,7 +124,7 @@ namespace num {
     template<typename T>
     [[nodiscard]] inline T pbc(const T x, const T y) {
         if constexpr(!ndebug)
-            if(y == 0) throw("num::pbc(x,y): divisor y == 0");
+            if(y == 0) throw std::logic_error("num::pbc(x,y): divisor y == 0");
         if constexpr(std::is_signed_v<T>) {
             if(x >= 0 and x < y) return x;
             if(x < 0 and x >= -2 * y) return x + y;
