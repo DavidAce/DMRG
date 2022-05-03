@@ -143,10 +143,10 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
 
     std::sort(sites.begin(), sites.end());
     if(at_edge or shape.empty() or sizes.empty())
-        tools::log->debug("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | reason {}",
+        tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | reason {}",
                           initial_position, direction, min_sites, max_sites, threshold, sites, reason);
     else
-        tools::log->debug("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | "
+        tools::log->trace("Multisite activation: site {} | direction {} | sites min {} max {} | max problem size {} | chosen sites {} | "
                           "shape {} = {} | reason {}",
                           initial_position, direction, min_sites, max_sites, threshold, sites, shape.back(), sizes.back(), reason);
 

@@ -19,8 +19,8 @@ namespace tools::infinite::h5::save {
             try {
                 for(auto &link : links) {
                     if(h5file.linkExists(link)) {
-                        auto step      = h5file.readAttribute<uint64_t>("step", link);
-                        auto iter      = h5file.readAttribute<uint64_t>("iter", link);
+                        auto step      = h5file.readAttribute<uint64_t>(link, "step");
+                        auto iter      = h5file.readAttribute<uint64_t>(link, "iter");
                         save_log[link] = std::make_pair(iter, step);
                     }
                 }
@@ -57,9 +57,9 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
     if(save_log[dset_schmidt] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
         h5file.writeDataset(state.LC(), dset_schmidt, layout);
-        h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dset_schmidt);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", dset_schmidt);
-        h5file.writeAttribute(status.bond_max, "bond_max", dset_schmidt);
+        h5file.writeAttribute(state.get_truncation_error(), dset_schmidt, "truncation_error");
+        h5file.writeAttribute(status.bond_lim, dset_schmidt, "bond_lim");
+        h5file.writeAttribute(status.bond_max, dset_schmidt, "bond_max");
         save_log[dset_schmidt] = save_point;
     }
     if(storage_level < StorageLevel::NORMAL) return;
@@ -68,34 +68,34 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
         auto dsetName = mps_prefix + "/L_A";
         if(save_log[dsetName] != save_point) {
             h5file.writeDataset(state.LA(), dsetName);
-            h5file.writeAttribute(state.LA().dimensions(), "dimensions", dsetName);
-            h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-            h5file.writeAttribute(status.bond_lim, "bond_lim", dsetName);
-            h5file.writeAttribute(status.bond_max, "bond_max", dsetName);
+            h5file.writeAttribute(state.LA().dimensions(), dsetName, "dimensions");
+            h5file.writeAttribute(state.get_truncation_error(), dsetName, "truncation_error");
+            h5file.writeAttribute(status.bond_lim, dsetName, "bond_lim");
+            h5file.writeAttribute(status.bond_max, dsetName, "bond_max");
             save_log[dsetName] = save_point;
         }
         dsetName = mps_prefix + "/L_B";
         if(save_log[dsetName] != save_point) {
             h5file.writeDataset(state.LB(), dsetName);
-            h5file.writeAttribute(state.LB().dimensions(), "dimensions", dsetName);
-            h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-            h5file.writeAttribute(status.bond_lim, "bond_lim", dsetName);
-            h5file.writeAttribute(status.bond_max, "bond_max", dsetName);
+            h5file.writeAttribute(state.LB().dimensions(), dsetName, "dimensions");
+            h5file.writeAttribute(state.get_truncation_error(), dsetName, "truncation_error");
+            h5file.writeAttribute(status.bond_lim, dsetName, "bond_lim");
+            h5file.writeAttribute(status.bond_max, dsetName, "bond_max");
             save_log[dsetName] = save_point;
         }
         dsetName = mps_prefix + "/L_C";
         if(save_log[dsetName] != save_point) {
             h5file.writeDataset(state.LC(), dsetName);
-            h5file.writeAttribute(state.LC().dimensions(), "dimensions", dsetName);
-            h5file.writeAttribute(state.get_truncation_error(), "truncation_error", dsetName);
-            h5file.writeAttribute(status.bond_lim, "bond_lim", dsetName);
-            h5file.writeAttribute(status.bond_max, "bond_max", dsetName);
+            h5file.writeAttribute(state.LC().dimensions(), dsetName, "dimensions");
+            h5file.writeAttribute(state.get_truncation_error(), dsetName, "truncation_error");
+            h5file.writeAttribute(status.bond_lim, dsetName, "bond_lim");
+            h5file.writeAttribute(status.bond_max, dsetName, "bond_max");
             save_log[dsetName] = save_point;
         }
-        h5file.writeAttribute(status.iter, "iter", mps_prefix);
-        h5file.writeAttribute(status.step, "step", mps_prefix);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", mps_prefix);
-        h5file.writeAttribute(status.bond_max, "bond_max", mps_prefix);
+        h5file.writeAttribute(status.iter, mps_prefix, "iter");
+        h5file.writeAttribute(status.step, mps_prefix, "step");
+        h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
+        h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
     }
     /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
     if(storage_level < StorageLevel::FULL) {
@@ -105,9 +105,9 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
 
     if(save_log[mps_prefix] != save_point) {
         h5file.writeDataset(state.A_bare(), mps_prefix + "/M_A");
-        h5file.writeAttribute(state.A_bare().dimensions(), "dimensions", mps_prefix + "/M_A");
+        h5file.writeAttribute(state.A_bare().dimensions(), mps_prefix + "/M_A", "dimensions");
         h5file.writeDataset(state.B(), mps_prefix + "/M_B");
-        h5file.writeAttribute(state.B().dimensions(), "dimensions", mps_prefix + "/M_B");
+        h5file.writeAttribute(state.B().dimensions(), mps_prefix + "/M_B", "dimensions");
         save_log[mps_prefix] = save_point;
     }
 }

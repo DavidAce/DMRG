@@ -6,7 +6,6 @@
 #include "io/fmt.h"
 #include "math/num.h"
 #include "math/rnd.h"
-#include "qm/spin.h"
 #include "qm/time.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
@@ -17,7 +16,6 @@
 #include "tools/common/prof.h"
 #include "tools/finite/h5.h"
 #include "tools/finite/measure.h"
-#include "tools/finite/mps.h"
 #include "tools/finite/multisite.h"
 #include "tools/finite/opt.h"
 #include "tools/finite/opt_meta.h"
@@ -88,8 +86,8 @@ void xdmrg::resume() {
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet"); break;
-            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet"); break;
+            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet");
+            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet");
             case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
@@ -116,8 +114,8 @@ void xdmrg::run_default_task_list() {
             case StateInit::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
             case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet"); break;
-            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet"); break;
+            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet");
+            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet");
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -249,6 +247,7 @@ void xdmrg::run_algorithm() {
 
 void xdmrg::run_fes_analysis() {
     if(settings::strategy::fes_decrement == 0) return;
+    tools::log = tools::Logger::setLogger(status.algo_type_str() + "-fes", settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} finite entanglement scaling analysis with bond size step {} of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::fes_decrement, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_fes = tid::tic_scope("fes");
@@ -280,6 +279,8 @@ void xdmrg::run_fes_analysis() {
     }
     tools::log->info("Finished {} finite entanglement scaling of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(),
                      status.algo_stop_sv());
+    // Reset our logger
+    tools::log            = tools::Logger::getLogger(status.algo_type_str());
     status.fes_is_running = false;
 }
 
@@ -305,7 +306,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     auto iter_multiplier = std::max<size_t>(1, 10 * status.algorithm_saturated_for);
 
     // Copy settings
-    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg, unless settings specifically ask for 1-site
+    m1.max_sites =
+        std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg by default, unless settings specifically ask for 1-site
     m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
     m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
     m1.bfgs_max_iter = std::min<size_t>(200000, settings::precision::bfgs_max_iter * iter_multiplier);
@@ -318,10 +320,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
     else {
         using namespace settings::strategy;
-        switch(multisite_mps_rise) {
-            case MultisiteRise::OFF: break;
-            case MultisiteRise::SATURATED: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for, multisite_mps_site_max); break;
-            case MultisiteRise::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for + 1, multisite_mps_site_max); break;
+        switch(multisite_mps_when) {
+            case MultisiteWhen::OFF: break;
+            case MultisiteWhen::SATURATED: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for, multisite_mps_site_max); break;
+            case MultisiteWhen::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for + 1, multisite_mps_site_max); break;
         }
     }
 
@@ -330,7 +332,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     bool prefer_eigs_always    = settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
     bool prefer_eigs_saturated = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
 
-    if(prefer_eigs_always or prefer_eigs_saturated) {
+    if(prefer_eigs_always or prefer_eigs_saturated or status.fes_is_running) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
         m1.retry     = true;
@@ -384,7 +386,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // Do eig instead of eigs/bfgs when its cheap
     if(m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
 
-    if(status.env_expansion_alpha > 0) {
+    if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
         if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
         // If we are stuck and enabled subspace expansion when stuck
@@ -526,7 +528,7 @@ void xdmrg::single_xDMRG_step() {
         results.back().set_optexit(meta.optExit);
         /* clang-format on */
 
-        tools::log->debug(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(meta.optMode),
+        tools::log->trace(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(meta.optMode),
                           enum2sv(meta.optSolver), flag2str(meta.optExit), variance_before_step.value(), results.back().get_variance(),
                           results.back().get_relchange() * 100);
         if(results.back().get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
@@ -566,9 +568,8 @@ void xdmrg::single_xDMRG_step() {
         // Do the truncation with SVD
         tensors.merge_multisite_mps(winner.get_tensor(), winner.get_bond_limit());
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
-        if(tools::log->level() <= spdlog::level::debug) {
-            tools::log->debug("Truncation errors: {:8.2e}", fmt::join(tensors.state->get_truncation_errors_active(), ", "));
-        }
+        if(tools::log->level() <= spdlog::level::trace)
+            tools::log->trace("Truncation errors: {:8.2e}", fmt::join(tensors.state->get_truncation_errors_active(), ", "));
 
         if constexpr(settings::debug) {
             auto variance_before_svd = winner.get_variance();

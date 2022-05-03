@@ -385,19 +385,19 @@ void LBit::save_hamiltonian(h5pp::File &file, std::string_view table_path) const
     // Position 0 is also responsible for writing attributes
     if(position.value() != 0) return;
 
-    file.writeAttribute(h5tb.param.J1_mean, "J1_mean", table_path);
-    file.writeAttribute(h5tb.param.J2_mean, "J2_mean", table_path);
-    file.writeAttribute(h5tb.param.J3_mean, "J3_mean", table_path);
-    file.writeAttribute(h5tb.param.J1_wdth, "J1_wdth", table_path);
-    file.writeAttribute(h5tb.param.J2_wdth, "J2_wdth", table_path);
-    file.writeAttribute(h5tb.param.J3_wdth, "J3_wdth", table_path);
-    file.writeAttribute(h5tb.param.J2_xcls, "J2_xcls", table_path);
-    file.writeAttribute(h5tb.param.J2_span, "J2_span", table_path);
-    file.writeAttribute(h5tb.param.J2_ctof, "J2_ctof", table_path);
-    file.writeAttribute(h5tb.param.f_mixer, "f_mixer", table_path);
-    file.writeAttribute(h5tb.param.u_layer, "u_layer", table_path);
-    file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
-    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
+    file.writeAttribute(h5tb.param.J1_mean, table_path, "J1_mean");
+    file.writeAttribute(h5tb.param.J2_mean, table_path, "J2_mean");
+    file.writeAttribute(h5tb.param.J3_mean, table_path, "J3_mean");
+    file.writeAttribute(h5tb.param.J1_wdth, table_path, "J1_wdth");
+    file.writeAttribute(h5tb.param.J2_wdth, table_path, "J2_wdth");
+    file.writeAttribute(h5tb.param.J3_wdth, table_path, "J3_wdth");
+    file.writeAttribute(h5tb.param.J2_xcls, table_path, "J2_xcls");
+    file.writeAttribute(h5tb.param.J2_span, table_path, "J2_span");
+    file.writeAttribute(h5tb.param.J2_ctof, table_path, "J2_ctof");
+    file.writeAttribute(h5tb.param.f_mixer, table_path, "f_mixer");
+    file.writeAttribute(h5tb.param.u_layer, table_path, "u_layer");
+    file.writeAttribute(h5tb.param.distribution, table_path, "distribution");
+    file.writeAttribute(h5tb.param.spin_dim, table_path, "spin_dim");
 }
 
 void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) {

@@ -20,14 +20,14 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar>
     file.writeDataset(U, fmt::format("{}/U", group_name));
     file.writeDataset(S, fmt::format("{}/S", group_name));
     file.writeDataset(VT, fmt::format("{}/VT", group_name));
-    file.writeAttribute(rows, "rows", group_name);
-    file.writeAttribute(cols, "cols", group_name);
-    file.writeAttribute(rank, "rank", group_name);
-    file.writeAttribute(rank_max, "rank_max", group_name);
-    file.writeAttribute(use_bdc, "use_bdc", group_name);
-    file.writeAttribute(threshold, "threshold", group_name);
-    file.writeAttribute(switchsize_bdc, "switchsize_bdc", group_name);
-    for(const auto &[key, val] : details) file.writeAttribute(val, key, group_name);
+    file.writeAttribute(rows, group_name, "rows");
+    file.writeAttribute(cols, group_name, "cols");
+    file.writeAttribute(rank, group_name, "rank");
+    file.writeAttribute(rank_max, group_name, "rank_max");
+    file.writeAttribute(use_bdc, group_name, "use_bdc");
+    file.writeAttribute(threshold, group_name, "threshold");
+    file.writeAttribute(switchsize_bdc, group_name, "switchsize_bdc");
+    for(const auto &[key, val] : details) file.writeAttribute(val, group_name, key);
 
     //
     //

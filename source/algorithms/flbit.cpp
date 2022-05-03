@@ -48,19 +48,19 @@ void flbit::resume() {
         unitary_gates_2site_layers.clear();
         std::string grouppath = "/fLBIT/model/unitary_gates";
         if(not h5file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
-        auto num_layers = h5file->readAttribute<size_t>("num_layers", grouppath);
+        auto num_layers = h5file->readAttribute<size_t>(grouppath, "num_layers");
         if(num_layers != settings::model::lbit::u_layer)
             throw std::runtime_error(fmt::format("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer));
         unitary_gates_2site_layers.resize(num_layers);
         for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
             std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
-            auto        num_gates = h5file->readAttribute<size_t>("num_gates", layerpath);
+            auto        num_gates = h5file->readAttribute<size_t>(layerpath, "num_gates");
             layer.resize(num_gates);
             for(auto &&[idx_gate, u] : iter::enumerate(layer)) {
                 std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
                 auto        op       = h5file->readDataset<Eigen::Tensor<Scalar, 2>>(gatepath);
-                auto        pos      = h5file->readAttribute<std::vector<size_t>>("pos", gatepath);
-                auto        dim      = h5file->readAttribute<std::vector<long>>("dim", gatepath);
+                auto        pos      = h5file->readAttribute<std::vector<size_t>>(gatepath, "pos");
+                auto        dim      = h5file->readAttribute<std::vector<long>>(gatepath, "dim");
                 u                    = qm::Gate(op, pos, dim);
             }
         }

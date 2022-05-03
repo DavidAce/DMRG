@@ -63,10 +63,10 @@ namespace tools::finite::h5 {
         measurement_entry.physical_time    = status.phys_time;
 
         h5file.appendTableRecords(measurement_entry, table_path);
-        h5file.writeAttribute(status.iter, "iter", table_path);
-        h5file.writeAttribute(status.step, "step", table_path);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
-        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
     void save::correlations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -113,10 +113,10 @@ namespace tools::finite::h5 {
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_lim, data, size);
         h5file.appendTableRecords(entry, table_path);
-        h5file.writeAttribute(status.iter, "iter", table_path);
-        h5file.writeAttribute(status.step, "step", table_path);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
-        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
     void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -194,12 +194,12 @@ namespace tools::finite::h5 {
             /*! Writes down the midchain "Lambda" bond matrix (singular values). */
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
             h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, H5D_CHUNKED);
-            h5file.writeAttribute(state.get_truncation_error_midchain(), "truncation_error", dsetname_schmidt);
-            h5file.writeAttribute((state.get_length<long>() - 1) / 2, "position", dsetname_schmidt);
-            h5file.writeAttribute(status.iter, "iter", dsetname_schmidt);
-            h5file.writeAttribute(status.step, "step", dsetname_schmidt);
-            h5file.writeAttribute(status.bond_lim, "bond_lim", dsetname_schmidt);
-            h5file.writeAttribute(status.bond_max, "bond_max", dsetname_schmidt);
+            h5file.writeAttribute(state.get_truncation_error_midchain(), dsetname_schmidt, "truncation_error");
+            h5file.writeAttribute((state.get_length<long>() - 1) / 2, dsetname_schmidt, "position");
+            h5file.writeAttribute(status.iter, dsetname_schmidt, "iter");
+            h5file.writeAttribute(status.step, dsetname_schmidt, "step");
+            h5file.writeAttribute(status.bond_lim, dsetname_schmidt, "bond_lim");
+            h5file.writeAttribute(status.bond_max, dsetname_schmidt, "bond_max");
         }
 
         if(not skip_mps) {
@@ -210,25 +210,25 @@ namespace tools::finite::h5 {
             for(const auto &mps : state.mps_sites) {
                 auto dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position<long>());
                 h5file.writeDataset(mps->get_L(), dsetName, H5D_CHUNKED);
-                h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
-                h5file.writeAttribute(mps->get_L().dimensions(), "dimensions", dsetName);
-                h5file.writeAttribute(mps->get_truncation_error(), "truncation_error", dsetName);
+                h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
+                h5file.writeAttribute(mps->get_L().dimensions(), dsetName, "dimensions");
+                h5file.writeAttribute(mps->get_truncation_error(), dsetName, "truncation_error");
                 if(mps->isCenter()) {
                     dsetName = fmt::format("{}/L_C", mps_prefix);
                     h5file.writeDataset(mps->get_LC(), dsetName, H5D_CHUNKED);
-                    h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
-                    h5file.writeAttribute(mps->get_LC().dimensions(), "dimensions", dsetName);
-                    h5file.writeAttribute(mps->get_truncation_error_LC(), "truncation_error", dsetName);
+                    h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
+                    h5file.writeAttribute(mps->get_LC().dimensions(), dsetName, "dimensions");
+                    h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error");
                 }
             }
-            h5file.writeAttribute(state.get_length(), "model_size", mps_prefix);
-            h5file.writeAttribute(state.get_position<long>(), "position", mps_prefix);
-            h5file.writeAttribute(state.get_truncation_errors(), "truncation_errors", mps_prefix);
-            h5file.writeAttribute(state.get_labels(), "labels", mps_prefix);
-            h5file.writeAttribute(status.iter, "iter", mps_prefix);
-            h5file.writeAttribute(status.step, "step", mps_prefix);
-            h5file.writeAttribute(status.bond_lim, "bond_lim", mps_prefix);
-            h5file.writeAttribute(status.bond_max, "bond_max", mps_prefix);
+            h5file.writeAttribute(state.get_length(), mps_prefix, "model_size");
+            h5file.writeAttribute(state.get_position<long>(), mps_prefix, "position");
+            h5file.writeAttribute(state.get_truncation_errors(), mps_prefix, "truncation_errors");
+            h5file.writeAttribute(state.get_labels(), mps_prefix, "labels");
+            h5file.writeAttribute(status.iter, mps_prefix, "iter");
+            h5file.writeAttribute(status.step, mps_prefix, "step");
+            h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
+            h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
         }
 
         /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
@@ -239,10 +239,10 @@ namespace tools::finite::h5 {
             for(const auto &mps : state.mps_sites) {
                 auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
                 h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
-                h5file.writeAttribute(mps->get_position<long>(), "position", dsetName);
-                h5file.writeAttribute(mps->get_M_bare().dimensions(), "dimensions", dsetName);
-                h5file.writeAttribute(mps->get_label(), "label", dsetName);
-                h5file.writeAttribute(mps->get_unique_id(), "unique_id", dsetName);
+                h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
+                h5file.writeAttribute(mps->get_M_bare().dimensions(), dsetName, "dimensions");
+                h5file.writeAttribute(mps->get_label(), dsetName, "label");
+                h5file.writeAttribute(mps->get_unique_id(), dsetName, "unique_id");
             }
         }
     }
@@ -256,8 +256,8 @@ namespace tools::finite::h5 {
         tools::log->trace("Storing table: [{}]", table_path);
         auto t_hdf = tid::tic_scope("model", tid::level::extra);
         for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5file, table_path);
-        h5file.writeAttribute(enum2sv(settings::model::model_type), "model_type", table_path);
-        h5file.writeAttribute(settings::model::model_size, "model_size", table_path);
+        h5file.writeAttribute(enum2sv(settings::model::model_type), table_path, "model_type");
+        h5file.writeAttribute(settings::model::model_size, table_path, "model_size");
     }
 
     /*! Write all the MPO's with site info in attributes */
@@ -269,8 +269,8 @@ namespace tools::finite::h5 {
         auto t_hdf = tid::tic_scope("mpo", tid::level::extra);
         tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(storage_level));
         for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5file, mpo_prefix); }
-        h5file.writeAttribute(settings::model::model_size, "model_size", mpo_prefix);
-        h5file.writeAttribute(enum2sv(settings::model::model_type), "model_type", mpo_prefix);
+        h5file.writeAttribute(settings::model::model_size, mpo_prefix, "model_size");
+        h5file.writeAttribute(enum2sv(settings::model::model_type), mpo_prefix, "model_type");
     }
 
     template<typename T>
@@ -291,10 +291,10 @@ namespace tools::finite::h5 {
         else
             layout = H5D_layout_t::H5D_CHUNKED;
         h5file.writeDataset(data, data_path, layout);
-        h5file.writeAttribute(status.iter, "iter", data_path);
-        h5file.writeAttribute(status.step, "step", data_path);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", data_path);
-        h5file.writeAttribute(status.bond_max, "bond_max", data_path);
+        h5file.writeAttribute(status.iter, data_path, "iter");
+        h5file.writeAttribute(status.step, data_path, "step");
+        h5file.writeAttribute(status.bond_lim, data_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, data_path, "bond_max");
     }
 
     template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 2> &data, std::string_view data_name, std::string_view prefix,

@@ -311,12 +311,12 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     //        static size_t count = 0;
     //        auto dsetname = fmt::format("{}_{}",dsetbase,count++);
     //        file.writeDataset(multisite_tensor, dsetname, H5D_CHUNKED);
-    //        file.writeAttribute(tid::get("split").get_last_interval(), "t_split", dsetname);
-    //        file.writeAttribute(spin_dims, "spin_dims", dsetname);
-    //        file.writeAttribute(positions, "positions", dsetname);
-    //        file.writeAttribute(center_position, "center_position", dsetname);
-    //        file.writeAttribute(bond_lim, "bond_lim", dsetname);
-    //        file.writeAttribute(t_split->get_last_interval(), "t_split", dsetname);
+    //        file.writeAttribute(tid::get("split").get_last_interval(),dsetname, "t_split");
+    //        file.writeAttribute(spin_dims, dsetname, "spin_dims");
+    //        file.writeAttribute(positions, dsetname, "positions");
+    //        file.writeAttribute(center_position, dsetname, "center_position");
+    //        file.writeAttribute(bond_lim, dsetname, "bond_lim");
+    //        file.writeAttribute(t_split->get_last_interval(), dsetname, "t_split");
     //    }
 
     // Return the all the positions including the bond matrix
@@ -377,7 +377,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
-    if(positions.empty()) return std::vector<MpsSite>();
+    if(positions.empty()) return {};
     auto t_to_a = tid::tic_scope("to_a");
     // Initialize the resulting container of split sites
     std::vector<MpsSite> mps_sites;
@@ -417,7 +417,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
             // In the last SVD, it's important that we don't truncate by threshold.
             // If we do, we risk making the V non-diagonal, which would truncate whatever site is on the right, later on.
             //            svd.threshold = std::numeric_limits<double>::epsilon();
-            bond_lim = V.dimension(0) * V.dimension(1); // V.dimension(2); // TODO: Check this
+            bond_lim = std::min(bond_lim, V.dimension(0) * V.dimension(1)); // V.dimension(2); // TODO: Check this
         }
 
         std::tie(U, S, V) = svd.schmidt_into_left_normalized(V, spin_dim, bond_lim);
@@ -499,7 +499,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
-    if(positions.empty()) return std::deque<MpsSite>();
+    if(positions.empty()) return {};
     auto t_to_b = tid::tic_scope("to_b");
 
     // Initialize the resulting container of split sites
@@ -537,7 +537,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
             // In the last SVD, it's important that we don't truncate by threshold.
             // If we do, we risk making the U non-diagonal, which would truncate whatever site is on the left, later on.
             //            svd.threshold = std::numeric_limits<double>::epsilon();
-            bond_lim = U.dimension(0) * U.dimension(2); // TODO: Check this
+            bond_lim = std::min(bond_lim, U.dimension(0) * U.dimension(2)); // TODO: Check this
         }
 
         std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, bond_lim);

@@ -195,21 +195,30 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
     // Therefore a proper full normalization is required after this operation, as well as a full
     // rebuild of environments.
 
-    if(std::abs(sign) != 1) throw std::runtime_error(fmt::format("Expected 'sign' +1 or -1. Got [{}]", sign));
-    tools::log->debug("Projecting state to sector with sign {}", sign);
+    if(std::abs(sign) != 1) throw except::runtime_error("Expected 'sign' +1 or -1. Got [{}]", sign);
+    tools::log->debug("Projecting state to sector with sign {} | bond_lim {}", sign, bond_lim.value());
     auto t_prj = tid::tic_scope("projection");
     tools::finite::mps::normalize_state(state, bond_lim, svd_settings, NormPolicy::IFNEEDED);
 
+    state.clear_measurements();
+    state.clear_cache();
     auto spin_components = tools::finite::measure::spin_components(state);
+    auto bond_dimensions = tools::finite::measure::bond_dimensions(state);
     tools::log->debug("Spin components before projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Bond dimensions before projection : {}", tools::finite::measure::bond_dimensions(state));
     state.clear_measurements();
     state.clear_cache();
     // Do the projection
     const auto [mpos, L, R] = qm::mpo::parity_projector_mpos(paulimatrix, state.get_length(), sign);
     apply_mpos(state, mpos, L, R);
+    tools::log->debug("Should normalize now");
     tools::finite::mps::normalize_state(state, bond_lim, svd_settings, NormPolicy::ALWAYS); // Has to be normalized ALWAYS, projection ruins normalization!
     spin_components = tools::finite::measure::spin_components(state);
+    bond_dimensions = tools::finite::measure::bond_dimensions(state);
     tools::log->debug("Spin components after  projection : X = {:.16f}  Y = {:.16f}  Z = {:.16f}", spin_components[0], spin_components[1], spin_components[2]);
+    tools::log->debug("Bond dimensions after  projection : {}", tools::finite::measure::bond_dimensions(state));
+    if(bond_lim and state.find_largest_bond() > bond_lim.value())
+        throw except::logic_error("A bond dimension exceeds bond limit: {} > {}", bond_dimensions, bond_lim.value());
     if constexpr(settings::debug) state.assert_validity();
 }
 

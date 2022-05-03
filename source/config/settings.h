@@ -115,7 +115,7 @@ namespace settings {
     /*! \namespace settings::strategy Settings affecting the convergence rate of the xDMRG algorithm */
     namespace strategy {
         inline bool          bfgs_fix_rnorm_w_eigs       = true;                                   /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
-        inline OptEigs       prefer_eigs_over_bfgs       = OptEigs::WHEN_SATURATED;                /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose [ALWAYS | WHEN_SATURATED] */
+        inline OptEigs       prefer_eigs_over_bfgs       = OptEigs::WHEN_SATURATED;                /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose {WHEN_SATURATED, ALWAYS} */
         inline bool          expand_envs_when_stuck      = true;                                   /*!< Use environment expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
@@ -133,8 +133,8 @@ namespace settings {
         inline double        max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
         inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
-        inline MultisiteMove multisite_mps_step          = MultisiteMove::MAX;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline MultisiteRise multisite_mps_rise          = MultisiteRise::SATURATED;               /*!< When to rise the number of sites in a DMRG step {OFF, SATURATED, ALWAYS} */
+        inline MultisiteMove multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::OFF;               /*!< When to increase the number of sites in a DMRG step {OFF, SATURATED, ALWAYS} */
         inline std::string   target_sector               = "none";                                 /*!< Find an eigenstate in this parity sector. Choose between [random,randomAxis, none, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline std::string   initial_sector              = "random";                               /*!< Initialize state in this spin pattern/parity sector. Choose between [random, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */

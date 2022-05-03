@@ -9,7 +9,7 @@ namespace tools::common::h5 {
 
     void load::status(const h5pp::File &h5file, std::string_view state_prefix, AlgorithmStatus &status) {
         auto tic          = tid::tic_scope("status", tid::level::detailed);
-        auto table_prefix = h5file.readAttribute<std::vector<std::string>>(state_prefix, "common/table_prfxs").front();
+        auto table_prefix = h5file.readAttribute<std::vector<std::string>>("common/table_prfxs", state_prefix).front();
 
         std::string table_path = fmt::format("{}/status", table_prefix);
         if(h5file.linkExists(table_path)) {
@@ -23,7 +23,7 @@ namespace tools::common::h5 {
 
     void load::timer(const h5pp::File &h5file, std::string_view state_prefix, [[maybe_unused]] AlgorithmStatus &status) {
         if(not settings::timer::on) return;
-        auto state_root   = h5file.readAttribute<std::string>(state_prefix, "common/state_root");
+        auto state_root   = h5file.readAttribute<std::string>("common/state_root", state_prefix);
         auto timer_prefix = fmt::format("{}/timers", state_root);
         if(h5file.linkExists(timer_prefix))
             tools::log->info("Loading timers from group: [{}]", timer_prefix);

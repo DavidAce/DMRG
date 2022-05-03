@@ -41,7 +41,7 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         tools::log->info("Searching for resumable states with keyword [{}] from algorithm [{}] in file [{}]", search, algo_name, h5file.getFilePath());
     if(not h5file.linkExists("common/storage_level")) throw except::load_error("Missing dataset [common/storage_level]");
     for(const auto &candidate : h5file.getAttributeNames("common/storage_level")) {
-        if(candidate.find(algo_name) != std::string::npos and h5file.readAttribute<std::string>(candidate, "common/storage_level") == "FULL")
+        if(candidate.find(algo_name) != std::string::npos and h5file.readAttribute<std::string>("common/storage_level", candidate) == "FULL")
             state_prefix_candidates.push_back(candidate);
     }
 
@@ -64,7 +64,7 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
     // Here we collect unique state names
     std::vector<std::string> state_names;
     for(const auto &pfx : state_prefix_candidates) {
-        auto name = h5file.readAttribute<std::string>(pfx, "common/state_name");
+        auto name = h5file.readAttribute<std::string>("common/state_name", pfx);
         if(not name.empty()) {
             if(std::find(state_names.begin(), state_names.end(), name) == state_names.end()) { state_names.emplace_back(name); }
         }
@@ -80,7 +80,7 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         std::vector<std::pair<size_t, std::string>> matching_candidates;
         for(const auto &candidate : state_prefix_candidates) {
             if(candidate.find(name) == std::string::npos) continue;
-            auto steps = h5file.readAttribute<size_t>(candidate, "common/step");
+            auto steps = h5file.readAttribute<size_t>("common/step", candidate);
             matching_candidates.emplace_back(std::make_pair(steps, candidate));
         }
 

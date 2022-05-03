@@ -189,14 +189,14 @@ void IsingMajorana::save_hamiltonian(h5pp::File &file, std::string_view hamilton
     file.appendTableRecords(h5tb, hamiltonian_table_path);
     // Position 0 is also responsible for writing attributes
     if(position.value() != 0) return;
-    file.writeAttribute(h5tb.param.J_mean, "J_mean", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.J_wdth, "J_wdth", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.h_mean, "h_mean", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.h_wdth, "h_wdth", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.g, "g", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.delta, "delta", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.distribution, "distribution", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", hamiltonian_table_path);
+    file.writeAttribute(h5tb.param.J_mean, hamiltonian_table_path, "J_mean");
+    file.writeAttribute(h5tb.param.J_wdth, hamiltonian_table_path, "J_wdth");
+    file.writeAttribute(h5tb.param.h_mean, hamiltonian_table_path, "h_mean");
+    file.writeAttribute(h5tb.param.h_wdth, hamiltonian_table_path, "h_wdth");
+    file.writeAttribute(h5tb.param.g, hamiltonian_table_path, "g");
+    file.writeAttribute(h5tb.param.delta, hamiltonian_table_path, "delta");
+    file.writeAttribute(h5tb.param.distribution, hamiltonian_table_path, "distribution");
+    file.writeAttribute(h5tb.param.spin_dim, hamiltonian_table_path, "spin_dim");
 }
 
 void IsingMajorana::load_hamiltonian(const h5pp::File &file, std::string_view model_path) {

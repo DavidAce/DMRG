@@ -10,7 +10,7 @@
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
-enum class MultisiteRise { OFF, SATURATED, ALWAYS };
+enum class MultisiteWhen { OFF, SATURATED, ALWAYS };
 enum class SVDMode { EIGEN, LAPACKE, RSVD };
 enum class BondGrow { OFF, TRUNCATED, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
@@ -193,10 +193,10 @@ constexpr std::string_view enum2sv(const T &item) {
         case MultisiteMove::MID :                                       return "MID";
         case MultisiteMove::MAX :                                       return "MAX";
     }
-    if constexpr(std::is_same_v<T, MultisiteRise>) switch(item){
-        case MultisiteRise::OFF :                                       return "OFF";
-        case MultisiteRise::SATURATED :                                 return "SATURATED";
-        case MultisiteRise::ALWAYS :                                    return "ALWAYS";
+    if constexpr(std::is_same_v<T, MultisiteWhen>) switch(item){
+        case MultisiteWhen::OFF :                                       return "OFF";
+        case MultisiteWhen::SATURATED :                                 return "SATURATED";
+        case MultisiteWhen::ALWAYS :                                    return "ALWAYS";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::SR)                                         return "SR";
@@ -457,7 +457,7 @@ constexpr auto sv2enum(std::string_view item) {
         AlgorithmType,
         AlgorithmStop,
         MultisiteMove,
-        MultisiteRise,
+        MultisiteWhen,
         SVDMode,
         BondGrow,
         GateMove,
@@ -502,10 +502,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "MID")                                   return MultisiteMove::MID;
         if(item == "MAX")                                   return MultisiteMove::MAX;
     }
-    if constexpr(std::is_same_v<T, MultisiteRise>) {
-        if(item == "OFF")                                   return MultisiteRise::OFF;
-        if(item == "SATURATED")                             return MultisiteRise::SATURATED;
-        if(item == "ALWAYS")                                return MultisiteRise::ALWAYS;
+    if constexpr(std::is_same_v<T, MultisiteWhen>) {
+        if(item == "OFF")                                   return MultisiteWhen::OFF;
+        if(item == "SATURATED")                             return MultisiteWhen::SATURATED;
+        if(item == "ALWAYS")                                return MultisiteWhen::ALWAYS;
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == "SR")                                    return OptRitz::SR;

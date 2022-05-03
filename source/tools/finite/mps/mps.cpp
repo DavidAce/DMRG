@@ -158,7 +158,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     auto moves            = static_cast<size_t>(std::abs(center_position - current_position));
     if constexpr(settings::debug_merge or settings::debug)
         if(logPolicy == LogPolicy::NORMAL)
-            tools::log->trace("merge_multisite_mps: sites {} | chi limit {} | dimensions {} | center {} -> {} | {}", sites, bond_lim,
+            tools::log->trace("merge_multisite_mps: sites {} | bond limit {} | dimensions {} | center {} -> {} | {}", sites, bond_lim,
                               multisite_mps.dimensions(), current_position, center_position, state.get_labels());
 
     // Some sanity checks
@@ -364,7 +364,6 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         throw std::logic_error(fmt::format("Center position mismatch {} ! {}\nLabels: {}", current_position, center_position, state.get_labels()));
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
-
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
         state.assert_validity();
@@ -383,16 +382,17 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
         auto norm = tools::finite::measure::norm(state);
         tools::log->trace("Norm: {:.16f}", norm);
         if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
+        // Otherwise we just do the normalization
     }
-    // Otherwise we just do the normalization
+
     if(not bond_lim) bond_lim = state.find_largest_bond();
     // Save the current position, direction and center status
     auto dir   = state.get_direction();
     auto pos   = state.get_position<long>();
     auto cnt   = pos >= 0;
     auto steps = 0;
-    if(tools::log->level() == spdlog::level::trace)
-        tools::log->trace("Normalizing state | old norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
+    if(tools::log->level() <= spdlog::level::debug)
+        tools::log->debug("Normalizing state | old norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
                           dir, bond_lim.value(), tools::finite::measure::bond_dimensions(state));
 
     // Start with SVD at the current center position
@@ -411,8 +411,8 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
     state.clear_measurements();
     state.clear_cache();
     auto norm = tools::finite::measure::norm(state);
-    if(tools::log->level() == spdlog::level::trace)
-        tools::log->trace("Normalized  state | new norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", norm, pos, dir, bond_lim.value(),
+    if(tools::log->level() <= spdlog::level::debug)
+        tools::log->debug("Normalized  state | new norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", norm, pos, dir, bond_lim.value(),
                           tools::finite::measure::bond_dimensions(state));
     if(std::abs(norm - 1) > settings::precision::max_norm_error) {
         for(const auto &mps : state.mps_sites) {
@@ -422,6 +422,10 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
         }
         throw std::runtime_error(fmt::format("Norm too far from unity: {:.16f} | max allowed norm error {}", norm, settings::precision::max_norm_error));
     }
+    if(bond_lim and state.find_largest_bond() > bond_lim.value())
+        throw except::logic_error("normalize_state: a bond dimension exceeds bond limit: {} > {}", tools::finite::measure::bond_dimensions(state),
+                                  bond_lim.value());
+
     return true;
 }
 

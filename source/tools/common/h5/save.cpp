@@ -16,7 +16,7 @@ namespace tools::common::h5 {
         if(save_log.empty()) {
             try {
                 AlgorithmStatus status;
-                if(h5file.linkExists("common/status")) status = h5file.readAttribute<AlgorithmStatus>(state_prefix, "common/status");
+                if(h5file.linkExists("common/status")) status = h5file.readAttribute<AlgorithmStatus>("common/status", state_prefix);
                 save_log.insert(std::make_pair(state_prefix, status));
             } catch(const std::exception &ex) { tools::log->warn("Could not bootstrap save_log for {}: {}", state_prefix, ex.what()); }
         }
@@ -31,7 +31,7 @@ namespace tools::common::h5 {
         }
         if(not h5file.linkExists(linkPath)) h5file.writeDataset(linkText, linkPath);
         tools::log->trace("Link {:<32} | attribute -- {: <40}", linkPath, attrName);
-        h5file.writeAttribute(attrData, attrName, linkPath, std::nullopt, h5type);
+        h5file.writeAttribute(attrData, linkPath, attrName, std::nullopt, h5type);
     }
 
     void save::status(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
@@ -47,10 +47,10 @@ namespace tools::common::h5 {
         auto info   = h5file.getTableInfo(table_path);
         auto offset = h5_save_point and h5_save_point.value() == save_point ? info.numRecords.value() - 1 : info.numRecords.value();
         h5pp::hdf5::writeTableRecords(status, info, offset, 1);
-        h5file.writeAttribute(status.iter, "iter", table_path);
-        h5file.writeAttribute(status.step, "step", table_path);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
-        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
     void save::mem(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const AlgorithmStatus &status) {
@@ -72,10 +72,10 @@ namespace tools::common::h5 {
         auto info   = h5file.getTableInfo(table_path);
         auto offset = h5_save_point and h5_save_point.value() == save_point ? info.numRecords.value() - 1 : info.numRecords.value();
         h5pp::hdf5::writeTableRecords(mem_usage_entry, info, offset, 1);
-        h5file.writeAttribute(status.iter, "iter", table_path);
-        h5file.writeAttribute(status.step, "step", table_path);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
-        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
     std::optional<std::string> find::find_duplicate_save(const h5pp::File &h5file, std::string_view state_prefix, const AlgorithmStatus &status) {
@@ -90,7 +90,7 @@ namespace tools::common::h5 {
             auto h5_state_root_exists = h5pp::hdf5::checkIfAttrExists(h5file.openFileHandle(), "common/state_root", h5_state_prefix);
             if(not h5_state_root_exists) return std::nullopt;
 
-            auto h5_state_root = h5file.readAttribute<std::string>(h5_state_prefix, "common/state_root");
+            auto h5_state_root = h5file.readAttribute<std::string>("common/state_root", h5_state_prefix);
             tools::log->debug("Found h5_state_root: {}", h5_state_root);
             if(state_prefix.find(h5_state_root) != std::string_view::npos) {
                 // We have a match! A state on file with the same root as the given state prefix
@@ -120,8 +120,8 @@ namespace tools::common::h5 {
             auto iter_exists = h5pp::hdf5::checkIfAttrExists(link_info.getLocId(), link_path, "iter");
             auto step_exists = h5pp::hdf5::checkIfAttrExists(link_info.getLocId(), link_path, "step");
             if(iter_exists and step_exists) {
-                auto iter = h5file.readAttribute<uint64_t>("iter", link_path);
-                auto step = h5file.readAttribute<uint64_t>("step", link_path);
+                auto iter = h5file.readAttribute<uint64_t>(link_path, "iter");
+                auto step = h5file.readAttribute<uint64_t>(link_path, "step");
                 return std::make_pair(iter, step);
             }
         }
@@ -212,10 +212,10 @@ namespace tools::common::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_ur::h5_type, table_path, fmt::format("{} Timings", status.algo_type_sv()));
         h5file.writeTableRecords(table_items, table_path, 0);
 
-        h5file.writeAttribute(status.iter, "iter", table_path);
-        h5file.writeAttribute(status.step, "step", table_path);
-        h5file.writeAttribute(status.bond_lim, "bond_lim", table_path);
-        h5file.writeAttribute(status.bond_max, "bond_max", table_path);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
 }

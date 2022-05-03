@@ -10,7 +10,6 @@
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
-#include "tools/common/h5.h"
 #include "tools/common/log.h"
 #include "tools/finite/env.h"
 #include "tools/finite/h5.h"
@@ -117,11 +116,11 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
                 // On the other edge this is not necessary!
                 num_moves = std::max<long>(1, num_active - 1) + 1;   // to the edge without flipping, +1 to flip
                 if(reached_edgeL) num_moves = num_moves.value() + 1; // , +1 to get pos == 0
-            } else if(settings::strategy::multisite_mps_step == MultisiteMove::ONE)
+            } else if(settings::strategy::multisite_mps_move == MultisiteMove::ONE)
                 num_moves = 1ul;
-            else if(settings::strategy::multisite_mps_step == MultisiteMove::MID) {
+            else if(settings::strategy::multisite_mps_move == MultisiteMove::MID) {
                 num_moves = std::max<long>(1, num_active / 2);
-            } else if(settings::strategy::multisite_mps_step == MultisiteMove::MAX) {
+            } else if(settings::strategy::multisite_mps_move == MultisiteMove::MAX) {
                 num_moves = std::max<long>(1, num_active - 1); // Move so that the center point moves out of the active region
             } else
                 throw std::logic_error("Could not determine how many sites to move");
@@ -129,7 +128,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
     }
 
     if(num_moves <= 0) throw std::runtime_error(fmt::format("Cannot move center point {} sites", num_moves.value()));
-    tools::log->debug("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
+    tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
     tensors.clear_cache();
     tensors.clear_measurements();
     try {
@@ -302,10 +301,10 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
         // Update alpha
         double old_expansion_alpha = status.env_expansion_alpha;
         double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
-        double factor_dn           = std::pow(1e-2, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
+        double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
 
         bool var_recently_improved = status.energy_variance_lowest / status.env_expansion_variance < 1e-1;
-        if(var_recently_improved) factor_dn *= 0.001;
+        //        if(var_recently_improved) factor_dn *= 0.1;
 
         if(status.algorithm_has_stuck_for > 0 and not var_recently_improved) {
             status.env_expansion_alpha *= factor_up;

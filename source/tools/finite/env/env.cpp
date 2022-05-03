@@ -58,7 +58,6 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
 
     // Set up the SVD
     svd::solver svd(svd_settings);
-
     state.clear_cache();
 
     // Follows the environment expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
@@ -138,7 +137,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 const auto &chiL_new = mpsL_new.get_chiR();
                 const auto &dimL_new = mpsL_new.dimensions();
                 const auto &dimR_new = mpsR_new.dimensions();
-                tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
+                tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", posL - 1, posL, alpha.value(), chiL_old,
                                   ML_PL.dimension(2), chiL_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
@@ -218,7 +217,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 const auto &dimR_new = mpsR_new.dimensions();
                 const auto &dimL_new = mpsL_new.dimensions();
 
-                tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
+                tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", posR, posR + 1, alpha.value(), chiR_old,
                                   MR_PR.dimension(1), chiR_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);
@@ -290,19 +289,11 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 auto  dimL_old = mpsL.dimensions();
                 auto  dimR_old = mpsR.dimensions();
                 auto &mpoL     = model.get_mpo(posL - 1);
-                //                auto &eneL     = edges.get_env_eneL(posL - 1);
                 auto &varL = edges.get_env_varL(posL - 1);
 
                 mpsL.set_M(state.get_multisite_mps({mpsL.get_position()}));
-                //                Eigen::Tensor<Scalar, 3> PL1      = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
-                //                Eigen::Tensor<Scalar, 3> PL2      = varL.get_expansion_term(mpsL, mpoL, alpha.value());
-                //                Eigen::Tensor<Scalar, 3> PL       = PL1.concatenate(PL2, 2);
-                //                Eigen::Tensor<Scalar, 3> PL = eneL.get_expansion_term(mpsL, mpoL, alpha.value());
                 Eigen::Tensor<Scalar, 3> PL = varL.get_expansion_term(mpsL, mpoL, alpha.value());
-
                 Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
-                //                Eigen::Tensor<Scalar, 3> P0    = tenx::TensorRandom<double>(mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR()).cast<Scalar>();
-                //                P0                             = P0 * P0.constant(1e-10);
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
@@ -348,7 +339,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 const auto &chiL_new = mpsL_new.get_chiR();
                 const auto &dimL_new = mpsL_new.dimensions();
                 const auto &dimR_new = mpsR_new.dimensions();
-                tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posL - 1, posL, alpha.value(), chiL_old,
+                tools::log->debug("Environment expansion pos L {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", posL - 1, posL, alpha.value(), chiL_old,
                                   ML_PL.dimension(2), chiL_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during left-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during left-moving expansion: {} -> {}", dimR_old, dimR_new);
@@ -368,18 +359,11 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 auto  dimR_old = mpsR.dimensions();
                 auto  dimL_old = mpsL.dimensions();
                 auto &mpoR     = model.get_mpo(posR + 1);
-                //                auto &eneR     = edges.get_env_eneR(posR + 1);
                 auto &varR = edges.get_env_varR(posR + 1);
 
                 mpsR.set_M(state.get_multisite_mps({mpsR.get_position()}));
-                //                Eigen::Tensor<Scalar, 3> PR1      = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
-                //                Eigen::Tensor<Scalar, 3> PR2      = varR.get_expansion_term(mpsR, mpoR, alpha.value());
-                //                Eigen::Tensor<Scalar, 3> PR       = PR1.concatenate(PR2, 1);
                 Eigen::Tensor<Scalar, 3> PR = varR.get_expansion_term(mpsR, mpoR, alpha.value());
-                //                Eigen::Tensor<Scalar, 3> PR = eneR.get_expansion_term(mpsR, mpoR, alpha.value());
                 Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
-                //                Eigen::Tensor<Scalar, 3> P0    = tenx::TensorRandom<double>(mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1)).cast<Scalar>();
-                //                P0                             = P0 * P0.constant(1e-10);
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
@@ -428,7 +412,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 const auto &dimR_new = mpsR_new.dimensions();
                 const auto &dimL_new = mpsL_new.dimensions();
 
-                tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {} ", posR, posR + 1, alpha.value(), chiR_old,
+                tools::log->debug("Environment expansion pos R {} {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", posR, posR + 1, alpha.value(), chiR_old,
                                   MR_PR.dimension(1), chiR_new, bond_lim);
                 if(dimL_old[1] != dimL_new[1]) throw except::runtime_error("mpsL changed chiL during right-moving expansion: {} -> {}", dimL_old, dimL_new);
                 if(dimR_old[2] != dimR_new[2]) throw except::runtime_error("mpsR changed chiR during right-moving expansion: {} -> {}", dimR_old, dimR_new);

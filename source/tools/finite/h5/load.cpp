@@ -24,7 +24,7 @@ namespace tools::finite::h5 {
     // Load model, state and simulation status from HDF5
     void load::simulation(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmStatus &status, AlgorithmType algo_type) {
         try {
-            if(h5file.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
+            if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
                 throw std::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
 
             // Reset tensors
@@ -39,17 +39,17 @@ namespace tools::finite::h5 {
     }
 
     void load::model(const h5pp::File &h5file, std::string_view state_prefix, ModelFinite &model) {
-        auto model_prefix = h5file.readAttribute<std::string>(state_prefix, "common/model_prefix");
+        auto model_prefix = h5file.readAttribute<std::string>("common/model_prefix", state_prefix);
         try {
-            if(h5file.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
+            if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
                 throw std::runtime_error("Given prefix to model data with StorageLevel < FULL. The model can only be resumed from FULL storage");
             // Find the path to the MPO
             if(h5file.linkExists(model_prefix)) {
                 auto table_path = fmt::format("{}/hamiltonian", model_prefix);
                 if(not h5file.linkExists(table_path)) throw std::runtime_error(fmt::format("Hamiltonian table does not exist: [{}]", table_path));
                 tools::log->info("Loading model data from hamiltonian table: [{}]", table_path);
-                auto model_type = h5file.readAttribute<std::string>("model_type", table_path);
-                auto model_size = h5file.readAttribute<size_t>("model_size", table_path);
+                auto model_type = h5file.readAttribute<std::string>(table_path, "model_type");
+                auto model_size = h5file.readAttribute<size_t>(table_path, "model_size");
                 if(sv2enum<ModelType>(model_type) != settings::model::model_type)
                     throw std::runtime_error(
                         fmt::format("model_type [{}] != settings::model::model_type [{}]", model_type, enum2sv(settings::model::model_type)));
@@ -70,10 +70,10 @@ namespace tools::finite::h5 {
         try {
             if(h5file.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
                 throw std::runtime_error("Given prefix to MPS data with StorageLevel < FULL. The MPS's can only be resumed from FULL storage");
-            auto mps_prefix = h5file.readAttribute<std::string>(state_prefix, "common/mps_prefix");
-            auto model_type = h5file.readAttribute<std::string>(state_prefix, "common/model_type");
-            auto model_size = h5file.readAttribute<size_t>(state_prefix, "common/model_size");
-            auto position   = h5file.readAttribute<long>(state_prefix, "common/position");
+            auto mps_prefix = h5file.readAttribute<std::string>("common/mps_prefix", state_prefix);
+            auto model_type = h5file.readAttribute<std::string>("common/model_type", state_prefix);
+            auto model_size = h5file.readAttribute<size_t>("common/model_size", state_prefix);
+            auto position   = h5file.readAttribute<long>("common/position", state_prefix);
             if(position != status.position) throw std::runtime_error(fmt::format("MPS: position [{}] != status.position [{}]", position, status.position));
             if(sv2enum<ModelType>(model_type) != settings::model::model_type)
                 throw std::runtime_error(
@@ -91,7 +91,7 @@ namespace tools::finite::h5 {
                     std::string dset_LC_name = fmt::format("{}/{}", mps_prefix, "L_C");
                     if(not h5file.linkExists(dset_LC_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {}", dset_LC_name));
                     auto LC          = h5file.readDataset<Eigen::Tensor<cplx, 1>>(dset_LC_name);
-                    auto pos_on_file = h5file.readAttribute<long>("position", dset_LC_name);
+                    auto pos_on_file = h5file.readAttribute<long>(dset_LC_name, "position");
                     if(pos != pos_on_file)
                         throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));
                     mps->set_LC(LC);
@@ -100,8 +100,8 @@ namespace tools::finite::h5 {
                 if(not h5file.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
                 auto L     = h5file.readDataset<Eigen::Tensor<cplx, 1>>(dset_L_name);
                 auto M     = h5file.readDataset<Eigen::Tensor<cplx, 3>>(dset_M_name);
-                auto error = h5file.readAttribute<double>("truncation_error", dset_L_name);
-                auto label = h5file.readAttribute<std::string>("label", dset_M_name);
+                auto error = h5file.readAttribute<double>(dset_L_name, "truncation_error");
+                auto label = h5file.readAttribute<std::string>(dset_M_name, "label");
                 mps->set_mps(M, L, error, label);
                 tools::log->trace("Loaded mps: {}({})", mps->get_label(), mps->get_position());
                 // Sanity checks
@@ -130,7 +130,7 @@ namespace tools::finite::h5 {
 
     void load::validate(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmType algo_type) {
         auto t_val             = tid::tic_scope("validate");
-        auto table_prefix      = h5file.readAttribute<std::vector<std::string>>(state_prefix, "common/table_prfxs").front();
+        auto table_prefix      = h5file.readAttribute<std::vector<std::string>>("common/table_prfxs", state_prefix).front();
         auto measurements_path = fmt::format("{}/measurements", table_prefix);
         tensors.rebuild_mpo();
         tensors.rebuild_mpo_squared();

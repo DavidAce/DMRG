@@ -321,14 +321,14 @@ void MpoSite::print_parameter_values() const {
 void MpoSite::save_mpo(h5pp::File &file, std::string_view mpo_prefix) const {
     std::string dataset_name = fmt::format("{}/H_{}", mpo_prefix, get_position());
     file.writeDataset(MPO(), dataset_name, H5D_layout_t::H5D_CONTIGUOUS);
-    file.writeAttribute(get_position(), "position", dataset_name);
+    file.writeAttribute(get_position(), dataset_name, "position");
     for(auto &params : get_parameters()) {
-        if(params.second.type() == typeid(double)) file.writeAttribute(std::any_cast<double>(params.second), params.first, dataset_name);
-        if(params.second.type() == typeid(size_t)) file.writeAttribute(std::any_cast<size_t>(params.second), params.first, dataset_name);
-        if(params.second.type() == typeid(uint64_t)) file.writeAttribute(std::any_cast<uint64_t>(params.second), params.first, dataset_name);
-        if(params.second.type() == typeid(int)) file.writeAttribute(std::any_cast<int>(params.second), params.first, dataset_name);
-        if(params.second.type() == typeid(bool)) file.writeAttribute(std::any_cast<bool>(params.second), params.first, dataset_name);
-        if(params.second.type() == typeid(std::string)) file.writeAttribute(std::any_cast<std::string>(params.second), params.first, dataset_name);
+        if(params.second.type() == typeid(double)) file.writeAttribute(std::any_cast<double>(params.second), dataset_name, params.first);
+        if(params.second.type() == typeid(size_t)) file.writeAttribute(std::any_cast<size_t>(params.second), dataset_name, params.first);
+        if(params.second.type() == typeid(uint64_t)) file.writeAttribute(std::any_cast<uint64_t>(params.second), dataset_name, params.first);
+        if(params.second.type() == typeid(int)) file.writeAttribute(std::any_cast<int>(params.second), dataset_name, params.first);
+        if(params.second.type() == typeid(bool)) file.writeAttribute(std::any_cast<bool>(params.second), dataset_name, params.first);
+        if(params.second.type() == typeid(std::string)) file.writeAttribute(std::any_cast<std::string>(params.second), dataset_name, params.first);
     }
 }
 
