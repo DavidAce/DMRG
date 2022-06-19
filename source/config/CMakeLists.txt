@@ -1,9 +1,11 @@
-add_library(dmrg-config-o OBJECT)
-target_sources(dmrg-config-o PUBLIC loader.cpp settings.cpp parse.cpp)
-target_link_libraries(dmrg-config-o PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-config-o)
+add_source_target(dmrg-config
+        TARGET_SOURCES
+        loader.cpp
+        settings.cpp
+        parse.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tools-common-log
+        )
 
-
-add_library(dmrg-config INTERFACE)
-target_link_libraries(dmrg-config INTERFACE $<TARGET_OBJECTS:dmrg-config-o>)
-target_link_libraries(dmrg-config INTERFACE deps flags)

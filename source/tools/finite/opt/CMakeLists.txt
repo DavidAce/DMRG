@@ -1,5 +1,5 @@
-add_library(dmrg-tools-finite-opt OBJECT)
-target_sources(dmrg-tools-finite-opt PRIVATE
+add_source_target(dmrg-tools-finite-opt
+        TARGET_SOURCES
         bfgs_base_functor.cpp
         bfgs_optimize_variance.cpp
         bfgs_variance_functor.cpp
@@ -19,7 +19,16 @@ target_sources(dmrg-tools-finite-opt PRIVATE
         opt.cpp
         opt_mps.cpp
         opt_meta.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-config
+        dmrg-math-eig
+        dmrg-algorithms-status
+        dmrg-tensors-finite
+        dmrg-tools-finite-measure
+        dmrg-tools-common-log
+        dmrg-tools-common-contraction
         )
 
-target_link_libraries(dmrg-tools-finite-opt PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-finite-opt)

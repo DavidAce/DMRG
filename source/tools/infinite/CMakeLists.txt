@@ -7,11 +7,11 @@ add_subdirectory(print)
 
 add_library(dmrg-tools-infinite INTERFACE)
 target_link_libraries(dmrg-tools-infinite INTERFACE
-        $<TARGET_OBJECTS:dmrg-tools-infinite-h5>
-        $<TARGET_OBJECTS:dmrg-tools-infinite-measure>
-        $<TARGET_OBJECTS:dmrg-tools-infinite-env>
-        $<TARGET_OBJECTS:dmrg-tools-infinite-opt>
-        $<TARGET_OBJECTS:dmrg-tools-infinite-mps>
-        $<TARGET_OBJECTS:dmrg-tools-infinite-print>
+        dmrg-tools-infinite-h5
+        dmrg-tools-infinite-measure
+        dmrg-tools-infinite-env
+        dmrg-tools-infinite-opt
+        dmrg-tools-infinite-mps
+        dmrg-tools-infinite-print
         )
 target_link_libraries(dmrg-tools-infinite INTERFACE deps flags)

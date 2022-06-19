@@ -1,4 +1,9 @@
-add_library(dmrg-qm-mpo OBJECT)
-target_sources(dmrg-qm-mpo PRIVATE mpo.cpp)
-target_link_libraries(dmrg-qm-mpo PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-qm-mpo)
+add_source_target(dmrg-qm-mpo
+        TARGET_SOURCES
+        mpo.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-math-rnd
+        dmrg-math-tenx
+        )

@@ -1,4 +1,15 @@
-add_library(dmrg-tools-finite-env OBJECT)
-target_sources(dmrg-tools-finite-env PRIVATE env.cpp)
-target_link_libraries(dmrg-tools-finite-env PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-finite-env)
+add_source_target(dmrg-tools-finite-env
+        TARGET_SOURCES
+        env.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-config
+        dmrg-math-svd
+        dmrg-math-tenx
+        dmrg-tensors-finite
+        dmrg-tools-common-log
+        dmrg-tools-common-contraction
+        )
+

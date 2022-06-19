@@ -1,4 +1,15 @@
-add_library(dmrg-tensors-env OBJECT)
-target_sources(dmrg-tensors-env PRIVATE EnvPair.cpp EnvBase.cpp EnvEne.cpp EnvVar.cpp)
-target_link_libraries(dmrg-tensors-env PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tensors-env)
+add_source_target(dmrg-tensors-env
+        TARGET_SOURCES
+        EnvPair.cpp
+        EnvBase.cpp
+        EnvEne.cpp
+        EnvVar.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-math-hash
+        dmrg-tensors-mps
+        dmrg-tensors-mpo
+        dmrg-tensors-env
+        dmrg-tools-common-log
+        )

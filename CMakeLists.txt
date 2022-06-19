@@ -97,6 +97,7 @@ endif()
 # Print summary of CMake configuration
 include(cmake/PrintTargetInfo.cmake)
 print_project_summary(DMRG++)
+write_project_summary(DMRG++)
 
 
 ###################

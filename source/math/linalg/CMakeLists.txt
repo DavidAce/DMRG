@@ -1,4 +1,6 @@
-add_library(dmrg-math-linalg OBJECT)
-target_sources(dmrg-math-linalg PRIVATE matrix.cpp)
-target_link_libraries(dmrg-math-linalg PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-math-linalg)
+add_source_target(dmrg-math-linalg
+        TARGET_SOURCES
+        matrix.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        )

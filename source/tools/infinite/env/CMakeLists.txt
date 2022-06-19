@@ -1,4 +1,9 @@
-add_library(dmrg-tools-infinite-env OBJECT)
-target_sources(dmrg-tools-infinite-env PRIVATE env.cpp)
-target_link_libraries(dmrg-tools-infinite-env PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-infinite-env)
+add_source_target(dmrg-tools-infinite-env
+        TARGET_SOURCES
+        env.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tensors-infinite
+        )
+

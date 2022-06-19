@@ -1,11 +1,30 @@
-add_library(dmrg-tools-finite-ops OBJECT ops.cpp)
-add_library(dmrg-tools-finite-print OBJECT print.cpp)
+add_source_target(dmrg-tools-finite-ops
+        TARGET_SOURCES
+        ops.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-qm-spin
+        dmrg-qm-mpo
+        dmrg-tensors-state-finite
+        dmrg-tensors-mpo
+        dmrg-math-tenx
+        dmrg-tools-finite-mps
+        dmrg-tools-finite-measure
+        dmrg-tools-common-log
+        dmrg-tools-common-contraction
+        )
+add_source_target(dmrg-tools-finite-print
+        TARGET_SOURCES
+        print.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tensors-finite
+        dmrg-tools-common-log
+        )
 
-target_link_libraries(dmrg-tools-finite-ops PUBLIC deps flags)
-target_link_libraries(dmrg-tools-finite-print PUBLIC deps flags)
-
-target_link_precompiled_headers(dmrg-tools-finite-ops)
-target_link_precompiled_headers(dmrg-tools-finite-print)
 
 add_subdirectory(h5)
 add_subdirectory(ed)
@@ -17,14 +36,14 @@ add_subdirectory(opt)
 
 add_library(dmrg-tools-finite INTERFACE)
 target_link_libraries(dmrg-tools-finite INTERFACE
-        $<TARGET_OBJECTS:dmrg-tools-finite-env>
-        $<TARGET_OBJECTS:dmrg-tools-finite-mps>
-        $<TARGET_OBJECTS:dmrg-tools-finite-multisite>
-        $<TARGET_OBJECTS:dmrg-tools-finite-ops>
-        $<TARGET_OBJECTS:dmrg-tools-finite-opt>
-        $<TARGET_OBJECTS:dmrg-tools-finite-print>
-        $<TARGET_OBJECTS:dmrg-tools-finite-h5>
-        $<TARGET_OBJECTS:dmrg-tools-finite-ed>
-        $<TARGET_OBJECTS:dmrg-tools-finite-measure>
+        dmrg-tools-finite-measure
+        dmrg-tools-finite-mps
+        dmrg-tools-finite-env
+        dmrg-tools-finite-multisite
+        dmrg-tools-finite-ops
+        dmrg-tools-finite-opt
+        dmrg-tools-finite-print
+        dmrg-tools-finite-h5
+        dmrg-tools-finite-ed
         )
 target_link_libraries(dmrg-tools-finite INTERFACE deps flags)

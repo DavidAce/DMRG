@@ -1,4 +1,6 @@
-add_library(dmrg-qm-lbit OBJECT)
-target_sources(dmrg-qm-lbit PRIVATE lbit.cpp)
-target_link_libraries(dmrg-qm-lbit PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-qm-lbit)
+add_source_target(dmrg-qm-lbit
+        TARGET_SOURCES
+        lbit.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        )

@@ -8,11 +8,11 @@ add_subdirectory(spin)
 
 add_library(dmrg-qm INTERFACE)
 target_link_libraries(dmrg-qm INTERFACE
-        $<TARGET_OBJECTS:dmrg-qm-gate>
-        $<TARGET_OBJECTS:dmrg-qm-time>
-        $<TARGET_OBJECTS:dmrg-qm-lbit>
-        $<TARGET_OBJECTS:dmrg-qm-mpo>
-        $<TARGET_OBJECTS:dmrg-qm-spin>
+        dmrg-qm-gate
+        dmrg-qm-spin
+        dmrg-qm-mpo
+        dmrg-qm-time
+        dmrg-qm-lbit
         )
 
 target_link_libraries(dmrg-qm INTERFACE deps flags)

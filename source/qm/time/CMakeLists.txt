@@ -1,4 +1,10 @@
-add_library(dmrg-qm-time OBJECT)
-target_sources(dmrg-qm-time PRIVATE time.cpp)
-target_link_libraries(dmrg-qm-time PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-qm-time)
+add_source_target(dmrg-qm-time
+        TARGET_SOURCES
+        time.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-math-tenx
+        dmrg-math-linalg
+        dmrg-tools-common-log
+        )

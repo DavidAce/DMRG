@@ -1,11 +1,15 @@
+add_source_target(dmrg-math-eig-arpack
+        TARGET_SOURCES
+        solver_arpack.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-math-eig-matvec
+        dmrg-math-eig-o
+        )
 # This one is special, since it absolutely can't have BLAS/LAPACK headers during compile for some reason
-add_library(dmrg-math-eig-arpack OBJECT)
-target_sources(dmrg-math-eig-arpack PRIVATE solver_arpack.cpp)
 set_source_files_properties(solver_arpack.cpp PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
-#target_link_libraries(dmrg-math-eig-arpack PUBLIC spdlog::spdlog arpack::arpack++ flags)
 
-# Test
-#target_link_libraries(dmrg-math-eig-arpack PUBLIC Eigen3::Eigen)
 
-target_link_libraries(dmrg-math-eig-arpack PUBLIC deps flags)
 

@@ -1,3 +1,4 @@
+include(../cmake/AddSourceTarget.cmake)
 add_subdirectory(algorithms)
 add_subdirectory(config)
 add_subdirectory(debug)

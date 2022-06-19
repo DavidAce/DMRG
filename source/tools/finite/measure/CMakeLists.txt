@@ -1,4 +1,21 @@
-add_library(dmrg-tools-finite-measure OBJECT)
-target_sources(dmrg-tools-finite-measure PRIVATE measure.cpp measure-parity-components.cpp entropy.cpp)
-target_link_libraries(dmrg-tools-finite-measure PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-finite-measure)
+add_source_target(dmrg-tools-finite-measure
+        TARGET_SOURCES
+        measure.cpp
+        measure-parity-components.cpp
+        entropy.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-qm-spin
+        dmrg-qm-mpo
+        dmrg-tensors-finite
+        dmrg-math-eig
+        dmrg-math-tenx
+        dmrg-math-linalg
+        dmrg-tools-finite-mps
+        dmrg-tools-common-log
+        dmrg-tools-common-contraction
+
+        )
+

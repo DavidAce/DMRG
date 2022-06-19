@@ -1,4 +1,18 @@
-add_library(dmrg-tensors-mpo OBJECT)
-target_sources(dmrg-tensors-mpo PRIVATE MpoSite.cpp MpoFactory.cpp IsingSelfDual.cpp IsingMajorana.cpp IsingRandomField.cpp LBit.cpp)
-target_link_libraries(dmrg-tensors-mpo PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tensors-mpo)
+add_source_target(dmrg-tensors-mpo
+        TARGET_SOURCES
+        MpoSite.cpp
+        MpoFactory.cpp
+        IsingSelfDual.cpp
+        IsingMajorana.cpp
+        IsingRandomField.cpp
+        LBit.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-config
+        dmrg-math-hash
+        dmrg-math-rnd
+        dmrg-math-tenx
+        dmrg-qm-spin
+        dmrg-tools-common-log
+        )

@@ -1,4 +1,14 @@
-add_library(dmrg-tensors-mps OBJECT)
-target_sources(dmrg-tensors-mps PRIVATE MpsSite.cpp)
-target_link_libraries(dmrg-tensors-mps PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tensors-mps)
+add_source_target(dmrg-tensors-mps
+        TARGET_SOURCES
+        MpsSite.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-debug
+        dmrg-math-linalg
+        dmrg-math-tenx
+        dmrg-math-hash
+        dmrg-tools-common-contraction
+        dmrg-tools-common-log
+        )

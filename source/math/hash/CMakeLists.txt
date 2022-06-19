@@ -1,5 +1,8 @@
-add_library(dmrg-math-hash OBJECT)
-target_sources(dmrg-math-hash PRIVATE hash.cpp)
-target_link_libraries(dmrg-math-hash PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-math-hash)
-
+add_source_target(dmrg-math-hash
+        TARGET_SOURCES
+        hash.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        )

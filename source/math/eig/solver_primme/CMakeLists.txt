@@ -1,4 +1,10 @@
-add_library(dmrg-math-eig-primme OBJECT)
-target_sources(dmrg-math-eig-primme PRIVATE solver_primme.cpp)
-target_link_libraries(dmrg-math-eig-primme PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-math-eig-primme)
+add_source_target(dmrg-math-eig-primme
+        TARGET_SOURCES
+        solver_primme.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-math-eig-matvec
+        dmrg-math-eig-o
+        )

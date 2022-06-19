@@ -1,4 +1,9 @@
-add_library(dmrg-tools-infinite-print OBJECT)
-target_sources(dmrg-tools-infinite-print PRIVATE print.cpp)
-target_link_libraries(dmrg-tools-infinite-print PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-infinite-print)
+add_source_target(dmrg-tools-infinite-print
+        TARGET_SOURCES
+        print.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tensors-infinite
+        )
+

@@ -1,4 +1,16 @@
-add_library(dmrg-tools-infinite-measure OBJECT)
-target_sources(dmrg-tools-infinite-measure PRIVATE measure.cpp measure_ham.cpp measure_mom.cpp)
-target_link_libraries(dmrg-tools-infinite-measure PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-infinite-measure)
+add_source_target(dmrg-tools-infinite-measure
+        TARGET_SOURCES
+        measure.cpp
+        measure_ham.cpp
+        measure_mom.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-math-tenx
+        dmrg-algorithms-status
+        dmrg-tensors-infinite
+        dmrg-tools-common-contraction
+        dmrg-tools-common-log
+        )
+

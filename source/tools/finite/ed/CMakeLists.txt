@@ -1,7 +1,16 @@
-add_library(dmrg-tools-finite-ed OBJECT)
-target_sources(dmrg-tools-finite-ed PRIVATE
+add_source_target(dmrg-tools-finite-ed
+        TARGET_SOURCES
         ed.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-algorithms-status
+        dmrg-math-eig
+        dmrg-math-tenx
+        dmrg-tensors-finite
+        dmrg-tools-finite-measure
+        dmrg-tools-finite-opt
+        dmrg-tools-common-split
         )
 
-target_link_libraries(dmrg-tools-finite-ed PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-finite-ed)

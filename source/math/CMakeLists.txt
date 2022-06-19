@@ -6,15 +6,11 @@ add_subdirectory(hash)
 add_subdirectory(tenx)
 add_library(dmrg-math INTERFACE)
 target_link_libraries(dmrg-math INTERFACE
-        $<TARGET_OBJECTS:dmrg-math-eig>
-        $<TARGET_OBJECTS:dmrg-math-eig-arpack>
-        $<TARGET_OBJECTS:dmrg-math-eig-lapacke>
-        $<TARGET_OBJECTS:dmrg-math-eig-primme>
-        $<TARGET_OBJECTS:dmrg-math-eig-matvec>
-        $<TARGET_OBJECTS:dmrg-math-svd>
-        $<TARGET_OBJECTS:dmrg-math-linalg>
-        $<TARGET_OBJECTS:dmrg-math-rnd>
-        $<TARGET_OBJECTS:dmrg-math-hash>
-        $<TARGET_OBJECTS:dmrg-math-tenx>
+        dmrg-math-linalg
+        dmrg-math-svd
+        dmrg-math-rnd
+        dmrg-math-eig
+        dmrg-math-hash
+        dmrg-math-tenx
         )
 target_link_libraries(dmrg-math INTERFACE deps flags)

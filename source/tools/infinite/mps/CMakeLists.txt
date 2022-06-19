@@ -1,4 +1,12 @@
-add_library(dmrg-tools-infinite-mps OBJECT)
-target_sources(dmrg-tools-infinite-mps PRIVATE mps.cpp)
-target_link_libraries(dmrg-tools-infinite-mps PUBLIC deps flags)
-target_link_precompiled_headers(dmrg-tools-infinite-mps)
+add_source_target(dmrg-tools-infinite-mps
+        TARGET_SOURCES
+        mps.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-config
+        dmrg-tensors-state-infinite
+        dmrg-tools-common-split
+        )
+

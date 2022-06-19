@@ -1,35 +1,52 @@
 add_subdirectory(h5)
 add_subdirectory(contraction)
 
-add_library(dmrg-tools-common-log OBJECT)
-target_sources(dmrg-tools-common-log PRIVATE log.cpp)
-target_link_libraries(dmrg-tools-common-log PUBLIC deps flags)
+add_source_target(dmrg-tools-common-log TARGET_SOURCES log.cpp OBJECT_LINK_LIBRARIES deps flags)
 
-add_library(dmrg-tools-common-prof OBJECT)
-target_sources(dmrg-tools-common-prof PRIVATE prof.cpp)
-target_link_libraries(dmrg-tools-common-prof PUBLIC deps flags)
-
-add_library(dmrg-tools-common-split OBJECT)
-target_sources(dmrg-tools-common-split PRIVATE split.cpp)
-target_link_libraries(dmrg-tools-common-split PUBLIC deps flags)
-
-add_library(dmrg-tools-common-views OBJECT)
-target_sources(dmrg-tools-common-views PRIVATE views.cpp)
-target_link_libraries(dmrg-tools-common-views PUBLIC deps flags)
-
-target_link_precompiled_headers(dmrg-tools-common-log)
-target_link_precompiled_headers(dmrg-tools-common-prof)
-target_link_precompiled_headers(dmrg-tools-common-split)
-target_link_precompiled_headers(dmrg-tools-common-views)
-
+add_source_target(dmrg-tools-common-prof
+        TARGET_SOURCES
+        prof.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-config
+        dmrg-tools-common-log
+        )
+add_source_target(dmrg-tools-common-split
+        TARGET_SOURCES
+        split.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-config
+        dmrg-math-svd
+        dmrg-tensors-mps
+        dmrg-tools-common-log
+        dmrg-tools-common-contraction
+        )
+add_source_target(dmrg-tools-common-views
+        TARGET_SOURCES
+        views.cpp
+        OBJECT_LINK_LIBRARIES
+        deps flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-config
+        dmrg-math-eig
+        dmrg-math-tenx
+        dmrg-tensors-state
+        dmrg-tools-common-log
+        )
 
 add_library(dmrg-tools-common INTERFACE)
 target_link_libraries(dmrg-tools-common INTERFACE deps flags)
 target_link_libraries(dmrg-tools-common INTERFACE
-        $<TARGET_OBJECTS:dmrg-tools-common-log>
-        $<TARGET_OBJECTS:dmrg-tools-common-prof>
-        $<TARGET_OBJECTS:dmrg-tools-common-split>
-        $<TARGET_OBJECTS:dmrg-tools-common-views>
-        $<TARGET_OBJECTS:dmrg-tools-common-h5>
-        $<TARGET_OBJECTS:dmrg-tools-common-contraction>
+        dmrg-tools-common-log
+        dmrg-tools-common-prof
+        dmrg-tools-common-split
+        dmrg-tools-common-views
+        dmrg-tools-common-h5
+        dmrg-tools-common-contraction
         )

@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.15)
+function(add_source_target target_name)
+    set(options CONFIG MODULE CHECK QUIET DEBUG INSTALL_PREFIX_PKGNAME)
+    set(oneValueArgs VERSION INSTALL_DIR INSTALL_SUBDIR BUILD_DIR BUILD_SUBDIR FIND_NAME TARGET_NAME LINK_TYPE)
+    set(multiValueArgs TARGET_SOURCES OBJECT_LINK_LIBRARIES INTERFACE_LINK_LIBRARIES)
+    cmake_parse_arguments(PARSE_ARGV 1 ADD "${options}" "${oneValueArgs}" "${multiValueArgs}")
+
+    set(object_name ${target_name}-o)
+    add_library(${object_name} OBJECT)
+    target_sources(${object_name} PRIVATE ${ADD_TARGET_SOURCES})
+    target_link_libraries(${object_name} PUBLIC ${ADD_OBJECT_LINK_LIBRARIES})
+    target_link_precompiled_headers(${object_name})
+
+    add_library(${target_name} INTERFACE)
+    target_sources(${target_name} INTERFACE $<TARGET_OBJECTS:${object_name}>)
+    target_link_libraries(${target_name} INTERFACE ${object_name} ${ADD_INTERFACE_LINK_LIBRARIES})
+endfunction()
