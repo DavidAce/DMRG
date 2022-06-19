@@ -62,7 +62,8 @@ if (DMRG_PACKAGE_MANAGER MATCHES "conan")
     list(APPEND DMRG_CONAN_PATH_SUFFIXES
             bin envs/dmrg/bin
             )
+    mark_as_advanced(DMRG_CONAN_HINTS)
+    mark_as_advanced(DMRG_CONAN_PATH_SUFFIXES)
 endif ()
 
 
-mark_as_advanced(DMRG_CONAN_CANDIDATE_PATHS)
