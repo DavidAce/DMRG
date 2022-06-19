@@ -1,9 +1,9 @@
 #include "../contraction.h"
+#include "math/tenx.h"
+#include "tid/tid.h"
 #include <io/fmt.h>
-#include <math/tenx.h>
 #include <tblis/tblis.h>
 #include <tblis/util/thread.h>
-#include <tid/tid.h>
 
 #if defined(DMRG_SAVE_CONTRACTION)
     #include <h5pp/h5pp.h>

@@ -6,7 +6,6 @@
 #include "math/tenx.h"
 #include "qm/mpo.h"
 #include "qm/spin.h"
-#include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
@@ -16,7 +15,6 @@
 
 //
 #include "debug/exceptions.h"
-#include "math/linalg/tensor.h"
 #include "tools/common/contraction.h"
 
 namespace settings {

@@ -1,11 +1,11 @@
 #include <math/tenx/fwd_decl.h>
 // Eigen goes first
 #include "debug/exceptions.h"
+#include "math/tenx.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include <complex>
 #include <Eigen/IterativeLinearSolvers>
-#include <math/tenx.h>
 #include <unsupported/Eigen/IterativeSolvers>
 
 template<typename Scalar_>

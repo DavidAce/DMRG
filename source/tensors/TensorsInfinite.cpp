@@ -23,8 +23,8 @@ TensorsInfinite::TensorsInfinite()
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-TensorsInfinite::~TensorsInfinite()                       = default;            // default dtor
-TensorsInfinite::TensorsInfinite(TensorsInfinite &&other) = default;            // default move ctor
+TensorsInfinite::~TensorsInfinite()                                  = default; // default dtor
+TensorsInfinite::TensorsInfinite(TensorsInfinite &&other)            = default; // default move ctor
 TensorsInfinite &TensorsInfinite::operator=(TensorsInfinite &&other) = default; // default move assign
 
 TensorsInfinite::TensorsInfinite(const TensorsInfinite &other)

@@ -23,7 +23,7 @@ namespace tools::common::h5 {
     }
 
     template<typename AttrType>
-    void save::attr(h5pp::File &h5file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText,
+    void save::attr(h5pp::File &h5file, const AttrType &attrData, std::string_view linkPath, std::string_view attrName, std::string_view linkText,
                     std::optional<h5pp::hid::h5t> h5type) {
         if(not h5file.linkExists(attrName)) {
             tools::log->trace("link [{}] does not exist. Returning ...", attrName);
@@ -170,23 +170,23 @@ namespace tools::common::h5 {
         auto mps_prefix        = fmt::format("{}/mps", state_prefix);
 
         h5pp_table_algorithm_status::register_table_type();
-        save::attr(h5file, status, state_prefix, "common/status", "Maps state_prefix -> status", h5pp_table_algorithm_status::h5_type);
-        save::attr(h5file, status.algorithm_has_finished, state_prefix, "common/finished", "Maps state_prefix -> finished");
-        save::attr(h5file, storage_level_sv, state_prefix, "common/storage_level", "Maps state_prefix -> storage_level");
-        save::attr(h5file, storage_reason_sv, state_prefix, "common/storage_reason", "Maps state_prefix -> storage_reason");
-        save::attr(h5file, state_root, state_prefix, "common/state_root", "Maps state_prefix -> state_root");
-        save::attr(h5file, model_prefix, state_prefix, "common/model_prefix", "Maps state_prefix -> model_prefix");
-        save::attr(h5file, hamiltonian, state_prefix, "common/hamiltonian", "Maps state_prefix -> hamiltonian table");
-        save::attr(h5file, mpo_prefix, state_prefix, "common/mpo_prefix", "Maps state_prefix -> mpo_prefix");
-        save::attr(h5file, mps_prefix, state_prefix, "common/mps_prefix", "Maps state_prefix -> mps_prefix");
-        save::attr(h5file, model_name_sv, state_prefix, "common/model_type", "Maps state_prefix -> model_type");
-        save::attr(h5file, model_size, state_prefix, "common/model_size", "Maps state_prefix -> model_size");
-        save::attr(h5file, status.algo_type_sv(), state_prefix, "common/algo_type", "Maps state_prefix -> algo_type");
-        save::attr(h5file, state_name, state_prefix, "common/state_name", "Maps state_prefix -> state_name");
-        save::attr(h5file, status.iter, state_prefix, "common/iter", "Maps state_prefix -> iter");
-        save::attr(h5file, status.step, state_prefix, "common/step", "Maps state_prefix -> step");
-        save::attr(h5file, status.position, state_prefix, "common/position", "Maps state_prefix -> position");
-        if(not table_prfxs.empty()) save::attr(h5file, table_prfxs, state_prefix, "common/table_prfxs", "Maps state_prefix -> one or more table prefixes");
+        save::attr(h5file, status, "common/status", state_prefix, "Maps state_prefix -> status", h5pp_table_algorithm_status::h5_type);
+        save::attr(h5file, status.algorithm_has_finished, "common/finished", state_prefix, "Maps state_prefix -> finished");
+        save::attr(h5file, storage_level_sv, "common/storage_level", state_prefix, "Maps state_prefix -> storage_level");
+        save::attr(h5file, storage_reason_sv, "common/storage_reason", state_prefix, "Maps state_prefix -> storage_reason");
+        save::attr(h5file, state_root, "common/state_root", state_prefix, "Maps state_prefix -> state_root");
+        save::attr(h5file, model_prefix, "common/model_prefix", state_prefix, "Maps state_prefix -> model_prefix");
+        save::attr(h5file, hamiltonian, "common/hamiltonian", state_prefix, "Maps state_prefix -> hamiltonian table");
+        save::attr(h5file, mpo_prefix, "common/mpo_prefix", state_prefix, "Maps state_prefix -> mpo_prefix");
+        save::attr(h5file, mps_prefix, "common/mps_prefix", state_prefix, "Maps state_prefix -> mps_prefix");
+        save::attr(h5file, model_name_sv, "common/model_type", state_prefix, "Maps state_prefix -> model_type");
+        save::attr(h5file, model_size, "common/model_size", state_prefix, "Maps state_prefix -> model_size");
+        save::attr(h5file, status.algo_type_sv(), "common/algo_type", state_prefix, "Maps state_prefix -> algo_type");
+        save::attr(h5file, state_name, "common/state_name", state_prefix, "Maps state_prefix -> state_name");
+        save::attr(h5file, status.iter, "common/iter", state_prefix, "Maps state_prefix -> iter");
+        save::attr(h5file, status.step, "common/step", state_prefix, "Maps state_prefix -> step");
+        save::attr(h5file, status.position, "common/position", state_prefix, "Maps state_prefix -> position");
+        if(not table_prfxs.empty()) save::attr(h5file, table_prfxs, "common/table_prfxs", state_prefix, "Maps state_prefix -> one or more table prefixes");
         save_log.insert({std::string(state_prefix), status});
     }
 

@@ -40,7 +40,7 @@ namespace tools::finite::mps {
     extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, long bond_lim, GateMove gm = GateMove::AUTO, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_gates_old                      (StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & order, GateMove gm, std::optional<svd::settings> svd_settings = std::nullopt);
-    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, long bond_lim, std::vector<size_t> & order, GateMove gm, std::optional<svd::settings> svd_settings = std::nullopt);
+    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, long bond_lim, std::vector<size_t> & sites, GateMove gm, std::optional<svd::settings> svd_settings = std::nullopt);
     extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool reverse, long bond_lim, GateMove gm = GateMove::AUTO, std::optional<svd::settings> svd_settings = std::nullopt);
     namespace init{
         inline std::set<long> used_bitfields;

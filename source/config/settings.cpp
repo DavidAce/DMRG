@@ -1,5 +1,5 @@
 #include "settings.h"
-#include <config/loader.h>
+#include "loader.h"
 
 bool settings::algorithm_is_on(AlgorithmType algo_type) {
     switch(algo_type) {
@@ -72,7 +72,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::savepoint_keep_newest_only"          , storage::savepoint_keep_newest_only);
     dmrg_config.load_parameter("storage::savepoint_frequency"                 , storage::savepoint_frequency);
     dmrg_config.load_parameter("storage::checkpoint_keep_newest_only"         , storage::checkpoint_keep_newest_only);
-    dmrg_config.load_parameter("storage::bondpoint_enabled"        , storage::bondpoint_enabled);
     dmrg_config.load_parameter("storage::checkpoint_frequency"                , storage::checkpoint_frequency);
     dmrg_config.load_parameter("storage::use_temp_dir"                        , storage::use_temp_dir);
     dmrg_config.load_parameter("storage::copy_from_temp_freq"                 , storage::copy_from_temp_freq);
@@ -88,7 +87,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::storage_level_init_state"            , storage::storage_level_init_state);
     dmrg_config.load_parameter("storage::storage_level_emin_state"            , storage::storage_level_emin_state);
     dmrg_config.load_parameter("storage::storage_level_emax_state"            , storage::storage_level_emax_state);
-    dmrg_config.load_parameter("storage::storage_level_fes_states"            , storage::storage_level_fes_states);
+    dmrg_config.load_parameter("storage::storage_level_bond_state"            , storage::storage_level_bond_state);
 
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);
     dmrg_config.load_parameter("model::model_size"                            , model::model_size);

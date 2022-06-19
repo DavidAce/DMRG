@@ -17,7 +17,7 @@ enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, BOND_UPDATE, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, FES_ANALYSIS };
+enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, BOND_INCREASE, BOND_DECREASE };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
@@ -262,13 +262,13 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StorageReason::SAVEPOINT)                            return "SAVEPOINT";
         if(item == StorageReason::CHECKPOINT)                           return "CHECKPOINT";
         if(item == StorageReason::FINISHED)                             return "FINISHED";
-        if(item == StorageReason::BOND_UPDATE)                          return "BOND_UPDATE";
         if(item == StorageReason::PROJ_STATE)                           return "PROJ_STATE";
         if(item == StorageReason::INIT_STATE)                           return "INIT_STATE";
         if(item == StorageReason::EMIN_STATE)                           return "EMIN_STATE";
         if(item == StorageReason::EMAX_STATE)                           return "EMAX_STATE";
         if(item == StorageReason::MODEL)                                return "MODEL";
-        if(item == StorageReason::FES_ANALYSIS)                         return "FES_ANALYSIS";
+        if(item == StorageReason::BOND_INCREASE)                        return "BOND_INCREASE";
+        if(item == StorageReason::BOND_DECREASE)                        return "BOND_DECREASE";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -571,13 +571,13 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "SAVEPOINT")                             return StorageReason::SAVEPOINT;
         if(item == "CHECKPOINT")                            return StorageReason::CHECKPOINT;
         if(item == "FINISHED")                              return StorageReason::FINISHED;
-        if(item == "BOND_UPDATE")                            return StorageReason::BOND_UPDATE;
         if(item == "PROJ_STATE")                            return StorageReason::PROJ_STATE;
         if(item == "INIT_STATE")                            return StorageReason::INIT_STATE;
         if(item == "EMIN_STATE")                            return StorageReason::EMIN_STATE;
         if(item == "EMAX_STATE")                            return StorageReason::EMAX_STATE;
         if(item == "MODEL")                                 return StorageReason::MODEL;
-        if(item == "FES_ANALYSIS")                          return StorageReason::FES_ANALYSIS;
+        if(item == "BOND_INCREASE")                         return StorageReason::BOND_INCREASE;
+        if(item == "BOND_DECREASE")                         return StorageReason::BOND_DECREASE;
 
     }
     if constexpr(std::is_same_v<T, StateInit>) {

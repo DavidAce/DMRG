@@ -158,7 +158,6 @@ void ModelFinite::clear_mpo_squared() {
 }
 
 void ModelFinite::compress_mpo_squared(std::optional<svd::settings> svd_settings) {
-    tools::log->debug("Compressing MPO²");
     cache.multisite_mpo_squared = std::nullopt;
     cache.multisite_ham_squared = std::nullopt;
     auto mpo_compressed         = get_compressed_mpo_squared(svd_settings);
@@ -215,6 +214,7 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
                     mpo_sq = U.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             }
+            tools::log->info("iter {} | idx {} | dim {} -> {}", iter, idx, report[idx], mpo_sq.dimensions());
         }
 
         // Now we have done left to right. Next we do right to left
@@ -236,6 +236,7 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
                     mpo_sq = T_r2l.contract(V, tenx::idx({1}, {0}));
             }
+            tools::log->info("iter {} | idx {} | dim {} -> {}", iter, idx, report[idx], mpo_sq.dimensions());
         }
     }
 

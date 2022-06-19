@@ -1,10 +1,10 @@
 #include "ModelInfinite.h"
+#include "config/settings.h"
+#include "general/iter.h"
+#include "math/num.h"
+#include "math/svd.h"
+#include "math/tenx.h"
 #include "tensors/site/mpo/MpoFactory.h"
-#include <config/settings.h>
-#include <general/iter.h>
-#include <math/num.h>
-#include <math/svd.h>
-#include <math/tenx.h>
 
 ModelInfinite::ModelInfinite() = default;
 
@@ -17,8 +17,8 @@ ModelInfinite::ModelInfinite() = default;
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-ModelInfinite::~ModelInfinite()                     = default;            // default dtor
-ModelInfinite::ModelInfinite(ModelInfinite &&other) = default;            // default move ctor
+ModelInfinite::~ModelInfinite()                                = default; // default dtor
+ModelInfinite::ModelInfinite(ModelInfinite &&other)            = default; // default move ctor
 ModelInfinite &ModelInfinite::operator=(ModelInfinite &&other) = default; // default move assign
 
 ModelInfinite::ModelInfinite(const ModelInfinite &other) : cache(other.cache), HA(other.HA->clone()), HB(other.HB->clone()), model_type(other.model_type) {}

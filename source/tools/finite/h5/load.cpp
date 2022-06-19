@@ -2,7 +2,6 @@
 #include "debug/exceptions.h"
 #include "io/table_types.h"
 #include "math/num.h"
-#include "math/tenx.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
@@ -13,7 +12,6 @@
 #include "tools/common/log.h"
 #include "tools/finite/env.h"
 #include "tools/finite/h5.h"
-#include "tools/finite/mps.h"
 #include "tools/finite/print.h"
 #include <algorithms/AlgorithmStatus.h>
 #include <complex>
@@ -68,7 +66,7 @@ namespace tools::finite::h5 {
     void load::state(const h5pp::File &h5file, std::string_view state_prefix, StateFinite &state, const AlgorithmStatus &status) {
         using cplx = std::complex<double>;
         try {
-            if(h5file.readAttribute<std::string>(state_prefix, "common/storage_level") != enum2sv(StorageLevel::FULL))
+            if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
                 throw std::runtime_error("Given prefix to MPS data with StorageLevel < FULL. The MPS's can only be resumed from FULL storage");
             auto mps_prefix = h5file.readAttribute<std::string>("common/mps_prefix", state_prefix);
             auto model_type = h5file.readAttribute<std::string>("common/model_type", state_prefix);

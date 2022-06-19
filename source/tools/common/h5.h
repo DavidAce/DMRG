@@ -1,6 +1,7 @@
 #pragma once
 #include <h5pp/details/h5ppHid.h>
 #include <map>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -31,7 +32,7 @@ namespace tools::common::h5 {
         extern void bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
         extern std::optional<std::pair<uint64_t, uint64_t>> get_last_save_point(const h5pp::File &h5file, std::string_view link_path);
         template<typename AttrType>
-        extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view attrName, std::string_view linkPath, std::string_view linkText, std::optional<h5pp::hid::h5t> h5type = std::nullopt);
+        extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view linkPath, std::string_view attrName, std::string_view linkText, std::optional<h5pp::hid::h5t> h5type = std::nullopt);
         extern void status   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
         extern void mem      (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
         extern void timer    (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);

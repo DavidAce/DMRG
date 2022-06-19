@@ -1,6 +1,6 @@
 #include "../svd.h"
+#include "tid/tid.h"
 #include <complex>
-#include <tid/tid.h>
 
 #ifndef lapack_complex_float
     #define lapack_complex_float std::complex<float>
@@ -13,8 +13,8 @@
 #if __has_include(<mkl_lapacke.h>)
     #include <mkl_lapacke.h>
 #elif __has_include(<openblas/lapacke.h>)
-    #include <openblas/lapacke.h>
     #include <openblas/cblas.h>
+    #include <openblas/lapacke.h>
     #include <openblas_config.h>
 #else
     #include <lapacke.h>
@@ -29,12 +29,12 @@ namespace svd {
         std::vector<std::complex<double>> cwork(1ul, 0);
         std::vector<double>               rwork(1ul, 0);
         void                              clear_lapack() {
-            iwork = std::vector<int>(1ul, 0);
-            cwork = std::vector<std::complex<double>>(1ul, 0);
-            rwork = std::vector<double>(1ul, 0);
-            iwork.shrink_to_fit();
-            cwork.shrink_to_fit();
-            rwork.shrink_to_fit();
+                                         iwork = std::vector<int>(1ul, 0);
+                                         cwork = std::vector<std::complex<double>>(1ul, 0);
+                                         rwork = std::vector<double>(1ul, 0);
+                                         iwork.shrink_to_fit();
+                                         cwork.shrink_to_fit();
+                                         rwork.shrink_to_fit();
         }
     }
 }
@@ -424,7 +424,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(save_result) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
 
     svd::log->trace("SVD with Lapacke finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
-                   threshold, rank, rank_max.value(), rows, cols, truncation_error, t_lpk->get_last_interval());
+                    threshold, rank, rank_max.value(), rows, cols, truncation_error, t_lpk->get_last_interval());
     return std::make_tuple(U, S, VT, rank);
 }
 

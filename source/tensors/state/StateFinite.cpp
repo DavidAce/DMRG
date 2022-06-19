@@ -385,8 +385,8 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
                 auto &mps_left = get_mps_site(sites.front() - 1);
                 auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
                 multisite_mps  = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
-                norm           = tools::common::contraction::contract_mps_norm(multisite_mps);
-                tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm);
+                auto norm_left = tools::common::contraction::contract_mps_norm(multisite_mps);
+                tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm_left);
             }
             throw std::runtime_error(fmt::format("get_multisite_mps: not normalized: sites {} | norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm));
         }

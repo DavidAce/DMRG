@@ -121,8 +121,6 @@ namespace tools::common::contraction {
     }
 
     /* clang-format on */
-    template<typename T>
-    using OptRefWrap = std::optional<std::reference_wrapper<T>>;
 
     template<typename Scalar>
     void contract_mps_bnd(Scalar *res_ptr, std::array<long, 3> res_dims, const Scalar *const mps_ptr, std::array<long, 3> mps_dims, const Scalar *const bnd_ptr,

@@ -18,7 +18,6 @@
 #include "tools/finite/measure.h"
 #include "tools/finite/mps.h"
 #include "tools/finite/ops.h"
-#include "tools/finite/opt.h"
 #include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -254,10 +253,46 @@ void flbit::single_flbit_step() {
     auto t_step = tid::tic_scope("step");
     auto t_evo  = tid::tic_scope("time_evo");
 
+    auto svdset           = svd::settings();
+    svdset.switchsize_bdc = 64;
+    svdset.svd_lib        = SVDLib::lapacke;
+
+    {
+        auto access = status.iter == 0 ? h5pp::FileAccess::REPLACE : h5pp::FileAccess::READWRITE;
+        auto h5svd  = h5pp::File("../bench/data/swapgates.h5", access);
+        h5svd.setCompressionLevel(9);
+        auto                  state_prefix = fmt::format("fLBIT/iter_{}", status.iter);
+        auto                  table_prefix = state_prefix;
+        static h5pp::hid::h5t h5tswap;
+        if(not h5tswap.valid()) {
+            h5tswap = H5Tcreate(H5T_COMPOUND, 2 * sizeof(uint64_t));
+            H5Tinsert(h5tswap, "posL", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+            H5Tinsert(h5tswap, "posR", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+        }
+
+        tools::common::h5::save::status(h5svd, state_prefix, StorageLevel::FULL, status);
+        tools::finite::h5::save::state(h5svd, state_prefix, StorageLevel::FULL, *state_lbit, status);
+        tools::common::h5::save::meta(h5svd, StorageLevel::FULL, StorageReason::CHECKPOINT, settings::model::model_type, settings::model::model_size,
+                                      state_lbit->get_name(), state_prefix, "", {table_prefix}, status);
+        for(const auto &[idx, gate] : iter::enumerate(time_swap_gates_2site)) {
+            auto gate_prefix = fmt::format("{}/gate_{}", state_prefix, idx);
+            auto gate_path   = fmt::format("{}/op", gate_prefix);
+            auto swaps       = std::vector<qm::Swap>(gate.swaps.begin(), gate.swaps.end());
+            auto rwaps       = std::vector<qm::Rwap>(gate.rwaps.begin(), gate.rwaps.end());
+            h5svd.writeDataset(gate.op, gate_path, H5D_CHUNKED);
+            h5svd.writeAttribute(gate.pos, gate_prefix, "pos");
+            h5svd.writeAttribute(gate.dim, gate_prefix, "dim");
+            h5svd.writeAttribute(static_cast<size_t>(idx), gate_prefix, "idx");
+            h5svd.writeDataset(swaps, gate_prefix + "/swaps", h5tswap);
+            h5svd.writeDataset(rwaps, gate_prefix + "/rwaps", h5tswap);
+        }
+    }
+
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = {}", status.delta_t);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.bond_lim); // L16: false 16 | true 31 svds
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_lim); // L16: false 657 | true 344 svds
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_lim, GateMove::ON,
+                                             svdset);                                                     // L16: false 657 | true 344 svds
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.bond_lim); // L16: false 42 | true 71 svds
     } else {
         tools::log->debug("Applying time evolution gates Δt = {}", status.delta_t);
@@ -265,7 +300,7 @@ void flbit::single_flbit_step() {
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_lim);
     }
-
+    if(status.iter >= 10) exit(0);
     t_evo.toc();
     transform_to_real_basis();
 
@@ -590,7 +625,7 @@ void flbit::transform_to_lbit_basis() {
     [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug_swap");
-        // Double check the that transform operation backwards is equal to to the original state
+        // Double check the that transform operation backwards is equal to the original state
         auto state_real_debug = *state_lbit;
         for(auto &layer : unitary_gates_2site_layers)
             for(auto &g : layer) g.unmark_as_used();
@@ -617,13 +652,13 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
             for(const auto &[idx_gate, u] : iter::enumerate(layer)) {
                 std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
                 h5file->writeDataset(u.op, gatepath);
-                h5file->writeAttribute(u.dim, "dim", gatepath);
-                h5file->writeAttribute(u.pos, "pos", gatepath);
+                h5file->writeAttribute(u.dim, gatepath, "dim");
+                h5file->writeAttribute(u.pos, gatepath, "pos");
             }
-            h5file->writeAttribute(static_cast<size_t>(idx_layer), "idx_layer", layerpath);
-            h5file->writeAttribute(layer.size(), "num_gates", layerpath);
+            h5file->writeAttribute(static_cast<size_t>(idx_layer), layerpath, "idx_layer");
+            h5file->writeAttribute(layer.size(), layerpath, "num_gates");
         }
-        h5file->writeAttribute(unitary_gates_2site_layers.size(), "num_layers", grouppath);
+        h5file->writeAttribute(unitary_gates_2site_layers.size(), grouppath, "num_layers");
     }
 
     // Save the lbit analysis once
@@ -648,18 +683,18 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
             h5file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
             h5file->writeDataset(decay, "/fLBIT/analysis/decay");
             h5file->writeDataset(lioms, "/fLBIT/analysis/lioms");
-            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/cls_avg");
-            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/sse_avg");
-            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/decay");
-            h5file->writeAttribute(urange, "u_depth", "/fLBIT/analysis/lioms");
-            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/cls_avg");
-            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/sse_avg");
-            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/decay");
-            h5file->writeAttribute(frange, "f_mixer", "/fLBIT/analysis/lioms");
-            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/cls_avg");
-            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/sse_avg");
-            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/decay");
-            h5file->writeAttribute(sample, "samples", "/fLBIT/analysis/lioms");
+            h5file->writeAttribute(urange, "/fLBIT/analysis/cls_avg", "u_depth");
+            h5file->writeAttribute(urange, "/fLBIT/analysis/sse_avg", "u_depth");
+            h5file->writeAttribute(urange, "/fLBIT/analysis/decay", "u_depth");
+            h5file->writeAttribute(urange, "/fLBIT/analysis/lioms", "u_depth");
+            h5file->writeAttribute(frange, "/fLBIT/analysis/cls_avg", "f_mixer");
+            h5file->writeAttribute(frange, "/fLBIT/analysis/sse_avg", "f_mixer");
+            h5file->writeAttribute(frange, "/fLBIT/analysis/decay", "f_mixer");
+            h5file->writeAttribute(frange, "/fLBIT/analysis/lioms", "f_mixer");
+            h5file->writeAttribute(sample, "/fLBIT/analysis/cls_avg", "samples");
+            h5file->writeAttribute(sample, "/fLBIT/analysis/sse_avg", "samples");
+            h5file->writeAttribute(sample, "/fLBIT/analysis/decay", "samples");
+            h5file->writeAttribute(sample, "/fLBIT/analysis/lioms", "samples");
         }
     }
 }

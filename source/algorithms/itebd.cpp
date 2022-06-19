@@ -1,7 +1,6 @@
 #include "itebd.h"
 #include "config/settings.h"
 #include "qm/time.h"
-#include "tensors/edges/EdgesInfinite.h"
 #include "tensors/model/ModelInfinite.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/state/StateInfinite.h"

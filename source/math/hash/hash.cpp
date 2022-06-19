@@ -1,7 +1,7 @@
+#include "../hash.h"
+#include "tid/tid.h"
 #include <complex>
 #include <functional>
-#include <math/hash.h>
-#include <tid/tid.h>
 
 namespace hash {
     template<typename T>

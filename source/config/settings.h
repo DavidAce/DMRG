@@ -2,8 +2,8 @@
 
 #include "debug.h"
 #include "enums.h"
+#include "tid/enums.h"
 #include <string>
-#include <tid/enums.h>
 #include <vector>
 
 class Loader;
@@ -71,7 +71,6 @@ namespace settings {
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but bond-update savepoints can still happen */
         inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables checkpoints but bond-update checkpoints can still happen */
-        inline bool                bondpoint_enabled               = true;                         /*!< If true, a bondpoint is made, writing results to file before the bond dimension is updated */
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
@@ -87,8 +86,7 @@ namespace settings {
         inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
         inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
-        inline StorageLevel     storage_level_bondpoint  = StorageLevel::NORMAL; /*!< Storage level for checkpoints made when updating the bond dimension */
-        inline StorageLevel     storage_level_fes_states = StorageLevel::NORMAL; /*!< Storage level for finite entanglement scaling analysis after a simulation has finished. */
+        inline StorageLevel     storage_level_bond_state = StorageLevel::NORMAL; /*!< Storage level for states written on bond limit change */
 
         namespace tmp{
             inline std::string hdf5_temp_path;

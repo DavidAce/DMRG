@@ -8,10 +8,8 @@
 #include "tid/tid.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
-#include "tools/common/prof.h"
 #include "tools/infinite/h5.h"
 #include "tools/infinite/measure.h"
-#include "tools/infinite/mps.h"
 
 AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing algorithm infinite");
@@ -97,7 +95,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     if(grow_rate <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate));
 
     // Write current results before updating bond dimension
-    write_to_file(StorageReason::BOND_UPDATE);
+    write_to_file(StorageReason::BOND_INCREASE);
 
     // If we got to this point we will update the bond dimension by a factor
     auto factor = settings::strategy::bond_grow_rate;
@@ -253,16 +251,16 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
             break;
         }
-        case StorageReason::BOND_UPDATE: {
+        case StorageReason::BOND_INCREASE: {
             if(settings::strategy::bond_grow_mode == BondGrow::OFF) return;
             storage_level = settings::storage::storage_level_checkpoint;
-            state_prefix += fmt::format("/checkpoint/bond_{}", status.bond_lim);
+            state_prefix += fmt::format("/fes-inc/bond_{}", status.bond_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
-        case StorageReason::FES_ANALYSIS: {
-            storage_level = settings::storage::storage_level_fes_states;
-            state_prefix += fmt::format("/fes/bond_{}", status.bond_lim);
+        case StorageReason::BOND_DECREASE: {
+            storage_level = settings::storage::storage_level_bond_state;
+            state_prefix += fmt::format("/fes-dec/bond_{}", status.bond_lim);
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }

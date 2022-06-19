@@ -4,6 +4,7 @@
 #include <array>
 #include <complex>
 #include <deque>
+#include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
@@ -77,11 +78,13 @@ namespace qm {
     struct Rwap;
     struct Swap {
         size_t posL, posR;
+        Swap() = default;
         Swap(size_t posL, size_t posR);
         bool operator==(const Rwap &rwap) const;
     };
     struct Rwap {
         size_t posL, posR;
+        Rwap() = default;
         Rwap(size_t posL, size_t posR);
         bool operator==(const Swap &swap) const;
     };

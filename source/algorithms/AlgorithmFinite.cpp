@@ -84,10 +84,10 @@ void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
     if(settings::strategy::project_final_state) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
-    write_to_file(StorageReason::BOND_UPDATE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
-    write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);  // To update checkpoint/iter_# or iter_last
-    write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);  // To compare the finished state to a projected one
-    write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);  // To get a /finished state (which points to /iter_last)
+    write_to_file(StorageReason::BOND_INCREASE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
+    write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);    // To update checkpoint/iter_# or iter_last
+    write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);    // To compare the finished state to a projected one
+    write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);    // To get a /finished state (which points to /iter_last)
     print_status_full();
     run_fes_analysis();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
@@ -239,7 +239,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
 
     // Write current results before updating bond dimension
-    write_to_file(StorageReason::BOND_UPDATE);
+    write_to_file(StorageReason::BOND_INCREASE);
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
         randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.bond_lim);
 
@@ -269,7 +269,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
     size_t iter_since_reduce = status.iter - iter_last_bond_reduce;
     if(status.algorithm_has_stuck_for > 0 or status.algorithm_converged_for > 0 or iter_since_reduce >= 8) {
-        write_to_file(StorageReason::FES_ANALYSIS);
+        write_to_file(StorageReason::BOND_DECREASE);
 
         auto grow_rate = std::abs(settings::strategy::fes_decrement);
         auto bond_new  = static_cast<double>(status.bond_lim);

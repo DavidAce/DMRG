@@ -1,11 +1,11 @@
 #include "EnvEne.h"
+#include "config/debug.h"
 #include "debug/exceptions.h"
 #include "EnvEne.h"
 #include "math/hash.h"
-#include <config/debug.h>
-#include <math/num.h>
-#include <tensors/site/mpo/MpoSite.h>
-#include <tensors/site/mps/MpsSite.h>
+#include "math/num.h"
+#include "tensors/site/mpo/MpoSite.h"
+#include "tensors/site/mps/MpsSite.h"
 #include <utility>
 
 EnvEne::EnvEne(std::string side_, const MpsSite &mps, const MpoSite &mpo) : EnvBase(std::move(side_), "ene", mps, mpo) { set_edge_dims(mps, mpo); }

@@ -31,8 +31,8 @@ TensorsFinite::TensorsFinite() : state(std::make_unique<StateFinite>()), model(s
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-TensorsFinite::~TensorsFinite()                     = default;            // default dtor
-TensorsFinite::TensorsFinite(TensorsFinite &&other) = default;            // default move ctor
+TensorsFinite::~TensorsFinite()                                = default; // default dtor
+TensorsFinite::TensorsFinite(TensorsFinite &&other)            = default; // default move ctor
 TensorsFinite &TensorsFinite::operator=(TensorsFinite &&other) = default; // default move assign
 
 TensorsFinite::TensorsFinite(const TensorsFinite &other)
@@ -300,9 +300,14 @@ void TensorsFinite::set_psfactor(double psfactor) {
     rebuild_edges();
 }
 
-void TensorsFinite::rebuild_mpo() { model->build_mpo(); }
+void TensorsFinite::rebuild_mpo() {
+    tools::log->trace("Rebuilding MPO");
+    model->build_mpo();
+}
 
 void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress, std::optional<svd::settings> svd_settings) {
+    if(state->get_algorithm() == AlgorithmType::fLBIT) return;
+    tools::log->trace("Rebuilding MPO²");
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
     if(not compress) compress = settings::precision::use_compressed_mpo_squared_all;
@@ -355,12 +360,12 @@ void TensorsFinite::activate_sites(long threshold, size_t max_sites, size_t min_
 std::array<long, 3> TensorsFinite::active_problem_dims() const { return tools::finite::multisite::get_dimensions(*state, active_sites); }
 long                TensorsFinite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*state, active_sites); }
 bool                TensorsFinite::is_real() const {
-    if(settings::model::model_type == ModelType::ising_sdual) {
-        if(not state->is_real()) tools::log->critical("state has imaginary part");
+                   if(settings::model::model_type == ModelType::ising_sdual) {
+                       if(not state->is_real()) tools::log->critical("state has imaginary part");
         if(not model->is_real()) tools::log->critical("model has imaginary part");
         if(not edges->is_real()) tools::log->critical("edges has imaginary part");
     }
-    return state->is_real() and model->is_real() and edges->is_real();
+                   return state->is_real() and model->is_real() and edges->is_real();
 }
 bool TensorsFinite::has_nan() const {
     if(state->has_nan()) tools::log->critical("state has nan");

@@ -183,14 +183,14 @@ namespace tools::finite::h5 {
         auto mps_prefix       = fmt::format("{}/mps", state_prefix);
 
         // Check if the current entry has already been saved
-        auto h5_save_point_schmidt = tools::common::h5::save::get_last_save_point(h5file, dsetname_schmidt);
-        auto h5_save_point_mps     = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
-        auto save_point            = std::make_pair(status.iter, status.step);
+        auto h5_save_point_dset_schmidt = tools::common::h5::save::get_last_save_point(h5file, dsetname_schmidt);
+        auto h5_save_point_mps          = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
+        auto save_point                 = std::make_pair(status.iter, status.step);
 
-        bool skip_schmidt = h5_save_point_schmidt and h5_save_point_schmidt.value() == save_point;
-        bool skip_mps     = h5_save_point_mps and h5_save_point_mps.value() == save_point;
+        bool skip_dset_schmidt = h5_save_point_dset_schmidt and h5_save_point_dset_schmidt.value() == save_point;
+        bool skip_mps          = h5_save_point_mps and h5_save_point_mps.value() == save_point;
 
-        if(not skip_schmidt) {
+        if(not skip_dset_schmidt) {
             /*! Writes down the midchain "Lambda" bond matrix (singular values). */
             tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
             h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, H5D_CHUNKED);
