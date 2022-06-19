@@ -47,12 +47,14 @@ namespace tools::finite::h5 {
         extern void measurements        (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const TensorsFinite & tensors, const AlgorithmStatus & status);
         extern void measurements        (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const ModelFinite & model, const EdgesFinite & edges, const AlgorithmStatus & status);
         extern void bond_dimensions     (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
+        extern void schmidt_values      (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void truncation_errors   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void entropies_neumann   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void entropies_renyi     (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void entropies_number    (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void expectations        (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void structure_factors   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
+        extern void number_probabilities(h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
 
         extern void setup_prefix(const AlgorithmStatus &status, const StorageReason &storage_reason, StorageLevel &storage_level,
                                  std::string_view state_name, std::string &state_prefix, std::string &model_prefix, std::string & timer_prefix, std::vector<std::string> &table_prefxs);

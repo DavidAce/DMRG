@@ -536,13 +536,16 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
 
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
+    auto state_llen      = state_copy.get_length<long>();
     auto von_neumann_sum = [](double sum, const double p) {
         return p > 0 ? sum + p * std::log(p) : sum;
     };
 
-    std::vector<double>                                 number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
-    std::vector<Amplitude>                              cache;
-    std::vector<std::pair<size_t, std::vector<double>>> probabilities;
+    std::vector<double>      number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
+    std::vector<Amplitude>   cache;
+    Eigen::Tensor<double, 2> probabilities(state_llen + 1, state_llen + 1);
+    probabilities.setZero();
+
     tools::log->enable_backtrace(200);
     for(const auto &mps : state_copy.mps_sites) {
         auto pos = mps->get_position<long>();
@@ -554,7 +557,12 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
         number_entropies[idx] = std::abs(number_entropy);
         cache                 = amplitudes; // Cache the amplitudes for the next step
-        if constexpr(settings::debug_numen) probabilities.emplace_back(idx, probability);
+                                            //        if constexpr(settings::debug_numen)
+        auto                psize  = static_cast<long>(probability.size());
+        std::array<long, 2> offset = {0, pos + 1};
+        std::array<long, 2> extent = {psize, 1};
+        tools::log->info("probability L idx {} size {}", idx, psize);
+        probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
     }
 
     cache.clear();
@@ -569,21 +577,27 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
         number_entropies[idx] = std::abs(number_entropy);
         cache                 = amplitudes; // Cache the amplitudes for the next step
-        if constexpr(settings::debug_numen) probabilities.emplace_back(idx, probability);
+                                            //        if constexpr(settings::debug_numen)
+        auto                psize           = static_cast<long>(probability.size());
+        std::array<long, 2> offset          = {0, pos};
+        std::array<long, 2> extent          = {psize, 1};
+        probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
+        tools::log->info("probability R idx {} size {}", idx, psize);
     }
-
-    if constexpr(settings::debug_numen) {
-        for(const auto &[idx, prob] : probabilities) {
-            // Sanity check on probabilities
-            auto p_sum = std::accumulate(prob.begin(), prob.end(), 0.0);
-            tools::log->trace("idx {:>2} | p(n) = {:20.16f} = {:20.16f}", idx, fmt::join(prob, ", "), p_sum);
-        }
-    }
+    //
+    //    if constexpr(settings::debug_numen) {
+    //        for(const auto &[idx, prob] : iter::enumerate(probabilities)) {
+    //            // Sanity check on probabilities
+    //            auto p_sum = std::accumulate(prob.begin(), prob.end(), 0.0);
+    //            tools::log->trace("idx {:>2} | p(n) = {:20.16f} = {:20.16f}", idx, fmt::join(prob, ", "), p_sum);
+    //        }
+    //    }
 
     tools::log->disable_backtrace();
     state.measurements.number_entropies        = number_entropies;
     state.measurements.number_entropy_midchain = number_entropies.at(state.get_length<size_t>() / 2);
     state.measurements.number_entropy_current  = number_entropies.at(state.get_position<size_t>() + 1);
+    state.measurements.number_probabilities    = probabilities;
     tools::log->debug(FMT_STRING("Number entropies: {:.4f}"), fmt::join(number_entropies, ", "));
     return state.measurements.number_entropies.value();
 }

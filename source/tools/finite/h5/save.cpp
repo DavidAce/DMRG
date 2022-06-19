@@ -126,6 +126,42 @@ namespace tools::finite::h5 {
         data_as_table(h5file, table_prefix, status, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
     }
 
+    void save::schmidt_values(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                              const AlgorithmStatus &status) {
+        if(storage_level == StorageLevel::NONE) return;
+        auto                     t_hdf      = tid::tic_scope("schmidt_values", tid::level::extra);
+        auto                     table_path = fmt::format("{}/{}", table_prefix, "schmidt_values");
+        const long               cols       = state.get_length<long>() + 1; // Number of bonds matrices (1d arrays)
+        const long               rows       = status.bond_max;              // Max number of schmidt values in each bond (singular values)
+        long                     past_LC    = 0;                            // Add one after collecting LC
+        Eigen::Tensor<double, 2> bonds(rows, cols);                         // Collect all bond matrices.
+        bonds.setZero();
+        for(const auto &mps : state.mps_sites) {
+            auto offset                 = std::array<long, 2>{0, mps->get_position<long>() + past_LC};
+            auto extent                 = std::array<long, 2>{mps->get_L().size(), 1};
+            bonds.slice(offset, extent) = mps->get_L().reshape(extent).real();
+            if(mps->isCenter()) {
+                past_LC                     = 1;
+                offset                      = std::array<long, 2>{0, mps->get_position<long>() + past_LC};
+                extent                      = std::array<long, 2>{mps->get_LC().size(), 1};
+                bonds.slice(offset, extent) = mps->get_LC().reshape(extent).real();
+            }
+        }
+        if(not h5file.linkExists(table_path)) {
+            auto                 hrows = static_cast<hsize_t>(rows);
+            auto                 hcols = static_cast<hsize_t>(cols);
+            std::vector<hsize_t> dims  = {hrows, hcols, 0};
+            std::vector<hsize_t> chnk  = {hrows, hcols, 10};
+            h5file.createDataset(table_path, h5pp::util::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 9);
+        }
+        h5file.appendToDataset(bonds, table_path, 2);
+        h5file.writeAttribute(state.get_position<long>(), table_path, "position");
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+    }
+
     void save::truncation_errors(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                                  const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
@@ -139,6 +175,32 @@ namespace tools::finite::h5 {
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
         data_as_table(h5file, table_prefix, status, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies",
                       "L_");
+    }
+
+    void save::number_probabilities(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                                    const AlgorithmStatus &status) {
+        if(storage_level == StorageLevel::NONE) return;
+        if(not state.measurements.number_probabilities) return;
+        auto t_hdf      = tid::tic_scope("probabilities", tid::level::extra);
+        auto table_path = fmt::format("{}/{}", table_prefix, "number_probabilities");
+        tools::log->trace("Appending to table: {}", table_path);
+        // Check if the current entry has already been appended
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return;
+
+        if(not h5file.linkExists(table_path)) {
+            auto                 rows = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(0));
+            auto                 cols = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(1));
+            std::vector<hsize_t> dims = {rows, cols, 0};
+            std::vector<hsize_t> chnk = {rows, cols, 10};
+            h5file.createDataset(table_path, h5pp::util::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
+        }
+        h5file.appendToDataset(state.measurements.number_probabilities.value(), table_path, 2);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
     void save::entropies_renyi(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -375,17 +437,15 @@ namespace tools::finite::h5 {
                     state_prefix += fmt::format("/iter_{}", status.iter);
                 break;
             }
-            case StorageReason::BOND_UPDATE: {
-                storage_level = settings::storage::storage_level_bondpoint;
-                if(not settings::storage::bondpoint_enabled) storage_level = StorageLevel::NONE;
-                // If we have updated the bond limit we may want to write a projection too
-                state_prefix += fmt::format("/bondpoint");
+            case StorageReason::BOND_INCREASE: {
+                storage_level = settings::storage::storage_level_bond_state;
+                state_prefix += "/fes-inc";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
-            case StorageReason::FES_ANALYSIS: {
-                storage_level = settings::storage::storage_level_fes_states;
-                state_prefix += "/fes";
+            case StorageReason::BOND_DECREASE: {
+                storage_level = settings::storage::storage_level_bond_state;
+                state_prefix += "/fes-dec";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
@@ -464,11 +524,11 @@ namespace tools::finite::h5 {
                 break;
             }
 
-            case StorageReason::BOND_UPDATE:
             case StorageReason::INIT_STATE:
             case StorageReason::EMIN_STATE:
             case StorageReason::EMAX_STATE:
-            case StorageReason::FES_ANALYSIS:
+            case StorageReason::BOND_INCREASE:
+            case StorageReason::BOND_DECREASE:
             case StorageReason::MODEL: break;
         }
 
@@ -484,7 +544,7 @@ namespace tools::finite::h5 {
         if(storage_reason == StorageReason::MODEL) {
             tools::finite::h5::save::model(h5file, model_prefix, storage_level, model);
             tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
-        } else if(storage_reason != StorageReason::BOND_UPDATE and storage_reason != StorageReason::FES_ANALYSIS) {
+        } else if(storage_reason != StorageReason::BOND_INCREASE and storage_reason != StorageReason::BOND_DECREASE) {
             tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
             tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
         }
@@ -499,12 +559,14 @@ namespace tools::finite::h5 {
             tools::common::h5::save::timer(h5file, table_prefix, storage_level, status);
             tools::finite::h5::save::measurements(h5file, table_prefix, storage_level, state, model, edges, status);
             tools::finite::h5::save::bond_dimensions(h5file, table_prefix, storage_level, state, status);
+            tools::finite::h5::save::schmidt_values(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::truncation_errors(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_neumann(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_renyi(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::entropies_number(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::expectations(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::structure_factors(h5file, table_prefix, storage_level, state, status);
+            tools::finite::h5::save::number_probabilities(h5file, table_prefix, storage_level, state, status);
         }
         h5file.setKeepFileClosed();
 
