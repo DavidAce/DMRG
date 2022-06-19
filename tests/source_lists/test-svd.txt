@@ -1,8 +1,8 @@
-set(test_inc
-$<TARGET_OBJECTS:dmrg-math-svd>
-$<TARGET_OBJECTS:dmrg-math-tenx>
-$<TARGET_OBJECTS:dmrg-tools-common-log>
-$<TARGET_OBJECTS:dmrg-tid-o>
-)
+set(test_inc)
 
-set(test_lnk)
+set(test_lnk
+    dmrg-tid
+    dmrg-math-svd
+    dmrg-math-tenx
+    dmrg-tools-common-log
+)

@@ -1,7 +1,8 @@
 set(test_inc
-$<TARGET_OBJECTS:dmrg-math-rnd>
-$<TARGET_OBJECTS:dmrg-math-linalg>
-$<TARGET_OBJECTS:dmrg-qm-spin>
 )
 
-set(test_lnk)
+set(test_lnk
+    dmrg-qm-spin
+    dmrg-math-rnd
+    dmrg-math-linalg
+    )

@@ -1,13 +1,13 @@
 set(test_lnk
     dmrg-tid
+    dmrg-math-svd
+    dmrg-math-tenx
+    dmrg-math-hash
+    dmrg-tensors-mps
+    dmrg-tools-common-contraction
+    dmrg-tools-common-log
+    dmrg-tools-common-split
+
  )
 
-set(test_inc
-    $<TARGET_OBJECTS:dmrg-tools-common-log>
-    $<TARGET_OBJECTS:dmrg-tools-common-split>
-    $<TARGET_OBJECTS:dmrg-tools-common-contraction>
-    $<TARGET_OBJECTS:dmrg-tensors-mps>
-    $<TARGET_OBJECTS:dmrg-math-svd>
-    $<TARGET_OBJECTS:dmrg-math-tenx>
-    $<TARGET_OBJECTS:dmrg-math-hash>
- )
+set(test_inc)

@@ -16,7 +16,6 @@ bool equal(const A &a, const B &b, double prec = 1e-8) {
     return true;
 }
 
-
 TEST_CASE("Compare matrix and tensor kronecker products", "[kronecker]") {
     SECTION("Rank 4") {
         Eigen::MatrixXcd id = qm::spin::half::id;
@@ -29,10 +28,10 @@ TEST_CASE("Compare matrix and tensor kronecker products", "[kronecker]") {
         auto matrix_id_m  = linalg::matrix::kronecker(id, m);
         auto tensor4_m_id = linalg::tensor::kronecker(m, id);
         auto tensor4_id_m = linalg::tensor::kronecker(id, m);
-        fmt::print("matrix_m_id\n{}\n", linalg::matrix::to_string(matrix_m_id));
-        fmt::print("matrix_id_m\n{}\n", linalg::matrix::to_string(matrix_id_m));
-        fmt::print("tensor4_m_id\n{}\n", linalg::tensor::to_string(tensor4_m_id));
-        fmt::print("tensor4_id_m\n{}\n", linalg::tensor::to_string(tensor4_id_m));
+        //        fmt::print("matrix_m_id\n{}\n", linalg::matrix::to_string(matrix_m_id));
+        //        fmt::print("matrix_id_m\n{}\n", linalg::matrix::to_string(matrix_id_m));
+        //        fmt::print("tensor4_m_id\n{}\n", linalg::tensor::to_string(tensor4_m_id));
+        //        fmt::print("tensor4_id_m\n{}\n", linalg::tensor::to_string(tensor4_id_m));
         REQUIRE(equal(matrix_m_id, tensor4_id_m));
         REQUIRE(equal(matrix_id_m, tensor4_m_id));
     }
@@ -47,23 +46,22 @@ TEST_CASE("Compare matrix and tensor kronecker products", "[kronecker]") {
         auto matrix_id_id_m  = linalg::matrix::kronecker(linalg::matrix::kronecker(id, id), m);
         auto tensor6_m_id_id = linalg::tensor::kronecker(linalg::tensor::kronecker(m, id), id);
         auto tensor6_id_id_m = linalg::tensor::kronecker(linalg::tensor::kronecker(id, id), m);
-        fmt::print("matrix_m_id_id\n{}\n", linalg::matrix::to_string(matrix_m_id_id));
-        fmt::print("matrix_id_id_m\n{}\n", linalg::matrix::to_string(matrix_id_id_m));
-        fmt::print("tensor6_m_id_id\n{}\n", linalg::tensor::to_string(tensor6_m_id_id));
-        fmt::print("tensor6_id_id_m\n{}\n", linalg::tensor::to_string(tensor6_id_id_m));
+        //        fmt::print("matrix_m_id_id\n{}\n", linalg::matrix::to_string(matrix_m_id_id));
+        //        fmt::print("matrix_id_id_m\n{}\n", linalg::matrix::to_string(matrix_id_id_m));
+        //        fmt::print("tensor6_m_id_id\n{}\n", linalg::tensor::to_string(tensor6_m_id_id));
+        //        fmt::print("tensor6_id_id_m\n{}\n", linalg::tensor::to_string(tensor6_id_id_m));
         REQUIRE(equal(matrix_m_id_id, tensor6_id_id_m));
         REQUIRE(equal(matrix_id_id_m, tensor6_m_id_id));
     }
 }
 
-
 TEST_CASE("Test partial trace of tensors", "[partial trace]") {
     SECTION("Rank 4") {
         Eigen::MatrixXcd id = qm::spin::half::id;
         Eigen::MatrixXcd m(2, 2);
-        for(long i = 0; i < m.size(); i ++) m(i) = static_cast<double>(i+1);
-        m(1,0) = -2;
-        m(0,1) = std::complex<double>(-2.3,-10);
+        for(long i = 0; i < m.size(); i++) m(i) = static_cast<double>(i + 1);
+        m(1, 0) = -2;
+        m(0, 1) = std::complex<double>(-2.3, -10);
 
         // Compute the traces
         auto tr_id = id.trace();
@@ -77,10 +75,10 @@ TEST_CASE("Test partial trace of tensors", "[partial trace]") {
         // Do the tracing
         auto tensor2_m  = linalg::tensor::trace(tensor4_m_id, tenx::idx({1}, {3}));
         auto tensor2_id = linalg::tensor::trace(tensor4_m_id, tenx::idx({0}, {2}));
-        fmt::print("matrix_m\n{}\n", linalg::matrix::to_string(matrix_m));
-        fmt::print("matrix_id\n{}\n", linalg::matrix::to_string(matrix_id));
-        fmt::print("tensor2_m\n{}\n", linalg::tensor::to_string(tensor2_m));
-        fmt::print("tensor2_id\n{}\n", linalg::tensor::to_string(tensor2_id));
+        //        fmt::print("matrix_m\n{}\n", linalg::matrix::to_string(matrix_m));
+        //        fmt::print("matrix_id\n{}\n", linalg::matrix::to_string(matrix_id));
+        //        fmt::print("tensor2_m\n{}\n", linalg::tensor::to_string(tensor2_m));
+        //        fmt::print("tensor2_id\n{}\n", linalg::tensor::to_string(tensor2_id));
 
         REQUIRE(equal(matrix_m, tensor2_m));
         REQUIRE(equal(matrix_id, tensor2_id));
@@ -102,9 +100,9 @@ TEST_CASE("Test partial trace of tensors", "[partial trace]") {
     SECTION("Rank 6") {
         Eigen::MatrixXcd id = qm::spin::half::id;
         Eigen::MatrixXcd m(2, 2);
-        for(long i = 0; i < m.size(); i ++) m(i) = static_cast<double>(i+1);
-        m(1,0) = -2;
-        m(0,1) = std::complex<double>(-2.3,-10);
+        for(long i = 0; i < m.size(); i++) m(i) = static_cast<double>(i + 1);
+        m(1, 0) = -2;
+        m(0, 1) = std::complex<double>(-2.3, -10);
 
         // Compute the traces
         auto tr_id = id.trace();
@@ -152,8 +150,12 @@ TEST_CASE("Test partial trace of tensors", "[partial trace]") {
     }
 }
 
-
-
-int main(int argc, char **argv){
-    return Catch::Session().run(argc, argv);
+int main(int argc, char **argv) {
+    Catch::Session session; // There must be exactly one instance
+    int            returnCode = session.applyCommandLine(argc, argv);
+    if(returnCode != 0) // Indicates a command line error
+        return returnCode;
+    // session.configData().showSuccessfulTests = false;
+    // session.configData().reporterName = "compact";
+    return session.run();
 }

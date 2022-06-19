@@ -1,9 +1,8 @@
-set(test_inc
-    $<TARGET_OBJECTS:dmrg-tools-common-log>
-    $<TARGET_OBJECTS:dmrg-tools-common-contraction>
-    $<TARGET_OBJECTS:dmrg-tid-o>
-)
+set(test_inc)
 
 set(test_lnk
+    dmrg-tid
     dmrg-math
+    dmrg-tools-common-log
+    dmrg-tools-common-contraction
  )
