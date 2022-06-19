@@ -40,14 +40,11 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ### Install dependencies from conanfile.txt                    ###
     ##################################################################
     unset(CONAN_COMMAND CACHE)
-    find_program (CONAN_COMMAND conan
+    find_program(CONAN_COMMAND conan
             HINTS ${DMRG_CONAN_HINTS}
-            PATH_SUFFIXES ${DMRG_CONAN_PATH_SUFFIXES})
-    if(NOT CONAN_COMMAND)
-        message(FATAL_ERROR "Could not find conan program executable")
-    else()
-        message(STATUS "Found conan: ${CONAN_COMMAND}")
-    endif()
+            PATH_SUFFIXES ${DMRG_CONAN_PATH_SUFFIXES}
+            REQUIRED)
+
 
     # Download cmake-conan integrator
     if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan/conan.cmake")
@@ -74,7 +71,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     conan_cmake_install(
             CONAN_COMMAND ${CONAN_COMMAND}
             BUILD missing outdated cascade
-            GENERATOR cmake_find_package_multi
+            GENERATOR CMakeDeps
             SETTINGS ${CONAN_AUTODETECT}
             INSTALL_FOLDER ${CMAKE_BINARY_DIR}/conan
             ENV libunwind:LDFLAGS=-fcommon
@@ -96,22 +93,62 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     list(PREPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/conan)
     # Use CONFIG to avoid MODULE mode. This is recommended for the cmake_find_package_multi generator
 
-    find_package(CLI11        2.2.0  REQUIRED CONFIG)
-    find_package(Eigen3       3.4    REQUIRED CONFIG)
-    find_package(h5pp         1.10.0 REQUIRED CONFIG)
-    find_package(fmt          8.1.1  REQUIRED CONFIG)
-    find_package(spdlog       1.10.0  REQUIRED CONFIG)
-    find_package(arpack++     2.3.0  REQUIRED CONFIG)
-    find_package(Ceres        2.0.0  REQUIRED CONFIG)
-    find_package(libunwind    1.6.2  REQUIRED CONFIG)
-    find_package(Backward     1.6    REQUIRED CONFIG)
-    if(NOT DMRG_ENABLE_MKL)
+    find_package(CLI11 2.2.0 REQUIRED CONFIG)
+    find_package(Eigen 3.4 REQUIRED CONFIG)
+    find_package(h5pp 1.10.0 REQUIRED CONFIG)
+    find_package(fmt 8.1.1 REQUIRED CONFIG)
+    find_package(spdlog 1.10.0 REQUIRED CONFIG)
+    find_package(arpack++ 2.3.0 REQUIRED CONFIG)
+    find_package(ceres-solver 2.0.0 REQUIRED CONFIG)
+    find_package(libunwind 1.6.2 REQUIRED CONFIG)
+    find_package(backward-cpp 1.6 REQUIRED CONFIG)
+    if (NOT DMRG_ENABLE_MKL)
         find_package(OpenBLAS 0.3.17 REQUIRED CONFIG)
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
         #For convenience, define these targes
         add_library(BLAS::BLAS ALIAS OpenBLAS::OpenBLAS)
         add_library(LAPACK::LAPACK ALIAS OpenBLAS::OpenBLAS)
-        add_library(lapacke::lapacke  ALIAS OpenBLAS::OpenBLAS)
-    endif()
+        add_library(lapacke::lapacke ALIAS OpenBLAS::OpenBLAS)
+    endif ()
+    if (TARGET eigen::eigen AND NOT TARGET Eigen3::Eigen)
+        add_library(Eigen3::Eigen ALIAS eigen::eigen)
+    endif ()
+    if (TARGET ceres-solver::ceres-solver AND NOT TARGET Ceres::Ceres)
+        add_library(Ceres::ceres ALIAS ceres-solver::ceres-solver)
+    endif ()
+    if (TARGET backward-cpp::backward-cpp AND NOT TARGET Backward::Backward)
+        add_library(Backward::Backward ALIAS backward-cpp::backward-cpp)
+    endif ()
+    target_link_libraries(deps INTERFACE
+            CLI11::CLI11
+            h5pp::h5pp
+            arpack++::arpack++
+            primme::primme
+            ceres-solver::ceres-solver
+            BLAS::BLAS
+            backward-cpp::backward-cpp
+            )
 
+    if (TARGET libunwind::libunwind)
+        target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
+        target_link_libraries(deps INTERFACE libunwind::libunwind)
+    endif ()
+
+    # Configure Eigen
+    if (TARGET eigen::eigen)
+        target_compile_definitions(eigen::eigen INTERFACE EIGEN_USE_THREADS)
+        if (TARGET BLAS::BLAS)
+            target_link_libraries(eigen::eigen INTERFACE BLAS::BLAS)
+            target_compile_definitions(eigen::eigen INTERFACE EIGEN_USE_BLAS)
+            target_compile_definitions(eigen::eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
+            if (TARGET mkl::mkl)
+                message(STATUS "Eigen3 will use MKL")
+                target_compile_definitions(eigen::eigen INTERFACE EIGEN_USE_MKL_ALL)
+            else ()
+                message(STATUS "Eigen3 will use OpenBLAS")
+            endif ()
+        endif ()
+    else ()
+        message(FATAL_ERROR "Target not defined: eigen::eigen")
+    endif ()
 endif()

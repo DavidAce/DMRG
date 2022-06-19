@@ -64,7 +64,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     install_package(Eigen3 VERSION 3.4 TARGET_NAME Eigen3::Eigen)
 
     # h5pp for writing to file binary in format
-    install_package(h5pp VERSION 1.9.0 CMAKE_ARGS ${h5pp_ARGS})
+    install_package(h5pp VERSION 1.10.0 CMAKE_ARGS ${h5pp_ARGS})
 
     # cli11 for parsing cli arguments
     install_package(cli11 VERSION 2.1.1 TARGET_NAME CLI11::CLI11 FIND_NAME CLI11)
@@ -96,5 +96,46 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
 
     # Backward for printing pretty stack traces
     install_package(Backward)
+
+
+    target_link_libraries(deps INTERFACE
+            CLI11::CLI11
+            h5pp::h5pp
+            arpack++::arpack++
+            primme::primme
+            Ceres::ceres
+            BLAS::BLAS
+            Backward::Backward
+            )
+
+    if (TARGET unwind::unwind)
+        target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
+        target_link_libraries(deps INTERFACE unwind::unwind)
+        target_link_libraries(Ceres::ceres INTERFACE unwind::unwind)
+        if (TARGET glog::glog)
+            target_link_libraries(glog::glog INTERFACE unwind::unwind)
+        endif ()
+    endif ()
+
+    # Configure Eigen
+    if (TARGET Eigen3::Eigen)
+        target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_THREADS)
+        get_target_property(EIGEN3_INCLUDE_DIR Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+        target_include_directories(Eigen3::Eigen SYSTEM INTERFACE ${EIGEN3_INCLUDE_DIR})
+        if (TARGET mkl::mkl)
+            message(STATUS "Eigen3 will use MKL")
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_MKL_ALL)
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
+            target_link_libraries(Eigen3::Eigen INTERFACE mkl::mkl)
+        elseif (TARGET OpenBLAS::OpenBLAS)
+            message(STATUS "Eigen3 will use OpenBLAS")
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_BLAS)
+            target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_LAPACKE_STRICT)
+            target_link_libraries(Eigen3::Eigen INTERFACE OpenBLAS::OpenBLAS)
+        endif ()
+    else ()
+        message(FATAL_ERROR "Target not defined: Eigen3::Eigen")
+    endif ()
+
 
 endif ()
