@@ -16,7 +16,7 @@ backward-cpp/1.6@
 zlib/1.2.12@
 
 [generators]
-cmake
+CMakeDeps
 
 [options]
 arpack-ng:openblas_version=0.3.17
