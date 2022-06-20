@@ -17,12 +17,14 @@ set(dmrg-bench-swapgates-src
 set(dmrg-bench-swapgates-lnk
         dmrg-tid
         dmrg-config
+        dmrg-debug
         dmrg-qm-gate
         dmrg-math-tenx
         dmrg-tensors-state-finite
         dmrg-tools-finite-mps
         dmrg-tools-finite-h5
         dmrg-tools-common-h5
+        dmrg-tools-common-prof
         )
 
 
