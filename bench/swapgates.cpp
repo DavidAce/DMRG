@@ -1,20 +1,32 @@
 #define ANKERL_NANOBENCH_IMPLEMENT
 #include "algorithms/AlgorithmStatus.h"
 #include "config/parse.h"
+#include "config/settings.h"
+#include "debug/info.h"
 #include "env/environment.h"
 #include "math/tenx/omp.h"
 #include "nanobench.h"
 #include "qm/gate.h"
 #include "tensors/state/StateFinite.h"
+#include "tid/tid.h"
 #include "tools/common/h5.h"
+#include "tools/common/prof.h"
 #include "tools/finite/h5.h"
 #include "tools/finite/mps.h"
+#include <cstdlib>
 #include <fmt/core.h>
 #include <h5pp/h5pp.h>
 #include <string_view>
 #include <unsupported/Eigen/CXX11/Tensor>
 int main(int argc, char *argv[]) {
     settings::parse(argc, argv);
+    std::atexit(debug::print_mem_usage);
+    std::atexit(tools::common::timer::print_timers);
+    std::at_quick_exit(debug::print_mem_usage);
+    std::at_quick_exit(tools::common::timer::print_timers);
+    settings::timer::level = tid::detailed;
+    auto t_bench           = tid::tic_scope("fLBIT");
+
     using cplx = std::complex<double>;
     using op_t = Eigen::Tensor<cplx, 2>;
     fmt::print("Using {} {}\n", env::build::march, env::build::mtune);
@@ -44,18 +56,19 @@ int main(int argc, char *argv[]) {
             gate.dim          = h5svd.readAttribute<std::vector<long>>(gate_prefix, "dim");
         }
         auto svdset      = svd::settings();
+        svdset.benchmark = true;
         auto bench       = ankerl::nanobench::Bench().title(fmt::format("Swap Gates | {}", state_prefix)).relative(true).minEpochIterations(1);
-        auto switchsizes = std::vector<size_t>{16, 32, 64};
-        auto thresholds  = std::vector<double>{1e-10, 1e-8, 1e-6, 1e-4};
-        auto num_threads = std::vector<int>{1, 2, 4};
+        auto switchsizes = std::vector<size_t>{16};
+        auto thresholds  = std::vector<double>{1e-8};
+        auto num_threads = std::vector<int>{1};
         for(const auto &num_thread : num_threads) {
             for(const auto &switchsize : switchsizes) {
                 for(const auto &threshold : thresholds) {
                     svdset.switchsize_bdc = switchsize;
                     svdset.threshold_tr   = threshold;
-                    tenx::omp::setNumThreads(num_thread);
                     omp_set_num_threads(num_thread);
                     mkl_set_num_threads(num_thread);
+                    tenx::omp::setNumThreads(num_thread);
                     auto name = fmt::format("threads {} | switchsize {} | threshold {:.1e} | bond_lim {}", num_thread, switchsize, threshold, status.bond_lim);
                     bench.name(name).run([&]() {
                         auto state_tmp = state;
