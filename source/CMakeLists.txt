@@ -2,6 +2,7 @@ include(../cmake/AddSourceTarget.cmake)
 add_subdirectory(algorithms)
 add_subdirectory(config)
 add_subdirectory(debug)
+add_subdirectory(io)
 add_subdirectory(math)
 add_subdirectory(qm)
 add_subdirectory(tensors)
@@ -14,6 +15,7 @@ target_link_libraries(dmrg-main INTERFACE
         dmrg-algorithms
         dmrg-config
         dmrg-debug
+        dmrg-io
         dmrg-math
         dmrg-qm
         dmrg-tensors
