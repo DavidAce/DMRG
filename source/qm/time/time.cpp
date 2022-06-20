@@ -1,5 +1,6 @@
 #include "qm/time.h"
 #include "config/debug.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/linalg.h"
 #include "math/tenx.h"
@@ -125,11 +126,11 @@ namespace qm::time {
             if(std::imag(delta_t) == 0) {
                 for(auto &t : time_evolution_gates_forward)
                     if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-                        throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+                        throw except::runtime_error("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op));
                     }
                 for(auto &t : time_evolution_gates_reverse)
                     if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-                        throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+                        throw except::runtime_error("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op));
                     }
             }
         }

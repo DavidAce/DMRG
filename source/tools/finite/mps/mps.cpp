@@ -44,9 +44,9 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
     } else {
         long pos  = state.get_position<long>();  // If all sites are B's, then this is -1. Otherwise this is the current "A*LC" site
         long posC = pos + state.get_direction(); // This is the site which becomes the new center position
-        if(pos < -1 or pos >= state.get_length<long>()) throw std::runtime_error(fmt::format("pos out of bounds: {}", pos));
-        if(posC < -1 or posC >= state.get_length<long>()) throw std::runtime_error(fmt::format("posC out of bounds: {}", posC));
-        if(state.get_direction() != posC - pos) throw std::logic_error(fmt::format("Expected posC - pos == {}. Got {}", state.get_direction(), posC - pos));
+        if(pos < -1 or pos >= state.get_length<long>()) throw except::range_error("pos out of bounds: {}", pos);
+        if(posC < -1 or posC >= state.get_length<long>()) throw except::range_error("posC out of bounds: {}", posC);
+        if(state.get_direction() != posC - pos) throw except::logic_error("Expected posC - pos == {}. Got {}", state.get_direction(), posC - pos);
 
         if constexpr(settings::debug_moves) {
             if(posC > pos) tools::log->info("Moving {} -> {}", pos, posC);
@@ -84,7 +84,7 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, long bond_lim, 
         return 0;               // No moves this time, return 0
     } else {
         long pos = state.get_position<long>();
-        if(pos < -1 or pos >= state.get_length<long>()) throw std::runtime_error(fmt::format("pos out of bounds: {}", pos));
+        if(pos < -1 or pos >= state.get_length<long>()) throw except::range_error("pos out of bounds: {}", pos);
 
         long  posL    = state.get_direction() == 1 ? pos + 1 : pos - 1;
         long  posR    = state.get_direction() == 1 ? pos + 2 : pos;
@@ -115,7 +115,7 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, long bond_lim, 
 
 size_t tools::finite::mps::move_center_point_to_pos(StateFinite &state, long pos, long bond_lim, std::optional<svd::settings> svd_settings) {
     if(pos != std::clamp<long>(pos, -1l, state.get_length<long>() - 1))
-        throw std::logic_error(fmt::format("move_center_point_to_pos: Given pos [{}]. Expected range [-1,{}]", pos, state.get_length<long>() - 1));
+        throw except::logic_error("move_center_point_to_pos: Given pos [{}]. Expected range [-1,{}]", pos, state.get_length<long>() - 1);
     if((state.get_direction() < 0 and pos > state.get_position<long>()) or //
        (state.get_direction() > 0 and pos < state.get_position<long>()))   //
         state.flip_direction();                                            // Turn direction towards new position
@@ -127,8 +127,8 @@ size_t tools::finite::mps::move_center_point_to_pos(StateFinite &state, long pos
 
 size_t tools::finite::mps::move_center_point_to_pos_dir(StateFinite &state, long pos, int dir, long bond_lim, std::optional<svd::settings> svd_settings) {
     if(pos != std::clamp<long>(pos, -1l, state.get_length<long>() - 1))
-        throw std::logic_error(fmt::format("move_center_point_to_pos_dir: Given pos [{}]. Expected range [-1,{}]", pos, state.get_length<long>() - 1));
-    if(std::abs(dir) != 1) throw std::logic_error("move_center_point_to_pos_dir: dir must be 1 or -1");
+        throw except::logic_error("move_center_point_to_pos_dir: Given pos [{}]. Expected range [-1,{}]", pos, state.get_length<long>() - 1);
+    if(std::abs(dir) != 1) throw except::logic_error("move_center_point_to_pos_dir: dir must be 1 or -1");
     if((state.get_direction() < 0 and pos > state.get_position<long>()) or //
        (state.get_direction() > 0 and pos < state.get_position<long>()))   //
         state.flip_direction();                                            // Turn direction towards new position
@@ -163,12 +163,12 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
 
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
-        throw std::runtime_error(fmt::format("merge_multisite_mps: mps dim1 {} != chiL {} on left-most site", multisite_mps.dimension(1),
-                                             state.get_mps_site(sites.front()).get_chiL(), sites.front()));
+        throw except::logic_error("merge_multisite_mps: mps dim1 {} != chiL {} on left-most site", multisite_mps.dimension(1),
+                                  state.get_mps_site(sites.front()).get_chiL(), sites.front());
 
     if(multisite_mps.dimension(2) != state.get_mps_site(sites.back()).get_chiR())
-        throw std::runtime_error(fmt::format("merge_multisite_mps: mps dim2 {} != chiR {} on right-most site", multisite_mps.dimension(2),
-                                             state.get_mps_site(sites.back()).get_chiR(), sites.back()));
+        throw except::logic_error("merge_multisite_mps: mps dim2 {} != chiR {} on right-most site", multisite_mps.dimension(2),
+                                  state.get_mps_site(sites.back()).get_chiR(), sites.back());
     if constexpr(settings::debug_merge or settings::debug) {
         // Never allow nan's in the multisite_mps
         if(tenx::hasNaN(multisite_mps))
@@ -198,8 +198,8 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     bool center_in_sites = center_position == std::clamp<long>(center_position, static_cast<long>(sites.front()), static_cast<long>(sites.back()));
     bool center_in_range = current_position == std::clamp<long>(current_position, static_cast<long>(sites.front() - 1), static_cast<long>(sites.back()));
     if(center_in_sites and not center_in_range)
-        throw std::runtime_error(fmt::format("merge_multisite_mps: cannot merge multisite_mps {} with new center at {}: current center {} is too far", sites,
-                                             center_position, current_position));
+        throw except::runtime_error("merge_multisite_mps: cannot merge multisite_mps {} with new center at {}: current center {} is too far", sites,
+                                    center_position, current_position);
 
     long              spin_prod = 1;
     std::vector<long> spin_dims;
@@ -209,7 +209,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         spin_prod *= spin_dims.back();
     }
     if(spin_prod != multisite_mps.dimension(0))
-        throw std::runtime_error(fmt::format("merge_multisite_mps: multisite mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod));
+        throw except::runtime_error("merge_multisite_mps: multisite mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod);
 
     // Hold L on the edge in case we need to convert AL to A or LB to B
     //    std::optional<stash<Eigen::Tensor<cplx, 1>>> ll_edge = std::nullopt;
@@ -266,7 +266,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         // Detect right-move
         if(center_position > current_position) { // This AC will become an A (AC moves to the right)
             if(center_position != std::clamp(center_position, pos_frnt, pos_back))
-                throw std::logic_error(fmt::format("merge_multisite_mps: right-moving new center position {} must be in sites {}", center_position, sites));
+                throw except::logic_error("merge_multisite_mps: right-moving new center position {} must be in sites {}", center_position, sites);
 
             // Case 1, right-move: LC[3]B[4] -> L[4]A[4]LC[4]V[5], current_position == 3, center_position == 4. Then LC[3] becomes L[4] on A[4]
             // Case 2, swap-move: A[3]LC[3]B[4] -> A[3]A[4]LC[4]V, current_position == 3, center_position == 4. Then LC[3] is thrown away
@@ -278,11 +278,11 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         // Detect left-move
         if(center_position < current_position) { // This AC position will become a B (AC moves to the left)
             if(center_position < pos_frnt - 1)
-                throw std::logic_error(
-                    fmt::format("merge_multisite_mps: left-moving new center position {} is out of range [{}]+{}", center_position, pos_frnt - 1, sites));
+                throw except::logic_error("merge_multisite_mps: left-moving new center position {} is out of range [{}]+{}", center_position, pos_frnt - 1,
+                                          sites);
             if(current_position > pos_back + 1)
-                throw std::logic_error(
-                    fmt::format("merge_multisite_mps: left-moving current position {} is out of range {}+[{}]", current_position, sites, pos_back + 1));
+                throw except::logic_error("merge_multisite_mps: left-moving current position {} is out of range {}+[{}]", current_position, sites,
+                                          pos_back + 1);
 
             // Case 1, left-move: A[3]LC[3]     -> U[2]LC[2]B[3]    , current_position == 3, center_position == 2. Then LC[3] becomes L[3] on B[3]
             // Case 2, swap-move: A[3]A[4]LC[4] -> A[3]LC[3]B[4]    , current_position == 3, center_position == 4. Then LC[4] becomes L[4] on B[4]
@@ -361,7 +361,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
 
     current_position = state.get_position<long>();
     if(current_position != center_position)
-        throw std::logic_error(fmt::format("Center position mismatch {} ! {}\nLabels: {}", current_position, center_position, state.get_labels()));
+        throw except::logic_error("Center position mismatch {} ! {}\nLabels: {}", current_position, center_position, state.get_labels());
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
     if constexpr(settings::debug) {
@@ -380,7 +380,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
     if(norm_policy == NormPolicy::IFNEEDED) {
         // We may only go ahead with a normalization if its really needed.
         auto norm = tools::finite::measure::norm(state);
-        tools::log->trace("Norm: {:.16f}", norm);
+        if constexpr(settings::debug) tools::log->trace("Norm: {:.16f}", norm);
         if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
         // Otherwise we just do the normalization
     }
@@ -420,7 +420,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
             if(mps->isCenter()) tools::log->warn("LC({}) | norm {:.16f} \n {}", mps->get_position(), tenx::VectorMap(mps->get_LC()).norm(), mps->get_LC());
             if constexpr(settings::debug) mps->assert_identity();
         }
-        throw std::runtime_error(fmt::format("Norm too far from unity: {:.16f} | max allowed norm error {}", norm, settings::precision::max_norm_error));
+        throw except::runtime_error("Norm too far from unity: {:.16f} | max allowed norm error {}", norm, settings::precision::max_norm_error);
     }
     if(bond_lim and state.find_largest_bond() > bond_lim.value())
         throw except::logic_error("normalize_state: a bond dimension exceeds bond limit: {} > {}", tools::finite::measure::bond_dimensions(state),
@@ -556,7 +556,7 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
     // To apply inverse layers we reverse the whole sequence
     if(reverse) std::reverse(gate_sequence.begin(), gate_sequence.end());
     if(gate_sequence.size() != gates.size())
-        throw std::logic_error(fmt::format("Expected gate_sequence.size() {} == gates.size() {}", gate_sequence.size(), gates.size()));
+        throw except::logic_error("Expected gate_sequence.size() {} == gates.size() {}", gate_sequence.size(), gates.size());
     return gate_sequence;
 }
 
@@ -565,8 +565,8 @@ template std::vector<size_t> generate_gate_sequence(const StateFinite &state, co
 
 void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, long bond_lim, GateMove gm,
                                     std::optional<svd::settings> svd_settings) {
-    if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate is out of bounds: {}", gate.pos));
-    if(gate.was_used()) throw std::runtime_error(fmt::format("gate was already used: pos {} ", gate.pos));
+    if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
+    if(gate.was_used()) throw except::runtime_error("gate was already used: pos {} ", gate.pos);
     if(gm == GateMove::AUTO) gm = GateMove::OFF; // Most likely it does not pay to enable moving of center site. This is best reserved for swap gates.
     if(gm == GateMove::ON) {
         // Applying gate operators will automatically move around the center position IF either posL-1, posL or posR is a center.
@@ -719,11 +719,11 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
      *
      */
     auto t_swap = tid::tic_scope("swap");
-    if(posR != posL + 1) throw std::logic_error(fmt::format("Expected posR == posL+1. Got posL {} and posR {}", posL, posR));
+    if(posR != posL + 1) throw except::logic_error("Expected posR == posL+1. Got posL {} and posR {}", posL, posR);
     if(posR != std::clamp(posR, 0ul, state.get_length<size_t>() - 1ul))
-        throw std::logic_error(fmt::format("Expected posR in [0,{}]. Got {}", state.get_length() - 1, posR));
+        throw except::logic_error("Expected posR in [0,{}]. Got {}", state.get_length() - 1, posR);
     if(posL != std::clamp(posL, 0ul, state.get_length<size_t>() - 1ul))
-        throw std::logic_error(fmt::format("Expected posL in [0,{}]. Got {}", state.get_length() - 1, posL));
+        throw except::logic_error("Expected posL in [0,{}]. Got {}", state.get_length() - 1, posL);
 
     if(gm == GateMove::AUTO) gm = GateMove::ON;
     auto                   old_svd     = svd::solver::count.value();
@@ -759,7 +759,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
 void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, long bond_lim,
                                          std::vector<size_t> &sites, GateMove gm, std::optional<svd::settings> svd_settings) {
     if(gate.was_used()) return;
-    if(gate.pos.back() >= state.get_length()) throw std::logic_error(fmt::format("The last position of gate is out of bounds: {}", gate.pos));
+    if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
     auto old_pos = state.get_position<long>();
     auto old_svd = svd::solver::count.value();
     auto pos_idx = get_site_idx<size_t>(sites, gate.pos); // Site on the state where the gate positions are currently located

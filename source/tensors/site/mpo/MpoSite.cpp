@@ -74,7 +74,7 @@ void MpoSite::build_mpo_squared() {
         if(tenx::hasNaN(mpo_squared.value())) {
             print_parameter_names();
             print_parameter_values();
-            throw std::runtime_error(fmt::format("MPO squared at position {} has NAN's", get_position()));
+            throw except::runtime_error("MPO squared at position {} has NAN's", get_position());
         }
     }
 }
@@ -141,7 +141,7 @@ void MpoSite::assert_validity() const {
             if(std::isnan(std::any_cast<double>(param.second))) {
                 print_parameter_names();
                 print_parameter_values();
-                throw std::runtime_error(fmt::format("Param [{}] = {}", param.first, std::any_cast<double>(param.second)));
+                throw except::runtime_error("Param [{}] = {}", param.first, std::any_cast<double>(param.second));
             }
     if(tenx::hasNaN(mpo_internal)) throw except::runtime_error("MPO has NAN on position {}", get_position());
     if(not tenx::isReal(mpo_internal)) throw except::runtime_error("MPO has IMAG on position {}", get_position());
@@ -353,7 +353,7 @@ void MpoSite::load_mpo(const h5pp::File &file, std::string_view mpo_prefix) {
         if(tenx::VectorMap(MPO()) != tenx::VectorCast(file.readDataset<Eigen::Tensor<cplx, 4>>(mpo_dset)))
             throw std::runtime_error("Built MPO does not match the MPO on file");
     } else {
-        throw std::runtime_error(fmt::format("Could not load MPO. Dataset [{}] does not exist", mpo_dset));
+        throw except::runtime_error("Could not load MPO. Dataset [{}] does not exist", mpo_dset);
     }
 }
 

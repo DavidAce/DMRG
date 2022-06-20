@@ -132,11 +132,11 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(S
     auto axis = qm::spin::half::get_axis(sector);
     tools::log->info("Setting random product state using the bitset of number {} to select eigenspinors of σ{}", bitfield, axis);
 
-    if(bitfield < 0) throw std::runtime_error(fmt::format("Can't set product state from bitfield of negative number: {}", bitfield));
-    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
+    if(bitfield < 0) throw except::runtime_error("Can't set product state from bitfield of negative number: {}", bitfield);
+    if(type == StateInitType::REAL and axis == "y") throw except::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
 
     constexpr long maxbits = 64;
-    if(maxbits < state.get_length()) throw std::range_error("Max supported state length for bitset is 64");
+    if(maxbits < state.get_length()) throw except::range_error("Max supported state length for bitset is 64");
     std::bitset<maxbits>     bs(static_cast<size_t>(bitfield));
     std::vector<int>         bs_vec;
     std::vector<std::string> ud_vec;
@@ -188,7 +188,7 @@ void tools::finite::mps::init::set_random_product_state_in_sector_using_eigenspi
         spin_component = tools::finite::measure::spin_component(state, axis);
     }
     state.clear_measurements();
-    if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
+    if(spin_component * sign < 0) throw except::logic_error("Could not initialize_state in the correct sector");
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites

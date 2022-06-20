@@ -92,7 +92,7 @@ namespace tools::finite::opt {
                 //                }
             }
         }
-        if(init.size() > static_cast<size_t>(nev)) throw std::logic_error("Found too many initial guesses");
+        if(init.size() > static_cast<size_t>(nev)) throw except::logic_error("Found too many initial guesses");
         return init;
     }
 
@@ -172,7 +172,7 @@ namespace tools::finite::opt {
                 auto H2_ptr  = static_cast<MatrixProductType *>(config.primme_effective_ham_sq);
                 using Scalar = typename MatrixProductType::Scalar;
                 using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-                if(H2_ptr->rows() != H_ptr->rows()) throw std::logic_error("H2 and H size mismatch");
+                if(H2_ptr->rows() != H_ptr->rows()) throw except::logic_error("H2 and H size mismatch");
                 H_ptr->compress();
                 long mps_size = static_cast<long>(H2_ptr->rows());
                 auto v        = Eigen::Map<Vector>(static_cast<Scalar *>(evec), mps_size);
@@ -279,8 +279,10 @@ namespace tools::finite::opt {
     template<typename Scalar>
     void eigs_variance_executor(eig::solver &solver, MatVecMPO<Scalar> &hamiltonian_squared, const TensorsFinite &tensors, const opt_mps &initial_mps,
                                 std::vector<opt_mps> &results, const OptMeta &meta) {
-        if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL) throw std::logic_error("eigs_launcher error: Mixed Scalar:cplx with OptType::REAL");
-        if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX) throw std::logic_error("eigs_launcher error: Mixed Scalar:real with OptType::CPLX");
+        if(std::is_same_v<Scalar, cplx> and meta.optType == OptType::REAL)
+            throw except::logic_error("eigs_launcher error: Mixed Scalar:cplx with OptType::REAL");
+        if(std::is_same_v<Scalar, real> and meta.optType == OptType::CPLX)
+            throw except::logic_error("eigs_launcher error: Mixed Scalar:real with OptType::CPLX");
 
         const auto       &mpo = tensors.get_multisite_mpo();
         const auto       &env = tensors.get_multisite_env_ene_blk();

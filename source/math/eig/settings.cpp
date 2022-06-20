@@ -1,10 +1,11 @@
 #include "settings.h"
+#include "debug/exceptions.h"
 #include <string>
 
 void eig::settings::clear() { *this = settings(); }
 
 std::string eig::settings::get_ritz_string() const {
-    if(not ritz) throw std::runtime_error("Ritz has not been set");
+    if(not ritz) throw except::runtime_error("Ritz has not been set");
     return std::string(eig::RitzToString(ritz.value()));
 }
 
@@ -13,7 +14,7 @@ void eig::settings::checkRitz()
 // The valid ritzes are stated in the arpack++ manual page 78.
 {
     std::string error_mesg;
-    if(not ritz) throw std::runtime_error("Ritz has not been set");
+    if(not ritz) throw except::runtime_error("Ritz has not been set");
     if(type == Type::CPLX or form == Form::NSYM) {
         if(ritz.value() == Ritz::LA or ritz.value() == Ritz::SA or ritz.value() == Ritz::BE) {
             error_mesg.append("Invalid ritz for cplx or nonsym problem: ").append(RitzToString(ritz.value()));
@@ -30,5 +31,5 @@ void eig::settings::checkRitz()
             if(ritz.value() == Ritz::SI) error_mesg.append(" | Suggested ritz: SM");
         }
     }
-    if(not error_mesg.empty()) throw std::runtime_error(error_mesg);
+    if(not error_mesg.empty()) throw except::runtime_error(error_mesg);
 }

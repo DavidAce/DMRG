@@ -533,7 +533,7 @@ namespace tools::finite::h5 {
         }
 
         if(storage_level == StorageLevel::NONE) return;
-        if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
+        if(state_prefix.empty()) throw except::runtime_error("State prefix is empty");
         tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level),
                           state_prefix, model_prefix);
 

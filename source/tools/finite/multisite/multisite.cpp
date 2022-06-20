@@ -1,4 +1,5 @@
 #include "../multisite.h"
+#include "debug/exceptions.h"
 #include <math/num.h>
 #include <tensors/model/ModelFinite.h>
 #include <tensors/site/mpo/MpoSite.h>
@@ -13,7 +14,7 @@ std::array<long, 3> tools::finite::multisite::get_dimensions(const StateFinite &
     if(sites.value().empty()) return std::array<long, 3>{0, 0, 0};
     std::array<long, 3> dimensions{};
     std::sort(sites.value().begin(), sites.value().end());
-    if(sites.value().front() > sites.value().back()) throw std::runtime_error(fmt::format("Given site list is not increasing: {}", sites.value()));
+    if(sites.value().front() > sites.value().back()) throw except::logic_error("Given site list is not increasing: {}", sites.value());
 
     dimensions[1] = state.get_mps_site(sites.value().front()).get_M().dimension(1);
     dimensions[2] = state.get_mps_site(sites.value().back()).get_M().dimension(2);
@@ -25,7 +26,7 @@ std::array<long, 3> tools::finite::multisite::get_dimensions(const StateFinite &
 std::array<long, 4> tools::finite::multisite::get_dimensions(const ModelFinite &model, std::optional<std::vector<size_t>> sites) {
     if(not sites) sites = model.active_sites;
     if(sites.value().empty()) return std::array<long, 4>{0, 0, 0, 0};
-    if(sites.value().front() > sites.value().back()) throw std::runtime_error(fmt::format("Given site list is not increasing: {}", sites.value()));
+    if(sites.value().front() > sites.value().back()) throw except::logic_error("Given site list is not increasing: {}", sites.value());
     std::array<long, 4> dimensions{};
     dimensions[0] = model.get_mpo(sites.value().front()).MPO().dimension(0);
     dimensions[1] = model.get_mpo(sites.value().back()).MPO().dimension(1);
@@ -41,8 +42,7 @@ std::array<long, 4> tools::finite::multisite::get_dimensions(const ModelFinite &
 std::array<long, 4> tools::finite::multisite::get_dimensions_squared(const ModelFinite &model, std::optional<std::vector<size_t>> active_sites) {
     if(not active_sites) active_sites = model.active_sites;
     if(active_sites.value().empty()) return std::array<long, 4>{0, 0, 0, 0};
-    if(active_sites.value().front() > active_sites.value().back())
-        throw std::runtime_error(fmt::format("Active site list is not increasing: {}", active_sites.value()));
+    if(active_sites.value().front() > active_sites.value().back()) throw except::logic_error("Active site list is not increasing: {}", active_sites.value());
     std::array<long, 4> dimensions{};
     dimensions[0] = model.get_mpo(active_sites.value().front()).MPO2().dimension(0);
     dimensions[1] = model.get_mpo(active_sites.value().back()).MPO2().dimension(1);
@@ -131,9 +131,9 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
             reason = fmt::format("problem sizes are equal: {}", size);
             break;
         } else if(sites.size() == 1) {
-            throw std::logic_error("At least two sites required!");
+            throw except::logic_error("At least two sites required!");
         } else if(sites.empty()) {
-            throw std::logic_error("No sites for a jump");
+            throw except::logic_error("No sites for a jump");
         } else {
             sites.pop_back();
             sizes.pop_back();
@@ -150,8 +150,8 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
                           "shape {} = {} | reason {}",
                           initial_position, direction, min_sites, max_sites, threshold, sites, shape.back(), sizes.back(), reason);
 
-    if(not at_edge and sites.size() < min_sites) throw std::runtime_error(fmt::format("Activated sites ({}) < min_sites ({})", sites.size(), min_sites));
-    if(not at_edge and sites.size() > max_sites) throw std::runtime_error(fmt::format("Activated sites ({}) > max_sites ({})", sites.size(), max_sites));
+    if(not at_edge and sites.size() < min_sites) throw except::logic_error("Activated sites ({}) < min_sites ({})", sites.size(), min_sites);
+    if(not at_edge and sites.size() > max_sites) throw except::logic_error("Activated sites ({}) > max_sites ({})", sites.size(), max_sites);
     return sites;
 }
 

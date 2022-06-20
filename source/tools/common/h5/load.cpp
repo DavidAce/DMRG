@@ -1,4 +1,5 @@
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "io/table_types.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"
@@ -16,8 +17,8 @@ namespace tools::common::h5 {
             tools::log->info("Loading status from table: [{}]", table_path);
             h5file.readTableRecords(status, table_path); // Reads the last entry by default
         } else {
-            throw std::runtime_error(
-                fmt::format("Could not find table [status] for state [{}] in file [{}] at table path [{}]", state_prefix, h5file.getFilePath(), table_path));
+            throw except::runtime_error("Could not find table [status] for state [{}] in file [{}] at table path [{}]", state_prefix, h5file.getFilePath(),
+                                        table_path);
         }
     }
 
@@ -28,8 +29,8 @@ namespace tools::common::h5 {
         if(h5file.linkExists(timer_prefix))
             tools::log->info("Loading timers from group: [{}]", timer_prefix);
         else
-            throw std::runtime_error(
-                fmt::format("Could not find group [timers] for state [{}] in file [{}] at prefix [{}]", state_prefix, h5file.getFilePath(), timer_prefix));
+            throw except::runtime_error("Could not find group [timers] for state [{}] in file [{}] at prefix [{}]", state_prefix, h5file.getFilePath(),
+                                        timer_prefix);
         for(const auto &dset : h5file.findDatasets("", timer_prefix)) {
             auto &t_ur = tid::get(dset);
             tools::log->trace("Loading {}", dset);

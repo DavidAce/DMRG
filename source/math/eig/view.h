@@ -1,5 +1,6 @@
 #pragma once
 
+#include "debug/exceptions.h"
 #include "solution.h"
 #include <fmt/format.h>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -12,13 +13,12 @@ namespace eig::view {
 
     template<typename Scalar>
     Eigen::Map<VectorType<Scalar>> get_eigvals(const eig::solution &result, bool converged_only = true) {
-        if(not result.meta.eigvals_found)
-            throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvals found [{}]", result.meta.eigvals_found));
+        if(not result.meta.eigvals_found) throw except::runtime_error("Results have not been obtained yet: eigvals found [{}]", result.meta.eigvals_found);
         if constexpr(std::is_same_v<Scalar, real>)
-            if(not result.eigvals_are_real()) throw std::runtime_error("Can't view real eigenvalues: solution has complex eigenvalues");
+            if(not result.eigvals_are_real()) throw except::runtime_error("Can't view real eigenvalues: solution has complex eigenvalues");
 
         auto &eigvals = result.get_eigvals<Scalar>();
-        if(eigvals.empty()) throw std::runtime_error("The requested eigenvalues are empty. Did you request the correct type?");
+        if(eigvals.empty()) throw except::runtime_error("The requested eigenvalues are empty. Did you request the correct type?");
         long size = converged_only ? static_cast<long>(result.meta.nev_converged) : static_cast<long>(eigvals.size());
         return Eigen::Map<VectorType<Scalar>>(eigvals.data(), size);
     }
@@ -31,16 +31,16 @@ namespace eig::view {
     template<typename Scalar>
     Eigen::Map<MatrixType<Scalar>> get_eigvecs(const eig::solution &result, Side side = Side::R, bool converged_only = true) {
         if(side == Side::R and not result.meta.eigvecsR_found)
-            throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvecs R found [{}]", result.meta.eigvecsR_found));
+            throw except::runtime_error("Results have not been obtained yet: eigvecs R found [{}]", result.meta.eigvecsR_found);
         else if(side == Side::L and not result.meta.eigvecsL_found)
-            throw std::runtime_error(fmt::format("Results have not been obtained yet: eigvecs L found [{}]", result.meta.eigvecsL_found));
+            throw except::runtime_error("Results have not been obtained yet: eigvecs L found [{}]", result.meta.eigvecsL_found);
 
-        if(side == Side::LR) throw std::runtime_error("Cannot get both L and R eigenvectors. Choose one");
+        if(side == Side::LR) throw except::runtime_error("Cannot get both L and R eigenvectors. Choose one");
 
         if constexpr(std::is_same_v<Scalar, real>)
-            if(not result.eigvecs_are_real()) throw std::runtime_error("Can't view real eigenvectors: solution has complex eigenvectors");
+            if(not result.eigvecs_are_real()) throw except::runtime_error("Can't view real eigenvectors: solution has complex eigenvectors");
         auto &eigvecs = result.get_eigvecs<Scalar>(side);
-        if(eigvecs.empty()) throw std::runtime_error("The requested eigenvectors are empty. Did you request the correct type?");
+        if(eigvecs.empty()) throw except::runtime_error("The requested eigenvectors are empty. Did you request the correct type?");
         if(result.meta.rows * result.meta.cols != static_cast<eig::size_type>(eigvecs.size())) throw std::logic_error("Size mismatch in results");
         auto rows = result.meta.rows;
         auto cols = converged_only ? result.meta.nev_converged : result.meta.cols;
@@ -56,8 +56,8 @@ namespace eig::view {
     template<typename Scalar>
     Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> get_eigvec(const eig::solution &result, const std::array<long, 3> &dims, long num = 0, Side side = Side::R) {
         if(result.meta.rows != dims[0] * dims[1] * dims[2])
-            throw std::range_error(fmt::format("Given tensor dimensions do not match eigenvector size: size {} != {} * {} * {} = {}", result.meta.rows, dims[0],
-                                               dims[1], dims[3], dims[0] * dims[1] * dims[2]));
+            throw except::range_error("Given tensor dimensions do not match eigenvector size: size {} != {} * {} * {} = {}", result.meta.rows, dims[0], dims[1],
+                                      dims[3], dims[0] * dims[1] * dims[2]);
         auto eigvecmap = get_eigvec<Scalar>(result, num, side);
         return Eigen::TensorMap<Eigen::Tensor<Scalar, 3>>(eigvecmap.data(), dims);
     }

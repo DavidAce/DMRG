@@ -44,6 +44,6 @@ class flbit : public AlgorithmFinite {
     void transform_to_real_basis();
     void transform_to_lbit_basis();
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;
-
+    void write_state_swap_gates_to_file(const StateFinite &state, const std::vector<qm::SwapGate> &gates);
     void print_status_update() final;
 };

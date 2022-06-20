@@ -157,31 +157,31 @@ void EdgesFinite::eject_edges_all() {
 }
 
 const EnvEne &EdgesFinite::get_env_eneL(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_env_eneL(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    if(pos >= eneL.size()) throw std::range_error(fmt::format("get_env_eneL(pos:{}): pos is out of range | eneL.size() == {}", pos, eneL.size()));
+    if(pos >= get_length()) throw except::range_error("get_env_eneL(pos:{}): pos is out of range | system size {}", pos, get_length());
+    if(pos >= eneL.size()) throw except::range_error("get_env_eneL(pos:{}): pos is out of range | eneL.size() == {}", pos, eneL.size());
     const auto &env = **std::next(eneL.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_env_eneL(pos:{}): position mismatch {}", pos, env.get_position()));
+    if(env.get_position() != pos) throw except::logic_error("get_env_eneL(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 const EnvEne &EdgesFinite::get_env_eneR(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_env_eneR(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    if(pos >= eneR.size()) throw std::range_error(fmt::format("get_env_eneR(pos:{}): pos is out of range | eneR.size() == {}", pos, eneR.size()));
+    if(pos >= get_length()) throw except::range_error("get_env_eneR(pos:{}): pos is out of range | system size {}", pos, get_length());
+    if(pos >= eneR.size()) throw except::range_error("get_env_eneR(pos:{}): pos is out of range | eneR.size() == {}", pos, eneR.size());
     const auto &env = **std::next(eneR.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_env_eneR(pos:{}): position mismatch {}", pos, env.get_position()));
+    if(env.get_position() != pos) throw except::logic_error("get_env_eneR(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 const EnvVar &EdgesFinite::get_env_varL(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_env_varL(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    if(pos >= varL.size()) throw std::range_error(fmt::format("get_env_varL(pos:{}): pos is out of range | varL.size() == {}", pos, varL.size()));
+    if(pos >= get_length()) throw except::range_error("get_env_varL(pos:{}): pos is out of range | system size {}", pos, get_length());
+    if(pos >= varL.size()) throw except::range_error("get_env_varL(pos:{}): pos is out of range | varL.size() == {}", pos, varL.size());
     const auto &env = **std::next(varL.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_env_varL(pos:{}): position mismatch {}", pos, env.get_position()));
+    if(env.get_position() != pos) throw except::logic_error("get_env_varL(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 const EnvVar &EdgesFinite::get_env_varR(size_t pos) const {
-    if(pos >= get_length()) throw std::range_error(fmt::format("get_env_varR(pos:{}): pos is out of range | system size {}", pos, get_length()));
-    if(pos >= varR.size()) throw std::range_error(fmt::format("get_env_varR(pos:{}): pos is out of range | varR.size() == {}", pos, varR.size()));
+    if(pos >= get_length()) throw except::range_error("get_env_varR(pos:{}): pos is out of range | system size {}", pos, get_length());
+    if(pos >= varR.size()) throw except::range_error("get_env_varR(pos:{}): pos is out of range | varR.size() == {}", pos, varR.size());
     const auto &env = **std::next(varR.begin(), static_cast<long>(pos));
-    if(env.get_position() != pos) throw std::logic_error(fmt::format("get_env_varR(pos:{}): position mismatch {}", pos, env.get_position()));
+    if(env.get_position() != pos) throw except::logic_error("get_env_varR(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 
@@ -191,20 +191,20 @@ EnvVar &EdgesFinite::get_env_varL(size_t pos) { return const_cast<EnvVar &>(std:
 EnvVar &EdgesFinite::get_env_varR(size_t pos) { return const_cast<EnvVar &>(std::as_const(*this).get_env_varR(pos)); }
 
 env_pair<const EnvEne> EdgesFinite::get_env_ene(size_t posL, size_t posR) const {
-    if(posL > posR) throw std::range_error(fmt::format("get_env_ene(posL,posR): posL is out of range posL {} > posR {}", posL, posR));
+    if(posL > posR) throw except::range_error("get_env_ene(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_eneL(posL), get_env_eneR(posR)};
 }
 env_pair<const EnvVar> EdgesFinite::get_env_var(size_t posL, size_t posR) const {
-    if(posL > posR) throw std::range_error(fmt::format("get_env_var(posL,posR): posL is out of range posL {} > posR {}", posL, posR));
+    if(posL > posR) throw except::range_error("get_env_var(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_varL(posL), get_env_varR(posR)};
 }
 
 env_pair<EnvEne> EdgesFinite::get_env_ene(size_t posL, size_t posR) {
-    if(posL > posR) throw std::range_error(fmt::format("get_env_ene(posL,posR): posL is out of range posL {} > posR {}", posL, posR));
+    if(posL > posR) throw except::range_error("get_env_ene(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_eneL(posL), get_env_eneR(posR)};
 }
 env_pair<EnvVar> EdgesFinite::get_env_var(size_t posL, size_t posR) {
-    if(posL > posR) throw std::range_error(fmt::format("get_env_var(posL,posR): posL is out of range posL {} > posR {}", posL, posR));
+    if(posL > posR) throw except::range_error("get_env_var(posL,posR): posL is out of range posL {} > posR {}", posL, posR);
     return {get_env_varL(posL), get_env_varR(posR)};
 }
 

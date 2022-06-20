@@ -278,7 +278,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
             tools::log->debug("Critical cancellation error  {:>20.16f}", critical_cancellation_error);
             if(delta_var > 1e3 * critical_cancellation_error) {
                 tools::log->warn("Variance changed significantly after energy shift+compression");
-                if(delta_var > 1e6 * critical_cancellation_error) throw std::runtime_error("Energy reduction destroyed variance precision");
+                if(delta_var > 1e6 * critical_cancellation_error) throw except::runtime_error("Energy reduction destroyed variance precision");
             }
             if(delta_ene_rel > 1e-8) {
                 tools::log->warn("Energy changed significantly after energy shift+compression");
@@ -375,9 +375,9 @@ bool TensorsFinite::has_nan() const {
 }
 void TensorsFinite::assert_validity() const {
     if(settings::model::model_type == ModelType::ising_sdual) {
-        if(not state->is_real()) throw std::runtime_error("state has imaginary part");
-        if(not model->is_real()) throw std::runtime_error("model has imaginary part");
-        if(not edges->is_real()) throw std::runtime_error("edges has imaginary part");
+        if(not state->is_real()) throw except::runtime_error("state has imaginary part");
+        if(not model->is_real()) throw except::runtime_error("model has imaginary part");
+        if(not edges->is_real()) throw except::runtime_error("edges has imaginary part");
     }
 
     state->assert_validity();
@@ -391,8 +391,8 @@ bool TensorsFinite::has_center_point() const { return state->has_center_point();
 template<typename T>
 T TensorsFinite::get_length() const {
     if(not num::all_equal(state->get_length<size_t>(), model->get_length(), edges->get_length()))
-        throw std::runtime_error(
-            fmt::format("All lengths are not equal: state {} | model {} | edges {}", state->get_length<size_t>(), model->get_length(), edges->get_length()));
+        throw except::runtime_error("All lengths are not equal: state {} | model {} | edges {}", state->get_length<size_t>(), model->get_length(),
+                                    edges->get_length());
     return state->get_length<T>();
 }
 
@@ -433,14 +433,15 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
                                         LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
-        throw std::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}");
+        throw except::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}", active_sites, state->active_sites,
+                                    model->active_sites, edges->active_sites);
     clear_measurements(LogPolicy::QUIET);
     tools::finite::mps::merge_multisite_mps(*state, multisite_tensor, active_sites, get_position<long>(), bond_lim, svd_settings, log_policy);
     normalize_state(bond_lim, svd_settings, NormPolicy::IFNEEDED);
 }
 
 std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, long bond_lim, std::optional<svd::settings> svd_settings) {
-    if(active_sites.empty()) throw std::runtime_error("No active sites for subspace expansion");
+    if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     auto pos_expanded = tools::finite::env::expand_environment_var(*state, *model, *edges, alpha, bond_lim, svd_settings);
     if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt

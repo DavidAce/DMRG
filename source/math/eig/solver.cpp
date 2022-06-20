@@ -1,4 +1,5 @@
 #include "solver.h"
+#include "debug/exceptions.h"
 #include "log.h"
 #include "matvec/matvec_dense.h"
 #include "matvec/matvec_mpo.h"
@@ -88,12 +89,12 @@ void eig::solver::eig(const Scalar *matrix, size_type L, Vecs compute_eigvecs_, 
                 info = zgeev(matrix, L);
             }
         } else {
-            throw std::runtime_error("Unknown type");
+            throw except::runtime_error("Unknown type");
         }
 
     } catch(std::exception &ex) {
         eig::log->error("Eigenvalue solver failed: {}", ex.what());
-        throw std::runtime_error(fmt::format("Eigenvalue solver Failed: {}", ex.what()));
+        throw except::runtime_error("Eigenvalue solver Failed: {}", ex.what());
     }
 
     result.build_eigvals_cplx();
@@ -131,12 +132,12 @@ void eig::solver::eig(const Scalar *matrix, size_type L, char range, int il, int
             if constexpr(form == Form::SYMM) throw std::logic_error("zheevx not implemented");
             if constexpr(form == Form::NSYM) throw std::logic_error("?sygvx not implemented");
         } else {
-            throw std::runtime_error("Unknown type");
+            throw except::runtime_error("Unknown type");
         }
 
     } catch(std::exception &ex) {
         eig::log->error("Eigenvalue solver failed: {}", ex.what());
-        throw std::runtime_error(fmt::format("Eigenvalue solver Failed: {}", ex.what()));
+        throw except::runtime_error("Eigenvalue solver Failed: {}", ex.what());
     }
 
     result.build_eigvals_cplx();

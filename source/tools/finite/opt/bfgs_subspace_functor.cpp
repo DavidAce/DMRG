@@ -1,4 +1,5 @@
 #include "bfgs_subspace_functor.h"
+#include "debug/exceptions.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -98,7 +99,7 @@ bool tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::Evaluate(const
         tools::log->warn("energy shift    = {:.16f}", energy_shift);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw std::runtime_error("Direct functor failed at mv = " + std::to_string(counter));
+        throw except::runtime_error("Direct functor failed at mv = {}", counter);
     }
     counter++;
     return true;

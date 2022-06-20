@@ -1,12 +1,13 @@
 #include <math/svd.h>
 
 #if defined(DMRG_ENABLE_RSVD)
+    #include "debug/exceptions.h"
+    #include "math/rnd.h"
     #include "rsvd/Constants.hpp"
     #include "rsvd/ErrorEstimators.hpp"
     #include "rsvd/RandomizedSvd.hpp"
+    #include "tid/tid.h"
     #include <Eigen/Dense>
-    #include <math/rnd.h>
-    #include <tid/tid.h>
 #endif
 
 /*! \brief Performs randomized SVD on a matrix
@@ -24,11 +25,11 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     else
         rank_max = std::min({rank_max.value(), rows, cols});
 
-    svd::log->trace("Starting SVD with RSVD | {} x {} |threshold {:.4e} | rank_max {}", rows,cols, threshold, rank_max.value());
+    svd::log->trace("Starting SVD with RSVD | {} x {} |threshold {:.4e} | rank_max {}", rows, cols, threshold, rank_max.value());
     MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar> >(mat_ptr, rows, cols);
 
-    if(rows <= 0) throw std::runtime_error(fmt::format("SVD error: rows = {}", rows));
-    if(cols <= 0) throw std::runtime_error(fmt::format("SVD error: cols = {}", cols));
+    if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
+    if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
 
     #if !defined(NDEBUG)
     // These are more expensive debugging operations
@@ -44,7 +45,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Lu> SVD(rnd::internal::rng);
 
-    svd::log->debug("Running RSVD | {} x {} |threshold {:.4e} | rank_max {}", rows,cols, threshold, rank_max.value());
+    svd::log->debug("Running RSVD | {} x {} |threshold {:.4e} | rank_max {}", rows, cols, threshold, rank_max.value());
     // Run the svd
     //    SVD.compute(mat, rank_max.value(), 10, 4U);
     SVD.compute(mat, rank_max.value());
@@ -61,20 +62,20 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     if(rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().topRows(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {
-        throw std::runtime_error(fmt::format(FMT_STRING("RSVD SVD error \n"
-                                                        "  svd_threshold    = {:.4e}\n"
-                                                        "  Truncation Error = {:.4e}\n"
-                                                        "  Rank             = {}\n"
-                                                        "  Dims             = ({}, {})\n"
-                                                        "  A all finite     : {}\n"
-                                                        "  U all finite     : {}\n"
-                                                        "  S all finite     : {}\n"
-                                                        "  V all finite     : {}\n"),
-                                             threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
-                                             SVD.singularValues().topRows(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite()));
+        throw except::runtime_error("RSVD SVD error \n"
+                                    "  svd_threshold    = {:.4e}\n"
+                                    "  Truncation Error = {:.4e}\n"
+                                    "  Rank             = {}\n"
+                                    "  Dims             = ({}, {})\n"
+                                    "  A all finite     : {}\n"
+                                    "  U all finite     : {}\n"
+                                    "  S all finite     : {}\n"
+                                    "  V all finite     : {}\n",
+                                    threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
+                                    SVD.singularValues().topRows(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite());
     }
-    svd::log->trace("SVD with RND SVD finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}", threshold, rank,
-                   rank_max.value(), rows, cols, truncation_error, t_rsvd->get_last_interval());
+    svd::log->trace("SVD with RND SVD finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
+                    threshold, rank, rank_max.value(), rows, cols, truncation_error, t_rsvd->get_last_interval());
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
 #endif
 }

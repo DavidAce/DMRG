@@ -116,7 +116,7 @@ namespace tools::finite::opt {
                     auto diff_energy_rhs = std::abs(rhs.get_energy() - initial_mps.get_energy());
                     return diff_energy_lhs < diff_energy_rhs;
                 }
-                default: throw std::runtime_error(fmt::format("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz)));
+                default: throw except::runtime_error("Ground state optimization with ritz {} is not implemented", enum2sv(meta.optRitz));
             }
         };
         if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);

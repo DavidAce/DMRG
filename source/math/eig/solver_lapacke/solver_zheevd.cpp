@@ -18,6 +18,7 @@
 
 #include "../log.h"
 #include "../solver.h"
+#include "debug/exceptions.h"
 #include <chrono>
 
 int eig::solver::zheevd(const cplx *matrix, size_type L) {
@@ -57,7 +58,7 @@ int eig::solver::zheevd(const cplx *matrix, size_type L) {
         result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
         result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
     } else {
-        throw std::runtime_error("LAPACK zheevd failed with error: " + std::to_string(info));
+        throw except::runtime_error("LAPACK zheevd failed with error: " + std::to_string(info));
     }
     return info;
 }

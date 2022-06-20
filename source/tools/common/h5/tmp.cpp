@@ -1,5 +1,6 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "io/filesystem.h"
 #include "io/fmt.h"
 #include "tid/tid.h"
@@ -35,7 +36,7 @@ std::string tools::common::h5::tmp::internal::get_tmp_dir() {
 }
 
 const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::register_paths(std::string_view filepath) {
-    if(not fs::path(filepath).has_filename()) throw std::runtime_error(fmt::format("Given output file path has no filename: [{}]", filepath));
+    if(not fs::path(filepath).has_filename()) throw except::runtime_error("Given output file path has no filename: [{}]", filepath);
     std::string filename = fs::path(filepath).filename();
     if(internal::file_register.find(filename) != internal::file_register.end()) return internal::file_register[filename];
     std::string original_path         = fs::absolute(filepath);
@@ -45,7 +46,7 @@ const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::intern
 }
 
 const tools::common::h5::tmp::internal::pathpair &tools::common::h5::tmp::internal::get_paths(std::string_view filepath) {
-    if(not fs::path(filepath).has_filename()) throw std::runtime_error(fmt::format("Given output file path has no filename: [{}]", filepath));
+    if(not fs::path(filepath).has_filename()) throw except::runtime_error("Given output file path has no filename: [{}]", filepath);
     std::string filename = fs::path(filepath).filename();
     return internal::file_register[filename];
 }
@@ -117,7 +118,7 @@ void tools::common::h5::tmp::create_directory(std::string_view path) {
         } else {
             tools::log->info("Directory already exists: {}", dir.string());
         }
-    } catch(std::exception &ex) { throw std::runtime_error("Failed to create directory: " + std::string(ex.what())); }
+    } catch(std::exception &ex) { throw except::runtime_error("Failed to create directory: {}", ex.what()); }
 }
 
 void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const h5pp::File &h5file, StorageReason storage_reason,

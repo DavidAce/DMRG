@@ -23,7 +23,7 @@ namespace tools::finite::h5 {
     void load::simulation(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmStatus &status, AlgorithmType algo_type) {
         try {
             if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
-                throw std::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
+                throw except::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
 
             // Reset tensors
             tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
@@ -33,7 +33,7 @@ namespace tools::finite::h5 {
             tools::finite::h5::load::state(h5file, state_prefix, *tensors.state, status);
             tools::common::h5::load::timer(h5file, state_prefix, status);
             tools::finite::h5::load::validate(h5file, state_prefix, tensors, algo_type);
-        } catch(const std::exception &ex) { throw except::load_error(fmt::format("failed to load from state prefix [{}]: {}", state_prefix, ex.what())); }
+        } catch(const std::exception &ex) { throw except::load_error("failed to load from state prefix [{}]: {}", state_prefix, ex.what()); }
     }
 
     void load::model(const h5pp::File &h5file, std::string_view state_prefix, ModelFinite &model) {
@@ -44,7 +44,7 @@ namespace tools::finite::h5 {
             // Find the path to the MPO
             if(h5file.linkExists(model_prefix)) {
                 auto table_path = fmt::format("{}/hamiltonian", model_prefix);
-                if(not h5file.linkExists(table_path)) throw std::runtime_error(fmt::format("Hamiltonian table does not exist: [{}]", table_path));
+                if(not h5file.linkExists(table_path)) throw except::runtime_error("Hamiltonian table does not exist: [{}]", table_path);
                 tools::log->info("Loading model data from hamiltonian table: [{}]", table_path);
                 auto model_type = h5file.readAttribute<std::string>(table_path, "model_type");
                 auto model_size = h5file.readAttribute<size_t>(table_path, "model_size");
@@ -52,7 +52,7 @@ namespace tools::finite::h5 {
                     throw std::runtime_error(
                         fmt::format("model_type [{}] != settings::model::model_type [{}]", model_type, enum2sv(settings::model::model_type)));
                 if(model_size != settings::model::model_size)
-                    throw std::runtime_error(fmt::format("model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
+                    throw except::runtime_error("model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size);
                 for(const auto &mpo : model.MPO) mpo->load_hamiltonian(h5file, model_prefix);
                 for(const auto &mpo : model.MPO) tools::log->trace("Loaded mpo: {}({})", enum2sv(mpo->model_type), mpo->get_position());
             } else {
@@ -60,7 +60,7 @@ namespace tools::finite::h5 {
             }
             tools::log->info("Finished loading model");
             tools::finite::print::model(model);
-        } catch(const std::exception &ex) { throw std::runtime_error(fmt::format("model error [{}]: {}", model_prefix, ex.what())); }
+        } catch(const std::exception &ex) { throw except::runtime_error("model error [{}]: {}", model_prefix, ex.what()); }
     }
 
     void load::state(const h5pp::File &h5file, std::string_view state_prefix, StateFinite &state, const AlgorithmStatus &status) {
@@ -72,12 +72,11 @@ namespace tools::finite::h5 {
             auto model_type = h5file.readAttribute<std::string>("common/model_type", state_prefix);
             auto model_size = h5file.readAttribute<size_t>("common/model_size", state_prefix);
             auto position   = h5file.readAttribute<long>("common/position", state_prefix);
-            if(position != status.position) throw std::runtime_error(fmt::format("MPS: position [{}] != status.position [{}]", position, status.position));
+            if(position != status.position) throw except::runtime_error("MPS: position [{}] != status.position [{}]", position, status.position);
             if(sv2enum<ModelType>(model_type) != settings::model::model_type)
-                throw std::runtime_error(
-                    fmt::format("MPS: model_type [{}] != settings::model::model_type [{}]", model_type, enum2sv(settings::model::model_type)));
+                throw except::runtime_error("MPS: model_type [{}] != settings::model::model_type [{}]", model_type, enum2sv(settings::model::model_type));
             if(model_size != settings::model::model_size)
-                throw std::runtime_error(fmt::format("MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size));
+                throw except::runtime_error("MPS: model_size [{}] != settings::model::model_size [{}]", model_size, settings::model::model_size);
             state.initialize(status.algo_type, sv2enum<ModelType>(model_type), model_size, static_cast<size_t>(position));
             tools::log->debug("Loading state data from MPS in [{}]", mps_prefix);
             for(const auto &mps : state.mps_sites) {
@@ -87,15 +86,14 @@ namespace tools::finite::h5 {
                 std::string dset_M_name = fmt::format("{}/{}_{}", mps_prefix, "M", pos);
                 if(mps->isCenter()) {
                     std::string dset_LC_name = fmt::format("{}/{}", mps_prefix, "L_C");
-                    if(not h5file.linkExists(dset_LC_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {}", dset_LC_name));
+                    if(not h5file.linkExists(dset_LC_name)) throw except::runtime_error("Dataset does not exist: {}", dset_LC_name);
                     auto LC          = h5file.readDataset<Eigen::Tensor<cplx, 1>>(dset_LC_name);
                     auto pos_on_file = h5file.readAttribute<long>(dset_LC_name, "position");
-                    if(pos != pos_on_file)
-                        throw std::runtime_error(fmt::format("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file));
+                    if(pos != pos_on_file) throw except::runtime_error("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file);
                     mps->set_LC(LC);
                 }
-                if(not h5file.linkExists(dset_L_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_L_name));
-                if(not h5file.linkExists(dset_M_name)) throw std::runtime_error(fmt::format("Dataset does not exist: {} ", dset_M_name));
+                if(not h5file.linkExists(dset_L_name)) throw except::runtime_error("Dataset does not exist: {} ", dset_L_name);
+                if(not h5file.linkExists(dset_M_name)) throw except::runtime_error("Dataset does not exist: {} ", dset_M_name);
                 auto L     = h5file.readDataset<Eigen::Tensor<cplx, 1>>(dset_L_name);
                 auto M     = h5file.readDataset<Eigen::Tensor<cplx, 3>>(dset_M_name);
                 auto error = h5file.readAttribute<double>(dset_L_name, "truncation_error");
@@ -104,11 +102,12 @@ namespace tools::finite::h5 {
                 tools::log->trace("Loaded mps: {}({})", mps->get_label(), mps->get_position());
                 // Sanity checks
                 if(num::cmp_equal(pos, position) and not mps->isCenter())
-                    throw std::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
-                if(num::cmp_not_equal(pos, position) and mps->isCenter()) throw std::logic_error("A site not at current position claims to be a state center");
+                    throw except::logic_error("Given position is not a a center. State may be wrongly initialized or something is wrong with the resumed file");
+                if(num::cmp_not_equal(pos, position) and mps->isCenter())
+                    throw except::logic_error("A site not at current position claims to be a state center");
                 //        if(passed_LC > 1) throw std::logic_error("Multiple centers encountered");
             }
-        } catch(const std::exception &ex) { throw std::runtime_error(fmt::format("state error: {}", ex.what())); }
+        } catch(const std::exception &ex) { throw except::runtime_error("state error: {}", ex.what()); }
     }
 
     void compare(double val1, double val2, double tol, std::string_view tag) {
@@ -119,8 +118,8 @@ namespace tools::finite::h5 {
             return;
         }
         if(std::abs(val1 - val2) > tol)
-            throw std::runtime_error(fmt::format("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1,
-                                                 val2, std::abs(val1 - val2), tol));
+            throw except::runtime_error("Value mismatch after resume: {} = {:.16f} | expected {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2,
+                                        std::abs(val1 - val2), tol);
         else
             tools::log->debug("{} matches measurement on file: {:.16f} == {:.16f} | diff = {:.16f} | tol = {:.16f}", tag, val1, val2, std::abs(val1 - val2),
                               tol);

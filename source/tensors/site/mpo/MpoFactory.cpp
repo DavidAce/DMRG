@@ -11,7 +11,7 @@ std::unique_ptr<MpoSite> MpoFactory::create_mpo(size_t position, ModelType model
         case ModelType::ising_sdual: return std::make_unique<IsingSelfDual>(model_type, position);
         case ModelType::ising_majorana: return std::make_unique<IsingMajorana>(model_type, position);
         case ModelType::lbit: return std::make_unique<LBit>(model_type, position);
-        default: throw std::runtime_error(fmt::format("Wrong model type: [{}]", enum2sv(model_type)));
+        default: throw except::runtime_error("Wrong model type: [{}]", enum2sv(model_type));
     }
 }
 

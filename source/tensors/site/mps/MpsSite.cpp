@@ -58,11 +58,11 @@ MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<r
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-MpsSite::~MpsSite()                        = default;            // default dtor
-MpsSite::MpsSite(MpsSite &&other) noexcept = default;            // default move ctor
+MpsSite::~MpsSite()                                   = default; // default dtor
+MpsSite::MpsSite(MpsSite &&other) noexcept            = default; // default move ctor
 MpsSite &MpsSite::operator=(MpsSite &&other) noexcept = default; // default move assign
 MpsSite::MpsSite(const MpsSite &other)                = default;
-MpsSite &MpsSite::operator=(const MpsSite &other) = default;
+MpsSite &MpsSite::operator=(const MpsSite &other)     = default;
 
 bool MpsSite::isCenter() const { return LC.has_value(); }
 
@@ -75,24 +75,24 @@ Eigen::DSizes<long, 3> MpsSite::dimensions() const { return Eigen::DSizes<long, 
 bool MpsSite::is_real() const { return tenx::isReal(get_M_bare()) and tenx::isReal(get_L()); }
 bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) or tenx::hasNaN(get_L()); }
 void MpsSite::assert_validity() const {
-    if(has_nan()) throw std::runtime_error(fmt::format("MpsSite::assert_validity(): MPS (M or L) at position {} has NaN's", get_position()));
+    if(has_nan()) throw except::runtime_error("MpsSite::assert_validity(): MPS (M or L) at position {} has NaN's", get_position());
     assert_dimensions();
 }
 
 void MpsSite::assert_dimensions() const {
     if(get_label() == "B" and get_chiR() != get_L().dimension(0))
-        throw std::runtime_error(fmt::format("MpsSite: Assert failed: Dimensions for B and L are incompatible at site {}: B {} | L {}", get_position(),
-                                             get_M_bare().dimensions(), get_L().dimensions()));
+        throw except::runtime_error("MpsSite: Assert failed: Dimensions for B and L are incompatible at site {}: B {} | L {}", get_position(),
+                                    get_M_bare().dimensions(), get_L().dimensions());
     if(get_label() == "A" and get_chiL() != get_L().dimension(0))
-        throw std::runtime_error(fmt::format("MpsSite: Assert failed: Dimensions for A and L are incompatible at site {}: A {} | L {}", get_position(),
-                                             get_M_bare().dimensions(), get_L().dimensions()));
+        throw except::runtime_error("MpsSite: Assert failed: Dimensions for A and L are incompatible at site {}: A {} | L {}", get_position(),
+                                    get_M_bare().dimensions(), get_L().dimensions());
     if(get_label() == "AC") {
         if(get_chiL() != get_L().dimension(0))
-            throw std::runtime_error(fmt::format("MpsSite: Assert failed: Dimensions for AC and L are incompatible at site {}: AC {} | L {}", get_position(),
-                                                 get_M_bare().dimensions(), get_L().dimensions()));
+            throw except::runtime_error("MpsSite: Assert failed: Dimensions for AC and L are incompatible at site {}: AC {} | L {}", get_position(),
+                                        get_M_bare().dimensions(), get_L().dimensions());
         if(get_chiR() != get_LC().dimension(0))
-            throw std::runtime_error(fmt::format("MpsSite: Assert failed: Dimensions for AC and L are incompatible at site {}: AC {} | LC{}", get_position(),
-                                                 get_M_bare().dimensions(), get_L().dimensions()));
+            throw except::runtime_error("MpsSite: Assert failed: Dimensions for AC and L are incompatible at site {}: AC {} | LC{}", get_position(),
+                                        get_M_bare().dimensions(), get_L().dimensions());
     }
 }
 
@@ -101,42 +101,42 @@ void MpsSite::assert_identity() const {
     if(get_label() == "B") {
         auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
         if(not tenx::isIdentity(id, 1e-10)) {
-            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id));
+            throw except::runtime_error("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id);
         }
     } else {
         auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 1});
         if(not tenx::isIdentity(id, 1e-10)) {
-            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id));
+            throw except::runtime_error("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id);
         }
     }
     if(isCenter() or get_label() == "AC") {
         auto norm = tools::common::contraction::contract_mps_norm(get_M());
         if(std::abs(norm - 1) > 1e-10)
-            throw std::runtime_error(fmt::format("MpsSite: {0}^dagger {0} is not unity at pos {1}: {2:.16f}", get_label(), get_position(), norm));
+            throw except::runtime_error("MpsSite: {0}^dagger {0} is not unity at pos {1}: {2:.16f}", get_label(), get_position(), norm);
     }
 }
 
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
     auto t_get = tid::tic_scope("get_M_bare", tid::level::detailed);
     if(M) {
-        if(M.value().size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M_bare(): M has size 0 at position {}", get_position()));
+        if(M.value().size() == 0) throw except::runtime_error("MpsSite::get_M_bare(): M has size 0 at position {}", get_position());
         return M.value();
     } else
-        throw std::runtime_error(fmt::format("MpsSite::get_M_bare(): M has not been set at position {}", get_position()));
+        throw except::runtime_error("MpsSite::get_M_bare(): M has not been set at position {}", get_position());
 }
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
     auto t_get = tid::tic_scope("get_M", tid::level::detailed);
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
-            throw std::runtime_error(fmt::format("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2),
-                                                 LC.value().dimension(0), get_position()));
+            throw except::runtime_error("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0),
+                                        get_position());
         if(MC) {
-            if(MC.value().size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M(): MC has size 0 at position {}", get_position()));
+            if(MC.value().size() == 0) throw except::runtime_error("MpsSite::get_M(): MC has size 0 at position {}", get_position());
             return MC.value();
         } else {
             MC = Eigen::Tensor<cplx, 3>(spin_dim(), get_chiL(), get_chiR());
             tools::common::contraction::contract_mps_bnd(MC.value(), get_M_bare(), get_LC());
-            if(MC->size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_M(): built MC with size 0 at position {}", get_position()));
+            if(MC->size() == 0) throw except::runtime_error("MpsSite::get_M(): built MC with size 0 at position {}", get_position());
             return MC.value();
         }
     } else
@@ -147,28 +147,28 @@ const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
     auto t_get = tid::tic_scope("get_L", tid::level::detailed);
     if(L) {
         if constexpr(settings::debug) {
-            if(L->size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_L(): L has size 0 at position {} | label {}", get_position(), get_label()));
+            if(L->size() == 0) throw except::runtime_error("MpsSite::get_L(): L has size 0 at position {} | label {}", get_position(), get_label());
             if(get_label() != "B" and L->size() != get_chiL())
-                throw std::runtime_error(fmt::format("MpsSite::get_L(): L.size() {} != chiL {} at position {} | M dims {} | label {}", L->size(), get_chiL(),
-                                                     get_position(), dimensions(), get_label()));
+                throw except::runtime_error("MpsSite::get_L(): L.size() {} != chiL {} at position {} | M dims {} | label {}", L->size(), get_chiL(),
+                                            get_position(), dimensions(), get_label());
             if(get_label() == "B" and L->size() != get_chiR())
-                throw std::runtime_error(fmt::format("MpsSite::get_L(): L.size() {} != chiR {} at position {} | M dims {} | label {}", L->size(), get_chiR(),
-                                                     get_position(), dimensions(), get_label()));
+                throw except::runtime_error("MpsSite::get_L(): L.size() {} != chiR {} at position {} | M dims {} | label {}", L->size(), get_chiR(),
+                                            get_position(), dimensions(), get_label());
         }
         return L.value();
     } else
-        throw std::runtime_error(fmt::format("MpsSite::get_L(): L has not been set at position {}", get_position()));
+        throw except::runtime_error("MpsSite::get_L(): L has not been set at position {}", get_position());
 }
 const Eigen::Tensor<cplx, 1> &MpsSite::get_LC() const {
     auto t_get = tid::tic_scope("get_LC", tid::level::detailed);
     if(isCenter()) {
         if(LC->dimension(0) != get_M_bare().dimension(2))
-            throw std::runtime_error(fmt::format("MpsSite::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}",
-                                                 get_M_bare().dimensions(), LC.value().dimensions(), get_position()));
-        if(LC.value().size() == 0) throw std::runtime_error(fmt::format("MpsSite::get_LC(): LC has size 0 at position {}", get_position()));
+            throw except::runtime_error("MpsSite::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}", get_M_bare().dimensions(),
+                                        LC.value().dimensions(), get_position());
+        if(LC.value().size() == 0) throw except::runtime_error("MpsSite::get_LC(): LC has size 0 at position {}", get_position());
         return LC.value();
     } else
-        throw std::runtime_error(fmt::format("MpsSite::get_LC(): Site at position {} is not a center", get_position()));
+        throw except::runtime_error("MpsSite::get_LC(): Site at position {} is not a center", get_position());
 }
 
 Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() { return const_cast<Eigen::Tensor<cplx, 3> &>(std::as_const(*this).get_M_bare()); }
@@ -178,7 +178,7 @@ Eigen::Tensor<cplx, 1> &MpsSite::get_LC() { return const_cast<Eigen::Tensor<cplx
 double                  MpsSite::get_truncation_error() const { return truncation_error; }
 double                  MpsSite::get_truncation_error_LC() const { return truncation_error_LC; }
 std::string_view        MpsSite::get_label() const {
-    if(label.empty()) throw std::runtime_error(fmt::format("No label found at position {}", get_position()));
+    if(label.empty()) throw except::runtime_error("No label found at position {}", get_position());
     return label;
 }
 std::string MpsSite::get_tag() const { return fmt::format("{}[{}]", get_label(), get_position()); }
@@ -236,10 +236,10 @@ void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error /* Negative i
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(L_).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_L(): Norm of L is too far from unity: {:.16f}", norm);
-        //            throw std::runtime_error(fmt::format("MpsSite::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm));
+        //            throw except::runtime_error("MpsSite::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm);
         //        if(position and position.value() == 0 and get_label() != "B"){
-        //            if(L_.size() != 1) throw std::logic_error("Left edge L should have size 1");
-        //            if(std::abs(L_.coeff(0)) != 1.0) throw std::logic_error("Left edge L should be equal to 1");
+        //            if(L_.size() != 1) throw except::logic_error("Left edge L should have size 1");
+        //            if(std::abs(L_.coeff(0)) != 1.0) throw except::logic_error("Left edge L should be equal to 1");
         //        }
     }
 
@@ -256,9 +256,9 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(LC_).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_LC(): Norm of LC is too far from unity: {:.16f}", norm);
-        //            throw std::runtime_error(fmt::format("MpsSite::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}", norm));
+        //            throw except::runtime_error(MpsSite::set_LC(): Can't set L: Norm of LC is too far from unity: {:.16f}", norm);
         if(position and position.value() == 0 and get_label() == "B") {
-            throw std::logic_error("Only an A-site can become an AC site (not really true though");
+            throw except::logic_error("Only an A-site can become an AC site (not really true though");
         }
     }
     if(position) {
@@ -303,9 +303,9 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     auto tag  = get_tag();       // tag, (example: A[3])
     auto otag = other.get_tag(); // other tag, (example: AC[3])
 
-    if(get_position() != other.get_position()) throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: position mismatch {}"), tag, otag));
+    if(get_position() != other.get_position()) throw except::runtime_error("MpsSite({})::fuse_mps: position mismatch {}", tag, otag);
 
-    if(not other.has_M()) throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} with undefined M"), tag, otag));
+    if(not other.has_M()) throw except::runtime_error("MpsSite({})::fuse_mps: Got other mps {} with undefined M", tag, otag);
     if constexpr(settings::debug_merge) {
         if(other.has_L())
             tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L {}"), tag, otag, other.dimensions(), other.get_L().dimensions());
@@ -341,7 +341,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
         if((other.get_label() != "B" and get_chiL() == 1) or (other.get_label() == "B" and get_chiR() == 1))
             set_L(one);
         else
-            throw std::runtime_error(fmt::format(FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} without an L, and there is no preexisting L"), tag, otag));
+            throw except::runtime_error("MpsSite({})::fuse_mps: Got other mps {} without an L, and there is no preexisting L", tag, otag);
     }
 
     // Copy the center LC if it's in other
@@ -364,8 +364,7 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     }
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
-    if(mpoDimL != mpoDimR)
-        throw std::logic_error(fmt::format("MpsSite({})::apply_mpo: Can't apply mpo's with different L/R dims: not implemented yet", get_tag()));
+    if(mpoDimL != mpoDimR) throw except::logic_error("MpsSite({})::apply_mpo: Can't apply mpo's with different L/R dims: not implemented yet", get_tag());
 
     Eigen::Tensor<cplx, 1> L_temp = tenx::broadcast(get_L(), {mpoDimL});
     tenx::normalize(L_temp);
@@ -451,18 +450,18 @@ void MpsSite::take_stash(const MpsSite &other) {
         if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking V stash from {}"), get_tag(), other.get_tag());
 
         if(get_position() != other.get_position() + 1)
-            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Found V stash with destination {} the wrong position {}"), get_tag(),
-                                               other.V_stash->pos_dst, other.get_tag()));
+            throw except::logic_error("MpsSite({})::take_stash: Found V stash with destination {} the wrong position {}", get_tag(), other.V_stash->pos_dst,
+                                      other.get_tag());
 
         auto &V = other.V_stash->data;
         if(V.dimension(0) != 1)
-            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
-                                                          "V has invalid dimensions {}. Dim at idx 0 should be == 1"),
-                                               get_tag(), other.get_tag(), V.dimensions()));
+            throw except::logic_error("MpsSite({})::take_stash: Failed to take V stash from {}: "
+                                      "V has invalid dimensions {}. Dim at idx 0 should be == 1",
+                                      get_tag(), other.get_tag(), V.dimensions());
         if(V.dimension(2) != get_chiL())
-            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
-                                                          "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)"),
-                                               get_tag(), other.get_tag(), V.dimensions(), dimensions()));
+            throw except::logic_error("MpsSite({})::take_stash: Failed to take V stash from {}: "
+                                      "V dimensions {} | M dimensions {} |  Expected V(2) == M(1)",
+                                      get_tag(), other.get_tag(), V.dimensions(), dimensions());
         auto VM = tools::common::contraction::contract_mps_mps_temp(V, get_M_bare());
         set_M(VM);
         other.V_stash = std::nullopt; // Stash has been consumed
@@ -482,19 +481,19 @@ void MpsSite::take_stash(const MpsSite &other) {
         if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking U stash from {}"), get_tag(), other.get_tag());
 
         if(get_position() != other.get_position() - 1)
-            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Found U stash with destination {} the wrong position {}"), get_tag(),
-                                               other.U_stash->pos_dst, other.get_tag()));
+            throw except::logic_error("MpsSite({})::take_stash: Found U stash with destination {} the wrong position {}", get_tag(), other.U_stash->pos_dst,
+                                      other.get_tag());
 
         auto &U = other.U_stash->data;
         if(U.dimension(0) != 1)
-            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take U stash from {}: "
-                                                          "U has invalid dimensions {}. Dim at idx 0 should be == 1"),
-                                               get_tag(), other.get_tag(), U.dimensions()));
+            throw except::logic_error("MpsSite({})::take_stash: Failed to take U stash from {}: "
+                                      "U has invalid dimensions {}. Dim at idx 0 should be == 1",
+                                      get_tag(), other.get_tag(), U.dimensions());
 
         if(U.dimension(1) != get_chiR())
-            throw std::logic_error(fmt::format(FMT_STRING("MpsSite({})::take_stash: Failed to take V stash from {}: "
-                                                          "M dimensions {} | U dimensions {} |  Expected M(2) == U(1)"),
-                                               get_tag(), other.get_tag(), dimensions(), U.dimensions()));
+            throw except::logic_error("MpsSite({})::take_stash: Failed to take V stash from {}: "
+                                      "M dimensions {} | U dimensions {} |  Expected M(2) == U(1)",
+                                      get_tag(), other.get_tag(), dimensions(), U.dimensions());
 
         auto MU = tools::common::contraction::contract_mps_mps_temp(get_M_bare(), U);
         set_M(MU);

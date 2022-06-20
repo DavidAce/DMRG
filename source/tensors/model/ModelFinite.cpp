@@ -58,17 +58,17 @@ ModelFinite &ModelFinite::operator=(const ModelFinite &other) {
 
 void ModelFinite::initialize(ModelType model_type_, size_t model_size) {
     tools::log->info("Initializing model {} with {} sites", enum2sv(model_type_), model_size);
-    if(model_size < 2) throw std::logic_error("Tried to initialize model with less than 2 sites");
-    if(model_size > 2048) throw std::logic_error("Tried to initialize model with more than 2048 sites");
-    if(not MPO.empty()) throw std::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
+    if(model_size < 2) throw except::logic_error("Tried to initialize model with less than 2 sites");
+    if(model_size > 2048) throw except::logic_error("Tried to initialize model with more than 2048 sites");
+    if(not MPO.empty()) throw except::logic_error("Tried to initialize over an existing model. This is usually not what you want!");
     // Generate MPO
     model_type = model_type_;
     for(size_t site = 0; site < model_size; site++) { MPO.emplace_back(MpoFactory::create_mpo(site, model_type)); }
-    if(MPO.size() != model_size) throw std::logic_error("Initialized MPO with wrong size");
+    if(MPO.size() != model_size) throw except::logic_error("Initialized MPO with wrong size");
 }
 
 const MpoSite &ModelFinite::get_mpo(size_t pos) const {
-    if(pos >= MPO.size()) throw std::range_error(fmt::format("get_mpo(pos) pos out of range: {}", pos));
+    if(pos >= MPO.size()) throw except::range_error("get_mpo(pos) pos out of range: {}", pos);
     return **std::next(MPO.begin(), static_cast<long>(pos));
 }
 

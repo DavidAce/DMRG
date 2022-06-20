@@ -4,6 +4,7 @@
 #include "../matvec/matvec_sparse.h"
 #include "../sfinae.h"
 #include "../solver.h"
+#include "debug/exceptions.h"
 #include <primme/primme.h>
 #include <tid/tid.h>
 
@@ -11,19 +12,19 @@ inline primme_target stringToTarget(std::string_view ritzstring) {
     if(ritzstring == "LA") return primme_target::primme_largest;
     if(ritzstring == "SA") return primme_target::primme_smallest;
     if(ritzstring == "LM") return primme_target::primme_largest_abs;
-    if(ritzstring == "SM") throw std::runtime_error("Primme Ritz SM (smallest magnitude) not implemented");
+    if(ritzstring == "SM") throw except::runtime_error("Primme Ritz SM (smallest magnitude) not implemented");
     if(ritzstring == "LR") return primme_target::primme_largest;
     if(ritzstring == "SR") return primme_target::primme_smallest;
-    if(ritzstring == "LI") throw std::runtime_error("Primme Ritz LI (largest imaginary) not implemented");
-    if(ritzstring == "SI") throw std::runtime_error("Primme Ritz SI (smallest imaginary) not implemented");
-    if(ritzstring == "BE") throw std::runtime_error("Primme Ritz BE (both ends) not implemented");
+    if(ritzstring == "LI") throw except::runtime_error("Primme Ritz LI (largest imaginary) not implemented");
+    if(ritzstring == "SI") throw except::runtime_error("Primme Ritz SI (smallest imaginary) not implemented");
+    if(ritzstring == "BE") throw except::runtime_error("Primme Ritz BE (both ends) not implemented");
     if(ritzstring == "primme_smallest") return primme_target::primme_smallest;
     if(ritzstring == "primme_largest") return primme_target::primme_largest;
     if(ritzstring == "primme_closest_geq") return primme_target::primme_closest_geq;
     if(ritzstring == "primme_closest_leq") return primme_target::primme_closest_leq;
     if(ritzstring == "primme_closest_abs") return primme_target::primme_closest_abs;
     if(ritzstring == "primme_largest_abs") return primme_target::primme_largest_abs;
-    throw std::runtime_error("Wrong ritz string: " + std::string(ritzstring));
+    throw except::runtime_error("Wrong ritz string: " + std::string(ritzstring));
 }
 
 inline std::string_view TargetToString(primme_target target) {
@@ -43,16 +44,16 @@ inline primme_target RitzToTarget(eig::Ritz ritz) {
     if(ritz == eig::Ritz::SM) return primme_target::primme_closest_abs;
     if(ritz == eig::Ritz::LR) return primme_target::primme_largest;
     if(ritz == eig::Ritz::SR) return primme_target::primme_smallest;
-    if(ritz == eig::Ritz::LI) throw std::runtime_error("Primme Ritz LI (largest imaginary) not implemented");
-    if(ritz == eig::Ritz::SI) throw std::runtime_error("Primme Ritz SI (smallest imaginary) not implemented");
-    if(ritz == eig::Ritz::BE) throw std::runtime_error("Primme Ritz BE (both ends) not implemented");
+    if(ritz == eig::Ritz::LI) throw except::runtime_error("Primme Ritz LI (largest imaginary) not implemented");
+    if(ritz == eig::Ritz::SI) throw except::runtime_error("Primme Ritz SI (smallest imaginary) not implemented");
+    if(ritz == eig::Ritz::BE) throw except::runtime_error("Primme Ritz BE (both ends) not implemented");
     if(ritz == eig::Ritz::primme_smallest) return primme_target::primme_smallest;
     if(ritz == eig::Ritz::primme_largest) return primme_target::primme_largest;
     if(ritz == eig::Ritz::primme_closest_geq) return primme_target::primme_closest_geq;
     if(ritz == eig::Ritz::primme_closest_leq) return primme_target::primme_closest_leq;
     if(ritz == eig::Ritz::primme_closest_abs) return primme_target::primme_closest_abs;
     if(ritz == eig::Ritz::primme_largest_abs) return primme_target::primme_largest_abs;
-    throw std::runtime_error("Wrong ritz enum");
+    throw except::runtime_error("Wrong ritz enum");
 }
 
 inline primme_preset_method stringToMethod(std::optional<std::string> methodstring) {
@@ -73,7 +74,7 @@ inline primme_preset_method stringToMethod(std::optional<std::string> methodstri
     if(methodstring.value() == "PRIMME_STEEPEST_DESCENT") return primme_preset_method::PRIMME_STEEPEST_DESCENT;
     if(methodstring.value() == "PRIMME_LOBPCG_OrthoBasis") return primme_preset_method::PRIMME_LOBPCG_OrthoBasis;
     if(methodstring.value() == "PRIMME_LOBPCG_OrthoBasis_Window") return primme_preset_method::PRIMME_LOBPCG_OrthoBasis_Window;
-    throw std::runtime_error("Wrong method string: " + methodstring.value());
+    throw except::runtime_error("Wrong method string: " + methodstring.value());
 }
 
 inline primme_preset_method MethodAdapter(std::optional<eig::PrimmeMethod> method) {
@@ -103,7 +104,7 @@ inline primme_projection stringToProj(std::optional<std::string> projstring) {
     if(projstring.value() == "primme_proj_harmonic") return primme_projection::primme_proj_harmonic;
     if(projstring.value() == "primme_proj_refined") return primme_projection::primme_proj_refined;
     if(projstring.value() == "primme_proj_default") return primme_projection::primme_proj_default;
-    throw std::runtime_error("Wrong projection string: " + projstring.value());
+    throw except::runtime_error("Wrong projection string: " + projstring.value());
 }
 
 template<typename MatrixProductType>

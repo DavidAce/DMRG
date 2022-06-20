@@ -1,6 +1,7 @@
 
 
 #include "qm/gate.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
@@ -13,8 +14,7 @@
 
 template<typename T>
 std::vector<T> subset(const std::vector<T> &vec, size_t idx_start, size_t num) {
-    if(idx_start + num > vec.size())
-        throw std::range_error(fmt::format("Vector subset start {} num {} out of range for vector of size {}", idx_start, num, vec.size()));
+    if(idx_start + num > vec.size()) throw except::range_error("Vector subset start {} num {} out of range for vector of size {}", idx_start, num, vec.size());
     auto vec_bgn = vec.begin() + static_cast<long>(idx_start);
     auto vec_end = vec_bgn + static_cast<long>(num);
     return std::vector<T>(vec_bgn, vec_end);
@@ -22,8 +22,7 @@ std::vector<T> subset(const std::vector<T> &vec, size_t idx_start, size_t num) {
 
 template<auto N, typename T, auto M>
 std::array<T, N> subset(const std::array<T, M> &arr, size_t idx_start) {
-    if(idx_start + N > arr.size())
-        throw std::range_error(fmt::format("Vector subset start {} num {} out of range for vector of size {}", idx_start, N, arr.size()));
+    if(idx_start + N > arr.size()) throw except::range_error("Vector subset start {} num {} out of range for vector of size {}", idx_start, N, arr.size());
     auto             vec_bgn = arr.begin() + idx_start;
     auto             vec_end = vec_bgn + N;
     std::array<T, N> res{};
@@ -157,22 +156,22 @@ qm::Gate::Gate(const Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic> &op_, s
     : pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1l, std::multiplies<>());
     if(dim_prod != op_.rows() or dim_prod != op_.cols())
-        throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.rows(), op_.cols()));
-    if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
+        throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.rows(), op_.cols());
+    if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
     op = tenx::TensorMap(op_);
 }
 
 qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_) : op(op_), pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
-        throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1)));
-    if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
+        throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1));
+    if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
 }
 qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
     auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
     if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
-        throw std::logic_error(fmt::format("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1)));
-    if(pos.size() != dim.size()) throw std::logic_error(fmt::format("pos.size() {} != dim.size() {}", pos, dim));
+        throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1));
+    if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
     op = exp_internal(op_, alpha);
 }
 
@@ -199,7 +198,7 @@ std::array<long, rank> qm::Gate::shape() const {
             for(size_t i = 0; i < dims.size(); i++) dims[i] = dim[i % dim.size()];
             return dims;
         } else {
-            throw std::range_error(fmt::format("Can't compute shape of rank {} for gate with pos {} and dim {}", rank, pos, dim));
+            throw except::range_error("Can't compute shape of rank {} for gate with pos {} and dim {}", rank, pos, dim);
         }
     }
 }
@@ -322,7 +321,7 @@ template std::vector<std::vector<size_t>> qm::get_lightcone<iter::order::rev>(co
 std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t pos_tau, size_t pos_sig) {
     auto tau_cone = qm::get_lightcone<iter::order::def>(unitary_layers, pos_tau);
     auto sig_cone = qm::get_lightcone<iter::order::rev>(unitary_layers, pos_sig); // This cone is upside down!
-    if(tau_cone.size() != sig_cone.size()) throw std::runtime_error("tau and sig cones should have equal size!");
+    if(tau_cone.size() != sig_cone.size()) throw except::runtime_error("tau and sig cones should have equal size!");
 
     std::vector<std::vector<size_t>> int_cone;
 
@@ -686,8 +685,8 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         return qm::Gate{op, middle_gate.pos, middle_gate.dim};
     }
 
-    throw std::runtime_error(fmt::format("Insert case not implemented: middle pos {} | updown pos {} | pos_isect {} | pos_nsect {}", middle_gate.pos,
-                                         updown_gate.pos, pos_isect, pos_nsect));
+    throw except::runtime_error("Insert case not implemented: middle pos {} | updown pos {} | pos_isect {} | pos_nsect {}", middle_gate.pos, updown_gate.pos,
+                                pos_isect, pos_nsect);
 }
 
 qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
@@ -849,7 +848,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
         }
     }
 
-    throw std::runtime_error(
+    throw except::runtime_error(
         fmt::format("Connect case not implemented: dn pos {} | up pos {} | pos_isect {} | pos_nsect {}", dn_gate.pos, up_gate.pos, pos_isect, pos_nsect));
 }
 
@@ -858,7 +857,7 @@ qm::Gate qm::trace_idx(const qm::Gate &gate, const std::vector<long> &idx) {
     // idx is already pair-ordered, so when we call tenx::idx we need to undo that order
     // which explains the weird indexing in the following case
     if(idx.size() == 4) return qm::trace(gate, tenx::idx({idx[0], idx[2]}, {idx[1], idx[3]}));
-    throw std::runtime_error(fmt::format("Tracing {} indices is not implemented", idx.size()));
+    throw except::runtime_error("Tracing {} indices is not implemented", idx.size());
 }
 
 qm::Gate qm::trace_pos(const qm::Gate &gate, const std::vector<size_t> &pos) {
@@ -876,9 +875,9 @@ qm::Gate qm::trace_pos(const qm::Gate &gate, size_t pos) { return qm::trace_pos(
 
 qm::cplx qm::trace(const qm::Gate &gate) {
     qm::Gate t = qm::trace_pos(gate, gate.pos);
-    if(not t.pos.empty()) throw std::logic_error(fmt::format("Gate should be empty after tracing all positions. Got pos: {}", t.pos));
+    if(not t.pos.empty()) throw except::logic_error("Gate should be empty after tracing all positions. Got pos: {}", t.pos);
     if(t.op.dimension(0) * t.op.dimension(1) != 1)
-        throw std::logic_error(fmt::format("Gate should have cplx op after tracing all positions. Got dims: {}", t.op.dimensions()));
+        throw except::logic_error("Gate should have cplx op after tracing all positions. Got dims: {}", t.op.dimensions());
     return t.op(0);
 }
 
@@ -941,7 +940,7 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
         if constexpr(N == 1) { // dim size 1 is special! It can't take 2 index pairs
             op_traced = linalg::tensor::trace(static_cast<T2>(gate.op.reshape(gate.shape<2>())), idxpairs).reshape(dim2);
         } else {
-            throw std::runtime_error(fmt::format("Can't trace {} index pairs on gate with pos {}", N, gate.pos));
+            throw except::runtime_error("Can't trace {} index pairs on gate with pos {}", N, gate.pos);
         }
     }
     /* clang-format off */
@@ -962,7 +961,7 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
     else if(gate.dim.size() == 16) op_traced = linalg::tensor::trace(static_cast<T32>(gate.op.reshape(gate.shape<32>())), idxpairs).reshape(dim2);
     /* clang-format on */
     else
-        throw std::runtime_error(fmt::format("Trace not implemented: N == {} | dim.size() == {}", N, gate.dim.size()));
+        throw except::runtime_error("Trace not implemented: N == {} | dim.size() == {}", N, gate.dim.size());
 
     return Gate{op_traced, pos, dim};
 }

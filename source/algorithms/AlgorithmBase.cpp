@@ -6,13 +6,13 @@
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
 #include <complex>
+#include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
-
 using Scalar = AlgorithmBase::Scalar;
 
 AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_) : h5file(std::move(h5ppFile_)) {
     status.algo_type = algo_type_;
-    tools::log->set_error_handler([](const std::string &msg) { throw std::runtime_error(msg); });
+    tools::log->set_error_handler([](const std::string &msg) { throw except::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::loglevel, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
 }
@@ -30,7 +30,7 @@ void AlgorithmBase::init_bond_dimension_limits() {
         status.bond_lim = settings::get_bond_max(status.algo_type);
 
     // Sanity check
-    if(status.bond_lim == 0) throw std::runtime_error(fmt::format("Bond dimension limit invalid: {}", status.bond_lim));
+    if(status.bond_lim == 0) throw except::runtime_error("Bond dimension limit invalid: {}", status.bond_lim);
 }
 
 void AlgorithmBase::write_enable() { write_enabled = true; }

@@ -10,11 +10,11 @@
     #include "math/num.h"
     #include "tid/tid.h"
 namespace settings {
-    constexpr static bool bench_expval = true;
+    [[maybe_unused]] constexpr static bool bench_expval = true;
 }
 #else
 namespace settings {
-    constexpr static bool bench_expval = false;
+    [[maybe_unused]] constexpr static bool bench_expval = false;
 }
 #endif
 

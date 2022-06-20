@@ -15,8 +15,8 @@ EnvEne EnvEne::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
     // enlarge() uses "this" block together with mps and mpo to generate a new environment block corresponding to a neighboring site
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
-            throw std::logic_error(fmt::format("EnvEne::enlarge: {}{}[{}]: All positions are not equal: env {} | mps {} | mpo {}", tag, side, get_position(),
-                                               get_position(), mps.get_position(), mpo.get_position()));
+            throw except::logic_error("EnvEne::enlarge: {}{}[{}]: All positions are not equal: env {} | mps {} | mpo {}", tag, side, get_position(),
+                                      get_position(), mps.get_position(), mpo.get_position());
 
     EnvEne env = *this;
     if(env.sites == 0 and (not block or block->size() == 0)) {
@@ -33,7 +33,7 @@ EnvEne EnvEne::enlarge(const MpsSite &mps, const MpoSite &mpo) const {
     else if(env.side == "R")
         env.position = mps.get_position() - 1;
     else
-        throw std::logic_error("Expected environment side L or R, got: " + side);
+        throw except::logic_error("Expected environment side L or R, got: " + side);
 
     env.tag = "ene";
     // Save the hash id's used to create the new block in env
@@ -53,14 +53,14 @@ void EnvEne::refresh(const EnvEne &env, const MpsSite &mps, const MpoSite &mpo) 
     // If side == R, env,mps and mpo are all corresponding to the neighbor on the right
     if constexpr(settings::debug)
         if(not num::all_equal(env.get_position(), mps.get_position(), mpo.get_position()))
-            throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
-                                               get_position(), get_position(), mps.get_position(), mpo.get_position()));
+            throw except::logic_error("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
+                                      get_position(), get_position(), mps.get_position(), mpo.get_position());
 
     if(side == "L" and get_position() != mps.get_position() + 1)
-        throw std::logic_error(
+        throw except::logic_error(
             fmt::format("EnvEne::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(), side, get_position() - 1));
     if(side == "R" and get_position() + 1 != mps.get_position())
-        throw std::logic_error(
+        throw except::logic_error(
             fmt::format("EnvEne::refresh(pos == {}): This env{} needs env, mps and mpo at position {}", get_position(), side, get_position() + 1));
 
     // We refresh this block if any of these conditions hold:
@@ -114,8 +114,8 @@ void EnvEne::refresh(const EnvEne &env, const MpsSite &mps, const MpoSite &mpo) 
 
         if constexpr(settings::debug) {
             if(unique_id_bef == get_unique_id()) tools::log->warn("Refreshing {} env{}({}): id did not change: {}", tag, side, get_position(), unique_id_bef);
-            //                throw std::logic_error(fmt::format("Refreshing {} env{}({}): failed: id did not change: {}", tag, side, get_position(),
-            //                unique_id_bef));
+            //                throw except::logic_error("Refreshing {} env{}({}): failed: id did not change: {}", tag, side, get_position(),
+            //                unique_id_bef);
         }
     }
 }

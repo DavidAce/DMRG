@@ -3,6 +3,7 @@
 //
 #include "../gate.h"
 #include "config/debug.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/num.h"
 #include "tools/common/log.h"
@@ -12,10 +13,10 @@ namespace settings {
 }
 
 qm::Swap::Swap(size_t posL, size_t posR) : posL(posL), posR(posR) {
-    if(posL + 1 != posR) throw std::logic_error(fmt::format("Swap: Expected posL+1 == posR. Got posL {} and posR {}", posL, posR));
+    if(posL + 1 != posR) throw except::logic_error("Swap: Expected posL+1 == posR. Got posL {} and posR {}", posL, posR);
 }
 qm::Rwap::Rwap(size_t posL, size_t posR) : posL(posL), posR(posR) {
-    if(posL + 1 != posR) throw std::logic_error(fmt::format("Rwap: Expected posL+1 == posR. Got posL {} and posR {}", posL, posR));
+    if(posL + 1 != posR) throw except::logic_error("Rwap: Expected posL+1 == posR. Got posL {} and posR {}", posL, posR);
 }
 
 bool qm::Swap::operator==(const Rwap &rwap) const { return posL == rwap.posL and posR == rwap.posR; }
@@ -34,7 +35,7 @@ void qm::SwapGate::generate_swap_sequences() {
     if(pos.size() == 2ul and pos[0] + 1ul == pos[1]) return; // No swaps needed
     if(pos.size() >= 3) {
         for(size_t p = 0; p < pos.size() - 1ul; p++)
-            if(pos[p] + 1ul != pos[p + 1]) throw std::logic_error(fmt::format("SwapGate: 3body gates are only supported for adjacent sites: pos {}", pos));
+            if(pos[p] + 1ul != pos[p + 1]) throw except::logic_error("SwapGate: 3body gates are only supported for adjacent sites: pos {}", pos);
         return;
     }
     for(const auto &p : num::range<size_t>(pos.front(), pos.back())) {

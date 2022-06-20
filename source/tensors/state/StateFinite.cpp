@@ -23,8 +23,8 @@ StateFinite::StateFinite() = default; // Can't initialize lists since we don't k
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-StateFinite::~StateFinite() noexcept                   = default;            // default dtor
-StateFinite::StateFinite(StateFinite &&other) noexcept = default;            // default move ctor
+StateFinite::~StateFinite() noexcept                              = default; // default dtor
+StateFinite::StateFinite(StateFinite &&other) noexcept            = default; // default move ctor
 StateFinite &StateFinite::operator=(StateFinite &&other) noexcept = default; // default move assign
 
 /* clang-format off */
@@ -67,9 +67,9 @@ void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size
     tools::log->debug("Initializing state: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
                       position);
     set_algorithm(algo_type);
-    if(model_size < 2) throw std::logic_error("Tried to initialize state with less than 2 sites");
-    if(model_size > 2048) throw std::logic_error("Tried to initialize state with more than 2048 sites");
-    if(position >= model_size) throw std::logic_error("Tried to initialize state at a position larger than the number of sites");
+    if(model_size < 2) throw except::logic_error("Tried to initialize state with less than 2 sites");
+    if(model_size > 2048) throw except::logic_error("Tried to initialize state with more than 2048 sites");
+    if(position >= model_size) throw except::logic_error("Tried to initialize state at a position larger than the number of sites");
 
     long spin_dim = 2;
     switch(model_type) {
@@ -95,9 +95,9 @@ void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size
             label = "B";
         }
     }
-    if(mps_sites.size() != model_size) throw std::logic_error("Initialized state with wrong size");
-    if(not get_mps_site(position).isCenter()) throw std::logic_error("Initialized state center bond at the wrong position");
-    if(get_position() != position) throw std::logic_error("Initialized state at the wrong position");
+    if(mps_sites.size() != model_size) throw except::logic_error("Initialized state with wrong size");
+    if(not get_mps_site(position).isCenter()) throw except::logic_error("Initialized state center bond at the wrong position");
+    if(get_position() != position) throw except::logic_error("Initialized state at the wrong position");
     tag_normalized_sites = std::vector<bool>(model_size, false);
     //    tag_edge_ene_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
     //    tag_edge_var_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
@@ -249,7 +249,7 @@ void StateFinite::assert_validity() const {
     size_t pos = 0;
     for(const auto &mps : mps_sites) {
         if(pos != mps->get_position<size_t>())
-            throw std::runtime_error(fmt::format("State is corrupted: position mismatch: expected position {} != mps position {}", pos, mps->get_position()));
+            throw except::runtime_error("State is corrupted: position mismatch: expected position {} != mps position {}", pos, mps->get_position());
         pos++;
     }
 
@@ -273,11 +273,10 @@ const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::current_bond() const {
 template<typename T>
 const MpsSite &StateFinite::get_mps_site(T pos) const {
     if constexpr(std::is_signed_v<T>)
-        if(pos < 0) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
-    if(pos >= get_length<T>()) throw std::range_error(fmt::format("get_mps_site(pos): pos out of range: {}", pos));
+        if(pos < 0) throw except::range_error("get_mps_site(pos): pos out of range: {}", pos);
+    if(pos >= get_length<T>()) throw except::range_error("get_mps_site(pos): pos out of range: {}", pos);
     const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
-    if(mps_ptr->get_position<T>() != pos)
-        throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
+    if(mps_ptr->get_position<T>() != pos) throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>());
     return *mps_ptr;
 
     //    if(algo == AlgorithmType::fLBIT){
@@ -285,12 +284,12 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
     //        for(const auto & mps_ptr :  mps_sites ){
     //            if(mps_ptr->get_position<T>() == pos) return *mps_ptr;
     //        }
-    //        throw std::runtime_error(fmt::format("get_mps_site(pos): pos {} not found", pos));
+    //        throw except::runtime_error("get_mps_site(pos): pos {} not found", pos);
     //    }else{
     //        // There shouldn't be any swap operator, we can safely assume the mps positions are sorted
     //        const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
     //        if(mps_ptr->get_position<T>() != pos)
-    //            throw std::range_error(fmt::format("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>()));
+    //            throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>());
     //        return *mps_ptr;
     //    }
 }
@@ -333,7 +332,7 @@ std::array<long, 3> StateFinite::active_dimensions() const { return tools::finit
 long StateFinite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*this, active_sites); }
 
 std::vector<long> StateFinite::get_spin_dims(const std::vector<size_t> &sites) const {
-    if(sites.empty()) throw std::runtime_error("No sites on which to collect spin dimensions");
+    if(sites.empty()) throw except::runtime_error("No sites on which to collect spin dimensions");
     std::vector<long> dims;
     dims.reserve(sites.size());
     for(const auto &site : sites) { dims.emplace_back(get_mps_site(site).spin_dim()); }
@@ -343,7 +342,7 @@ std::vector<long> StateFinite::get_spin_dims(const std::vector<size_t> &sites) c
 std::vector<long> StateFinite::get_spin_dims() const { return get_spin_dims(active_sites); }
 
 Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
-    if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mps tensor");
+    if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
     if constexpr(settings::debug) tools::log->trace("get_multisite_mps: sites {}", sites);
     auto                     t_mps = tid::tic_scope("gen_mps");
@@ -362,16 +361,16 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         auto &mps_left = get_mps_site(sites.front() - 1);
         auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
         if(L_left.dimension(0) != multisite_mps.dimension(1))
-            throw std::logic_error(
-                fmt::format("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(), multisite_mps.dimensions()));
+            throw except::logic_error("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(),
+                                      multisite_mps.dimensions());
         multisite_mps = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
     } else if(sites.back() < get_length() - 1 and get_mps_site(sites.back()).get_label() == "A") {
         // In this case all sites are "A" and we need to append the the "L" from the site on the right to make a normalized multisite mps
         auto &mps_right = get_mps_site(sites.back() + 1);
         auto &L_right   = mps_right.get_L();
         if(L_right.dimension(0) != multisite_mps.dimension(2))
-            throw std::logic_error(
-                fmt::format("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(), multisite_mps.dimensions()));
+            throw except::logic_error("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(),
+                                      multisite_mps.dimensions());
         multisite_mps = tools::common::contraction::contract_mps_bnd_temp(multisite_mps, L_right, temp);
     }
 
@@ -388,7 +387,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
                 auto norm_left = tools::common::contraction::contract_mps_norm(multisite_mps);
                 tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm_left);
             }
-            throw std::runtime_error(fmt::format("get_multisite_mps: not normalized: sites {} | norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm));
+            throw except::runtime_error("get_multisite_mps: not normalized: sites {} | norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
         }
     }
     return multisite_mps;
@@ -405,7 +404,7 @@ void StateFinite::set_truncation_error(double error) { set_truncation_error(get_
 
 void StateFinite::set_truncation_error_LC(double error) {
     auto &mps = get_mps_site(get_position());
-    if(not mps.isCenter()) throw std::runtime_error("mps at current position is not a center");
+    if(not mps.isCenter()) throw except::runtime_error("mps at current position is not a center");
     mps.set_truncation_error_LC(error);
 }
 
@@ -452,9 +451,9 @@ double StateFinite::get_truncation_error_midchain() const {
 std::vector<double> StateFinite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
 std::vector<double> StateFinite::get_truncation_errors_active() const { return tools::finite::measure::truncation_errors_active(*this); }
 double              StateFinite::get_truncation_error_active_max() const {
-    auto   truncation_errors_active = get_truncation_errors_active();
-    double truncation_error         = 0;
-    if(not truncation_errors_active.empty()) truncation_error = *std::max_element(truncation_errors_active.begin(), truncation_errors_active.end());
+                 auto   truncation_errors_active = get_truncation_errors_active();
+                 double truncation_error         = 0;
+                 if(not truncation_errors_active.empty()) truncation_error = *std::max_element(truncation_errors_active.begin(), truncation_errors_active.end());
     return truncation_error;
 }
 
@@ -489,32 +488,33 @@ void StateFinite::clear_cache(LogPolicy logPolicy) const {
 void StateFinite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 
 void StateFinite::tag_active_sites_normalized(bool tag) const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot tag active sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot tag active sites, size mismatch in site list");
     for(auto &site : active_sites) tag_normalized_sites[site] = tag;
 }
 
 void StateFinite::tag_all_sites_normalized(bool tag) const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot untag all sites, size mismatch in site list");
     tag_normalized_sites = std::vector<bool>(get_length(), tag);
 }
 
 void StateFinite::tag_site_normalized(size_t pos, bool tag) const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot untag all sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot untag all sites, size mismatch in site list");
     tag_normalized_sites[pos] = tag;
 }
 
 bool StateFinite::is_normalized_on_all_sites() const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on all sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot check normalization status on all sites, size mismatch in site list");
     return std::all_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
 }
 
 bool StateFinite::is_normalized_on_any_sites() const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on any sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot check normalization status on any sites, size mismatch in site list");
     return std::any_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
 }
 
 bool StateFinite::is_normalized_on_active_sites() const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check normalization status on active sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length())
+        throw except::runtime_error("Cannot check normalization status on active sites, size mismatch in site list");
     if(active_sites.empty()) return false;
     auto first_site_ptr = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.front()));
     auto last_site_ptr  = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.back()));
@@ -522,7 +522,7 @@ bool StateFinite::is_normalized_on_active_sites() const {
 }
 
 bool StateFinite::is_normalized_on_non_active_sites() const {
-    if(tag_normalized_sites.size() != get_length()) throw std::runtime_error("Cannot check update status on all sites, size mismatch in site list");
+    if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot check update status on all sites, size mismatch in site list");
     if(active_sites.empty()) return is_normalized_on_all_sites();
     for(size_t idx = 0; idx < get_length(); idx++)
         if(std::find(active_sites.begin(), active_sites.end(), idx) == active_sites.end() and not tag_normalized_sites[idx]) return false;

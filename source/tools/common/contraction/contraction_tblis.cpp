@@ -1,7 +1,7 @@
 #include "../contraction.h"
+#include "io/fmt.h"
 #include "math/tenx.h"
 #include "tid/tid.h"
-#include <io/fmt.h>
 #include <tblis/tblis.h>
 #include <tblis/util/thread.h>
 

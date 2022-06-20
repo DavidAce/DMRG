@@ -57,7 +57,7 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
         if(debug::hasNaN(envR)) msg.append("\t envR\n");
         if(debug::hasNaN(env2L)) msg.append("\t env2L\n");
         if(debug::hasNaN(env2R)) msg.append("\t env2R\n");
-        if(not msg.empty()) throw std::runtime_error(fmt::format("The following objects have nan's:\n{}", msg));
+        if(not msg.empty()) throw except::runtime_error("The following objects have nan's:\n{}", msg);
     }
 
     tools::log->trace("- Allocating memory for matrix-vector products");
@@ -84,7 +84,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), size); // v does not include the lagrange multiplier
 
     if constexpr(settings::debug) {
-        if(v.hasNaN()) throw std::runtime_error(fmt::format("bfgs_variance_functor::Evaluate: v has nan's at mv {}\n{}", counter, v));
+        if(v.hasNaN()) throw except::runtime_error("bfgs_variance_functor::Evaluate: v has nan's at mv {}\n{}", counter, v);
     }
 
     VectorType n_temp;
@@ -190,7 +190,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
         tools::log->warn("energy shift    = {:.16f}", energy_shift);
         tools::log->warn("norm            = {:.16f}", norm);
         tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw std::runtime_error("Direct functor failed at mv = " + std::to_string(counter));
+        throw except::runtime_error("Direct functor failed at mv = {}", counter);
     }
 
     counter++;

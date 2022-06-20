@@ -71,10 +71,10 @@ void AlgorithmFinite::run()
             tools::log->info("Attempting resume");
             resume();
         } catch(const except::state_error &ex) {
-            throw except::resume_error(fmt::format("Failed to resume state from file [{}]: {}", h5file->getFilePath(), ex.what()));
+            throw except::resume_error("Failed to resume state from file [{}]: {}", h5file->getFilePath(), ex.what());
         } catch(const except::load_error &ex) {
-            throw except::resume_error(fmt::format("Failed to load simulation from file [{}]: {}", h5file->getFilePath(), ex.what()));
-        } catch(const std::exception &ex) { throw std::runtime_error(fmt::format("Failed to resume from file [{}]: {}", h5file->getFilePath(), ex.what())); }
+            throw except::resume_error("Failed to load simulation from file [{}]: {}", h5file->getFilePath(), ex.what());
+        } catch(const std::exception &ex) { throw except::runtime_error("Failed to resume from file [{}]: {}", h5file->getFilePath(), ex.what()); }
     } else {
         run_default_task_list();
     }
@@ -123,11 +123,11 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
             } else if(settings::strategy::multisite_mps_move == MultisiteMove::MAX) {
                 num_moves = std::max<long>(1, num_active - 1); // Move so that the center point moves out of the active region
             } else
-                throw std::logic_error("Could not determine how many sites to move");
+                throw except::logic_error("Could not determine how many sites to move");
         }
     }
 
-    if(num_moves <= 0) throw std::runtime_error(fmt::format("Cannot move center point {} sites", num_moves.value()));
+    if(num_moves <= 0) throw except::runtime_error("Cannot move center point {} sites", num_moves.value());
     tools::log->trace("Moving center point {} steps in direction {}", num_moves.value(), tensors.state->get_direction());
     tensors.clear_cache();
     tensors.clear_measurements();
@@ -233,7 +233,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 
     // If we got to this point we will update the bond dimension by a factor
     auto grow_rate = settings::strategy::bond_grow_rate;
-    if(grow_rate <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate));
+    if(grow_rate <= 1.0) throw except::runtime_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate);
 
     // Do a projection to make sure the saved data is in the correct sector
     if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
@@ -351,7 +351,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
         if(settings::strategy::bond_grow_mode == BondGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             bond_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
-    if(bond_lim.value() <= 0) throw std::runtime_error(fmt::format("Invalid bond_lim: {}", bond_lim.value()));
+    if(bond_lim.value() <= 0) throw except::runtime_error("Invalid bond_lim: {}", bond_lim.value());
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type.value()), sector.value(), use_eigenspinors.value(), bitfield.value());
 
@@ -382,8 +382,8 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(tensors.state->find_largest_bond() > bond_lim.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),
         //        bond_lim.value());
-        throw std::runtime_error(fmt::format("Faulty truncation after randomize. Max found bond dimension is {}, but bond limit is {}",
-                                             tensors.state->find_largest_bond(), bond_lim.value()));
+        throw except::runtime_error("Faulty truncation after randomize. Max found bond dimension is {}, but bond limit is {}",
+                                    tensors.state->find_largest_bond(), bond_lim.value());
 
     tensors.rebuild_edges();
     tools::log->info("Randomization successful:");
@@ -564,9 +564,9 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     for(size_t site = 0; site < entropies_size; site++) {
         std::transform(algorithm_history.begin(), algorithm_history.end(), std::back_inserter(entropy_iter[site]),
                        [entropies_size, site](const log_entry &h) -> double {
-                           if(h.entropies.empty()) throw std::runtime_error("Entanglement entropies are missing from algorithm history entry");
+                           if(h.entropies.empty()) throw except::runtime_error("Entanglement entropies are missing from algorithm history entry");
                            if(h.entropies.size() != entropies_size)
-                               throw std::runtime_error(fmt::format("Entanglement entropies have the wrong size {} != {}", h.entropies.size(), entropies_size));
+                               throw except::runtime_error("Entanglement entropies have the wrong size {} != {}", h.entropies.size(), entropies_size);
                            return h.entropies[site];
                        });
         reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value());

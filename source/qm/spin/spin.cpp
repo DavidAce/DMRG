@@ -1,8 +1,8 @@
 #include "../spin.h"
+#include "debug/exceptions.h"
+#include "io/fmt.h"
 #include "math/linalg/matrix.h"
 #include <Eigen/Core>
-#include <fmt/format.h>
-#include <fmt/ranges.h>
 
 Eigen::MatrixXcd qm::spin::gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool mirror)
 /*
@@ -36,7 +36,7 @@ Eigen::MatrixXcd qm::spin::gen_embedded_spin_operator(const Eigen::MatrixXcd &s,
  */
 
 {
-    if(at >= sites) throw std::logic_error(fmt::format("Expected at < sites. Got: at = {} | sites {}", at, sites));
+    if(at >= sites) throw except::logic_error("Expected at < sites. Got: at = {} | sites {}", at, sites);
     Eigen::MatrixXcd id     = Eigen::MatrixXcd::Identity(s.rows(), s.cols());
     Eigen::MatrixXcd result = at == 0 ? s : id;
     for(size_t site = 1; site < sites; site++)

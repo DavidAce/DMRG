@@ -68,7 +68,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
-    if(mpos.size() != state.get_length()) throw std::runtime_error("Number of mpo's doesn't match the number of sites on the system");
+    if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
 
     if constexpr(settings::debug or settings::debug_projection) {
         state.clear_measurements();
@@ -295,7 +295,7 @@ int tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::strin
     } else if(sector == "none") {
         return 0;
     } else
-        throw std::runtime_error(fmt::format("Could not parse sector string [{}]", sector));
+        throw except::runtime_error("Could not parse sector string [{}]", sector);
     return 0;
 }
 

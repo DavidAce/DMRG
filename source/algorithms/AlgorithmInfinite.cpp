@@ -92,14 +92,14 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
 
     // If we got to this point we will update the bond dimension by a factor
     auto grow_rate = settings::strategy::bond_grow_rate;
-    if(grow_rate <= 1.0) throw std::runtime_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate));
+    if(grow_rate <= 1.0) throw except::runtime_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate);
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_INCREASE);
 
     // If we got to this point we will update the bond dimension by a factor
     auto factor = settings::strategy::bond_grow_rate;
-    if(factor <= 1.0) throw std::logic_error(fmt::format("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor));
+    if(factor <= 1.0) throw except::logic_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor);
 
     auto bond_new = static_cast<double>(status.bond_lim);
     if(grow_rate <= 2.0 and grow_rate > 1.0) {
@@ -117,8 +117,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     status.algorithm_has_stuck_for    = 0;
     status.algorithm_saturated_for    = 0;
     // Last sanity check before leaving here
-    if(status.bond_lim > status.bond_max)
-        throw std::runtime_error(fmt::format("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max));
+    if(status.bond_lim > status.bond_max) throw except::runtime_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
 void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
@@ -297,7 +296,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
         }
     }
     if(storage_level == StorageLevel::NONE) return;
-    if(state_prefix.empty()) throw std::runtime_error("State prefix is empty");
+    if(state_prefix.empty()) throw except::runtime_error("State prefix is empty");
     tools::log->debug("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level), state_prefix);
     // Start saving tensors and metadata
     tools::infinite::h5::save::state(*h5file, state_prefix, storage_level, *tensors.state, status);
@@ -336,7 +335,7 @@ void AlgorithmInfinite::print_status_update() {
             report += fmt::format("E/L: ham {:<20.16f} mom {:<20.16f}", tools::infinite::measure::energy_per_site_ham(tensors),
                                   tools::infinite::measure::energy_per_site_mom(tensors));
             break;
-        default: throw std::runtime_error("Wrong simulation type");
+        default: throw except::runtime_error("Wrong simulation type");
     }
 
     switch(status.algo_type) {
@@ -349,7 +348,7 @@ void AlgorithmInfinite::print_status_update() {
             report += fmt::format("lg σ²H: ham {:<10.6f} mom {:<10.6f}", tools::infinite::measure::energy_variance_per_site_ham(tensors),
                                   tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
-        default: throw std::runtime_error("Wrong simulation type");
+        default: throw except::runtime_error("Wrong simulation type");
     }
     report += fmt::format("ε: {:<8.2e} ", tools::infinite::measure::truncation_error(*tensors.state));
     report += fmt::format("Sₑ(l): {:<10.8f} ", tools::infinite::measure::entanglement_entropy(*tensors.state));
@@ -364,7 +363,7 @@ void AlgorithmInfinite::print_status_update() {
             report += fmt::format("sat: [σ² {:<1} Sₑ {:<1}] ", status.variance_mpo_saturated_for, status.entanglement_saturated_for);
             break;
         case AlgorithmType::iTEBD: report += fmt::format("sat: [Sₑ {:<1}] ", status.entanglement_saturated_for); break;
-        default: throw std::runtime_error("Wrong simulation type");
+        default: throw except::runtime_error("Wrong simulation type");
     }
     report += fmt::format("con: {:<4} ", status.algorithm_converged_for);
     report += fmt::format("time:{:>8.2f}s ", tid::get_unscoped("t_tot").get_time());
@@ -389,7 +388,7 @@ void AlgorithmInfinite::print_status_full() {
             tools::log->info("Energy HAM            = {:<16.16f}", tools::infinite::measure::energy_per_site_ham(tensors));
             tools::log->info("Energy MOM            = {:<16.16f}", tools::infinite::measure::energy_per_site_mom(tensors));
             break;
-        default: throw std::runtime_error("Wrong simulation type");
+        default: throw except::runtime_error("Wrong simulation type");
     }
     switch(status.algo_type) {
         case AlgorithmType::iDMRG:
@@ -401,7 +400,7 @@ void AlgorithmInfinite::print_status_full() {
             tools::log->info("lg σ²H HAM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_ham(tensors));
             tools::log->info("lg σ²H MOM         = {:<8.2e}", tools::infinite::measure::energy_variance_per_site_mom(tensors));
             break;
-        default: throw std::runtime_error("Wrong simulation type");
+        default: throw except::runtime_error("Wrong simulation type");
     }
     tools::log->info("Truncation error      = {:<8.2e}", tools::infinite::measure::truncation_error(*tensors.state));
     tools::log->info("Entanglement Entropy  = {:<16.16f}", tools::infinite::measure::entanglement_entropy(*tensors.state));
@@ -412,7 +411,7 @@ void AlgorithmInfinite::print_status_full() {
         case AlgorithmType::iDMRG: break;
         case AlgorithmType::iTEBD: tools::log->info("δt                    = {:<16.16f}", status.delta_t); break;
 
-        default: throw std::runtime_error("Wrong simulation type");
+        default: throw except::runtime_error("Wrong simulation type");
     }
 
     tools::log->info("Algorithm succeeded      = {:<}", status.algorithm_has_succeeded);

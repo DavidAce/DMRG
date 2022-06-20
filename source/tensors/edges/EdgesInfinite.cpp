@@ -1,4 +1,5 @@
 #include "EdgesInfinite.h"
+#include "debug/exceptions.h"
 #include "math/num.h"
 #include "tensors/site/env/EnvEne.h"
 #include "tensors/site/env/EnvVar.h"
@@ -65,16 +66,16 @@ void EdgesInfinite::env_pair<env_type>::assert_validity() const {
 
 size_t EdgesInfinite::get_length() const {
     if(not num::all_equal(eneL->get_sites(), eneR->get_sites(), varL->get_sites(), varR->get_sites()))
-        throw std::runtime_error(fmt::format("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->get_sites(), eneR->get_sites(),
-                                             varL->get_sites(), varR->get_sites()));
+        throw except::runtime_error("Site mismatch in edges: eneL {} | eneR {} | varL {} | varR {}", eneL->get_sites(), eneR->get_sites(), varL->get_sites(),
+                                    varR->get_sites());
     return eneL->get_sites() + eneR->get_sites() + 2;
 }
 
 size_t EdgesInfinite::get_position() const {
     if(not num::all_equal(eneL->get_position(), varL->get_position()))
-        throw std::runtime_error(fmt::format("Position mismatch in edges: eneL {} | varL {}", eneL->get_position(), varL->get_position()));
+        throw except::runtime_error("Position mismatch in edges: eneL {} | varL {}", eneL->get_position(), varL->get_position());
     if(not num::all_equal(eneR->get_position(), varR->get_position()))
-        throw std::runtime_error(fmt::format("Position mismatch in edges: eneR {} | varR {}", eneR->get_position(), varR->get_position()));
+        throw except::runtime_error("Position mismatch in edges: eneR {} | varR {}", eneR->get_position(), varR->get_position());
     return eneL->get_position();
 }
 

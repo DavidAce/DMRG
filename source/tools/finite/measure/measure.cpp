@@ -24,8 +24,8 @@ void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     // No need for energy or variance in fLBIT simulations. In fact, we don't update the ene and var environments,
     // so this operation would give an error
     if(tensors.state->get_algorithm() == AlgorithmType::fLBIT) return;
-    tensors.measurements.energy                   = measure::energy(tensors); // This number is needed for variance calculation!
-    tensors.measurements.energy_variance          = measure::energy_variance(tensors);
+    tensors.measurements.energy          = measure::energy(tensors); // This number is needed for variance calculation!
+    tensors.measurements.energy_variance = measure::energy_variance(tensors);
     do_all_measurements(*tensors.state);
 }
 
@@ -139,7 +139,7 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
         bond_dims.emplace_back(mps->get_L().dimension(0));
         if(mps->isCenter()) { bond_dims.emplace_back(mps->get_LC().dimension(0)); }
     }
-    if(bond_dims.size() != state.get_length() + 1) throw std::logic_error("bond_dims.size() should be length+1");
+    if(bond_dims.size() != state.get_length() + 1) throw except::logic_error("bond_dims.size() should be length+1");
     state.measurements.bond_dims = bond_dims;
     return state.measurements.bond_dims.value();
 }
@@ -203,9 +203,9 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
             state.measurements.entanglement_entropy_current = std::abs(SE(0));
         }
     }
-    if(entanglement_entropies.size() != state.get_length() + 1) throw std::logic_error("entanglement_entropies.size() should be length+1");
-    if(entanglement_entropies.front() != 0.0) throw std::logic_error(fmt::format("First entropy should be 0. Got: {:.16f}", entanglement_entropies.front()));
-    if(entanglement_entropies.back() != 0.0) throw std::logic_error(fmt::format("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back()));
+    if(entanglement_entropies.size() != state.get_length() + 1) throw except::logic_error("entanglement_entropies.size() should be length+1");
+    if(entanglement_entropies.front() != 0.0) throw except::logic_error("First entropy should be 0. Got: {:.16f}", entanglement_entropies.front());
+    if(entanglement_entropies.back() != 0.0) throw except::logic_error("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back());
     state.measurements.entanglement_entropies = entanglement_entropies;
     return state.measurements.entanglement_entropies.value();
 }
@@ -238,7 +238,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
             renyi_q.emplace_back(std::abs(RE(0)));
         }
     }
-    if(renyi_q.size() != state.get_length() + 1) throw std::logic_error("renyi_q.size() should be length+1");
+    if(renyi_q.size() != state.get_length() + 1) throw except::logic_error("renyi_q.size() should be length+1");
     if(q == 2.0) {
         state.measurements.renyi_2 = renyi_q;
         return state.measurements.renyi_2.value();
@@ -276,7 +276,7 @@ double tools::finite::measure::spin_component(const StateFinite &state, const Ei
         L = temp;
     }
 
-    if(L.dimensions() != R.dimensions()) throw std::runtime_error("spin_component(): L and R dimension mismatch");
+    if(L.dimensions() != R.dimensions()) throw except::runtime_error("spin_component(): L and R dimension mismatch");
     Eigen::Tensor<cplx, 0> spin_tmp = L.contract(R, tenx::idx({0, 1, 2}, {0, 1, 2}));
     double                 spin     = std::real(spin_tmp(0));
     return spin;
@@ -298,7 +298,7 @@ std::vector<double> tools::finite::measure::truncation_errors(const StateFinite 
         truncation_errors.emplace_back(mps->get_truncation_error());
         if(mps->isCenter()) truncation_errors.emplace_back(mps->get_truncation_error_LC());
     }
-    if(truncation_errors.size() != state.get_length() + 1) throw std::logic_error("truncation_errors.size() should be length+1");
+    if(truncation_errors.size() != state.get_length() + 1) throw except::logic_error("truncation_errors.size() should be length+1");
     state.measurements.truncation_errors = truncation_errors;
     return state.measurements.truncation_errors.value();
 }
@@ -344,7 +344,7 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &sta
     double                 norm_chain = tenx::VectorMap(chain).norm();
     if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) {
         tools::log->warn("Norm far from unity: {}", norm_chain);
-        throw std::runtime_error("Norm too far from unity: " + std::to_string(norm_chain));
+        throw except::runtime_error("Norm too far from unity: {:.16f}", norm_chain);
     }
     return mps_chain;
 }
@@ -355,8 +355,8 @@ double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type
     if(measurements != nullptr and measurements->energy_minus_energy_shift) return measurements->energy_minus_energy_shift.value();
     if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-            throw std::runtime_error(fmt::format("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
-                                                 model.active_sites, edges.active_sites));
+            throw except::runtime_error("Could not compute energy: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                        model.active_sites, edges.active_sites);
         return tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements);
     } else {
         auto        t_msr = tid::tic_scope("measure");
@@ -436,8 +436,8 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
 
     if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
         if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
-            throw std::runtime_error(fmt::format("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}",
-                                                 state.active_sites, model.active_sites, edges.active_sites));
+            throw except::runtime_error("Could not compute energy variance: active sites are not equal: state {} | model {} | edges {}", state.active_sites,
+                                        model.active_sites, edges.active_sites);
         if(state.active_sites.empty()) throw std::runtime_error("Could not compute energy variance: active sites are empty");
         return tools::finite::measure::energy_variance(state.get_multisite_mps(), model, edges, measurements);
     } else {

@@ -74,7 +74,7 @@ int settings::parse(int argc, char **argv) {
         } else if(pre.get_option("--config")->empty()) {
             tools::log->warn("The default config file does not exist: {}", input::config_filename);
         } else
-            throw std::runtime_error(fmt::format("Could not find config file: {}", settings::input::config_filename)); // Invalid file
+            throw except::runtime_error("Could not find config file: {}", settings::input::config_filename); // Invalid file
         return 0;
     };
     preload();

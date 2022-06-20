@@ -86,8 +86,8 @@ void xdmrg::resume() {
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet");
-            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet");
+            case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
+            case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
             case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
@@ -114,8 +114,8 @@ void xdmrg::run_default_task_list() {
             case StateInit::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
             case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw std::runtime_error("TODO! Product state aligned initialization not implemented yet");
-            case StateInit::PRODUCT_STATE_NEEL: throw std::runtime_error("TODO! Product state neel initialization not implemented yet");
+            case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
+            case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -162,7 +162,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
     }
     if(not task_list.empty()) {
         for(auto &task : task_list) tools::log->critical("Unfinished task: {}", enum2sv(task));
-        throw std::runtime_error("Simulation ended with unfinished tasks");
+        throw except::runtime_error("Simulation ended with unfinished tasks");
     }
 }
 
@@ -170,19 +170,19 @@ void xdmrg::init_energy_limits(std::optional<double> energy_density_target, std:
     if(not energy_density_target) energy_density_target = settings::xdmrg::energy_density_target;
     if(not energy_density_window) energy_density_window = settings::xdmrg::energy_density_window;
     if(energy_density_target.value() < 0.0 or energy_density_target.value() > 1.0)
-        throw std::runtime_error(
+        throw except::runtime_error(
             fmt::format("Error setting energy density target: Expected value in range [0 - 1.0], got: [{:.8f}]", energy_density_target.value()));
     if(energy_density_window.value() < 0.0 or energy_density_window.value() > 0.5)
-        throw std::runtime_error(
+        throw except::runtime_error(
             fmt::format("Error setting energy density window: Expected value in range [0 - 0.5], got: [{:.8f}]", energy_density_window.value()));
     status.energy_dens_target = energy_density_target.value();
     status.energy_dens_window = energy_density_window.value();
 
     // Set energy boundaries. This function is supposed to run after find_energy_range!
     if(status.energy_max == status.energy_min)
-        throw std::runtime_error(fmt::format("Could not set energy limits because energy_max == {} and energy_min == {}\n"
-                                             "Try running find_energy_range() first",
-                                             status.energy_max, status.energy_min));
+        throw except::runtime_error("Could not set energy limits because energy_max == {} and energy_min == {}\n"
+                                    "Try running find_energy_range() first",
+                                    status.energy_max, status.energy_min);
     status.energy_tgt  = status.energy_min + status.energy_dens_target * (status.energy_max - status.energy_min);
     status.energy_ulim = status.energy_tgt + status.energy_dens_window * (status.energy_max - status.energy_min);
     status.energy_llim = status.energy_tgt - status.energy_dens_window * (status.energy_max - status.energy_min);
@@ -491,7 +491,7 @@ void xdmrg::single_xDMRG_step() {
                 break;
             }
             case OptInit::LAST_RESULT: {
-                if(results.empty()) throw std::logic_error("There are no previous results to select an initial state");
+                if(results.empty()) throw except::logic_error("There are no previous results to select an initial state");
                 results.emplace_back(opt::find_excited_state(tensors, results.back(), status, meta));
                 break;
             }
@@ -675,7 +675,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);
         if(not outside_of_window) break;
         counter++;
-        if(counter >= 200) throw std::runtime_error(fmt::format("Failed to find initial state in energy window after {}. retries: ", counter));
+        if(counter >= 200) throw except::runtime_error("Failed to find initial state in energy window after {}. retries: ", counter);
         if(counter % 10 == 0 and energy_window_growth_factor != 1.0) {
             double old_energy_dens_window = status.energy_dens_window;
             double new_energy_dens_window = std::min(energy_window_growth_factor * status.energy_dens_window, 0.5);

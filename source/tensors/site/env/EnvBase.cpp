@@ -36,7 +36,7 @@ EnvBase::EnvBase(size_t position_, std::string side_, std::string tag_)
 EnvBase::EnvBase(std::string side_, std::string tag_, const MpsSite &MPS, const MpoSite &MPO)
     : block(std::make_unique<Eigen::Tensor<cplx, 3>>()), side(std::move(side_)), tag(std::move(tag_)) {
     if(MPS.get_position() != MPO.get_position())
-        throw std::logic_error(fmt::format("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position()));
+        throw except::logic_error("MPS and MPO have different positions: {} != {}", MPS.get_position(), MPO.get_position());
     position = MPS.get_position();
     assert_block();
 }
@@ -94,14 +94,14 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
          */
 
         if(mps.dimension(0) != mpo.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo   dim[{}]:{}", side, tag, position.value(), 0,
-                                                 mps.dimension(0), 2, mpo.dimension(2)));
+            throw except::runtime_error("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo   dim[{}]:{}", side, tag, position.value(), 0,
+                                        mps.dimension(0), 2, mpo.dimension(2));
         if(mps.dimension(1) != otherblock.dimension(0))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 1,
-                                                 mps.dimension(1), 0, otherblock.dimension(0)));
+            throw except::runtime_error("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 1,
+                                        mps.dimension(1), 0, otherblock.dimension(0));
         if(mpo.dimension(0) != otherblock.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 0,
-                                                 mpo.dimension(0), 2, otherblock.dimension(2)));
+            throw except::runtime_error("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != left-block dim[{}]:{}", side, tag, position.value(), 0,
+                                        mpo.dimension(0), 2, otherblock.dimension(2));
 
         block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
         block->device(tenx::omp::getDevice()) = otherblock.contract(mps, tenx::idx({0}, {1}))
@@ -126,14 +126,14 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
          */
 
         if(mps.dimension(0) != mpo.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo dim[{}]:{}", side, tag, position.value(), 0,
-                                                 mps.dimension(0), 2, mpo.dimension(2)));
+            throw except::runtime_error("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != mpo dim[{}]:{}", side, tag, position.value(), 0,
+                                        mps.dimension(0), 2, mpo.dimension(2));
         if(mps.dimension(2) != otherblock.dimension(0))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 2,
-                                                 mps.dimension(2), 0, otherblock.dimension(0)));
+            throw except::runtime_error("env{} {} pos {} dimension mismatch: mps dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 2,
+                                        mps.dimension(2), 0, otherblock.dimension(0));
         if(mpo.dimension(1) != otherblock.dimension(2))
-            throw std::runtime_error(fmt::format("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 1,
-                                                 mpo.dimension(1), 2, otherblock.dimension(2)));
+            throw except::runtime_error("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 1,
+                                        mpo.dimension(1), 2, otherblock.dimension(2));
         block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
         block->device(tenx::omp::getDevice()) = otherblock.contract(mps, tenx::idx({0}, {2}))
                                                     .contract(mpo, tenx::idx({1, 2}, {1, 2}))
@@ -193,7 +193,7 @@ bool EnvBase::has_block() const { return block != nullptr and block->size() != 0
 
 void EnvBase::assert_validity() const {
     assert_block();
-    if(tenx::hasNaN(*block)) { throw std::runtime_error(fmt::format("Environment {} side {} at position {} has NAN's", tag, side, get_position())); }
+    if(tenx::hasNaN(*block)) { throw except::runtime_error("Environment {} side {} at position {} has NAN's", tag, side, get_position()); }
 }
 
 void EnvBase::assert_unique_id(const EnvBase &env, const MpsSite &mps, const MpoSite &mpo) const {
@@ -236,7 +236,7 @@ size_t EnvBase::get_position() const {
     if(position)
         return position.value();
     else
-        throw std::runtime_error(fmt::format("Position hasn't been set on env side {}", side));
+        throw except::runtime_error("Position hasn't been set on env side {}", side);
 }
 
 size_t EnvBase::get_sites() const { return sites; }
@@ -287,8 +287,8 @@ std::optional<std::size_t> EnvBase::get_unique_id_mpo() const { return unique_id
 Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const MpoSite &mpo, double alpha) const {
     if constexpr(settings::debug)
         if(not num::all_equal(get_position(), mps.get_position(), mpo.get_position()))
-            throw std::logic_error(fmt::format("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
-                                               get_position(), get_position(), mps.get_position(), mpo.get_position()));
+            throw except::logic_error("class_env_{}::enlarge(): side({}), pos({}),: All positions are not equal: env {} | mps {} | mpo {}", tag, side,
+                                      get_position(), get_position(), mps.get_position(), mpo.get_position());
 
     Eigen::Tensor<cplx, 4> mpo_tensor;
     if(tag == "ene")
@@ -302,7 +302,7 @@ Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const Mpo
         long spin = mps.spin_dim();
         long chiL = mps.get_chiL();
         long chiR = mps.get_chiR() * mpo_tensor.dimension(1);
-        if(get_block().dimension(0) != chiL) throw std::logic_error("block dim 0 != chiL");
+        if(get_block().dimension(0) != chiL) throw except::logic_error("block dim 0 != chiL");
         Eigen::Tensor<cplx, 3> PL = get_block()
                                         .contract(mps.get_M_bare(), tenx::idx({0}, {1}))
                                         .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
@@ -315,7 +315,7 @@ Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const Mpo
         long spin = mps.spin_dim();
         long chiL = mps.get_chiL() * mpo_tensor.dimension(0);
         long chiR = mps.get_chiR();
-        if(get_block().dimension(0) != chiR) throw std::logic_error("block dim 0 != chiR");
+        if(get_block().dimension(0) != chiR) throw except::logic_error("block dim 0 != chiR");
         Eigen::Tensor<cplx, 3> PR = get_block()
                                         .contract(mps.get_M_bare(), tenx::idx({0}, {2}))
                                         .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))

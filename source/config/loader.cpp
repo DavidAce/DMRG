@@ -44,7 +44,7 @@ std::string Loader::get_config_file_as_string() {
         std::ifstream file;
         try {
             file.open(file_path);
-        } catch(std::exception &ex) { throw std::runtime_error(fmt::format("Could not open file [ {} ]: {}", file_path.string(), ex.what())); }
+        } catch(std::exception &ex) { throw except::runtime_error("Could not open file [ {} ]: {}", file_path.string(), ex.what()); }
         if(file.is_open()) {
             file.clear();
             file.seekg(0, std::ios::beg);

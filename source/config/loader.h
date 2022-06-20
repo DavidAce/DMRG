@@ -1,9 +1,10 @@
 #pragma once
-#include <config/enums.h>
+#include "debug/exceptions.h"
 #include "io/filesystem.h"
-#include <string>
 #include "tid/enums.h"
 #include "tools/common/log.h"
+#include <config/enums.h>
+#include <string>
 #include <unordered_map>
 
 class Loader {
@@ -41,10 +42,10 @@ class Loader {
     template<typename T>
     [[nodiscard]] T parse_param(const std::string &param_val, std::string_view param_name) {
         try {
-            if(param_val.empty()) throw std::range_error(fmt::format("Parameter [{}] has no value", param_name));
+            if(param_val.empty()) throw except::range_error("Parameter [{}] has no value", param_name);
             if constexpr(std::is_same_v<T, unsigned int>) {
                 auto val = static_cast<int>(std::stoi(param_val));
-                if(val < 0) throw std::runtime_error(fmt::format("Read negative value for unsigned parameter: {}", val));
+                if(val < 0) throw except::runtime_error("Read negative value for unsigned parameter: {}", val);
                 return static_cast<T>(val);
             }
             if constexpr(std::is_same_v<T, unsigned long>) return std::stoul(param_val);
@@ -59,11 +60,11 @@ class Loader {
             if constexpr(std::is_same<T, bool>::value) {
                 if(param_val == "true") return true;
                 if(param_val == "false") return false;
-                throw std::runtime_error(fmt::format("Expected true or false, got {}", param_val));
+                throw except::runtime_error("Expected true or false, got {}", param_val);
             }
-            throw std::runtime_error("Type mismatch on parameter: " + param_val);
-        } catch(std::exception &ex) { throw std::runtime_error("Error parsing param: " + std::string(ex.what())); } catch(...) {
-            throw std::runtime_error("Error parsing param: Unknown error");
+            throw except::runtime_error("Type mismatch on parameter: {}", param_val);
+        } catch(std::exception &ex) { throw except::runtime_error("Error parsing param: {}", ex.what()); } catch(...) {
+            throw except::runtime_error("Error parsing param: Unknown error");
         }
     }
 
@@ -75,9 +76,9 @@ class Loader {
             if(param_map.find(param_requested) != param_map.end()) {
                 return parse_param<T>(param_map[param_requested], param_requested);
             } else
-                throw std::range_error(fmt::format("Config file does not specify the requested parameter: [{}]", param_requested));
+                throw except::range_error("Config file does not specify the requested parameter: [{}]", param_requested);
         } catch(std::range_error &ex) { throw std::runtime_error(ex.what()); } catch(std::exception &ex) {
-            throw std::runtime_error(fmt::format("Error parsing the requested parameter: [{}]: {}", param_requested, ex.what()));
+            throw except::runtime_error("Error parsing the requested parameter: [{}]: {}", param_requested, ex.what());
         }
     }
 };

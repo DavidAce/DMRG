@@ -127,7 +127,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     //    tt is the total time taken by the minimizer.
 
     if(initial_mps.get_sites() != tensors.active_sites)
-        throw std::runtime_error(fmt::format("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites));
+        throw except::runtime_error("mismatch in active sites: initial_mps {} | active {}", initial_mps.get_sites(), tensors.active_sites);
     /* clang-format off */
     opt_mps result;
     if     (meta.optMode == OptMode::OVERLAP  and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_overlap(tensors, initial_mps, status, meta);

@@ -1,5 +1,5 @@
 #include "info.h"
-#include "tools/common/log.h"
+#include <algorithm>
 #include <climits>
 #include <fstream>
 #include <sstream>
@@ -46,7 +46,7 @@ double debug::mem_usage_in_mb(std::string_view name) {
                         std::string::size_type sz; // alias of size_t
                         value = std::stoll(value_str, &sz);
                     } catch(const std::exception &ex) {
-                        tools::log->error("Could not read mem usage from /proc/self/status: Failed to parse string [{}]: {}", value_str, ex.what());
+                        std::fprintf(stderr, "Could not read mem usage from /proc/self/status: Failed to parse string [%s]: %s", value_str.c_str(), ex.what());
                     }
                     // Now we have the value in kb
                     return static_cast<double>(value) / 1024.0;
@@ -62,7 +62,7 @@ double debug::mem_hwm_in_mb() { return mem_usage_in_mb("VmHWM"); }
 double debug::mem_vm_in_mb() { return mem_usage_in_mb("VmPeak"); }
 
 void debug::print_mem_usage() {
-    tools::log->info("{:<30}{:>10.1f} MB", "Memory RSS", mem_rss_in_mb());
-    tools::log->info("{:<30}{:>10.1f} MB", "Memory Peak", mem_hwm_in_mb());
-    tools::log->info("{:<30}{:>10.1f} MB", "Memory Vm", mem_vm_in_mb());
+    std::printf("%-30s%10.1f MB", "Memory RSS", mem_rss_in_mb());
+    std::printf("%-30s%10.1f MB", "Memory Peak", mem_hwm_in_mb());
+    std::printf("%-30s%10.1f MB", "Memory Vm", mem_vm_in_mb());
 }

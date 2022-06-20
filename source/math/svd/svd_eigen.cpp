@@ -1,10 +1,11 @@
 #include <complex.h>
 #undef I
 
+#include "../svd.h"
+#include "debug/exceptions.h"
+#include "tid/tid.h"
 #include <Eigen/QR>
 #include <Eigen/SVD>
-#include <math/svd.h>
-#include <tid/tid.h>
 
 //#if !defined(NDEBUG)
 #include <h5pp/h5pp.h>
@@ -31,8 +32,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     svd::log->trace("Starting SVD with Eigen");
     Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
 
-    if(rows <= 0) throw std::runtime_error(fmt::format("SVD error: rows = {}", rows));
-    if(cols <= 0) throw std::runtime_error(fmt::format("SVD error: cols = {}", cols));
+    if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
+    if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
 
 #if !defined(NDEBUG)
     // These are more expensive debugging operations
@@ -105,19 +106,18 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
         //#endif
 
-        throw std::runtime_error(fmt::format(FMT_STRING("Eigen SVD error \n"
-                                                        "  svd_threshold    = {:.4e}\n"
-                                                        "  Truncation Error = {:.4e}\n"
-                                                        "  Rank             = {}\n"
-                                                        "  Rank max         = {}\n"
-                                                        "  Dims             = ({}, {})\n"
-                                                        "  A all finite     : {}\n"
-                                                        "  U all finite     : {}\n"
-                                                        "  S all finite     : {}\n"
-                                                        "  S all positive   : {}\n"
-                                                        "  V all finite     : {}\n"),
-                                             threshold, truncation_error, rank, rank_max.value(), rows, cols, mat.allFinite(), U_finite, S_finite, S_positive,
-                                             V_finite));
+        throw except::runtime_error("Eigen SVD error \n"
+                                    "  svd_threshold    = {:.4e}\n"
+                                    "  Truncation Error = {:.4e}\n"
+                                    "  Rank             = {}\n"
+                                    "  Rank max         = {}\n"
+                                    "  Dims             = ({}, {})\n"
+                                    "  A all finite     : {}\n"
+                                    "  U all finite     : {}\n"
+                                    "  S all finite     : {}\n"
+                                    "  S all positive   : {}\n"
+                                    "  V all finite     : {}\n",
+                                    threshold, truncation_error, rank, rank_max.value(), rows, cols, mat.allFinite(), U_finite, S_finite, S_positive, V_finite);
     }
 
     if(save_result)

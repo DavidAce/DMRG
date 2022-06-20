@@ -1,12 +1,13 @@
 #pragma once
 
+#include "debug/exceptions.h"
+#include "tools/common/log.h"
 #include <any>
 #include <array>
 #include <h5pp/details/h5ppHid.h>
 #include <hdf5.h>
 #include <hdf5_hl.h>
 #include <stdexcept>
-#include "tools/common/log.h"
 
 template<typename SrcType, typename TgtType, size_t size>
 void copy_c_str(const SrcType &src, TgtType (&tgt)[size])
@@ -71,7 +72,7 @@ class h5tb_ising_selfdual {
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
         if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
         /* clang-format on */
-        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+        throw except::runtime_error("Unrecognized parameter: {}", p);
     }
 
     static std::vector<std::string> get_parameter_names() {
@@ -147,7 +148,7 @@ class h5tb_ising_majorana {
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
         if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
         /* clang-format on */
-        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+        throw except::runtime_error("Unrecognized parameter: {}", p);
     }
 
     static std::vector<std::string> get_parameter_names() {
@@ -216,7 +217,7 @@ class h5tb_ising_tf_rf {
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
         if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
         /* clang-format on */
-        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+        throw except::runtime_error("Unrecognized parameter: {}", p);
     }
 
     static std::vector<std::string> get_parameter_names() { return {"J1", "J2", "h_tran", "h_mean", "h_wdth", "h_rand", "spin_dim", "distribution"}; }
@@ -318,7 +319,7 @@ class h5tb_lbit {
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
         if(p == "distribution")return fmt::format(FMT_STRING("{:<12}")    ,param.distribution);
         /* clang-format on */
-        throw std::runtime_error(fmt::format("Unrecognized parameter: {}", p));
+        throw except::runtime_error("Unrecognized parameter: {}", p);
     }
 
     static std::vector<std::string> get_parameter_names() {

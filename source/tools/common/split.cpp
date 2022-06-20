@@ -116,13 +116,13 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
     }
 
-    if(positions.empty()) throw std::runtime_error("Could not split multisite tensor: positions list is empty");
-    if(multisite_mps.size() == 0) throw std::runtime_error("Could not split multisite tensor: tensor is empty");
-    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor: spin_dims list is empty");
+    if(positions.empty()) throw except::runtime_error("Could not split multisite tensor: positions list is empty");
+    if(multisite_mps.size() == 0) throw except::runtime_error("Could not split multisite tensor: tensor is empty");
+    if(spin_dims.empty()) throw except::runtime_error("Could not split multisite tensor: spin_dims list is empty");
     if(spin_dims.size() != positions.size())
-        throw std::runtime_error(fmt::format("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
-                                             spin_dims, positions));
-    if(bond_lim <= 0) throw std::runtime_error(fmt::format("Invalid bond dimension limit:  bond_lim = {}", bond_lim));
+        throw except::runtime_error("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
+                                    spin_dims, positions);
+    if(bond_lim <= 0) throw except::runtime_error("Invalid bond dimension limit:  bond_lim = {}", bond_lim);
 
     auto t_split = tid::tic_scope("split", tid::level::extra);
     // Setup the svd settings if not given explicitly
@@ -278,14 +278,14 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
     }
 
-    if(mps_sites_As.empty() and mps_sites_Bs.empty()) throw std::runtime_error("Got empty mps_sites from both left and right");
+    if(mps_sites_As.empty() and mps_sites_Bs.empty()) throw except::runtime_error("Got empty mps_sites from both left and right");
 
     // Sanity checks
     if(mps_sites_As.size() != spin_dims_left.size())
-        throw std::runtime_error(
+        throw except::runtime_error(
             fmt::format("Could not split multisite tensor: Got mps_sites_As.size() {} != spins_dims_left {}", mps_sites_As.size(), spin_dims_left.size()));
     if(mps_sites_Bs.size() != spin_dims_right.size())
-        throw std::runtime_error(
+        throw except::runtime_error(
             fmt::format("Could not split multisite tensor: Got mps_sites_Bs.size() {} != spins_dims_right {}", mps_sites_Bs.size(), spin_dims_right.size()));
 
     // Move the right side onto the left side (This is equivalent to std::list::splice)
@@ -294,12 +294,11 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     for(const auto &&[idx, mps] : iter::enumerate(mps_sites_As)) {
         auto pos = positions[idx];
         if(not mps.is_at_position(pos)) {
-            throw std::runtime_error(fmt::format("Could not split multisite tensor: Position mismatch: expected site {} != mps pos {} | positions to merge {}",
-                                                 pos, mps.get_position(), positions));
+            throw except::runtime_error("Could not split multisite tensor: Position mismatch: expected site {} != mps pos {} | positions to merge {}", pos,
+                                        mps.get_position(), positions);
         }
         if(mps.is_at_position(center_position) and not mps.isCenter()) {
-            throw std::runtime_error(
-                fmt::format("Could not split multisite tensor: Specified center position {} did not become a center MPS", mps.get_position()));
+            throw except::runtime_error("Could not split multisite tensor: Specified center position {} did not become a center MPS", mps.get_position());
         }
     }
 
@@ -370,10 +369,10 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
      * Note that the spin dimensions are given in left-to-right order, i.e. 12345
      */
 
-    //    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the left: spin_dims list is empty");
+    //    if(spin_dims.empty()) throw except::runtime_error("Could not split multisite tensor from the left: spin_dims list is empty");
     if(spin_dims.size() != positions.size())
-        throw std::runtime_error(fmt::format(
-            "Could not split multisite tensor from the left: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims, positions));
+        throw except::runtime_error("Could not split multisite tensor from the left: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal",
+                                    spin_dims, positions);
 
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
@@ -421,7 +420,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         }
 
         std::tie(U, S, V) = svd.schmidt_into_left_normalized(V, spin_dim, bond_lim);
-        if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
+        if(S.size() == 0) throw except::runtime_error("Could not split multisite tensor: Got 0 singular values from left svd");
 
         // Note: Now we have the three components
         // U:   A left-unitary "A" matrix which is a "Lambda * Gamma" in Vidal's notation
@@ -491,9 +490,9 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
      *
      * Note that the spin dimensions are given in left-to-right order, i.e. 12345
      */
-    //    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
+    //    if(spin_dims.empty()) throw except::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
     if(spin_dims.size() != positions.size())
-        throw std::runtime_error(
+        throw except::runtime_error(
             fmt::format("Could not split multisite tensor from the right: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal", spin_dims,
                         positions));
 
@@ -541,7 +540,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
         }
 
         std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, bond_lim);
-        if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
+        if(S.size() == 0) throw except::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 
         // Note: Now we have the three components
         // U:   Contains one site less than the previous iteration.
@@ -613,12 +612,11 @@ template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(c
 //      *
 //      * Note that the spin dimensions are given in left-to-right order, i.e. 12345
 //      */
-//     //    if(spin_dims.empty()) throw std::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
+//     //    if(spin_dims.empty()) throw except::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
 //     if(spin_dims.size() != positions.size())
-//         throw std::runtime_error(
-//             fmt::format("Could not split multisite tensor from the right: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal",
-//             spin_dims,
-//                         positions));
+//         throw except::runtime_error(
+//             "Could not split multisite tensor from the right: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal",
+//             spin_dims, positions);
 //
 //     // A special case is when we do one-site tensors. Then we expect
 //     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
@@ -665,7 +663,7 @@ template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(c
 //         // V:   A right-unitary "B" matrix which is a "Gamma*Lambda" in Vidal's notation
 //
 //         std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, bond_lim);
-//         if(S.size() == 0) throw std::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
+//         if(S.size() == 0) throw except::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
 //
 //         {
 //             // Contract U and S, i.e. we make a new "theta". In Vidal-form we contract LG * L (where the U = LG)

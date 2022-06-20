@@ -1,4 +1,5 @@
 #include "settings.h"
+#include "debug/exceptions.h"
 #include "loader.h"
 
 bool settings::algorithm_is_on(AlgorithmType algo_type) {
@@ -59,7 +60,7 @@ bool settings::store_wave_function(AlgorithmType algo_type) {
  */
 
 void settings::load(Loader &dmrg_config) {
-    if(not dmrg_config.file_exists) throw std::runtime_error(fmt::format("Could not load config [{}]: File does not exist", dmrg_config.file_path.string()));
+    if(not dmrg_config.file_exists) throw except::runtime_error("Could not load config [{}]: File does not exist", dmrg_config.file_path.string());
     dmrg_config.load();
     input::config_filename      = dmrg_config.file_path.string();
     input::config_file_contents = dmrg_config.get_config_file_as_string();

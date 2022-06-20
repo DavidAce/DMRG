@@ -1,10 +1,10 @@
 #pragma once
 
 #include "algorithms/AlgorithmStatus.h"
+#include "io/fmt.h"
 #include "tid/enums.h"
 #include <array>
 #include <cstdio>
-#include <fmt/core.h>
 #include <h5pp/h5pp.h>
 #include <memory>
 #include <unordered_map>

@@ -40,7 +40,7 @@ std::vector<int> subspace::generate_nev_list(int rows) {
 
     while(nev_list.size() > 1 and (nev_list.back() * 2 > rows or static_cast<size_t>(nev_list.back()) > settings::precision::max_subspace_size))
         nev_list.pop_back();
-    if(nev_list.empty()) throw std::logic_error("nev_list is empty");
+    if(nev_list.empty()) throw except::logic_error("nev_list is empty");
     return nev_list;
 }
 
@@ -181,9 +181,9 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
         reports::subs_add_entry(nev, max_overlap, min_overlap, subspace_error, solver.result.meta.time_total, time_ham, t_lu.get_last_interval(),
                                 solver.result.meta.iter, solver.result.meta.num_mv, solver.result.meta.num_pc);
         time_ham = 0;
-        if(max_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("max_overlap larger than one: {:.16f}", max_overlap));
-        if(sq_sum_overlap > 1.0 + 1e-6) throw std::runtime_error(fmt::format("eps larger than one: {:.16f}", sq_sum_overlap));
-        if(min_overlap < 0.0) throw std::runtime_error(fmt::format("min_overlap smaller than zero: {:.16f}", min_overlap));
+        if(max_overlap > 1.0 + 1e-6) throw except::runtime_error("max_overlap larger than one: {:.16f}", max_overlap);
+        if(sq_sum_overlap > 1.0 + 1e-6) throw except::runtime_error("eps larger than one: {:.16f}", sq_sum_overlap);
+        if(min_overlap < 0.0) throw except::runtime_error("min_overlap smaller than zero: {:.16f}", min_overlap);
         if(subspace_error < target_subspace_error) {
             reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, target_subspace_error);
             break;

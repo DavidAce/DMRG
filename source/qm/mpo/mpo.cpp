@@ -1,4 +1,5 @@
 #include "qm/mpo.h"
+#include "debug/exceptions.h"
 #include "math/num.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
@@ -154,7 +155,7 @@ namespace qm::mpo {
      *
      */
     {
-        if(paulimatrix1.rows() != paulimatrix2.rows()) throw std::logic_error("Pauli matrices must be of equal size");
+        if(paulimatrix1.rows() != paulimatrix2.rows()) throw except::logic_error("Pauli matrices must be of equal size");
         long                   spin_dim = paulimatrix1.rows();
         auto                   I        = Eigen::MatrixXcd::Identity(spin_dim, spin_dim).eval();
         std::array<long, 4>    extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
@@ -181,7 +182,7 @@ namespace qm::mpo {
             sum = std::accumulate(binary.begin(), binary.end(), 0);
             if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
         }
-        if(binary.size() != sites) throw std::logic_error("Size mismatch");
+        if(binary.size() != sites) throw except::logic_error("Size mismatch");
         // Generate the list
         std::vector<Eigen::Tensor<cplx, 4>> mpos;
         for(auto &val : binary) {
@@ -227,7 +228,7 @@ namespace qm::mpo {
      *
      */
     {
-        if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
+        if(paulimatrices.empty()) throw except::runtime_error("List of pauli matrices is empty");
         long                   num_paulis = static_cast<long>(paulimatrices.size());
         long                   spin_dim   = 2;
         auto                   I          = Eigen::MatrixXcd::Identity(spin_dim, spin_dim).eval();
@@ -252,7 +253,7 @@ namespace qm::mpo {
             sum = std::accumulate(binary.begin(), binary.end(), 0);
             if((num::mod<size_t>(sites, 2) == 0 and sum == 0) or (num::mod<size_t>(sites, 2) == 1 and sum == 1)) break;
         }
-        if(binary.size() != sites) throw std::logic_error("Size mismatch");
+        if(binary.size() != sites) throw except::logic_error("Size mismatch");
         // Generate the list
         std::vector<Eigen::Tensor<cplx, 4>> mpos;
         std::vector<std::string>            mpos_str;
@@ -315,7 +316,7 @@ namespace qm::mpo {
      */
 
     {
-        if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
+        if(paulimatrices.empty()) throw except::runtime_error("List of pauli matrices is empty");
         long                spin_dim = 2;
         std::array<long, 4> extent4  = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
         std::array<long, 2> extent2  = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
@@ -398,8 +399,8 @@ namespace qm::mpo {
      *
      */
     {
-        if(paulimatrices.empty()) throw std::runtime_error("List of pauli matrices is empty");
-        if(paulimatrices.size() != uniform_dist_widths.size()) throw std::runtime_error("List size mismatch: paulimatrices and uniform_dist_widths");
+        if(paulimatrices.empty()) throw except::runtime_error("List of pauli matrices is empty");
+        if(paulimatrices.size() != uniform_dist_widths.size()) throw except::runtime_error("List size mismatch: paulimatrices and uniform_dist_widths");
         long                num_paulis = static_cast<long>(paulimatrices.size());
         long                spin_dim   = 2;
         std::array<long, 4> extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */

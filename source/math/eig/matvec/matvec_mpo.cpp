@@ -32,9 +32,9 @@ MatVecMPO<Scalar_>::MatVecMPO(const Eigen::Tensor<T, 3> &envL_, /*!< The left bl
     } else if constexpr(std::is_same_v<Scalar_, eig::real> and std::is_same_v<T, eig::cplx>) {
         // This should only be done if we know for a fact that there is no imaginary component.
         if constexpr(eig::debug) {
-            if(not tenx::isReal(mpo_)) throw std::runtime_error("mpo is not real");
-            if(not tenx::isReal(envL_)) throw std::runtime_error("envL is not real");
-            if(not tenx::isReal(envR_)) throw std::runtime_error("envR is not real");
+            if(not tenx::isReal(mpo_)) throw except::runtime_error("mpo is not real");
+            if(not tenx::isReal(envL_)) throw except::runtime_error("envL is not real");
+            if(not tenx::isReal(envR_)) throw except::runtime_error("envR is not real");
         }
         mpo  = mpo_.real();
         envL = envL_.real();

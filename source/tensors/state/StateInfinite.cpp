@@ -104,22 +104,22 @@ MpsSite       &StateInfinite::get_mps_siteB() { return *MPS_B; }
 const MpsSite &StateInfinite::get_mps_site(size_t pos) const {
     if(pos == 0) return *MPS_A;
     if(pos == 1) return *MPS_B;
-    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1", pos));
+    throw except::runtime_error("Got wrong site position {}. Expected 0 or 1", pos);
 }
 MpsSite &StateInfinite::get_mps_site(size_t pos) {
     if(pos == 0) return *MPS_A;
     if(pos == 1) return *MPS_B;
-    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1", pos));
+    throw except::runtime_error("Got wrong site position {}. Expected 0 or 1", pos);
 }
 const MpsSite &StateInfinite::get_mps_site(std::string_view pos) const {
     if(pos == "A") return *MPS_A;
     if(pos == "B") return *MPS_B;
-    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1", pos));
+    throw except::runtime_error("Got wrong site position {}. Expected 0 or 1", pos);
 }
 MpsSite &StateInfinite::get_mps_site(std::string_view pos) {
     if(pos == "A") return *MPS_A;
     if(pos == "B") return *MPS_B;
-    throw std::runtime_error(fmt::format("Got wrong site position {}. Expected 0 or 1", pos));
+    throw except::runtime_error("Got wrong site position {}. Expected 0 or 1", pos);
 }
 
 /* clang-format off */
@@ -294,7 +294,7 @@ void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long
 }
 
 void StateInfinite::set_mps(const std::vector<MpsSite> &mps_list) {
-    if(mps_list.size() != 2) throw std::runtime_error("Expected 2 sites, got: " + std::to_string(mps_list.size()));
+    if(mps_list.size() != 2) throw except::runtime_error("Expected 2 sites, got: {}", mps_list.size());
     const auto &mpsA = *std::next(mps_list.begin(), 0);
     const auto &mpsB = *std::next(mps_list.begin(), 1);
     set_mps(mpsA, mpsB);

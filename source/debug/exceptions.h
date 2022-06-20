@@ -1,51 +1,62 @@
 #pragma once
 
-#include <io/fmt.h>
+#include "io/fmt.h"
 #include <stdexcept>
 
+//#ifndef EXCEPT_DEPRECATED
+//    #define EXCEPT_DEPRECATED __attribute__((deprecated))
+//#endif
 namespace except {
-
-    template<typename... Args>
-    [[nodiscard]] std::runtime_error runtime_error(std::string_view s, Args... args) {
-        if(s.rfind("dmrg++: ", 0) == 0)
-            return std::runtime_error(fmt::format(s, std::forward<Args>(args)...));
-        else
-            return std::runtime_error("dmrg++: " + fmt::format(s, std::forward<Args>(args)...));
-    }
-    template<typename... Args>
-    [[nodiscard]] std::logic_error logic_error(std::string_view s, Args... args) {
-        if(s.rfind("dmrg++: ", 0) == 0)
-            return std::logic_error(fmt::format(s, std::forward<Args>(args)...));
-        else
-            return std::logic_error("dmrg++: " + fmt::format(s, std::forward<Args>(args)...));
-    }
-    //    template<typename... Args>
-    //    std::runtime_error runtime_error(Args... args) {
-    //        return std::runtime_error("dmrg++: " + fmt::format(std::forward<Args>(args)...));
-    //    }
-    //    template<typename... Args>
-    //    std::logic_error logic_error(Args... args) {
-    //        return std::logic_error("dmrg++: " + h5pp::format(std::forward<Args>(args)...));
+    //    namespace internal {
+    //        template<typename... T>
+    //        EXCEPT_DEPRECATED inline void debug_type(T...) {}
+    //        template<typename... T>
+    //        EXCEPT_DEPRECATED inline void debug_type() {}
     //    }
 
-    class state_error : public std::runtime_error {
+    class runtime_error : public std::runtime_error {
+        public:
+        using std::runtime_error::runtime_error;
+        template<typename... Args>
+        runtime_error(Args &&...args) : std::runtime_error(fmt::format(std::forward<Args>(args)...)) {}
+    };
+
+    class logic_error : public std::logic_error {
+        public:
+        using std::logic_error::logic_error;
+        template<typename... Args>
+        logic_error(Args &&...args) : std::logic_error(fmt::format(std::forward<Args>(args)...)) {}
+    };
+
+    class range_error : public std::range_error {
+        public:
+        using std::range_error::range_error;
+        template<typename... Args>
+        range_error(Args &&...args) : std::range_error(fmt::format(std::forward<Args>(args)...)) {}
+    };
+
+    class state_error : public except::runtime_error {
         // Used for signaling that no resumable state was found
-        using std::runtime_error::runtime_error;
+        using except::runtime_error::runtime_error;
     };
 
-    class file_error : public std::runtime_error {
+    class file_error : public except::runtime_error {
         // Used for signaling that the existing file is corrupted
-        using std::runtime_error::runtime_error;
+        using except::runtime_error::runtime_error;
     };
 
-    class load_error : public std::runtime_error {
+    class load_error : public except::runtime_error {
         // Used for signaling an error when loading an existing file
-        using std::runtime_error::runtime_error;
+        using except::runtime_error::runtime_error;
     };
 
-    class resume_error : public std::runtime_error {
+    class resume_error : public except::runtime_error {
         // Used to signal that an error ocurred when trying to resume a simulation
-        using std::runtime_error::runtime_error;
+        using except::runtime_error::runtime_error;
     };
 
 }
+
+#define EXCEPT_EXTERN extern
+#include "exceptions.txx"
+#undef EXCEPT_EXTERN

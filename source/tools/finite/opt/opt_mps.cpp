@@ -1,7 +1,8 @@
 #include "../opt_mps.h"
-#include <config/debug.h>
-#include <io/fmt.h>
-#include <math/num.h>
+#include "config/debug.h"
+#include "debug/exceptions.h"
+#include "io/fmt.h"
+#include "math/num.h"
 
 using namespace tools::finite::opt;
 
@@ -28,31 +29,31 @@ std::string_view opt_mps::get_name() const {
     if(name)
         return name.value();
     else
-        throw std::runtime_error("opt_mps: name not set");
+        throw except::runtime_error("opt_mps: name not set");
 }
 
 const Eigen::Tensor<opt_mps::cplx, 3> &opt_mps::get_tensor() const {
     if(tensor)
         return tensor.value();
     else
-        throw std::runtime_error("opt_mps: tensor not set");
+        throw except::runtime_error("opt_mps: tensor not set");
 }
 
 Eigen::Map<const Eigen::VectorXcd> opt_mps::get_vector() const { return Eigen::Map<const Eigen::VectorXcd>(get_tensor().data(), get_tensor().size()); }
 
 Eigen::Map<const Eigen::VectorXd> opt_mps::get_vector_cplx_as_2xreal() const {
-    if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
+    if(not tensor) throw except::runtime_error("opt_mps: tensor not set");
     return {reinterpret_cast<const double *>(tensor.value().data()), 2 * tensor.value().size()};
 }
 
 Eigen::VectorXd opt_mps::get_vector_cplx_as_1xreal() const {
-    if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
+    if(not tensor) throw except::runtime_error("opt_mps: tensor not set");
     return Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size()).real();
 }
 
 template<OptType optType>
 [[nodiscard]] Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier() const {
-    if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
+    if(not tensor) throw except::runtime_error("opt_mps: tensor not set");
     auto             size_old = tensor.value().size();
     auto             size_new = size_old + 2; // Add 2 for both lagrange multipliers (we have 2 constraints)
     Eigen::VectorXcd tensor_extended(size_new);
@@ -68,7 +69,7 @@ template Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier<Opt
 template Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier<OptType::CPLX>() const;
 
 const std::vector<size_t> &opt_mps::get_sites() const {
-    if(not sites) throw std::runtime_error("opt_mps: sites not set");
+    if(not sites) throw except::runtime_error("opt_mps: sites not set");
     return sites.value();
 }
 
@@ -76,14 +77,14 @@ double opt_mps::get_energy() const {
     if(energy)
         return energy.value();
     else
-        throw std::runtime_error("opt_mps: energy not set");
+        throw except::runtime_error("opt_mps: energy not set");
 }
 
 double opt_mps::get_energy_shift() const {
     if(eshift)
         return eshift.value();
     else
-        throw std::runtime_error("opt_mps: eshift not set");
+        throw except::runtime_error("opt_mps: eshift not set");
 }
 
 double opt_mps::get_energy_per_site() const { return get_energy() / static_cast<double>(get_length()); }
@@ -92,14 +93,14 @@ double opt_mps::get_eigval() const {
     if(eigval)
         return eigval.value();
     else
-        throw std::runtime_error("opt_mps: eigval not set");
+        throw except::runtime_error("opt_mps: eigval not set");
 }
 
 double opt_mps::get_variance() const {
     if(variance)
         return variance.value();
     else
-        throw std::runtime_error("opt_mps: variance not set");
+        throw except::runtime_error("opt_mps: variance not set");
 }
 
 double opt_mps::get_variance_per_site() const { return get_variance() / static_cast<double>(get_length()); }
@@ -227,7 +228,7 @@ double opt_mps::get_overlap() const {
     if(overlap)
         return overlap.value();
     else
-        throw std::runtime_error("opt_mps: overlap not set");
+        throw except::runtime_error("opt_mps: overlap not set");
 }
 
 double opt_mps::get_alpha() const {
@@ -241,46 +242,46 @@ double opt_mps::get_norm() const {
     if(norm)
         return norm.value();
     else
-        throw std::runtime_error("opt_mps: norm not set");
+        throw except::runtime_error("opt_mps: norm not set");
 }
 
 size_t opt_mps::get_length() const {
     if(length)
         return length.value();
     else
-        throw std::runtime_error("opt_mps: length not set");
+        throw except::runtime_error("opt_mps: length not set");
 }
 
 OptSolver opt_mps::get_optsolver() const {
     if(optSolver)
         return optSolver.value();
     else
-        throw std::runtime_error("opt_mps: optSolver not set");
+        throw except::runtime_error("opt_mps: optSolver not set");
 }
 OptMode opt_mps::get_optmode() const {
     if(optMode)
         return optMode.value();
     else
-        throw std::runtime_error("opt_mps: optMode not set");
+        throw except::runtime_error("opt_mps: optMode not set");
 }
 
 OptExit opt_mps::get_optexit() const {
     if(optExit)
         return optExit.value();
     else
-        throw std::runtime_error("opt_mps: optMode not set");
+        throw except::runtime_error("opt_mps: optMode not set");
 }
 
 long opt_mps::get_bond_limit() const {
     if(bond_lim)
         return bond_lim.value();
     else
-        throw std::runtime_error("opt_mps: bond_lim not set");
+        throw except::runtime_error("opt_mps: bond_lim not set");
 }
 
 void opt_mps::clear() { tensor = std::nullopt; }
 void opt_mps::normalize() {
-    if(not tensor) throw std::runtime_error("opt_mps: tensor not set");
+    if(not tensor) throw except::runtime_error("opt_mps: tensor not set");
     Eigen::Map<Eigen::VectorXcd> vector(tensor.value().data(), tensor.value().size());
     vector.normalize();
     norm = vector.norm();
@@ -372,10 +373,10 @@ void opt_mps::validate_basis_vector() const {
     if(not num_mv)   error_msg.append("\t num_mv  \n");
     if(not time)     error_msg.append("\t time    \n");
     if constexpr (settings::debug){
-        if(has_nan()) throw std::runtime_error("opt_mps error: mps has nan's");
+        if(has_nan()) throw except::runtime_error("opt_mps error: mps has nan's");
     }
     /* clang-format on */
-    if(not error_msg.empty()) { throw std::runtime_error(fmt::format("opt_mps error: Missing fields:\n{}", error_msg)); }
+    if(not error_msg.empty()) { throw except::runtime_error("opt_mps error: Missing fields:\n{}", error_msg); }
 }
 
 void opt_mps::validate_initial_mps() const {
@@ -391,10 +392,10 @@ void opt_mps::validate_initial_mps() const {
     if(not norm)     error_msg.append("\t norm    \n");
     if(not length)   error_msg.append("\t length  \n");
     if constexpr (settings::debug){
-        if(has_nan()) throw std::runtime_error("opt_mps error: initial mps has nan's");
+        if(has_nan()) throw except::runtime_error("opt_mps error: initial mps has nan's");
     }
     /* clang-format on */
-    if(not error_msg.empty()) { throw std::runtime_error(fmt::format("opt_mps error: Missing fields in initial mps:\n{}", error_msg)); }
+    if(not error_msg.empty()) { throw except::runtime_error("opt_mps error: Missing fields in initial mps:\n{}", error_msg); }
 }
 
 void opt_mps::validate_result() const {
@@ -414,10 +415,10 @@ void opt_mps::validate_result() const {
     if(not num_mv)   error_msg.append("\t num_mv  \n");
     if(not time)     error_msg.append("\t time    \n");
     if constexpr (settings::debug){
-        if(has_nan()) throw std::runtime_error("opt_mps error: mps has nan's");
+        if(has_nan()) throw except::runtime_error("opt_mps error: mps has nan's");
     }
     /* clang-format on */
-    if(not error_msg.empty()) { throw std::runtime_error(fmt::format("opt_mps error: Missing fields:\n{}", error_msg)); }
+    if(not error_msg.empty()) { throw except::runtime_error("opt_mps error: Missing fields:\n{}", error_msg); }
 }
 
 bool opt_mps::operator<(const opt_mps &rhs) const {

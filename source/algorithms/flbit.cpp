@@ -46,10 +46,10 @@ void flbit::resume() {
         // Load the unitaries
         unitary_gates_2site_layers.clear();
         std::string grouppath = "/fLBIT/model/unitary_gates";
-        if(not h5file->linkExists(grouppath)) throw std::runtime_error(fmt::format("Missing link: {}", grouppath));
+        if(not h5file->linkExists(grouppath)) throw except::runtime_error("Missing link: {}", grouppath);
         auto num_layers = h5file->readAttribute<size_t>(grouppath, "num_layers");
         if(num_layers != settings::model::lbit::u_layer)
-            throw std::runtime_error(fmt::format("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer));
+            throw except::runtime_error("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer);
         unitary_gates_2site_layers.resize(num_layers);
         for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
             std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
@@ -84,7 +84,7 @@ void flbit::resume() {
                 task_list.emplace_back(flbit_task::TRANSFORM_TO_LBIT);
                 task_list.emplace_back(flbit_task::TIME_EVOLVE);
             } else
-                throw std::runtime_error(fmt::format("Unrecognized state name for flbit: [{}]", name));
+                throw except::runtime_error("Unrecognized state name for flbit: [{}]", name);
             task_list.emplace_back(flbit_task::POST_DEFAULT);
         }
         run_task_list(task_list);
@@ -148,7 +148,7 @@ void flbit::run_default_task_list() {
     run_task_list(default_task_list);
     if(not default_task_list.empty()) {
         for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2sv(task));
-        throw std::runtime_error("Simulation ended with unfinished tasks");
+        throw except::runtime_error("Simulation ended with unfinished tasks");
     }
 }
 
@@ -172,7 +172,7 @@ void flbit::run_preprocessing() {
         tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
         auto nbody = std::vector<size_t>{1, 2, 3};
         ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, nbody), list_Lsite, tensors.state->get_spin_dims(list_Lsite)));
-        time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite);
+        time_gates_Lsite = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_Lsite, settings::flbit::time_gate_id_threshold);
     }
 
     if(settings::flbit::use_swap_gates) {
@@ -189,7 +189,7 @@ void flbit::run_preprocessing() {
 
     create_lbit_transform_gates();
 
-    if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
+    if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
@@ -205,7 +205,7 @@ void flbit::run_algorithm() {
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     auto t_run = tid::tic_scope("run");
-    if(not tensors.position_is_inward_edge()) throw std::logic_error("Put the state on an edge!");
+    if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
     while(true) {
         single_flbit_step();
         check_convergence();
@@ -242,7 +242,7 @@ void flbit::single_flbit_step() {
      * \fn void single_DMRG_step(std::string ritz)
      */
     tools::log->debug("Starting fLBIT: iter {} | Δt = {}", status.iter, status.delta_t);
-    if(not state_lbit) throw std::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
+    if(not state_lbit) throw except::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
         tools::finite::mps::normalize_state(*state_lbit_init, status.bond_lim, std::nullopt, NormPolicy::ALWAYS);
@@ -257,36 +257,7 @@ void flbit::single_flbit_step() {
     svdset.switchsize_bdc = 64;
     svdset.svd_lib        = SVDLib::lapacke;
 
-    {
-        auto access = status.iter == 0 ? h5pp::FileAccess::REPLACE : h5pp::FileAccess::READWRITE;
-        auto h5svd  = h5pp::File("../bench/data/swapgates.h5", access);
-        h5svd.setCompressionLevel(9);
-        auto                  state_prefix = fmt::format("fLBIT/iter_{}", status.iter);
-        auto                  table_prefix = state_prefix;
-        static h5pp::hid::h5t h5tswap;
-        if(not h5tswap.valid()) {
-            h5tswap = H5Tcreate(H5T_COMPOUND, 2 * sizeof(uint64_t));
-            H5Tinsert(h5tswap, "posL", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-            H5Tinsert(h5tswap, "posR", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-        }
-
-        tools::common::h5::save::status(h5svd, state_prefix, StorageLevel::FULL, status);
-        tools::finite::h5::save::state(h5svd, state_prefix, StorageLevel::FULL, *state_lbit, status);
-        tools::common::h5::save::meta(h5svd, StorageLevel::FULL, StorageReason::CHECKPOINT, settings::model::model_type, settings::model::model_size,
-                                      state_lbit->get_name(), state_prefix, "", {table_prefix}, status);
-        for(const auto &[idx, gate] : iter::enumerate(time_swap_gates_2site)) {
-            auto gate_prefix = fmt::format("{}/gate_{}", state_prefix, idx);
-            auto gate_path   = fmt::format("{}/op", gate_prefix);
-            auto swaps       = std::vector<qm::Swap>(gate.swaps.begin(), gate.swaps.end());
-            auto rwaps       = std::vector<qm::Rwap>(gate.rwaps.begin(), gate.rwaps.end());
-            h5svd.writeDataset(gate.op, gate_path, H5D_CHUNKED);
-            h5svd.writeAttribute(gate.pos, gate_prefix, "pos");
-            h5svd.writeAttribute(gate.dim, gate_prefix, "dim");
-            h5svd.writeAttribute(static_cast<size_t>(idx), gate_prefix, "idx");
-            h5svd.writeDataset(swaps, gate_prefix + "/swaps", h5tswap);
-            h5svd.writeDataset(rwaps, gate_prefix + "/rwaps", h5tswap);
-        }
-    }
+    if(settings::flbit::save_swap_gates) write_state_swap_gates_to_file(*state_lbit, time_swap_gates_2site);
 
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = {}", status.delta_t);
@@ -300,7 +271,6 @@ void flbit::single_flbit_step() {
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_lim);
     }
-    if(status.iter >= 10) exit(0);
     t_evo.toc();
     transform_to_real_basis();
 
@@ -340,7 +310,7 @@ void flbit::update_time_step() {
         return;
     }
     status.delta_t = time_points[status.iter];
-    if(std::abs(status.delta_t) == 0) throw std::logic_error("Expected nonzero delta_t after time step update");
+    if(std::abs(status.delta_t) == 0) throw except::logic_error("Expected nonzero delta_t after time step update");
     tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t, status.phys_time);
 }
 
@@ -380,35 +350,34 @@ void flbit::create_time_points() {
     auto time_final = std::complex<double>(settings::flbit::time_final_real, settings::flbit::time_final_imag);
     auto time_diff  = time_start - time_final;
     // Check that there will be some time evolution
-    if(std::abs(time_diff) == 0) throw std::logic_error("time_start - time_final == 0");
+    if(std::abs(time_diff) == 0) throw except::logic_error("time_start - time_final == 0");
     // Check that the time limits are purely real or imaginary!
     bool time_is_real = std::abs(time_diff.real()) > 0;
     bool time_is_imag = std::abs(time_diff.imag()) > 0;
     if(time_is_real and time_is_imag)
-        throw std::logic_error(fmt::format("time_start and time_final must both be either purely real or imaginary. Got:\n"
-                                           "time_start = {:.8f}{:+.8f}\n"
-                                           "time_final = {:.8f}{:+.8f}",
-                                           time_start.real(), time_start.imag(), time_final.real(), time_final.imag()));
+        throw except::logic_error("time_start and time_final must both be either purely real or imaginary. Got:\n"
+                                  "time_start = {:.8f}{:+.8f}\n"
+                                  "time_final = {:.8f}{:+.8f}",
+                                  time_start.real(), time_start.imag(), time_final.real(), time_final.imag());
     time_points.reserve(settings::flbit::time_num_steps);
     if(time_is_real)
         for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, std::real(time_start), std::real(time_final))) {
-            if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
+            if(std::isinf(t) or std::isnan(t)) throw except::runtime_error("Invalid time point: {}", t);
             time_points.emplace_back(t);
         }
     else
         for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, std::imag(time_start), std::imag(time_final))) {
-            if(std::isinf(t) or std::isnan(t)) throw std::runtime_error(fmt::format("Invalid time point: {}", t));
+            if(std::isinf(t) or std::isnan(t)) throw except::runtime_error("Invalid time point: {}", t);
             time_points.emplace_back(std::complex<double>(0, t));
         }
     tools::log->trace(FMT_STRING("Created {} time points:\n{}"), time_points.size(), time_points);
     // Sanity check
     if(time_points.size() != settings::flbit::time_num_steps)
-        throw std::logic_error(
-            fmt::format("Got time_points.size():[{}] != settings::flbit::time_num_steps:[{}]", time_points.size(), settings::flbit::time_num_steps));
+        throw except::logic_error("Got time_points.size():[{}] != settings::flbit::time_num_steps:[{}]", time_points.size(), settings::flbit::time_num_steps);
 }
 
 void flbit::create_hamiltonian_gates() {
-    if(ready_hamiltonian_gates) throw std::logic_error("Hamiltonian gates have already been constructed");
+    if(ready_hamiltonian_gates) throw except::logic_error("Hamiltonian gates have already been constructed");
     tools::log->info("Creating Hamiltonian gates");
     auto t_hamgates = tid::tic_scope("hamgates");
     ham_gates_1body.clear();
@@ -465,20 +434,19 @@ void flbit::create_hamiltonian_gates() {
         ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
 
-    for(const auto &[idx, ham] : iter::enumerate(ham_gates_1body)) {
-        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx)); }
-    }
-    for(const auto &[idx, ham] : iter::enumerate(ham_gates_2body)) {
-        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham2[{}] is all zeros", idx)); }
-    }
-    for(const auto &[idx, ham] : iter::enumerate(ham_gates_3body)) {
-        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
-    }
+    for(const auto &[idx, ham] : iter::enumerate(ham_gates_1body))
+        if(tenx::isZero(ham.op)) throw except::runtime_error("ham1[{}] is all zeros", idx);
+
+    for(const auto &[idx, ham] : iter::enumerate(ham_gates_2body))
+        if(tenx::isZero(ham.op)) throw except::runtime_error("ham2[{}] is all zeros", idx);
+
+    for(const auto &[idx, ham] : iter::enumerate(ham_gates_3body))
+        if(tenx::isZero(ham.op)) throw except::runtime_error("ham3[{}] is all zeros", idx);
     ready_hamiltonian_gates = true;
 }
 
 void flbit::create_hamiltonian_swap_gates() {
-    if(ready_hamiltonian_swap_gates) throw std::logic_error("Hamiltonian swap gates have already been constructed");
+    if(ready_hamiltonian_swap_gates) throw except::logic_error("Hamiltonian swap gates have already been constructed");
     tools::log->info("Creating Hamiltonian swap gates");
     auto t_swaphamgates = tid::tic_scope("swaphamgates");
     ham_swap_gates_1body.clear();
@@ -504,20 +472,20 @@ void flbit::create_hamiltonian_swap_gates() {
         if(maxR == posL) continue;
         for(auto posR : num::range<size_t>(posL, maxR + 1)) { // maxR+1 to include the last site in range
             if(posL == posR) continue;
-            if(posL >= L) throw std::logic_error(fmt::format("posL {} >= L {}", posL, L));
-            if(posR >= L) throw std::logic_error(fmt::format("posR {} >= L {}", posR, L));
+            if(posL >= L) throw except::logic_error("posL {} >= L {}", posL, L);
+            if(posR >= L) throw except::logic_error("posR {} >= L {}", posR, L);
             auto sites = std::vector<size_t>{posL, posR}; // +1 to include last site
             auto nbody = std::vector<size_t>{2};
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->info("Generating {}-body hamiltonian on sites {}", nbody, sites);
             auto ham_swap_gate = qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins);
-            if(tenx::isZero(ham_swap_gate.op)) {
-                tools::log->error("hamiltonian 2-body swap gate for sites {} is a zero-matrix. skipping...", ham_swap_gate.pos);
-                continue;
-            } else
-                ham_swap_gates_2body.emplace_back(ham_swap_gate);
+            // Accept all swap gates even if all elements are near zero on gates for remote sites,
+            // since at large times t these can become relevant again by exp(-itH)
+            ham_swap_gates_2body.emplace_back(ham_swap_gate);
         }
     }
+    // Ignore Hamiltonians with entries smaller than J2_zero: the time scale is too small to resolve them.
+
     for(auto pos : list_3site) {
         auto range = 2ul;                                                                  // Distance to next-nearest neighbor when 3 sites interact
         auto sites = num::range<size_t>(pos, std::clamp<size_t>(pos + range + 1, 0ul, L)); // +1 to include last site
@@ -527,47 +495,48 @@ void flbit::create_hamiltonian_swap_gates() {
         ham_swap_gates_3body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_1body)) {
-        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham1[{}] is all zeros", idx)); }
+        if(tenx::isZero(ham.op)) { throw except::runtime_error("ham1[{}] is all zeros", idx); }
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_2body)) {
         if(tenx::isZero(ham.op)) {
-            tools::log->error("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix.", idx, ham.pos);
-            tools::log->error("     This can happen if r = J2_ctof = {} is too large.", J2_ctof);
-            tools::log->error("     With the current settings:");
-            tools::log->error("        x = settings::model::lbit::J2_xcls = {}", settings::model::lbit::J2_xcls);
-            tools::log->error("        m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
-            tools::log->error("        w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
-            tools::log->error("     Values of this matrix are expected to be smaller than exp(-r/x) * (m+w/2) = {:8.2e}",
+            tools::log->info("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix.", idx, ham.pos);
+            tools::log->debug("  Time evo. swap gates exp(-itH) ~ identity are ignored until t is very large");
+            tools::log->trace("  This can happen if r = J2_ctof = {} is too large.", J2_ctof);
+            tools::log->trace("  With the current settings:");
+            tools::log->trace("     x = settings::model::lbit::J2_xcls = {}", settings::model::lbit::J2_xcls);
+            tools::log->trace("     m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
+            tools::log->trace("     w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
+            tools::log->trace("  Values of this matrix are expected to be smaller than exp(-r/x) * (m+w/2) = {:8.2e}",
                               std::exp(-static_cast<double>(J2_ctof) / settings::model::lbit::J2_xcls) *
                                   (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0));
         }
     }
-    for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body)) {
-        if(tenx::isZero(ham.op)) { throw std::runtime_error(fmt::format("ham3[{}] is all zeros", idx)); }
-    }
+    for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body))
+        if(tenx::isZero(ham.op)) throw except::runtime_error("ham3[{}] is all zeros", idx);
+
     ready_hamiltonian_swap_gates = true;
 }
 
 void flbit::update_time_evolution_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
-    if(not ready_hamiltonian_gates) throw std::logic_error("Hamiltonian gates have not been constructed");
+    if(not ready_hamiltonian_gates) throw except::logic_error("Hamiltonian gates have not been constructed");
     update_time_step();
     tools::log->debug("Updating time evolution gates to iter {} | Δt = {}", status.iter, status.delta_t);
-    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body);
-    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body);
-    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body);
+    time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body, settings::flbit::time_gate_id_threshold);
+    time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body, settings::flbit::time_gate_id_threshold);
+    time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body, settings::flbit::time_gate_id_threshold);
 }
 
 void flbit::update_time_evolution_swap_gates() {
     // Create the time evolution operators
     if(time_points.empty()) create_time_points();
-    if(not ready_hamiltonian_swap_gates) throw std::logic_error("Hamiltonian swap gates have not been constructed");
+    if(not ready_hamiltonian_swap_gates) throw except::logic_error("Hamiltonian swap gates have not been constructed");
     update_time_step();
     tools::log->debug("Updating time evolution swap gates to iter {} | Δt = {}", status.iter, status.delta_t);
-    time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body);
-    time_swap_gates_2site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_2body);
-    time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body);
+    time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body, settings::flbit::time_gate_id_threshold);
+    time_swap_gates_2site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_2body, settings::flbit::time_gate_id_threshold);
+    time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body, settings::flbit::time_gate_id_threshold);
 }
 
 void flbit::create_lbit_transform_gates() {
@@ -604,7 +573,7 @@ void flbit::transform_to_real_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 1e-4) throw std::runtime_error(fmt::format("State overlap after transform back from real is not 1: Got {:.16f}", overlap));
+        if(std::abs(overlap - 1) > 1e-4) throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-10) tools::log->warn("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
     }
 }
@@ -634,7 +603,7 @@ void flbit::transform_to_lbit_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 1e-10) throw std::runtime_error(fmt::format("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap));
+        if(std::abs(overlap - 1) > 1e-10) throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
     }
 }
 
@@ -696,6 +665,38 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
             h5file->writeAttribute(sample, "/fLBIT/analysis/decay", "samples");
             h5file->writeAttribute(sample, "/fLBIT/analysis/lioms", "samples");
         }
+    }
+}
+
+void flbit::write_state_swap_gates_to_file(const StateFinite &state, const std::vector<qm::SwapGate> &gates) {
+    tools::log->trace("Saving state and swap gates");
+    auto access = status.iter == 0 ? h5pp::FileAccess::REPLACE : h5pp::FileAccess::READWRITE;
+    auto h5svd  = h5pp::File("../bench/data/swapgates.h5", access);
+    h5svd.setCompressionLevel(9);
+    auto                  state_prefix = fmt::format("fLBIT/iter_{}", status.iter);
+    auto                  table_prefix = state_prefix;
+    static h5pp::hid::h5t h5tswap;
+    if(not h5tswap.valid()) {
+        h5tswap = H5Tcreate(H5T_COMPOUND, 2 * sizeof(uint64_t));
+        H5Tinsert(h5tswap, "posL", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+        H5Tinsert(h5tswap, "posR", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+    }
+
+    tools::common::h5::save::status(h5svd, state_prefix, StorageLevel::FULL, status);
+    tools::finite::h5::save::state(h5svd, state_prefix, StorageLevel::FULL, state, status);
+    tools::common::h5::save::meta(h5svd, StorageLevel::FULL, StorageReason::CHECKPOINT, settings::model::model_type, settings::model::model_size,
+                                  state.get_name(), state_prefix, "", {table_prefix}, status);
+    for(const auto &[idx, gate] : iter::enumerate(gates)) {
+        auto gate_prefix = fmt::format("{}/gate_{}", state_prefix, idx);
+        auto gate_path   = fmt::format("{}/op", gate_prefix);
+        auto swaps       = std::vector<qm::Swap>(gate.swaps.begin(), gate.swaps.end());
+        auto rwaps       = std::vector<qm::Rwap>(gate.rwaps.begin(), gate.rwaps.end());
+        h5svd.writeDataset(gate.op, gate_path, H5D_CHUNKED);
+        h5svd.writeAttribute(gate.pos, gate_prefix, "pos");
+        h5svd.writeAttribute(gate.dim, gate_prefix, "dim");
+        h5svd.writeAttribute(static_cast<size_t>(idx), gate_prefix, "idx");
+        h5svd.writeDataset(swaps, gate_prefix + "/swaps", h5tswap);
+        h5svd.writeDataset(rwaps, gate_prefix + "/rwaps", h5tswap);
     }
 }
 

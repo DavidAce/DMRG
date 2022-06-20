@@ -1,5 +1,6 @@
 #include "../mps.h"
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
 #include "qm/spin.h"
@@ -145,7 +146,7 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
         G_mat.colwise().normalize();
         mps.set_M(G);
     }
-    if(spin_component * sign < 0) throw std::logic_error("Could not initialize_state in the correct sector");
+    if(spin_component * sign < 0) throw except::logic_error("Could not initialize_state in the correct sector");
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites

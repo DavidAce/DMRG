@@ -1,5 +1,6 @@
 #include "fdmrg.h"
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "io/fmt.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
@@ -25,7 +26,7 @@ void fdmrg::resume() {
     // To guide the behavior, we check the setting ResumePolicy.
 
     auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type);
-    if(resumable_states.empty()) throw std::runtime_error("Could not resume: no valid state candidates found for resume");
+    if(resumable_states.empty()) throw except::runtime_error("Could not resume: no valid state candidates found for resume");
     for(const auto &state_prefix : resumable_states) {
         tools::log->info("Resuming state [{}]", state_prefix);
         tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
@@ -47,7 +48,7 @@ void fdmrg::resume() {
             else if(name.find("emin") != std::string::npos)
                 task_list.emplace_back(fdmrg_task::FIND_GROUND_STATE);
             else
-                throw std::runtime_error(fmt::format("Unrecognized state name for fdmrg: [{}]", name));
+                throw except::runtime_error("Unrecognized state name for fdmrg: [{}]", name);
             task_list.emplace_back(fdmrg_task::POST_DEFAULT);
         }
         run_task_list(task_list);
@@ -96,7 +97,7 @@ void fdmrg::run_default_task_list() {
     run_task_list(default_task_list);
     if(not default_task_list.empty()) {
         for(auto &task : default_task_list) tools::log->critical("Unfinished task: {}", enum2sv(task));
-        throw std::runtime_error("Simulation ended with unfinished tasks");
+        throw except::runtime_error("Simulation ended with unfinished tasks");
     }
 }
 

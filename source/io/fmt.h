@@ -9,3 +9,7 @@
 #if defined(FMT_HEADER_ONLY)
     #pragma message "{fmt} has been included as header-only library. This causes large compile-time overhead"
 #endif
+
+#define FMT_EXTERN extern
+#include "fmt.txx"
+#undef FMT_EXTERN

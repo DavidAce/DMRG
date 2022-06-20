@@ -77,7 +77,7 @@ namespace tid {
     ur &get_unscoped(std::string_view key, level l) {
         return get(key, l, "");
 
-        //        if(key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", key));
+        //        if(key.empty()) throw except::runtime_error("Invalid key: {}", key);
         //        auto result = internal::tid_db.insert(std::make_pair(key, tid::ur(key)));
         //        auto & ur = result.first->second;
         //        if(result.second and l != level::parent)  ur.set_level(l); // Set the level on creation only

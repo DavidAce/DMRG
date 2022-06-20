@@ -3,6 +3,7 @@
 //
 
 #include "../measure.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/tenx.h"
 #include "tensors/site/mps/MpsSite.h"
@@ -23,7 +24,7 @@ struct Amplitude {
 
     [[nodiscard]] std::string to_string(const std::bitset<64> &b, long num) const {
         std::string s;
-        if(num > 64) throw std::range_error("Maximum bitset length is 64");
+        if(num > 64) throw except::range_error("Maximum bitset length is 64");
         for(size_t i = 0; i <= static_cast<size_t>(num); i++) s.append(std::to_string(static_cast<int>(b[i])));
         return s;
     }
@@ -43,7 +44,7 @@ struct Amplitude {
             // We can look it up by transforming the bits between 0 to bit_site to an integer
             // and use that as the index on amplitudes
             long state_pos = state.get_position<long>();
-            if(tgt_pos > state_pos) throw std::logic_error(fmt::format("eval_from_A: expected mps_site ({}) <= state_pos ({})", tgt_pos, state_pos));
+            if(tgt_pos > state_pos) throw except::logic_error("eval_from_A: expected mps_site ({}) <= state_pos ({})", tgt_pos, state_pos);
 
             if(tgt_pos > 0 and not cache.empty()) {
                 // There is a chance to continue building an existing amplitude
@@ -72,9 +73,9 @@ struct Amplitude {
                 if(site and site.value() >= pos) continue; // Fast-forward to the missing sites
                 if(tgt_pos < pos) break;                   // Contract up to the mps at tgt_pos
                 if(ampl.size() != mps->get_chiL())
-                    throw std::runtime_error(fmt::format("eval() failed for site {}: "
-                                                         "mismatch in ampl({}) with size = {} and mps({}) with chiL = {} | bits {}",
-                                                         tgt_pos, site.value(), ampl.size(), pos, mps->get_chiL(), bits.to_string()));
+                    throw except::runtime_error("eval() failed for site {}: "
+                                                "mismatch in ampl({}) with size = {} and mps({}) with chiL = {} | bits {}",
+                                                tgt_pos, site.value(), ampl.size(), pos, mps->get_chiL(), bits.to_string());
                 long                size = mps->get_chiR();
                 std::array<long, 3> off  = {bits[static_cast<size_t>(pos)], 0, 0};
                 std::array<long, 3> ext  = {1, mps->get_chiL(), mps->get_chiR()};
@@ -89,8 +90,8 @@ struct Amplitude {
                 // Update the current site
                 site = pos;
             }
-            if(not site) throw std::logic_error(fmt::format("ampl has undefined site: should be {}", tgt_pos));
-            if(site.value() != tgt_pos) throw std::logic_error(fmt::format("site ({}) != mps_site ({})", site.value(), tgt_pos));
+            if(not site) throw except::logic_error("ampl has undefined site: should be {}", tgt_pos);
+            if(site.value() != tgt_pos) throw except::logic_error("site ({}) != mps_site ({})", site.value(), tgt_pos);
         }
     }
 
@@ -107,7 +108,7 @@ struct Amplitude {
             long state_len = state.get_length<long>();
             long state_pos = state.get_position<long>();
             long mps_rsite = state_len - 1 - tgt_pos;
-            if(tgt_pos <= state_pos) throw std::logic_error(fmt::format("eval_from_B: expected mps_site ({}) > state_pos ({})", tgt_pos, state_pos));
+            if(tgt_pos <= state_pos) throw except::logic_error("eval_from_B: expected mps_site ({}) > state_pos ({})", tgt_pos, state_pos);
 
             if(tgt_pos < state_len - 1 and not cache.empty()) {
                 // There is a chance to continue building an existing amplitude
@@ -136,9 +137,9 @@ struct Amplitude {
                 if(site and site.value() <= pos) continue; // Fast-forward to the missing sites
                 if(tgt_pos > pos) break;                   // Contract up to the mps at mps_pos
                 if(ampl.size() != mps->get_chiR())
-                    throw std::runtime_error(fmt::format("eval() failed for site {}: "
-                                                         "mismatch in ampl({}) with size = {} and mps({}) with chiR = {} | bits {}",
-                                                         tgt_pos, site.value(), ampl.size(), pos, mps->get_chiL(), bits.to_string()));
+                    throw except::runtime_error("eval() failed for site {}: "
+                                                "mismatch in ampl({}) with size = {} and mps({}) with chiR = {} | bits {}",
+                                                tgt_pos, site.value(), ampl.size(), pos, mps->get_chiL(), bits.to_string());
                 long                mps_rpos = state_len - 1 - mps->get_position<long>();
                 long                size     = mps->get_chiL();
                 std::array<long, 3> off      = {bits[static_cast<size_t>(mps_rpos)], 0, 0};
@@ -153,8 +154,8 @@ struct Amplitude {
                 // Update the current site
                 site = pos;
             }
-            if(not site) throw std::logic_error(fmt::format("ampl has undefined site: should be {}", tgt_pos));
-            if(site.value() != tgt_pos) throw std::logic_error(fmt::format("site ({}) != mps_site ({})", site.value(), tgt_pos));
+            if(not site) throw except::logic_error("ampl has undefined site: should be {}", tgt_pos);
+            if(site.value() != tgt_pos) throw except::logic_error("site ({}) != mps_site ({})", site.value(), tgt_pos);
         }
     }
 
@@ -198,7 +199,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
             a.eval(state, tgt_pos, cache);
             if(a.ampl.size() != static_cast<long>(schmidt_vector.size())) {
                 tools::log->dump_backtrace();
-                throw std::runtime_error(fmt::format("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_vector.size()));
+                throw except::runtime_error("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_vector.size());
             }
             auto ampl_sqr = std::abs(std::conj(a.ampl[static_cast<long>(i)]) * a.ampl[static_cast<long>(i)]);
             if(ampl_sqr > cutoff) {
@@ -224,7 +225,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     if(std::abs(p_sum - 1.0) > 1e-8) {
         tools::log->dump_backtrace();
         tools::log->info("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
-        throw std::runtime_error(fmt::format("p_sum - 1.0 = {:.8e}", p_sum - 1.0));
+        throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
     //    tools::log->info("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
     return probability;
@@ -235,7 +236,7 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
     auto state_pos = state.get_position<long>();
     auto state_len = state.get_length<long>();
     auto spinprod  = [](long &acc, const auto &mps) {
-        if(mps->spin_dim() != 2) throw std::runtime_error("number_entropies: spin_dim() != 2 is not supported");
+        if(mps->spin_dim() != 2) throw except::runtime_error("number_entropies: spin_dim() != 2 is not supported");
         return acc * mps->spin_dim();
     };
     // Generate a list of bit sequences of size prod_{i=0}^l spin_dim_i.
@@ -257,7 +258,7 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
 std::vector<double> tools::finite::measure::number_entropies(const StateFinite &state) {
     if(state.measurements.number_entropies) return state.measurements.number_entropies.value();
     if(state.get_algorithm() != AlgorithmType::fLBIT) {
-        throw std::runtime_error(fmt::format("Called number_entropies(StateFinite) from algorithm [{}]", enum2sv(state.get_algorithm())));
+        throw except::runtime_error("Called number_entropies(StateFinite) from algorithm [{}]", enum2sv(state.get_algorithm()));
         // Only fLBIT has particle-number conservation
         state.measurements.number_entropy_current  = std::nullopt;
         state.measurements.number_entropy_midchain = std::nullopt;
@@ -280,7 +281,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     for(const auto &mps : state_copy.mps_sites) {
         auto pos = mps->get_position<long>();
         if(pos > state_pos) break;
-        if(mps->get_label() == "B") throw std::logic_error("Expected A/AC site, got B");
+        if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
         auto amplitudes                                   = generate_amplitude_list(state_copy, pos);
         auto probability                                  = compute_probability(state_copy, pos, amplitudes, cache);
         auto number_entropy                               = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
@@ -293,7 +294,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     for(const auto &mps : iter::reverse(state_copy.mps_sites)) {
         auto pos = mps->get_position<long>();
         if(pos <= state_pos + 1) break; // No need to compute at LC again
-        if(mps->get_label() != "B") throw std::logic_error(fmt::format("Expected B site, got {}", mps->get_label()));
+        if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
         auto amplitudes                               = generate_amplitude_list(state_copy, pos);
         auto probability                              = compute_probability(state_copy, pos, amplitudes, cache);
         auto number_entropy                           = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);

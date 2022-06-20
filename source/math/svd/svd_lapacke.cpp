@@ -1,4 +1,5 @@
 #include "../svd.h"
+#include "debug/exceptions.h"
 #include "tid/tid.h"
 #include <complex>
 
@@ -66,8 +67,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(), std::max(A.rows(), A.cols()));
         long max_size         = std::min(S.size(), rank_max.value());
         rank                  = (S.head(max_size).real().array() >= threshold).count();
-        if(U.rows() != A.rows()) throw std::logic_error(fmt::format("U.rows():{} != A.rows():{}", U.rows(), A.rows()));
-        if(VT.cols() != A.cols()) throw std::logic_error(fmt::format("VT.cols():{} != A.cols():{}", VT.cols(), A.cols()));
+        if(U.rows() != A.rows()) throw except::logic_error("U.rows():{} != A.rows():{}", U.rows(), A.rows());
+        if(VT.cols() != A.cols()) throw except::logic_error("VT.cols():{} != A.cols():{}", VT.cols(), A.cols());
         return std::make_tuple(VT.adjoint().leftCols(rank), S.head(rank), U.adjoint().topRows(rank), rank);
     }
     auto t_lpk = tid::tic_scope("lapacke", tid::extra);
@@ -156,8 +157,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                                         'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
                                                         U.data(), ldu, V.data(), ldv, rwork.data(), lrwork, iwork.data());
                     t_dgejsv.toc();
-                    if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgejsv error: parameter {} is invalid", info));
-                    if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgejsv error: could not converge: info {}", info));
+                    if(info < 0) throw except::runtime_error("Lapacke SVD dgejsv error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("Lapacke SVD dgejsv error: could not converge: info {}", info);
                     VT = V.adjoint();
                     V.resize(0, 0);
                 } else {
@@ -174,8 +175,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     info =
                         LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, rwork.data(), lrwork);
                     t_dgesvj.toc();
-                    if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvj error: parameter {} is invalid", info));
-                    if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvj error: could not converge: info {}", info));
+                    if(info < 0) throw except::runtime_error("Lapacke SVD dgesvj error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("Lapacke SVD dgesvj error: could not converge: info {}", info);
                     U  = A;
                     VT = V.adjoint();
                 }
@@ -193,8 +194,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 svd::log->trace("Querying dgesdd");
                 info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1,
                                            iwork.data());
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesdd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesdd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
 
                 lrwork = static_cast<int>(rwork[0]);
                 rwork.resize(static_cast<size_t>(lrwork));
@@ -203,8 +204,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix), tid::detailed);
                 info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), lrwork,
                                            iwork.data());
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesdd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesdd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
 
             } else {
                 svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
@@ -217,8 +218,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
                 svd::log->trace("Querying dgesvd");
                 info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1);
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD dgesvd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD dgesvd error: could not converge: info {}", info);
 
                 int lrwork = static_cast<int>(rwork[0]);
                 rwork.resize(static_cast<size_t>(lrwork));
@@ -227,8 +228,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 auto t_dgesvd = tid::tic_token(fmt::format("dgesvd{}", t_suffix), tid::detailed);
                 info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
                                            lrwork);
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD dgesvd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD dgesvd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD dgesvd error: could not converge: info {}", info);
             }
         } else if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
             if(use_jacobi) {
@@ -254,8 +255,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                                         'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
                                                         U.data(), ldu, V.data(), ldv, cwork.data(), -1, rwork.data(), -1, iwork.data());
 
-                    if(info < 0) throw std::runtime_error(fmt::format("zgejsv error: parameter {} is invalid", info));
-                    if(info > 0) throw std::runtime_error(fmt::format("zgejsv error: could not converge: info {}", info));
+                    if(info < 0) throw except::runtime_error("zgejsv error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("zgejsv error: could not converge: info {}", info);
 
                     lcwork = static_cast<int>(std::real(cwork[0]));
                     lrwork = static_cast<int>(rwork[0]);
@@ -270,8 +271,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                                'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
                                                U.data(), ldu, V.data(), ldv, cwork.data(), lcwork, rwork.data(), lrwork, iwork.data());
 
-                    if(info < 0) throw std::runtime_error(fmt::format("zgejsv error: parameter {} is invalid", info));
-                    if(info > 0) throw std::runtime_error(fmt::format("zgejsv error: could not converge: info {}", info));
+                    if(info < 0) throw except::runtime_error("zgejsv error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("zgejsv error: could not converge: info {}", info);
                     VT = V.adjoint();
                     V.resize(0, 0);
                 } else {
@@ -289,8 +290,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), -1,
                                                rwork.data(), -1);
 
-                    if(info < 0) throw std::runtime_error(fmt::format("zgesvj error: parameter {} is invalid", info));
-                    if(info > 0) throw std::runtime_error(fmt::format("zgesvj error: could not converge: info {}", info));
+                    if(info < 0) throw except::runtime_error("zgesvj error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("zgesvj error: could not converge: info {}", info);
 
                     lcwork = static_cast<int>(std::real(cwork[0]));
                     lrwork = static_cast<int>(rwork[0]);
@@ -300,8 +301,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     svd::log->trace("Running zgesvj | cwork {} | rwork {}", lcwork, lrwork);
                     info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), lcwork,
                                                rwork.data(), lrwork);
-                    if(info < 0) throw std::runtime_error(fmt::format("zgesvj error: parameter {} is invalid", info));
-                    if(info > 0) throw std::runtime_error(fmt::format("zgesvj error: could not converge: info {}", info));
+                    if(info < 0) throw except::runtime_error("zgesvj error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("zgesvj error: could not converge: info {}", info);
                     U  = A;
                     VT = V.adjoint();
                     V.resize(0, 0);
@@ -325,16 +326,16 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 auto t_zgesdd = tid::tic_token(fmt::format("zgesdd{}", t_suffix), tid::detailed);
                 /* clang-format off */
                 info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD zgesdd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD zgesdd error: could not converge: info {}", info);
 
                 lcwork = static_cast<int>(std::real(cwork[0]));
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Running zgesdd");
                 info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork, rwork.data(), iwork.data());
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesdd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD zgesdd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD zgesdd error: could not converge: info {}", info);
                 /* clang-format on */
 
             } else {
@@ -353,16 +354,16 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 auto t_zgesvd = tid::tic_token(fmt::format("zgesvd{}", t_suffix), tid::detailed);
                 /* clang-format off */
                 info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data());
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD zgesvd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD zgesvd error: could not converge: info {}", info);
 
                 lcwork = static_cast<int>(std::real(cwork[0]));
                 cwork.resize(static_cast<size_t>(lcwork));
 
                 svd::log->trace("Running zgesvd");
                 info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork, rwork.data());
-                if(info < 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: parameter {} is invalid", info));
-                if(info > 0) throw std::runtime_error(fmt::format("Lapacke SVD zgesvd error: could not converge: info {}", info));
+                if(info < 0) throw except::runtime_error("Lapacke SVD zgesvd error: parameter {} is invalid", info);
+                if(info > 0) throw except::runtime_error("Lapacke SVD zgesvd error: could not converge: info {}", info);
                 /* clang-format on */
             }
         }
@@ -412,14 +413,14 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     } catch(const std::exception &ex) {
         //#if !defined(NDEBUG)
         if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
-        throw std::runtime_error(fmt::format(FMT_STRING("Lapacke SVD error \n"
-                                                        "  svd_threshold    = {:.4e}\n"
-                                                        "  Truncation Error = {:.4e}\n"
-                                                        "  Rank             = {}\n"
-                                                        "  Dims             = ({}, {})\n"
-                                                        "  Lapacke info     : {}\n"
-                                                        "  Error message    : {}\n"),
-                                             threshold, truncation_error, rank, rows, cols, info, ex.what()));
+        throw except::runtime_error("Lapacke SVD error \n"
+                                    "  svd_threshold    = {:.4e}\n"
+                                    "  Truncation Error = {:.4e}\n"
+                                    "  Rank             = {}\n"
+                                    "  Dims             = ({}, {})\n"
+                                    "  Lapacke info     : {}\n"
+                                    "  Error message    : {}\n",
+                                    threshold, truncation_error, rank, rows, cols, info, ex.what());
     }
     if(save_result) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
 
