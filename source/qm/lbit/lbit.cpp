@@ -1,6 +1,7 @@
 #include "../lbit.h"
 #include "../spin.h"
 #include "config/debug.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "io/fmt.h"
 #include "io/spdlog.h"
@@ -88,7 +89,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     if constexpr(settings::debug) {
         // Sanity check
         for(const auto &u : unitaries)
-            if(not tenx::MatrixMap(u.op).isUnitary()) throw std::logic_error("u is not unitary!");
+            if(not tenx::MatrixMap(u.op).isUnitary()) throw except::logic_error("u is not unitary!");
     }
 
     return unitaries;
@@ -100,34 +101,46 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_time_evolution_operator(cplx delta_t, const
     return tenx::TensorCast((delta_t * tenx::MatrixMap(H)).exp());
 }
 
-std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite) {
+std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold) {
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
-    for(auto &h : hams_nsite) time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
+    for(auto &h : hams_nsite) {
+        time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
+        if(tenx::isIdentity(time_evolution_gates.back().op, id_threshold)) {
+            tools::log->trace("get_time_evolution_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_gates.back().pos, id_threshold);
+            time_evolution_gates.pop_back(); // Skip this gate if it is just an identity.
+        }
+    }
     if constexpr(settings::debug) {
         for(auto &t : time_evolution_gates)
             if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-                throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+                throw except::runtime_error("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op));
             }
     }
-
+    time_evolution_gates.shrink_to_fit();
     return time_evolution_gates;
 }
 
-std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite) {
+std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold) {
     std::vector<SwapGate> time_evolution_swap_gates;
     time_evolution_swap_gates.reserve(hams_nsite.size());
     for(auto &h : hams_nsite) {
         time_evolution_swap_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-        time_evolution_swap_gates.back().generate_swap_sequences();
+        if(tenx::isIdentity(time_evolution_swap_gates.back().op, id_threshold)) {
+            tools::log->trace("get_time_evolution_swap_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_swap_gates.back().pos,
+                              id_threshold);
+            time_evolution_swap_gates.pop_back(); // Skip this gate if it is just an identity.
+        } else {
+            time_evolution_swap_gates.back().generate_swap_sequences();
+        }
     }
     if constexpr(settings::debug) {
         for(auto &t : time_evolution_swap_gates)
             if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
-                throw std::runtime_error(fmt::format("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op)));
+                throw except::runtime_error("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op));
             }
     }
-
+    time_evolution_swap_gates.shrink_to_fit();
     return time_evolution_swap_gates;
 }
 
@@ -138,8 +151,7 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site
     // without passing through the Suzuki-Trotter decomposition.
     // Here we expect "hams_2site" to contain terms like  h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}.
 
-    if(hams_2site.size() != sites - 1)
-        throw std::logic_error(fmt::format("Wrong number of twosite hamiltonians: {}. Expected {}", hams_2site.size(), sites - 1));
+    if(hams_2site.size() != sites - 1) throw except::logic_error("Wrong number of twosite hamiltonians: {}. Expected {}", hams_2site.size(), sites - 1);
 
     std::vector<Eigen::Tensor<cplx, 2>> time_evolution_operators;
     time_evolution_operators.reserve(sites - 1);
@@ -153,8 +165,7 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site
     // exp(A + B) = exp(A)exp(B)
     // without passing through the Suzuki-Trotter decomposition.
 
-    if(hams_3site.size() != sites - 2)
-        throw std::logic_error(fmt::format("Wrong number of three-site hamiltonians: {}. Expected {}", hams_3site.size(), sites - 2));
+    if(hams_3site.size() != sites - 2) throw except::logic_error("Wrong number of three-site hamiltonians: {}. Expected {}", hams_3site.size(), sites - 2);
 
     std::vector<Eigen::Tensor<cplx, 2>> time_evolution_operators;
     time_evolution_operators.reserve(sites - 1);
@@ -267,7 +278,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
     cplx result;
     if(g.pos.empty()) {
         if(g.op.dimension(0) * g.op.dimension(1) != 1) // g.op should be a rank-2 tensor of dimensions 1x1
-            throw std::runtime_error(fmt::format("Expected empty gate to have cplx op: Got dims {}", g.op.dimensions()));
+            throw except::runtime_error("Expected empty gate to have cplx op: Got dims {}", g.op.dimensions());
         // This happens when the light cone from site i can't reach site j within the current depth of the unitary circuit.
         // Essentially, ρ'_i has no support where σ^z_j connects. Therefore we effectively get
         //      Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
@@ -323,7 +334,7 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_real_overlap(const std::vector<std
     auto sums = tenx::MatrixMap(lbit_overlap).rowwise().sum();
     if(not sums.cwiseAbs().isOnes(1e-4)) {
         tools::log->info("lbit_overlap: \n{}\nsums\n{}\n", linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums, 6));
-        throw std::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
+        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
     }
 
     return lbit_overlap;
