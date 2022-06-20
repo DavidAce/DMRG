@@ -21,12 +21,13 @@ message(STATUS "Resolved ${CMAKE_CXX_COMPILER} --> ${CMAKE_CXX_COMPILER_REALPATH
 
 
 ExternalProject_Add(external_tblis
-        GIT_REPOSITORY  https://github.com/devinamatthews/tblis.git
-        GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6
+        GIT_REPOSITORY https://github.com/devinamatthews/tblis.git
+        GIT_TAG 7d979b6624071879383377611cb2fa483b6a3104 # master on Apr 22
+        # GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
         GIT_PROGRESS TRUE
-        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
+        #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
 
-        PREFIX      ${CMAKE_BINARY_DIR}
+        PREFIX ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 
         #Give Ninja access to the terminal.
