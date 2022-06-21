@@ -6,22 +6,12 @@ endif()
 include(GNUInstallDirs)
 include(ExternalProject)
 
-option(STACK_WALKING_UNWIND             "" ON)   # Better than BACKTRACE
-option(STACK_WALKING_BACKTRACE          "" OFF)
-option(STACK_WALKING_LIBUNWIND          "" OFF)
-option(STACK_DETAILS_AUTO_DETECT        "" ON)
-option(STACK_DETAILS_BACKTRACE_SYMBOL   "" OFF) # Last resort
-option(STACK_DETAILS_DW                 "" ON)
-option(STACK_DETAILS_BFD                "" ON)
-option(STACK_DETAILS_DWARF              "" ON)
-set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "")
-
 ExternalProject_Add(external_Backward
         URL https://github.com/bombela/backward-cpp/archive/refs/tags/v1.6.tar.gz
         URL_MD5 0facf6e0fb35ed0f3cd069424a1dc79a
         BUILD_ALWAYS TRUE
-        PREFIX          ${CMAKE_BINARY_DIR}
-        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
+        PREFIX ${CMAKE_BINARY_DIR}
+        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         #Give Ninja access to the terminal.
         USES_TERMINAL_DOWNLOAD TRUE
         USES_TERMINAL_UPDATE TRUE
@@ -30,27 +20,13 @@ ExternalProject_Add(external_Backward
         USES_TERMINAL_INSTALL TRUE
         USES_TERMINAL_TEST TRUE
 
-        CMAKE_ARGS
-        ${INIT_CACHE_ARG}
-        -DBUILD_SHARED_LIBS:BOOL=OFF
-        -DCMAKE_FIND_LIBRARY_SUFFIXES:STRING=${CMAKE_STATIC_LIBRARY_SUFFIX}
-        -DCMAKE_POLICY_DEFAULT_CMP0074=NEW
-        -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-        -DCMAKE_INSTALL_RPATH:PATH=<INSTALL_DIR>/${CMAKE_INSTALL_LIBDIR}
-        -DCMAKE_SKIP_BUILD_RPATH:BOOL=OFF
-        -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
-        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
-        -DCMAKE_INSTALL_MESSAGE=LAZY
-        # Backward flags
-        -DBACKWARD_SHARED:BOOL=OFF
-        -DSTACK_WALKING_UNWIND:BOOL=${STACK_WALKING_UNWIND}
-        -DSTACK_WALKING_BACKTRACE:BOOL=FALSE
-        -DSTACK_WALKING_LIBUNWIND:BOOL=FALSE
-        -DSTACK_DETAILS_AUTO_DETECT:BOOL=${STACK_DETAILS_AUTO_DETECT}
-        -DSTACK_DETAILS_BACKTRACE_SYMBOL:BOOL=FALSE
-        -DSTACK_DETAILS_DW:BOOL=${STACK_DETAILS_DW}                  # I think this is newer than DWARF and more efficient https://github.com/stephenrkell/libdwarfpp/issues/12
-        -DSTACK_DETAILS_BFD:BOOL=${DSTACK_DETAILS_BFD}
-        -DSTACK_DETAILS_DWARF:BOOL=${STACK_DETAILS_DWARF}
+        UPDATE_COMMAND ""
+        TEST_COMMAND ""
+        BUILD_COMMAND ""
+        CONFIGURE_COMMAND ""
+        INSTALL_COMMAND
+        ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/backward.hpp <INSTALL_DIR>/${CMAKE_INSTALL_INCLUDEDIR}/backward.hpp
+
         )
 
 
