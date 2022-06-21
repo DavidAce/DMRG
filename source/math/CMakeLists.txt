@@ -13,4 +13,4 @@ target_link_libraries(dmrg-math INTERFACE
         dmrg-math-hash
         dmrg-math-tenx
         )
-target_link_libraries(dmrg-math INTERFACE deps flags)
+target_link_libraries(dmrg-math INTERFACE dmrg-deps dmrg-flags)

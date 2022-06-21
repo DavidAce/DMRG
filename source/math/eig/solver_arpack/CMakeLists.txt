@@ -2,7 +2,7 @@ add_source_target(dmrg-math-eig-arpack
         TARGET_SOURCES
         solver_arpack.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-math-eig-matvec

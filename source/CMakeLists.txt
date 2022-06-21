@@ -10,7 +10,7 @@ add_subdirectory(tid)
 add_subdirectory(tools)
 add_library(dmrg-main OBJECT)
 target_sources(dmrg-main PRIVATE main.cpp)
-target_link_libraries(dmrg-main PUBLIC deps flags)
+target_link_libraries(dmrg-main PUBLIC dmrg-deps dmrg-flags)
 target_link_libraries(dmrg-main INTERFACE
         dmrg-algorithms
         dmrg-config

@@ -98,7 +98,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     install_package(Backward)
 
 
-    target_link_libraries(deps INTERFACE
+    target_link_libraries(dmrg-deps INTERFACE
             CLI11::CLI11
             h5pp::h5pp
             arpack++::arpack++
@@ -109,8 +109,8 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
             )
 
     if (TARGET unwind::unwind)
-        target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
-        target_link_libraries(deps INTERFACE unwind::unwind)
+        target_compile_definitions(dmrg-deps INTERFACE DMRG_HAS_UNWIND=1)
+        target_link_libraries(dmrg-depsINTERFACE unwind::unwind)
         target_link_libraries(Ceres::ceres INTERFACE unwind::unwind)
         if (TARGET glog::glog)
             target_link_libraries(glog::glog INTERFACE unwind::unwind)

@@ -6,12 +6,12 @@ target_link_libraries(Threads::Threads INTERFACE rt dl)
 
 # Find OpenMP
 find_package(OpenMP COMPONENTS CXX REQUIRED)
-target_link_libraries(flags INTERFACE OpenMP::OpenMP_CXX)
+target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
 
 
-# Link all dependencies to deps
-if (NOT TARGET deps)
-    add_library(deps INTERFACE)
+# Link all dependencies to dmrg-deps
+if (NOT TARGET dmrg-deps)
+    add_library(dmrg-deps INTERFACE)
 endif ()
 
 
@@ -24,6 +24,6 @@ include(cmake/InstallPackage.cmake)
 install_package(primme MODULE)
 if (DMRG_ENABLE_TBLIS)
     install_package(tblis MODULE)
-    target_link_libraries(deps INTERFACE tblis::tblis)
+    target_link_libraries(dmrg-deps INTERFACE tblis::tblis)
 endif()
 

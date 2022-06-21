@@ -41,9 +41,9 @@ include(cmake/PrintBuildInfo.cmake)
 
 
 ###  Add targets to collect common settings
-add_library(deps INTERFACE)
-add_library(flags INTERFACE)
-target_include_directories(flags INTERFACE source)
+add_library(dmrg-deps INTERFACE)
+add_library(dmrg-flags INTERFACE)
+target_include_directories(dmrg-flags INTERFACE source)
 
 ###  Apply compiler flags
 include(cmake/CompilerFlags.cmake)

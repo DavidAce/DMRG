@@ -2,7 +2,7 @@ add_source_target(dmrg-tools-common-contraction
         TARGET_SOURCES
         matrix_inverse_vector_product.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-math-tenx

@@ -119,7 +119,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     if (TARGET backward-cpp::backward-cpp AND NOT TARGET Backward::Backward)
         add_library(Backward::Backward ALIAS backward-cpp::backward-cpp)
     endif ()
-    target_link_libraries(deps INTERFACE
+    target_link_libraries(dmrg-deps INTERFACE
             CLI11::CLI11
             h5pp::h5pp
             arpack++::arpack++
@@ -130,8 +130,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             )
 
     if (TARGET libunwind::libunwind)
-        target_compile_definitions(deps INTERFACE DMRG_HAS_UNWIND=1)
-        target_link_libraries(deps INTERFACE libunwind::libunwind)
+        target_compile_definitions(dmrg-deps INTERFACE DMRG_HAS_UNWIND=1)
+        target_link_libraries(dmrg-deps INTERFACE libunwind::libunwind)
     endif ()
 
     # Configure Eigen

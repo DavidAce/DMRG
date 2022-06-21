@@ -4,7 +4,7 @@ add_source_target(dmrg-tools-finite-mps
         mps_init_entangled_state.cpp
         mps_init_product_state.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config

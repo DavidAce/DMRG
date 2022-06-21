@@ -4,5 +4,5 @@ add_source_target(dmrg-qm-spin
         half.cpp
         one.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         )

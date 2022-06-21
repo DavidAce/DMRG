@@ -1,13 +1,13 @@
 add_subdirectory(h5)
 add_subdirectory(contraction)
 
-add_source_target(dmrg-tools-common-log TARGET_SOURCES log.cpp OBJECT_LINK_LIBRARIES deps flags)
+add_source_target(dmrg-tools-common-log TARGET_SOURCES log.cpp OBJECT_LINK_LIBRARIES dmrg-deps dmrg-flags)
 
 add_source_target(dmrg-tools-common-prof
         TARGET_SOURCES
         prof.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
@@ -17,7 +17,7 @@ add_source_target(dmrg-tools-common-split
         TARGET_SOURCES
         split.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
@@ -30,7 +30,7 @@ add_source_target(dmrg-tools-common-views
         TARGET_SOURCES
         views.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
@@ -41,7 +41,7 @@ add_source_target(dmrg-tools-common-views
         )
 
 add_library(dmrg-tools-common INTERFACE)
-target_link_libraries(dmrg-tools-common INTERFACE deps flags)
+target_link_libraries(dmrg-tools-common INTERFACE dmrg-deps dmrg-flags)
 target_link_libraries(dmrg-tools-common INTERFACE
         dmrg-tools-common-log
         dmrg-tools-common-prof

@@ -2,7 +2,7 @@ add_source_target(dmrg-tools-finite-ops
         TARGET_SOURCES
         ops.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-qm-spin
@@ -19,7 +19,7 @@ add_source_target(dmrg-tools-finite-print
         TARGET_SOURCES
         print.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tensors-finite
         dmrg-tools-common-log
@@ -46,4 +46,4 @@ target_link_libraries(dmrg-tools-finite INTERFACE
         dmrg-tools-finite-h5
         dmrg-tools-finite-ed
         )
-target_link_libraries(dmrg-tools-finite INTERFACE deps flags)
+target_link_libraries(dmrg-tools-finite INTERFACE dmrg-deps dmrg-flags)

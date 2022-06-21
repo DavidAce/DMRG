@@ -2,7 +2,7 @@ add_source_target(dmrg-tensors-model-finite
         TARGET_SOURCES
         ModelFinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
@@ -16,7 +16,7 @@ add_source_target(dmrg-tensors-model-infinite
         TARGET_SOURCES
         ModelInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-config
         dmrg-math-svd

@@ -4,7 +4,7 @@ add_source_target(dmrg-math-eig-matvec
         matvec_sparse.cpp
         matvec_mpo.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-math-svd

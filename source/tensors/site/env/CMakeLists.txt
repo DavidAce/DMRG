@@ -5,7 +5,7 @@ add_source_target(dmrg-tensors-env
         EnvEne.cpp
         EnvVar.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-math-hash
         dmrg-tensors-mps

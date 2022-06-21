@@ -2,7 +2,7 @@ add_source_target(dmrg-algorithms-status
         TARGET_SOURCES
         AlgorithmStatus.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         )
 
 
@@ -10,7 +10,7 @@ add_source_target(dmrg-algorithms-base
         TARGET_SOURCES
         AlgorithmBase.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-config
         dmrg-algorithms-status
@@ -22,7 +22,7 @@ add_source_target(dmrg-algorithms-finite
         TARGET_SOURCES
         AlgorithmFinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
@@ -45,7 +45,7 @@ add_source_target(dmrg-algorithms-infinite
         TARGET_SOURCES
         AlgorithmInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
@@ -64,7 +64,7 @@ add_source_target(dmrg-algorithms-fdmrg
         TARGET_SOURCES
         fdmrg.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-algorithms-finite
         dmrg-tools-finite-opt
@@ -76,7 +76,7 @@ add_source_target(dmrg-algorithms-flbit
         TARGET_SOURCES
         flbit.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-algorithms-finite
         dmrg-math-tenx
@@ -91,7 +91,7 @@ add_source_target(dmrg-algorithms-xdmrg
         TARGET_SOURCES
         xdmrg.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-algorithms-finite
         dmrg-qm-time
@@ -104,7 +104,7 @@ add_source_target(dmrg-algorithms-idmrg
         TARGET_SOURCES
         idmrg.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-algorithms-infinite
         dmrg-tensors-edges-infinite
@@ -115,7 +115,7 @@ add_source_target(dmrg-algorithms-itebd
         TARGET_SOURCES
         itebd.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-qm-time
         dmrg-algorithms-infinite
@@ -127,7 +127,7 @@ add_source_target(dmrg-algorithms-launcher
         TARGET_SOURCES
         AlgorithmLauncher.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-algorithms-fdmrg
         dmrg-algorithms-flbit

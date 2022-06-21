@@ -2,7 +2,7 @@ add_source_target(dmrg-tensors-edges-finite
         TARGET_SOURCES
         EdgesFinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-config
         dmrg-tensors-env
@@ -12,7 +12,7 @@ add_source_target(dmrg-tensors-edges-infinite
         TARGET_SOURCES
         EdgesInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tensors-env
         dmrg-tools-common-log

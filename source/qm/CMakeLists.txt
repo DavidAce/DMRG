@@ -15,4 +15,4 @@ target_link_libraries(dmrg-qm INTERFACE
         dmrg-qm-lbit
         )
 
-target_link_libraries(dmrg-qm INTERFACE deps flags)
+target_link_libraries(dmrg-qm INTERFACE dmrg-deps dmrg-flags)

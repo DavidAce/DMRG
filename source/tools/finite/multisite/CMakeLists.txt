@@ -2,7 +2,7 @@ add_source_target(dmrg-tools-finite-multisite
         TARGET_SOURCES
         multisite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tensors-state-finite
         dmrg-tensors-model-finite

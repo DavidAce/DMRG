@@ -7,7 +7,7 @@ add_source_target(dmrg-tensors-mpo
         IsingRandomField.cpp
         LBit.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-config
         dmrg-math-hash

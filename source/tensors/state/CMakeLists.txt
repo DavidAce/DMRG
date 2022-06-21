@@ -2,7 +2,7 @@ add_source_target(dmrg-tensors-state-finite
         TARGET_SOURCES
         StateFinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-debug
         dmrg-tensors-mps
@@ -16,7 +16,7 @@ add_source_target(dmrg-tensors-state-infinite
         TARGET_SOURCES
         StateInfinite.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-debug
         dmrg-math-tenx

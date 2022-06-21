@@ -4,7 +4,7 @@ add_source_target(dmrg-tools-finite-measure
         measure-parity-components.cpp
         entropy.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-qm-spin

@@ -20,7 +20,7 @@ add_source_target(dmrg-tools-finite-opt
         opt_mps.cpp
         opt_meta.cpp
         OBJECT_LINK_LIBRARIES
-        deps flags
+        dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         dmrg-config
