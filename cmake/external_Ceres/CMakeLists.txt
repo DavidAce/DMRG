@@ -9,14 +9,15 @@ option(GLOG_PREFER_EXPORTED_GLOG_CMAKE_CONFIGURATION        ""  TRUE)
 option(EIGEN_PREFER_EXPORTED_EIGEN_CMAKE_CONFIGURATION      ""  TRUE)
 option(GFLAGS_PREFER_EXPORTED_GFLAGS_CMAKE_CONFIGURATION    ""  TRUE)
 
+set(cxxflags "-w")
 
 include(ExternalProject)
 ExternalProject_Add(external_Ceres
-        URL  https://github.com/ceres-solver/ceres-solver/archive/2.0.0.tar.gz
-        URL_MD5 94246057ac520313e3b582c45a30db6e
+        URL https://github.com/ceres-solver/ceres-solver/archive/refs/tags/2.1.0.tar.gz
+        URL_MD5 4ab48f439d63a09a075d4fcdcddc7667
         BUILD_ALWAYS TRUE # <- True will detect changes in dependencies of ceres
-        PREFIX          ${CMAKE_BINARY_DIR}
-        INSTALL_DIR     ${CMAKE_INSTALL_PREFIX}
+        PREFIX ${CMAKE_BINARY_DIR}
+        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 
         #Give Ninja access to the terminal.
         USES_TERMINAL_DOWNLOAD TRUE
@@ -35,6 +36,7 @@ ExternalProject_Add(external_Ceres
         #-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=OFF
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
         -DCMAKE_INSTALL_MESSAGE=LAZY
+        -DCMAKE_CXX_FLAGS=${cxxflags}
         # Ceres flags
         -DEigen3_ROOT:PATH=${Eigen3_ROOT}
         -Dgflags_ROOT:PATH=${gflags_ROOT}
