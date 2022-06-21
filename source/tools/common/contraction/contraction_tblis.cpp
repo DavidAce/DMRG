@@ -119,7 +119,7 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     auto   tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
     double alpha = 1.0;
     double beta  = 0.0;
-    tblis::mult(alpha, ta, la, tb, lb, beta, tc, lc);
+    tblis::mult(alpha, ta, la.c_str(), tb, lb.c_str(), beta, tc, lc.c_str());
 }
 
 /* clang-format off */

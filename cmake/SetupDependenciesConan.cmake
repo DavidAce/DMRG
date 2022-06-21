@@ -16,16 +16,16 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         add_library(lapacke::lapacke ALIAS mkl::mkl) # Lapacke is included
 
         include(cmake/getExpandedTarget.cmake)
-        expand_target_libs(BLAS::BLAS BLAS_LIBRARIES)
+        expand_target_libs(mkl::mkl MKL_LIBRARIES)
         # Passing BLAS_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
         # Replacing each ";" with spaces will work until arpack-ng tries to link as is.
         # Instead we should use the generator expression trick to let arpack understand that these
         # are multiple libraries
-        string (REPLACE ";" "$<SEMICOLON>" BLAS_LIBRARIES "${BLAS_LIBRARIES}")
+        string(REPLACE ";" "$<SEMICOLON>" MKL_LIBRARIES "${MKL_LIBRARIES}")
         list(APPEND DMRG_CONAN_OPTIONS
                 OPTIONS arpack-ng:blas=All
-                OPTIONS arpack-ng:blas_libraries=${BLAS_LIBRARIES}
-                OPTIONS arpack-ng:lapack_libraries=${BLAS_LIBRARIES}
+                OPTIONS arpack-ng:blas_libraries=${MKL_LIBRARIES}
+                OPTIONS arpack-ng:lapack_libraries=${MKL_LIBRARIES}
                 )
     else()
         if(OPENBLAS_DYNAMIC_ARCH)
@@ -105,6 +105,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     if (NOT DMRG_ENABLE_MKL)
         find_package(OpenBLAS 0.3.17 REQUIRED CONFIG)
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
+        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
+        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_double=std::complex<double>)
         #For convenience, define these targes
         add_library(BLAS::BLAS ALIAS OpenBLAS::OpenBLAS)
         add_library(LAPACK::LAPACK ALIAS OpenBLAS::OpenBLAS)
