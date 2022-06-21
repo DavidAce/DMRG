@@ -138,7 +138,7 @@ function(install_package pkg_name)
     endforeach()
     if(PKG_MISSING_TARGET)
         pkg_message(FATAL_ERROR "Could not install ${pkg_name}: dependencies missing [${PKG_MISSING_TARGET}]")
-    endif()
+    endif ()
 
     pkg_message(VERBOSE "Starting install")
 
@@ -148,18 +148,19 @@ function(install_package pkg_name)
     list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE INTERNAL "Paths for find_package lookup" FORCE)
 
+    if (NOT PKG_MODULE)
+        # Try finding config files before modules
+        pkg_message(DEBUG "Prefer CONFIG mode ON")
+        set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+    endif ()
 
-    # Try finding config files before modules
-    pkg_message(DEBUG "Prefer CONFIG mode ON")
-    set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
-
-    if(PKG_LIBRARY_NAMES)
+    if (PKG_LIBRARY_NAMES)
         # This attempts to find <PackageName>_LIBRARY with given names before calling find_package
         # This is necessary for ZLIB
-        if(pkg_link_type MATCHES "static|STATIC|Static")
+        if (pkg_link_type MATCHES "static|STATIC|Static")
             set(pkg_link_type_msg ${pkg_link_type})
             set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX})
-        endif()
+        endif ()
         pkg_message(DEBUG "Looking for ${pkg_link_type_msg} library names ${PKG_LIBRARY_NAMES}")
         unset(${pkg_find_name}_LIBRARY)
         unset(${pkg_find_name}_LIBRARY CACHE)
