@@ -2,28 +2,32 @@ cmake_minimum_required(VERSION 3.15)
 project(external-tblis)
 include(../GetNumThreads.cmake)
 get_num_threads(NUM_THREADS)
-if(INIT_CACHE_FILE)
+if (INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
-endif()
+endif ()
 include(ExternalProject)
 
-set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
-set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
 
 # the configure.ac script in tblis is allergic to the "cc" compiler, complaining that
 # it cannot resolve the compiler vendor. Normally the cc compiler
 # points to "gcc" anyway so we resolve the symlink here.
 
-get_filename_component(CMAKE_C_COMPILER_REALPATH ${CMAKE_C_COMPILER} REALPATH)
-get_filename_component(CMAKE_CXX_COMPILER_REALPATH ${CMAKE_CXX_COMPILER} REALPATH)
-message(STATUS "Resolved ${CMAKE_C_COMPILER} --> ${CMAKE_C_COMPILER_REALPATH}")
-message(STATUS "Resolved ${CMAKE_CXX_COMPILER} --> ${CMAKE_CXX_COMPILER_REALPATH}")
+#get_filename_component(cc ${CMAKE_C_COMPILER} REALPATH)
+#get_filename_component(cxx ${CMAKE_CXX_COMPILER} REALPATH)
+#message(STATUS "Resolved ${CMAKE_C_COMPILER} --> ${cc}")
+#message(STATUS "Resolved ${CMAKE_CXX_COMPILER} --> ${cxx}")
+
+set(cc ${CMAKE_C_COMPILER})
+set(cxx ${CMAKE_CXX_COMPILER})
+set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
+set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
+set(libs "-lm -ldl")
 
 
 ExternalProject_Add(external_tblis
         GIT_REPOSITORY https://github.com/devinamatthews/tblis.git
         GIT_TAG 7d979b6624071879383377611cb2fa483b6a3104 # master on Apr 22
-        # GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
+        #         GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
         GIT_PROGRESS TRUE
         #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
 
@@ -40,21 +44,19 @@ ExternalProject_Add(external_tblis
 
         BUILD_ALWAYS TRUE
         CONFIGURE_COMMAND
-            cd <SOURCE_DIR> &&
-            pwd &&
-            export CC=${CMAKE_C_COMPILER_REALPATH} &&
-            export CXX=${CMAKE_CXX_COMPILER_REALPATH} &&
-            echo "CC=${CMAKE_C_COMPILER_REALPATH}" &&
-            echo "CXX=${CMAKE_CXX_COMPILER_REALPATH}" &&
-            ./configure CC=${CMAKE_C_COMPILER_REALPATH} CXX=${CMAKE_CXX_COMPILER_REALPATH}  --enable-config=haswell,skx1,zen --prefix=<INSTALL_DIR>
+        COMMAND export CC=${cc}
+        COMMAND export CXX=${cxx}
+        COMMAND export LIBS=${libs}
+        COMMAND export CFLAGS=${cflags}
+        COMMAND export CXXFLAGS=${cxxflags}
+        COMMAND cd <SOURCE_DIR>
+        COMMAND ./configure --enable-config=haswell,skx1,zen --prefix=<INSTALL_DIR>
 
         BUILD_COMMAND
-            cd <SOURCE_DIR> &&
-            pwd &&
-            make -j${NUM_THREADS}
+        COMMAND cd <SOURCE_DIR>
+        COMMAND make -j${NUM_THREADS}
 
         INSTALL_COMMAND
-            cd <SOURCE_DIR> &&
-            pwd &&
-            make install
+        COMMAND cd <SOURCE_DIR>
+        COMMAND make install
         )
