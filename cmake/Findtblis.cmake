@@ -2,7 +2,7 @@ unset(TBLIS_LIBRARY)
 unset(TBLIS_LIBRARY CACHE)
 find_library(TBLIS_LIBRARY
         tblis
-        HINTS ${TB_DEPS_INSTALL_DIR}
+        HINTS ${DMRG_DEPS_INSTALL_DIR}
         PATH_SUFFIXES lib tblis/lib
         NO_CMAKE_ENVIRONMENT_PATH
         NO_SYSTEM_ENVIRONMENT_PATH
@@ -10,7 +10,7 @@ find_library(TBLIS_LIBRARY
         )
 find_path(TBLIS_INCLUDE_DIR
         tblis/tblis.h
-        HINTS ${TB_DEPS_INSTALL_DIR}
+        HINTS ${DMRG_DEPS_INSTALL_DIR}
         PATH_SUFFIXES include tblis/include
         NO_CMAKE_ENVIRONMENT_PATH
         NO_SYSTEM_ENVIRONMENT_PATH
