@@ -10,6 +10,7 @@ add_source_target(dmrg-math-svd
         INTERFACE_LINK_LIBRARIES
         dmrg-tid
         )
+
 if (DMRG_ENABLE_RSVD)
     target_compile_definitions(dmrg-math-svd-o PRIVATE DMRG_ENABLE_RSVD)
 endif ()
