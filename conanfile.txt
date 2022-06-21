@@ -3,17 +3,16 @@
 
 
 [requires]
-ceres-solver/2.0.0@
-glog/0.6.0@
+ceres-solver/2.1.0
+glog/0.6.0
 h5pp/1.10.0@davidace/dev
-fmt/8.1.1@
-spdlog/1.10.0@
-eigen/3.4.0@
+fmt/8.1.1
+spdlog/1.10.0
+eigen/3.4.0
 arpack++/2.3.0@davidace/dev
-libunwind/1.6.2@
-cli11/2.2.0@
-backward-cpp/1.6@
-zlib/1.2.12@
+cli11/2.2.0
+backward-cpp/1.6
+zlib/1.2.12
 
 [generators]
 CMakeDeps
