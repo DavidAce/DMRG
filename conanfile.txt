@@ -19,7 +19,7 @@ zlib/1.2.12@
 CMakeDeps
 
 [options]
-arpack-ng:openblas_version=0.3.17
+arpack-ng:openblas_version=0.3.20
 openblas:build_lapack=True
 openblas:dynamic_arch=True
 ceres-solver:use_glog=True
