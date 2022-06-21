@@ -7,16 +7,6 @@ if (INIT_CACHE_FILE)
 endif ()
 include(ExternalProject)
 
-
-# the configure.ac script in tblis is allergic to the "cc" compiler, complaining that
-# it cannot resolve the compiler vendor. Normally the cc compiler
-# points to "gcc" anyway so we resolve the symlink here.
-
-#get_filename_component(cc ${CMAKE_C_COMPILER} REALPATH)
-#get_filename_component(cxx ${CMAKE_CXX_COMPILER} REALPATH)
-#message(STATUS "Resolved ${CMAKE_C_COMPILER} --> ${cc}")
-#message(STATUS "Resolved ${CMAKE_CXX_COMPILER} --> ${cxx}")
-
 set(cc ${CMAKE_C_COMPILER})
 set(cxx ${CMAKE_CXX_COMPILER})
 set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
