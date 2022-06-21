@@ -1,7 +1,7 @@
 
 function(find_Lapacke)
     include(cmake/CheckCompile.cmake)
-    set(lapacke_tgt_candidates mkl::mkl OpenBLAS::OpenBLAS LAPACK::LAPACK)
+    set(lapacke_tgt_candidates mkl::mkl OpenBLAS::OpenBLAS)
     foreach(tgt ${lapacke_tgt_candidates})
         if(TARGET ${tgt})
             message(DEBUG "Looking for Lapacke in ${tgt}")
