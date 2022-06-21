@@ -71,6 +71,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     conan_cmake_install(
             CONAN_COMMAND ${CONAN_COMMAND}
             BUILD missing outdated cascade
+            UPDATE
             GENERATOR CMakeDeps
             SETTINGS ${CONAN_AUTODETECT}
             INSTALL_FOLDER ${CMAKE_BINARY_DIR}/conan
@@ -94,14 +95,13 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Use CONFIG to avoid MODULE mode. This is recommended for the cmake_find_package_multi generator
 
     find_package(CLI11 2.2.0 REQUIRED CONFIG)
-    find_package(Eigen 3.4 REQUIRED CONFIG)
+    find_package(Eigen3 3.4 REQUIRED CONFIG)
     find_package(h5pp 1.10.0 REQUIRED CONFIG)
     find_package(fmt 8.1.1 REQUIRED CONFIG)
     find_package(spdlog 1.10.0 REQUIRED CONFIG)
     find_package(arpack++ 2.3.0 REQUIRED CONFIG)
-    find_package(ceres-solver 2.0.0 REQUIRED CONFIG)
-    find_package(libunwind 1.6.2 REQUIRED CONFIG)
-    find_package(backward-cpp 1.6 REQUIRED CONFIG)
+    find_package(Ceres 2.1.0 REQUIRED CONFIG)
+    find_package(Backward 1.6 REQUIRED CONFIG)
     if (NOT DMRG_ENABLE_MKL)
         find_package(OpenBLAS 0.3.20 REQUIRED CONFIG)
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
@@ -126,7 +126,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
             h5pp::h5pp
             arpack++::arpack++
             primme::primme
-            ceres-solver::ceres-solver
+            Ceres::ceres
+            Backward::Backward
             BLAS::BLAS
             backward-cpp::backward-cpp
             )
