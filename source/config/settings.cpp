@@ -199,10 +199,12 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::time_final_real"         , flbit::time_final_real);
     dmrg_config.load_parameter("flbit::time_final_imag"         , flbit::time_final_imag);
     dmrg_config.load_parameter("flbit::time_num_steps"          , flbit::time_num_steps);
+    dmrg_config.load_parameter("flbit::time_gate_id_threshold"  , flbit::time_gate_id_threshold);
     dmrg_config.load_parameter("flbit::print_freq"              , flbit::print_freq);
     dmrg_config.load_parameter("flbit::compute_lbit_length"     , flbit::compute_lbit_length);
     dmrg_config.load_parameter("flbit::compute_lbit_stats"      , flbit::compute_lbit_stats);
     dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
+    dmrg_config.load_parameter("flbit::save_swap_gates"         , flbit::save_swap_gates);
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
