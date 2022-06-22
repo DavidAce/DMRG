@@ -767,16 +767,20 @@ void AlgorithmFinite::print_status_full() {
     }
     tools::log->info("Spin components (global X,Y,Z)     = {:.16f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
 
-    tools::finite::measure::expectation_values_xyz(*tensors.state);
-    tools::finite::measure::correlation_matrix_xyz(*tensors.state);
-    tools::finite::measure::structure_factors_xyz(*tensors.state);
-
-    tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}", fmt::join(tenx::span(tensors.state->measurements.expectation_values_sx.value()), ", "));
-    tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}", fmt::join(tenx::span(tensors.state->measurements.expectation_values_sy.value()), ", "));
-    tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}", fmt::join(tenx::span(tensors.state->measurements.expectation_values_sz.value()), ", "));
-    tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_x.value());
-    tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_y.value());
-    tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_z.value());
+    if(status.algo_type == AlgorithmType::xDMRG) {
+        tools::finite::measure::expectation_values_xyz(*tensors.state);
+        tools::finite::measure::correlation_matrix_xyz(*tensors.state);
+        tools::finite::measure::structure_factors_xyz(*tensors.state);
+        tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}",
+                         fmt::join(tenx::span(tensors.state->measurements.expectation_values_sx.value()), ", "));
+        tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}",
+                         fmt::join(tenx::span(tensors.state->measurements.expectation_values_sy.value()), ", "));
+        tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}",
+                         fmt::join(tenx::span(tensors.state->measurements.expectation_values_sz.value()), ", "));
+        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_x.value());
+        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_y.value());
+        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_z.value());
+    }
 
     tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
