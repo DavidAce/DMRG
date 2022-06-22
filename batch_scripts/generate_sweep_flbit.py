@@ -65,9 +65,9 @@ for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x
         "flbit::bond_max"                    : "1024",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
-        "flbit::time_final_real"             : "1e10",
+        "flbit::time_final_real"             : "1e14",
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "100",
+        "flbit::time_num_steps"              : "150",
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1
