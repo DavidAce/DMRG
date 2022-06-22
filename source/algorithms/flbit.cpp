@@ -563,6 +563,11 @@ void flbit::transform_to_real_basis() {
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
 
+    if(tools::log->level() <= spdlog::level::debug) {
+        tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
+        tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
+    }
+
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
         // Double check the transform operation
@@ -592,6 +597,12 @@ void flbit::transform_to_lbit_basis() {
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
         for(const auto &u : layer) u.unmark_as_used();
     [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
+
+    if(tools::log->level() <= spdlog::level::debug) {
+        tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
+        tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
+    }
+
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug_swap");
         // Double check the that transform operation backwards is equal to the original state
@@ -647,6 +658,7 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
             frange = {settings::model::lbit::f_mixer};
         }
         if(not urange.empty() and not frange.empty()) {
+            tools::log->info("Computing the lbit characteristic length-scale");
             auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
             h5file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
             h5file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");

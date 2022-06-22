@@ -39,9 +39,10 @@ class MpsSite {
 
     [[nodiscard]] bool                          is_real() const;
     [[nodiscard]] bool                          has_nan() const;
+    [[nodiscard]] bool                          is_normalized(double prec = 1e-10) const;
     void                                        assert_validity() const;
     void                                        assert_dimensions() const;
-    void                                        assert_identity() const;
+    void                                        assert_normalized(double prec = 1e-10) const;
     [[nodiscard]] bool                          isCenter() const;
     [[nodiscard]] bool                          has_L() const;
     [[nodiscard]] bool                          has_M() const;

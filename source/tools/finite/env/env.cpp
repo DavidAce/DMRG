@@ -108,7 +108,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                     mpsL.stash_S(S, -1, mpsR.get_position());
                 }
                 mpsR.take_stash(mpsL);
-                if constexpr(settings::debug) mpsL.assert_identity();
+                if constexpr(settings::debug) mpsL.assert_normalized();
 
                 // Make mpsR normalized
                 {
@@ -184,7 +184,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                     mpsR.stash_S(S, -1, mpsL.get_position());
                 }
                 mpsL.take_stash(mpsR);
-                if constexpr(settings::debug) mpsR.assert_identity();
+                if constexpr(settings::debug) mpsR.assert_normalized();
 
                 // Make mpsL normalized
                 {
@@ -310,7 +310,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                     mpsL.stash_S(S, -1, mpsR.get_position());
                 }
                 mpsR.take_stash(mpsL);
-                if constexpr(settings::debug) mpsL.assert_identity();
+                if constexpr(settings::debug) mpsL.assert_normalized();
 
                 // Make mpsR normalized
                 {
@@ -379,7 +379,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                     mpsR.stash_S(S, -1, mpsL.get_position());
                 }
                 mpsL.take_stash(mpsR);
-                if constexpr(settings::debug) mpsR.assert_identity();
+                if constexpr(settings::debug) mpsR.assert_normalized();
 
                 // Make mpsL normalized
                 {

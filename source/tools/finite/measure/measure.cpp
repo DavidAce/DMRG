@@ -64,31 +64,13 @@ size_t tools::finite::measure::length(const StateFinite &state) { return state.g
 double tools::finite::measure::norm(const StateFinite &state, bool full) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
-    auto   t_chi = tid::tic_scope("norm");
-    if(not full and state.is_normalized_on_all_sites()) {
+    auto   t_norm = tid::tic_scope("norm");
+    if(not full) {
         // We know the all sites are normalized. We can check that the current position is normalized
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
         const auto &mps = state.get_mps_site(pos);
         tools::log->trace("Measuring norm using site {} with dimensions {}", pos, mps.dimensions());
         norm = tools::common::contraction::contract_mps_norm(mps.get_M());
-    } else if(not full and state.is_normalized_on_non_active_sites() and not state.active_sites.empty()) {
-        tools::log->trace("Measuring norm using active sites {}", state.active_sites);
-        Eigen::Tensor<cplx, 2> chain;
-        Eigen::Tensor<cplx, 2> temp;
-        bool                   first = true;
-        for(const auto &pos : state.active_sites) {
-            const Eigen::Tensor<cplx, 3> &M = state.get_mps_site(pos).get_M();
-            if(first) {
-                chain = tools::common::contraction::contract_mps_partial(M, {0, 1});
-                first = false;
-                continue;
-            }
-            temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-            temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
-
-            chain = temp;
-        }
-        norm = std::abs(tenx::MatrixMap(chain).trace());
     } else {
         tools::log->trace("Measuring norm on full chain");
         Eigen::Tensor<cplx, 2> chain;
@@ -108,7 +90,6 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         }
         norm = std::abs(tenx::MatrixMap(chain).trace());
     }
-
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm);
     state.measurements.norm = norm;
     return state.measurements.norm.value();

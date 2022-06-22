@@ -56,10 +56,10 @@ namespace svd {
         solver();
         solver(const svd::settings &svd_settings);
         solver(std::optional<svd::settings> svd_settings);
-        double                          threshold      = 1e-12; // Singular value threshold
-        double                          threshold_tr   = 1e-12; // Truncation error threshold
-        size_t                          switchsize_bdc = 16;    // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
-        size_t                          switchsize_rnd = 1024;  // Use Randomized SVD algorithm when rows < switchsize_bdc and BDC otherwise
+        double                          threshold      = 1e-8; // Singular value threshold
+        double                          threshold_tr   = 1e-8; // Truncation error threshold
+        size_t                          switchsize_bdc = 16;   // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
+        size_t                          switchsize_rnd = 1024; // Use Randomized SVD algorithm when rows < switchsize_bdc and BDC otherwise
         SVDLib                          svd_lib        = SVDLib::lapacke;
         bool                            use_bdc        = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize_bdc
         bool                            save_fail      = false;

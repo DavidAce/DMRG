@@ -211,50 +211,6 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     if(spin_prod != multisite_mps.dimension(0))
         throw except::runtime_error("merge_multisite_mps: multisite mps dim0 {} != spin_prod {}", multisite_mps.dimension(0), spin_prod);
 
-    // Hold L on the edge in case we need to convert AL to A or LB to B
-    //    std::optional<stash<Eigen::Tensor<cplx, 1>>> ll_edge = std::nullopt;
-    //    std::optional<stash<Eigen::Tensor<cplx, 1>>> lr_edge = std::nullopt;
-    //    if(num::cmp_greater_equal(center_position, sites.back())) {
-    //        // In this case all sites will become A or AC type.
-    //        // Then we need to store the last L (the one that was included when constructing the multisite theta).
-    //        // This is the L to the right of the last mps in "sites"
-    //        auto        pos_back = sites.back();
-    //        auto        pos_next = sites.back() + 1;
-    //        const auto &mps_back = state.get_mps_site(pos_back);
-    //        if(mps_back.isCenter())
-    //            lr_edge = {mps_back.get_LC(), mps_back.get_truncation_error_LC(), pos_back};
-    //        else if(mps_back.get_label() == "B")
-    //            lr_edge = {mps_back.get_L(), mps_back.get_truncation_error(), pos_back};
-    //        else if(pos_next < state.get_length()) {
-    //            // In this case we know mps_back == A and that the next site can be
-    //            // either A or AC, but should not be a B (that would be an error).
-    //            const auto &mps_next = state.get_mps_site(pos_next);
-    //            if(mps_next.get_label() != "B")
-    //                lr_edge = {mps_next.get_L(), mps_next.get_truncation_error(), pos_back};
-    //            else
-    //                throw except::logic_error("merge_multisite_mps: wrong label [{}] on mps_next | expected A or AC", mps_next.get_label());
-    //        }
-    //    }
-    //    if(num::cmp_less(center_position, sites.back())) {
-    //        // In this case all sites will become B type
-    //        // Then we need to store the L on the left of all sites in multisite_mps.
-    //        auto        pos_frnt = sites.front();
-    //        auto        pos_prev = sites.front() - 1;
-    //        const auto &mps_frnt = state.get_mps_site(pos_frnt);
-    //        if(mps_frnt.get_label() != "B")
-    //            ll_edge = {mps_frnt.get_L(), mps_frnt.get_truncation_error(), pos_frnt}; // This one becomes LC on left-move if mps_frnt is AC now
-    //        else if(pos_prev > 0) {
-    //            const auto &mps_prev = state.get_mps_site(pos_prev);
-    //            // In this case we know that mps_frnt is B type, therefore mps_prev must be AC or B
-    //            if(mps_prev.isCenter())
-    //                ll_edge = {mps_prev.get_LC(), mps_prev.get_truncation_error_LC(), pos_frnt};
-    //            else if(mps_prev.get_label() == "B")
-    //                ll_edge = {mps_prev.get_L(), mps_prev.get_truncation_error(), pos_frnt};
-    //            else
-    //                throw except::logic_error("merge_multisite_mps: wrong label [{}] on mps_prev | expected AC or B", mps_prev.get_label());
-    //        }
-    //    }
-
     // Hold LC if moving. This should be placed in an L-slot later
     std::optional<stash<Eigen::Tensor<cplx, 1>>> lc_move = std::nullopt;
     if(center_position != current_position and current_position >= 0) {
@@ -313,40 +269,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     for(auto &mps_src : mps_list) {
         auto  pos     = mps_src.get_position();
         auto &mps_tgt = state.get_mps_site(pos);
-        //        tools::log->info("merge_multisite_mps: fusing src {} --> tgt {} | ll {} | lr {} | lc {}",
-        //                         mps_src.get_tag(), mps_tgt.get_tag(),
-        //                         ll_edge and ll_edge->pos_dst == pos,
-        //                         lr_edge and lr_edge->pos_dst == pos,
-        //                         lc_move and lc_move->pos_dst == pos
-        //                         );
-        //        // Now, for split v2, multiply L⁻¹ to generate either A or B from LGL.
-        //        if(mps_src.get_label() == "AL") {
-        //            tools::log->info("merge_multisite_mps: converting AL to A at pos {} | center {} | sites {}", pos, center_position, sites);
-        //            if(lr_edge and lr_edge->pos_dst == pos) {
-        //                mps_src.convert_AL_to_A(lr_edge->data);
-        //            } else {
-        //                Eigen::Tensor<cplx, 1> LR(1);
-        //                LR.setConstant(1.0);
-        //                mps_src.convert_AL_to_A(LR);
-        //            }
-        //            // Now it's possible that mps_src is also supposed to become an AC. Then lr_edge has LC.
-        //            if(num::cmp_equal(pos, center_position)) mps_src.set_LC(lr_edge->data, lr_edge->error);
-        //        }
-        //        if(mps_src.get_label() == "LB") {
-        //            tools::log->info("merge_multisite_mps: converting LB to B at pos {} | center {} | sites {}", pos, center_position, sites);
-        //            if(ll_edge and ll_edge->pos_dst == pos) {
-        //                mps_src.convert_LB_to_B(ll_edge->data);
-        //            } else {
-        //                Eigen::Tensor<cplx, 1> LL(1);
-        //                LL.setConstant(1.0);
-        //                mps_src.convert_LB_to_B(LL);
-        //            }
-        //            // Now it's possible that the site left of mps_src is also supposed to become an AC. Then ll_edge has LC.
-        //            if(num::cmp_equal(pos - 1, center_position) and ll_edge->pos_dst == pos) {
-        //                auto &mps_left = state.get_mps_site(pos - 1);
-        //                mps_left.set_LC(ll_edge->data, ll_edge->error);
-        //            }
-        //        }
+
         // inject lc_move if there is any waiting
         if(lc_move and pos == lc_move->pos_dst) { mps_src.set_L(lc_move->data, lc_move->error); }
 
@@ -354,8 +277,21 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         state.tag_site_normalized(pos, true); // Fused site is normalized
 
         // Now take stashes for neighboring sites
-        if(pos < state.get_length() - 1) state.get_mps_site(pos + 1).take_stash(mps_src); // Take stashed S,V (and possibly LC)
-        if(pos > 0) state.get_mps_site(pos - 1).take_stash(mps_src);                      // Take stashed U,S (and possibly LC)
+        // Note that if U or V is pushed onto the next site, that site may lose its normalization!
+        // This is usually not a problem since that site is probably updated next anyway.
+        // Marking it as non-normalized lets us determine whether a full normalization is required later.
+        if(pos < state.get_length() - 1) {
+            bool has_V_stash_for_nbr = mps_src.get_V_stash() and mps_src.get_V_stash()->pos_dst == pos + 1;
+            bool ruins_normalization = has_V_stash_for_nbr and not mps_tgt.isCenter(); // It's ok to push V stash from AC to B.
+            if(ruins_normalization) state.tag_site_normalized(pos + 1, false);
+            state.get_mps_site(pos + 1).take_stash(mps_src); // Take stashed S,V (and possibly LC)
+        }
+        if(pos > 0) {
+            bool has_U_stash_for_nbr = mps_src.get_U_stash() and mps_src.get_U_stash()->pos_dst == pos - 1;
+            bool ruins_normalization = has_U_stash_for_nbr and not state.get_mps_site(pos - 1).isCenter(); // It's ok to U push stash from B to AC.
+            if(ruins_normalization) state.tag_site_normalized(pos - 1, false);
+            state.get_mps_site(pos - 1).take_stash(mps_src); // Take stashed U,S (and possibly LC)
+        }
         mps_src.drop_stash(); // Discard whatever is left stashed at the edge (this normalizes the state)
     }
 
@@ -364,10 +300,10 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         throw except::logic_error("Center position mismatch {} ! {}\nLabels: {}", current_position, center_position, state.get_labels());
     state.clear_cache(LogPolicy::QUIET);
     state.clear_measurements(LogPolicy::QUIET);
-    if constexpr(settings::debug) {
+    if constexpr(settings::debug or settings::debug_merge) {
         auto t_dbg = tid::tic_scope("debug");
-        state.assert_validity();
-        for(auto &pos : sites) state.get_mps_site(pos).assert_identity();
+        for(const auto &pos : sites) state.get_mps_site(pos).assert_validity();
+        for(const auto &pos : sites) state.get_mps_site(pos).assert_normalized();
     }
     return moves;
 }
@@ -379,9 +315,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
 
     if(norm_policy == NormPolicy::IFNEEDED) {
         // We may only go ahead with a normalization if its really needed.
-        auto norm = tools::finite::measure::norm(state);
-        if constexpr(settings::debug) tools::log->trace("Norm: {:.16f}", norm);
-        if(std::abs(norm - 1.0) < settings::precision::max_norm_error) return false;
+        if(state.is_normalized_on_all_sites()) return false; // Return false, i.e. did "not" perform a normalization.
         // Otherwise we just do the normalization
     }
 
@@ -404,28 +338,28 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
         // Make sure that the bond dimension does not increase faster than spin_dim per site
         long bond_new = std::min(bond_lim.value(), mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR()));
         tools::finite::mps::merge_multisite_mps(state, mps.get_M(), {static_cast<size_t>(pos)}, pos, bond_new, svd_settings, LogPolicy::QUIET);
-        if constexpr(settings::debug) mps.assert_identity();
     }
     // Now we can move around the chain until we return to the original status
     while(steps++ < 2 or not state.position_is_at(pos, dir, cnt)) move_center_point_single_site(state, bond_lim.value(), svd_settings);
     state.clear_measurements();
     state.clear_cache();
-    auto norm = tools::finite::measure::norm(state);
-    if(tools::log->level() <= spdlog::level::debug)
-        tools::log->debug("Normalized  state | new norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", norm, pos, dir, bond_lim.value(),
-                          tools::finite::measure::bond_dimensions(state));
-    if(std::abs(norm - 1) > settings::precision::max_norm_error) {
+    if(not state.is_normalized_on_all_sites()) {
         for(const auto &mps : state.mps_sites) {
-            tools::log->warn("L ({}) | norm {:.16f} \n {}", mps->get_position(), tenx::VectorMap(mps->get_L()).norm(), mps->get_L());
-            if(mps->isCenter()) tools::log->warn("LC({}) | norm {:.16f} \n {}", mps->get_position(), tenx::VectorMap(mps->get_LC()).norm(), mps->get_LC());
-            if constexpr(settings::debug) mps->assert_identity();
+            bool normalized_tag = state.get_normalization_tags()[mps->get_position<size_t>()];
+            tools::log->warn("{} | is_normalized {:<7} | L norm {:.16f} | norm tag {}", mps->get_tag(), mps->is_normalized(),
+                             tenx::VectorMap(mps->get_L()).norm(), normalized_tag);
+            if(mps->isCenter()) tools::log->warn("LC({}) | norm {:.16f}", mps->get_position(), tenx::VectorMap(mps->get_LC()).norm());
         }
-        throw except::runtime_error("Norm too far from unity: {:.16f} | max allowed norm error {}", norm, settings::precision::max_norm_error);
+        throw except::runtime_error("normalize_state: normalization failed. state norm {:.16f} | max allowed norm error {:.2e} | norm tags {}",
+                                    tools::finite::measure::norm(state), settings::precision::max_norm_error, state.get_normalization_tags());
     }
+
     if(bond_lim and state.find_largest_bond() > bond_lim.value())
         throw except::logic_error("normalize_state: a bond dimension exceeds bond limit: {} > {}", tools::finite::measure::bond_dimensions(state),
                                   bond_lim.value());
-
+    if(tools::log->level() <= spdlog::level::debug)
+        tools::log->debug("Normalized  state | new norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
+                          dir, bond_lim.value(), tools::finite::measure::bond_dimensions(state));
     return true;
 }
 
@@ -567,21 +501,32 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
                                     std::optional<svd::settings> svd_settings) {
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
     if(gate.was_used()) throw except::runtime_error("gate was already used: pos {} ", gate.pos);
-    if(gm == GateMove::AUTO) gm = GateMove::OFF; // Most likely it does not pay to enable moving of center site. This is best reserved for swap gates.
+    if(gm == GateMove::AUTO) gm = GateMove::ON; // Most likely it does not pay to enable moving of center site. This is best reserved for swap gates.
+    auto old_posC = state.get_position<long>();
+    auto old_svds = svd::solver::count.value();
+
+    if constexpr(settings::debug_gates)
+        tools::log->trace("apply_gate: status  pos {} | gm {} | center {} | svds {} | labels {}", gate.pos, enum2sv(gm), old_posC, old_svds,
+                          state.get_labels());
     if(gm == GateMove::ON) {
-        // Applying gate operators will automatically move around the center position IF either posL-1, posL or posR is a center.
+        // When gm == GateMove::ON, applying swap operators automatically moves the center position onto posL. This can
+        // happen IFF the center position is already on one of posL-1, posL or posR.
         // To get this process going we need to move the center into one of these positions first.
-        // Note 1: posL and posR here refers to the front/back of gate.pos.
-        // Note 2: the apply operation will set the current center the left-most site.
-        auto current_position = state.get_position<long>();
-        long move_to_position = std::clamp<long>(current_position, static_cast<long>(gate.pos.front()) - 1l, static_cast<long>(gate.pos.back()));
-        auto steps            = move_center_point_to_pos_dir(state, move_to_position, 1, bond_lim, svd_settings);
+        // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise they are front/back of gate.pos.
+        // Note 2: both the swap and apply operations will set the current center on the left-most site of the gate.
+        auto tgt_gate = gate.pos;
+        auto tgt_posC = std::clamp<long>(old_posC, static_cast<long>(tgt_gate.front()) - 1l, static_cast<long>(tgt_gate.back()));
+        auto num_step = move_center_point_to_pos_dir(state, tgt_posC, 1, bond_lim, svd_settings);
         if constexpr(settings::debug_gates)
-            if(steps > 0) tools::log->info("apply_gate: moved center point {} -> {} | {} steps", current_position, move_to_position, steps);
+            if(num_step > 0)
+                tools::log->trace("apply_gate: moved   pos {} | gm {} | center {} -> {} | tgt {} | steps {} | svds {}", gate.pos, enum2sv(gm), old_posC,
+                                  tgt_posC, tgt_gate, num_step, svd::solver::count.value());
+        old_posC = tgt_posC; // Update the current position
     }
 
-    auto center_position = gm == GateMove::ON ? static_cast<long>(gate.pos.front()) : state.get_position<long>();
-    auto multisite_mps   = state.get_multisite_mps(gate.pos);
+    // Generate the mps object on which to apply the gate
+    auto multisite_mps = state.get_multisite_mps(gate.pos);
+    // Apply the gate
     {
         auto t_apply = tid::tic_token("apply");
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
@@ -589,12 +534,15 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
             temp.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
         else
             temp.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+        gate.mark_as_used();
     }
+    if constexpr(settings::debug_gates) tools::log->trace("apply_gate: applied pos {} | gm {} | svds {}", gate.pos, enum2sv(gm), svd::solver::count.value());
 
-    gate.mark_as_used();
+    auto new_posC = gm == GateMove::ON ? static_cast<long>(gate.pos.front()) : old_posC;
+    tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, new_posC, bond_lim, svd_settings, LogPolicy::QUIET);
     if constexpr(settings::debug_gates)
-        tools::log->trace("apply_gate: merging gate {} dims {} | center {}", gate.pos, multisite_mps.dimensions(), center_position);
-    tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, center_position, bond_lim, svd_settings, LogPolicy::QUIET);
+        tools::log->trace("apply_gate: merged  pos {} | gm {} | center {} -> {} | svds {}", gate.pos, enum2sv(gm), old_posC, new_posC,
+                          svd::solver::count.value());
 }
 
 void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool reverse,
@@ -622,7 +570,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
 
     state.clear_cache(LogPolicy::QUIET);
     Eigen::Tensor<cplx, 3> gate_mps;
-    for(const auto &idx : gate_sequence) { apply_gate(state, gates.at(idx), gate_mps, reverse, bond_lim, gm, svd_settings); }
+    for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, reverse, bond_lim, gm, svd_settings);
 
     move_center_point_to_pos_dir(state, 0, 1, bond_lim, svd_settings);
     tools::finite::mps::normalize_state(state, bond_lim, svd_settings, NormPolicy::IFNEEDED);
@@ -752,7 +700,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
                           get_site_idx<size_t>(sites, {posL, posR}), enum2sv(gm), old_pos, new_pos, old_svd, svd::solver::count.value(), state.get_labels(),
                           sites);
         if constexpr(settings::debug)
-            for(const auto &mps : state.mps_sites) mps->assert_identity();
+            for(const auto &mps : state.mps_sites) mps->assert_normalized();
     }
 }
 
@@ -760,9 +708,9 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
                                          std::vector<size_t> &sites, GateMove gm, std::optional<svd::settings> svd_settings) {
     if(gate.was_used()) return;
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
-    auto old_pos = state.get_position<long>();
-    auto old_svd = svd::solver::count.value();
-    auto pos_idx = get_site_idx<size_t>(sites, gate.pos); // Site on the state where the gate positions are currently located
+    auto old_posC = state.get_position<long>();
+    auto old_svds = svd::solver::count.value();
+    auto pos_idxs = get_site_idx<size_t>(sites, gate.pos); // Site on the state where the gate positions are currently located
 
     // pos_idx has the indices pointing to where the gate positions are located on the chain right now, after many swaps.
     // Example:
@@ -773,8 +721,8 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     // be a vector of elements with increments by 1 for the gate to be applicable.
 
     if constexpr(settings::debug_gates)
-        tools::log->trace("apply_swap_gate: status  pos {} | idx {} | gm {} | center {} | svds {} | labels {} | sites {}", gate.pos, pos_idx, enum2sv(gm),
-                          old_pos, old_svd, state.get_labels(), sites);
+        tools::log->trace("apply_swap_gate: status  pos {} | idx {} | gm {} | center {} | svds {} | labels {} | sites {}", gate.pos, pos_idxs, enum2sv(gm),
+                          old_posC, old_svds, state.get_labels(), sites);
 
     if(gm == GateMove::ON) {
         // When gm == GateMove::ON, applying swap operators automatically moves the center position onto posL. This can
@@ -783,29 +731,30 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise they are front/back of gate.pos.
         // Note 2: both the swap and apply operations will set the current center on the left-most site of the gate.
         auto tgt_gate = gate.swaps.empty() ? gate.pos : std::vector<size_t>{gate.swaps[0].posL, gate.swaps[0].posR};
-        auto tgt_posC = std::clamp<long>(old_pos, static_cast<long>(tgt_gate.front()) - 1l, static_cast<long>(tgt_gate.back()));
-        auto steps    = move_center_point_to_pos_dir(state, tgt_posC, 1, bond_lim, svd_settings);
+        auto tgt_posC = std::clamp<long>(old_posC, static_cast<long>(tgt_gate.front()) - 1l, static_cast<long>(tgt_gate.back()));
+        auto num_step = move_center_point_to_pos_dir(state, tgt_posC, 1, bond_lim, svd_settings);
         if constexpr(settings::debug_gates)
-            if(steps > 0)
-                tools::log->trace("apply_swap_gate: moved center point into place {} -> {} | pos {} | tgt {} | steps {} | svds {}", old_pos, tgt_posC, gate.pos,
-                                  tgt_gate, steps, svd::solver::count.value());
+            if(num_step > 0)
+                tools::log->trace("apply_swap_gate: moved  pos {} | gm {} | center {} -> {} | tgt {} | steps {} | svds {}", gate.pos, enum2sv(gm), old_posC,
+                                  tgt_posC, tgt_gate, num_step, svd::solver::count.value());
+        old_posC = tgt_posC; // Update the current position
     }
 
     // with i<j, start by applying all the swap operators S(i,j), which move site i to j-1
     for(const auto &s : gate.swaps) swap_sites(state, s.posL, s.posR, sites, gm, svd_settings);
 
     // Refresh the site indices of the gate after having swapped a lot.
-    pos_idx = get_site_idx<size_t>(sites, gate.pos);
+    pos_idxs = get_site_idx<size_t>(sites, gate.pos);
 
     // Check that idx elements increase by one
-    if(pos_idx.size() >= 2) {
-        for(size_t i = 1; i < pos_idx.size(); i++) {
-            if(pos_idx[i] != pos_idx[i - 1] + 1) throw except::logic_error("Invalid pos idx {} | gate.pos {} | sites {}", pos_idx, gate.pos, sites);
+    if(pos_idxs.size() >= 2) {
+        for(size_t i = 1; i < pos_idxs.size(); i++) {
+            if(pos_idxs[i] != pos_idxs[i - 1] + 1) throw except::logic_error("Invalid pos idx {} | gate.pos {} | sites {}", pos_idxs, gate.pos, sites);
         }
     }
 
     // Generate the mps object on which to apply the gate
-    auto multisite_mps = state.get_multisite_mps(pos_idx);
+    auto multisite_mps = state.get_multisite_mps(pos_idxs);
 
     // Apply the gate
     {
@@ -818,15 +767,15 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         gate.mark_as_used();
     }
     if constexpr(settings::debug_gates)
-        tools::log->trace("apply_swap_gate: applied pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idx, enum2sv(gm), sites,
+        tools::log->trace("apply_swap_gate: applied pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::count.value());
 
     // It's best to do an AC-B type of SVD split, so we put the center poisition on the left-most site when GateMove::ON
-    long center_position = gm == GateMove::ON ? static_cast<long>(pos_idx.front()) : old_pos;
+    long new_posC = gm == GateMove::ON ? static_cast<long>(pos_idxs.front()) : old_posC;
 
-    tools::finite::mps::merge_multisite_mps(state, temp, pos_idx, center_position, bond_lim, svd_settings, LogPolicy::QUIET);
+    tools::finite::mps::merge_multisite_mps(state, temp, pos_idxs, new_posC, bond_lim, svd_settings, LogPolicy::NORMAL);
     if constexpr(settings::debug_gates)
-        tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idx, enum2sv(gm), sites,
+        tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::count.value());
 
     // Now swap site j-1 in reverse back to i
@@ -834,8 +783,8 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
 
     // Sanity check
     if constexpr(settings::debug_gates) {
-        tools::log->trace("apply_swap_gate: return  pos {} | gm {} | center {} -> {} | svds {} | labels {} | sites {}", gate.pos, enum2sv(gm), old_pos,
-                          center_position, svd::solver::count.value(), state.get_labels(), sites);
+        tools::log->trace("apply_swap_gate: return  pos {} | gm {} | center {} -> {} | svds {} | labels {} | sites {}", gate.pos, enum2sv(gm), old_posC,
+                          new_posC, svd::solver::count.value(), state.get_labels(), sites);
     }
 }
 
@@ -846,7 +795,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
     // Sanity check
     if constexpr(settings::debug_gates) {
-        for(const auto &mps : state.mps_sites) mps->assert_identity();
+        for(const auto &mps : state.mps_sites) mps->assert_normalized();
         tools::log->trace("before applying swap gates: labels {}", state.get_labels());
     }
 
@@ -862,12 +811,12 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
         }
     }
 
-    auto                   svd_count = svd::solver::count.value();
-    auto                   sites     = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
-    Eigen::Tensor<cplx, 3> temp;
-    size_t                 skip_count = 0;
-    size_t                 swap_count = 0;
-    size_t                 rwap_count = 0;
+    auto                    sites = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
+    Eigen::Tensor<cplx, 3>  temp;
+    [[maybe_unused]] auto   svds_count = svd::solver::count.value();
+    [[maybe_unused]] size_t skip_count = 0;
+    [[maybe_unused]] size_t swap_count = 0;
+    [[maybe_unused]] size_t rwap_count = 0;
 
     auto gate_sequence = generate_gate_sequence(state, gates, reverse);
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
@@ -880,8 +829,11 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     move_center_point_to_pos_dir(state, 0, 1, bond_lim, svd_settings);
     tools::finite::mps::normalize_state(state, bond_lim, svd_settings, NormPolicy::IFNEEDED);
 
-    svd_count = svd::solver::count.value() - svd_count;
-    //    if constexpr(settings::debug_gates or settings::debug)
-    tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
-                      rwap_count, swap_count + rwap_count, skip_count, svd_count, t_swapgate->get_last_interval());
+    if constexpr(settings::debug or settings::debug_gates) {
+        auto t_dbg = tid::tic_scope("debug");
+        svds_count = svd::solver::count.value() - svds_count;
+        tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
+                          rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
+        for(const auto &mps : state.mps_sites) mps->assert_normalized();
+    }
 }

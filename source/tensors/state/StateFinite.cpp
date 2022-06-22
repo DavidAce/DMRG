@@ -504,7 +504,38 @@ void StateFinite::tag_site_normalized(size_t pos, bool tag) const {
 
 bool StateFinite::is_normalized_on_all_sites() const {
     if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot check normalization status on all sites, size mismatch in site list");
-    return std::all_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
+
+    auto        normalized_tags = std::all_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
+    auto        normalized_fast = true;
+    auto        normalized_full = true;
+    auto        normalized_site = true;
+    std::string msg             = fmt::format("tags {}", normalized_tags);
+    if(normalized_tags) {
+        // We don't need this check if the tags already told us the state isn't normalized
+        auto norm       = tools::finite::measure::norm(*this, false);
+        normalized_fast = std::abs(norm - 1.0) <= settings::precision::max_norm_error;
+        msg += fmt::format(" | fast {}", normalized_fast);
+    }
+    if constexpr(settings::debug) {
+        if(normalized_tags and normalized_fast) {
+            auto norm       = tools::finite::measure::norm(*this, true);
+            normalized_full = std::abs(norm - 1.0) <= settings::precision::max_norm_error;
+            msg += fmt::format(" | full {}", normalized_full);
+        }
+        if(normalized_tags and normalized_fast and normalized_full) {
+            std::string site;
+            for(const auto &mps : mps_sites) {
+                if(not mps->is_normalized(settings::precision::max_norm_error)) {
+                    normalized_site = false;
+                    break;
+                    site = fmt::format("({}) ", mps->get_position());
+                }
+            }
+            msg += fmt::format(" | site {}{}", site, normalized_site);
+        }
+    }
+    tools::log->trace("{} normalized: {}", get_name(), msg);
+    return normalized_tags and normalized_fast and normalized_full and normalized_site;
 }
 
 bool StateFinite::is_normalized_on_any_sites() const {
@@ -535,3 +566,4 @@ std::vector<size_t> StateFinite::get_active_ids() const {
     for(const auto &pos : active_sites) ids.emplace_back(get_mps_site(pos).get_unique_id());
     return ids;
 }
+const std::vector<bool> &StateFinite::get_normalization_tags() const { return tag_normalized_sites; }

@@ -138,8 +138,9 @@ class StateFinite {
 
     void tag_active_sites_normalized(bool tag) const;
     void tag_all_sites_normalized(bool tag) const;
-    void tag_site_normalized(size_t pos, bool tag) const;
-    bool is_normalized_on_all_sites() const;
+    void                     tag_site_normalized(size_t pos, bool tag) const;
+    const std::vector<bool> &get_normalization_tags() const;
+    bool                     is_normalized_on_all_sites() const;
     bool is_normalized_on_any_sites() const;
     bool is_normalized_on_active_sites() const;
     bool is_normalized_on_non_active_sites() const;

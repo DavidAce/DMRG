@@ -166,9 +166,11 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         }
     }
 
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+
     if constexpr(settings::debug or settings::debug_projection) {
-        state.clear_measurements();
-        state.clear_cache();
         state.tag_all_sites_normalized(false); // This operation denormalizes all sites
         tools::log->debug("Num mpos             after  applying mpos: {}", mpos.size());
         tools::log->debug("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
@@ -177,11 +179,9 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         tools::log->debug("Entanglement entropy after  applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
         if(tenx::hasNaN(tools::finite::measure::entanglement_entropies(state)))
             throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
+        state.clear_measurements();
+        state.clear_cache();
     }
-
-    state.clear_measurements();
-    state.clear_cache();
-    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
 void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<long> bond_lim,

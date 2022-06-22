@@ -74,7 +74,26 @@ Eigen::DSizes<long, 3> MpsSite::dimensions() const { return Eigen::DSizes<long, 
 
 bool MpsSite::is_real() const { return tenx::isReal(get_M_bare()) and tenx::isReal(get_L()); }
 bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) or tenx::hasNaN(get_L()); }
+bool MpsSite::is_normalized(double prec) const {
+    auto t_dbg = tid::tic_token("is_normalized");
+    if(isCenter() or get_label() == "AC") {
+        auto norm = tools::common::contraction::contract_mps_norm(get_M());
+        return std::abs(norm - 1) <= prec;
+    }
+    if(get_label() == "A") {
+        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 1});
+        return tenx::isIdentity(id, prec);
+    }
+    if(get_label() == "B") {
+        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
+        return tenx::isIdentity(id, prec);
+    }
+    throw except::runtime_error("MpsSite::is_identity: unexpected label: {}", get_label());
+}
+
 void MpsSite::assert_validity() const {
+    if(LC and get_label() != "AC") throw except::runtime_error("MpsSite::assert_validity: Found LC at pos {} with label {}", get_position(), get_label());
+    if(not LC and get_label() == "AC") throw except::runtime_error("MpsSite::assert_validity: Missing LC at pos {} with label {}", get_position(), get_label());
     if(has_nan()) throw except::runtime_error("MpsSite::assert_validity(): MPS (M or L) at position {} has NaN's", get_position());
     assert_dimensions();
 }
@@ -96,24 +115,10 @@ void MpsSite::assert_dimensions() const {
     }
 }
 
-void MpsSite::assert_identity() const {
-    auto t_dbg = tid::tic_token("assert_identity");
-    if(get_label() == "B") {
-        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
-        if(not tenx::isIdentity(id, 1e-10)) {
-            throw except::runtime_error("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id);
-        }
-    } else {
-        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 1});
-        if(not tenx::isIdentity(id, 1e-10)) {
-            throw except::runtime_error("MpsSite: {0}^dagger {0} is not identity at pos {1}: \n{2}", get_label(), get_position(), id);
-        }
-    }
-    if(isCenter() or get_label() == "AC") {
-        auto norm = tools::common::contraction::contract_mps_norm(get_M());
-        if(std::abs(norm - 1) > 1e-10)
-            throw except::runtime_error("MpsSite: {0}^dagger {0} is not unity at pos {1}: {2:.16f}", get_label(), get_position(), norm);
-    }
+void MpsSite::assert_normalized(double prec) const {
+    auto t_dbg = tid::tic_token("assert_normalized");
+    if(not is_normalized(prec))
+        throw except::runtime_error("MpsSite::assert_normalized({0:.2e}): {1}^dagger {1} is not normalized at pos {2}", prec, get_label(), get_position());
 }
 
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
