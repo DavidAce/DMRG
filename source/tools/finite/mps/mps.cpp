@@ -315,6 +315,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
 
     if(norm_policy == NormPolicy::IFNEEDED) {
         // We may only go ahead with a normalization if its really needed.
+        tools::log->trace("normalize_state: checking if needed");
         if(state.is_normalized_on_all_sites()) return false; // Return false, i.e. did "not" perform a normalization.
         // Otherwise we just do the normalization
     }
@@ -326,7 +327,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
     auto cnt   = pos >= 0;
     auto steps = 0;
     if(tools::log->level() <= spdlog::level::debug)
-        tools::log->debug("Normalizing state | old norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
+        tools::log->debug("normalize_state: old local norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
                           dir, bond_lim.value(), tools::finite::measure::bond_dimensions(state));
 
     // Start with SVD at the current center position
@@ -358,7 +359,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<long>
         throw except::logic_error("normalize_state: a bond dimension exceeds bond limit: {} > {}", tools::finite::measure::bond_dimensions(state),
                                   bond_lim.value());
     if(tools::log->level() <= spdlog::level::debug)
-        tools::log->debug("Normalized  state | new norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
+        tools::log->debug("normalize_state: new local norm = {:.16f} | pos {} | dir {} | bond_lim {} | bond dims {}", tools::finite::measure::norm(state), pos,
                           dir, bond_lim.value(), tools::finite::measure::bond_dimensions(state));
     return true;
 }
@@ -573,8 +574,6 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, reverse, bond_lim, gm, svd_settings);
 
     move_center_point_to_pos_dir(state, 0, 1, bond_lim, svd_settings);
-    tools::finite::mps::normalize_state(state, bond_lim, svd_settings, NormPolicy::IFNEEDED);
-
     svd_count = (svd::solver::count ? svd::solver::count.value() : 0ll) - svd_count;
     tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
 }
@@ -827,13 +826,9 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
         apply_swap_gate(state, gate, temp, reverse, bond_lim, sites, gm, svd_settings);
     }
     move_center_point_to_pos_dir(state, 0, 1, bond_lim, svd_settings);
-    tools::finite::mps::normalize_state(state, bond_lim, svd_settings, NormPolicy::IFNEEDED);
-
     if constexpr(settings::debug or settings::debug_gates) {
-        auto t_dbg = tid::tic_scope("debug");
         svds_count = svd::solver::count.value() - svds_count;
         tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
                           rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
-        for(const auto &mps : state.mps_sites) mps->assert_normalized();
     }
 }

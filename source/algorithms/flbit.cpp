@@ -271,6 +271,14 @@ void flbit::single_flbit_step() {
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_lim);
     }
+    if(tools::log->level() <= spdlog::level::debug) {
+        tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
+        tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
+    }
+    if constexpr(settings::debug) {
+        auto t_dbg = tid::tic_scope("debug");
+        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
+    }
     t_evo.toc();
     transform_to_real_basis();
 
@@ -562,14 +570,15 @@ void flbit::transform_to_real_basis() {
     tools::finite::mps::normalize_state(*tensors.state, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-
     if(tools::log->level() <= spdlog::level::debug) {
         tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
         tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
     }
-
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
+        // Check normalization
+        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
+
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
@@ -602,7 +611,10 @@ void flbit::transform_to_lbit_basis() {
         tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
         tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
     }
-
+    if constexpr(settings::debug) {
+        auto t_dbg = tid::tic_scope("debug");
+        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
+    }
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug_swap");
         // Double check the that transform operation backwards is equal to the original state
