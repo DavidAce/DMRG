@@ -241,7 +241,7 @@ void flbit::single_flbit_step() {
     /*!
      * \fn void single_DMRG_step(std::string ritz)
      */
-    tools::log->debug("Starting fLBIT: iter {} | Δt = {}", status.iter, status.delta_t);
+    tools::log->debug("Starting fLBIT: iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(status.delta_t), std::imag(status.delta_t));
     if(not state_lbit) throw except::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
@@ -260,29 +260,27 @@ void flbit::single_flbit_step() {
     if(settings::flbit::save_swap_gates) write_state_swap_gates_to_file(*state_lbit, time_swap_gates_2site);
 
     if(settings::flbit::use_swap_gates) {
-        tools::log->debug("Applying time evolution swap gates Δt = {}", status.delta_t);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.bond_lim); // L16: false 16 | true 31 svds
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_lim, GateMove::ON,
-                                             svdset);                                                     // L16: false 657 | true 344 svds
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.bond_lim); // L16: false 42 | true 71 svds
+        tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.bond_lim);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_lim, GateMove::ON, svdset);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.bond_lim);
     } else {
-        tools::log->debug("Applying time evolution gates Δt = {}", status.delta_t);
+        tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
         tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.bond_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_lim);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_lim);
     }
-    if(tools::log->level() <= spdlog::level::debug) {
-        tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
-        tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
-    }
-    if constexpr(settings::debug) {
-        auto t_dbg = tid::tic_scope("debug");
-        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
-    }
+    tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
+
     t_evo.toc();
     transform_to_real_basis();
 
     if constexpr(settings::debug) {
+        if(tools::log->level() <= spdlog::level::debug) {
+            tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
+            tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
+        }
+        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
         if(settings::model::model_size <= 6) {
             if(Upsi_ed.dimension(0) != time_gates_Lsite[0].op.dimension(1))
                 throw except::logic_error("Upsi_ed may not have been initialized: Upsi_ed: {}", Upsi_ed.dimensions());
@@ -507,7 +505,7 @@ void flbit::create_hamiltonian_swap_gates() {
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_2body)) {
         if(tenx::isZero(ham.op)) {
-            tools::log->info("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix.", idx, ham.pos);
+            tools::log->debug("hamiltonian 2-body swap gate {} for sites {} is almost a zero-matrix.", idx, ham.pos);
             tools::log->debug("  Time evo. swap gates exp(-itH) ~ identity are ignored until t is very large");
             tools::log->trace("  This can happen if r = J2_ctof = {} is too large.", J2_ctof);
             tools::log->trace("  With the current settings:");
@@ -530,7 +528,7 @@ void flbit::update_time_evolution_gates() {
     if(time_points.empty()) create_time_points();
     if(not ready_hamiltonian_gates) throw except::logic_error("Hamiltonian gates have not been constructed");
     update_time_step();
-    tools::log->debug("Updating time evolution gates to iter {} | Δt = {}", status.iter, status.delta_t);
+    tools::log->debug("Updating time evolution gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(status.delta_t), std::imag(status.delta_t));
     time_gates_1site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_1body, settings::flbit::time_gate_id_threshold);
     time_gates_2site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_2body, settings::flbit::time_gate_id_threshold);
     time_gates_3site = qm::lbit::get_time_evolution_gates(status.delta_t, ham_gates_3body, settings::flbit::time_gate_id_threshold);
@@ -541,7 +539,8 @@ void flbit::update_time_evolution_swap_gates() {
     if(time_points.empty()) create_time_points();
     if(not ready_hamiltonian_swap_gates) throw except::logic_error("Hamiltonian swap gates have not been constructed");
     update_time_step();
-    tools::log->debug("Updating time evolution swap gates to iter {} | Δt = {}", status.iter, status.delta_t);
+    tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(status.delta_t),
+                      std::imag(status.delta_t));
     time_swap_gates_1site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_1body, settings::flbit::time_gate_id_threshold);
     time_swap_gates_2site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_2body, settings::flbit::time_gate_id_threshold);
     time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body, settings::flbit::time_gate_id_threshold);
@@ -570,12 +569,13 @@ void flbit::transform_to_real_basis() {
     tools::finite::mps::normalize_state(*tensors.state, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-    if(tools::log->level() <= spdlog::level::debug) {
-        tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
-        tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
-    }
+
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
+        if(tools::log->level() <= spdlog::level::debug) {
+            tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
+            tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
+        }
         // Check normalization
         for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
 
@@ -605,18 +605,17 @@ void flbit::transform_to_lbit_basis() {
         tools::finite::mps::apply_gates(*state_lbit, layer, true, status.bond_lim); // L16: true 28 | false 29 svds
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
         for(const auto &u : layer) u.unmark_as_used();
-    [[maybe_unused]] auto has_normalized = tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
 
-    if(tools::log->level() <= spdlog::level::debug) {
-        tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
-        tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
-    }
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
+        if(tools::log->level() <= spdlog::level::debug) {
+            tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
+            tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
+        }
+        // Check normalization
         for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
-    }
-    if constexpr(settings::debug) {
-        auto t_dbg = tid::tic_scope("debug_swap");
+
         // Double check the that transform operation backwards is equal to the original state
         auto state_real_debug = *state_lbit;
         for(auto &layer : unitary_gates_2site_layers)

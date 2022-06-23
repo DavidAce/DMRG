@@ -440,7 +440,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
         tools::log->warn("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
         tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
-    tools::log->trace("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+    //    tools::log->trace("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
     return probability;
 }
 
