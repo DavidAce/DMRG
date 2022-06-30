@@ -764,94 +764,86 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         return p > 0 ? sum + p * std::log(p) : sum;
     };
 
-    std::vector<double>             number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
-    std::vector<Amplitude<From::A>> cacheA;
-    std::vector<Amplitude<From::B>> cacheB;
-    Eigen::Tensor<double, 2>        probabilities(state_llen + 1, state_llen + 1);
+    std::vector<double>      number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
+    [[maybe_unused]] size_t  cacheA_size;
+    [[maybe_unused]] size_t  cacheB_size;
+    Eigen::Tensor<double, 2> probabilities(state_llen + 1, state_llen + 1);
     probabilities.setZero();
 
     tools::log->enable_backtrace(200);
-    for(const auto &mps : state_copy.mps_sites) {
-        auto pos = mps->get_position<long>();
-        auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
-        if(pos > state_pos) break;               // Only compute up to and including AC
-        if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
-        auto amplitudes       = generate_amplitude_list_rrpv<From::A>(state_copy, pos);
-        auto probability      = compute_probability_rrpv(state_copy, pos, amplitudes, cacheA);
-        auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
-        number_entropies[idx] = std::abs(number_entropy);
-        //        cache                 = amplitudes; // Cache the amplitudes for the next step
-        //        if constexpr(settings::debug_numen)
-        auto                psize           = static_cast<long>(probability.size());
-        std::array<long, 2> offset          = {0, pos + 1};
-        std::array<long, 2> extent          = {psize, 1};
-        probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
+    {
+        std::vector<Amplitude<From::A>> cache;
+        for(const auto &mps : state_copy.mps_sites) {
+            auto pos = mps->get_position<long>();
+            auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
+            if(pos > state_pos) break;               // Only compute up to and including AC
+            if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
+            auto amplitudes       = generate_amplitude_list_rrpv<From::A>(state_copy, pos);
+            auto probability      = compute_probability_rrpv(state_copy, pos, amplitudes, cache);
+            auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
+            number_entropies[idx] = std::abs(number_entropy);
+            //        cache                 = amplitudes; // Cache the amplitudes for the next step
+            //        if constexpr(settings::debug_numen)
+            auto                psize           = static_cast<long>(probability.size());
+            std::array<long, 2> offset          = {0, pos + 1};
+            std::array<long, 2> extent          = {psize, 1};
+            probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
+        }
+        cacheA_size = cache.size();
     }
-    [[maybe_unused]] auto cacheA_size = cacheA.size();
-    cacheA.clear();
-    cacheA.shrink_to_fit();
-
-    for(const auto &mps : iter::reverse(state_copy.mps_sites)) {
-        auto pos = mps->get_position<long>();
-        auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
-        if(pos <= state_pos + 1) break;      // No need to compute at AC again so add +1
-        if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
-        auto amplitudes       = generate_amplitude_list_rrpv<From::B>(state_copy, pos);
-        auto probability      = compute_probability_rrpv(state_copy, pos, amplitudes, cacheB);
-        auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
-        number_entropies[idx] = std::abs(number_entropy);
-        //        cache                 = amplitudes; // Cache the amplitudes for the next step
-        //        if constexpr(settings::debug_numen)
-        auto                psize           = static_cast<long>(probability.size());
-        std::array<long, 2> offset          = {0, pos};
-        std::array<long, 2> extent          = {psize, 1};
-        probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
+    {
+        std::vector<Amplitude<From::B>> cache;
+        for(const auto &mps : iter::reverse(state_copy.mps_sites)) {
+            auto pos = mps->get_position<long>();
+            auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
+            if(pos <= state_pos + 1) break;      // No need to compute at AC again so add +1
+            if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
+            auto amplitudes                     = generate_amplitude_list_rrpv<From::B>(state_copy, pos);
+            auto probability                    = compute_probability_rrpv(state_copy, pos, amplitudes, cache);
+            auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
+            number_entropies[idx]               = std::abs(number_entropy);
+            auto                psize           = static_cast<long>(probability.size());
+            std::array<long, 2> offset          = {0, pos};
+            std::array<long, 2> extent          = {psize, 1};
+            probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
+        }
+        cacheB_size = cache.size();
     }
-    [[maybe_unused]] auto cacheB_size = cacheB.size();
-
-    //
-    //    if constexpr(settings::debug_numen) {
-    //        for(const auto &[idx, prob] : iter::enumerate(probabilities)) {
-    //            // Sanity check on probabilities
-    //            auto p_sum = std::accumulate(prob.begin(), prob.end(), 0.0);
-    //            tools::log->trace("idx {:>2} | p(n) = {:20.16f} = {:20.16f}", idx, fmt::join(prob, ", "), p_sum);
-    //        }
-    //    }
 
     tools::log->disable_backtrace();
     state.measurements.number_entropies        = number_entropies;
     state.measurements.number_entropy_midchain = number_entropies.at(state.get_length<size_t>() / 2);
     state.measurements.number_entropy_current  = number_entropies.at(state.get_position<size_t>() + 1);
     state.measurements.number_probabilities    = probabilities;
-    tools::log->debug("Number entropies: {:.4f}", fmt::join(number_entropies, ", "));
-    if constexpr(settings::debug_cache) tools::log->debug("Cache sizes: A {} | B {}", cacheA_size, cacheB_size);
+    tools::log->debug("Number entropies (cchA {} cchB {} | time {:.3e} s): {:.4f}", cacheA_size, cacheB_size, t_num->get_last_interval(),
+                      fmt::join(number_entropies, ", "));
     return state.measurements.number_entropies.value();
-    /*
-     * RRPV IMPROVEMENTS
-     *
-        rrpv L = 20
-        [2022-06-30 03:00:14][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121,
-     0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000 [2022-06-30 03:00:14][fLBIT][ debug  ] Cache sizes: A 169 | B 279
+    /* clang-format off */
+/*
+ * RRPV IMPROVEMENTS
+ *
+    rrpv L = 20
+    [2022-06-30 03:00:14][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121, 0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000
+    [2022-06-30 03:00:14][fLBIT][ debug  ] Cache sizes: A 169 | B 279
 
-        non rrpv L = 20
-        [2022-06-30 03:01:45][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121,
-     0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000 [2022-06-30 03:01:45][fLBIT][ debug  ] Cache sizes: A 1022 | B 279
+    non rrpv L = 20
+    [2022-06-30 03:01:45][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121, 0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000
+    [2022-06-30 03:01:45][fLBIT][ debug  ] Cache sizes: A 1022 | B 279
 
-        rrpv both A and B L = 20
-        [2022-06-30 03:04:21][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121,
-     0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000 [2022-06-30 03:04:21][fLBIT][ debug  ] Cache sizes: A 169 | B 125
+    rrpv both A and B L = 20
+    [2022-06-30 03:04:21][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121, 0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000
+    [2022-06-30 03:04:21][fLBIT][ debug  ] Cache sizes: A 169 | B 125
 
-        rrpv both A and B L = 32
-        [2022-06-30 03:06:20][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206,
-     0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400,
-     0.0287, 0.0000 [2022-06-30 03:06:20][fLBIT][ debug  ] Cache sizes: A 1904 | B 1446
+    rrpv both A and B L = 32
+    [2022-06-30 03:06:20][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206, 0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400, 0.0287, 0.0000
+    [2022-06-30 03:06:20][fLBIT][ debug  ] Cache sizes: A 1904 | B 1446
 
-        non rrpv L = 32
-        [2022-06-30 03:14:18][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206,
-     0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400,
-     0.0287, 0.0000 [2022-06-30 03:14:18][fLBIT][ debug  ] Cache sizes: A 50443 | B 15339
+    non rrpv L = 32
+    [2022-06-30 03:14:18][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206, 0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400, 0.0287, 0.0000
+    [2022-06-30 03:14:18][fLBIT][ debug  ] Cache sizes: A 50443 | B 15339
 
-    */
+*/
+    /* clang-format on */
 }
 
 double tools::finite::measure::number_entropy_current(const StateFinite &state) {
