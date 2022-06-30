@@ -18,10 +18,11 @@ option(DMRG_ENABLE_LTO "Enable link time optimization" OFF)
 option(DMRG_ENABLE_PCH "Enable precompiled headers to speed up compilation" OFF)
 option(DMRG_ENABLE_CCACHE "Enable ccache to speed up compilation" OFF)
 option(DMRG_ENABLE_COVERAGE "Enable test coverage" OFF)
-option(DMRG_PROFILE_BUILD "Enable build-time profiling with -ftime-trace (study results with ClangBuildAnalyzer)" OFF)
+option(DMRG_PROFILE_BUILD "Enable -ftime-trace (inspect with ClangBuildAnalyzer)" OFF)
 option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
 option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
 option(DMRG_ENABLE_DOCS "Build documentation" OFF)
+option(DMRG_CMAKE_DEBUG "Extra information during CMake configuration" OFF)
 option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared libraries" ON)
 
 # Make an "enum" for valid package managers
@@ -94,11 +95,12 @@ endif()
 
 
 
-# Print summary of CMake configuration
-include(cmake/PrintTargetInfo.cmake)
-print_project_summary(DMRG++)
-write_project_summary(DMRG++)
-
+if (DMRG_CMAKE_DEBUG)
+    # Print summary of CMake configuration
+    include(cmake/PrintTargetInfo.cmake)
+    print_project_summary(DMRG++)
+    write_project_summary(DMRG++)
+endif ()
 
 ###################
 ### INFORMATION ###
