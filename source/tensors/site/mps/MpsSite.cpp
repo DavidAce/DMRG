@@ -116,13 +116,11 @@ void MpsSite::assert_dimensions() const {
 }
 
 void MpsSite::assert_normalized(double prec) const {
-    auto t_dbg = tid::tic_token("assert_normalized");
     if(not is_normalized(prec))
         throw except::runtime_error("MpsSite::assert_normalized({0:.2e}): {1}^dagger {1} is not normalized at pos {2}", prec, get_label(), get_position());
 }
 
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
-    auto t_get = tid::tic_scope("get_M_bare", tid::level::detailed);
     if(M) {
         if(M.value().size() == 0) throw except::runtime_error("MpsSite::get_M_bare(): M has size 0 at position {}", get_position());
         return M.value();
@@ -149,7 +147,6 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
 }
 
 const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
-    auto t_get = tid::tic_scope("get_L", tid::level::detailed);
     if(L) {
         if constexpr(settings::debug) {
             if(L->size() == 0) throw except::runtime_error("MpsSite::get_L(): L has size 0 at position {} | label {}", get_position(), get_label());
@@ -165,7 +162,6 @@ const Eigen::Tensor<cplx, 1> &MpsSite::get_L() const {
         throw except::runtime_error("MpsSite::get_L(): L has not been set at position {}", get_position());
 }
 const Eigen::Tensor<cplx, 1> &MpsSite::get_LC() const {
-    auto t_get = tid::tic_scope("get_LC", tid::level::detailed);
     if(isCenter()) {
         if(LC->dimension(0) != get_M_bare().dimension(2))
             throw except::runtime_error("MpsSite::get_LC(): M dimensions {} are incompatible with LC dimensions {} at position {}", get_M_bare().dimensions(),
