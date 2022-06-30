@@ -3,8 +3,8 @@
 #include "math/num.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
+#include "qm/spin.h"
 #include "tools/common/log.h"
-
 namespace qm::mpo {
     std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
     /*! Builds the MPO string for measuring  spin on many-body systems.
@@ -34,6 +34,9 @@ namespace qm::mpo {
         Ledge(0, 0, 0) = 1;
         Redge(0, 0, 0) = 1;
         return {MPO, Ledge, Redge};
+    }
+    std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(std::string_view axis) {
+        return qm::mpo::pauli_mpo(spin::half::get_pauli(axis));
     }
 
     std::tuple<std::vector<Eigen::Tensor<cplx, 4>>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix,
