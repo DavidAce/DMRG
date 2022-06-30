@@ -16,8 +16,8 @@
 #include <utility>
 
 namespace settings {
-    inline constexpr bool debug_numen = true;
-    inline constexpr bool debug_cache = true;
+    inline constexpr bool debug_numen = false;
+    inline constexpr bool debug_cache = false;
 }
 
 enum class From { A, B };
@@ -353,8 +353,6 @@ std::vector<size_t> get_random_roundrobin_popcount_vector(size_t num_bits) {
     std::vector<size_t> rrpv;
     size_t              size = 1ul << num_bits;
     rrpv.reserve(size);
-    tools::log->trace("popcount_partitions size: {} | num_bits {} | size {}", popcount_partitions.size(), num_bits, size);
-
     while(true) {
         for(auto &p : popcount_partitions) {
             if(not p.empty()) {
@@ -657,8 +655,7 @@ std::vector<Amplitude<from>> generate_amplitude_list_rrpv(const StateFinite &sta
     auto num_bits  = -1ul;
     if constexpr(from == From::A) { num_bits = static_cast<size_t>(mps_pos) + 1ul; }
     if constexpr(from == From::B) { num_bits = state.get_length<size_t>() - static_cast<size_t>(mps_pos); }
-    auto rrpv = get_random_roundrobin_popcount_vector(num_bits);
-    tools::log->trace("rrpv size: {} | mps_pos {} | num_bits {}", rrpv.size(), mps_pos, num_bits);
+    auto                         rrpv = get_random_roundrobin_popcount_vector(num_bits);
     std::vector<Amplitude<from>> amplitudes;
     amplitudes.reserve(rrpv.size());
     long start_pos = from == From::A ? -1l : state_len;
@@ -779,8 +776,8 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
         if(pos > state_pos) break;               // Only compute up to and including AC
         if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
-        auto amplitudes       = generate_amplitude_list<From::A>(state_copy, pos);
-        auto probability      = compute_probability(state_copy, pos, amplitudes, cacheA);
+        auto amplitudes       = generate_amplitude_list_rrpv<From::A>(state_copy, pos);
+        auto probability      = compute_probability_rrpv(state_copy, pos, amplitudes, cacheA);
         auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
         number_entropies[idx] = std::abs(number_entropy);
         //        cache                 = amplitudes; // Cache the amplitudes for the next step
@@ -799,8 +796,8 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
         if(pos <= state_pos + 1) break;      // No need to compute at AC again so add +1
         if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
-        auto amplitudes       = generate_amplitude_list<From::B>(state_copy, pos);
-        auto probability      = compute_probability(state_copy, pos, amplitudes, cacheB);
+        auto amplitudes       = generate_amplitude_list_rrpv<From::B>(state_copy, pos);
+        auto probability      = compute_probability_rrpv(state_copy, pos, amplitudes, cacheB);
         auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
         number_entropies[idx] = std::abs(number_entropy);
         //        cache                 = amplitudes; // Cache the amplitudes for the next step
@@ -829,6 +826,32 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     tools::log->debug("Number entropies: {:.4f}", fmt::join(number_entropies, ", "));
     if constexpr(settings::debug_cache) tools::log->debug("Cache sizes: A {} | B {}", cacheA_size, cacheB_size);
     return state.measurements.number_entropies.value();
+    /*
+     * RRPV IMPROVEMENTS
+     *
+        rrpv L = 20
+        [2022-06-30 03:00:14][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121,
+     0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000 [2022-06-30 03:00:14][fLBIT][ debug  ] Cache sizes: A 169 | B 279
+
+        non rrpv L = 20
+        [2022-06-30 03:01:45][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121,
+     0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000 [2022-06-30 03:01:45][fLBIT][ debug  ] Cache sizes: A 1022 | B 279
+
+        rrpv both A and B L = 20
+        [2022-06-30 03:04:21][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121,
+     0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000 [2022-06-30 03:04:21][fLBIT][ debug  ] Cache sizes: A 169 | B 125
+
+        rrpv both A and B L = 32
+        [2022-06-30 03:06:20][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206,
+     0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400,
+     0.0287, 0.0000 [2022-06-30 03:06:20][fLBIT][ debug  ] Cache sizes: A 1904 | B 1446
+
+        non rrpv L = 32
+        [2022-06-30 03:14:18][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206,
+     0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400,
+     0.0287, 0.0000 [2022-06-30 03:14:18][fLBIT][ debug  ] Cache sizes: A 50443 | B 15339
+
+    */
 }
 
 double tools::finite::measure::number_entropy_current(const StateFinite &state) {
