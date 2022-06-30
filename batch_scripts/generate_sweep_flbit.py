@@ -15,7 +15,7 @@ location    = "input"
 sites               = [24]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 0.250, 0.100]]
-f                   = [0.300]
+f                   = [0.2500]
 u                   = [5]
 x                   = [0.5]
 r                   = [-1]
@@ -62,12 +62,12 @@ for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x
         "model::lbit::J2_span"               : str_r,
         "model::lbit::f_mixer"               : str_f,
         "model::lbit::u_layer"               : str_u,
-        "flbit::bond_max"                    : "1024",
+        "flbit::bond_max"                    : "2048",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "1e14",
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "150",
+        "flbit::time_num_steps"              : "100",
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1
