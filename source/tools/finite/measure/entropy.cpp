@@ -5,6 +5,7 @@
 #include "general/iter.h"
 #include "math/linalg/matrix.h"
 #include "math/num.h"
+#include "math/rnd.h"
 #include "math/tenx.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
@@ -15,230 +16,275 @@
 #include <utility>
 
 namespace settings {
-    inline constexpr bool debug_numen = false;
+    inline constexpr bool debug_numen = true;
+    inline constexpr bool debug_cache = true;
 }
 
+enum class From { A, B };
+
+template<From from, auto N, bool on = settings::debug_numen>
+[[nodiscard]] inline std::string bits_to_string(const std::bitset<N> &b, [[maybe_unused]] long state_size, long num_bits) {
+    if constexpr(on) {
+        if(tools::log->level() > spdlog::level::trace) return {};
+        if(num_bits < 0l or num::cmp_greater_equal(num_bits, N)) {
+            tools::log->warn("num_bits should be in range [0,{}]. Got {} | bits {}", N, num_bits, b.to_string());
+            return "SEE WARNING";
+        }
+
+        // Extract the relevant bits
+        auto bs = b.to_string().substr(static_cast<std::string::size_type>(N) - static_cast<std::string::size_type>(num_bits));
+
+        if constexpr(from == From::B) {
+            // Print in the original order, from N - state_size + num_bits until the end
+            return std::string{bs.begin(), bs.end()};
+        }
+        if constexpr(from == From::A) {
+            // Print in reverse order,
+            return std::string{bs.rbegin(), bs.rend()};
+        }
+    } else
+        return {};
+}
+
+template<auto N>
+[[nodiscard]] inline bool bits_are_equal(const std::bitset<N> &b1, const std::bitset<N> &b2, long num_bits) {
+    // Example. Let this amplitude be a and the other is o.
+    // Consider two bitsets of 8 bits, and we are checking num_bits == 3:
+    // Then bits 0,1 and 2 need to be identical
+    //     b1 = 00001011
+    //     b2 = 00000011
+    // Shift bits to the left edge with <<
+    //     b1 << (8 - num_bits) = 01100000
+    //     b2 << (8 - num_bits) = 01100000
+    // Compare with the ^ operator and check that all are zero with .none()
+    //     r = (( a << (8 - num_bits) ) ^ (o << (8 - num_bits))) = 00000000
+    //     return r.none()
+    if constexpr(settings::debug or settings::debug_numen)
+        if(num_bits < 0) throw except::runtime_error("num_bits must be in range [0,{}] | Got: {}", N, num_bits);
+    const auto num = static_cast<size_t>(num_bits);
+    return ((b1 << (N - num)) ^ (b2 << (N - num))).none();
+}
+
+template<From from, auto N = 64>
 struct Amplitude {
-    long                                  state_size;          // System size
-    std::bitset<64>                       bits;                // Bits that select spins on each MPS site
-    std::optional<long>                   site = std::nullopt; // MPS site (not Schmidt site!)
-    Eigen::Tensor<StateFinite::Scalar, 1> ampl;                // Accumulates the MPS tensors
-    bool                                  cache_hit = false;   // True if eval was avoided due to cache hit
-    Amplitude(long state_size, std::bitset<64> bits, std::optional<long> site, Eigen::Tensor<StateFinite::Scalar, 1> ampl)
-        : state_size(state_size), bits(bits), site(site), ampl(std::move(ampl)) {}
+    long                                  state_size;        // System size
+    std::bitset<N>                        bits;              // Bits that select spins on each MPS site
+    long                                  pos = -1l;         // MPS site (not Schmidt site!)
+    Eigen::Tensor<StateFinite::Scalar, 1> ampl;              // Accumulates the MPS tensors
+    bool                                  cache_hit = false; // True if eval was avoided due to cache hit
+    Amplitude(long state_size_, long pos_, const std::bitset<64> &bits_, const Eigen::Tensor<StateFinite::Scalar, 1> &ampl_)
+        : state_size(state_size_), bits(bits_), pos(pos_), ampl(ampl_) {
+        if constexpr(from == From::B) pos = state_size;
+    }
 
     public:
-    template<bool on = settings::debug_numen>
-    [[nodiscard]] std::string to_string(const std::bitset<64> &b, long num) const {
-        if constexpr(on) {
-            if(tools::log->level() > spdlog::level::trace) return {};
-            assert(num > 0 and num < 64 and "num should be in range [0,64]");
-            return fmt::format(FMT_STRING("{1:>{0}}"), state_size, b.to_string().substr(b.size() - static_cast<size_t>(num)));
-        } else
-            return {};
-    }
-    template<bool on = settings::debug_numen>
-    [[nodiscard]] std::string to_rstring(const std::bitset<64> &b, long num) const {
-        if constexpr(on) {
-            if(tools::log->level() > spdlog::level::trace) return {};
-            if(num < 0l or num::cmp_greater_equal(num, b.size())) throw except::logic_error("num should be in range [0,{}]", b.size());
-            auto bs = b.to_string().substr(b.size() - static_cast<size_t>(num));
-            return fmt::format(FMT_STRING("{1:<{0}}"), state_size, std::string{bs.rbegin(), bs.rend()});
-        } else
-            return {};
-    }
-
-    template<bool on = settings::debug_numen>
     [[nodiscard]] std::string to_string() const {
-        if(site)
-            return to_string<on>(bits, state_size);
+        if constexpr(from == From::A)
+            return bits_to_string<from>(bits, state_size, pos + 1);
         else
-            return {};
+            return bits_to_string<from>(bits, state_size, state_size - pos);
     }
-    template<bool on = settings::debug_numen>
-    [[nodiscard]] std::string to_rstring() const {
-        if(site)
-            return to_rstring<on>(bits, state_size);
-        else
-            return {};
+    [[nodiscard]] std::string to_string(long num_bits) const { return bits_to_string<from>(bits, state_size, num_bits); }
+
+    [[nodiscard]] bool equal_bitwise(const Amplitude &other, long num_bits) const { return bits_are_equal(bits, other.bits, num_bits); }
+    [[nodiscard]] bool equal_bitwise(const std::bitset<N> &other, long num_bits) const { return bits_are_equal(bits, other, num_bits); }
+    template<typename CacheT>
+    [[nodiscard]] size_t get_idx_from_unsorted_cache(CacheT &cache, long num_bits) {
+        // Let's say the we have a bitset 11011100 and we are looking
+        // for a cache for tgt_pos = 6. Then we look for
+        // 1101110
+        // in the cache.
+        long num_bits_cache = -1; // How many bits to compare
+        for(const auto &[i, c] : iter::enumerate(cache)) {
+            if constexpr(from == From::A) num_bits_cache = c.pos + 1;
+            if constexpr(from == From::B) num_bits_cache = c.state_size - c.pos;
+            if(num_bits_cache != num_bits) continue;
+            if(bits_are_equal(this->bits, c.bits, num_bits)) return i;
+        }
+        return -1ul;
     }
-    template<bool on = settings::debug_numen>
-    [[nodiscard]] std::string to_string(bool reverse) const {
-        if(site)
-            if(reverse)
-                return to_rstring<on>(bits, state_size);
-            else
-                return to_string<on>(bits, state_size);
-        else
-            return {};
-    }
-
-    [[nodiscard]] bool contains(const Amplitude &other, long tgt_pos) const {
-        // Example. Let this amplitude be a and the other is o.
-        // Consider a bitset of 8 bits, and we are checking tgt_pos == 3:
-        // Then bits 0,1 and 2 need to be identical
-        //     a.bits = 00001011
-        //     o.bits = 00000011
-        // Shift bits to the left edge with <<
-        //     a << (8 - tgt_pos) = 01100000
-        //     o << (8 - tgt_pos) = 01100000
-        // Compare with the ^ operator and check that all are zero with .none()
-        //     r = (( a << (8 - tgt_pos) ) ^ (o << (8 - tgt_pos))) = 00000000
-        //     return r.none()
-        const auto &a   = this->bits;
-        const auto &o   = other.bits;
-        const auto  pos = static_cast<size_t>(tgt_pos);
-        return ((a << (a.size() - pos)) ^ (o << (o.size() - pos))).none();
-    }
-
-    void eval_from_A(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &cache) {
-        if(not site or site.value() < tgt_pos) {
-            auto t_evalA = tid::tic_scope("evalA");
-
-            // There are missing mps in the amplitude. Let's add them
-            // First, check if it is already available in the amplitudes database
-            // We can look it up by transforming the bits between 0 to bit_site to an integer
-            // and use that as the index on amplitudes
-            long state_pos = state.get_position<long>();
-            if(tgt_pos > state_pos) throw except::logic_error("eval_from_A: expected mps_site ({}) <= state_pos ({})", tgt_pos, state_pos);
-
-            if(tgt_pos > 0 and not cache.empty()) {
-                // There is a chance to continue building an existing amplitude
-                auto            t_check    = tid::tic_scope("cache_check");
-                std::bitset<64> bits_index = 0;
-                for(size_t i = 0; i < static_cast<size_t>(tgt_pos); i++) bits_index[i] = bits[i];
-                if(cache.size() > bits_index.to_ulong()) {
-                    const auto &c = cache.at(bits_index.to_ulong()); // A cache item
-                    if(c.site and c.site.value() <= tgt_pos) {
-                        // Cache hit! No need to compute the amplitude from scratch, just append the next site
-                        auto t_hit = tid::tic_scope("cache_hit");
-                        site       = c.site;
-                        ampl       = c.ampl;
-                        cache_hit  = c.site.value() + 1 == tgt_pos;
-                        if constexpr(settings::debug_numen)
-                            tools::log->trace(FMT_STRING("from A: cache hit: [site {:>2} | n {:>2} | bits {}] target [site {:>2} | n {:>2} | bits {}"),
-                                              c.site.value(), bits_index.count(), to_rstring(bits_index, c.site.value() + 1), tgt_pos, bits.count(),
-                                              to_rstring(bits, tgt_pos + 1));
-                    }
+    template<typename CacheT>
+    [[nodiscard]] size_t get_root_idx_from_unsorted_cache(CacheT &cache, long tgt_pos) {
+        // Let's say the we have a bitset 11011100 and we are looking
+        // for a cache to make tgt_pos = 6. Then we look for
+        // 1101110, then (i.e. already computed)
+        // 110111, then
+        // 11011, and so on
+        // in the cache.
+        if constexpr(from == From::A) {
+            for(long p = tgt_pos; p >= 0; --p) {
+                long num_bits = p + 1;
+                for(const auto &[i, c] : iter::enumerate(cache)) {
+                    if(c.pos != p) continue;
+                    bool eq = bits_are_equal(this->bits, c.bits, num_bits);
+                    //                    if constexpr(settings::debug_cache) {
+                    //                        auto tb = this->to_string(num_bits);
+                    //                        auto cb = c.to_string(num_bits);
+                    //                        tools::log->trace("comparison idx {} | a {} == c {} {} | pos {}", i, tb, cb, eq, p);
+                    //                    }
+                    if(eq) return i;
                 }
             }
-
-            if(ampl.size() == 0) { // Initialize
-                ampl.resize(1);
-                ampl.setConstant(1.0);
-                cache_hit = false;
-            }
-            Eigen::Tensor<StateFinite::Scalar, 1> temp;
-            // Contract the missing mps up to, but not including, the last mps at mps_site
-            for(const auto &mps : state.mps_sites) {
-                long pos = mps->get_position<long>();
-                if(site and site.value() >= pos) continue; // Fast-forward to the missing sites
-                if(tgt_pos < pos) break;                   // Contract up to the mps at tgt_pos
-                if(ampl.size() != mps->get_chiL())
-                    throw except::runtime_error("eval() failed for site {}: "
-                                                "mismatch in ampl({}) with size = {} and mps({}) with chiL = {} | bits {}",
-                                                tgt_pos, site.value(), ampl.size(), pos, mps->get_chiL(), to_rstring());
-
-                long                size = mps->get_chiR();
-                std::array<long, 3> off  = {bits[static_cast<size_t>(pos)], 0, 0}; // This selects which bit gets appended to ampl
-                std::array<long, 3> ext  = {1, mps->get_chiL(), mps->get_chiR()};
-                // ampl never has a trailing Lambda
-                auto t_con = tid::tic_scope("contract");
-                if constexpr(settings::debug_numen)
-                    tools::log->trace(FMT_STRING("from A: cntrction: pos  {:>2} | tgt {:>2} | bits {}"), pos, tgt_pos, to_rstring(bits, pos));
-
-                temp.resize(size);
-                temp.device(tenx::omp::getDevice()) = ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
-                t_con.toc();
-                ampl = temp;
-
-                // Update the current site
-                site = pos;
-            }
-            if(not site) throw except::logic_error("ampl has undefined site: should be {}", tgt_pos);
-            if(site.value() != tgt_pos) throw except::logic_error("site ({}) != mps_site ({})", site.value(), tgt_pos);
         }
-    }
-
-    void eval_from_B(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &cache) {
-        // Start by calculating the mps sites that should be included in the amplitude
-        // Remember that in eval_from_B we calculate the amplitude starting from the right-end of the chain
-        if(not site or site.value() > tgt_pos) {
-            auto t_evalB = tid::tic_scope("evalB");
-
-            // There are missing mps in the amplitude. Let's add them
-            // First, check if it is already available in the amplitudes database
-            // We can look it up by transforming the bits between 0 to bit_site to an integer
-            // and use that as the index on amplitudes
-            long state_len = state.get_length<long>();
-            long state_pos = state.get_position<long>();
-            long mps_rsite = state_len - 1 - tgt_pos;
-            if(tgt_pos <= state_pos) throw except::logic_error("eval_from_B: expected mps_site ({}) > state_pos ({})", tgt_pos, state_pos);
-
-            if(tgt_pos < state_len - 1 and not cache.empty()) {
-                // There is a chance to continue building an existing amplitude
-                auto            t_check    = tid::tic_scope("cache_check");
-                std::bitset<64> bits_index = 0;
-                for(size_t i = 0; i < static_cast<size_t>(mps_rsite); i++) bits_index[i] = bits[i];
-                if(cache.size() > bits_index.to_ulong()) {
-                    const auto &c = cache.at(bits_index.to_ulong()); // A cache item
-                    if(c.site and c.site.value() > tgt_pos) {
-                        // Cache hit! No need to compute the amplitude from scratch
-                        auto t_hit = tid::tic_scope("cache_hit");
-                        site       = c.site;
-                        ampl       = c.ampl;
-                        cache_hit  = c.site.value() + 1 == tgt_pos;
-                        if constexpr(settings::debug_numen)
-                            tools::log->trace(FMT_STRING("from B: cache hit: [sites {:>2} | n {:>2} | bits {}] target [sites {:>2} | n {:>2} | bits {}"),
-                                              c.site.value(), bits_index.count(), to_string(bits_index, c.site.value() + 1), tgt_pos, bits.count(),
-                                              to_string(bits, tgt_pos + 1));
-                    }
+        if constexpr(from == From::B) {
+            for(long p = tgt_pos; p < state_size; ++p) {
+                long num_bits = state_size - p;
+                for(const auto &[i, c] : iter::enumerate(cache)) {
+                    if(c.pos != p) continue;
+                    bool eq = bits_are_equal(this->bits, c.bits, num_bits);
+                    //                    if constexpr(settings::debug_cache) {
+                    //                        auto tb = this->to_string(num_bits);
+                    //                        auto cb = c.to_string(num_bits);
+                    //                        tools::log->trace("comparison idx {} | a {} == c {} {} | pos {}", i, tb, cb, eq, p);
+                    //                    }
+                    if(eq) return i;
                 }
             }
-
-            if(ampl.size() == 0) { // Initialize
-                ampl.resize(1);
-                ampl.setConstant(1.0);
-                cache_hit = false;
-            }
-            Eigen::Tensor<StateFinite::Scalar, 1> temp;
-            // Contract the missing mps
-            for(const auto &mps : iter::reverse(state.mps_sites)) {
-                long pos = mps->get_position<long>();
-                if(site and site.value() <= pos) continue; // Fast-forward to the missing sites
-                if(tgt_pos > pos) break;                   // Contract up to the mps at mps_pos
-                if(ampl.size() != mps->get_chiR())
-                    throw except::runtime_error("eval() failed for site {}: "
-                                                "mismatch in ampl({}) with size = {} and mps({}) with chiR = {} | bits {}",
-                                                tgt_pos, site.value(), ampl.size(), pos, mps->get_chiL(), to_string());
-                long                mps_rpos = state_len - 1 - pos;
-                long                size     = mps->get_chiL();
-                std::array<long, 3> off      = {bits[static_cast<size_t>(mps_rpos)], 0, 0}; // This selects which bit gets prepended to ampl
-                std::array<long, 3> ext      = {1, mps->get_chiL(), mps->get_chiR()};
-
-                // ampl never has a trailing Lambda
-                auto t_con = tid::tic_scope("contract");
-                if constexpr(settings::debug_numen)
-                    tools::log->trace(FMT_STRING("from B: cntrction: pos  {:>2} | tgt {:>2} | bits {}"), pos, tgt_pos, to_string(bits, state_len - pos));
-                temp.resize(size);
-                temp.device(tenx::omp::getDevice()) = mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
-                t_con.toc();
-                ampl = temp;
-                // Update the current site
-                site = pos;
-
-                // Add to cache
-            }
-            if(not site) throw except::logic_error("ampl has undefined site: should be {}", tgt_pos);
-            if(site.value() != tgt_pos) throw except::logic_error("site ({}) != mps_site ({})", site.value(), tgt_pos);
         }
+        return -1ul;
     }
+    void eval(const StateFinite &state, long tgt_pos, std::vector<Amplitude<from>> &cache) {
+        if constexpr(from == From::A) {
+            if(pos < tgt_pos) {
+                auto t_evalA = tid::tic_scope("evalA");
+                // There are missing mps in the amplitude. Let's add them
+                // First, check if it is already available in the amplitudes database
+                // We can look it up by transforming the bits between 0 to bit_site to an integer
+                // and use that as the index on amplitudes
+                long state_pos = state.get_position<long>();
+                if(tgt_pos > state_pos) throw except::logic_error("eval_from_A: expected mps_site ({}) <= state_pos ({})", tgt_pos, state_pos);
 
-    void eval(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &cache) {
-        if(tgt_pos <= state.get_position<long>())
-            eval_from_A(state, tgt_pos, cache);
-        else
-            eval_from_B(state, tgt_pos, cache);
+                size_t cidx = get_root_idx_from_unsorted_cache(cache, tgt_pos);
+                if(cidx != -1ul) {
+                    auto &c   = cache[cidx];
+                    pos       = c.pos;
+                    ampl      = c.ampl;
+                    cache_hit = true;
+                    if constexpr(settings::debug_numen or settings::debug_cache) {
+                        tools::log->trace("from A: cache hit: found [pos {:>2} | n {:>2} | bits {}] target [pos {:>2} | n {:>2} | bits {}]", c.pos,
+                                          c.bits.count(), c.to_string(), tgt_pos, bits.count(), to_string(tgt_pos + 1));
+                    }
+                } else if(ampl.size() == 0) {
+                    // Initialize
+                    ampl.resize(1);
+                    ampl.setConstant(1.0);
+                    pos       = -1l;
+                    cache_hit = false;
+                    if constexpr(settings::debug_numen or settings::debug_cache)
+                        tools::log->trace("from A: cache miss: could not find bits to build target [pos {:>2} | n {:>2} | bits {}]", tgt_pos, bits.count(),
+                                          to_string(tgt_pos + 1));
+                }
+
+                auto                                  t_con = tid::tic_scope("contract");
+                Eigen::Tensor<StateFinite::Scalar, 1> temp;
+                // Contract the missing mps up to, but not including, the last mps at mps_site
+                for(const auto &mps : state.mps_sites) {
+                    long mps_pos = mps->template get_position<long>();
+                    if(pos >= mps_pos) continue; // Fast-forward to the missing sites
+                    if(tgt_pos < mps_pos) break; // Contract up to the mps at tgt_pos
+                    if(ampl.size() != mps->get_chiL())
+                        throw except::runtime_error("eval() failed for site {}: mismatch in ampl({}) with size = {} and mps({}) with chiL = {} | bits {}",
+                                                    tgt_pos, pos, ampl.size(), mps_pos, mps->get_chiL(), to_string());
+
+                    long                size = mps->get_chiR();
+                    std::array<long, 3> off  = {bits[static_cast<size_t>(mps_pos)], 0, 0}; // This selects which bit gets appended to ampl
+                    std::array<long, 3> ext  = {1, mps->get_chiL(), mps->get_chiR()};
+                    // ampl never has a trailing Lambda
+                    if constexpr(settings::debug_numen)
+                        tools::log->trace("from A: contraction: pos {:>2} | tgt {:>2} | bits {} -> {}", mps_pos, tgt_pos, to_string(), to_string(mps_pos + 1));
+
+                    temp.resize(size);
+                    temp.device(tenx::omp::getDevice()) =
+                        ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
+                    ampl = temp;    // Update the current amplitude
+                    pos  = mps_pos; // Update the current site
+
+                    // Add to cache
+                    cidx = get_idx_from_unsorted_cache(cache, pos + 1);
+                    if(cidx == -1ul) {
+                        // Append
+                        if constexpr(settings::debug_cache) tools::log->trace("from A: appended to cache: {}", to_string(pos + 1));
+                        cache.emplace_back(*this);
+                    } else
+                        throw except::runtime_error("from A: ampl already in cache at idx {}: {}", cidx, cache[cidx].to_string());
+                }
+                if(pos != tgt_pos) throw except::logic_error("pos ({}) != tgt_pos ({})", pos, tgt_pos);
+            }
+        }
+        if constexpr(from == From::B) {
+            // Start by calculating the mps sites that should be included in the amplitude
+            // Remember that in eval_from_B we calculate the amplitude starting from the right-end of the chain
+            if(pos > tgt_pos) {
+                auto t_evalB = tid::tic_scope("evalB");
+
+                // There are missing mps in the amplitude. Let's add them
+                // First, check if it is already available in the amplitudes database
+                // We can look it up by transforming the bits between 0 to bit_site to an integer
+                // and use that as the index on amplitudes
+                long state_pos = state.get_position<long>();
+                if(tgt_pos <= state_pos) throw except::logic_error("eval_from_B: expected mps_site ({}) > state_pos ({})", tgt_pos, state_pos);
+
+                size_t cidx = get_root_idx_from_unsorted_cache(cache, tgt_pos);
+                if(cidx != -1ul) {
+                    auto &c   = cache[cidx];
+                    pos       = c.pos;
+                    ampl      = c.ampl;
+                    cache_hit = true;
+                    if constexpr(settings::debug_numen or settings::debug_cache) {
+                        tools::log->trace("from B: cache hit: found [pos {:>2} | n {:>2} | bits {}] target [pos {:>2} | n {:>2} | bits {}]", c.pos,
+                                          c.bits.count(), c.to_string(), tgt_pos, bits.count(), to_string(state_size - tgt_pos));
+                    }
+                } else if(ampl.size() == 0) {
+                    // Initialize
+                    ampl.resize(1);
+                    ampl.setConstant(1.0);
+                    pos       = state_size;
+                    cache_hit = false;
+                    if constexpr(settings::debug_numen or settings::debug_cache) {
+                        tools::log->trace("from B: cache miss: could not find bits to build target [pos {:>2} | n {:>2} | bits {}]", tgt_pos, bits.count(),
+                                          to_string(state_size - tgt_pos));
+                        for(const auto &[i, c] : iter::enumerate(cache)) tools::log->trace("  {}: {}", i, c.to_string());
+                    }
+                }
+
+                auto                                  t_con = tid::tic_scope("contract");
+                Eigen::Tensor<StateFinite::Scalar, 1> temp;
+                // Contract the missing mps
+                for(const auto &mps : iter::reverse(state.mps_sites)) {
+                    long mps_pos = mps->template get_position<long>();
+                    if(pos <= mps_pos) continue; // Fast-forward to the missing sites
+                    if(tgt_pos > mps_pos) break; // Contract up to the mps at mps_pos
+                    if(ampl.size() != mps->get_chiR())
+                        throw except::runtime_error("eval() failed for site {}: mismatch in ampl({}) with size = {} and mps({}) with chiR = {} | bits {}",
+                                                    tgt_pos, pos, ampl.size(), mps_pos, mps->get_chiL(), to_string());
+
+                    long                mps_rpos = state_size - 1 - mps_pos;
+                    long                size     = mps->get_chiL();
+                    std::array<long, 3> off      = {bits[static_cast<size_t>(mps_rpos)], 0, 0}; // This selects which bit gets prepended to ampl
+                    std::array<long, 3> ext      = {1, mps->get_chiL(), mps->get_chiR()};
+
+                    // ampl never has a trailing Lambda
+                    if constexpr(settings::debug_numen)
+                        tools::log->trace("from B: contraction: pos  {:>2} | tgt {:>2} | bits {} <- {}", mps_pos, tgt_pos, to_string(state_size - mps_pos),
+                                          to_string());
+                    temp.resize(size);
+                    temp.device(tenx::omp::getDevice()) =
+                        mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
+                    ampl = temp;    // Update the current amplitude
+                    pos  = mps_pos; // Update the current site
+
+                    // Add to cache
+                    cidx = get_idx_from_unsorted_cache(cache, state_size - pos);
+                    if(cidx == -1ul) {
+                        // Append
+                        if constexpr(settings::debug_cache) tools::log->trace("from B: added to cache: {}", to_string());
+                        cache.emplace_back(*this);
+                    } else
+                        throw except::runtime_error("from B: ampl already in cache at idx {}: {}", cidx, cache[cidx].to_string());
+                }
+                if(pos != tgt_pos) throw except::logic_error("site ({}) != mps_site ({})", pos, tgt_pos);
+            }
+        }
     }
 };
 
@@ -273,8 +319,58 @@ size_t nextGreaterWithOneMoreSetBit(size_t n) {
     return ((n << 1) + 1);
 }
 
+std::vector<size_t> get_numbers_with_hamming_weight_n(size_t n, long num_bits) {
+    std::vector<size_t> numbers;
+    auto                max_num = std::uint64_t(1) << num_bits;
+    for(size_t num = 0; num < max_num; ++num) {
+        if(std::bitset<64>(num).count() == n) numbers.emplace_back(num);
+    }
+    return numbers;
+}
+
+std::vector<std::vector<size_t>> get_popcount_partitions(size_t num_bits) {
+    // We make a vector of vectors where each inner vector has numbers with equal popcount,
+    // and popcount is the number of set bits.
+    size_t num_part = 0;
+    for(size_t i = 0; i <= num_bits; i++) num_part++;
+    std::vector<std::vector<size_t>> partitions(num_part);
+    auto                             max_num = 1ul << num_bits;
+    for(size_t num = 0; num < max_num; ++num) {
+        if constexpr(settings::debug or settings::debug_numen)
+            partitions.at(std::bitset<64>(num).count()).emplace_back(num);
+        else
+            partitions[std::bitset<64>(num).count()].emplace_back(num);
+    }
+    return partitions;
+}
+
+std::vector<size_t> get_random_roundrobin_popcount_vector(size_t num_bits) {
+    auto popcount_partitions = get_popcount_partitions(num_bits);
+    // Shuffle each partition
+    for(auto &p : popcount_partitions) std::shuffle(p.begin(), p.end(), rnd::internal::rng);
+
+    // Make a new list where we pick the tails of each partition in round-robin fashion
+    std::vector<size_t> rrpv;
+    size_t              size = 1ul << num_bits;
+    rrpv.reserve(size);
+    tools::log->trace("popcount_partitions size: {} | num_bits {} | size {}", popcount_partitions.size(), num_bits, size);
+
+    while(true) {
+        for(auto &p : popcount_partitions) {
+            if(not p.empty()) {
+                rrpv.emplace_back(p.back());
+                p.pop_back();
+            }
+        }
+        bool empty = std::all_of(popcount_partitions.begin(), popcount_partitions.end(), [](const auto &p) -> bool { return p.empty(); });
+        if(empty) break;
+    }
+    return rrpv;
+}
+
+template<typename AmplitudesT>
 size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, std::vector<bool> &nflg, std::vector<size_t> &namp,
-                                      const std::vector<Amplitude> &amplitudes) {
+                                      const AmplitudesT &amplitudes) {
     if(namp.size() != amplitudes.size()) throw except::logic_error("Size mistmatch: namp {} != amplitudes {}", namp.size(), amplitudes.size());
     if(nflg.size() != nmax + 1) throw except::logic_error("nflg.size() != nmax+1");
     auto t_next = tid::tic_token("next");
@@ -341,7 +437,100 @@ size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, st
     return -1ul;
 }
 
-std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, std::vector<Amplitude> &amplitudes, std::vector<Amplitude> &cache) {
+template<typename AmplitudesT, typename CacheT>
+std::vector<double> compute_probability_rrpv(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
+    // Here we compute the probability of finding
+
+    auto                t_prob    = tid::tic_scope("probability");
+    auto                state_pos = state.get_position<long>();
+    auto                state_len = state.get_length<long>();
+    auto                tgt_rpos  = state_len - 1 - tgt_pos;
+    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
+    std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
+    double              probability_sum = 0.0;
+    // Figure out which schmidt values to use
+    auto                     t_figout = tid::tic_scope("figout");
+    Eigen::Tensor<double, 1> schmidt_values;
+    if(tgt_pos < state_pos)
+        schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
+    else if(tgt_pos == state_pos)
+        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
+    else {
+        const auto &mps_left = state.get_mps_site(tgt_pos - 1);
+        schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
+    }
+    t_figout.toc();
+
+    // Create optional slots for each schmidt value
+    auto   t_slots          = tid::tic_scope("slots");
+    double amplitude_cutoff = 1e-12;
+
+    Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), tgt_pos + 2);
+    Eigen::VectorXi schmidt_taken    = Eigen::VectorXi::Zero(schmidt_values.size());
+    Eigen::VectorXd schmidt_squared  = tenx::VectorMap(schmidt_values).cwiseAbs2();
+    auto            min_alpha        = 0l;
+    auto            max_alpha        = schmidt_values.size();
+
+    for(auto &a : amplitudes) {
+        auto n  = a.bits.count();
+        long nl = static_cast<long>(n); // Number of bits in amplitude a, as <long>
+
+        // Evaluate the amplitude vector
+        a.eval(state, tgt_pos, cache);
+        if(a.ampl.size() != schmidt_values.size()) {
+            tools::log->dump_backtrace();
+            throw except::logic_error("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_values.size());
+        }
+        // Add amplitudes to the nth column
+        auto avec = tenx::VectorMap(a.ampl);
+        ampacc_sq_matrix.col(nl) += avec.conjugate().cwiseProduct(avec).cwiseAbs();
+        //        tools::log->info("ampacc_sq: \n{}\n", linalg::matrix::to_string(ampacc_sq_matrix,8));
+
+        // Check if any amplitude element gives the signal to add probability
+        for(long alpha = min_alpha; alpha < max_alpha; alpha++) {
+            if(schmidt_taken(alpha) == 1) continue;
+            auto asq = ampacc_sq_matrix(alpha, nl); // The a²[alpha] value tells us to pick the corresponding λ²[alpha] when nonzero.
+            auto ssq = schmidt_squared[alpha];      // The value λ² is added to probability if the amplitude is greater than cutoff.
+            // Check that the probability would not grow too large, in case we are erroneously considering an amplitude
+            // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
+            bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
+            if(accept) {
+                probability[n] += ssq;
+                probability_sum += ssq;
+                schmidt_taken(alpha) = 1;
+                if(schmidt_taken.isOnes()) break;
+            }
+            if constexpr(settings::debug_numen) {
+                std::string_view accept_str = accept ? "accept" : "";
+                std::string_view cacheh_str = a.cache_hit ? "cache" : "";
+                tools::log->trace("pos {:>2} | n {:>2} | bits {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
+                                  "{:9.3e} [{:6}|{:5}]",
+                                  tgt_pos, n, a.to_string(), 1 - probability_sum, alpha, asq, amplitude_cutoff, alpha, ssq, accept_str, cacheh_str);
+            }
+        }
+        if(schmidt_taken.isOnes()) break;                                                    // All schmidt values squared have been added to probability
+        while(schmidt_taken(min_alpha) == 1) min_alpha++;                                    // Advance min_alpha to skip first taken schmidt values
+        while(schmidt_taken(max_alpha - 1) == 1 and max_alpha >= min_alpha + 1) max_alpha--; // Decrease max_alpha to skip the last taken schmidt values
+    }
+
+    // Sanity check on probabilities
+    auto p_sum = std::accumulate(probability.begin(), probability.end(), 0.0);
+    if(std::abs(p_sum - 1.0) > 1e-4) {
+        tools::log->dump_backtrace();
+        tools::log->info("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
+    }
+    if(std::abs(p_sum - 1.0) > 1e-8) {
+        tools::log->dump_backtrace();
+        tools::log->warn("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
+    }
+    //    tools::log->trace("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+    return probability;
+}
+
+template<typename AmplitudesT, typename CacheT>
+std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
     // Here we compute the probability of finding
 
     auto                t_prob    = tid::tic_scope("probability");
@@ -387,9 +576,9 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
         if(idx == -1ul) // Could not find next idx. Probably all have been checked.
             break;
         auto &a  = amplitudes[idx];
-        long  nl = static_cast<long>(a.bits.count());
+        long  nl = static_cast<long>(a.bits.count()); // Number of bits in amplitude a, as <long>
         if constexpr(settings::debug_numen)
-            if(n != nl) throw except::logic_error("Wrong bit number!");
+            if(static_cast<long>(n) != nl) throw except::logic_error("Wrong bit number!");
         // Evaluate the amplitude vector
         a.eval(state, tgt_pos, cache);
         if(a.ampl.size() != schmidt_values.size()) {
@@ -409,18 +598,18 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
             // Check that the probability would not grow too large, in case we are erroneously considering an amplitude
             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
             bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
-            if constexpr(settings::debug_numen) {
-                char accept_ch = accept ? '*' : ' ';
-                char cacheh_ch = a.cache_hit ? 'o' : ' ';
-                tools::log->trace(
-                    FMT_STRING("site {:>2} | n {:>2} | bits {} | idx {:>5} | cutoff {:8.2e} | 1-P {:8.2e} | a({:>4})² {:8.2e} | λ({:>4})² {:8.2e} [{}|{}]"),
-                    tgt_pos, n, a.to_string(tgt_pos <= state_pos), idx, amplitude_cutoff, 1 - probability_sum, alpha, asq, alpha, ssq, accept_ch, cacheh_ch);
-            }
-
             if(accept) {
                 probability[n] += ssq;
                 probability_sum += ssq;
                 schmidt_taken(alpha) = 1;
+                if(schmidt_taken.isOnes()) break;
+            }
+            if constexpr(settings::debug_numen) {
+                std::string_view accept_str = accept ? "accept" : "";
+                std::string_view cacheh_str = a.cache_hit ? "cache" : "";
+                tools::log->trace("pos {:>2} | n {:>2} | bits {} | idx {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
+                                  "{:9.3e} [{:6}|{:5}]",
+                                  tgt_pos, n, a.to_string(), idx, 1 - probability_sum, alpha, asq, amplitude_cutoff, alpha, ssq, accept_str, cacheh_str);
             }
         }
         if(schmidt_taken.isOnes()) break;                                                    // All schmidt values squared have been added to probability
@@ -444,17 +633,53 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     return probability;
 }
 
-std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mps_pos) {
+template<From from>
+std::vector<Amplitude<from>> generate_amplitude_list_rrpv(const StateFinite &state, long mps_pos) {
     // Generate a list of bit sequences of size prod_{i=0}^pos spin_dim_i.
     // For spin-half this is just 2^pos elements, where pos is the mps position
     // counting from the left.
-    // Example: Let mpo_pos == 2, state_pos == 4 and state_len == 8
-    //      Then num_bitseqs = prod_{i=0}^{mpo_pos} = spin_dim_0 * spin_dim_1 * spin_dim_2 = 2³ = 8
-    //      if mpo_pos == 2 <= state_pos we generate
-    //          000, 100, 010, 110, 001, 101, 011, 111
-    //      if mpo_pos == 6 > state_pos we generate
-    //          000, 100, 010, 110, 001, 101, 011, 111
-    // So we generate the same regardless, but later on these are read in reverse in the second case
+    // Example: Let state_pos == 4 and state_len == 8. Then
+    // num_bitseqs = prod_{i=0}^{mpo_pos} = spin_dim_0 * spin_dim_1 * spin_dim_2 = 2³ = 8,
+    //      if mpo_pos == 2, "from A",  we generate
+    //          000, 001, 010, 011, 100, 101, 110, 111
+    //      if mpo_pos == 6 "from B" we also generate
+    //          000, 001, 010, 011, 100, 101, 110, 111
+    // So we generate the same regardless, but in the first case the numbers are interpreted
+    // in "in reverse" so that 001 becomes 100.
+
+    // In this rrpv version, we sort the bit sequences using a random round-robin popcount vector,
+    // so in the example above we could get
+    //    000, 001, 011, 111, 010, 101, 100, 110
+    // notice how the bits with 1 or 2 bits end up in random order
+
+    auto t_amp     = tid::tic_scope("amplitude");
+    auto state_len = state.get_length<long>();
+    auto num_bits  = -1ul;
+    if constexpr(from == From::A) { num_bits = static_cast<size_t>(mps_pos) + 1ul; }
+    if constexpr(from == From::B) { num_bits = state.get_length<size_t>() - static_cast<size_t>(mps_pos); }
+    auto rrpv = get_random_roundrobin_popcount_vector(num_bits);
+    tools::log->trace("rrpv size: {} | mps_pos {} | num_bits {}", rrpv.size(), mps_pos, num_bits);
+    std::vector<Amplitude<from>> amplitudes;
+    amplitudes.reserve(rrpv.size());
+    long start_pos = from == From::A ? -1l : state_len;
+    for(const auto &num : rrpv) amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(num)), {}});
+
+    return amplitudes;
+}
+
+template<From from>
+std::vector<Amplitude<from>> generate_amplitude_list(const StateFinite &state, long mps_pos) {
+    // Generate a list of bit sequences of size prod_{i=0}^pos spin_dim_i.
+    // For spin-half this is just 2^pos elements, where pos is the mps position
+    // counting from the left.
+    // Example: Let state_pos == 4 and state_len == 8. Then
+    // num_bitseqs = prod_{i=0}^{mpo_pos} = spin_dim_0 * spin_dim_1 * spin_dim_2 = 2³ = 8,
+    //      if mpo_pos == 2, "from A",  we generate
+    //          000, 001, 010, 011, 100, 101, 110, 111
+    //      if mpo_pos == 6 "from B" we also generate
+    //          000, 001, 010, 011, 100, 101, 110, 111
+    // So we generate the same regardless, but in the first case the numbers are interpreted
+    // in "in reverse" so that 001 becomes 100.
 
     auto t_amp     = tid::tic_scope("amplitude");
     auto state_pos = state.get_position<long>();
@@ -472,10 +697,11 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
         num_bitseqs   = std::accumulate(state.mps_sites.rbegin(), state.mps_sites.rbegin() + mps_rpos + 1, 1l, spinprod);
     }
 
-    std::vector<Amplitude> amplitudes;
+    std::vector<Amplitude<from>> amplitudes;
     amplitudes.reserve(static_cast<size_t>(num_bitseqs));
+    long start_pos = from == From::A ? -1l : state_len;
     for(long count = 0; count < num_bitseqs; count++)
-        amplitudes.emplace_back(Amplitude{state_len, std::bitset<64>(static_cast<unsigned long long int>(count)), std::nullopt, {}});
+        amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(count)), {}});
 
     return amplitudes;
 }
@@ -500,7 +726,7 @@ std::vector<Amplitude> generate_amplitude_list(const StateFinite &state, long mp
  *      * n is the number of particles in {𝜎},  Σ_i 𝜎_i.  (e.g. both 11000 and 00101 would give n = 2)
  *      * A({𝜎}) is the amplitude vector identified by the configuration {𝜎}. There are 2^l per bond.
  *      * λ are the schmidt values of the bond at the bipartition. There is only one λ per bond.
- *      * 𝛼 indexes both the schmidt values λ the amplitude vector and A({𝜎})
+ *      * 𝛼 indexes both the schmidt values λ and the amplitude vector and A({𝜎})
  *      * ϵ is a small cutoff, typically ~ 1e-14
  *      * subscript _[𝛼|A({𝜎})_𝛼 > ϵ] means that the sum only includes
  *        𝛼 for which the corresponding amplitude element is large enough, signaling that
@@ -528,6 +754,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         // Only fLBIT has particle-number conservation
         throw except::logic_error("Called number_entropies(StateFinite) from algorithm [{}]. Only [fLBIT] is allowed.", enum2sv(state.get_algorithm()));
     }
+    //    number_entropies_mpo(state);
 
     auto t_num      = tid::tic_scope("number_entropy");
     auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state
@@ -540,9 +767,10 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         return p > 0 ? sum + p * std::log(p) : sum;
     };
 
-    std::vector<double>      number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
-    std::vector<Amplitude>   cache;
-    Eigen::Tensor<double, 2> probabilities(state_llen + 1, state_llen + 1);
+    std::vector<double>             number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
+    std::vector<Amplitude<From::A>> cacheA;
+    std::vector<Amplitude<From::B>> cacheB;
+    Eigen::Tensor<double, 2>        probabilities(state_llen + 1, state_llen + 1);
     probabilities.setZero();
 
     tools::log->enable_backtrace(200);
@@ -551,36 +779,39 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
         if(pos > state_pos) break;               // Only compute up to and including AC
         if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
-        auto amplitudes       = generate_amplitude_list(state_copy, pos);
-        auto probability      = compute_probability(state_copy, pos, amplitudes, cache);
+        auto amplitudes       = generate_amplitude_list<From::A>(state_copy, pos);
+        auto probability      = compute_probability(state_copy, pos, amplitudes, cacheA);
         auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
         number_entropies[idx] = std::abs(number_entropy);
-        cache                 = amplitudes; // Cache the amplitudes for the next step
-                                            //        if constexpr(settings::debug_numen)
-        auto                psize  = static_cast<long>(probability.size());
-        std::array<long, 2> offset = {0, pos + 1};
-        std::array<long, 2> extent = {psize, 1};
+        //        cache                 = amplitudes; // Cache the amplitudes for the next step
+        //        if constexpr(settings::debug_numen)
+        auto                psize           = static_cast<long>(probability.size());
+        std::array<long, 2> offset          = {0, pos + 1};
+        std::array<long, 2> extent          = {psize, 1};
         probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
     }
-
-    cache.clear();
+    [[maybe_unused]] auto cacheA_size = cacheA.size();
+    cacheA.clear();
+    cacheA.shrink_to_fit();
 
     for(const auto &mps : iter::reverse(state_copy.mps_sites)) {
         auto pos = mps->get_position<long>();
         auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
         if(pos <= state_pos + 1) break;      // No need to compute at AC again so add +1
         if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
-        auto amplitudes       = generate_amplitude_list(state_copy, pos);
-        auto probability      = compute_probability(state_copy, pos, amplitudes, cache);
+        auto amplitudes       = generate_amplitude_list<From::B>(state_copy, pos);
+        auto probability      = compute_probability(state_copy, pos, amplitudes, cacheB);
         auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
         number_entropies[idx] = std::abs(number_entropy);
-        cache                 = amplitudes; // Cache the amplitudes for the next step
-                                            //        if constexpr(settings::debug_numen)
+        //        cache                 = amplitudes; // Cache the amplitudes for the next step
+        //        if constexpr(settings::debug_numen)
         auto                psize           = static_cast<long>(probability.size());
         std::array<long, 2> offset          = {0, pos};
         std::array<long, 2> extent          = {psize, 1};
         probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
     }
+    [[maybe_unused]] auto cacheB_size = cacheB.size();
+
     //
     //    if constexpr(settings::debug_numen) {
     //        for(const auto &[idx, prob] : iter::enumerate(probabilities)) {
@@ -595,7 +826,8 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     state.measurements.number_entropy_midchain = number_entropies.at(state.get_length<size_t>() / 2);
     state.measurements.number_entropy_current  = number_entropies.at(state.get_position<size_t>() + 1);
     state.measurements.number_probabilities    = probabilities;
-    tools::log->debug(FMT_STRING("Number entropies: {:.4f}"), fmt::join(number_entropies, ", "));
+    tools::log->debug("Number entropies: {:.4f}", fmt::join(number_entropies, ", "));
+    if constexpr(settings::debug_cache) tools::log->debug("Cache sizes: A {} | B {}", cacheA_size, cacheB_size);
     return state.measurements.number_entropies.value();
 }
 
