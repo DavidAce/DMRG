@@ -656,7 +656,7 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
     if(storage_reason == StorageReason::MODEL) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_model = tid::tic_scope("MODEL");
-        if(h5file->linkExists("/fLBIT/analysis")) return;
+        if(h5file->linkExists("/fLBIT/model/lbits")) return;
         std::vector<size_t> urange;
         std::vector<double> frange;
         size_t              sample = 1;
@@ -670,23 +670,14 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
         }
         if(not urange.empty() and not frange.empty()) {
             tools::log->info("Computing the lbit characteristic length-scale");
-            auto [cls_avg, sse_avg, decay, lioms] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
-            h5file->writeDataset(cls_avg, "/fLBIT/analysis/cls_avg");
-            h5file->writeDataset(sse_avg, "/fLBIT/analysis/sse_avg");
-            h5file->writeDataset(decay, "/fLBIT/analysis/decay");
-            h5file->writeDataset(lioms, "/fLBIT/analysis/lioms");
-            h5file->writeAttribute(urange, "/fLBIT/analysis/cls_avg", "u_depth");
-            h5file->writeAttribute(urange, "/fLBIT/analysis/sse_avg", "u_depth");
-            h5file->writeAttribute(urange, "/fLBIT/analysis/decay", "u_depth");
-            h5file->writeAttribute(urange, "/fLBIT/analysis/lioms", "u_depth");
-            h5file->writeAttribute(frange, "/fLBIT/analysis/cls_avg", "f_mixer");
-            h5file->writeAttribute(frange, "/fLBIT/analysis/sse_avg", "f_mixer");
-            h5file->writeAttribute(frange, "/fLBIT/analysis/decay", "f_mixer");
-            h5file->writeAttribute(frange, "/fLBIT/analysis/lioms", "f_mixer");
-            h5file->writeAttribute(sample, "/fLBIT/analysis/cls_avg", "samples");
-            h5file->writeAttribute(sample, "/fLBIT/analysis/sse_avg", "samples");
-            h5file->writeAttribute(sample, "/fLBIT/analysis/decay", "samples");
-            h5file->writeAttribute(sample, "/fLBIT/analysis/lioms", "samples");
+            auto [cls_avg, sse_avg, decay, data] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
+            h5file->writeDataset(cls_avg, "/fLBIT/model/lbits/cls_avg");
+            h5file->writeDataset(sse_avg, "/fLBIT/model/lbits/sse_avg");
+            h5file->writeDataset(decay, "/fLBIT/model/lbits/decay");
+            h5file->writeAttribute(urange, "/fLBIT/model/lbits", "u_layer");
+            h5file->writeAttribute(frange, "/fLBIT/model/lbits", "f_mixer");
+            h5file->writeAttribute(sample, "/fLBIT/model/lbits", "samples");
+            if(settings::storage::storage_level_model == StorageLevel::FULL) h5file->writeDataset(data, "/fLBIT/model/lbits/data");
         }
     }
 }
