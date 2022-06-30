@@ -12,7 +12,7 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [24]
+sites               = [32]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 0.250, 0.100]]
 f                   = [0.2500]
