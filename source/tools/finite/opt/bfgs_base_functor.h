@@ -3,6 +3,7 @@
 #include <array>
 #include <ceres/first_order_function.h>
 #include <ceres/local_parameterization.h>
+#include <ceres/manifold.h>
 #include <memory>
 class StateFinite;
 class ModelFinite;
@@ -68,7 +69,7 @@ namespace tools::finite::opt::internal {
     /* clang-format on */
 
     template<typename FunctorType>
-    class NormParametrization : public ceres::LocalParameterization {
+    class NormParametrization : public ceres::Manifold {
         public:
         const FunctorType &functor;
         explicit NormParametrization(const FunctorType &functor_);
@@ -82,10 +83,10 @@ namespace tools::finite::opt::internal {
 
         // The jacobian of Plus(x, delta) w.r.t delta at delta = 0.
         // jacobian is a row-major GlobalSize() x LocalSize() matrix.
-        bool ComputeJacobian(const double *x, double *jacobian) const final;
+        bool PlusJacobian(const double *x, double *jacobian) const final;
 
-        int GlobalSize() const final; // Size of x.
-        int LocalSize() const final;  // Size of delta.
+        int AmbientSize() const final; // Size of x.
+        int TangentSize() const final; // Size of delta.
     };
 
 }
