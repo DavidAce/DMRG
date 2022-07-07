@@ -33,20 +33,18 @@ ExternalProject_Add(external_tblis
         USES_TERMINAL_TEST TRUE
 
         BUILD_ALWAYS TRUE
+        BUILD_IN_SOURCE TRUE
         CONFIGURE_COMMAND
         COMMAND export CC=${cc}
         COMMAND export CXX=${cxx}
         COMMAND export LIBS=${libs}
         COMMAND export CFLAGS=${cflags}
         COMMAND export CXXFLAGS=${cxxflags}
-        COMMAND cd <SOURCE_DIR>
         COMMAND ./configure --enable-config=haswell,skx1,zen --prefix=<INSTALL_DIR>
 
         BUILD_COMMAND
-        COMMAND cd <SOURCE_DIR>
-        COMMAND make -j${NUM_THREADS}
+        make -j${NUM_THREADS}
 
         INSTALL_COMMAND
-        COMMAND cd <SOURCE_DIR>
-        COMMAND make install
+        make install
         )
