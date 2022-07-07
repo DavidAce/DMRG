@@ -267,9 +267,9 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
     // We reduce the bond dimension limit whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
-    size_t iter_since_reduce = status.iter - iter_last_bond_reduce;
-    if(status.algorithm_has_stuck_for > 0 or status.algorithm_converged_for > 0 or iter_since_reduce >= 8) {
-        write_to_file(StorageReason::BOND_DECREASE);
+    size_t iter_since_reduce = std::max(status.iter, iter_last_bond_reduce) - std::min(status.iter, iter_last_bond_reduce);
+    if(status.algorithm_saturated_for > 0 or iter_since_reduce >= 4) {
+        write_to_file(StorageReason::BOND_DECREASE, CopyPolicy::OFF);
 
         auto grow_rate = std::abs(settings::strategy::fes_decrement);
         auto bond_new  = static_cast<double>(status.bond_lim);
@@ -282,7 +282,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
         bond_new = std::floor(std::max(bond_new, static_cast<double>(status.bond_init)));
 
         if(bond_new == static_cast<double>(status.bond_lim))
-            status.algo_stop = AlgorithmStop::SUCCESS;
+            status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
         else {
             tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
             status.bond_lim                = static_cast<long>(bond_new);
