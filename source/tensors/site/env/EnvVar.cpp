@@ -126,10 +126,10 @@ void EnvVar::set_edge_dims(const MpsSite &mps, const MpoSite &mpo) {
     if(side == "R") edge = mpo.get_MPO2_edge_right();
     std::size_t unique_id_edge = hash::hash_buffer(edge.data(), static_cast<size_t>(edge.size()));
     if(unique_id_env and unique_id_env.value() == unique_id_edge) return;
-    if constexpr(settings::debug) {
+    if constexpr(settings::debug)
         if(side != "L" and side != "R") throw except::runtime_error("Wrong side: {}", side);
-        tools::log->trace("EnvEne::set_edge_dims: {}{}({}) {}", tag, side, get_position());
-    }
+
+    tools::log->trace("EnvVar::set_edge_dims: {}{}({}): {}", tag, side, get_position(), edge.dimensions());
     set_edge_dims(mps.get_M_bare(), mpo.MPO2(), edge);
     unique_id     = get_unique_id();
     unique_id_env = unique_id_edge;
