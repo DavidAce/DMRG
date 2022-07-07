@@ -62,7 +62,7 @@ double debug::mem_hwm_in_mb() { return mem_usage_in_mb("VmHWM"); }
 double debug::mem_vm_in_mb() { return mem_usage_in_mb("VmPeak"); }
 
 void debug::print_mem_usage() {
-    std::printf("%-30s%10.1f MB", "Memory RSS", mem_rss_in_mb());
-    std::printf("%-30s%10.1f MB", "Memory Peak", mem_hwm_in_mb());
-    std::printf("%-30s%10.1f MB", "Memory Vm", mem_vm_in_mb());
+    std::printf("%-30s%10.1f MB\n", "Memory RSS", mem_rss_in_mb());
+    std::printf("%-30s%10.1f MB\n", "Memory Peak", mem_hwm_in_mb());
+    std::printf("%-30s%10.1f MB\n", "Memory Vm", mem_vm_in_mb());
 }
