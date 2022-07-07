@@ -350,20 +350,20 @@ std::vector<size_t> get_random_roundrobin_popcount_vector(size_t num_bits) {
     for(auto &p : popcount_partitions) std::shuffle(p.begin(), p.end(), rnd::internal::rng);
 
     // Make a new list where we pick the tails of each partition in round-robin fashion
-    std::vector<size_t> rrpv;
+    std::vector<size_t> rrp;
     size_t              size = 1ul << num_bits;
-    rrpv.reserve(size);
+    rrp.reserve(size);
     while(true) {
         for(auto &p : popcount_partitions) {
             if(not p.empty()) {
-                rrpv.emplace_back(p.back());
+                rrp.emplace_back(p.back());
                 p.pop_back();
             }
         }
         bool empty = std::all_of(popcount_partitions.begin(), popcount_partitions.end(), [](const auto &p) -> bool { return p.empty(); });
         if(empty) break;
     }
-    return rrpv;
+    return rrp;
 }
 
 template<typename AmplitudesT>
@@ -436,7 +436,7 @@ size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, st
 }
 
 template<typename AmplitudesT, typename CacheT>
-std::vector<double> compute_probability_rrpv(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
+std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
     // Here we compute the probability of finding
 
     auto                t_prob    = tid::tic_scope("probability");
@@ -632,7 +632,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
 }
 
 template<From from>
-std::vector<Amplitude<from>> generate_amplitude_list_rrpv(const StateFinite &state, long mps_pos) {
+std::vector<Amplitude<from>> generate_amplitude_list_rrp(const StateFinite &state, long mps_pos) {
     // Generate a list of bit sequences of size prod_{i=0}^pos spin_dim_i.
     // For spin-half this is just 2^pos elements, where pos is the mps position
     // counting from the left.
@@ -645,7 +645,7 @@ std::vector<Amplitude<from>> generate_amplitude_list_rrpv(const StateFinite &sta
     // So we generate the same regardless, but in the first case the numbers are interpreted
     // in "in reverse" so that 001 becomes 100.
 
-    // In this rrpv version, we sort the bit sequences using a random round-robin popcount vector,
+    // In this rrp version, we sort the bit sequences using a random round-robin popcount vector,
     // so in the example above we could get
     //    000, 001, 011, 111, 010, 101, 100, 110
     // notice how the bits with 1 or 2 bits end up in random order
@@ -655,11 +655,11 @@ std::vector<Amplitude<from>> generate_amplitude_list_rrpv(const StateFinite &sta
     auto num_bits  = -1ul;
     if constexpr(from == From::A) { num_bits = static_cast<size_t>(mps_pos) + 1ul; }
     if constexpr(from == From::B) { num_bits = state.get_length<size_t>() - static_cast<size_t>(mps_pos); }
-    auto                         rrpv = get_random_roundrobin_popcount_vector(num_bits);
+    auto                         rrp = get_random_roundrobin_popcount_vector(num_bits);
     std::vector<Amplitude<from>> amplitudes;
-    amplitudes.reserve(rrpv.size());
+    amplitudes.reserve(rrp.size());
     long start_pos = from == From::A ? -1l : state_len;
-    for(const auto &num : rrpv) amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(num)), {}});
+    for(const auto &num : rrp) amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(num)), {}});
 
     return amplitudes;
 }
@@ -778,8 +778,8 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
             if(pos > state_pos) break;               // Only compute up to and including AC
             if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
-            auto amplitudes       = generate_amplitude_list_rrpv<From::A>(state_copy, pos);
-            auto probability      = compute_probability_rrpv(state_copy, pos, amplitudes, cache);
+            auto amplitudes       = generate_amplitude_list_rrp<From::A>(state_copy, pos);
+            auto probability      = compute_probability_rrp(state_copy, pos, amplitudes, cache);
             auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx] = std::abs(number_entropy);
             //        cache                 = amplitudes; // Cache the amplitudes for the next step
@@ -798,8 +798,8 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
             if(pos <= state_pos + 1) break;      // No need to compute at AC again so add +1
             if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
-            auto amplitudes                     = generate_amplitude_list_rrpv<From::B>(state_copy, pos);
-            auto probability                    = compute_probability_rrpv(state_copy, pos, amplitudes, cache);
+            auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_copy, pos);
+            auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
             auto                psize           = static_cast<long>(probability.size());
@@ -815,34 +815,26 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     state.measurements.number_entropy_midchain = number_entropies.at(state.get_length<size_t>() / 2);
     state.measurements.number_entropy_current  = number_entropies.at(state.get_position<size_t>() + 1);
     state.measurements.number_probabilities    = probabilities;
-    tools::log->debug("Number entropies (cchA {} cchB {} | time {:.3e} s): {:.4f}", cacheA_size, cacheB_size, t_num->get_last_interval(),
-                      fmt::join(number_entropies, ", "));
+    tools::log->debug("Number entropies: cchA {} + cchB {} = {} | χ = {} | time {:.3e} s", cacheA_size, cacheB_size, cacheA_size + cacheB_size,
+                      measure::bond_dimension_midchain(state), t_num->get_last_interval());
+    tools::log->debug("Number entropies: {:.4f}", fmt::join(number_entropies, ", "));
     return state.measurements.number_entropies.value();
     /* clang-format off */
-/*
- * RRPV IMPROVEMENTS
- *
-    rrpv L = 20
-    [2022-06-30 03:00:14][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121, 0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000
-    [2022-06-30 03:00:14][fLBIT][ debug  ] Cache sizes: A 169 | B 279
+    /*
+    Full chain number entropy calculation
+    RRP    L   χ      Cache size      Time       Speedup
+           8   15     22              0.0004 s
+    *      8   15     25              0.0007 s   0.57x
 
-    non rrpv L = 20
-    [2022-06-30 03:01:45][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121, 0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000
-    [2022-06-30 03:01:45][fLBIT][ debug  ] Cache sizes: A 1022 | B 279
+           16  117    269             0.025  s
+    *      16  117    154             0.013  s   1.92x
 
-    rrpv both A and B L = 20
-    [2022-06-30 03:04:21][fLBIT][ debug  ] Number entropies: 0.0000, 0.0195, 0.0012, 0.0169, 0.0097, 0.0026, 0.0081, 0.0333, 0.0005, 0.0344, 0.0057, 0.0121, 0.0472, 0.0138, 0.2017, 0.1441, 0.0466, 0.0370, 0.0036, 0.0891, 0.0000
-    [2022-06-30 03:04:21][fLBIT][ debug  ] Cache sizes: A 169 | B 125
+           24  829    5927            6.6    s
+    *      24  829    655             2.0    s   3.3x
 
-    rrpv both A and B L = 32
-    [2022-06-30 03:06:20][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206, 0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400, 0.0287, 0.0000
-    [2022-06-30 03:06:20][fLBIT][ debug  ] Cache sizes: A 1904 | B 1446
-
-    non rrpv L = 32
-    [2022-06-30 03:14:18][fLBIT][ debug  ] Number entropies: 0.0000, 0.0153, 0.0022, 0.0399, 0.0027, 0.0060, 0.0036, 0.0226, 0.0099, 0.0173, 0.0343, 0.0206, 0.0594, 0.0104, 0.1590, 0.1490, 0.0248, 0.0080, 0.0159, 0.1594, 0.0064, 0.1060, 0.0171, 0.0066, 0.1655, 0.0134, 0.0546, 0.0657, 0.1562, 0.1694, 0.0400, 0.0287, 0.0000
-    [2022-06-30 03:14:18][fLBIT][ debug  ] Cache sizes: A 50443 | B 15339
-
-*/
+           32  423    117953          128.9  s
+    *      32  423    2325            1.9    s   68x
+    */
     /* clang-format on */
 }
 
