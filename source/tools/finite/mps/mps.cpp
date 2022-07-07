@@ -498,6 +498,107 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
 template std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse);
 template std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, bool reverse);
 
+template<typename GateType>
+std::vector<size_t> generate_gate_sequence2(const StateFinite &state, const std::vector<GateType> &gates, bool reverse, bool range_long_to_short = false) {
+    // Generate a list of staggered indices, without assuming that gates are sorted in any way
+    // Consider a sequence of short-range gates such as [0,1], [1,2], [2,3], then this function is used to generate a new sequence without overlaps:
+    //
+    //  * short range 2-site gates:
+    //         * layer 0: [0,1],[2,3],[4,5]... and so on,
+    //         * layer 1: [1,2],[3,4],[5,6]..., i.e. even sites first, then odd sites,
+    //  * short range 3-site gates:
+    //         * layer 0: [0,1,2], [3,4,5]...
+    //         * layer 1: [1,2,3], [4,5,6]...,
+    //         * layer 2: [2,3,4], [5,6,7], and so on.
+    //
+    // To avoid having to move/swap all the way back between layers, one can flip odd layers to generate a zig-zag pattern.
+    // Then, when applying the inverse operation, both layers as well as gates within a layer are flipped
+    //
+    // Now consider a sequence of long-range gates such as [0,1], [0,2], ... [0,L-1], [1,2], [1,3]...., [1,L-1]
+    // To generate a performant sequence of gates with respect to swaps, it's important to note which gates commute.
+    // In this implementation we make the assumption that gates [i,j] and [i,k] always commute (i != j != k).
+    // Thus, we get the following sequence
+    //  * long range 2-site gates:
+    //         * layer 0: [0,1],[0,2],[0,3]... then [2,3],[2,4],[2,5]... then [4,5],[4,6][4,7]... and so on
+    //         * layer 1: [1,2],[1,3],[1,4]... then [3,4],[3,5],[3,6]... then [5,6],[5,7][5,8]... and so on
+    //
+    // This way we get as many reverse swap cancellations as possible while maintaining some support
+    // for non-commutativity on short-range interactions
+    //
+    // For performance reasons we may want to apply gates from long to short range:
+    // * flipped long range 2-site gates:
+    //        * layer 0: ... [0,3],[0,2],[0,1] then ... [2,5],[2,4],[2,3] then ... [4,7],[4,6][4,5] and so on
+    //        * layer 1: ... [1,4],[1,3],[1,2] then ... [3,6],[3,5],[3,4] then ... [5,8],[5,7][5,6] and so on
+    //
+    // Performance note:
+    // If the state is at position L-1, and the list generated has to start from 0, then L-1 moves have
+    // to be done before even starting. Additionally, if unlucky, we have to move/swap L-1 times again to return
+    // to the original position.
+    //    if(state.get_direction() < 0 and past_middle) state.flip_direction(); // Turn direction away from middle
+    //    if(state.get_direction() > 0 and not past_middle) state.flip_direction(); // Turn direction away from middle
+    auto                                          t_gen     = tid::tic_scope("gen_gate_seq");
+    auto                                          state_len = state.get_length<long>();
+    auto                                          state_pos = state.get_position<long>();
+    std::vector<std::vector<std::vector<size_t>>> layers; // Layer --> group --> idx
+    std::vector<size_t>                           idx = num::range<size_t>(0, gates.size());
+    while(not idx.empty()) {
+        std::vector<std::vector<size_t>> layer; // Group --> idx
+        std::vector<size_t>              idx_used;
+        size_t                           at = gates.at(idx.front()).pos.front(); // Left most leg of the gate at idx[0].
+        for(size_t i = 0; i < idx.size(); i++) {
+            const auto &gate_i = gates.at(idx.at(i)); // Gate at idx[i]
+            if(gate_i.pos.front() >= at) {
+                auto                back_i = gate_i.pos.back(); // Right-most leg of gate idx[i]
+                std::vector<size_t> group_i;                    // List of idx with gates starting at the same position (i.e. same "at")
+                for(size_t j = i; j < idx.size(); j++) {        // Look ahead
+                    // In this part we accept a gate if gate j is further ahead than i, without overlap.
+                    const auto &gate_j  = gates.at(idx.at(j)); // gate_i == gate_j on first iteration of j, so we always accept
+                    auto        front_j = gate_j.pos.front();
+                    auto        back_j  = gate_j.pos.back();
+                    if(front_j == at and back_j >= back_i) {
+                        group_i.emplace_back(idx.at(j));
+                        idx_used.emplace_back(idx.at(j));
+                    }
+                }
+                // Append the group in reverse order to the current layer
+                if(range_long_to_short) std::reverse(group_i.begin(), group_i.end());
+                layer.emplace_back(group_i);
+                at = back_i + 1; // Move the position forward to a gate that doesn't overlap with the gate at idx[0]
+            }
+        }
+        // Append the layer
+        layers.emplace_back(layer);
+
+        // Remove the used elements from idx by value
+        for(const auto &i : iter::reverse(idx_used)) idx.erase(std::remove(idx.begin(), idx.end(), i), idx.end());
+    }
+
+    // Reverse every other layer to get a zigzag pattern
+    // If the state is past the middle, reverse layers 0,2,4... otherwise 1,3,5...
+    size_t past_middle = state_pos > state_len / 2 ? 0 : 1;
+    for(const auto &[i, layer] : iter::enumerate(layers)) {
+        if(num::mod<size_t>(i, 2) == past_middle) std::reverse(layer.begin(), layer.end());
+    }
+
+    // To apply inverse we reverse the layers
+    // Note that we don't need to reverse groups because we assumed that these commute
+    if(reverse) {
+        for(auto &layer : layers) std::reverse(layer.begin(), layer.end());
+        std::reverse(layers.begin(), layers.end());
+    }
+
+    // Move the layers into a long sequence of positions
+    std::vector<size_t> gate_sequence;
+    for(auto &layer : layers)
+        for(auto &group : layer) gate_sequence.insert(gate_sequence.end(), std::make_move_iterator(group.begin()), std::make_move_iterator(group.end()));
+
+    if(gate_sequence.size() != gates.size()) throw except::logic_error("gate_sequence.size() {} != gates.size() {}", gate_sequence.size(), gates.size());
+    return gate_sequence;
+}
+
+template std::vector<size_t> generate_gate_sequence2(const StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, bool range_long_to_short);
+template std::vector<size_t> generate_gate_sequence2(const StateFinite &state, const std::vector<qm::SwapGate> &gates, bool reverse, bool range_long_to_short);
+
 void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, long bond_lim, GateMove gm,
                                     std::optional<svd::settings> svd_settings) {
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
@@ -817,7 +918,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     [[maybe_unused]] size_t swap_count = 0;
     [[maybe_unused]] size_t rwap_count = 0;
 
-    auto gate_sequence = generate_gate_sequence(state, gates, reverse);
+    auto gate_sequence = generate_gate_sequence2(state, gates, reverse);
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto &gate = gates.at(gate_idx);
         if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
@@ -826,9 +927,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
         apply_swap_gate(state, gate, temp, reverse, bond_lim, sites, gm, svd_settings);
     }
     move_center_point_to_pos_dir(state, 0, 1, bond_lim, svd_settings);
-    if constexpr(settings::debug or settings::debug_gates) {
-        svds_count = svd::solver::count.value() - svds_count;
-        tools::log->trace("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
-                          rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
-    }
+    svds_count = svd::solver::count.value() - svds_count;
+    tools::log->debug("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
+                      rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
 }
