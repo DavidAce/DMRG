@@ -82,7 +82,14 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     bfgs_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     bfgs_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     bfgs_default_options.max_num_iterations                         = 2000;
-    bfgs_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise, anything larger incurs a large overhead. The overhead means 2x computation time at ~64
+    bfgs_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+
+    // Approximate eigenvalue bfgs scaling performs badly when the problem
+    // is ill-conditioned (sensitive to some parameters). Empirically,
+    // we observe that the gradient is still large when bfgs has finished,
+    // and often the result is a tiny bit worse than what we started with.
+    // When this happens, it's not worth trying to get BFGS to converge,
+    // try an eigensolver on the energy-shifted operator H² instead.
     bfgs_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
     bfgs_default_options.min_line_search_step_size                  = std::numeric_limits<double>::epsilon();
     bfgs_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
@@ -99,14 +106,6 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     bfgs_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
     bfgs_default_options.update_state_every_iteration               = false;
     bfgs_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
-
-    if(status.algorithm_has_stuck_for > 0){
-        // Eigenvalue bfgs scaling performs badly when the problem is ill-conditioned (sensitive to some parameters).
-        // Empirically, we observe that the gradient is still large when bfgs has finished,
-        // and often the result is a tiny bit worse than what we started with.
-        // When this happens, it's not worth trying to get BFGS to converge: instead, try an eigensolver on the energy-shifted operator H²
-        bfgs_default_options.max_lbfgs_rank                         = 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-    }
 
     /* clang-format off */
     // Apply overrides if there are any
@@ -234,7 +233,7 @@ bool tools::finite::opt::internal::NormParametrization<FunctorType>::Plus(const 
 }
 
 template<typename FunctorType>
-bool tools::finite::opt::internal::NormParametrization<FunctorType>::ComputeJacobian(const double *v_double_double, double *jac_double_double) const {
+bool tools::finite::opt::internal::NormParametrization<FunctorType>::PlusJacobian(const double *v_double_double, double *jac_double_double) const {
     auto t_jac       = tid::tic_scope("jac");
     using VectorType = typename FunctorType::VectorType;
     using ScalarType = typename VectorType::Scalar;
@@ -259,11 +258,11 @@ bool tools::finite::opt::internal::NormParametrization<FunctorType>::ComputeJaco
 }
 
 template<typename FunctorType>
-int tools::finite::opt::internal::NormParametrization<FunctorType>::GlobalSize() const {
+int tools::finite::opt::internal::NormParametrization<FunctorType>::AmbientSize() const {
     return functor.num_parameters;
 }
 template<typename FunctorType>
-int tools::finite::opt::internal::NormParametrization<FunctorType>::LocalSize() const {
+int tools::finite::opt::internal::NormParametrization<FunctorType>::TangentSize() const {
     return functor.num_parameters;
 }
 
