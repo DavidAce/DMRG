@@ -6,10 +6,10 @@
 #include "math/linalg/tensor.h"
 #include "math/svd.h"
 #include "ModelFinite.h"
+#include "qm/spin.h"
 #include "tensors/site/mpo/MpoFactory.h"
 #include "tid/tid.h"
 #include "tools/finite/multisite.h"
-#include "qm/spin.h"
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
 
 // We need to define the destructor and other special functions
@@ -21,8 +21,8 @@ ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't k
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-ModelFinite::~ModelFinite()                   = default;            // default dtor
-ModelFinite::ModelFinite(ModelFinite &&other) = default;            // default move ctor
+ModelFinite::~ModelFinite()                              = default; // default dtor
+ModelFinite::ModelFinite(ModelFinite &&other)            = default; // default move ctor
 ModelFinite &ModelFinite::operator=(ModelFinite &&other) = default; // default move assign
 
 /* clang-format off */
@@ -171,8 +171,9 @@ bool ModelFinite::has_mpo_squared() const {
 std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo_squared(std::optional<svd::settings> svd_settings) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
+    mpos_sq.reserve(MPO.size());
     for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->get_non_compressed_mpo_squared());
-    tools::log->trace("Compressing MPO²");
+    tools::log->trace("Compressing MPO²: {} sites", mpos_sq.size());
 
     // Setup SVD
     // Here we need a lot of precision:
@@ -198,6 +199,7 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
         Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
         Eigen::Tensor<cplx, 4> T_mpo_sq;
         for(const auto &[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
+            auto mpo_sq_dim_old = mpo_sq.dimensions();
             if(T_l2r.size() == 0)
                 T_mpo_sq = mpo_sq;
             else
@@ -214,13 +216,14 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
                     mpo_sq = U.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             }
-            tools::log->info("iter {} | idx {} | dim {} -> {}", iter, idx, report[idx], mpo_sq.dimensions());
+            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
         }
 
         // Now we have done left to right. Next we do right to left
         Eigen::Tensor<cplx, 2> T_r2l;    // Transfer matrix
         Eigen::Tensor<cplx, 4> mpo_sq_T; // Absorbs transfer matrix
         for(const auto &[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
+            auto mpo_sq_dim_old = mpo_sq.dimensions();
             if(T_r2l.size() == 0)
                 mpo_sq_T = mpo_sq;
             else
@@ -236,13 +239,13 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
                     mpo_sq = T_r2l.contract(V, tenx::idx({1}, {0}));
             }
-            tools::log->info("iter {} | idx {} | dim {} -> {}", iter, idx, report[idx], mpo_sq.dimensions());
+            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
         }
     }
 
     // Print the results
     if(tools::log->level() == spdlog::level::trace)
-        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->trace("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
 
     return mpos_sq;
 }
