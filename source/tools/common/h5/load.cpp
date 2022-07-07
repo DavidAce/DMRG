@@ -24,21 +24,21 @@ namespace tools::common::h5 {
 
     void load::timer(const h5pp::File &h5file, std::string_view state_prefix, [[maybe_unused]] AlgorithmStatus &status) {
         if(not settings::timer::on) return;
-        auto state_root   = h5file.readAttribute<std::string>("common/state_root", state_prefix);
-        auto timer_prefix = fmt::format("{}/timers", state_root);
-        if(h5file.linkExists(timer_prefix))
-            tools::log->info("Loading timers from group: [{}]", timer_prefix);
+        auto state_root = h5file.readAttribute<std::string>("common/state_root", state_prefix);
+        auto table_path = fmt::format("{}/tables/timers", state_root);
+        if(h5file.linkExists(table_path))
+            tools::log->info("Loading timers from table: [{}]", table_path);
         else
-            throw except::runtime_error("Could not find group [timers] for state [{}] in file [{}] at prefix [{}]", state_prefix, h5file.getFilePath(),
-                                        timer_prefix);
-        for(const auto &dset : h5file.findDatasets("", timer_prefix)) {
-            auto &t_ur = tid::get(dset);
-            tools::log->trace("Loading {}", dset);
-            auto data = h5file.readDataset<h5pp_ur::item>(fmt::format("{}/{}", timer_prefix, dset));
-            t_ur.set_time(data.time);
-            t_ur.set_count(data.count);
+            throw except::runtime_error("Could not find table [{}] for state [{}] in file [{}] ", table_path, state_prefix, h5file.getFilePath());
+
+        auto table = h5file.readTableRecords<std::vector<h5pp_ur::item>>(table_path, h5pp::TableSelection::ALL);
+        for(const auto &t : table) {
+            tools::log->trace("Loading {}", t.name);
+            auto &t_ur = tid::get(t.name);
+            t_ur.set_time(t.time);
+            t_ur.set_level(static_cast<tid::level>(t.level));
+            t_ur.set_count(t.count);
         }
-        //        status.algo_time = tid::get_unscoped(status.algo_type_str());
     }
 
 }

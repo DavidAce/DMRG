@@ -36,7 +36,8 @@ void xdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type);
+    auto resumable_states =
+        tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, settings::storage::file_resume_name, settings::storage::file_resume_iter);
     if(resumable_states.empty()) throw except::state_error("no resumable states were found");
 
     for(const auto &state_prefix : resumable_states) {
@@ -256,9 +257,26 @@ void xdmrg::run_fes_analysis() {
     status.fes_is_running = true;
     status.bond_max       = settings::xdmrg::bond_max; // Set to highest
     status.bond_lim       = settings::xdmrg::bond_max; // Set to highest
+
+    while(status.bond_lim > tensors.state->find_largest_bond()) {
+        // Reduce bond dimension from bond_max down to the current maximum.
+        // Write to file on each decrement so that we get one entry on file
+        // per bond dim, even if there has been no change. This helps with
+        // collecting data and averaging later.
+        status.iter += 1;
+        status.step += tensors.get_length<size_t>();
+        status.algorithm_converged_for = 1;
+        status.algorithm_saturated_for = 0;
+        reduce_bond_dimension_limit();
+        status.wall_time = tid::get_unscoped("t_tot").get_time();
+        status.algo_time = t_fes->get_time();
+    }
+
     while(true) {
         tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
+        status.wall_time       = tid::get_unscoped("t_tot").get_time();
+        status.algo_time       = t_fes->get_time();
         auto truncation_errors = tensors.state->get_truncation_errors();
         print_status_update();
         check_convergence();
@@ -273,9 +291,6 @@ void xdmrg::run_fes_analysis() {
 
         // Retain the max truncation error, otherwise it is lost in the next pass
         tensors.state->keep_max_truncation_errors(truncation_errors);
-
-        status.wall_time = tid::get_unscoped("t_tot").get_time();
-        status.algo_time = t_fes->get_time();
     }
     tools::log->info("Finished {} finite entanglement scaling of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(),
                      status.algo_stop_sv());
@@ -303,7 +318,12 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.bond_lim = status.bond_lim;
 
     // Set up a multiplier for number of iterations
-    auto iter_multiplier = std::max<size_t>(1, 10 * status.algorithm_saturated_for);
+    size_t iter_multiplier = 1;
+    if(not status.fes_is_running) {
+        if(status.entanglement_saturated_for > 0) iter_multiplier = status.entanglement_saturated_for;
+        if(status.variance_mpo_saturated_for > 0) iter_multiplier = status.variance_mpo_saturated_for;
+        if(status.algorithm_saturated_for > 0) iter_multiplier = 10 * status.algorithm_saturated_for;
+    }
 
     // Copy settings
     m1.max_sites =
@@ -311,6 +331,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
     m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
     m1.bfgs_max_iter = std::min<size_t>(200000, settings::precision::bfgs_max_iter * iter_multiplier);
+    m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 16 : 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
+                                                                      // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     m1.eigs_max_iter = std::min<size_t>(200000, settings::precision::eigs_max_iter * iter_multiplier);
     m1.eigs_max_tol  = settings::precision::eigs_tolerance;
     m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;

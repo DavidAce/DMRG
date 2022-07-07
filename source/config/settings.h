@@ -75,12 +75,14 @@ namespace settings {
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
         inline unsigned            compression_level               = 1;                            /*!< GZip compression level in HDF5. Choose between [0-9] (0 = off, 9 = max compression) */
-        inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;  /*!< What to do when a prior output file is found. Choose between RESUME,RENAME,DELETE */
+        inline FileCollisionPolicy file_collision_policy           = FileCollisionPolicy::RESUME;  /*!< What to do when a prior output file is found. Choose between RESUME, REVIVE, BACKUP, RENAME, REPLACE */
         inline FileResumePolicy    file_resume_policy              = FileResumePolicy::FULL;       /*!< Depends on dataset "common/finished_all=bool" FULL: Ignore bool -> Scan .cfg to add missing items. FAST: exit if true. */
+        inline std::string         file_resume_name                = ""  ;                         /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
+        inline size_t              file_resume_iter                = -1ul;                         /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
 
         inline StorageLevel     storage_level_model      = StorageLevel::LIGHT;  /*!< Storage level for the model realization. LIGHT stores nothing. NORMAL stores the Hamiltonian parameter table, and FULL also the MPO's */
-        inline StorageLevel     storage_level_savepoint  = StorageLevel::LIGHT;  /*!< Storage level for savepoints, which are snapshots used for resume (if FULL) */
-        inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are mid-simulation measurements (can also be used for resume if FULL) */
+        inline StorageLevel     storage_level_savepoint  = StorageLevel::LIGHT;  /*!< Storage level for savepoints, which are snapshots used for resume */
+        inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are mid-simulation measurements */
         inline StorageLevel     storage_level_finished   = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates */
         inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;  /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
         inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
@@ -138,10 +140,9 @@ namespace settings {
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit     initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
-
-        inline double   fes_decrement                    = 2;                                      /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
-        inline BondGrow bond_grow_mode                   = BondGrow::OFF;                          /*!< If and when to increase the bond dimension limit. Choose OFF, TRUNCATED, SATURATED, ITERATION. */
-        inline double   bond_grow_rate                   = 8;                                      /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
+        inline double        fes_decrement               = 2;                                      /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
+        inline BondGrow      bond_grow_mode              = BondGrow::OFF;                          /*!< If and when to increase the bond dimension limit. Choose OFF, TRUNCATED, SATURATED, ITERATION. */
+        inline double        bond_grow_rate              = 8;                                      /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
     }
 
 

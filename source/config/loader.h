@@ -42,7 +42,10 @@ class Loader {
     template<typename T>
     [[nodiscard]] T parse_param(const std::string &param_val, std::string_view param_name) {
         try {
-            if(param_val.empty()) throw except::range_error("Parameter [{}] has no value", param_name);
+            if(param_val.empty()) {
+                if constexpr(std::is_same_v<T, std::string>) return "";
+                throw except::range_error("Parameter [{}] has no value", param_name);
+            }
             if constexpr(std::is_same_v<T, unsigned int>) {
                 auto val = static_cast<int>(std::stoi(param_val));
                 if(val < 0) throw except::runtime_error("Read negative value for unsigned parameter: {}", val);
@@ -56,8 +59,8 @@ class Loader {
             if constexpr(std::is_same_v<T, size_t>) return std::stoul(param_val);
             if constexpr(std::is_same_v<T, double>) return std::stod(param_val);
             if constexpr(std::is_enum_v<T>) return sv2enum<T>(param_val);
-            if constexpr(std::is_same<T, std::string>::value) return param_val;
-            if constexpr(std::is_same<T, bool>::value) {
+            if constexpr(std::is_same_v<T, std::string>) return param_val;
+            if constexpr(std::is_same_v<T, bool>) {
                 if(param_val == "true") return true;
                 if(param_val == "false") return false;
                 throw except::runtime_error("Expected true or false, got {}", param_val);

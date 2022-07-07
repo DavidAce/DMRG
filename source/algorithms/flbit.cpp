@@ -37,7 +37,10 @@ void flbit::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, "state_real");
+    auto state_name = settings::storage::file_resume_name;
+    if(state_name.empty()) state_name = "state_real";
+
+    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, state_name, settings::storage::file_resume_iter);
     for(const auto &state_prefix : resumable_states) {
         if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);

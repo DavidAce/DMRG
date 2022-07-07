@@ -24,7 +24,7 @@ namespace tools::common::h5 {
     namespace resume{
         extern std::optional<size_t>   extract_state_number     (std::string_view  state_prefix);
         extern std::string             extract_state_name       (std::string_view  state_prefix);
-        extern std::vector<std::string>find_resumable_states    (const h5pp::File & h5file, AlgorithmType algo_type, std::string_view  search = "");
+        extern std::vector<std::string>find_resumable_states    (const h5pp::File & h5file, AlgorithmType algo_type, std::string_view name = "", size_t iter = -1ul);
     }
     namespace save{
 //        extern void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);

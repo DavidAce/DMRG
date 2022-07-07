@@ -86,21 +86,30 @@ int settings::parse(int argc, char **argv) {
     app.allow_extras(false);
     /* clang-format off */
     app.add_flag("--help-preload"                      , "Print help related to preloading configuration");
-    app.add_option("-c,--config"                       , input::config_filename     , "Path to a .cfg or .h5 file from a previous simulation");
-    app.add_option("-m,--model"                        , model::model_type          , "Select the Hamiltonian")->transform(CLI::CheckedTransformer(s2e_model, CLI::ignore_case));
-    app.add_option("-b,--bitfield"                     , input::bitfield            , "Integer whose bitfield sets the initial product state. Negative is unused");
-    app.add_option("-n,--stlthreads"                   , threading::stl_threads     , "Number of C++11 threads (Used by Eigen::Tensor)");
-    app.add_option("-o,--outfile"                      , storage::output_filepath   , "Path to the output file. The seed number gets appended by default (see -x)");
-    app.add_option("-s,--seed"                         , input::seed                , "Positive number seeds the random number generator");
-    app.add_option("-t,--ompthreads"                   , threading::omp_threads     , "Number of OpenMP threads");
-    app.add_flag  ("-x,--noseedname"                   , noseedname                 , "Do not append seed to the output filename");
-    app.add_option("-z,--compression"                  , storage::compression_level , "Compression level of h5pp")->check(CLI::Range(0,9));
-    app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel          , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
-    app.add_option("-V,--logh5pp"                      , console::logh5pp           , "Log level of h5pp")->transform(CLI::CheckedTransformer(s2e_logh5pp, CLI::ignore_case))->type_name("ENUM");
-    app.add_option("--timestamp"                       , console::timestamp         , "Log timestamp");
-    app.add_option("--dummyrange"                      , dummy                      , "Dummy")->check(CLI::Range(0,3));
+    app.add_option("-c,--config"                       , input::config_filename         , "Path to a .cfg or .h5 file from a previous simulation");
+    app.add_option("-m,--model"                        , model::model_type              , "Select the Hamiltonian")->transform(CLI::CheckedTransformer(s2e_model, CLI::ignore_case));
+    app.add_option("-b,--bitfield"                     , input::bitfield                , "Integer whose bitfield sets the initial product state. Negative is unused");
+    app.add_option("-n,--stlthreads"                   , threading::stl_threads         , "Number of C++11 threads (Used by Eigen::Tensor)");
+    app.add_option("-o,--outfile"                      , storage::output_filepath       , "Path to the output file. The seed number gets appended by default (see -x)");
+    app.add_option("-s,--seed"                         , input::seed                    , "Positive number seeds the random number generator");
+    app.add_option("-t,--ompthreads"                   , threading::omp_threads         , "Number of OpenMP threads");
+    app.add_flag  ("-x,--noseedname"                   , noseedname                     , "Do not append seed to the output filename");
+    app.add_option("-z,--compression"                  , storage::compression_level     , "Compression level of h5pp")->check(CLI::Range(0,9));
+    app.add_flag  ("-r,--resume"                                                        , "Resume simulation from last iteration");
+    app.add_option("--resume-iter"                     , storage::file_resume_iter      , "Resume from iteration");
+    app.add_option("--resume-name"                     , storage::file_resume_name      , "Resume from state matching this name");
+    app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel              , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
+    app.add_option("-V,--logh5pp"                      , console::logh5pp               , "Log level of h5pp")->transform(CLI::CheckedTransformer(s2e_logh5pp, CLI::ignore_case))->type_name("ENUM");
+    app.add_option("--timestamp"                       , console::timestamp             , "Log timestamp");
+    app.add_option("--dummyrange"                      , dummy                          , "Dummy")->check(CLI::Range(0,3));
     /* clang-format on */
+
     app.parse(argc, argv);
+
+    if(app.count("--resume") > 0 or app.count("--resume-iter") > 0 or app.count("--resume-name") > 0) {
+        tools::log->info("Resuming from iter {}", storage::file_resume_iter);
+        settings::storage::file_collision_policy = FileCollisionPolicy::RESUME;
+    }
 
     //    for(const auto &res : app.get_options()) fmt::print("{:<32} = {}\n", res->get_name(), res->results());
 

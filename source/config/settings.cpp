@@ -65,6 +65,9 @@ void settings::load(Loader &dmrg_config) {
     input::config_filename      = dmrg_config.file_path.string();
     input::config_file_contents = dmrg_config.get_config_file_as_string();
     /* clang-format off */
+    dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
+    dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);
+
     dmrg_config.load_parameter("input::seed"                                  , input::seed);
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
 
@@ -80,6 +83,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::compression_level"                   , storage::compression_level);
     dmrg_config.load_parameter("storage::file_collision_policy"               , storage::file_collision_policy);
     dmrg_config.load_parameter("storage::file_resume_policy"                  , storage::file_resume_policy);
+    dmrg_config.load_parameter("storage::file_resume_name"                    , storage::file_resume_name);
+    dmrg_config.load_parameter("storage::file_resume_iter"                    , storage::file_resume_iter);
     dmrg_config.load_parameter("storage::storage_level_model"                 , storage::storage_level_model);
     dmrg_config.load_parameter("storage::storage_level_savepoint"             , storage::storage_level_savepoint);
     dmrg_config.load_parameter("storage::storage_level_checkpoint"            , storage::storage_level_checkpoint);
@@ -174,9 +179,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::max_size_part_diag"                , precision::max_size_part_diag);
     dmrg_config.load_parameter("precision::max_size_multisite"                , precision::max_size_multisite);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
-
-    dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
-    dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);
 
     //Parameters controlling finite-DMRG
     dmrg_config.load_parameter("fdmrg::on"                      , fdmrg::on);
