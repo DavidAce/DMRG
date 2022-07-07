@@ -309,13 +309,14 @@ namespace tools::finite::opt {
             if(solver.config.sigma and tensors.model->is_compressed_mpo_squared())
                 throw except::logic_error("eigs_optimize_variance with PRIMME with given sigma requires non-compressed MPO²");
             if(solver.config.sigma)
-                tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | init on | dims {} = {}",
-                                  std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
-                                  hamiltonian_squared.rows());
+                tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | maxIter {} | init on | dims {} = {}",
+                                  std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), solver.config.maxIter.value(),
+                                  hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
 
             else
-                tools::log->debug("Finding excited state as minimum of [(H-E)²] | primme {} | init on | dims {} = {}",
-                                  eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
+                tools::log->debug("Finding excited state as minimum of [(H-E)²] | primme {} | maxIter {} | init on | dims {} = {}",
+                                  eig::RitzToString(solver.config.ritz.value()), solver.config.maxIter.value(), hamiltonian_squared.get_shape_mps(),
+                                  hamiltonian_squared.rows());
             solver.eigs(hamiltonian_squared);
         }
 
