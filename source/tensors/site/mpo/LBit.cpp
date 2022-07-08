@@ -197,14 +197,20 @@ void LBit::build_mpo()
 }
 
 void LBit::randomize_hamiltonian() {
-    // J2(i,j) = exp(-|i-j|/J2_xcls) * Random_ij(J2_mean-J2_wdth_i/2, J2_mean+J2_wdth_i/2)
+    // J2(i,j) = exp(-(r-1)/J2_xcls) * Random_ij(J2_mean, J2_wdth), for i < j,
+    // where
+    //    * r = r(i,j) = |i-j|
+    //    * Random_ij(J2_mean, J2_wdth) are drawn randomly for each i,j, according to some distribution.
+    //    * The "-1" in the exponent disables the exponential suppression on nearest neighbors,
+    //      i.e.  exponential decay starts after 1 site, and so J2_wdth sets the size of nearest neighbor interaction.
+
     using namespace settings::model::lbit;
-    for(const auto &[r, J2_rand_ref] : iter::enumerate(h5tb.param.J2_rand)) {
+    for(size_t r = 0; r < h5tb.param.J2_rand.size(); ++r) {
         if(r == 0) continue;                                         // J2 does not describe self-interaction
         if(r > h5tb.param.J2_ctof) break;                            // Can't interact further than this
         if(r + get_position() >= settings::model::model_size) break; // No more sites to interact with
-        J2_rand_ref = std::exp(-static_cast<double>(r) /
-                               settings::model::lbit::J2_xcls); // exp(-r/J2_xcls) * Random_ij, where r = |i-j|, and Random_ij is compute d below
+
+        h5tb.param.J2_rand[r] = std::exp(-(static_cast<double>(r) - 1) / settings::model::lbit::J2_xcls);
     }
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);

@@ -212,7 +212,7 @@ namespace settings {
             inline double       J2_mean       = 0;              /*!< Constant offset for two-body interaction */
             inline double       J3_mean       = 0;              /*!< Constant offset for three-body interaction */
             inline double       J1_wdth       = 0.5;            /*!< Width of the distribution for on-site interactions */
-            inline double       J2_wdth       = 0.5;            /*!< Width of the distribution for two-body interaction */
+            inline double       J2_wdth       = 0.5;            /*!< Width of the distribution for two-body interaction (st.dev. for normal distribution). */
             inline double       J3_wdth       = 0.5;            /*!< Width of the distribution for three-body interaction */
             inline double       J2_xcls       = 1;              /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
             inline size_t       J2_span       = -1ul;           /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Use -1 for infinite. Note that J2_span + 1 MPOs are used */

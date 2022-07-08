@@ -14,7 +14,7 @@ location    = "input"
 
 sites               = [24]
 J                   = [[0.000, 0.000, 0.000]]
-w                   = [[1.000, 0.250, 0.100]]
+w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
 f                   = [0.2500]
 u                   = [4]
 x                   = [0.5]

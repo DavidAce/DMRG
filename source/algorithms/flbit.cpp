@@ -504,21 +504,10 @@ void flbit::create_hamiltonian_swap_gates() {
         ham_swap_gates_3body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_1body)) {
-        if(tenx::isZero(ham.op)) { throw except::runtime_error("ham1[{}] is all zeros", idx); }
+        if(tenx::isZero(ham.op)) throw except::runtime_error("ham1[{}] is all zeros", idx);
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_2body)) {
-        if(tenx::isZero(ham.op)) {
-            tools::log->debug("hamiltonian 2-body swap gate {} for sites {} is almost a zero-matrix.", idx, ham.pos);
-            tools::log->debug("  Time evo. swap gates exp(-itH) ~ identity are ignored until t is very large");
-            tools::log->trace("  This can happen if r = J2_ctof = {} is too large.", J2_ctof);
-            tools::log->trace("  With the current settings:");
-            tools::log->trace("     x = settings::model::lbit::J2_xcls = {}", settings::model::lbit::J2_xcls);
-            tools::log->trace("     m = settings::model::lbit::J2_mean = {}", settings::model::lbit::J2_mean);
-            tools::log->trace("     w = settings::model::lbit::J2_wdth = {}", settings::model::lbit::J2_wdth);
-            tools::log->trace("  Values of this matrix are expected to be smaller than exp(-r/x) * (m+w/2) = {:8.2e}",
-                              std::exp(-static_cast<double>(J2_ctof) / settings::model::lbit::J2_xcls) *
-                                  (settings::model::lbit::J2_mean + settings::model::lbit::J2_wdth / 2.0));
-        }
+        if(tenx::isZero(ham.op)) tools::log->debug("hamiltonian 2-body swap gate {} for sites {} is a zero-matrix", idx, ham.pos);
     }
     for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_3body))
         if(tenx::isZero(ham.op)) throw except::runtime_error("ham3[{}] is all zeros", idx);
