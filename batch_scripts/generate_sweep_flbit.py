@@ -12,12 +12,12 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [24]
+sites               = [28]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
 f                   = [0.2500]
 u                   = [4]
-x                   = [0.5]
+x                   = [0.8]
 r                   = [-1]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
@@ -65,7 +65,7 @@ for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x
         "flbit::bond_max"                    : "2048",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
-        "flbit::time_final_real"             : "1e14",
+        "flbit::time_final_real"             : "1e12",
         "flbit::time_final_imag"             : "0",
         "flbit::time_num_steps"              : "100",
     }
