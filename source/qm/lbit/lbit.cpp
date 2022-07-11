@@ -124,9 +124,11 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
 std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold) {
     std::vector<SwapGate> time_evolution_swap_gates;
     time_evolution_swap_gates.reserve(hams_nsite.size());
+    size_t count_ignored = 0;
     for(auto &h : hams_nsite) {
         time_evolution_swap_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-        if(tenx::isIdentity(time_evolution_swap_gates.back().op, id_threshold)) {
+        if(tenx::isIdentity(time_evolution_swap_gates.back().op.abs(), id_threshold)) {
+            count_ignored++;
             tools::log->trace("get_time_evolution_swap_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_swap_gates.back().pos,
                               id_threshold);
             time_evolution_swap_gates.pop_back(); // Skip this gate if it is just an identity.
@@ -141,6 +143,7 @@ std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, 
             }
     }
     time_evolution_swap_gates.shrink_to_fit();
+    tools::log->debug("get_time_evolution_swap_gates: ignored {} time evolution swap gates: I +- {:.2e}", count_ignored, id_threshold);
     return time_evolution_swap_gates;
 }
 

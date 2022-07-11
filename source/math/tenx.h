@@ -408,6 +408,17 @@ namespace tenx {
         return matrix.isIdentity(threshold);
     }
 
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    auto isIdentity(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, double threshold = std::numeric_limits<double>::epsilon(),
+                    const Device &device = Device()) {
+        auto tensor = tenx::asEval(expr, device);
+        static_assert(tensor.rank() == 2 and "isIdentity(): expression must be a tensor of rank 2");
+        auto tensorMap = tensor.map();
+        using Scalar   = typename decltype(tensorMap)::Scalar;
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>> matrix(tensorMap.data(), tensorMap.dimension(0), tensorMap.dimension(1));
+        return matrix.isIdentity(threshold);
+    }
+
     template<typename Derived>
     bool hasNaN(const Eigen::EigenBase<Derived> &obj) {
         return obj.derived().hasNaN();
