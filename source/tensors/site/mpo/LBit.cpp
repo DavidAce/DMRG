@@ -197,37 +197,43 @@ void LBit::build_mpo()
 }
 
 void LBit::randomize_hamiltonian() {
-    // J2(i,j) = exp(-(r-1)/J2_xcls) * Random_ij(J2_mean, J2_wdth), for i < j,
+    // J2(i,j) = J2_exp(r) * Random_ij(J2_mean, J2_wdth), for i < j,
     // where
+    //    * J2_exp(r) = exp(-(r-1)/J2_xcls)
+    //    * J2_xcls: characteristic length scale for decay of pairwise interactions
     //    * r = r(i,j) = |i-j|
     //    * Random_ij(J2_mean, J2_wdth) are drawn randomly for each i,j, according to some distribution.
     //    * The "-1" in the exponent disables the exponential suppression on nearest neighbors,
     //      i.e.  exponential decay starts after 1 site, and so J2_wdth sets the size of nearest neighbor interaction.
+    //
+    // For normal and lognormal we can instead put the decay in the standard deviation
+    //      J2(i,j) = N(J2_mean, J2_exp(r))
+    // This definition is the same as Eq. 7: https://link.aps.org/doi/10.1103/PhysRevB.97.214202
 
     using namespace settings::model::lbit;
+    auto J2_exp = std::vector<double>(h5tb.param.J2_rand.size(), 0.0);
     for(size_t r = 0; r < h5tb.param.J2_rand.size(); ++r) {
         if(r == 0) continue;                                         // J2 does not describe self-interaction
         if(r > h5tb.param.J2_ctof) break;                            // Can't interact further than this
         if(r + get_position() >= settings::model::model_size) break; // No more sites to interact with
-
-        h5tb.param.J2_rand[r] = std::exp(-(static_cast<double>(r) - 1) / settings::model::lbit::J2_xcls);
+        J2_exp[r] = std::exp(-(static_cast<double>(r) - 1) / settings::model::lbit::J2_xcls);
     }
     if(std::string(h5tb.param.distribution) == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::normal(J3_mean, J3_wdth);
-        for(auto &J2_rand_ref : h5tb.param.J2_rand) J2_rand_ref *= rnd::normal(J2_mean, J2_wdth);
+        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = rnd::normal(J2_mean, J2_exp[r]);
     } else if(std::string(h5tb.param.distribution) == "lognormal") {
         h5tb.param.J1_rand = rnd::log_normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::log_normal(J3_mean, J3_wdth);
-        for(auto &J2_rand_ref : h5tb.param.J2_rand) J2_rand_ref *= rnd::log_normal(J2_mean, J2_wdth);
+        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = rnd::log_normal(J2_mean, J2_exp[r]);
     } else if(std::string(h5tb.param.distribution) == "uniform") {
         h5tb.param.J1_rand = rnd::uniform_double_box(J1_mean - J1_wdth / 2.0, J1_mean + J1_wdth / 2.0);
         h5tb.param.J3_rand = rnd::uniform_double_box(J3_mean - J3_wdth / 2.0, J3_mean + J3_wdth / 2.0);
-        for(auto &J2_rand_ref : h5tb.param.J2_rand) J2_rand_ref *= rnd::uniform_double_box(J2_mean - J2_wdth / 2.0, J2_mean + J2_wdth / 2.0);
+        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = J2_exp[r] * rnd::uniform_double_box(J2_mean - J2_wdth / 2.0, J2_mean + J2_wdth / 2.0);
     } else if(std::string(h5tb.param.distribution) == "constant") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean;
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
-        for(auto &J2_rand_ref : h5tb.param.J2_rand) J2_rand_ref *= settings::model::lbit::J2_mean;
+        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = J2_exp[r] * settings::model::lbit::J2_mean;
     } else {
         throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
     }
