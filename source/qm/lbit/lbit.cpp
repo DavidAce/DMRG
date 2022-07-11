@@ -127,7 +127,7 @@ std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, 
     size_t count_ignored = 0;
     for(auto &h : hams_nsite) {
         time_evolution_swap_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-        if(tenx::isIdentity(time_evolution_swap_gates.back().op.abs(), id_threshold)) {
+        if(tenx::isIdentity(time_evolution_swap_gates.back().op, id_threshold)) {
             count_ignored++;
             tools::log->trace("get_time_evolution_swap_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_swap_gates.back().pos,
                               id_threshold);
