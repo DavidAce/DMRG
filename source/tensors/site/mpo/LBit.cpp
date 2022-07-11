@@ -209,6 +209,10 @@ void LBit::randomize_hamiltonian() {
     // For normal and lognormal we can instead put the decay in the standard deviation
     //      J2(i,j) = N(J2_mean, J2_exp(r))
     // This definition is the same as Eq. 7: https://link.aps.org/doi/10.1103/PhysRevB.97.214202
+    // Note that the saturation time is predictably:
+    //      tmax ~ [J2_wdth * exp(-(L/2 - 1)/J2_xcls)]^-1
+    // where 2/pi comes from using the half-normal distribution |N(...)| (see wiki).
+    // We take the absolute value here to get the order of magnitude of the interactions.
 
     using namespace settings::model::lbit;
     auto J2_exp = std::vector<double>(h5tb.param.J2_rand.size(), 0.0);
