@@ -272,8 +272,8 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
 
     // Decide whether to skip interactions. All the J2 values are taken later
     double J1_rand = h5tb.param.J1_rand;
-    double J3_rand = h5tb.param.J3_rand;
     auto   J2_rand = h5tb.param.J2_rand;
+    double J3_rand = h5tb.param.J3_rand;
     if(skip) {
         for(const auto &s : skip.value()) {
             if(pos == s) {
@@ -438,4 +438,6 @@ void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefi
     if(h5tb.param.distribution != distribution) throw except::runtime_error("distribution {} != {} lbit::distribution", h5tb.param.distribution, distribution);
     if(h5tb.param.J2_span != J2_span) throw except::runtime_error("J2_span {} != {} lbit::J2_span", h5tb.param.J2_span, J2_span);
     if(h5tb.param.u_layer != u_layer) throw except::runtime_error("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer);
+
+    build_mpo();
 }

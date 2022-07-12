@@ -198,4 +198,6 @@ void IsingRandomField::load_hamiltonian(const h5pp::File &file, std::string_view
     if(std::abs(h5tb.param.h_tran - h_tran) > 1e-6) throw except::runtime_error("h_tran {:.16f} != {:.16f} ising_tf_rf::h_tran", h5tb.param.h_tran, h_tran);
     if(std::abs(h5tb.param.h_mean - h_mean) > 1e-6) throw except::runtime_error("h_mean {:.16f} != {:.16f} ising_tf_rf::h_mean", h5tb.param.h_mean, h_mean);
     if(std::abs(h5tb.param.h_wdth - h_wdth) > 1e-6) throw except::runtime_error("h_wdth {:.16f} != {:.16f} ising_tf_rf::h_wdth", h5tb.param.h_wdth, h_wdth);
+
+    build_mpo();
 }

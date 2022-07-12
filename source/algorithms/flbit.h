@@ -40,7 +40,7 @@ class flbit : public AlgorithmFinite {
     void create_hamiltonian_swap_gates();
     void update_time_evolution_gates();
     void update_time_evolution_swap_gates();
-    void create_lbit_transform_gates();
+    void create_unitary_circuit_gates();
     void transform_to_real_basis();
     void transform_to_lbit_basis();
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;

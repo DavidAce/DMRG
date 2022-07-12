@@ -42,10 +42,13 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         tools::log->info("Searching for resumable states with name [{}] from algorithm [{}] in file [{}]", name, algo_name, h5file.getFilePath());
     if(not h5file.linkExists("common/storage_level")) throw except::load_error("Missing dataset [common/storage_level]");
     for(const auto &candidate : h5file.getAttributeNames("common/storage_level")) {
-        if(candidate.find(algo_name) != std::string::npos and h5file.readAttribute<std::string>("common/storage_level", candidate) == "FULL")
-            state_prefix_candidates.push_back(candidate);
+        if(candidate.find(algo_name) != std::string::npos) {
+            auto storage_level = h5file.readAttribute<std::string>("common/storage_level", candidate);
+            if(storage_level != "NONE") {
+                if(algo_type == AlgorithmType::fLBIT or storage_level == "FULL") state_prefix_candidates.push_back(candidate);
+            }
+        }
     }
-
     tools::log->info("Found state candidates: {}", state_prefix_candidates);
 
     // Apply the iter filter
@@ -111,6 +114,5 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         // Add the front candidate
         state_candidates_latest.emplace_back(matching_candidates.front().second);
     }
-    exit(0);
     return state_candidates_latest;
 }

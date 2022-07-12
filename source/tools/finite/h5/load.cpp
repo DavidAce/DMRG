@@ -22,26 +22,40 @@ namespace tools::finite::h5 {
     // Load model, state and simulation status from HDF5
     void load::simulation(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmStatus &status, AlgorithmType algo_type) {
         try {
-            if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
-                throw except::runtime_error("Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
+            auto storage_level = h5file.readAttribute<std::string>("common/storage_level", state_prefix);
+            if(algo_type == AlgorithmType::fLBIT) {
+                if(storage_level == enum2sv(StorageLevel::NONE))
+                    throw except::runtime_error(
+                        "Given prefix to simulation data with StorageLevel == NONE. The simulation can only be resumed from LIGHT storage or above");
 
-            // Reset tensors
-            tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
+                tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
+                tools::common::h5::load::status(h5file, state_prefix, status);
+                tools::finite::h5::load::model(h5file, state_prefix, *tensors.model);
+                tools::common::h5::load::timer(h5file, state_prefix, status);
+            } else {
+                if(storage_level != enum2sv(StorageLevel::FULL))
+                    throw except::runtime_error(
+                        "Given prefix to simulation data with StorageLevel < FULL. The simulation can only be resumed from FULL storage");
 
-            tools::common::h5::load::status(h5file, state_prefix, status);
-            tools::finite::h5::load::model(h5file, state_prefix, *tensors.model);
-            tools::finite::h5::load::state(h5file, state_prefix, *tensors.state, status);
-            tools::common::h5::load::timer(h5file, state_prefix, status);
-            tools::finite::h5::load::validate(h5file, state_prefix, tensors, algo_type);
+                // Reset tensors
+                tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
+
+                tools::common::h5::load::status(h5file, state_prefix, status);
+                tools::finite::h5::load::model(h5file, state_prefix, *tensors.model);
+                tools::finite::h5::load::state(h5file, state_prefix, *tensors.state, status);
+                tools::common::h5::load::timer(h5file, state_prefix, status);
+                tools::finite::h5::load::validate(h5file, state_prefix, tensors, algo_type);
+            }
+
         } catch(const std::exception &ex) { throw except::load_error("failed to load from state prefix [{}]: {}", state_prefix, ex.what()); }
     }
 
     void load::model(const h5pp::File &h5file, std::string_view state_prefix, ModelFinite &model) {
         auto model_prefix = h5file.readAttribute<std::string>("common/model_prefix", state_prefix);
         try {
-            if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
-                throw std::runtime_error("Given prefix to model data with StorageLevel < FULL. The model can only be resumed from FULL storage");
-            // Find the path to the MPO
+            if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) == enum2sv(StorageLevel::NONE))
+                throw std::runtime_error("Given prefix to model data with StorageLevel == NONE. The model can only be resumed from LIGHT storage or above");
+            // Find the path to the model
             if(h5file.linkExists(model_prefix)) {
                 auto table_path = fmt::format("{}/hamiltonian", model_prefix);
                 if(not h5file.linkExists(table_path)) throw except::runtime_error("Hamiltonian table does not exist: [{}]", table_path);
@@ -58,7 +72,7 @@ namespace tools::finite::h5 {
             } else {
                 throw std::runtime_error("Could not find model data");
             }
-            tools::log->info("Finished loading model");
+            tools::log->debug("Finished loading model");
             tools::finite::print::model(model);
         } catch(const std::exception &ex) { throw except::runtime_error("model error [{}]: {}", model_prefix, ex.what()); }
     }

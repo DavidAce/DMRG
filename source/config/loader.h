@@ -43,7 +43,7 @@ class Loader {
     [[nodiscard]] T parse_param(const std::string &param_val, std::string_view param_name) {
         try {
             if(param_val.empty()) {
-                if constexpr(std::is_same_v<T, std::string>) return "";
+                if constexpr(std::is_same_v<T, std::string>) return std::string();
                 throw except::range_error("Parameter [{}] has no value", param_name);
             }
             if constexpr(std::is_same_v<T, unsigned int>) {
@@ -59,7 +59,12 @@ class Loader {
             if constexpr(std::is_same_v<T, size_t>) return std::stoul(param_val);
             if constexpr(std::is_same_v<T, double>) return std::stod(param_val);
             if constexpr(std::is_enum_v<T>) return sv2enum<T>(param_val);
-            if constexpr(std::is_same_v<T, std::string>) return param_val;
+            if constexpr(std::is_same_v<T, std::string>) {
+                if(param_val == "\"\"")
+                    return std::string();
+                else
+                    return param_val;
+            }
             if constexpr(std::is_same_v<T, bool>) {
                 if(param_val == "true") return true;
                 if(param_val == "false") return false;

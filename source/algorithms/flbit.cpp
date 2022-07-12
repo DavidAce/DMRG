@@ -45,6 +45,21 @@ void flbit::resume() {
         if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);
         tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        // Our first task is to decide on a state name for the newly loaded state
+        // The simplest is to inferr it from the state prefix itself
+        auto name = tools::common::h5::resume::extract_state_name(state_prefix);
+        tensors.state->set_name(name);
+        clear_convergence_status();
+
+        // Create an initial state in the real basis
+        auto bond_lim = settings::get_bond_init(status.algo_type);
+        tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
+                         enum2sv(settings::strategy::initial_state), enum2sv(ResetReason::INIT), enum2sv(settings::strategy::initial_type),
+                         settings::strategy::initial_sector, settings::strategy::use_eigenspinors, settings::input::bitfield);
+        tensors.randomize_state(settings::strategy::initial_state, settings::strategy::initial_sector, bond_lim, settings::strategy::use_eigenspinors,
+                                settings::input::bitfield, std::nullopt);
+
+        tensors.move_center_point_to_edge(status.bond_lim);
 
         // Load the unitaries
         unitary_gates_2site_layers.clear();
@@ -66,12 +81,9 @@ void flbit::resume() {
                 u                    = qm::Gate(op, pos, dim);
             }
         }
-        clear_convergence_status();
-        tensors.move_center_point_to_edge(status.bond_lim);
 
-        // Our first task is to decide on a state name for the newly loaded state
-        // The simplest is to inferr it from the state prefix itself
-        auto name = tools::common::h5::resume::extract_state_name(state_prefix);
+        // Generate the corresponding state in lbit basis
+        transform_to_lbit_basis();
 
         // Initialize a custom task list
         std::deque<flbit_task> task_list;
@@ -122,7 +134,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
                     create_hamiltonian_gates();
                     update_time_evolution_gates();
                 }
-                create_lbit_transform_gates();
+                create_unitary_circuit_gates();
                 break;
             }
             case flbit_task::TIME_EVOLVE:
@@ -162,7 +174,7 @@ void flbit::run_preprocessing() {
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
 
-    // Create a state in the l-bit basis
+    // Create an initial state in the real basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     tensors.move_center_point_to_edge(status.bond_lim);
     tools::finite::print::model(*tensors.model);
@@ -181,16 +193,12 @@ void flbit::run_preprocessing() {
     if(settings::flbit::use_swap_gates) {
         create_hamiltonian_swap_gates();
         update_time_evolution_swap_gates();
-        //#pragma message "do not create the following gates"
-        //        create_hamiltonian_gates();
-        //        update_time_evolution_gates();
-
     } else {
         create_hamiltonian_gates();
         update_time_evolution_gates();
     }
 
-    create_lbit_transform_gates();
+    create_unitary_circuit_gates();
 
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
 
@@ -538,7 +546,7 @@ void flbit::update_time_evolution_swap_gates() {
     time_swap_gates_3site = qm::lbit::get_time_evolution_swap_gates(status.delta_t, ham_swap_gates_3body, settings::flbit::time_gate_id_threshold);
 }
 
-void flbit::create_lbit_transform_gates() {
+void flbit::create_unitary_circuit_gates() {
     if(unitary_gates_2site_layers.size() == settings::model::lbit::u_layer) return;
     tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
     unitary_gates_2site_layers.clear();
@@ -547,7 +555,7 @@ void flbit::create_lbit_transform_gates() {
 }
 
 void flbit::transform_to_real_basis() {
-    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_unitary_circuit_gates();
     auto t_map    = tid::tic_scope("l2r");
     tensors.state = std::make_unique<StateFinite>(*state_lbit);
     tensors.state->set_name("state_real");
@@ -586,7 +594,7 @@ void flbit::transform_to_real_basis() {
 }
 
 void flbit::transform_to_lbit_basis() {
-    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_lbit_transform_gates();
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_unitary_circuit_gates();
     auto t_map = tid::tic_scope("r2l");
     state_lbit = std::make_unique<StateFinite>(*tensors.state);
     state_lbit->set_name("state_lbit");

@@ -222,4 +222,6 @@ void IsingSelfDual::load_hamiltonian(const h5pp::File &file, std::string_view mo
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
     if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
         throw except::logic_error("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
+
+    build_mpo();
 }
