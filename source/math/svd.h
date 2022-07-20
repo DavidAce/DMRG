@@ -1,10 +1,10 @@
 #pragma once
 
-#include "svd/settings.h"
 #include "math/num.h"
 #include "math/tenx.h"
-#include <optional>
+#include "svd/settings.h"
 #include "tools/common/log.h"
+#include <optional>
 namespace tid {
     class ur;
 }
@@ -45,7 +45,7 @@ namespace svd {
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>, long> do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
                                                                                                 std::optional<long> rank_max = std::nullopt);
 
-        [[nodiscard]] std::pair<long, double> truncation_error_limited_rank(const VectorType<double> &S) const;
+        [[nodiscard]] std::pair<long, double> get_rank_by_truncation_error(const VectorType<double> &S) const;
 
         template<typename Scalar>
         void print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec = 8);
@@ -56,17 +56,17 @@ namespace svd {
         solver();
         solver(const svd::settings &svd_settings);
         solver(std::optional<svd::settings> svd_settings);
-        double                          threshold      = 1e-8; // Singular value threshold
-        double                          threshold_tr   = 1e-8; // Truncation error threshold
+        double truncation_lim =
+            std::numeric_limits<double>::epsilon(); // Truncation error limit, discard all lambda_i for highest i satisfying truncation_lim < sum_i lambda_i^2
         size_t                          switchsize_bdc = 16;   // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
-        size_t                          switchsize_rnd = 1024; // Use Randomized SVD algorithm when rows < switchsize_bdc and BDC otherwise
-        SVDLib                          svd_lib        = SVDLib::lapacke;
+        size_t                          switchsize_rnd = 2048; // Use Randomized SVD algorithm when rows < switchsize_rnd and BDC otherwise
+        svd::Lib                        svd_lib        = svd::Lib::lapacke;
         bool                            use_bdc        = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize_bdc
         bool                            save_fail      = false;
         bool                            save_result    = false;
         bool                            benchmark      = false;
-        static std::optional<long long> count;
-        double                          truncation_error = 0;
+        static std::optional<long long> count;                // Count the number of svd invocations for this execution
+        double                          truncation_error = 0; // Stores the last truncation error
 
         void setLogLevel(size_t logLevel);
 
@@ -82,21 +82,21 @@ namespace svd {
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor,
                                                                                                            std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd_ptr(tensor.data(), tensor.dimension(0), tensor.dimension(1), rank_max);
-            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.normalized().template cast<Scalar>()), tenx::TensorMap(V));
+            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(V));
         }
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>>
             decompose(const Eigen::Tensor<Scalar, 3> &tensor, const long rows, const long cols, std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd_ptr(tensor.data(), rows, cols, rank_max);
-            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.normalized().template cast<Scalar>()), tenx::TensorMap(V));
+            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(V));
         }
 
         template<typename Derived>
         std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>, MatrixType<typename Derived::Scalar>>
             decompose(const Eigen::DenseBase<Derived> &matrix, std::optional<long> rank_max = std::nullopt) {
             auto [U, S, V, rank] = do_svd_ptr(matrix.derived().data(), matrix.rows(), matrix.cols(), rank_max);
-            return std::make_tuple(U, S.normalized().template cast<typename Derived::Scalar>(), V);
+            return std::make_tuple(U, S.template cast<typename Derived::Scalar>(), V);
         }
 
         template<typename Scalar, auto N>

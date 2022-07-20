@@ -136,6 +136,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
                 randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
                 break;
             case xdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
+            case xdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
             case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
@@ -201,6 +202,7 @@ void xdmrg::run_preprocessing() {
     randomize_model(); // First use of random!
     tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
+    init_truncation_error_limits();
     find_energy_range();
     init_energy_limits();
     if(settings::xdmrg::energy_density_window != 0.5)
@@ -234,6 +236,7 @@ void xdmrg::run_algorithm() {
 
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
+        update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         shift_mpo_energy();
         try_projection();
@@ -247,10 +250,11 @@ void xdmrg::run_algorithm() {
 }
 
 void xdmrg::run_fes_analysis() {
-    if(settings::strategy::fes_decrement == 0) return;
+#pragma message "ADD RUN_FES task list item"
+    if(settings::strategy::fes_rate == 0) return;
     tools::log = tools::Logger::setLogger(status.algo_type_str() + "-fes", settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} finite entanglement scaling analysis with bond size step {} of model [{}] for state [{}]", status.algo_type_sv(),
-                     settings::strategy::fes_decrement, enum2sv(settings::model::model_type), tensors.state->get_name());
+                     settings::strategy::fes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_fes = tid::tic_scope("fes");
     if(not status.algorithm_has_finished) throw except::logic_error("Finite entanglement scaling analysis can only be done after a finished simulation");
     clear_convergence_status();
@@ -316,6 +320,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // Set the default bond limit
     m1.bond_lim = status.bond_lim;
+
+    // Set up the default svd precision
+    //    m1.svd_trwt = status.sv
 
     // Set up a multiplier for number of iterations
     size_t iter_multiplier = 1;
@@ -718,11 +725,11 @@ void xdmrg::find_energy_range() {
     // Here we define a set of tasks for fdmrg in order to produce the lowest and highest energy eigenstates,
     // We don't want it to randomize its own model, so we implant our current model before running the tasks.
 
-    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                       fdmrg_task::FIND_GROUND_STATE};
+    std::deque<fdmrg_task> gs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_TRNC_LIMITS,
+                                       fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE, fdmrg_task::FIND_GROUND_STATE};
 
-    std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE,
-                                       fdmrg_task::FIND_HIGHEST_STATE};
+    std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_TRNC_LIMITS,
+                                       fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE, fdmrg_task::FIND_HIGHEST_STATE};
     // Find lowest energy state
     {
         auto  t_gs = tid::tic_scope("fDMRG");

@@ -58,18 +58,25 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, lon
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
         if(state.get_direction() == 1) {
-            auto  posC_ul  = static_cast<size_t>(posC);                                                        // Cast to unsigned
-            auto &mpsC     = state.get_mps_site(posC);                                                         // This becomes the new center position AC
+            auto  posC_ul  = static_cast<size_t>(posC);   // Cast to unsigned
+            auto &mpsC     = state.get_mps_site(posC);    // This becomes the new AC (currently B)
+            auto  trnc     = mpsC.get_truncation_error(); // Truncation error of the old B/new AC, i.e. bond to the right of posC,
             long  bond_new = std::min(bond_lim, mpsC.spin_dim() * std::min(mpsC.get_chiL(), mpsC.get_chiR())); // Bond dimensions growth limit
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
             auto onesite_tensor = tools::common::contraction::contract_bnd_mps_temp(LC, mpsC.get_M());
             tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, bond_new, svd_settings, LogPolicy::QUIET);
+            mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
         } else if(state.get_direction() == -1) {
-            auto  pos_ul         = static_cast<size_t>(pos);                                                      // Cast to unsigned
-            auto &mps            = state.get_mps_site(pos);                                                       // This AC becomes the new B
+            auto  pos_ul         = static_cast<size_t>(pos);   // Cast to unsigned
+            auto &mps            = state.get_mps_site(pos);    // This AC becomes the new B
+            auto  trnc           = mps.get_truncation_error(); // Truncation error of old AC/new B, i.e. bond to the left of pos,
             long  bond_new       = std::min(bond_lim, mps.spin_dim() * std::min(mps.get_chiL(), mps.get_chiR())); // Bond dimensions growth limit
             auto  onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (LC is unset later)
             tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {pos_ul}, posC, bond_new, svd_settings, LogPolicy::QUIET);
+            if(posC >= 0) {
+                auto &mpsC = state.get_mps_site(posC); // This old A is now an AC
+                mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
+            }
         }
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);

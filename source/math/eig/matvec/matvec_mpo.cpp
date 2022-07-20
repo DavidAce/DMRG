@@ -207,8 +207,7 @@ void MatVecMPO<T>::compress() {
     svd::settings svd_settings;
     svd_settings.svd_lib        = SVDLib::lapacke;
     svd_settings.use_bdc        = false;
-    svd_settings.threshold      = 1e-8;
-    svd_settings.threshold_tr   = 1e-8;
+    svd_settings.truncation_lim = 1e-24;
     svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
 

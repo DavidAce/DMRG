@@ -94,6 +94,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::storage_level_emin_state"            , storage::storage_level_emin_state);
     dmrg_config.load_parameter("storage::storage_level_emax_state"            , storage::storage_level_emax_state);
     dmrg_config.load_parameter("storage::storage_level_bond_state"            , storage::storage_level_bond_state);
+    dmrg_config.load_parameter("storage::storage_level_trnc_state"            , storage::storage_level_trnc_state);
+    dmrg_config.load_parameter("storage::storage_level_fes_state"             , storage::storage_level_fes_state);
 
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);
     dmrg_config.load_parameter("model::model_size"                            , model::model_size);
@@ -154,16 +156,18 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
     dmrg_config.load_parameter("strategy::secondary_states"                   , strategy::secondary_states);
-    dmrg_config.load_parameter("strategy::fes_decrement"                      , strategy::fes_decrement);
-    dmrg_config.load_parameter("strategy::bond_grow_mode"                     , strategy::bond_grow_mode);
-    dmrg_config.load_parameter("strategy::bond_grow_rate"                     , strategy::bond_grow_rate);
+    dmrg_config.load_parameter("strategy::fes_rate"                           , strategy::fes_rate);
+    dmrg_config.load_parameter("strategy::bond_increase_when"                 , strategy::bond_increase_when);
+    dmrg_config.load_parameter("strategy::bond_increase_rate"                 , strategy::bond_increase_rate);
+    dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);
+    dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
 
     dmrg_config.load_parameter("precision::eigs_max_iter"                     , precision::eigs_max_iter);
     dmrg_config.load_parameter("precision::eigs_tolerance"                    , precision::eigs_tolerance);
     dmrg_config.load_parameter("precision::eigs_default_ncv"                  , precision::eigs_default_ncv);
     dmrg_config.load_parameter("precision::bfgs_max_iter"                     , precision::bfgs_max_iter);
-    dmrg_config.load_parameter("precision::svd_threshold"                     , precision::svd_threshold);
-    dmrg_config.load_parameter("precision::svd_threshold_tr"                  , precision::svd_threshold_tr);
+    dmrg_config.load_parameter("precision::svd_truncation_lim"                , precision::svd_truncation_lim);
+    dmrg_config.load_parameter("precision::svd_truncation_init"               , precision::svd_truncation_init);
     dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);
     dmrg_config.load_parameter("precision::max_grad_tolerance"                , precision::max_grad_tolerance);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);

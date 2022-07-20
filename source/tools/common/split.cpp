@@ -127,8 +127,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     auto t_split = tid::tic_scope("split", tid::level::extra);
     // Setup the svd settings if not given explicitly
     if(not svd_settings) svd_settings = svd::settings();
-    if(not svd_settings->threshold) svd_settings->threshold = settings::precision::svd_threshold;
-    if(not svd_settings->threshold_tr) svd_settings->threshold_tr = settings::precision::svd_threshold_tr;
+    if(not svd_settings->truncation_lim) svd_settings->truncation_lim = settings::precision::svd_truncation_lim;
     if(not svd_settings->switchsize_bdc) svd_settings->switchsize_bdc = settings::precision::svd_switchsize_bdc;
 
     // Split the multisite tensor at the given center position.

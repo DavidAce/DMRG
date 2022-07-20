@@ -129,21 +129,21 @@ class StateFinite {
     std::vector<double> get_truncation_errors_active() const;
     double              get_truncation_error_active_max() const;
     size_t              num_sites_truncated(double truncation_threshold) const;
-    size_t              num_bonds_at_limit(long bond_level) const;
-    bool                is_limited_by_bond(long bond_lim, double truncation_threshold) const;
+    size_t              num_bonds_at_limit(long bond_lim) const;
+    bool                is_limited_by_bond(long bond_lim) const;
+    bool                is_truncated(double truncation_error_limit) const;
+    void                clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
+    void                clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
+    void                do_all_measurements() const;
 
-    void clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
-    void clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
-    void do_all_measurements() const;
-
-    void tag_active_sites_normalized(bool tag) const;
-    void tag_all_sites_normalized(bool tag) const;
+    void                     tag_active_sites_normalized(bool tag) const;
+    void                     tag_all_sites_normalized(bool tag) const;
     void                     tag_site_normalized(size_t pos, bool tag) const;
     const std::vector<bool> &get_normalization_tags() const;
     bool                     is_normalized_on_all_sites() const;
-    bool is_normalized_on_any_sites() const;
-    bool is_normalized_on_active_sites() const;
-    bool is_normalized_on_non_active_sites() const;
+    bool                     is_normalized_on_any_sites() const;
+    bool                     is_normalized_on_active_sites() const;
+    bool                     is_normalized_on_non_active_sites() const;
 
     std::vector<size_t> get_active_ids() const;
 };

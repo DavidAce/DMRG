@@ -64,6 +64,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case fdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
+            case fdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case fdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
@@ -108,6 +109,7 @@ void fdmrg::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
+    init_truncation_error_limits();
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -134,6 +136,7 @@ void fdmrg::run_algorithm() {
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
+        update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
         shift_mpo_energy();
@@ -146,7 +149,7 @@ void fdmrg::run_algorithm() {
 }
 
 void fdmrg::run_fes_analysis() {
-    if(settings::strategy::fes_decrement == 0) return;
+    if(settings::strategy::fes_rate == 0) return;
     tools::log->warn("FES is not yet implemented for fdmrg");
 }
 
@@ -171,7 +174,7 @@ void fdmrg::single_fdmrg_step() {
         auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
         auto result_mps  = tools::finite::opt::find_ground_state(tensors, initial_mps, status, meta);
         if constexpr(settings::debug) tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", result_mps.get_variance(), result_mps.get_norm());
-        tensors.merge_multisite_mps(result_mps.get_tensor(), status.bond_lim);
+        tensors.merge_multisite_mps(result_mps.get_tensor(), status.bond_lim, svd::settings(status.trnc_lim));
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if constexpr(settings::debug)
             tools::log->debug("Variance after svd: {:8.2e} | trunc: {}", tools::finite::measure::energy_variance(tensors),

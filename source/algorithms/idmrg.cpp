@@ -58,7 +58,8 @@ void idmrg::run_simulation() {
             break;
         }
 
-        update_bond_dimension_limit(); // Will update bond dimension if the state precision is being limited by bond dimension
+        update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
+        update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         tensors.enlarge();
         status.iter++;
         status.step++;

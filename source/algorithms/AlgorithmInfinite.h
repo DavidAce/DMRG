@@ -20,6 +20,7 @@ class AlgorithmInfinite : public AlgorithmBase {
     void run()                                                                                               final;
     void update_variance_max_digits(std::optional<double> energy = std::nullopt)                             final;
     void update_bond_dimension_limit()                                                                       final;
+    void update_truncation_error_limit()                                                                     final;
     void randomize_model();
     void randomize_state(ResetReason reason,
                          std::optional<std::string> sector = std::nullopt,

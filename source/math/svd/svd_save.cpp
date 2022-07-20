@@ -25,7 +25,7 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar>
     file.writeAttribute(rank, group_name, "rank");
     file.writeAttribute(rank_max, group_name, "rank_max");
     file.writeAttribute(use_bdc, group_name, "use_bdc");
-    file.writeAttribute(threshold, group_name, "threshold");
+    file.writeAttribute(truncation_lim, group_name, "truncation_lim");
     file.writeAttribute(switchsize_bdc, group_name, "switchsize_bdc");
     for(const auto &[key, val] : details) file.writeAttribute(val, group_name, key);
 

@@ -59,17 +59,18 @@ int main(int argc, char *argv[]) {
         svdset.benchmark = true;
         auto bench       = ankerl::nanobench::Bench().title(fmt::format("Swap Gates | {}", state_prefix)).relative(true).minEpochIterations(1);
         auto switchsizes = std::vector<size_t>{16};
-        auto thresholds  = std::vector<double>{1e-8};
+        auto truncations = std::vector<double>{1e-8};
         auto num_threads = std::vector<int>{1};
         for(const auto &num_thread : num_threads) {
             for(const auto &switchsize : switchsizes) {
-                for(const auto &threshold : thresholds) {
+                for(const auto &truncation : truncations) {
                     svdset.switchsize_bdc = switchsize;
-                    svdset.threshold_tr   = threshold;
+                    svdset.truncation_lim = truncation;
                     omp_set_num_threads(num_thread);
                     mkl_set_num_threads(num_thread);
                     tenx::omp::setNumThreads(num_thread);
-                    auto name = fmt::format("threads {} | switchsize {} | threshold {:.1e} | bond_lim {}", num_thread, switchsize, threshold, status.bond_lim);
+                    auto name =
+                        fmt::format("threads {} | switchsize {} | truncation {:.1e} | bond_lim {}", num_thread, switchsize, truncation, status.bond_lim);
                     bench.name(name).run([&]() {
                         auto state_tmp = state;
                         auto gates_tmp = gates;

@@ -66,7 +66,7 @@ namespace settings {
      */
     namespace storage {
         inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
-        inline bool                save_timers                     = true;                         /*!< Whether to save timer information to file */
+        inline bool                save_timers                     = true;                         /*!< Save timer information to file (on storage level FULL|NORMAL) */
         inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
         inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but bond-update savepoints can still happen */
         inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
@@ -89,6 +89,8 @@ namespace settings {
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
         inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
         inline StorageLevel     storage_level_bond_state = StorageLevel::NORMAL; /*!< Storage level for states written on bond limit change */
+        inline StorageLevel     storage_level_trnc_state = StorageLevel::NORMAL; /*!< Storage level for states written on truncation error limit change */
+        inline StorageLevel     storage_level_fes_state  = StorageLevel::NORMAL; /*!< Storage level for states written during finite entanglement scaling (fes) after the main simulation */
 
         namespace tmp{
             inline std::string hdf5_temp_path;
@@ -119,7 +121,7 @@ namespace settings {
         inline bool          expand_envs_when_stuck      = true;                                   /*!< Use environment expansion when stuck in local minima. alpha == lowest_variance */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
-        inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_grow_mode == true). */
+        inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_increase_when == true). */
         inline bool          project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
         inline bool          project_final_state         = false;                                  /*!< Project to target axis/parity sector before writing down the final state */
         inline bool          randomize_on_bond_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing the bond dimension */
@@ -130,19 +132,21 @@ namespace settings {
         inline size_t        max_saturation_iters        = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
         inline size_t        min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
         inline size_t        min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
-        inline double        max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in subspace expansion */
+        inline double        max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment expansion */
         inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::OFF;               /*!< When to increase the number of sites in a DMRG step {OFF, SATURATED, ALWAYS} */
+        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::OFF;                     /*!< When to increase the number of sites in a DMRG step {OFF, SATURATED, ALWAYS} */
         inline std::string   target_sector               = "none";                                 /*!< Find an eigenstate in this parity sector. Choose between [random,randomAxis, none, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline std::string   initial_sector              = "random";                               /*!< Initialize state in this spin pattern/parity sector. Choose between [random, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit     initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
-        inline double        fes_decrement               = 2;                                      /*!< If |fes_decrement| > 0, runs a finite entanglement scaling analysis with this step size in bond dimension, after finishing the main algorithm */
-        inline BondGrow      bond_grow_mode              = BondGrow::OFF;                          /*!< If and when to increase the bond dimension limit. Choose OFF, TRUNCATED, SATURATED, ITERATION. */
-        inline double        bond_grow_rate              = 8;                                      /*!< Bond dimension growth rate. Must be > 1. Interpreted as a factor if 1<=x<=2, and as a constant addition otherwise. Also used in FES (in reverse) */
+        inline double        fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
+        inline UpdateWhen    bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, SATURATED, ITERATION}. */
+        inline double        bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
+        inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< Decrease SVD truncation error limit on this event {NEVER, TRUNCATED, SATURATED, ITERATION} */
+        inline double        trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
     }
 
 
@@ -152,8 +156,8 @@ namespace settings {
         inline double   eigs_tolerance                  = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_default_ncv                = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
-        inline double   svd_threshold                   = 1e-12 ;                  /*!< Minimum threshold value for keeping singular values. */
-        inline double   svd_threshold_tr                = 1e-12 ;                  /*!< Maximum acceptable threshold for truncation error (Does nothing if smaller than svd_threshold) */
+        inline double   svd_truncation_lim              = 1e-15 ;                  /*!< Maximum truncation error (if allowed by the bond dimension limit)*/
+        inline double   svd_truncation_init             = 1e-15 ;                  /*!< Initial truncation error, decreases down to lim */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (BFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
@@ -228,7 +232,7 @@ namespace settings {
         inline bool     on                  = false;                               /*!< Turns iDMRG simulation on/off. */
         inline size_t   max_iters           = 5000;                                /*!< Maximum number of iDMRG iterations before forced termination */
         inline long     bond_max            = 32;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init           = 16;                                  /*!< Initial bond dimension limit. Only used when bond_grow_mode == true. */
+        inline long     bond_init           = 16;                                  /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t   print_freq          = 1000;                                /*!< Print frequency for console output. In units of iterations.  (0 = off). */
     }
 
@@ -242,7 +246,7 @@ namespace settings {
         inline double    time_step_min         = 0.00001;                          /*!< (Absolute value) Minimum and final time step for iTEBD time evolution. */
         inline size_t    suzuki_order          = 1;                                /*!< Order of the suzuki trotter decomposition (1,2 or 4) */
         inline long      bond_max              = 8;                                /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long      bond_init             = 16;                               /*!< Initial bond dimension limit. Only used when bond_grow_mode == true. */
+        inline long      bond_init             = 16;                               /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t    print_freq            = 5000;                             /*!< Print frequency for console output. In units of iterations. (0 = off).*/
     }
 
@@ -252,7 +256,7 @@ namespace settings {
         inline size_t    max_iters           = 10;                                 /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t    min_iters           = 4;                                  /*!< Min number of iterations. One iterations moves L steps. */
         inline long      bond_max            = 8;                                  /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long      bond_init           = 16;                                 /*!< Initial bond dimension limit. Only used when bond_grow_mode == true. */
+        inline long      bond_init           = 16;                                 /*!< Initial bond dimension limit. Only used when bond_increase_when == true. */
         inline size_t    print_freq          = 100;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool      store_wavefn        = false;                              /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
     }
@@ -265,7 +269,7 @@ namespace settings {
         inline size_t   min_iters               = 4;                               /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates          = true;                            /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
         inline long     bond_max                = 16;                              /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init               = 16;                              /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow_mode == true, or starting from an entangled state */
+        inline long     bond_init               = 16;                              /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
         inline double   time_start_real         = 1e-1;                            /*!< Starting time point (real) */
         inline double   time_start_imag         = 0;                               /*!< Starting time point (imag) */
         inline double   time_final_real         = 1e6;                             /*!< Finishing time point (real) */
@@ -285,7 +289,7 @@ namespace settings {
         inline size_t   max_iters                       = 10;                      /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters                       = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
         inline long     bond_max                        = 768;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init                       = 8;                       /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_grow_mode == true, or starting from an entangled state */
+        inline long     bond_init                       = 8;                       /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
         inline size_t   opt_overlap_iters               = 2;                       /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
         inline long     opt_overlap_bond_limit          = 16;                      /*!< Bond limit during initial OVERLAP optimization. set to <= 0 for unlimited */
         inline size_t   opt_subspace_iters              = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */

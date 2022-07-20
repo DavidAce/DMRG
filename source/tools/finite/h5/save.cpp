@@ -438,14 +438,23 @@ namespace tools::finite::h5 {
                 break;
             }
             case StorageReason::BOND_INCREASE: {
+                if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) storage_level = StorageLevel::NONE;
                 storage_level = settings::storage::storage_level_bond_state;
-                state_prefix += "/fes-inc";
+                state_prefix += "/bond";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
-            case StorageReason::BOND_DECREASE: {
-                storage_level = settings::storage::storage_level_bond_state;
-                state_prefix += "/fes-dec";
+            case StorageReason::TRNC_DECREASE: {
+                if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) storage_level = StorageLevel::NONE;
+                storage_level = settings::storage::storage_level_trnc_state;
+                state_prefix += "/trnc";
+                table_prefxs = {state_prefix}; // Does not pollute common tables
+                break;
+            }
+            case StorageReason::FES: {
+                if(settings::strategy::fes_rate == 0.0) storage_level = StorageLevel::NONE;
+                storage_level = settings::storage::storage_level_fes_state;
+                state_prefix += "/fes";
                 table_prefxs = {state_prefix}; // Does not pollute common tables
                 break;
             }
@@ -528,7 +537,8 @@ namespace tools::finite::h5 {
             case StorageReason::EMIN_STATE:
             case StorageReason::EMAX_STATE:
             case StorageReason::BOND_INCREASE:
-            case StorageReason::BOND_DECREASE:
+            case StorageReason::TRNC_DECREASE:
+            case StorageReason::FES:
             case StorageReason::MODEL: break;
         }
 
@@ -544,9 +554,17 @@ namespace tools::finite::h5 {
         if(storage_reason == StorageReason::MODEL) {
             tools::finite::h5::save::model(h5file, model_prefix, storage_level, model);
             tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
-        } else if(storage_reason != StorageReason::BOND_INCREASE and storage_reason != StorageReason::BOND_DECREASE) {
-            tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
-            tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
+        } else {
+            switch(storage_reason) {
+                case StorageReason::BOND_INCREASE:
+                case StorageReason::TRNC_DECREASE:
+                case StorageReason::FES: break;
+                default: {
+                    tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
+                    tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
+                    break;
+                }
+            }
         }
         tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
                                       state_prefix, model_prefix, table_prefxs, status);

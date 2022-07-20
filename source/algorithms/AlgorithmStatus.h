@@ -15,6 +15,9 @@ class AlgorithmStatus {
     long                 bond_lim                   = 0; /*!< Current limit on bond dimension, can be increased dynamically */
     long                 bond_max                   = 0; /*!< Maximum allowable bond dimension during an algorithm run */
     long                 bond_init                  = 0; /*!< Initial limit on bond dimension when an algorithm starts */
+    double               trnc_lim                   = 0; /*!< Current truncation error limit */
+    double               trnc_min                   = 0; /*!< Minimum truncation error limit for this simulation */
+    double               trnc_init                  = 0; /*!< Initial max limit on truncation error */
     double               energy_min                 = 0;
     double               energy_max                 = 0;
     double               energy_tgt                 = 0;
@@ -50,6 +53,7 @@ class AlgorithmStatus {
     size_t               variance_mom_converged_for = 0;
     size_t               variance_mom_saturated_for = 0;
     bool                 bond_limit_has_reached_max = false;
+    bool                 trnc_limit_has_reached_min = false;
     bool                 spin_parity_has_converged  = false;
     bool                 time_step_has_converged    = false;
     bool                 fes_is_running             = false;

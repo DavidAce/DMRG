@@ -48,43 +48,28 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     // Setup the SVD solver
     SVD.setSwitchSize(static_cast<int>(switchsize_bdc));
-    SVD.setThreshold(threshold);
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(rank_max.value(), 5l)) : "";
 
     bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize_bdc);
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
-        svd::log->debug("Running Eigen::JacobiSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
+        svd::log->debug("Running Eigen::JacobiSVD truncation limit {:.4e} | switchsize bdc {} | rank_max {}", truncation_lim, switchsize_bdc, rank_max.value());
         // Run the svd
         auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix), tid::detailed);
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
-        svd::log->debug("Running Eigen::BDCSVD threshold {:.4e} | switchsize bdc {} | rank_max {}", threshold, switchsize_bdc, rank_max.value());
+        svd::log->debug("Running Eigen::BDCSVD truncation limit {:.4e} | switchsize bdc {} | rank_max {}", truncation_lim, switchsize_bdc, rank_max.value());
         // Run the svd
         auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix), tid::detailed);
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     }
-    if(count) count.value()++;
-    long max_size = std::min(SVD.singularValues().size(), rank_max.value());
-    long rank     = (SVD.singularValues().head(max_size).array() >= threshold).count();
-    svd::log->trace("Truncating singular values");
-    if(rank == SVD.singularValues().size()) {
-        truncation_error = 0;
-    } else {
-        truncation_error = SVD.singularValues().tail(SVD.singularValues().size() - rank).norm();
-    }
-
-    auto [rank_tr, truncation_error_tr] = truncation_error_limited_rank(SVD.singularValues().head(max_size));
-    if(rank_tr < rank) {
-        rank             = rank_tr;
-        truncation_error = truncation_error_tr;
-    }
-
-    bool U_finite   = SVD.matrixU().leftCols(rank).allFinite();
-    bool S_finite   = SVD.singularValues().head(rank).allFinite();
-    bool V_finite   = SVD.matrixV().leftCols(rank).allFinite();
-    bool S_positive = (SVD.singularValues().head(rank).array() >= 0).all();
+    long rank       = SVD.rank();
+    long max_size   = std::min(rank, rank_max.value());
+    bool U_finite   = SVD.matrixU().leftCols(max_size).allFinite();
+    bool S_finite   = SVD.singularValues().head(max_size).allFinite();
+    bool V_finite   = SVD.matrixV().leftCols(max_size).allFinite();
+    bool S_positive = (SVD.singularValues().head(max_size).array() >= 0).all();
 
     if(SVD.rank() <= 0 or rank == 0 or not U_finite or not S_finite or not S_positive or not V_finite) {
         if(not mat.allFinite()) {
@@ -100,16 +85,11 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->critical("Eigen SVD error: S is not positive");
         }
         //#if !defined(NDEBUG)
-        if(save_fail)
-            save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank_max.value(),
-                             "Eigen", details);
+        if(save_fail) save_svd<Scalar>(mat, SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), rank_max.value(), "Eigen", details);
 
         //#endif
 
         throw except::runtime_error("Eigen SVD error \n"
-                                    "  svd_threshold    = {:.4e}\n"
-                                    "  Truncation Error = {:.4e}\n"
-                                    "  Rank             = {}\n"
                                     "  Rank max         = {}\n"
                                     "  Dims             = ({}, {})\n"
                                     "  A all finite     : {}\n"
@@ -117,14 +97,17 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                     "  S all finite     : {}\n"
                                     "  S all positive   : {}\n"
                                     "  V all finite     : {}\n",
-                                    threshold, truncation_error, rank, rank_max.value(), rows, cols, mat.allFinite(), U_finite, S_finite, S_positive, V_finite);
+                                    rank_max.value(), rows, cols, mat.allFinite(), U_finite, S_finite, S_positive, V_finite);
     }
+    if(count) count.value()++;
+
+    // Truncation error needs normalized singular values
+    std::tie(rank, truncation_error) = get_rank_by_truncation_error(SVD.singularValues().head(max_size).normalized());
 
     if(save_result)
-        save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank_max.value(), "Eigen",
-                         details);
+        save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank, "Eigen", details);
     svd::log->trace("SVD with Eigen finished successfully");
-
+    // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
 }
 

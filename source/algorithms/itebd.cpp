@@ -16,6 +16,7 @@ void itebd::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     init_bond_dimension_limits();
+    init_truncation_error_limits();
     randomize_model(); // First use of random!
     auto t_init    = tid::tic_scope("init");
     status.delta_t = std::complex<double>(settings::itebd::time_step_init_real, settings::itebd::time_step_init_imag);

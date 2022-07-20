@@ -190,17 +190,17 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(not tensors.position_is_inward_edge()) return;
     status.bond_max                   = settings::get_bond_max(status.algo_type);
     status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
-    if(settings::strategy::bond_grow_mode == BondGrow::OFF) {
+    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
         status.bond_lim                   = status.bond_max;
         status.bond_limit_has_reached_max = true;
         return;
     }
     if(status.bond_limit_has_reached_max) return;
-    auto tic = tid::tic_scope("get_bond_grow_mode");
+    auto tic = tid::tic_scope("bond_grow");
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
-            double truncation_threshold = 2 * settings::precision::svd_threshold;
+            double truncation_threshold = 2 * settings::precision::svd_truncation_lim;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
             size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_lim);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
@@ -214,25 +214,22 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 
     // If we got here we want to increase the bond dimension limit progressively during the simulation
     // Only increment the bond dimension if the following are all true
-    //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow_mode == BondGrow::IF_STUCK we add the condition
-    //      * the algorithm has got stuck
     bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
-    bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim, 2 * settings::precision::svd_threshold);
-    bool grow_if_truncated = settings::strategy::bond_grow_mode == BondGrow::TRUNCATED;
-    bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::SATURATED;
+    bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
+    bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
+    bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
 
     if(grow_if_truncated and not is_truncated) {
         tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
         return;
     }
     if(grow_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_lim);
+        tools::log->info("Algorithm is not saturated. Kept current bond limit {}", status.bond_lim);
         return;
     }
 
     // If we got to this point we will update the bond dimension by a factor
-    auto grow_rate = settings::strategy::bond_grow_rate;
+    auto grow_rate = settings::strategy::bond_increase_rate;
     if(grow_rate <= 1.0) throw except::runtime_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate);
 
     // Do a projection to make sure the saved data is in the correct sector
@@ -264,21 +261,21 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 }
 
 void AlgorithmFinite::reduce_bond_dimension_limit() {
-    // We reduce the bond dimension limit whenever entanglement has stopped changing
+    // We reduce the bond dimension limit during FES whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
     size_t iter_since_reduce = std::max(status.iter, iter_last_bond_reduce) - std::min(status.iter, iter_last_bond_reduce);
     if(status.algorithm_saturated_for > 0 or iter_since_reduce >= 4) {
-        write_to_file(StorageReason::BOND_DECREASE, CopyPolicy::OFF);
+        write_to_file(StorageReason::FES, CopyPolicy::OFF);
 
-        auto grow_rate = std::abs(settings::strategy::fes_decrement);
-        auto bond_new  = static_cast<double>(status.bond_lim);
-        if(grow_rate > 0.0 and grow_rate < 1.0)
-            bond_new *= grow_rate;
-        else if(grow_rate >= 1.0)
-            bond_new -= grow_rate;
+        auto fes_rate = std::abs(settings::strategy::fes_rate);
+        auto bond_new = static_cast<double>(status.bond_lim);
+        if(fes_rate > 0.0 and fes_rate < 1.0)
+            bond_new *= fes_rate;
+        else if(fes_rate >= 1.0)
+            bond_new -= fes_rate;
         else
-            throw except::logic_error("invalid grow rate {}", grow_rate);
+            throw except::logic_error("invalid fes rate {}", fes_rate);
         bond_new = std::floor(std::max(bond_new, static_cast<double>(status.bond_init)));
 
         if(bond_new == static_cast<double>(status.bond_lim))
@@ -291,6 +288,69 @@ void AlgorithmFinite::reduce_bond_dimension_limit() {
         }
         iter_last_bond_reduce = status.iter;
     }
+}
+
+void AlgorithmFinite::update_truncation_error_limit() {
+    if(not tensors.position_is_inward_edge()) return;
+    if(status.trnc_lim == 0.0) throw std::runtime_error("trnc_lim is zero!");
+    status.trnc_min                   = settings::precision::svd_truncation_lim;
+    status.trnc_limit_has_reached_min = status.trnc_lim <= status.trnc_min;
+    tools::log->info("trnc_min: {:8.2e} | trnc_lim {:8.2e} | reached {}", status.trnc_min, status.trnc_lim, status.trnc_limit_has_reached_min);
+    if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
+        status.trnc_lim                   = status.trnc_min;
+        status.trnc_limit_has_reached_min = true;
+        return;
+    }
+    if(status.trnc_limit_has_reached_min) return;
+    auto tic = tid::tic_scope("trnc_down");
+
+    if constexpr(settings::debug) {
+        if(tools::log->level() == spdlog::level::trace) {
+            double truncation_threshold = 2 * settings::precision::svd_truncation_lim;
+            size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
+            tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
+            tools::log->trace("Truncation errors     : {}", tensors.state->get_truncation_errors());
+            tools::log->trace("Bond dimensions       : {}", tools::finite::measure::bond_dimensions(*tensors.state));
+            tools::log->trace("Truncated bond count  : {} ", trunc_bond_count);
+            tools::log->trace("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
+        }
+    }
+
+    // If we got here we want to increase the bond dimension limit progressively during the simulation
+    bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
+    bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdateWhen::TRUNCATED;
+    bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
+
+    if(drop_if_truncated and not is_truncated) {
+        tools::log->info("State is not truncated. Kept current truncation error limit {}", status.trnc_lim);
+        return;
+    }
+    if(drop_if_saturated and not is_saturated) {
+        tools::log->info("Algorithm is not saturated. Kept current truncation error limit {}", status.trnc_lim);
+        return;
+    }
+
+    // If we got to this point we will update the truncation error limit by a factor
+    auto drop_rate = settings::strategy::trnc_decrease_rate;
+    if(drop_rate > 1.0 or drop_rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:.3f} | must be in [0, 1]");
+
+    // Do a projection to make sure the saved data is in the correct sector
+    if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
+
+    // Write current results before updating the truncation error limit
+    write_to_file(StorageReason::TRNC_DECREASE);
+
+    auto trnc_new = std::max(status.trnc_min, status.trnc_lim * drop_rate);
+
+    tools::log->info("Updating truncation error limit {} -> {} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
+    status.trnc_lim                   = trnc_new;
+    status.trnc_limit_has_reached_min = status.bond_lim == status.bond_max;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
+
+    // Last sanity check before leaving here
+    if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {} > {}", status.trnc_lim, status.trnc_min);
 }
 
 void AlgorithmFinite::update_expansion_factor_alpha() {
@@ -333,7 +393,7 @@ void AlgorithmFinite::randomize_model() {
 
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
                                       std::optional<long> bond_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
-                                      std::optional<double> svd_threshold) {
+                                      std::optional<double> svd_truncation_lim) {
     auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -345,10 +405,10 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(not sector) sector = settings::strategy::initial_sector;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
-    if(not svd_threshold and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_threshold = 1e-2;
+    if(not svd_truncation_lim and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_truncation_lim = 1e-2;
     if(not bond_lim) {
         bond_lim = settings::get_bond_init(status.algo_type);
-        if(settings::strategy::bond_grow_mode == BondGrow::OFF and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
+        if(settings::strategy::bond_increase_when == UpdateWhen::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             bond_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
     if(bond_lim.value() <= 0) throw except::runtime_error("Invalid bond_lim: {}", bond_lim.value());
@@ -356,7 +416,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type.value()), sector.value(), use_eigenspinors.value(), bitfield.value());
 
     svd::settings svd_settings;
-    svd_settings.threshold = svd_threshold;
+    svd_settings.truncation_lim = svd_truncation_lim;
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
@@ -377,7 +437,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     status.position  = tensors.state->get_position<long>();
     status.direction = tensors.state->get_direction();
     status.algo_stop = AlgorithmStop::NONE;
-    if(settings::strategy::bond_grow_mode != BondGrow::OFF) status.bond_lim = bond_lim.value();
+    if(settings::strategy::bond_increase_when != UpdateWhen::NEVER) status.bond_lim = bond_lim.value();
     if(reason == ResetReason::NEW_STATE) excited_state_number++;
     if(tensors.state->find_largest_bond() > bond_lim.value())
         //        tools::log->warn("Faulty truncation after randomize. Max found bond is {}, but bond limit is {}", tensors.state->find_largest_bond(),

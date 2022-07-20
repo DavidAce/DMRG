@@ -13,6 +13,9 @@ void AlgorithmStatus::reset() {
     bond_max           = status.bond_max;
     bond_init          = status.bond_init;
     bond_lim           = status.bond_lim;
+    trnc_min           = status.trnc_min;
+    trnc_init          = status.trnc_init;
+    trnc_lim           = status.trnc_lim;
     energy_min         = status.energy_min;
     energy_max         = status.energy_max;
     energy_tgt         = status.energy_tgt;
@@ -40,6 +43,9 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->bond_max                      == s.bond_max and
         this->bond_init                     == s.bond_init and
         this->bond_lim                      == s.bond_lim and
+        this->trnc_min                      == s.trnc_min and
+        this->trnc_init                     == s.trnc_init and
+        this->trnc_lim                      == s.trnc_lim and
         this->energy_min                    == s.energy_min and
         this->energy_max                    == s.energy_max and
         this->energy_tgt                    == s.energy_tgt and
@@ -75,6 +81,7 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->variance_mom_converged_for    == s.variance_mom_converged_for and
         this->variance_mom_saturated_for    == s.variance_mom_saturated_for and
         this->bond_limit_has_reached_max    == s.bond_limit_has_reached_max and
+        this->trnc_limit_has_reached_min    == s.trnc_limit_has_reached_min and
         this->spin_parity_has_converged     == s.spin_parity_has_converged and
         this->time_step_has_converged       == s.time_step_has_converged and
         this->fes_is_running                == s.fes_is_running;

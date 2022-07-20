@@ -61,25 +61,20 @@ void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy)
 void AlgorithmInfinite::update_bond_dimension_limit() {
     status.bond_max                   = settings::get_bond_max(status.algo_type);
     status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
-    if(settings::strategy::bond_grow_mode == BondGrow::OFF) {
+    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
         status.bond_lim = status.bond_max;
         return;
     }
     if(status.bond_limit_has_reached_max) return;
-    auto tic = tid::tic_scope("bond_grow_mode");
+    auto tic = tid::tic_scope("bond_grow");
 
     // If we got here we want to increase the bond dimension limit progressively during the simulation
-    // Only increment the bond dimension if the following are all true
-    //      * the state precision is limited by bond dimension
-    // In addition, if get_bond_grow_mode == BondGrow::SATURATED we add the condition
-    //      * the algorithm has got stuck
-
     // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
     // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
     bool is_saturated      = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
-    bool is_truncated      = tensors.state->is_bond_limited(status.bond_lim, 2 * settings::precision::svd_threshold);
-    bool grow_if_truncated = settings::strategy::bond_grow_mode == BondGrow::TRUNCATED;
-    bool grow_if_saturated = settings::strategy::bond_grow_mode == BondGrow::SATURATED;
+    bool is_truncated      = tensors.state->is_bond_limited(status.bond_lim, 2 * settings::precision::svd_truncation_lim);
+    bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
+    bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
 
     if(grow_if_truncated and not is_truncated) {
         tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
@@ -91,15 +86,77 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     }
 
     // If we got to this point we will update the bond dimension by a factor
-    auto grow_rate = settings::strategy::bond_grow_rate;
-    if(grow_rate <= 1.0) throw except::runtime_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate);
+    auto grow_rate = settings::strategy::bond_increase_rate;
+    if(grow_rate <= 1.0) throw except::runtime_error("Error: bond_increase_rate == {:.3f} | must be larger than one", grow_rate);
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_INCREASE);
 
     // If we got to this point we will update the bond dimension by a factor
-    auto factor = settings::strategy::bond_grow_rate;
-    if(factor <= 1.0) throw except::logic_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", factor);
+    auto factor = settings::strategy::bond_increase_rate;
+    if(factor <= 1.0) throw except::logic_error("Error: bond_increase_rate == {:.3f} | must be larger than one", factor);
+
+    auto bond_new = static_cast<double>(status.bond_lim);
+    if(grow_rate <= 2.0 and grow_rate > 1.0) {
+        bond_new = std::ceil(bond_new * grow_rate);
+        bond_new = num::round_up_to_multiple_of<double>(bond_new, 4);
+    } else if(grow_rate > 2.0) {
+        bond_new = bond_new + grow_rate;
+    } else
+        throw except::logic_error("Expected grow_rate > 1.0. Got {}", grow_rate);
+    bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
+
+    tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
+    status.bond_lim                   = static_cast<long>(bond_new);
+    status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
+    status.algorithm_has_stuck_for    = 0;
+    status.algorithm_saturated_for    = 0;
+    // Last sanity check before leaving here
+    if(status.bond_lim > status.bond_max) throw except::runtime_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
+}
+
+void AlgorithmInfinite::update_truncation_error_limit() {
+    status.bond_max                   = settings::get_bond_max(status.algo_type);
+    status.bond_limit_has_reached_max = status.bond_lim >= status.bond_max;
+    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
+        status.bond_lim = status.bond_max;
+        return;
+    }
+    if(status.bond_limit_has_reached_max) return;
+    auto tic = tid::tic_scope("trnc_down");
+
+    // If we got here we want to increase the bond dimension limit progressively during the simulation
+    // Only increment the bond dimension if the following are all true
+    //      * the state precision is limited by bond dimension
+    // In addition, if get_bond_grow_mode == UpdateWhen::SATURATED we add the condition
+    //      * the algorithm has got stuck
+
+    // When schmidt values are highly truncated at every step the entanglement fluctuates a lot, so we should check both
+    // variance and entanglement for saturation. Note that status.algorithm_saturaded_for uses an "and" condition.
+    bool is_saturated      = status.algorithm_saturated_for > 0 or status.variance_mpo_saturated_for > 0;
+    bool is_truncated      = tensors.state->is_bond_limited(status.bond_lim, 2 * settings::precision::svd_truncation_lim);
+    bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
+    bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
+
+    if(grow_if_truncated and not is_truncated) {
+        tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
+        return;
+    }
+    if(grow_if_saturated and not is_saturated) {
+        tools::log->info("Algorithm is not saturated yet. Kept current bond limit {}", status.bond_lim);
+        return;
+    }
+
+    // If we got to this point we will update the bond dimension by a factor
+    auto grow_rate = settings::strategy::bond_increase_rate;
+    if(grow_rate <= 1.0) throw except::runtime_error("Error: bond_increase_rate == {:.3f} | must be larger than one", grow_rate);
+
+    // Write current results before updating bond dimension
+    write_to_file(StorageReason::BOND_INCREASE);
+
+    // If we got to this point we will update the bond dimension by a factor
+    auto factor = settings::strategy::bond_increase_rate;
+    if(factor <= 1.0) throw except::logic_error("Error: bond_increase_rate == {:.3f} | must be larger than one", factor);
 
     auto bond_new = static_cast<double>(status.bond_lim);
     if(grow_rate <= 2.0 and grow_rate > 1.0) {
@@ -251,15 +308,23 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
             break;
         }
         case StorageReason::BOND_INCREASE: {
-            if(settings::strategy::bond_grow_mode == BondGrow::OFF) return;
-            storage_level = settings::storage::storage_level_checkpoint;
-            state_prefix += fmt::format("/fes-inc/bond_{}", status.bond_lim);
+            if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) return;
+            storage_level = settings::storage::storage_level_bond_state;
+            state_prefix += "/bond";
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }
-        case StorageReason::BOND_DECREASE: {
-            storage_level = settings::storage::storage_level_bond_state;
-            state_prefix += fmt::format("/fes-dec/bond_{}", status.bond_lim);
+        case StorageReason::TRNC_DECREASE: {
+            if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) return;
+            storage_level = settings::storage::storage_level_trnc_state;
+            state_prefix += "/trnc";
+            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
+            break;
+        }
+        case StorageReason::FES: {
+            if(settings::strategy::fes_rate == 0) return;
+            storage_level = settings::storage::storage_level_fes_state;
+            state_prefix += "/fes";
             table_prefxs = {state_prefix}; // Should not pollute tables other than its own
             break;
         }

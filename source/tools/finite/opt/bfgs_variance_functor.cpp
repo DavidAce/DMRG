@@ -278,9 +278,9 @@ void bfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
     if(readyCompress) return;
 
     svd::settings svd_settings;
-    svd_settings.svd_lib        = SVDLib::lapacke;
+    svd_settings.svd_lib        = svd::Lib::lapacke;
     svd_settings.use_bdc        = false;
-    svd_settings.threshold      = 1e-12;
+    svd_settings.truncation_lim = 1e-24;
     svd_settings.switchsize_bdc = 4096;
     svd::solver svd(svd_settings);
     auto        old_dimensions = mpo2.dimensions();

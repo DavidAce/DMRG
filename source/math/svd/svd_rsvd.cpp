@@ -51,14 +51,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     SVD.compute(mat, rank_max.value());
 
     if(count) count.value()++;
-    long max_size = std::min(SVD.singularValues().size(), rank_max.value());
-    long rank     = (SVD.singularValues().topRows(max_size).array().real() >= threshold).count();
-    svd::log->trace("Truncating singular values");
-    if(rank == SVD.singularValues().size()) {
-        truncation_error = 0;
-    } else {
-        truncation_error = SVD.singularValues().bottomRows(SVD.singularValues().size() - rank).norm();
-    }
+    long rank     = SVD.rank();
+    long max_size = std::min(rank, rank_max.value());
+    // Truncation error needs normalized singular values
+    std::tie(rank, truncation_error) = get_rank_by_truncation_error(SVD.singularValues().head(max_size).normalized());
 
     if(rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().topRows(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {
@@ -76,6 +72,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     }
     svd::log->trace("SVD with RND SVD finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
                     threshold, rank, rank_max.value(), rows, cols, truncation_error, t_rsvd->get_last_interval());
+    // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
 #endif
 }

@@ -8,9 +8,13 @@ svd::solver::solver() {
     setLogLevel(2);
     if(not count) count = 0;
 }
+
+svd::settings::settings(long rank_max_) : rank_max(rank_max_){};
+svd::settings::settings(double truncation_lim_) : truncation_lim(truncation_lim_){};
+svd::settings::settings(long rank_max_, double truncation_lim_) : rank_max(rank_max_), truncation_lim(truncation_lim_){};
+
 void svd::solver::copy_settings(const svd::settings &svd_settings) {
-    if(svd_settings.threshold) threshold = svd_settings.threshold.value();
-    if(svd_settings.threshold_tr) threshold_tr = svd_settings.threshold_tr.value();
+    if(svd_settings.truncation_lim) truncation_lim = svd_settings.truncation_lim.value();
     if(svd_settings.switchsize_bdc) switchsize_bdc = svd_settings.switchsize_bdc.value();
     if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
     if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
@@ -56,7 +60,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     bool use_rsvd = num::cmp_greater(minrc, rank_max.value() * 10) and num::cmp_greater(minrc, switchsize_rnd);
 
     switch(svd_lib) {
-        case SVDLib::lapacke: {
+        case svd::Lib::lapacke: {
             try {
                 if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
                     return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
@@ -68,7 +72,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             }
             break;
         }
-        case SVDLib::eigen: {
+        case svd::Lib::eigen: {
             try {
                 if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
                     return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
@@ -80,7 +84,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             }
             break;
         }
-        case SVDLib::rsvd: {
+        case svd::Lib::rsvd: {
             try {
                 return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
             } catch(const std::exception &ex) {
@@ -151,10 +155,11 @@ template Eigen::Tensor<double, 2> svd::solver::pseudo_inverse(const Eigen::Tenso
 template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<cplx, 2> &tensor);
 
 // template<typename Scalar>
-std::pair<long, double> svd::solver::truncation_error_limited_rank(const VectorType<double> &S) const {
-    VectorType<double> truncations(S.size());
-    for(long s = 0; s < S.size(); s++) { truncations[s] = S.bottomRows(S.size() - s).norm(); }
-    auto rank = (truncations.array() >= threshold_tr).count();
-    //    tools::log->info("Rank {} | error {:8.2e} truncation errors: {:8.2e}", rank, truncations[rank-1], fmt::join(truncations, ", "));
-    return {rank, truncations[rank - 1]};
+std::pair<long, double> svd::solver::get_rank_by_truncation_error(const VectorType<double> &S) const {
+    VectorType<double> truncation_errors(S.size() + 1);
+    for(long s = 0; s <= S.size(); s++) { truncation_errors[s] = S.bottomRows(S.size() - s).squaredNorm(); } // Last one should be zero, i.e. no truncation
+    auto rank = (truncation_errors.array() >= truncation_lim).count();
+    tools::log->info("Size {} | Rank {} | limit {:8.2e} | error {:8.2e} truncation errors: {:8.2e}", S.size(), rank, truncation_lim, truncation_errors[rank],
+                     fmt::join(truncation_errors, ", "));
+    return {rank, truncation_errors[rank]};
 }

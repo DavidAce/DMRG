@@ -3,30 +3,28 @@
 #include <optional>
 #include <string>
 
-enum class SVDLib { eigen, lapacke, rsvd };
-
 namespace svd {
-    inline std::string_view enum2sv(SVDLib lib) {
-        if(lib == SVDLib::eigen) return "eigen";
-        if(lib == SVDLib::lapacke) return "lapacke";
-        if(lib == SVDLib::rsvd) return "rsvd";
+    enum class Lib { eigen, lapacke, rsvd };
+    inline std::string_view enum2sv(svd::Lib lib) {
+        if(lib == svd::Lib::eigen) return "eigen";
+        if(lib == svd::Lib::lapacke) return "lapacke";
+        if(lib == svd::Lib::rsvd) return "rsvd";
         throw std::logic_error("Could not match SVDLib");
     }
 
     struct settings {
-        std::optional<double> threshold      = std::nullopt;
-        std::optional<double> threshold_tr   = std::nullopt;
-        std::optional<size_t> switchsize_bdc = std::nullopt;
-        std::optional<size_t> loglevel       = std::nullopt;
-        std::optional<bool>   use_bdc        = std::nullopt;
-        std::optional<SVDLib> svd_lib        = std::nullopt;
-        std::optional<bool>   save_fail      = std::nullopt;
-        std::optional<bool>   benchmark      = std::nullopt;
+        std::optional<long>     rank_max       = std::nullopt;
+        std::optional<double>   truncation_lim = std::nullopt;
+        std::optional<size_t>   switchsize_bdc = std::nullopt;
+        std::optional<size_t>   loglevel       = std::nullopt;
+        std::optional<bool>     use_bdc        = std::nullopt;
+        std::optional<svd::Lib> svd_lib        = std::nullopt;
+        std::optional<bool>     save_fail      = std::nullopt;
+        std::optional<bool>     benchmark      = std::nullopt;
         /* clang-format off */
         std::string to_string(){
             std::string msg;
-            if(threshold       ) msg.append(fmt::format(" | threshold {:.2e}", threshold.value()));
-            if(threshold_tr    ) msg.append(fmt::format(" | threshold_tr {:.2e}", threshold_tr.value()));
+            if(truncation_lim  ) msg.append(fmt::format(" | truncation_lim {:.2e}", truncation_lim.value()));
             if(switchsize_bdc  ) msg.append(fmt::format(" | switchsize bdc {}", switchsize_bdc.value()));
             if(loglevel        ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
             if(use_bdc         ) msg.append(fmt::format(" | use_bdc {}", use_bdc.value()));
@@ -36,5 +34,9 @@ namespace svd {
             return msg.empty() ? msg : "svd settings" + msg;
         }
         /* clang-format on */
+        settings() = default;
+        explicit settings(long rank_max_);
+        explicit settings(double truncation_lim_);
+        explicit settings(long rank_max_, double truncation_lim_);
     };
 }

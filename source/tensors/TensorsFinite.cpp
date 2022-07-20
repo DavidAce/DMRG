@@ -240,7 +240,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->trace("Setting MPO energy shift {:.16f} (all edges should be rebuilt after this)", energy_shift_per_site.value());
+    tools::log->trace("Setting MPO energy shift (per site) {:.16f} (all edges should be rebuilt after this)", energy_shift_per_site.value());
     model->set_energy_shift_per_site(energy_shift_per_site.value());
     model->clear_mpo_squared();
     model->assert_validity();

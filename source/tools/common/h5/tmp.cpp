@@ -138,12 +138,13 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
             case StorageReason::CHECKPOINT:
                 if(status.iter % settings::storage::copy_from_temp_freq != 0) return; // Check that we write according to the frequency given
             case StorageReason::FINISHED:
-            case StorageReason::BOND_INCREASE:
             case StorageReason::PROJ_STATE:
             case StorageReason::INIT_STATE:
             case StorageReason::EMIN_STATE:
             case StorageReason::EMAX_STATE:
-            case StorageReason::BOND_DECREASE:
+            case StorageReason::BOND_INCREASE:
+            case StorageReason::TRNC_DECREASE:
+            case StorageReason::FES:
             case StorageReason::MODEL: break;
         }
         tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());

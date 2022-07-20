@@ -117,6 +117,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
+            case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;
             case flbit_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
@@ -173,6 +174,7 @@ void flbit::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
+    init_truncation_error_limits();
 
     // Create an initial state in the real basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
@@ -244,7 +246,7 @@ void flbit::run_algorithm() {
 }
 
 void flbit::run_fes_analysis() {
-    if(settings::strategy::fes_decrement == 0) return;
+    if(settings::strategy::fes_rate == 0) return;
     tools::log->warn("FES is not yet implemented for flbit");
 }
 
@@ -588,7 +590,7 @@ void flbit::transform_to_real_basis() {
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-3) throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
-        if(std::abs(overlap - 1) > std::max(settings::precision::svd_threshold, settings::precision::svd_threshold_tr))
+        if(std::abs(overlap - 1) > settings::precision::svd_truncation_lim)
             tools::log->warn("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
     }
 }
@@ -627,7 +629,7 @@ void flbit::transform_to_lbit_basis() {
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(std::abs(overlap - 1) > 1e-3) throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
-        if(std::abs(overlap - 1) > std::max(settings::precision::svd_threshold, settings::precision::svd_threshold_tr))
+        if(std::abs(overlap - 1) > settings::precision::svd_truncation_lim)
             throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
     }
 }

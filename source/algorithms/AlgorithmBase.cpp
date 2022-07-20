@@ -22,15 +22,32 @@ void AlgorithmBase::copy_from_tmp(StorageReason storage_reason, std::optional<Co
 }
 
 void AlgorithmBase::init_bond_dimension_limits() {
-    status.bond_init = settings::get_bond_init(status.algo_type);
-    status.bond_max  = settings::get_bond_max(status.algo_type);
-    if(settings::strategy::bond_grow_mode != BondGrow::OFF)
-        status.bond_lim = settings::get_bond_init(status.algo_type);
-    else
-        status.bond_lim = settings::get_bond_max(status.algo_type);
-
+    if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) {
+        status.bond_max  = settings::get_bond_max(status.algo_type);
+        status.bond_lim  = settings::get_bond_max(status.algo_type);
+        status.bond_init = settings::get_bond_max(status.algo_type);
+    } else {
+        status.bond_max  = settings::get_bond_max(status.algo_type);
+        status.bond_lim  = settings::get_bond_init(status.algo_type);
+        status.bond_init = settings::get_bond_init(status.algo_type);
+    }
     // Sanity check
     if(status.bond_lim == 0) throw except::runtime_error("Bond dimension limit invalid: {}", status.bond_lim);
+}
+
+void AlgorithmBase::init_truncation_error_limits() {
+    if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) {
+        status.trnc_min  = settings::precision::svd_truncation_lim;
+        status.trnc_lim  = settings::precision::svd_truncation_lim;
+        status.trnc_init = settings::precision::svd_truncation_lim;
+    } else {
+        status.trnc_min  = settings::precision::svd_truncation_lim;
+        status.trnc_lim  = settings::precision::svd_truncation_init;
+        status.trnc_init = settings::precision::svd_truncation_init;
+    }
+    // Sanity check
+    if(status.trnc_lim == 0.0) throw except::runtime_error("Truncation error limit invalid: {}", status.trnc_lim);
+    tools::log->info("Initialized truncation error limits: init {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_init, status.trnc_lim, status.trnc_min);
 }
 
 void AlgorithmBase::write_enable() { write_enabled = true; }

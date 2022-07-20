@@ -65,8 +65,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
         t_adj.toc();
         auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(), std::max(A.rows(), A.cols()));
-        long max_size         = std::min(S.size(), rank_max.value());
-        rank                  = (S.head(max_size).real().array() >= threshold).count();
+        rank                  = std::min(S.size(), rank_max.value());
         if(U.rows() != A.rows()) throw except::logic_error("U.rows():{} != A.rows():{}", U.rows(), A.rows());
         if(VT.cols() != A.cols()) throw except::logic_error("VT.cols():{} != A.cols():{}", VT.cols(), A.cols());
         return std::make_tuple(VT.adjoint().leftCols(rank), S.head(rank), U.adjoint().topRows(rank), rank);
@@ -137,7 +136,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if constexpr(std::is_same<Scalar, double>::value) {
             if(use_jacobi) {
                 if constexpr(use_jsv) {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
+                                    sizeS);
                     // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
                     // For this routine we need rows > cols
                     S.resize(sizeS);
@@ -162,7 +162,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     VT = V.adjoint();
                     V.resize(0, 0);
                 } else {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
+                                    sizeS);
                     // For this routine we need rows > cols
                     S.resize(sizeS);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
@@ -181,7 +182,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     VT = V.adjoint();
                 }
             } else if(use_bdc) {
-                svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                svd::log->debug("Running Lapacke BDC SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
                 int liwork = std::max(1, 8 * mn);
                 int lrwork = std::max(1, mn * (6 + 4 * mn) + mx);
                 iwork.resize(static_cast<size_t>(liwork));
@@ -208,7 +209,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
 
             } else {
-                svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                svd::log->debug("Running Lapacke SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
 
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
@@ -234,7 +235,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         } else if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
             if(use_jacobi) {
                 if constexpr(use_jsv) {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
+                                    sizeS);
                     // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
                     // For this routine we need rows > cols
                     S.resize(sizeS);
@@ -276,7 +278,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     VT = V.adjoint();
                     V.resize(0, 0);
                 } else {
-                    svd::log->debug("Running Lapacke Jacobi SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
+                                    sizeS);
                     S.resize(sizeS);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
 
@@ -309,7 +312,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 }
 
             } else if(use_bdc) {
-                svd::log->debug("Running Lapacke BDC SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                svd::log->debug("Running Lapacke BDC SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
                 VT.resize(rowsVT, colsVT);
@@ -339,7 +342,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                 /* clang-format on */
 
             } else {
-                svd::log->debug("Running Lapacke SVD | threshold {:.4e} | switchsize bdc {} | size {}", threshold, switchsize_bdc, sizeS);
+                svd::log->debug("Running Lapacke SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
 
                 U.resize(rowsU, colsU);
                 S.resize(sizeS);
@@ -370,25 +373,12 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
         svd::log->trace("Truncating singular values");
         if(count) count.value()++;
-        long max_size = std::min(S.size(), rank_max.value());
-        rank          = (S.head(max_size).array() >= threshold).count();
-
-        if(rank == S.size()) {
-            truncation_error = 0;
-        } else {
-            truncation_error = S.tail(S.size() - rank).norm();
-        }
-
-        auto [rank_tr, truncation_error_tr] = truncation_error_limited_rank(S.head(max_size));
-        if(rank_tr < rank) {
-            //            svd::log->warn("Replaced rank {} -> {}", rank, rank_tr);
-            rank             = rank_tr;
-            truncation_error = truncation_error_tr;
-        }
+        long max_size                    = std::min(S.size(), rank_max.value());
+        std::tie(rank, truncation_error) = get_rank_by_truncation_error(S.head(max_size).normalized()); // Truncation error needs normalized singular values
 
         // Do the truncation
         U  = U.leftCols(rank).eval();
-        S  = S.head(rank).eval();
+        S  = S.head(rank).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
         VT = VT.topRows(rank).eval();
 
         // Sanity checks
@@ -414,18 +404,18 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         //#if !defined(NDEBUG)
         if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
         throw except::runtime_error("Lapacke SVD error \n"
-                                    "  svd_threshold    = {:.4e}\n"
                                     "  Truncation Error = {:.4e}\n"
                                     "  Rank             = {}\n"
                                     "  Dims             = ({}, {})\n"
                                     "  Lapacke info     : {}\n"
                                     "  Error message    : {}\n",
-                                    threshold, truncation_error, rank, rows, cols, info, ex.what());
+                                    truncation_error, rank, rows, cols, info, ex.what());
     }
     if(save_result) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
 
-    svd::log->trace("SVD with Lapacke finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
-                    threshold, rank, rank_max.value(), rows, cols, truncation_error, t_lpk->get_last_interval());
+    svd::log->trace(
+        "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
+        truncation_lim, rank, rank_max.value(), rows, cols, truncation_error, t_lpk->get_last_interval());
     return std::make_tuple(U, S, VT, rank);
 }
 

@@ -464,15 +464,19 @@ size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
     return trunc_bond_count;
 }
 
-size_t StateFinite::num_bonds_at_limit(long bond_level) const {
+size_t StateFinite::num_bonds_at_limit(long bond_lim) const {
     auto bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [bond_level](auto const &val) { return val >= bond_level; }));
+    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
     return bonds_at_lim;
 }
 
-bool StateFinite::is_limited_by_bond(long bond_lim, [[maybe_unused]] double truncation_threshold) const {
-    return num_bonds_at_limit(bond_lim) > 0;
-    //    return num_sites_truncated(truncation_threshold) > 0 or num_bonds_at_limit(bond_lim) > 0;
+bool StateFinite::is_limited_by_bond(long bond_lim) const { return num_bonds_at_limit(bond_lim) > 0; }
+
+bool StateFinite::is_truncated(double truncation_error_limit) const {
+    auto truncation_errors = get_truncation_errors();
+    auto num_above_lim     = static_cast<size_t>(
+        std::count_if(truncation_errors.begin(), truncation_errors.end(), [truncation_error_limit](auto const &err) { return err >= truncation_error_limit; }));
+    return num_above_lim > 0;
 }
 
 void StateFinite::clear_measurements(LogPolicy logPolicy) const {

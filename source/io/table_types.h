@@ -162,6 +162,9 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "bond_lim",                    HOFFSET(table, bond_lim),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_max",                    HOFFSET(table, bond_max),                   H5T_NATIVE_LONG);
         H5Tinsert(h5_type, "bond_init",                   HOFFSET(table, bond_init),                  H5T_NATIVE_LONG);
+        H5Tinsert(h5_type, "trnc_lim",                    HOFFSET(table, trnc_lim),                   H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "trnc_min",                    HOFFSET(table, trnc_min),                   H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "trnc_init",                   HOFFSET(table, trnc_init),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_min",                  HOFFSET(table, energy_min),                 H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_max",                  HOFFSET(table, energy_max),                 H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "energy_tgt",                  HOFFSET(table, energy_tgt),                 H5T_NATIVE_DOUBLE);

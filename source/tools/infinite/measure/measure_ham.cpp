@@ -140,7 +140,7 @@ double tools::infinite::measure::energy_variance_per_site_ham(const TensorsInfin
 
     svd::solver svd;
     svd.svd_lib        = SVDLib::lapacke;
-    svd.threshold      = settings::precision::svd_threshold;
+    svd.truncation_lim = settings::precision::svd_truncation_lim;
     svd.switchsize_bdc = settings::precision::svd_switchsize_bdc;
 
     Eigen::Tensor<Scalar, 4> E_evn_pinv = svd.pseudo_inverse(one_minus_transfer_matrix_evn).reshape(tenx::array4{sizeLB, sizeLB, sizeLA, sizeLA});

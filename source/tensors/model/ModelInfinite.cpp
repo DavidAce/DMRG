@@ -71,7 +71,7 @@ void ModelInfinite::rebuild_mpo_squared(std::optional<SVDMode> svdMode) {
         reset_mpo_squared();
 }
 
-std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compressed_mpo_squared(std::optional<SVDMode> svdMode) {
+std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compressed_mpo_squared(std::optional<svd::settings> svd_settings) {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
     mpos_sq.emplace_back(HA->get_non_compressed_mpo_squared());
@@ -82,12 +82,14 @@ std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compress
     //  - Use very low svd threshold
     //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
-    svd::solver svd;
-    svd.threshold      = 1e-12;
-    svd.switchsize_bdc = 50000;
-    svd.svd_lib        = SVDLib::lapacke;
-    if(svdMode == SVDMode::EIGEN) svd.svd_lib = SVDLib::eigen;
-    if(svdMode == SVDMode::RSVD) svd.svd_lib = SVDLib::rsvd;
+    if(not svd_settings) svd_settings = svd::settings();
+    if(not svd_settings->truncation_lim) svd_settings->truncation_lim = 1e-24;
+    if(not svd_settings->switchsize_bdc) svd_settings->switchsize_bdc = 4096;
+    if(not svd_settings->use_bdc) svd_settings->use_bdc = false;
+    if(not svd_settings->loglevel) svd_settings->loglevel = 2;
+    // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
+    // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
+    if(not svd_settings->svd_lib) svd_settings->svd_lib = svd::Lib::lapacke;
 
     // Print the results
     std::vector<std::string> report;
