@@ -145,9 +145,9 @@ namespace settings {
         inline double        fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
         inline UpdateWhen    bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, SATURATED, ITERATION}. */
         inline double        bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
-        inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< Decrease SVD truncation error limit on this event {NEVER, TRUNCATED, SATURATED, ITERATION} */
-        inline double        trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
-    }
+        inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, SATURATED, ITERATION} */
+        inline double        trnc_decrease_rate          = 1e-2;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
+}
 
 
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
@@ -156,8 +156,8 @@ namespace settings {
         inline double   eigs_tolerance                  = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_default_ncv                = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
-        inline double   svd_truncation_lim              = 1e-15 ;                  /*!< Maximum truncation error (if allowed by the bond dimension limit)*/
-        inline double   svd_truncation_init             = 1e-15 ;                  /*!< Initial truncation error, decreases down to lim */
+        inline double   svd_truncation_lim              = 5e-32 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
+        inline double   svd_truncation_init             = 1e-4 ;                   /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (BFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
@@ -285,22 +285,22 @@ namespace settings {
 
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */
     namespace xdmrg {
-        inline bool     on                              = false;                   /*!< Turns xDMRG simulation on/off. */
-        inline size_t   max_iters                       = 10;                      /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t   min_iters                       = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
-        inline long     bond_max                        = 768;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init                       = 8;                       /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
-        inline size_t   opt_overlap_iters               = 2;                       /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
-        inline long     opt_overlap_bond_limit          = 16;                      /*!< Bond limit during initial OVERLAP optimization. set to <= 0 for unlimited */
-        inline size_t   opt_subspace_iters              = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
-        inline long     opt_subspace_bond_limit         = 32;                      /*!< Bond limit during initial SUBSPACE optimization. set to <= 0 for unlimited */
-        inline size_t   print_freq                      = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
-        inline double   energy_density_target           = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
-        inline double   energy_density_window           = 0.05;                    /*!< Accept states inside of energy_tgt +- energy_dens_window. */
-        inline size_t   max_states                      = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
-        inline bool     store_wavefn                    = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool     finish_if_entanglm_saturated    = true;                    /*!< Finish early as soon as entanglement has saturated */
-        inline bool     finish_if_variance_saturated    = false;                   /*!< Finish early as soon as energy variance has saturated */
+        inline bool       on                            = false;                   /*!< Turns xDMRG simulation on/off. */
+        inline size_t     max_iters                     = 10;                      /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t     min_iters                     = 4;                       /*!< Min number of iterations. One iterations moves L steps. */
+        inline long       bond_max                      = 768;                     /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline long       bond_init                     = 8;                       /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
+        inline size_t     opt_overlap_iters             = 2;                       /*!< Number of initial iterations selecting the candidate state with best overlap to the current state */
+        inline long       opt_overlap_bond_lim          = 16;                      /*!< Bond limit during initial OVERLAP optimization. set to <= 0 for unlimited */
+        inline size_t     opt_subspace_iters            = 2;                       /*!< Number of iterations using the subspace optimization of variance, after the overlap iterations */
+        inline long       opt_subspace_bond_lim         = 32;                      /*!< Bond limit during initial SUBSPACE optimization. set to <= 0 for unlimited */
+        inline size_t     print_freq                    = 1;                       /*!< Print frequency for console output. In units of iterations. (0 = off). */
+        inline double     energy_density_target         = 0.5;                     /*!< Target energy in [0-1], where 0.5 means middle of spectrum. */
+        inline double     energy_density_window         = 0.05;                    /*!< Accept states inside of energy_tgt +- energy_dens_window. */
+        inline size_t     max_states                    = 1;                       /*!< Max number of random states to find using xDMRG on a single disorder realization */
+        inline bool       store_wavefn                  = false;                   /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline bool       finish_if_entanglm_saturated  = true;                    /*!< Finish early as soon as entanglement has saturated */
+        inline bool       finish_if_variance_saturated  = false;                   /*!< Finish early as soon as energy variance has saturated */
     }
 }
 /* clang-format on */

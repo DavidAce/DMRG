@@ -1,32 +1,38 @@
+#include "math/svd.h"
+#include "tid/tid.h"
 #include <Eigen/QR>
-#include <math/svd.h>
-#include <tid/tid.h>
 
-std::optional<long long> svd::solver::count = 0;
+long long svd::solver::count = 0;
 
-svd::solver::solver() {
-    setLogLevel(2);
-    if(not count) count = 0;
+svd::solver::solver() { setLogLevel(2); }
+
+svd::config::config(long rank_max_) : rank_max(rank_max_) {}
+svd::config::config(double truncation_lim_) : truncation_lim(truncation_lim_) {}
+svd::config::config(long rank_max_, double truncation_lim_) : rank_max(rank_max_), truncation_lim(truncation_lim_) {}
+svd::config::config(std::optional<long> rank_max_) : rank_max(rank_max_) {}
+svd::config::config(std::optional<double> truncation_lim_) : truncation_lim(truncation_lim_) {}
+svd::config::config(std::optional<long> rank_max_, std::optional<double> truncation_lim_) : rank_max(rank_max_), truncation_lim(truncation_lim_) {}
+
+void svd::solver::copy_config(const svd::config &svd_cfg) {
+    if(svd_cfg.rank_max) rank_max = svd_cfg.rank_max.value();
+    if(svd_cfg.truncation_lim) truncation_lim = svd_cfg.truncation_lim.value();
+    if(svd_cfg.switchsize_bdc) switchsize_bdc = svd_cfg.switchsize_bdc.value();
+    if(svd_cfg.loglevel) setLogLevel(svd_cfg.loglevel.value());
+    if(svd_cfg.use_bdc) use_bdc = svd_cfg.use_bdc.value();
+    if(svd_cfg.svd_lib) svd_lib = svd_cfg.svd_lib.value();
+    if(svd_cfg.save_fail) save_fail = svd_cfg.save_fail.value();
+    if(svd_cfg.benchmark) benchmark = svd_cfg.benchmark.value();
 }
 
-svd::settings::settings(long rank_max_) : rank_max(rank_max_){};
-svd::settings::settings(double truncation_lim_) : truncation_lim(truncation_lim_){};
-svd::settings::settings(long rank_max_, double truncation_lim_) : rank_max(rank_max_), truncation_lim(truncation_lim_){};
+svd::solver::solver(const svd::config &svd_cfg) : solver() { copy_config(svd_cfg); }
 
-void svd::solver::copy_settings(const svd::settings &svd_settings) {
-    if(svd_settings.truncation_lim) truncation_lim = svd_settings.truncation_lim.value();
-    if(svd_settings.switchsize_bdc) switchsize_bdc = svd_settings.switchsize_bdc.value();
-    if(svd_settings.loglevel) setLogLevel(svd_settings.loglevel.value());
-    if(svd_settings.use_bdc) use_bdc = svd_settings.use_bdc.value();
-    if(svd_settings.svd_lib) svd_lib = svd_settings.svd_lib.value();
-    if(svd_settings.save_fail) save_fail = svd_settings.save_fail.value();
-    if(svd_settings.benchmark) benchmark = svd_settings.benchmark.value();
+svd::solver::solver(std::optional<svd::config> svd_cfg) : solver() {
+    if(svd_cfg) copy_config(svd_cfg.value());
 }
 
-svd::solver::solver(const svd::settings &svd_settings) : solver() { copy_settings(svd_settings); }
-
-svd::solver::solver(std::optional<svd::settings> svd_settings) : solver() {
-    if(svd_settings) copy_settings(svd_settings.value());
+void svd::solver::set_config(const svd::config &svd_cfg) { copy_config(svd_cfg); }
+void svd::solver::set_config(std::optional<svd::config> svd_cfg) {
+    if(svd_cfg) copy_config(svd_cfg.value());
 }
 
 void svd::solver::setLogLevel(size_t logLevel) {
@@ -37,6 +43,10 @@ void svd::solver::setLogLevel(size_t logLevel) {
     svd::log->set_pattern("[%Y-%m-%d %H:%M:%S.%e][%n]%^[%=8l]%$ %v");
 }
 
+double    svd::solver::get_truncation_error() const { return truncation_error; }
+long      svd::solver::get_rank() const { return rank; }
+long long svd::solver::get_count() { return count; }
+
 /*! \brief Performs SVD on a matrix
  *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
  *  Performs rigorous checks to ensure stability of DMRG.
@@ -45,51 +55,57 @@ void svd::solver::setLogLevel(size_t logLevel) {
  *   \param mat_ptr Pointer to the matrix. Supported are double * and std::complex<double> *
  *   \param rows Rows of the matrix
  *   \param cols Columns of the matrix
- *   \param rank_max Maximum number of singular values
+ *   \param svd_cfg Optional overrides to default svd configuration
  *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-    svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
-    auto t_svd = tid::tic_scope("svd");
-    if(not rank_max.has_value())
-        rank_max = std::min(rows, cols);
-    else
-        rank_max = std::min({rank_max.value(), rows, cols});
-    auto minrc    = std::min(rows, cols);
-    bool use_rsvd = num::cmp_greater(minrc, rank_max.value() * 10) and num::cmp_greater(minrc, switchsize_rnd);
+std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
+    svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, const svd::config &svd_cfg) {
+#if defined(DMRG_ENABLE_RSVD)
+    constexpr bool has_rsvd = true;
+#else
+    constexpr bool has_rsvd = false;
+#endif
 
+    auto t_svd = tid::tic_scope("svd");
+
+    copy_config(svd_cfg);
+    auto sizeS    = std::min(rows, cols);
+    long rank_lim = rank_max > 0 ? std::min(sizeS, rank_max) : sizeS;
+    bool use_rsvd = has_rsvd and num::cmp_greater(sizeS, rank_lim * 10) and num::cmp_greater(sizeS, switchsize_rnd);
+#pragma omp atomic
+    count++;
     switch(svd_lib) {
-        case svd::Lib::lapacke: {
+        case svd::lib::lapacke: {
             try {
                 if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
-                    return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                    return do_svd_rsvd(mat_ptr, rows, cols);
                 else
-                    return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+                    return do_svd_lapacke(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
                 svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
-                return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+                return do_svd_eigen(mat_ptr, rows, cols);
             }
             break;
         }
-        case svd::Lib::eigen: {
+        case svd::lib::eigen: {
             try {
                 if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
-                    return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                    return do_svd_rsvd(mat_ptr, rows, cols);
                 else
-                    return do_svd_eigen(mat_ptr, rows, cols, rank_max);
+                    return do_svd_eigen(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
                 svd::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
-                return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+                return do_svd_lapacke(mat_ptr, rows, cols);
             }
             break;
         }
-        case svd::Lib::rsvd: {
+        case svd::lib::rsvd: {
             try {
-                return do_svd_rsvd(mat_ptr, rows, cols, rank_max);
+                return do_svd_rsvd(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
                 svd::log->warn("Rsvd failed to perform SVD: {} | Trying Lapacke", ex.what());
-                return do_svd_lapacke(mat_ptr, rows, cols, rank_max);
+                return do_svd_lapacke(mat_ptr, rows, cols);
             }
             break;
         }
@@ -98,8 +114,21 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     throw std::logic_error("Unrecognized svd library");
 }
 
+using real = double;
+using cplx = std::complex<double>;
+
+//! \relates svd::class_SVD
+//! \brief force instantiation of do_svd for type 'double'
+template std::tuple<svd::solver::MatrixType<real>, svd::solver::VectorType<real>, svd::solver::MatrixType<real>>
+    svd::solver::do_svd_ptr(const real *, long, long, const svd::config &);
+
+//! \relates svd::class_SVD
+//! \brief force instantiation of do_svd for type 'std::complex<double>'
+template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>>
+    svd::solver::do_svd_ptr(const cplx *, long, long, const svd::config &);
+
 template<typename Scalar>
-void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec) {
+void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec) const {
     auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
     svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
     for(long r = 0; r < A.rows(); r++) {
@@ -111,7 +140,7 @@ void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long
     }
 }
 template<typename Scalar>
-void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) {
+void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) const {
     auto V = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(vec_ptr, size);
     svd::log->warn("Print matrix of size {}\n", size);
     if constexpr(std::is_same_v<Scalar, std::complex<double>>)
@@ -120,23 +149,10 @@ void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) {
         for(long i = 0; i < V.size(); i++) fmt::print("{1:.{0}f}\n", dec, V[i]);
 }
 
-using cplx = std::complex<double>;
-using real = double;
-
-template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, long dec);
-template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, long dec);
-template void svd::solver::print_vector<real>(const real *vec_ptr, long size, long dec);
-template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, long dec);
-
-//! \relates svd::class_SVD
-//! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
-    svd::solver::do_svd_ptr(const double *, long, long, std::optional<long>);
-
-//! \relates svd::class_SVD
-//! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
-    svd::solver::do_svd_ptr(const cplx *, long, long, std::optional<long>);
+template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, long dec) const;
+template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, long dec) const;
+template void svd::solver::print_vector<real>(const real *vec_ptr, long size, long dec) const;
+template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, long dec) const;
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor) {
@@ -155,11 +171,19 @@ template Eigen::Tensor<double, 2> svd::solver::pseudo_inverse(const Eigen::Tenso
 template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<cplx, 2> &tensor);
 
 // template<typename Scalar>
-std::pair<long, double> svd::solver::get_rank_by_truncation_error(const VectorType<double> &S) const {
+std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
+    assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
     VectorType<double> truncation_errors(S.size() + 1);
     for(long s = 0; s <= S.size(); s++) { truncation_errors[s] = S.bottomRows(S.size() - s).squaredNorm(); } // Last one should be zero, i.e. no truncation
-    auto rank = (truncation_errors.array() >= truncation_lim).count();
-    tools::log->info("Size {} | Rank {} | limit {:8.2e} | error {:8.2e} truncation errors: {:8.2e}", S.size(), rank, truncation_lim, truncation_errors[rank],
-                     fmt::join(truncation_errors, ", "));
-    return {rank, truncation_errors[rank]};
+    auto rank_    = (truncation_errors.array() >= truncation_lim).count();
+    auto rank_lim = rank_max > 0 ? std::min(S.size(), rank_max) : S.size();
+    rank_         = std::min(rank_, rank_lim);
+    tools::log->info("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.2e} | error {:8.2e} truncation errors: {:8.2e}", S.size(), rank_, rank_lim,
+                     truncation_lim, truncation_errors[rank_], fmt::join(truncation_errors, ", "));
+    if(rank_ <= 0) {
+        svd::log->error("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.2e} | error {:8.2e} truncation errors: {:8.2e}", S.size(), rank_,
+                        rank_lim, truncation_lim, truncation_errors[rank_], fmt::join(truncation_errors, ", "));
+        throw std::logic_error("rank <= 0");
+    }
+    return {rank_, truncation_errors[rank_]};
 }

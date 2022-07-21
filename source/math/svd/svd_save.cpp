@@ -6,9 +6,8 @@
 #include <h5pp/h5pp.h>
 
 template<typename Scalar>
-void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar> &U, const VectorType<Scalar> &S, const MatrixType<Scalar> &VT, long rank_max,
+void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar> &U, const VectorType<Scalar> &S, const MatrixType<Scalar> &VT,
                            const std::string &lib, const std::vector<std::pair<std::string, std::string>> &details) const {
-    auto rank = S.size();
     auto rows = A.rows();
     auto cols = A.cols();
 
@@ -22,7 +21,7 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar>
     file.writeDataset(VT, fmt::format("{}/VT", group_name));
     file.writeAttribute(rows, group_name, "rows");
     file.writeAttribute(cols, group_name, "cols");
-    file.writeAttribute(rank, group_name, "rank");
+    file.writeAttribute(S.size(), group_name, "rank");
     file.writeAttribute(rank_max, group_name, "rank_max");
     file.writeAttribute(use_bdc, group_name, "use_bdc");
     file.writeAttribute(truncation_lim, group_name, "truncation_lim");
@@ -52,7 +51,7 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar>
 using cplx = std::complex<double>;
 using real = double;
 
-template void svd::solver::save_svd(const MatrixType<real> &A, const MatrixType<real> &U, const VectorType<real> &S, const MatrixType<real> &VT, long rank_max,
+template void svd::solver::save_svd(const MatrixType<real> &A, const MatrixType<real> &U, const VectorType<real> &S, const MatrixType<real> &VT,
                                     const std::string &lib, const std::vector<std::pair<std::string, std::string>> &details) const;
-template void svd::solver::save_svd(const MatrixType<cplx> &A, const MatrixType<cplx> &U, const VectorType<cplx> &S, const MatrixType<cplx> &VT, long rank_max,
+template void svd::solver::save_svd(const MatrixType<cplx> &A, const MatrixType<cplx> &U, const VectorType<cplx> &S, const MatrixType<cplx> &VT,
                                     const std::string &lib, const std::vector<std::pair<std::string, std::string>> &details) const;

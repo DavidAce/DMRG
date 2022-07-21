@@ -441,7 +441,8 @@ void AlgorithmInfinite::print_status_full() {
     tensors.state->do_all_measurements();
     using namespace std;
     using namespace tools::infinite::measure;
-    tools::log->info("--- Final results  --- {} ---", status.algo_type_sv());
+    tools::log->info("{:=^60}", "");
+    tools::log->info("= {: ^56} =", fmt::format("Completed [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("Iterations            = {:<16d}", status.iter);
     switch(status.algo_type) {
         case AlgorithmType::iDMRG:
@@ -488,6 +489,8 @@ void AlgorithmInfinite::print_status_full() {
     tools::log->info("σ² MOM                   = Converged : {:<4}  Saturated: {:<4}", status.variance_mom_converged_for, status.variance_mom_saturated_for);
     tools::log->info("Sₑ                       = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for, status.entanglement_saturated_for);
     tools::log->info("Time                     = {:<16.16f}", tid::get_unscoped("t_tot").get_time());
-
-    tools::log->info("Peak memory           = {:<6.1f} MB", debug::mem_hwm_in_mb());
+    tools::log->info("Mem RSS                  = {:<.1f} MB", debug::mem_rss_in_mb());
+    tools::log->info("Mem Peak                 = {:<.1f} MB", debug::mem_hwm_in_mb());
+    tools::log->info("Mem VM                   = {:<.1f} MB", debug::mem_vm_in_mb());
+    tools::log->info("{:=^60}", "");
 }

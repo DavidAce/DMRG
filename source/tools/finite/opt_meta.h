@@ -25,6 +25,7 @@ namespace tools::finite::opt {
         size_t                max_sites        = 2;
         size_t                min_sites        = 1;
         long                  bond_lim         = -1;
+        double                trnc_lim         = -1.0;
         long                  max_problem_size = 0;
         long                  problem_size     = 0;
         bool                  retry            = true;

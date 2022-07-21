@@ -82,6 +82,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case fdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
+            case fdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
             case fdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case fdmrg_task::TIMER_RESET: tid::reset("fDMRG"); break;
         }
@@ -169,12 +170,12 @@ void fdmrg::single_fdmrg_step() {
             // If we are stuck and enabled subspace expansion when stuck
             if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0) alpha_expansion = status.env_expansion_alpha;
             // Use subspace expansion if alpha_expansion was set
-            if(alpha_expansion) tensors.expand_environment(alpha_expansion.value(), status.bond_lim);
+            if(alpha_expansion) tensors.expand_environment(alpha_expansion.value(), svd::config(status.bond_lim, status.trnc_lim));
         }
         auto initial_mps = tools::finite::opt::get_opt_initial_mps(tensors);
         auto result_mps  = tools::finite::opt::find_ground_state(tensors, initial_mps, status, meta);
         if constexpr(settings::debug) tools::log->debug("Variance after opt: {:8.2e} | norm {:.16f}", result_mps.get_variance(), result_mps.get_norm());
-        tensors.merge_multisite_mps(result_mps.get_tensor(), status.bond_lim, svd::settings(status.trnc_lim));
+        tensors.merge_multisite_mps(result_mps.get_tensor(), svd::config(status.bond_lim, status.trnc_lim));
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if constexpr(settings::debug)
             tools::log->debug("Variance after svd: {:8.2e} | trunc: {}", tools::finite::measure::energy_variance(tensors),

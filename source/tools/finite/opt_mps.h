@@ -45,6 +45,7 @@ namespace tools::finite::opt {
         std::optional<OptRitz>                optRitz     = std::nullopt;
         std::optional<OptExit>                optExit     = std::nullopt;
         std::optional<long>                   bond_lim    = std::nullopt;
+        std::optional<double>                 trnc_lim    = std::nullopt;
 
         public:
         bool                 is_basis_vector = false;
@@ -99,7 +100,8 @@ namespace tools::finite::opt {
         [[nodiscard]] OptSolver                  get_optsolver() const;
         [[nodiscard]] OptMode                    get_optmode() const;
         [[nodiscard]] OptExit                    get_optexit() const;
-        [[nodiscard]] long                       get_bond_limit() const;
+        [[nodiscard]] long                       get_bond_lim() const;
+        [[nodiscard]] double                     get_trnc_lim() const;
 
         void clear();
         void normalize();
@@ -139,6 +141,7 @@ namespace tools::finite::opt {
         void set_optmode(OptMode optmode_);
         void set_optexit(OptExit optexit_);
         void set_bond_limit(long bond_);
+        void set_trnc_limit(double trnc_);
         void validate_initial_mps() const;
         void validate_basis_vector() const;
         void validate_result() const;

@@ -102,6 +102,7 @@ for jobitem in joblist:
         # We can now compare the ids in the task id sequence that should have run,
         # to the ones that actually suceeded.
         failed = sequence - success
+        failed = [x - 1 for x in failed] # subtract 1 because getline is indexed from 0
 
         # We can now extract the config lines that should have executed
         cfglines = getlines(open(jobfile,"r"), failed)

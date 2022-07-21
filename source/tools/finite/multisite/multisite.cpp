@@ -154,31 +154,3 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
     if(not at_edge and sites.size() > max_sites) throw except::logic_error("Activated sites ({}) > max_sites ({})", sites.size(), max_sites);
     return sites;
 }
-
-std::vector<size_t> tools::finite::multisite::generate_truncated_site_list(StateFinite &state, long threshold, long bond_lim, const size_t max_sites,
-                                                                           const size_t min_sites) {
-    auto active_sites = generate_site_list(state, threshold, max_sites, min_sites);
-    if(active_sites.size() == max_sites) return active_sites; // Fastest outcome
-    state.active_sites.clear();
-
-    // Consider that the active site list may be limited by the edge
-    if(state.get_direction() > 0 and active_sites.back() == state.get_length() - 1) return active_sites;
-    if(state.get_direction() < 0 and active_sites.front() == 0) return active_sites;
-
-    // Try activating more sites by truncating some sites ahead.
-    size_t best_num_sites = min_sites;
-    for(size_t num_sites = min_sites; num_sites <= max_sites; num_sites++) {
-        auto state_copy = state;
-        tools::finite::mps::truncate_next_sites(state_copy, bond_lim, num_sites);
-        auto new_active_sites = generate_site_list(state_copy, threshold, num_sites, min_sites);
-        if(new_active_sites.size() > active_sites.size()) {
-            best_num_sites = num_sites;
-            active_sites   = new_active_sites;
-        }
-    }
-    tools::finite::mps::truncate_next_sites(state, bond_lim, best_num_sites);
-    auto resulting_sites = generate_site_list(state, threshold, max_sites, min_sites);
-    tools::log->info("Problem size {} | active sites: {}", get_problem_size(state, resulting_sites), resulting_sites);
-    tools::log->info("Bond dimensions {}", tools::finite::measure::bond_dimensions(state));
-    return resulting_sites;
-}

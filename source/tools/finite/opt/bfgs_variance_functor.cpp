@@ -277,12 +277,11 @@ template<typename Scalar, LagrangeNorm lagrangeNorm>
 void bfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
     if(readyCompress) return;
 
-    svd::settings svd_settings;
-    svd_settings.svd_lib        = svd::Lib::lapacke;
-    svd_settings.use_bdc        = false;
-    svd_settings.truncation_lim = 1e-24;
-    svd_settings.switchsize_bdc = 4096;
-    svd::solver svd(svd_settings);
+    svd::config svd_cfg;
+    svd_cfg.svd_lib        = svd::lib::lapacke;
+    svd_cfg.use_bdc        = false;
+    svd_cfg.switchsize_bdc = 4096;
+    svd::solver svd(svd_cfg);
     auto        old_dimensions = mpo2.dimensions();
     //    Eigen::Tensor<Scalar, 4> mpo2_l2r;
     {

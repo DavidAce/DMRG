@@ -157,6 +157,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case xdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
+            case xdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
             case xdmrg_task::POST_DEFAULT: run_postprocessing(); break;
             case xdmrg_task::TIMER_RESET: tid::reset("xDMRG"); break;
         }
@@ -250,7 +251,6 @@ void xdmrg::run_algorithm() {
 }
 
 void xdmrg::run_fes_analysis() {
-#pragma message "ADD RUN_FES task list item"
     if(settings::strategy::fes_rate == 0) return;
     tools::log = tools::Logger::setLogger(status.algo_type_str() + "-fes", settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} finite entanglement scaling analysis with bond size step {} of model [{}] for state [{}]", status.algo_type_sv(),
@@ -267,17 +267,18 @@ void xdmrg::run_fes_analysis() {
         // Write to file on each decrement so that we get one entry on file
         // per bond dim, even if there has been no change. This helps with
         // collecting data and averaging later.
+        tools::log->info("Reducing down to current max bond: {}", status.bond_lim);
         status.iter += 1;
         status.step += tensors.get_length<size_t>();
         status.algorithm_converged_for = 1;
         status.algorithm_saturated_for = 0;
-        reduce_bond_dimension_limit();
+        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::ITERATION);
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_fes->get_time();
     }
 
     while(true) {
-        tools::log->trace("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+        tools::log->info("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         single_xDMRG_step();
         status.wall_time       = tid::get_unscoped("t_tot").get_time();
         status.algo_time       = t_fes->get_time();
@@ -287,7 +288,7 @@ void xdmrg::run_fes_analysis() {
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
-        reduce_bond_dimension_limit();
+        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED);
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
 
@@ -318,11 +319,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
 
-    // Set the default bond limit
+    // Set the default svd limits
     m1.bond_lim = status.bond_lim;
-
-    // Set up the default svd precision
-    //    m1.svd_trwt = status.sv
+    m1.trnc_lim = status.trnc_lim;
 
     // Set up a multiplier for number of iterations
     size_t iter_multiplier = 1;
@@ -373,10 +372,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = true;
-        if(settings::xdmrg::opt_subspace_bond_limit > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_limit) {
+        if(settings::xdmrg::opt_subspace_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_lim) {
             tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_lim,
-                             settings::xdmrg::opt_subspace_bond_limit);
-            m1.bond_lim = settings::xdmrg::opt_subspace_bond_limit;
+                             settings::xdmrg::opt_subspace_bond_lim);
+            m1.bond_lim = settings::xdmrg::opt_subspace_bond_lim;
         }
     }
 
@@ -386,9 +385,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = false;
-        if(settings::xdmrg::opt_overlap_bond_limit > 0 and m1.bond_lim > settings::xdmrg::opt_overlap_bond_limit) {
-            tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_lim, settings::xdmrg::opt_subspace_bond_limit);
-            m1.bond_lim = settings::xdmrg::opt_subspace_bond_limit;
+        if(settings::xdmrg::opt_overlap_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_overlap_bond_lim) {
+            tools::log->info("Will keep bond dimension back during overlap optimization {} -> {}", m1.bond_lim, settings::xdmrg::opt_subspace_bond_lim);
+            m1.bond_lim = settings::xdmrg::opt_subspace_bond_lim;
         }
     }
 
@@ -502,9 +501,9 @@ void xdmrg::single_xDMRG_step() {
         // Use environment expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(meta.alpha_expansion) {
-            auto pos_expanded = tensors.expand_environment(std::nullopt, meta.bond_lim); // nullopt implies a pos query
+            auto pos_expanded = tensors.expand_environment(std::nullopt); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_environment(meta.alpha_expansion, meta.bond_lim);
+            tensors.expand_environment(meta.alpha_expansion, svd::config(meta.bond_lim, meta.trnc_lim));
         }
 
         // Announce the current configuration for optimization
@@ -530,8 +529,8 @@ void xdmrg::single_xDMRG_step() {
         // so that we may use them if this result turns out to be the winner
         if(meta.alpha_expansion) {
             results.back().set_alpha(meta.alpha_expansion);
-            auto pos_expanded         = tensors.expand_environment(std::nullopt, meta.bond_lim); // nullopt implies a pos query
-            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);              // Backup the mps sites that this run was compatible with
+            auto pos_expanded         = tensors.expand_environment(std::nullopt);   // nullopt implies a pos query
+            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the mps sites that this run was compatible with
         }
 
         // Reset the mps to the original if they were backed up earlier
@@ -544,6 +543,7 @@ void xdmrg::single_xDMRG_step() {
         // We can now decide if we are happy with the result or not.
         results.back().set_relchange(results.back().get_variance() / variance_before_step.value());
         results.back().set_bond_limit(meta.bond_lim);
+        results.back().set_trnc_limit(meta.trnc_lim);
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
         if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
@@ -595,7 +595,7 @@ void xdmrg::single_xDMRG_step() {
         }
 
         // Do the truncation with SVD
-        tensors.merge_multisite_mps(winner.get_tensor(), winner.get_bond_limit());
+        tensors.merge_multisite_mps(winner.get_tensor(), svd::config(winner.get_bond_lim(), winner.get_trnc_lim()));
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if(tools::log->level() <= spdlog::level::trace)
             tools::log->trace("Truncation errors: {:8.2e}", fmt::join(tensors.state->get_truncation_errors_active(), ", "));

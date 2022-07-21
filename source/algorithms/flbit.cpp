@@ -53,13 +53,14 @@ void flbit::resume() {
 
         // Create an initial state in the real basis
         auto bond_lim = settings::get_bond_init(status.algo_type);
-        tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
-                         enum2sv(settings::strategy::initial_state), enum2sv(ResetReason::INIT), enum2sv(settings::strategy::initial_type),
-                         settings::strategy::initial_sector, settings::strategy::use_eigenspinors, settings::input::bitfield);
-        tensors.randomize_state(settings::strategy::initial_state, settings::strategy::initial_sector, bond_lim, settings::strategy::use_eigenspinors,
-                                settings::input::bitfield, std::nullopt);
+        if(settings::strategy::initial_state != StateInit::PRODUCT_STATE_NEEL)
+            tools::log->warn("Expected initial_state == PRODUCT_STATE_NEEL. Got {}", enum2sv(settings::strategy::initial_state));
+        if(settings::strategy::initial_sector != "+z") tools::log->warn("Expected initial_sector == +z. Got {}", settings::strategy::initial_sector);
 
-        tensors.move_center_point_to_edge(status.bond_lim);
+        tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_sector, bond_lim,
+                                settings::strategy::use_eigenspinors, settings::input::bitfield);
+
+        tensors.move_center_point_to_edge();
 
         // Load the unitaries
         unitary_gates_2site_layers.clear();
@@ -147,6 +148,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
             case flbit_task::POST_PRINT_RESULT: print_status_full(); break;
             case flbit_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
+            case flbit_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
             case flbit_task::POST_DEFAULT: run_postprocessing(); break;
             case flbit_task::TIMER_RESET: tid::reset("fLBIT"); break;
         }
@@ -178,7 +180,7 @@ void flbit::run_preprocessing() {
 
     // Create an initial state in the real basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    tensors.move_center_point_to_edge(status.bond_lim);
+    tensors.move_center_point_to_edge();
     tools::finite::print::model(*tensors.model);
     create_time_points();
     update_time_step();
@@ -258,32 +260,28 @@ void flbit::single_flbit_step() {
     if(not state_lbit) throw except::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
-        tools::finite::mps::normalize_state(*state_lbit_init, status.bond_lim, std::nullopt, NormPolicy::ALWAYS);
+        tools::finite::mps::normalize_state(*state_lbit_init, std::nullopt, NormPolicy::ALWAYS);
     }
     *state_lbit = *state_lbit_init;
 
     // Time evolve from 0 to time_point[iter] here
-    auto t_step = tid::tic_scope("step");
-    auto t_evo  = tid::tic_scope("time_evo");
-
-    auto svdset           = svd::settings();
-    svdset.switchsize_bdc = 64;
-    svdset.svd_lib        = SVDLib::lapacke;
-
+    auto t_step  = tid::tic_scope("step");
+    auto t_evo   = tid::tic_scope("time_evo");
+    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
     if(settings::flbit::save_swap_gates) write_state_swap_gates_to_file(*state_lbit, time_swap_gates_2site);
 
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, status.bond_lim);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, status.bond_lim, GateMove::ON, svdset);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, status.bond_lim);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2site, false, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, GateMove::AUTO, svd_cfg);
     } else {
         tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, status.bond_lim);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, status.bond_lim);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, status.bond_lim);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, GateMove::AUTO, svd_cfg);
     }
-    tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
     t_evo.toc();
     transform_to_real_basis();
@@ -562,13 +560,14 @@ void flbit::transform_to_real_basis() {
     tensors.state = std::make_unique<StateFinite>(*state_lbit);
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
-    for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(*tensors.state, layer, false, status.bond_lim); // L16: true 29 | false
+    for(const auto &layer : unitary_gates_2site_layers)
+        tools::finite::mps::apply_gates(*tensors.state, layer, false, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
     for(const auto &layer : unitary_gates_2site_layers)
         for(const auto &u : layer) u.unmark_as_used();
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    tools::finite::mps::normalize_state(*tensors.state, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*tensors.state, std::nullopt, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
 
@@ -584,7 +583,8 @@ void flbit::transform_to_real_basis() {
         // Double check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
-        for(const auto &layer : iter::reverse(unitary_gates_2site_layers)) tools::finite::mps::apply_gates(state_lbit_debug, layer, true, status.bond_lim);
+        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+            tools::finite::mps::apply_gates(state_lbit_debug, layer, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
         for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
@@ -605,10 +605,11 @@ void flbit::transform_to_lbit_basis() {
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-        tools::finite::mps::apply_gates(*state_lbit, layer, true, status.bond_lim); // L16: true 28 | false 29 svds
+        tools::finite::mps::apply_gates(*state_lbit, layer, true, GateMove::AUTO,
+                                        svd::config(status.bond_lim, status.trnc_lim)); // L16: true 28 | false 29 svds
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
         for(const auto &u : layer) u.unmark_as_used();
-    tools::finite::mps::normalize_state(*state_lbit, status.bond_lim, std::nullopt, NormPolicy::IFNEEDED);
+    tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
@@ -623,7 +624,8 @@ void flbit::transform_to_lbit_basis() {
         auto state_real_debug = *state_lbit;
         for(auto &layer : unitary_gates_2site_layers)
             for(auto &g : layer) g.unmark_as_used();
-        for(const auto &layer : unitary_gates_2site_layers) tools::finite::mps::apply_gates(state_real_debug, layer, false, status.bond_lim);
+        for(const auto &layer : unitary_gates_2site_layers)
+            tools::finite::mps::apply_gates(state_real_debug, layer, false, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
         for(const auto &layer : unitary_gates_2site_layers)
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);

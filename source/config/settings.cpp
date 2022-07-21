@@ -217,9 +217,9 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("xdmrg::max_iters"                    , xdmrg::max_iters);
     dmrg_config.load_parameter("xdmrg::min_iters"                    , xdmrg::min_iters);
     dmrg_config.load_parameter("xdmrg::opt_overlap_iters"            , xdmrg::opt_overlap_iters);
-    dmrg_config.load_parameter("xdmrg::opt_overlap_bond_limit"       , xdmrg::opt_overlap_bond_limit);
+    dmrg_config.load_parameter("xdmrg::opt_overlap_bond_lim"         , xdmrg::opt_overlap_bond_lim);
     dmrg_config.load_parameter("xdmrg::opt_subspace_iters"           , xdmrg::opt_subspace_iters);
-    dmrg_config.load_parameter("xdmrg::opt_subspace_bond_limit"      , xdmrg::opt_subspace_bond_limit);
+    dmrg_config.load_parameter("xdmrg::opt_subspace_bond_lim"        , xdmrg::opt_subspace_bond_lim);
     dmrg_config.load_parameter("xdmrg::bond_max"                     , xdmrg::bond_max);
     dmrg_config.load_parameter("xdmrg::bond_init"                    , xdmrg::bond_init);
 

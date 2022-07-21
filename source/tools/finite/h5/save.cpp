@@ -512,7 +512,8 @@ namespace tools::finite::h5 {
             case StorageReason::PROJ_STATE: {
                 if(storage_level != StorageLevel::NONE) {
                     if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
-                    auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(state, settings::strategy::target_sector, status.bond_lim);
+                    auto state_projected = tools::finite::ops::get_projection_to_nearest_sector(state, settings::strategy::target_sector,
+                                                                                                svd::config(status.bond_lim, status.trnc_lim));
                     return save::simulation(h5file, state_projected, model, edges, status, storage_reason, copy_policy);
                 }
                 break;

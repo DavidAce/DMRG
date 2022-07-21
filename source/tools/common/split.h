@@ -1,7 +1,7 @@
 #pragma once
 #include <complex>
 #include <deque>
-#include <math/svd/settings.h>
+#include <math/svd/config.h>
 #include <math/tenx/fwd_decl.h>
 #include <optional>
 #include <tuple>
@@ -15,9 +15,8 @@ namespace tools::common::split {
     extern std::vector<MpsSite> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,
                                            const std::vector<long>         & spin_dims,
                                            const std::vector<size_t>       & positions,
-                                           long                            center_position,
-                                           long                            bond_lim,
-                                           std::optional<svd::settings>    svd_settings = std::nullopt);
+                                           long                              center_position,
+                                           std::optional<svd::config>        svd_cfg);
 
 
     namespace internal{
@@ -26,16 +25,14 @@ namespace tools::common::split {
                     split_mps_into_As(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
-                                      long                            bond_lim,
-                                      std::optional<svd::settings>    svd_settings = std::nullopt);
+                                      svd::config                   & svd_cfg);
 
         template<typename Scalar>
         extern std::deque<MpsSite>
                     split_mps_into_Bs(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
-                                      long                            bond_lim,
-                                      std::optional<svd::settings>    svd_settings = std::nullopt);
+                                      svd::config                   & svd_cfg);
     }
 
     /* clang-format on */

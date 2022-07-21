@@ -13,20 +13,15 @@
 /*! \brief Performs randomized SVD on a matrix
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-    svd::solver::do_svd_rsvd([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols,
-                             [[maybe_unused]] std::optional<long> rank_max) {
+std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
+    svd::solver::do_svd_rsvd([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols) const {
 #if !defined(DMRG_ENABLE_RSVD)
     throw std::runtime_error("Define DMRG_ENABLE_RSVD to use rsvd");
 #else
-    auto t_rsvd = tid::tic_scope("rsvd");
-    if(not rank_max.has_value())
-        rank_max = std::min(rows, cols);
-    else
-        rank_max = std::min({rank_max.value(), rows, cols});
-
-    svd::log->trace("Starting SVD with RSVD | {} x {} |threshold {:.4e} | rank_max {}", rows, cols, threshold, rank_max.value());
-    MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar> >(mat_ptr, rows, cols);
+    auto t_rsvd   = tid::tic_scope("rsvd");
+    long rank_lim = rank_max > 0 ? std::min(std::min(rows, cols), rank_max) : std::min(rows, cols);
+    if(rank_lim <= 0) throw std::logic_error("rank_lim <= 0");
+    MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
 
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
     if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
@@ -45,21 +40,17 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Lu> SVD(rnd::internal::rng);
 
-    svd::log->debug("Running RSVD | {} x {} |threshold {:.4e} | rank_max {}", rows, cols, threshold, rank_max.value());
+    svd::log->debug("Running RSVD | {} x {} | truncation limit {:.4e} | rank_lim {}", rows, cols, truncation_lim, rank_lim);
     // Run the svd
-    //    SVD.compute(mat, rank_max.value(), 10, 4U);
-    SVD.compute(mat, rank_max.value());
+    SVD.compute(mat, rank_lim);
 
-    if(count) count.value()++;
-    long rank     = SVD.rank();
-    long max_size = std::min(rank, rank_max.value());
+    rank = SVD.nonzeroSingularValues();
     // Truncation error needs normalized singular values
-    std::tie(rank, truncation_error) = get_rank_by_truncation_error(SVD.singularValues().head(max_size).normalized());
+    std::tie(rank, truncation_error) = get_rank_by_truncation_error(SVD.singularValues().normalized());
 
     if(rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().topRows(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {
         throw except::runtime_error("RSVD SVD error \n"
-                                    "  svd_threshold    = {:.4e}\n"
                                     "  Truncation Error = {:.4e}\n"
                                     "  Rank             = {}\n"
                                     "  Dims             = ({}, {})\n"
@@ -67,23 +58,25 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                     "  U all finite     : {}\n"
                                     "  S all finite     : {}\n"
                                     "  V all finite     : {}\n",
-                                    threshold, truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
+                                    truncation_error, rank, rows, cols, mat.allFinite(), SVD.matrixU().leftCols(rank).allFinite(),
                                     SVD.singularValues().topRows(rank).allFinite(), SVD.matrixV().leftCols(rank).allFinite());
     }
-    svd::log->trace("SVD with RND SVD finished successfully | threshold {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
-                    threshold, rank, rank_max.value(), rows, cols, truncation_error, t_rsvd->get_last_interval());
+    svd::log->trace("SVD with RND SVD finished successfully | rank {:<4} | rank_lim {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}", rank, rank_lim, rows,
+                    cols, truncation_error, t_rsvd->get_last_interval());
     // Not all calls to do_svd need normalized S, so we do not normalize here!
-    return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
+    return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint());
 #endif
 }
 
+using real = double;
+using cplx = std::complex<double>;
+
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
-    svd::solver::do_svd_rsvd(const double *, long, long, std::optional<long>);
+template std::tuple<svd::solver::MatrixType<real>, svd::solver::VectorType<real>, svd::solver::MatrixType<real>> svd::solver::do_svd_rsvd(const real *, long,
+                                                                                                                                          long) const;
 
-using cplx = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
-    svd::solver::do_svd_rsvd(const cplx *, long, long, std::optional<long>);
+template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>> svd::solver::do_svd_rsvd(const cplx *, long,
+                                                                                                                                          long) const;

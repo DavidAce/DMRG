@@ -204,12 +204,11 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
 template<typename T>
 void MatVecMPO<T>::compress() {
     if(readyCompress) return;
-    svd::settings svd_settings;
-    svd_settings.svd_lib        = SVDLib::lapacke;
-    svd_settings.use_bdc        = false;
-    svd_settings.truncation_lim = 1e-24;
-    svd_settings.switchsize_bdc = 4096;
-    svd::solver svd(svd_settings);
+    svd::config svd_cfg;
+    svd_cfg.svd_lib        = svd::lib::lapacke;
+    svd_cfg.use_bdc        = false;
+    svd_cfg.switchsize_bdc = 4096;
+    svd::solver svd(svd_cfg);
 
     Eigen::Tensor<T, 4> mpo_tmp = mpo;
     Eigen::Tensor<T, 4> mpo_l2r, mpo_r2l;

@@ -21,7 +21,7 @@ namespace settings {
 }
 
 std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                               long bond_lim, std::optional<svd::settings> svd_settings) {
+                                                               std::optional<svd::config> svd_cfg) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -57,7 +57,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
     using Scalar = StateFinite::Scalar;
 
     // Set up the SVD
-    svd::solver svd(svd_settings);
+    svd::solver svd(svd_cfg);
     state.clear_cache();
 
     // Follows the environment expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
@@ -95,8 +95,12 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
-                bond_lim = std::min(bond_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_lim);
+                long bond_lim = mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
+                if(not svd_cfg) svd_cfg = svd::config();
+                if(not svd_cfg->rank_max) svd_cfg->rank_max = bond_lim;
+                svd_cfg->rank_max = std::min(bond_lim, svd_cfg->rank_max.value());
+
+                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg.value());
                 mpsL.set_M(U);
                 mpsL.stash_V(V, mpsR.get_position());
                 mpsR.set_M(MR_P0);
@@ -172,8 +176,12 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
-                bond_lim = std::min(bond_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_lim);
+                long bond_lim = mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
+                if(not svd_cfg) svd_cfg = svd::config();
+                if(not svd_cfg->rank_max) svd_cfg->rank_max = bond_lim;
+                svd_cfg->rank_max = std::min(bond_lim, svd_cfg->rank_max.value());
+
+                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg.value());
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 mpsR.stash_U(U, mpsL.get_position());
@@ -229,7 +237,7 @@ std::vector<size_t> tools::finite::env::expand_environment_ene(StateFinite &stat
 }
 
 std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &state, const ModelFinite &model, EdgesFinite &edges, std::optional<double> alpha,
-                                                               long bond_lim, std::optional<svd::settings> svd_settings) {
+                                                               std::optional<svd::config> svd_cfg) {
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
@@ -265,7 +273,7 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
     using Scalar = StateFinite::Scalar;
 
     // Set up the SVD
-    svd::solver svd(svd_settings);
+    svd::solver svd(svd_cfg);
 
     state.clear_cache();
 
@@ -289,16 +297,20 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 auto  dimL_old = mpsL.dimensions();
                 auto  dimR_old = mpsR.dimensions();
                 auto &mpoL     = model.get_mpo(posL - 1);
-                auto &varL = edges.get_env_varL(posL - 1);
+                auto &varL     = edges.get_env_varL(posL - 1);
 
                 mpsL.set_M(state.get_multisite_mps({mpsL.get_position()}));
-                Eigen::Tensor<Scalar, 3> PL = varL.get_expansion_term(mpsL, mpoL, alpha.value());
-                Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
+                Eigen::Tensor<Scalar, 3> PL    = varL.get_expansion_term(mpsL, mpoL, alpha.value());
+                Eigen::Tensor<Scalar, 3> P0    = tenx::TensorConstant<Scalar>(0.0, mpsR.spin_dim(), PL.dimension(2), mpsR.get_chiR());
                 Eigen::Tensor<Scalar, 3> ML_PL = mpsL.get_M_bare().concatenate(PL, 2);
                 Eigen::Tensor<Scalar, 3> MR_P0 = mpsR.get_M_bare().concatenate(P0, 1);
 
-                bond_lim = std::min(bond_lim, mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), bond_lim);
+                auto bond_lim = mpsL.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
+                if(not svd_cfg) svd_cfg = svd::config();
+                if(not svd_cfg->rank_max) svd_cfg->rank_max = bond_lim;
+                svd_cfg->rank_max = std::min(bond_lim, svd_cfg->rank_max.value());
+
+                auto [U, S, V] = svd.schmidt_into_left_normalized(ML_PL, mpsL.spin_dim(), svd_cfg.value());
                 mpsL.set_M(U);
                 mpsL.stash_V(V, mpsR.get_position());
                 mpsR.set_M(MR_P0);
@@ -359,16 +371,20 @@ std::vector<size_t> tools::finite::env::expand_environment_var(StateFinite &stat
                 auto  dimR_old = mpsR.dimensions();
                 auto  dimL_old = mpsL.dimensions();
                 auto &mpoR     = model.get_mpo(posR + 1);
-                auto &varR = edges.get_env_varR(posR + 1);
+                auto &varR     = edges.get_env_varR(posR + 1);
 
                 mpsR.set_M(state.get_multisite_mps({mpsR.get_position()}));
-                Eigen::Tensor<Scalar, 3> PR = varR.get_expansion_term(mpsR, mpoR, alpha.value());
-                Eigen::Tensor<Scalar, 3> P0 = tenx::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
+                Eigen::Tensor<Scalar, 3> PR    = varR.get_expansion_term(mpsR, mpoR, alpha.value());
+                Eigen::Tensor<Scalar, 3> P0    = tenx::TensorConstant<Scalar>(0.0, mpsL.spin_dim(), mpsL.get_chiL(), PR.dimension(1));
                 Eigen::Tensor<Scalar, 3> MR_PR = mpsR.get_M_bare().concatenate(PR, 1);
                 Eigen::Tensor<Scalar, 3> ML_P0 = mpsL.get_M_bare().concatenate(P0, 2); // Usually an AC
 
-                bond_lim = std::min(bond_lim, mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR())); // Bond dimension can't grow faster than x spin_dim
-                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), bond_lim);
+                auto bond_lim = mpsR.spin_dim() * std::min(mpsL.get_chiL(), mpsR.get_chiR()); // Bond dimension can't grow faster than x spin_dim
+                if(not svd_cfg) svd_cfg = svd::config();
+                if(not svd_cfg->rank_max) svd_cfg->rank_max = bond_lim;
+                svd_cfg->rank_max = std::min(bond_lim, svd_cfg->rank_max.value());
+
+                auto [U, S, V] = svd.schmidt_into_right_normalized(MR_PR, mpsR.spin_dim(), svd_cfg.value());
                 mpsL.set_M(ML_P0);
                 mpsR.set_M(V);
                 mpsR.stash_U(U, mpsL.get_position());

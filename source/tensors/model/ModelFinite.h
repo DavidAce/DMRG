@@ -2,7 +2,7 @@
 #include <array>
 #include <complex>
 #include <config/enums.h>
-#include <math/svd/settings.h>
+#include <math/svd/config.h>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 class MpoSite;
@@ -22,13 +22,13 @@ class ModelFinite {
         std::optional<Eigen::Tensor<cplx, 2>> multisite_ham_squared = std::nullopt;
     };
     mutable Cache                       cache;
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared();
     void                                randomize();
     void                                build_mpo();
     void                                build_mpo_squared();
     void                                clear_mpo_squared();
     bool                                has_mpo_squared() const;
-    void                                compress_mpo_squared(std::optional<svd::settings> svd_settings = std::nullopt);
+    void                                compress_mpo_squared();
     void                                set_energy_shift(double total_energy);
     void                                set_energy_shift_per_site(double energy_shift_per_site);
     void                                set_psfactor(double psfactor);

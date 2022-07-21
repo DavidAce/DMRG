@@ -11,8 +11,7 @@
 #include "tools/finite/measure.h"
 #include <bitset>
 
-void tools::finite::mps::init::random_product_state(StateFinite &state, StateInitType type, std::string_view sector, bool use_eigenspinors,
-                                                    std::optional<long> bitfield)
+void tools::finite::mps::init::random_product_state(StateFinite &state, StateInitType type, std::string_view sector, bool use_eigenspinors, long bitfield)
 /*!
  * There are many ways to generate an initial product state based on the
  * arguments (sector,use_eigenspinors, bitfield) = (string,long, optional<bool> ).
@@ -51,8 +50,8 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     if(sector == "random") {
         init::set_random_product_state_with_random_spinors(state, type); // a)
     } else if(init::bitfield_is_valid(bitfield) and axis_valid) {
-        init::set_random_product_state_on_axis_using_bitfield(state, type, sector, bitfield.value()); // b)
-        init::used_bitfields.insert(bitfield.value());
+        init::set_random_product_state_on_axis_using_bitfield(state, type, sector, bitfield); // b)
+        init::used_bitfields.insert(bitfield);
     } else if(use_eigenspinors and axis_valid) {
         init::set_random_product_state_in_sector_using_eigenspinors(state, type, sector); // c)
     } else if(axis_valid) {

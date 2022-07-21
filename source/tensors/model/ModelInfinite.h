@@ -35,8 +35,8 @@ class ModelInfinite {
     void                                                 initialize(ModelType model_type_);
     void                                                 randomize();
     void                                                 reset_mpo_squared();
-    void                                                 rebuild_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
-    std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> get_compressed_mpo_squared(std::optional<SVDMode> svdMode = std::nullopt);
+    void                                                 rebuild_mpo_squared();
+    std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> get_compressed_mpo_squared();
 
     bool is_real() const;
     bool has_nan() const;

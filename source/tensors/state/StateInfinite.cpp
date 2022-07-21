@@ -289,8 +289,8 @@ void StateInfinite::set_positions(size_t position) {
     MPS_B->set_position(position + 1);
 }
 
-void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim, std::optional<svd::settings> svd_settings) {
-    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, bond_lim, svd_settings);
+void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg) {
+    tools::infinite::mps::merge_twosite_tensor(*this, twosite_tensor, svd_cfg);
 }
 
 void StateInfinite::set_mps(const std::vector<MpsSite> &mps_list) {

@@ -81,10 +81,10 @@ void TensorsInfinite::eject_edges() {
     clear_measurements();
 }
 
-void TensorsInfinite::merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim, std::optional<svd::settings> svd_settings) {
+void TensorsInfinite::merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg) {
     state->clear_cache();
     clear_measurements();
-    tools::infinite::mps::merge_twosite_tensor(*state, twosite_tensor, bond_lim, svd_settings);
+    tools::infinite::mps::merge_twosite_tensor(*state, twosite_tensor, svd_cfg);
     //    normalize_state(bond_lim, svd_threshold, NormPolicy::IFNEEDED);
 }
 

@@ -41,15 +41,13 @@ namespace svd {
 }
 
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-    svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
+    svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows, long cols) const {
     // Setup useful sizes
     int rowsA = static_cast<int>(rows);
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
 
-    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
-    if(rank_max.value() == 0) throw std::logic_error("rank_max == 0");
     // Setup the SVD solver
     bool use_jacobi = static_cast<size_t>(sizeS) < switchsize_bdc;
 
@@ -64,11 +62,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if(A.cols() <= 0) throw std::runtime_error("SVD error: cols() == 0");
 
         t_adj.toc();
-        auto [U, S, VT, rank] = do_svd_lapacke(A.data(), A.rows(), A.cols(), std::max(A.rows(), A.cols()));
-        rank                  = std::min(S.size(), rank_max.value());
+        auto [U, S, VT] = do_svd_lapacke(A.data(), A.rows(), A.cols());
         if(U.rows() != A.rows()) throw except::logic_error("U.rows():{} != A.rows():{}", U.rows(), A.rows());
         if(VT.cols() != A.cols()) throw except::logic_error("VT.cols():{} != A.cols():{}", VT.cols(), A.cols());
-        return std::make_tuple(VT.adjoint().leftCols(rank), S.head(rank), U.adjoint().topRows(rank), rank);
+        return std::make_tuple(VT.adjoint(), S, U.adjoint());
     }
     auto t_lpk = tid::tic_scope("lapacke", tid::extra);
 
@@ -104,7 +101,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     VectorType<double> S;
     MatrixType<Scalar> V;
     MatrixType<Scalar> VT;
-    long               rank;
     svd::log->trace("Starting SVD with lapacke | rows {} | cols {}", rows, cols);
 
     int info   = 0;
@@ -372,9 +368,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
 
         svd::log->trace("Truncating singular values");
-        if(count) count.value()++;
-        long max_size                    = std::min(S.size(), rank_max.value());
-        std::tie(rank, truncation_error) = get_rank_by_truncation_error(S.head(max_size).normalized()); // Truncation error needs normalized singular values
+        auto max_size                    = S.nonZeros();
+        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size).normalized()); // Truncation error needs normalized singular values
 
         // Do the truncation
         U  = U.leftCols(rank).eval();
@@ -402,7 +397,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     } catch(const std::exception &ex) {
         //#if !defined(NDEBUG)
-        if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
+        if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
         throw except::runtime_error("Lapacke SVD error \n"
                                     "  Truncation Error = {:.4e}\n"
                                     "  Rank             = {}\n"
@@ -411,21 +406,22 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                     "  Error message    : {}\n",
                                     truncation_error, rank, rows, cols, info, ex.what());
     }
-    if(save_result) { save_svd<Scalar>(A_original, U, S, VT, rank_max.value(), "lapacke", details); }
+    if(save_result) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
 
     svd::log->trace(
         "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
-        truncation_lim, rank, rank_max.value(), rows, cols, truncation_error, t_lpk->get_last_interval());
-    return std::make_tuple(U, S, VT, rank);
+        truncation_lim, rank, rank_max, rows, cols, truncation_error, t_lpk->get_last_interval());
+    return std::make_tuple(U, S, VT);
 }
+using real = double;
+using cplx = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd_lapacke for type 'double'
-template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
-    svd::solver::do_svd_lapacke(const double *, long, long, std::optional<long>);
+template std::tuple<svd::solver::MatrixType<real>, svd::solver::VectorType<real>, svd::solver::MatrixType<real>> svd::solver::do_svd_lapacke(const real *, long,
+                                                                                                                                             long) const;
 
-using cplx = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd_lapacke for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
-    svd::solver::do_svd_lapacke(const cplx *, long, long, std::optional<long>);
+template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>> svd::solver::do_svd_lapacke(const cplx *, long,
+                                                                                                                                             long) const;

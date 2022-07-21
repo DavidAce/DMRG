@@ -136,7 +136,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
-            status.step += tensors.move_center_point(status.bond_lim);
+            status.step += tensors.move_center_point(svd::config(status.bond_lim, status.trnc_lim));
             // Do not go past the edge if you aren't there already!
             // It's important to stay at the inward edge so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
@@ -260,23 +260,28 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
-void AlgorithmFinite::reduce_bond_dimension_limit() {
+void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) {
     // We reduce the bond dimension limit during FES whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
+    if(when == UpdateWhen::NEVER) return;
     if(iter_last_bond_reduce == 0) iter_last_bond_reduce = status.iter;
     size_t iter_since_reduce = std::max(status.iter, iter_last_bond_reduce) - std::min(status.iter, iter_last_bond_reduce);
-    if(status.algorithm_saturated_for > 0 or iter_since_reduce >= 4) {
+    bool   reduce_saturated  = when == UpdateWhen::SATURATED and status.algorithm_saturated_for > 0;
+    bool   reduce_truncated  = when == UpdateWhen::TRUNCATED and tensors.state->is_truncated(status.trnc_lim);
+    bool   reduce_iteration  = when == UpdateWhen::ITERATION and iter_since_reduce >= 1;
+    if(reduce_saturated or reduce_truncated or reduce_iteration or iter_since_reduce >= 20) {
         write_to_file(StorageReason::FES, CopyPolicy::OFF);
 
-        auto fes_rate = std::abs(settings::strategy::fes_rate);
         auto bond_new = static_cast<double>(status.bond_lim);
-        if(fes_rate > 0.0 and fes_rate < 1.0)
-            bond_new *= fes_rate;
-        else if(fes_rate >= 1.0)
-            bond_new -= fes_rate;
+        if(rate > 0.0 and rate < 1.0)
+            bond_new *= rate;
+        else if(rate >= 1.0)
+            bond_new -= rate;
         else
-            throw except::logic_error("invalid fes rate {}", fes_rate);
-        bond_new = std::floor(std::max(bond_new, static_cast<double>(status.bond_init)));
+            throw except::logic_error("invalid rate {}", rate);
+        bond_new = std::floor(std::max(bond_new, 1.0));
+        tools::log->info("Reducing bond dimension limit {} -> {} | rate {:8.2e} | sat {} trn {} iter {}", status.bond_lim, bond_new, rate, reduce_saturated,
+                         reduce_truncated, reduce_iteration);
 
         if(bond_new == static_cast<double>(status.bond_lim))
             status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
@@ -295,7 +300,6 @@ void AlgorithmFinite::update_truncation_error_limit() {
     if(status.trnc_lim == 0.0) throw std::runtime_error("trnc_lim is zero!");
     status.trnc_min                   = settings::precision::svd_truncation_lim;
     status.trnc_limit_has_reached_min = status.trnc_lim <= status.trnc_min;
-    tools::log->info("trnc_min: {:8.2e} | trnc_lim {:8.2e} | reached {}", status.trnc_min, status.trnc_lim, status.trnc_limit_has_reached_min);
     if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
         status.trnc_lim                   = status.trnc_min;
         status.trnc_limit_has_reached_min = true;
@@ -323,17 +327,17 @@ void AlgorithmFinite::update_truncation_error_limit() {
     bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
 
     if(drop_if_truncated and not is_truncated) {
-        tools::log->info("State is not truncated. Kept current truncation error limit {}", status.trnc_lim);
+        tools::log->info("State is not truncated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
         return;
     }
     if(drop_if_saturated and not is_saturated) {
-        tools::log->info("Algorithm is not saturated. Kept current truncation error limit {}", status.trnc_lim);
+        tools::log->info("Algorithm is not saturated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
         return;
     }
 
     // If we got to this point we will update the truncation error limit by a factor
     auto drop_rate = settings::strategy::trnc_decrease_rate;
-    if(drop_rate > 1.0 or drop_rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:.3f} | must be in [0, 1]");
+    if(drop_rate > 1.0 or drop_rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:8.2e} | must be in [0, 1]");
 
     // Do a projection to make sure the saved data is in the correct sector
     if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
@@ -343,14 +347,14 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     auto trnc_new = std::max(status.trnc_min, status.trnc_lim * drop_rate);
 
-    tools::log->info("Updating truncation error limit {} -> {} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
+    tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = status.bond_lim == status.bond_max;
     status.algorithm_has_stuck_for    = 0;
     status.algorithm_saturated_for    = 0;
 
     // Last sanity check before leaving here
-    if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {} > {}", status.trnc_lim, status.trnc_min);
+    if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
 
 void AlgorithmFinite::update_expansion_factor_alpha() {
@@ -392,8 +396,8 @@ void AlgorithmFinite::randomize_model() {
 }
 
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
-                                      std::optional<long> bond_lim, std::optional<bool> use_eigenspinors, std::optional<long> bitfield,
-                                      std::optional<double> svd_truncation_lim) {
+                                      std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<long> bond_lim,
+                                      std::optional<double> trnc_lim) {
     auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -405,28 +409,24 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(not sector) sector = settings::strategy::initial_sector;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
-    if(not svd_truncation_lim and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) svd_truncation_lim = 1e-2;
     if(not bond_lim) {
         bond_lim = settings::get_bond_init(status.algo_type);
         if(settings::strategy::bond_increase_when == UpdateWhen::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
             bond_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
-    if(bond_lim.value() <= 0) throw except::runtime_error("Invalid bond_lim: {}", bond_lim.value());
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | eigspinors {} | bitfield {}", tensors.state->get_name(),
-                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type.value()), sector.value(), use_eigenspinors.value(), bitfield.value());
-
-    svd::settings svd_settings;
-    svd_settings.truncation_lim = svd_truncation_lim;
+    if(not trnc_lim) {
+        trnc_lim = settings::precision::svd_truncation_init;
+        if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) trnc_lim = 1e-2;
+    }
 
     tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
-
-    tensors.randomize_state(state_init, sector.value(), bond_lim.value(), use_eigenspinors.value(), bitfield, std::nullopt);
+    tensors.randomize_state(reason, state_init, state_type.value(), sector.value(), use_eigenspinors.value(), bitfield.value(), bond_lim.value());
 
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
                          tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
-        tensors.project_to_nearest_sector(sector.value(), status.bond_lim, std::nullopt, svd_settings);
+        tensors.project_to_nearest_sector(sector.value(), std::nullopt, svd::config(bond_lim, trnc_lim));
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
 
@@ -490,7 +490,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
         bool use_mpo2_proj = status.algo_type == AlgorithmType::xDMRG and settings::precision::use_projection_on_mpo_squared;
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(target_sector.value(), status.bond_lim, use_mpo2_proj);
+            tensors.project_to_nearest_sector(target_sector.value(), use_mpo2_proj, svd::config(status.bond_lim, status.trnc_lim));
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -511,13 +511,15 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), status.bond_lim, use_mpo2_proj);
+                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), use_mpo2_proj,
+                                                          svd::config(status.bond_lim, status.trnc_lim));
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), status.bond_lim, use_mpo2_proj);
+                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), use_mpo2_proj,
+                                                          svd::config(status.bond_lim, status.trnc_lim));
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
@@ -535,7 +537,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 // It may turn out that the spin component is almost exactly +-1 already, then no projection happens, but other
                 // routines may go through, such as sign selection on MPO² projection.
 
-                tensors.project_to_nearest_sector(target_sector.value(), status.bond_lim, use_mpo2_proj);
+                tensors.project_to_nearest_sector(target_sector.value(), use_mpo2_proj, svd::config(status.bond_lim, status.trnc_lim));
             }
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
@@ -790,12 +792,8 @@ void AlgorithmFinite::print_status_update() {
 void AlgorithmFinite::print_status_full() {
     tensors.redo_all_measurements();
     tools::log->info("{:=^60}", "");
-    tools::log->info("= {: ^56} =", fmt::format("Full status [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
+    tools::log->info("= {: ^56} =", fmt::format("Completed [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("{:=^60}", "");
-
-    tools::log->info("Mem RSS                            = {:<.1f} MB", debug::mem_rss_in_mb());
-    tools::log->info("Mem Peak                           = {:<.1f} MB", debug::mem_hwm_in_mb());
-    tools::log->info("Mem VM                             = {:<.1f} MB", debug::mem_vm_in_mb());
     tools::log->info("Stop reason                        = {}", status.algo_stop_sv());
     tools::log->info("Sites                              = {}", tensors.get_length());
     tools::log->info("Position                           = {}", status.position);
@@ -842,6 +840,7 @@ void AlgorithmFinite::print_status_full() {
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_z.value());
     }
 
+    tools::log->info("Truncation Error limit             = {:8.2e}", status.trnc_lim);
     tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);
@@ -854,5 +853,8 @@ void AlgorithmFinite::print_status_full() {
     }
     tools::log->info("Sₑ                                 = Converged : {:<4}  Saturated: {:<4}", status.entanglement_converged_for,
                      status.entanglement_saturated_for);
+    tools::log->info("Mem RSS                            = {:<.1f} MB", debug::mem_rss_in_mb());
+    tools::log->info("Mem Peak                           = {:<.1f} MB", debug::mem_hwm_in_mb());
+    tools::log->info("Mem VM                             = {:<.1f} MB", debug::mem_vm_in_mb());
     tools::log->info("{:=^60}", "");
 }

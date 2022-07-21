@@ -1,7 +1,7 @@
 #pragma once
 #include <complex>
 #include <config/enums.h>
-#include <math/svd/settings.h>
+#include <math/svd/config.h>
 #include <math/tenx/fwd_decl.h>
 #include <measure/MeasurementsTensorsInfinite.h>
 #include <memory>
@@ -48,7 +48,7 @@ class TensorsInfinite {
     void reset_edges();
     void eject_edges();
 
-    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, long bond_lim, std::optional<svd::settings> svd_settings = std::nullopt);
+    void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg = std::nullopt);
     void enlarge();
     void do_all_measurements() const;
     void clear_measurements() const;

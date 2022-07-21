@@ -157,10 +157,10 @@ void ModelFinite::clear_mpo_squared() {
     for(const auto &mpo : MPO) mpo->clear_mpo_squared();
 }
 
-void ModelFinite::compress_mpo_squared(std::optional<svd::settings> svd_settings) {
+void ModelFinite::compress_mpo_squared() {
     cache.multisite_mpo_squared = std::nullopt;
     cache.multisite_ham_squared = std::nullopt;
-    auto mpo_compressed         = get_compressed_mpo_squared(svd_settings);
+    auto mpo_compressed         = get_compressed_mpo_squared();
     for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_compressed[pos]);
 }
 
@@ -168,7 +168,7 @@ bool ModelFinite::has_mpo_squared() const {
     return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
 }
 
-std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo_squared(std::optional<svd::settings> svd_settings) {
+std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
     // First, rebuild the MPO's
     std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
     mpos_sq.reserve(MPO.size());
@@ -180,16 +180,14 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
     //  - Use very low svd threshold
     //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
-    if(not svd_settings) svd_settings = svd::settings();
-    if(not svd_settings->truncation_lim) svd_settings->truncation_lim = 1e-24;
-    if(not svd_settings->switchsize_bdc) svd_settings->switchsize_bdc = 4096;
-    if(not svd_settings->use_bdc) svd_settings->use_bdc = false;
-    if(not svd_settings->loglevel) svd_settings->loglevel = 2;
+    auto svd_cfg = svd::config();
     // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
     // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
-    if(not svd_settings->svd_lib) svd_settings->svd_lib = svd::Lib::lapacke;
+    svd_cfg.svd_lib        = svd::lib::lapacke;
+    svd_cfg.switchsize_bdc = 4096;
+    svd_cfg.use_bdc        = false;
 
-    svd::solver svd(svd_settings);
+    svd::solver svd(svd_cfg);
 
     // Print the results
     std::vector<std::string> report;

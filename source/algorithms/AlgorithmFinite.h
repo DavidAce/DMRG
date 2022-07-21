@@ -39,16 +39,16 @@ class AlgorithmFinite : public AlgorithmBase {
     void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
-    void         reduce_bond_dimension_limit();
+    void         reduce_bond_dimension_limit(double rate, UpdateWhen when);
     void         update_truncation_error_limit() final;
     void         update_expansion_factor_alpha();
     void         randomize_model();
     void         run() final;
     void         clear_convergence_status() override;
     void         randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
-                                 std::optional<std::string> sector = std::nullopt, std::optional<long> bond_lim = std::nullopt,
-                                 std::optional<bool> use_eigenspinors = std::nullopt, std::optional<long> bitfield = std::nullopt,
-                                 std::optional<double> svd_truncation_lim = std::nullopt);
+                                 std::optional<std::string> sector = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
+                                 std::optional<long> bitfield = std::nullopt, std::optional<long> bond_lim = std::nullopt,
+                                 std::optional<double> trnc_lim = std::nullopt);
 
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) override;
     void print_status_update() override;

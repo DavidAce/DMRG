@@ -11,7 +11,7 @@ enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class MultisiteWhen { OFF, SATURATED, ALWAYS };
-enum class SVDMode { EIGEN, LAPACKE, RSVD };
+enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
@@ -86,6 +86,7 @@ enum class fdmrg_task {
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
     POST_PRINT_TIMERS,
+    POST_FES_ANALYSIS,
     POST_DEFAULT,
     TIMER_RESET,
 };
@@ -108,6 +109,7 @@ enum class flbit_task {
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
     POST_PRINT_TIMERS,
+    POST_FES_ANALYSIS,
     POST_DEFAULT,
     TIMER_RESET,
 };
@@ -134,6 +136,7 @@ enum class xdmrg_task {
     POST_WRITE_RESULT,
     POST_PRINT_RESULT,
     POST_PRINT_TIMERS,
+    POST_FES_ANALYSIS,
     POST_DEFAULT,
     TIMER_RESET,
 };
@@ -206,10 +209,10 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptRitz::LR)                                         return "LR";
         if(item == OptRitz::SM)                                         return "SM";
     }
-    if constexpr(std::is_same_v<T, SVDMode>) {
-        if(item == SVDMode::EIGEN)                                      return "EIGEN";
-        if(item == SVDMode::LAPACKE)                                    return "LAPACKE";
-        if(item == SVDMode::RSVD)                                       return "RSVD";
+    if constexpr(std::is_same_v<T, SVDLibrary>) {
+        if(item == SVDLibrary::EIGEN)                                      return "EIGEN";
+        if(item == SVDLibrary::LAPACKE)                                    return "LAPACKE";
+        if(item == SVDLibrary::RSVD)                                       return "RSVD";
     }
     if constexpr(std::is_same_v<T, UpdateWhen>) {
         if(item == UpdateWhen::NEVER)                                  return "NEVER";
@@ -332,6 +335,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == flbit_task::POST_WRITE_RESULT)                     return "POST_WRITE_RESULT";
         if(item == flbit_task::POST_PRINT_RESULT)                     return "POST_PRINT_RESULT";
         if(item == flbit_task::POST_PRINT_TIMERS)                     return "POST_PRINT_TIMERS";
+        if(item == flbit_task::POST_FES_ANALYSIS)                     return "POST_FES_ANALYSIS";
         if(item == flbit_task::POST_DEFAULT)                          return "POST_DEFAULT";
         if(item == flbit_task::TIMER_RESET)                           return "TIMER_RESET";
     }
@@ -356,6 +360,8 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == xdmrg_task::FIND_EXCITED_STATE)                     return "FIND_EXCITED_STATE";
         if(item == xdmrg_task::POST_WRITE_RESULT)                      return "POST_WRITE_RESULT";
         if(item == xdmrg_task::POST_PRINT_RESULT)                      return "POST_PRINT_RESULT";
+        if(item == xdmrg_task::POST_PRINT_TIMERS)                      return "POST_PRINT_TIMERS";
+        if(item == xdmrg_task::POST_FES_ANALYSIS)                      return "POST_FES_ANALYSIS";
         if(item == xdmrg_task::POST_DEFAULT)                           return "POST_DEFAULT";
         if(item == xdmrg_task::TIMER_RESET)                            return "TIMER_RESET";
     }
@@ -465,7 +471,7 @@ constexpr auto sv2enum(std::string_view item) {
         AlgorithmStop,
         MultisiteMove,
         MultisiteWhen,
-        SVDMode,
+        SVDLibrary,
         UpdateWhen,
         GateMove,
         ModelType,
@@ -519,10 +525,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "LR")                                    return OptRitz::LR;
         if(item == "SM")                                    return OptRitz::SM;
     }
-    if constexpr(std::is_same_v<T, SVDMode>) {
-        if(item == "EIGEN")                                 return SVDMode::EIGEN;
-        if(item == "LAPACKE")                               return SVDMode::LAPACKE;
-        if(item == "RSVD")                                  return SVDMode::RSVD;
+    if constexpr(std::is_same_v<T, SVDLibrary>) {
+        if(item == "EIGEN")                                 return SVDLibrary::EIGEN;
+        if(item == "LAPACKE")                               return SVDLibrary::LAPACKE;
+        if(item == "RSVD")                                  return SVDLibrary::RSVD;
     }
     if constexpr(std::is_same_v<T, UpdateWhen>) {
         if(item == "NEVER")                                 return UpdateWhen::NEVER;
@@ -624,6 +630,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FIND_HIGHEST_STATE")                    return fdmrg_task::FIND_HIGHEST_STATE;
         if(item == "POST_WRITE_RESULT")                     return fdmrg_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return fdmrg_task::POST_PRINT_RESULT;
+        if(item == "POST_PRINT_TIMERS")                     return fdmrg_task::POST_PRINT_TIMERS;
+        if(item == "POST_FES_ANALYSIS")                     return fdmrg_task::POST_FES_ANALYSIS;
         if(item == "POST_DEFAULT")                          return fdmrg_task::POST_DEFAULT;
         if(item == "TIMER_RESET")                           return fdmrg_task::TIMER_RESET;
     }
@@ -646,6 +654,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "POST_WRITE_RESULT")                     return flbit_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return flbit_task::POST_PRINT_RESULT;
         if(item == "POST_PRINT_TIMERS")                     return flbit_task::POST_PRINT_TIMERS;
+        if(item == "POST_FES_ANALYSIS")                     return flbit_task::POST_FES_ANALYSIS;
         if(item == "POST_DEFAULT")                          return flbit_task::POST_DEFAULT;
         if(item == "TIMER_RESET")                           return flbit_task::TIMER_RESET;
     }
@@ -670,6 +679,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "FIND_EXCITED_STATE")                    return xdmrg_task::FIND_EXCITED_STATE;
         if(item == "POST_WRITE_RESULT")                     return xdmrg_task::POST_WRITE_RESULT;
         if(item == "POST_PRINT_RESULT")                     return xdmrg_task::POST_PRINT_RESULT;
+        if(item == "POST_PRINT_TIMERS")                     return xdmrg_task::POST_PRINT_TIMERS;
+        if(item == "POST_FES_ANALYSIS")                     return xdmrg_task::POST_FES_ANALYSIS;
         if(item == "POST_DEFAULT")                          return xdmrg_task::POST_DEFAULT;
         if(item == "TIMER_RESET")                           return xdmrg_task::TIMER_RESET;
     }

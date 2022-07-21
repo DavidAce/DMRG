@@ -20,16 +20,14 @@
  *   \param mat_ptr Pointer to the matrix. Supported are double * and std::complex<double> *
  *   \param rows Rows of the matrix
  *   \param cols Columns of the matrix
- *   \param rank_max Maximum number of singular values
  *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>, long>
-    svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols, std::optional<long> rank_max) {
+std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
+    svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols) const {
     auto t_eigen = tid::tic_scope("eigen", tid::extra);
-    if(not rank_max.has_value()) rank_max = std::min(rows, cols);
-
     svd::log->trace("Starting SVD with Eigen");
+    auto                                 minRC = std::min(rows, cols);
     Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
 
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
@@ -49,23 +47,25 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     // Setup the SVD solver
     SVD.setSwitchSize(static_cast<int>(switchsize_bdc));
     // Add suffix for more detailed breakdown of matrix sizes
-    auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(rank_max.value(), 5l)) : "";
-
-    bool use_jacobi = std::min(rows, cols) < static_cast<long>(switchsize_bdc);
+    auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(minRC, 5l)) : "";
+    auto svd_info = fmt::format("| {} x {} | rank_max {} | truncation limit {:.4e} | switchsize bdc {}", rows, cols, rank_max, truncation_lim, switchsize_bdc);
+    bool use_jacobi = minRC < static_cast<long>(switchsize_bdc);
     if(use_jacobi) {
         // We only use Jacobi for precision. So we use all the precision we can get.
-        svd::log->debug("Running Eigen::JacobiSVD truncation limit {:.4e} | switchsize bdc {} | rank_max {}", truncation_lim, switchsize_bdc, rank_max.value());
+        svd::log->debug("Running Eigen::JacobiSVD {}", svd_info);
         // Run the svd
         auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix), tid::detailed);
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
-        svd::log->debug("Running Eigen::BDCSVD truncation limit {:.4e} | switchsize bdc {} | rank_max {}", truncation_lim, switchsize_bdc, rank_max.value());
+        svd::log->debug("Running Eigen::BDCSVD {}", svd_info);
         // Run the svd
         auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix), tid::detailed);
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     }
-    long rank       = SVD.rank();
-    long max_size   = std::min(rank, rank_max.value());
+
+    long rank_lim   = rank_max > 0 ? std::min(minRC, rank_max) : minRC;
+    rank            = SVD.nonzeroSingularValues();
+    long max_size   = std::min(rank, rank_lim);
     bool U_finite   = SVD.matrixU().leftCols(max_size).allFinite();
     bool S_finite   = SVD.singularValues().head(max_size).allFinite();
     bool V_finite   = SVD.matrixV().leftCols(max_size).allFinite();
@@ -85,39 +85,38 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->critical("Eigen SVD error: S is not positive");
         }
         //#if !defined(NDEBUG)
-        if(save_fail) save_svd<Scalar>(mat, SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), rank_max.value(), "Eigen", details);
+        if(save_fail) save_svd<Scalar>(mat, SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), "Eigen", details);
 
         //#endif
 
         throw except::runtime_error("Eigen SVD error \n"
-                                    "  Rank max         = {}\n"
+                                    "  Rank max       = {}\n"
                                     "  Dims             = ({}, {})\n"
                                     "  A all finite     : {}\n"
                                     "  U all finite     : {}\n"
                                     "  S all finite     : {}\n"
                                     "  S all positive   : {}\n"
                                     "  V all finite     : {}\n",
-                                    rank_max.value(), rows, cols, mat.allFinite(), U_finite, S_finite, S_positive, V_finite);
+                                    rank_max, rows, cols, mat.allFinite(), U_finite, S_finite, S_positive, V_finite);
     }
-    if(count) count.value()++;
 
     // Truncation error needs normalized singular values
-    std::tie(rank, truncation_error) = get_rank_by_truncation_error(SVD.singularValues().head(max_size).normalized());
+    std::tie(rank, truncation_error) = get_rank_from_truncation_error(SVD.singularValues().head(max_size).normalized());
 
     if(save_result)
-        save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank, "Eigen", details);
+        save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), "Eigen", details);
     svd::log->trace("SVD with Eigen finished successfully");
     // Not all calls to do_svd need normalized S, so we do not normalize here!
-    return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), rank);
+    return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint());
 }
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>, long>
-    svd::solver::do_svd_eigen(const double *, long, long, std::optional<long>);
+template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>>
+    svd::solver::do_svd_eigen(const double *, long, long) const;
 
 using cplx = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>, long>
-    svd::solver::do_svd_eigen(const cplx *, long, long, std::optional<long>);
+template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>> svd::solver::do_svd_eigen(const cplx *, long,
+                                                                                                                                           long) const;

@@ -63,7 +63,7 @@ namespace tools::finite::ed {
         auto  centerpos     = tensors_ed.get_position<long>();
         auto &state_ed      = *tensors_ed.state;
         auto &multisite_mps = results.front().get_tensor();
-        auto  mps_list      = tools::common::split::split_mps(multisite_mps, spin_dims, positions, centerpos, status.bond_lim);
+        auto  mps_list      = tools::common::split::split_mps(multisite_mps, spin_dims, positions, centerpos, std::nullopt); // No svd truncation
         state_ed.set_name("state_ed");
         state_ed.set_mps_sites(mps_list);
         tools::finite::measure::do_all_measurements(state_ed);

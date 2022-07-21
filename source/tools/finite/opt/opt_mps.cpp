@@ -272,11 +272,18 @@ OptExit opt_mps::get_optexit() const {
         throw except::runtime_error("opt_mps: optMode not set");
 }
 
-long opt_mps::get_bond_limit() const {
+long opt_mps::get_bond_lim() const {
     if(bond_lim)
         return bond_lim.value();
     else
         throw except::runtime_error("opt_mps: bond_lim not set");
+}
+
+double opt_mps::get_trnc_lim() const {
+    if(trnc_lim)
+        return trnc_lim.value();
+    else
+        throw except::runtime_error("opt_mps: trnc_lim not set");
 }
 
 void opt_mps::clear() { tensor = std::nullopt; }
@@ -356,6 +363,7 @@ void opt_mps::set_optsolver(OptSolver optSpace_) { optSolver = optSpace_; }
 void opt_mps::set_optmode(OptMode optMode_) { optMode = optMode_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 void opt_mps::set_bond_limit(long bond_) { bond_lim = bond_; }
+void opt_mps::set_trnc_limit(double trnc_) { trnc_lim = trnc_; }
 
 void opt_mps::validate_basis_vector() const {
     std::string error_msg;
