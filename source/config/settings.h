@@ -136,16 +136,16 @@ namespace settings {
         inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::OFF;                     /*!< When to increase the number of sites in a DMRG step {OFF, SATURATED, ALWAYS} */
+        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::OFF;                     /*!< When to increase the number of sites in a DMRG step {OFF, STUCK, SATURATED, ALWAYS} */
         inline std::string   target_sector               = "none";                                 /*!< Find an eigenstate in this parity sector. Choose between [random,randomAxis, none, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline std::string   initial_sector              = "random";                               /*!< Initialize state in this spin pattern/parity sector. Choose between [random, x,+x,-x, y, +y,-y, z,+z,-z]  */
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit     initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
         inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
         inline double        fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
-        inline UpdateWhen    bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, SATURATED, ITERATION}. */
+        inline UpdateWhen    bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
         inline double        bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
-        inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, SATURATED, ITERATION} */
+        inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
         inline double        trnc_decrease_rate          = 1e-2;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
 }
 

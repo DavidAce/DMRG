@@ -107,7 +107,8 @@ class StateInfinite {
     void set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Tensor<Scalar, 3> &MA, const Eigen::Tensor<Scalar, 1> &LC, const Eigen::Tensor<Scalar, 3> &MB,
                  const Eigen::Tensor<Scalar, 1> &LB);
 
-    bool is_bond_limited(long bond_lim, double truncation_threshold) const;
+    bool is_limited_by_bond(long bond_lim) const;
+    bool is_truncated(double truncation_error_limit) const;
 
     void do_all_measurements() const;
     void clear_measurements() const;

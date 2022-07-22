@@ -328,7 +328,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(not status.fes_is_running) {
         if(status.entanglement_saturated_for > 0) iter_multiplier = status.entanglement_saturated_for;
         if(status.variance_mpo_saturated_for > 0) iter_multiplier = status.variance_mpo_saturated_for;
-        if(status.algorithm_saturated_for > 0) iter_multiplier = 10 * status.algorithm_saturated_for;
+        if(status.algorithm_has_stuck_for > 0) iter_multiplier = 10 * status.algorithm_has_stuck_for;
     }
 
     // Copy settings
@@ -348,10 +348,13 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
     else {
         using namespace settings::strategy;
+        size_t has_stuck_for = status.algorithm_has_stuck_for;
+        size_t saturated_for = status.algorithm_saturated_for * (status.algorithm_converged_for == 0); // Turn on only if non-converged
         switch(multisite_mps_when) {
             case MultisiteWhen::OFF: break;
-            case MultisiteWhen::SATURATED: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for, multisite_mps_site_max); break;
-            case MultisiteWhen::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + status.algorithm_saturated_for + 1, multisite_mps_site_max); break;
+            case MultisiteWhen::STUCK: m1.max_sites = std::min(multisite_mps_site_def + has_stuck_for, multisite_mps_site_max); break;
+            case MultisiteWhen::SATURATED: m1.max_sites = std::min(multisite_mps_site_def + saturated_for, multisite_mps_site_max); break;
+            case MultisiteWhen::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + saturated_for + 1, multisite_mps_site_max); break;
         }
     }
 

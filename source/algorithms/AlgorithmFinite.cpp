@@ -211,13 +211,13 @@ void AlgorithmFinite::update_bond_dimension_limit() {
             tools::log->trace("Entanglement entropies: {} ", tools::finite::measure::entanglement_entropies(*tensors.state));
         }
     }
-
     // If we got here we want to increase the bond dimension limit progressively during the simulation
-    // Only increment the bond dimension if the following are all true
     bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_has_stuck      = status.algorithm_has_stuck_for > 1;
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
     bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
     bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
+    bool grow_if_has_stuck = settings::strategy::bond_increase_when == UpdateWhen::STUCK;
 
     if(grow_if_truncated and not is_truncated) {
         tools::log->info("State is not limited by its bond dimension. Kept current bond limit {}", status.bond_lim);
@@ -227,10 +227,10 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         tools::log->info("Algorithm is not saturated. Kept current bond limit {}", status.bond_lim);
         return;
     }
-
-    // If we got to this point we will update the bond dimension by a factor
-    auto grow_rate = settings::strategy::bond_increase_rate;
-    if(grow_rate <= 1.0) throw except::runtime_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", grow_rate);
+    if(grow_if_has_stuck and not is_has_stuck) {
+        tools::log->info("Algorithm is not stuck. Kept current bond limit {}", status.bond_lim);
+        return;
+    }
 
     // Do a projection to make sure the saved data is in the correct sector
     if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
@@ -240,14 +240,18 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
         randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
 
+    // If we got to this point we will update the bond dimension by a factor
+    auto rate = settings::strategy::bond_increase_rate;
+    if(rate <= 1.0) throw except::runtime_error("Error: get_bond_grow_rate == {:.3f} | must be larger than one", rate);
+
     auto bond_new = static_cast<double>(status.bond_lim);
-    if(grow_rate <= 2.0 and grow_rate > 1.0) {
-        bond_new = std::ceil(bond_new * grow_rate);
+    if(rate <= 2.0 and rate > 1.0) {
+        bond_new = std::ceil(bond_new * rate);
         bond_new = num::round_up_to_multiple_of<double>(bond_new, 4);
-    } else if(grow_rate > 2.0) {
-        bond_new = bond_new + grow_rate;
+    } else if(rate > 2.0) {
+        bond_new = bond_new + rate;
     } else
-        throw except::logic_error("Expected grow_rate > 1.0. Got {}", grow_rate);
+        throw except::logic_error("Expected grow_rate > 1.0. Got {}", rate);
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
 
     tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
@@ -317,11 +321,13 @@ void AlgorithmFinite::update_truncation_error_limit() {
         }
     }
 
-    // If we got here we want to increase the bond dimension limit progressively during the simulation
+    // If we got here we want to decrease the truncation error limit progressively during the simulation
     bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_has_stuck      = status.algorithm_has_stuck_for > 1; // Allow one round while saturated so that extra efforts get a chance.
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
     bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdateWhen::TRUNCATED;
     bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
+    bool drop_if_has_stuck = settings::strategy::trnc_decrease_when == UpdateWhen::STUCK;
 
     if(drop_if_truncated and not is_truncated) {
         tools::log->info("State is not truncated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
@@ -331,10 +337,10 @@ void AlgorithmFinite::update_truncation_error_limit() {
         tools::log->info("Algorithm is not saturated. Kept current truncation error limit {:8.2e}", status.trnc_lim);
         return;
     }
-
-    // If we got to this point we will update the truncation error limit by a factor
-    auto rate = settings::strategy::trnc_decrease_rate;
-    if(rate > 1.0 or rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:8.2e} | must be in [0, 1]");
+    if(drop_if_has_stuck and not is_has_stuck) {
+        tools::log->info("Algorithm is not stuck. Kept current truncation error limit {:8.2e}", status.trnc_lim);
+        return;
+    }
 
     // Do a projection to make sure the saved data is in the correct sector
     if(settings::strategy::project_on_bond_update)
@@ -343,11 +349,15 @@ void AlgorithmFinite::update_truncation_error_limit() {
     // Write current results before updating the truncation error limit
     write_to_file(StorageReason::TRNC_DECREASE);
 
+    // If we got to this point we will update the truncation error limit by a factor
+    auto rate = settings::strategy::trnc_decrease_rate;
+    if(rate > 1.0 or rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:8.2e} | must be in [0, 1]");
+
     auto trnc_new = std::max(status.trnc_min, status.trnc_lim * rate);
 
     tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
     status.trnc_lim                   = trnc_new;
-    status.trnc_limit_has_reached_min = status.bond_lim == status.bond_max;
+    status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_max;
     status.algorithm_has_stuck_for    = 0;
     status.algorithm_saturated_for    = 0;
 
@@ -702,6 +712,7 @@ void AlgorithmFinite::clear_convergence_status() {
     status.variance_mpo_converged_for = 0;
     status.variance_mpo_saturated_for = 0;
     status.bond_limit_has_reached_max = false;
+    status.trnc_limit_has_reached_min = false;
     status.spin_parity_has_converged  = false;
 }
 

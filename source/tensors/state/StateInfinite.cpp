@@ -21,8 +21,8 @@ StateInfinite::StateInfinite() : MPS_A(std::make_unique<MpsSite>()), MPS_B(std::
 // operator= and copy assignment constructor.
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
-StateInfinite::~StateInfinite()                     = default;            // default dtor
-StateInfinite::StateInfinite(StateInfinite &&other) = default;            // default move ctor
+StateInfinite::~StateInfinite()                                = default; // default dtor
+StateInfinite::StateInfinite(StateInfinite &&other)            = default; // default move ctor
 StateInfinite &StateInfinite::operator=(StateInfinite &&other) = default; // default move assign
 
 /* clang-format off */
@@ -322,11 +322,9 @@ void StateInfinite::set_mps(const Eigen::Tensor<Scalar, 1> &LA, const Eigen::Ten
     clear_cache();
 }
 
-bool StateInfinite::is_bond_limited(long bond_lim, double truncation_threshold) const {
-    bool has_truncated   = get_truncation_error() > truncation_threshold;
-    bool has_reached_max = chiC() >= bond_lim;
-    return has_truncated or has_reached_max;
-}
+bool StateInfinite::is_limited_by_bond(long bond_lim) const { return chiC() >= bond_lim; }
+
+bool StateInfinite::is_truncated(double truncation_error_limit) const { return get_truncation_error() > truncation_error_limit; }
 
 void StateInfinite::clear_cache() const { cache = Cache(); }
 

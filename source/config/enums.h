@@ -10,9 +10,9 @@
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
-enum class MultisiteWhen { OFF, SATURATED, ALWAYS };
+enum class MultisiteWhen { OFF, STUCK, SATURATED, ALWAYS };
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
-enum class UpdateWhen { NEVER, TRUNCATED, SATURATED, ITERATION };
+enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
@@ -187,12 +187,12 @@ constexpr std::string_view enum2sv(const T &item) {
     static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
     /* clang-format off */
     if constexpr(std::is_same_v<T, AlgorithmType>) switch(item) {
-        case AlgorithmType::iDMRG:                                       return "iDMRG";
-        case AlgorithmType::fDMRG:                                       return "fDMRG";
-        case AlgorithmType::fLBIT:                                       return "fLBIT";
-        case AlgorithmType::xDMRG:                                       return "xDMRG";
-        case AlgorithmType::iTEBD:                                       return "iTEBD";
-        case AlgorithmType::ANY:                                         return "ANY";
+        case AlgorithmType::iDMRG:                                      return "iDMRG";
+        case AlgorithmType::fDMRG:                                      return "fDMRG";
+        case AlgorithmType::fLBIT:                                      return "fLBIT";
+        case AlgorithmType::xDMRG:                                      return "xDMRG";
+        case AlgorithmType::iTEBD:                                      return "iTEBD";
+        case AlgorithmType::ANY:                                        return "ANY";
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) switch(item){
         case MultisiteMove::ONE :                                       return "ONE";
@@ -201,6 +201,7 @@ constexpr std::string_view enum2sv(const T &item) {
     }
     if constexpr(std::is_same_v<T, MultisiteWhen>) switch(item){
         case MultisiteWhen::OFF :                                       return "OFF";
+        case MultisiteWhen::STUCK :                                     return "STUCK";
         case MultisiteWhen::SATURATED :                                 return "SATURATED";
         case MultisiteWhen::ALWAYS :                                    return "ALWAYS";
     }
@@ -210,15 +211,16 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptRitz::SM)                                         return "SM";
     }
     if constexpr(std::is_same_v<T, SVDLibrary>) {
-        if(item == SVDLibrary::EIGEN)                                      return "EIGEN";
-        if(item == SVDLibrary::LAPACKE)                                    return "LAPACKE";
-        if(item == SVDLibrary::RSVD)                                       return "RSVD";
+        if(item == SVDLibrary::EIGEN)                                   return "EIGEN";
+        if(item == SVDLibrary::LAPACKE)                                 return "LAPACKE";
+        if(item == SVDLibrary::RSVD)                                    return "RSVD";
     }
     if constexpr(std::is_same_v<T, UpdateWhen>) {
-        if(item == UpdateWhen::NEVER)                                  return "NEVER";
-        if(item == UpdateWhen::TRUNCATED)                              return "TRUNCATED";
-        if(item == UpdateWhen::SATURATED)                              return "SATURATED";
-        if(item == UpdateWhen::ITERATION)                              return "ITERATION";
+        if(item == UpdateWhen::NEVER)                                   return "NEVER";
+        if(item == UpdateWhen::TRUNCATED)                               return "TRUNCATED";
+        if(item == UpdateWhen::STUCK)                                   return "STUCK";
+        if(item == UpdateWhen::SATURATED)                               return "SATURATED";
+        if(item == UpdateWhen::ITERATION)                               return "ITERATION";
     }
     if constexpr(std::is_same_v<T, GateMove>) {
         if(item == GateMove::OFF)                                       return "OFF";
@@ -517,6 +519,7 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, MultisiteWhen>) {
         if(item == "OFF")                                   return MultisiteWhen::OFF;
+        if(item == "STUCK")                                 return MultisiteWhen::STUCK;
         if(item == "SATURATED")                             return MultisiteWhen::SATURATED;
         if(item == "ALWAYS")                                return MultisiteWhen::ALWAYS;
     }
@@ -533,6 +536,7 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, UpdateWhen>) {
         if(item == "NEVER")                                 return UpdateWhen::NEVER;
         if(item == "TRUNCATED")                             return UpdateWhen::TRUNCATED;
+        if(item == "STUCK")                                 return UpdateWhen::STUCK;
         if(item == "SATURATED")                             return UpdateWhen::SATURATED;
         if(item == "ITERATION")                             return UpdateWhen::ITERATION;
     }
