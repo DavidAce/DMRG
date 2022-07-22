@@ -265,12 +265,11 @@ void ModelFinite::set_psfactor(double psfactor) {
 }
 
 void ModelFinite::set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli) {
-    tools::log->debug("ModelFinite: Setting MPO² proj: sign {:+}", sign);
     for(const auto &mpo : MPO) mpo->set_mpo2_proj(sign, pauli);
 }
 
 void ModelFinite::set_mpo2_proj(int sign, std::string_view sector) {
-    if(qm::spin::half::is_valid_axis(sector)) set_mpo2_proj(sign, qm::spin::half::get_pauli(sector));
+    if(qm::spin::half::is_valid_axis(sector)) { set_mpo2_proj(sign, qm::spin::half::get_pauli(sector)); }
 }
 
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }

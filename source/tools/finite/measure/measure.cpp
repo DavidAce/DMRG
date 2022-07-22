@@ -404,15 +404,17 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
     // Here we show that the variance calculated with energy-shifted mpo's is equivalent to the usual way.
     // If mpo's are shifted:
     //      Var H = <(H-E_shf)²> - <H-E_shf>²     = <H²>  - 2<H>E_shf + E_shf² - (<H> - E_shf)²
-    //                                            = H2    - 2*E*E_shf + E_shf² - E² + 2*E*E_shf - E_shf²
-    //                                            = H2    - E²
-    //      Note that in the last line, H2-E² is a subtraction of two large numbers --> catastrophic cancellation --> loss of precision.
-    //      On the other hand Var H = <(H-E_red)²> - energy_minus_energy_shift² = <(H-E_red)²> - ~dE², where both terms are always  << 1.
-    //      The first term computed from a double-layer of shifted mpo's.
-    //      In the second term dE is usually small, in fact identically zero immediately after an energy-reduction operation,
-    //      but may grow if the optimization steps make significant progress refining E.
-    // Else, if E_red = 0 (i.e. not shifted) we get the usual formula:
-    //      Var H = <(H - 0)²> - <H - 0>² = H2 - E²
+    //                                            = H²    - 2*E*E_shf + E_shf² - E² + 2*E*E_shf - E_shf²
+    //                                            = H²    - E²
+    //      Note that in the last line, H²-E² is a subtraction of two large numbers --> catastrophic cancellation --> loss of precision.
+    //      On the other hand Var H = <(H-E_shf)²> - energy_minus_energy_shift² = <(H-E_red)²> - ~dE², where both terms are always  << 1.
+    //      The first term is computed from a double-layer of shifted mpo's.
+    //      In the second term dE is usually very small, in fact identically zero immediately after an energy-reduction operation,
+    //      but may grow if the optimization steps make significant progress refining E. Thus wethe first term is a good approximation to
+    //      the variance by itself.
+    //
+    // Else, if E_shf = 0 (i.e. not shifted) we get the usual formula:
+    //      Var H = <(H - 0)²> - <H - 0>² = H² - E²
     if(measurements != nullptr and measurements->energy_variance) return measurements->energy_variance.value();
 
     if constexpr(std::is_same_v<state_or_mps_type, StateFinite>) {
@@ -426,7 +428,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(model.is_shifted())
             energy = tools::finite::measure::energy_minus_energy_shift(state, model, edges, measurements);
         else
-            energy = tools::finite::measure::energy(state, model, edges, measurements);
+            energy = tools::finite::measure::energy(state, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
 
         auto   t_msr = tid::tic_scope("measure");
         double E2    = energy * energy;
@@ -435,17 +437,17 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
             throw std::runtime_error(
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
 
-        const auto &mpo = model.get_multisite_mpo_squared();
-        const auto &env = edges.get_multisite_env_var_blk();
+        const auto &mpo2 = model.get_multisite_mpo_squared();
+        const auto &env2 = edges.get_multisite_env_var_blk();
         if constexpr(settings::debug)
             tools::log->trace("Measuring energy variance: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
-                              model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
+                              model.active_sites, mpo2.dimensions(), edges.active_sites, env2.L.dimensions(), env2.R.dimensions());
 
-        if(state.dimension(0) != mpo.dimension(2))
+        if(state.dimension(0) != mpo2.dimension(2))
             throw std::runtime_error(
-                fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo.dimension(2)));
+                fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo2.dimension(2)));
         auto   t_var = tid::tic_scope("var");
-        double H2    = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
+        double H2    = tools::common::contraction::expectation_value(state, mpo2, env2.L, env2.R);
         double var   = std::abs(H2 - E2);
         if(measurements != nullptr) measurements->energy_variance = var;
         return var;

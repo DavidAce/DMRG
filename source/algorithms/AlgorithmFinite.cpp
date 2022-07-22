@@ -165,9 +165,9 @@ void AlgorithmFinite::shift_mpo_energy() {
 }
 
 void AlgorithmFinite::rebuild_mpo_squared() {
-    tools::log->info("Rebuilding MPO²");
     if(not tensors.position_is_inward_edge()) return;
     bool compress = settings::precision::use_compressed_mpo_squared_all;
+    tools::log->debug("Rebuilding MPO² | compress:{}", compress);
     tensors.rebuild_mpo_squared(compress);
 }
 
@@ -280,9 +280,6 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) 
         else
             throw except::logic_error("invalid rate {}", rate);
         bond_new = std::floor(std::max(bond_new, 1.0));
-        tools::log->info("Reducing bond dimension limit {} -> {} | rate {:8.2e} | sat {} trn {} iter {}", status.bond_lim, bond_new, rate, reduce_saturated,
-                         reduce_truncated, reduce_iteration);
-
         if(bond_new == static_cast<double>(status.bond_lim))
             status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
         else {
