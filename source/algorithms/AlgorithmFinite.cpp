@@ -333,16 +333,17 @@ void AlgorithmFinite::update_truncation_error_limit() {
     }
 
     // If we got to this point we will update the truncation error limit by a factor
-    auto drop_rate = settings::strategy::trnc_decrease_rate;
-    if(drop_rate > 1.0 or drop_rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:8.2e} | must be in [0, 1]");
+    auto rate = settings::strategy::trnc_decrease_rate;
+    if(rate > 1.0 or rate < 0) throw except::runtime_error("Error: trnc_decrease_rate == {:8.2e} | must be in [0, 1]");
 
     // Do a projection to make sure the saved data is in the correct sector
-    if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
+    if(settings::strategy::project_on_bond_update)
+        tensors.project_to_nearest_sector(settings::strategy::target_sector, std::nullopt, svd::config(status.bond_lim, status.trnc_lim));
 
     // Write current results before updating the truncation error limit
     write_to_file(StorageReason::TRNC_DECREASE);
 
-    auto trnc_new = std::max(status.trnc_min, status.trnc_lim * drop_rate);
+    auto trnc_new = std::max(status.trnc_min, status.trnc_lim * rate);
 
     tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
     status.trnc_lim                   = trnc_new;
