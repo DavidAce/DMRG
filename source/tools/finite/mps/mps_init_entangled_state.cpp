@@ -26,12 +26,10 @@ std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t siz
     return bond_dimensions;
 }
 
-void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view sector, long bond_lim,
-                                                      bool use_eigenspinors) {
-    if(use_eigenspinors)
-        set_random_entangled_state_with_random_spinors(state, type, bond_lim);
-    else
-        set_random_entangled_state_with_random_spinors(state, type, bond_lim);
+void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view sector,
+                                                      [[maybe_unused]] bool use_eigenspinors, long bond_lim) {
+    // TODO: Make version with/without eigenspinors
+    set_random_entangled_state_with_random_spinors(state, type, bond_lim);
 }
 
 void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_lim) {

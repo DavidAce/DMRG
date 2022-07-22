@@ -177,8 +177,8 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     if(status.bond_lim > status.bond_max) throw except::runtime_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
-void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<long> bitfield,
-                                        std::optional<bool> use_eigenspinors) {
+void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
+                                        std::optional<size_t> bitfield) {
     tools::log->trace("Resetting to random product state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)

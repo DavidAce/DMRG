@@ -69,16 +69,16 @@ void TensorsFinite::randomize_model() {
     rebuild_mpo_squared();
 }
 
-void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view sector, long bond_lim,
-                                    bool use_eigenspinors, long bitfield) {
+void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view sector, bool use_eigenspinors,
+                                    size_t bitfield, long bond_lim) {
     state->clear_measurements();
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | bond_lim {} | eigspinors {} | bitfield {}", state->get_name(),
-                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type), sector, bond_lim, use_eigenspinors, bitfield);
+                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type), sector, use_eigenspinors, bitfield, bond_lim);
 
     tools::log->debug("Randomizing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
 
-    tools::finite::mps::randomize_state(*state, state_init, state_type, sector, bond_lim, use_eigenspinors, bitfield);
+    tools::finite::mps::randomize_state(*state, state_init, state_type, sector, use_eigenspinors, bitfield, bond_lim);
 
     tools::log->debug("Randomizing state - After : norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
@@ -182,7 +182,10 @@ env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisi
 
 void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<bool> use_mpo2_proj, std::optional<svd::config> svd_cfg) {
     auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, svd_cfg);
-    if(use_mpo2_proj and use_mpo2_proj.value()) model->set_mpo2_proj(sign, sector);
+    if(use_mpo2_proj and use_mpo2_proj.value()) {
+        tools::log->info("Setting MPO² sector projection to {:+}{}", sign, sector);
+        model->set_mpo2_proj(sign, sector);
+    }
     sync_active_sites();
     if(not active_sites.empty()) {
         rebuild_edges();
@@ -240,7 +243,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->trace("Setting MPO energy shift (per site) {:.16f} (all edges should be rebuilt after this)", energy_shift_per_site.value());
+    tools::log->debug("Shifting MPO energy (per site) {:.16f} (all edges should be rebuilt after this)", energy_shift_per_site.value());
     model->set_energy_shift_per_site(energy_shift_per_site.value());
     model->clear_mpo_squared();
     model->assert_validity();
@@ -265,6 +268,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
         auto &bef = debs.front();
         auto &aft = debs.back();
         if(bef and aft) {
+            double ratio_var     = std::abs(aft->var / bef->var);
             double delta_ene     = std::abs(bef->ene - aft->ene);
             double delta_var     = std::abs(bef->var - aft->var);
             double delta_ene_rel = delta_ene / std::abs(aft->ene) * 100;
@@ -285,6 +289,10 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
                 if(delta_ene_rel > 1e-6)
                     throw except::runtime_error("Energy shift changed energy level {:.16f} -> {:.16f} (Δ/E = {:.3f} %)", bef->ene, aft->ene, delta_ene_rel);
             }
+            if(ratio_var < 0.8 or ratio_var > 1.2)
+                tools::log->warn("Variance changed significantly after energy shift: old {:.6e} | new {:.6e}", bef->var, aft->var);
+            else if(ratio_var < 0.01 or ratio_var > 100)
+                throw except::runtime_error("Variance changed too much after energy shift: old {:.6e} | new {:.6e}", bef->var, aft->var);
         }
     }
 }

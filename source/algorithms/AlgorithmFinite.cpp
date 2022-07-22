@@ -238,7 +238,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_INCREASE);
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
-        randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt, status.bond_lim);
+        randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
 
     auto bond_new = static_cast<double>(status.bond_lim);
     if(grow_rate <= 2.0 and grow_rate > 1.0) {
@@ -396,7 +396,7 @@ void AlgorithmFinite::randomize_model() {
 }
 
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
-                                      std::optional<bool> use_eigenspinors, std::optional<long> bitfield, std::optional<long> bond_lim,
+                                      std::optional<bool> use_eigenspinors, std::optional<size_t> bitfield, std::optional<long> bond_lim,
                                       std::optional<double> trnc_lim) {
     auto t_rnd = tid::tic_scope("rnd_state");
     if(reason == ResetReason::SATURATED) {

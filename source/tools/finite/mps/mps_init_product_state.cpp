@@ -11,7 +11,7 @@
 #include "tools/finite/measure.h"
 #include <bitset>
 
-void tools::finite::mps::init::random_product_state(StateFinite &state, StateInitType type, std::string_view sector, bool use_eigenspinors, long bitfield)
+void tools::finite::mps::init::random_product_state(StateFinite &state, StateInitType type, std::string_view sector, bool use_eigenspinors, size_t bitfield)
 /*!
  * There are many ways to generate an initial product state based on the
  * arguments (sector,use_eigenspinors, bitfield) = (string,long, optional<bool> ).
@@ -127,16 +127,17 @@ void tools::finite::mps::init::set_random_product_state_with_random_spinors(Stat
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(StateFinite &state, StateInitType type, std::string_view sector, long bitfield) {
+void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(StateFinite &state, StateInitType type, std::string_view sector,
+                                                                               size_t bitfield) {
     auto axis = qm::spin::half::get_axis(sector);
     tools::log->info("Setting random product state using the bitset of number {} to select eigenspinors of σ{}", bitfield, axis);
 
-    if(bitfield < 0) throw except::runtime_error("Can't set product state from bitfield of negative number: {}", bitfield);
+    if(bitfield == -1ul) throw except::logic_error("Can't set product state from bitfield == -1ul");
     if(type == StateInitType::REAL and axis == "y") throw except::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
 
-    constexpr long maxbits = 64;
+    constexpr size_t maxbits = 64;
     if(maxbits < state.get_length()) throw except::range_error("Max supported state length for bitset is 64");
-    std::bitset<maxbits>     bs(static_cast<size_t>(bitfield));
+    std::bitset<maxbits>     bs(bitfield);
     std::vector<int>         bs_vec;
     std::vector<std::string> ud_vec;
     for(size_t i = 0; i < state.get_length(); i++) bs_vec.emplace_back(bs[i]);

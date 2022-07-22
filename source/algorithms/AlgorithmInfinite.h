@@ -24,8 +24,7 @@ class AlgorithmInfinite : public AlgorithmBase {
     void randomize_model();
     void randomize_state(ResetReason reason,
                          std::optional<std::string> sector = std::nullopt,
-                         std::optional<long> bitfield = std::nullopt,
-                         std::optional<bool> use_eigenspinors = std::nullopt);
+                         std::optional<bool> use_eigenspinors = std::nullopt, std::optional<size_t> bitfield = std::nullopt);
 
     void clear_convergence_status()                                                                          override;
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT,

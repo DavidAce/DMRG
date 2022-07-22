@@ -51,8 +51,8 @@ class TensorsFinite {
 
     void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
     void randomize_model();
-    void randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view sector, long bond_lim, bool use_eigenspinors,
-                         long bitfield);
+    void randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view sector, bool use_eigenspinors, size_t bitfield,
+                         long bond_lim);
     void normalize_state(std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
 
     [[nodiscard]] const Eigen::Tensor<cplx, 3>          &get_multisite_mps() const;

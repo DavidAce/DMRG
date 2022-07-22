@@ -26,7 +26,7 @@ namespace settings {
     inline constexpr bool debug_moves = false;
 }
 
-bool tools::finite::mps::init::bitfield_is_valid(long bitfield) { return bitfield >= 0 and init::used_bitfields.count(bitfield) == 0; }
+bool tools::finite::mps::init::bitfield_is_valid(size_t bitfield) { return bitfield != -1ul and init::used_bitfields.count(bitfield) == 0; }
 
 size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std::optional<svd::config> svd_cfg) {
     auto t_move = tid::tic_scope("move");
@@ -362,8 +362,8 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
     return true;
 }
 
-void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view sector, long bond_lim, bool use_eigenspinors,
-                                         long bitfield) {
+void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view sector, bool use_eigenspinors,
+                                         size_t bitfield, long bond_lim) {
     switch(init) {
         case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, sector, use_eigenspinors, bitfield);
         case StateInit::RANDOM_ENTANGLED_STATE: return init::random_entangled_state(state, type, sector, bond_lim, use_eigenspinors);

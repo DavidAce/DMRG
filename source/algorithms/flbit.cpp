@@ -57,8 +57,8 @@ void flbit::resume() {
             tools::log->warn("Expected initial_state == PRODUCT_STATE_NEEL. Got {}", enum2sv(settings::strategy::initial_state));
         if(settings::strategy::initial_sector != "+z") tools::log->warn("Expected initial_sector == +z. Got {}", settings::strategy::initial_sector);
 
-        tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_sector, bond_lim,
-                                settings::strategy::use_eigenspinors, settings::input::bitfield);
+        tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_sector,
+                                settings::strategy::use_eigenspinors, settings::input::bitfield, bond_lim);
 
         tensors.move_center_point_to_edge();
 

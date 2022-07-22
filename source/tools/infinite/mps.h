@@ -11,6 +11,6 @@ class StateInfinite;
 namespace tools::infinite::mps {
     using Scalar = std::complex<double>;
     extern void merge_twosite_tensor(StateInfinite &state, const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void random_product_state(const StateInfinite &state, [[maybe_unused]] std::string_view sector, [[maybe_unused]] long bitfield,
-                                     bool use_eigenspinors);
+    extern void random_product_state(const StateInfinite &state, [[maybe_unused]] std::string_view sector, bool use_eigenspinors,
+                                     [[maybe_unused]] size_t bitfield);
 }
