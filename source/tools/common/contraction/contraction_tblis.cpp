@@ -9,14 +9,14 @@
     #include <h5pp/h5pp.h>
 #endif
 #if defined(DMRG_BENCH_CONTRACTION)
-    #include <math/num.h>
-    #include <tid/tid.h>
+    #include "math/num.h"
+    #include "tid/tid.h"
 namespace settings {
-    constexpr static bool bench_expval = true;
+    [[maybe_unused]] constexpr static bool bench_expval = true;
 }
 #else
 namespace settings {
-    constexpr static bool bench_expval = false;
+    [[maybe_unused]] constexpr static bool bench_expval = false;
 }
 #endif
 
@@ -147,7 +147,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     if constexpr(std::is_same_v<Scalar, real>){
-        tblis_set_num_threads(tenx::omp::num_threads);
+        tblis_set_num_threads(static_cast<unsigned int>(tenx::omp::num_threads));
         Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
         Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
 
