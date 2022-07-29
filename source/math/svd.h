@@ -41,10 +41,6 @@ namespace svd {
         template<typename Scalar>
         std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>> do_svd_rsvd(const Scalar *mat_ptr, long rows, long cols) const;
 
-        template<typename Scalar>
-        std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>> do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
-                                                                                          const svd::config &settings);
-
         void copy_config(const svd::config &svd_cfg);
 
         [[nodiscard]] std::pair<long, double> get_rank_from_truncation_error(const VectorType<double> &S) const;
@@ -76,6 +72,10 @@ namespace svd {
         [[nodiscard]] double           get_truncation_error() const;
         [[nodiscard]] long             get_rank() const;
         [[nodiscard]] static long long get_count();
+
+        template<typename Scalar>
+        std::tuple<MatrixType<Scalar>, VectorType<Scalar>, MatrixType<Scalar>> do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
+                                                                                          const svd::config &settings);
 
         template<typename Scalar>
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
