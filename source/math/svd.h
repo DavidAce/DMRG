@@ -87,23 +87,23 @@ namespace svd {
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor) {
-            auto [U, S, V] = do_svd_ptr(tensor.data(), tensor.dimension(0), tensor.dimension(1));
-            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(V));
+            auto [U, S, VT] = do_svd_ptr(tensor.data(), tensor.dimension(0), tensor.dimension(1));
+            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(VT));
         }
 
         template<typename Scalar>
         std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 3> &tensor,
                                                                                                            const long rows, const long cols) {
             if(rows * cols != tensor.size()) throw std::runtime_error("rows * cols  != tensor.size()");
-            auto [U, S, V] = do_svd_ptr(tensor.data(), rows, cols);
-            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(V));
+            auto [U, S, VT] = do_svd_ptr(tensor.data(), rows, cols);
+            return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(VT));
         }
 
         template<typename Derived>
         std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>, MatrixType<typename Derived::Scalar>>
             decompose(const Eigen::DenseBase<Derived> &matrix) {
-            auto [U, S, V] = do_svd_ptr(matrix.derived().data(), matrix.rows(), matrix.cols());
-            return std::make_tuple(U, S.template cast<typename Derived::Scalar>(), V);
+            auto [U, S, VT] = do_svd_ptr(matrix.derived().data(), matrix.rows(), matrix.cols());
+            return std::make_tuple(U, S.template cast<typename Derived::Scalar>(), VT);
         }
 
         template<typename Scalar, auto N>
@@ -122,9 +122,9 @@ namespace svd {
              * The function call argument order dL, chiL, dR,chiR is meant as a hint for how to use this function.
              */
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
-            auto [U, S, V] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, svd_cfg);
+            auto [U, S, VT] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, svd_cfg);
             return std::make_tuple(tenx::TensorMap(U, dL, chiL, S.size()), tenx::TensorMap(S.normalized().template cast<Scalar>(), S.size()),
-                                   tenx::TensorMap(V, S.size(), dR, chiR).shuffle(tenx::array3{1, 0, 2}));
+                                   tenx::TensorMap(VT, S.size(), dR, chiR).shuffle(tenx::array3{1, 0, 2}));
         }
 
         template<typename Scalar>
@@ -135,9 +135,9 @@ namespace svd {
             long dR   = tensor.dimension(2);
             long chiR = tensor.dimension(3);
             if(dL * chiL * dR * chiR != tensor.size()) throw std::range_error("schmidt error: tensor size does not match given dimensions.");
-            auto [U, S, V] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, svd_cfg);
+            auto [U, S, VT] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, svd_cfg);
             return std::make_tuple(tenx::TensorMap(U, dL, chiL, S.size()), tenx::TensorMap(S.normalized().template cast<Scalar>(), S.size()),
-                                   tenx::TensorMap(V, S.size(), dR, chiR).shuffle(tenx::array3{1, 0, 2}));
+                                   tenx::TensorMap(VT, S.size(), dR, chiR).shuffle(tenx::array3{1, 0, 2}));
         }
 
         template<typename Scalar>
@@ -360,7 +360,44 @@ namespace svd {
                 tenx::TensorMap(U).template cast<Scalar>(),
                 tenx::TensorMap(S).template cast<Scalar>(),
                 tenx::TensorMap(V).reshape(tenx::array4{rank, dim1, dim2, dim3}).shuffle(tenx::array4{0, 3, 1, 2}).template cast<Scalar>());
-            /* clang-format off */
+            /* clang-format on */
+        }
+        template<typename Scalar>
+        std::pair<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 4>> split_mpo_pair(const Eigen::Tensor<Scalar, 6> &mpo,
+                                                                                     const svd::config              &svd_cfg = svd::config()) {
+            /*
+             * Splits a pair of merged MPO's back into two MPO's.
+             *
+             *
+             *         (1)dL     (4)dR                             (1)dL                                      (1)dR
+             *            |        |                                 |                                          |
+             *   (0)mL---[  mpoLR   ]---(3)mR     --->    (0)mL---[ mpoL ]---mC(3)  (0)---[S]---(1)  mC(3)---[ mpoR ]---(0)mR
+             *            |        |                                 |                                          |
+             *         (2)dL     (5)dR                            (2)dL                                       (2)dR
+             *
+             *
+             * The mpo's can be shuffled back to standard form with
+             *   mpoL: shuffle(0,3,1,2)
+             *   mpoR: shuffle(3,0,1,2)
+             *
+             * The square root of S can then be multiplied into both left and right MPO's, on the mC index.
+             *
+             */
+            auto rows = mpo.dimension(0) * mpo.dimension(1) * mpo.dimension(2);
+            auto cols = mpo.dimension(3) * mpo.dimension(4) * mpo.dimension(5);
+
+            auto mL         = mpo.dimension(0);
+            auto mR         = mpo.dimension(3);
+            auto dL         = mpo.dimension(1);
+            auto dR         = mpo.dimension(4);
+            auto [U, S, VT] = do_svd_ptr(mpo.data(), rows, cols, svd_cfg);
+            auto mC         = S.size();
+            S               = S.cwiseSqrt();
+            U               = U * S.asDiagonal();
+            VT              = S.asDiagonal() * VT;
+
+            return std::make_pair(tenx::TensorMap(U).reshape(tenx::array4{mL, dL, dL, mC}).shuffle(tenx::array4{0, 3, 1, 2}),
+                                  tenx::TensorMap(VT).reshape(tenx::array4{mC, mR, dR, dR}));
         }
     };
 }
