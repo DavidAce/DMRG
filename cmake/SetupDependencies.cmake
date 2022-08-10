@@ -21,7 +21,17 @@ include(cmake/SetupDependenciesConan.cmake)
 
 # Install dependencies that are not in conan.
 include(cmake/InstallPackage.cmake)
+
+
 install_package(primme MODULE)
+target_link_libraries(dmrg-deps INTERFACE primme::primme)
+
+install_package(stlbfgs MODULE)
+target_link_libraries(dmrg-deps INTERFACE stlbfgs::stlbfgs)
+
+install_package(lbfgspp)
+target_link_libraries(dmrg-deps INTERFACE lbfgspp)
+
 if (DMRG_ENABLE_TBLIS)
     install_package(tblis MODULE)
     target_link_libraries(dmrg-deps INTERFACE tblis::tblis)

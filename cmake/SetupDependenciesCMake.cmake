@@ -108,7 +108,6 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
             CLI11::CLI11
             h5pp::h5pp
             arpack++::arpack++
-            primme::primme
             Ceres::ceres
             BLAS::BLAS
             Backward::Backward
