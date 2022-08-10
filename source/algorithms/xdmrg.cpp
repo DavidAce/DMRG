@@ -326,24 +326,24 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // Set up a multiplier for number of iterations
     size_t iter_multiplier = 1;
-    if(not status.fes_is_running) {
-        if(status.entanglement_saturated_for > 0) iter_multiplier = status.entanglement_saturated_for;
-        if(status.variance_mpo_saturated_for > 0) iter_multiplier = status.variance_mpo_saturated_for;
-        if(status.algorithm_has_stuck_for > 0) iter_multiplier = 10 * status.algorithm_has_stuck_for;
-    }
+    // #pragma message "REINSTATE ITER_MULTIPLIER"
+    //     if(not status.fes_is_running) {
+    //         if(status.entanglement_saturated_for > 0) iter_multiplier = status.entanglement_saturated_for;
+    //         if(status.variance_mpo_saturated_for > 0) iter_multiplier = status.variance_mpo_saturated_for;
+    //         if(status.algorithm_has_stuck_for > 0) iter_multiplier = 10 * status.algorithm_has_stuck_for;
+    //     }
 
     // Copy settings
     m1.max_sites =
         std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg by default, unless settings specifically ask for 1-site
     m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
     m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
-    m1.bfgs_max_iter = std::min<size_t>(200000, settings::precision::bfgs_max_iter * iter_multiplier);
-    m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 16 : 32; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
-                                                                      // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-    m1.eigs_max_iter = std::min<size_t>(200000, settings::precision::eigs_max_iter * iter_multiplier);
+    m1.bfgs_max_iter = settings::precision::bfgs_max_iter * iter_multiplier;
+    m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 8 : 16; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
+                                                                     // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+    m1.eigs_max_iter = settings::precision::eigs_max_iter;
     m1.eigs_max_tol  = settings::precision::eigs_tolerance;
     m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;
-
     // Adjust the maximum number of sites to consider
     if(status.algorithm_has_succeeded)
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
@@ -376,7 +376,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optMode   = OptMode::SUBSPACE;
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
-        m1.retry     = true;
         if(settings::xdmrg::opt_subspace_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_lim) {
             tools::log->info("Will keep bond dimension back during variance|shift-invert optimization {} -> {}", m1.bond_lim,
                              settings::xdmrg::opt_subspace_bond_lim);
@@ -411,12 +410,13 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         case OptMode::SIMPS:
         case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
     }
+    if(m1.optSolver == OptSolver::BFGS) m1.retry = settings::strategy::bfgs_fix_rnorm_w_eigs;
 
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
-    // Do eig instead of eigs/bfgs when its cheap
+    // Do eigs (or eig) instead of bfgs when it's cheap
     if(m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
 
     if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
@@ -442,13 +442,13 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     OptMeta m2 = m1; // Start with m1 as a baseline
     m2.label   = "m2";
     m2.optInit = OptInit::LAST_RESULT;
+    m2.retry   = false;
     if(m1.optMode == OptMode::SUBSPACE) {
         // I.e. if we did a SUBSPACE run that did not result in better variance, try VARIANCE optimization
         // This usually helps to fine-tune the result if the subspace had bad quality.
         m2.optWhen   = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
         m2.optMode   = OptMode::VARIANCE;
         m2.optSolver = OptSolver::BFGS;
-        m2.retry     = false;
         metas.emplace_back(m2);
     } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::ENERGY) {
         // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
@@ -456,7 +456,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optSolver = OptSolver::EIGS;
         m2.optMode   = OptMode::VARIANCE;
         m2.optInit   = OptInit::LAST_RESULT;
-        m2.retry     = false;
         metas.emplace_back(m2);
     } else if(m1.optMode == OptMode::VARIANCE and
               (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_rnorm_w_eigs))) {
@@ -465,10 +464,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optSolver = OptSolver::EIGS;
         m2.optMode   = OptMode::VARIANCE;
         m2.optInit   = OptInit::LAST_RESULT;
-
-        // The longer variance has saturated for, the longer we should run.
-        if(status.algorithm_has_stuck_for > 0) m2.eigs_max_ncv = std::max(16, m2.eigs_max_ncv.value() * 2); // 4 is default
-        m2.retry = false;
         metas.emplace_back(m2);
     }
     for(const auto &config : metas) config.validate();
