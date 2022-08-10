@@ -13,14 +13,14 @@ location    = "input"
 
 
 sites               = np.array([12,14,16,18])
-gs                  = [0.04]
+gs                  = [0.0, 0.02, 0.04]
 # deltas              = [-8.0, -7.0, -6.0, -5.0, -4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
 deltas              = [0.0]
 initial_state       = ["RANDOM_PRODUCT_STATE"]
 initial_sector      = "z"
 target_sector       = "z"
 multisite_mps_size_def  = [1]
-multisite_mps_size_max  = [2]
+multisite_mps_size_max  = [1]
 output_prefix       = "output"
 separate_input_dir  = False
 
