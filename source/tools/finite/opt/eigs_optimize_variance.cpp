@@ -386,7 +386,7 @@ namespace tools::finite::opt {
         using namespace settings::precision;
         initial_mps.validate_basis_vector();
         if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
-        reports::eigs_add_entry(initial_mps, spdlog::level::info);
+        reports::eigs_add_entry(initial_mps, spdlog::level::debug);
 
         auto                 t_var = tid::tic_scope("eigs-var");
         std::vector<opt_mps> results;
@@ -404,7 +404,7 @@ namespace tools::finite::opt {
             std::sort(results.begin(), results.end(), internal::Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
         }
 
-        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
 
         return results.front();
     }
