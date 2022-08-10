@@ -91,7 +91,6 @@ namespace tools::common::h5 {
             if(not h5_state_root_exists) return std::nullopt;
 
             auto h5_state_root = h5file.readAttribute<std::string>("common/state_root", h5_state_prefix);
-            tools::log->debug("Found h5_state_root: {}", h5_state_root);
             if(state_prefix.find(h5_state_root) != std::string_view::npos) {
                 // We have a match! A state on file with the same root as the given state prefix
                 // A state_prefix is something like xDMRG/state_0/checkpoint/iter_last
@@ -160,6 +159,8 @@ namespace tools::common::h5 {
         static std::unordered_map<std::string, AlgorithmStatus> save_log;
         bootstrap_meta_log(save_log, h5file, state_prefix);
         if(save_log.count(std::string(state_prefix)) and save_log.at(std::string(state_prefix)) == status) return;
+        if(not h5file.linkExists(state_prefix)) return;
+
         tools::log->trace("Writing attribute metadata for state_prefix: [{}]", state_prefix);
         auto storage_level_sv  = enum2sv(storage_level);
         auto storage_reason_sv = enum2sv(storage_reason);
