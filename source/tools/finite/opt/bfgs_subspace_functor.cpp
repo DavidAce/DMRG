@@ -85,6 +85,7 @@ bool tools::finite::opt::internal::bfgs_subspace_functor<Scalar>::Evaluate(const
         max_grad_norm      = grad.template lpNorm<Eigen::Infinity>(); // To monitor the actual gradient norm of the optimization (not its logarithm)
         grad *= var_1;                                                // Because we are optimizing the logarithm.
     }
+    fval = fx[0];
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("σ²H is invalid");

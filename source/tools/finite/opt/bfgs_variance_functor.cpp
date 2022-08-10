@@ -119,8 +119,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     //    var        = nH2n;
     double eps = std::numeric_limits<double>::epsilon();
     if((std::real(var) < -eps or std::real(nH2n) < -eps))
-        tools::log->trace("Counter = {} | BFGS | "
-                          "negative: "
+        tools::log->debug("Counter = {} | BFGS | "
                           "var  {:.16f} + {:.16f}i | "
                           "nHn  {:.16f} + {:.16f}i | "
                           "nH2n {:.16f} + {:.16f}i | "
@@ -176,6 +175,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
             grad_w_multiplier.bottomRows(2)[1] = std::log10(h);
         }
     }
+    fval = fx[0];
 
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("σ²H is invalid");

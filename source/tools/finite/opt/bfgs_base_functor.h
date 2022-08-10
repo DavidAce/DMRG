@@ -26,6 +26,7 @@ namespace tools::finite::opt::internal {
         int                 num_parameters; // Includes lagrangian multiplier(s)
         long                size;           // Does not include lagrange multiplier (i.e. size + 1 = num_parameters if LagrangeNorm::ON)
         std::array<long, 3> dims;
+        mutable double      fval{};
         mutable double      energy{};
         mutable double      variance{};
         mutable double      energy_shift;
@@ -45,6 +46,7 @@ namespace tools::finite::opt::internal {
         //        template<typename> friend class NormParametrization;
         explicit bfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
 
+        double get_fval() const;
         double get_energy() const;
         double get_variance() const;
         size_t get_count() const;

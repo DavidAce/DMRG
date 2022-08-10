@@ -22,9 +22,10 @@ bfgs_base_functor::bfgs_base_functor(const TensorsFinite &tensors, const Algorit
     energy_shift   = tensors.model->get_energy_shift();
 
     // All energies in status are per site!
-    iteration            = status.iter;
+    iteration = status.iter;
 }
 
+double bfgs_base_functor::get_fval() const { return fval; }
 double bfgs_base_functor::get_energy() const { return energy; }
 double bfgs_base_functor::get_variance() const { return variance; }
 size_t bfgs_base_functor::get_count() const { return counter; }
