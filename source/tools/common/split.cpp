@@ -125,7 +125,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     auto t_split = tid::tic_scope("split", tid::level::extra);
 
-    // Setup the svd settings if not given explicitly
+    // Set up the svd settings if not given explicitly
     if(not svd_cfg) svd_cfg = svd::config();
     if(not svd_cfg->truncation_lim) svd_cfg->truncation_lim = settings::precision::svd_truncation_lim;
     if(not svd_cfg->switchsize_bdc) svd_cfg->switchsize_bdc = settings::precision::svd_switchsize_bdc;

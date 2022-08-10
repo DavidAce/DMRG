@@ -403,7 +403,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m1.optMode = OptMode::VARIANCE;
     }
 
-    // Setup the maximum problem size here
+    // Set up the maximum problem size here
     switch(m1.optMode) {
         case OptMode::OVERLAP:
         case OptMode::SUBSPACE: m1.max_problem_size = settings::precision::max_size_part_diag; break;
@@ -478,7 +478,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, const xdmrg::OptMeta &meta) {
     if(results.empty()) return true;
     bool should = meta.should_proceed(results.back().get_optexit());
-    tools::log->trace("Should try again: {} | when {} | previous exit {}", should, flag2str(meta.optWhen), flag2str(results.back().get_optexit()));
+    tools::log->trace("Optimizer status: {} --> try again: {} | when: {}", flag2str(results.back().get_optexit()), should, flag2str(meta.optWhen));
     return should;
 }
 
@@ -512,9 +512,9 @@ void xdmrg::update_state() {
         }
 
         // Announce the current configuration for optimization
-        tools::log->debug("Running meta {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | alpha {:.3e}", idx_conf + 1,
+        tools::log->debug("Running meta {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", idx_conf + 1,
                           confList.size(), meta.label, enum2sv(meta.optInit), enum2sv(meta.optMode), enum2sv(meta.optSolver), enum2sv(meta.optType),
-                          meta.chosen_sites, tensors.state->active_dimensions(), tensors.state->active_problem_size(),
+                          meta.chosen_sites, tensors.state->active_dimensions(), tensors.state->active_problem_size(), meta.trnc_lim,
                           (meta.alpha_expansion ? meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         // Run the optimization
         switch(meta.optInit) {
@@ -574,10 +574,10 @@ void xdmrg::update_state() {
                 tools::log->debug(FMT_STRING("Candidate: {:<24} | E/L {:<10.6f}| σ²H {:<8.2e} | res {:8.2e} | sites [{:>2}-{:<2}] | "
                                              "alpha {:8.2e} | "
                                              "overlap {:.16f} | "
-                                             "{:20} | {} | time {:.4f} ms"),
+                                             "{:20} | {} | time {:.2e} s"),
                                   r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_eigs_rnorm(), r.get_sites().front(), r.get_sites().back(),
                                   r.get_alpha(), r.get_overlap(), fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optsolver())),
-                                  flag2str(r.get_optexit()), 1000 * r.get_time());
+                                  flag2str(r.get_optexit()), r.get_time());
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
