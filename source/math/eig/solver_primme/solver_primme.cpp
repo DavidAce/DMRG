@@ -123,24 +123,19 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | f {:20.16f} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s"), primme->stats.numMatvecs,
+        return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | f {:12.5e} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s"), primme->stats.numMatvecs,
                            primme->stats.numOuterIterations, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
-    auto       &solver     = *static_cast<eig::solver *>(primme->monitor);
-    auto       &result     = solver.result;
-    auto       &eigvals    = result.get_eigvals<eig::Form::SYMM>();
-    std::string msg_diff   = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:20.16f}", std::abs(eigvals[0] - eigvals[1])) : "";
-    std::string msg_grad   = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
-    auto        rnorm      = std::numeric_limits<double>::quiet_NaN();
-    auto        max_res_it = std::max_element(result.meta.residual_norms.begin(), result.meta.residual_norms.end());
-    if(max_res_it != result.meta.residual_norms.end()) {
-        rnorm                     = *max_res_it;
-        result.meta.last_res_norm = rnorm;
-    }
-    return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | rnorm {:8.2e} | f {:20.16f}{}{} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s | {}"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, rnorm, primme->stats.estimateMinEVal, msg_diff, msg_grad,
-                       primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
+    auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
+    auto       &result   = solver.result;
+    auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
+    std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
+    std::string msg_grad = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
+
+    return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | rnorm {:8.2e} | f {:12.5e}{}{} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s | {}"),
+                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, result.meta.last_res_norm, primme->stats.estimateMinEVal,
+                       msg_diff, msg_grad, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
                        primme->stats.numMatvecs / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
 }
 
@@ -281,7 +276,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
                 primme.numTargetShifts = static_cast<int>(config.primme_target_shifts.size());
                 primme.targetShifts    = config.primme_target_shifts.data();
             } else if(config.sigma and not matrix.isReadyShift()) {
-                // We handle shifts by applying them directly on the matrix is possible. Else here:
+                // We handle shifts by applying them directly on the matrix if possible. Else here:
                 eig::log->debug("Setting target shift: {:.8f}", std::real(config.sigma.value()));
                 config.primme_target_shifts = {std::real(config.sigma.value())};
                 primme.numTargetShifts      = static_cast<int>(config.primme_target_shifts.size());
@@ -362,7 +357,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
             case -42: eig::log->error("PRIMME_ORTHO_CONST_FAILURE (exit {})", info); break;
             case -43: eig::log->error("PRIMME_PARALLEL_FAILURE (exit {})", info); break;
             case -44: eig::log->error("PRIMME_FUNCTION_UNAVAILABLE (exit {})", info); break;
-            default: eig::log->error("Unknown error code: Go to http://www.cs.wm.edu/~andreas/software/doc/appendix.html?highlight=primme_main_iter_failure");
+            default:
+                eig::log->error("Unknown error code: {}.\n Go to http://www.cs.wm.edu/~andreas/software/doc/appendix.html?highlight=primme_main_iter_failure",
+                                info);
         }
     }
     result.meta.eigvecsR_found = true; // We can use partial results
