@@ -27,7 +27,6 @@ AlgorithmLauncher::AlgorithmLauncher(std::shared_ptr<h5pp::File> h5ppFile_) : h5
     std::atexit(debug::print_mem_usage);
     std::atexit(tools::common::timer::print_timers);
     std::at_quick_exit(debug::print_mem_usage);
-    std::at_quick_exit(tools::common::timer::print_timers);
     setup_temp_path();
 }
 
@@ -37,7 +36,6 @@ AlgorithmLauncher::AlgorithmLauncher() {
     std::atexit(debug::print_mem_usage);
     std::atexit(tools::common::timer::print_timers);
     std::at_quick_exit(debug::print_mem_usage);
-    std::at_quick_exit(tools::common::timer::print_timers);
 
     start_h5file();
     setup_temp_path();
