@@ -262,7 +262,7 @@ void xdmrg::run_fes_analysis() {
     status.fes_is_running = true;
     status.bond_max       = settings::xdmrg::bond_max; // Set to highest
     status.bond_lim       = settings::xdmrg::bond_max; // Set to highest
-
+    tensors.move_center_point_to_inward_edge();
     while(status.bond_lim > tensors.state->find_largest_bond()) {
         // Reduce bond dimension from bond_max down to the current maximum.
         // Write to file on each decrement so that we get one entry on file
