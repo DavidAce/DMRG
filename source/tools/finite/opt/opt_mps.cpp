@@ -58,8 +58,8 @@ template<OptType optType>
     auto             size_new = size_old + 2; // Add 2 for both lagrange multipliers (we have 2 constraints)
     Eigen::VectorXcd tensor_extended(size_new);
     tensor_extended.topRows(size_old) = Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size());
-    tensor_extended.bottomRows(2)[0]  = 0;
-    tensor_extended.bottomRows(2)[1]  = 0;
+    tensor_extended.bottomRows(2)[0]  = 0; // Norm
+    tensor_extended.bottomRows(2)[1]  = 0; // Residual norm
     if constexpr(optType == OptType::REAL) { return Eigen::Map<const Eigen::VectorXcd>(tensor_extended.data(), tensor_extended.size()).real(); }
     if constexpr(optType == OptType::CPLX) {
         return Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(tensor_extended.data()), 2 * tensor_extended.size());
@@ -67,6 +67,27 @@ template<OptType optType>
 }
 template Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier<OptType::REAL>() const;
 template Eigen::VectorXd opt_mps::get_initial_state_with_lagrange_multiplier<OptType::CPLX>() const;
+
+template<OptType optType>
+[[nodiscard]] std::vector<double> opt_mps::get_stl_initial_state_with_lagrange_multiplier() const {
+    if(not tensor) throw except::runtime_error("opt_mps: tensor not set");
+    auto             size_old = tensor.value().size();
+    auto             size_new = size_old + 2; // Add 2 for both lagrange multipliers (we have 2 constraints)
+    Eigen::VectorXcd tensor_extended(size_new);
+    tensor_extended.topRows(size_old) = Eigen::Map<const Eigen::VectorXcd>(tensor.value().data(), tensor.value().size());
+    tensor_extended.bottomRows(2)[0]  = 0; // Norm
+    tensor_extended.bottomRows(2)[1]  = 0; // Residual norm
+    if constexpr(optType == OptType::REAL) {
+        Eigen::VectorXd tensor_map = Eigen::Map<const Eigen::VectorXcd>(tensor_extended.data(), tensor_extended.size()).real();
+        return {tensor_map.begin(), tensor_map.end()};
+    }
+    if constexpr(optType == OptType::CPLX) {
+        auto tensor_map = Eigen::Map<Eigen::VectorXd>(reinterpret_cast<double *>(tensor_extended.data()), 2 * tensor_extended.size());
+        return {tensor_map.begin(), tensor_map.end()};
+    }
+}
+template std::vector<double> opt_mps::get_stl_initial_state_with_lagrange_multiplier<OptType::REAL>() const;
+template std::vector<double> opt_mps::get_stl_initial_state_with_lagrange_multiplier<OptType::CPLX>() const;
 
 const std::vector<size_t> &opt_mps::get_sites() const {
     if(not sites) throw except::runtime_error("opt_mps: sites not set");

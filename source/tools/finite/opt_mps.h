@@ -69,6 +69,9 @@ namespace tools::finite::opt {
         template<OptType optType>
         [[nodiscard]] Eigen::VectorXd get_initial_state_with_lagrange_multiplier() const;
 
+        template<OptType optType>
+        [[nodiscard]] std::vector<double> get_stl_initial_state_with_lagrange_multiplier() const;
+
         [[nodiscard]] const std::vector<size_t> &get_sites() const;
         [[nodiscard]] double                     get_energy() const;
         [[nodiscard]] double                     get_energy_shift() const;
