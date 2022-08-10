@@ -14,6 +14,7 @@
 #include "tools/common/log.h"
 #include "tools/finite/env.h"
 #include "tools/finite/measure.h"
+#include "tools/finite/mpo.h"
 #include "tools/finite/mps.h"
 #include "tools/finite/multisite.h"
 #include "tools/finite/ops.h"
@@ -24,7 +25,7 @@ TensorsFinite::TensorsFinite() : state(std::make_unique<StateFinite>()), model(s
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
-// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Otherwise, unique_ptr will forcibly inline its own default deleter.
 // Here we follow "rule of five", so we must also define
 // our own copy/move ctor and copy/move assignments
 // This has the side effect that we must define our own
@@ -243,7 +244,7 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
 
-    tools::log->debug("Shifting MPO energy (per site) {:.16f} (all edges should be rebuilt after this)", energy_shift_per_site.value());
+    tools::log->info("Shifting MPO energy: {:.16f}", get_length<double>() * energy_shift_per_site.value());
     model->set_energy_shift_per_site(energy_shift_per_site.value());
     model->clear_mpo_squared();
     model->assert_validity();
@@ -368,12 +369,12 @@ void TensorsFinite::activate_sites(long threshold, size_t max_sites, size_t min_
 std::array<long, 3> TensorsFinite::active_problem_dims() const { return tools::finite::multisite::get_dimensions(*state, active_sites); }
 long                TensorsFinite::active_problem_size() const { return tools::finite::multisite::get_problem_size(*state, active_sites); }
 bool                TensorsFinite::is_real() const {
-                   if(settings::model::model_type == ModelType::ising_sdual) {
-                       if(not state->is_real()) tools::log->critical("state has imaginary part");
+    if(settings::model::model_type == ModelType::ising_sdual) {
+        if(not state->is_real()) tools::log->critical("state has imaginary part");
         if(not model->is_real()) tools::log->critical("model has imaginary part");
         if(not edges->is_real()) tools::log->critical("edges has imaginary part");
     }
-                   return state->is_real() and model->is_real() and edges->is_real();
+    return state->is_real() and model->is_real() and edges->is_real();
 }
 bool TensorsFinite::has_nan() const {
     if(state->has_nan()) tools::log->critical("state has nan");
@@ -428,7 +429,12 @@ bool   TensorsFinite::position_is_at(long pos) const { return state->position_is
 bool   TensorsFinite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
 bool   TensorsFinite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
 size_t TensorsFinite::move_center_point(std::optional<svd::config> svd_cfg) { return tools::finite::mps::move_center_point_single_site(*state, svd_cfg); }
-size_t TensorsFinite::move_center_point_to_edge(std::optional<svd::config> svd_cfg) { return tools::finite::mps::move_center_point_to_edge(*state, svd_cfg); }
+size_t TensorsFinite::move_center_point_to_pos(long pos, std::optional<svd::config> svd_cfg) {
+    return tools::finite::mps::move_center_point_to_pos(*state, pos, svd_cfg);
+}
+size_t TensorsFinite::move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg) {
+    return tools::finite::mps::move_center_point_to_inward_edge(*state, svd_cfg);
+}
 size_t TensorsFinite::move_center_point_to_middle(std::optional<svd::config> svd_cfg) {
     return tools::finite::mps::move_center_point_to_middle(*state, svd_cfg);
 }
@@ -450,6 +456,146 @@ std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alph
     if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt
     if constexpr(settings::debug) assert_validity();
     return pos_expanded;
+}
+
+void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::optional<long> new_pos) {
+    if(sites_mps.size() != get_length<size_t>()) {
+        sites_mps.clear();
+        for(const auto &mps : state->mps_sites) sites_mps.emplace_back(mps->get_position<size_t>());
+    }
+    long dir = steps < 0l ? -1l : 1l;
+
+    for(long step = 0; std::abs(step) < std::abs(steps); step += dir) {
+        long posL = std::min(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
+        long posR = std::max(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
+        if(posL == posR) break;
+        if(posL < 0 or posL >= get_length<long>()) break;
+        if(posR < 0 or posR >= get_length<long>()) break;
+        tools::log->info("swapping mps sites {} <--> {}", posL, posR);
+        // Move the MPS site
+        tools::finite::mps::swap_sites(*state, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
+    }
+    if(new_pos) {
+        if(new_pos.value() != std::clamp(new_pos.value(), 0l, get_length<long>()))
+            throw except::runtime_error("move_site: expected new_pos in range [0,{}]. Got {}", get_length<long>(), new_pos.value());
+        tools::finite::mps::move_center_point_to_pos(*state, new_pos.value());
+        move_center_point_to_pos(new_pos.value());
+        activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
+    }
+
+    tools::log->info("Sites mps: {}", sites_mps);
+    clear_cache();
+    clear_measurements();
+}
+
+void TensorsFinite::move_site_mpo(const size_t site, const long steps, std::vector<size_t> &sites_mpo) {
+    if(sites_mpo.size() != get_length<size_t>()) {
+        sites_mpo.clear();
+        for(const auto &mpo : model->MPO) sites_mpo.emplace_back(mpo->get_position());
+    }
+    long dir = steps < 0l ? -1l : 1l;
+
+    for(long step = 0; std::abs(step) < std::abs(steps); step += dir) {
+        long posL = std::min(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
+        long posR = std::max(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
+        if(posL == posR) break;
+        if(posL < 0 or posL >= get_length<long>()) break;
+        if(posR < 0 or posR >= get_length<long>()) break;
+        tools::log->info("swapping mpo sites {} <--> {}", posL, posR);
+        // Move the MPO site
+        tools::finite::mpo::swap_sites(*model, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mpo);
+    }
+    tools::log->info("Sites mpo: {}", sites_mpo);
+    clear_cache();
+    clear_measurements();
+}
+
+void TensorsFinite::move_site_mps_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mps, std::optional<long> new_pos) {
+    if(sites_mps.size() != get_length<size_t>()) {
+        sites_mps.clear();
+        for(const auto &mps : state->mps_sites) sites_mps.emplace_back(mps->get_position<size_t>());
+    }
+    while(true) {
+        // We must first find the src_pos of the given site in the list.
+        // Example:
+        //      site = 0
+        //      tgt_pos = 0
+        //      sites = {1,2,3,4,0,5,6,7}
+        //  We can then calculate:
+        //      src_pos = find(sites.begin(), sites.end(), site) = 4
+        auto src_itr = std::find(sites_mps.begin(), sites_mps.end(), site);
+        if(src_itr == sites_mps.end()) throw except::logic_error("site {} was not found in sites_mps: {}", site, sites_mps);
+        auto src_pos = std::distance(sites_mps.begin(), src_itr);
+        if(src_pos == tgt_pos) break;
+        long step = tgt_pos < src_pos ? -1l : 1l;
+        long posL = src_pos + (step < 0 ? -1l : 0);
+        long posR = src_pos + (step < 0 ? 0 : 1l);
+        if(posL == posR) break;
+        if(posL < 0 or posL >= get_length<long>()) break;
+        if(posR < 0 or posR >= get_length<long>()) break;
+        tools::log->info("swapping mps sites {} <--> {}", posL, posR);
+        // Move the MPS site
+        tools::finite::mps::swap_sites(*state, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
+    }
+    if(new_pos) {
+        if(new_pos.value() != std::clamp(new_pos.value(), 0l, get_length<long>()))
+            throw except::runtime_error("move_site: expected new_pos in range [0,{}]. Got {}", get_length<long>(), new_pos.value());
+        tools::finite::mps::move_center_point_to_pos(*state, new_pos.value());
+        move_center_point_to_pos(new_pos.value());
+        activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
+    }
+
+    tools::log->info("Sites mps: {}", sites_mps);
+    clear_cache();
+    clear_measurements();
+}
+
+void TensorsFinite::move_site_mpo_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mpo) {
+    if(sites_mpo.size() != get_length<size_t>()) {
+        sites_mpo.clear();
+        for(const auto &mpo : model->MPO) sites_mpo.emplace_back(mpo->get_position());
+    }
+
+    while(true) {
+        // We must first find the src_pos of the given site in the list.
+        // Example:
+        //      site = 0
+        //      tgt_pos = 0
+        //      sites = {1,2,3,4,0,5,6,7}
+        //  We can then calculate:
+        //      src_pos = find(sites.begin(), sites.end(), site) = 4
+        auto src_itr = std::find(sites_mpo.begin(), sites_mpo.end(), site);
+        if(src_itr == sites_mpo.end()) throw except::logic_error("site {} was not found in sites_mpo: {}", site, sites_mpo);
+        auto src_pos = std::distance(sites_mpo.begin(), src_itr);
+        if(src_pos == tgt_pos) break;
+        long step = tgt_pos < src_pos ? -1l : 1l;
+        long posL = src_pos + (step < 0 ? -1l : 0);
+        long posR = src_pos + (step < 0 ? 0 : 1l);
+        if(posL == posR) break;
+        if(posL < 0 or posL >= get_length<long>()) break;
+        if(posR < 0 or posR >= get_length<long>()) break;
+        tools::log->info("swapping mpo sites {} <--> {}", posL, posR);
+        // Move the MPO site
+        tools::finite::mpo::swap_sites(*model, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mpo);
+    }
+    tools::log->info("Sites mpo: {}", sites_mpo);
+    clear_cache();
+    clear_measurements();
+}
+
+void TensorsFinite::move_site(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
+                              std::optional<long> new_pos) {
+    move_site_mps(site, steps, sites_mps, new_pos);
+    move_site_mpo(site, steps, sites_mpo);
+    rebuild_edges();
+}
+
+void TensorsFinite::move_site_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
+                                     std::optional<long> new_pos) {
+    move_site_mps_to_pos(site, tgt_pos, sites_mps, new_pos);
+    move_site_mpo_to_pos(site, tgt_pos, sites_mpo);
+    rebuild_edges();
+    if(sites_mps != sites_mpo) throw except::logic_error("sites mismatch \n sites_mps {}\n sites_mpo {}", sites_mps, sites_mpo);
 }
 
 void TensorsFinite::assert_edges() const { tools::finite::env::assert_edges(*state, *model, *edges); }

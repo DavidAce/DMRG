@@ -103,18 +103,29 @@ class TensorsFinite {
     void                do_all_measurements() const;
     void                redo_all_measurements() const;
     size_t              move_center_point(std::optional<svd::config> svd_cfg = std::nullopt);
-    size_t              move_center_point_to_edge(std::optional<svd::config> svd_cfg = std::nullopt);
+    size_t              move_center_point_to_pos(long pos, std::optional<svd::config> svd_cfg = std::nullopt);
+    size_t              move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_middle(std::optional<svd::config> svd_cfg = std::nullopt);
     void                merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg = std::nullopt,
                                             LogPolicy log_policy = LogPolicy::QUIET);
 
     std::vector<size_t> expand_environment(std::optional<double> alpha, std::optional<svd::config> svd_cfg = std::nullopt);
-    void                assert_edges() const;
-    void                assert_edges_ene() const;
-    void                assert_edges_var() const;
-    void                rebuild_edges();
-    void                rebuild_edges_ene();
-    void                rebuild_edges_var();
-    void                clear_measurements(LogPolicy logPolicy = LogPolicy::QUIET) const;
-    void                clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
+
+    void move_site_mps(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::optional<long> new_pos = std::nullopt);
+    void move_site_mpo(const size_t site, const long steps, std::vector<size_t> &sites_mpo);
+    void move_site_mps_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mps, std::optional<long> new_pos = std::nullopt);
+    void move_site_mpo_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mpo);
+    void move_site(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
+                   std::optional<long> new_pos = std::nullopt);
+    void move_site_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
+                          std::optional<long> new_pos = std::nullopt);
+
+    void assert_edges() const;
+    void assert_edges_ene() const;
+    void assert_edges_var() const;
+    void rebuild_edges();
+    void rebuild_edges_ene();
+    void rebuild_edges_var();
+    void clear_measurements(LogPolicy logPolicy = LogPolicy::QUIET) const;
+    void clear_cache(LogPolicy logPolicy = LogPolicy::QUIET) const;
 };
