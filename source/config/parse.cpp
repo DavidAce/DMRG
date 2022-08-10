@@ -10,8 +10,12 @@
 #include <CLI/CLI.hpp>
 #include <h5pp/h5pp.h>
 
-std::string filename_append_number(const std::string &filename, const long number) {
-    if(number < 0) return filename;
+template<typename T>
+std::string filename_append_number(const std::string &filename, const T number) {
+    if constexpr(std::is_signed_v<T>)
+        if(number < 0) return filename;
+    if constexpr(std::is_unsigned_v<T>)
+        if(number == std::numeric_limits<T>::max()) return filename;
     // Append the seed_model to the output filename
     h5pp::fs::path oldFileName = filename;
     h5pp::fs::path newFileName = filename;
