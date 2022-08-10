@@ -16,6 +16,8 @@ namespace tools::finite::opt::internal{
     template<typename T, auto rank = 3>
     using TensorType = Eigen::Tensor<T, rank>;
 
+    extern opt_mps lbfgspp_optimize_variance  (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps stlbfgs_optimize_variance  (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps bfgs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eig_optimize_energy        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eig_optimize_variance      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
