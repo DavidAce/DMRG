@@ -149,17 +149,16 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
         grad *= var_1;                                                // Because we are optimizing the logarithm.
     }
     if(fx != nullptr) { fx[0] = log10var; }
-
     if constexpr(lagrangeNorm == LagrangeNorm::ON) {
         // Here we define the norm constraint by using the lagrange multiplier trick:
         //      f(x)
         // is replaced with
         //      L(x,lambda) = f(x) + lambda1 * g(x) + lambda2 * h(x)
         // where g(x) = | <x|x> - 1 |
-        // where h(x) = |r| = | H²x - E²x | (the 2-norm of the residual on the eigenvalue eq H²x = E²x )
-        // Note that dh(x)/dx = 1/2sqrt(f) * (H²r-E²r)
-        residual = H2n - nH2n * n; // aka r
-        resnorm  = residual.norm();
+        // where h(x) = log10(|r|) = | H²x - E²x | (the 2-norm of the residual on the eigenvalue eq H²x = E²x )
+        // Note that dh(x)/dx = 1/(2 * h^(3/2)) * (H²r-E²r)
+        residual = H2n - nH2n * n;  // aka r(x)
+        resnorm  = residual.norm(); // aka h(x)
 
         double g = std::abs(vv - 1.0); // aka g(x)
         double h = resnorm;            // aka h(x)
@@ -170,7 +169,8 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
             auto H2r               = Eigen::Map<VectorType>(H2r_tensor.data(), H2r_tensor.size());
             auto grad_w_multiplier = Eigen::Map<VectorType>(reinterpret_cast<Scalar *>(grad_double_double), size + 2);
             grad_w_multiplier.topRows(size) += pref * num::sign(vv - 1.0) * v; // aka  += lambda * dg(x)/dx = lambda * sign(x) * x
-            grad_w_multiplier.topRows(size) += (H2r - nH2n * residual) / (2 * std::pow(resnorm, 1.5) * std::log(10)); // aka dh(x)/dx = (H²r-E²r) / 2sqrt(f)
+            grad_w_multiplier.topRows(size) +=
+                (H2r - nH2n * residual) / (2 * std::pow(resnorm, 1.5) * std::log(10)); // aka dh(x)/dx = 1/(2 * h^(3/2)) * (H²r-E²r)
             grad_w_multiplier.bottomRows(2)[0] = g;
             grad_w_multiplier.bottomRows(2)[1] = std::log10(h);
         }
@@ -180,7 +180,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     if(std::isnan(log10var) or std::isinf(log10var)) {
         tools::log->warn("σ²H is invalid");
         tools::log->warn("σ²H             = {:8.2e}", variance);
-        tools::log->warn("mv         = {}", counter);
+        tools::log->warn("mv              = {}", counter);
         tools::log->warn("size            = {}", size);
         tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
         tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
@@ -194,7 +194,6 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     }
 
     counter++;
-    t_step->toc();
     return true;
 }
 
