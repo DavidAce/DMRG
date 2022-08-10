@@ -38,8 +38,14 @@ namespace num {
             return cmp_equal(t.get(), u);
         else if constexpr(internal::is_reference_wrapper_v<U>)
             return cmp_equal(t, u.get());
-        else if constexpr(std::is_floating_point_v<T> or std::is_floating_point_v<U>)
+        else if constexpr(std::is_same_v<T, U>)
             return t == u;
+        else if constexpr(std::is_floating_point_v<T> and std::is_floating_point_v<U>)
+            return t == u;
+        else if constexpr(std::is_floating_point_v<T>)
+            return static_cast<T>(t) == static_cast<T>(u);
+        else if constexpr(std::is_floating_point_v<U>)
+            return static_cast<U>(t) == static_cast<U>(u);
         else {
             using UT = std::make_unsigned_t<T>;
             using UU = std::make_unsigned_t<U>;
@@ -63,8 +69,14 @@ namespace num {
             return cmp_less(t.get(), u);
         else if constexpr(internal::is_reference_wrapper_v<U>)
             return cmp_less(t, u.get());
-        else if constexpr(std::is_floating_point_v<T> or std::is_floating_point_v<U>)
+        else if constexpr(std::is_same_v<T, U>)
             return t < u;
+        else if constexpr(std::is_floating_point_v<T> and std::is_floating_point_v<U>)
+            return t < u;
+        else if constexpr(std::is_floating_point_v<T>)
+            return static_cast<T>(t) < static_cast<T>(u);
+        else if constexpr(std::is_floating_point_v<U>)
+            return static_cast<U>(t) < static_cast<U>(u);
         else {
             using UT = std::make_unsigned_t<T>;
             using UU = std::make_unsigned_t<U>;
@@ -105,9 +117,7 @@ namespace num {
         if constexpr(std::is_integral_v<T>) {
             if constexpr(std::is_unsigned_v<T>)
                 return x >= y ? x % y : x;
-            else {
-                return x >= y ? x % y : (x < 0 ? (x % y + y) % y : x);
-            }
+            else { return x >= y ? x % y : (x < 0 ? (x % y + y) % y : x); }
 
         }
         //            return (x % y + y) % y;
@@ -156,24 +166,27 @@ namespace num {
     }
 
     template<typename T = int, typename T1, typename T2, typename T3 = internal::int_or_dbl<T1, T2>>
-    [[nodiscard]] std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) {
-        if(step == 0) throw std::runtime_error("Range cannot have step size zero");
-        if constexpr(std::is_signed_v<T3>) {
-            if(cmp_greater(first, last) and step > 0) return range<T>(first, last, -step);
-            if(cmp_less(first, last) and step < 0) return range<T>(first, last, -step);
-        } else {
-            if(cmp_greater(first, last)) throw std::runtime_error("Range of unsigned step type cannot have first > last");
-        }
-        if(cmp_equal(first, last)) return {};
-        if(cmp_equal(static_cast<T3>(first) + step, last)) return std::vector<T>{static_cast<T>(first)};
-
-        auto num_steps = static_cast<size_t>(
-            std::abs<double>((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
-        if(num_steps > 10000000) throw std::runtime_error("Too many steps for range");
-
+    [[nodiscard]] std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) noexcept {
+        if(step == 0) return {static_cast<T>(first)};
+        auto num_steps =
+            static_cast<size_t>(std::abs((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
         std::vector<T> vec;
         vec.reserve(num_steps);
-        for(T3 current = static_cast<T3>(first); cmp_less(current, last); current += step) vec.emplace_back(current);
+        T val = first;
+        if(cmp_less(first, last)) {
+            while(cmp_less(val, last)) {
+                vec.emplace_back(val);
+                val += cmp_less(step, 0) ? -step : step;
+            }
+        } else {
+            while(cmp_greater(val, last)) {
+                vec.emplace_back(val);
+                val -= cmp_less(step, 0) ? -step : step;
+            }
+        }
+        if constexpr(std::is_signed_v<T3>) {
+            if(step < 0) return {vec.rbegin(), vec.rend()};
+        }
         return vec;
     }
 
