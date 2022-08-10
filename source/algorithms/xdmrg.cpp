@@ -280,11 +280,11 @@ void xdmrg::run_fes_analysis() {
 
     while(true) {
         tools::log->info("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-        single_xDMRG_step();
+        update_state();
         status.wall_time       = tid::get_unscoped("t_tot").get_time();
         status.algo_time       = t_fes->get_time();
         auto truncation_errors = tensors.state->get_truncation_errors();
-        print_status_update();
+        print_status();
         check_convergence();
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
@@ -481,7 +481,7 @@ bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, c
     return should;
 }
 
-void xdmrg::single_xDMRG_step() {
+void xdmrg::update_state() {
     using namespace tools::finite;
     using namespace tools::finite::opt;
     auto                                t_step   = tid::tic_scope("step");
