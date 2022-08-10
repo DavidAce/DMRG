@@ -45,7 +45,7 @@ enum class OptWhen : int {
     PREV_FAIL_ERROR    = 32,
     ALWAYS             = 64
 };
-enum class OptEigs { ALWAYS, WHEN_SATURATED }; // When to prefer eigs over bfgs (the default)
+enum class OptEigs { NEVER, WHEN_STUCK, WHEN_SATURATED, ALWAYS }; // When to prefer eigs over bfgs (the default)
 
 enum class OptExit : int {
     SUCCESS       = 0,
@@ -402,8 +402,10 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
     }
     if constexpr(std::is_same_v<T,OptEigs>){
-        if(item == OptEigs::ALWAYS)                                    return "ALWAYS";
+        if(item == OptEigs::NEVER)                                     return "NEVER";
+        if(item == OptEigs::WHEN_STUCK)                                return "WHEN_STUCK";
         if(item == OptEigs::WHEN_SATURATED)                            return "WHEN_SATURATED";
+        if(item == OptEigs::ALWAYS)                                    return "ALWAYS";
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == OptMark::PASS)                                      return "PASS";
@@ -723,8 +725,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ALWAYS")                                return OptWhen::ALWAYS;
     }
     if constexpr(std::is_same_v<T,OptEigs>){
-        if(item == "ALWAYS")                                return OptEigs::ALWAYS;
+        if(item == "NEVER")                                 return OptEigs::NEVER;
+        if(item == "WHEN_STUCK")                            return OptEigs::WHEN_STUCK;
         if(item == "WHEN_SATURATED")                        return OptEigs::WHEN_SATURATED;
+        if(item == "ALWAYS")                                return OptEigs::ALWAYS;
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == "PASS")                                  return OptMark::PASS;

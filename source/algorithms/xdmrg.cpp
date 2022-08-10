@@ -359,15 +359,16 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         }
     }
 
-    // Next we setup the mode at the early stages of the simulation
+    // Next we set up the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
-    bool prefer_eigs_always    = settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
-    bool prefer_eigs_saturated = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
+    bool prefer_eigs_never          = settings::strategy::prefer_eigs_over_bfgs == OptEigs::NEVER;
+    bool prefer_eigs_when_stuck     = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0;
+    bool prefer_eigs_when_saturated = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
+    bool prefer_eigs_always         = settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
 
-    if(prefer_eigs_always or prefer_eigs_saturated or status.fes_is_running) {
+    if(not prefer_eigs_never and (prefer_eigs_when_saturated or prefer_eigs_when_stuck or prefer_eigs_always or status.fes_is_running)) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
-        m1.retry     = true;
     }
 
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
