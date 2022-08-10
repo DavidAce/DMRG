@@ -2,6 +2,7 @@
 // Eigen goes first
 #include "debug/exceptions.h"
 #include "math/tenx.h"
+#include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include <complex>
@@ -102,90 +103,83 @@ namespace Eigen::internal {
 
 }
 
-/* clang-format off */
 template<typename Scalar>
-void tools::common::contraction::matrix_inverse_vector_product(Scalar * res_ptr,
-                                                       const Scalar * const mps_ptr, std::array<long,3> mps_dims,
-                                                       const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
-                                                       const Scalar * const envL_ptr, std::array<long,3> envL_dims,
-                                                       const Scalar * const envR_ptr, std::array<long,3> envR_dims){
+void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, const Scalar *const mps_ptr, std::array<long, 3> mps_dims,
+                                                               const Scalar *const mpo_ptr, std::array<long, 4> mpo_dims, const Scalar *const envL_ptr,
+                                                               std::array<long, 3> envL_dims, const Scalar *const envR_ptr, std::array<long, 3> envR_dims) {
+    // Here we return x <-- A^-1 * b
+    // Where A^-1 * b is obtained by solving
+    //       A*x = b
+    // using an iterative matrix-free solver.
 
+    // We have previously tried using bfgs for unconstrained minimization of f = |Aφ - ψ|², where
+    //      φ = res
+    //      ψ = mps
+    //      A = (H-E) = effective hamiltonian (from mpo and env)
+    //
+    // The gradient is ∇f = (H-E)²φ - (H-E)ψ (note that the (H-E)² is just (H-E) applied twice, not the second moment).
+    // After minimization we have φ ~ (H-E)⁻¹ψ = A⁻¹ * x
+    // The result was not better than using BiCGSTAB or MINRES
 
-        // Here we return x <-- A^-1 * b
-        // Where A^-1 * b is obtained by solving
-        //       A*x = b
-        // using an iterative matrix-free solver.
+    {
+        auto mps  = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
+        auto mpo  = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 4>>(mpo_ptr, mpo_dims);
+        auto envL = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(envL_ptr, envL_dims);
+        auto envR = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(envR_ptr, envR_dims);
 
-        // We have previously tried using bfgs for unconstrained minimization of f = |Aφ - ψ|², where
-        //      φ = res
-        //      ψ = mps
-        //      A = (H-E) = effective hamiltonian (from mpo and env)
-        //
-        // The gradient is ∇f = (H-E)²φ - (H-E)ψ (note that the (H-E)² is just (H-E) applied twice, not the second moment).
-        // After minimization we have φ ~ (H-E)⁻¹ψ = A⁻¹ * x
-        // The result was not better than using BiCGSTAB or MINRES
+        if(mps.dimension(1) != envL.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
+        if(mps.dimension(2) != envR.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
+        if(mps.dimension(0) != mpo.dimension(2)) throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
+        if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
+        if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
+    }
 
+    // Define the "matrix-free" matrix replacement.
+    MatrixReplacement<Scalar> matRepl;
+    matRepl.attachTensors(envL_ptr, envR_ptr, mpo_ptr, mps_dims, mpo_dims);
+    Eigen::Index                               MaxIters  = matRepl.rows();
+    double                                     tolerance = 1e-3;
+    Eigen::Map<tenx::VectorType<Scalar>>       res(res_ptr, matRepl.rows());
+    Eigen::Map<const tenx::VectorType<Scalar>> mps(mps_ptr, matRepl.rows());
+
+    if constexpr(std::is_same_v<Scalar, double>) {
         {
-            auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
-            auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar,4>>(mpo_ptr,mpo_dims);
-            auto envL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envL_ptr,envL_dims);
-            auto envR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(envR_ptr,envR_dims);
+            auto                            t_mativec = tid::tic_token("matrix_inverse_vector_product", tid::level::extra);
+            static tenx::VectorType<Scalar> guess_mr;
+            if(guess_mr.size() != res.size()) guess_mr = res;
 
-            if(mps.dimension(1) != envL.dimension(0))
-                throw except::runtime_error("Dimension mismatch mps {} and envL {}", mps.dimensions(), envL.dimensions());
-            if(mps.dimension(2) != envR.dimension(0))
-                throw except::runtime_error("Dimension mismatch mps {} and envR {}", mps.dimensions(), envR.dimensions());
-            if(mps.dimension(0) != mpo.dimension(2)) throw except::runtime_error("Dimension mismatch mps {} and mpo {}", mps.dimensions(), mpo.dimensions());
-            if(envL.dimension(2) != mpo.dimension(0))
-                throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
-            if(envR.dimension(2) != mpo.dimension(1))
-                throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
-        }
-
-        // Define the "matrix-free" matrix replacement.
-        MatrixReplacement<Scalar> matRepl;
-        matRepl.attachTensors(envL_ptr, envR_ptr, mpo_ptr, mps_dims, mpo_dims);
-
-        Eigen::Index MaxIters = 40000;
-        double tolerance = 1e-8;
-        Eigen::Map<tenx::VectorType<Scalar>> res(res_ptr, matRepl.rows());
-        Eigen::Map<const tenx::VectorType<Scalar>> mps(mps_ptr, matRepl.rows());
-        static tenx::VectorType<Scalar> guess;
-        if(guess.size() != res.size()) guess = res;
-        if constexpr (std::is_same_v<Scalar,std::complex<double>>){
-//            tools::log->info("BiCGSTAB Preconditioner: size {} started ...",  mps.size());
-            Eigen::BiCGSTAB<MatrixReplacement<Scalar>, Eigen::IdentityPreconditioner> solver;
-            solver.compute(matRepl);
-            solver.setMaxIterations(MaxIters);
-            solver.setTolerance(tolerance);
-            res = solver.solveWithGuess(mps,guess);
-            tools::log->info("BiCGSTAB Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {}",  mps.size(), solver.info(), solver.tolerance(), solver.error(), solver.iterations());
-        }
-        if constexpr (std::is_same_v<Scalar,double>){
-//            tools::log->info("MINRES Preconditioner: size {} started ...",  mps.size());
-//            Eigen::MINRES<MatrixReplacement<Scalar>, Eigen::Lower|Eigen::Upper, Eigen::IdentityPreconditioner> solver;
-            Eigen::BiCGSTAB<MatrixReplacement<Scalar>, Eigen::IdentityPreconditioner> solver;
-
+            Eigen::MINRES<MatrixReplacement<Scalar>, Eigen::Upper | Eigen::Lower, Eigen::IdentityPreconditioner> solver;
             solver.setMaxIterations(MaxIters);
             solver.setTolerance(tolerance);
             solver.compute(matRepl);
-            res = solver.solveWithGuess(mps,guess);
-            tools::log->info("MINRES Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {}",  mps.size(), solver.info(), solver.tolerance(), solver.error(), solver.iterations());
+            res = solver.solveWithGuess(mps, guess_mr);
+            tools::log->info("MR Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(), solver.info(),
+                             solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter, t_mativec->get_last_interval());
+            guess_mr = res;
         }
-        guess = res;
+    } else {
+        auto                            t_mativec = tid::tic_token("matrix_inverse_vector_product", tid::level::extra);
+        static tenx::VectorType<Scalar> guess_cbs;
+        if(guess_cbs.size() != res.size()) guess_cbs = res;
+        Eigen::ConjugateGradient<MatrixReplacement<Scalar>, Eigen::Upper | Eigen::Lower, Eigen::IdentityPreconditioner> solver;
+        // Eigen::ConjugateGradient<MatrixReplacement<Scalar>, Eigen::Upper|Eigen::Lower,  Eigen::IdentityPreconditioner> solver;
+        solver.setMaxIterations(MaxIters);
+        solver.setTolerance(tolerance);
+        solver.compute(matRepl);
+        res = solver.solveWithGuess(mps, guess_cbs);
+        tools::log->info("CG Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(), solver.info(),
+                         solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter, t_mativec->get_last_interval());
+        guess_cbs = res;
+    }
 
-
+    //    guess = res;
 }
 
-template void tools::common::contraction::matrix_inverse_vector_product(
-    real * res_ptr,
-    const real * const mps_ptr, std::array<long,3> mps_dims,
-    const real * const mpo_ptr, std::array<long,4> mpo_dims,
-    const real * const envL_ptr, std::array<long,3> envL_dims,
-    const real * const envR_ptr, std::array<long,3> envR_dims);
-template void tools::common::contraction::matrix_inverse_vector_product(
-    cplx *       res_ptr,
-    const cplx * const mps_ptr, std::array<long,3> mps_dims,
-    const cplx * const mpo_ptr, std::array<long,4> mpo_dims,
-    const cplx * const envL_ptr, std::array<long,3> envL_dims,
-    const cplx * const envR_ptr, std::array<long,3> envR_dims);
+template void tools::common::contraction::matrix_inverse_vector_product(real *res_ptr, const real *const mps_ptr, std::array<long, 3> mps_dims,
+                                                                        const real *const mpo_ptr, std::array<long, 4> mpo_dims, const real *const envL_ptr,
+                                                                        std::array<long, 3> envL_dims, const real *const envR_ptr,
+                                                                        std::array<long, 3> envR_dims);
+template void tools::common::contraction::matrix_inverse_vector_product(cplx *res_ptr, const cplx *const mps_ptr, std::array<long, 3> mps_dims,
+                                                                        const cplx *const mpo_ptr, std::array<long, 4> mpo_dims, const cplx *const envL_ptr,
+                                                                        std::array<long, 3> envL_dims, const cplx *const envR_ptr,
+                                                                        std::array<long, 3> envR_dims);
