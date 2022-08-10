@@ -49,20 +49,25 @@ class AlgorithmBase {
     void write_enable();
 
     protected:
-    //    using SaturationReport = std::tuple<bool,bool,double,double,int>; //slopes computed, has saturated, rel slope, avgY, check from
+    enum class SaturationScale { lin, log };
     struct SaturationReport {
-        bool                has_computed    = false;
-        bool                has_saturated   = false;
-        size_t              saturated_count = 0;
-        size_t              saturated_point = 0;
-        std::vector<double> Y_vec; // The values used to gauge saturation
-        std::vector<double> Y_avg; // Running average from [i:end]
-        std::vector<double> Y_std; // The "moving" standard deviation of Y_avg from [i:end]
-        std::vector<double> Y_stn; // The "normalized" scale invariant version of Y_std
-        //        std::vector<double> Y_log; // Normalized values to check saturation. Let y = -log10(Y_vec). Then Y_log = y/y.back()
-        //        std::vector<double> Y_ste; // The "moving" standard error of Y_log. (std from x -> end, moving x towards end)
-        std::vector<double> Y_slp; // The "moving" slope of Y_log. (slope from x -> end, moving x towards end)
+        bool                                     has_computed    = false;
+        bool                                     has_saturated   = false;
+        size_t                                   saturated_count = 0;
+        size_t                                   saturated_point = 0;
+        SaturationScale                          saturated_scale = SaturationScale::lin;
+        std::vector<double>                      Y_vec; // The values used to measure saturation. This is the log of given data when log is on
+        std::vector<double>                      Y_avg; // Running average from [i:end] of Y_vec
+        std::vector<double>                      Y_std; // The "moving" standard deviation of Y_vec (or Y_log) from [i:end]
+        std::vector<int>                         Y_sat; // Flags that tell if Y_vec has saturated at that index
+        [[nodiscard]] constexpr std::string_view get_saturated_scale() noexcept {
+            switch(saturated_scale) {
+                case SaturationScale::lin: return "lin";
+                case SaturationScale::log: return "log";
+            }
+            return "error";
+        }
     };
     size_t           count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx = 0);
-    SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity);
+    SaturationReport check_saturation(const std::vector<double> &Y_vec, double sensitivity, SaturationScale scale);
 };

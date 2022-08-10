@@ -69,64 +69,36 @@ size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double
     return std::max(scount, rcount);
 }
 
-AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vector<double> &Y_vec, double sensitivity) {
+AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vector<double> &Y_vec, double sensitivity, SaturationScale scale) {
     SaturationReport report;
     constexpr size_t min_data_points = 2;
     if(Y_vec.size() < min_data_points) { return report; }
 
-    // Running average [i:end]
-    std::vector<double> Y_avg;
-    Y_avg.reserve(Y_vec.size());
-    for(const auto &[i, y] : iter::enumerate(Y_vec)) Y_avg.push_back(stat::mean(Y_vec, i));
+    report.Y_vec = Y_vec;
+    if(scale == SaturationScale::log)
+        for(auto &y : report.Y_vec) y = std::log10(y);
 
-    // Get the standard deviations from i to end
-    std::vector<double> Y_std;
-    Y_std.reserve(Y_avg.size());
-    for(const auto &[i, y] : iter::enumerate(Y_avg)) Y_std.push_back(stat::stdev(Y_avg, i));
-
-    // "Normalize" the standard deviations so that this becomes scale invariant w.r.t Y_vec
-    std::vector<double> Y_stn;
-    Y_stn.reserve(Y_std.size());
-    for(const auto &[i, y] : iter::enumerate(Y_std)) {
-        double divisor = Y_avg[i] == 0.0 ? 1.0 : Y_avg[i];
-        Y_stn.push_back(Y_std[i] / divisor);
+    // Running average and standard deviation from i to end
+    report.Y_avg.resize(report.Y_vec.size());
+    report.Y_std.resize(report.Y_vec.size());
+    for(const auto &[i, y] : iter::enumerate(report.Y_vec)) {
+        report.Y_avg[i] = stat::mean(report.Y_vec, i);
+        report.Y_std[i] = stat::stdev(report.Y_vec, i);
     }
+    report.Y_sat.resize(report.Y_vec.size());
+    for(const auto &[i, s] : iter::enumerate(report.Y_std)) report.Y_sat[i] = static_cast<int>(s < sensitivity); // Below sensitivity --> saturated
 
-    // Get also the slopes of the smoothened data
-    std::vector<double> Y_slp, Y_log;
-    Y_slp.reserve(Y_vec.size());
-    Y_log.reserve(Y_vec.size());
-    auto Y_smt = stat::smooth(Y_vec, 2);
-    for(auto &y : Y_smt) Y_log.push_back(-std::log10(std::abs(y)));
-    // Normalize so the last element is 1
-    double yback = Y_log.back();
-    for(auto &y : Y_log) y /= yback;
-    for(const auto &[i, y] : iter::enumerate(Y_vec)) {
-        auto [slp, res] = stat::slope(Y_log, i);
-        Y_slp.push_back(std::abs(slp));
+    // Since the last element is always zero, we just copy the saturation state of the second to last element.
+    if(report.Y_sat.size() > 1) report.Y_sat.back() = report.Y_sat.rbegin()[1];
+
+    // From the end, count how many Y_sat[i] are 1,  before finding a 0.
+    for(const auto &[i, y] : iter::enumerate_reverse(report.Y_sat)) {
+        report.saturated_point = static_cast<size_t>(i);
+        if(y == 0) break;
+        report.saturated_count++;
     }
-
-    size_t saturated_from_idx = 0;
-    for(const auto &[i, a] : iter::enumerate(Y_avg)) {
-        saturated_from_idx = i;
-        auto median        = stat::median(Y_avg, i);
-        auto bwidth        = 10 * Y_std[i]; // Band width
-                                            //        tools::log->info("Y_vec[{:3}] = {:7.4e} | band = {:7.4e} +- {:7.4e}",i, Y_vec[i], median,bwidth);
-        bool rel_cond = Y_stn[i] < sensitivity;
-        bool abs_cond = Y_std[i] < 1e-10;
-        bool win_cond = Y_vec[i] == std::clamp(Y_vec[i], median - bwidth, median + bwidth);
-        bool slp_cond = Y_slp[i] < 0.1 * sensitivity;
-        if((rel_cond or abs_cond or slp_cond) and win_cond) break;
-    }
-
     report.has_computed    = true;
-    report.saturated_point = saturated_from_idx;
-    report.saturated_count = Y_vec.size() - saturated_from_idx - 1;
+    report.saturated_scale = scale;
     report.has_saturated   = report.saturated_count > 0;
-    report.Y_avg           = Y_avg;
-    report.Y_vec           = Y_vec;
-    report.Y_std           = Y_std;
-    report.Y_stn           = Y_stn;
-    report.Y_slp           = Y_slp;
     return report;
 }

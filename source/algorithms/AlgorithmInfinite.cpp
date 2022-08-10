@@ -222,7 +222,7 @@ void AlgorithmInfinite::check_convergence_variance_mpo(std::optional<double> thr
     if(not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mpo_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mpo(tensors));
     status.variance_mpo_converged_for = count_convergence(var_mpo_iter, threshold.value());
-    auto report                       = check_saturation(var_mpo_iter, sensitivity.value());
+    auto report                       = check_saturation(var_mpo_iter, sensitivity.value(), SaturationScale::log);
     if(report.has_computed) { status.variance_mpo_saturated_for = report.saturated_count; }
 }
 
@@ -232,7 +232,7 @@ void AlgorithmInfinite::check_convergence_variance_ham(std::optional<double> thr
     if(not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_ham_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_ham(tensors));
     status.variance_ham_converged_for = count_convergence(var_ham_iter, threshold.value());
-    auto report                       = check_saturation(var_ham_iter, sensitivity.value());
+    auto report                       = check_saturation(var_ham_iter, sensitivity.value(), SaturationScale::log);
     if(report.has_computed) { status.variance_ham_saturated_for = report.saturated_count; }
 }
 
@@ -242,7 +242,7 @@ void AlgorithmInfinite::check_convergence_variance_mom(std::optional<double> thr
     if(not sensitivity) sensitivity = settings::precision::variance_saturation_sensitivity;
     var_mom_iter.emplace_back(tools::infinite::measure::energy_variance_per_site_mom(tensors));
     status.variance_mom_converged_for = count_convergence(var_mom_iter, threshold.value());
-    auto report                       = check_saturation(var_mom_iter, sensitivity.value());
+    auto report                       = check_saturation(var_mom_iter, sensitivity.value(), SaturationScale::log);
     if(report.has_computed) { status.variance_mom_saturated_for = report.saturated_count; }
 }
 
@@ -250,7 +250,7 @@ void AlgorithmInfinite::check_convergence_entg_entropy(std::optional<double> sen
     tools::log->debug("Checking convergence of entanglement");
     if(not sensitivity) sensitivity = settings::precision::entropy_saturation_sensitivity;
     entropy_iter.emplace_back(tools::infinite::measure::entanglement_entropy(*tensors.state));
-    auto report = check_saturation(entropy_iter, sensitivity.value());
+    auto report = check_saturation(entropy_iter, sensitivity.value(), SaturationScale::lin);
     if(report.has_computed) {
         status.entanglement_saturated_for = report.saturated_count;
         status.entanglement_converged_for = report.saturated_count;
@@ -367,7 +367,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     copy_from_tmp(storage_reason, copy_policy);
 }
 
-void AlgorithmInfinite::print_status_update() {
+void AlgorithmInfinite::print_status() {
     if(num::mod(status.iter, settings::print_freq(status.algo_type)) != 0) { return; }
     if(settings::print_freq(status.algo_type) == 0) { return; }
     //    compute_observables();

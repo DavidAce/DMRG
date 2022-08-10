@@ -577,9 +577,10 @@ AlgorithmFinite::log_entry::log_entry(const AlgorithmStatus &s, const TensorsFin
 
 void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold, std::optional<double> saturation_sensitivity) {
     if(not tensors.position_is_inward_edge()) return;
-    tools::log->trace("Checking convergence of variance mpo");
     if(not threshold) threshold = std::max(status.energy_variance_prec_limit, settings::precision::variance_convergence_threshold);
     if(not saturation_sensitivity) saturation_sensitivity = settings::precision::variance_saturation_sensitivity;
+    tools::log->trace("Checking convergence of variance mpo | convergence threshold {:.2e} | sensitivity {:.2e}", threshold.value(),
+                      saturation_sensitivity.value());
 
     if(algorithm_history.empty() or algorithm_history.back().status.step < status.step)
         algorithm_history.emplace_back(status, tensors);
@@ -592,7 +593,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
                    [](const log_entry &h) -> double { return h.variance; });
 
     //    var_mpo_iter.emplace_back(tools::finite::measure::energy_variance(tensors));
-    auto report = check_saturation(var_mpo_iter, saturation_sensitivity.value());
+    auto report = check_saturation(var_mpo_iter, saturation_sensitivity.value(), SaturationScale::log);
     if(report.has_computed) {
         status.variance_mpo_converged_for                          = count_convergence(var_mpo_iter, threshold.value(), report.saturated_point);
         status.variance_mpo_saturated_for                          = report.saturated_count;
@@ -600,7 +601,8 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
         algorithm_history.back().status.variance_mpo_saturated_for = status.variance_mpo_saturated_for;
 
         if(tools::log->level() >= spdlog::level::debug)
-            tools::log->debug("Energy variance convergence: saturated {} iters (since iter {})", report.saturated_count, report.saturated_point);
+            tools::log->debug("Energy variance convergence: converged {} | saturated {} (since {})", status.variance_mpo_converged_for, report.saturated_count,
+                              report.saturated_point);
         if(tools::log->level() <= spdlog::level::trace) {
             tools::log->trace("Energy variance slope details:");
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
@@ -611,8 +613,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
             tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
             tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
-            tools::log->trace(" -- slp history        = {:7.4e}", fmt::join(report.Y_slp, ", "));
+            tools::log->trace(" -- sat history        = {}", report.Y_sat, ", ");
         }
     }
 }
@@ -640,35 +641,33 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
                                throw except::runtime_error("Entanglement entropies have the wrong size {} != {}", h.entropies.size(), entropies_size);
                            return h.entropies[site];
                        });
-        reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value());
+        reports[site] = check_saturation(entropy_iter[site], saturation_sensitivity.value(), SaturationScale::lin);
     }
 
     bool all_computed = std::all_of(reports.begin(), reports.end(), [](const SaturationReport &r) { return r.has_computed; });
     if(all_computed) {
-        // Find the report which has the greatest change recently
-        size_t last_saturated_site = 0;
-        size_t last_saturated_idx  = 0;
-        for(const auto &[site, r] : iter::enumerate(reports)) {
-            if(r.saturated_point >= last_saturated_idx) {
-                last_saturated_site = site;
-                last_saturated_idx  = r.saturated_point;
+        // Find the report which saturated last
+        auto last_saturated_itr = std::min_element(reports.begin(), reports.end(), [](const SaturationReport &r1, const SaturationReport &r2) -> bool {
+            return r1.saturated_count < r2.saturated_count;
+        });
+        if(last_saturated_itr != reports.end()) {
+            auto  last_saturated_site         = static_cast<size_t>(std::distance(reports.begin(), last_saturated_itr));
+            auto &report                      = reports[last_saturated_site];
+            status.entanglement_saturated_for = report.saturated_count;
+            if(tools::log->level() >= spdlog::level::debug)
+                tools::log->debug("Entanglement ent. convergence at site {}: converged {} | saturated {} iters (since {})", last_saturated_site,
+                                  status.entanglement_converged_for, report.saturated_count, report.saturated_point);
+            if(tools::log->level() <= spdlog::level::trace) {
+                tools::log->trace("Entanglement slope details:");
+                tools::log->trace(" -- site               = {}", last_saturated_site);
+                tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+                tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
+                tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+                tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+                tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
+                tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
+                tools::log->trace(" -- sat history        = {}", report.Y_sat);
             }
-        }
-        auto &report                      = reports[last_saturated_site];
-        status.entanglement_saturated_for = report.saturated_count;
-        if(tools::log->level() >= spdlog::level::debug)
-            tools::log->debug("Entanglement ent. convergence at site {}: saturated {} iters (since {})", last_saturated_site, report.saturated_count,
-                              report.saturated_point);
-        if(tools::log->level() <= spdlog::level::trace) {
-            tools::log->trace("Entanglement slope details:");
-            tools::log->trace(" -- site               = {}", last_saturated_site);
-            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->trace(" -- avg history        = {:7.4e}", fmt::join(report.Y_avg, ", "));
-            tools::log->trace(" -- std history        = {:7.4e}", fmt::join(report.Y_std, ", "));
-            tools::log->trace(" -- stn history        = {:7.4e}", fmt::join(report.Y_stn, ", "));
         }
     }
     status.entanglement_converged_for = status.entanglement_saturated_for;
