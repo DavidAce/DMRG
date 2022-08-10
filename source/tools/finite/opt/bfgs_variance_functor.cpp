@@ -77,7 +77,7 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
 bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_double_double, double *fx, double *grad_double_double) const {
-    t_step->tic();
+    auto                         t_token = t_step->tic_token();
     Scalar                       var;
     Scalar                       nHn, nH2n;
     double                       vv, log10var;
@@ -200,11 +200,9 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
 void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) const {
-    t_H2n->tic();
+    auto t_token  = t_H2n->tic_token();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2n_tensor, v_tensor, mpo2, env2L, env2R);
-    t_H2n->toc();
-
     ops = tools::finite::opt::internal::get_ops(dims[0], dims[1], dims[2], mpo.dimension(0));
 
     /*
@@ -259,18 +257,16 @@ void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) c
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
 void bfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) const {
-    t_Hn->tic();
+    auto t_token  = t_Hn->tic_token();
     auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(Hn_tensor, v_tensor, mpo, envL, envR);
-    t_Hn->toc();
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
 void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2r(const VectorType &r) const {
-    t_H2r->tic();
+    auto t_token  = t_H2r->tic_token();
     auto r_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(r.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2r_tensor, r_tensor, mpo2, env2L, env2R);
-    t_H2r->toc();
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
