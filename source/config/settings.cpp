@@ -166,6 +166,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::eigs_tolerance"                    , precision::eigs_tolerance);
     dmrg_config.load_parameter("precision::eigs_default_ncv"                  , precision::eigs_default_ncv);
     dmrg_config.load_parameter("precision::bfgs_max_iter"                     , precision::bfgs_max_iter);
+    dmrg_config.load_parameter("precision::iter_stuck_multiplier"             , precision::iter_stuck_multiplier);
     dmrg_config.load_parameter("precision::svd_truncation_lim"                , precision::svd_truncation_lim);
     dmrg_config.load_parameter("precision::svd_truncation_init"               , precision::svd_truncation_init);
     dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);

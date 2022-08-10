@@ -325,13 +325,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.trnc_lim = status.trnc_lim;
 
     // Set up a multiplier for number of iterations
-    size_t iter_multiplier = 1;
-    // #pragma message "REINSTATE ITER_MULTIPLIER"
-    //     if(not status.fes_is_running) {
-    //         if(status.entanglement_saturated_for > 0) iter_multiplier = status.entanglement_saturated_for;
-    //         if(status.variance_mpo_saturated_for > 0) iter_multiplier = status.variance_mpo_saturated_for;
-    //         if(status.algorithm_has_stuck_for > 0) iter_multiplier = 10 * status.algorithm_has_stuck_for;
-    //     }
+    size_t iter_multiplier = status.algorithm_has_stuck_for > 0 ? settings::precision::iter_stuck_multiplier : 1;
 
     // Copy settings
     m1.max_sites =
@@ -341,7 +335,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.bfgs_max_iter = settings::precision::bfgs_max_iter * iter_multiplier;
     m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 8 : 16; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
                                                                      // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-    m1.eigs_max_iter = settings::precision::eigs_max_iter;
+    m1.eigs_max_iter = settings::precision::eigs_max_iter * iter_multiplier;
     m1.eigs_max_tol  = settings::precision::eigs_tolerance;
     m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;
     // Adjust the maximum number of sites to consider

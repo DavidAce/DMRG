@@ -152,12 +152,13 @@ namespace settings {
 
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
-        inline size_t   eigs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for eigenvalue solver. */
+        inline size_t   eigs_max_iter                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
         inline double   eigs_tolerance                  = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_default_ncv                = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
+        inline size_t   iter_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on BFGS/EIGS by this factor when stuck */
         inline double   svd_truncation_lim              = 5e-32 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
-        inline double   svd_truncation_init             = 1e-4 ;                   /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
+        inline double   svd_truncation_init             = 1e-4  ;                   /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
         inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (BFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
