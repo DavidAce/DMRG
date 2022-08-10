@@ -23,7 +23,6 @@ namespace tools::finite::opt::internal{
     extern opt_mps eig_optimize_variance      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_energy       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_subspace     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eigs_optimize_simps        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern opt_mps eigs_optimize_overlap      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern void eigs_extract_results          (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
