@@ -15,6 +15,20 @@ add_source_target(dmrg-tools-finite-ops
         dmrg-tools-common-log
         dmrg-tools-common-contraction
         )
+
+add_source_target(dmrg-tools-finite-mpo
+        TARGET_SOURCES
+        mpo.cpp
+        OBJECT_LINK_LIBRARIES
+        dmrg-deps dmrg-flags
+        INTERFACE_LINK_LIBRARIES
+        dmrg-tid
+        dmrg-math-svd
+        dmrg-math-tenx
+        dmrg-tensors-mpo
+        dmrg-tools-common-log
+        dmrg-tools-common-contraction
+        )
 add_source_target(dmrg-tools-finite-print
         TARGET_SOURCES
         print.cpp
@@ -36,14 +50,15 @@ add_subdirectory(opt)
 
 add_library(dmrg-tools-finite INTERFACE)
 target_link_libraries(dmrg-tools-finite INTERFACE
+        dmrg-tools-finite-h5
+        dmrg-tools-finite-ed
         dmrg-tools-finite-measure
         dmrg-tools-finite-mps
         dmrg-tools-finite-env
         dmrg-tools-finite-multisite
-        dmrg-tools-finite-ops
         dmrg-tools-finite-opt
+        dmrg-tools-finite-mpo
+        dmrg-tools-finite-ops
         dmrg-tools-finite-print
-        dmrg-tools-finite-h5
-        dmrg-tools-finite-ed
         )
 target_link_libraries(dmrg-tools-finite INTERFACE dmrg-deps dmrg-flags)
