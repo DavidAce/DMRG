@@ -91,19 +91,19 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     // When this happens, it's not worth trying to get BFGS to converge,
     // try an eigensolver on the energy-shifted operator H² instead.
     bfgs_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
-    bfgs_default_options.min_line_search_step_size                  = std::numeric_limits<double>::epsilon();
+    bfgs_default_options.min_line_search_step_size                  = 1e-64;
     bfgs_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
     bfgs_default_options.min_line_search_step_contraction           = 0.6; // 0.6
     bfgs_default_options.max_line_search_step_expansion             = 10; // 10
-    bfgs_default_options.max_num_line_search_step_size_iterations   = 20;
-    bfgs_default_options.max_num_line_search_direction_restarts     = 5; //5
-    bfgs_default_options.line_search_sufficient_function_decrease   = 1e-4; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
-    bfgs_default_options.line_search_sufficient_curvature_decrease  = 1-1e-3;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
+    bfgs_default_options.max_num_line_search_step_size_iterations   = 100;
+    bfgs_default_options.max_num_line_search_direction_restarts     = 50; //5
+    bfgs_default_options.line_search_sufficient_function_decrease   = 1e-6; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
+    bfgs_default_options.line_search_sufficient_curvature_decrease  = 0.90;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
     bfgs_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
-    bfgs_default_options.function_tolerance                         = 1e-6; // Tested, 1e-6 seems to be a sweetspot
-    bfgs_default_options.gradient_tolerance                         = 1e-4; // This is the max gradient on f = log Var H
-    bfgs_default_options.parameter_tolerance                        = 1e-14;
-    bfgs_default_options.minimizer_progress_to_stdout               = false; //tools::log->level() <= spdlog::level::trace;
+    bfgs_default_options.function_tolerance                         = std::numeric_limits<double>::epsilon(); // Tested, 1e-6 seems to be a sweetspot
+    bfgs_default_options.gradient_tolerance                         = std::numeric_limits<double>::epsilon(); // 1e-8 // This is the max gradient on f = log Var H
+    bfgs_default_options.parameter_tolerance                        = 0; //std::numeric_limits<double>::epsilon(); // 1e-14
+    bfgs_default_options.minimizer_progress_to_stdout               = tools::log->level() <= spdlog::level::trace;
     bfgs_default_options.update_state_every_iteration               = false;
     bfgs_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
 
@@ -132,7 +132,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     if     (meta.optMode == OptMode::OVERLAP  and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_overlap(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::ENERGY   and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_energy(tensors, initial_mps, status, meta); // TODO: Implement energy mode
     else if(meta.optMode == OptMode::SUBSPACE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_subspace(tensors, initial_mps, status, meta);
-    else if(meta.optMode == OptMode::SIMPS    and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta); // TODO: Implement simps mode
+    else if(meta.optMode == OptMode::SIMPS    and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_energy(tensors, initial_mps, status, meta); // TODO: Implement simps mode
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::EIGS)  result = internal::eigs_optimize_variance(tensors, initial_mps, status, meta);
     else if(meta.optMode == OptMode::VARIANCE and meta.optSolver == OptSolver::BFGS)  result = internal::bfgs_optimize_variance(tensors, initial_mps, status, meta);
     else
