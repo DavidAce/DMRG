@@ -151,8 +151,8 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
 }
 
 void AlgorithmFinite::shift_mpo_energy() {
-    if(not tensors.position_is_inward_edge()) return;
     if(not settings::precision::use_mpo_energy_shift) return;
+    if(not tensors.position_is_inward_edge()) return;
     // Shift mpo energy to avoid catastrophic cancellation
     // Note that this operation makes the Hamiltonian nearly singular,
     // which is tough for Lanczos/Arnoldi iterations to handle in fdmrg.
