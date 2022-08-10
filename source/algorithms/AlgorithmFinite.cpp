@@ -468,7 +468,8 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
             status.env_expansion_alpha *= factor_dn;
         }
         double alpha_upper_limit = settings::strategy::max_env_expansion_alpha;
-        double alpha_lower_limit = std::max(status.energy_variance_lowest, 10 * std::sqrt(status.trnc_lim));
+        double alpha_lower_limit = status.energy_variance_lowest;
+        //        double alpha_lower_limit = std::max(status.energy_variance_lowest, std::sqrt(status.trnc_lim));
 
         status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, std::min(alpha_lower_limit, alpha_upper_limit), alpha_upper_limit);
         if(status.env_expansion_alpha < old_expansion_alpha) {
