@@ -56,7 +56,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     Eigen::VectorXd  eigvals;
 
     // If the mps is small enough you can afford full diag.
-    if(tensors.state->active_problem_size() <= settings::precision::max_size_full_diag) {
+    if(tensors.state->active_problem_size() <= settings::solver::max_size_full_eigs) {
         std::tie(eigvecs, eigvals) = find_subspace_full<Scalar>(tensors);
     } else {
         double eigval_target;
@@ -145,7 +145,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
 
     // Create a reusable config for multiple nev trials
     eig::settings config;
-    config.tol             = settings::precision::eigs_tolerance;
+    config.tol             = settings::solver::eigs_tolerance;
     config.sigma           = energy_target;
     config.shift_invert    = eig::Shinv::ON;
     config.compute_eigvecs = eig::Vecs::ON;

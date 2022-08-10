@@ -171,15 +171,15 @@ void AlgorithmFinite::try_moving_sites() {
     //  pos : the index of a slot on the lattice, which can not be moved. (long)
     //  site: the index of a particle on the lattice, which can be moved. (size_t)
     //  dir : Direction on which to move the position: +1l = right, -1l = left.
-    auto eigs_max_iter                         = settings::precision::eigs_max_iter;
-    auto eigs_tolerance                        = settings::precision::eigs_tolerance;
+    auto prefer_eigs_backup                    = settings::solver::prefer_eigs_over_bfgs;
+    auto eigs_max_iter                         = settings::solver::eigs_max_iter;
+    auto eigs_tolerance                        = settings::solver::eigs_tolerance;
     auto multisite_mps_when_backup             = settings::strategy::multisite_mps_when;
     auto multisite_mps_site_max_backup         = settings::strategy::multisite_mps_site_max;
     auto multisite_mps_site_def_backup         = settings::strategy::multisite_mps_site_def;
-    auto prefer_eigs_backup                    = settings::strategy::prefer_eigs_over_bfgs;
-    settings::precision::eigs_max_iter         = 100;
-    settings::precision::eigs_tolerance        = 1e-12;
-    settings::strategy::prefer_eigs_over_bfgs  = OptEigs::ALWAYS;
+    settings::solver::eigs_max_iter            = 100;
+    settings::solver::eigs_tolerance           = 1e-12;
+    settings::solver::prefer_eigs_over_bfgs    = OptEigs::ALWAYS;
     settings::strategy::multisite_mps_when     = MultisiteWhen::ALWAYS;
     settings::strategy::multisite_mps_site_max = 2;
     settings::strategy::multisite_mps_site_def = 2;
@@ -198,8 +198,6 @@ void AlgorithmFinite::try_moving_sites() {
     for(const auto &site : site_seq) {
         std::vector<long> tgt_pos_seq = dir > 0 ? num::range<long>(site + 1, len - 1, 1) : num::range<long>(0, site, -1);
         std::vector<long> tgt_pos_req = dir > 0 ? num::range<long>(site, len - 2, -1) : num::range<long>(1, site + 1, 1);
-        tools::log->debug("seq: {}", tgt_pos_seq);
-        tools::log->debug("req: {}", tgt_pos_req);
         tgt_pos_seq.insert(tgt_pos_seq.end(), tgt_pos_req.begin(), tgt_pos_req.end());
         tools::log->info("Moving site {} dir {} | seq: {}", site, dir, tgt_pos_seq);
         for(const auto &tgt_pos : tgt_pos_seq) {
@@ -212,9 +210,9 @@ void AlgorithmFinite::try_moving_sites() {
             status.step += 1;
 
             tensors.move_site_to_pos(static_cast<size_t>(site), tgt_pos, sites_mps, sites_mpo, tgt_pos);
-            tools::log->info("Labels    : {}", tensors.state->get_labels());
-            tools::log->info("Sites mps : {}", sites_mps);
-            tools::log->info("Sites mpo : {}", sites_mpo);
+            tools::log->debug("Labels    : {}", tensors.state->get_labels());
+            tools::log->debug("Sites mps : {}", sites_mps);
+            tools::log->debug("Sites mpo : {}", sites_mpo);
         }
         tools::log->info("Resetting MPO's");
         tensors.rebuild_mpo();
@@ -238,12 +236,12 @@ void AlgorithmFinite::try_moving_sites() {
 
     if(not tensors.position_is_inward_edge())
         throw except::logic_error("Position {} and direction {} is not an inward edge", tensors.get_position(), tensors.state->get_direction());
-    settings::precision::eigs_max_iter         = eigs_max_iter;
-    settings::precision::eigs_tolerance        = eigs_tolerance;
+    settings::solver::eigs_max_iter            = eigs_max_iter;
+    settings::solver::eigs_tolerance           = eigs_tolerance;
+    settings::solver::prefer_eigs_over_bfgs    = prefer_eigs_backup;
     settings::strategy::multisite_mps_when     = multisite_mps_when_backup;
     settings::strategy::multisite_mps_site_max = multisite_mps_site_max_backup;
     settings::strategy::multisite_mps_site_def = multisite_mps_site_def_backup;
-    settings::strategy::prefer_eigs_over_bfgs  = prefer_eigs_backup;
 }
 
 void AlgorithmFinite::rebuild_mpo() {
@@ -288,7 +286,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
-            double truncation_threshold = 2 * settings::precision::svd_truncation_lim;
+            double truncation_threshold = 2 * settings::solver::svd_truncation_lim;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
             size_t bond_at_lim_count    = tensors.state->num_bonds_at_limit(status.bond_lim);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
@@ -385,7 +383,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) 
 void AlgorithmFinite::update_truncation_error_limit() {
     if(not tensors.position_is_inward_edge()) return;
     if(status.trnc_lim == 0.0) throw std::runtime_error("trnc_lim is zero!");
-    status.trnc_min                   = settings::precision::svd_truncation_lim;
+    status.trnc_min                   = settings::solver::svd_truncation_lim;
     status.trnc_limit_has_reached_min = status.trnc_lim <= status.trnc_min;
     if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER or settings::strategy::trnc_decrease_rate == 0.0) {
         status.trnc_lim                   = status.trnc_min;
@@ -397,7 +395,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
-            double truncation_threshold = 2 * settings::precision::svd_truncation_lim;
+            double truncation_threshold = 2 * settings::solver::svd_truncation_lim;
             size_t trunc_bond_count     = tensors.state->num_sites_truncated(truncation_threshold);
             tools::log->trace("Truncation threshold  : {:<.8e}", truncation_threshold);
             tools::log->trace("Truncation errors     : {}", tensors.state->get_truncation_errors());
@@ -509,11 +507,11 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             bond_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
     if(not trnc_lim) {
-        trnc_lim = settings::precision::svd_truncation_init;
+        trnc_lim = settings::solver::svd_truncation_init;
         if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) trnc_lim = 1e-2;
     }
 
-    tensors.activate_sites(settings::precision::max_size_part_diag, 2); // Activate a pair of sites so that asserts and measurements work
+    tensors.activate_sites(settings::solver::max_size_shift_invert, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
     tensors.randomize_state(reason, state_init, state_type.value(), sector.value(), use_eigenspinors.value(), bitfield.value(), bond_lim.value());
 

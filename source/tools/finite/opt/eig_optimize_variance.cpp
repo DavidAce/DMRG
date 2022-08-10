@@ -15,7 +15,7 @@ namespace tools::finite::opt::internal {
     template<typename Scalar>
     void eig_variance_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         const auto problem_size = tensors.active_problem_size();
-        if(problem_size <= settings::precision::max_size_full_diag) {
+        if(problem_size <= settings::solver::max_size_full_eigs) {
             tools::log->trace("Full diagonalization of (H-E)²");
             auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
             eig::solver solver;
@@ -29,7 +29,7 @@ namespace tools::finite::opt::internal {
     opt_mps eig_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status, OptMeta &meta) {
         initial_mps.validate_basis_vector();
         if(not tensors.model->is_shifted()) throw std::runtime_error("eig_optimize_variance requires energy-shifted MPO²");
-        reports::eigs_add_entry(initial_mps, spdlog::level::info);
+        reports::eigs_add_entry(initial_mps, spdlog::level::debug);
         auto                 t_var = tid::tic_scope("eig-var");
         std::vector<opt_mps> results;
         switch(meta.optType) {
@@ -46,7 +46,7 @@ namespace tools::finite::opt::internal {
             std::sort(results.begin(), results.end(), Comparator(meta)); // Smallest eigenvalue (i.e. variance) wins
         }
 
-        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
         return results.front();
     }
 }

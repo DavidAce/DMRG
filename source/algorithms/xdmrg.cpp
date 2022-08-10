@@ -325,19 +325,19 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.trnc_lim = status.trnc_lim;
 
     // Set up a multiplier for number of iterations
-    size_t iter_multiplier = status.algorithm_has_stuck_for > 0 ? settings::precision::iter_stuck_multiplier : 1;
+    size_t iter_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::iter_stuck_multiplier : 1;
 
     // Copy settings
     m1.max_sites =
         std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg by default, unless settings specifically ask for 1-site
     m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
-    m1.bfgs_grad_tol = settings::precision::max_grad_tolerance;
-    m1.bfgs_max_iter = settings::precision::bfgs_max_iter * iter_multiplier;
+    m1.bfgs_grad_tol = settings::solver::max_grad_tolerance;
+    m1.bfgs_max_iter = settings::solver::bfgs_max_iter * iter_multiplier;
     m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 8 : 16; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
                                                                      // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-    m1.eigs_max_iter = settings::precision::eigs_max_iter * iter_multiplier;
-    m1.eigs_max_tol  = settings::precision::eigs_tolerance;
-    m1.eigs_max_ncv  = settings::precision::eigs_default_ncv;
+    m1.eigs_max_iter = settings::solver::eigs_max_iter * iter_multiplier;
+    m1.eigs_max_tol  = settings::solver::eigs_tolerance;
+    m1.eigs_max_ncv  = settings::solver::eigs_default_ncv;
     // Adjust the maximum number of sites to consider
     if(status.algorithm_has_succeeded)
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
@@ -355,10 +355,10 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // Next we set up the mode at the early stages of the simulation
     // Note that we make stricter requirements as we go down the if-list
-    bool prefer_eigs_never          = settings::strategy::prefer_eigs_over_bfgs == OptEigs::NEVER;
-    bool prefer_eigs_when_stuck     = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0;
-    bool prefer_eigs_when_saturated = settings::strategy::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
-    bool prefer_eigs_always         = settings::strategy::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
+    bool prefer_eigs_never          = settings::solver::prefer_eigs_over_bfgs == OptEigs::NEVER;
+    bool prefer_eigs_when_stuck     = settings::solver::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0;
+    bool prefer_eigs_when_saturated = settings::solver::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
+    bool prefer_eigs_always         = settings::solver::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
 
     if(not prefer_eigs_never and (prefer_eigs_when_saturated or prefer_eigs_when_stuck or prefer_eigs_always or status.fes_is_running)) {
         m1.optMode   = OptMode::VARIANCE;
@@ -390,7 +390,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     }
 
     // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
-    if(tensors.state->size_1site() > settings::precision::max_size_part_diag) {
+    if(tensors.state->size_1site() > settings::solver::max_size_shift_invert) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
         // When this happens, we should use optimize VARIANCE using EIGS or BFGS instead.
         m1.optMode = OptMode::VARIANCE;
@@ -399,19 +399,19 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     // Set up the maximum problem size here
     switch(m1.optMode) {
         case OptMode::OVERLAP:
-        case OptMode::SUBSPACE: m1.max_problem_size = settings::precision::max_size_part_diag; break;
+        case OptMode::SUBSPACE: m1.max_problem_size = settings::solver::max_size_shift_invert; break;
         case OptMode::ENERGY:
         case OptMode::SIMPS:
         case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
     }
-    if(m1.optSolver == OptSolver::BFGS) m1.retry = settings::strategy::bfgs_fix_rnorm_w_eigs;
+    if(m1.optSolver == OptSolver::BFGS) m1.retry = settings::solver::bfgs_fix_rnorm_w_eigs;
 
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
     // Do eigs (or eig) instead of bfgs when it's cheap
-    if(m1.problem_size <= settings::precision::max_size_full_diag) m1.optSolver = OptSolver::EIGS;
+    if(m1.problem_size <= settings::solver::max_size_full_eigs) m1.optSolver = OptSolver::EIGS;
 
     if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -452,7 +452,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         m2.optInit   = OptInit::LAST_RESULT;
         metas.emplace_back(m2);
     } else if(m1.optMode == OptMode::VARIANCE and
-              (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::strategy::bfgs_fix_rnorm_w_eigs))) {
+              (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::solver::bfgs_fix_rnorm_w_eigs))) {
         // If we did a VARIANCE optimization whose residual_norm did succeed, then run again for longer and more sites
         m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP | OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
@@ -690,7 +690,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
     auto t_rnd             = tid::tic_scope("rnd_state");
     int  counter           = 0;
     bool outside_of_window = true;
-    tensors.activate_sites(settings::precision::max_size_full_diag, 2);
+    tensors.activate_sites(settings::solver::max_size_full_eigs, 2);
     while(true) {
         randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, -1); // Do not use the bitfield: set to -1
         status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);

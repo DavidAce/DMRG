@@ -277,7 +277,7 @@ namespace tools::finite::opt {
         auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
         tools::log->trace("Finding largest-magnitude eigenvalue");
         eig::solver solver; // Define a solver just to find the maximum eigenvalue
-        solver.config.tol             = settings::precision::eigs_tolerance;
+        solver.config.tol             = settings::solver::eigs_tolerance;
         solver.config.maxIter         = 200;
         solver.config.maxNev          = 1;
         solver.config.maxNcv          = 16;
@@ -354,7 +354,7 @@ namespace tools::finite::opt {
         configs[0].primme_method      = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
         configs[0].primme_convTestFun = RnormReadConvTest;
         // Apply preconditioner if applicable, usually faster on small matrices
-        //        if(initial_mps.get_tensor().size() > settings::precision::max_size_full_diag and initial_mps.get_tensor().size() <= 8000)
+        //        if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
         //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
         //        if(initial_mps.get_tensor().size() > 8192 and initial_mps.get_tensor().size() <= 20000)
         //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
@@ -380,7 +380,7 @@ namespace tools::finite::opt {
 
     opt_mps internal::eigs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
                                              OptMeta &meta) {
-        if(tensors.active_problem_size() <= settings::precision::max_size_full_diag) return internal::eig_optimize_variance(tensors, initial_mps, status, meta);
+        if(tensors.active_problem_size() <= settings::solver::max_size_full_eigs) return internal::eig_optimize_variance(tensors, initial_mps, status, meta);
 
         using namespace internal;
         using namespace settings::precision;

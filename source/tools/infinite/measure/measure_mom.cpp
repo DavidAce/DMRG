@@ -26,7 +26,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     // Normalize
     Eigen::Tensor<Scalar, 2> transfer_matrix_theta_evn =
         tools::common::views::get_transfer_matrix_theta_evn(state_evolved).reshape(tenx::array2{sizeLB, sizeLB});
-    using namespace settings::precision;
+    using namespace settings::solver;
     eig::solver solver;
     auto        nev = static_cast<eig::size_type>(1);
     auto        ncv = static_cast<eig::size_type>(eigs_default_ncv);

@@ -28,8 +28,8 @@ namespace tools::infinite::opt {
         MatVecMPO<cplx> matrix(env.L, env.R, mpo);
         eig::solver     solver;
         solver.config.maxNev  = 1;
-        solver.config.maxNcv  = static_cast<eig::size_type>(settings::precision::eigs_default_ncv);
-        solver.config.tol     = settings::precision::eigs_tolerance;
+        solver.config.maxNcv  = static_cast<eig::size_type>(settings::solver::eigs_default_ncv);
+        solver.config.tol     = settings::solver::eigs_tolerance;
         solver.config.maxIter = 10000;
         solver.eigs(matrix, -1, -1, ritz, eig::Form::SYMM, eig::Side::R, 1.0, eig::Shinv::OFF, eig::Vecs::ON, eig::Dephase::OFF);
         return eig::view::get_eigvec<cplx>(solver.result, shape_mps);

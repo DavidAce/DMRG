@@ -161,7 +161,7 @@ void fdmrg::update_state() {
     std::optional<double> alpha_expansion = std::nullopt;
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
                       enum2sv(ritz), enum2sv(meta.optType));
-    tensors.activate_sites(settings::precision::max_size_part_diag, settings::strategy::multisite_mps_site_def);
+    tensors.activate_sites(settings::solver::max_size_shift_invert, settings::strategy::multisite_mps_site_def);
 
     if(not tensors.active_sites.empty()) {
         if(status.env_expansion_alpha > 0) {

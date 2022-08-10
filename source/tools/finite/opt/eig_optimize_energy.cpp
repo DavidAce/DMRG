@@ -16,7 +16,7 @@ namespace tools::finite::opt {
     template<typename Scalar>
     void internal::eig_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         const auto problem_size = tensors.active_problem_size();
-        if(problem_size > settings::precision::max_size_full_diag)
+        if(problem_size > settings::solver::max_size_full_eigs)
             throw except::logic_error("eig_executor: the Hamiltonian is too large for eig: {}", problem_size);
         eig::solver solver;
         if(meta.optMode == OptMode::VARIANCE) {
@@ -69,7 +69,7 @@ namespace tools::finite::opt {
         }
 
         if(results.size() >= 2) std::sort(results.begin(), results.end(), Comparator(meta, initial_mps.get_energy()));
-        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
         reports::print_eigs_report();
         if(results.empty())
             return initial_mps; // Solver failed

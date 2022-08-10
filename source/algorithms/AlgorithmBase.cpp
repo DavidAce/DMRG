@@ -37,13 +37,13 @@ void AlgorithmBase::init_bond_dimension_limits() {
 
 void AlgorithmBase::init_truncation_error_limits() {
     if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) {
-        status.trnc_min  = settings::precision::svd_truncation_lim;
-        status.trnc_lim  = settings::precision::svd_truncation_lim;
-        status.trnc_init = settings::precision::svd_truncation_lim;
+        status.trnc_min  = settings::solver::svd_truncation_lim;
+        status.trnc_lim  = settings::solver::svd_truncation_lim;
+        status.trnc_init = settings::solver::svd_truncation_lim;
     } else {
-        status.trnc_min  = settings::precision::svd_truncation_lim;
-        status.trnc_lim  = settings::precision::svd_truncation_init;
-        status.trnc_init = settings::precision::svd_truncation_init;
+        status.trnc_min  = settings::solver::svd_truncation_lim;
+        status.trnc_lim  = settings::solver::svd_truncation_init;
+        status.trnc_init = settings::solver::svd_truncation_init;
     }
     // Sanity check
     if(status.trnc_lim == 0.0) throw except::runtime_error("Truncation error limit invalid: {}", status.trnc_lim);

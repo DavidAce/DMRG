@@ -96,7 +96,7 @@ namespace tools::finite::opt {
 
         auto comparator = [&ritz, &meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
             auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
-            if(diff < settings::precision::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
+            if(diff < settings::solver::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
             switch(ritz) {
                 case eig::Ritz::SA:
                 case eig::Ritz::SR: return lhs.get_energy() < rhs.get_energy();
@@ -113,12 +113,12 @@ namespace tools::finite::opt {
             }
         };
         if(results.size() >= 2) std::sort(results.begin(), results.end(), comparator);
-        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::info);
+        for(const auto &mps : results) reports::eigs_add_entry(mps, spdlog::level::debug);
         return results;
     }
 
     opt_mps internal::eigs_optimize_energy(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta) {
-        if(tensors.active_problem_size() <= settings::precision::max_size_full_diag) return eig_optimize_energy(tensors, initial_mps, status, meta);
+        if(tensors.active_problem_size() <= settings::solver::max_size_full_eigs) return eig_optimize_energy(tensors, initial_mps, status, meta);
 
         tools::log->debug("Energy optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
         auto                 t_eigs = tid::tic_scope("eigs-ene");

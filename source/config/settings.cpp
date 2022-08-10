@@ -130,8 +130,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
-    dmrg_config.load_parameter("strategy::bfgs_fix_rnorm_w_eigs"              , strategy::bfgs_fix_rnorm_w_eigs);
-    dmrg_config.load_parameter("strategy::prefer_eigs_over_bfgs"              , strategy::prefer_eigs_over_bfgs);
     dmrg_config.load_parameter("strategy::expand_envs_when_stuck"             , strategy::expand_envs_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
@@ -162,15 +160,20 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);
     dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
 
-    dmrg_config.load_parameter("precision::eigs_max_iter"                     , precision::eigs_max_iter);
-    dmrg_config.load_parameter("precision::eigs_tolerance"                    , precision::eigs_tolerance);
-    dmrg_config.load_parameter("precision::eigs_default_ncv"                  , precision::eigs_default_ncv);
-    dmrg_config.load_parameter("precision::bfgs_max_iter"                     , precision::bfgs_max_iter);
-    dmrg_config.load_parameter("precision::iter_stuck_multiplier"             , precision::iter_stuck_multiplier);
-    dmrg_config.load_parameter("precision::svd_truncation_lim"                , precision::svd_truncation_lim);
-    dmrg_config.load_parameter("precision::svd_truncation_init"               , precision::svd_truncation_init);
-    dmrg_config.load_parameter("precision::svd_switchsize_bdc"                , precision::svd_switchsize_bdc);
-    dmrg_config.load_parameter("precision::max_grad_tolerance"                , precision::max_grad_tolerance);
+    dmrg_config.load_parameter("solver::eigs_max_iter"                        , solver::eigs_max_iter);
+    dmrg_config.load_parameter("solver::eigs_tolerance"                       , solver::eigs_tolerance);
+    dmrg_config.load_parameter("solver::eigs_default_ncv"                     , solver::eigs_default_ncv);
+    dmrg_config.load_parameter("solver::bfgs_max_iter"                        , solver::bfgs_max_iter);
+    dmrg_config.load_parameter("solver::iter_stuck_multiplier"                , solver::iter_stuck_multiplier);
+    dmrg_config.load_parameter("solver::max_size_full_eigs"                   , solver::max_size_full_eigs);
+    dmrg_config.load_parameter("solver::max_size_shift_invert"                , solver::max_size_shift_invert);
+    dmrg_config.load_parameter("solver::bfgs_fix_rnorm_w_eigs"                , solver::bfgs_fix_rnorm_w_eigs);
+    dmrg_config.load_parameter("solver::prefer_eigs_over_bfgs"                , solver::prefer_eigs_over_bfgs);
+    dmrg_config.load_parameter("solver::max_grad_tolerance"                   , solver::max_grad_tolerance);
+    dmrg_config.load_parameter("solver::svd_truncation_lim"                   , solver::svd_truncation_lim);
+    dmrg_config.load_parameter("solver::svd_truncation_init"                  , solver::svd_truncation_init);
+    dmrg_config.load_parameter("solver::svd_switchsize_bdc"                   , solver::svd_switchsize_bdc);
+
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_otf"    , precision::use_compressed_mpo_squared_otf);
     dmrg_config.load_parameter("precision::use_mpo_energy_shift"              , precision::use_mpo_energy_shift);
@@ -180,8 +183,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);
     dmrg_config.load_parameter("precision::target_subspace_error"             , precision::target_subspace_error);
     dmrg_config.load_parameter("precision::max_subspace_size"                 , precision::max_subspace_size);
-    dmrg_config.load_parameter("precision::max_size_full_diag"                , precision::max_size_full_diag);
-    dmrg_config.load_parameter("precision::max_size_part_diag"                , precision::max_size_part_diag);
     dmrg_config.load_parameter("precision::max_size_multisite"                , precision::max_size_multisite);
     dmrg_config.load_parameter("precision::max_norm_error"                    , precision::max_norm_error);
 
