@@ -239,9 +239,10 @@ void xdmrg::run_algorithm() {
         update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
-        try_projection();
-        shift_mpo_energy();
-        move_center_point();
+        try_projection();                // Tries to project the state to the nearest global spin parity sector
+        shift_mpo_energy();              // Subtracts the current energy per site E/L from each MPO.
+        try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+        move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }

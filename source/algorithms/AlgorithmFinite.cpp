@@ -164,6 +164,94 @@ void AlgorithmFinite::shift_mpo_energy() {
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
+void AlgorithmFinite::try_moving_sites() {
+    if(not tensors.position_is_inward_edge()) return;
+    if(status.algorithm_has_stuck_for == 0) return;
+    // Definitions:
+    //  pos : the index of a slot on the lattice, which can not be moved. (long)
+    //  site: the index of a particle on the lattice, which can be moved. (size_t)
+    //  dir : Direction on which to move the position: +1l = right, -1l = left.
+    auto eigs_max_iter                         = settings::precision::eigs_max_iter;
+    auto eigs_tolerance                        = settings::precision::eigs_tolerance;
+    auto multisite_mps_when_backup             = settings::strategy::multisite_mps_when;
+    auto multisite_mps_site_max_backup         = settings::strategy::multisite_mps_site_max;
+    auto multisite_mps_site_def_backup         = settings::strategy::multisite_mps_site_def;
+    auto prefer_eigs_backup                    = settings::strategy::prefer_eigs_over_bfgs;
+    settings::precision::eigs_max_iter         = 100;
+    settings::precision::eigs_tolerance        = 1e-12;
+    settings::strategy::prefer_eigs_over_bfgs  = OptEigs::ALWAYS;
+    settings::strategy::multisite_mps_when     = MultisiteWhen::ALWAYS;
+    settings::strategy::multisite_mps_site_max = 2;
+    settings::strategy::multisite_mps_site_def = 2;
+
+    auto len      = tensors.get_length<long>();
+    auto pos      = tensors.get_position<long>();
+    auto dir      = pos > len / 2 ? -1l : 1l;
+    auto site_seq = dir > 0 ? num::range<long>(0, len - 1, 1) : num::range<long>(1, len, -1);
+
+    std::vector<size_t> sites_mps, sites_mpo;
+    tensors.activate_sites({tensors.get_position()});
+    tools::log->info("Trying to move sites | pos {} | dir {}", pos, dir);
+    std::vector<std::string> report;
+    auto                     ene_old = tools::finite::measure::energy(tensors);
+    auto                     var_old = tools::finite::measure::energy_variance(tensors);
+    for(const auto &site : site_seq) {
+        std::vector<long> tgt_pos_seq = dir > 0 ? num::range<long>(site + 1, len - 1, 1) : num::range<long>(0, site, -1);
+        std::vector<long> tgt_pos_req = dir > 0 ? num::range<long>(site, len - 2, -1) : num::range<long>(1, site + 1, 1);
+        tools::log->debug("seq: {}", tgt_pos_seq);
+        tools::log->debug("req: {}", tgt_pos_req);
+        tgt_pos_seq.insert(tgt_pos_seq.end(), tgt_pos_req.begin(), tgt_pos_req.end());
+        tools::log->info("Moving site {} dir {} | seq: {}", site, dir, tgt_pos_seq);
+        for(const auto &tgt_pos : tgt_pos_seq) {
+            update_state();
+            print_status();
+            if(not sites_mps.empty())
+                report.emplace_back(fmt::format("sites [{:2}, {:2}] @ pos [{:2}, {:2}] | variance {:.5e}", sites_mps[tensors.active_sites.front()],
+                                                sites_mps[tensors.active_sites.back()], tensors.active_sites.front(), tensors.active_sites.back(),
+                                                tools::finite::measure::energy_variance(tensors)));
+            status.step += 1;
+
+            tensors.move_site_to_pos(static_cast<size_t>(site), tgt_pos, sites_mps, sites_mpo, tgt_pos);
+            tools::log->info("Labels    : {}", tensors.state->get_labels());
+            tools::log->info("Sites mps : {}", sites_mps);
+            tools::log->info("Sites mpo : {}", sites_mpo);
+        }
+        tools::log->info("Resetting MPO's");
+        tensors.rebuild_mpo();
+        tensors.rebuild_mpo_squared(settings::precision::use_compressed_mpo_squared_all);
+        //        tensors.move_site_mps_to_pos(pos_ul, pos, sites_mps, pos_old);
+        tensors.move_center_point_to_inward_edge();
+        tensors.rebuild_edges();
+        tensors.activate_sites({tensors.get_position()});
+        sites_mpo.clear();
+        sites_mps.clear();
+        tools::log->info("Labels    : {}", tensors.state->get_labels());
+        status.iter += 1;
+        //        check_convergence();
+        //        if(status.variance_mpo_saturated_for == 0) break;
+    }
+
+    tools::log->info("Finished moving sites");
+    for(const auto &r : report) tools::log->info("{}", r);
+    tools::log->info("Energy    {:.16f} --> {:.16f}", ene_old, tools::finite::measure::energy(tensors));
+    tools::log->info("Variance  {:9.3e} --> {:9.3e}", var_old, tools::finite::measure::energy_variance(tensors));
+
+    if(not tensors.position_is_inward_edge())
+        throw except::logic_error("Position {} and direction {} is not an inward edge", tensors.get_position(), tensors.state->get_direction());
+    settings::precision::eigs_max_iter         = eigs_max_iter;
+    settings::precision::eigs_tolerance        = eigs_tolerance;
+    settings::strategy::multisite_mps_when     = multisite_mps_when_backup;
+    settings::strategy::multisite_mps_site_max = multisite_mps_site_max_backup;
+    settings::strategy::multisite_mps_site_def = multisite_mps_site_def_backup;
+    settings::strategy::prefer_eigs_over_bfgs  = prefer_eigs_backup;
+}
+
+void AlgorithmFinite::rebuild_mpo() {
+    if(not tensors.position_is_inward_edge()) return;
+    tools::log->debug("Rebuilding MPO");
+    tensors.rebuild_mpo();
+}
+
 void AlgorithmFinite::rebuild_mpo_squared() {
     if(not tensors.position_is_inward_edge()) return;
     bool compress = settings::precision::use_compressed_mpo_squared_all;
