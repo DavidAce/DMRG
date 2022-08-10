@@ -463,7 +463,7 @@ std::array<long, 4> ModelFinite::active_dimensions_squared() const { return tool
 Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_squared(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo squared tensor");
     if(sites == active_sites and cache.multisite_mpo_squared and not nbody) return cache.multisite_mpo_squared.value();
-    tools::log->trace("Contracting multisite mpo squared tensor with {} sites", sites.size());
+    tools::log->trace("Contracting multisite mpo² tensor with sites {}", sites);
     auto                   t_mpo     = tid::tic_scope("mpo");
     auto                   positions = num::range<size_t>(sites.front(), sites.back() + 1);
     Eigen::Tensor<cplx, 4> multisite_mpo_squared;
