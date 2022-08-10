@@ -54,9 +54,10 @@ namespace tools::finite::opt {
 
     opt_mps internal::eig_optimize_energy(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
                                           OptMeta &meta) {
-        tools::log->debug("Energy optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
-        if(meta.optMode != OptMode::ENERGY)
-            throw except::runtime_error("Wrong optimization mode [{}]. Expected [{}]", enum2sv(meta.optMode), enum2sv(OptMode::ENERGY));
+        tools::log->debug("Energy optimization with ritz {} | type {} | mode {}", enum2sv(meta.optRitz), enum2sv(meta.optType), enum2sv(meta.optMode));
+        if(meta.optMode != OptMode::ENERGY and meta.optMode != OptMode::SIMPS)
+            throw except::runtime_error("Wrong optimization mode [{}]. Expected [{}|{}]", enum2sv(meta.optMode), enum2sv(OptMode::ENERGY),
+                                        enum2sv(OptMode::SIMPS));
         if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
             throw std::runtime_error("eig_optimize_energy with ritz [SM] requires energy-shifted MPO ");
 

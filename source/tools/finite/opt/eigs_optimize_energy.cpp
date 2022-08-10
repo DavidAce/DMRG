@@ -19,29 +19,22 @@
 
 namespace tools::finite::opt {
 
-    template<typename MatrixProductType>
-    void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+    template<typename Scalar, typename MatVecMPO<Scalar>::DecompMode mode>
+    void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
         if(x == nullptr) return;
         if(y == nullptr) return;
         if(primme == nullptr) return;
-        using T               = typename MatrixProductType::Scalar;
-        const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
-        const auto  shape_mps = H_ptr->get_shape_mps();
-        const auto &mpo       = H_ptr->get_mpo();
-        const auto &envL      = H_ptr->get_envL();
-        const auto &envR      = H_ptr->get_envR();
-        for(int i = 0; i < *blockSize; i++) {
-            auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
-            auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
-            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
-        }
-        *ierr = 0;
+        const auto H_ptr = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
+        H_ptr->decomp    = mode;
+        H_ptr->FactorOP();
+        H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
     }
 
     template<typename Scalar>
     std::vector<opt_mps> eigs_energy_executor(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta) {
-        if(meta.optMode != OptMode::ENERGY)
-            throw except::runtime_error("Wrong optimization mode [{}]. Expected [{}]", enum2sv(meta.optMode), enum2sv(OptMode::ENERGY));
+        if(meta.optMode != OptMode::ENERGY and meta.optMode != OptMode::SIMPS)
+            throw except::runtime_error("Wrong optimization mode [{}]. Expected [{}|{}]", enum2sv(meta.optMode), enum2sv(OptMode::ENERGY),
+                                        enum2sv(OptMode::SIMPS));
         if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
             throw std::runtime_error("eigs_optimize_energy with ritz [SM] requires energy-shifted MPO ");
 
@@ -55,15 +48,15 @@ namespace tools::finite::opt {
         const auto       &env = tensors.get_multisite_env_ene_blk();
         MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        solver.config.tol             = 1e-10; // This is the target residual_norm norm. 1e-10 seems to be sufficient:
+        solver.config.tol             = 1e-12;
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
         solver.config.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
-        solver.config.maxIter         = 4000;
+        solver.config.maxIter         = 10000;
         solver.config.maxTime         = 60 * 60;
         solver.config.maxNev          = static_cast<eig::size_type>(1);
-        solver.config.maxNcv          = static_cast<eig::size_type>(16); // arpack needs ncv ~512 to handle all cases. Primme seems content with 16.
+        solver.config.maxNcv          = static_cast<eig::size_type>(4); // arpack needs ncv ~512 to handle all cases. Primme seems content with 4.
         solver.config.primme_locking  = false;
         solver.config.loglevel        = 2;
 
@@ -81,13 +74,13 @@ namespace tools::finite::opt {
 
         if(meta.optRitz == OptRitz::SM) {
             solver.config.maxIter              = 100000;
-            solver.config.maxNev               = static_cast<eig::size_type>(8);
-            solver.config.maxNcv               = static_cast<eig::size_type>(32);
-            solver.config.primme_projection    = "primme_proj_refined";
+            solver.config.maxNev               = static_cast<eig::size_type>(1);
+            solver.config.maxNcv               = static_cast<eig::size_type>(4);
+            solver.config.primme_projection    = "primme_proj_default";
             solver.config.primme_locking       = false;
             solver.config.primme_target_shifts = {initial_mps.get_eigval()};
             solver.config.ritz                 = eig::Ritz::primme_closest_abs;
-            if(meta.optMode == OptMode::SIMPS) solver.config.primme_preconditioner = simps_preconditioner<MatVecMPO<Scalar>>;
+            if(meta.optMode == OptMode::SIMPS) solver.config.primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
 
             solver.eigs(hamiltonian);
         } else {

@@ -386,6 +386,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptMode::VARIANCE)                                  return "VARIANCE";
         if(item == OptMode::OVERLAP)                                   return "OVERLAP";
         if(item == OptMode::SUBSPACE)                                  return "SUBSPACE";
+        if(item == OptMode::SIMPS)                                     return "SIMPS";
     }
     if constexpr(std::is_same_v<T,OptSolver>){
         if(item == OptSolver::EIGS)                                    return "EIGS";
@@ -709,6 +710,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "VARIANCE")                              return OptMode::VARIANCE;
         if(item == "OVERLAP")                               return OptMode::OVERLAP;
         if(item == "SUBSPACE")                              return OptMode::SUBSPACE;
+        if(item == "SIMPS")                                 return OptMode::SIMPS;
     }
     if constexpr(std::is_same_v<T,OptSolver>){
         if(item == "EIGS")                                  return OptSolver::EIGS;
