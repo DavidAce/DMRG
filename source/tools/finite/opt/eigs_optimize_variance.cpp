@@ -117,7 +117,17 @@ namespace tools::finite::opt {
         } else {
             problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
         }
-        *ierr = 0;
+        double prec         = primme->eps * problemNorm;
+        int    default_crit = *rNorm < prec;
+
+        if(primme->convtest == nullptr) return;
+        auto &solver = *static_cast<eig::solver *>(primme->convtest);
+        auto &result = solver.result;
+
+        // Store rNorm
+        result.meta.last_res_norm = *rNorm;
+        *isconv                   = default_crit;
+        *ierr                     = 0;
     }
 
     template<typename MatrixProductType>
@@ -331,18 +341,23 @@ namespace tools::finite::opt {
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
         std::vector<eig::settings> configs(1);
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        configs[0].tol             = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        configs[0].maxIter         = 1000;
-        configs[0].maxNev          = 1;
-        configs[0].maxNcv          = 4;
-        configs[0].compress        = false;
-        configs[0].maxTime         = 2 * 60 * 60; // Two hours
-        configs[0].lib             = eig::Lib::PRIMME;
-        configs[0].ritz            = eig::Ritz::SA;
-        configs[0].compute_eigvecs = eig::Vecs::ON;
-        configs[0].loglevel        = 2;
-        configs[0].primme_method   = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-        //        configs[0].primme_preconditioner = simps_preconditioner<MatVecMPO<Scalar>>;
+        configs[0].tol                = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        configs[0].maxIter            = 1000;
+        configs[0].maxNev             = 1;
+        configs[0].maxNcv             = 4;
+        configs[0].compress           = false;
+        configs[0].maxTime            = 2 * 60 * 60; // Two hours
+        configs[0].lib                = eig::Lib::PRIMME;
+        configs[0].ritz               = eig::Ritz::SA;
+        configs[0].compute_eigvecs    = eig::Vecs::ON;
+        configs[0].loglevel           = 2;
+        configs[0].primme_method      = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
+        configs[0].primme_convTestFun = RnormReadConvTest;
+        // Apply preconditioner if applicable, usually faster on small matrices
+        //        if(initial_mps.get_tensor().size() > settings::precision::max_size_full_diag and initial_mps.get_tensor().size() <= 8000)
+        //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
+        //        if(initial_mps.get_tensor().size() > 8192 and initial_mps.get_tensor().size() <= 20000)
+        //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
 
         // Overrides from default
         if(meta.compress_otf) configs[0].compress = meta.compress_otf;
