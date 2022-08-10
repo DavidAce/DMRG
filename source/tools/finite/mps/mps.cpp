@@ -141,7 +141,10 @@ size_t tools::finite::mps::move_center_point_to_pos_dir(StateFinite &state, long
     return moves;
 }
 
-size_t tools::finite::mps::move_center_point_to_edge(StateFinite &state, std::optional<svd::config> svd_cfg) {
+size_t tools::finite::mps::move_center_point_to_inward_edge(StateFinite &state, std::optional<svd::config> svd_cfg) {
+    // Flip if past middle and going in the other direction
+    if(state.get_direction() < 0 and state.get_position() > state.get_length() / 2) state.flip_direction();
+    if(state.get_direction() > 0 and state.get_position() < state.get_length() / 2) state.flip_direction();
     size_t moves = 0;
     while(not state.position_is_inward_edge()) moves += move_center_point_single_site(state, svd_cfg);
     return moves;

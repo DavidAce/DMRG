@@ -22,7 +22,7 @@ namespace tools::finite::mps {
     extern size_t move_center_point                  (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_pos           (StateFinite & state, long pos, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_pos_dir       (StateFinite & state, long pos, int dir, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern size_t move_center_point_to_edge          (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern size_t move_center_point_to_inward_edge   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t move_center_point_to_middle        (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern size_t merge_multisite_mps                (StateFinite & state, const Eigen::Tensor<cplx,3> & multisite_mps, const std::vector<size_t> & sites, long center_position, std::optional<svd::config> svd_cfg = std::nullopt, std::optional<LogPolicy> logPolicy = std::nullopt);
     extern bool normalize_state                      (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy norm_policy = NormPolicy::IFNEEDED);
@@ -36,7 +36,7 @@ namespace tools::finite::mps {
     extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, bool reverse, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_gates_old                      (StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & order, GateMove gm);
+    extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & sites, GateMove gm);
     extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, std::vector<size_t> & sites, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool reverse, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     namespace init{

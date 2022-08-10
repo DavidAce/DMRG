@@ -60,7 +60,7 @@ void flbit::resume() {
         tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_sector,
                                 settings::strategy::use_eigenspinors, settings::input::bitfield, bond_lim);
 
-        tensors.move_center_point_to_edge();
+        tensors.move_center_point_to_inward_edge();
 
         // Load the unitaries
         unitary_gates_2site_layers.clear();
@@ -180,7 +180,7 @@ void flbit::run_preprocessing() {
 
     // Create an initial state in the real basis
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    tensors.move_center_point_to_edge();
+    tensors.move_center_point_to_inward_edge();
     tools::finite::print::model(*tensors.model);
     create_time_points();
     update_time_step();
