@@ -158,18 +158,18 @@ MpoSite       &ModelInfinite::get_mpo_siteA() { return *HA; }
 MpoSite       &ModelInfinite::get_mpo_siteB() { return *HB; }
 
 Eigen::DSizes<long, 4> ModelInfinite::dimensions() const {
-    long dim0 = HA->MPO().dimension(0);
-    long dim1 = HB->MPO().dimension(1);
-    long dim2 = HA->MPO().dimension(2) * HB->MPO().dimension(2);
-    long dim3 = HA->MPO().dimension(3) * HB->MPO().dimension(3);
+    long dim0 = get_mpo_siteA().MPO().dimension(0);
+    long dim1 = get_mpo_siteB().MPO().dimension(1);
+    long dim2 = get_mpo_siteA().MPO().dimension(2) * get_mpo_siteB().MPO().dimension(2);
+    long dim3 = get_mpo_siteA().MPO().dimension(3) * get_mpo_siteB().MPO().dimension(3);
     return Eigen::DSizes<long, 4>{dim0, dim1, dim2, dim3};
 }
 
 bool ModelInfinite::is_shifted() const { return HA->is_shifted() and HB->is_shifted(); }
 
 double ModelInfinite::get_energy_shift_per_site() const {
-    if(not num::all_equal(HA->get_energy_shift(), HB->get_energy_shift()))
-        throw except::runtime_error("Energy shift mismatch: HA {:.16f} != HB {:.16f}", HA->get_energy_shift(), HB->get_energy_shift());
+    if(not num::all_equal(HA->get_energy_shift(), get_mpo_siteB().get_energy_shift()))
+        throw except::runtime_error("Energy shift mismatch: HA {:.16f} != HB {:.16f}", get_mpo_siteA().get_energy_shift(), get_mpo_siteB().get_energy_shift());
     return HA->get_energy_shift();
 }
 
@@ -180,21 +180,24 @@ void ModelInfinite::set_energy_shift_per_site(double energy_shift_per_site) {
 
 const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_AB() const {
     if(cache.twosite_mpo_AB) return cache.twosite_mpo_AB.value();
-    long dim0 = HA->MPO().dimension(0);
-    long dim1 = HB->MPO().dimension(1);
-    long dim2 = HA->MPO().dimension(2) * HB->MPO().dimension(2);
-    long dim3 = HA->MPO().dimension(3) * HB->MPO().dimension(3);
-    cache.twosite_mpo_AB =
-        HA->MPO().contract(HB->MPO(), tenx::idx({1}, {0})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{dim0, dim1, dim2, dim3});
+    long dim0            = get_mpo_siteA().MPO().dimension(0);
+    long dim1            = get_mpo_siteB().MPO().dimension(1);
+    long dim2            = get_mpo_siteA().MPO().dimension(2) * get_mpo_siteB().MPO().dimension(2);
+    long dim3            = get_mpo_siteA().MPO().dimension(3) * get_mpo_siteB().MPO().dimension(3);
+    cache.twosite_mpo_AB = get_mpo_siteA()
+                               .MPO()
+                               .contract(get_mpo_siteB().MPO(), tenx::idx({1}, {0}))
+                               .shuffle(tenx::array6{0, 3, 1, 4, 2, 5})
+                               .reshape(tenx::array4{dim0, dim1, dim2, dim3});
     return cache.twosite_mpo_AB.value();
 }
 
 const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_BA() const {
     if(cache.twosite_mpo_BA) return cache.twosite_mpo_BA.value();
-    long dim0 = HB->MPO().dimension(0);
-    long dim1 = HA->MPO().dimension(1);
-    long dim2 = HB->MPO().dimension(2) * HA->MPO().dimension(2);
-    long dim3 = HB->MPO().dimension(3) * HA->MPO().dimension(3);
+    long dim0 = get_mpo_siteB().MPO().dimension(0);
+    long dim1 = get_mpo_siteA().MPO().dimension(1);
+    long dim2 = get_mpo_siteB().MPO().dimension(2) * get_mpo_siteA().MPO().dimension(2);
+    long dim3 = get_mpo_siteB().MPO().dimension(3) * get_mpo_siteA().MPO().dimension(3);
     cache.twosite_mpo_BA =
         HB->MPO().contract(HA->MPO(), tenx::idx({1}, {0})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{dim0, dim1, dim2, dim3});
     return cache.twosite_mpo_BA.value();

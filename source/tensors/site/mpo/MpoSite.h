@@ -45,13 +45,13 @@ class MpoSite {
     void                                        set_psfactor(double psfactor);
     void                                        set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli);
     void                                        build_mpo_squared();
+    void                                        set_mpo(const Eigen::Tensor<cplx, 4> &mpo_sq);
     void                                        set_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_sq);
     void                                        clear_mpo_squared();
     [[nodiscard]] bool                          has_mpo_squared() const;
     [[nodiscard]] Eigen::Tensor<cplx, 4>        get_non_compressed_mpo_squared() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4> &MPO() const;
     [[nodiscard]] const Eigen::Tensor<cplx, 4> &MPO2() const;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>       &MPO2();
     [[nodiscard]] Eigen::Tensor<cplx, 4>        MPO2_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                                 std::optional<std::vector<size_t>> skip = std::nullopt) const;
     [[nodiscard]] size_t                        get_position() const;

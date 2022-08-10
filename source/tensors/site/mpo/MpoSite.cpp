@@ -79,6 +79,11 @@ void MpoSite::build_mpo_squared() {
     }
 }
 
+void MpoSite::set_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
+    mpo_internal = mpo;
+    unique_id    = std::nullopt;
+}
+
 void MpoSite::set_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_sq) {
     mpo_squared  = mpo_sq;
     unique_id_sq = std::nullopt;
@@ -99,6 +104,16 @@ const Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO() const {
     }
 }
 
+// Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO() {
+//     unique_id = std::nullopt;
+//     if(all_mpo_parameters_have_been_set) {
+//         return mpo_internal;
+//     } else {
+//         build_mpo();
+//         return mpo_squared.value();
+//     }
+// }
+
 const Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO2() const {
     if(mpo_squared and all_mpo_parameters_have_been_set)
         return mpo_squared.value();
@@ -106,14 +121,15 @@ const Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO2() const {
         throw std::runtime_error("MPO squared has not been set.");
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO2() {
-    if(mpo_squared and all_mpo_parameters_have_been_set)
-        return mpo_squared.value();
-    else {
-        build_mpo_squared();
-        return mpo_squared.value();
-    }
-}
+// Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO2() {
+//     unique_id_sq = std::nullopt;
+//     if(mpo_squared and all_mpo_parameters_have_been_set)
+//         return mpo_squared.value();
+//     else {
+//         build_mpo_squared();
+//         return mpo_squared.value();
+//     }
+// }
 
 Eigen::Tensor<MpoSite::cplx, 4> MpoSite::MPO2_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
     if(not nbody) return MPO2();
