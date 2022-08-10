@@ -369,18 +369,16 @@ namespace svd {
              * Splits a pair of merged MPO's back into two MPO's.
              *
              *
-             *         (1)dL     (4)dR                             (1)dL                                      (1)dR
+             *         (1)dL     (4)dR                             (1)dL                                      (2)dR
              *            |        |                                 |                                          |
-             *   (0)mL---[  mpoLR   ]---(3)mR     --->    (0)mL---[ mpoL ]---mC(3)  (0)---[S]---(1)  mC(3)---[ mpoR ]---(0)mR
+             *   (0)mL---[  mpoLR   ]---(3)mR     --->    (0)mL---[ mpoL ]---mC(3)  (0)---[S]---(1)  mC(0)---[ mpoR ]---(1)mR
              *            |        |                                 |                                          |
-             *         (2)dL     (5)dR                            (2)dL                                       (2)dR
+             *         (2)dL     (5)dR                            (2)dL                                       (3)dR
              *
-             *
-             * The mpo's can be shuffled back to standard form with
-             *   mpoL: shuffle(0,3,1,2)
-             *   mpoR: shuffle(3,0,1,2)
              *
              * The square root of S can then be multiplied into both left and right MPO's, on the mC index.
+             * The left mpo can be shuffled back to standard form with
+             *   mpoL: shuffle(0,3,1,2)
              *
              */
             auto rows = mpo.dimension(0) * mpo.dimension(1) * mpo.dimension(2);
