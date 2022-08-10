@@ -483,7 +483,7 @@ void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vect
         activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
     }
 
-    tools::log->info("Sites mps: {}", sites_mps);
+    tools::log->debug("Sites mps: {}", sites_mps);
     clear_cache();
     clear_measurements();
 }
@@ -501,11 +501,11 @@ void TensorsFinite::move_site_mpo(const size_t site, const long steps, std::vect
         if(posL == posR) break;
         if(posL < 0 or posL >= get_length<long>()) break;
         if(posR < 0 or posR >= get_length<long>()) break;
-        tools::log->info("swapping mpo sites {} <--> {}", posL, posR);
+        tools::log->debug("swapping mpo sites {} <--> {}", posL, posR);
         // Move the MPO site
         tools::finite::mpo::swap_sites(*model, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mpo);
     }
-    tools::log->info("Sites mpo: {}", sites_mpo);
+    tools::log->debug("Sites mpo: {}", sites_mpo);
     clear_cache();
     clear_measurements();
 }
@@ -545,7 +545,7 @@ void TensorsFinite::move_site_mps_to_pos(const size_t site, const long tgt_pos, 
         activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
     }
 
-    tools::log->info("Sites mps: {}", sites_mps);
+    tools::log->debug("Sites mps: {}", sites_mps);
     clear_cache();
     clear_measurements();
 }
@@ -574,11 +574,11 @@ void TensorsFinite::move_site_mpo_to_pos(const size_t site, const long tgt_pos, 
         if(posL == posR) break;
         if(posL < 0 or posL >= get_length<long>()) break;
         if(posR < 0 or posR >= get_length<long>()) break;
-        tools::log->info("swapping mpo sites {} <--> {}", posL, posR);
+        tools::log->debug("swapping mpo sites {} <--> {}", posL, posR);
         // Move the MPO site
         tools::finite::mpo::swap_sites(*model, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mpo);
     }
-    tools::log->info("Sites mpo: {}", sites_mpo);
+    tools::log->debug("Sites mpo: {}", sites_mpo);
     clear_cache();
     clear_measurements();
 }

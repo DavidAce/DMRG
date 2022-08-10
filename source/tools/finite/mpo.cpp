@@ -89,10 +89,10 @@ void tools::finite::mpo::swap_sites(ModelFinite &model, size_t posL, size_t posR
 
     auto [mpoL, mpoR]   = swap_mpo(mpo_posL.MPO(), mpo_posR.MPO());
     auto [mpoL2, mpoR2] = swap_mpo(mpo_posL.MPO2(), mpo_posR.MPO2());
-    tools::log->info("mpo({}) : {} -> {}", mpo_posL.get_position(), mpo_posL.MPO().dimensions(), mpoL.dimensions());
-    tools::log->info("mpo({}) : {} -> {}", mpo_posR.get_position(), mpo_posR.MPO().dimensions(), mpoR.dimensions());
-    tools::log->info("mpo²({}): {} -> {}", mpo_posL.get_position(), mpo_posL.MPO2().dimensions(), mpoL2.dimensions());
-    tools::log->info("mpo²({}): {} -> {}", mpo_posR.get_position(), mpo_posR.MPO2().dimensions(), mpoR2.dimensions());
+    tools::log->debug("mpo({}) : {} -> {}", mpo_posL.get_position(), mpo_posL.MPO().dimensions(), mpoL.dimensions());
+    tools::log->debug("mpo({}) : {} -> {}", mpo_posR.get_position(), mpo_posR.MPO().dimensions(), mpoR.dimensions());
+    tools::log->debug("mpo²({}): {} -> {}", mpo_posL.get_position(), mpo_posL.MPO2().dimensions(), mpoL2.dimensions());
+    tools::log->debug("mpo²({}): {} -> {}", mpo_posR.get_position(), mpo_posR.MPO2().dimensions(), mpoR2.dimensions());
     mpo_posL.set_mpo(mpoL);
     mpo_posR.set_mpo(mpoR);
     mpo_posL.set_mpo_squared(mpoL2);
