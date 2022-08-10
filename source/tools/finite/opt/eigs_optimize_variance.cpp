@@ -96,22 +96,26 @@ namespace tools::finite::opt {
         return init;
     }
 
-    template<typename MatrixProductType>
-    void simps_preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, int *ierr) {
+    template<typename Scalar, typename MatVecMPO<Scalar>::DecompMode mode>
+    void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
         if(x == nullptr) return;
         if(y == nullptr) return;
         if(primme == nullptr) return;
-        using T = typename MatrixProductType::Scalar;
-        // When optimizing variance, the objects below refer to the ones to construct (H-E)², as in the second moment
-        const auto  H_ptr     = static_cast<MatrixProductType *>(primme->matrix);
-        const auto  shape_mps = H_ptr->get_shape_mps();
-        const auto &mpo       = H_ptr->get_mpo();
-        const auto &envL      = H_ptr->get_envL();
-        const auto &envR      = H_ptr->get_envR();
-        for(int i = 0; i < *blockSize; i++) {
-            auto mps_in  = Eigen::TensorMap<const Eigen::Tensor<T, 3>>(static_cast<T *>(x) + *ldx * i, shape_mps);
-            auto mps_out = Eigen::TensorMap<Eigen::Tensor<T, 3>>(static_cast<T *>(y) + *ldy * i, shape_mps);
-            tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+        const auto H_ptr = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
+        H_ptr->decomp    = mode;
+        H_ptr->FactorOP();
+        H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
+    }
+
+    void RnormReadConvTest([[maybe_unused]] double *eval, [[maybe_unused]] void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
+        if(rNorm == nullptr) return;
+        if(primme == nullptr) return;
+
+        double problemNorm;
+        if(not primme->massMatrixMatvec) {
+            problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
+        } else {
+            problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
         }
         *ierr = 0;
     }
