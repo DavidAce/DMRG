@@ -27,13 +27,13 @@ void itebd::run_preprocessing() {
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
-void itebd::run_simulation() {
+void itebd::run_algorithm() {
     tools::log->info("Starting {} simulation", status.algo_type_sv());
     auto t_run = tid::tic_scope("run");
     while(status.iter < settings::itebd::max_iters and status.algorithm_converged_for == 0) {
-        single_TEBD_step();
+        update_state();
         check_convergence();
-        print_status_update();
+        print_status();
         write_to_file();
 
         status.iter++;
@@ -47,9 +47,9 @@ void itebd::run_postprocessing() {
     print_status_full();
 }
 
-void itebd::single_TEBD_step() {
+void itebd::update_state() {
     /*!
-     * \fn single_TEBD_step(class_superblock &state)
+     * \fn update_state()
      * \brief infinite Time evolving block decimation.
      */
     auto t_step = tid::tic_scope("step");

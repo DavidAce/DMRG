@@ -17,12 +17,12 @@ class fdmrg : public AlgorithmFinite {
     using AlgorithmFinite::AlgorithmFinite;
     explicit fdmrg(std::shared_ptr<h5pp::File> h5file_);
     OptRitz ritz = OptRitz::SR;
-    void    single_fdmrg_step();
     void    resume() final;
     void    run_task_list(std::deque<fdmrg_task> &task_list);
     void    run_default_task_list() final;
     void    run_preprocessing() final;
     void    run_algorithm() final;
     void    run_fes_analysis() final;
+    void    update_state() final;
     void    check_convergence() final;
 };

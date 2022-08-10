@@ -127,8 +127,8 @@ void fdmrg::run_algorithm() {
     auto t_run       = tid::tic_scope("run");
     status.algo_stop = AlgorithmStop::NONE;
     while(true) {
-        single_fdmrg_step();
-        print_status_update();
+        update_state();
+        print_status();
         check_convergence();
         write_to_file();
 
@@ -154,7 +154,7 @@ void fdmrg::run_fes_analysis() {
     tools::log->warn("FES is not yet implemented for fdmrg");
 }
 
-void fdmrg::single_fdmrg_step() {
+void fdmrg::update_state() {
     auto    t_step = tid::tic_scope("step");
     OptMeta meta(ritz, OptMode::ENERGY);
     if(tensors.is_real()) meta.optType = OptType::REAL; // Can do everything in real mode if the model is real

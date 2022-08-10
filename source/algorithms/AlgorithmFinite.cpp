@@ -24,7 +24,7 @@ AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, Algorith
 }
 
 // We need to make a destructor manually for the enclosing class "ModelFinite"
-// that encloses "class_model_base". Otherwise unique_ptr will forcibly inline its
+// that encloses "class_model_base". Otherwise, unique_ptr will forcibly inline its
 // own default deleter.
 // This allows us to forward declare the abstract base class "class_model_base"
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
@@ -506,10 +506,10 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             // then we may inadvertently project to a sector opposite to the target state.
             // If that happened, we would get stuck in a local minima.
             // One reasonable thing to do here is to compare the variance of both projections,
-            // and keep the one with lowest variance.
+            // and keep the one with the lowest variance.
             // Of course, one problem is that if the spin component is already in one sector,
             // projecting to the other sector will zero the norm. So we can only make this
-            // decision if the the |spin component| << 1. Maybe < 0.5 is enough?
+            // decision if the |spin component| << 1. Maybe < 0.5 is enough?
             auto spin_component_along_requested_axis = tools::finite::measure::spin_component(*tensors.state, target_sector.value());
             tools::log->debug("Spin component along {} = {:.16f}", target_sector.value(), spin_component_along_requested_axis);
             if(std::abs(spin_component_along_requested_axis) < 0.5) {
@@ -736,7 +736,7 @@ void AlgorithmFinite::write_to_file(StorageReason storage_reason, const T &data,
 template void AlgorithmFinite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name,
                                              std::optional<CopyPolicy> copy_policy);
 
-void AlgorithmFinite::print_status_update() {
+void AlgorithmFinite::print_status() {
     if(num::mod(status.step, settings::print_freq(status.algo_type)) != 0) return;
     if(settings::print_freq(status.algo_type) == 0) return;
 

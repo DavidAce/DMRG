@@ -26,10 +26,7 @@ class AlgorithmFinite : public AlgorithmBase {
     std::optional<OptSolver> last_optspace  = std::nullopt;
 
     public:
-    virtual void run_algorithm()     = 0;
-    virtual void run_fes_analysis()  = 0;
-    virtual void run_preprocessing() = 0; // Specific for each algorithm type
-    virtual void run_postprocessing();
+    virtual void run_fes_analysis()      = 0;
     virtual void resume()                = 0;
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
@@ -44,6 +41,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         update_expansion_factor_alpha();
     void         randomize_model();
     void         run() final;
+    void         run_postprocessing() override;
     void         clear_convergence_status() override;
     void         randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
                                  std::optional<std::string> sector = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
@@ -51,7 +49,7 @@ class AlgorithmFinite : public AlgorithmBase {
                                  std::optional<double> trnc_lim = std::nullopt);
 
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) override;
-    void print_status_update() override;
+    void print_status() override;
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);

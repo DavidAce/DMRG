@@ -28,9 +28,13 @@ class AlgorithmBase {
 
     // Virtual Functions
     virtual void run()                                                                                                                         = 0;
+    virtual void run_algorithm()                                                                                                               = 0;
+    virtual void run_preprocessing()                                                                                                           = 0;
+    virtual void run_postprocessing()                                                                                                          = 0;
+    virtual void update_state()                                                                                                                = 0;
     virtual void check_convergence()                                                                                                           = 0;
     virtual void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt) = 0;
-    virtual void print_status_update()                                                                                                         = 0;
+    virtual void print_status()                                                                                                                = 0;
     virtual void print_status_full()                                                                                                           = 0;
     virtual void clear_convergence_status()                                                                                                    = 0;
     virtual void update_variance_max_digits(std::optional<double> energy = std::nullopt)                                                       = 0;

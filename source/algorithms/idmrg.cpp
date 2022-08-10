@@ -12,7 +12,7 @@ idmrg::idmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmInfinite(std::mov
     tensors.initialize(settings::model::model_type);
 }
 
-void idmrg::run_simulation() {
+void idmrg::run_algorithm() {
     if(ritz == OptRitz::SR)
         tensors.state->set_name("state_emin");
     else
@@ -21,9 +21,9 @@ void idmrg::run_simulation() {
                      tensors.state->get_name());
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     while(true) {
-        single_iDMRG_step();
+        update_state();
         check_convergence();
-        print_status_update();
+        print_status();
         write_to_file();
 
         // It's important not to perform the last move.
@@ -69,9 +69,9 @@ void idmrg::run_simulation() {
     tools::log->info("Finished {} simulation -- reason: {}", status.algo_type_sv(), status.algo_stop_sv());
 }
 
-void idmrg::single_iDMRG_step() {
+void idmrg::update_state() {
     /*!
-     * \fn void single_DMRG_step(class_superblock &state)
+     * \fn void single_DMRG_step()
      */
     tools::log->trace("Starting single iDMRG step with ritz: [{}]", enum2sv(ritz));
     Eigen::Tensor<Scalar, 3> twosite_tensor = tools::infinite::opt::find_ground_state(tensors, ritz);

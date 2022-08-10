@@ -26,7 +26,6 @@ class flbit : public AlgorithmFinite {
     // Inherit the constructor of class_algorithm_base
     using AlgorithmFinite::AlgorithmFinite;
     explicit flbit(std::shared_ptr<h5pp::File> h5file_);
-    void single_flbit_step();
     void update_time_step();
     void resume() final;
     void run_task_list(std::deque<flbit_task> &task_list);
@@ -34,6 +33,7 @@ class flbit : public AlgorithmFinite {
     void run_preprocessing() final;
     void run_algorithm() final;
     void run_fes_analysis() final;
+    void update_state() final;
     void check_convergence() final;
     void create_time_points();
     void create_hamiltonian_gates();
@@ -45,5 +45,5 @@ class flbit : public AlgorithmFinite {
     void transform_to_lbit_basis();
     void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) final;
     void write_state_swap_gates_to_file(const StateFinite &state, const std::vector<qm::SwapGate> &gates);
-    void print_status_update() final;
+    void print_status() final;
 };

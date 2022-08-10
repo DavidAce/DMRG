@@ -21,7 +21,7 @@ void AlgorithmInfinite::run() {
     if(not settings::algorithm_is_on(status.algo_type)) return;
     auto t_tot = tid::get_unscoped("t_tot").tic_token();
     run_preprocessing();
-    run_simulation();
+    run_algorithm();
     run_postprocessing();
 }
 

@@ -222,11 +222,11 @@ void flbit::run_algorithm() {
     auto t_run = tid::tic_scope("run");
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
     while(true) {
-        single_flbit_step();
+        update_state();
         check_convergence();
         write_to_file(StorageReason::SAVEPOINT);
         write_to_file(StorageReason::CHECKPOINT);
-        print_status_update();
+        print_status();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
@@ -252,9 +252,9 @@ void flbit::run_fes_analysis() {
     tools::log->warn("FES is not yet implemented for flbit");
 }
 
-void flbit::single_flbit_step() {
+void flbit::update_state() {
     /*!
-     * \fn void single_DMRG_step(std::string ritz)
+     * \fn void update_state()
      */
     tools::log->debug("Starting fLBIT: iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(status.delta_t), std::imag(status.delta_t));
     if(not state_lbit) throw except::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
@@ -721,7 +721,7 @@ void flbit::write_state_swap_gates_to_file(const StateFinite &state, const std::
     }
 }
 
-void flbit::print_status_update() {
+void flbit::print_status() {
     if(num::mod(status.iter, settings::print_freq(status.algo_type)) != 0) return;
     if(settings::print_freq(status.algo_type) == 0) return;
     auto        t_print = tid::tic_scope("print");

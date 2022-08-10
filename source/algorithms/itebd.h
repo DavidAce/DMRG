@@ -14,10 +14,10 @@ class itebd : public AlgorithmInfinite {
     std::vector<Eigen::Tensor<Scalar, 2>> unitary_time_evolving_operators;
     Eigen::Tensor<Scalar, 2>              h_evn, h_odd;
 
-    void single_TEBD_step();
-    void run_simulation() final;
+    void run_algorithm() final;
     void run_preprocessing() final;
     void run_postprocessing() final;
+    void update_state() final;
     void check_convergence_time_step();
     void check_convergence() final;
 };
