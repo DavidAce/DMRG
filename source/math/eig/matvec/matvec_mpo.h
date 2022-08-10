@@ -2,32 +2,39 @@
 #include "../enums.h"
 #include <array>
 #include <complex>
+#include <Eigen/Cholesky>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
+
 namespace tid {
     class ur;
 }
 
 struct primme_params;
 
-template<class Scalar_>
+template<typename T>
 class MatVecMPO {
+    static_assert(std::is_same_v<T, eig::real> or std::is_same_v<T, eig::cplx>);
+
     public:
-    using Scalar                                   = Scalar_;
+    using Scalar                                   = T;
     constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
     constexpr static bool         can_compress     = true;
     constexpr static eig::Storage storage          = eig::Storage::MPS;
+    enum class DecompMode { MATRIXFREE, LDLT, LLT };
+    DecompMode decomp = DecompMode::MATRIXFREE;
 
     private:
     using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     Eigen::Tensor<Scalar, 3> envL;
     Eigen::Tensor<Scalar, 3> envR;
     Eigen::Tensor<Scalar, 4> mpo;
     std::array<long, 3>      shape_mps;
 
-    long      mps_size;
+    long      size_mps;
     eig::Form form = eig::Form::SYMM;
     eig::Side side = eig::Side::R;
 
@@ -37,23 +44,26 @@ class MatVecMPO {
     bool                 readyFactorOp = false; // Flag to make sure LU factorization has occurred
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
+    Eigen::LDLT<MatrixType> ldlt; // Stores the ldlt matrix decomposition on shift-invert
+    Eigen::LLT<MatrixType>  llt;  // Stores the llt matrix decomposition on shift-invert
+    MatrixType              matrixDecomp;
+
     public:
     MatVecMPO() = default;
-    template<typename T>
-    MatVecMPO(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
-              const Eigen::Tensor<T, 3> &envR_, /*!< The right block tensor.  */
-              const Eigen::Tensor<T, 4> &mpo_   /*!< The Hamiltonian MPO's  */
+    template<typename S>
+    MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block tensor.  */
+              const Eigen::Tensor<S, 3> &envR_, /*!< The right block tensor.  */
+              const Eigen::Tensor<S, 4> &mpo_   /*!< The Hamiltonian MPO's  */
     );
+    // Functions used in Arpack++ solver
+    [[nodiscard]] int rows() const { return static_cast<int>(size_mps); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int cols() const { return static_cast<int>(size_mps); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
-    // Functions used in in Arpack++ solver
-    [[nodiscard]] int rows() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
-    [[nodiscard]] int cols() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
-
-    void FactorOP();                                  //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
-    void MultOPv(Scalar_ *mps_in_, Scalar_ *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void FactorOP();                      //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
+    void MultOPv(T *mps_in_, T *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
-    void MultAx(Scalar_ *mps_in_, Scalar_ *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
-    void MultAx(Scalar_ *mps_in, Scalar_ *mps_out, Scalar_ *mpo_ptr, Scalar_ *envL_ptr, Scalar_ *envR_ptr, std::array<long, 3> shape_mps_,
+    void MultAx(T *mps_in_, T *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
+    void MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_,
                 std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
 
@@ -68,7 +78,6 @@ class MatVecMPO {
     void set_mode(eig::Form form_);
     void set_side(eig::Side side_);
 
-    template<typename T = eig::cplx>
     [[nodiscard]] T                               get_shift() const;
     [[nodiscard]] eig::Form                       get_form() const;
     [[nodiscard]] eig::Side                       get_side() const;
@@ -76,6 +85,7 @@ class MatVecMPO {
     [[nodiscard]] const Eigen::Tensor<Scalar, 4> &get_mpo() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_envL() const;
     [[nodiscard]] const Eigen::Tensor<Scalar, 3> &get_envR() const;
+    [[nodiscard]] long                            get_size() const;
     [[nodiscard]] std::array<long, 3>             get_shape_mps() const;
     [[nodiscard]] std::array<long, 4>             get_shape_mpo() const;
     [[nodiscard]] std::array<long, 3>             get_shape_envL() const;

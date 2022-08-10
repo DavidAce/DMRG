@@ -5,6 +5,7 @@
 #include "math/tenx.h"
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
+#include <Eigen/Cholesky>
 #include <primme/primme.h>
 
 namespace eig {
@@ -16,20 +17,19 @@ namespace eig {
 #endif
 }
 
-// template<typename Scalar_>
-// MatVecMPO<Scalar_>::~MatVecMPO() noexcept = default;
-
-template<typename Scalar_>
 template<typename T>
-MatVecMPO<Scalar_>::MatVecMPO(const Eigen::Tensor<T, 3> &envL_, /*!< The left block tensor.  */
-                              const Eigen::Tensor<T, 3> &envR_, /*!< The right block tensor.  */
-                              const Eigen::Tensor<T, 4> &mpo_   /*!< The Hamiltonian MPO's  */
+template<typename S>
+MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block tensor.  */
+                        const Eigen::Tensor<S, 3> &envR_, /*!< The right block tensor.  */
+                        const Eigen::Tensor<S, 4> &mpo_   /*!< The Hamiltonian MPO's  */
 ) {
-    if constexpr(std::is_same_v<Scalar_, T>) {
+    static_assert(std::is_same_v<S, eig::real> or std::is_same_v<S, eig::cplx>);
+
+    if constexpr(std::is_same_v<T, S>) {
         mpo  = mpo_;
         envL = envL_;
         envR = envR_;
-    } else if constexpr(std::is_same_v<Scalar_, eig::real> and std::is_same_v<T, eig::cplx>) {
+    } else if constexpr(std::is_same_v<T, eig::real> and std::is_same_v<S, eig::cplx>) {
         // This should only be done if we know for a fact that there is no imaginary component.
         if constexpr(eig::debug) {
             if(not tenx::isReal(mpo_)) throw except::runtime_error("mpo is not real");
@@ -39,14 +39,14 @@ MatVecMPO<Scalar_>::MatVecMPO(const Eigen::Tensor<T, 3> &envL_, /*!< The left bl
         mpo  = mpo_.real();
         envL = envL_.real();
         envR = envR_.real();
-    } else if constexpr(std::is_same_v<Scalar_, eig::cplx> and std::is_same_v<T, eig::real>) {
+    } else if constexpr(std::is_same_v<T, eig::cplx> and std::is_same_v<S, eig::real>) {
         mpo  = mpo_.template cast<eig::cplx>();
         envL = envL_.template cast<eig::cplx>();
         envR = envR_.template cast<eig::cplx>();
     }
 
     shape_mps  = {mpo.dimension(2), envL.dimension(0), envR.dimension(0)};
-    mps_size   = shape_mps[0] * shape_mps[1] * shape_mps[2];
+    size_mps   = shape_mps[0] * shape_mps[1] * shape_mps[2];
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
@@ -61,15 +61,32 @@ template MatVecMPO<eig::cplx>::MatVecMPO(const Eigen::Tensor<eig::cplx, 3> &envL
 template MatVecMPO<eig::real>::MatVecMPO(const Eigen::Tensor<eig::cplx, 3> &envL_, const Eigen::Tensor<eig::cplx, 3> &envR_,
                                          const Eigen::Tensor<eig::cplx, 4> &mpo_);
 
-template<typename Scalar>
-void MatVecMPO<Scalar>::FactorOP()
-/* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
-{
+template<typename T>
+void MatVecMPO<T>::FactorOP() {
     if(readyFactorOp) return; // happens only once
-    if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
-    t_factorOP->tic();
+    if(decomp == DecompMode::MATRIXFREE) {
+        readyFactorOp = true;
+        return;
+    }
+
+    auto t_token = t_factorOP->tic_token();
+    eig::log->info("Generating A_matrix");
+    MatrixType A_matrix = get_matrix() - Eigen::MatrixXd::Identity(rows(), cols()) * get_shift();
+    matrixDecomp        = A_matrix;
+    matrixDecomp.llt();
+    if(decomp == DecompMode::LDLT) {
+        eig::log->info("LDLT Factorization...");
+        ldlt.compute(A_matrix);
+    }
+    if(decomp == DecompMode::LLT) {
+        eig::log->info("LLT Factorization | sp {:8.5e} ...", static_cast<double>(A_matrix.nonZeros()) / A_matrix.size());
+        llt.compute(A_matrix);
+    } else {
+        /* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
+        if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
+    }
+    eig::log->info("Success");
     readyFactorOp = true;
-    t_factorOP->toc();
 }
 
 template<typename T>
@@ -132,11 +149,23 @@ void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
     switch(side) {
         case eig::Side::R: {
             for(int i = 0; i < *blockSize; i++) {
-                T                                    *mps_in_  = static_cast<T *>(x) + *ldx * i;
-                T                                    *mps_out_ = static_cast<T *>(y) + *ldy * i;
-                Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
-                Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
-                tools::common::contraction::matrix_inverse_vector_product(mps_out, mps_in, mpo, envL, envR);
+                T *x_ptr = static_cast<T *>(x) + *ldx * i;
+                T *y_ptr = static_cast<T *>(y) + *ldy * i;
+                if(decomp == DecompMode::MATRIXFREE) {
+                    Eigen::TensorMap<Eigen::Tensor<T, 3>> x_map(x_ptr, shape_mps);
+                    Eigen::TensorMap<Eigen::Tensor<T, 3>> y_map(y_ptr, shape_mps);
+                    tools::common::contraction::matrix_inverse_vector_product(y_map, x_map, mpo, envL, envR);
+                }
+                if(decomp == DecompMode::LDLT) {
+                    Eigen::Map<VectorType> x_map(x_ptr, *ldx);
+                    Eigen::Map<VectorType> y_map(y_ptr, *ldy);
+                    y_map.noalias() = ldlt.solve(x_map);
+                }
+                if(decomp == DecompMode::LLT) {
+                    Eigen::Map<VectorType> x_map(x_ptr, *ldx);
+                    Eigen::Map<VectorType> y_map(y_ptr, *ldy);
+                    y_map.noalias() = llt.solve(x_map);
+                }
                 num_op++;
             }
             break;
@@ -247,21 +276,11 @@ void MatVecMPO<Scalar>::set_side(const eig::Side side_) {
     side = side_;
 }
 
-template<typename Scalar>
 template<typename T>
-T MatVecMPO<Scalar>::get_shift() const {
-    if constexpr(std::is_same_v<T, eig::cplx>)
-        return sigma;
-    else if constexpr(std::is_floating_point_v<T>)
-        return std::real(sigma);
-    else
-        return static_cast<T>(sigma);
+T MatVecMPO<T>::get_shift() const {
+    if constexpr(std::is_same_v<T, eig::cplx>) return sigma;
+    if constexpr(std::is_same_v<T, eig::real>) return std::real(sigma);
 }
-
-template eig::real MatVecMPO<eig::real>::get_shift<eig::real>() const;
-template eig::real MatVecMPO<eig::cplx>::get_shift<eig::real>() const;
-template eig::cplx MatVecMPO<eig::real>::get_shift<eig::cplx>() const;
-template eig::cplx MatVecMPO<eig::cplx>::get_shift<eig::cplx>() const;
 
 template<typename Scalar>
 eig::Form MatVecMPO<Scalar>::get_form() const {
@@ -293,6 +312,12 @@ template<typename Scalar>
 const Eigen::Tensor<Scalar, 3> &MatVecMPO<Scalar>::get_envR() const {
     return envR;
 }
+
+template<typename Scalar>
+long MatVecMPO<Scalar>::get_size() const {
+    return size_mps;
+}
+
 template<typename Scalar>
 std::array<long, 3> MatVecMPO<Scalar>::get_shape_mps() const {
     return shape_mps;
@@ -311,6 +336,8 @@ std::array<long, 3> MatVecMPO<Scalar>::get_shape_envR() const {
 }
 template<typename Scalar>
 Eigen::Tensor<Scalar, 6> MatVecMPO<Scalar>::get_tensor() const {
+    eig::log->info("Generating tensor");
+
     auto                     d0 = shape_mps[0];
     auto                     d1 = shape_mps[1];
     auto                     d2 = shape_mps[2];
@@ -324,7 +351,6 @@ Eigen::Tensor<Scalar, 6> MatVecMPO<Scalar>::get_tensor() const {
 template<typename Scalar>
 typename MatVecMPO<Scalar>::MatrixType MatVecMPO<Scalar>::get_matrix() const {
     return tenx::MatrixCast(get_tensor(), rows(), cols());
-    //    return get_tensor().reshape(tenx::array2{rows(), cols()});
 }
 
 template<typename Scalar>
