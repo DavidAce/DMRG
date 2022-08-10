@@ -300,8 +300,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         }
     }
     // If we got here we want to increase the bond dimension limit progressively during the simulation
-    bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
-    bool is_has_stuck      = status.algorithm_has_stuck_for > 1;
+    bool is_saturated      = status.algorithm_saturated_for > 0; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_has_stuck      = status.algorithm_has_stuck_for > 0;
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
     bool grow_if_truncated = settings::strategy::bond_increase_when == UpdateWhen::TRUNCATED;
     bool grow_if_saturated = settings::strategy::bond_increase_when == UpdateWhen::SATURATED;
@@ -376,9 +376,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) 
             status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
         else {
             tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
-            status.bond_lim                = static_cast<long>(bond_new);
-            status.algorithm_has_stuck_for = 0;
-            status.algorithm_saturated_for = 0;
+            status.bond_lim = static_cast<long>(bond_new);
         }
         iter_last_bond_reduce = status.iter;
     }
@@ -410,8 +408,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
     }
 
     // If we got here we want to decrease the truncation error limit progressively during the simulation
-    bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.
-    bool is_has_stuck      = status.algorithm_has_stuck_for > 1; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_saturated      = status.algorithm_saturated_for > 0; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_has_stuck      = status.algorithm_has_stuck_for > 0; // Allow one round while saturated so that extra efforts get a chance.
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
     bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdateWhen::TRUNCATED;
     bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
@@ -445,9 +443,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
     status.trnc_lim                   = trnc_new;
-    status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_max;
-    status.algorithm_has_stuck_for    = 0;
-    status.algorithm_saturated_for    = 0;
+    status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_min;
 
     // Last sanity check before leaving here
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
