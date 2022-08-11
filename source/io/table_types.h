@@ -200,6 +200,7 @@ class h5pp_table_algorithm_status {
         H5Tinsert(h5_type, "variance_mom_converged_for",  HOFFSET(table, variance_mom_converged_for), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "variance_mom_saturated_for",  HOFFSET(table, variance_mom_saturated_for), H5T_NATIVE_ULONG);
         H5Tinsert(h5_type, "bond_limit_has_reached_max",  HOFFSET(table, bond_limit_has_reached_max), H5T_NATIVE_UINT8);
+        H5Tinsert(h5_type, "trnc_limit_has_reached_min",  HOFFSET(table, trnc_limit_has_reached_min), H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "fes_is_running",              HOFFSET(table, fes_is_running),             H5T_NATIVE_UINT8);
