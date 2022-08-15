@@ -279,7 +279,7 @@ void xdmrg::run_fes_analysis() {
     }
 
     while(true) {
-        tools::log->info("Starting step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+        tools::log->trace("Starting xDMRG FES step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         update_state();
         status.wall_time       = tid::get_unscoped("t_tot").get_time();
         status.algo_time       = t_fes->get_time();
