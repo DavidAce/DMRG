@@ -126,15 +126,16 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
 }
 
 std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFinite &state) {
-    // Here we calculate the bond dimensions of the bonds that were merged into the full state in the last step
+    // Here we get the bond dimensions of the bonds that were merged into the full state in the last step
     // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
+    // If active sites is just {4}, it returns the bond between {4,5} when going right, and {3,4} when going left.
     auto t_chi = tid::tic_scope("bond_merged");
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // Because of subspace expansion, the only bond dimension that grows is the one directly behind
         // mps, relative to the current direction.
-        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
-        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
+        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     std::vector<long> bond_dims;
@@ -285,12 +286,15 @@ std::vector<double> tools::finite::measure::truncation_errors(const StateFinite 
 }
 
 std::vector<double> tools::finite::measure::truncation_errors_active(const StateFinite &state) {
+    // Here we get the truncation erros of the bonds that were merged into the full state in the last step
+    // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
+    // If active sites is just {4}, it returns the bond between {4,5} when going right, and {3,4} when going left.
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // Because of subspace expansion, the only bond dimension that grows is the one directly behind
         // mps, relative to the current direction.
-        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error()};
-        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
+        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
+        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
     std::vector<double> truncation_errors;
