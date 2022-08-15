@@ -136,9 +136,9 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         while(num_moves > moves++) {
             if(tensors.position_is_outward_edge()) status.iter++;
             tools::log->trace("Moving center position | step {} | pos {} | dir {} ", status.step, tensors.get_position<long>(), tensors.state->get_direction());
-            status.step += tensors.move_center_point(svd::config(status.bond_lim, status.trnc_lim));
+            status.step += tensors.move_center_point();
             // Do not go past the edge if you aren't there already!
-            // It's important to stay at the inward edge so we can do convergence checks and so on
+            // It's important to stay at the inward edge, so we can do convergence checks and so on
             if(tensors.position_is_inward_edge()) break;
         }
         tensors.clear_active_sites();
