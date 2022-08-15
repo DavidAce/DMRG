@@ -134,7 +134,7 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the algorithms */
     namespace strategy {
-        inline bool          expand_envs_when_stuck      = true;                                   /*!< Use environment expansion when stuck in local minima. alpha == lowest_variance */
+        inline bool          move_sites_when_stuck       = true;                                   /*!< Try moving sites around when stuck */
         inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
         inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
         inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_increase_when == true). */

@@ -130,7 +130,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
 
-    dmrg_config.load_parameter("strategy::expand_envs_when_stuck"             , strategy::expand_envs_when_stuck);
+    dmrg_config.load_parameter("strategy::move_sites_when_stuck"              , strategy::move_sites_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
     dmrg_config.load_parameter("strategy::project_on_every_iter"              , strategy::project_on_every_iter);
     dmrg_config.load_parameter("strategy::project_on_bond_update"             , strategy::project_on_bond_update);

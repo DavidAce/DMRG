@@ -32,7 +32,7 @@ void xdmrg::resume() {
     // 2) Resume a previously successful simulation. This may be desireable if the config
     //    wants something that is not present in the file.
     //      a) A certain number of states
-    //      b) A state inside of a particular energy window
+    //      b) A state inside a particular energy window
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
@@ -416,9 +416,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
         if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
-        // If we are stuck and enabled subspace expansion when stuck
-        if(settings::strategy::expand_envs_when_stuck and status.algorithm_has_stuck_for > 0 and status.env_expansion_alpha > 0)
-            m1.alpha_expansion = status.env_expansion_alpha;
     }
 
     metas.emplace_back(m1);

@@ -165,6 +165,7 @@ void AlgorithmFinite::shift_mpo_energy() {
 }
 
 void AlgorithmFinite::try_moving_sites() {
+    if(not settings::strategy::move_sites_when_stuck) return;
     if(not tensors.position_is_inward_edge()) return;
     if(status.algorithm_has_stuck_for == 0) return;
     // Definitions:
@@ -845,10 +846,10 @@ void AlgorithmFinite::print_status() {
         report += fmt::format("l:⟨{}| ", site_str);
     }
 
-    double epsite = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_per_site(tensors);
-    report += fmt::format(FMT_STRING("E/L:{:<20.16f} "), epsite);
+    double epsite = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
+    report += fmt::format(FMT_STRING("E:{:<20.16f} "), epsite);
 
-    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("e:{:<6.4f} "), status.energy_dens); }
+    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("e:{:<5.3f} "), status.energy_dens); }
     report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(),
                           tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
