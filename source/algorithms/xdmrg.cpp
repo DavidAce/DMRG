@@ -721,7 +721,7 @@ void xdmrg::find_energy_range() {
 
     std::deque<fdmrg_task> hs_tasks = {fdmrg_task::INIT_CLEAR_STATUS, fdmrg_task::INIT_BOND_LIMITS, fdmrg_task::INIT_TRNC_LIMITS,
                                        fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE, fdmrg_task::FIND_HIGHEST_STATE};
-    // Find lowest energy state
+    // Find the lowest energy state
     {
         auto  t_gs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_gs(h5file);
@@ -734,7 +734,7 @@ void xdmrg::find_energy_range() {
         write_to_file(StorageReason::EMIN_STATE, *fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges);
     }
 
-    // Find highest energy state
+    // Find the highest energy state
     {
         auto  t_hs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_hs(h5file);

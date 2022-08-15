@@ -40,7 +40,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
         state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
         return 0;               // No moves this time, return 0
     } else {
-        long pos  = state.get_position<long>();  // If all sites are B's, then this is -1. Otherwise this is the current "A*LC" site
+        long pos  = state.get_position<long>();  // If all sites are B's, then this is -1. Otherwise, this is the current "A*LC" site
         long posC = pos + state.get_direction(); // This is the site which becomes the new center position
         if(pos < -1 or pos >= state.get_length<long>()) throw except::range_error("pos out of bounds: {}", pos);
         if(posC < -1 or posC >= state.get_length<long>()) throw except::range_error("posC out of bounds: {}", posC);
@@ -317,10 +317,10 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
     // NOTE! It IS important to start with the current position.
 
     if(norm_policy == NormPolicy::IFNEEDED) {
-        // We may only go ahead with a normalization if its really needed.
+        // We may only go ahead with a normalization if it's really needed.
         tools::log->trace("normalize_state: checking if needed");
         if(state.is_normalized_on_all_sites()) return false; // Return false, i.e. did "not" perform a normalization.
-        // Otherwise we just do the normalization
+        // Otherwise, we just do the normalization
     }
 
     // Save the current position, direction and center status
