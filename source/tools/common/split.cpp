@@ -372,7 +372,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     Eigen::Tensor<Scalar, 3>                V = multisite_mps;           // This side contains all the remaining sites
     Eigen::Tensor<Scalar, 3>                SV_temp;                     // Temporary for contracting S*V
     std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt; // Starts out empty, carries the schmidt values from the previous iteration
-    double                                  S_prev_error = 0;            // Truncation error from the previous iteration
+    double                                  S_prev_error = -1.0;         // Truncation error from the previous iteration
     for(const auto &[idx, spin_dim] : iter::enumerate(spin_dims)) {
         /* The schmidt decomposition gives us the 3 matrices to the right of the line |:
          *                       |
@@ -398,7 +398,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         // Note: Now we have the three components
         // U:   A left-unitary "A" matrix which is a "Lambda * Gamma" in Vidal's notation
         // S:   A set of singular values, "L" matrix, belonging to the site on the right of this one (i.e. the next A to pop out of V)
-        // V:   Contains one site less than the it did before. That site is now in U.
+        // V:   Contains one site less than it did before. That site is now in U.
         //      Before using V as the next multisite mps, it absorbs S so that the next U to pop out is a left-unitary A-type matrix.
 
         mps_sites.emplace_back(U, S_prev, positions[idx], S_prev_error, "A"); // S_prev is empty in the first iteration.
@@ -478,13 +478,13 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     // Set up the SVD
     svd::solver svd(svd_cfg);
 
-    // Declare the the tensors that will catch the schmidt (SVD) decompositions
+    // Declare the tensors that will catch the schmidt (SVD) decompositions
     Eigen::Tensor<Scalar, 3>                U = multisite_mps;              // This side contains all the sites
     Eigen::Tensor<Scalar, 1>                S;                              // The singular values
     Eigen::Tensor<Scalar, 3>                V;                              // This will become the first site extracted
     Eigen::Tensor<Scalar, 3>                US_temp;                        // Temporary for contracting U*S
     std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt;    // Starts out empty, needs to be checked outside of this split
-    double                                  S_prev_error = 0;               // Truncation error from the previous iteration
+    double                                  S_prev_error = -1.0;            // Truncation error from the previous iteration
     for(const auto &[idx, spin_dim] : iter::enumerate_reverse(spin_dims)) { // Iterate in reverse order
         /* The schmidt decomposition gives us the 3 matrices to the left of the line |:
          *                                                      |
