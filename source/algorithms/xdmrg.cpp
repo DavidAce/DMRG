@@ -677,7 +677,7 @@ void xdmrg::check_convergence() {
     }
 }
 
-void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector) {
+void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, const std::optional<std::string> &sector) {
     tools::log->info("Resetting to state in energy window -- reason: {}", enum2sv(reason));
     tools::log->info("Searching for state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
 

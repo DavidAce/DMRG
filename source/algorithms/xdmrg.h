@@ -35,7 +35,7 @@ class xdmrg : public AlgorithmFinite {
     explicit xdmrg(std::shared_ptr<h5pp::File> h5ppFile_);
     void find_energy_range();
     void init_energy_limits(std::optional<double> energy_density_target = std::nullopt, std::optional<double> energy_density_window = std::nullopt);
-    void randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, std::optional<std::string> sector = std::nullopt);
+    void randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, const std::optional<std::string> &sector = std::nullopt);
     void run_task_list(std::deque<xdmrg_task> &task_list);
     void run_preprocessing() final;
     void run_default_task_list() final;
