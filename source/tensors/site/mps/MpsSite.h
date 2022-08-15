@@ -16,8 +16,8 @@ class MpsSite {
     std::optional<Eigen::Tensor<cplx, 1>>                LC                  = std::nullopt; /*!< \f$\Lambda_C\f$ Center lambda, if this is a center matrix*/
     mutable std::optional<Eigen::Tensor<cplx, 3>>        MC                  = std::nullopt;
     std::optional<size_t>                                position            = std::nullopt;
-    double                                               truncation_error    = 0;
-    double                                               truncation_error_LC = 0;
+    double                                               truncation_error    = -2.0;
+    double                                               truncation_error_LC = -2.0;
     std::string                                          label;
     mutable std::optional<std::size_t>                   unique_id;
     mutable std::optional<stash<Eigen::Tensor<cplx, 3>>> U_stash = std::nullopt; /*!< \f$U\f$ A "U" matrix from SVD stored temporarily  */
