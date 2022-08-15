@@ -178,7 +178,9 @@ std::pair<long, double> svd::solver::get_rank_from_truncation_error(const Vector
     auto rank_    = (truncation_errors.array() >= truncation_lim).count();
     auto rank_lim = rank_max > 0 ? std::min(S.size(), rank_max) : S.size();
     rank_         = std::min(rank_, rank_lim);
-    //    tools::log->info("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.2e} | error {:8.2e} truncation errors: {:8.2e}", S.size(), rank_,
+    //    tools::log->info("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.5e} | error {:8.5e}", S.size(), rank_, rank_lim,
+    //                     truncation_lim, truncation_errors[rank_]);
+    //    tools::log->info("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.5e} | error {:8.5e} truncation errors: {:8.5e}", S.size(), rank_,
     //    rank_lim,
     //                     truncation_lim, truncation_errors[rank_], fmt::join(truncation_errors, ", "));
     if(rank_ <= 0) {
