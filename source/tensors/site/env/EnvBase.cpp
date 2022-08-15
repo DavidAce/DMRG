@@ -296,7 +296,7 @@ Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const Mpo
     else if(tag == "var")
         mpo_tensor = mpo.MPO2();
     else
-        throw std::runtime_error("Expected tag [var|ene]: Got: [" + tag + "]");
+        throw except::runtime_error("Expected tag [var|ene]: Got: [{}]", tag);
 
     if(side == "L") {
         long spin = mps.spin_dim();
@@ -304,7 +304,7 @@ Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const Mpo
         long chiR = mps.get_chiR() * mpo_tensor.dimension(1);
         if(get_block().dimension(0) != chiL) throw except::logic_error("block dim 0 != chiL");
         Eigen::Tensor<cplx, 3> PL = get_block()
-                                        .contract(mps.get_M_bare(), tenx::idx({0}, {1}))
+                                        .contract(mps.get_M(), tenx::idx({0}, {1}))
                                         .contract(mpo_tensor, tenx::idx({1, 2}, {0, 2}))
                                         .shuffle(tenx::array4{3, 0, 1, 2})
                                         .reshape(tenx::array3{spin, chiL, chiR});
@@ -317,7 +317,7 @@ Eigen::Tensor<cplx, 3> EnvBase::get_expansion_term(const MpsSite &mps, const Mpo
         long chiR = mps.get_chiR();
         if(get_block().dimension(0) != chiR) throw except::logic_error("block dim 0 != chiR");
         Eigen::Tensor<cplx, 3> PR = get_block()
-                                        .contract(mps.get_M_bare(), tenx::idx({0}, {2}))
+                                        .contract(mps.get_M(), tenx::idx({0}, {2}))
                                         .contract(mpo_tensor, tenx::idx({1, 2}, {1, 2}))
                                         .shuffle(tenx::array4{3, 0, 1, 2})
                                         .reshape(tenx::array3{spin, chiL, chiR});
