@@ -42,6 +42,7 @@ ExternalProject_Add(external_stlbfgs
         cmake -E make_directory <INSTALL_DIR>/lib &&
         cmake -E make_directory <INSTALL_DIR>/include/stlbfgs &&
         cmake -E copy_if_different <BINARY_DIR>/libstlbfgs${STLBFGS_LIBSUFFIX} <INSTALL_DIR>/lib &&
+        cmake -E copy_if_different <BINARY_DIR>/libstlbfgs${STLBFGS_LIBSUFFIX}.1.0 <INSTALL_DIR>/lib &&
         cmake -E copy_if_different <SOURCE_DIR>/linesearch.h <INSTALL_DIR>/include/stlbfgs/linesearch.h &&
         cmake -E copy_if_different <SOURCE_DIR>/stlbfgs.h <INSTALL_DIR>/include/stlbfgs/stlbfgs.h
         )
