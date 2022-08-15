@@ -218,10 +218,10 @@ template bool MpsSite::is_at_position(int pos) const;
 
 void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, double error, std::string_view label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
+    set_label(label_);
     set_M(M_);
     set_L(L_);
     set_truncation_error(error);
-    set_label(label_);
 }
 
 void MpsSite::set_M(const Eigen::Tensor<cplx, 3> &M_) {
@@ -245,7 +245,7 @@ void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error /* Negative i
     }
 
     if(position) {
-        if(error >= 0) truncation_error = error;
+        set_truncation_error(error);
         L         = L_;
         unique_id = std::nullopt;
     } else
@@ -263,11 +263,11 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative
         }
     }
     if(position) {
-        if(error >= 0) truncation_error_LC = error;
+        set_label("AC");
+        set_truncation_error_LC(error);
         LC = LC_;
         MC.reset();
         unique_id = std::nullopt;
-        set_label("AC");
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
 }
@@ -275,11 +275,19 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative
 void MpsSite::set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
 
 void MpsSite::set_truncation_error(double error /* Negative is ignored */) {
-    if(error >= 0) truncation_error = error;
+    if(error >= 0.0) {
+        tools::log->warn("Setting truncation error on site {}: {:8.5e}", get_tag(), error);
+        truncation_error = error;
+    }
 }
+
 void MpsSite::set_truncation_error_LC(double error /* Negative is ignored */) {
-    if(error >= 0) truncation_error_LC = error;
+    if(error >= 0.0) {
+        tools::log->warn("Setting truncation error on site {}: {:8.5e} (LC)", get_tag(), error);
+        truncation_error_LC = error;
+    }
 }
+
 void MpsSite::set_label(std::string_view label_) {
     // If we are flipping the kind of site from B to non B (or vice-versa), then the L matrix
     // should be removed since it changes side.
@@ -313,12 +321,11 @@ void MpsSite::fuse_mps(const MpsSite &other) {
         else
             tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L nullopt"), tag, otag, other.dimensions());
     }
+    // Copy the A/AC/B label
+    set_label(other.get_label());
 
     // We have to copy the bare "M", i.e. not MC, which would include LC.
     set_M(other.get_M_bare());
-
-    // Copy the A/AC/B label
-    set_label(other.get_label());
 
     // If we are flipping the kind of site from B to non B (or vice versa), then the L matrix
     // should be removed since it changes side.
@@ -528,16 +535,16 @@ void MpsSite::convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR) {
     if(get_chiR() != LR.dimension(0)) throw except::runtime_error("MpsSite::convert_AL_to_A: chiR {} != LR.dim(0) {}", get_chiR() != LR.dimension(0));
     if(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::convert_AL_to_A: multipliying inverse L"), get_tag());
     Eigen::Tensor<cplx, 3> tmp = get_M_bare().contract(tenx::asDiagonalInversed(LR), tenx::idx({2}, {0}));
-    set_M(tmp);
     set_label("A");
+    set_M(tmp);
 }
 void MpsSite::convert_LB_to_B(const Eigen::Tensor<cplx, 1> &LL) {
     if(label != "LB") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
     if(get_chiL() != LL.dimension(0)) throw except::runtime_error("MpsSite::convert_LB_to_B: chiL {} != LL.dim(0) {}", get_chiL() != LL.dimension(0));
     if(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::convert_LB_to_B: multipliying inverse L"), get_tag());
     Eigen::Tensor<cplx, 3> tmp = tenx::asDiagonalInversed(LL).contract(get_M_bare(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
-    set_M(tmp);
     set_label("B");
+    set_M(tmp);
 }
 
 std::size_t MpsSite::get_unique_id() const {
