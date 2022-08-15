@@ -109,7 +109,7 @@ class TensorsFinite {
     void                merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg = std::nullopt,
                                             LogPolicy log_policy = LogPolicy::QUIET);
 
-    std::vector<size_t> expand_environment(std::optional<double> alpha, std::optional<svd::config> svd_cfg = std::nullopt);
+    std::vector<size_t> expand_environment(std::optional<double> alpha, EnvExpandMode envExpandMode, std::optional<svd::config> svd_cfg = std::nullopt);
 
     void move_site_mps(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::optional<long> new_pos = std::nullopt);
     void move_site_mpo(const size_t site, const long steps, std::vector<size_t> &sites_mpo);

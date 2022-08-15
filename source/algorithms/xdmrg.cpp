@@ -492,9 +492,9 @@ void xdmrg::update_state() {
         // Use environment expansion if alpha_expansion is set
         // Note that this changes the mps and edges adjacent to "tensors.active_sites"
         if(meta.alpha_expansion) {
-            auto pos_expanded = tensors.expand_environment(std::nullopt); // nullopt implies a pos query
+            auto pos_expanded = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
             if(not mps_original) mps_original = tensors.state->get_mps_sites(pos_expanded);
-            tensors.expand_environment(meta.alpha_expansion, svd::config(meta.bond_lim, meta.trnc_lim));
+            tensors.expand_environment(meta.alpha_expansion, EnvExpandMode::VAR, svd::config(meta.bond_lim));
         }
 
         // Announce the current configuration for optimization
@@ -520,15 +520,15 @@ void xdmrg::update_state() {
         // so that we may use them if this result turns out to be the winner
         if(meta.alpha_expansion) {
             results.back().set_alpha(meta.alpha_expansion);
-            auto pos_expanded         = tensors.expand_environment(std::nullopt);   // nullopt implies a pos query
-            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded); // Backup the mps sites that this run was compatible with
+            auto pos_expanded         = tensors.expand_environment(std::nullopt, EnvExpandMode::VAR); // nullopt implies a pos query
+            results.back().mps_backup = tensors.state->get_mps_sites(pos_expanded);                   // Backup the mps sites that this run was compatible with
         }
 
         // Reset the mps to the original if they were backed up earlier
         // This is so that the next meta starts with unchanged mps as neighbors
         if(mps_original) {
             tensors.state->set_mps_sites(mps_original.value());
-            tensors.rebuild_edges(); // Make sure the edges are up to date
+            tensors.rebuild_edges(); // Make sure the edges are up-to-date
         }
 
         // We can now decide if we are happy with the result or not.

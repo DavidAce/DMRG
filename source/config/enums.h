@@ -20,6 +20,7 @@ enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, BOND_INCREASE, TRNC_DECREASE, FES };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
+enum class EnvExpandMode { ENE, VAR };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy {
     RESUME, /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
