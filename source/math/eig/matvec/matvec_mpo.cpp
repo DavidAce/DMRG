@@ -75,11 +75,11 @@ void MatVecMPO<T>::FactorOP() {
     matrixDecomp        = A_matrix;
     matrixDecomp.llt();
     if(decomp == DecompMode::LDLT) {
-        eig::log->info("LDLT Factorization...");
+        eig::log->debug("LDLT Factorization...");
         ldlt.compute(A_matrix);
     }
     if(decomp == DecompMode::LLT) {
-        eig::log->info("LLT Factorization | sp {:8.5e} ...", static_cast<double>(A_matrix.nonZeros()) / A_matrix.size());
+        eig::log->debug("LLT Factorization");
         llt.compute(A_matrix);
     } else {
         /* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
