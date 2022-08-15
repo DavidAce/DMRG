@@ -404,7 +404,6 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         case OptMode::SIMPS:
         case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
     }
-    if(m1.optSolver == OptSolver::BFGS) m1.retry = settings::solver::bfgs_fix_rnorm_w_eigs;
 
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
@@ -412,6 +411,9 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     // Do eigs (or eig) instead of bfgs when it's cheap
     if(m1.problem_size <= settings::solver::max_size_full_eigs) m1.optSolver = OptSolver::EIGS;
+
+    // Let EIGS fix BFGS rnorm when enabled
+    if(m1.optSolver == OptSolver::BFGS) m1.retry = settings::solver::bfgs_fix_rnorm_w_eigs;
 
     if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
