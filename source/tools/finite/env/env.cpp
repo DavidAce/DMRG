@@ -120,8 +120,8 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
                     tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), norm_old, norm_new);
                 }
             }
-            tools::log->info("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimR_old[1],
-                             ML_PL.dimension(2), mpsR.get_chiL(), bond_lim);
+            tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimR_old[1],
+                              ML_PL.dimension(2), mpsR.get_chiL(), bond_lim);
         }
     }
     {
@@ -159,8 +159,8 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
                 }
             }
 
-            tools::log->info("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimL_old[2],
-                             MR_PR.dimension(1), mpsL.get_chiR(), bond_lim);
+            tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimL_old[2],
+                              MR_PR.dimension(1), mpsL.get_chiR(), bond_lim);
         }
     }
     if(dimL_old[1] != mpsL.get_chiL()) throw except::runtime_error("mpsL changed chiL during environment expansion: {} -> {}", dimL_old, mpsL.dimensions());

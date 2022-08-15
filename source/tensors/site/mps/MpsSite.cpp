@@ -276,14 +276,14 @@ void MpsSite::set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_err
 
 void MpsSite::set_truncation_error(double error /* Negative is ignored */) {
     if(error >= 0.0) {
-        tools::log->warn("Setting truncation error on site {}: {:8.5e}", get_tag(), error);
+        //        tools::log->warn("Setting truncation error on site {}: {:8.5e}", get_tag(), error);
         truncation_error = error;
     }
 }
 
 void MpsSite::set_truncation_error_LC(double error /* Negative is ignored */) {
     if(error >= 0.0) {
-        tools::log->warn("Setting truncation error on site {}: {:8.5e} (LC)", get_tag(), error);
+        //        tools::log->warn("Setting truncation error on site {}: {:8.5e} (LC)", get_tag(), error);
         truncation_error_LC = error;
     }
 }
