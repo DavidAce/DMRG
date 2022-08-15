@@ -172,16 +172,16 @@ namespace num {
             static_cast<size_t>(std::abs((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
         std::vector<T> vec;
         vec.reserve(num_steps);
-        T val = first;
+        auto val = static_cast<T>(first);
         if(cmp_less(first, last)) {
             while(cmp_less(val, last)) {
                 vec.emplace_back(val);
-                val += cmp_less(step, 0) ? -step : step;
+                val += cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
             }
         } else {
             while(cmp_greater(val, last)) {
                 vec.emplace_back(val);
-                val -= cmp_less(step, 0) ? -step : step;
+                val -= cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
             }
         }
         if constexpr(std::is_signed_v<T3>) {
