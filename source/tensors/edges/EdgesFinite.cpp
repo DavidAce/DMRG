@@ -281,3 +281,8 @@ std::pair<std::vector<size_t>, std::vector<size_t>> EdgesFinite::get_active_ids(
     var_ids = {get_env_varL(active_sites.front()).get_unique_id(), get_env_varR(active_sites.back()).get_unique_id()};
     return ids;
 }
+
+std::array<long, 3> EdgesFinite::get_dims_eneL(size_t pos) const { return get_env_eneL(pos).get_dims(); }
+std::array<long, 3> EdgesFinite::get_dims_eneR(size_t pos) const { return get_env_eneR(pos).get_dims(); }
+std::array<long, 3> EdgesFinite::get_dims_varL(size_t pos) const { return get_env_varL(pos).get_dims(); }
+std::array<long, 3> EdgesFinite::get_dims_varR(size_t pos) const { return get_env_varR(pos).get_dims(); }

@@ -83,4 +83,9 @@ class EdgesFinite {
     [[nodiscard]] env_pair<Eigen::Tensor<Scalar, 3>>       get_multisite_env_var_blk(std::optional<std::vector<size_t>> sites = std::nullopt);
 
     [[nodiscard]] std::pair<std::vector<size_t>, std::vector<size_t>> get_active_ids() const;
+
+    [[nodiscard]] std::array<long, 3> get_dims_eneL(size_t pos) const;
+    [[nodiscard]] std::array<long, 3> get_dims_eneR(size_t pos) const;
+    [[nodiscard]] std::array<long, 3> get_dims_varL(size_t pos) const;
+    [[nodiscard]] std::array<long, 3> get_dims_varR(size_t pos) const;
 };

@@ -19,8 +19,8 @@
 // Read more: https://stackoverflow.com/questions/33212686/how-to-use-unique-ptr-with-forward-declared-type
 // And here:  https://stackoverflow.com/questions/6012157/is-stdunique-ptrt-required-to-know-the-full-definition-of-t
 EnvBase::EnvBase() : block(std::make_unique<Eigen::Tensor<cplx, 3>>()) { assert_block(); } // default ctor
-EnvBase::~EnvBase()                        = default;                                      // default dtor
-EnvBase::EnvBase(EnvBase &&other) noexcept = default;                                      // default move ctor
+EnvBase::~EnvBase()                                   = default;                           // default dtor
+EnvBase::EnvBase(EnvBase &&other) noexcept            = default;                           // default move ctor
 EnvBase &EnvBase::operator=(EnvBase &&other) noexcept = default;                           // default move assign
 
 EnvBase::EnvBase(const EnvBase &other)
@@ -190,6 +190,8 @@ Eigen::Tensor<cplx, 3> &EnvBase::get_block() {
 }
 
 bool EnvBase::has_block() const { return block != nullptr and block->size() != 0; }
+
+std::array<long, 3> EnvBase::get_dims() const { return get_block().dimensions(); }
 
 void EnvBase::assert_validity() const {
     assert_block();

@@ -263,12 +263,13 @@ void xdmrg::run_fes_analysis() {
     status.bond_max       = settings::xdmrg::bond_max; // Set to highest
     status.bond_lim       = settings::xdmrg::bond_max; // Set to highest
     tensors.move_center_point_to_inward_edge();
+    tensors.activate_sites({tensors.get_position()});
+    tensors.rebuild_edges();
     while(status.bond_lim > tensors.state->find_largest_bond()) {
         // Reduce bond dimension from bond_max down to the current maximum.
         // Write to file on each decrement so that we get one entry on file
         // per bond dim, even if there has been no change. This helps with
         // collecting data and averaging later.
-        tools::log->info("Reducing down to current max bond: {}", status.bond_lim);
         status.iter += 1;
         status.step += tensors.get_length<size_t>();
         status.algorithm_converged_for = 1;
@@ -277,7 +278,6 @@ void xdmrg::run_fes_analysis() {
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_fes->get_time();
     }
-
     while(true) {
         tools::log->trace("Starting xDMRG FES step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
         update_state();

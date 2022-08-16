@@ -53,6 +53,7 @@ class EnvBase {
     [[nodiscard]] const Eigen::Tensor<cplx, 3> &get_block() const;
     [[nodiscard]] Eigen::Tensor<cplx, 3>       &get_block();
     [[nodiscard]] bool                          has_block() const;
+    [[nodiscard]] std::array<long, 3>           get_dims() const;
     [[nodiscard]] bool                          is_real() const;
     [[nodiscard]] bool                          has_nan() const;
     [[nodiscard]] size_t                        get_position() const;
