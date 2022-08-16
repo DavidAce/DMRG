@@ -9,6 +9,7 @@ set(cxxflags "-w")
 
 if (BUILD_SHARED_LIBS)
     set(STLBFGS_LIBSUFFIX ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    set(STLBFGS_LIBSOVERS .1.0)
 else ()
     set(STLBFGS_LIBSUFFIX ${CMAKE_STATIC_LIBRARY_SUFFIX})
 endif ()
@@ -42,7 +43,7 @@ ExternalProject_Add(external_stlbfgs
         cmake -E make_directory <INSTALL_DIR>/lib &&
         cmake -E make_directory <INSTALL_DIR>/include/stlbfgs &&
         cmake -E copy_if_different <BINARY_DIR>/libstlbfgs${STLBFGS_LIBSUFFIX} <INSTALL_DIR>/lib &&
-        cmake -E copy_if_different <BINARY_DIR>/libstlbfgs${STLBFGS_LIBSUFFIX}.1.0 <INSTALL_DIR>/lib &&
+        cmake -E copy_if_different <BINARY_DIR>/libstlbfgs${STLBFGS_LIBSUFFIX}${STLBFGS_LIBSOVERS} <INSTALL_DIR>/lib &&
         cmake -E copy_if_different <SOURCE_DIR>/linesearch.h <INSTALL_DIR>/include/stlbfgs/linesearch.h &&
         cmake -E copy_if_different <SOURCE_DIR>/stlbfgs.h <INSTALL_DIR>/include/stlbfgs/stlbfgs.h
         )
