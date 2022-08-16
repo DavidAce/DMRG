@@ -10,7 +10,8 @@ class EdgesFinite;
 // class h5pp_table_measurements_finite;
 class AlgorithmFinite : public AlgorithmBase {
     private:
-    size_t iter_last_bond_reduce = 0;
+    size_t                             iter_last_bond_reduce = 0;
+    std::optional<std::vector<size_t>> sites_mps, sites_mpo; // Used when moving sites
 
     public:
     // Inherit the constructor of class_algorithm_base

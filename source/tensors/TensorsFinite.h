@@ -117,7 +117,7 @@ class TensorsFinite {
     void move_site_mpo_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mpo);
     void move_site(const size_t site, const long steps, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
                    std::optional<long> new_pos = std::nullopt);
-    void move_site_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
+    void move_site_to_pos(const size_t site, const long tgt_pos, std::optional<std::vector<size_t>> &sites_mps, std::optional<std::vector<size_t>> &sites_mpo,
                           std::optional<long> new_pos = std::nullopt);
 
     void assert_edges() const;

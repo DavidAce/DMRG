@@ -190,7 +190,6 @@ void AlgorithmFinite::try_moving_sites() {
     auto dir      = pos > len / 2 ? -1l : 1l;
     auto site_seq = dir > 0 ? num::range<long>(0, len - 1, 1) : num::range<long>(1, len, -1);
 
-    std::vector<size_t> sites_mps, sites_mpo;
     tensors.activate_sites({tensors.get_position()});
     tools::log->info("Trying to move sites | pos {} | dir {}", pos, dir);
     std::vector<std::string> report;
@@ -204,16 +203,15 @@ void AlgorithmFinite::try_moving_sites() {
         for(const auto &tgt_pos : tgt_pos_seq) {
             update_state();
             print_status();
-            if(not sites_mps.empty())
-                report.emplace_back(fmt::format("sites [{:2}, {:2}] @ pos [{:2}, {:2}] | variance {:.5e}", sites_mps[tensors.active_sites.front()],
-                                                sites_mps[tensors.active_sites.back()], tensors.active_sites.front(), tensors.active_sites.back(),
+            if(sites_mps)
+                report.emplace_back(fmt::format("sites [{:2}, {:2}] @ pos [{:2}, {:2}] | variance {:.5e}", sites_mps->at(tensors.active_sites.front()),
+                                                sites_mps->at(tensors.active_sites.back()), tensors.active_sites.front(), tensors.active_sites.back(),
                                                 tools::finite::measure::energy_variance(tensors)));
             status.step += 1;
-
             tensors.move_site_to_pos(static_cast<size_t>(site), tgt_pos, sites_mps, sites_mpo, tgt_pos);
             tools::log->debug("Labels    : {}", tensors.state->get_labels());
-            tools::log->debug("Sites mps : {}", sites_mps);
-            tools::log->debug("Sites mpo : {}", sites_mpo);
+            tools::log->debug("Sites mps : {}", sites_mps.value());
+            tools::log->debug("Sites mpo : {}", sites_mpo.value());
         }
         tools::log->info("Resetting MPO's");
         tensors.rebuild_mpo();
@@ -222,9 +220,9 @@ void AlgorithmFinite::try_moving_sites() {
         tensors.move_center_point_to_inward_edge();
         tensors.rebuild_edges();
         tensors.activate_sites({tensors.get_position()});
-        sites_mpo.clear();
-        sites_mps.clear();
         tools::log->info("Labels    : {}", tensors.state->get_labels());
+        sites_mpo = std::nullopt;
+        sites_mps = std::nullopt;
         status.iter += 1;
         //        check_convergence();
         //        if(status.variance_mpo_saturated_for == 0) break;
@@ -833,12 +831,14 @@ void AlgorithmFinite::print_status() {
     if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.state->get_position<long>());
     if(tensors.active_sites.size() == 1) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.active_sites.front());
     if(tensors.active_sites.size() >= 2) {
+        auto frnt = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.front()) : tensors.active_sites.front();
+        auto back = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.back()) : tensors.active_sites.back();
         if(tensors.position_is_at(static_cast<long>(tensors.active_sites.front())))
-            site_str = fmt::format(FMT_STRING("{:>2}.{:>2} "), tensors.active_sites.front(), tensors.active_sites.back());
+            site_str = fmt::format(FMT_STRING("{:>2}.{:>2} "), frnt, back);
         else if(tensors.position_is_at(static_cast<long>(tensors.active_sites.back())))
-            site_str = fmt::format(FMT_STRING("{:>2} {:>2}."), tensors.active_sites.front(), tensors.active_sites.back());
+            site_str = fmt::format(FMT_STRING("{:>2} {:>2}."), frnt, back);
         else
-            site_str = fmt::format(FMT_STRING("{:>2} {:>2} "), tensors.active_sites.front(), tensors.active_sites.back());
+            site_str = fmt::format(FMT_STRING("{:>2} {:>2} "), frnt, back);
     }
     if(tensors.state->get_direction() > 0) {
         report += fmt::format("l:|{}⟩ ", site_str);

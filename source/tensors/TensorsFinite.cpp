@@ -471,7 +471,7 @@ void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vect
         if(posL == posR) break;
         if(posL < 0 or posL >= get_length<long>()) break;
         if(posR < 0 or posR >= get_length<long>()) break;
-        tools::log->info("swapping mps sites {} <--> {}", posL, posR);
+        tools::log->debug("swapping mps sites {} <--> {}", posL, posR);
         // Move the MPS site
         tools::finite::mps::swap_sites(*state, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
     }
@@ -533,7 +533,7 @@ void TensorsFinite::move_site_mps_to_pos(const size_t site, const long tgt_pos, 
         if(posL == posR) break;
         if(posL < 0 or posL >= get_length<long>()) break;
         if(posR < 0 or posR >= get_length<long>()) break;
-        tools::log->info("swapping mps sites {} <--> {}", posL, posR);
+        tools::log->debug("swapping mps sites {} <--> {}", posL, posR);
         // Move the MPS site
         tools::finite::mps::swap_sites(*state, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
     }
@@ -590,12 +590,14 @@ void TensorsFinite::move_site(const size_t site, const long steps, std::vector<s
     rebuild_edges();
 }
 
-void TensorsFinite::move_site_to_pos(const size_t site, const long tgt_pos, std::vector<size_t> &sites_mps, std::vector<size_t> &sites_mpo,
-                                     std::optional<long> new_pos) {
-    move_site_mps_to_pos(site, tgt_pos, sites_mps, new_pos);
-    move_site_mpo_to_pos(site, tgt_pos, sites_mpo);
+void TensorsFinite::move_site_to_pos(const size_t site, const long tgt_pos, std::optional<std::vector<size_t>> &sites_mps,
+                                     std::optional<std::vector<size_t>> &sites_mpo, std::optional<long> new_pos) {
+    if(not sites_mps) sites_mps = std::vector<size_t>{};
+    if(not sites_mpo) sites_mpo = std::vector<size_t>{};
+    move_site_mps_to_pos(site, tgt_pos, sites_mps.value(), new_pos);
+    move_site_mpo_to_pos(site, tgt_pos, sites_mpo.value());
     rebuild_edges();
-    if(sites_mps != sites_mpo) throw except::logic_error("sites mismatch \n sites_mps {}\n sites_mpo {}", sites_mps, sites_mpo);
+    if(sites_mps != sites_mpo) throw except::logic_error("sites mismatch \n sites_mps {}\n sites_mpo {}", sites_mps.value(), sites_mpo.value());
 }
 
 void TensorsFinite::assert_edges() const { tools::finite::env::assert_edges(*state, *model, *edges); }
