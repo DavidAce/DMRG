@@ -64,7 +64,7 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
         "model::model_size"                  : str_L,
         "model::ising_majorana::delta"       : str_d,
         "model::ising_majorana::g"           : str_g,
-        "xdmrg::bond_max"                    : "128",
+        "xdmrg::bond_max"                    : "2048",
         "xdmrg::max_states"                  : "1",
         "strategy::multisite_mps_site_def"   : str(multisite_mps_size_def[0]),
         "strategy::multisite_mps_site_max"   : str(multi),
