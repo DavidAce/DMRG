@@ -190,6 +190,7 @@ void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::opti
     sync_active_sites();
     if(not active_sites.empty()) {
         rebuild_edges();
+        clear_cache();
         if constexpr(settings::debug) assert_validity();
     }
 }
@@ -478,7 +479,6 @@ void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vect
     if(new_pos) {
         if(new_pos.value() != std::clamp(new_pos.value(), 0l, get_length<long>()))
             throw except::runtime_error("move_site: expected new_pos in range [0,{}]. Got {}", get_length<long>(), new_pos.value());
-        tools::finite::mps::move_center_point_to_pos(*state, new_pos.value());
         move_center_point_to_pos(new_pos.value());
         activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
     }
@@ -540,7 +540,6 @@ void TensorsFinite::move_site_mps_to_pos(const size_t site, const long tgt_pos, 
     if(new_pos) {
         if(new_pos.value() != std::clamp(new_pos.value(), 0l, get_length<long>()))
             throw except::runtime_error("move_site: expected new_pos in range [0,{}]. Got {}", get_length<long>(), new_pos.value());
-        tools::finite::mps::move_center_point_to_pos(*state, new_pos.value());
         move_center_point_to_pos(new_pos.value());
         activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
     }

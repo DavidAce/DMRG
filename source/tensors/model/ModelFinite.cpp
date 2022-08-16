@@ -266,6 +266,7 @@ void ModelFinite::set_psfactor(double psfactor) {
 
 void ModelFinite::set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli) {
     for(const auto &mpo : MPO) mpo->set_mpo2_proj(sign, pauli);
+    clear_cache();
 }
 
 void ModelFinite::set_mpo2_proj(int sign, std::string_view sector) {
