@@ -348,7 +348,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         switch(info) {
             case -1: eig::log->error("PRIMME_UNEXPECTED_FAILURE (exit {}): set printLevel > 0 to see the call stack", info); break;
             case -2: eig::log->error("PRIMME_MALLOC_FAILURE (exit {}): eith<er CPU or GPU", info); break;
-            case -3: eig::log->info("PRIMME_MAIN_ITER_FAILURE (exit {}): {}", info, getLogMessage(&primme)); break;
+            case -3: eig::log->debug("PRIMME_MAIN_ITER_FAILURE (exit {}): {}", info, getLogMessage(&primme)); break;
             case -4: eig::log->error("PRIMME_ARGUMENT_IS_NULL (exit {})", info); break;
             case -5: eig::log->error("PRIMME_INVALID_ARG n < 0 or nLocal < 0 or nLocal > n (exit {})", info); break;
             case -6: eig::log->error("PRIMME_INVALID_ARG numProcs < 1 (exit {})", info); break;
