@@ -2,12 +2,15 @@
 #include "../measure.h"
 #include "config/settings.h"
 #include "io/fmt.h"
+#include "math/eig.h"
+#include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/tenx.h"
 #include "qm/mpo.h"
 #include "qm/spin.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
+#include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -55,6 +58,7 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
         correlation_matrix_xyz(state);
         expectation_values_xyz(state);
         structure_factors_xyz(state);
+        kvornings_marker(state);
     }
 }
 
@@ -440,7 +444,6 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(not num::all_equal(model.active_sites, edges.active_sites))
             throw std::runtime_error(
                 fmt::format("Could not compute energy variance: active sites are not equal: model {} | edges {}", model.active_sites, edges.active_sites));
-
         const auto &mpo2 = model.get_multisite_mpo_squared();
         const auto &env2 = edges.get_multisite_env_var_blk();
         if constexpr(settings::debug)
@@ -700,7 +703,7 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(mpos.empty()) throw std::runtime_error("expectation_value: obs is empty");
 
-    // Generate a string of mpos for each site. If a site has no local observable given in obs, insert an identity MPO there.
+    // Generate a string of mpos for each site. If a site has no local observable given, insert an identity MPO there.
     auto mpodims = mpos.front().mpo.dimensions();
 
     for(auto &ob : mpos) {
@@ -819,6 +822,57 @@ Eigen::Tensor<double, 2> tools::finite::measure::correlation_matrix(const StateF
         }
     }
     return C;
+}
+
+Eigen::Tensor<double, 2> tools::finite::measure::kvornings_matrix(const StateFinite &state) {
+    tools::log->trace("Measuring kvornings matrix");
+    const auto sp = tenx::TensorCast(qm::spin::half::sp);
+    const auto sm = tenx::TensorCast(qm::spin::half::sm);
+    const auto zm = tenx::TensorCast(-qm::spin::half::sz); // Negative sigma z
+
+    long                     len = state.get_length<long>();
+    Eigen::Tensor<double, 2> C(len, len);
+    C.setZero();
+
+    for(long pos_j = 0; pos_j < len; pos_j++) {
+        for(long pos_i = pos_j; pos_i < len; pos_i++) {
+            // Create an operator string from pos_i to pos_j, where
+            // pos_i has sp,
+            // pos_j has sm,
+            // insert zm between pos_i and pos_j.
+            std::vector<LocalObservableOp> ops;
+
+            if(pos_i == pos_j) {
+                // Stack the operators
+                Eigen::Tensor<cplx, 2> spm = sp.contract(sm, tenx::idx({0}, {1}));
+                LocalObservableOp      opm = {spm, pos_i};
+                ops.emplace_back(LocalObservableOp{spm, pos_i});
+            } else {
+                for(long pos = std::min(pos_i, pos_j); pos <= std::max(pos_i, pos_j); pos++) {
+                    if(pos == pos_i)
+                        ops.emplace_back(LocalObservableOp{sp, pos});
+                    else if(pos == pos_j)
+                        ops.emplace_back(LocalObservableOp{sm, pos});
+                    else
+                        ops.emplace_back(LocalObservableOp{zm, pos});
+                }
+            }
+
+            C(pos_i, pos_j) = expectation_value(state, ops);
+        }
+    }
+    return C;
+}
+
+void tools::finite::measure::kvornings_marker(const StateFinite &state) {
+    if(not state.measurements.kvornings_marker) {
+        auto C = kvornings_matrix(state);
+        tools::log->info("Kvornings matrix: \n{}\n", linalg::tensor::to_string(C, 5));
+        auto solver = eig::solver();
+        solver.eig<eig::Form::SYMM>(C.data(), C.dimension(0), eig::Vecs::OFF);
+        state.measurements.kvornings_marker = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
+        tools::log->info("Kvornings marker: {:+9.4e}", fmt::join(tenx::span(state.measurements.kvornings_marker.value()), ", "));
+    }
 }
 
 double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<double, 2> &correlation_matrix) {

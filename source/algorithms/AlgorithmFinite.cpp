@@ -218,8 +218,8 @@ void AlgorithmFinite::try_moving_sites() {
         tensors.rebuild_mpo_squared(settings::precision::use_compressed_mpo_squared_all);
         //        tensors.move_site_mps_to_pos(pos_ul, pos, sites_mps, pos_old);
         tensors.move_center_point_to_inward_edge();
-        tensors.rebuild_edges();
         tensors.activate_sites({tensors.get_position()});
+        tensors.rebuild_edges();
         tools::log->info("Labels    : {}", tensors.state->get_labels());
         sites_mpo = std::nullopt;
         sites_mps = std::nullopt;
@@ -922,6 +922,7 @@ void AlgorithmFinite::print_status_full() {
         tools::finite::measure::expectation_values_xyz(*tensors.state);
         tools::finite::measure::correlation_matrix_xyz(*tensors.state);
         tools::finite::measure::structure_factors_xyz(*tensors.state);
+        tools::finite::measure::kvornings_marker(*tensors.state);
         tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}",
                          fmt::join(tenx::span(tensors.state->measurements.expectation_values_sx.value()), ", "));
         tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}",
@@ -931,6 +932,7 @@ void AlgorithmFinite::print_status_full() {
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_x.value());
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_y.value());
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_z.value());
+        tools::log->info("Kvornings marker ⟨σ+..σz..σ-⟩      = {:.8f}", fmt::join(tenx::span(tensors.state->measurements.kvornings_marker.value()), ", "));
     }
 
     tools::log->info("Truncation Error limit             = {:8.2e}", status.trnc_lim);

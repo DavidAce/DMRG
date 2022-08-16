@@ -31,4 +31,5 @@ struct MeasurementsStateFinite {
     std::optional<double>                   structure_factor_x            = std::nullopt;
     std::optional<double>                   structure_factor_y            = std::nullopt;
     std::optional<double>                   structure_factor_z            = std::nullopt;
+    std::optional<Eigen::Tensor<double, 1>> kvornings_marker              = std::nullopt;
 };

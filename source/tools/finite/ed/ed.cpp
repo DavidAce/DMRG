@@ -81,6 +81,7 @@ namespace tools::finite::ed {
         tools::finite::measure::expectation_values_xyz(state_ed);
         tools::finite::measure::correlation_matrix_xyz(state_ed);
         tools::finite::measure::structure_factors_xyz(state_ed);
+        tools::finite::measure::kvornings_marker(state_ed);
 
         tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}", fmt::join(tenx::span(state_ed.measurements.expectation_values_sx.value()), ", "));
         tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}", fmt::join(tenx::span(state_ed.measurements.expectation_values_sy.value()), ", "));
@@ -88,6 +89,7 @@ namespace tools::finite::ed {
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", state_ed.measurements.structure_factor_x.value());
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", state_ed.measurements.structure_factor_y.value());
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", state_ed.measurements.structure_factor_z.value());
+        tools::log->info("Kvornings marker                   = {:+9.6f}", fmt::join(tenx::span(state_ed.measurements.kvornings_marker.value()), ", "));
         tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(state_ed.get_truncation_errors(), ", "));
 
         return state_ed;

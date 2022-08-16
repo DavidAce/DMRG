@@ -54,6 +54,7 @@ namespace tools::finite::h5 {
         extern void entropies_number    (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void expectations        (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void structure_factors   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
+        extern void kvornings_marker    (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
         extern void number_probabilities(h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const StateFinite & state, const AlgorithmStatus & status);
 
         extern void setup_prefix(const AlgorithmStatus &status, const StorageReason &storage_reason, StorageLevel &storage_level,

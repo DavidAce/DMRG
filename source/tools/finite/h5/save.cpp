@@ -96,6 +96,18 @@ namespace tools::finite::h5 {
         /* clang-format on */
     }
 
+    void save::kvornings_marker(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                                const AlgorithmStatus &status) {
+        if(storage_level <= StorageLevel::LIGHT) return;
+        if(status.algo_type != AlgorithmType::xDMRG) return;
+        auto t_hdf = tid::tic_scope("kvornings_marker", tid::level::extra);
+        tools::finite::measure::kvornings_marker(state);
+        tools::log->trace("Saving kvornings marker to {}", table_prefix);
+        /* clang-format off */
+        save::data_as_table(h5file, table_prefix, status, state.measurements.kvornings_marker, "kvornings_marker", "Kvornings marker", "eigval");
+        /* clang-format on */
+    }
+
     template<typename T>
     void save::data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const T *const data, size_t size,
                              std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
@@ -585,6 +597,7 @@ namespace tools::finite::h5 {
             tools::finite::h5::save::entropies_number(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::expectations(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::structure_factors(h5file, table_prefix, storage_level, state, status);
+            tools::finite::h5::save::kvornings_marker(h5file, table_prefix, storage_level, state, status);
             tools::finite::h5::save::number_probabilities(h5file, table_prefix, storage_level, state, status);
         }
         h5file.setKeepFileClosed();
