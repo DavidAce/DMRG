@@ -199,7 +199,7 @@ void AlgorithmFinite::try_moving_sites() {
         std::vector<long> tgt_pos_seq = dir > 0 ? num::range<long>(site + 1, len - 1, 1) : num::range<long>(0, site, -1);
         std::vector<long> tgt_pos_req = dir > 0 ? num::range<long>(site, len - 2, -1) : num::range<long>(1, site + 1, 1);
         tgt_pos_seq.insert(tgt_pos_seq.end(), tgt_pos_req.begin(), tgt_pos_req.end());
-        tools::log->info("Moving site {} dir {} | seq: {}", site, dir, tgt_pos_seq);
+        tools::log->debug("Moving site {} dir {} | seq: {}", site, dir, tgt_pos_seq);
         for(const auto &tgt_pos : tgt_pos_seq) {
             update_state();
             print_status();
@@ -220,7 +220,6 @@ void AlgorithmFinite::try_moving_sites() {
         tensors.move_center_point_to_inward_edge();
         tensors.activate_sites({tensors.get_position()});
         tensors.rebuild_edges();
-        tools::log->info("Labels    : {}", tensors.state->get_labels());
         sites_mpo = std::nullopt;
         sites_mps = std::nullopt;
         status.iter += 1;
