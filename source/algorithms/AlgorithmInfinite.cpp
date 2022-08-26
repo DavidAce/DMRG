@@ -181,7 +181,7 @@ void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::s
             status.num_resets++;
     }
 
-    if(not sector) sector = settings::strategy::initial_sector;
+    if(not sector) sector = settings::strategy::initial_axis;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
 

@@ -26,7 +26,7 @@ std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t siz
     return bond_dimensions;
 }
 
-void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view sector,
+void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view axis,
                                                       [[maybe_unused]] bool use_eigenspinors, long bond_lim) {
     // TODO: Make version with/without eigenspinors
     set_random_entangled_state_with_random_spinors(state, type, bond_lim);
@@ -71,15 +71,15 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view sector,
-                                                                                       long bond_lim) {
+void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view axis,
+                                                                                     long bond_lim) {
     const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
-    auto       axis            = qm::spin::half::get_axis(sector);
-    auto       sign            = qm::spin::half::get_sign(sector);
-    tools::log->info("Setting random entangled state in sector {} using eigenspinors of the pauli matrix σ{}", sector, axis);
+    auto       axus            = qm::spin::half::get_axis_unsigned(axis);
+    auto       sign            = qm::spin::half::get_sign(axis);
+    tools::log->info("Setting random entangled state on axis {} using eigenspinors of the pauli matrix σ{}", axis, axus);
     tools::log->info("Target bond dimensions: {}", bond_dimensions);
-    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in sector [y] which impliex CPLX");
+    if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
     bool        past_center = false;
     std::string label       = "A";
     for(auto &mps_ptr : state.mps_sites) {
@@ -98,7 +98,7 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
         for(long col = 0; col < chiR; col++) {
             for(long row = 0; row < chiL; row++) {
                 auto rnd_sign                              = 2 * rnd::uniform_integer_01() - 1;
-                auto spinor                                = qm::spin::half::get_spinor(axis, rnd_sign);
+                auto spinor                                = qm::spin::half::get_spinor(axus, rnd_sign);
                 offset3                                    = {0, row, col};
                 G.slice(offset3, extent3).reshape(extent1) = tenx::TensorMap(spinor);
             }
@@ -118,7 +118,7 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
 
     // Here we can make sure the state ends up in the correct spin parity sector by flipping the last
     // spin if necessary
-    auto spin_component = tools::finite::measure::spin_component(state, axis);
+    auto spin_component = tools::finite::measure::spin_component(state, axus);
     if(spin_component * sign < 0) {
         auto                                                           &mps  = *state.mps_sites.back();
         auto                                                            chiL = bond_dimensions[mps.get_position()];
@@ -135,9 +135,9 @@ void tools::finite::mps::init::set_random_entangled_state_in_sector_using_eigens
                 offset3                                    = {0, row, col};
                 Eigen::Tensor<cplx, 1> old_spinor_tensor   = mps.get_M().slice(offset3, extent3).reshape(extent1);
                 Eigen::VectorXcd       old_spinor_vector   = tenx::VectorCast(old_spinor_tensor);
-                cplx                   old_spinor_expval   = old_spinor_vector.dot(qm::spin::half::get_pauli(axis) * old_spinor_vector);
+                cplx                   old_spinor_expval   = old_spinor_vector.dot(qm::spin::half::get_pauli(axus) * old_spinor_vector);
                 int                    old_spinor_sign     = std::real(old_spinor_expval) > 0 ? 1 : -1;
-                auto                   new_spinor_vector   = qm::spin::half::get_spinor(axis, -old_spinor_sign);
+                auto                   new_spinor_vector   = qm::spin::half::get_spinor(axus, -old_spinor_sign);
                 G.slice(offset3, extent3).reshape(extent1) = tenx::TensorMap(new_spinor_vector);
             }
         }

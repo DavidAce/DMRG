@@ -63,46 +63,49 @@ namespace qm::spin::half {
         return S;
     }
 
-    bool is_valid_axis(std::string_view sector) { return std::find(valid_axis_str.begin(), valid_axis_str.end(), sector) != valid_axis_str.end(); }
+    bool is_valid_axis(std::string_view axis) { return std::find(valid_axis_str.begin(), valid_axis_str.end(), axis) != valid_axis_str.end(); }
 
-    int get_sign(std::string_view sector) {
-        if(sector.at(0) == '+')
+    int get_sign(std::string_view axis) {
+        if(axis.empty()) throw std::logic_error("get_sign: empty axis string");
+        if(axis[0] == '+')
             return 1;
-        else if(sector.at(0) == '-')
+        else if(axis[0] == '-')
             return -1;
         else
             return 0;
     }
 
-    std::string_view get_axis(std::string_view sector) {
-        if(not is_valid_axis(sector)) throw except::runtime_error("Could not extract valid axis from sector string [{}]. Choose one of (+-) x,y or z.", sector);
-        int sign = get_sign(sector);
+    std::string_view get_axis_unsigned(std::string_view axis) {
+        if(axis.empty()) throw std::logic_error("get_axis_unsigned: empty axis string");
+        if(not is_valid_axis(axis)) throw except::runtime_error("get_axis_unsigned: invalid axis string [{}]. Choose one of (+-) x,y,z or i,id.", axis);
+        int sign = get_sign(axis);
         if(sign == 0) {
-            return sector.substr(0, 1);
+            return axis.substr(0, 1);
         } else {
-            return sector.substr(1, 1);
+            return axis.substr(1, 1);
         }
     }
 
     Eigen::Vector2cd get_spinor(std::string_view axis, int sign) {
-        if(axis == "x" and sign >= 0) return sx_spinors[0];
-        if(axis == "x" and sign < 0) return sx_spinors[1];
-        if(axis == "y" and sign >= 0) return sy_spinors[0];
-        if(axis == "y" and sign < 0) return sy_spinors[1];
-        if(axis == "z" and sign >= 0) return sz_spinors[0];
-        if(axis == "z" and sign < 0) return sz_spinors[1];
+        auto axus = get_axis_unsigned(axis);
+        if(axus == "x" and sign >= 0) return sx_spinors[0];
+        if(axus == "x" and sign < 0) return sx_spinors[1];
+        if(axus == "y" and sign >= 0) return sy_spinors[0];
+        if(axus == "y" and sign < 0) return sy_spinors[1];
+        if(axus == "z" and sign >= 0) return sz_spinors[0];
+        if(axus == "z" and sign < 0) return sz_spinors[1];
         throw except::runtime_error("get_spinor given invalid axis: {}", axis);
     }
 
-    Eigen::Vector2cd get_spinor(std::string_view sector) { return get_spinor(get_axis(sector), get_sign(sector)); }
+    Eigen::Vector2cd get_spinor(std::string_view axis) { return get_spinor(axis, get_sign(axis)); }
 
     Eigen::Matrix2cd get_pauli(std::string_view axis) {
-        if(axis.find('x') != std::string::npos) return sx;
-        if(axis.find('y') != std::string::npos) return sy;
-        if(axis.find('z') != std::string::npos) return sz;
-        if(axis.find('I') != std::string::npos) return id;
-        if(axis.find('i') != std::string::npos) return id;
-        throw except::runtime_error("get_pauli given invalid axis: {}", axis);
+        auto axus = get_axis_unsigned(axis);
+        if(axus == "x") return sx;
+        if(axus == "y") return sy;
+        if(axus == "z") return sz;
+        if(axus == "i") return id;
+        throw except::runtime_error("get_pauli: could not match axis string: {}", axis);
     }
 
 }

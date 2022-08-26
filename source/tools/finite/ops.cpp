@@ -184,16 +184,16 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     }
 }
 
-void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<svd::config> svd_cfg) {
+void tools::finite::ops::project_to_axis(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<svd::config> svd_cfg) {
     // This function applies the projection MPO operator  "0.5 * ( 1 - prod s)", where
     // 1 is understood as a 2^L x 2^L tensor and "prod s" is the outer product of pauli matrices, one for each site.
     // This operation leaves the global norm unchanged (thanks to the 0.5 factor) but locally each MPS loses its
     // norm (norm = 2), and entanglement entropies become doubled.
-    // Therefore a proper full normalization is required after this operation, as well as a full
+    // Therefore, a proper full normalization is required after this operation, as well as a full
     // rebuild of environments.
 
     if(std::abs(sign) != 1) throw except::runtime_error("Expected 'sign' +1 or -1. Got [{}]", sign);
-    tools::log->debug("Projecting state to sector with sign {}", sign);
+    tools::log->debug("Projecting state to axis with sign {}", sign);
     auto t_prj = tid::tic_scope("projection");
     tools::finite::mps::normalize_state(state, svd_cfg, NormPolicy::IFNEEDED);
 
@@ -219,94 +219,94 @@ void tools::finite::ops::project_to_sector(StateFinite &state, const Eigen::Matr
     if constexpr(settings::debug) state.assert_validity();
 }
 
-std::optional<double> tools::finite::ops::get_spin_component_in_sector(StateFinite &state, std::string_view sector) {
+std::optional<double> tools::finite::ops::get_spin_component_along_axis(StateFinite &state, std::string_view axis) {
     auto t_align = tid::tic_scope("align");
-    if(qm::spin::half::is_valid_axis(sector)) {
-        return tools::finite::measure::spin_component(state, qm::spin::half::get_pauli(sector));
+    if(qm::spin::half::is_valid_axis(axis)) {
+        return tools::finite::measure::spin_component(state, qm::spin::half::get_pauli(axis));
     } else
         return std::nullopt;
 }
 
-int tools::finite::ops::project_to_nearest_sector(StateFinite &state, std::string_view sector, std::optional<svd::config> svd_cfg) {
+int tools::finite::ops::project_to_nearest_axis(StateFinite &state, std::string_view axis, std::optional<svd::config> svd_cfg) {
     /*
      * When projecting, there is one bad thing that may happen: that the norm of the state vanishes.
      *
      * This can happen in a couple of different scenarios:
-     *      - The global state has spin component Z = -1.0 and we project to Z = +1.0 (or vice versa)
+     *      - The global state has spin component Z = -1.0, and we project to Z = +1.0 (or vice versa)
      *
-     * Therefore the projection is only done if the state has a chance of surviving
+     * Therefore, the projection is only done if the state has a chance of surviving
      * Otherwise emit a warning and return
      *
      */
 
-    tools::log->debug("Projecting state to axis nearest sector {}", sector);
-    auto t_prj                    = tid::tic_scope("proj");
-    auto spin_component_in_sector = get_spin_component_in_sector(state, sector);
-    if(spin_component_in_sector.has_value()) {
-        auto sector_sign    = qm::spin::half::get_sign(sector);
-        auto paulimatrix    = qm::spin::half::get_pauli(sector);
-        auto spin_alignment = sector_sign * spin_component_in_sector.value();
+    tools::log->debug("Projecting state to axis nearest {}", axis);
+    auto t_prj                     = tid::tic_scope("proj");
+    auto spin_component_along_axis = get_spin_component_along_axis(state, axis);
+    if(spin_component_along_axis.has_value()) {
+        auto sign           = qm::spin::half::get_sign(axis);
+        auto pauli          = qm::spin::half::get_pauli(axis);
+        auto spin_alignment = sign * spin_component_along_axis.value();
         // Now we have to check that the intended projection is safe
-        tools::log->debug("Spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
+        tools::log->debug("Spin component in axis {}: {:.16f}", axis, spin_component_along_axis.value());
         if(spin_alignment > 1.0 - 1e-14) {
-            tools::log->info("Projection not needed: spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
-            return sector_sign;
+            tools::log->info("Projection not needed: spin component along axis {}: {:.16f}", axis, spin_component_along_axis.value());
+            return sign;
         } else if(spin_alignment > 0) {
             // In this case the state has an aligned component along the requested axis --> safe
-            project_to_sector(state, paulimatrix, sector_sign, svd_cfg);
-            return sector_sign;
+            project_to_axis(state, pauli, sign, svd_cfg);
+            return sign;
         } else if(spin_alignment < 0) {
             constexpr auto spin_alignment_threshold = 1e-3;
             // In this case the state has an anti-aligned component along the requested axis --> safe if spin_component < 1 - spin_component_threshold
             // Remember that  spin_alignment == -1 means orthogonal!
             if(std::abs(spin_alignment) < 1.0 - spin_alignment_threshold) {
-                project_to_sector(state, paulimatrix, sector_sign, svd_cfg);
-                return sector_sign;
+                project_to_axis(state, pauli, sign, svd_cfg);
+                return sign;
             } else {
-                tools::log->warn("Skipping projection to [{0}]: State spin is orthogonal to the requested projection axis: <{0}|Ψ> = {1:.16f}", sector,
+                tools::log->warn("Skipping projection to [{0}]: State spin is orthogonal to the requested projection axis: <{0}|Ψ> = {1:.16f}", axis,
                                  spin_alignment);
                 return 0;
             }
-        } else if(spin_alignment == 0) {
-            // No sector sign was specified, so we select the one along which there is a component
-            if(spin_component_in_sector.value() >= 0)
-                sector_sign = 1;
+        } else if(spin_alignment == 0) { // Probably zero because sign == 0.
+            // No axis sign was specified, so we select the one along which there is a component
+            if(spin_component_along_axis.value() >= 0)
+                sign = 1;
             else
-                sector_sign = -1;
-            spin_alignment = sector_sign * spin_component_in_sector.value();
+                sign = -1;
+            spin_alignment = sign * spin_component_along_axis.value();
             if(spin_alignment > 1.0 - 1e-14) {
-                tools::log->info("Projection not needed: spin component in sector {}: {:.16f}", sector, spin_component_in_sector.value());
+                tools::log->info("Projection not needed: spin component along axis {}: {:.16f}", axis, spin_component_along_axis.value());
             } else {
-                project_to_sector(state, paulimatrix, sector_sign, svd_cfg);
+                project_to_axis(state, pauli, sign, svd_cfg);
             }
-            return sector_sign;
+            return sign;
         }
-    } else if(sector == "randomAxis") {
+    } else if(axis == "randomAxis") {
         std::vector<std::string> possibilities = {"x", "y", "z"};
         std::string              chosen_axis   = possibilities[rnd::uniform_integer_box<size_t>(0, possibilities.size() - 1)];
-        return project_to_nearest_sector(state, chosen_axis, svd_cfg);
-    } else if(sector == "random") {
+        return project_to_nearest_axis(state, chosen_axis, svd_cfg);
+    } else if(axis == "random") {
         auto             coeffs    = Eigen::Vector3d::Random().normalized();
         Eigen::Matrix2cd random_c2 = coeffs(0) * qm::spin::half::sx + coeffs(1) * qm::spin::half::sy + coeffs(2) * qm::spin::half::sz;
-        project_to_sector(state, random_c2, 1, svd_cfg);
+        project_to_axis(state, random_c2, 1, svd_cfg);
         return 0;
-    } else if(sector == "none") {
+    } else if(axis == "none") {
         return 0;
     } else
-        throw except::runtime_error("Could not parse sector string [{}]", sector);
+        throw except::runtime_error("Could not parse axis string [{}]", axis);
     return 0;
 }
 
-StateFinite tools::finite::ops::get_projection_to_sector(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign,
-                                                         std::optional<svd::config> svd_cfg) {
+StateFinite tools::finite::ops::get_projection_to_axis(const StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign,
+                                                       std::optional<svd::config> svd_cfg) {
     auto state_projected = state;
-    project_to_sector(state_projected, paulimatrix, sign, svd_cfg);
+    project_to_axis(state_projected, paulimatrix, sign, svd_cfg);
     return state_projected;
 }
 
-StateFinite tools::finite::ops::get_projection_to_nearest_sector(const StateFinite &state, std::string_view sector, std::optional<svd::config> svd_cfg) {
+StateFinite tools::finite::ops::get_projection_to_nearest_axis(const StateFinite &state, std::string_view axis, std::optional<svd::config> svd_cfg) {
     auto                  state_projected = state;
-    [[maybe_unused]] auto sign            = project_to_nearest_sector(state_projected, sector, svd_cfg);
+    [[maybe_unused]] auto sign            = project_to_nearest_axis(state_projected, axis, svd_cfg);
     return state_projected;
 }
 

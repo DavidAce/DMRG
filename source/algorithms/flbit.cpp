@@ -55,9 +55,9 @@ void flbit::resume() {
         auto bond_lim = settings::get_bond_init(status.algo_type);
         if(settings::strategy::initial_state != StateInit::PRODUCT_STATE_NEEL)
             tools::log->warn("Expected initial_state == PRODUCT_STATE_NEEL. Got {}", enum2sv(settings::strategy::initial_state));
-        if(settings::strategy::initial_sector != "+z") tools::log->warn("Expected initial_sector == +z. Got {}", settings::strategy::initial_sector);
+        if(settings::strategy::initial_axis != "+z") tools::log->warn("Expected initial_axis == +z. Got {}", settings::strategy::initial_axis);
 
-        tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_sector,
+        tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_axis,
                                 settings::strategy::use_eigenspinors, settings::input::bitfield, bond_lim);
 
         tensors.move_center_point_to_inward_edge();

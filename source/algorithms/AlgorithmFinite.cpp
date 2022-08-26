@@ -83,7 +83,7 @@ void AlgorithmFinite::run()
 void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
-    if(settings::strategy::project_final_state) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
+    if(settings::strategy::project_final_state) tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
     write_to_file(StorageReason::BOND_INCREASE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
     write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);    // To update checkpoint/iter_# or iter_last
     write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);    // To compare the finished state to a projected one
@@ -302,7 +302,8 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     }
 
     // Do a projection to make sure the saved data is in the correct sector
-    if(settings::strategy::project_on_bond_update) tensors.project_to_nearest_sector(settings::strategy::target_sector, status.bond_lim);
+    if(settings::strategy::project_on_bond_update)
+        tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
 
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_INCREASE);
@@ -411,7 +412,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     // Do a projection to make sure the saved data is in the correct sector
     if(settings::strategy::project_on_bond_update)
-        tensors.project_to_nearest_sector(settings::strategy::target_sector, std::nullopt, svd::config(status.bond_lim, status.trnc_lim));
+        tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
 
     // Write current results before updating the truncation error limit
     write_to_file(StorageReason::TRNC_DECREASE);
@@ -481,7 +482,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
     if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
-    if(not sector) sector = settings::strategy::initial_sector;
+    if(not sector) sector = settings::strategy::initial_axis;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
     if(not bitfield) bitfield = settings::input::bitfield;
     if(not bond_lim) {
@@ -501,7 +502,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
                          tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
-        tensors.project_to_nearest_sector(sector.value(), std::nullopt, svd::config(bond_lim, trnc_lim));
+        tensors.project_to_nearest_axis(sector.value(), svd::config(bond_lim, trnc_lim));
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
 
@@ -551,7 +552,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     bool project_to_given_sector = target_sector.has_value();
 
     if(project_on_every_iter or project_on_var_saturation or project_to_given_sector or project_on_spin_saturation) {
-        if(not target_sector) target_sector = settings::strategy::target_sector;
+        if(not target_sector) target_sector = settings::strategy::target_axis;
         if(not qm::spin::half::is_valid_axis(target_sector.value())) return; // Do not project unless the target sector is one of +- xyz
         std::string msg;
         if(project_on_spin_saturation) msg += " | reason: spin component has not converged";
@@ -564,7 +565,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
         if(sector_sign != 0) {
-            tensors.project_to_nearest_sector(target_sector.value(), use_mpo2_proj, svd::config(status.bond_lim, status.trnc_lim));
+            tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -585,15 +586,13 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 auto variance_pos = std::numeric_limits<double>::quiet_NaN();
                 try {
                     tools::log->debug("Trying projection to -{}", target_sector.value());
-                    tensors_neg.project_to_nearest_sector(fmt::format("-{}", target_sector.value()), use_mpo2_proj,
-                                                          svd::config(status.bond_lim, status.trnc_lim));
+                    tensors_neg.project_to_nearest_axis(fmt::format("-{}", target_sector.value()), svd::config(status.bond_lim, status.trnc_lim));
                     variance_neg = tools::finite::measure::energy_variance(tensors_neg);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to -{} failed: {}", target_sector.value(), ex.what()); }
 
                 try {
                     tools::log->debug("Trying projection to +{}", target_sector.value());
-                    tensors_pos.project_to_nearest_sector(fmt::format("+{}", target_sector.value()), use_mpo2_proj,
-                                                          svd::config(status.bond_lim, status.trnc_lim));
+                    tensors_pos.project_to_nearest_axis(fmt::format("+{}", target_sector.value()), svd::config(status.bond_lim, status.trnc_lim));
                     variance_pos = tools::finite::measure::energy_variance(tensors_pos);
                 } catch(const std::exception &ex) { throw except::runtime_error("Projection to +{} failed: {}", target_sector.value(), ex.what()); }
 
@@ -611,7 +610,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 // It may turn out that the spin component is almost exactly +-1 already, then no projection happens, but other
                 // routines may go through, such as sign selection on MPO² projection.
 
-                tensors.project_to_nearest_sector(target_sector.value(), use_mpo2_proj, svd::config(status.bond_lim, status.trnc_lim));
+                tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
             }
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
@@ -623,7 +622,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                     tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
                 }
         }
-        if(target_sector.value() == settings::strategy::target_sector) projected_iter = status.iter;
+        if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
     }
 }
@@ -752,10 +751,10 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
     static constexpr std::array<std::string_view, 9> valid_sectors = {"x", "+x", "-x", "y", "+y", "-y", "z", "+z", "-z"};
     bool sector_is_valid = std::find(valid_sectors.begin(), valid_sectors.end(), target_sector) != valid_sectors.end();
     if(sector_is_valid) {
-        auto axis                        = qm::spin::half::get_axis(settings::strategy::target_sector);
-        auto sign                        = qm::spin::half::get_sign(settings::strategy::target_sector);
+        auto axis                        = qm::spin::half::get_axis_unsigned(settings::strategy::target_axis);
+        auto sign                        = qm::spin::half::get_sign(settings::strategy::target_axis);
         auto spin_components             = tools::finite::measure::spin_components(*tensors.state);
-        auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_sector);
+        auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_axis);
         status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;
         if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
             tools::log->warn("Spin component {} has converged: {:.16f} but requested sector was {}", axis, fmt::join(spin_components, ", "), target_sector);
