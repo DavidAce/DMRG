@@ -5,6 +5,7 @@
 #include "debug/exceptions.h"
 #include "math/num.h"
 #include "math/tenx.h"
+#include "qm/spin.h"
 #include "tensors/edges/EdgesFinite.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
@@ -180,15 +181,16 @@ env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisi
     return std::as_const(*edges).get_multisite_env_var_blk();
 }
 
-void TensorsFinite::project_to_nearest_sector(std::string_view sector, std::optional<bool> use_mpo2_proj, std::optional<svd::config> svd_cfg) {
-    auto sign = tools::finite::ops::project_to_nearest_sector(*state, sector, svd_cfg);
-    if(use_mpo2_proj and use_mpo2_proj.value()) {
-        tools::log->info("Setting MPO² sector projection to {:+}{}", sign, sector);
-        model->set_mpo2_proj(sign, sector);
-    }
-    sync_active_sites();
-    if(not active_sites.empty()) {
-        rebuild_edges();
+void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg) {
+    auto sign = tools::finite::ops::project_to_nearest_axis(*state, axis, svd_cfg);
+    if(sign != 0) clear_cache();
+}
+
+void TensorsFinite::set_parity_shift_mpo_squared(std::string_view axis) {
+    auto sign = qm::spin::half::get_sign(axis);
+    if(sign == 0) sign = tools::finite::measure::spin_sign(*state, axis);
+    bool modified = model->set_parity_shift_mpo_squared(sign, axis); // will ignore the sign on the axis string if present
+    if(modified) {
         clear_cache();
         if constexpr(settings::debug) assert_validity();
     }

@@ -580,7 +580,6 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto variance_old  = tools::finite::measure::energy_variance(tensors);
         auto spincomp_old  = tools::finite::measure::spin_components(*tensors.state);
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
-        bool use_mpo2_proj = status.algo_type == AlgorithmType::xDMRG and settings::precision::use_projection_on_mpo_squared;
         if(sector_sign != 0) {
             tensors.project_to_nearest_sector(target_sector.value(), use_mpo2_proj, svd::config(status.bond_lim, status.trnc_lim));
         } else {
@@ -644,6 +643,13 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         if(target_sector.value() == settings::strategy::target_sector) projected_iter = status.iter;
         write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
     }
+}
+
+void AlgorithmFinite::try_parity_shift() {
+    if(not settings::precision::use_mpo_parity_shift) return;
+    if(not tensors.position_is_inward_edge()) return;
+    if(not qm::spin::half::is_valid_axis(settings::strategy::target_axis)) return;
+    tensors.set_parity_shift_mpo_squared(settings::strategy::target_axis);
 }
 
 void AlgorithmFinite::try_parity_sep() {

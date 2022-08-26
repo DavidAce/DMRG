@@ -23,15 +23,15 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id;
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
-    double e_shift        = 0;     /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
-    double psfactor       = 0;     /*!< Parity sector separation factor */
-    bool   parity_sep     = false; /*!< Parity sector separation on/off */
-    int    mpo2_proj_sign = 0;     /*!< Set MPO2 = H² + P², where P² = P = 0.5(1 + sign*prod(pauli)) projects to +- sign parity sector. Disable with 0 */
-    Eigen::MatrixXcd mpo2_proj_pauli;
+    std::optional<size_t> position;                  /*!< Position on a finite chain */
+    double                e_shift           = 0;     /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
+    double                psfactor          = 0;     /*!< Parity sector separation factor */
+    bool                  parity_sep        = false; /*!< Parity sector separation on/off */
+    int                   parity_shift_sign = 0;     /*!< Sign of parity sector to shift */
+    std::string           parity_shift_axus = {};    /*!< Unsigned axis {x,y,z} of spin parity sector to shift */
 
     std::array<long, 4>                   extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
     std::array<long, 2>                   extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */
-    std::optional<size_t>                 position;  /*!< Position on a finite chain */
     Eigen::Tensor<cplx, 4>                mpo_internal;
     std::optional<Eigen::Tensor<cplx, 4>> mpo_squared = std::nullopt;
 
@@ -43,7 +43,8 @@ class MpoSite {
     void                                        assert_validity() const;
     void                                        set_energy_shift(double site_energy);
     void                                        set_psfactor(double psfactor);
-    void                                        set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli);
+    void                                        set_parity_shift_mpo_squared(int sign, std::string_view axis);
+    std::pair<int, std::string_view>            get_parity_shift_mpo_squared() const;
     void                                        build_mpo_squared();
     void                                        set_mpo(const Eigen::Tensor<cplx, 4> &mpo_sq);
     void                                        set_mpo_squared(const Eigen::Tensor<cplx, 4> &mpo_sq);

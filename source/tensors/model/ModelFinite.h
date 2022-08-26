@@ -32,8 +32,9 @@ class ModelFinite {
     void                                set_energy_shift(double total_energy);
     void                                set_energy_shift_per_site(double energy_shift_per_site);
     void                                set_psfactor(double psfactor);
-    void                                set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli);
-    void                                set_mpo2_proj(int sign, std::string_view sector);
+    bool                                set_parity_shift_mpo_squared(int sign, std::string_view axis);
+    std::pair<int, std::string_view>    get_parity_shift_mpo_squared() const;
+    bool                                has_parity_shift_mpo_squared() const;
 
     public:
     std::vector<std::unique_ptr<MpoSite>> MPO; /*!< A list of stored Hamiltonian MPO tensors,indexed by chain position. */

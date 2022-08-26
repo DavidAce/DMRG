@@ -3,6 +3,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/eig.h"
 #include "math/linalg/tensor.h"
 #include "math/svd.h"
 #include "ModelFinite.h"
@@ -160,20 +161,28 @@ void ModelFinite::clear_mpo_squared() {
 void ModelFinite::compress_mpo_squared() {
     cache.multisite_mpo_squared = std::nullopt;
     cache.multisite_ham_squared = std::nullopt;
-    auto mpo_compressed         = get_compressed_mpo_squared();
-    for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_compressed[pos]);
+    auto mpo_squared_compressed = get_compressed_mpo_squared();
+    for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_squared_compressed[pos]);
 }
+
+// void ModelFinite::sqrt_mpo_squared() {
+//     cache.multisite_mpo_squared = std::nullopt;
+//     cache.multisite_ham_squared = std::nullopt;
+//     auto mpo_squared_sqrt       = get_sqrt_mpo_squared();
+//     for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_squared_sqrt[pos]);
+// }
 
 bool ModelFinite::has_mpo_squared() const {
     return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
 }
 
 std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
-    // First, rebuild the MPO's
+    tools::log->trace("Compressing MPO²: {} sites", MPO.size());
+    if(not has_mpo_squared()) build_mpo_squared(); // Make sure they exist.
+    // Collect all the mpo² (doesn't matter if they are already compressed)
     std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
     mpos_sq.reserve(MPO.size());
-    for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->get_non_compressed_mpo_squared());
-    tools::log->trace("Compressing MPO²: {} sites", mpos_sq.size());
+    for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->MPO2());
 
     // Setup SVD
     // Here we need a lot of precision:
@@ -250,11 +259,73 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
     return mpos_sq;
 }
 
+// std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_sqrt_mpo_squared() {
+//     if(is_compressed_mpo_squared()) throw except::logic_error("Can only take sqrt of non-compressed MPO²");
+//     tools::log->trace("Taking square root of MPO²: {} sites", MPO.size());
+//
+//     // Setup SVD
+//     // Here we need a lot of precision:
+//     //  - Use very low svd threshold
+//     //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
+//     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
+//     auto svd_cfg = svd::config();
+//     // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
+//     // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
+//     svd_cfg.svd_lib        = svd::lib::lapacke;
+//     svd_cfg.switchsize_bdc = 4096;
+//     svd_cfg.use_bdc        = false;
+//
+//     svd::solver svd(svd_cfg);
+//
+//     // Setup EIG
+//     auto solver = eig::solver();
+//
+//     // Allocate resulting sqrt mpo²
+//     std::vector<Eigen::Tensor<cplx, 4>> mpos_squared_sqrt;
+//     mpos_squared_sqrt.reserve(MPO.size());
+//
+//     for(const auto &[pos, mpo] : iter::enumerate(MPO)) {
+//         const auto &d = mpo->MPO().dimensions();
+//         // Set up the re-shape and shuffles to convert mpo² to a rank2-tensor
+//         auto shf6 = std::array<long, 6>{0, 2, 4, 1, 3, 5};
+//         auto shp6 = std::array<long, 6>{d[0], d[0], d[1], d[1], d[2], d[3]};
+//         auto shp2 = std::array<long, 2>{d[0] * d[1] * d[2], d[0] * d[1] * d[3]};
+//         auto shp4 = std::array<long, 4>{d[0] * d[0], d[1] * d[1], d[2], d[3]};
+//
+//         Eigen::Tensor<cplx, 2> mpo_squared_matrix = mpo->MPO2().reshape(shp6).shuffle(shf6).reshape(shp2);
+//
+//         auto [U, S, VT] = svd.decompose(mpo_squared_matrix);
+//         shf6            = {0, 3, 1, 4, 2, 5};
+//         shp6            = {d[0], d[1], d[2], d[0], d[1], d[3]};
+//
+//         Eigen::Tensor<cplx, 4> mpo_squared_sqrt =
+//             U.contract(tenx::asDiagonal(S.sqrt()), tenx::idx({1}, {0})).contract(VT, tenx::idx({1}, {0})).reshape(shp6).shuffle(shf6).reshape(shp4);
+//         mpos_squared_sqrt.emplace_back(mpo_squared_sqrt);
+//
+//         solver.eig<eig::Form::SYMM>(mpo_squared_matrix.data(), mpo_squared_matrix.dimension(0), eig::Vecs::ON);
+//         auto D           = tenx::TensorCast(eig::view::get_eigvals<eig::real>(solver.result).cast<cplx>());
+//         auto V           = tenx::TensorCast(eig::view::get_eigvecs<eig::cplx>(solver.result));
+//         mpo_squared_sqrt = V.contract(tenx::asDiagonal(D.sqrt()), tenx::idx({1}, {0}))
+//                                .contract(V.shuffle(std::array<long, 2>{1, 0}), tenx::idx({1}, {0}))
+//                                .reshape(shp6)
+//                                .shuffle(shf6)
+//                                .reshape(shp4);
+//
+//         Eigen::Tensor<double,1> S_real = S.real();
+//         Eigen::Tensor<double,1> D_real = D.real();
+//         tools::log->info("mpo²[{}] svds: {:8.4e}", static_cast<long>(pos), fmt::join(tenx::span(S_real),", "));
+//         tools::log->info("mpo²[{}] eigv: {:8.4e}", static_cast<long>(pos), fmt::join(tenx::span(D_real),", "));
+//         mpos_squared_sqrt.emplace_back(mpo_squared_sqrt);
+//     }
+//
+//     return mpos_squared_sqrt;
+// }
+
 void ModelFinite::set_energy_shift(double total_energy) { set_energy_shift_per_site(total_energy / static_cast<double>(get_length())); }
 
 void ModelFinite::set_energy_shift_per_site(double energy_shift_per_site) {
     if(get_energy_shift_per_site() == energy_shift_per_site) return;
-    tools::log->debug("Setting MPO energy shift (per site) {:.16f}", energy_shift_per_site);
+    tools::log->debug("Shifting MPO energy per site: {:.16f}", energy_shift_per_site);
     for(const auto &mpo : MPO) mpo->set_energy_shift(energy_shift_per_site);
     clear_cache();
 }
@@ -264,13 +335,31 @@ void ModelFinite::set_psfactor(double psfactor) {
     clear_cache();
 }
 
-void ModelFinite::set_mpo2_proj(int sign, const Eigen::MatrixXcd &pauli) {
-    for(const auto &mpo : MPO) mpo->set_mpo2_proj(sign, pauli);
+bool ModelFinite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) return false;
+    if(get_parity_shift_mpo_squared() == std::make_pair(sign, axis)) return false;
+    tools::log->info("Setting MPO² parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
+    for(const auto &mpo : MPO) mpo->set_parity_shift_mpo_squared(sign, axis);
     clear_cache();
+    return true;
 }
 
-void ModelFinite::set_mpo2_proj(int sign, std::string_view sector) {
-    if(qm::spin::half::is_valid_axis(sector)) { set_mpo2_proj(sign, qm::spin::half::get_pauli(sector)); }
+std::pair<int, std::string_view> ModelFinite::get_parity_shift_mpo_squared() const {
+    auto parity_shift     = std::pair<int, std::string_view>{0, ""};
+    bool parity_shift_set = false;
+    for(const auto &mpo : MPO) {
+        if(not parity_shift_set) {
+            parity_shift     = mpo->get_parity_shift_mpo_squared();
+            parity_shift_set = true;
+        } else if(parity_shift != mpo->get_parity_shift_mpo_squared())
+            throw except::logic_error("mpo² parity shift at site {} differs from shift at site 0", mpo->get_position());
+    }
+    return parity_shift;
+}
+
+bool ModelFinite::has_parity_shift_mpo_squared() const {
+    auto parity_shift = get_parity_shift_mpo_squared();
+    return parity_shift.first != 0 and not parity_shift.second.empty();
 }
 
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }

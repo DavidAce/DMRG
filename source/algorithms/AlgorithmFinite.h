@@ -31,6 +31,7 @@ class AlgorithmFinite : public AlgorithmBase {
     virtual void resume()                = 0;
     virtual void run_default_task_list() = 0;
     void         try_projection(std::optional<std::string> target_sector = std::nullopt);
+    void         try_parity_shift();
     void         try_parity_sep();
     void         try_moving_sites();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
