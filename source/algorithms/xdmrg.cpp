@@ -488,6 +488,7 @@ void xdmrg::update_state() {
         // Try activating the sites asked for;
         tensors.activate_sites(meta.chosen_sites);
         if(tensors.active_sites.empty()) continue;
+        tensors.rebuild_edges();
 
         // Hold the variance before the optimization step for comparison
         if(not variance_before_step) variance_before_step = measure::energy_variance(tensors); // Should just take value from cache
@@ -691,6 +692,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
     int  counter           = 0;
     bool outside_of_window = true;
     tensors.activate_sites(settings::solver::max_size_full_eigs, 2);
+    tensors.rebuild_edges();
     while(true) {
         randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, -1); // Do not use the bitfield: set to -1
         status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);

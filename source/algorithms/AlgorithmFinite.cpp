@@ -153,14 +153,9 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
 void AlgorithmFinite::shift_mpo_energy() {
     if(not settings::precision::use_mpo_energy_shift) return;
     if(not tensors.position_is_inward_edge()) return;
-    // Shift mpo energy to avoid catastrophic cancellation
-    // Note that this operation makes the Hamiltonian nearly singular,
-    // which is tough for Lanczos/Arnoldi iterations to handle in fdmrg.
-    // We solve that problem by shifting energy.
-    tensors.shift_mpo_energy(std::nullopt);
-    // The shift clears our squared mpo's. So we have to rebuild them.
-    rebuild_mpo_squared();
-    tensors.rebuild_edges();
+    tensors.shift_mpo_energy();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
+    tensors.rebuild_mpo_squared(); // The shift clears our squared mpo's. So we have to rebuild them. Compression is retained.
+    tensors.rebuild_edges();       // The shift modified all our mpo's. So we have to rebuild all the edges.
     if constexpr(settings::debug) tensors.assert_validity();
 }
 
@@ -193,6 +188,7 @@ void AlgorithmFinite::try_moving_sites() {
     auto site_seq = dir > 0 ? num::range<long>(0, len - 1, 1) : num::range<long>(1, len, -1);
 
     tensors.activate_sites({tensors.get_position()});
+    tensors.rebuild_edges();
     tools::log->info("Trying to move sites | pos {} | dir {}", pos, dir);
     std::vector<std::string> report;
     auto                     ene_old = tools::finite::measure::energy(tensors);
@@ -219,7 +215,7 @@ void AlgorithmFinite::try_moving_sites() {
         tensors.rebuild_mpo();
         tensors.rebuild_mpo_squared();
         tensors.move_center_point_to_inward_edge();
-        tensors.activate_sites({tensors.get_position()});
+        tensors.activate_sites();
         tensors.rebuild_edges();
         sites_mpo = std::nullopt;
         sites_mps = std::nullopt;

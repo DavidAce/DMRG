@@ -162,7 +162,7 @@ void fdmrg::update_state() {
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
                       enum2sv(ritz), enum2sv(meta.optType));
     tensors.activate_sites(settings::solver::max_size_shift_invert, settings::strategy::multisite_mps_site_def);
-
+    tensors.rebuild_edges();
     if(not tensors.active_sites.empty()) {
         if(status.env_expansion_alpha > 0) {
             // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -194,7 +194,7 @@ void fdmrg::check_convergence() {
     update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
-    check_convergence_spin_parity_sector(settings::strategy::target_sector);
+    check_convergence_spin_parity_sector(settings::strategy::target_axis);
 
     if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturation_iters or
        (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
