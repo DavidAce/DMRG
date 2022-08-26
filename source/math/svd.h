@@ -86,23 +86,24 @@ namespace svd {
         }
 
         template<typename Scalar>
-        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor) {
-            auto [U, S, VT] = do_svd_ptr(tensor.data(), tensor.dimension(0), tensor.dimension(1));
+        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 2> &tensor,
+                                                                                                           const svd::config &svd_cfg = svd::config()) {
+            auto [U, S, VT] = do_svd_ptr(tensor.data(), tensor.dimension(0), tensor.dimension(1), svd_cfg);
             return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(VT));
         }
 
         template<typename Scalar>
-        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> decompose(const Eigen::Tensor<Scalar, 3> &tensor,
-                                                                                                           const long rows, const long cols) {
+        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>>
+            decompose(const Eigen::Tensor<Scalar, 3> &tensor, const long rows, const long cols, const svd::config &svd_cfg = svd::config()) {
             if(rows * cols != tensor.size()) throw std::runtime_error("rows * cols  != tensor.size()");
-            auto [U, S, VT] = do_svd_ptr(tensor.data(), rows, cols);
+            auto [U, S, VT] = do_svd_ptr(tensor.data(), rows, cols, svd_cfg);
             return std::make_tuple(tenx::TensorMap(U), tenx::TensorMap(S.template cast<Scalar>()), tenx::TensorMap(VT));
         }
 
         template<typename Derived>
         std::tuple<MatrixType<typename Derived::Scalar>, VectorType<typename Derived::Scalar>, MatrixType<typename Derived::Scalar>>
-            decompose(const Eigen::DenseBase<Derived> &matrix) {
-            auto [U, S, VT] = do_svd_ptr(matrix.derived().data(), matrix.rows(), matrix.cols());
+            decompose(const Eigen::DenseBase<Derived> &matrix, const svd::config &svd_cfg = svd::config()) {
+            auto [U, S, VT] = do_svd_ptr(matrix.derived().data(), matrix.rows(), matrix.cols(), svd_cfg);
             return std::make_tuple(U, S.template cast<typename Derived::Scalar>(), VT);
         }
 
