@@ -46,17 +46,19 @@ namespace tools::finite::opt::internal {
         //        template<typename> friend class NormParametrization;
         explicit bfgs_base_functor(const TensorsFinite &tensors, const AlgorithmStatus &status);
 
-        double get_fval() const;
-        double get_energy() const;
-        double get_variance() const;
-        size_t get_count() const;
-        double get_norm() const;
-        double get_norm_offset() const;
-        double get_resnorm() const;
-        double get_delta_f() const;
-        double get_max_grad_norm() const;
-        long   get_ops() const;
-        int    NumParameters() const final;
+        double              get_fval() const;
+        double              get_energy() const;
+        double              get_variance() const;
+        size_t              get_count() const;
+        double              get_norm() const;
+        double              get_norm_offset() const;
+        double              get_resnorm() const;
+        double              get_delta_f() const;
+        double              get_max_grad_norm() const;
+        long                get_ops() const;
+        long                get_size() const;
+        std::array<long, 3> get_dims() const;
+        int                 NumParameters() const final;
 
         void set_delta_f(double delta_f_) const;
         void set_max_grad_norm(double max_grad_norm_) const;
