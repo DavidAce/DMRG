@@ -64,6 +64,7 @@ bfgs_variance_functor<Scalar, lagrangeNorm>::bfgs_variance_functor(const Tensors
     Hn_tensor.resize(dims);
     H2n_tensor.resize(dims);
     if constexpr(lagrangeNorm == LagrangeNorm::ON) {
+        H2H2n_tensor.resize(dims);
         H2r_tensor.resize(dims);
         residual.resize(size);
     }
@@ -80,7 +81,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     auto                         t_token = t_step->tic_token();
     Scalar                       var;
     Scalar                       nHn, nH2n;
-    double                       vv, log10var;
+    double                       vv;
     Eigen::Map<const VectorType> v(reinterpret_cast<const Scalar *>(v_double_double), size); // v does not include the lagrange multiplier
 
     if constexpr(settings::debug) {
@@ -115,8 +116,7 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
     t_nH2n->toc();
 
     // Do this next bit carefully to avoid negative variance when numbers are very small
-    var = nH2n - nHn * nHn;
-    //    var        = nH2n;
+    var        = nH2n - nHn * nHn;
     double eps = std::numeric_limits<double>::epsilon();
     if((std::real(var) < -eps or std::real(nH2n) < -eps))
         tools::log->debug("Counter = {} | BFGS | "
@@ -126,72 +126,51 @@ bool bfgs_variance_functor<Scalar, lagrangeNorm>::Evaluate(const double *v_doubl
                           "grad {:8.4e}",
                           counter, std::real(var), std::imag(var), std::real(nHn), std::imag(nHn), std::real(nH2n), std::imag(nH2n), max_grad_norm);
 
-    //    var = std::abs(var);
-    //    var = std::real(var) == 0.0 ? eps : var;
-
     energy      = std::real(nHn + energy_shift);
     variance    = std::abs(var);
     norm_offset = std::abs(vv - 1.0);
-    //    log10var          = std::log10(variance);
-    // Here we work with a small offset on the variance:
-    //      When the variance is very low, numerical noise will sometimes cause nH2n < 0 or var < 0.
-    //      I think this is caused by H2 being slightly non-symmetric
-    //    double var_offset = std::clamp(std::real(var) + 1e-12, eps, std::abs(var) + 1e-12);
-    log10var  = std::log10(std::abs(var));
+
     auto pref = std::is_same_v<Scalar, real> ? 2.0 : 1.0; // Factor 2 for real
 
-    Eigen::Map<VectorType> grad(reinterpret_cast<Scalar *>(grad_double_double), size);
-    if(grad_double_double != nullptr) {
-        auto one_over_norm = 1.0 / norm;
-        auto var_1         = 1.0 / std::real(var) / std::log(10);
-        grad               = pref * one_over_norm * (H2n - 2.0 * nHn * Hn - (nH2n - 2.0 * nHn * nHn) * n);
-        max_grad_norm      = grad.template lpNorm<Eigen::Infinity>(); // To monitor the actual gradient norm of the optimization (not its logarithm)
-        grad *= var_1;                                                // Because we are optimizing the logarithm.
-    }
-    if(fx != nullptr) { fx[0] = log10var; }
+    if(fx != nullptr) fx[0] = std::abs(var);
     if constexpr(lagrangeNorm == LagrangeNorm::ON) {
         // Here we define the norm constraint by using the lagrange multiplier trick:
         //      f(x)
         // is replaced with
         //      L(x,lambda) = f(x) + lambda1 * g(x) + lambda2 * h(x)
         // where g(x) = | <x|x> - 1 |
-        // where h(x) = log10(|r|) = | H²x - E²x | (the 2-norm of the residual on the eigenvalue eq H²x = E²x )
-        // Note that dh(x)/dx = 1/(2 * h^(3/2)) * (H²r-E²r)
-        residual = H2n - nH2n * n;  // aka r(x)
-        resnorm  = residual.norm(); // aka h(x)
+        // where h(x) = log(|r|) = log10 (| H²x - E²x |) (log10 of the 2-norm of the residual vector from the eigenvalue eq H²x = E²x )
+        // Note that dh(x)/dx* = (H²H²n - 2E²H²n + E²)/(2*|r|²) (easiest to show using index notation and taking the derivative dh(x)/dx* (x*:
+        // conjugated)
 
-        double g = std::abs(vv - 1.0); // aka g(x)
-        double h = resnorm;            // aka h(x)
+        residual = H2n - nH2n * n;        // aka r(x)
+        resnorm  = residual.norm() + eps; // aka h(x), add eps so that we don't divide by zero
 
-        if(fx != nullptr) fx[0] += g + std::log10(h);
+        double g = norm_offset;       // aka g(x)
+        double h = std::log(resnorm); // aka h(x)
+
+        if(fx != nullptr) fx[0] += g + h;
+
         if(grad_double_double != nullptr) {
-            get_H2r(residual);
-            auto H2r               = Eigen::Map<VectorType>(H2r_tensor.data(), H2r_tensor.size());
-            auto grad_w_multiplier = Eigen::Map<VectorType>(reinterpret_cast<Scalar *>(grad_double_double), size + 2);
-            grad_w_multiplier.topRows(size) += pref * num::sign(vv - 1.0) * v; // aka  += lambda * dg(x)/dx = lambda * sign(x) * x
-            grad_w_multiplier.topRows(size) +=
-                (H2r - nH2n * residual) / (2 * std::pow(resnorm, 1.5) * std::log(10)); // aka dh(x)/dx = 1/(2 * h^(3/2)) * (H²r-E²r)
-            grad_w_multiplier.bottomRows(2)[0] = g;
-            grad_w_multiplier.bottomRows(2)[1] = std::log10(h);
+            auto grad          = Eigen::Map<VectorType>(reinterpret_cast<Scalar *>(grad_double_double), size + 2);
+            grad.topRows(size) = pref * (H2n - 2.0 * nHn * Hn);
+            get_H2H2n(H2n);
+            auto H2H2n = Eigen::Map<VectorType>(H2H2n_tensor.data(), H2H2n_tensor.size());
+            grad.topRows(size) += pref * num::sign(vv - 1.0) * v; // aka  += lambda * dg(x)/dx = lambda * sign(x) * x
+            grad.topRows(size) += (H2H2n - 2.0 * nH2n * H2n + nH2n * nH2n * n) / (2.0 * resnorm * resnorm);
+            grad.bottomRows(2)[0] = g;
+            grad.bottomRows(2)[1] = h;
+            max_grad_norm         = grad.topRows(size).template lpNorm<Eigen::Infinity>();
+        }
+    } else {
+        if(grad_double_double != nullptr) {
+            auto grad          = Eigen::Map<VectorType>(reinterpret_cast<Scalar *>(grad_double_double), size);
+            auto one_over_norm = 1.0 / norm;
+            grad               = pref * one_over_norm * (H2n - 2.0 * nHn * Hn);
+            max_grad_norm      = grad.template lpNorm<Eigen::Infinity>();
         }
     }
     fval = fx[0];
-
-    if(std::isnan(log10var) or std::isinf(log10var)) {
-        tools::log->warn("σ²H is invalid");
-        tools::log->warn("σ²H             = {:8.2e}", variance);
-        tools::log->warn("mv              = {}", counter);
-        tools::log->warn("size            = {}", size);
-        tools::log->warn("vv              = {:.16f} + i{:.16f}", std::real(vv), std::imag(vv));
-        tools::log->warn("nH2n            = {:.16f} + i{:.16f}", std::real(nH2n), std::imag(nH2n));
-        tools::log->warn("nHn             = {:.16f} + i{:.16f}", std::real(nHn), std::imag(nHn));
-        tools::log->warn("var             = {:.16f} + i{:.16f}", std::real(var), std::imag(var));
-        tools::log->warn("energy offset   = {:.16f}", energy_offset);
-        tools::log->warn("energy shift    = {:.16f}", energy_shift);
-        tools::log->warn("norm            = {:.16f}", norm);
-        tools::log->warn("norm   offset   = {:.16f}", norm_offset);
-        throw except::runtime_error("Direct functor failed at mv = {}", counter);
-    }
 
     counter++;
     return true;
@@ -255,10 +234,10 @@ void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2n(const VectorType &v) c
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
-void bfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &v) const {
+void bfgs_variance_functor<Scalar, lagrangeNorm>::get_Hn(const VectorType &n) const {
     auto t_token  = t_Hn->tic_token();
-    auto v_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(v.derived().data(), dims);
-    tools::common::contraction::matrix_vector_product(Hn_tensor, v_tensor, mpo, envL, envR);
+    auto n_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(n.derived().data(), dims);
+    tools::common::contraction::matrix_vector_product(Hn_tensor, n_tensor, mpo, envL, envR);
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>
@@ -266,6 +245,13 @@ void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2r(const VectorType &r) c
     auto t_token  = t_H2r->tic_token();
     auto r_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(r.derived().data(), dims);
     tools::common::contraction::matrix_vector_product(H2r_tensor, r_tensor, mpo2, env2L, env2R);
+}
+
+template<typename Scalar, LagrangeNorm lagrangeNorm>
+void bfgs_variance_functor<Scalar, lagrangeNorm>::get_H2H2n(const VectorType &n) const {
+    auto t_token  = t_H2r->tic_token();
+    auto n_tensor = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(n.derived().data(), dims);
+    tools::common::contraction::matrix_vector_product(H2H2n_tensor, n_tensor, mpo2, env2L, env2R);
 }
 
 template<typename Scalar, LagrangeNorm lagrangeNorm>

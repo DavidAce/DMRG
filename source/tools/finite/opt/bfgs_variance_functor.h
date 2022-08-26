@@ -10,7 +10,7 @@ namespace tools::finite::opt::internal {
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
         mutable VectorType               residual;
-        mutable Eigen::Tensor<Scalar, 3> Hn_tensor, H2n_tensor, H2r_tensor;
+        mutable Eigen::Tensor<Scalar, 3> Hn_tensor, H2n_tensor, H2r_tensor, H2H2n_tensor;
         Eigen::Tensor<Scalar, 3>         envL, envR;
         Eigen::Tensor<Scalar, 3>         env2L, env2R;
         Eigen::Tensor<Scalar, 4>         mpo, mpo2;
@@ -18,9 +18,10 @@ namespace tools::finite::opt::internal {
         mutable bool                     print_path    = true;
         mutable bool                     readyCompress = false;
         mutable bool                     readyShift    = false;
-        void                             get_Hn(const VectorType &v) const;
-        void                             get_H2n(const VectorType &v) const;
+        void                             get_Hn(const VectorType &n) const;
+        void                             get_H2n(const VectorType &n) const;
         void                             get_H2r(const VectorType &r) const;
+        void                             get_H2H2n(const VectorType &n) const;
 
         public:
         template<typename>
