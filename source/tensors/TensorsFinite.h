@@ -96,8 +96,9 @@ class TensorsFinite {
 
     void                sync_active_sites();
     void                clear_active_sites();
-    void                activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);
     void                activate_sites(const std::vector<size_t> &sites);
+    void                activate_sites();
+    void                activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);
     std::array<long, 3> active_problem_dims() const;
     long                active_problem_size() const;
     void                do_all_measurements() const;

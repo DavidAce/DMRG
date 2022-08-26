@@ -363,6 +363,14 @@ void TensorsFinite::activate_sites(const std::vector<size_t> &sites) {
     if constexpr(settings::debug) assert_validity();
 }
 
+void TensorsFinite::activate_sites() {
+    sync_active_sites();
+    if(active_sites.empty()) {
+        if(position_is_at(-1)) throw except::logic_error("activate_sites: cannot activate a default site when pos == -1");
+        activate_sites({get_position<size_t>()});
+    }
+}
+
 void TensorsFinite::activate_sites(long threshold, size_t max_sites, size_t min_sites) {
     activate_sites(tools::finite::multisite::generate_site_list(*state, threshold, max_sites, min_sites));
 }
@@ -602,9 +610,19 @@ void TensorsFinite::move_site_to_pos(const size_t site, const long tgt_pos, std:
 void TensorsFinite::assert_edges() const { tools::finite::env::assert_edges(*state, *model, *edges); }
 void TensorsFinite::assert_edges_ene() const { tools::finite::env::assert_edges_ene(*state, *model, *edges); }
 void TensorsFinite::assert_edges_var() const { tools::finite::env::assert_edges_var(*state, *model, *edges); }
-void TensorsFinite::rebuild_edges() { tools::finite::env::rebuild_edges(*state, *model, *edges); }
-void TensorsFinite::rebuild_edges_ene() { tools::finite::env::rebuild_edges_ene(*state, *model, *edges); }
-void TensorsFinite::rebuild_edges_var() { tools::finite::env::rebuild_edges_var(*state, *model, *edges); }
+void TensorsFinite::rebuild_edges() {
+    activate_sites();
+    tools::finite::env::rebuild_edges(*state, *model, *edges);
+}
+void TensorsFinite::rebuild_edges_ene() {
+    activate_sites();
+    tools::finite::env::rebuild_edges_ene(*state, *model, *edges);
+}
+void TensorsFinite::rebuild_edges_var() {
+    activate_sites();
+    tools::finite::env::rebuild_edges_var(*state, *model, *edges);
+}
+
 void TensorsFinite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 void TensorsFinite::redo_all_measurements() const {
     clear_cache();
