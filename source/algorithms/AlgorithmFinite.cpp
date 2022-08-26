@@ -217,7 +217,7 @@ void AlgorithmFinite::try_moving_sites() {
         }
         tools::log->info("Resetting MPO's");
         tensors.rebuild_mpo();
-        tensors.rebuild_mpo_squared(settings::precision::use_compressed_mpo_squared_all);
+        tensors.rebuild_mpo_squared();
         tensors.move_center_point_to_inward_edge();
         tensors.activate_sites({tensors.get_position()});
         tensors.rebuild_edges();
@@ -242,19 +242,6 @@ void AlgorithmFinite::try_moving_sites() {
     settings::strategy::multisite_mps_when     = multisite_mps_when_backup;
     settings::strategy::multisite_mps_site_max = multisite_mps_site_max_backup;
     settings::strategy::multisite_mps_site_def = multisite_mps_site_def_backup;
-}
-
-void AlgorithmFinite::rebuild_mpo() {
-    if(not tensors.position_is_inward_edge()) return;
-    tools::log->debug("Rebuilding MPO");
-    tensors.rebuild_mpo();
-}
-
-void AlgorithmFinite::rebuild_mpo_squared() {
-    if(not tensors.position_is_inward_edge()) return;
-    bool compress = settings::precision::use_compressed_mpo_squared_all;
-    tools::log->debug("Rebuilding MPO² | compress:{}", compress);
-    tensors.rebuild_mpo_squared(compress);
 }
 
 void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {

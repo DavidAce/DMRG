@@ -70,7 +70,7 @@ class TensorsFinite {
     void shift_mpo_energy(std::optional<double> energy_shift_per_site = std::nullopt);
     void set_psfactor(double psfactor);
     void rebuild_mpo();
-    void rebuild_mpo_squared(std::optional<bool> compress = std::nullopt);
+    void rebuild_mpo_squared();
 
     void assert_validity() const;
 
