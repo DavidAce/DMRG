@@ -91,7 +91,6 @@ void TensorsFinite::normalize_state(std::optional<svd::config> svd_cfg, NormPoli
     if(has_normalized) {
         state->clear_cache();
         clear_measurements();
-        rebuild_edges();
     }
 }
 
@@ -594,7 +593,6 @@ void TensorsFinite::move_site(const size_t site, const long steps, std::vector<s
                               std::optional<long> new_pos) {
     move_site_mps(site, steps, sites_mps, new_pos);
     move_site_mpo(site, steps, sites_mpo);
-    rebuild_edges();
 }
 
 void TensorsFinite::move_site_to_pos(const size_t site, const long tgt_pos, std::optional<std::vector<size_t>> &sites_mps,
@@ -603,7 +601,6 @@ void TensorsFinite::move_site_to_pos(const size_t site, const long tgt_pos, std:
     if(not sites_mpo) sites_mpo = std::vector<size_t>{};
     move_site_mps_to_pos(site, tgt_pos, sites_mps.value(), new_pos);
     move_site_mpo_to_pos(site, tgt_pos, sites_mpo.value());
-    rebuild_edges();
     if(sites_mps != sites_mpo) throw except::logic_error("sites mismatch \n sites_mps {}\n sites_mpo {}", sites_mps.value(), sites_mpo.value());
 }
 
