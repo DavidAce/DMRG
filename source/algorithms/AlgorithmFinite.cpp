@@ -173,13 +173,15 @@ void AlgorithmFinite::try_moving_sites() {
     //  site: the index of a particle on the lattice, which can be moved. (size_t)
     //  dir : Direction on which to move the position: +1l = right, -1l = left.
     auto prefer_eigs_backup                    = settings::solver::prefer_eigs_over_bfgs;
-    auto eigs_max_iter                         = settings::solver::eigs_max_iter;
-    auto eigs_tolerance                        = settings::solver::eigs_tolerance;
+    auto eigs_iter_max_backup                  = settings::solver::eigs_iter_max;
+    auto eigs_tol_min_backup                   = settings::solver::eigs_tol_min;
+    auto eigs_ncv_backup                       = settings::solver::eigs_ncv;
     auto multisite_mps_when_backup             = settings::strategy::multisite_mps_when;
     auto multisite_mps_site_max_backup         = settings::strategy::multisite_mps_site_max;
     auto multisite_mps_site_def_backup         = settings::strategy::multisite_mps_site_def;
-    settings::solver::eigs_max_iter            = 100;
-    settings::solver::eigs_tolerance           = 1e-12;
+    settings::solver::eigs_iter_max            = 100;
+    settings::solver::eigs_tol_min             = std::min(1e-14, settings::solver::eigs_tol_min);
+    settings::solver::eigs_ncv                 = std::max(35ul, settings::solver::eigs_ncv);
     settings::solver::prefer_eigs_over_bfgs    = OptEigs::ALWAYS;
     settings::strategy::multisite_mps_when     = MultisiteWhen::ALWAYS;
     settings::strategy::multisite_mps_site_max = 2;
@@ -216,17 +218,16 @@ void AlgorithmFinite::try_moving_sites() {
         tools::log->info("Resetting MPO's");
         tensors.rebuild_mpo();
         tensors.rebuild_mpo_squared(settings::precision::use_compressed_mpo_squared_all);
-        //        tensors.move_site_mps_to_pos(pos_ul, pos, sites_mps, pos_old);
         tensors.move_center_point_to_inward_edge();
         tensors.activate_sites({tensors.get_position()});
         tensors.rebuild_edges();
         sites_mpo = std::nullopt;
         sites_mps = std::nullopt;
         status.iter += 1;
-        //        check_convergence();
-        //        if(status.variance_mpo_saturated_for == 0) break;
+        check_convergence();
+        if(status.variance_mpo_converged_for > 0) break;
     }
-
+    clear_convergence_status();
     tools::log->info("Finished moving sites");
     for(const auto &r : report) tools::log->info("{}", r);
     tools::log->info("Energy    {:.16f} --> {:.16f}", ene_old, tools::finite::measure::energy(tensors));
@@ -234,8 +235,9 @@ void AlgorithmFinite::try_moving_sites() {
 
     if(not tensors.position_is_inward_edge())
         throw except::logic_error("Position {} and direction {} is not an inward edge", tensors.get_position(), tensors.state->get_direction());
-    settings::solver::eigs_max_iter            = eigs_max_iter;
-    settings::solver::eigs_tolerance           = eigs_tolerance;
+    settings::solver::eigs_iter_max            = eigs_iter_max_backup;
+    settings::solver::eigs_tol_min             = eigs_tol_min_backup;
+    settings::solver::eigs_ncv                 = eigs_ncv_backup;
     settings::solver::prefer_eigs_over_bfgs    = prefer_eigs_backup;
     settings::strategy::multisite_mps_when     = multisite_mps_when_backup;
     settings::strategy::multisite_mps_site_max = multisite_mps_site_max_backup;
