@@ -264,6 +264,7 @@ void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optiona
     std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
 
     switch(storage_reason) {
+        case StorageReason::NONE: return;
         case StorageReason::FINISHED: {
             storage_level = settings::storage::storage_level_finished;
             state_prefix += "/finished";

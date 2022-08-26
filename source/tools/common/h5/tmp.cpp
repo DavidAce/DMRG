@@ -134,6 +134,7 @@ void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const 
     if(copy_policy == CopyPolicy::TRY) {
         if(save_log[h5file.getFilePath()] == save_point) return;
         switch(storage_reason) {
+            case StorageReason::NONE: return;
             case StorageReason::SAVEPOINT:
             case StorageReason::CHECKPOINT:
                 if(status.iter % settings::storage::copy_from_temp_freq != 0) return; // Check that we write according to the frequency given

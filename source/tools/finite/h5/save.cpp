@@ -418,6 +418,7 @@ namespace tools::finite::h5 {
         storage_level = StorageLevel::NONE;
 
         switch(storage_reason) {
+            case StorageReason::NONE: return;
             case StorageReason::FINISHED: {
                 storage_level = settings::storage::storage_level_finished;
                 state_prefix += "/finished";
@@ -516,6 +517,7 @@ namespace tools::finite::h5 {
 
         // Additional constraints
         switch(storage_reason) {
+            case StorageReason::NONE: return;
             case StorageReason::SAVEPOINT:
             case StorageReason::CHECKPOINT: {
                 if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;

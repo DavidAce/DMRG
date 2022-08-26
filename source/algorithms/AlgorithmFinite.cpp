@@ -348,7 +348,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
-void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) {
+void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageReason storage_reason) {
     // We reduce the bond dimension limit during FES whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
     if(when == UpdateWhen::NEVER) return;
@@ -358,7 +358,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) 
     bool   reduce_truncated  = when == UpdateWhen::TRUNCATED and tensors.state->is_truncated(status.trnc_lim);
     bool   reduce_iteration  = when == UpdateWhen::ITERATION and iter_since_reduce >= 1;
     if(reduce_saturated or reduce_truncated or reduce_iteration or iter_since_reduce >= 20) {
-        write_to_file(StorageReason::FES, CopyPolicy::OFF);
+        write_to_file(storage_reason, CopyPolicy::OFF);
 
         auto bond_new = static_cast<double>(status.bond_lim);
         if(rate > 0.0 and rate < 1.0)
@@ -371,7 +371,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when) 
         if(bond_new == static_cast<double>(status.bond_lim))
             status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
         else {
-            tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
+            if(storage_reason != StorageReason::NONE) tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
             status.bond_lim = static_cast<long>(bond_new);
         }
         iter_last_bond_reduce = status.iter;

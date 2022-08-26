@@ -39,7 +39,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
-    void         reduce_bond_dimension_limit(double rate, UpdateWhen when);
+    void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageReason storage_reason);
     void         update_truncation_error_limit() final;
     void         update_expansion_factor_alpha();
     void         randomize_model();

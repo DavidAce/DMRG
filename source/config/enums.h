@@ -17,7 +17,7 @@ enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, BOND_INCREASE, TRNC_DECREASE, FES };
+enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, BOND_INCREASE, TRNC_DECREASE, FES, NONE };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
@@ -279,6 +279,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StorageReason::BOND_INCREASE)                        return "BOND_INCREASE";
         if(item == StorageReason::TRNC_DECREASE)                        return "TRNC_DECREASE";
         if(item == StorageReason::FES)                                  return "FES";
+        if(item == StorageReason::NONE)                                 return "NONE";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -600,6 +601,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "BOND_INCREASE")                         return StorageReason::BOND_INCREASE;
         if(item == "TRNC_DECREASE")                         return StorageReason::TRNC_DECREASE;
         if(item == "FES")                                   return StorageReason::FES;
+        if(item == "NONE")                                  return StorageReason::NONE;
 
     }
     if constexpr(std::is_same_v<T, StateInit>) {

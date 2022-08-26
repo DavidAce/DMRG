@@ -274,7 +274,7 @@ void xdmrg::run_fes_analysis() {
         status.step += tensors.get_length<size_t>();
         status.algorithm_converged_for = 1;
         status.algorithm_saturated_for = 0;
-        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::ITERATION);
+        reduce_bond_dimension_limit(1, UpdateWhen::ITERATION, StorageReason::NONE);
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_fes->get_time();
     }
@@ -289,7 +289,7 @@ void xdmrg::run_fes_analysis() {
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
-        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED);
+        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageReason::FES);
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
 
