@@ -25,16 +25,18 @@ bfgs_base_functor::bfgs_base_functor(const TensorsFinite &tensors, const Algorit
     iteration = status.iter;
 }
 
-double bfgs_base_functor::get_fval() const { return fval; }
-double bfgs_base_functor::get_energy() const { return energy; }
-double bfgs_base_functor::get_variance() const { return variance; }
-size_t bfgs_base_functor::get_count() const { return counter; }
-double bfgs_base_functor::get_norm() const { return norm; }
-double bfgs_base_functor::get_norm_offset() const { return norm_offset; }
-double bfgs_base_functor::get_resnorm() const { return resnorm; }
-double bfgs_base_functor::get_delta_f() const { return delta_f; }
-double bfgs_base_functor::get_max_grad_norm() const { return max_grad_norm; }
-long   bfgs_base_functor::get_ops() const { return ops; }
-int    bfgs_base_functor::NumParameters() const { return num_parameters; }
-void   bfgs_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
-void   bfgs_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }
+double              bfgs_base_functor::get_fval() const { return fval; }
+double              bfgs_base_functor::get_energy() const { return energy; }
+double              bfgs_base_functor::get_variance() const { return variance; }
+size_t              bfgs_base_functor::get_count() const { return counter; }
+double              bfgs_base_functor::get_norm() const { return norm; }
+double              bfgs_base_functor::get_norm_offset() const { return norm_offset; }
+double              bfgs_base_functor::get_resnorm() const { return resnorm; }
+double              bfgs_base_functor::get_delta_f() const { return delta_f; }
+double              bfgs_base_functor::get_max_grad_norm() const { return max_grad_norm; }
+long                bfgs_base_functor::get_ops() const { return ops; }
+long                bfgs_base_functor::get_size() const { return size; }
+std::array<long, 3> bfgs_base_functor::get_dims() const { return dims; }
+int                 bfgs_base_functor::NumParameters() const { return num_parameters; }
+void                bfgs_base_functor::set_delta_f(double delta_f_) const { delta_f = delta_f_; }
+void                bfgs_base_functor::set_max_grad_norm(double max_grad_norm_) const { max_grad_norm = max_grad_norm_; }
