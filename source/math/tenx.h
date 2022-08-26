@@ -98,12 +98,13 @@ namespace tenx {
     //    //***************************************//
     //
 
-    template<typename Scalar>
-    Eigen::Tensor<Scalar, 1> extractDiagonal(const Eigen::Tensor<Scalar, 2> &tensor) {
-        if(tensor.dimension(0) != tensor.dimension(1)) throw std::runtime_error("extractDiagonal expects a square tensor");
-        Eigen::Tensor<Scalar, 1> diagonals(tensor.dimension(0));
-        for(Eigen::Index i = 0; i < tensor.dimension(0); i++) diagonals(i) = tensor(i, i);
-        return diagonals;
+    template<typename T, typename Device = Eigen::DefaultDevice>
+    auto extractDiagonal(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
+        auto tensor    = tenx::asEval(expr, device);
+        auto tensorMap = tensor.map();
+        auto size      = tensorMap.size();
+        auto rows      = static_cast<Eigen::Index>(std::floor(std::sqrt(size)));
+        return tensorMap.reshape(array1{size}).stride(array1{rows + 1});
     }
 
     template<typename T, typename Device = Eigen::DefaultDevice>
