@@ -1,6 +1,6 @@
 #include "../opt_mps.h"
-#include "general/iter.h"
 #include "bfgs_subspace_functor.h"
+#include "general/iter.h"
 #include "tools/common/log.h"
 #include "tools/finite/opt/opt-internal.h"
 
@@ -26,7 +26,7 @@ void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps
     for(auto &eigvec : subspace) {
         eigvec.set_name(fmt::format("eigenvector {}", idx++));
         //        tools::log->trace("Filtered {:<16}: overlap {:.16f} | energy {:>20.16f}", eigvec.get_label(), eigvec.get_overlap(),
-        //                          eigvec.get_energy_per_site());
+        //                          eigvec.get_energy());
     }
 
     tools::log->trace("Filtered from {} down to {} states", initial_size, subspace.size());
@@ -34,36 +34,37 @@ void tools::finite::opt::internal::subspace::filter_subspace(std::vector<opt_mps
     if(subspace.size() < min_accept) throw std::runtime_error("Filtered too many eigvecs");
 }
 
-std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs,
-                                                                                                     double energy_llim_per_site, double energy_ulim_per_site) {
+std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs, double energy_llim,
+                                                                                                     double energy_ulim) {
     if(eigvecs.empty()) return std::nullopt;
     auto overlaps = get_overlaps(eigvecs);
     long idx      = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
-        auto energy_per_site = eigvec.get_energy_per_site();
-        if(energy_per_site > energy_ulim_per_site) overlaps(idx) = 0.0;
-        if(energy_per_site < energy_llim_per_site) overlaps(idx) = 0.0;
+        auto energy = eigvec.get_energy();
+        if(energy > energy_ulim) overlaps(idx) = 0.0;
+        if(energy < energy_llim) overlaps(idx) = 0.0;
         idx++;
     }
-    // Now we have a list of overlaps where nonzero elements correspond do eigvecs inside the energy window
+    // Now we have a list of overlaps where nonzero elements correspond to eigvecs inside the energy window
     // Get the index to the highest overlapping element
     double max_overlap_val = overlaps.maxCoeff(&idx);
     if(max_overlap_val == 0.0) {
-        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim_per_site, energy_ulim_per_site);
+        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim, energy_ulim);
+        for(const auto &eigvec : eigvecs) tools::log->info("energy {}: {}", eigvec.get_eigs_idx(), eigvec.get_energy());
         return std::nullopt;
     }
     return idx;
 }
 
-std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> &eigvecs,
-                                                                                                     double energy_llim_per_site, double energy_ulim_per_site) {
+std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> &eigvecs, double energy_llim,
+                                                                                                     double energy_ulim) {
     if(eigvecs.empty()) return std::nullopt;
     auto   var = std::numeric_limits<double>::infinity();
     size_t idx = 0;
     for(const auto &[i, eigvec] : iter::enumerate(eigvecs)) {
         if(not eigvec.is_basis_vector) continue;
-        if(eigvec.get_variance() < var and eigvec.get_energy_per_site() <= energy_ulim_per_site and eigvec.get_energy_per_site() >= energy_llim_per_site) {
+        if(eigvec.get_variance() < var and eigvec.get_energy() <= energy_ulim and eigvec.get_energy() >= energy_llim) {
             idx = i;
             var = eigvec.get_variance();
         }
@@ -73,21 +74,21 @@ std::optional<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_
 }
 
 std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> &eigvecs, size_t max_eigvecs,
-                                                                                                   double energy_llim_per_site, double energy_ulim_per_site) {
+                                                                                                   double energy_llim, double energy_ulim) {
     if(eigvecs.empty()) return std::vector<size_t>();
     auto overlaps = get_overlaps(eigvecs);
     long idx      = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
-        if(eigvec.get_energy_per_site() > energy_ulim_per_site) overlaps(idx) = 0.0;
-        if(eigvec.get_energy_per_site() < energy_llim_per_site) overlaps(idx) = 0.0;
+        if(eigvec.get_energy() > energy_ulim) overlaps(idx) = 0.0;
+        if(eigvec.get_energy() < energy_llim) overlaps(idx) = 0.0;
         idx++;
     }
-    // Now we have a list of overlaps where nonzero elements correspond do eigvecs inside the energy window
+    // Now we have a list of overlaps where nonzero elements correspond to eigvecs inside the energy window
     // Get the index to the highest overlapping element
     double max_overlap_val = overlaps.maxCoeff();
     if(max_overlap_val == 0.0) {
-        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim_per_site, energy_ulim_per_site);
+        tools::log->debug("No overlapping eigenstates in given energy window {} to {}.", energy_llim, energy_ulim);
         return std::vector<size_t>();
     }
 
@@ -141,17 +142,6 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies(const std::
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
         energies(idx++) = eigvec.get_energy();
-    }
-    energies.conservativeResize(idx);
-    return energies;
-}
-
-Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies_per_site(const std::vector<opt_mps> &eigvecs) {
-    Eigen::VectorXd energies(static_cast<long>(eigvecs.size()));
-    long            idx = 0;
-    for(const auto &eigvec : eigvecs) {
-        if(not eigvec.is_basis_vector) continue;
-        energies(idx++) = eigvec.get_energy_per_site();
     }
     energies.conservativeResize(idx);
     return energies;

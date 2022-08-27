@@ -78,14 +78,13 @@ namespace tools::finite::opt::internal{
         filter_subspace(std::vector<opt_mps> & subspace, size_t max_accept);
 
 
-        extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, double energy_llim_per_site, double energy_ulim_per_site);
-        extern std::optional<size_t> get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> & eigvecs, double energy_llim_per_site, double energy_ulim_per_site);
-        extern std::vector<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, size_t max_eigvecs, double energy_llim_per_site, double energy_ulim_per_site);
+        extern std::optional<size_t> get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, double energy_llim, double energy_ulim);
+        extern std::optional<size_t> get_idx_to_eigvec_with_lowest_variance(const std::vector<opt_mps> & eigvecs, double energy_llim, double energy_ulim);
+        extern std::vector<size_t>   get_idx_to_eigvec_with_highest_overlap(const std::vector<opt_mps> & eigvecs, size_t max_eigvecs, double energy_llim, double energy_ulim);
 
         extern Eigen::MatrixXcd get_eigvecs(const std::vector<opt_mps> & eigvecs);
         extern Eigen::VectorXd get_eigvals(const std::vector<opt_mps> & eigvecs);
         extern Eigen::VectorXd get_energies(const std::vector<opt_mps> & eigvecs);
-        extern Eigen::VectorXd get_energies_per_site(const std::vector<opt_mps> & eigvecs);
         extern Eigen::VectorXd get_overlaps(const std::vector<opt_mps> & eigvecs);
         extern std::vector<double> get_subspace_errors(const std::vector<opt_mps> & eigvecs);
         extern double get_subspace_error(const std::vector<opt_mps> & eigvecs, std::optional<size_t> max_eigvecs = std::nullopt);

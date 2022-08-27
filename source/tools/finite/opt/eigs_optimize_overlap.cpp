@@ -72,7 +72,7 @@ opt_mps tools::finite::opt::internal::eigs_optimize_overlap(const TensorsFinite 
     std::vector<opt_mps> subspace;
     switch(meta.optType) {
         case OptType::CPLX: subspace = internal::subspace::find_subspace<cplx>(tensors, settings::precision::target_subspace_error, meta); break;
-        case OptType::REAL: subspace = internal::subspace::find_subspace<double>(tensors, settings::precision::target_subspace_error, meta); break;
+        case OptType::REAL: subspace = internal::subspace::find_subspace<real>(tensors, settings::precision::target_subspace_error, meta); break;
     }
 
     tools::log->trace("eigs_optimize_overlap: subspace found with {} eigenvectors", subspace.size());
@@ -87,14 +87,13 @@ opt_mps tools::finite::opt::internal::eigs_optimize_overlap(const TensorsFinite 
         eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors));
         if(tools::log->level() == spdlog::level::trace) {
             tools::log->trace("eigs_optimize_overlap: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}",
-                              max_overlap_idx.value(), eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy_per_site(),
-                              eigvec_max_overlap.get_variance());
+                              max_overlap_idx.value(), eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy(), eigvec_max_overlap.get_variance());
         }
         if(eigvec_max_overlap.get_overlap() < 0.1)
             tools::log->debug("eigs_optimize_overlap: Overlap fell below < 0.1: {:20.16f}", eigvec_max_overlap.get_overlap());
         return eigvec_max_overlap;
     } else {
-        tools::log->warn("eigs_optimize_overlap: No overlapping states in energy range. Returning the state unchanged.");
+        tools::log->warn("eigs_optimize_overlap: No overlapping states in energy range. Max overlap has energy. Returning the state unchanged.");
         return initial_mps;
     }
 }
