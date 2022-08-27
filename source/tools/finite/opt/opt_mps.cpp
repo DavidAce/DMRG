@@ -124,8 +124,6 @@ double opt_mps::get_variance() const {
         throw except::runtime_error("opt_mps: variance not set");
 }
 
-double opt_mps::get_variance_per_site() const { return get_variance() / static_cast<double>(get_length()); }
-
 size_t opt_mps::get_iter() const {
     if(iter)
         return iter.value();
