@@ -167,21 +167,21 @@ namespace tools::finite::opt {
         eig::solver solver;
         auto       &cfg = solver.config;
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        configs[0].tol                = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
-        configs[0].maxIter            = 1000;
-        configs[0].maxNev             = 1;
-        configs[0].maxNcv             = 4;
-        configs[0].compress           = false;
-        configs[0].maxTime            = 2 * 60 * 60; // Two hours
-        configs[0].lib                = eig::Lib::PRIMME;
-        configs[0].ritz               = eig::Ritz::SA;
-        configs[0].compute_eigvecs    = eig::Vecs::ON;
-        configs[0].loglevel           = 2;
-        configs[0].primme_method      = eig::PrimmeMethod::PRIMME_GD_plusK; // eig::PrimmeMethod::PRIMME_JDQMR;
-        configs[0].primme_convTestFun = RnormReadConvTest;
-        // Apply preconditioner if applicable, usually faster on small matrices
-        //        if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
-        //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
+        cfg.tol             = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
+        cfg.maxIter         = 1000;
+        cfg.maxNev          = 1;
+        cfg.maxNcv          = 4;
+        cfg.compress        = false;
+        cfg.maxTime         = 2 * 60 * 60; // Two hours
+        cfg.lib             = eig::Lib::PRIMME;
+        cfg.ritz            = eig::Ritz::primme_smallest; // eig::Ritz::SA;
+        cfg.compute_eigvecs = eig::Vecs::ON;
+        cfg.loglevel        = 2;
+        cfg.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC; // eig::PrimmeMethod::PRIMME_JDQMR;
+
+        //         Apply preconditioner if applicable, usually faster on small matrices
+        //                if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
+        //                    configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
         //        if(initial_mps.get_tensor().size() > 8192 and initial_mps.get_tensor().size() <= 20000)
         //        configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
 
