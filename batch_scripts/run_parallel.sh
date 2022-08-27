@@ -2,7 +2,7 @@
 
 #SBATCH --nodes=1
 #SBATCH --kill-on-invalid-dep=yes
-#SBATCH --output=logs/%x-%A.out
+#SBATCH --output=logs/%x-%A.txt
 #SBATCH --error=logs/%x-%A.err
 
 
@@ -53,9 +53,9 @@ mkdir -p $outdir/$simbase
 num_cols=$(awk '{print NF}' $simfile | head -n 1)
 
 if [ "$num_cols" -eq 2 ]; then
-    cat $simfile | parallel --max-procs $SLURM_NTASKS --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -c {1} -s {2} &> $outdir/${simbase}/{1/.}_{2}.out"
+    cat $simfile | parallel --max-procs $SLURM_NTASKS --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -c {1} -s {2} &> $outdir/${simbase}/{1/.}_{2}.txt"
 elif [ "$num_cols" -eq 3 ]; then
-    cat $simfile | parallel --max-procs $SLURM_NTASKS --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -c {1} -s {2} -b {3} &> $outdir/${simbase}/{1/.}_{2}_{3}.out"
+    cat $simfile | parallel --max-procs $SLURM_NTASKS --memfree $SLURM_MEM_PER_CPU --joblog $outfile --colsep ' ' "$exec -c {1} -s {2} -b {3} &> $outdir/${simbase}/{1/.}_{2}_{3}.txt"
 else
     echo "Case not implemented"
     exit 1

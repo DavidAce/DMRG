@@ -63,7 +63,7 @@ with open("{}/{}".format(args.outdir, args.failfile), "w") as output:
                 item['jobidraw'] = line[1]
                 item['jobname'] = line[2]
                 item['exitcode'] = line[3]
-                item['outfile'] = '{}/{}-{}.out'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
+                item['outfile'] = '{}/{}-{}.txt'.format(args.logdir,line[2], line[0]) # This needs to match the sbatch file
                 joblist.append(item)
 
         print("Command:", ' '.join(p.args))
