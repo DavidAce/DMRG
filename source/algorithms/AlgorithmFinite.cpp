@@ -439,19 +439,17 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
         // Update alpha
         double old_expansion_alpha = status.env_expansion_alpha;
         double factor_up           = std::pow(1e+1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep increases alpha by x10
-        double factor_dn           = std::pow(1e-1, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x100
+        double factor_dn           = std::pow(1e-3, 1.0 / static_cast<double>(settings::model::model_size)); // A sweep decreases alpha by x1000
 
         bool var_recently_improved = status.energy_variance_lowest / status.env_expansion_variance < 1e-1;
-        //        if(var_recently_improved) factor_dn *= 0.1;
-
-        if(status.algorithm_has_stuck_for > 0 and not var_recently_improved) {
+        bool var_has_converged = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold;
+        if(status.algorithm_has_stuck_for > 0 and not var_recently_improved and not var_has_converged) {
             status.env_expansion_alpha *= factor_up;
         } else {
             status.env_expansion_alpha *= factor_dn;
         }
         double alpha_upper_limit = settings::strategy::max_env_expansion_alpha;
         double alpha_lower_limit = status.energy_variance_lowest;
-        //        double alpha_lower_limit = std::max(status.energy_variance_lowest, std::sqrt(status.trnc_lim));
 
         status.env_expansion_alpha = std::clamp(status.env_expansion_alpha, std::min(alpha_lower_limit, alpha_upper_limit), alpha_upper_limit);
         if(status.env_expansion_alpha < old_expansion_alpha) {
