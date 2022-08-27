@@ -315,6 +315,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
      */
     OptMeta m1;
     m1.label = "m1";
+    m1.retry = false;
 
     // The first decision is easy. Real or complex optimization
     if(tensors.is_real()) m1.optType = OptType::REAL;
