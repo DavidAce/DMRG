@@ -20,6 +20,7 @@ option(DMRG_ENABLE_CCACHE "Enable ccache to speed up compilation" OFF)
 option(DMRG_ENABLE_COVERAGE "Enable test coverage" OFF)
 option(DMRG_PROFILE_BUILD "Enable -ftime-trace (inspect with ClangBuildAnalyzer)" OFF)
 option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
+option(DMRG_BUILD_TOOLS "Build tools" ON)
 option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
 option(DMRG_ENABLE_DOCS "Build documentation" OFF)
 option(DMRG_CMAKE_DEBUG "Extra information during CMake configuration" OFF)
@@ -121,31 +122,10 @@ message(STATUS "================================================================
 message(STATUS "")
 
 
-#############################
-## UNIT TEST
-#############################
-# Simple testing with ctest
-if (DMRG_ENABLE_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif ()
-
-#############################
-## BENCHMARKS
-#############################
-# Simple testing with ctest
-if (DMRG_ENABLE_BENCH)
-    enable_testing()
-    add_subdirectory(bench)
-endif ()
-
-
-#############################
-## DOCS
-#############################
-if (DMRG_ENABLE_DOCS)
-    add_subdirectory(docs)
-endif ()
+add_subdirectory(tests) # Unit testing with ctest and catch2
+add_subdirectory(bench) # Benchmarks with ctest and nanobench
+add_subdirectory(tools) # Build tools for minor DMRG related tasks
+add_subdirectory(docs)  # Build documentation with doxygen
 
 #############################
 ## NINJA TRACING

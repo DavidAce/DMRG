@@ -1,0 +1,5 @@
+if (DMRG_BUILD_TOOLS)
+    cmake_minimum_required(VERSION 3.15)
+    project(dmrg-tools)
+    add_subdirectory(tool-kvorning-marker)
+endif ()
