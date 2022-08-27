@@ -16,13 +16,11 @@
 #include "tools/finite/opt/opt-internal.h"
 #include "tools/finite/opt/report.h"
 #include <primme/primme.h>
-// Temporary
-//#include <h5pp/h5pp.h>
 
 namespace tools::finite::opt {
 
     template<typename Scalar>
-    struct opt_init_t {
+    struct opt_mps_init_t {
         Eigen::Tensor<Scalar, 3> mps = {};
         long                     idx = 0;
     };
@@ -49,8 +47,8 @@ namespace tools::finite::opt {
     }
 
     template<typename Scalar>
-    std::vector<opt_init_t<Scalar>> get_initial_guesses(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
-        std::vector<opt_init_t<Scalar>> init;
+    std::vector<opt_mps_init_t<Scalar>> get_initial_guesses(const opt_mps &initial_mps, const std::vector<opt_mps> &results, long nev) {
+        std::vector<opt_mps_init_t<Scalar>> init;
         if(results.empty()) {
             if constexpr(std::is_same_v<Scalar, real>)
                 init.push_back({initial_mps.get_tensor().real(), 0});
@@ -107,177 +105,13 @@ namespace tools::finite::opt {
         H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
     }
 
-    void RnormReadConvTest([[maybe_unused]] double *eval, [[maybe_unused]] void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
-        if(rNorm == nullptr) return;
-        if(primme == nullptr) return;
-
-        double problemNorm;
-        if(not primme->massMatrixMatvec) {
-            problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
-        } else {
-            problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
-        }
-        double prec         = primme->eps * problemNorm;
-        int    default_crit = *rNorm < prec;
-
-        if(primme->convtest == nullptr) return;
-        auto &solver = *static_cast<eig::solver *>(primme->convtest);
-        auto &result = solver.result;
-
-        // Store rNorm
-        result.meta.last_res_norm = *rNorm;
-        *isconv                   = default_crit;
-        *ierr                     = 0;
-    }
-
-    template<typename MatrixProductType>
-    void GradientConvTest(double *eval, void *evec, double *rNorm, int *isconv, struct primme_params *primme, int *ierr) {
-        if(rNorm == nullptr) return;
-        if(primme == nullptr) return;
-
-        double problemNorm;
-        if(not primme->massMatrixMatvec) {
-            problemNorm = primme->aNorm > 0.0 ? primme->aNorm : primme->stats.estimateLargestSVal;
-        } else {
-            problemNorm = primme->aNorm > 0.0 && primme->invBNorm > 0.0 ? primme->aNorm * primme->invBNorm : primme->stats.estimateLargestSVal;
-        }
-        double prec         = primme->eps * problemNorm;
-        int    default_crit = *rNorm < prec;
-
-        *isconv = default_crit;
-        *ierr   = 0;
-
-        if(eval == nullptr) return;
-        if(evec == nullptr) return;
-        if(primme->convtest == nullptr) return;
-        auto &solver = *static_cast<eig::solver *>(primme->convtest);
-        auto &config = solver.config;
-        auto &result = solver.result;
-
-        // Store rNorm
-        result.meta.last_res_norm = *rNorm;
-
-        // Terminate if its taking too long
-        if(config.maxTime.has_value() and primme->stats.elapsedTime > config.maxTime.value()) {
-            solver.log->warn("primme: max time has been exeeded: {:.2f}", config.maxTime.value());
-            primme->maxMatvecs = 0;
-        }
-
-        if constexpr(MatrixProductType::storage == eig::Storage::MPS) {
-            if(config.primme_effective_ham == nullptr) return;
-            if(config.primme_effective_ham_sq == nullptr) return;
-            long   iter_since_last = primme->stats.numMatvecs - result.meta.last_grad_iter;
-            double time_since_last = primme->stats.elapsedTime - result.meta.last_grad_time;
-
-            double grad_tol  = config.primme_grad_tol ? config.primme_grad_tol.value() : 1e-6;
-            long   grad_iter = config.primme_grad_iter ? config.primme_grad_iter.value() : 100;
-            double grad_time = config.primme_grad_time ? config.primme_grad_time.value() : 5.0;
-
-            // If we do inner iterations we better check gradient convergence every outer iteration instead, so we override the
-            // iter/time periods given in config.
-            if(primme->correctionParams.maxInnerIterations != 0) {
-                grad_iter = 0;
-                grad_time = 0;
-            }
-
-            if(iter_since_last >= grad_iter or time_since_last >= grad_time) {
-                auto t_grad  = tid::tic_token("primme.grad");
-                auto H_ptr   = static_cast<MatrixProductType *>(config.primme_effective_ham);
-                auto H2_ptr  = static_cast<MatrixProductType *>(config.primme_effective_ham_sq);
-                using Scalar = typename MatrixProductType::Scalar;
-                using Vector = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-                if(H2_ptr->rows() != H_ptr->rows()) throw except::logic_error("H2 and H size mismatch");
-                H_ptr->compress();
-                long mps_size = static_cast<long>(H2_ptr->rows());
-                auto v        = Eigen::Map<Vector>(static_cast<Scalar *>(evec), mps_size);
-
-                Vector Hv(mps_size), H2v(mps_size);
-
-                H_ptr->MultAx(v.data(), Hv.data());
-                H2_ptr->MultAx(v.data(), H2v.data());
-
-                if(H_ptr->template get_shift<Scalar>() != 0.0) Hv += v * H_ptr->template get_shift<Scalar>();
-                if(H2_ptr->template get_shift<Scalar>() != 0.0) H2v += v * H2_ptr->template get_shift<Scalar>();
-                auto vHv      = v.dot(Hv);
-                auto vH2v     = v.dot(H2v);
-                auto norm_1   = 1.0 / v.norm();
-                auto pref     = std::is_same_v<Scalar, cplx> ? 2.0 : 1.0; // Factor 2 for complex
-                auto grad     = pref * norm_1 * (H2v - 2.0 * vHv * Hv - (vH2v - 2.0 * vHv * vHv) * v);
-                auto grad_max = grad.template lpNorm<Eigen::Infinity>();
-
-                // Store gradient info
-                result.meta.last_grad_max  = grad_max;
-                result.meta.last_grad_iter = primme->stats.numMatvecs;
-                result.meta.last_grad_time = primme->stats.elapsedTime;
-
-                *isconv = std::max<int>(*isconv, grad_max < grad_tol);
-                *ierr   = 0;
-                //            if(*isconv != 0)
-                solver.log->debug(
-                    FMT_STRING("ops {:< 5} | mv {:<5} | iter {:<4} | λ {:20.16f} | res {:8.2e} | ∇fᵐᵃˣ {:8.2e} | time {:8.2f} s | dt {:8.2e} s/op"), H2_ptr->mv,
-                    primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->stats.estimateMinEVal, *rNorm, grad_max, primme->stats.elapsedTime,
-                    primme->stats.timeMatvec / primme->stats.numMatvecs);
-            }
-        }
-    }
-
-    bool try_harder(const std::vector<opt_mps> &results, [[maybe_unused]] const OptMeta &meta, spdlog::level::level_enum level = spdlog::level::debug) {
-        if(results.empty()) {
-            tools::log->debug("Try harder: true | first run");
-            return true;
-        }
-
-        //        static constexpr auto full_str     = std::array<std::string_view, 3>{"lapack", "dsyevd", "zheevd"};
-        //        bool                  is_full_diag = std::find(full_str.begin(), full_str.end(), results.back().get_name()) != full_str.end();
-        const auto &name  = results.back().get_name();
-        bool is_full_diag = name.find("lapack") != std::string::npos or name.find("dsyevd") != std::string::npos or name.find("dsyevx") != std::string::npos or
-                            name.find("zheevd") != std::string::npos;
-        if(is_full_diag) {
-            tools::log->log(level, "Try harder: false | full diagonalization is good enough");
-            return false; // Full diag. You are finished.
-        }
-        // It's important that we only consider the "eigenvector 0" results, i.e. idx == 0.
-        std::vector<std::reference_wrapper<const opt_mps>> results_eig0;
-        for(const auto &r : results) {
-            if(r.get_eigs_idx() == 0) results_eig0.emplace_back(r);
-        }
-
-        const auto &back0 = results_eig0.back().get();
-
-        // When there is a degeneracy, we may get a situation like this:
-        //
-        // E/L                    λ                      σ²H      overlap
-        // +5.565233108953220     +0.000000000001958     2.74e-12 0.695437332511797
-        // +5.565233122209704     +0.000000000003793     2.75e-12 0.718586749494365
-        //
-        // We are really looking for the state in the second line, but since nev == 1 we don't see the next state.
-        // The only way to detect this scenario is to check if the overlap is below 0.7071...
-        // If that is true, we should get the next state with nev == 2 and check its overlap too.
-        // If their variance is about the same we know that we have met this scenario and should pick
-        // the one with highest overlap.
-        // TODO: One could perhaps try SVD on each state to check if the entropy changes drastically?
-        if(back0.get_overlap() <= std::sqrt(0.5)) {
-            tools::log->log(level, "Try harder: true | nearly degenerate");
-            return true;
-        }
-
-        // TODO: The test below is wrong.  eigs_tol is eps, but the convergence condition is actually res <= eps * aNorm * invBnorm
-        //        if(back0.get_eigs_rnorm() <= back0.get_eigs_tol()) { // 1.1 to get a non-exact match as well
-        //            tools::log->debug("Try harder: false | residual_norm tolerance reached: {:8.2e}", back0.get_eigs_tol());
-        //            return false;
-        //        }
-        bool tryharder = back0.get_grad_max() >= back0.get_grad_tol();
-        tools::log->log(level, "Try harder: {} | grad norm {:8.2e} threshold = {:<8.2e}", tryharder, back0.get_grad_max(), back0.get_grad_tol());
-        return tryharder;
-    }
-
     template<typename Scalar>
     double get_largest_eigenvalue_hamiltonian_squared(const TensorsFinite &tensors) {
         const auto &env2                = tensors.get_multisite_env_var_blk();
         auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
         tools::log->trace("Finding largest-magnitude eigenvalue");
         eig::solver solver; // Define a solver just to find the maximum eigenvalue
-        solver.config.tol             = settings::solver::eigs_tolerance;
+        solver.config.tol             = settings::solver::eigs_tol_min;
         solver.config.maxIter         = 200;
         solver.config.maxNev          = 1;
         solver.config.maxNcv          = 16;
@@ -312,34 +146,26 @@ namespace tools::finite::opt {
         if(solver.config.lib == eig::Lib::ARPACK) {
             if(tensors.model->is_compressed_mpo_squared()) throw std::runtime_error("eigs_optimize_variance with ARPACK requires non-compressed MPO²");
             if(not solver.config.ritz) solver.config.ritz = eig::Ritz::LM;
-            if(not solver.config.sigma)
-                solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one just to make sure we shift enough
-            tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | arpack {} | init on | dims {} = {}",
-                              std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), hamiltonian_squared.get_shape_mps(),
-                              hamiltonian_squared.rows());
-            solver.eigs(hamiltonian_squared);
+            if(not solver.config.sigma) solver.config.sigma = get_largest_eigenvalue_hamiltonian_squared<Scalar>(tensors) + 1.0; // Add one to shift enough
         } else if(solver.config.lib == eig::Lib::PRIMME) {
             if(not solver.config.ritz) solver.config.ritz = eig::Ritz::SA;
-            if(solver.config.sigma and tensors.model->is_compressed_mpo_squared())
-                throw except::logic_error("eigs_optimize_variance with PRIMME with given sigma requires non-compressed MPO²");
-            if(solver.config.sigma)
-                tools::log->debug("Finding excited state as minimum of [(H-E)²-σ] | σ = {:.16f} | primme {} | maxIter {} | init on | dims {} = {}",
-                                  std::real(solver.config.sigma.value()), eig::RitzToString(solver.config.ritz.value()), solver.config.maxIter.value(),
-                                  hamiltonian_squared.get_shape_mps(), hamiltonian_squared.rows());
-
-            else
-                tools::log->debug("Finding excited state as minimum of [(H-E)²] | primme {} | maxIter {} | init on | dims {} = {}",
-                                  eig::RitzToString(solver.config.ritz.value()), solver.config.maxIter.value(), hamiltonian_squared.get_shape_mps(),
-                                  hamiltonian_squared.rows());
-            solver.eigs(hamiltonian_squared);
+            if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->is_compressed_mpo_squared())
+                throw except::logic_error("eigs_optimize_variance with PRIMME with sigma requires non-compressed MPO²");
         }
+        tools::log->debug("Finding excited state of operator [(H-E)²{}]{}{} | {} {} | maxIter {} | init on | size {} | mps {} | mpo {}",
+                          solver.config.sigma ? "-σ" : "", solver.config.shift_invert == eig::Shinv::ON ? "⁻¹" : "",
+                          solver.config.sigma ? fmt::format(" | σ = {:.16f}", solver.config.sigma->real()) : "", eig::LibToString(solver.config.lib),
+                          eig::RitzToString(solver.config.ritz), solver.config.maxIter.value(), hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(),
+                          hamiltonian_squared.get_shape_mpo());
 
+        solver.eigs(hamiltonian_squared);
         internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
     }
 
     template<typename Scalar>
     void eigs_manager(const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta) {
-        std::vector<eig::settings> configs(1);
+        eig::solver solver;
+        auto       &cfg = solver.config;
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
         configs[0].tol                = 1e-12; // 1e-12 is good. This Sets "eps" in primme, see link above.
         configs[0].maxIter            = 1000;
@@ -357,14 +183,13 @@ namespace tools::finite::opt {
         //        if(initial_mps.get_tensor().size() > settings::solver::max_size_full_eigs and initial_mps.get_tensor().size() <= 8000)
         //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::LLT>;
         //        if(initial_mps.get_tensor().size() > 8192 and initial_mps.get_tensor().size() <= 20000)
-        //            configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
+        //        configs[0].primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
 
         // Overrides from default
-        if(meta.compress_otf) configs[0].compress = meta.compress_otf;
-        if(meta.eigs_max_tol) configs[0].tol = meta.eigs_max_tol;
-        if(meta.eigs_max_ncv) configs[0].maxNcv = meta.eigs_max_ncv;
-        if(meta.eigs_max_iter) configs[0].maxIter = meta.eigs_max_iter;
-        if(meta.eigs_grad_tol) configs[0].primme_grad_tol = meta.eigs_grad_tol;
+        if(meta.compress_otf) cfg.compress = meta.compress_otf;
+        if(meta.eigs_tol) cfg.tol = meta.eigs_tol;
+        if(meta.eigs_ncv) cfg.maxNcv = meta.eigs_ncv;
+        if(meta.eigs_iter_max) cfg.maxIter = meta.eigs_iter_max;
 
         const auto &env2                = tensors.get_multisite_env_var_blk();
         auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
@@ -376,6 +201,7 @@ namespace tools::finite::opt {
             hamiltonian_squared.factorization = eig::Factorization::LLT;
             hamiltonian_squared.set_readyCompress(tensors.model->is_compressed_mpo_squared());
         }
+        eigs_variance_executor<Scalar>(solver, hamiltonian_squared, tensors, initial_mps, results, meta);
     }
 
     opt_mps internal::eigs_optimize_variance(const TensorsFinite &tensors, const opt_mps &initial_mps, [[maybe_unused]] const AlgorithmStatus &status,
