@@ -325,19 +325,23 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.trnc_lim = status.trnc_lim;
 
     // Set up a multiplier for number of iterations
-    size_t iter_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::iter_stuck_multiplier : 1;
+    size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::iter_stuck_multiplier : 1;
 
     // Copy settings
-    m1.max_sites =
-        std::min(2ul, settings::strategy::multisite_mps_site_def); // Normally we do 2-site dmrg by default, unless settings specifically ask for 1-site
+    m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def); // Default is 2-site dmrg, unless we specifically ask for 1-site
     m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
-    m1.bfgs_grad_tol = settings::solver::max_grad_tolerance;
-    m1.bfgs_max_iter = settings::solver::bfgs_max_iter * iter_multiplier;
-    m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 8 : 16; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
-                                                                     // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
-    m1.eigs_max_iter = settings::solver::eigs_max_iter * iter_multiplier;
-    m1.eigs_max_tol  = settings::solver::eigs_tolerance;
-    m1.eigs_max_ncv  = settings::solver::eigs_default_ncv;
+    m1.bfgs_max_iter = settings::solver::bfgs_max_iter * iter_stuck_multiplier;
+    m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 16 : 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
+                                                                      // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+    m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
+                           ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
+                           : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
+
+    m1.eigs_tol = status.algorithm_has_stuck_for == 0 ? std::clamp(status.energy_variance_lowest,  // Increase precision as variance decreases
+                                                                   settings::solver::eigs_tol_min, // From min
+                                                                   settings::solver::eigs_tol_max) // to max
+                                                      : settings::solver::eigs_tol_min;
+    m1.eigs_ncv = settings::solver::eigs_ncv;
     // Adjust the maximum number of sites to consider
     if(status.algorithm_has_succeeded)
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
