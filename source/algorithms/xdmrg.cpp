@@ -266,11 +266,9 @@ void xdmrg::run_fes_analysis() {
     tensors.move_center_point_to_inward_edge();
     tensors.activate_sites({tensors.get_position()});
     tensors.rebuild_edges();
-    while(status.bond_lim > tensors.state->find_largest_bond()) {
+    auto bond_max_dim = static_cast<long>(std::pow(2.0, tensors.get_length<double>() / 2));
+    while(status.bond_lim > std::min(bond_max_dim, status.bond_max)) {
         // Reduce bond dimension from bond_max down to the current maximum.
-        // Write to file on each decrement so that we get one entry on file
-        // per bond dim, even if there has been no change. This helps with
-        // collecting data and averaging later.
         status.iter += 1;
         status.step += tensors.get_length<size_t>();
         status.algorithm_converged_for = 1;
