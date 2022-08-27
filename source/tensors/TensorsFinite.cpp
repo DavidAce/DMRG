@@ -88,8 +88,8 @@ void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, St
 
 void TensorsFinite::normalize_state(std::optional<svd::config> svd_cfg, NormPolicy norm_policy) {
     // Normalize if unity was lost for some reason (numerical error buildup)
-    auto has_normalized = tools::finite::mps::normalize_state(*state, svd_cfg, norm_policy);
-    if(has_normalized) {
+    bool modified = tools::finite::mps::normalize_state(*state, svd_cfg, norm_policy);
+    if(modified) {
         state->clear_cache();
         clear_measurements();
     }
@@ -304,11 +304,12 @@ void TensorsFinite::set_psfactor(double psfactor) {
     tools::log->info("Setting parity separation factor: {:.16f}", psfactor);
     model->set_psfactor(psfactor);
     model->clear_mpo_squared();
-    model->assert_validity();
     edges->eject_edges_all();
     rebuild_mpo();
     rebuild_mpo_squared();
     rebuild_edges();
+    if constexpr(settings::debug) model->assert_validity();
+    if constexpr(settings::debug) edges->assert_validity();
 }
 
 void TensorsFinite::rebuild_mpo() {
@@ -316,17 +317,14 @@ void TensorsFinite::rebuild_mpo() {
     model->build_mpo();
 }
 
-void TensorsFinite::rebuild_mpo_squared(std::optional<bool> compress) {
+void TensorsFinite::rebuild_mpo_squared() {
     if(state->get_algorithm() == AlgorithmType::fLBIT) return;
     tools::log->trace("Rebuilding MPO²");
     measurements = MeasurementsTensorsFinite(); // Resets model-related measurements but not state measurements, which can remain
     model->clear_cache();
-    if(not compress) compress = settings::precision::use_compressed_mpo_squared_all;
-    if(compress.value())
-        model->compress_mpo_squared();
-    else
-        model->build_mpo_squared();
-    model->assert_validity();
+    model->build_mpo_squared(); // Will apply energy and parity shifts if there are any, but not compress.
+    if(settings::precision::use_compressed_mpo_squared_all) model->compress_mpo_squared();
+    if constexpr(settings::debug) model->assert_validity();
 }
 
 // Active sites
@@ -360,8 +358,6 @@ void TensorsFinite::activate_sites(const std::vector<size_t> &sites) {
     edges->active_sites = active_sites;
     clear_cache(LogPolicy::QUIET);
     clear_measurements(LogPolicy::QUIET);
-    rebuild_edges();
-    if constexpr(settings::debug) assert_validity();
 }
 
 void TensorsFinite::activate_sites() {
@@ -438,15 +434,25 @@ bool   TensorsFinite::position_is_inward_edge(size_t nsite) const { return state
 bool   TensorsFinite::position_is_at(long pos) const { return state->position_is_at(pos); }
 bool   TensorsFinite::position_is_at(long pos, int dir) const { return state->position_is_at(pos, dir); }
 bool   TensorsFinite::position_is_at(long pos, int dir, bool isCenter) const { return state->position_is_at(pos, dir, isCenter); }
-size_t TensorsFinite::move_center_point(std::optional<svd::config> svd_cfg) { return tools::finite::mps::move_center_point_single_site(*state, svd_cfg); }
+size_t TensorsFinite::move_center_point(std::optional<svd::config> svd_cfg) {
+    auto moves = tools::finite::mps::move_center_point_single_site(*state, svd_cfg);
+    if(moves != 0) clear_active_sites();
+    return moves;
+}
 size_t TensorsFinite::move_center_point_to_pos(long pos, std::optional<svd::config> svd_cfg) {
-    return tools::finite::mps::move_center_point_to_pos(*state, pos, svd_cfg);
+    auto moves = tools::finite::mps::move_center_point_to_pos(*state, pos, svd_cfg);
+    if(moves != 0) clear_active_sites();
+    return moves;
 }
 size_t TensorsFinite::move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg) {
-    return tools::finite::mps::move_center_point_to_inward_edge(*state, svd_cfg);
+    auto moves = tools::finite::mps::move_center_point_to_inward_edge(*state, svd_cfg);
+    if(moves != 0) clear_active_sites();
+    return moves;
 }
 size_t TensorsFinite::move_center_point_to_middle(std::optional<svd::config> svd_cfg) {
-    return tools::finite::mps::move_center_point_to_middle(*state, svd_cfg);
+    auto moves = tools::finite::mps::move_center_point_to_middle(*state, svd_cfg);
+    if(moves != 0) clear_active_sites();
+    return moves;
 }
 
 void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg, LogPolicy log_policy) {
