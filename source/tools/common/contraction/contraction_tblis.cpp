@@ -148,18 +148,36 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
 
     if constexpr(std::is_same_v<Scalar, real>){
         tblis_set_num_threads(static_cast<unsigned int>(tenx::omp::num_threads));
-        Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
-        Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
+        if (mps.dimension(1) >= mps.dimension(2)){
+            Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
+            Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
+            contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd");
+            contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl");
+            contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk");
+        }
+        else{
+            Eigen::Tensor<Scalar, 4> mpsenvR(mps.dimension(0), mps.dimension(1), envR.dimension(1), envR.dimension(2));
+            Eigen::Tensor<Scalar, 4> mpsenvRmpo(mps.dimension(1), envR.dimension(1), mpo.dimension(0), mpo.dimension(3));
+            contract_tblis(mps, envR, mpsenvR, "abf", "fcd", "abcd");
+            contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl");
+            contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk");
+        }
 
-        contract_tblis(mps, envL, mpsenvL, "afb", "fcd", "abcd");
-        contract_tblis(mpsenvL, mpo, mpsenvLmpo, "qijr", "rkql", "ijkl");
-        contract_tblis(mpsenvLmpo, envR, res, "qjri", "qkr", "ijk");
+
     }else{
-        res.device(tenx::omp::getDevice()) = mps
-                                            .contract(envL,     tenx::idx({1}, {0}))
-                                            .contract(mpo,      tenx::idx({0, 3}, {2, 0}))
-                                            .contract(envR,     tenx::idx({0, 2}, {0, 2}))
-                                            .shuffle(tenx::array3{1, 0, 2});
+        if (mps.dimension(1) >= mps.dimension(2)){
+            res.device(tenx::omp::getDevice()) = mps
+                                                .contract(envL, tenx::idx({1}, {0}))
+                                                .contract(mpo,  tenx::idx({3, 0}, {0, 2}))
+                                                .contract(envR, tenx::idx({0, 2}, {0, 2}))
+                                                .shuffle(tenx::array3{1, 0, 2});
+        }else{
+            res.device(tenx::omp::getDevice()) = mps
+                                                .contract(envR, tenx::idx({2}, {0}))
+                                                .contract(mpo,  tenx::idx({3, 0}, {1, 2}))
+                                                .contract(envL, tenx::idx({0, 2}, {0, 2}))
+                                                .shuffle(tenx::array3{1, 2, 0});
+        }
     }
 }
 
