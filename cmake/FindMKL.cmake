@@ -414,7 +414,9 @@ function(check_mkl_compiles)
 endfunction()
 
 
-
+if (MKL_FOUND)
+    return()
+endif ()
 find_mkl_libraries()
 setup_mkl_targets()
 check_mkl_compiles()
