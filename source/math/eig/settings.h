@@ -47,9 +47,6 @@ namespace eig {
         std::optional<std::string>  primme_projection           = std::nullopt;
         std::optional<int>          primme_locking              = std::nullopt;
         std::optional<int>          primme_max_inner_iterations = std::nullopt; // Strongly recommend -1 or a fixed number like 100 here.
-        std::optional<double>       primme_grad_tol             = std::nullopt;
-        std::optional<int32_t>      primme_grad_iter            = std::nullopt;
-        std::optional<double>       primme_grad_time            = std::nullopt;
         std::vector<double>         primme_target_shifts        = {};
         void                       *primme_effective_ham        = nullptr;
         void                       *primme_effective_ham_sq     = nullptr;

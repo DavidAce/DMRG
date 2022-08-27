@@ -34,10 +34,9 @@ namespace tools::finite::opt {
         std::vector<size_t>   chosen_sites     = {};
         std::string           label;
         std::optional<bool>   compress_otf            = std::nullopt; // Compress on the fly
-        std::optional<double> eigs_max_tol            = std::nullopt;
-        std::optional<int>    eigs_max_iter           = std::nullopt;
-        std::optional<int>    eigs_max_ncv            = std::nullopt;
-        std::optional<double> eigs_grad_tol           = std::nullopt;
+        std::optional<double> eigs_tol                = std::nullopt;
+        std::optional<int>    eigs_ncv                = std::nullopt;
+        std::optional<int>    eigs_iter_max           = std::nullopt;
         std::optional<double> bfgs_grad_tol           = std::nullopt;
         std::optional<int>    bfgs_max_iter           = std::nullopt;
         std::optional<int>    bfgs_max_rank           = std::nullopt;

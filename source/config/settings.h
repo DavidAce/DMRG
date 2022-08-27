@@ -126,7 +126,6 @@ namespace settings {
         inline long     max_size_shift_invert           = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
         inline OptEigs  prefer_eigs_over_bfgs           = OptEigs::ALWAYS;         /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose {WHEN_SATURATED, ALWAYS} */
         inline bool     bfgs_fix_rnorm_w_eigs           = true;                    /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
-        inline double   max_grad_tolerance              = 1e-8  ;                  /*!< Keep running an opimization step (BFGS/Arnoldi/GD+k) until max(∇log10(Var H)) < max_grad_tolerance */
         inline double   svd_truncation_lim              = 5e-32 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
         inline double   svd_truncation_init             = 1e-4  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */

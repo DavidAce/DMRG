@@ -98,24 +98,6 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double energy_variance             (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, double energy_minimum, double energy_maximum, MeasurementsTensorsFinite * measurements = nullptr);
-
-
-    template<typename Scalar>
-    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<Scalar, 3> &mps,
-                                                             const Eigen::Tensor<Scalar, 4> &mpo1,
-                                                             const Eigen::Tensor<Scalar, 3> &en1L,
-                                                             const Eigen::Tensor<Scalar, 3> &en1R,
-                                                             const Eigen::Tensor<Scalar, 4> &mpo2,
-                                                             const Eigen::Tensor<Scalar, 3> &en2L,
-                                                             const Eigen::Tensor<Scalar, 3> &en2R);
-
-    template<typename Scalar>
-    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<Scalar, 3> &mps,
-                                                             const Eigen::Tensor<Scalar, 4> &mpo2,
-                                                             const Eigen::Tensor<Scalar, 3> &en2L,
-                                                             const Eigen::Tensor<Scalar, 3> &en2R);
-
-    [[nodiscard]] extern double max_gradient                (const Eigen::Tensor<cplx, 3> &mps, const TensorsFinite & tensors);
     [[nodiscard]] extern double residual_norm                    (const Eigen::Tensor<cplx, 3> &mps,
                                                              const Eigen::Tensor<cplx, 4> &mpo,
                                                              const Eigen::Tensor<cplx, 3> &envL,

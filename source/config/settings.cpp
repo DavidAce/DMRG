@@ -169,7 +169,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("solver::max_size_shift_invert"                , solver::max_size_shift_invert);
     dmrg_config.load_parameter("solver::bfgs_fix_rnorm_w_eigs"                , solver::bfgs_fix_rnorm_w_eigs);
     dmrg_config.load_parameter("solver::prefer_eigs_over_bfgs"                , solver::prefer_eigs_over_bfgs);
-    dmrg_config.load_parameter("solver::max_grad_tolerance"                   , solver::max_grad_tolerance);
     dmrg_config.load_parameter("solver::svd_truncation_lim"                   , solver::svd_truncation_lim);
     dmrg_config.load_parameter("solver::svd_truncation_init"                  , solver::svd_truncation_init);
     dmrg_config.load_parameter("solver::svd_switchsize_bdc"                   , solver::svd_switchsize_bdc);
