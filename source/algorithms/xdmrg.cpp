@@ -565,13 +565,12 @@ void xdmrg::update_state() {
     if(not results.empty()) {
         if(tools::log->level() <= spdlog::level::debug)
             for(const auto &r : results)
-                tools::log->debug(FMT_STRING("Candidate: {:<24} | E/L {:<10.6f}| σ²H {:<8.2e} | res {:8.2e} | sites [{:>2}-{:<2}] | "
+                tools::log->debug(FMT_STRING("Candidate: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
                                              "alpha {:8.2e} | "
-                                             "overlap {:.16f} | "
+                                             "sites {} |"
                                              "{:20} | {} | time {:.2e} s"),
-                                  r.get_name(), r.get_energy_per_site(), r.get_variance(), r.get_eigs_rnorm(), r.get_sites().front(), r.get_sites().back(),
-                                  r.get_alpha(), r.get_overlap(), fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optsolver())),
-                                  flag2str(r.get_optexit()), r.get_time());
+                                  r.get_name(), r.get_energy(), r.get_variance(), r.get_rnorm(), r.get_overlap(), r.get_alpha(), r.get_sites(),
+                                  fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optsolver())), flag2str(r.get_optexit()), r.get_time());
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
@@ -642,7 +641,7 @@ void xdmrg::check_convergence() {
     update_variance_max_digits();
     check_convergence_variance();
     check_convergence_entg_entropy();
-    check_convergence_spin_parity_sector(settings::strategy::target_sector);
+    check_convergence_spin_parity_sector(settings::strategy::target_axis);
     if(std::max(status.variance_mpo_saturated_for, status.entanglement_saturated_for) > settings::strategy::max_saturation_iters or
        (status.variance_mpo_saturated_for > 0 and status.entanglement_saturated_for > 0))
         status.algorithm_saturated_for++;
