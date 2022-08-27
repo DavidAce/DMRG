@@ -256,6 +256,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
     if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(static_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
     if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();
+    if(config.maxIter) primme.maxMatvecs = config.maxIter.value();
     if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
     if(config.primme_locking) primme.locking = config.primme_locking.value();
     // Shifts
@@ -301,7 +302,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     // Override some parameters
     if(config.primme_max_inner_iterations) primme.correctionParams.maxInnerIterations = config.primme_max_inner_iterations.value();
     //    primme.restartingParams.maxPrevRetain = 2;
-    //    primme.minRestartSize = 2;
+    primme.minRestartSize = primme.numEvals; // As few as possible for gd+k
     //    primme.maxBlockSize = 8;
     //    primme.orth = primme_orth_explicit_I;
     //    if(primme.maxBlockSize == 1) primme.restartingParams.maxPrevRetain = 1;
