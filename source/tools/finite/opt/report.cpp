@@ -13,7 +13,7 @@ void tools::finite::opt::reports::print_bfgs_report(){
                       "Optimization report",
                       "size",
                       "space",
-                      "E/L",
+                      "E",
                       "σ²H", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
                       "norm",
@@ -119,7 +119,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                       "ncv",
                       "tol",
                       "|∇Ψ|ᵐᵃˣ",
-                      "E/L",
+                      "E",
                       "λ",
                       "σ²H", // Special characters are counted properly in fmt 1.7.0
                       "overlap",
@@ -156,8 +156,8 @@ void tools::finite::opt::reports::bfgs_add_entry(std::string_view mode, std::str
     if(tools::log->level() > spdlog::level::debug) return;
     if(not space) space = mps.get_tensor().size();
     std::string description = fmt::format("{:<8} {:<16} {}", mode, mps.get_name(), tag);
-    bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(), space.value(), mps.get_energy_per_site(), mps.get_variance(), mps.get_overlap(),
-                                  mps.get_norm(), mps.get_eigs_rnorm(), mps.get_delta_f(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_time()});
+    bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(), space.value(), mps.get_energy(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
+                                  mps.get_rnorm(), mps.get_delta_f(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_time()});
 }
 
 void tools::finite::opt::reports::time_add_entry() {
@@ -176,7 +176,6 @@ void tools::finite::opt::reports::eigs_add_entry(const opt_mps &mps, spdlog::lev
     if(level < tools::log->level()) return;
     std::string description = fmt::format("{:<24}", mps.get_name());
     eigs_log.push_back(eigs_entry{description, std::string(mps.get_eigs_ritz()), mps.get_tensor().size(), mps.get_eigs_idx(), mps.get_eigs_nev(),
-                                  mps.get_eigs_ncv(), mps.get_energy_per_site(), mps.get_eigs_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                  mps.get_eigs_rnorm(), mps.get_eigs_tol(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(),
-                                  level});
+                                  mps.get_eigs_ncv(), mps.get_energy(), mps.get_eigs_eigval(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
+                                  mps.get_rnorm(), mps.get_eigs_tol(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_pc(), mps.get_time(), level});
 }
