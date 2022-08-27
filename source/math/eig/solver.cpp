@@ -16,6 +16,8 @@ eig::solver::solver() {
     log = eig::log;
 }
 
+eig::solver::solver(const eig::settings &config_) : eig::solver::solver() { config = config_; }
+
 void eig::solver::setLogLevel(size_t loglevel) {
     config.loglevel = loglevel;
     eig::setLevel(loglevel);

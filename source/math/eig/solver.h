@@ -17,6 +17,7 @@ namespace eig {
         eig::solution                   result;
         std::shared_ptr<spdlog::logger> log;
         solver();
+        solver(const eig::settings &config);
         void setLogLevel(size_t loglevel);
         template<typename Scalar>
         void subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size_type nev);
