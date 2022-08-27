@@ -545,13 +545,13 @@ void xdmrg::update_state() {
         results.back().set_trnc_limit(meta.trnc_lim);
         /* clang-format off */
         meta.optExit = OptExit::SUCCESS;
-        if(results.back().get_grad_max()       > 1.000                  ) meta.optExit |= OptExit::FAIL_GRADIENT;
-        if(results.back().get_eigs_rnorm()     > 1e-10                  ) meta.optExit |= OptExit::FAIL_RESIDUAL;
+        if(results.back().get_grad_max()       > 1.000                         ) meta.optExit |= OptExit::FAIL_GRADIENT;
+        if(results.back().get_rnorm()          > settings::solver::eigs_tol_max) meta.optExit |= OptExit::FAIL_RESIDUAL;
         if(results.back().get_eigs_nev()       == 0 and
-                          meta.optSolver       == OptSolver::EIGS       ) meta.optExit |= OptExit::FAIL_RESIDUAL;
-        if(results.back().get_overlap()        < 0.010                  ) meta.optExit |= OptExit::FAIL_OVERLAP;
-        if(results.back().get_relchange()      > 1.001                  ) meta.optExit |= OptExit::FAIL_WORSENED;
-        else if(results.back().get_relchange() > 0.999                  ) meta.optExit |= OptExit::FAIL_NOCHANGE;
+                          meta.optSolver       == OptSolver::EIGS              ) meta.optExit |= OptExit::FAIL_RESIDUAL; // No convergence
+        if(results.back().get_overlap()        < 0.010                         ) meta.optExit |= OptExit::FAIL_OVERLAP;
+        if(results.back().get_relchange()      > 1.001                         ) meta.optExit |= OptExit::FAIL_WORSENED;
+        else if(results.back().get_relchange() > 0.999                         ) meta.optExit |= OptExit::FAIL_NOCHANGE;
 
         results.back().set_optexit(meta.optExit);
         /* clang-format on */
