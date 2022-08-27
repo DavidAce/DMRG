@@ -19,6 +19,7 @@ namespace tools::finite::opt {
         std::optional<double>                 eshift      = std::nullopt;
         std::optional<double>                 energy      = std::nullopt;
         std::optional<double>                 variance    = std::nullopt;
+        std::optional<double>                 rnorm       = std::nullopt;
         std::optional<double>                 overlap     = std::nullopt;
         std::optional<double>                 alpha       = std::nullopt;
         std::optional<double>                 norm        = std::nullopt;
@@ -39,7 +40,6 @@ namespace tools::finite::opt {
         std::optional<double>                 eigs_eigval = std::nullopt;
         std::optional<std::string>            eigs_ritz   = std::nullopt;
         std::optional<cplx>                   eigs_shift  = std::nullopt;
-        std::optional<double>                 eigs_resid  = std::nullopt;
         std::optional<OptMode>                optMode     = std::nullopt;
         std::optional<OptSolver>              optSolver   = std::nullopt;
         std::optional<OptRitz>                optRitz     = std::nullopt;
@@ -78,7 +78,7 @@ namespace tools::finite::opt {
         [[nodiscard]] double                     get_energy_per_site() const;
         [[nodiscard]] double                     get_eigval() const;
         [[nodiscard]] double                     get_variance() const;
-        [[nodiscard]] double                     get_variance_per_site() const;
+        [[nodiscard]] double                     get_rnorm() const;
         [[nodiscard]] double                     get_overlap() const;
         [[nodiscard]] double                     get_alpha() const;
         [[nodiscard]] double                     get_norm() const;
@@ -99,7 +99,6 @@ namespace tools::finite::opt {
         [[nodiscard]] double                     get_eigs_eigval() const;
         [[nodiscard]] std::string_view           get_eigs_ritz() const;
         [[nodiscard]] cplx                       get_eigs_shift() const;
-        [[nodiscard]] double                     get_eigs_rnorm() const;
         [[nodiscard]] OptSolver                  get_optsolver() const;
         [[nodiscard]] OptMode                    get_optmode() const;
         [[nodiscard]] OptExit                    get_optexit() const;
@@ -117,7 +116,7 @@ namespace tools::finite::opt {
         void set_energy(double energy_);
         void set_energy_per_site(double energy_per_site_);
         void set_variance(double variance_);
-        void set_variance_per_site(double variance_per_site_);
+        void set_rnorm(const double rnorm_);
         void set_overlap(double overlap_);
         void set_alpha(std::optional<double> alpha_);
         void set_length(size_t length);
@@ -136,8 +135,7 @@ namespace tools::finite::opt {
         void set_eigs_tol(double tol_);
         void set_eigs_eigval(double eigval_);
         void set_eigs_ritz(std::string_view ritz_);
-        void set_eigs_shift(const cplx &shift_);
-        void set_eigs_resid(const double &resid);
+        void set_eigs_shift(const cplx shift_);
         void set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &dims);
         void set_optsolver(OptSolver optspace_);

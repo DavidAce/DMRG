@@ -238,9 +238,9 @@ opt_mps::cplx opt_mps::get_eigs_shift() const {
         return opt_mps::cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
-double opt_mps::get_eigs_rnorm() const {
-    if(eigs_resid)
-        return eigs_resid.value();
+double opt_mps::get_rnorm() const {
+    if(rnorm)
+        return rnorm.value();
     else
         return std::numeric_limits<double>::quiet_NaN();
 }
@@ -343,7 +343,7 @@ void opt_mps::set_energy(double energy_) {
 }
 void opt_mps::set_energy_per_site(double energy_per_site_) { set_energy(energy_per_site_ * static_cast<double>(get_length())); }
 void opt_mps::set_variance(double variance_) { variance = variance_; }
-void opt_mps::set_variance_per_site(double variance_per_site_) { set_variance(variance_per_site_ * static_cast<double>(get_length())); }
+void opt_mps::set_rnorm(const double rnorm_) { rnorm = rnorm_; }
 void opt_mps::set_overlap(double overlap_) { overlap = overlap_; }
 void opt_mps::set_alpha(std::optional<double> alpha_) { alpha = alpha_; }
 void opt_mps::set_length(size_t length_) { length = length_; }
@@ -362,8 +362,7 @@ void opt_mps::set_eigs_ncv(long ncv_) { eigs_ncv = ncv_; }
 void opt_mps::set_eigs_tol(double tol_) { eigs_tol = tol_; }
 void opt_mps::set_eigs_eigval(double eigval_) { eigs_eigval = eigval_; }
 void opt_mps::set_eigs_ritz(std::string_view ritz_) { eigs_ritz = std::string(ritz_); }
-void opt_mps::set_eigs_shift(const cplx &shift_) { eigs_shift = shift_; }
-void opt_mps::set_eigs_resid(const double &resid_) { eigs_resid = resid_; }
+void opt_mps::set_eigs_shift(const cplx shift_) { eigs_shift = shift_; }
 
 void opt_mps::set_tensor_cplx(const double *data, const Eigen::DSizes<long, 3> &dims) {
     // Here we set a complex tensor from double data.

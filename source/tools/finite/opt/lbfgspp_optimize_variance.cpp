@@ -110,8 +110,8 @@ tools::finite::opt::opt_mps tools::finite::opt::internal::lbfgspp_optimize_varia
     optimized_mps.normalize();
     optimized_mps.set_energy(tools::finite::measure::energy(optimized_mps.get_tensor(), tensors));
     optimized_mps.set_variance(tools::finite::measure::energy_variance(optimized_mps.get_tensor(), tensors));
-    optimized_mps.set_eigs_resid(tools::finite::measure::residual_norm(optimized_mps.get_tensor(), tensors.get_multisite_mpo_squared(),
-                                                                       tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
+    optimized_mps.set_rnorm(tools::finite::measure::residual_norm(optimized_mps.get_tensor(), tensors.get_multisite_mpo_squared(),
+                                                                  tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
     optimized_mps.set_overlap(std::abs(current_map.dot(optimized_mps.get_vector())));
     optimized_mps.set_iter(summary.iterations.size());
     optimized_mps.set_time(summary.total_time_in_seconds);

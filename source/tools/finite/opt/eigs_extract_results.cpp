@@ -58,10 +58,10 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                 mps.set_optsolver(meta.optSolver);
                 if(solver.config.primme_grad_tol) mps.set_grad_tol(solver.config.primme_grad_tol.value());
                 if(solver.result.meta.residual_norms.empty())
-                    mps.set_eigs_resid(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
-                                                                             tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
+                    mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
+                                                                        tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
                 else
-                    mps.set_eigs_resid(solver.result.meta.residual_norms.at(static_cast<size_t>(idx))); // primme convergence precision
+                    mps.set_rnorm(solver.result.meta.residual_norms.at(static_cast<size_t>(idx))); // primme convergence precision
                 auto   measurements = MeasurementsTensorsFinite();
                 double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);
                 double eigval       = energy - initial_mps.get_energy_shift();
