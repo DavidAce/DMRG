@@ -471,7 +471,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 bool xdmrg::try_again(const std::vector<tools::finite::opt::opt_mps> &results, const xdmrg::OptMeta &meta) {
     if(results.empty()) return true;
     bool should = meta.should_proceed(results.back().get_optexit());
-    tools::log->trace("Optimizer status: {} --> try again: {} | when: {}", flag2str(results.back().get_optexit()), should, flag2str(meta.optWhen));
+    if(should) tools::log->debug("Optimizer status: {} --> try again: {} | when: {}", flag2str(results.back().get_optexit()), should, flag2str(meta.optWhen));
     return should;
 }
 
