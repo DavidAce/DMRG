@@ -54,12 +54,6 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
     state.measurements.renyi_inf       = measure::renyi_entropies(state, std::numeric_limits<double>::infinity());
     state.measurements.spin_components = measure::spin_components(state);
 
-    if(state.get_algorithm() == AlgorithmType::xDMRG) {
-        correlation_matrix_xyz(state);
-        expectation_values_xyz(state);
-        structure_factors_xyz(state);
-        kvornings_marker(state);
-    }
 }
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
