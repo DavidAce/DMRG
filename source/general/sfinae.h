@@ -18,6 +18,16 @@ namespace sfinae {
     template<class>
     inline constexpr bool invalid_type_v = false;
 
+    template<class T, class... Ts>
+    struct is_any : std::disjunction<std::is_same<T, Ts>...> {};
+    template<class T, class... Ts>
+    inline constexpr bool is_any_v = is_any<T, Ts...>::value;
+
+    template<class T, class... Ts>
+    struct are_same : std::conjunction<std::is_same<T, Ts>...> {};
+    template<class T, class... Ts>
+    inline constexpr bool are_same_v = are_same<T, Ts...>::value;
+
     template<typename T, typename = std::void_t<>>
     struct has_size : public std::false_type {};
     template<typename T>
