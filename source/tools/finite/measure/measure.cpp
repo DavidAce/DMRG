@@ -272,7 +272,20 @@ double tools::finite::measure::spin_component(const StateFinite &state, std::str
     if(axis.find('x') != std::string_view::npos) return measure::spin_component(state, qm::spin::half::sx);
     if(axis.find('y') != std::string_view::npos) return measure::spin_component(state, qm::spin::half::sy);
     if(axis.find('z') != std::string_view::npos) return measure::spin_component(state, qm::spin::half::sz);
-    throw std::runtime_error("Unexpected axis: " + std::string(axis));
+    throw except::logic_error("unexpected axis [{}]", axis);
+}
+
+double tools::finite::measure::spin_alignment(const StateFinite &state, std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) throw except::logic_error("unexpected axis [{}]", axis);
+    auto spin_component_along_axis = tools::finite::measure::spin_component(state, qm::spin::half::get_pauli(axis));
+    auto sign                      = qm::spin::half::get_sign(axis);
+    return sign * spin_component_along_axis;
+}
+
+int tools::finite::measure::spin_sign(const StateFinite &state, std::string_view axis) {
+    // The sign on the axis string is ignored here
+    auto spin_component_along_axis = tools::finite::measure::spin_component(state, qm::spin::half::get_pauli(axis));
+    return num::sign(spin_component_along_axis);
 }
 
 std::vector<double> tools::finite::measure::truncation_errors(const StateFinite &state) {
