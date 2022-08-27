@@ -36,8 +36,6 @@ class AlgorithmFinite : public AlgorithmBase {
     void         try_moving_sites();
     void         move_center_point(std::optional<long> num_moves = std::nullopt);
     void         shift_mpo_energy();
-    void         rebuild_mpo();
-    void         rebuild_mpo_squared();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
     void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageReason storage_reason);
