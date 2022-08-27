@@ -71,7 +71,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
         } else {
             eigval_target = energy_target;
         }
-        std::tie(eigvecs, eigvals) = find_subspace_part<Scalar>(tensors, eigval_target, target_subspace_error, meta);
+        std::tie(eigvecs, eigvals) = find_subspace_primme<Scalar>(tensors, eigval_target, target_subspace_error, meta);
     }
     /* clang-format off */
     tools::log->trace("Eigval range         : {:.16f} --> {:.16f}", eigvals.minCoeff(), eigvals.maxCoeff());
@@ -145,7 +145,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
 
     // Create a reusable config for multiple nev trials
     eig::settings config;
-    config.tol             = settings::solver::eigs_tolerance;
+    config.tol             = settings::solver::eigs_tol_min;
     config.sigma           = energy_target;
     config.shift_invert    = eig::Shinv::ON;
     config.compute_eigvecs = eig::Vecs::ON;
@@ -203,6 +203,116 @@ template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_pa
                                                                                          double target_subspace_error, const OptMeta &meta);
 
 template<typename Scalar>
+void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+    if(x == nullptr) return;
+    if(y == nullptr) return;
+    if(primme == nullptr) return;
+    const auto H_ptr = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
+    H_ptr->FactorOP();
+    H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
+}
+
+template<typename Scalar>
+std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(const TensorsFinite &tensors, double eigval_target, double target_subspace_error,
+                                                                            const OptMeta &meta) {
+    tools::log->trace("Finding subspace -- partial");
+    auto t_iter = tid::tic_scope("part");
+
+    // Initial mps and a vector map
+    const auto                        &initial_mps = tensors.state->get_multisite_mps();
+    Eigen::Map<const Eigen::VectorXcd> initial_vec(initial_mps.data(), initial_mps.size());
+
+    // Mutable initial mps vector used for initial guess in arpack
+    Eigen::Tensor<Scalar, 3> init;
+    if constexpr(std::is_same_v<Scalar, real>) init = tensors.state->get_multisite_mps().real();
+    if constexpr(std::is_same_v<Scalar, cplx>) init = tensors.state->get_multisite_mps();
+
+    // Get the local effective Hamiltonian in mps/mpo form
+    const auto       &mpo = tensors.get_multisite_mpo();
+    const auto       &env = tensors.get_multisite_env_ene_blk();
+    MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
+
+    // Create a reusable config for multiple nev trials
+    eig::settings config;
+    config.lib                  = eig::Lib::PRIMME;
+    config.tol                  = 1e-10;
+    config.maxNcv               = settings::solver::eigs_ncv;
+    config.shift_invert         = eig::Shinv::OFF;
+    config.maxIter              = settings::solver::eigs_iter_max;
+    config.ritz                 = eig::Ritz::primme_closest_abs;
+    config.primme_target_shifts = {eigval_target};
+    //    config.sigma           = energy_target;
+    config.compute_eigvecs = eig::Vecs::ON;
+    config.initial_guess.push_back({init.data(), 0});
+    config.primme_locking = 1;
+    config.loglevel       = 1;
+    if(initial_mps.size() <= settings::solver::max_size_shift_invert) {
+        hamiltonian.set_readyCompress(tensors.model->is_compressed_mpo_squared());
+        hamiltonian.factorization   = eig::Factorization::LU;
+        config.shift_invert         = eig::Shinv::ON;
+        config.ritz                 = eig::Ritz::primme_largest_abs;
+        config.sigma                = eigval_target;
+        config.primme_projection    = "primme_proj_default";
+        config.primme_locking       = false;
+        config.primme_target_shifts = {};
+    }
+
+    std::string reason = "exhausted";
+
+    // Initialize eigvals/eigvecs containers that store the results
+    Eigen::VectorXd  eigvals;
+    Eigen::MatrixXcd eigvecs;
+    for(auto nev : {2, 8, 32, 128}) {
+        eig::solver solver;
+        solver.config        = config;
+        solver.config.maxNev = nev;
+
+        // Set the new initial guess if we are doing one more round
+        if(eigvecs.cols() != 0) {
+            solver.config.initial_guess.clear();
+            for(long n = 0; n < eigvecs.cols(); n++) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
+        }
+        tools::log->info("Running eigensolver | nev {} | ncv {}", solver.config.maxNev.value(), solver.config.maxNcv.value());
+        solver.eigs(hamiltonian);
+        eigvals = eig::view::get_eigvals<eig::real>(solver.result, false);
+        eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R, false);
+        // Check the quality of the subspace
+        Eigen::VectorXd overlaps       = (initial_vec.adjoint() * eigvecs).cwiseAbs().real();
+        double          max_overlap    = overlaps.maxCoeff();
+        double          min_overlap    = overlaps.minCoeff();
+        double          sq_sum_overlap = overlaps.cwiseAbs2().sum();
+        double          subspace_error = 1.0 - sq_sum_overlap;
+        double          lu_time        = hamiltonian.t_factorOP.get()->get_last_interval();
+        double          ham_time       = hamiltonian.t_genMat.get()->get_last_interval();
+        reports::subs_add_entry(nev, max_overlap, min_overlap, subspace_error, solver.result.meta.time_total, ham_time, lu_time, solver.result.meta.iter,
+                                solver.result.meta.num_mv, solver.result.meta.num_pc);
+        if(max_overlap > 1.0 + 1e-6) throw except::runtime_error("max_overlap larger than one: {:.16f}", max_overlap);
+        if(sq_sum_overlap > 1.0 + 1e-6) throw except::runtime_error("eps larger than one: {:.16f}", sq_sum_overlap);
+        if(min_overlap < 0.0) throw except::runtime_error("min_overlap smaller than zero: {:.16f}", min_overlap);
+        tools::log->debug("Found {} eigenpairs | nev {} converged {} | subspace error {:.3e}", eigvals.size(), nev, solver.result.meta.nev_converged,
+                          subspace_error);
+
+        if(subspace_error < target_subspace_error) {
+            reason = fmt::format("subspace error is low enough: {:.3e} < threshold {:.3e}", subspace_error, target_subspace_error);
+            break;
+        }
+        if(meta.optMode == OptMode::OVERLAP and sq_sum_overlap >= 1.0 / std::sqrt(2.0)) {
+            reason = fmt::format("Overlap is sufficient:  {:.16f} >= threshold {:.16f}", max_overlap, 1.0 / std::sqrt(2.0));
+            break;
+        }
+    }
+    tools::log->debug("Finished iterative eigensolver -- reason: {}", reason);
+    if(config.shift_invert == eig::Shinv::ON)
+        for(auto &e : eigvals) e = 1.0 / e + eigval_target;
+    return {eigvecs, eigvals};
+}
+
+template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme<cplx>(const TensorsFinite &tensors, double eigval_target,
+                                                                                           double target_subspace_error, const OptMeta &meta);
+template std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme<real>(const TensorsFinite &tensors, double eigval_target,
+                                                                                           double target_subspace_error, const OptMeta &meta);
+
+template<typename Scalar>
 std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const TensorsFinite &tensors) {
     tools::log->trace("Finding subspace -- full diag");
     auto t_full = tid::tic_scope("full");
@@ -212,6 +322,8 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const 
     // Create a solver and diagonalize the local effective Hamiltonian
     eig::solver solver;
     solver.eig<eig::Form::SYMM>(effective_hamiltonian.data(), effective_hamiltonian.dimension(0), eig::Vecs::ON, eig::Dephase::OFF);
+    //    solver.eig(effective_hamiltonian.data(), effective_hamiltonian.dimension(0), 'I', 1, 1, 0.0, 1.0, 1, eig::Vecs::ON, eig::Dephase::OFF);
+
     tools::log->debug("Finished eigensolver -- reason: Full diagonalization");
 
     const auto &multisite_mps = tensors.state->get_multisite_mps();
