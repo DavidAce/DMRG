@@ -19,13 +19,12 @@
 
 namespace tools::finite::opt {
 
-    template<typename Scalar, typename MatVecMPO<Scalar>::DecompMode mode>
+    template<typename Scalar>
     void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
         if(x == nullptr) return;
         if(y == nullptr) return;
         if(primme == nullptr) return;
         const auto H_ptr = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
-        H_ptr->decomp    = mode;
         H_ptr->FactorOP();
         H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
     }
@@ -44,15 +43,18 @@ namespace tools::finite::opt {
         tools::log->trace("Defining eigenvalue solver");
         eig::solver solver;
 
-        const auto       &mpo = tensors.get_multisite_mpo();
-        const auto       &env = tensors.get_multisite_env_ene_blk();
+        const auto       &mpo  = tensors.get_multisite_mpo();
+        const auto       &env  = tensors.get_multisite_env_ene_blk();
+        const auto        size = initial_mps.get_tensor().size();
         MatVecMPO<Scalar> hamiltonian(env.L, env.R, mpo);
+        hamiltonian.factorization = eig::Factorization::NONE; // No LU factorization by default
+
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
         solver.config.tol             = 1e-12;
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
-        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_GD_Olsen_plusK;
+        solver.config.primme_method   = eig::PrimmeMethod::PRIMME_DYNAMIC;
         solver.config.maxIter         = 10000;
         solver.config.maxTime         = 60 * 60;
         solver.config.maxNev          = static_cast<eig::size_type>(1);
@@ -97,21 +99,17 @@ namespace tools::finite::opt {
             }
         }
 
-            solver.eigs(hamiltonian);
-        } else {
-            // Since we use energy-shifted mpo's, we set a sigma shift = 1.0 to move the smallest eigenvalue away from 0, which
-            // would otherwise cause trouble for the eigenvalue solver. This equates to subtracting sigma * identity from the bottom corner of the mpo.
-            // The resulting eigenvalue will be shifted by the same amount, but the eigenvector will be the same, and that's what we keep.
-            //        solver.config.sigma = 1.0;
-            solver.eigs(hamiltonian);
-        }
+        if(meta.eigs_tol) solver.config.tol = meta.eigs_tol.value();
+        if(meta.eigs_ncv) solver.config.maxNcv = meta.eigs_ncv.value();
+        if(meta.eigs_iter_max) solver.config.maxIter = meta.eigs_iter_max.value();
+        solver.eigs(hamiltonian);
 
         std::vector<opt_mps> results;
         internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
 
         auto comparator = [&ritz, &meta, &initial_mps](const opt_mps &lhs, const opt_mps &rhs) {
             auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
-            if(diff < settings::solver::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
+            if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(ritz) {
                 case eig::Ritz::SA:
                 case eig::Ritz::SR: return lhs.get_energy() < rhs.get_energy();
