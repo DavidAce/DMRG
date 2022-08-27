@@ -364,7 +364,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     bool prefer_eigs_when_saturated = settings::solver::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
     bool prefer_eigs_always         = settings::solver::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
 
-    if(not prefer_eigs_never and (prefer_eigs_when_saturated or prefer_eigs_when_stuck or prefer_eigs_always or status.fes_is_running)) {
+    if(m1.optSolver == OptSolver::BFGS and not prefer_eigs_never and
+       (prefer_eigs_when_saturated or prefer_eigs_when_stuck or prefer_eigs_always or status.fes_is_running)) {
         m1.optMode   = OptMode::VARIANCE;
         m1.optSolver = OptSolver::EIGS;
     }
