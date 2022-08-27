@@ -3,6 +3,7 @@
 #include <array>
 #include <complex>
 #include <Eigen/Cholesky>
+#include <Eigen/LU>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
@@ -23,8 +24,7 @@ class MatVecMPO {
     constexpr static bool         can_shift        = true;
     constexpr static bool         can_compress     = true;
     constexpr static eig::Storage storage          = eig::Storage::MPS;
-    enum class DecompMode { MATRIXFREE, LDLT, LLT };
-    DecompMode decomp = DecompMode::MATRIXFREE;
+    eig::Factorization            factorization    = eig::Factorization::NONE;
 
     private:
     using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
@@ -44,9 +44,9 @@ class MatVecMPO {
     bool                 readyFactorOp = false; // Flag to make sure LU factorization has occurred
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
-    Eigen::LDLT<MatrixType> ldlt; // Stores the ldlt matrix decomposition on shift-invert
-    Eigen::LLT<MatrixType>  llt;  // Stores the llt matrix decomposition on shift-invert
-    MatrixType              matrixDecomp;
+    Eigen::LDLT<MatrixType>         ldlt; // Stores the ldlt matrix factorization on shift-invert
+    Eigen::LLT<MatrixType>          llt;  // Stores the llt matrix factorization on shift-invert
+    Eigen::PartialPivLU<MatrixType> lu;   // Stores the lu matrix factorization on shift-invert
 
     public:
     MatVecMPO() = default;

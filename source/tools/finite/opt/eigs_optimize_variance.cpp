@@ -96,13 +96,13 @@ namespace tools::finite::opt {
         return init;
     }
 
-    template<typename Scalar, typename MatVecMPO<Scalar>::DecompMode mode>
+    template<typename Scalar, typename eig::Factorization factorization>
     void preconditioner(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
         if(x == nullptr) return;
         if(y == nullptr) return;
         if(primme == nullptr) return;
-        const auto H_ptr = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
-        H_ptr->decomp    = mode;
+        const auto H_ptr     = static_cast<MatVecMPO<Scalar> *>(primme->matrix);
+        H_ptr->factorization = factorization;
         H_ptr->FactorOP();
         H_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
     }
@@ -366,15 +366,15 @@ namespace tools::finite::opt {
         if(meta.eigs_max_iter) configs[0].maxIter = meta.eigs_max_iter;
         if(meta.eigs_grad_tol) configs[0].primme_grad_tol = meta.eigs_grad_tol;
 
-        const auto                      &env2 = tensors.get_multisite_env_var_blk();
-        std::optional<MatVecMPO<Scalar>> hamiltonian_squared;
-        for(const auto &config : configs) {
-            eig::solver solver;
-            solver.config = config;
-            if(not hamiltonian_squared) hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
-            eigs_variance_executor<Scalar>(solver, hamiltonian_squared.value(), tensors, initial_mps, results, meta);
-            if(&config == &configs.back()) break;
-            if(not try_harder(results, meta, spdlog::level::debug)) break;
+        const auto &env2                = tensors.get_multisite_env_var_blk();
+        auto        hamiltonian_squared = MatVecMPO<Scalar>(env2.L, env2.R, tensors.get_multisite_mpo_squared());
+        if(initial_mps.get_tensor().size() <= settings::solver::max_size_shift_invert) {
+            cfg.shift_invert                  = eig::Shinv::ON;
+            cfg.sigma                         = 0.0;
+            cfg.primme_target_shifts          = {};
+            cfg.ritz                          = eig::Ritz::primme_largest_abs;
+            hamiltonian_squared.factorization = eig::Factorization::LLT;
+            hamiltonian_squared.set_readyCompress(tensors.model->is_compressed_mpo_squared());
         }
     }
 

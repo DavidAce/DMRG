@@ -48,6 +48,7 @@ MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block te
     shape_mps  = {mpo.dimension(2), envL.dimension(0), envR.dimension(0)};
     size_mps   = shape_mps[0] * shape_mps[1] * shape_mps[2];
     t_factorOP = std::make_unique<tid::ur>("Time FactorOp");
+    t_genMat   = std::make_unique<tid::ur>("Time genMat");
     t_multOPv  = std::make_unique<tid::ur>("Time MultOpv");
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
@@ -63,29 +64,33 @@ template MatVecMPO<eig::real>::MatVecMPO(const Eigen::Tensor<eig::cplx, 3> &envL
 
 template<typename T>
 void MatVecMPO<T>::FactorOP() {
-    if(readyFactorOp) return; // happens only once
-    if(decomp == DecompMode::MATRIXFREE) {
+    auto t_token = t_factorOP->tic_token();
+    if(readyFactorOp) {
+        auto t_token2 = t_genMat->tic_token(); // No time taken here
+        return;                                // happens only once
+    }
+    if(factorization == eig::Factorization::NONE) {
+        auto t_token2 = t_genMat->tic_token(); // No time taken here
         readyFactorOp = true;
         return;
     }
+    MatrixType A_matrix = get_matrix();
+    if(not readyShift and std::abs(get_shift()) != 0.0) { A_matrix.diagonal() -= VectorType::Constant(rows(), get_shift()); }
 
-    auto t_token = t_factorOP->tic_token();
-    eig::log->info("Generating A_matrix");
-    MatrixType A_matrix = get_matrix() - Eigen::MatrixXd::Identity(rows(), cols()) * get_shift();
-    matrixDecomp        = A_matrix;
-    matrixDecomp.llt();
-    if(decomp == DecompMode::LDLT) {
-        eig::log->debug("LDLT Factorization...");
+    if(factorization == eig::Factorization::LDLT) {
+        eig::log->debug("LDLT Factorization");
         ldlt.compute(A_matrix);
-    }
-    if(decomp == DecompMode::LLT) {
+    } else if(factorization == eig::Factorization::LLT) {
         eig::log->debug("LLT Factorization");
         llt.compute(A_matrix);
-    } else {
+    } else if(factorization == eig::Factorization::LU) {
+        eig::log->debug("LU Factorization");
+        lu.compute(A_matrix);
+    } else if(factorization == eig::Factorization::NONE) {
         /* We don't actually invert a matrix here: we let an iterative matrix-free solver apply OP^-1 x */
-        if(not readyShift) throw std::runtime_error("Cannot FactorOP: Shift value sigma has not been set.");
+        if(not readyShift) throw std::runtime_error("Cannot FactorOP with Factorization::NONE: Shift value sigma has not been set on the MPO.");
     }
-    eig::log->info("Success");
+    eig::log->debug("Finished factorization");
     readyFactorOp = true;
 }
 
@@ -151,20 +156,22 @@ void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
             for(int i = 0; i < *blockSize; i++) {
                 T *x_ptr = static_cast<T *>(x) + *ldx * i;
                 T *y_ptr = static_cast<T *>(y) + *ldy * i;
-                if(decomp == DecompMode::MATRIXFREE) {
+                if(factorization == eig::Factorization::NONE) {
                     Eigen::TensorMap<Eigen::Tensor<T, 3>> x_map(x_ptr, shape_mps);
                     Eigen::TensorMap<Eigen::Tensor<T, 3>> y_map(y_ptr, shape_mps);
                     tools::common::contraction::matrix_inverse_vector_product(y_map, x_map, mpo, envL, envR);
-                }
-                if(decomp == DecompMode::LDLT) {
+                } else if(factorization == eig::Factorization::LDLT) {
                     Eigen::Map<VectorType> x_map(x_ptr, *ldx);
                     Eigen::Map<VectorType> y_map(y_ptr, *ldy);
                     y_map.noalias() = ldlt.solve(x_map);
-                }
-                if(decomp == DecompMode::LLT) {
+                } else if(factorization == eig::Factorization::LLT) {
                     Eigen::Map<VectorType> x_map(x_ptr, *ldx);
                     Eigen::Map<VectorType> y_map(y_ptr, *ldy);
                     y_map.noalias() = llt.solve(x_map);
+                } else if(factorization == eig::Factorization::LU) {
+                    Eigen::Map<VectorType> x_map(x_ptr, *ldx);
+                    Eigen::Map<VectorType> y_map(y_ptr, *ldy);
+                    y_map.noalias() = lu.solve(x_map);
                 }
                 num_op++;
             }
@@ -188,6 +195,7 @@ template<typename Scalar>
 void MatVecMPO<Scalar>::reset() {
     if(t_factorOP) t_factorOP->reset();
     if(t_multOPv) t_multOPv->reset();
+    if(t_genMat) t_genMat->reset();
     if(t_multAx) t_multAx->reset();
     num_mv = 0;
     num_op = 0;

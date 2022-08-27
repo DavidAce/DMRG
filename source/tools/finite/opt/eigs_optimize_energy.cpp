@@ -73,14 +73,29 @@ namespace tools::finite::opt {
         tools::log->trace("Finding energy eigenstate {}", enum2sv(meta.optRitz));
 
         if(meta.optRitz == OptRitz::SM) {
-            solver.config.maxIter              = 100000;
-            solver.config.maxNev               = static_cast<eig::size_type>(1);
-            solver.config.maxNcv               = static_cast<eig::size_type>(4);
-            solver.config.primme_projection    = "primme_proj_default";
-            solver.config.primme_locking       = false;
-            solver.config.primme_target_shifts = {initial_mps.get_eigval()};
-            solver.config.ritz                 = eig::Ritz::primme_closest_abs;
-            if(meta.optMode == OptMode::SIMPS) solver.config.primme_preconditioner = preconditioner<Scalar, MatVecMPO<Scalar>::DecompMode::MATRIXFREE>;
+            if(size <= settings::solver::max_size_shift_invert) {
+                hamiltonian.set_readyCompress(tensors.model->is_compressed_mpo_squared());
+                hamiltonian.factorization       = eig::Factorization::LU;
+                solver.config.shift_invert      = eig::Shinv::ON;
+                solver.config.ritz              = eig::Ritz::primme_largest_abs;
+                solver.config.sigma             = initial_mps.get_eigval();
+                solver.config.maxIter           = 500;
+                solver.config.maxNev            = static_cast<eig::size_type>(1);
+                solver.config.maxNcv            = static_cast<eig::size_type>(4);
+                solver.config.primme_projection = "primme_proj_default";
+                solver.config.primme_locking    = false;
+            } else {
+                hamiltonian.factorization          = eig::Factorization::NONE;
+                solver.config.maxIter              = 100000;
+                solver.config.maxNev               = static_cast<eig::size_type>(1);
+                solver.config.maxNcv               = static_cast<eig::size_type>(4);
+                solver.config.primme_projection    = "primme_proj_default";
+                solver.config.primme_locking       = false;
+                solver.config.primme_target_shifts = {initial_mps.get_eigval()};
+                solver.config.ritz                 = eig::Ritz::primme_closest_abs;
+                if(meta.optMode == OptMode::SIMPS) solver.config.primme_preconditioner = preconditioner<Scalar>;
+            }
+        }
 
             solver.eigs(hamiltonian);
         } else {
