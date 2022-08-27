@@ -30,17 +30,16 @@ option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared librarie
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake conan)
 set(DMRG_PACKAGE_MANAGER find CACHE STRING "Package manager for external dependencies")
 set_property(CACHE DMRG_PACKAGE_MANAGER PROPERTY STRINGS ${DMRG_PACKAGE_MANAGERS_VALID})
-if (NOT DMRG_PACKAGE_MANAGER IN_LIST DMRG_PACKAGE_MANAGERS_VALID)
+if(NOT DMRG_PACKAGE_MANAGER IN_LIST DMRG_PACKAGE_MANAGERS_VALID)
     message(FATAL_ERROR "DMRG_PACKAGE_MANAGER must be one of ${DMRG_PACKAGE_MANAGERS_VALID}")
-endif ()
+endif()
 
 ###  Check <optional>
 include(cmake/CheckCXXOptional.cmake)
-CheckCXXOptional()
+checkcxxoptional()
 
 ### Print extra info during CMake configure
 include(cmake/PrintBuildInfo.cmake)
-
 
 ###  Add targets to collect common settings
 add_library(dmrg-deps INTERFACE)
@@ -50,7 +49,6 @@ target_include_directories(dmrg-flags INTERFACE source)
 ###  Apply compiler flags
 include(cmake/CompilerFlags.cmake)
 
-
 ################################################################
 ### Get environment, host, build, exec and git details       ###
 ### Generates a header env/environment.h                     ###
@@ -58,15 +56,12 @@ include(cmake/CompilerFlags.cmake)
 ################################################################
 include(cmake/environment.cmake)
 
-
 # Setup paths that find_package should search and
 # let cmake find our Find<package>.cmake modules
 include(cmake/SetupPaths.cmake)
 
-
 ### Find or install all the dependencies
 include(cmake/SetupDependencies.cmake)
-
 
 ###  Add all source files
 add_executable(DMRG++)
@@ -82,26 +77,23 @@ target_link_precompiled_headers(DMRG++)
 ### Enable link time optimization. Requires DMRG_ENABLE_LTO=ON
 target_enable_lto(DMRG++)
 
-
 # Uninstall target
-if (NOT TARGET uninstall)
+if(NOT TARGET uninstall)
     configure_file(
             ${CMAKE_CURRENT_SOURCE_DIR}/cmake/DMRGUninstall.cmake.in
             ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake
             IMMEDIATE @ONLY)
 
     add_custom_target(uninstall
-            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake)
+                      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/DMRGUninstall.cmake)
 endif()
 
-
-
-if (DMRG_CMAKE_DEBUG)
+if(DMRG_CMAKE_DEBUG)
     # Print summary of CMake configuration
     include(cmake/PrintTargetInfo.cmake)
     print_project_summary(DMRG++)
     write_project_summary(DMRG++)
-endif ()
+endif()
 
 ###################
 ### INFORMATION ###
@@ -110,17 +102,16 @@ endif ()
 message(STATUS "")
 message(STATUS "=============================================================================")
 message(STATUS "")
-if (OPENBLAS_DYNAMIC_ARCH AND NOT TARGET mkl::mkl)
+if(OPENBLAS_DYNAMIC_ARCH AND NOT TARGET mkl::mkl)
     # Using OpenBLAS
     message(STATUS "   OpenBLAS DYNAMIC_ARCH: Remember to set architecture before launch:")
     message(STATUS "          export OPENBLAS_CORETYPE=<microarch>\n")
-endif ()
+endif()
 message(STATUS "   To clean cmake files, run './build.sh -c'")
 message(STATUS "   To see more options,  run './build.sh -h'")
 message(STATUS "")
 message(STATUS "=============================================================================")
 message(STATUS "")
-
 
 add_subdirectory(tests) # Unit testing with ctest and catch2
 add_subdirectory(bench) # Benchmarks with ctest and nanobench
@@ -130,7 +121,7 @@ add_subdirectory(docs)  # Build documentation with doxygen
 #############################
 ## NINJA TRACING
 #############################
-if (CMAKE_GENERATOR MATCHES "Ninja")
+if(CMAKE_GENERATOR MATCHES "Ninja")
     add_custom_command(
             TARGET DMRG++
             COMMAND ninja -C ${CMAKE_BINARY_DIR} -t recompact
@@ -140,6 +131,6 @@ if (CMAKE_GENERATOR MATCHES "Ninja")
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
             COMMENT "Generating ninja build statistics"
     )
-endif ()
+endif()
 
 
