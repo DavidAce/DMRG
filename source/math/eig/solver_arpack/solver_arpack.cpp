@@ -322,9 +322,9 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     t_pre_token.toc();
 
     // Generate an Arnoldi basis
-    int           step          = 0;
-    int           nops          = 0;
-    int           iter          = 0;
+    int step = 0;
+    int nops = 0;
+    int iter = 0;
     while(not solver.ArnoldiBasisFound()) {
         if(step == 0) {
             if(config.logTime) {
