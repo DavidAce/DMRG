@@ -73,23 +73,35 @@ namespace eig {
     }
 
     inline std::string_view RitzToString(Ritz ritz) {
-        if(ritz == Ritz::LA) return "LA";
-        if(ritz == Ritz::SA) return "SA";
-        if(ritz == Ritz::LM) return "LM";
-        if(ritz == Ritz::SM) return "SM";
-        if(ritz == Ritz::LR) return "LR";
-        if(ritz == Ritz::SR) return "SR";
-        if(ritz == Ritz::LI) return "LI";
-        if(ritz == Ritz::SI) return "SI";
-        if(ritz == Ritz::BE) return "BE";
-        if(ritz == Ritz::primme_smallest) return "primme_smallest";
-        if(ritz == Ritz::primme_largest) return "primme_largest";
-        if(ritz == Ritz::primme_closest_geq) return "primme_closest_geq";
-        if(ritz == Ritz::primme_closest_leq) return "primme_closest_leq";
-        if(ritz == Ritz::primme_closest_abs) return "primme_closest_abs";
-        if(ritz == Ritz::primme_largest_abs) return "primme_largest_abs";
-        throw std::runtime_error("Wrong ritz enum");
+        switch(ritz) {
+            case Ritz::LA: return "LA";
+            case Ritz::SA: return "SA";
+            case Ritz::LM: return "LM";
+            case Ritz::SM: return "SM";
+            case Ritz::LR: return "LR";
+            case Ritz::SR: return "SR";
+            case Ritz::LI: return "LI";
+            case Ritz::SI: return "SI";
+            case Ritz::BE: return "BE";
+            case Ritz::primme_smallest: return "primme_smallest";
+            case Ritz::primme_largest: return "primme_largest";
+            case Ritz::primme_closest_geq: return "primme_closest_geq";
+            case Ritz::primme_closest_leq: return "primme_closest_leq";
+            case Ritz::primme_closest_abs: return "primme_closest_abs";
+            case Ritz::primme_largest_abs: return "primme_largest_abs";
+            default: throw std::logic_error("No valid eig::Ritz given");
+        }
     }
+    inline std::string_view RitzToString(std::optional<Ritz> ritz) { return ritz ? RitzToString(ritz.value()) : "Ritz:NONE"; }
+    inline std::string_view LibToString(Lib lib) {
+        switch(lib) {
+            case Lib::ARPACK: return "ARPACK";
+            case Lib::PRIMME: return "PRIMME";
+            default: throw std::logic_error("No valid eig::Lib given");
+        }
+    }
+
+    inline std::string_view LibToString(std::optional<Lib> lib) { return lib ? LibToString(lib.value()) : "Lib:NONE"; }
 
     inline PrimmeMethod stringToMethod(std::optional<std::string> methodstring) {
         if(not methodstring.has_value()) return PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS;
@@ -112,23 +124,25 @@ namespace eig {
         throw std::runtime_error("Wrong method string: " + methodstring.value());
     }
     inline std::string_view MethodToString(std::optional<PrimmeMethod> method) {
-        if(not method.has_value()) return "PRIMME_DEFAULT_MIN_MATVECS";
-        if(method.value() == PrimmeMethod::PRIMME_DEFAULT_METHOD) return "PRIMME_DEFAULT_METHOD";
-        if(method.value() == PrimmeMethod::PRIMME_DYNAMIC) return "PRIMME_DYNAMIC";
-        if(method.value() == PrimmeMethod::PRIMME_DEFAULT_MIN_TIME) return "PRIMME_DEFAULT_MIN_TIME";
-        if(method.value() == PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS) return "PRIMME_DEFAULT_MIN_MATVECS";
-        if(method.value() == PrimmeMethod::PRIMME_Arnoldi) return "PRIMME_Arnoldi";
-        if(method.value() == PrimmeMethod::PRIMME_GD) return "PRIMME_GD";
-        if(method.value() == PrimmeMethod::PRIMME_GD_plusK) return "PRIMME_GD_plusK";
-        if(method.value() == PrimmeMethod::PRIMME_GD_Olsen_plusK) return "PRIMME_GD_Olsen_plusK";
-        if(method.value() == PrimmeMethod::PRIMME_JD_Olsen_plusK) return "PRIMME_JD_Olsen_plusK";
-        if(method.value() == PrimmeMethod::PRIMME_RQI) return "PRIMME_RQI";
-        if(method.value() == PrimmeMethod::PRIMME_JDQR) return "PRIMME_JDQR";
-        if(method.value() == PrimmeMethod::PRIMME_JDQMR) return "PRIMME_JDQMR";
-        if(method.value() == PrimmeMethod::PRIMME_JDQMR_ETol) return "PRIMME_JDQMR_ETol";
-        if(method.value() == PrimmeMethod::PRIMME_STEEPEST_DESCENT) return "PRIMME_STEEPEST_DESCENT";
-        if(method.value() == PrimmeMethod::PRIMME_LOBPCG_OrthoBasis) return "PRIMME_LOBPCG_OrthoBasis";
-        if(method.value() == PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window) return "PRIMME_LOBPCG_OrthoBasis_Window";
-        return "PRIMME_DEFAULT_MIN_MATVECS";
+        if(not method.has_value()) return "PRIMME_DYNAMIC";
+        switch(method.value()) {
+            case PrimmeMethod::PRIMME_DEFAULT_METHOD: return "PRIMME_DEFAULT_METHOD";
+            case PrimmeMethod::PRIMME_DYNAMIC: return "PRIMME_DYNAMIC";
+            case PrimmeMethod::PRIMME_DEFAULT_MIN_TIME: return "PRIMME_DEFAULT_MIN_TIME";
+            case PrimmeMethod::PRIMME_DEFAULT_MIN_MATVECS: return "PRIMME_DEFAULT_MIN_MATVECS";
+            case PrimmeMethod::PRIMME_Arnoldi: return "PRIMME_Arnoldi";
+            case PrimmeMethod::PRIMME_GD: return "PRIMME_GD";
+            case PrimmeMethod::PRIMME_GD_plusK: return "PRIMME_GD_plusK";
+            case PrimmeMethod::PRIMME_GD_Olsen_plusK: return "PRIMME_GD_Olsen_plusK";
+            case PrimmeMethod::PRIMME_JD_Olsen_plusK: return "PRIMME_JD_Olsen_plusK";
+            case PrimmeMethod::PRIMME_RQI: return "PRIMME_RQI";
+            case PrimmeMethod::PRIMME_JDQR: return "PRIMME_JDQR";
+            case PrimmeMethod::PRIMME_JDQMR: return "PRIMME_JDQMR";
+            case PrimmeMethod::PRIMME_JDQMR_ETol: return "PRIMME_JDQMR_ETol";
+            case PrimmeMethod::PRIMME_STEEPEST_DESCENT: return "PRIMME_STEEPEST_DESCENT";
+            case PrimmeMethod::PRIMME_LOBPCG_OrthoBasis: return "PRIMME_LOBPCG_OrthoBasis";
+            case PrimmeMethod::PRIMME_LOBPCG_OrthoBasis_Window: return "PRIMME_LOBPCG_OrthoBasis_Window";
+            default: throw std::logic_error("No valid eig::PrimmeMethod given");
+        }
     }
 }
