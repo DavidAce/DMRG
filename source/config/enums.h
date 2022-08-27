@@ -10,7 +10,7 @@
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
 enum class MultisiteMove { ONE, MID, MAX };
-enum class MultisiteWhen { OFF, STUCK, SATURATED, ALWAYS };
+enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
@@ -201,7 +201,7 @@ constexpr std::string_view enum2sv(const T &item) {
         case MultisiteMove::MAX :                                       return "MAX";
     }
     if constexpr(std::is_same_v<T, MultisiteWhen>) switch(item){
-        case MultisiteWhen::OFF :                                       return "OFF";
+        case MultisiteWhen::NEVER :                                     return "NEVER";
         case MultisiteWhen::STUCK :                                     return "STUCK";
         case MultisiteWhen::SATURATED :                                 return "SATURATED";
         case MultisiteWhen::ALWAYS :                                    return "ALWAYS";
@@ -523,7 +523,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "MAX")                                   return MultisiteMove::MAX;
     }
     if constexpr(std::is_same_v<T, MultisiteWhen>) {
-        if(item == "OFF")                                   return MultisiteWhen::OFF;
+        if(item == "NEVER")                                 return MultisiteWhen::NEVER;
         if(item == "STUCK")                                 return MultisiteWhen::STUCK;
         if(item == "SATURATED")                             return MultisiteWhen::SATURATED;
         if(item == "ALWAYS")                                return MultisiteWhen::ALWAYS;
