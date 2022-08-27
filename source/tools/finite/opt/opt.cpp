@@ -82,27 +82,26 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
     bfgs_default_options.line_search_interpolation_type             = ceres::LineSearchInterpolationType::CUBIC;
     bfgs_default_options.line_search_direction_type                 = ceres::LineSearchDirectionType::LBFGS;
     bfgs_default_options.max_num_iterations                         = 2000;
-    bfgs_default_options.max_lbfgs_rank                             = 16; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+    bfgs_default_options.max_lbfgs_rank                             = 8; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes. Overhead goes from 1.2x to 2x computation time at in 8 -> 64
 
     // Approximate eigenvalue bfgs scaling performs badly when the problem
     // is ill-conditioned (sensitive to some parameters). Empirically,
-    // we observe that the gradient is still large when bfgs has finished,
-    // and often the result is a tiny bit worse than what we started with.
+    // we observe that the gradient and residual norm are still large when bfgs has finished
     // When this happens, it's not worth trying to get BFGS to converge,
     // try an eigensolver on the energy-shifted operator H² instead.
     bfgs_default_options.use_approximate_eigenvalue_bfgs_scaling    = true;  // Tested: True makes a huge difference, takes longer steps at each iteration and generally converges faster/to better variance
-    bfgs_default_options.min_line_search_step_size                  = 1e-64;
+    bfgs_default_options.min_line_search_step_size                  = 1e-16;
     bfgs_default_options.max_line_search_step_contraction           = 1e-3; // 1e-3
     bfgs_default_options.min_line_search_step_contraction           = 0.6; // 0.6
     bfgs_default_options.max_line_search_step_expansion             = 10; // 10
-    bfgs_default_options.max_num_line_search_step_size_iterations   = 100;
-    bfgs_default_options.max_num_line_search_direction_restarts     = 50; //5
-    bfgs_default_options.line_search_sufficient_function_decrease   = 1e-6; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
-    bfgs_default_options.line_search_sufficient_curvature_decrease  = 0.90;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long for no added benefit. Tested 0.9 to be sweetspot
+    bfgs_default_options.max_num_line_search_step_size_iterations   = 25;
+    bfgs_default_options.max_num_line_search_direction_restarts     = 5; //5
+    bfgs_default_options.line_search_sufficient_function_decrease   = 1e-2; //1e-4; Tested, doesn't seem to matter between [1e-1 to 1e-4]. Default is fine: 1e-4
+    bfgs_default_options.line_search_sufficient_curvature_decrease  = 0.90;//0.9 // This one should be above 0.5. Below, it makes retries at every step and starts taking twice as long.
     bfgs_default_options.max_solver_time_in_seconds                 = 60*60;//60*2;
     bfgs_default_options.function_tolerance                         = std::numeric_limits<double>::epsilon(); // Tested, 1e-6 seems to be a sweetspot
     bfgs_default_options.gradient_tolerance                         = std::numeric_limits<double>::epsilon(); // 1e-8 // This is the max gradient on f = log Var H
-    bfgs_default_options.parameter_tolerance                        = 0; //std::numeric_limits<double>::epsilon(); // 1e-14
+    bfgs_default_options.parameter_tolerance                        = 0;//std::numeric_limits<double>::epsilon(); // 1e-14
     bfgs_default_options.minimizer_progress_to_stdout               = tools::log->level() <= spdlog::level::trace;
     bfgs_default_options.update_state_every_iteration               = false;
     bfgs_default_options.logging_type                               = ceres::LoggingType::PER_MINIMIZER_ITERATION;
