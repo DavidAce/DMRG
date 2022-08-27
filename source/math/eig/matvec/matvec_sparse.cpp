@@ -1,5 +1,6 @@
 
 #include "matvec_sparse.h"
+#include "../log.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <Eigen/SparseLU>
@@ -116,9 +117,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr
                 x_out.noalias() = x_in * sparse_lu::lu_real_dense.value().inverse();
             else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
                 x_out.noalias() = x_in * sparse_lu::lu_cplx_dense.value().inverse();
-            else {
-                throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet");
-            }
+            else { throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet"); }
             break;
         }
         case eig::Side::LR: {
@@ -162,9 +161,7 @@ void MatVecSparse<Scalar, sparseLU>::MultOPv(void *x, int *ldx, void *y, int *ld
                     x_out.noalias() = x_in * sparse_lu::lu_real_dense.value().inverse();
                 else if constexpr(std::is_same_v<Scalar, std::complex<double>> and not sparseLU)
                     x_out.noalias() = x_in * sparse_lu::lu_cplx_dense.value().inverse();
-                else {
-                    throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet");
-                }
+                else { throw std::runtime_error("Left sided sparse shift invert hasn't been implemented yet"); }
                 num_op++;
             }
             break;
@@ -298,9 +295,12 @@ void MatVecSparse<Scalar, sparseLU>::print() const {
 }
 
 template<typename Scalar, bool sparseLU>
-void MatVecSparse<Scalar, sparseLU>::set_shift(std::complex<double> sigma_) {
-    if(readyShift) { return; }
-    sigma = sigma_;
+void MatVecSparse<Scalar, sparseLU>::set_shift(std::complex<double> shift) {
+    if(readyShift) return;
+    if(sigma == shift) return;
+    eig::log->trace("Setting shift = {:.16f} + i{:.16f}", std::real(shift), std::imag(shift));
+
+    sigma = shift;
     if(A_stl.empty()) {
         A_stl.resize(static_cast<size_t>(L * L));
         std::copy(A_ptr, A_ptr + static_cast<size_t>(L * L), A_stl.begin());

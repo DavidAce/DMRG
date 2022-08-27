@@ -63,6 +63,16 @@ template MatVecMPO<eig::real>::MatVecMPO(const Eigen::Tensor<eig::cplx, 3> &envL
                                          const Eigen::Tensor<eig::cplx, 4> &mpo_);
 
 template<typename T>
+int MatVecMPO<T>::rows() const {
+    return static_cast<int>(size_mps);
+};
+
+template<typename T>
+int MatVecMPO<T>::cols() const {
+    return static_cast<int>(size_mps);
+};
+
+template<typename T>
 void MatVecMPO<T>::FactorOP() {
     auto t_token = t_factorOP->tic_token();
     if(readyFactorOp) {
@@ -96,9 +106,9 @@ void MatVecMPO<T>::FactorOP() {
 
 template<typename T>
 void MatVecMPO<T>::MultAx(T *mps_in_, T *mps_out_) {
-    auto                                       token = t_multAx->tic_token();
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_, shape_mps);
-    Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_, shape_mps);
+    auto                                  token = t_multAx->tic_token();
+    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_, shape_mps);
+    Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_, shape_mps);
     tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
     num_mv++;
 }
@@ -116,10 +126,10 @@ template<typename T>
 void MatVecMPO<T>::MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, [[maybe_unused]] primme_params *primme, [[maybe_unused]] int *err) {
     auto token = t_multAx->tic_token();
     for(int i = 0; i < *blockSize; i++) {
-        T                                         *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
-        T                                         *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
-        Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_in(mps_in_ptr, shape_mps);
-        Eigen::TensorMap<Eigen::Tensor<Scalar, 3>> mps_out(mps_out_ptr, shape_mps);
+        T                                    *mps_in_ptr  = static_cast<T *>(x) + *ldx * i;
+        T                                    *mps_out_ptr = static_cast<T *>(y) + *ldy * i;
+        Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_in(mps_in_ptr, shape_mps);
+        Eigen::TensorMap<Eigen::Tensor<T, 3>> mps_out(mps_out_ptr, shape_mps);
         tools::common::contraction::matrix_vector_product(mps_out, mps_in, mpo, envL, envR);
     }
 
@@ -188,11 +198,11 @@ void MatVecMPO<T>::MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize,
     *err = 0;
 }
 
-template<typename Scalar>
-void MatVecMPO<Scalar>::print() const {}
+template<typename T>
+void MatVecMPO<T>::print() const {}
 
-template<typename Scalar>
-void MatVecMPO<Scalar>::reset() {
+template<typename T>
+void MatVecMPO<T>::reset() {
     if(t_factorOP) t_factorOP->reset();
     if(t_multOPv) t_multOPv->reset();
     if(t_genMat) t_genMat->reset();
@@ -205,10 +215,18 @@ template<typename T>
 void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     // Here we set an energy shift directly on the MPO.
     // This only works if the MPO is not compressed already.
-    readyShift = sigma == shift;
+    if(readyShift) return;
+    if(sigma == shift) return;
 
-    if(readyShift) return; // This only happens once!!
-    if(readyCompress) throw std::runtime_error("Cannot shift the matrix: it is already compressed!");
+    if(readyCompress) {
+        if(factorization == eig::Factorization::NONE)
+            throw std::runtime_error("Cannot shift the matrix with Factorization::NONE: mpo is already compressed!");
+        else {
+            eig::log->trace("Setting shift = {:.16f} + i{:.16f}", std::real(shift), std::imag(shift));
+            sigma = shift; // We can shift the diagonal of the full matrix instead
+            return;
+        }
+    }
 
     // The MPO is a rank4 tensor ijkl where the first 2 ij indices draw a simple
     // rank2 matrix, where each element is also a matrix with the size
@@ -225,7 +243,7 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     std::array<long, 4> extent4{1, 1, spindim, spindim};
     std::array<long, 2> extent2{spindim, spindim};
 
-    auto id = tenx::TensorIdentity<Scalar>(spindim);
+    auto id = tenx::TensorIdentity<T>(spindim);
     // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*shift]
     if constexpr(std::is_same_v<T, eig::real>)
         mpo.slice(offset4, extent4).reshape(extent2) += id * std::real(sigma - shift);
@@ -255,8 +273,8 @@ void MatVecMPO<T>::compress() {
         mpo_l2r                = U_l2r.contract(tenx::asDiagonal(S), tenx::idx({1}, {0})).shuffle(std::array<long, 4>{0, 3, 1, 2});
 
         // Contract V_l2r into the right environment
-        Eigen::Tensor<Scalar, 3> envR_tmp = envR.contract(V_l2r, tenx::idx({2}, {1}));
-        envR                              = envR_tmp;
+        Eigen::Tensor<T, 3> envR_tmp = envR.contract(V_l2r, tenx::idx({2}, {1}));
+        envR                         = envR_tmp;
     }
     {
         // Compress right to left
@@ -264,8 +282,8 @@ void MatVecMPO<T>::compress() {
         mpo_r2l                = tenx::asDiagonal(S).contract(V_r2l, tenx::idx({1}, {0}));
 
         // Contract U_r2l into the left environment
-        Eigen::Tensor<Scalar, 3> envL_tmp = envL.contract(U_r2l, tenx::idx({2}, {0}));
-        envL                              = envL_tmp;
+        Eigen::Tensor<T, 3> envL_tmp = envL.contract(U_r2l, tenx::idx({2}, {0}));
+        envL                         = envL_tmp;
     }
     {
         // The new mpo is what remains
@@ -275,13 +293,18 @@ void MatVecMPO<T>::compress() {
     eig::log->debug("Compressed MPO dimensions {} -> {}", mpo.dimensions(), mpo_tmp.dimensions());
 }
 
-template<typename Scalar>
-void MatVecMPO<Scalar>::set_mode(const eig::Form form_) {
+template<typename T>
+void MatVecMPO<T>::set_mode(const eig::Form form_) {
     form = form_;
 }
-template<typename Scalar>
-void MatVecMPO<Scalar>::set_side(const eig::Side side_) {
+template<typename T>
+void MatVecMPO<T>::set_side(const eig::Side side_) {
     side = side_;
+}
+
+template<typename T>
+void MatVecMPO<T>::set_readyCompress(bool compressed) {
+    readyCompress = compressed;
 }
 
 template<typename T>
@@ -290,87 +313,88 @@ T MatVecMPO<T>::get_shift() const {
     if constexpr(std::is_same_v<T, eig::real>) return std::real(sigma);
 }
 
-template<typename Scalar>
-eig::Form MatVecMPO<Scalar>::get_form() const {
+template<typename T>
+eig::Form MatVecMPO<T>::get_form() const {
     return form;
 }
-template<typename Scalar>
-eig::Side MatVecMPO<Scalar>::get_side() const {
+template<typename T>
+eig::Side MatVecMPO<T>::get_side() const {
     return side;
 }
-template<typename Scalar>
-eig::Type MatVecMPO<Scalar>::get_type() const {
-    if constexpr(std::is_same_v<Scalar, eig::real>)
+template<typename T>
+eig::Type MatVecMPO<T>::get_type() const {
+    if constexpr(std::is_same_v<T, eig::real>)
         return eig::Type::REAL;
-    else if constexpr(std::is_same_v<Scalar, eig::cplx>)
+    else if constexpr(std::is_same_v<T, eig::cplx>)
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");
 }
 
-template<typename Scalar>
-const Eigen::Tensor<Scalar, 4> &MatVecMPO<Scalar>::get_mpo() const {
+template<typename T>
+const Eigen::Tensor<T, 4> &MatVecMPO<T>::get_mpo() const {
     return mpo;
 }
-template<typename Scalar>
-const Eigen::Tensor<Scalar, 3> &MatVecMPO<Scalar>::get_envL() const {
+template<typename T>
+const Eigen::Tensor<T, 3> &MatVecMPO<T>::get_envL() const {
     return envL;
 }
-template<typename Scalar>
-const Eigen::Tensor<Scalar, 3> &MatVecMPO<Scalar>::get_envR() const {
+template<typename T>
+const Eigen::Tensor<T, 3> &MatVecMPO<T>::get_envR() const {
     return envR;
 }
 
-template<typename Scalar>
-long MatVecMPO<Scalar>::get_size() const {
+template<typename T>
+long MatVecMPO<T>::get_size() const {
     return size_mps;
 }
 
-template<typename Scalar>
-std::array<long, 3> MatVecMPO<Scalar>::get_shape_mps() const {
+template<typename T>
+std::array<long, 3> MatVecMPO<T>::get_shape_mps() const {
     return shape_mps;
 }
-template<typename Scalar>
-std::array<long, 4> MatVecMPO<Scalar>::get_shape_mpo() const {
+template<typename T>
+std::array<long, 4> MatVecMPO<T>::get_shape_mpo() const {
     return mpo.dimensions();
 }
-template<typename Scalar>
-std::array<long, 3> MatVecMPO<Scalar>::get_shape_envL() const {
+template<typename T>
+std::array<long, 3> MatVecMPO<T>::get_shape_envL() const {
     return envL.dimensions();
 }
-template<typename Scalar>
-std::array<long, 3> MatVecMPO<Scalar>::get_shape_envR() const {
+template<typename T>
+std::array<long, 3> MatVecMPO<T>::get_shape_envR() const {
     return envR.dimensions();
 }
-template<typename Scalar>
-Eigen::Tensor<Scalar, 6> MatVecMPO<Scalar>::get_tensor() const {
-    eig::log->info("Generating tensor");
+template<typename T>
+Eigen::Tensor<T, 6> MatVecMPO<T>::get_tensor() const {
+    auto t_token = t_genMat->tic_token();
+    eig::log->debug("Generating tensor");
 
-    auto                     d0 = shape_mps[0];
-    auto                     d1 = shape_mps[1];
-    auto                     d2 = shape_mps[2];
-    Eigen::Tensor<Scalar, 6> tensor;
+    auto                d0 = shape_mps[0];
+    auto                d1 = shape_mps[1];
+    auto                d2 = shape_mps[2];
+    Eigen::Tensor<T, 6> tensor;
     tensor.resize(tenx::array6{d0, d1, d2, d0, d1, d2});
     tensor.device(tenx::omp::getDevice()) =
         get_envL().contract(get_mpo(), tenx::idx({2}, {0})).contract(get_envR(), tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
     return tensor;
 }
 
-template<typename Scalar>
-typename MatVecMPO<Scalar>::MatrixType MatVecMPO<Scalar>::get_matrix() const {
+template<typename T>
+typename MatVecMPO<T>::MatrixType MatVecMPO<T>::get_matrix() const {
     return tenx::MatrixCast(get_tensor(), rows(), cols());
 }
 
-template<typename Scalar>
-bool MatVecMPO<Scalar>::isReadyFactorOp() const {
+template<typename T>
+bool MatVecMPO<T>::isReadyFactorOp() const {
     return readyFactorOp;
 }
-template<typename Scalar>
-bool MatVecMPO<Scalar>::isReadyShift() const {
+template<typename T>
+bool MatVecMPO<T>::isReadyShift() const {
     return readyShift;
 }
-template<typename Scalar>
-bool MatVecMPO<Scalar>::isReadyCompress() const {
+template<typename T>
+bool MatVecMPO<T>::isReadyCompress() const {
     return readyCompress;
 }
 

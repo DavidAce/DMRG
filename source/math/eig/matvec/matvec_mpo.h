@@ -19,7 +19,10 @@ class MatVecMPO {
     static_assert(std::is_same_v<T, eig::real> or std::is_same_v<T, eig::cplx>);
 
     public:
-    using Scalar                                   = T;
+    using Scalar     = T;
+    using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
+    using VectorType = Eigen::Matrix<T, Eigen::Dynamic, 1>;
+
     constexpr static bool         can_shift_invert = true;
     constexpr static bool         can_shift        = true;
     constexpr static bool         can_compress     = true;
@@ -27,16 +30,13 @@ class MatVecMPO {
     eig::Factorization            factorization    = eig::Factorization::NONE;
 
     private:
-    using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
-    Eigen::Tensor<Scalar, 3> envL;
-    Eigen::Tensor<Scalar, 3> envR;
-    Eigen::Tensor<Scalar, 4> mpo;
-    std::array<long, 3>      shape_mps;
-
-    long      size_mps;
-    eig::Form form = eig::Form::SYMM;
-    eig::Side side = eig::Side::R;
+    Eigen::Tensor<T, 3> envL;
+    Eigen::Tensor<T, 3> envR;
+    Eigen::Tensor<T, 4> mpo;
+    std::array<long, 3> shape_mps;
+    long                size_mps;
+    eig::Form           form = eig::Form::SYMM;
+    eig::Side           side = eig::Side::R;
 
     // Shift and shift-invert mode stuff
     std::complex<double> sigma         = 0.0;   // The shift
@@ -56,8 +56,8 @@ class MatVecMPO {
               const Eigen::Tensor<S, 4> &mpo_   /*!< The Hamiltonian MPO's  */
     );
     // Functions used in Arpack++ solver
-    [[nodiscard]] int rows() const { return static_cast<int>(size_mps); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
-    [[nodiscard]] int cols() const { return static_cast<int>(size_mps); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int rows() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int cols() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
     void FactorOP();                      //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
     void MultOPv(T *mps_in_, T *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
@@ -77,6 +77,7 @@ class MatVecMPO {
     void set_shift(std::complex<double> shift);
     void set_mode(eig::Form form_);
     void set_side(eig::Side side_);
+    void set_readyCompress(bool compressed);
 
     [[nodiscard]] T                               get_shift() const;
     [[nodiscard]] eig::Form                       get_form() const;
@@ -99,6 +100,7 @@ class MatVecMPO {
 
     // Timers
     std::unique_ptr<tid::ur> t_factorOP;
+    std::unique_ptr<tid::ur> t_genMat;
     std::unique_ptr<tid::ur> t_multOPv;
     std::unique_ptr<tid::ur> t_multAx;
 };

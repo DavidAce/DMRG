@@ -1,4 +1,5 @@
 #include "matvec_dense.h"
+#include "math/eig/log.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <tid/tid.h>
@@ -214,7 +215,9 @@ void MatVecDense<Scalar>::print() const {
 
 template<typename Scalar>
 void MatVecDense<Scalar>::set_shift(std::complex<double> sigma_) {
-    if(readyShift) { return; }
+    if(readyShift) return;
+    if(sigma == sigma_) return;
+    eig::log->trace("Setting shift = {:.16f} + i{:.16f}", std::real(sigma), std::imag(sigma));
     sigma = sigma_;
     if(A_stl.empty()) {
         A_stl.resize(static_cast<size_t>(L * L));
