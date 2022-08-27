@@ -123,8 +123,8 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | f {:12.5e} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s"), primme->stats.numMatvecs,
-                           primme->stats.numOuterIterations, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
+        return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s"),
+                           primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
     auto       &solver   = *static_cast<eig::solver *>(primme->monitor);
@@ -132,10 +132,9 @@ std::string getLogMessage(struct primme_params *primme) {
     auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
     std::string msg_grad = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
-
-    return fmt::format(FMT_STRING("mv {:>6} | iter {:>6} | size {} | rnorm {:8.2e} | f {:12.5e}{}{} | time {:8.2f} s | {:8.2e} it/s | {:8.2e} mv/s | {}"),
-                       primme->stats.numMatvecs, primme->stats.numOuterIterations, primme->n, result.meta.last_res_norm, primme->stats.estimateMinEVal,
-                       msg_diff, msg_grad, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
+    return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s | {}"),
+                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff, msg_grad,
+                       result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
                        primme->stats.numMatvecs / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
 }
 
@@ -145,31 +144,32 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
                 [[maybe_unused]] void *LSRes, [[maybe_unused]] const char *msg, [[maybe_unused]] double *time, [[maybe_unused]] primme_event *event,
                 [[maybe_unused]] struct primme_params *primme, [[maybe_unused]] int *ierr) {
     if(event == nullptr) return;
-    if(*event == primme_event_inner_iteration) return; // No need to log that often
-
     std::string eventMessage;
     /* clang-format off */
-    if(*event == primme_event_outer_iteration)      eventMessage = "event_outer_iteration";
-    else if(*event == primme_event_inner_iteration) eventMessage = "event_inner_iteration";
-    else if(*event == primme_event_restart)         eventMessage = "event_restart";
-    else if(*event == primme_event_reset)           eventMessage = "event_reset";
-    else if(*event == primme_event_converged)       eventMessage = "event_converged";
-    else if(*event == primme_event_locked)          eventMessage = "event_locked";
-    else if(*event == primme_event_message)         eventMessage = "event_message";
-    else if(*event == primme_event_profile)         eventMessage = "event_profile";
+    switch(*event){
+        case primme_event_outer_iteration : eventMessage = "event_outer_iteration"; break;
+        case primme_event_inner_iteration : eventMessage = "event_inner_iteration"; break;
+        case primme_event_restart         : return;
+        case primme_event_reset           : return;
+        case primme_event_converged       : return;
+        case primme_event_locked          : return;
+        case primme_event_message         : return;
+        case primme_event_profile         : return;
+    }
     /* clang-format on */
     std::string basisMessage = basisSize != nullptr ? fmt::format(" | ncv {:3}", *basisSize) : "";
+    std::string nlockMessage = numLocked != nullptr and primme->locking == 1 ? fmt::format(" | nlk {:3}", *numLocked) : "";
 
     if(primme->monitor != nullptr) {
         auto &solver              = *static_cast<eig::solver *>(primme->monitor);
         auto &config              = solver.config;
         auto &result              = solver.result;
         auto  level               = spdlog::level::trace;
-        auto  iter_since_last_log = std::abs(primme->stats.numOuterIterations - result.meta.last_log_iter);
+        auto  nmvs_since_last_log = std::abs(primme->stats.numMatvecs - result.meta.last_log_iter);
         auto  time_since_last_log = std::abs(primme->stats.elapsedTime - result.meta.last_log_time);
-        if(*event == primme_event_outer_iteration) {
+        if(*event == primme_event_outer_iteration or *event == primme_event_inner_iteration) {
             if(config.logTime and config.logTime.value() <= time_since_last_log) level = eig::log->level();
-            if(config.logIter and config.logIter.value() <= iter_since_last_log) level = eig::log->level();
+            if(config.logIter and config.logIter.value() <= nmvs_since_last_log) level = eig::log->level();
         } else if(*event == primme_event_converged)
             level = spdlog::level::debug;
 
@@ -179,9 +179,13 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
             primme->maxMatvecs = 0;
         }
         if(eig::log->level() <= level) {
-            eig::log->log(level, FMT_STRING("{}{} | {}"), getLogMessage(primme), basisMessage, eventMessage);
+            if(basisNorms != nullptr and basisSize != nullptr) {
+                auto rnorms               = Eigen::Map<const Eigen::VectorXd>(static_cast<double *>(basisNorms), *basisSize);
+                result.meta.last_res_norm = rnorms.maxCoeff();
+            }
+            eig::log->log(level, FMT_STRING("{}{}{} | {}"), getLogMessage(primme), basisMessage, nlockMessage, eventMessage);
             result.meta.last_log_time = primme->stats.elapsedTime;
-            result.meta.last_log_iter = primme->stats.numOuterIterations;
+            result.meta.last_log_iter = primme->stats.numMatvecs;
         }
     } else {
         eig::log->trace(FMT_STRING("{} | {}"), getLogMessage(primme), eventMessage);
@@ -197,11 +201,11 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     auto    t_pre_token = t_pre.tic_token();
     if constexpr(MatrixProductType::can_shift) {
         if(config.sigma) {
-            eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
+            eig::log->debug("Setting shift with sigma = {}", std::real(config.sigma.value()));
             matrix.set_shift(config.sigma.value());
             if constexpr(MatrixProductType::can_shift_invert) {
                 if(config.shift_invert == Shinv::ON) {
-                    eig::log->trace("Enabling shift-invert mode");
+                    eig::log->debug("Enabling shift-invert mode");
                     matrix.FactorOP();
                 }
             } else if(config.shift_invert == Shinv::ON)
@@ -300,7 +304,10 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     //    primme.minRestartSize = 2;
     //    primme.maxBlockSize = 8;
     //    primme.orth = primme_orth_explicit_I;
-
+    //    if(primme.maxBlockSize == 1) primme.restartingParams.maxPrevRetain = 1;
+    primme.maxBasisSize = std::max(primme.maxBasisSize, 1 + primme.minRestartSize + primme.restartingParams.maxPrevRetain);
+    eig::log->debug("numEvals {} | maxMatvecs {} | eps {:.2e} | minRestartSize {} | maxPrevRetain {} | maxBasisSize {} | maxBlockSize {}", primme.numEvals,
+                    primme.maxMatvecs, primme.eps, primme.minRestartSize, primme.restartingParams.maxPrevRetain, primme.maxBasisSize, primme.maxBlockSize);
     // Allocate space
     auto &eigvals = result.get_eigvals<eig::Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Scalar, eig::Form::SYMM>();
@@ -357,9 +364,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
             case -42: eig::log->error("PRIMME_ORTHO_CONST_FAILURE (exit {})", info); break;
             case -43: eig::log->error("PRIMME_PARALLEL_FAILURE (exit {})", info); break;
             case -44: eig::log->error("PRIMME_FUNCTION_UNAVAILABLE (exit {})", info); break;
-            default:
-                eig::log->error("Unknown error code: {}.\n Go to http://www.cs.wm.edu/~andreas/software/doc/appendix.html?highlight=primme_main_iter_failure",
-                                info);
+            default: eig::log->error("Unknown error code: {}.\n Go to http://www.cs.wm.edu/~andreas/software/doc/appendix.html", info);
         }
     }
     result.meta.eigvecsR_found = true; // We can use partial results
