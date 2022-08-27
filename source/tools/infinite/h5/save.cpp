@@ -10,7 +10,6 @@
 #include "tools/infinite/h5.h"
 #include "tools/infinite/measure.h"
 #include <h5pp/h5pp.h>
-#include <regex>
 
 namespace tools::infinite::h5::save {
     void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file,
@@ -29,16 +28,6 @@ namespace tools::infinite::h5::save {
     }
 }
 
-int tools::infinite::h5::save::decide_layout(std::string_view prefix_path) {
-    std::string str(prefix_path);
-    std::regex  rx(R"(point/iter_[0-9])"); // Declare the regex with a raw string literal
-    std::smatch m;
-    if(regex_search(str, m, rx))
-        return H5D_CONTIGUOUS;
-    else
-        return H5D_CHUNKED;
-}
-
 void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateInfinite &state,
                                       const AlgorithmStatus &status) {
     if(storage_level == StorageLevel::NONE) return;
@@ -52,7 +41,7 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state
 
     bootstrap_save_log(save_log, h5file, {dset_schmidt, mps_prefix});
     auto save_point = std::make_pair(status.iter, status.step);
-    auto layout     = static_cast<H5D_layout_t>(decide_layout(state_prefix));
+    auto layout     = H5D_layout_t::H5D_CHUNKED;
 
     if(save_log[dset_schmidt] != save_point) {
         tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
