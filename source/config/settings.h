@@ -117,9 +117,10 @@ namespace settings {
 
     /*! \namespace settings::solvers Settings affecting the solvers (eig, eigs, bfgs, svd) */
     namespace solver {
-        inline size_t   eigs_max_iter                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
-        inline double   eigs_tolerance                  = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline size_t   eigs_default_ncv                = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
+        inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
+        inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double   eigs_tol_max                    = 1e-8 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline size_t   eigs_ncv                        = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
         inline size_t   iter_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on BFGS/EIGS by this factor when stuck */
         inline long     max_size_full_eigs              = 2048  ;                  /*!< Maximum problem size allowed for full diagonalization of the local (effective) hamiltonian matrix. */

@@ -160,9 +160,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);
     dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
 
-    dmrg_config.load_parameter("solver::eigs_max_iter"                        , solver::eigs_max_iter);
-    dmrg_config.load_parameter("solver::eigs_tolerance"                       , solver::eigs_tolerance);
-    dmrg_config.load_parameter("solver::eigs_default_ncv"                     , solver::eigs_default_ncv);
+    dmrg_config.load_parameter("solver::eigs_iter_max"                        , solver::eigs_iter_max);
+    dmrg_config.load_parameter("solver::eigs_tol_min"                         , solver::eigs_tol_min);
+    dmrg_config.load_parameter("solver::eigs_tol_max"                         , solver::eigs_tol_max);
+    dmrg_config.load_parameter("solver::eigs_ncv"                             , solver::eigs_ncv);
     dmrg_config.load_parameter("solver::bfgs_max_iter"                        , solver::bfgs_max_iter);
     dmrg_config.load_parameter("solver::iter_stuck_multiplier"                , solver::iter_stuck_multiplier);
     dmrg_config.load_parameter("solver::max_size_full_eigs"                   , solver::max_size_full_eigs);

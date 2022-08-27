@@ -29,7 +29,7 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
     using namespace settings::solver;
     eig::solver solver;
     auto        nev = static_cast<eig::size_type>(1);
-    auto        ncv = static_cast<eig::size_type>(eigs_default_ncv);
+    auto        ncv = static_cast<eig::size_type>(eigs_ncv);
 
     solver.eigs(transfer_matrix_theta_evn.data(), sizeLB, nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
                 eig::Dephase::OFF);

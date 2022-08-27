@@ -318,7 +318,7 @@ namespace tools::finite::opt::internal {
             return comparator::eigval_and_overlap(lhs, rhs);
         } else {
             auto diff = std::abs(lhs.get_eigval() - rhs.get_eigval());
-            if(diff < settings::solver::eigs_tolerance) return lhs.get_overlap() > rhs.get_overlap();
+            if(diff < settings::solver::eigs_tol_min) return lhs.get_overlap() > rhs.get_overlap();
             switch(meta->optRitz) {
                 case OptRitz::SR: return comparator::energy(lhs, rhs);
                 case OptRitz::LR: return comparator::energy(rhs, lhs);
