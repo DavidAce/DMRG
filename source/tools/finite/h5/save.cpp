@@ -74,6 +74,7 @@ namespace tools::finite::h5 {
         if(storage_level <= StorageLevel::LIGHT) return;
         if(status.algo_type != AlgorithmType::xDMRG) return;
         auto t_hdf = tid::tic_scope("correlations", tid::level::extra);
+        if(not status.algorithm_has_finished) return;
         tools::finite::measure::correlation_matrix_xyz(state);
         tools::log->trace("Saving correlations to {}", state_prefix);
         /* clang-format off */
@@ -86,6 +87,7 @@ namespace tools::finite::h5 {
                                  const AlgorithmStatus &status) {
         if(storage_level <= StorageLevel::LIGHT) return;
         if(status.algo_type != AlgorithmType::xDMRG) return;
+        if(not status.algorithm_has_finished) return;
         auto t_hdf = tid::tic_scope("structure_factors", tid::level::extra);
         tools::finite::measure::structure_factors_xyz(state);
         tools::log->trace("Saving structure factors to {}", table_prefix);
@@ -100,12 +102,11 @@ namespace tools::finite::h5 {
                                 const AlgorithmStatus &status) {
         if(storage_level <= StorageLevel::LIGHT) return;
         if(status.algo_type != AlgorithmType::xDMRG) return;
+        if(not status.algorithm_has_finished) return;
         auto t_hdf = tid::tic_scope("kvornings_marker", tid::level::extra);
         tools::finite::measure::kvornings_marker(state);
         tools::log->trace("Saving kvornings marker to {}", table_prefix);
-        /* clang-format off */
         save::data_as_table(h5file, table_prefix, status, state.measurements.kvornings_marker, "kvornings_marker", "Kvornings marker", "eigval");
-        /* clang-format on */
     }
 
     template<typename T>
