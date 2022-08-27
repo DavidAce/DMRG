@@ -1,13 +1,8 @@
 #include "../opt_meta.h"
 #include "../opt_mps.h"
-#include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
-#include "general/iter.h"
 #include "math/eig.h"
-#include "math/eig/matvec/matvec_mpo.h"
 #include "math/num.h"
-#include "math/tenx.h"
-//#include "tensors/model/ModelFinite.h"
 #include "measure/MeasurementsTensorsFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/TensorsFinite.h"
@@ -98,6 +93,63 @@ void tools::finite::opt::internal::eigs_extract_results(const TensorsFinite &ten
                 //                    // to keep the first few eigenvectors here.
                 //                    if(num_solutions >= 16) break;
                 //                }
+            }
+        }
+    }
+}
+
+void tools::finite::opt::internal::eigs_extract_results_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta,
+                                                                 const eig::solver &solver, const std::vector<opt_mps> &subspace,
+                                                                 std::vector<opt_mps> &results) {
+    auto t_ext    = tid::tic_scope("extract");
+    auto dims_mps = initial_mps.get_tensor().dimensions();
+    if(solver.result.meta.eigvals_found and solver.result.meta.eigvecsR_found) {
+        auto eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R);
+        auto eigvals = eig::view::get_eigvals<real>(solver.result);
+        if(eigvecs.cols() == eigvals.size()) /* Checks if eigenvectors converged for each eigenvalue */ {
+            auto indices = num::range<long>(0, eigvals.size());
+            // Eigenvalues are normally sorted small to large, so we reverse when looking for large.
+            if(meta.optRitz == OptRitz::LR) std::reverse(indices.begin(), indices.end());
+            for(const auto &idx : indices) {
+                results.emplace_back(opt_mps());
+                auto &mps           = results.back();
+                mps.is_basis_vector = false;
+                mps.set_name(fmt::format("{:<8}eigenvector {}", solver.config.tag, idx));
+                // eigvecs are not always well normalized when we get them from eig::solver
+                mps.set_tensor(subspace::get_vector_in_fullspace(subspace, eigvecs.col(idx).normalized()), dims_mps);
+                mps.set_sites(initial_mps.get_sites());
+                mps.set_energy_shift(initial_mps.get_energy_shift()); // Will set energy if also given the eigval
+                mps.set_overlap(std::abs(initial_mps.get_vector().dot(mps.get_vector())));
+                mps.set_length(initial_mps.get_length());
+                mps.set_time(solver.result.meta.time_total);
+                mps.set_op(static_cast<size_t>(solver.result.meta.num_op));
+                mps.set_mv(static_cast<size_t>(solver.result.meta.num_mv));
+                mps.set_pc(static_cast<size_t>(solver.result.meta.num_pc));
+                mps.set_iter(static_cast<size_t>(solver.result.meta.iter));
+                mps.set_eigs_idx(idx);
+                mps.set_eigs_nev(solver.result.meta.nev_converged);
+                mps.set_eigs_ncv(solver.result.meta.ncv);
+                mps.set_eigs_tol(solver.result.meta.tol);
+                mps.set_eigs_eigval(eigvals[idx]);
+                mps.set_eigs_ritz(solver.result.meta.ritz);
+                mps.set_eigs_shift(solver.result.meta.sigma);
+                mps.set_optmode(meta.optMode);
+                mps.set_optsolver(meta.optSolver);
+                if(solver.result.meta.residual_norms.empty())
+                    mps.set_rnorm(tools::finite::measure::residual_norm(mps.get_tensor(), tensors.get_multisite_mpo_squared(),
+                                                                        tensors.get_multisite_env_var_blk().L, tensors.get_multisite_env_var_blk().R));
+                else
+                    mps.set_rnorm(solver.result.meta.residual_norms.at(static_cast<size_t>(idx))); // primme convergence precision
+                auto   measurements = MeasurementsTensorsFinite();
+                double energy       = tools::finite::measure::energy(mps.get_tensor(), tensors, &measurements);
+                double eigval       = energy - initial_mps.get_energy_shift();
+                double variance     = tools::finite::measure::energy_variance(mps.get_tensor(), tensors, &measurements);
+
+                mps.set_energy(energy);
+                mps.set_eigval(eigval);
+                mps.set_variance(variance);
+                //                mps.set_grad_max(grad_max);
+                mps.validate_basis_vector();
             }
         }
     }

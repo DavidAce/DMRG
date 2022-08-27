@@ -27,6 +27,8 @@ namespace tools::finite::opt::internal{
     extern opt_mps eigs_optimize_overlap      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
     extern void eigs_extract_results          (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
                                                std::vector<opt_mps> &results, bool converged_only = true, double max_overlap_sq_sum = 0.7);
+    extern void eigs_extract_results_subspace (const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta,
+                                               const eig::solver &solver, const std::vector<opt_mps> & subspace_mps, std::vector<opt_mps> &results );
     template<typename Scalar>
     extern void eig_executor                  (const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta);
 
