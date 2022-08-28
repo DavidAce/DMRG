@@ -83,7 +83,10 @@ void AlgorithmFinite::run()
 void AlgorithmFinite::run_postprocessing() {
     tools::log->info("Running default postprocessing for {}", status.algo_type_sv());
     auto tic = tid::tic_scope("post");
-    if(settings::strategy::project_final_state) tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
+    if(settings::strategy::project_final_state) {
+        tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
+        tensors.rebuild_edges();
+    }
     write_to_file(StorageReason::BOND_INCREASE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
     write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);    // To update checkpoint/iter_# or iter_last
     write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);    // To compare the finished state to a projected one
@@ -302,9 +305,10 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     }
 
     // Do a projection to make sure the saved data is in the correct sector
-    if(settings::strategy::project_on_bond_update)
+    if(settings::strategy::project_on_bond_update) {
         tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
-
+        tensors.rebuild_edges();
+    }
     // Write current results before updating bond dimension
     write_to_file(StorageReason::BOND_INCREASE);
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
@@ -411,9 +415,10 @@ void AlgorithmFinite::update_truncation_error_limit() {
     }
 
     // Do a projection to make sure the saved data is in the correct sector
-    if(settings::strategy::project_on_bond_update)
+    if(settings::strategy::project_on_bond_update) {
         tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
-
+        tensors.rebuild_edges();
+    }
     // Write current results before updating the truncation error limit
     write_to_file(StorageReason::TRNC_DECREASE);
 
@@ -501,6 +506,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
                          tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
         tensors.project_to_nearest_axis(sector.value(), svd::config(bond_lim, trnc_lim));
+        tensors.rebuild_edges();
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
 
@@ -564,6 +570,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
         auto entropies_old = tools::finite::measure::entanglement_entropies(*tensors.state);
         if(sector_sign != 0) {
             tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
+            tensors.rebuild_edges();
         } else {
             // We have a choice here.
             // If no sector sign has been given, and the spin component along the requested axis is near zero,
@@ -610,6 +617,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
 
                 tensors.project_to_nearest_axis(target_sector.value(), svd::config(status.bond_lim, status.trnc_lim));
             }
+            tensors.rebuild_edges();
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
             auto entropies_new = tools::finite::measure::entanglement_entropies(*tensors.state);
