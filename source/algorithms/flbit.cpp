@@ -704,6 +704,7 @@ void flbit::write_state_swap_gates_to_file(const StateFinite &state, const std::
     }
 
     tools::common::h5::save::status(h5svd, state_prefix, StorageLevel::FULL, status);
+    tools::finite::h5::save::bonds(h5svd, state_prefix, StorageLevel::FULL, state, status);
     tools::finite::h5::save::state(h5svd, state_prefix, StorageLevel::FULL, state, status);
     tools::common::h5::save::meta(h5svd, StorageLevel::FULL, StorageReason::CHECKPOINT, settings::model::model_type, settings::model::model_size,
                                   state.get_name(), state_prefix, "", {table_prefix}, status);

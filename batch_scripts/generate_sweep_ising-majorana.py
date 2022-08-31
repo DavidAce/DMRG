@@ -20,7 +20,7 @@ initial_state       = ["RANDOM_PRODUCT_STATE"]
 initial_sector      = "z"
 target_sector       = "z"
 multisite_mps_size_def  = [1]
-multisite_mps_size_max  = [1]
+multisite_mps_size_max  = [4]
 output_prefix       = "output"
 separate_input_dir  = False
 
@@ -69,8 +69,8 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
         "strategy::multisite_mps_site_def"   : str(multisite_mps_size_def[0]),
         "strategy::multisite_mps_site_max"   : str(multi),
         "strategy::initial_state"            : str(init),
-        "strategy::initial_sector"           : str(initial_sector),
-        "strategy::target_sector"            : str(target_sector),
+        "strategy::initial_axis"             : str(initial_sector),
+        "strategy::target_axis"              : str(target_sector),
     }
     os.makedirs(input_dirname, exist_ok=True)
     num_total = num_total + 1

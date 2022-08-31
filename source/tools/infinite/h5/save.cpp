@@ -7,6 +7,7 @@
 #include "tensors/state/StateInfinite.h"
 #include "tensors/TensorsInfinite.h"
 #include "tid/tid.h"
+#include "tools/common/h5.h"
 #include "tools/infinite/h5.h"
 #include "tools/infinite/measure.h"
 #include <h5pp/h5pp.h>
@@ -28,77 +29,45 @@ namespace tools::infinite::h5::save {
     }
 }
 
-void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateInfinite &state,
+void tools::infinite::h5::save::bonds(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateInfinite &state,
                                       const AlgorithmStatus &status) {
     if(storage_level == StorageLevel::NONE) return;
 
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
-    auto                                                                  tic = tid::tic_token("state");
-    static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto                                                                  dset_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
-    auto                                                                  mps_prefix   = fmt::format("{}/mps", state_prefix);
+    auto tic           = tid::tic_token("state");
+    auto bonds_prefix  = fmt::format("{}/bonds", state_prefix);
+    auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, bonds_prefix);
+    auto save_point    = std::make_pair(status.iter, status.step);
+    if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
+    h5file.writeDataset(state.LA(), bonds_prefix + "/L_A");
+    h5file.writeDataset(state.LB(), bonds_prefix + "/L_B");
+    h5file.writeDataset(state.LC(), bonds_prefix + "/L_C");
+    h5file.writeAttribute(status.iter, bonds_prefix, "iter");
+    h5file.writeAttribute(status.step, bonds_prefix, "step");
+    h5file.writeAttribute(status.bond_lim, bonds_prefix, "bond_lim");
+    h5file.writeAttribute(status.bond_max, bonds_prefix, "bond_max");
+    h5file.writeAttribute(state.get_truncation_error(), bonds_prefix, "truncation_error");
+}
 
-    bootstrap_save_log(save_log, h5file, {dset_schmidt, mps_prefix});
-    auto save_point = std::make_pair(status.iter, status.step);
-    auto layout     = H5D_layout_t::H5D_CHUNKED;
+void tools::infinite::h5::save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateInfinite &state,
+                                      const AlgorithmStatus &status) {
+    if(storage_level < StorageLevel::FULL) return;
 
-    if(save_log[dset_schmidt] != save_point) {
-        tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
-        h5file.writeDataset(state.LC(), dset_schmidt, layout);
-        h5file.writeAttribute(state.get_truncation_error(), dset_schmidt, "truncation_error");
-        h5file.writeAttribute(status.bond_lim, dset_schmidt, "bond_lim");
-        h5file.writeAttribute(status.bond_max, dset_schmidt, "bond_max");
-        save_log[dset_schmidt] = save_point;
-    }
-    if(storage_level < StorageLevel::NORMAL) return;
-    if(save_log[mps_prefix] != save_point) {
-        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
-        auto dsetName = mps_prefix + "/L_A";
-        if(save_log[dsetName] != save_point) {
-            h5file.writeDataset(state.LA(), dsetName);
-            h5file.writeAttribute(state.LA().dimensions(), dsetName, "dimensions");
-            h5file.writeAttribute(state.get_truncation_error(), dsetName, "truncation_error");
-            h5file.writeAttribute(status.bond_lim, dsetName, "bond_lim");
-            h5file.writeAttribute(status.bond_max, dsetName, "bond_max");
-            save_log[dsetName] = save_point;
-        }
-        dsetName = mps_prefix + "/L_B";
-        if(save_log[dsetName] != save_point) {
-            h5file.writeDataset(state.LB(), dsetName);
-            h5file.writeAttribute(state.LB().dimensions(), dsetName, "dimensions");
-            h5file.writeAttribute(state.get_truncation_error(), dsetName, "truncation_error");
-            h5file.writeAttribute(status.bond_lim, dsetName, "bond_lim");
-            h5file.writeAttribute(status.bond_max, dsetName, "bond_max");
-            save_log[dsetName] = save_point;
-        }
-        dsetName = mps_prefix + "/L_C";
-        if(save_log[dsetName] != save_point) {
-            h5file.writeDataset(state.LC(), dsetName);
-            h5file.writeAttribute(state.LC().dimensions(), dsetName, "dimensions");
-            h5file.writeAttribute(state.get_truncation_error(), dsetName, "truncation_error");
-            h5file.writeAttribute(status.bond_lim, dsetName, "bond_lim");
-            h5file.writeAttribute(status.bond_max, dsetName, "bond_max");
-            save_log[dsetName] = save_point;
-        }
-        h5file.writeAttribute(status.iter, mps_prefix, "iter");
-        h5file.writeAttribute(status.step, mps_prefix, "step");
-        h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
-        h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
-    }
-    /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
-    if(storage_level < StorageLevel::FULL) {
-        save_log[mps_prefix] = save_point;
-        return;
-    }
-
-    if(save_log[mps_prefix] != save_point) {
-        h5file.writeDataset(state.A_bare(), mps_prefix + "/M_A");
-        h5file.writeAttribute(state.A_bare().dimensions(), mps_prefix + "/M_A", "dimensions");
-        h5file.writeDataset(state.B(), mps_prefix + "/M_B");
-        h5file.writeAttribute(state.B().dimensions(), mps_prefix + "/M_B", "dimensions");
-        save_log[mps_prefix] = save_point;
-    }
+    // Checks if the current entry has already been saved
+    // If it is empty because we are resuming, check if there is a log entry on file already
+    auto tic           = tid::tic_token("state");
+    auto mps_prefix    = fmt::format("{}/mps", state_prefix);
+    auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
+    auto save_point    = std::make_pair(status.iter, status.step);
+    if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
+    h5file.writeDataset(state.A_bare(), mps_prefix + "/M_A");
+    h5file.writeDataset(state.B(), mps_prefix + "/M_B");
+    h5file.writeAttribute(status.iter, mps_prefix, "iter");
+    h5file.writeAttribute(status.step, mps_prefix, "step");
+    h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
+    h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
+    h5file.writeAttribute(state.get_truncation_error(), mps_prefix, "truncation_error");
 }
 
 void tools::infinite::h5::save::edges(h5pp::File &h5file, std::string_view edges_prefix, const StorageLevel &storage_level, const EdgesInfinite &edges) {

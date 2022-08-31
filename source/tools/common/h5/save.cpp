@@ -169,6 +169,7 @@ namespace tools::common::h5 {
         auto hamiltonian       = fmt::format("{}/hamiltonian", model_prefix);
         auto mpo_prefix        = fmt::format("{}/mpo", model_prefix);
         auto mps_prefix        = fmt::format("{}/mps", state_prefix);
+        auto bonds_prefix      = fmt::format("{}/bonds", state_prefix);
 
         h5pp_table_algorithm_status::register_table_type();
         save::attr(h5file, status, "common/status", state_prefix, "Maps state_prefix -> status", h5pp_table_algorithm_status::h5_type);
@@ -180,6 +181,7 @@ namespace tools::common::h5 {
         save::attr(h5file, hamiltonian, "common/hamiltonian", state_prefix, "Maps state_prefix -> hamiltonian table");
         save::attr(h5file, mpo_prefix, "common/mpo_prefix", state_prefix, "Maps state_prefix -> mpo_prefix");
         save::attr(h5file, mps_prefix, "common/mps_prefix", state_prefix, "Maps state_prefix -> mps_prefix");
+        save::attr(h5file, bonds_prefix, "common/bonds_prefix", state_prefix, "Maps state_prefix -> bonds_prefix");
         save::attr(h5file, model_name_sv, "common/model_type", state_prefix, "Maps state_prefix -> model_type");
         save::attr(h5file, model_size, "common/model_size", state_prefix, "Maps state_prefix -> model_size");
         save::attr(h5file, status.algo_type_sv(), "common/algo_type", state_prefix, "Maps state_prefix -> algo_type");

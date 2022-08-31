@@ -82,7 +82,8 @@ namespace tools::finite::h5 {
         try {
             if(h5file.readAttribute<std::string>("common/storage_level", state_prefix) != enum2sv(StorageLevel::FULL))
                 throw std::runtime_error("Given prefix to MPS data with StorageLevel < FULL. The MPS's can only be resumed from FULL storage");
-            auto mps_prefix = h5file.readAttribute<std::string>("common/mps_prefix", state_prefix);
+            auto bonds_prefix = h5file.readAttribute<std::string>("common/bonds_prefix", state_prefix);
+            auto mps_prefix   = h5file.readAttribute<std::string>("common/mps_prefix", state_prefix);
             auto model_type = h5file.readAttribute<std::string>("common/model_type", state_prefix);
             auto model_size = h5file.readAttribute<size_t>("common/model_size", state_prefix);
             auto position   = h5file.readAttribute<long>("common/position", state_prefix);
@@ -96,15 +97,16 @@ namespace tools::finite::h5 {
             for(const auto &mps : state.mps_sites) {
                 auto        pos         = mps->get_position<long>();
                 std::string pos_str     = std::to_string(pos);
-                std::string dset_L_name = fmt::format("{}/{}_{}", mps_prefix, "L", pos);
+                std::string dset_L_name = fmt::format("{}/{}_{}", bonds_prefix, "L", pos);
                 std::string dset_M_name = fmt::format("{}/{}_{}", mps_prefix, "M", pos);
                 if(mps->isCenter()) {
-                    std::string dset_LC_name = fmt::format("{}/{}", mps_prefix, "L_C");
+                    std::string dset_LC_name = fmt::format("{}/{}", bonds_prefix, "L_C");
                     if(not h5file.linkExists(dset_LC_name)) throw except::runtime_error("Dataset does not exist: {}", dset_LC_name);
                     auto LC          = h5file.readDataset<Eigen::Tensor<cplx, 1>>(dset_LC_name);
                     auto pos_on_file = h5file.readAttribute<long>(dset_LC_name, "position");
+                    auto error       = h5file.readAttribute<double>(dset_LC_name, "truncation_error");
                     if(pos != pos_on_file) throw except::runtime_error("Center bond position mismatch: pos [{}] != pos on file [{}]", pos, pos_on_file);
-                    mps->set_LC(LC);
+                    mps->set_LC(LC, error);
                 }
                 if(not h5file.linkExists(dset_L_name)) throw except::runtime_error("Dataset does not exist: {} ", dset_L_name);
                 if(not h5file.linkExists(dset_M_name)) throw except::runtime_error("Dataset does not exist: {} ", dset_M_name);

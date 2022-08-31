@@ -250,76 +250,79 @@ namespace tools::finite::h5 {
         /* clang-format on */
     }
 
-    void save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+    void save::bonds(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
                      const AlgorithmStatus &status) {
-        if(storage_level <= StorageLevel::LIGHT) return;
-        auto t_hdf            = tid::tic_scope("state", tid::level::extra);
-        auto dsetname_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
-        auto mps_prefix       = fmt::format("{}/mps", state_prefix);
+        if(storage_level == StorageLevel::NONE) return;
+        auto t_hdf        = tid::tic_scope("state", tid::level::extra);
+        auto bonds_prefix = fmt::format("{}/bonds", state_prefix);
 
         // Check if the current entry has already been saved
-        auto h5_save_point_dset_schmidt = tools::common::h5::save::get_last_save_point(h5file, dsetname_schmidt);
-        auto h5_save_point_mps          = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
-        auto save_point                 = std::make_pair(status.iter, status.step);
-
-        bool skip_dset_schmidt = h5_save_point_dset_schmidt and h5_save_point_dset_schmidt.value() == save_point;
-        bool skip_mps          = h5_save_point_mps and h5_save_point_mps.value() == save_point;
-
-        if(not skip_dset_schmidt) {
-            /*! Writes down the midchain "Lambda" bond matrix (singular values). */
-            tools::log->trace("Storing [{: ^6}]: mid bond matrix", enum2sv(storage_level));
-            h5file.writeDataset(state.midchain_bond(), dsetname_schmidt, H5D_CHUNKED);
-            h5file.writeAttribute(state.get_truncation_error_midchain(), dsetname_schmidt, "truncation_error");
-            h5file.writeAttribute((state.get_length<long>() - 1) / 2, dsetname_schmidt, "position");
-            h5file.writeAttribute(status.iter, dsetname_schmidt, "iter");
-            h5file.writeAttribute(status.step, dsetname_schmidt, "step");
-            h5file.writeAttribute(status.bond_lim, dsetname_schmidt, "bond_lim");
-            h5file.writeAttribute(status.bond_max, dsetname_schmidt, "bond_max");
-        }
-
-        if(not skip_mps) {
-            tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
-            // There should be one more sites+1 number of L's, because there is also a center bond
-            // However L_i always belongs M_i. Stick to this rule!
-            // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
-            for(const auto &mps : state.mps_sites) {
-                auto dsetName = fmt::format("{}/L_{}", mps_prefix, mps->get_position<long>());
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, bonds_prefix);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
+        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
+        // There should be one more sites+1 number of L's, because there is also a center bond
+        // However L_i always belongs M_i. Stick to this rule!
+        // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
+        for(const auto &mps : state.mps_sites) {
+            if(storage_level >= StorageLevel::NORMAL) {
+                auto dsetName = fmt::format("{}/L_{}", bonds_prefix, mps->get_position<long>());
                 h5file.writeDataset(mps->get_L(), dsetName, H5D_CHUNKED);
                 h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                h5file.writeAttribute(mps->get_L().dimensions(), dsetName, "dimensions");
                 h5file.writeAttribute(mps->get_truncation_error(), dsetName, "truncation_error");
-                if(mps->isCenter()) {
-                    dsetName = fmt::format("{}/L_C", mps_prefix);
-                    h5file.writeDataset(mps->get_LC(), dsetName, H5D_CHUNKED);
-                    h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                    h5file.writeAttribute(mps->get_LC().dimensions(), dsetName, "dimensions");
-                    h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error");
-                }
             }
-            h5file.writeAttribute(state.get_length(), mps_prefix, "model_size");
-            h5file.writeAttribute(state.get_position<long>(), mps_prefix, "position");
-            h5file.writeAttribute(state.get_truncation_errors(), mps_prefix, "truncation_errors");
-            h5file.writeAttribute(state.get_labels(), mps_prefix, "labels");
-            h5file.writeAttribute(status.iter, mps_prefix, "iter");
-            h5file.writeAttribute(status.step, mps_prefix, "step");
-            h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
-            h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
-        }
-
-        /*! Writes down the full MPS in "L-G-L-G- LC -G-L-G-L" notation. */
-        if(storage_level < StorageLevel::FULL) { return; }
-
-        if(not skip_mps) {
-            tools::log->trace("Storing [{: ^6}]: mps tensors", enum2sv(storage_level));
-            for(const auto &mps : state.mps_sites) {
-                auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
-                h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
+            if(storage_level >= StorageLevel::LIGHT and mps->isCenter()) {
+                auto dsetName = fmt::format("{}/L_C", bonds_prefix);
+                h5file.writeDataset(mps->get_LC(), dsetName, H5D_CHUNKED);
                 h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                h5file.writeAttribute(mps->get_M_bare().dimensions(), dsetName, "dimensions");
-                h5file.writeAttribute(mps->get_label(), dsetName, "label");
-                h5file.writeAttribute(mps->get_unique_id(), dsetName, "unique_id");
+                h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error");
             }
         }
+        h5file.writeAttribute(state.get_length(), bonds_prefix, "model_size");
+        h5file.writeAttribute(state.get_position<long>(), bonds_prefix, "position");
+        h5file.writeAttribute(state.get_truncation_errors(), bonds_prefix, "truncation_errors");
+        h5file.writeAttribute(status.iter, bonds_prefix, "iter");
+        h5file.writeAttribute(status.step, bonds_prefix, "step");
+        h5file.writeAttribute(status.bond_lim, bonds_prefix, "bond_lim");
+        h5file.writeAttribute(status.bond_max, bonds_prefix, "bond_max");
+
+        auto dsetname_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
+        auto midchain_bond    = Eigen::Tensor<double, 1>(state.midchain_bond().real());
+        h5file.writeDataset(midchain_bond, dsetname_schmidt, H5D_CHUNKED);
+        h5file.writeAttribute((state.get_length<long>() - 1) / 2, dsetname_schmidt, "position");
+        h5file.writeAttribute(status.iter, dsetname_schmidt, "iter");
+        h5file.writeAttribute(status.step, dsetname_schmidt, "step");
+        h5file.writeAttribute(status.bond_lim, dsetname_schmidt, "bond_lim");
+        h5file.writeAttribute(status.bond_max, dsetname_schmidt, "bond_max");
+    }
+
+    void save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+                     const AlgorithmStatus &status) {
+        if(storage_level < StorageLevel::FULL) return;
+        auto t_hdf      = tid::tic_scope("state", tid::level::extra);
+        auto mps_prefix = fmt::format("{}/mps", state_prefix);
+
+        // Check if the current entry has already been saved
+        auto h5_save_point_mps = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
+        auto save_point        = std::make_pair(status.iter, status.step);
+        if(h5_save_point_mps and h5_save_point_mps.value() == save_point) return;
+
+        tools::log->trace("Storing [{: ^6}]: mps tensors", enum2sv(storage_level));
+        for(const auto &mps : state.mps_sites) {
+            auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
+            h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
+            h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
+            h5file.writeAttribute(mps->get_M_bare().dimensions(), dsetName, "dimensions");
+            h5file.writeAttribute(mps->get_label(), dsetName, "label");
+            h5file.writeAttribute(mps->get_unique_id(), dsetName, "unique_id");
+        }
+        h5file.writeAttribute(state.get_length(), mps_prefix, "model_size");
+        h5file.writeAttribute(state.get_position<long>(), mps_prefix, "position");
+        h5file.writeAttribute(state.get_labels(), mps_prefix, "labels");
+        h5file.writeAttribute(status.iter, mps_prefix, "iter");
+        h5file.writeAttribute(status.step, mps_prefix, "step");
+        h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
+        h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
     }
 
     /*! Write down the Hamiltonian model type and site info as attributes */
@@ -576,6 +579,7 @@ namespace tools::finite::h5 {
                 case StorageReason::TRNC_DECREASE:
                 case StorageReason::FES: break;
                 default: {
+                    tools::finite::h5::save::bonds(h5file, state_prefix, storage_level, state, status);
                     tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
                     tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
                     break;
