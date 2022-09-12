@@ -4,8 +4,8 @@
 
 [requires]
 ceres-solver/2.1.0
-glog/0.6.0
-h5pp/1.10.0@davidace/dev
+#glog/0.6.0
+h5pp/1.10.1@davidace/dev
 fmt/8.1.1
 spdlog/1.10.0
 eigen/3.4.0
@@ -21,8 +21,8 @@ CMakeDeps
 arpack-ng:openblas_version=0.3.20
 openblas:build_lapack=True
 openblas:dynamic_arch=True
-ceres-solver:use_glog=True
-ceres-solver:use_gflags=True
+ceres-solver:use_glog=False
+ceres-solver:use_gflags=False
 
 #gflags:shared=False
 #glog:shared=False
@@ -49,7 +49,7 @@ ceres-solver:use_gflags=True
 # When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
 # In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
 # It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to
-# make Eigen infer some of the flags differently. In any case, settinc c++17 and no flags for eigen anywhere
+# make Eigen infer some flags differently. In any case, settinc c++17 and no flags for eigen anywhere
 # lets Eigen do its thing in the same way everywhere.
 #
 #
