@@ -13,17 +13,6 @@ if(DMRG_PRINT_INFO)
             "Use the built-in CMake CLI option --loglevel=[TRACE|DEBUG|VERBOSE|STATUS...] instead")
 endif()
 
-if(DMRG_MARCH)
-    message(FATAL_ERROR "The option [DMRG_MARCH] has been deprecated. Replace by:\n"
-            "Replace by:\n"
-            "COMPILER_MARCH:STRING=[x86-64|haswell|skylake|znver1|znver2|znver3|native]")
-endif()
-if(DMRG_MTUNE)
-    message(FATAL_ERROR "The option [DMRG_MTUNE] has been deprecated. Replace by:\n"
-            "Replace by:\n"
-            "COMPILER_MTUNE:STRING=[generic|haswell|skylake|znver1|znver2|znver3|native]")
-endif()
-
 if(DMRG_PROFILE_BUILD)
     message(FATAL_ERROR "The option [DMRG_PROFILE_BUILD] has been deprecated. Replace by:\n"
             "COMPILER_PROFILE_BUILD:BOOL=[TRUE|FALSE]")
@@ -59,4 +48,11 @@ if(COMPILER_MARCH)
 endif()
 if(COMPILER_MTUNE)
     message(FATAL_ERROR "The option [COMPILER_MTUNE] has been deprecated.")
+endif()
+
+if(DMRG_MARCH)
+    message(FATAL_ERROR "The option [DMRG_MARCH] has been deprecated.")
+endif()
+if(DMRG_MTUNE)
+    message(FATAL_ERROR "The option [DMRG_MTUNE] has been deprecated.")
 endif()
