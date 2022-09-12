@@ -9,8 +9,9 @@ include(ExternalProject)
 
 set(cc ${CMAKE_C_COMPILER})
 set(cxx ${CMAKE_CXX_COMPILER})
-set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE}")
-set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_C_FLAGS_RELEASE}")
+set(cflags "-fPIC ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+set(cxxflags "-fPIC ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+set(ldflags "${CMAKE_EXE_LINKER_FLAGS}")
 set(libs "-lm -ldl")
 
 externalproject_add(external_tblis
@@ -20,30 +21,31 @@ externalproject_add(external_tblis
                     GIT_PROGRESS TRUE
                     #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
 
-        PREFIX ${CMAKE_BINARY_DIR}
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+                    PREFIX ${CMAKE_BINARY_DIR}
+                    INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 
-        #Give Ninja access to the terminal.
-        USES_TERMINAL_DOWNLOAD TRUE
-        USES_TERMINAL_UPDATE TRUE
-        USES_TERMINAL_CONFIGURE TRUE
-        USES_TERMINAL_BUILD TRUE
-        USES_TERMINAL_INSTALL TRUE
-        USES_TERMINAL_TEST TRUE
+                    #Give Ninja access to the terminal.
+                    USES_TERMINAL_DOWNLOAD TRUE
+                    USES_TERMINAL_UPDATE TRUE
+                    USES_TERMINAL_CONFIGURE TRUE
+                    USES_TERMINAL_BUILD TRUE
+                    USES_TERMINAL_INSTALL TRUE
+                    USES_TERMINAL_TEST TRUE
 
-        BUILD_ALWAYS TRUE
-        BUILD_IN_SOURCE TRUE
-        CONFIGURE_COMMAND
-        COMMAND export CC=${cc}
-        COMMAND export CXX=${cxx}
-        COMMAND export LIBS=${libs}
-        COMMAND export CFLAGS=${cflags}
-        COMMAND export CXXFLAGS=${cxxflags}
-        COMMAND ./configure --enable-config=haswell,skx1,zen --prefix=<INSTALL_DIR>
+                    BUILD_ALWAYS TRUE
+                    BUILD_IN_SOURCE TRUE
+                    CONFIGURE_COMMAND
+                    COMMAND export CC=${cc}
+                    COMMAND export CXX=${cxx}
+                    COMMAND export LIBS=${libs}
+                    COMMAND export CFLAGS=${cflags}
+                    COMMAND export CXXFLAGS=${cxxflags}
+                    COMMAND export LDFLAGS=${ldflags}
+                    COMMAND ./configure --enable-config=haswell,skx1,zen --prefix=<INSTALL_DIR>
 
-        BUILD_COMMAND
-        make -j${NUM_THREADS}
+                    BUILD_COMMAND
+                    make -j${NUM_THREADS}
 
-        INSTALL_COMMAND
-        make install
-        )
+                    INSTALL_COMMAND
+                    make install
+                    )
