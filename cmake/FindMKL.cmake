@@ -396,11 +396,16 @@ function(setup_mkl_targets)
                     target_compile_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE -m64)
                 endif()
                 if(thread MATCHES "gnu_thread")
-                    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-                    find_package(Threads REQUIRED)
                     find_package(OpenMP COMPONENTS ${C} ${CXX} ${Fortran} REQUIRED)
                     foreach(lang ${LANG})
-                        target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE OpenMP::OpenMP_${lang})
+                        if(OpenMP_${lang}_FLAGS)
+                            target_link_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE
+                                                $<$<COMPILE_LANGUAGE:${LANG}>:${OpenMP_${lang}_FLAGS}>)
+                            target_compile_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE
+                                                   $<$<COMPILE_LANGUAGE:${LANG}>:${OpenMP_${lang}_FLAGS}>)
+                        elseif(TARGET OpenMP::OpenMP_${lang})
+                            target_link_libraries(mkl::mkl_${fort}_${thread}_${arch} INTERFACE OpenMP::OpenMP_${lang})
+                        endif()
                     endforeach()
                 endif()
                 if(thread MATCHES "intel_thread")
@@ -603,7 +608,6 @@ if(MKL_FOUND)
     set(LAPACK_COMPILE_OPTIONS "${MKL_COMPILE_OPTIONS}" CACHE INTERNAL "")
     set(LAPACK_COMPILE_DEFINITIONS "${MKL_COMPILE_DEFINITIONS}" CACHE INTERNAL "")
     set(LAPACK_COMPILE_FEATURES "${MKL_COMPILE_FEATURES}" CACHE INTERNAL "")
-
     mark_as_advanced(MKL_LIBRARIES
                      MKL_INCLUDE_DIRS
                      MKL_COMPILE_OPTIONS
