@@ -69,14 +69,13 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     set(CONAN_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${CONAN_BUILD_TYPE}}")
     set(CONAN_CFLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${CONAN_BUILD_TYPE}}")
     set(CONAN_LDFLAGS "${CMAKE_EXE_LINKER_FLAGS}")
-
-    conan_add_remote(CONAN_COMMAND ${CONAN_COMMAND} NAME conan-dmrg INDEX 0 URL https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg)
-    conan_cmake_autodetect(CONAN_AUTODETECT)
-    message(STATUS "CONAN_AUTODETECT: ${CONAN_AUTODETECT}")
     message(STATUS "CONAN_CXXFLAGS: ${CONAN_CXXFLAGS}")
     message(STATUS "CONAN_CFLAGS  : ${CONAN_CFLAGS}")
     message(STATUS "CONAN_LDFLAGS : ${CONAN_LDFLAGS}")
     message(STATUS "CONAN_BUILD   : ${CONAN_BUILD}")
+
+    conan_add_remote(CONAN_COMMAND ${CONAN_COMMAND} NAME conan-dmrg INDEX 0 URL https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg)
+    conan_cmake_autodetect(CONAN_AUTODETECT)
     conan_cmake_install(
             CONAN_COMMAND ${CONAN_COMMAND}
             BUILD ${CONAN_BUILD} missing outdated cascade
