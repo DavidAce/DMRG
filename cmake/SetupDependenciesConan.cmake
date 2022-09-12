@@ -114,12 +114,27 @@ if (DMRG_PACKAGE_MANAGER MATCHES "conan")
     endif ()
 
     target_link_libraries(dmrg-deps INTERFACE
-            CLI11::CLI11
-            h5pp::h5pp
-            arpack++::arpack++
-            primme::primme
-            Ceres::ceres
-            Backward::Backward
-            BLAS::BLAS
-            )
+                          CLI11::CLI11
+                          h5pp::h5pp
+                          arpack++::arpack++
+                          primme::primme
+                          Ceres::ceres
+                          Backward::Backward
+                          BLAS::BLAS
+                          )
+
+    # Fix issue with Ceres linking to cuda
+    find_package(CUDA QUIET) # Same call as when building Ceres
+    if(CUDA_FOUND)
+        message("-- Found CUDA version ${CUDA_VERSION}: "
+                "${CUDA_LIBRARIES};"
+                "${CUDA_cusolver_LIBRARY};"
+                "${CUDA_cusparse_LIBRARY};"
+                "${CUDA_CUBLAS_LIBRARIES}"
+                )
+        target_link_libraries(dmrg-deps INTERFACE ${CUDA_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cusparse_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
+    else()
+        target_compile_definitions(dmrg-deps INTERFACE CERES_NO_CUDA)
+    endif()
+
 endif ()
