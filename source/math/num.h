@@ -223,15 +223,32 @@ namespace num {
         return xs;
     }
 
+    /*! \brief Sum operator for containers such as vector
+     *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
+     *   \param from first element to add (default == 0)
+     *   \param to last element to add (default == -1: from - size)
+     *   \return sum of of elements with type Input::value_type .
+     *   \example Let <code> v = {1,2,3,4}</code>. Then <code> sum(v,0,3) = 10 </code>.
+     */
+    template<typename Input>
+    [[nodiscard]] auto sum(const Input &in, long from = 0, long num = -1) {
+        if(num < 0) num = in.size();
+        num = std::min<long>(num, static_cast<long>(in.size()) - from);
+        return std::accumulate(std::begin(in) + from, std::begin(in) + from + num, static_cast<typename Input::value_type>(0));
+    }
+
     /*! \brief Product operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
-     *   \param from first element to multiply
-     *   \param to last element to multiply
-     *   \return std::vector<T2>. Example, let <code> my_vector = {1,2,3,4}</code>. Then <code> prod(my_vector,0,3) = 24 </code>.
+     *   \param from first element to multiply (default == 0)
+     *   \param to last element to multiply (default == -1: from - size)
+     *   \return product of of elements with type Input::value_type .
+     *   \example Let <code> v = {1,2,3,4}</code>. Then <code> prod(v,0,3) = 24 </code>.
      */
     template<typename Input, typename From, typename To>
-    [[nodiscard]] auto prod(const Input &in, const From from, const To to) {
-        return std::accumulate(in.data() + from, in.data() + to, 1, std::multiplies<>());
+    [[nodiscard]] auto prod(const Input &in, long from = 0, long num = -1) {
+        if(num < 0) num = in.size();
+        num = std::min<long>(num, static_cast<long>(in.size()) - from);
+        return std::accumulate(std::begin(in) + from, std::begin(in) + from + num, 1, std::multiplies<>());
     }
 
     /*! \brief Checks if multiple values are equal to each other

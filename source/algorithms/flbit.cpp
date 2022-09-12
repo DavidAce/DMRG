@@ -589,9 +589,7 @@ void flbit::transform_to_real_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 1e-3) throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
-        if(std::abs(overlap - 1) > settings::solver::svd_truncation_lim)
-            tools::log->warn("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
+        if(std::abs(overlap - 1) > 1e-4) throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
     }
 }
 
@@ -620,7 +618,7 @@ void flbit::transform_to_lbit_basis() {
         // Check normalization
         for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
 
-        // Double check the that transform operation backwards is equal to the original state
+        // Double-check the that transform operation backwards is equal to the original state
         auto state_real_debug = *state_lbit;
         for(auto &layer : unitary_gates_2site_layers)
             for(auto &g : layer) g.unmark_as_used();
@@ -630,9 +628,7 @@ void flbit::transform_to_lbit_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 1e-3) throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
-        if(std::abs(overlap - 1) > settings::solver::svd_truncation_lim)
-            throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
+        if(std::abs(overlap - 1) > 1e-4) throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
     }
 }
 

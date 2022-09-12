@@ -117,10 +117,11 @@ template<typename T>
 T StateFinite::get_length() const {
     return static_cast<T>(mps_sites.size());
 }
-template double StateFinite::get_length<double>() const;
-template size_t StateFinite::get_length<size_t>() const;
-template long   StateFinite::get_length<long>() const;
-template int    StateFinite::get_length<int>() const;
+template double             StateFinite::get_length<double>() const;
+template size_t             StateFinite::get_length<size_t>() const;
+template long               StateFinite::get_length<long>() const;
+template int                StateFinite::get_length<int>() const;
+template unsigned long long StateFinite::get_length<unsigned long long>() const; // hsize_t from hdf5
 
 template<typename T>
 T StateFinite::get_position() const {
@@ -141,8 +142,10 @@ T StateFinite::get_position() const {
     } else
         return pos.value();
 }
-template size_t StateFinite::get_position<size_t>() const;
-template long   StateFinite::get_position<long>() const;
+template size_t             StateFinite::get_position<size_t>() const;
+template long               StateFinite::get_position<long>() const;
+template int                StateFinite::get_position<int>() const;
+template unsigned long long StateFinite::get_position<unsigned long long>() const; // hsize_t from hdf5
 
 long StateFinite::find_largest_bond() const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
@@ -295,6 +298,8 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
 }
 template const MpsSite &StateFinite::get_mps_site(size_t pos) const;
 template const MpsSite &StateFinite::get_mps_site(long pos) const;
+template const MpsSite &StateFinite::get_mps_site(int) const;
+template const MpsSite &StateFinite::get_mps_site(unsigned long long) const; // hsize_t
 
 template<typename T>
 MpsSite &StateFinite::get_mps_site(T pos) {
@@ -451,9 +456,9 @@ double StateFinite::get_truncation_error_midchain() const {
 std::vector<double> StateFinite::get_truncation_errors() const { return tools::finite::measure::truncation_errors(*this); }
 std::vector<double> StateFinite::get_truncation_errors_active() const { return tools::finite::measure::truncation_errors_active(*this); }
 double              StateFinite::get_truncation_error_active_max() const {
-                 auto   truncation_errors_active = get_truncation_errors_active();
-                 double truncation_error         = 0;
-                 if(not truncation_errors_active.empty()) truncation_error = *std::max_element(truncation_errors_active.begin(), truncation_errors_active.end());
+    auto   truncation_errors_active = get_truncation_errors_active();
+    double truncation_error         = 0;
+    if(not truncation_errors_active.empty()) truncation_error = *std::max_element(truncation_errors_active.begin(), truncation_errors_active.end());
     return truncation_error;
 }
 

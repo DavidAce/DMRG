@@ -203,8 +203,10 @@ T MpsSite::get_position() const {
     }
 }
 
-template size_t MpsSite::get_position<size_t>() const;
-template long   MpsSite::get_position<long>() const;
+template size_t             MpsSite::get_position<size_t>() const;
+template long               MpsSite::get_position<long>() const;
+template int                MpsSite::get_position<int>() const;
+template unsigned long long MpsSite::get_position<unsigned long long>() const; // hsize_t from hdf5
 
 template<typename T>
 [[nodiscard]] bool MpsSite::is_at_position(T pos) const {
@@ -215,6 +217,7 @@ template bool MpsSite::is_at_position(size_t pos) const;
 template bool MpsSite::is_at_position(unsigned pos) const;
 template bool MpsSite::is_at_position(long pos) const;
 template bool MpsSite::is_at_position(int pos) const;
+template bool MpsSite::is_at_position(unsigned long long pos) const; // hsize_t from hdf5
 
 void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, double error, std::string_view label_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.

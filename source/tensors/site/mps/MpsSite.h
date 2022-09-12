@@ -8,7 +8,8 @@
 class MpsSite {
     public:
     using cplx = std::complex<double>;
-    using real = double;
+    using real       = double;
+    using value_type = cplx;
 
     private:
     std::optional<Eigen::Tensor<cplx, 3>>                M                   = std::nullopt; /*!< \f$M\f$ A or B tensor (note: not a Gamma tensor!) */

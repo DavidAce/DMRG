@@ -5,7 +5,7 @@ namespace tid {
     ur::ur(std::string_view label_, level l) noexcept : label(label_), lvl(l) {}
     void ur::tic() noexcept {
         if constexpr(tid::enable) {
-            if(is_measuring) fprintf(stderr, "tid: error in tid::ur [%s]: called tic() twice: this timer is already active", label.c_str());
+            if(is_measuring) fprintf(stderr, "tid: error in tid::ur [%s]: called tic() twice: this timer is already active\n", label.c_str());
             //            if(is_measuring) throw std::runtime_error("Called tic() twice: this timer is already measuring: " + label);
             tic_timepoint = hresclock::now();
             is_measuring  = true;
@@ -16,7 +16,7 @@ namespace tid {
     void ur::toc() noexcept {
         if constexpr(tid::enable) {
             //            if(not is_measuring) throw std::runtime_error("Called toc() twice or without prior tic()");
-            if(not is_measuring) fprintf(stderr, "tid: error in tid::ur [%s]: called toc() twice or without prior tic()", label.c_str());
+            if(not is_measuring) fprintf(stderr, "tid: error in tid::ur [%s]: called toc() twice or without prior tic()\n", label.c_str());
             toc_timepoint = hresclock::now();
             delta_time    = toc_timepoint - tic_timepoint;
             measured_time += delta_time;
