@@ -144,7 +144,7 @@
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "FALSE",
         "DMRG_ENABLE_TBLIS": "FALSE",
-        "DMRG_ENABLE_DOCS": "ON",
+        "DMRG_ENABLE_DOCS": "OFF",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "FALSE",
         "COMPILER_ENABLE_USAN": "FALSE",
