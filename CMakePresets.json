@@ -9,143 +9,215 @@
     {
       "name": "default",
       "hidden": true,
-      "displayName": "Default Config",
-      "description": "Default build using Ninja generator",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_CXX_STANDARD": {
-          "type": "STRING",
-          "value": "17"
-        },
-        "CMAKE_CXX_STANDARD_REQUIRED": {
-          "type": "BOOL",
-          "value": "TRUE"
-        },
-        "CMAKE_CXX_EXTENSIONS": {
-          "type": "BOOL",
-          "value": "TRUE"
-        },
-        "CMAKE_POSITION_INDEPENDENT_CODE": {
-          "type": "BOOL",
-          "value": "TRUE"
-        },
-        "CMAKE_CXX_FLAGS_RELEASE_INIT": {
-          "type": "STRING",
-          "value": "-g -O3 -fno-strict-aliasing -Wall -Wextra -Wpedantic"
-        },
-        "CMAKE_CXX_FLAGS_DEBUG_INIT": {
-          "type": "STRING",
-          "value": "-g -O0 -fno-strict-aliasing -Wall -Wextra -Wpedantic -fstack-protector -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer"
-        },
-        "CMAKE_SKIP_BUILD_RPATH": {
-          "type": "BOOL",
-          "value": "FALSE"
-        },
-        "CMAKE_BUILD_WITH_INSTALL_RPATH": {
-          "type": "BOOL",
-          "value": "FALSE"
-        },
-        "CMAKE_INSTALL_RPATH_USE_LINK_PATH": {
-          "type": "BOOL",
-          "value": "TRUE"
-        }
-      },
-      "vendor": {
-        "example.com/ExampleIDE/1.0": {
-          "autoFormat": true
-        }
-      }
-    },
-    {
-      "name": "gcc-default",
-      "hidden": true,
-      "inherits": "default",
-      "displayName": "GCC default",
-      "description": "GCC with default settings",
-      "cacheVariables": {
-        "CMAKE_EXE_LINKER_FLAGS": {
-          "type": "STRING",
-          "value": "-fuse-ld=gold"
-        }
+        "DMRG_ENABLE_MKL": "TRUE",
+        "DMRG_ENABLE_TESTS": "TRUE",
+        "DMRG_ENABLE_BENCH": "TRUE",
+        "DMRG_ENABLE_RSVD": "FALSE",
+        "DMRG_ENABLE_TBLIS": "TRUE",
+        "DMRG_BENCH_CONTRACTION": "FALSE",
+        "DMRG_CMAKE_DEBUG": "TRUE",
+        "DMRG_PACKAGE_MANAGER": "conan",
+        "COMPILER_PROFILE_BUILD": "FALSE",
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
+        "CMAKE_MESSAGE_LOG_LEVEL": "DEBUG",
+        "CMAKE_INSTALL_PREFIX": "pkg-install",
+        "CMAKE_C_STANDARD": "17",
+        "CMAKE_CXX_STANDARD": "17",
+        "CMAKE_CXX_STANDARD_REQUIRED": "TRUE",
+        "CMAKE_CXX_EXTENSIONS": "FALSE",
+        "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
+        "CMAKE_CXX_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always -Wall -Wpedantic -Wextra -Wconversion -Wunused",
+        "CMAKE_CXX_FLAGS_DEBUG": "-fstack-protector=strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fstack-protector=strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always -Wall -Wpedantic -Wextra -Wconversion -Wunused",
+        "CMAKE_C_FLAGS_DEBUG": "-fstack-protector=strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fstack-protector=strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
+        "CMAKE_SKIP_BUILD_RPATH": "FALSE",
+        "CMAKE_BUILD_WITH_INSTALL_RPATH": "FALSE",
+        "CMAKE_INSTALL_RPATH_USE_LINK_PATH": "TRUE",
+        "CMAKE_CUDA_FLAGS": "-Xcompiler -fno-strict-aliasing -Xcompiler -fdiagnostics-color=always --expt-relaxed-constexpr -Xcudafe --diag_suppress=esa_on_defaulted_function_ignored",
+        "CMAKE_CUDA_ARCHITECTURES": "75;80;86",
+        "CMAKE_CUDA_SEPARABLE_COMPILATION": "TRUE",
+        "CMAKE_CUDA_HOST_COMPILER": "g++-10"
       },
       "environment": {
-        "CC": "gcc",
-        "CXX": "g++"
+        "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:"
       }
     },
     {
-      "name": "gcc-static",
-      "inherits": "gcc-default",
-      "displayName": "GCC static",
-      "description": "GCC with static linkage",
-      "binaryDir": "${sourceDir}/build/gcc-static",
-      "generator": "Ninja",
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": {
-          "type": "BOOL",
-          "value": "FALSE"
-        }
-      }
-    },
-    {
-      "name": "gcc-shared",
-      "inherits": "gcc-default",
-      "displayName": "GCC shared",
-      "description": "GCC with shared linkage",
-      "binaryDir": "${sourceDir}/build/gcc-shared",
-      "generator": "Ninja",
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": {
-          "type": "BOOL",
-          "value": "TRUE"
-        }
-      }
-    },
-    {
-      "name": "clang-default",
+      "name": "release",
       "hidden": true,
-      "inherits": "default",
-      "displayName": "GCC default",
-      "description": "GCC with default settings",
-      "environment": {
-        "CC": "clang",
-        "CXX": "clang++"
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "COMPILER_ENABLE_LTO": "TRUE",
+        "COMPILER_ENABLE_PCH": "TRUE",
+        "COMPILER_ENABLE_CCACHE": "TRUE"
       }
     },
     {
-      "name": "clang-static",
-      "inherits": "clang-default",
-      "displayName": "clang shared",
-      "description": "clang with shared linkage",
-      "binaryDir": "${sourceDir}/build/clang-static",
-      "generator": "Ninja",
+      "name": "debug",
+      "hidden": true,
       "cacheVariables": {
-        "BUILD_SHARED_LIBS": {
-          "type": "BOOL",
-          "value": "FALSE"
-        }
+        "CMAKE_BUILD_TYPE": "Debug",
+        "DMRG_CMAKE_DEBUG": "TRUE",
+        "DMRG_ENABLE_DOCS": "ON",
+        "COMPILER_ENABLE_ASAN": "TRUE",
+        "COMPILER_ENABLE_USAN": "TRUE"
       }
     },
     {
-      "name": "clang-shared",
-      "inherits": "clang-default",
-      "displayName": "clang shared",
-      "description": "clang with shared linkage",
-      "binaryDir": "${sourceDir}/build/clang-shared",
-      "generator": "Ninja",
+      "name": "release-conan",
+      "displayName": "Release|conan|mkl",
+      "inherits": [
+        "default",
+        "release"
+      ],
       "cacheVariables": {
-        "BUILD_SHARED_LIBS": {
-          "type": "BOOL",
-          "value": "TRUE"
-        }
+        "DMRG_PACKAGE_MANAGER": "conan"
+      }
+    },
+    {
+      "name": "release-gcc-12-static-conan",
+      "displayName": "Release|gcc-12|static|conan|mkl",
+      "inherits": [
+        "default",
+        "release"
+      ],
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-12",
+        "CMAKE_CXX_COMPILER": "g++-12",
+        "BUILD_SHARED_LIBS": "FALSE",
+        "DMRG_PACKAGE_MANAGER": "conan"
+      }
+    },
+    {
+      "name": "release-gcc-12-static-native-conan",
+      "displayName": "Release|gcc-12|static|march=native|conan|mkl",
+      "inherits": [
+        "release-gcc-12-static-conan"
+      ],
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
+        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native"
+      }
+    },
+    {
+      "name": "release-clang-14-static-conan",
+      "displayName": "debug|clang-14|static|conan|mkl",
+      "inherits": [
+        "default",
+        "release"
+      ],
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang-14",
+        "CMAKE_CXX_COMPILER": "clang++-14",
+        "BUILD_SHARED_LIBS": "FALSE",
+        "DMRG_PACKAGE_MANAGER": "conan"
+      }
+    },
+    {
+      "name": "debug-gcc-12-shared-cmake",
+      "displayName": "debug|gcc-12|shared|asan|cmake|mkl",
+      "inherits": [
+        "default",
+        "debug"
+      ],
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-12",
+        "CMAKE_CXX_COMPILER": "g++-12",
+        "BUILD_SHARED_LIBS": "TRUE",
+        "DMRG_PACKAGE_MANAGER": "cmake"
+      }
+    },
+    {
+      "name": "github-actions",
+      "displayName": "Default configuration for github-actions",
+      "inherits": [
+        "default"
+      ],
+      "cacheVariables": {
+        "DMRG_ENABLE_MKL": "FALSE",
+        "DMRG_ENABLE_TESTS": "TRUE",
+        "DMRG_ENABLE_BENCH": "FALSE",
+        "DMRG_ENABLE_TBLIS": "FALSE",
+        "DMRG_ENABLE_DOCS": "ON",
+        "DMRG_CMAKE_DEBUG": "TRUE",
+        "COMPILER_ENABLE_ASAN": "FALSE",
+        "COMPILER_ENABLE_USAN": "FALSE",
+        "COMPILER_ENABLE_CCACHE": "TRUE"
+      }
+    },
+    {
+      "name": "kraken",
+      "displayName": "Release|gcc-11|static|march=haswell|conan|mkl",
+      "inherits": [
+        "default",
+        "release"
+      ],
+      "binaryDir": "${sourceDir}/build/Release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-11",
+        "CMAKE_CXX_COMPILER": "g++-11",
+        "BUILD_SHARED_LIBS": "FALSE",
+        "DMRG_PACKAGE_MANAGER": "conan",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
+        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell"
+      }
+    },
+    {
+      "name": "tetralith",
+      "displayName": "Release|gcc-10|static|march=native|conan|mkl",
+      "inherits": [
+        "default",
+        "release"
+      ],
+      "binaryDir": "${sourceDir}/build/Release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-10",
+        "CMAKE_CXX_COMPILER": "g++-10",
+        "BUILD_SHARED_LIBS": "FALSE",
+        "DMRG_PACKAGE_MANAGER": "conan",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
+        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native"
       }
     }
   ],
   "buildPresets": [
     {
-      "name": "default",
-      "configurePreset": "default"
+      "name": "release-conan",
+      "displayName": "Release|march=native|conan|mkl",
+      "configurePreset": "release-conan"
+    },
+    {
+      "name": "release-gcc-12-static-conan",
+      "displayName": "Release|gcc-12|static|conan|mkl",
+      "configurePreset": "release-gcc-12-static-conan"
+    },
+    {
+      "name": "release-gcc-12-static-native-conan",
+      "displayName": "Release|gcc-12|static|march=native|conan|mkl",
+      "configurePreset": "release-gcc-12-static-native-conan"
+    },
+    {
+      "name": "kraken",
+      "displayName": "Release|gcc-11|static|march=haswell|conan|mkl",
+      "configurePreset": "kraken"
+    },
+    {
+      "name": "tetralith",
+      "displayName": "Release|gcc-10|static|march=native|conan|mkl",
+      "configurePreset": "tetralith",
+      "jobs": 16
+    },
+    {
+      "name": "github-actions",
+      "displayName": "Default configuration for github-actions",
+      "configurePreset": "github-actions",
+      "jobs": 2
     }
   ],
   "testPresets": [
@@ -160,10 +232,5 @@
         "stopOnFailure": true
       }
     }
-  ],
-  "vendor": {
-    "example.com/ExampleIDE/1.0": {
-      "autoFormat": false
-    }
-  }
+  ]
 }

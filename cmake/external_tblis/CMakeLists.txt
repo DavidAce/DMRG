@@ -2,24 +2,23 @@ cmake_minimum_required(VERSION 3.15)
 project(external-tblis)
 include(../GetNumThreads.cmake)
 get_num_threads(NUM_THREADS)
-if (INIT_CACHE_FILE)
+if(INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
-endif ()
+endif()
 include(ExternalProject)
 
 set(cc ${CMAKE_C_COMPILER})
 set(cxx ${CMAKE_CXX_COMPILER})
-set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
-set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
+set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE}")
+set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_C_FLAGS_RELEASE}")
 set(libs "-lm -ldl")
 
-
-ExternalProject_Add(external_tblis
-        GIT_REPOSITORY https://github.com/devinamatthews/tblis.git
-        GIT_TAG 7d979b6624071879383377611cb2fa483b6a3104 # master on Apr 22
-        #         GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
-        GIT_PROGRESS TRUE
-        #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
+externalproject_add(external_tblis
+                    GIT_REPOSITORY https://github.com/devinamatthews/tblis.git
+                    GIT_TAG 7d979b6624071879383377611cb2fa483b6a3104 # master on Apr 22
+                    #         GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
+                    GIT_PROGRESS TRUE
+                    #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
 
         PREFIX ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

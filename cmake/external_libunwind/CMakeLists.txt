@@ -1,26 +1,25 @@
 cmake_minimum_required(VERSION 3.15)
 project(external-libunwind)
-if (INIT_CACHE_FILE)
+if(INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
-endif ()
+endif()
 include(GNUInstallDirs)
 include(ExternalProject)
 
-
 set(cc ${CMAKE_C_COMPILER})
 set(cxx ${CMAKE_CXX_COMPILER})
-set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
-set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer")
+set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE}")
+set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_C_FLAGS_RELEASE}")
 set(libs "-lm -ldl")
-if (ZLIB_ROOT)
+if(ZLIB_ROOT)
     set(ldflags -L${ZLIB_ROOT}/lib)
-endif ()
+endif()
 
-ExternalProject_Add(external_libunwind
-        URL https://github.com/libunwind/libunwind/releases/download/v1.6.2/libunwind-1.6.2.tar.gz
-        URL_MD5 f625b6a98ac1976116c71708a73dc44a
-        BUILD_ALWAYS TRUE
-        PREFIX ${CMAKE_BINARY_DIR}
+externalproject_add(external_libunwind
+                    URL https://github.com/libunwind/libunwind/releases/download/v1.6.2/libunwind-1.6.2.tar.gz
+                    URL_MD5 f625b6a98ac1976116c71708a73dc44a
+                    BUILD_ALWAYS TRUE
+                    PREFIX ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
         #Give Ninja access to the terminal.
         USES_TERMINAL_DOWNLOAD TRUE

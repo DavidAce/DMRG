@@ -4,27 +4,28 @@ project(DMRG++
         DESCRIPTION "DMRG algorithms for 1D quantum spin chains"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
+include(cmake/Deprecation.cmake) # Warn if user passes deprecated settings
+
 # Make sure we use DMRG's own find modules
 list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 
-# Set options this build
-option(DMRG_ENABLE_MKL "Enable Intel Math Kernel Library" OFF)
-option(DMRG_ENABLE_RSVD "Enable Randomized SVD module" OFF)
-option(DMRG_ENABLE_TBLIS "Use TBLIS for tensor contraction instead of Eigen3" OFF)
-option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" OFF)
-option(DMRG_ENABLE_ASAN "Enable runtime address sanitizer -fsanitize=address" OFF)
-option(DMRG_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=undefined" OFF)
-option(DMRG_ENABLE_LTO "Enable link time optimization" OFF)
-option(DMRG_ENABLE_PCH "Enable precompiled headers to speed up compilation" OFF)
-option(DMRG_ENABLE_CCACHE "Enable ccache to speed up compilation" OFF)
-option(DMRG_ENABLE_COVERAGE "Enable test coverage" OFF)
-option(DMRG_PROFILE_BUILD "Enable -ftime-trace (inspect with ClangBuildAnalyzer)" OFF)
-option(DMRG_BUILD_EXAMPLES "Build examples" OFF)
-option(DMRG_BUILD_TOOLS "Build tools" OFF)
-option(DMRG_DEPS_IN_SUBDIR "Install dependencies into CMAKE_INSTALL_PREFIX/<libname>" ON)
-option(DMRG_ENABLE_DOCS "Build documentation" OFF)
-option(DMRG_CMAKE_DEBUG "Extra information during CMake configuration" OFF)
-option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared libraries" ON)
+# Set options for this build
+option(DMRG_ENABLE_MKL "Enable Intel Math Kernel Library" FALSE)
+option(DMRG_ENABLE_RSVD "Enable Randomized SVD module" FALSE)
+option(DMRG_ENABLE_TBLIS "Use TBLIS for tensor contraction instead of Eigen3" FALSE)
+option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" FALSE)
+option(DMRG_ENABLE_COVERAGE "Enable test coverage" FALSE)
+option(DMRG_BUILD_EXAMPLES "Build examples" FALSE)
+option(DMRG_BUILD_TOOLS "Build tools" FALSE)
+option(DMRG_ENABLE_DOCS "Build documentation" FALSE)
+option(DMRG_CMAKE_DEBUG "Extra information during CMake configuration" FALSE)
+option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared libraries" TRUE)
+option(COMPILER_PROFILE_BUILD "Enable -ftime-trace (inspect with ClangBuildAnalyzer)" FALSE)
+option(COMPILER_ENABLE_ASAN "Enable runtime address sanitizer -fsanitize=address" FALSE)
+option(COMPILER_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=undefined" FALSE)
+option(COMPILER_ENABLE_LTO "Enable link time optimization" FALSE)
+option(COMPILER_ENABLE_PCH "Enable precompiled headers to speed up compilation" FALSE)
+option(COMPILER_ENABLE_CCACHE "Enable ccache to speed up compilation" FALSE)
 
 # Make an "enum" for valid package managers
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake conan)

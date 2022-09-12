@@ -30,23 +30,6 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PKG_INSTALL_DIR_DEFAULT} ${
 list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
 set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE INTERNAL "Paths for find_package lookup" FORCE)
 
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 8 OR CMAKE_GENERATOR MATCHES "64")
-    set(FIND_LIBRARY_USE_LIB64_PATHS ON)
-elseif (CMAKE_SIZEOF_VOID_P EQUAL 4)
-    set(FIND_LIBRARY_USE_LIB32_PATHS ON)
-endif ()
-
-
-if(WIN32)
-    # On Windows it is standard practice to collect binaries into one directory.
-    # This way we avoid errors from .dll's not being found at runtime.
-    # These directories will contain h5pp tests, examples and possibly dependencies
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" CACHE PATH "Collect .exe and .dll")
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE PATH "Collect .lib")
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE PATH "Collect .lib")
-endif()
-
 if (DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Paths to search for conan installation.
     list(APPEND DMRG_CONAN_HINTS
