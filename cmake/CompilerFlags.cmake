@@ -18,7 +18,9 @@ endif()
 ###  Add optional RELEASE/DEBUG compile to flags
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:DEBUG>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
 target_compile_options(dmrg-flags INTERFACE $<$<AND:$<CONFIG:RELWITHDEBINFO>,$<CXX_COMPILER_ID:Clang>>: -fstandalone-debug>)
-
+target_compile_options(dmrg-flags INTERFACE
+                       $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4>
+                       $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall -Wextra -Wpedantic -Wconversion -Wunused>)
 ###  Enable c++17 support
 target_compile_features(dmrg-flags INTERFACE cxx_std_17)
 
@@ -49,6 +51,10 @@ endif()
 
 ### Enable link time optimization
 function(target_enable_lto tgt)
+    if(CMAKE_EXE_LINKER_FLAGS MATCHES "mold")
+        message(STATUS "LTO is not compatible with mold linker")
+        return()
+    endif()
     if(COMPILER_ENABLE_LTO)
         include(CheckIPOSupported)
         check_ipo_supported(RESULT lto_supported OUTPUT lto_error)
