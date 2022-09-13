@@ -25,54 +25,55 @@
 #include <thread>
 
 void test() {
-    svd::settings svd_settings;
+    svd::config svd_settings;
     svd_settings.save_fail = false;
     svd_settings.loglevel  = 2;
-    auto filename          = fmt::format("{}/svd-save.h5", TEST_MATRIX_DIR);
+    auto filename          = fmt::format("{}/svd-save.h5", BENCH_DATA_DIR);
     if(h5pp::fs::exists(filename)) {
         h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
         for(const auto &svd_group : h5file.findGroups("svd_lapacke")) {
-            auto U_original        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
-            auto S_original        = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
-            auto V_original        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/VT", svd_group));
-            auto A                 = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
-            auto rows              = A.rows();
-            auto cols              = A.cols();
-            auto rank_max          = h5file.readAttribute<long>("rank_max", svd_group);
-            svd_settings.threshold = h5file.readAttribute<double>("threshold", svd_group);
+            auto U_original             = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
+            auto S_original             = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
+            auto V_original             = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/VT", svd_group));
+            auto A                      = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
+            auto rows                   = A.rows();
+            auto cols                   = A.cols();
+            auto rank_max               = h5file.readAttribute<long>("rank_max", svd_group);
+            svd_settings.truncation_lim = h5file.readAttribute<double>("threshold", svd_group);
             Eigen::MatrixXcd S_mat(rank_max, 4);
             S_mat.setZero();
             {
-                svd_settings.svd_lib        = SVDLib::eigen;
+                svd_settings.svd_lib        = svd::lib::eigen;
                 svd_settings.use_bdc        = true;
                 svd_settings.switchsize_bdc = 16;
+                svd_settings.rank_max       = rank_max;
                 svd::solver svd(svd_settings);
-                auto        t_eigen  = tid::tic_scope("eigen");
-                auto [U, S, V, rank] = svd.do_svd(A, rank_max);
+                auto        t_eigen = tid::tic_scope("eigen");
+                auto [U, S, V]      = svd.do_svd(A);
                 t_eigen.toc();
                 //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
                 S_mat.col(0).topRows(S.size()) = S;
             }
             {
-                svd_settings.svd_lib        = SVDLib::lapacke;
+                svd_settings.svd_lib        = svd::lib::lapacke;
                 svd_settings.use_bdc        = true;
                 svd_settings.switchsize_bdc = 16;
                 svd::solver svd(svd_settings);
                 auto        t_lapack = tid::tic_scope("lapack");
-                auto [U, S, V, rank] = svd.do_svd(A, rank_max);
+                auto [U, S, V]       = svd.do_svd(A);
                 t_lapack.toc();
                 //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
                 S_mat.col(1).topRows(S.size()) = S;
             }
             {
-                svd_settings.svd_lib        = SVDLib::rsvd;
+                svd_settings.svd_lib        = svd::lib::rsvd;
                 svd_settings.use_bdc        = true;
                 svd_settings.switchsize_bdc = 16;
-                long        rsvd_rank_max   = rank_max / 10;
+                svd_settings.rank_max       = rank_max / 10;
                 svd::solver svd(svd_settings);
                 auto        t_rsvd = tid::tic_scope("rsvd");
 
-                auto [U, S, V, rank] = svd.do_svd(A, rsvd_rank_max);
+                auto [U, S, V] = svd.do_svd(A);
                 t_rsvd.toc();
                 //            fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
                 S_mat.col(2).topRows(S.size()) = S;
@@ -90,14 +91,14 @@ void test() {
 
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Bench split functions") {
-        svd::settings svd_settings;
-        svd_settings.threshold      = 1e-14;
+        svd::config svd_settings;
+        svd_settings.truncation_lim = 1e-14;
         svd_settings.loglevel       = 0;
         svd_settings.use_bdc        = false;
         svd_settings.switchsize_bdc = 4096;
         svd_settings.save_fail      = false;
-        svd_settings.svd_lib        = SVDLib::lapacke;
-        auto filename               = fmt::format("{}/svd-failed.h5", TEST_MATRIX_DIR);
+        svd_settings.svd_lib        = svd::lib::lapacke;
+        auto filename               = fmt::format("{}/svd-failed.h5", BENCH_DATA_DIR);
         if(h5pp::fs::exists(filename)) {
             h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
             for(const auto &svd_group : h5file.findGroups("svd_")) {
@@ -107,12 +108,11 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
                 auto A          = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
                 fmt::print("S original \n{}\n", linalg::matrix::to_string(S_original, 16));
 
-                auto rank_max          = h5file.readAttribute<long>("rank_max", svd_group);
-                svd_settings.threshold = h5file.readAttribute<long>("threshold", svd_group);
+                svd_settings.rank_max       = h5file.readAttribute<long>("rank_max", svd_group);
+                svd_settings.truncation_lim = h5file.readAttribute<long>("threshold", svd_group);
 
                 svd::solver svd(svd_settings);
-
-                auto [U, S, V, rank] = svd.do_svd(A, rank_max);
+                auto [U, S, V] = svd.do_svd(A);
                 fmt::print("S\n{}\n", linalg::matrix::to_string(S, 16));
             }
         }
@@ -124,7 +124,11 @@ namespace threading {
 }
 int main(int argc, char **argv) {
     tools::Logger::setLogger(tools::log, "testfail", 0, true);
-
+    auto filename = fmt::format("{}/svd-save.h5", BENCH_DATA_DIR);
+    if(not h5pp::fs::exists(filename)) {
+        tools::log->error("File does not exist: {}", filename);
+        exit(0);
+    }
 // Take care of threading
 // Set the number of threads to be used
 #if defined(EIGEN_USE_THREADS)

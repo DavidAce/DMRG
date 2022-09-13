@@ -223,6 +223,7 @@
   "testPresets": [
     {
       "name": "default",
+      "hidden": true,
       "configurePreset": "default",
       "output": {
         "outputOnFailure": true
@@ -230,6 +231,42 @@
       "execution": {
         "noTestsAction": "error",
         "stopOnFailure": true
+      }
+    },
+    {
+      "name": "release-conan",
+      "displayName": "Release|march=native|conan|mkl",
+      "configurePreset": "release-conan"
+    },
+    {
+      "name": "release-gcc-12-static-conan",
+      "displayName": "Release|gcc-12|static|conan|mkl",
+      "configurePreset": "release-gcc-12-static-conan"
+    },
+    {
+      "name": "release-gcc-12-static-native-conan",
+      "displayName": "Release|gcc-12|static|march=native|conan|mkl",
+      "configurePreset": "release-gcc-12-static-native-conan"
+    },
+    {
+      "name": "kraken",
+      "displayName": "Release|gcc-11|static|march=haswell|conan|mkl",
+      "configurePreset": "kraken"
+    },
+    {
+      "name": "tetralith",
+      "displayName": "Release|gcc-10|static|march=native|conan|mkl",
+      "configurePreset": "tetralith",
+      "execution": {
+        "jobs": 4
+      }
+    },
+    {
+      "name": "github-actions",
+      "displayName": "Default configuration for github-actions",
+      "configurePreset": "github-actions",
+      "execution": {
+        "jobs": 2
       }
     }
   ]

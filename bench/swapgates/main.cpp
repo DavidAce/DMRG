@@ -19,6 +19,11 @@
 #include <string_view>
 #include <unsupported/Eigen/CXX11/Tensor>
 int main(int argc, char *argv[]) {
+    auto filepath = fmt::format("{}/swapgates.h5", BENCH_DATA_DIR);
+    if(not h5pp::fs::exists(filepath)) {
+        fmt::print("File does not exist: {}", filepath);
+        exit(0);
+    }
     settings::parse(argc, argv);
     std::atexit(debug::print_mem_usage);
     std::atexit(tools::common::timer::print_timers);
@@ -31,8 +36,7 @@ int main(int argc, char *argv[]) {
     using op_t = Eigen::Tensor<cplx, 2>;
     fmt::print("Using {} {}\n", env::build::march, env::build::mtune);
 
-    auto                      filepath = fmt::format("{}/swapgates.h5", BENCH_DATA_DIR);
-    auto                      h5svd    = h5pp::File(filepath, h5pp::FileAccess::READONLY);
+    auto                      h5svd = h5pp::File(filepath, h5pp::FileAccess::READONLY);
     StateFinite               state;
     AlgorithmStatus           status;
     std::vector<qm::SwapGate> gates;
@@ -55,7 +59,7 @@ int main(int argc, char *argv[]) {
             gate.pos          = h5svd.readAttribute<std::vector<size_t>>(gate_prefix, "pos");
             gate.dim          = h5svd.readAttribute<std::vector<long>>(gate_prefix, "dim");
         }
-        auto svdset      = svd::settings();
+        auto svdset      = svd::config();
         svdset.benchmark = true;
         auto bench       = ankerl::nanobench::Bench().title(fmt::format("Swap Gates | {}", state_prefix)).relative(true).minEpochIterations(1);
         auto switchsizes = std::vector<size_t>{16};
@@ -74,7 +78,7 @@ int main(int argc, char *argv[]) {
                     bench.name(name).run([&]() {
                         auto state_tmp = state;
                         auto gates_tmp = gates;
-                        tools::finite::mps::apply_swap_gates(state_tmp, gates_tmp, false, status.bond_lim, GateMove::ON, svdset);
+                        tools::finite::mps::apply_swap_gates(state_tmp, gates_tmp, false, GateMove::ON, svdset);
                         ankerl::nanobench::doNotOptimizeAway(state_tmp);
                         ankerl::nanobench::doNotOptimizeAway(gates_tmp);
                     });

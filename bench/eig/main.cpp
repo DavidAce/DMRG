@@ -93,7 +93,11 @@ namespace threading {
 
 int main() {
     tools::Logger::setLogger(tools::log, "bench", 0, true);
-
+    auto filename = fmt::format("{}/eigs.h5", BENCH_DATA_DIR);
+    if(not h5pp::fs::exists(filename)) {
+        tools::log->error("File does not exist: {}", filename);
+        exit(0);
+    }
 // Take care of threading
 // Set the number of threads to be used
 #if defined(EIGEN_USE_THREADS)
@@ -147,7 +151,6 @@ int main() {
     //    configs[0].ritz = eig::Ritz::primme_closest_geq;
     //    configs[0].primme_projection = "primme_proj_refined";
 
-    auto filename = fmt::format("{}/eigs.h5", TEST_MATRIX_DIR);
     if(h5pp::fs::exists(filename)) {
         auto                     h5file = h5pp::File(filename, h5pp::FilePermission::READONLY);
         std::vector<std::string> msg;

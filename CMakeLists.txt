@@ -92,8 +92,7 @@ endif()
 if(DMRG_CMAKE_DEBUG)
     # Print summary of CMake configuration
     include(cmake/PrintTargetInfo.cmake)
-    print_project_summary(DMRG++)
-    write_project_summary(DMRG++)
+    print_and_write_project_summary(DMRG++)
 endif()
 
 ###################
@@ -113,8 +112,10 @@ message(STATUS "   To see more options,  run './build.sh -h'")
 message(STATUS "")
 message(STATUS "=============================================================================")
 message(STATUS "")
-
-add_subdirectory(tests) # Unit testing with ctest and catch2
+if(DMRG_ENABLE_TESTS)
+    enable_testing()
+    add_subdirectory(tests) # Unit testing with ctest and catch2
+endif()
 add_subdirectory(bench) # Benchmarks with ctest and nanobench
 add_subdirectory(tools) # Build tools for minor DMRG related tasks
 add_subdirectory(docs)  # Build documentation with doxygen

@@ -81,8 +81,8 @@ namespace svd {
         Eigen::Tensor<Scalar, 2> pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor);
 
         template<typename Derived>
-        auto do_svd(const Eigen::DenseBase<Derived> &mat) {
-            return do_svd_ptr(mat.derived().data(), mat.rows(), mat.cols());
+        auto do_svd(const Eigen::DenseBase<Derived> &mat, const svd::config &svd_cfg = svd::config()) {
+            return do_svd_ptr(mat.derived().data(), mat.rows(), mat.cols(), svd_cfg);
         }
 
         template<typename Scalar>

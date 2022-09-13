@@ -5,10 +5,10 @@
 #ifdef _OPENMP
     #include <omp.h>
 #endif
-#include <math/tenx.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tid/tid.h>
-#include <tools/common/split.h>
+#include "math/tenx.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tid/tid.h"
+#include "tools/common/split.h"
 
 #ifdef OPENBLAS_AVAILABLE
     #include <cblas.h>
@@ -19,19 +19,19 @@
     #include <mkl.h>
     #include <mkl_service.h>
 #endif
+#include "math/svd.h"
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
-#include <math/svd.h>
 #include <thread>
 
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Bench split functions") {
-        svd::settings svd_settings;
-        svd_settings.threshold      = 1e-8;
+        svd::config svd_settings;
+        svd_settings.truncation_lim = 1e-16;
         svd_settings.loglevel       = 2;
         svd_settings.use_bdc        = true;
         svd_settings.switchsize_bdc = 16;
-        auto filename               = fmt::format("{}/svd-benchmark.h5", TEST_MATRIX_DIR);
+        auto filename               = fmt::format("{}/svd-benchmark.h5", BENCH_DATA_DIR);
         if(h5pp::fs::exists(filename)) {
             h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
             double     t_split_sum = 0;
@@ -42,47 +42,48 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
 
                 auto multisite_tensor = h5file.readDataset<Eigen::Tensor<std::complex<double>, 3>>(multisite_tensor_name);
 
-                auto spin_dims       = h5file.readAttribute<std::vector<long>>("spin_dims", multisite_tensor_name);
-                auto positions       = h5file.readAttribute<std::vector<size_t>>("positions", multisite_tensor_name);
-                auto center_position = h5file.readAttribute<long>("center_position", multisite_tensor_name);
-                auto chi_limit       = h5file.readAttribute<long>("chi_limit", multisite_tensor_name);
-                auto t_split         = h5file.readAttribute<double>("t_split", multisite_tensor_name);
+                auto spin_dims        = h5file.readAttribute<std::vector<long>>("spin_dims", multisite_tensor_name);
+                auto positions        = h5file.readAttribute<std::vector<size_t>>("positions", multisite_tensor_name);
+                auto center_position  = h5file.readAttribute<long>("center_position", multisite_tensor_name);
+                auto chi_limit        = h5file.readAttribute<long>("chi_limit", multisite_tensor_name);
+                auto t_split          = h5file.readAttribute<double>("t_split", multisite_tensor_name);
+                svd_settings.rank_max = chi_limit;
                 t_split_sum += t_split;
                 {
-                    svd_settings.svd_lib = SVDLib::rsvd;
+                    svd_settings.svd_lib = svd::lib::rsvd;
                     auto t_eig           = tid::tic_scope("eig");
-                    auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                    auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
                 {
-                    svd_settings.svd_lib = SVDLib::lapacke;
+                    svd_settings.svd_lib = svd::lib::lapacke;
                     auto t_eig           = tid::tic_scope("lpk");
-                    auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                    auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
 
                 // Test what happens if center_position is now the same as positions.front()
                 center_position = static_cast<long>(positions.front());
                 {
-                    svd_settings.svd_lib = SVDLib::rsvd;
+                    svd_settings.svd_lib = svd::lib::rsvd;
                     auto t_eig           = tid::tic_scope("eigA");
-                    auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                    auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
                 {
-                    svd_settings.svd_lib = SVDLib::lapacke;
+                    svd_settings.svd_lib = svd::lib::lapacke;
                     auto t_eig           = tid::tic_scope("lpkA");
-                    auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                    auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
 
                 // Test what happens if center_position is now the same as positions.back()
                 center_position = static_cast<long>(positions.back());
                 {
-                    svd_settings.svd_lib = SVDLib::rsvd;
+                    svd_settings.svd_lib = svd::lib::rsvd;
                     auto t_eig           = tid::tic_scope("eigB");
-                    auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                    auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
                 {
-                    svd_settings.svd_lib = SVDLib::lapacke;
+                    svd_settings.svd_lib = svd::lib::lapacke;
                     auto t_eig           = tid::tic_scope("lpkB");
-                    auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, chi_limit, svd_settings);
+                    auto mps_list_lpk    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
 
                 tools::log->info("eig +{:8.2e} {:8.2e} | lpk +{:8.2e} {:8.2e} | eigA +{:8.2e} {:8.2e} | lpkA +{:8.2e} {:8.2e} | eigB +{:8.2e} {:8.2e} | lpkB "
@@ -110,7 +111,11 @@ namespace threading {
 }
 int main(int argc, char **argv) {
     tools::Logger::setLogger(tools::log, "bench", 0, true);
-
+    auto filename = fmt::format("{}/svd-benchmark.h5", BENCH_DATA_DIR);
+    if(not h5pp::fs::exists(filename)) {
+        tools::log->error("File does not exist: {}", filename);
+        exit(0);
+    }
 // Take care of threading
 // Set the number of threads to be used
 #if defined(EIGEN_USE_THREADS)

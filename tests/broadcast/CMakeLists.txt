@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.15)
+project(dmrg-test-broadcast)
+enable_testing()
+add_executable(${PROJECT_NAME} main.cpp)
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_WHAT_YOU_USE TRUE)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/tests)
+target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-deps dmrg-flags)
+target_link_precompiled_headers(${PROJECT_NAME})
+
+if(DMRG_ENABLE_COVERAGE)
+    target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
+    target_link_options(${PROJECT_NAME} PRIVATE --coverage)
+endif()
+
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
+message(STATUS "${PROJECT_NAME} CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")

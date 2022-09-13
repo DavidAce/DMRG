@@ -24,10 +24,10 @@
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     //    SECTION("Test that eigen can handle these matrices") {
     //        using reciter = h5pp::fs::recursive_directory_iterator;
-    //        svd::settings svd_settings;
+    //        svd::config svd_settings;
     //        svd_settings.threshold                          = 1e-8;
     //        svd_settings.loglevel                           = 0;
-    //        svd_settings.svd_lib                            = SVDLib::eigen;
+    //        svd_settings.svd_lib                            = svd::lib::eigen;
     //        size_t                            h5pp_logLevel = 2;
     //        svd::solver                       svd(svd_settings);
     //        [[maybe_unused]] Eigen::MatrixXcd U1, V1, U2, V2;
@@ -43,10 +43,10 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
 
     //    SECTION("Test that the results from eigen and lapack are the same") {
     //        using reciter = h5pp::fs::recursive_directory_iterator;
-    //        svd::settings svd_settings;
+    //        svd::config svd_settings;
     //        svd_settings.threshold = 1e-8;
     //        svd_settings.loglevel  = 0;
-    //        svd_settings.svd_lib   = SVDLib::eigen;
+    //        svd_settings.svd_lib   = svd::lib::eigen;
     //        svd::solver svd(svd_settings);
     //
     //        [[maybe_unused]] Eigen::MatrixXcd U1, V1, U2, V2;
@@ -57,9 +57,9 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     //            size_t     logLevel = 2;
     //            h5pp::File file(item.path().string(), h5pp::FilePermission::READONLY, logLevel);
     //            auto       matrix    = file.readDataset<Eigen::MatrixXcd>("svdmatrix");
-    //            svd_settings.svd_lib = SVDLib::eigen;
+    //            svd_settings.svd_lib = svd::lib::eigen;
     //            std::tie(U1, S1, V1) = svd.decompose(matrix);
-    //            svd_settings.svd_lib = SVDLib::lapacke;
+    //            svd_settings.svd_lib = svd::lib::lapacke;
     //            std::tie(U2, S2, V2) = svd.decompose(matrix);
     //            double differenceS   = std::log10((S2.array() - S1.array()).cwiseAbs().sum());
     //            fmt::print("S {:<32} diff {:.24f}\n", item.path().filename().string(), differenceS);
@@ -68,11 +68,11 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     //    }
     SECTION("Test that lapack can handle these matrices") {
         using reciter = h5pp::fs::recursive_directory_iterator;
-        svd::settings svd_settings;
-        svd_settings.threshold    = 1e-8;
-        svd_settings.loglevel     = 0;
-        svd_settings.svd_lib      = SVDLib::lapacke;
-        size_t      h5pp_logLevel = 2;
+        svd::config svd_settings;
+        svd_settings.truncation_lim = 1e-8;
+        svd_settings.loglevel       = 0;
+        svd_settings.svd_lib        = svd::lib::lapacke;
+        size_t      h5pp_logLevel   = 2;
         svd::solver svd(svd_settings);
 
         [[maybe_unused]] Eigen::MatrixXcd U1, V1, U2, V2;
