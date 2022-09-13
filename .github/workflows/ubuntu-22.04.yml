@@ -108,7 +108,7 @@ jobs:
           ctest -C ${{ matrix.build_type }} --extra-verbose -R dmrg
 
       - name: Upload conan binaries
-        if: matrix.manager == 'conan'
+        if: matrix.manager == 'conan' && (success() || failure())
         continue-on-error: true
         run: |
           conan user david --remote conan-dmrg --password ${{ secrets.CONAN_PASSSWORD }}
