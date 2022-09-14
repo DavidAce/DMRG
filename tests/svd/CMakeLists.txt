@@ -11,7 +11,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-deps dmrg-flags)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/tests)
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_WHAT_YOU_USE TRUE)
 target_link_precompiled_headers(${PROJECT_NAME})
 target_compile_definitions(${PROJECT_NAME} PRIVATE TEST_MATRIX_DIR="${PROJECT_SOURCE_DIR}/testmatrices")
 

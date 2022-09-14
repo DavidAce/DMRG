@@ -16,9 +16,9 @@
     #include <mkl.h>
     #include <mkl_service.h>
 #endif
+#include "math/svd.h"
 #include <Eigen/Core>
 #include <h5pp/h5pp.h>
-#include <math/svd.h>
 #include <thread>
 
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {

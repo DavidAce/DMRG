@@ -104,8 +104,7 @@ jobs:
 
       - name: Test
         run: |
-          cd build/${{ matrix.build_type }}
-          ctest -C ${{ matrix.build_type }} --extra-verbose -R dmrg
+          ctest --extra-verbose --preset=github-actions
 
       - name: Upload conan binaries
         if: matrix.manager == 'conan' && (success() || failure())
@@ -115,7 +114,6 @@ jobs:
           conan upload hdf5         --all --confirm -r conan-dmrg
           conan upload openblas     --all --confirm -r conan-dmrg
           conan upload ceres-solver --all --confirm -r conan-dmrg
-
 
       - name: Coverage
         if: matrix.compiler == 'gcc' && matrix.linkage == 'static' && matrix.manager == 'cmake'

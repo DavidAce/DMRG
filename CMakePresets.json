@@ -29,6 +29,8 @@
         "CMAKE_CXX_STANDARD_REQUIRED": "TRUE",
         "CMAKE_CXX_EXTENSIONS": "FALSE",
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
+        "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
+        "CMAKE_THREAD_PREFER_PTHREAD": "TRUE",
         "CMAKE_CXX_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always",
         "CMAKE_CXX_FLAGS_DEBUG": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
@@ -45,7 +47,8 @@
         "CMAKE_CUDA_HOST_COMPILER": "g++-10"
       },
       "environment": {
-        "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:"
+        "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
       }
     },
     {
@@ -102,7 +105,8 @@
       ],
       "cacheVariables": {
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
-        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native"
+        "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
+        "COMPILER_ENABLE_MOLD": "TRUE"
       }
     },
     {
@@ -148,7 +152,10 @@
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "FALSE",
         "COMPILER_ENABLE_USAN": "FALSE",
-        "COMPILER_ENABLE_CCACHE": "TRUE"
+        "COMPILER_ENABLE_CCACHE": "FALSE",
+        "CMAKE_VERBOSE_MAKEFILE": "FALSE",
+        "CMAKE_LINK_SEARCH_START_STATIC": "TRUE",
+        "CMAKE_LINK_SEARCH_END_STATIC": "TRUE"
       }
     },
     {
@@ -164,6 +171,8 @@
         "CMAKE_CXX_COMPILER": "g++-11",
         "BUILD_SHARED_LIBS": "FALSE",
         "DMRG_PACKAGE_MANAGER": "conan",
+        "COMPILER_ENABLE_LTO": "TRUE",
+        "COMPILER_ENABLE_MOLD": "FALSE",
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
         "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell"
       }
@@ -181,6 +190,8 @@
         "CMAKE_CXX_COMPILER": "g++-10",
         "BUILD_SHARED_LIBS": "FALSE",
         "DMRG_PACKAGE_MANAGER": "conan",
+        "COMPILER_ENABLE_LTO": "TRUE",
+        "COMPILER_ENABLE_MOLD": "FALSE",
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
         "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native"
       }
@@ -217,7 +228,9 @@
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
       "configurePreset": "github-actions",
-      "jobs": 2
+      "environment": {
+        "VERBOSE": "1"
+      }
     }
   ],
   "testPresets": [
@@ -263,11 +276,9 @@
     },
     {
       "name": "github-actions",
+      "inherits": "default",
       "displayName": "Default configuration for github-actions",
-      "configurePreset": "github-actions",
-      "execution": {
-        "jobs": 2
-      }
+      "configurePreset": "github-actions"
     }
   ]
 }

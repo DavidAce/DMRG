@@ -7,7 +7,5 @@ project(tool-kvorning-marker
 
 add_executable(dmrg-tool-kvorning-marker main.cpp)
 target_link_libraries(dmrg-tool-kvorning-marker PRIVATE dmrg-deps dmrg-flags)
-
-set_target_properties(dmrg-tool-kvorning-marker PROPERTIES LINK_WHAT_YOU_USE TRUE)
 target_include_directories(dmrg-tool-kvorning-marker PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_link_precompiled_headers(dmrg-tool-kvorning-marker)

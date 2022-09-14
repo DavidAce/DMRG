@@ -11,7 +11,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                       dmrg-tools-common-contraction
                       dmrg-tools-common-log
                       dmrg-tools-common-split)
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_WHAT_YOU_USE TRUE)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/source)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/bench)
 target_link_libraries(${PROJECT_NAME} PRIVATE dmrg-deps dmrg-flags)

@@ -399,8 +399,7 @@ function(setup_mkl_targets)
                     find_package(OpenMP COMPONENTS ${C} ${CXX} ${Fortran} REQUIRED)
                     foreach(lang ${LANG})
                         if(OpenMP_${lang}_FLAGS)
-                            target_link_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE
-                                                $<$<COMPILE_LANGUAGE:${LANG}>:${OpenMP_${lang}_FLAGS}>)
+                            target_link_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE ${OpenMP_${lang}_FLAGS})
                             target_compile_options(mkl::mkl_${fort}_${thread}_${arch} INTERFACE
                                                    $<$<COMPILE_LANGUAGE:${LANG}>:${OpenMP_${lang}_FLAGS}>)
                         elseif(TARGET OpenMP::OpenMP_${lang})
@@ -440,11 +439,10 @@ function(check_mkl_compiles)
     include(CheckCXXSourceCompiles)
     foreach(tgt ${MKL_TARGETS})
         unset(CMAKE_REQUIRED_LIBRARIES)
-        if(NOT BUILD_SHARED_LIBS)
-            set(CMAKE_REQUIRED_LIBRARIES -static-libgcc -static-libstdc++)
-        endif()
         string(SUBSTRING ${tgt} 5 -1 tgt_name)
         list(APPEND CMAKE_REQUIRED_LIBRARIES ${tgt})
+        include(cmake/PrintTargetInfo.cmake)
+        print_target_info(${tgt} "")
         if(TARGET ${tgt} AND ${tgt} MATCHES "sequential")
             check_cxx_source_compiles("
                         #include <mkl.h>
