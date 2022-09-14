@@ -20,8 +20,10 @@
         "DMRG_BENCH_CONTRACTION": "FALSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "conan",
+        "COMPILER_ENABLE_LTO": "FALSE",
+        "COMPILER_ENABLE_MOLD": "FALSE",
         "COMPILER_PROFILE_BUILD": "FALSE",
-        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
+        "CMAKE_VERBOSE_MAKEFILE": "FALSE",
         "CMAKE_MESSAGE_LOG_LEVEL": "DEBUG",
         "CMAKE_INSTALL_PREFIX": "pkg-install",
         "CMAKE_C_STANDARD": "17",
@@ -30,7 +32,6 @@
         "CMAKE_CXX_EXTENSIONS": "FALSE",
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
-        "CMAKE_THREAD_PREFER_PTHREAD": "TRUE",
         "CMAKE_CXX_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always",
         "CMAKE_CXX_FLAGS_DEBUG": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
@@ -73,11 +74,22 @@
       }
     },
     {
+      "name": "static",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always -static-libstdc++ -static-libgcc",
+        "CMAKE_C_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always -static-libstdc++ -static-libgcc",
+        "BUILD_SHARED_LIBS": "FALSE",
+        "CMAKE_LINK_SEARCH_START_STATIC": "TRUE",
+        "CMAKE_LINK_SEARCH_END_STATIC": "TRUE"
+      }
+    },
+    {
       "name": "release-conan",
       "displayName": "Release|conan|mkl",
       "inherits": [
-        "default",
-        "release"
+        "release",
+        "default"
       ],
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "conan"
@@ -87,13 +99,13 @@
       "name": "release-gcc-12-static-conan",
       "displayName": "Release|gcc-12|static|conan|mkl",
       "inherits": [
-        "default",
-        "release"
+        "static",
+        "release",
+        "default"
       ],
       "cacheVariables": {
         "CMAKE_C_COMPILER": "gcc-12",
         "CMAKE_CXX_COMPILER": "g++-12",
-        "BUILD_SHARED_LIBS": "FALSE",
         "DMRG_PACKAGE_MANAGER": "conan"
       }
     },
@@ -113,13 +125,13 @@
       "name": "release-clang-14-static-conan",
       "displayName": "debug|clang-14|static|conan|mkl",
       "inherits": [
-        "default",
-        "release"
+        "static",
+        "release",
+        "default"
       ],
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang-14",
         "CMAKE_CXX_COMPILER": "clang++-14",
-        "BUILD_SHARED_LIBS": "FALSE",
         "DMRG_PACKAGE_MANAGER": "conan"
       }
     },
@@ -140,9 +152,7 @@
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
-      "inherits": [
-        "default"
-      ],
+      "inherits": "default",
       "cacheVariables": {
         "DMRG_ENABLE_MKL": "FALSE",
         "DMRG_ENABLE_TESTS": "TRUE",
@@ -152,18 +162,28 @@
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "FALSE",
         "COMPILER_ENABLE_USAN": "FALSE",
-        "COMPILER_ENABLE_CCACHE": "FALSE",
-        "CMAKE_VERBOSE_MAKEFILE": "FALSE",
-        "CMAKE_LINK_SEARCH_START_STATIC": "TRUE",
-        "CMAKE_LINK_SEARCH_END_STATIC": "TRUE"
+        "COMPILER_ENABLE_CCACHE": "FALSE"
       }
+    },
+    {
+      "name": "github-actions-static",
+      "displayName": "Static configuration for github-actions",
+      "inherits": [
+        "static",
+        "github-actions"
+      ]
+    },
+    {
+      "name": "github-actions-shared",
+      "displayName": "Shared configuration for github-actions",
+      "inherits": "github-actions"
     },
     {
       "name": "kraken",
       "displayName": "Release|gcc-11|static|march=haswell|conan|mkl",
       "inherits": [
-        "default",
-        "release"
+        "release",
+        "default"
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
@@ -181,8 +201,8 @@
       "name": "tetralith",
       "displayName": "Release|gcc-10|static|march=native|conan|mkl",
       "inherits": [
-        "default",
-        "release"
+        "release",
+        "default"
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
@@ -192,6 +212,7 @@
         "DMRG_PACKAGE_MANAGER": "conan",
         "COMPILER_ENABLE_LTO": "TRUE",
         "COMPILER_ENABLE_MOLD": "FALSE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native",
         "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=native -mtune=native"
       }
@@ -227,10 +248,17 @@
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
-      "configurePreset": "github-actions",
-      "environment": {
-        "VERBOSE": "1"
-      }
+      "configurePreset": "github-actions"
+    },
+    {
+      "name": "github-actions-shared",
+      "displayName": "Shared build for github-actions",
+      "configurePreset": "github-actions-shared"
+    },
+    {
+      "name": "github-actions-static",
+      "displayName": "Static build for github-actions",
+      "configurePreset": "github-actions-static"
     }
   ],
   "testPresets": [
@@ -277,8 +305,20 @@
     {
       "name": "github-actions",
       "inherits": "default",
-      "displayName": "Default configuration for github-actions",
+      "displayName": "Default tests for github-actions",
       "configurePreset": "github-actions"
+    },
+    {
+      "name": "github-actions-shared",
+      "inherits": "default",
+      "displayName": "Shared tests for github-actions",
+      "configurePreset": "github-actions-shared"
+    },
+    {
+      "name": "github-actions-static",
+      "inherits": "default",
+      "displayName": "Static tests for github-actions",
+      "configurePreset": "github-actions-static"
     }
   ]
 }
