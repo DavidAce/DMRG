@@ -81,11 +81,8 @@ models.
 The following software is required to build the project:
 
 - C++17 compiler. Tested with:
-    - GNU GCC version >= 7
-    - Clang version >= 6.0.
--
-    * *To build dependencies*: Fortran compiler, tested with gfortran version >= 7
-- CMake version >= 3.15.
+  * *To build dependencies*: Fortran compiler
+- CMake version >= 3.18 (Use version >= 3.19 for CMake Presets)
 
 ## Build
 
