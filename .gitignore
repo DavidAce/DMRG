@@ -29,7 +29,4 @@ docs_rtd/api
 docs/build/doctrees
 docs/source/doxyoutput
 docs/source/api
-/tests/testmatrices/primme_mps.h5
-/tests/testmatrices/svd-benchmark.h5
-/tests/testmatrices/svd-save.h5
-/tests/testmatrices/svd-failed.h5
+CMakeUserPresets.json
