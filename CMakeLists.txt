@@ -26,6 +26,8 @@ option(COMPILER_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=unde
 option(COMPILER_ENABLE_LTO "Enable link time optimization" FALSE)
 option(COMPILER_ENABLE_PCH "Enable precompiled headers to speed up compilation" FALSE)
 option(COMPILER_ENABLE_CCACHE "Enable ccache to speed up compilation" FALSE)
+option(THREADS_PREFER_PTHREAD_FLAG "Prefer -pthread flag over -lpthread or similar" TRUE)
+option(CMAKE_INTERPROCEDURAL_OPTIMIZATION "Enable link-time-optimization" FALSE)
 
 # Make an "enum" for valid package managers
 set(DMRG_PACKAGE_MANAGERS_VALID find cmake conan)
@@ -74,10 +76,11 @@ target_link_libraries(DMRG++ PRIVATE dmrg-main)
 ### Link precompiled headers. Requires DMRG_ENABLE_PCH=ON
 target_link_precompiled_headers(DMRG++)
 
-### Enable link time optimization. Requires COMPILER_ENABLE_LTO=ON
-target_enable_lto(DMRG++)
 ### Enable mold linker (incompatible with lto). Requires COMPILER_ENABLE_MOLD=ON
 target_enable_mold(DMRG++)
+
+### Enable static linking of libgcc and libstdc++. Requires BUILD_SHARED_LIBS=OFF
+target_enable_static_libgcc(DMRG++)
 
 # Uninstall target
 if(NOT TARGET uninstall)
