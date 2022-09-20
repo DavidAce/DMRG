@@ -1,8 +1,6 @@
 add_source_target(dmrg-tools-finite-opt
         TARGET_SOURCES
         bfgs_base_functor.cpp
-        stlbfgs_optimize_variance.cpp
-        lbfgspp_optimize_variance.cpp
         bfgs_optimize_variance.cpp
         bfgs_variance_functor.cpp
         bfgs_subspace_functor.cpp
