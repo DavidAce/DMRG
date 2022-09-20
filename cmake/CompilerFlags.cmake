@@ -25,20 +25,21 @@ target_compile_options(dmrg-flags INTERFACE
 target_compile_features(dmrg-flags INTERFACE cxx_std_17)
 
 ###  Enable build profiling with ClangBuildAnalyzer
-if(COMPILER_PROFILE_BUILD AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(dmrg-flags INTERFACE -ftime-trace)
+if(COMPILER_PROFILE_BUILD)
+    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANG_AND_ID:CXX,Clang>:-ftime-trace>)
 endif()
 
 # Settings for sanitizers
 if(COMPILER_ENABLE_ASAN)
-    target_compile_options(dmrg-flags INTERFACE -fsanitize=address -fno-omit-frame-pointer)
+    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=address>) #-fno-omit-frame-pointer
     target_link_libraries(dmrg-flags INTERFACE -fsanitize=address)
 endif()
 if(COMPILER_ENABLE_USAN)
-    target_compile_options(dmrg-flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fno-omit-frame-pointer)
-    target_link_libraries(dmrg-flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds)
+    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error>) #  -fno-omit-frame-pointer
+    target_link_libraries(dmrg-flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error)
 endif()
 
+### Enable link time optimization
 if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     include(CheckIPOSupported)
     check_ipo_supported(RESULT lto_supported OUTPUT lto_error)
@@ -47,9 +48,19 @@ if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     else()
         message(FATAL_ERROR "LTO is not supported: ${lto_error}")
     endif()
-
 endif()
 
+# Enable static linking
+function(target_enable_static_libgcc tgt)
+    if(BUILD_SHARED_LIBS)
+        return()
+    endif()
+    message(STATUS "Enabling static linking on target [${tgt}]")
+    target_link_options(${tgt} BEFORE PUBLIC
+                        $<$<COMPILE_LANG_AND_ID:CXX,GNU>:-static-libstdc++ -static-libgcc>
+                        $<$<COMPILE_LANG_AND_ID:CXX,Clang>:-static-libgcc>
+                        )
+endfunction()
 
 ### Speed up compilation with precompiled headers
 function(target_link_precompiled_headers tgt)
@@ -67,6 +78,7 @@ function(target_link_precompiled_headers tgt)
                 add_executable(pch-exe ${PROJECT_SOURCE_DIR}/cmake/pch.cpp)
                 target_link_libraries(pch-exe PUBLIC dmrg-deps dmrg-flags)
                 target_precompile_headers(pch-exe PUBLIC ${PCH_HEADERS})
+                target_enable_static_libgcc(pch-exe)
             endif()
             target_precompile_headers(${tgt} REUSE_FROM pch-exe)
         else()
