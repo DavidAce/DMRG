@@ -25,17 +25,14 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Find required packages
     find_package(Threads REQUIRED)
     find_package(OpenMP COMPONENTS CXX REQUIRED)
-    find_package(Fortran REQUIRED)
+    find_package(gfortran REQUIRED)
 
     ##############################################################################
     ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
     ##############################################################################
     if(DMRG_ENABLE_MKL)
         find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-        add_library(lapacke::lapacke ALIAS mkl::mkl) # Lapacke is included
 
-        include(cmake/getExpandedTarget.cmake)
-        expand_target_libs(mkl::mkl MKL_LIBRARIES)
         # Passing BLAS_LIBRARIES as-is will result in cmake-conan injecting -o= between each element
         # Replacing each ";" with spaces will work until arpack-ng tries to link as is.
         # Instead we should use the generator expression trick to let arpack understand that these
@@ -99,11 +96,10 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     ##################################################################
     ### Find all the things!                                       ###
     ##################################################################
-    if(NOT CONAN_CMAKE_SILENT_OUTPUT)
-        set(CONAN_CMAKE_SILENT_OUTPUT OFF) # Default is off
-    endif()
     list(PREPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/conan)
     list(PREPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/conan)
+    list(REMOVE_DUPLICATES CMAKE_MODULE_PATH)
+    list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
     # Use CONFIG to avoid MODULE mode. This is recommended for the cmake_find_package_multi generator
 
     find_package(CLI11 2.2.0 REQUIRED CONFIG)
@@ -111,9 +107,13 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     find_package(h5pp 1.10.0 REQUIRED CONFIG)
     find_package(fmt 8.1.1 REQUIRED CONFIG)
     find_package(spdlog 1.10.0 REQUIRED CONFIG)
+    find_package(arpack-ng 3.8.0 REQUIRED CONFIG)
     find_package(arpack++ 2.3.0 REQUIRED CONFIG)
     find_package(Ceres 2.1.0 REQUIRED CONFIG)
     find_package(Backward 1.6 REQUIRED CONFIG)
+    if(NOT TARGET arpack-ng::arpack-ng)
+        message(FATAL_ERROR "")
+    endif()
     if(NOT DMRG_ENABLE_MKL)
         find_package(OpenBLAS 0.3.20 REQUIRED CONFIG)
         target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
