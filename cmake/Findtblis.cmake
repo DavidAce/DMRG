@@ -1,5 +1,8 @@
 
 function(find_tblis)
+    if(NOT BUILD_SHARED_LIBS)
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_SHARED_LIBRARY_SUFFIX})
+    endif()
     find_library(TBLIS_LIBRARY
                  tblis
                  HINTS ${DMRG_DEPS_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}
@@ -38,6 +41,23 @@ function(find_tblis)
               )
 
 endfunction()
+function(check_tblis_compiles)
+    set(CMAKE_REQUIRED_LIBRARIES tblis::tblis)
+    if(NOT BUILD_SHARED_LIBS OR CMAKE_LINK_SEARCH_START_STATIC)
+        set(CMAKE_REQUIRED_LINK_OPTIONS -static-libgcc)
+    endif()
+    check_cxx_source_compiles("
+                        #include <tblis/tblis.h>
+                        #include <tblis/util/thread.h>
+                        int main() {
+                           tblis::len_vector da;
+                           return 0;
+                        }
+                        " COMPILES_TBLIS)
+    if(NOT COMPILES_TBLIS)
+        message(FATAL_ERROR "Failed to compile a simple program using tblis::tblis")
+    endif()
+endfunction()
 
 find_tblis()
 
@@ -53,8 +73,19 @@ if(tblis_FOUND AND NOT TARGET tblis::tblis)
     set_target_properties(tblis::tblis PROPERTIES IMPORTED_LOCATION "${TBLIS_LIBRARY}")
     target_include_directories(tblis::tci SYSTEM INTERFACE ${TCI_INCLUDE_DIR})
     target_include_directories(tblis::tblis SYSTEM INTERFACE ${TBLIS_INCLUDE_DIR})
-    target_link_libraries(tblis::tblis INTERFACE tblis::tci)
+    find_package(OpenMP COMPONENTS CXX REQUIRED)
+    target_link_libraries(tblis::tci INTERFACE OpenMP::OpenMP_CXX)
     if(NOT BUILD_SHARED_LIBS)
         target_link_libraries(tblis::tblis INTERFACE atomic hwloc)
+        find_library(UDEV_LIBRARY udev)
+        if(UDEV_LIBRARY)
+            target_link_libraries(tblis::tblis INTERFACE ${UDEV_LIBRARY})
+        else()
+            message(WARNING "udev library not found (hwloc may depend on it)")
+        endif()
     endif()
+    target_link_libraries(tblis::tblis INTERFACE tblis::tci)
+
+    check_tblis_compiles()
 endif()
+
