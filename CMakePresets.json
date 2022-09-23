@@ -33,11 +33,11 @@
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
         "CMAKE_CXX_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always",
-        "CMAKE_CXX_FLAGS_DEBUG": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS_DEBUG": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O1 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS": "-fno-strict-aliasing -fdiagnostics-color=always",
-        "CMAKE_C_FLAGS_DEBUG": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_DEBUG": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb  -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
         "CMAKE_SKIP_BUILD_RPATH": "FALSE",
         "CMAKE_BUILD_WITH_INSTALL_RPATH": "FALSE",
@@ -250,6 +250,7 @@
         "debug-conan"
       ],
       "cacheVariables": {
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "COMPILER_ENABLE_ASAN": "FALSE",
         "COMPILER_ENABLE_USAN": "FALSE"
       }
@@ -363,6 +364,41 @@
       "configurePreset": "release-clang-14-native-conan"
     },
     {
+      "name": "debug-conan",
+      "displayName": "debug|conan",
+      "configurePreset": "debug-conan"
+    },
+    {
+      "name": "debug-gcc-10-conan",
+      "displayName": "debug|gcc-10|conan",
+      "configurePreset": "debug-gcc-10-conan"
+    },
+    {
+      "name": "debug-gcc-11-conan",
+      "displayName": "debug|gcc-11|conan",
+      "configurePreset": "debug-gcc-11-conan"
+    },
+    {
+      "name": "debug-gcc-11-cmake",
+      "displayName": "debug|gcc-11|cmake",
+      "configurePreset": "debug-gcc-11-cmake"
+    },
+    {
+      "name": "debug-gcc-11-conan-noasan",
+      "displayName": "debug|gcc-11|conan",
+      "configurePreset": "debug-gcc-11-conan-noasan"
+    },
+    {
+      "name": "debug-clang-14-conan",
+      "displayName": "debug|clang-14|conan",
+      "configurePreset": "debug-clang-14-conan"
+    },
+    {
+      "name": "debug-clang-14-conan-noasan",
+      "displayName": "debug|clang-14|conan",
+      "configurePreset": "debug-clang-14-conan-noasan"
+    },
+    {
       "name": "kraken",
       "displayName": "Release|gcc-11|march=haswell|conan|mkl",
       "configurePreset": "kraken"
@@ -434,8 +470,8 @@
     },
     {
       "name": "debug-gcc-11-cmake",
-      "displayName": "debug|gcc-11|conan",
-      "configurePreset": "debug-gcc-11-conan"
+      "displayName": "debug|gcc-11|cmake",
+      "configurePreset": "debug-gcc-11-cmake"
     },
     {
       "name": "debug-gcc-11-conan-noasan",
