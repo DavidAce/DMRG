@@ -68,6 +68,7 @@ include(cmake/SetupDependencies.cmake)
 
 ###  Add all source files
 add_executable(DMRG++)
+set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
 add_subdirectory(source)
 
 ### Link all the things!
