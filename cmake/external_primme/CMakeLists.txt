@@ -19,26 +19,41 @@ endif()
 externalproject_add(external_primme
                     URL https://github.com/primme/primme/archive/refs/tags/v3.2.tar.gz
                     URL_MD5 b26968d0ea8aa2e6feefc89f3c863062
-        PREFIX      ${CMAKE_BINARY_DIR}
-        INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+                    PREFIX ${CMAKE_BINARY_DIR}
+                    INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 
-        #Give Ninja access to the terminal.
-        USES_TERMINAL_DOWNLOAD TRUE
-        USES_TERMINAL_UPDATE TRUE
-        USES_TERMINAL_CONFIGURE TRUE
-        USES_TERMINAL_BUILD TRUE
-        USES_TERMINAL_INSTALL TRUE
-        USES_TERMINAL_TEST TRUE
+                    #Give Ninja access to the terminal.
+                    USES_TERMINAL_DOWNLOAD TRUE
+                    USES_TERMINAL_UPDATE TRUE
+                    USES_TERMINAL_CONFIGURE TRUE
+                    USES_TERMINAL_BUILD TRUE
+                    USES_TERMINAL_INSTALL TRUE
+                    USES_TERMINAL_TEST TRUE
 
-        BUILD_ALWAYS TRUE
-        CONFIGURE_COMMAND ""
-        BUILD_COMMAND
-            cd <SOURCE_DIR> &&
-            pwd &&
-            make clean &&
-            make VERBOSE=1 ${type} -j${NUM_THREADS}  CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
+                    BUILD_ALWAYS TRUE
+                    CONFIGURE_COMMAND ""
+                    BUILD_COMMAND
+                    COMMAND cd <SOURCE_DIR>
+                    COMMAND make VERBOSE=1 ${type} -j${NUM_THREADS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
 
-        INSTALL_COMMAND
-            cmake -E copy_directory <SOURCE_DIR>/lib <INSTALL_DIR>/lib &&
-            cmake -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include/primme
-        )
+                    INSTALL_COMMAND ""
+                    )
+
+if(BUILD_SHARED_LIBS)
+    externalproject_add_step(
+            external_primme
+            install_shared_lib
+            DEPENDEES build
+            COMMENT "Installing shared lib"
+            COMMAND cd <SOURCE_DIR>
+            COMMAND make install includedir=<INSTALL_DIR>/include/primme libdir=<INSTALL_DIR>/lib
+    )
+else()
+    externalproject_add_step(
+            external_primme
+            install_static_lib
+            DEPENDEES build
+            COMMENT "Installing static lib"
+            COMMAND cmake -E copy <SOURCE_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+    )
+endif()
