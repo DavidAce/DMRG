@@ -33,7 +33,9 @@ jobs:
         with:
           python-version: '3.x'
 
-      - uses: actions/cache@v2
+      - name: Setup caches
+        id: dmrg-cache
+        uses: actions/cache@v3
         with:
           path: |
             ~/.conan/data
@@ -99,7 +101,7 @@ jobs:
         # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
         run: |
-          cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DDMRG_PACKAGE_MANAGER=${{ matrix.manager }} -DCMAKE_INSTALL_PREFIX=~/pkg-install --preset=github-actions-${{ matrix.linkage }}
+          cmake -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_SHARED_LIBS=${{ matrix.linkage == 'shared' }} -DDMRG_PACKAGE_MANAGER=${{ matrix.manager }} -DCMAKE_INSTALL_PREFIX=~/pkg-install --preset=github-actions
           cmake --build --preset=github-actions-${{ matrix.linkage }}
 
       - name: Test
