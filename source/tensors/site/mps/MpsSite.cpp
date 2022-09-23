@@ -320,9 +320,9 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     if(not other.has_M()) throw except::runtime_error("MpsSite({})::fuse_mps: Got other mps {} with undefined M", tag, otag);
     if constexpr(settings::debug_merge) {
         if(other.has_L())
-            tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L {}"), tag, otag, other.dimensions(), other.get_L().dimensions());
+            tools::log->trace("MpsSite({})::fuse_mps: Merging {} | M {} | L {}", tag, otag, other.dimensions(), other.get_L().dimensions());
         else
-            tools::log->trace(FMT_STRING("MpsSite({})::fuse_mps: Merging {} | M {} | L nullopt"), tag, otag, other.dimensions());
+            tools::log->trace("MpsSite({})::fuse_mps: Merging {} | M {} | L nullopt", tag, otag, other.dimensions());
     }
     // Copy the A/AC/B label
     set_label(other.get_label());
@@ -358,9 +358,9 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     // Copy the center LC if it's in other
     if(other.isCenter()) {
         if(get_M_bare().dimension(2) != other.get_LC().dimension(0))
-            throw std::runtime_error(fmt::format(
-                FMT_STRING("MpsSite({})::fuse_mps: Got other mps {} with center of wrong dimension. M dims {} are not compatible with its LC dim {}"), tag,
-                otag, get_M_bare().dimensions(), other.get_LC().dimensions()));
+            throw except::runtime_error(
+                "MpsSite({})::fuse_mps: Got other mps {} with center of wrong dimension. M dims {} are not compatible with its LC dim {}", tag, otag,
+                get_M_bare().dimensions(), other.get_LC().dimensions());
         set_LC(other.get_LC(), other.get_truncation_error_LC());
     }
 }
@@ -458,7 +458,9 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
-        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking V stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge)
+            tools::log->trace("MpsSite({})::take_stash: Taking V stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
+                              other.V_stash->data.dimensions());
 
         if(get_position() != other.get_position() + 1)
             throw except::logic_error("MpsSite({})::take_stash: Found V stash with destination {} the wrong position {}", get_tag(), other.V_stash->pos_dst,
@@ -487,9 +489,13 @@ void MpsSite::take_stash(const MpsSite &other) {
          *           |            =          |                  |
          *           0                       0               0(dim=1)
          *
+         *  In addition, if this is a B site we expect an "S" to come along.
+         *  Here we simply set it as the new L of this site.
          */
 
-        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking U stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge)
+            tools::log->trace("MpsSite({})::take_stash: Taking U stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
+                              other.U_stash->data.dimensions());
 
         if(get_position() != other.get_position() - 1)
             throw except::logic_error("MpsSite({})::take_stash: Found U stash with destination {} the wrong position {}", get_tag(), other.U_stash->pos_dst,
@@ -512,11 +518,14 @@ void MpsSite::take_stash(const MpsSite &other) {
     }
     if(other.S_stash and other.S_stash->pos_dst == get_position()) {
         /* We get this stash when
-         *      - This is the right-most last A-site and AC is further to the right: Then we get both S and V to absorb on this site.
+         *      - This is an A-site and AC is further to the right: Then we get both V and S to absorb on this site.
+         *      - This is a B-site and AC is further to the left: Then we get both U and S to absorb on this site.
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
-        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking S stash from {}"), get_tag(), other.get_tag());
+        if constexpr(settings::debug_merge)
+            tools::log->trace("MpsSite({})::take_stash: Taking S stash from {} | L dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(), other.get_tag(), L->size(),
+                              other.S_stash->data.size(), get_truncation_error(), other.S_stash->error);
         set_L(other.S_stash->data, other.S_stash->error);
         other.S_stash = std::nullopt;
     }
@@ -526,8 +535,10 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
-        if constexpr(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::take_stash: Taking C stash from {}"), get_tag(), other.get_tag());
-        if(label == "B") tools::log->warn(FMT_STRING("MpsSite({})::take_stash: Taking C_stash to set LC on B-site"), get_tag());
+        if constexpr(settings::debug_merge) tools::log->trace("MpsSite({})::take_stash: Taking C stash from {}", get_tag(), other.get_tag());
+        if(label == "B")
+            tools::log->warn("MpsSite({})::take_stash: Taking C_stash to set LC on B-site | LC dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(),
+                             isCenter() ? LC->size() : -1l, other.C_stash->data.size(), isCenter() ? get_truncation_error_LC() : 0, other.C_stash->error);
         set_LC(other.C_stash->data, other.C_stash->error);
         other.C_stash = std::nullopt;
     }
@@ -536,7 +547,7 @@ void MpsSite::take_stash(const MpsSite &other) {
 void MpsSite::convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR) {
     if(label != "AL") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
     if(get_chiR() != LR.dimension(0)) throw except::runtime_error("MpsSite::convert_AL_to_A: chiR {} != LR.dim(0) {}", get_chiR() != LR.dimension(0));
-    if(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::convert_AL_to_A: multipliying inverse L"), get_tag());
+    if(settings::debug_merge) tools::log->trace("MpsSite({})::convert_AL_to_A: multipliying inverse L", get_tag());
     Eigen::Tensor<cplx, 3> tmp = get_M_bare().contract(tenx::asDiagonalInversed(LR), tenx::idx({2}, {0}));
     set_label("A");
     set_M(tmp);
@@ -544,7 +555,7 @@ void MpsSite::convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR) {
 void MpsSite::convert_LB_to_B(const Eigen::Tensor<cplx, 1> &LL) {
     if(label != "LB") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
     if(get_chiL() != LL.dimension(0)) throw except::runtime_error("MpsSite::convert_LB_to_B: chiL {} != LL.dim(0) {}", get_chiL() != LL.dimension(0));
-    if(settings::debug_merge) tools::log->trace(FMT_STRING("MpsSite({})::convert_LB_to_B: multipliying inverse L"), get_tag());
+    if(settings::debug_merge) tools::log->trace("MpsSite({})::convert_LB_to_B: multipliying inverse L", get_tag());
     Eigen::Tensor<cplx, 3> tmp = tenx::asDiagonalInversed(LL).contract(get_M_bare(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
     set_label("B");
     set_M(tmp);

@@ -349,7 +349,6 @@ std::vector<long> StateFinite::get_spin_dims() const { return get_spin_dims(acti
 Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
-    if constexpr(settings::debug) tools::log->trace("get_multisite_mps: sites {}", sites);
     auto                     t_mps = tid::tic_scope("gen_mps");
     Eigen::Tensor<Scalar, 3> multisite_mps;
     Eigen::Tensor<Scalar, 3> temp;
@@ -362,7 +361,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
     }
     if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
-        // In this case all sites are "B" and we need to prepend the the "L" from the site on the left to make a normalized multisite mps
+        // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
         auto &mps_left = get_mps_site(sites.front() - 1);
         auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
         if(L_left.dimension(0) != multisite_mps.dimension(1))
@@ -383,16 +382,10 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         // Check the norm of the tensor on debug builds
         auto   t_dbg = tid::tic_scope("debug");
         double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
+        tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
-            if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
-                // In this case all sites are "B" and we need to prepend the the "L" from the site on the left
-                auto &mps_left = get_mps_site(sites.front() - 1);
-                auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
-                multisite_mps  = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
-                auto norm_left = tools::common::contraction::contract_mps_norm(multisite_mps);
-                tools::log->critical("Norm after adding L to B from the left: {:.16f}", norm_left);
-            }
-            throw except::runtime_error("get_multisite_mps: not normalized: sites {} | norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
+            throw except::runtime_error("get_multisite_mps({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
+                                        settings::precision::max_norm_error);
         }
     }
     return multisite_mps;

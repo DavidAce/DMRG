@@ -15,6 +15,7 @@ svd::config::config(std::optional<long> rank_max_, std::optional<double> truncat
 
 void svd::solver::copy_config(const svd::config &svd_cfg) {
     if(svd_cfg.rank_max) rank_max = svd_cfg.rank_max.value();
+    if(svd_cfg.rank_min) rank_min = svd_cfg.rank_min.value();
     if(svd_cfg.truncation_lim) truncation_lim = svd_cfg.truncation_lim.value();
     if(svd_cfg.switchsize_bdc) switchsize_bdc = svd_cfg.switchsize_bdc.value();
     if(svd_cfg.loglevel) setLogLevel(svd_cfg.loglevel.value());
@@ -176,8 +177,11 @@ std::pair<long, double> svd::solver::get_rank_from_truncation_error(const Vector
     VectorType<double> truncation_errors(S.size() + 1);
     for(long s = 0; s <= S.size(); s++) { truncation_errors[s] = S.bottomRows(S.size() - s).squaredNorm(); } // Last one should be zero, i.e. no truncation
     auto rank_    = (truncation_errors.array() >= truncation_lim).count();
-    auto rank_lim = rank_max > 0 ? std::min(S.size(), rank_max) : S.size();
-    rank_         = std::min(rank_, rank_lim);
+    auto rank_lim = S.size();
+    if(rank_max > 0) rank_lim = std::min(S.size(), rank_max);
+    rank_ = std::min(rank_, rank_lim);
+    if(rank_min > 0) rank_ = std::max(rank_, std::min(S.size(), rank_min)); // Make sure we don't overtruncate in some cases (e.g. when stashing)
+
     //    tools::log->info("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.5e} | error {:8.5e}", S.size(), rank_, rank_lim,
     //                     truncation_lim, truncation_errors[rank_]);
     //    tools::log->info("Size {} | Rank {} | Rank limit {} | truncation error limit {:8.5e} | error {:8.5e} truncation errors: {:8.5e}", S.size(), rank_,

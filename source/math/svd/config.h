@@ -14,6 +14,7 @@ namespace svd {
 
     struct config {
         std::optional<long>     rank_max       = std::nullopt;
+        std::optional<long>     rank_min       = std::nullopt; /*!< Keep this many singular values even if they are smaller than truncation_lim */
         std::optional<double>   truncation_lim = std::nullopt;
         std::optional<size_t>   switchsize_bdc = std::nullopt;
         std::optional<size_t>   loglevel       = std::nullopt;
@@ -24,6 +25,8 @@ namespace svd {
         /* clang-format off */
         std::string to_string(){
             std::string msg;
+            if(rank_max        ) msg.append(fmt::format(" | rank_max {}", rank_max.value()));
+            if(rank_min        ) msg.append(fmt::format(" | rank_min {}", rank_min.value()));
             if(truncation_lim  ) msg.append(fmt::format(" | truncation_lim {:.2e}", truncation_lim.value()));
             if(switchsize_bdc  ) msg.append(fmt::format(" | switchsize bdc {}", switchsize_bdc.value()));
             if(loglevel        ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
