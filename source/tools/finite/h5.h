@@ -12,8 +12,10 @@ enum class CopyPolicy;
 enum class AlgorithmType;
 namespace h5pp {
     class File;
+    namespace hid {
+        class h5t;
+    }
 }
-
 struct StorageMeta;
 
 namespace tools::finite::h5 {
@@ -24,7 +26,7 @@ namespace tools::finite::h5 {
         template<typename T>
         void data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status,const T * const data, size_t size, std::string_view table_name, std::string_view table_title, std::string_view fieldname);
         template<typename T>
-        void data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status,const T & data, std::string_view table_name, std::string_view table_title, std::string_view fieldname){
+        void data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const T & data, std::string_view table_name, std::string_view table_title, std::string_view fieldname){
             if constexpr(sfinae::is_specialization_v<T, std::optional>){
                 if(data.has_value()) data_as_table(h5file, table_prefix, status, data.value(), table_name, table_title, fieldname);
             }
@@ -32,7 +34,8 @@ namespace tools::finite::h5 {
             else if constexpr (std::is_arithmetic_v<T>) data_as_table(h5file, table_prefix, status, &data, 1, table_name, table_title, fieldname);
             else static_assert(sfinae::invalid_type_v<T> and "Datatype must have .data() and .size() (or be std::optional of such)");
         }
-
+        template<typename T>
+        void data_as_table_vla(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const std::vector<T> & data, const h5pp::hid::h5t & h5elem_t, std::string_view table_name, std::string_view table_title, std::string_view fieldname);
         extern int decide_layout(std::string_view prefix_path);
         template<typename T>
         extern void data      (h5pp::File & h5file, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status, StorageReason storage_reason, std::optional<CopyPolicy> copy_policy);

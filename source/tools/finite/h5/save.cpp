@@ -120,12 +120,35 @@ namespace tools::finite::h5 {
         auto save_point    = std::make_pair(status.iter, status.step);
         if(h5_save_point and h5_save_point.value() == save_point) return;
 
-        // Register the table and create if it doesnt exist
-        auto h5_type = h5pp_table_data<T>::register_table_type(size, fieldname);
+        // Register the table and create if it doesn't exist
+        auto h5_type = h5pp_table_data<T>::register_table_type(h5pp::type::getH5Type<T>(), size, fieldname);
         if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_lim, data, size);
+        h5file.appendTableRecords(entry, table_path);
+        h5file.writeAttribute(status.iter, table_path, "iter");
+        h5file.writeAttribute(status.step, table_path, "step");
+        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+    }
+    template<typename T>
+    void save::data_as_table_vla(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const std::vector<T> &data,
+                                 const h5pp::hid::h5t &h5elem_t, std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
+        auto table_path = fmt::format("{}/{}", table_prefix, table_name);
+        tools::log->trace("Appending to table: {}", table_path);
+        // Check if the current entry has already been appended
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
+        auto save_point    = std::make_pair(status.iter, status.step);
+        if(h5_save_point and h5_save_point.value() == save_point) return;
+
+        // Register the table and create if it doesn't exist
+        auto h5_type = h5pp_table_data<T>::register_table_type(h5elem_t, data.size(), fieldname);
+        if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
+
+        // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
+        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_lim, data.data(), data.size());
+
         h5file.appendTableRecords(entry, table_path);
         h5file.writeAttribute(status.iter, table_path, "iter");
         h5file.writeAttribute(status.step, table_path, "step");
@@ -166,7 +189,7 @@ namespace tools::finite::h5 {
             auto                 hcols = static_cast<hsize_t>(cols);
             std::vector<hsize_t> dims  = {hrows, hcols, 0};
             std::vector<hsize_t> chnk  = {hrows, hcols, 10};
-            h5file.createDataset(table_path, h5pp::util::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 9);
+            h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 9);
         }
         h5file.appendToDataset(bonds, table_path, 2);
         h5file.writeAttribute(state.get_position<long>(), table_path, "position");
@@ -208,7 +231,7 @@ namespace tools::finite::h5 {
             auto                 cols = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(1));
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, 10};
-            h5file.createDataset(table_path, h5pp::util::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
+            h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
         }
         h5file.appendToDataset(state.measurements.number_probabilities.value(), table_path, 2);
         h5file.writeAttribute(status.iter, table_path, "iter");
@@ -251,143 +274,28 @@ namespace tools::finite::h5 {
         /* clang-format on */
     }
 
-    void save::bonds_old(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                         const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf        = tid::tic_scope("state", tid::level::extra);
-        auto bonds_prefix = fmt::format("{}/bonds", state_prefix);
-
-        // Check if the current entry has already been saved
-        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, bonds_prefix);
-        auto save_point    = std::make_pair(status.iter, status.step);
-        if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
-        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
-        // There should be one more sites+1 number of L's, because there is also a center bond
-        // However L_i always belongs M_i. Stick to this rule!
-        // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
-        for(const auto &mps : state.mps_sites) {
-            if(storage_level >= StorageLevel::NORMAL) {
-                auto dsetName = fmt::format("{}/L_{}", bonds_prefix, mps->get_position<long>());
-                h5file.writeDataset(mps->get_L(), dsetName, H5D_CHUNKED);
-                h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                h5file.writeAttribute(mps->get_truncation_error(), dsetName, "truncation_error");
-            }
-            if(storage_level >= StorageLevel::LIGHT and mps->isCenter()) {
-                auto dsetName = fmt::format("{}/L_C", bonds_prefix);
-                h5file.writeDataset(mps->get_LC(), dsetName, H5D_CHUNKED);
-                h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error");
-            }
-        }
-        h5file.writeAttribute(state.get_length(), bonds_prefix, "model_size");
-        h5file.writeAttribute(state.get_position<long>(), bonds_prefix, "position");
-        h5file.writeAttribute(state.get_truncation_errors(), bonds_prefix, "truncation_errors");
-        h5file.writeAttribute(status.iter, bonds_prefix, "iter");
-        h5file.writeAttribute(status.step, bonds_prefix, "step");
-        h5file.writeAttribute(status.bond_lim, bonds_prefix, "bond_lim");
-        h5file.writeAttribute(status.bond_max, bonds_prefix, "bond_max");
-
-        auto dsetname_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
-        auto midchain_bond    = Eigen::Tensor<double, 1>(state.midchain_bond().real());
-        h5file.writeDataset(midchain_bond, dsetname_schmidt, H5D_CHUNKED);
-        h5file.writeAttribute((state.get_length<long>() - 1) / 2, dsetname_schmidt, "position");
-        h5file.writeAttribute(status.iter, dsetname_schmidt, "iter");
-        h5file.writeAttribute(status.step, dsetname_schmidt, "step");
-        h5file.writeAttribute(status.bond_lim, dsetname_schmidt, "bond_lim");
-        h5file.writeAttribute(status.bond_max, dsetname_schmidt, "bond_max");
-    }
-
-    void append_bond(h5pp::File &h5file, h5pp::DsetInfo &dsetInfo, const Eigen::Tensor<std::complex<double>, 1> &L, hsize_t bond_idx, hsize_t iter_idx) {
-        h5pp::DataInfo dataInfo = h5pp::scan::scanDataInfo(L);
-        dataInfo.dataDims       = {dataInfo.dataSize.value(), 1, 1}; // Embed the bond L in a rank-3 tensor.
-        dataInfo.dataRank       = 3;
-        dataInfo.h5Space        = h5pp::util::getMemSpace(dataInfo.dataSize.value(), dataInfo.dataDims.value()); // Update the memspace
-
-        // Now draw a hyper-slab in the dataset to capture the data on file
-        dsetInfo.resizePolicy     = h5pp::ResizePolicy::GROW;
-        dsetInfo.dsetSlab         = h5pp::Hyperslab();
-        dsetInfo.dsetSlab->extent = dataInfo.dataDims;
-        dsetInfo.dsetSlab->offset = {0, bond_idx, iter_idx};
-        h5file.writeDataset(L, dataInfo, dsetInfo);
-    }
-
-    void save::bonds(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
+    void save::bonds(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
                      const AlgorithmStatus &status) {
         if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf        = tid::tic_scope("state", tid::level::extra);
-        auto bonds_prefix = fmt::format("{}/bonds", state_prefix);
-
+        auto t_hdf = tid::tic_scope("bonds", tid::level::extra);
         // Check if the current entry has already been saved
-        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, bonds_prefix);
+        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_prefix);
         auto save_point    = std::make_pair(status.iter, status.step);
         if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
         tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
-        // There should be one more sites+1 number of L's, because there is also a center bond
-        // However L_i always belongs M_i. Stick to this rule!
-        // This means that some M_i has two bonds, one L_i to the left, and one L_C to the right.
 
-        // We save the bonds in a multidimensional tensor of rank = rank(L) + rank(1D real space) + rank(time) = 3
-        // with dimensions in that order. So for instance, if bond_max == 1024, and we have 24 sites running 100 time steps,
-        // we should end up with tensor dimensions (1024,24,100)
-#pragma message "bonds should be saved in the new way. Do we need all iterations?"
-#pragma message "check if the state can also be saved in the new way, and resumed from. We probably don't need all iterations."
-        if(state_prefix.find("checkpoint") == std::string::npos) {
-            auto           dsetName_bonds = fmt::format("{}/L", state_prefix);
-            h5pp::DsetInfo dsetInfo       = h5file.getDatasetInfo(dsetName_bonds);
-            if(not dsetInfo.dsetExists.value()) {
-                auto           mps = state.get_mps_site(0);
-                h5pp::Options  options;
-                h5pp::DimsType dataDims  = {0, 0, 0};
-                h5pp::DimsType chunkDims = {static_cast<hsize_t>(status.bond_max), state.get_length<hsize_t>() + 1, 10};
-                dsetInfo =
-                    h5file.createDataset(dsetName_bonds, h5pp::util::getH5Type<MpsSite::value_type>(), H5D_CHUNKED, dataDims, chunkDims, std::nullopt, 9);
-            }
-            hsize_t bond_idx = 0;
-            hsize_t iter_idx = std::min(static_cast<hsize_t>(status.iter), dsetInfo.dsetDims->back());
-            for(const auto &mps : state.mps_sites) {
-                append_bond(h5file, dsetInfo, mps->get_L(), bond_idx++, iter_idx);
-                if(mps->isCenter()) { append_bond(h5file, dsetInfo, mps->get_LC(), bond_idx++, iter_idx); }
-            }
-            h5file.writeAttribute(state.get_length(), dsetName_bonds, "model_size");
-            h5file.writeAttribute(state.get_position<long>(), dsetName_bonds, "position");
-            h5file.writeAttribute(state.get_truncation_errors(), dsetName_bonds, "truncation_errors");
-            h5file.writeAttribute(status.iter, dsetName_bonds, "iter");
-            h5file.writeAttribute(status.step, dsetName_bonds, "step");
-            h5file.writeAttribute(status.bond_lim, dsetName_bonds, "bond_lim");
-            h5file.writeAttribute(status.bond_max, dsetName_bonds, "bond_max");
-        }
-        return;
-
+        // Transform from cplx to real to save space
+        using real                                 = MpsSite::real;
+        auto                                h5real = h5pp::type::getH5Type<real>();
+        std::vector<Eigen::Tensor<real, 1>> bonds_real;
+        bonds_real.reserve(state.get_length<size_t>() + 1);
         for(const auto &mps : state.mps_sites) {
-            if(storage_level >= StorageLevel::NORMAL) {
-                auto dsetName = fmt::format("{}/L_{}", bonds_prefix, mps->get_position<long>());
-                h5file.writeDataset(mps->get_L(), dsetName, H5D_CHUNKED);
-                h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                h5file.writeAttribute(mps->get_truncation_error(), dsetName, "truncation_error");
-            }
-            if(storage_level >= StorageLevel::LIGHT and mps->isCenter()) {
-                auto dsetName = fmt::format("{}/L_C", bonds_prefix);
-                h5file.writeDataset(mps->get_LC(), dsetName, H5D_CHUNKED);
-                h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
-                h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error");
-            }
+            bonds_real.emplace_back(mps->get_L().real());
+            if(mps->isCenter()) { bonds_real.emplace_back(mps->get_LC().real()); }
         }
-        h5file.writeAttribute(state.get_length(), bonds_prefix, "model_size");
-        h5file.writeAttribute(state.get_position<long>(), bonds_prefix, "position");
-        h5file.writeAttribute(state.get_truncation_errors(), bonds_prefix, "truncation_errors");
-        h5file.writeAttribute(status.iter, bonds_prefix, "iter");
-        h5file.writeAttribute(status.step, bonds_prefix, "step");
-        h5file.writeAttribute(status.bond_lim, bonds_prefix, "bond_lim");
-        h5file.writeAttribute(status.bond_max, bonds_prefix, "bond_max");
-
-        auto dsetname_schmidt = fmt::format("{}/schmidt_midchain", state_prefix);
-        auto midchain_bond    = Eigen::Tensor<double, 1>(state.midchain_bond().real());
-        h5file.writeDataset(midchain_bond, dsetname_schmidt, H5D_CHUNKED);
-        h5file.writeAttribute((state.get_length<long>() - 1) / 2, dsetname_schmidt, "position");
-        h5file.writeAttribute(status.iter, dsetname_schmidt, "iter");
-        h5file.writeAttribute(status.step, dsetname_schmidt, "step");
-        h5file.writeAttribute(status.bond_lim, dsetname_schmidt, "bond_lim");
-        h5file.writeAttribute(status.bond_max, dsetname_schmidt, "bond_max");
+        std::vector<hvl_t> bonds_hvla;
+        for(auto &bond : bonds_real) bonds_hvla.emplace_back(hvl_t{static_cast<size_t>(bond.size()), bond.data()});
+        data_as_table_vla(h5file, table_prefix, status, bonds_hvla, h5real, "bonds", "Singular Values", "L_");
     }
 
     void save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
@@ -673,8 +581,6 @@ namespace tools::finite::h5 {
                 case StorageReason::TRNC_DECREASE:
                 case StorageReason::FES: break;
                 default: {
-                    tools::finite::h5::save::bonds(h5file, state_prefix, storage_level, state, status);
-                    tools::finite::h5::save::bonds(h5file, state_prefix, storage_level, state, status);
                     tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
                     tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
                     break;

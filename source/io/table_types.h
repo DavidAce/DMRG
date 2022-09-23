@@ -1,8 +1,10 @@
 #pragma once
 
 #include "algorithms/AlgorithmStatus.h"
+#include "debug/exceptions.h"
 #include "io/fmt.h"
 #include "tid/enums.h"
+#include "tools/common/log.h"
 #include <array>
 #include <cstdio>
 #include <h5pp/h5pp.h>
@@ -241,8 +243,7 @@ class h5pp_table_data {
         size_t      type_size;
         size_t      data_size;
         std::string fieldname;
-        //        bool operator == (const meta & rhs) const = default;
-        bool operator==(const meta &rhs) const { return type_size == rhs.type_size and data_size == rhs.data_size and fieldname == rhs.fieldname; }
+        bool        operator==(const meta &rhs) const { return type_size == rhs.type_size and data_size == rhs.data_size and fieldname == rhs.fieldname; }
     };
     struct metaHasher {
         auto operator()(const meta &m) const { return std::hash<std::string>{}(fmt::format("{}|{}|{}", m.type_size, m.data_size, m.fieldname)); }
@@ -252,32 +253,41 @@ class h5pp_table_data {
     static inline std::unordered_map<meta, h5pp::hid::h5t, metaHasher> h5_types;
 
     static std::vector<std::byte> make_entry(uint64_t iter, uint64_t step, int64_t bond_lim, const T *const data, size_t data_size) {
-        size_t                 total_size = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t) + data_size * sizeof(T);
+        std::array<size_t, 4>  extent     = {sizeof(uint64_t), sizeof(uint64_t), sizeof(int64_t), data_size * sizeof(T)};
+        std::array<size_t, 4>  offset     = {0, extent[0], extent[0] + extent[1], extent[0] + extent[1] + extent[2]};
+        size_t                 total_size = extent[0] + extent[1] + extent[2] + extent[3];
         std::vector<std::byte> entry(total_size);
-        std::memcpy(entry.data() + 0 * sizeof(uint64_t), &iter, sizeof(uint64_t));
-        std::memcpy(entry.data() + 1 * sizeof(uint64_t), &step, sizeof(uint64_t));
-        std::memcpy(entry.data() + 2 * sizeof(int64_t), &bond_lim, sizeof(int64_t));
-        std::memcpy(entry.data() + 3 * sizeof(uint64_t), data, data_size * sizeof(T));
+        std::memcpy(entry.data() + offset[0], &iter, extent[0]);
+        std::memcpy(entry.data() + offset[1], &step, extent[1]);
+        std::memcpy(entry.data() + offset[2], &bond_lim, extent[2]);
+        std::memcpy(entry.data() + offset[3], data, extent[3]);
         return entry;
     }
 
-    [[nodiscard]] static h5pp::hid::h5t &register_table_type(size_t data_size, std::string_view fieldname) {
+    [[nodiscard]] static h5pp::hid::h5t &register_table_type(const h5pp::hid::h5t &h5elem_t, size_t data_size, std::string_view fieldname) {
         size_t data_offset = 2 * sizeof(uint64_t) + 1 * sizeof(int64_t);
         size_t total_size  = data_offset + data_size * sizeof(T);
         meta   m           = {sizeof(T), data_size, std::string(fieldname)};
         if(h5_types.find(m) == h5_types.end()) {
-            h5pp::hid::h5t h5_type = H5Tcreate(H5T_COMPOUND, total_size);
-            H5Tinsert(h5_type, "iter", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-            H5Tinsert(h5_type, "step", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-            H5Tinsert(h5_type, "bond_lim", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
-            auto h5type = h5pp::util::getH5Type<T>();
+            h5pp::hid::h5t h5comp_t = H5Tcreate(H5T_COMPOUND, total_size);
+            H5Tinsert(h5comp_t, "iter", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+            H5Tinsert(h5comp_t, "step", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
+            H5Tinsert(h5comp_t, "bond_lim", 2 * sizeof(uint64_t), H5T_NATIVE_INT64);
+            h5pp::hid::h5t h5data_t;
+            if constexpr(std::is_same_v<T, hvl_t>)
+                h5data_t = h5pp::hid::h5t(H5Tvlen_create(h5elem_t));
+            else if constexpr(h5pp::type::sfinae::is_std_array_v<T>) {
+                auto dims = std::array<hsize_t, 1>{std::tuple_size<T>::value}; // Gets N in std::array<S,N>
+                h5data_t  = H5Tarray_create(h5elem_t, dims.size(), dims.data());
+            } else
+                h5data_t = h5elem_t;
             if(data_size == 1)
-                H5Tinsert(h5_type, std::string(fieldname).c_str(), data_offset, h5type);
+                H5Tinsert(h5comp_t, std::string(fieldname).c_str(), data_offset, h5data_t);
             else
                 for(size_t elem = 0; elem < data_size; elem++) {
-                    H5Tinsert(h5_type, fmt::format("{}{}", fieldname, elem).c_str(), data_offset + elem * sizeof(T), h5type);
+                    H5Tinsert(h5comp_t, fmt::format("{}{}", fieldname, elem).c_str(), data_offset + elem * sizeof(T), h5data_t);
                 }
-            h5_types[m] = h5_type;
+            h5_types[m] = h5comp_t;
         }
         return h5_types[m];
     }
