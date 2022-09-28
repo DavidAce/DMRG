@@ -36,24 +36,17 @@ externalproject_add(external_primme
                     COMMAND cd <SOURCE_DIR>
                     COMMAND make VERBOSE=1 ${type} -j${NUM_THREADS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
 
-                    INSTALL_COMMAND ""
+                    INSTALL_COMMAND
+                    COMMAND cd <SOURCE_DIR>
+                    COMMAND make install includedir=<INSTALL_DIR>/include/primme libdir=<INSTALL_DIR>/lib
                     )
 
-if(BUILD_SHARED_LIBS)
-    externalproject_add_step(
-            external_primme
-            install_shared_lib
-            DEPENDEES build
-            COMMENT "Installing shared lib to ${CMAKE_INSTALL_PREFIX}/lib"
-            COMMAND cd <SOURCE_DIR>
-            COMMAND make install includedir=<INSTALL_DIR>/include/primme libdir=<INSTALL_DIR>/lib
-    )
-else()
+if(NOT BUILD_SHARED_LIBS)
     externalproject_add_step(
             external_primme
             install_static_lib
             DEPENDEES build install
-            COMMENT "Installing static lib to <INSTALL_DIR>/lib"
+            COMMENT "Installing static lib"
             COMMAND cmake -E copy <SOURCE_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX}
     )
 endif()
