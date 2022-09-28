@@ -391,7 +391,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
             // Let V absorb S from the previous SVD (see note below)
             V = tools::common::contraction::contract_bnd_mps_temp(S_prev.value(), V, SV_temp);
         }
-        if(&spin_dim == &spin_dims.back()) {
+        if(&spin_dim == &spin_dims.back() and spin_dim == V.dimension(0)) {
             // We reached the last site, and now V == L*GL, i.e. a theta with dim(0) == spin_dims.back().
             // Make sure we don't over-truncate during this SVD, so that we keep the bond dimension compatible with the adjacent site to the right.
             // In other words, we would like to retain the right bond dim of multisite_mps.
@@ -506,7 +506,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
             // Let U absorb S from the previous SVD (see note below)
             U = tools::common::contraction::contract_mps_bnd_temp(U, S_prev.value(), US_temp);
         }
-        if(&spin_dim == &spin_dims.front()) {
+        if(&spin_dim == &spin_dims.front() and spin_dim == U.dimension(0)) {
             // We reached the first site, and now U == LG*L, i.e. a theta with dim(0) == spin_dims.front().
             // Make sure we don't over-truncate during this SVD, so that we keep the bond dimension compatible with the adjacent site to the left.
             // In other words, we would like to retain the left bond dim of multisite_mps.
