@@ -25,7 +25,7 @@
         "COMPILER_PROFILE_BUILD": "FALSE",
         "CMAKE_VERBOSE_MAKEFILE": "FALSE",
         "CMAKE_MESSAGE_LOG_LEVEL": "STATUS",
-        "CMAKE_INSTALL_PREFIX": "pkg-install",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/pkg-install",
         "CMAKE_C_STANDARD": "17",
         "CMAKE_CXX_STANDARD": "17",
         "CMAKE_CXX_STANDARD_REQUIRED": "TRUE",
@@ -313,7 +313,8 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install"
       }
     },
     {
@@ -327,7 +328,8 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install"
       }
     }
   ],
