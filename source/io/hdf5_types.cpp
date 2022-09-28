@@ -30,7 +30,8 @@ void h5_enum_storage_event::create() {
     H5Tenum_insert(h5_storage_event, "FES", (val = 8, &val));
     H5Tenum_insert(h5_storage_event, "MODEL", (val = 9, &val));
     H5Tenum_insert(h5_storage_event, "NONE", (val = 10, &val));
-};
+}
+
 void h5_enum_storage_event::commit(const h5pp::hid::h5f &file_id) {
     if(H5Tcommitted(get_h5t()) > 0) return;
     herr_t err = H5Tcommit(file_id, "StorageEvent", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
@@ -41,6 +42,7 @@ h5pp::hid::h5t &h5_enum_storage_level::get_h5t() {
     create();
     return h5_storage_level;
 }
+
 void h5_enum_storage_level::create() {
     if(h5_storage_level.valid()) return;
     h5_storage_level = H5Tcreate(H5T_ENUM, sizeof(StorageLevel));
@@ -49,7 +51,7 @@ void h5_enum_storage_level::create() {
     H5Tenum_insert(h5_storage_level, "LIGHT", (val = 1, &val));
     H5Tenum_insert(h5_storage_level, "NORMAL", (val = 2, &val));
     H5Tenum_insert(h5_storage_level, "FULL", (val = 3, &val));
-};
+}
 
 void h5_enum_storage_level::commit(const h5pp::hid::h5f &file_id) {
     if(H5Tcommitted(get_h5t()) > 0) return;
@@ -218,17 +220,20 @@ void h5pp_table_memory_usage::register_table_type() {
     /* clang-format on */
 }
 
-h5pp_ur::item::item(const item &it) : time(it.time), sum(it.sum), pcnt(it.pcnt), avg(it.avg), level(it.level), count(it.count) { copy_name(it.name); };
+h5pp_ur::item::item(const item &it) : time(it.time), sum(it.sum), pcnt(it.pcnt), avg(it.avg), level(it.level), count(it.count) { copy_name(it.name); }
 h5pp_ur::item::item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count)
     : time(time), sum(sum), pcnt(pcnt), avg(avg), level(level), count(count) {
     copy_name(name_);
 }
+
 h5pp_ur::item::~item() noexcept { free(name); }
 void h5pp_ur::item::copy_name(std::string_view name_) {
     // Note that we must use C-style malloc/free here rather than C++-style new/delete, since that is what HDF5 uses internally.
     // This is particularly important when we read data from file, and let HDF5 allocate the vlen buffer
-    name = static_cast<char *>(malloc((name_.size() + 1) * sizeof(char))); // Add +1 for null terminator
-    strncpy(name, name_.data(), name_.size());
+    size_t len  = name_.size();
+    size_t size = (len + 1) * sizeof(char);
+    name        = static_cast<char *>(malloc(size)); // Add +1 for null terminator
+    strncpy(name, name_.data(), len * sizeof(char));
     name[name_.size()] = '\0'; // Make sure name is null-terminated!
 }
 h5pp_ur::h5pp_ur() { register_table_type(); }
