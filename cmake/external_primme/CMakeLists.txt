@@ -44,7 +44,7 @@ if(BUILD_SHARED_LIBS)
             external_primme
             install_shared_lib
             DEPENDEES build
-            COMMENT "Installing shared lib"
+            COMMENT "Installing shared lib to ${CMAKE_INSTALL_PREFIX}/lib"
             COMMAND cd <SOURCE_DIR>
             COMMAND make install includedir=<INSTALL_DIR>/include/primme libdir=<INSTALL_DIR>/lib
     )
@@ -53,7 +53,7 @@ else()
             external_primme
             install_static_lib
             DEPENDEES build
-            COMMENT "Installing static lib"
+            COMMENT "Installing static lib to ${CMAKE_INSTALL_PREFIX}/lib"
             COMMAND cmake -E copy <SOURCE_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
     )
 endif()
