@@ -41,6 +41,11 @@ void flbit::resume() {
     if(state_name.empty()) state_name = "state_real";
 
     auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, state_name, settings::storage::file_resume_iter);
+    tools::log->debug("Resumable states: {}", resumable_states);
+    exit(0);
+    // Find the unitary circuit
+    //    auto ulayer_prefix =
+
     for(const auto &state_prefix : resumable_states) {
         if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);
@@ -119,7 +124,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
-            case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
+            case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
             case flbit_task::INIT_CLEAR_STATUS: status.clear(); break;
             case flbit_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case flbit_task::INIT_DEFAULT: run_preprocessing(); break;
@@ -145,7 +150,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
                 break;
             case flbit_task::TRANSFORM_TO_LBIT: transform_to_lbit_basis(); break;
             case flbit_task::TRANSFORM_TO_REAL: transform_to_real_basis(); break;
-            case flbit_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
+            case flbit_task::POST_WRITE_RESULT: write_to_file(StorageEvent::LAST_STATE); break;
             case flbit_task::POST_PRINT_RESULT: print_status_full(); break;
             case flbit_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case flbit_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
@@ -208,7 +213,7 @@ void flbit::run_preprocessing() {
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
-    write_to_file(StorageReason::MODEL, CopyPolicy::TRY);
+    write_to_file(StorageEvent::MODEL, CopyPolicy::TRY);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -224,8 +229,7 @@ void flbit::run_algorithm() {
     while(true) {
         update_state();
         check_convergence();
-        write_to_file(StorageReason::SAVEPOINT);
-        write_to_file(StorageReason::CHECKPOINT);
+        write_to_file(StorageEvent::ITER_STATE);
         print_status();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -233,8 +237,8 @@ void flbit::run_algorithm() {
         if(status.algo_stop != AlgorithmStop::NONE) break;
         if(settings::flbit::use_swap_gates) {
             update_time_evolution_swap_gates();
-            //#pragma message "no need to update the normal gates"
-            //            update_time_evolution_gates();
+            // #pragma message "no need to update the normal gates"
+            //             update_time_evolution_gates();
 
         } else
             update_time_evolution_gates();
@@ -268,7 +272,6 @@ void flbit::update_state() {
     auto t_step  = tid::tic_scope("step");
     auto t_evo   = tid::tic_scope("time_evo");
     auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-    if(settings::flbit::save_swap_gates) write_state_swap_gates_to_file(*state_lbit, time_swap_gates_2site);
 
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
@@ -634,10 +637,10 @@ void flbit::transform_to_lbit_basis() {
     }
 }
 
-void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_file) {
-    AlgorithmFinite::write_to_file(storage_reason, *tensors.state, *tensors.model, *tensors.edges, copy_file);
+void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
+    AlgorithmFinite::write_to_file(*tensors.state, *tensors.model, *tensors.edges, storage_event, copy_policy);
     // Save the unitaries once
-    if(storage_reason == StorageReason::MODEL) {
+    if(storage_event == StorageEvent::MODEL) {
         auto        t_h5      = tid::tic_scope("h5");
         auto        t_model   = tid::tic_scope("MODEL");
         auto        t_gates   = tid::tic_scope("gates");
@@ -658,7 +661,7 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
     }
 
     // Save the lbit analysis once
-    if(storage_reason == StorageReason::MODEL) {
+    if(storage_event == StorageEvent::MODEL) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_model = tid::tic_scope("MODEL");
         if(h5file->linkExists("/fLBIT/model/lbits")) return;
@@ -684,39 +687,6 @@ void flbit::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy
             h5file->writeAttribute(sample, "/fLBIT/model/lbits", "samples");
             if(settings::storage::storage_level_model == StorageLevel::FULL) h5file->writeDataset(data, "/fLBIT/model/lbits/data");
         }
-    }
-}
-
-void flbit::write_state_swap_gates_to_file(const StateFinite &state, const std::vector<qm::SwapGate> &gates) {
-    tools::log->trace("Saving state and swap gates");
-    auto access = status.iter == 0 ? h5pp::FileAccess::REPLACE : h5pp::FileAccess::READWRITE;
-    auto h5svd  = h5pp::File("../bench/data/swapgates.h5", access);
-    h5svd.setCompressionLevel(9);
-    auto                  state_prefix = fmt::format("fLBIT/iter_{}", status.iter);
-    auto                  table_prefix = state_prefix;
-    static h5pp::hid::h5t h5tswap;
-    if(not h5tswap.valid()) {
-        h5tswap = H5Tcreate(H5T_COMPOUND, 2 * sizeof(uint64_t));
-        H5Tinsert(h5tswap, "posL", 0 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-        H5Tinsert(h5tswap, "posR", 1 * sizeof(uint64_t), H5T_NATIVE_UINT64);
-    }
-
-    tools::common::h5::save::status(h5svd, state_prefix, StorageLevel::FULL, status);
-    tools::finite::h5::save::bonds(h5svd, state_prefix, StorageLevel::FULL, state, status);
-    tools::finite::h5::save::state(h5svd, state_prefix, StorageLevel::FULL, state, status);
-    tools::common::h5::save::meta(h5svd, StorageLevel::FULL, StorageReason::CHECKPOINT, settings::model::model_type, settings::model::model_size,
-                                  state.get_name(), state_prefix, "", {table_prefix}, status);
-    for(const auto &[idx, gate] : iter::enumerate(gates)) {
-        auto gate_prefix = fmt::format("{}/gate_{}", state_prefix, idx);
-        auto gate_path   = fmt::format("{}/op", gate_prefix);
-        auto swaps       = std::vector<qm::Swap>(gate.swaps.begin(), gate.swaps.end());
-        auto rwaps       = std::vector<qm::Rwap>(gate.rwaps.begin(), gate.rwaps.end());
-        h5svd.writeDataset(gate.op, gate_path, H5D_CHUNKED);
-        h5svd.writeAttribute(gate.pos, gate_prefix, "pos");
-        h5svd.writeAttribute(gate.dim, gate_prefix, "dim");
-        h5svd.writeAttribute(static_cast<size_t>(idx), gate_prefix, "idx");
-        h5svd.writeDataset(swaps, gate_prefix + "/swaps", h5tswap);
-        h5svd.writeDataset(rwaps, gate_prefix + "/rwaps", h5tswap);
     }
 }
 

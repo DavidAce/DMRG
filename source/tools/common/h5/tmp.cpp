@@ -1,4 +1,3 @@
-#include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "io/filesystem.h"
@@ -121,37 +120,18 @@ void tools::common::h5::tmp::create_directory(std::string_view path) {
     } catch(std::exception &ex) { throw except::runtime_error("Failed to create directory: {}", ex.what()); }
 }
 
-void tools::common::h5::tmp::copy_from_tmp(const AlgorithmStatus &status, const h5pp::File &h5file, StorageReason storage_reason,
-                                           std::optional<CopyPolicy> copy_policy) {
+void tools::common::h5::tmp::copy_from_tmp(const h5pp::File &h5file, size_t iter, size_t step, const StorageEvent storage_event, CopyPolicy copy_policy) {
     if(not settings::storage::use_temp_dir) return;
-    if(not copy_policy) return copy_from_tmp(status, h5file, storage_reason, CopyPolicy::TRY);
     if(copy_policy == CopyPolicy::OFF) return;
 
-    // Check if we already copied the file this iteration and step
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;
-    auto                                                                  save_point = std::make_pair(status.iter, status.step);
-
+    auto                                                                  save_point = std::make_pair(iter, step);
     if(copy_policy == CopyPolicy::TRY) {
+        // Check if we already copied the file this iteration and step
+        if(storage_event == StorageEvent::ITER_STATE and iter % settings::storage::copy_from_temp_freq != 0) return;
         if(save_log[h5file.getFilePath()] == save_point) return;
-        switch(storage_reason) {
-            case StorageReason::NONE: return;
-            case StorageReason::SAVEPOINT:
-            case StorageReason::CHECKPOINT:
-                if(status.iter % settings::storage::copy_from_temp_freq != 0) return; // Check that we write according to the frequency given
-            case StorageReason::FINISHED:
-            case StorageReason::PROJ_STATE:
-            case StorageReason::INIT_STATE:
-            case StorageReason::EMIN_STATE:
-            case StorageReason::EMAX_STATE:
-            case StorageReason::BOND_INCREASE:
-            case StorageReason::TRNC_DECREASE:
-            case StorageReason::FES:
-            case StorageReason::MODEL: break;
-        }
-        tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());
-    } else if(copy_policy == CopyPolicy::FORCE)
-        tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());
-
+    }
+    tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());
     save_log[h5file.getFilePath()] = save_point;
 }
 

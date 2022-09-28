@@ -1,15 +1,15 @@
 #pragma once
+#include "h5/storage_info.h"
 #include <h5pp/details/h5ppHid.h>
 #include <map>
 #include <optional>
 #include <string>
 #include <unordered_map>
-
 class AlgorithmStatus;
 enum class StorageLevel;
 enum class ModelType;
 enum class AlgorithmType;
-enum class StorageReason;
+enum class StorageEvent;
 enum class CopyPolicy;
 
 namespace h5pp {
@@ -33,18 +33,15 @@ namespace tools::common::h5 {
         extern std::optional<std::pair<uint64_t, uint64_t>> get_last_save_point(const h5pp::File &h5file, std::string_view link_path);
         template<typename AttrType>
         extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view linkPath, std::string_view attrName, std::string_view linkText, std::optional<h5pp::hid::h5t> h5type = std::nullopt);
-        extern void status   (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
-        extern void mem      (h5pp::File & h5file, std::string_view  table_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
-        extern void timer    (h5pp::File & h5file, std::string_view  state_prefix, const StorageLevel & storage_level, const AlgorithmStatus &status);
-        extern void meta     (h5pp::File &h5file, const StorageLevel &storage_level, const StorageReason &storage_reason,const ModelType & model_type,
-                              size_t model_size, std::string_view  state_name, std::string_view state_prefix, std::string_view model_prefix,
-                              const std::vector<std::string> & table_prfxs, const AlgorithmStatus &status);
+        extern void status   (h5pp::File & h5file, const StorageInfo & sinfo, const AlgorithmStatus &status);
+        extern void mem      (h5pp::File & h5file, const StorageInfo & sinfo);
+        extern void timer    (h5pp::File & h5file, const StorageInfo & sinfo);
+        extern void meta     (h5pp::File &h5file, const StorageInfo & sinfo);
 
     }
     namespace load {
-        extern void status   (const h5pp::File & h5file, std::string_view  state_prefix, AlgorithmStatus & status);
-        extern void timer    (const h5pp::File & h5file, std::string_view  state_prefix, AlgorithmStatus & status);
-
+        extern void status   (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status);
+        extern void timer    (const h5pp::File & h5file, std::string_view state_prefix, const AlgorithmStatus & status);
     }
 
     namespace tmp{
@@ -62,7 +59,7 @@ namespace tools::common::h5 {
         extern std::string_view  get_temporary_filepath(std::string_view  filepath);
         extern std::string_view  get_original_filepath(std::string_view  filepath);
         extern void register_new_file (std::string_view  filepath);
-        extern void copy_from_tmp(const AlgorithmStatus &status, const h5pp::File &h5file, StorageReason storage_reason, std::optional<CopyPolicy> copy_policy);
+        extern void copy_from_tmp(const h5pp::File &h5file, size_t iter, size_t step, StorageEvent storage_event, CopyPolicy copy_policy);
         extern void copy_from_tmp(std::string_view  filepath);
         extern void copy_into_tmp(std::string_view  filepath);
         extern void copy_file(std::string_view  src, std::string_view  tgt);

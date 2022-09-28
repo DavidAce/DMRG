@@ -53,24 +53,21 @@ namespace settings {
      *
      *  enum StorageLevel:
      *       - `NONE`:   no data is saved at all
-     *       - `LIGHT`:  Mainly mid-chain data (energy/variance/polarization, schmidt values, entanglement entropy, lambda matrix, truncation error) , simulation status, and timers (if save_timers == true)
-     *       - `NORMAL`: Same as `LIGHT` + whole-chain measurements like entanglement entropies, truncation errors and schmidt values (lambda-matrices), and model Hamiltonian parameters
-     *       - `FULL`:   Same as `NORMAL` + MPS (Gamma + Lambda matrices) + MPO at each site.
+     *       - `LIGHT`:  Tables have mid-chain data at the last iteration (rows are replaced). No MPS
+     *       - `NORMAL`: Tables have mid-chain data at all iterations (rows are appended). No MPS
+     *       - `FULL`:   Tables have full-chain data at all iterations. MPS is saved.
      *
      * **Note: Resume**
      *
-     * Simulations can only be resumed from a state or checkpoint saved with `StorageLevel::FULL`.
+     * Simulations can only be resumed from a state with `StorageLevel::FULL`, except LBIT simulations, which can always resume.
      *
      * The only exception is `storage_level_model == StorageLevel::NORMAL` which is enough to recreate MPOs, since they can be reconstructed from the Hamiltonian parameter table
      *
      */
     namespace storage {
         inline std::string         output_filepath                 = "output/output.h5";           /*!< Name of the output HDF5 file relative to the execution point  */
-        inline bool                save_timers                     = true;                         /*!< Save timer information to file (on storage level FULL|NORMAL) */
-        inline bool                savepoint_keep_newest_only      = true;                         /*!< If true, a savepoint will overwrite previous savepoints on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline size_t              savepoint_frequency             = 1;                            /*!< How often, in units of iterations, to make a savepoint. 0 disables regular savepoints but bond-update savepoints can still happen */
-        inline bool                checkpoint_keep_newest_only     = true;                         /*!< If true, a checkpoint will overwrite previous checkpoint on file. Otherwise, all iterations are kept (dramaticallay increases file size) */
-        inline size_t              checkpoint_frequency            = 1;                            /*!< How often, in units of iterations, to make a checkpoint. 0 disables checkpoints but bond-update checkpoints can still happen */
+        inline bool                output_append_seed              = true;                         /*!< Append the seed for the random number generator to output_filepath */
+        inline size_t              storage_interval                = 1;                            /*!< Write to file this often, in units of iterations. Applies to StorageEvent::Iteration. */
         inline bool                use_temp_dir                    = true;                         /*!< If true uses a temporary directory for writes in the local drive (usually /tmp) and copies the results afterwards */
         inline size_t              copy_from_temp_freq             = 4;                            /*!< How often, in units of iterations, to copy the hdf5 file in tmp dir to target destination */
         inline std::string         temp_dir                        = "/tmp/DMRG";                  /*!< Local temp directory on the local system. If it does not exist we default to /tmp instead (or whatever is the default) */
@@ -80,17 +77,18 @@ namespace settings {
         inline std::string         file_resume_name                = ""  ;                         /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
         inline size_t              file_resume_iter                = -1ul;                         /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
 
-        inline StorageLevel     storage_level_model      = StorageLevel::LIGHT;  /*!< Storage level for the model realization. LIGHT stores nothing. NORMAL stores the Hamiltonian parameter table, and FULL also the MPO's */
-        inline StorageLevel     storage_level_savepoint  = StorageLevel::LIGHT;  /*!< Storage level for savepoints, which are snapshots used for resume */
-        inline StorageLevel     storage_level_checkpoint = StorageLevel::LIGHT;  /*!< Storage level for checkpoints, which are mid-simulation measurements */
-        inline StorageLevel     storage_level_finished   = StorageLevel::NORMAL; /*!< Storage level for final results written when a simulation terminates */
-        inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;  /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
-        inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for the initial states (for instance when launching a simulation or starting a new state) */
+        inline StorageLevel     storage_level_iter_state = StorageLevel::LIGHT;  /*!< Storage level for states during each iteration.  */
+        inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for states before the zeroth iteration */
+        inline StorageLevel     storage_level_last_state = StorageLevel::LIGHT;  /*!< Storage level for states after the last iteration. */
         inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
         inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
+        inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;  /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
         inline StorageLevel     storage_level_bond_state = StorageLevel::NORMAL; /*!< Storage level for states written on bond limit change */
         inline StorageLevel     storage_level_trnc_state = StorageLevel::NORMAL; /*!< Storage level for states written on truncation error limit change */
         inline StorageLevel     storage_level_fes_state  = StorageLevel::NORMAL; /*!< Storage level for states written during finite entanglement scaling (fes) after the main simulation */
+        inline StorageLevel     storage_level_model      = StorageLevel::NORMAL; /*!< Storage level for the model realization. NONE: OFF. LIGHT|NORMAL|FULL: the Hamiltonian parameter table */
+        inline StorageLevel     storage_level_timers     = StorageLevel::LIGHT;  /*!< Storage level for timers. NONE: off, LIGHT: tid::normal. NORMAL: tid::extra. FULL: tid::detailed */
+        inline StorageLevel     storage_level_tables     = StorageLevel::LIGHT;  /*!< Storage level for tables. Where applicable: NONE: off, LIGHT: center site. NORMAL: center sites. FULL: all sites */
 
         namespace tmp{
             inline std::string hdf5_temp_path;
@@ -286,7 +284,6 @@ namespace settings {
         inline bool     compute_lbit_length     = false;                           /*!< Calculate the characteristic length-scale of lbits */
         inline bool     compute_lbit_stats      = false;                           /*!< Calculate the statistics of characteristic length-scale for various u and f parameters */
         inline bool     store_wavefn            = false;                           /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-        inline bool     save_swap_gates         = false;                           /*!< Saves the state and swap gates used later for benchmarks */
 }
 
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */

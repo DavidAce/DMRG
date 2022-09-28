@@ -2,7 +2,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
-#include "io/table_types.h"
+#include "io/hdf5_types.h"
 #include "math/num.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
@@ -20,19 +20,19 @@
 
 namespace tools::finite::h5 {
 
-    void tools::finite::h5::save::measurements(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level,
-                                               const TensorsFinite &tensors, const AlgorithmStatus &status) {
-        save::measurements(h5file, table_prefix, storage_level, *tensors.state, *tensors.model, *tensors.edges, status);
+    void tools::finite::h5::save::measurements(h5pp::File &h5file, const StorageInfo &sinfo, const TensorsFinite &tensors, const AlgorithmStatus &status) {
+        save::measurements(h5file, sinfo, *tensors.state, *tensors.model, *tensors.edges, status);
     }
 
-    void save::measurements(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
-        std::string table_path = fmt::format("{}/measurements", table_prefix);
+    void save::measurements(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
+                            const AlgorithmStatus &status) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        sinfo.assert_well_defined();
+        std::string table_path = fmt::format("{}/measurements", sinfo.get_state_prefix());
 
         // Check if the current entry has already been saved
         auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
-        auto save_point    = std::make_pair(status.iter, status.step);
+        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
         if(h5_save_point and h5_save_point.value() == save_point) return; // Already saved
 
         tools::log->trace("Appending to table: {}", table_path);
@@ -41,15 +41,16 @@ namespace tools::finite::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
 
         h5pp_table_measurements_finite::table measurement_entry{};
-        measurement_entry.step     = static_cast<uint64_t>(status.step);
-        measurement_entry.iter     = static_cast<uint64_t>(status.iter);
-        measurement_entry.position = static_cast<long>(status.position);
+        measurement_entry.step     = static_cast<uint64_t>(sinfo.step);
+        measurement_entry.iter     = static_cast<uint64_t>(sinfo.iter);
+        measurement_entry.position = static_cast<long>(sinfo.position);
+        measurement_entry.event    = sinfo.storage_event;
         measurement_entry.length   = static_cast<uint64_t>(tools::finite::measure::length(state));
-        measurement_entry.bond_lim = status.bond_lim;
+        measurement_entry.bond_lim = sinfo.bond_lim;
         measurement_entry.bond_max = status.bond_max;
         measurement_entry.bond_mid = static_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
         measurement_entry.norm     = tools::finite::measure::norm(state);
-        if(status.algo_type != AlgorithmType::fLBIT) {
+        if(sinfo.algo_type != AlgorithmType::fLBIT) {
             measurement_entry.energy                 = tools::finite::measure::energy(state, model, edges);
             measurement_entry.energy_variance        = tools::finite::measure::energy_variance(state, model, edges);
             measurement_entry.energy_variance_lowest = status.energy_variance_lowest;
@@ -70,54 +71,46 @@ namespace tools::finite::h5 {
         h5file.writeAttribute(status.bond_max, table_path, "bond_max");
     }
 
-    void save::correlations(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const AlgorithmStatus &status) {
-        if(storage_level <= StorageLevel::LIGHT) return;
-        if(status.algo_type != AlgorithmType::xDMRG) return;
-        auto t_hdf = tid::tic_scope("correlations", tid::level::extra);
-        if(not status.algorithm_has_finished) return;
+    void save::correlations(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.algo_type != AlgorithmType::xDMRG) return;
+        if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
         tools::finite::measure::correlation_matrix_xyz(state);
-        tools::log->trace("Saving correlations to {}", state_prefix);
         /* clang-format off */
-        if(state.measurements.correlation_matrix_sx) save::data(h5file, state.measurements.correlation_matrix_sx.value(), "correlation_matrix_sx", state_prefix, storage_level, status);
-        if(state.measurements.correlation_matrix_sy) save::data(h5file, state.measurements.correlation_matrix_sy.value(), "correlation_matrix_sy", state_prefix, storage_level, status);
-        if(state.measurements.correlation_matrix_sz) save::data(h5file, state.measurements.correlation_matrix_sz.value(), "correlation_matrix_sz", state_prefix, storage_level, status);
+        if(state.measurements.correlation_matrix_sx) save::data(h5file, sinfo, state.measurements.correlation_matrix_sx.value(), "correlation_matrix_sx", sinfo.get_state_prefix());
+        if(state.measurements.correlation_matrix_sy) save::data(h5file, sinfo, state.measurements.correlation_matrix_sy.value(), "correlation_matrix_sy", sinfo.get_state_prefix());
+        if(state.measurements.correlation_matrix_sz) save::data(h5file, sinfo, state.measurements.correlation_matrix_sz.value(), "correlation_matrix_sz", sinfo.get_state_prefix());
         /* clang-format on */
     }
-    void save::structure_factors(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                                 const AlgorithmStatus &status) {
-        if(storage_level <= StorageLevel::LIGHT) return;
-        if(status.algo_type != AlgorithmType::xDMRG) return;
-        if(not status.algorithm_has_finished) return;
-        auto t_hdf = tid::tic_scope("structure_factors", tid::level::extra);
+    void save::structure_factors(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.algo_type != AlgorithmType::xDMRG) return;
+        if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
         tools::finite::measure::structure_factors_xyz(state);
-        tools::log->trace("Saving structure factors to {}", table_prefix);
-        /* clang-format off */
-        save::data_as_table(h5file, table_prefix, status, state.measurements.structure_factor_x, "structure_factor_x", "structure factor x", "f");
-        save::data_as_table(h5file, table_prefix, status, state.measurements.structure_factor_y, "structure_factor_y", "structure factor y", "f");
-        save::data_as_table(h5file, table_prefix, status, state.measurements.structure_factor_z, "structure_factor_z", "structure factor z", "f");
-        /* clang-format on */
+        save::data_as_table(h5file, sinfo, state.measurements.structure_factor_x, "structure_factor_x", "structure factor x", "f");
+        save::data_as_table(h5file, sinfo, state.measurements.structure_factor_y, "structure_factor_y", "structure factor y", "f");
+        save::data_as_table(h5file, sinfo, state.measurements.structure_factor_z, "structure_factor_z", "structure factor z", "f");
     }
 
-    void save::kvornings_marker(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                                const AlgorithmStatus &status) {
-        if(storage_level <= StorageLevel::LIGHT) return;
-        if(status.algo_type != AlgorithmType::xDMRG) return;
-        if(not status.algorithm_has_finished) return;
-        auto t_hdf = tid::tic_scope("kvornings_marker", tid::level::extra);
+    void save::kvornings_marker(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.algo_type != AlgorithmType::xDMRG) return;
+        if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
         tools::finite::measure::kvornings_marker(state);
-        tools::log->trace("Saving kvornings marker to {}", table_prefix);
-        save::data_as_table(h5file, table_prefix, status, state.measurements.kvornings_marker, "kvornings_marker", "Kvornings marker", "eigval");
+        save::data_as_table(h5file, sinfo, state.measurements.kvornings_marker, "kvornings_marker", "Kvornings marker", "eigval");
     }
 
     template<typename T>
-    void save::data_as_table(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const T *const data, size_t size,
-                             std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
-        auto table_path = fmt::format("{}/{}", table_prefix, table_name);
+    void save::data_as_table(h5pp::File &h5file, const StorageInfo &sinfo, const T *const data, size_t size, std::string_view table_name,
+                             std::string_view table_title, std::string_view fieldname) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        auto t_hdf      = tid::tic_scope(table_name);
+        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), table_name);
         tools::log->trace("Appending to table: {}", table_path);
+
         // Check if the current entry has already been appended
         auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
-        auto save_point    = std::make_pair(status.iter, status.step);
+        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
         if(h5_save_point and h5_save_point.value() == save_point) return;
 
         // Register the table and create if it doesn't exist
@@ -125,51 +118,50 @@ namespace tools::finite::h5 {
         if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
-        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_lim, data, size);
+        auto entry = h5pp_table_data<T>::make_entry(sinfo.iter, sinfo.step, sinfo.position, sinfo.storage_event, sinfo.bond_lim, data, size);
         h5file.appendTableRecords(entry, table_path);
-        h5file.writeAttribute(status.iter, table_path, "iter");
-        h5file.writeAttribute(status.step, table_path, "step");
-        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+        h5file.writeAttribute(sinfo.iter, table_path, "iter");
+        h5file.writeAttribute(sinfo.step, table_path, "step");
+        h5file.writeAttribute(sinfo.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(sinfo.bond_max, table_path, "bond_max");
     }
+
     template<typename T>
-    void save::data_as_table_vla(h5pp::File &h5file, std::string_view table_prefix, const AlgorithmStatus &status, const std::vector<T> &data,
-                                 const h5pp::hid::h5t &h5elem_t, std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
-        auto table_path = fmt::format("{}/{}", table_prefix, table_name);
-        tools::log->trace("Appending to table: {}", table_path);
+    void save::data_as_table_vla(h5pp::File &h5file, const StorageInfo &sinfo, const std::vector<T> &data, const h5pp::hid::h5t &h5elem_t,
+                                 std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        auto t_hdf      = tid::tic_scope(table_name);
+        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), table_name);
         // Check if the current entry has already been appended
         auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
-        auto save_point    = std::make_pair(status.iter, status.step);
+        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
         if(h5_save_point and h5_save_point.value() == save_point) return;
+        tools::log->trace("Appending to table: {}", table_path);
 
         // Register the table and create if it doesn't exist
         auto h5_type = h5pp_table_data<T>::register_table_type(h5elem_t, data.size(), fieldname);
         if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
-        auto entry = h5pp_table_data<T>::make_entry(status.iter, status.step, status.bond_lim, data.data(), data.size());
-
+        auto entry = h5pp_table_data<T>::make_entry(sinfo.iter, sinfo.step, sinfo.position, sinfo.storage_event, sinfo.bond_lim, data.data(), data.size());
         h5file.appendTableRecords(entry, table_path);
-        h5file.writeAttribute(status.iter, table_path, "iter");
-        h5file.writeAttribute(status.step, table_path, "step");
-        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+        h5file.writeAttribute(sinfo.iter, table_path, "iter");
+        h5file.writeAttribute(sinfo.step, table_path, "step");
+        h5file.writeAttribute(sinfo.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(sinfo.bond_max, table_path, "bond_max");
     }
 
-    void save::bond_dimensions(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                               const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
-        auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::extra);
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
+    void save::bond_dimensions(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        data_as_table(h5file, sinfo, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
     }
 
-    void save::schmidt_values(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                              const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+    void save::schmidt_values(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto                     t_hdf      = tid::tic_scope("schmidt_values", tid::level::extra);
-        auto                     table_path = fmt::format("{}/{}", table_prefix, "schmidt_values");
+        auto                     table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "schmidt_values");
         const long               cols       = state.get_length<long>() + 1; // Number of bonds matrices (1d arrays)
-        const long               rows       = status.bond_max;              // Max number of schmidt values in each bond (singular values)
+        const long               rows       = sinfo.bond_max;               // Max number of schmidt values in each bond (singular values)
         long                     past_LC    = 0;                            // Add one after collecting LC
         Eigen::Tensor<double, 2> bonds(rows, cols);                         // Collect all bond matrices.
         bonds.setZero();
@@ -193,37 +185,33 @@ namespace tools::finite::h5 {
         }
         h5file.appendToDataset(bonds, table_path, 2);
         h5file.writeAttribute(state.get_position<long>(), table_path, "position");
-        h5file.writeAttribute(status.iter, table_path, "iter");
-        h5file.writeAttribute(status.step, table_path, "step");
-        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+        h5file.writeAttribute(sinfo.iter, table_path, "iter");
+        h5file.writeAttribute(sinfo.step, table_path, "step");
+        h5file.writeAttribute(sinfo.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(sinfo.bond_max, table_path, "bond_max");
     }
 
-    void save::truncation_errors(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                                 const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+    void save::truncation_errors(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope("truncation_errors", tid::level::extra);
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::truncation_errors(state), "truncation_errors", "Truncation errors", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::truncation_errors(state), "truncation_errors", "Truncation errors", "L_");
     }
 
-    void save::entropies_neumann(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                                 const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+    void save::entropies_neumann(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies",
-                      "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
     }
 
-    void save::number_probabilities(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                                    const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+    void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
         if(not state.measurements.number_probabilities) return;
         auto t_hdf      = tid::tic_scope("probabilities", tid::level::extra);
-        auto table_path = fmt::format("{}/{}", table_prefix, "number_probabilities");
+        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "number_probabilities");
         tools::log->trace("Appending to table: {}", table_path);
         // Check if the current entry has already been appended
         auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_path);
-        auto save_point    = std::make_pair(status.iter, status.step);
+        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
         if(h5_save_point and h5_save_point.value() == save_point) return;
 
         if(not h5file.linkExists(table_path)) {
@@ -234,56 +222,45 @@ namespace tools::finite::h5 {
             h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
         }
         h5file.appendToDataset(state.measurements.number_probabilities.value(), table_path, 2);
-        h5file.writeAttribute(status.iter, table_path, "iter");
-        h5file.writeAttribute(status.step, table_path, "step");
-        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+        h5file.writeAttribute(sinfo.iter, table_path, "iter");
+        h5file.writeAttribute(sinfo.step, table_path, "step");
+        h5file.writeAttribute(sinfo.bond_lim, table_path, "bond_lim");
+        h5file.writeAttribute(sinfo.bond_max, table_path, "bond_max");
     }
 
-    void save::entropies_renyi(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                               const AlgorithmStatus &status) {
-        if(storage_level <= StorageLevel::LIGHT) return;
+    void save::entropies_renyi(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
         auto inf   = std::numeric_limits<double>::infinity();
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 3), "renyi_entropies_3", "Renyi Entropy 3", "L_");
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, 4), "renyi_entropies_4", "Renyi Entropy 4", "L_");
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::renyi_entropies(state, inf), "renyi_entropies_inf", "Renyi Entropy inf", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 3), "renyi_entropies_3", "Renyi Entropy 3", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 4), "renyi_entropies_4", "Renyi Entropy 4", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, inf), "renyi_entropies_inf", "Renyi Entropy inf", "L_");
     }
 
-    void save::entropies_number(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                                const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
-        if(status.algo_type != AlgorithmType::fLBIT) return;
-
+    void save::entropies_number(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.algo_type != AlgorithmType::fLBIT) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
-        data_as_table(h5file, table_prefix, status, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
     }
 
-    void save::expectations(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                            const AlgorithmStatus &status) {
-        if(storage_level <= StorageLevel::LIGHT) return;
-        if(status.algo_type != AlgorithmType::xDMRG) return;
+    void save::expectations(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.algo_type != AlgorithmType::xDMRG) return;
         auto t_hdf = tid::tic_scope("expectations", tid::level::extra);
         tools::finite::measure::expectation_values_xyz(state);
-        tools::log->trace("Saving expectations to {}", table_prefix);
+        tools::log->trace("Saving expectations to {}", sinfo.get_state_prefix());
         /* clang-format off */
-        save::data_as_table(h5file, table_prefix, status, state.measurements.expectation_values_sx, "expectation_values_sx", "<sigma x>", "L_");
-        save::data_as_table(h5file, table_prefix, status, state.measurements.expectation_values_sy, "expectation_values_sy", "<sigma y>", "L_");
-        save::data_as_table(h5file, table_prefix, status, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
+        save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sx, "expectation_values_sx", "<sigma x>", "L_");
+        save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sy, "expectation_values_sy", "<sigma y>", "L_");
+        save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
         /* clang-format on */
     }
 
-    void save::bonds(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                     const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+    void save::bonds(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope("bonds", tid::level::extra);
-        // Check if the current entry has already been saved
-        auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, table_prefix);
-        auto save_point    = std::make_pair(status.iter, status.step);
-        if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
-        tools::log->trace("Storing [{: ^6}]: bond matrices", enum2sv(storage_level));
-
         // Transform from cplx to real to save space
         using real                                 = MpsSite::real;
         auto                                h5real = h5pp::type::getH5Type<real>();
@@ -295,21 +272,20 @@ namespace tools::finite::h5 {
         }
         std::vector<hvl_t> bonds_hvla;
         for(auto &bond : bonds_real) bonds_hvla.emplace_back(hvl_t{static_cast<size_t>(bond.size()), bond.data()});
-        data_as_table_vla(h5file, table_prefix, status, bonds_hvla, h5real, "bonds", "Singular Values", "L_");
+        data_as_table_vla(h5file, sinfo, bonds_hvla, h5real, "bonds", "Singular Values", "L_");
     }
 
-    void save::state(h5pp::File &h5file, std::string_view state_prefix, const StorageLevel &storage_level, const StateFinite &state,
-                     const AlgorithmStatus &status) {
-        if(storage_level < StorageLevel::FULL) return;
+    void save::state(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level < StorageLevel::FULL) return;
         auto t_hdf      = tid::tic_scope("state", tid::level::extra);
-        auto mps_prefix = fmt::format("{}/mps", state_prefix);
+        auto mps_prefix = sinfo.get_mps_prefix();
 
         // Check if the current entry has already been saved
         auto h5_save_point_mps = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
-        auto save_point        = std::make_pair(status.iter, status.step);
+        auto save_point        = std::make_pair(sinfo.iter, sinfo.step);
         if(h5_save_point_mps and h5_save_point_mps.value() == save_point) return;
 
-        tools::log->trace("Storing [{: ^6}]: mps tensors", enum2sv(storage_level));
+        tools::log->trace("Storing [{: ^6}]: mps tensors", enum2sv(sinfo.storage_level));
         for(const auto &mps : state.mps_sites) {
             auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
             h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
@@ -321,16 +297,18 @@ namespace tools::finite::h5 {
         h5file.writeAttribute(state.get_length(), mps_prefix, "model_size");
         h5file.writeAttribute(state.get_position<long>(), mps_prefix, "position");
         h5file.writeAttribute(state.get_labels(), mps_prefix, "labels");
-        h5file.writeAttribute(status.iter, mps_prefix, "iter");
-        h5file.writeAttribute(status.step, mps_prefix, "step");
-        h5file.writeAttribute(status.bond_lim, mps_prefix, "bond_lim");
-        h5file.writeAttribute(status.bond_max, mps_prefix, "bond_max");
+        h5file.writeAttribute(sinfo.iter, mps_prefix, "iter");
+        h5file.writeAttribute(sinfo.step, mps_prefix, "step");
+        h5file.writeAttribute(sinfo.bond_lim, mps_prefix, "bond_lim");
+        h5file.writeAttribute(sinfo.bond_max, mps_prefix, "bond_max");
+        // Save the storage level as an attribute, to decide if we can resume later
+        h5file.writeAttribute(sinfo.storage_level, mps_prefix, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
     }
 
     /*! Write down the Hamiltonian model type and site info as attributes */
-    void save::model(h5pp::File &h5file, std::string_view table_prefix, const StorageLevel &storage_level, const ModelFinite &model) {
-        if(storage_level == StorageLevel::NONE) return;
-        std::string table_path = fmt::format("{}/hamiltonian", table_prefix);
+    void save::model(h5pp::File &h5file, const StorageInfo &sinfo, const ModelFinite &model) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        std::string table_path = fmt::format("{}/hamiltonian", sinfo.get_state_prefix());
         if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
         tools::log->trace("Storing table: [{}]", table_path);
@@ -341,28 +319,27 @@ namespace tools::finite::h5 {
     }
 
     /*! Write all the MPO's with site info in attributes */
-    void tools::finite::h5::save::mpo(h5pp::File &h5file, std::string_view model_prefix, const StorageLevel &storage_level, const ModelFinite &model) {
-        if(storage_level < StorageLevel::FULL) return;
-        std::string mpo_prefix = fmt::format("{}/mpo", model_prefix);
-        // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
+    void tools::finite::h5::save::mpo(h5pp::File &h5file, const StorageInfo &sinfo, const ModelFinite &model) {
+        if(sinfo.storage_level < StorageLevel::FULL) return;
+        std::string mpo_prefix = fmt::format("{}/model/mpo", sinfo.get_state_prefix());
+        // We do not expect the MPO's to change. Therefore, if they exist, there is nothing else to do here
         if(h5file.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
         auto t_hdf = tid::tic_scope("mpo", tid::level::extra);
-        tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(storage_level));
+        tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(sinfo.storage_level));
         for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5file, mpo_prefix); }
         h5file.writeAttribute(settings::model::model_size, mpo_prefix, "model_size");
         h5file.writeAttribute(enum2sv(settings::model::model_type), mpo_prefix, "model_type");
     }
 
     template<typename T>
-    void save::data(h5pp::File &h5file, const T &data, std::string_view data_name, std::string_view prefix, const StorageLevel &storage_level,
-                    const AlgorithmStatus &status) {
-        if(storage_level == StorageLevel::NONE) return;
+    void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, std::string_view prefix) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto t_data    = tid::tic_scope("data");
         auto data_path = fmt::format("{}/{}", prefix, data_name);
 
         // Check if the current entry has already been saved
         auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, data_path);
-        auto save_point    = std::make_pair(status.iter, status.step);
+        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
         if(h5_save_point and h5_save_point.value() == save_point) return; // Already saved
 
         H5D_layout_t layout;
@@ -371,247 +348,104 @@ namespace tools::finite::h5 {
         else
             layout = H5D_layout_t::H5D_CHUNKED;
         h5file.writeDataset(data, data_path, layout);
-        h5file.writeAttribute(status.iter, data_path, "iter");
-        h5file.writeAttribute(status.step, data_path, "step");
-        h5file.writeAttribute(status.bond_lim, data_path, "bond_lim");
-        h5file.writeAttribute(status.bond_max, data_path, "bond_max");
+        h5file.writeAttribute(sinfo.iter, data_path, "iter");
+        h5file.writeAttribute(sinfo.step, data_path, "step");
+        h5file.writeAttribute(sinfo.bond_lim, data_path, "bond_lim");
+        h5file.writeAttribute(sinfo.bond_max, data_path, "bond_max");
     }
 
-    template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 2> &data, std::string_view data_name, std::string_view prefix,
-                             const StorageLevel &storage_level, const AlgorithmStatus &status);
-    template void save::data(h5pp::File &h5file, const Eigen::Tensor<double, 1> &data, std::string_view data_name, std::string_view prefix,
-                             const StorageLevel &storage_level, const AlgorithmStatus &status);
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<double, 2> &data, std::string_view data_name,
+                             std::string_view prefix);
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<double, 1> &data, std::string_view data_name,
+                             std::string_view prefix);
 
     template<typename T>
-    void save::data(h5pp::File &h5file, const T &data, std::string_view data_name, std::string_view state_name, const AlgorithmStatus &status,
-                    StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+    void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, CopyPolicy copy_policy) {
         // Setup this save
-        auto                     t_h5     = tid::tic_scope("h5");
-        auto                     t_reason = tid::tic_scope(enum2sv(storage_reason), tid::level::extra);
-        StorageLevel             storage_level;
-        std::string              state_prefix;
-        std::string              model_prefix;
-        std::string              timer_prefix;
-        std::vector<std::string> table_prefxs;
-        tools::finite::h5::save::setup_prefix(status, storage_reason, storage_level, state_name, state_prefix, model_prefix, timer_prefix, table_prefxs);
+        auto t_h5     = tid::tic_scope("h5");
+        auto t_reason = tid::tic_scope(enum2sv(sinfo.storage_event), tid::level::extra);
 
         std::string prefix;
-        switch(storage_reason) {
-            case StorageReason::MODEL: {
-                prefix = model_prefix;
+        switch(sinfo.storage_event) {
+            case StorageEvent::MODEL: {
+                prefix = fmt::format("{}/model", sinfo.algo_name);
                 break;
             }
             default: {
-                prefix = state_prefix;
+                prefix = sinfo.get_state_prefix();
                 break;
             }
         }
 
-        save::data(h5file, data, data_name, prefix, storage_level, status);
-        tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
+        save::data(h5file, sinfo, data, data_name, prefix);
+        tools::common::h5::tmp::copy_from_tmp(h5file, sinfo.iter, sinfo.step, sinfo.storage_event, copy_policy);
     }
 
-    template void save::data(h5pp::File &h5file, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name, std::string_view state_name,
-                             const AlgorithmStatus &status, StorageReason storage_reason, std::optional<CopyPolicy> copy_policy);
+    template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name,
+                             CopyPolicy copy_policy);
 
-    void save::setup_prefix(const AlgorithmStatus &status, const StorageReason &storage_reason, StorageLevel &storage_level, std::string_view state_name,
-                            std::string &state_prefix, std::string &model_prefix, std::string &timer_prefix, std::vector<std::string> &table_prefxs) {
-        // Setup this save
-        state_prefix  = fmt::format("{}/{}", status.algo_type_sv(), state_name); // May get modified
-        model_prefix  = fmt::format("{}/model", status.algo_type_sv());
-        timer_prefix  = fmt::format("{}/timers", state_prefix);
-        table_prefxs  = {fmt::format("{}/tables", state_prefix)}; // Common tables
-        storage_level = StorageLevel::NONE;
-
-        switch(storage_reason) {
-            case StorageReason::NONE: return;
-            case StorageReason::FINISHED: {
-                storage_level = settings::storage::storage_level_finished;
-                state_prefix += "/finished";
-                break;
-            }
-            case StorageReason::SAVEPOINT: {
-                storage_level = settings::storage::storage_level_savepoint;
-                if(settings::storage::savepoint_frequency == 0) storage_level = StorageLevel::NONE;
-                if(settings::storage::savepoint_frequency > 0 and num::mod(status.iter, settings::storage::savepoint_frequency) != 0)
-                    storage_level = StorageLevel::NONE;
-
-                state_prefix += "/savepoint";
-                if(settings::storage::savepoint_keep_newest_only)
-                    state_prefix += "/iter_last";
-                else
-                    state_prefix += fmt::format("/iter_{}", status.iter);
-                break;
-            }
-            case StorageReason::CHECKPOINT: {
-                storage_level = settings::storage::storage_level_checkpoint;
-                if(settings::storage::checkpoint_frequency == 0) storage_level = StorageLevel::NONE;
-                if(settings::storage::checkpoint_frequency > 0 and num::mod(status.iter, settings::storage::checkpoint_frequency) != 0)
-                    storage_level = StorageLevel::NONE;
-
-                state_prefix += "/checkpoint";
-                if(settings::storage::checkpoint_keep_newest_only)
-                    state_prefix += "/iter_last";
-                else
-                    state_prefix += fmt::format("/iter_{}", status.iter);
-                break;
-            }
-            case StorageReason::BOND_INCREASE: {
-                if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) storage_level = StorageLevel::NONE;
-                storage_level = settings::storage::storage_level_bond_state;
-                state_prefix += "/bond";
-                table_prefxs = {state_prefix}; // Does not pollute common tables
-                break;
-            }
-            case StorageReason::TRNC_DECREASE: {
-                if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) storage_level = StorageLevel::NONE;
-                storage_level = settings::storage::storage_level_trnc_state;
-                state_prefix += "/trnc";
-                table_prefxs = {state_prefix}; // Does not pollute common tables
-                break;
-            }
-            case StorageReason::FES: {
-                if(settings::strategy::fes_rate == 0.0) storage_level = StorageLevel::NONE;
-                storage_level = settings::storage::storage_level_fes_state;
-                state_prefix += "/fes";
-                table_prefxs = {state_prefix}; // Does not pollute common tables
-                break;
-            }
-            case StorageReason::PROJ_STATE: {
-                storage_level = settings::storage::storage_level_proj_state;
-                state_prefix += "/projection";
-                table_prefxs = {state_prefix}; // Does not pollute common tables
-                break;
-            }
-            case StorageReason::INIT_STATE: {
-                storage_level = settings::storage::storage_level_init_state;
-                state_prefix += "/state_init";
-                table_prefxs = {state_prefix}; // Does not pollute common tables
-                break;
-            }
-            case StorageReason::EMIN_STATE: {
-                storage_level = settings::storage::storage_level_emin_state;
-                break;
-            }
-            case StorageReason::EMAX_STATE: {
-                storage_level = settings::storage::storage_level_emax_state;
-                break;
-            }
-            case StorageReason::MODEL: {
-                storage_level = settings::storage::storage_level_model;
-                break;
-            }
-        }
-    }
-
-    void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, const StorageReason &storage_reason,
-                          std::optional<CopyPolicy> copy_policy) {
-        save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, storage_reason, copy_policy);
+    void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, StorageEvent storage_event, CopyPolicy copy_policy) {
+        save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, storage_event, copy_policy);
     }
 
     void save::simulation(h5pp::File &h5file, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status,
-                          const StorageReason &storage_reason, std::optional<CopyPolicy> copy_policy) {
-        auto                     t_h5     = tid::tic_scope("h5");
-        auto                     t_sim    = tid::tic_scope("sim");
-        auto                     t_reason = tid::tic_scope(enum2sv(storage_reason));
-        StorageLevel             storage_level;
-        std::string              state_prefix;
-        std::string              model_prefix;
-        std::string              timer_prefix;
-        std::vector<std::string> table_prefxs;
-        tools::finite::h5::save::setup_prefix(status, storage_reason, storage_level, state.get_name(), state_prefix, model_prefix, timer_prefix, table_prefxs);
+                          StorageEvent event, CopyPolicy copy_policy) {
+        if(not state.position_is_inward_edge()) return;
+        auto sinfo = StorageInfo(status, state.get_name(), event);
+        if(sinfo.storage_event == StorageEvent::NONE) return;
+        if(sinfo.storage_level == StorageLevel::NONE) return;
 
-        // Additional constraints
-        switch(storage_reason) {
-            case StorageReason::NONE: return;
-            case StorageReason::SAVEPOINT:
-            case StorageReason::CHECKPOINT: {
-                if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
-                break;
-            }
-            case StorageReason::PROJ_STATE: {
-                if(storage_level != StorageLevel::NONE) {
-                    if(not state.position_is_inward_edge()) storage_level = StorageLevel::NONE;
-                    auto state_projected = tools::finite::ops::get_projection_to_nearest_axis(state, settings::strategy::target_axis,
-                                                                                              svd::config(status.bond_lim, status.trnc_lim));
-                    return save::simulation(h5file, state_projected, model, edges, status, storage_reason, copy_policy);
-                }
-                break;
-            }
-            case StorageReason::FINISHED: {
-                // Either checkpoint or savepoint may already have the same data.
-                // We can look for either of those under /common/finished, and make a soft-link
-                // If /finished has a higher storage level, it will write what is missing into the soft link
-                if(not h5file.linkExists(state_prefix)) {
-                    auto duplicate_prefix = common::h5::find::find_duplicate_save(h5file, state_prefix, status);
-                    if(duplicate_prefix) {
-                        // We have a match! attrName is the path to a group containing finished data already.
-                        // We make a soft link to it, and keep adding data if necessary.
-                        tools::log->debug("Creating soft link {} -> {}", state_prefix, duplicate_prefix.value());
-                        h5file.createSoftLink(duplicate_prefix.value(), state_prefix);
-                    }
-                }
-                break;
-            }
+        auto t_h5     = tid::tic_scope("h5");
+        auto t_sim    = tid::tic_scope("sim");
+        auto t_reason = tid::tic_scope(enum2sv(status.event));
 
-            case StorageReason::INIT_STATE:
-            case StorageReason::EMIN_STATE:
-            case StorageReason::EMAX_STATE:
-            case StorageReason::BOND_INCREASE:
-            case StorageReason::TRNC_DECREASE:
-            case StorageReason::FES:
-            case StorageReason::MODEL: break;
-        }
-
-        if(storage_level == StorageLevel::NONE) return;
-        if(state_prefix.empty()) throw except::runtime_error("State prefix is empty");
-        tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}] | model prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level),
-                          state_prefix, model_prefix);
-
-        // The file cam be kept open during writes
-        h5file.setKeepFileOpened();
+        tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
+                          sinfo.get_state_prefix());
 
         // Start saving tensors and metadata
-        if(storage_reason == StorageReason::MODEL) {
-            tools::finite::h5::save::model(h5file, model_prefix, storage_level, model);
-            tools::finite::h5::save::mpo(h5file, model_prefix, storage_level, model);
-        } else {
-            switch(storage_reason) {
-                case StorageReason::BOND_INCREASE:
-                case StorageReason::TRNC_DECREASE:
-                case StorageReason::FES: break;
-                default: {
-                    tools::finite::h5::save::state(h5file, state_prefix, storage_level, state, status);
-                    tools::finite::h5::save::correlations(h5file, state_prefix, storage_level, state, status);
-                    break;
-                }
+        if(sinfo.storage_event == StorageEvent::MODEL) {
+            tools::finite::h5::save::model(h5file, sinfo, model);
+            return;
+        }
+        // The file can be kept open during writes
+        h5file.setKeepFileOpened();
+
+        switch(sinfo.storage_event) {
+            case StorageEvent::BOND_INCREASE:
+            case StorageEvent::TRNC_DECREASE:
+            case StorageEvent::FES: break;
+            default: {
+                tools::finite::h5::save::state(h5file, sinfo, state);
+                tools::finite::h5::save::correlations(h5file, sinfo, state);
+                break;
             }
         }
-        tools::common::h5::save::meta(h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, state.get_name(),
-                                      state_prefix, model_prefix, table_prefxs, status);
+
+        //        tools::common::h5::save::meta(h5file, storage_level, storage_event, settings::model::model_type, settings::model::model_size,
+        //        state.get_name(),
+        //                                      state_prefix, model_prefix, status);
 
         // The main results have now been written. Next we append data to tables
-        for(const auto &table_prefix : table_prefxs) {
-            if(storage_reason == StorageReason::MODEL) break;
-            tools::common::h5::save::status(h5file, table_prefix, storage_level, status);
-            tools::common::h5::save::mem(h5file, table_prefix, storage_level, status);
-            tools::common::h5::save::timer(h5file, table_prefix, storage_level, status);
-            tools::finite::h5::save::measurements(h5file, table_prefix, storage_level, state, model, edges, status);
-            tools::finite::h5::save::bond_dimensions(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::bonds(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::schmidt_values(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::truncation_errors(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::entropies_neumann(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::entropies_renyi(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::entropies_number(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::expectations(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::structure_factors(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::kvornings_marker(h5file, table_prefix, storage_level, state, status);
-            tools::finite::h5::save::number_probabilities(h5file, table_prefix, storage_level, state, status);
-        }
+        tools::common::h5::save::status(h5file, sinfo, status);
+        tools::common::h5::save::mem(h5file, sinfo);
+        tools::common::h5::save::timer(h5file, sinfo);
+        tools::finite::h5::save::measurements(h5file, sinfo, state, model, edges, status);
+        tools::finite::h5::save::bond_dimensions(h5file, sinfo, state);
+        tools::finite::h5::save::bonds(h5file, sinfo, state);
+        tools::finite::h5::save::schmidt_values(h5file, sinfo, state);
+        tools::finite::h5::save::truncation_errors(h5file, sinfo, state);
+        tools::finite::h5::save::entropies_neumann(h5file, sinfo, state);
+        tools::finite::h5::save::entropies_renyi(h5file, sinfo, state);
+        tools::finite::h5::save::entropies_number(h5file, sinfo, state);
+        tools::finite::h5::save::expectations(h5file, sinfo, state);
+        tools::finite::h5::save::structure_factors(h5file, sinfo, state);
+        tools::finite::h5::save::kvornings_marker(h5file, sinfo, state);
+        tools::finite::h5::save::number_probabilities(h5file, sinfo, state);
+
+        // The file can now be closed
         h5file.setKeepFileClosed();
 
         // Copy from temporary location to destination depending on given policy
-        tools::common::h5::tmp::copy_from_tmp(status, h5file, storage_reason, copy_policy);
+        tools::common::h5::tmp::copy_from_tmp(h5file, sinfo.iter, sinfo.step, sinfo.storage_event, copy_policy);
     }
 }

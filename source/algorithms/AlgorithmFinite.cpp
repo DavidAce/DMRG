@@ -10,6 +10,7 @@
 #include "tensors/model/ModelFinite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
+#include "tools/common/h5/storage_info.h"
 #include "tools/common/log.h"
 #include "tools/finite/env.h"
 #include "tools/finite/h5.h"
@@ -87,10 +88,9 @@ void AlgorithmFinite::run_postprocessing() {
         tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
         tensors.rebuild_edges();
     }
-    write_to_file(StorageReason::BOND_INCREASE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
-    write_to_file(StorageReason::CHECKPOINT, CopyPolicy::OFF);    // To update checkpoint/iter_# or iter_last
-    write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);    // To compare the finished state to a projected one
-    write_to_file(StorageReason::FINISHED, CopyPolicy::FORCE);    // To get a /finished state (which points to /iter_last)
+    write_to_file(StorageEvent::BOND_INCREASE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
+    write_to_file(StorageEvent::PROJ_STATE, CopyPolicy::OFF);    // To compare the finished state to a projected one
+    write_to_file(StorageEvent::LAST_STATE, CopyPolicy::FORCE);  // For final mps
     print_status_full();
     run_fes_analysis();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
@@ -310,7 +310,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         tensors.rebuild_edges();
     }
     // Write current results before updating bond dimension
-    write_to_file(StorageReason::BOND_INCREASE);
+    write_to_file(StorageEvent::BOND_INCREASE);
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
         randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
 
@@ -338,7 +338,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     if(status.bond_lim > status.bond_max) throw except::logic_error("bond_lim is larger than get_bond_max! {} > {}", status.bond_lim, status.bond_max);
 }
 
-void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageReason storage_reason) {
+void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event) {
     // We reduce the bond dimension limit during FES whenever entanglement has stopped changing
     if(not tensors.position_is_inward_edge()) return;
     if(when == UpdateWhen::NEVER) return;
@@ -348,7 +348,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, 
     bool   reduce_truncated  = when == UpdateWhen::TRUNCATED and tensors.state->is_truncated(status.trnc_lim);
     bool   reduce_iteration  = when == UpdateWhen::ITERATION and iter_since_reduce >= 1;
     if(reduce_saturated or reduce_truncated or reduce_iteration or iter_since_reduce >= 20) {
-        write_to_file(storage_reason, CopyPolicy::OFF);
+        write_to_file(storage_event, CopyPolicy::OFF);
 
         auto bond_new = static_cast<double>(status.bond_lim);
         if(rate > 0.0 and rate < 1.0)
@@ -361,7 +361,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, 
         if(bond_new == static_cast<double>(status.bond_lim))
             status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
         else {
-            if(storage_reason != StorageReason::NONE) tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
+            if(storage_event != StorageEvent::NONE) tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
             status.bond_lim = static_cast<long>(bond_new);
         }
         iter_last_bond_reduce = status.iter;
@@ -420,7 +420,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
         tensors.rebuild_edges();
     }
     // Write current results before updating the truncation error limit
-    write_to_file(StorageReason::TRNC_DECREASE);
+    write_to_file(StorageEvent::TRNC_DECREASE);
 
     // If we got to this point we will update the truncation error limit by a factor
     auto rate = settings::strategy::trnc_decrease_rate;
@@ -629,7 +629,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
                 }
         }
         if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
-        write_to_file(StorageReason::PROJ_STATE, CopyPolicy::OFF);
+        write_to_file(StorageEvent::PROJ_STATE, CopyPolicy::OFF);
     }
 }
 
@@ -792,25 +792,26 @@ void AlgorithmFinite::clear_convergence_status() {
     status.spin_parity_has_converged  = false;
 }
 
-void AlgorithmFinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
+void AlgorithmFinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     if(not write_enabled) return;
-    tools::finite::h5::save::simulation(*h5file, tensors, status, storage_reason, copy_policy);
+    tools::finite::h5::save::simulation(*h5file, tensors, status, storage_event, copy_policy);
 }
 
-void AlgorithmFinite::write_to_file(StorageReason storage_reason, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
-                                    std::optional<CopyPolicy> copy_policy) {
+void AlgorithmFinite::write_to_file(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, StorageEvent storage_event,
+                                    CopyPolicy copy_policy) {
     if(not write_enabled) return;
-    tools::finite::h5::save::simulation(*h5file, state, model, edges, status, storage_reason, copy_policy);
+    tools::finite::h5::save::simulation(*h5file, state, model, edges, status, storage_event, copy_policy);
 }
 
 template<typename T>
-void AlgorithmFinite::write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy) {
+void AlgorithmFinite::write_to_file(const T &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy) {
     if(not write_enabled) return;
-    tools::finite::h5::save::data(*h5file, data, name, tensors.state->get_name(), status, storage_reason, copy_policy);
+    auto sinfo = StorageInfo(status, tensors.state->get_name(), storage_event);
+    tools::finite::h5::save::data(*h5file, sinfo, data, name, copy_policy);
 }
 
-template void AlgorithmFinite::write_to_file(StorageReason storage_reason, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name,
-                                             std::optional<CopyPolicy> copy_policy);
+template void AlgorithmFinite::write_to_file(const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name, StorageEvent storage_event,
+                                             CopyPolicy copy_policy);
 
 void AlgorithmFinite::print_status() {
     if(num::mod(status.step, settings::print_freq(status.algo_type)) != 0) return;

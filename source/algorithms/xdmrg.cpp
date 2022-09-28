@@ -138,7 +138,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case xdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
-            case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
+            case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
             case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case xdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case xdmrg_task::INIT_DEFAULT:
@@ -154,7 +154,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
                 tensors.state->set_name(fmt::format("state_{}", excited_state_number));
                 run_algorithm();
                 break;
-            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
+            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::LAST_STATE); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case xdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case xdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
@@ -210,7 +210,7 @@ void xdmrg::run_preprocessing() {
         randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
         randomize_state(ResetReason::INIT, settings::strategy::initial_state);
-    write_to_file(StorageReason::MODEL);
+    write_to_file(StorageEvent::MODEL);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -273,7 +273,7 @@ void xdmrg::run_fes_analysis() {
         status.step += tensors.get_length<size_t>();
         status.algorithm_converged_for = 1;
         status.algorithm_saturated_for = 0;
-        reduce_bond_dimension_limit(1, UpdateWhen::ITERATION, StorageReason::NONE);
+        reduce_bond_dimension_limit(1, UpdateWhen::ITERATION, StorageEvent::NONE);
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_fes->get_time();
     }
@@ -288,7 +288,7 @@ void xdmrg::run_fes_analysis() {
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
-        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageReason::FES);
+        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES);
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
 
@@ -739,7 +739,7 @@ void xdmrg::find_energy_range() {
         tools::log = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
         status.energy_min = tools::finite::measure::energy(fdmrg_gs.tensors);
-        write_to_file(StorageReason::EMIN_STATE, *fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges);
+        write_to_file(*fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges, StorageEvent::EMIN_STATE, CopyPolicy::OFF);
     }
 
     // Find the highest energy state
@@ -752,7 +752,7 @@ void xdmrg::find_energy_range() {
         tools::log = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
         status.energy_max = tools::finite::measure::energy(fdmrg_hs.tensors);
-        write_to_file(StorageReason::EMAX_STATE, *fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges);
+        write_to_file(*fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges, StorageEvent::EMAX_STATE, CopyPolicy::OFF);
     }
 
     // Reset our logger

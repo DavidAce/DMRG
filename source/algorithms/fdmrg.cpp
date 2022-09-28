@@ -65,7 +65,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
             case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case fdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case fdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
-            case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageReason::MODEL); break;
+            case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
             case fdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case fdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
             case fdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
@@ -79,7 +79,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
                 tensors.state->set_name("state_emax");
                 run_algorithm();
                 break;
-            case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageReason::FINISHED); break;
+            case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::LAST_STATE); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case fdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case fdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;

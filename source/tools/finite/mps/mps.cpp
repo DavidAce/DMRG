@@ -161,10 +161,13 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     auto t_merge          = tid::tic_scope("merge");
     auto current_position = state.get_position<long>();
     auto moves            = static_cast<size_t>(std::abs(center_position - current_position));
-    if constexpr(settings::debug_merge or settings::debug)
+    if constexpr(settings::debug)
         if(logPolicy == LogPolicy::NORMAL)
             tools::log->trace("merge_multisite_mps: sites {} | dimensions {} | center {} -> {} | {}", sites, multisite_mps.dimensions(), current_position,
                               center_position, state.get_labels());
+    if constexpr(settings::debug_merge)
+        tools::log->trace("merge_multisite_mps: sites {} | dimensions {} | center {} -> {} | {}", sites, multisite_mps.dimensions(), current_position,
+                          center_position, state.get_labels());
 
     // Some sanity checks
     if(multisite_mps.dimension(1) != state.get_mps_site(sites.front()).get_chiL())
@@ -564,7 +567,8 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
 
     move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
     svd_count = svd::solver::get_count() - svd_count;
-    tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
+    if constexpr(settings::debug_gates)
+        tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
 }
 
 template<typename T>
@@ -760,7 +764,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     // It's best to do an AC-B type of SVD split, so we put the center poisition on the left-most site when GateMove::ON
     long new_posC = gm == GateMove::ON ? static_cast<long>(pos_idxs.front()) : old_posC;
 
-    tools::finite::mps::merge_multisite_mps(state, temp, pos_idxs, new_posC, svd_cfg, LogPolicy::NORMAL);
+    tools::finite::mps::merge_multisite_mps(state, temp, pos_idxs, new_posC, svd_cfg, LogPolicy::QUIET);
     if constexpr(settings::debug_gates)
         tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::get_count());

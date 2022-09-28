@@ -17,8 +17,8 @@ AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmTyp
     tools::log->trace("Constructing class_algorithm_base");
 }
 
-void AlgorithmBase::copy_from_tmp(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
-    if(h5file) tools::common::h5::tmp::copy_from_tmp(status, *h5file, storage_reason, copy_policy);
+void AlgorithmBase::copy_from_tmp(StorageEvent storage_event, CopyPolicy copy_policy) {
+    tools::common::h5::tmp::copy_from_tmp(*h5file, status.iter, status.step, storage_event, copy_policy);
 }
 
 void AlgorithmBase::init_bond_dimension_limits() {

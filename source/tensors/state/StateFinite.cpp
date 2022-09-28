@@ -12,6 +12,10 @@
 #include "tools/finite/measure.h"
 #include "tools/finite/multisite.h"
 
+namespace settings {
+    inline constexpr bool debug_state = false;
+}
+
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet
 
 // We need to define the destructor and other special functions
@@ -382,7 +386,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
         // Check the norm of the tensor on debug builds
         auto   t_dbg = tid::tic_scope("debug");
         double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
-        tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
+        if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
         if(std::abs(norm - 1) > settings::precision::max_norm_error) {
             throw except::runtime_error("get_multisite_mps({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
                                         settings::precision::max_norm_error);

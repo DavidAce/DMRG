@@ -38,6 +38,7 @@ bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
         this->step                          == s.step and
         this->position                      == s.position and
         this->direction                     == s.direction and
+        this->event                         == s.event and
         this->num_resets                    == s.num_resets and
         this->min_iters                     == s.min_iters and
         this->bond_max                      == s.bond_max and

@@ -10,6 +10,7 @@ class AlgorithmStatus {
     size_t               step                       = 0; // How many dmrg steps have been taken (each step may cover multiple sites)
     long                 position                   = 0;
     int                  direction                  = 1;
+    mutable StorageEvent event                      = StorageEvent::NONE; // Mutable so that we can set back to NONE after write events in const scope
     size_t               num_resets                 = 0;
     size_t               min_iters                  = 0;
     long                 bond_lim                   = 0; /*!< Current limit on bond dimension, can be increased dynamically */

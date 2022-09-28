@@ -33,7 +33,7 @@ class AlgorithmBase {
     virtual void run_postprocessing()                                                                                                          = 0;
     virtual void update_state()                                                                                                                = 0;
     virtual void check_convergence()                                                                                                           = 0;
-    virtual void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt) = 0;
+    virtual void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY)                = 0;
     virtual void print_status()                                                                                                                = 0;
     virtual void print_status_full()                                                                                                           = 0;
     virtual void clear_convergence_status()                                                                                                    = 0;
@@ -42,7 +42,7 @@ class AlgorithmBase {
     virtual void update_truncation_error_limit()                                                                                               = 0;
 
     // common functions
-    void copy_from_tmp(StorageReason storage_reason = StorageReason::SAVEPOINT, std::optional<CopyPolicy> copy_policy = std::nullopt);
+    void copy_from_tmp(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY);
     void init_bond_dimension_limits();
     void init_truncation_error_limits();
     void write_disable();

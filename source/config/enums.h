@@ -17,7 +17,7 @@ enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-enum class StorageReason { SAVEPOINT, CHECKPOINT, FINISHED, PROJ_STATE, INIT_STATE, EMIN_STATE, EMAX_STATE, MODEL, BOND_INCREASE, TRNC_DECREASE, FES, NONE };
+enum class StorageEvent { ITER_STATE, INIT_STATE, LAST_STATE, EMIN_STATE, EMAX_STATE, PROJ_STATE, BOND_INCREASE, TRNC_DECREASE, FES, MODEL, NONE };
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
@@ -267,19 +267,18 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StorageLevel::NORMAL)                                return "NORMAL";
         if(item == StorageLevel::FULL)                                  return "FULL";
     }
-    if constexpr(std::is_same_v<T, StorageReason>) {
-        if(item == StorageReason::SAVEPOINT)                            return "SAVEPOINT";
-        if(item == StorageReason::CHECKPOINT)                           return "CHECKPOINT";
-        if(item == StorageReason::FINISHED)                             return "FINISHED";
-        if(item == StorageReason::PROJ_STATE)                           return "PROJ_STATE";
-        if(item == StorageReason::INIT_STATE)                           return "INIT_STATE";
-        if(item == StorageReason::EMIN_STATE)                           return "EMIN_STATE";
-        if(item == StorageReason::EMAX_STATE)                           return "EMAX_STATE";
-        if(item == StorageReason::MODEL)                                return "MODEL";
-        if(item == StorageReason::BOND_INCREASE)                        return "BOND_INCREASE";
-        if(item == StorageReason::TRNC_DECREASE)                        return "TRNC_DECREASE";
-        if(item == StorageReason::FES)                                  return "FES";
-        if(item == StorageReason::NONE)                                 return "NONE";
+    if constexpr(std::is_same_v<T, StorageEvent>) {
+        if(item == StorageEvent::ITER_STATE)                            return "ITER_STATE";
+        if(item == StorageEvent::INIT_STATE)                            return "INIT_STATE";
+        if(item == StorageEvent::LAST_STATE)                            return "LAST_STATE";
+        if(item == StorageEvent::EMIN_STATE)                            return "EMIN_STATE";
+        if(item == StorageEvent::EMAX_STATE)                            return "EMAX_STATE";
+        if(item == StorageEvent::PROJ_STATE)                            return "PROJ_STATE";
+        if(item == StorageEvent::BOND_INCREASE)                         return "BOND_INCREASE";
+        if(item == StorageEvent::TRNC_DECREASE)                         return "TRNC_DECREASE";
+        if(item == StorageEvent::FES)                                   return "FES";
+        if(item == StorageEvent::MODEL)                                 return "MODEL";
+        if(item == StorageEvent::NONE)                                  return "NONE";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -484,7 +483,7 @@ constexpr auto sv2enum(std::string_view item) {
         ModelType,
         EdgeStatus,
         StorageLevel,
-        StorageReason,
+        StorageEvent,
         CopyPolicy,
         ResetReason,
         NormPolicy,
@@ -589,20 +588,18 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "NORMAL")                                return StorageLevel::NORMAL;
         if(item == "FULL")                                  return StorageLevel::FULL;
     }
-    if constexpr(std::is_same_v<T, StorageReason>) {
-        if(item == "SAVEPOINT")                             return StorageReason::SAVEPOINT;
-        if(item == "CHECKPOINT")                            return StorageReason::CHECKPOINT;
-        if(item == "FINISHED")                              return StorageReason::FINISHED;
-        if(item == "PROJ_STATE")                            return StorageReason::PROJ_STATE;
-        if(item == "INIT_STATE")                            return StorageReason::INIT_STATE;
-        if(item == "EMIN_STATE")                            return StorageReason::EMIN_STATE;
-        if(item == "EMAX_STATE")                            return StorageReason::EMAX_STATE;
-        if(item == "MODEL")                                 return StorageReason::MODEL;
-        if(item == "BOND_INCREASE")                         return StorageReason::BOND_INCREASE;
-        if(item == "TRNC_DECREASE")                         return StorageReason::TRNC_DECREASE;
-        if(item == "FES")                                   return StorageReason::FES;
-        if(item == "NONE")                                  return StorageReason::NONE;
-
+    if constexpr(std::is_same_v<T, StorageEvent>) {
+        if(item == "ITER_STATE")                            return  StorageEvent::ITER_STATE;
+        if(item == "INIT_STATE")                            return  StorageEvent::INIT_STATE;
+        if(item == "LAST_STATE")                            return  StorageEvent::LAST_STATE;
+        if(item == "EMIN_STATE")                            return  StorageEvent::EMIN_STATE;
+        if(item == "EMAX_STATE")                            return  StorageEvent::EMAX_STATE;
+        if(item == "PROJ_STATE")                            return  StorageEvent::PROJ_STATE;
+        if(item == "BOND_INCREASE")                         return  StorageEvent::BOND_INCREASE;
+        if(item == "TRNC_DECREASE")                         return  StorageEvent::TRNC_DECREASE;
+        if(item == "FES")                                   return  StorageEvent::FES;
+        if(item == "MODEL")                                 return  StorageEvent::MODEL;
+        if(item == "NONE")                                  return  StorageEvent::NONE;
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == "RANDOM_PRODUCT_STATE")                  return StateInit::RANDOM_PRODUCT_STATE;

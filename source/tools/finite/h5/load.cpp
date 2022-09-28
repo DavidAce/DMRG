@@ -1,6 +1,6 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
-#include "io/table_types.h"
+#include "io/hdf5_types.h"
 #include "math/num.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"

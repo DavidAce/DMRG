@@ -38,7 +38,7 @@ class AlgorithmFinite : public AlgorithmBase {
     void         shift_mpo_energy();
     void         update_variance_max_digits(std::optional<double> energy = std::nullopt) final;
     void         update_bond_dimension_limit() final;
-    void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageReason storage_reason);
+    void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
     void         update_truncation_error_limit() final;
     void         update_expansion_factor_alpha();
     void         randomize_model();
@@ -50,16 +50,16 @@ class AlgorithmFinite : public AlgorithmBase {
                                  std::optional<size_t> bitfield = std::nullopt, std::optional<long> bond_lim = std::nullopt,
                                  std::optional<double> trnc_lim = std::nullopt);
 
-    void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT, std::optional<CopyPolicy> copy_file = std::nullopt) override;
+    void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) override;
     void print_status() override;
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_entg_entropy(std::optional<double> saturation_sensitivity = std::nullopt);
     void check_convergence_spin_parity_sector(std::string_view target_sector, double threshold = 1e-8);
-    void write_to_file(StorageReason storage_reason, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
-                       std::optional<CopyPolicy> copy_policy = std::nullopt);
+    void write_to_file(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, StorageEvent storage_event,
+                       CopyPolicy copy_policy = CopyPolicy::TRY);
     template<typename T>
-    void write_to_file(StorageReason storage_reason, const T &data, std::string_view name, std::optional<CopyPolicy> copy_policy = std::nullopt);
+    void write_to_file(const T &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy = CopyPolicy::TRY);
 
     struct log_entry {
         AlgorithmStatus     status;

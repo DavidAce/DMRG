@@ -27,10 +27,9 @@ class AlgorithmInfinite : public AlgorithmBase {
                          std::optional<bool> use_eigenspinors = std::nullopt, std::optional<size_t> bitfield = std::nullopt);
 
 
-    void write_to_file(StorageReason storage_reason = StorageReason::CHECKPOINT,
-                       std::optional<CopyPolicy> copy_policy = std::nullopt)                                 final;
-    void print_status()                                                                               final;
-    void print_status_full()                                                                                 final;
+    void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) final;
+    void print_status()                                                                                                 final;
+    void print_status_full()                                                                                            final;
     /* clang-format on */
 
     void check_convergence_variance_mpo(std::optional<double> threshold = std::nullopt, std::optional<double> sensitivity = std::nullopt);

@@ -7,15 +7,15 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "env/environment.h"
-#include <h5pp/h5pp.h>
-#include <memory>
 #include "tensors/state/StateFinite.h"
 #include "tensors/state/StateInfinite.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
 #include "tools/common/prof.h"
+#include <h5pp/h5pp.h>
+#include <memory>
 
-//#include <stdlib.h>
+// #include <stdlib.h>
 #include <cstdlib>
 #include <debug/info.h>
 #include <debug/stacktrace.h>
@@ -42,12 +42,6 @@ AlgorithmLauncher::AlgorithmLauncher() {
 }
 
 void AlgorithmLauncher::start_h5file() {
-    if(settings::storage::storage_level_model == StorageLevel::NONE and settings::storage::storage_level_savepoint == StorageLevel::NONE and
-       settings::storage::storage_level_checkpoint == StorageLevel::NONE and settings::storage::storage_level_finished == StorageLevel::NONE and
-       settings::storage::storage_level_proj_state == StorageLevel::NONE and settings::storage::storage_level_init_state == StorageLevel::NONE and
-       settings::storage::storage_level_emin_state == StorageLevel::NONE and settings::storage::storage_level_emax_state == StorageLevel::NONE)
-        return;
-
     // There are two possibilities depending on settings::storage::output_filename
     // 1) The .h5 file exists
     //    It is important to honor settings::storage::file_policy
@@ -63,7 +57,7 @@ void AlgorithmLauncher::start_h5file() {
             case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
                 // Inspecting the file in READWRITE mode can update the file modification timestamp.
-                // Therefore we must first inspect the file in READONLY mode, then reopen in READWRITE.
+                // Therefore, we must first inspect the file in READONLY mode, then reopen in READWRITE.
                 // If the file is somehow damaged or invalid, we simply truncate it and start from scratch.
                 // If the file has a fully processed set of simulations, then [common/finished_all] = true,
                 // in which case we consult settings::storage::file_resume_policy, to either exit or keep going
@@ -91,8 +85,11 @@ void AlgorithmLauncher::start_h5file() {
                     h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READWRITE);
                 } catch(const std::exception &ex) {
                     tools::log->error("Failed to recover simulation with policy [{}]: {}", enum2sv(settings::storage::file_collision_policy), ex.what());
-                    tools::log->info("Truncating file [{}]", settings::storage::output_filepath);
-                    h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::REPLACE);
+                    if(settings::storage::file_collision_policy == FileCollisionPolicy::REVIVE) {
+                        tools::log->info("Truncating file [{}]", settings::storage::output_filepath);
+                        h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::REPLACE);
+                    } else
+                        throw;
                 }
                 break;
             }

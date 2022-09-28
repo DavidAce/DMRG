@@ -1,6 +1,6 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
-#include "io/table_types.h"
+#include "io/hdf5_types.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
@@ -22,7 +22,7 @@ namespace tools::common::h5 {
         }
     }
 
-    void load::timer(const h5pp::File &h5file, std::string_view state_prefix, [[maybe_unused]] AlgorithmStatus &status) {
+    void load::timer(const h5pp::File &h5file, std::string_view state_prefix, [[maybe_unused]] const AlgorithmStatus &status) {
         if(not settings::timer::on) return;
         auto state_root = h5file.readAttribute<std::string>("common/state_root", state_prefix);
         auto table_path = fmt::format("{}/tables/timers", state_root);

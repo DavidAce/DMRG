@@ -45,6 +45,7 @@ std::vector<std::string> tools::common::h5::resume::find_resumable_states(const 
         if(candidate.find(algo_name) != std::string::npos) {
             auto storage_level = h5file.readAttribute<std::string>("common/storage_level", candidate);
             if(storage_level != "NONE") {
+                // fLBIT only requires the unitay layers to generate an real-space initial state from the lbit basis neel state.
                 if(algo_type == AlgorithmType::fLBIT or storage_level == "FULL") state_prefix_candidates.push_back(candidate);
             }
         }

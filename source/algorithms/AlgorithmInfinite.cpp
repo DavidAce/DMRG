@@ -29,13 +29,13 @@ void AlgorithmInfinite::run_preprocessing() {
     status.clear();
     randomize_model(); // First use of random!
     init_bond_dimension_limits();
-    write_to_file(StorageReason::MODEL);
+    write_to_file(StorageEvent::MODEL);
 }
 
 void AlgorithmInfinite::run_postprocessing() {
     auto t_pos = tid::tic_scope("post");
-    write_to_file(StorageReason::FINISHED);
-    copy_from_tmp(StorageReason::FINISHED);
+    write_to_file(StorageEvent::LAST_STATE);
+    copy_from_tmp(StorageEvent::LAST_STATE);
     print_status_full();
 }
 
@@ -94,7 +94,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     if(grow_rate <= 1.0) throw except::runtime_error("Error: bond_increase_rate == {:.3f} | must be larger than one", grow_rate);
 
     // Write current results before updating bond dimension
-    write_to_file(StorageReason::BOND_INCREASE);
+    write_to_file(StorageEvent::BOND_INCREASE);
 
     // If we got to this point we will update the bond dimension by a factor
     auto factor = settings::strategy::bond_increase_rate;
@@ -153,7 +153,7 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     }
 
     // Write current results before updating the truncation error limit
-    write_to_file(StorageReason::TRNC_DECREASE);
+    write_to_file(StorageEvent::TRNC_DECREASE);
 
     // If we got to this point we will update the truncation error limit by a factor
     auto rate = settings::strategy::trnc_decrease_rate;
@@ -257,116 +257,28 @@ void AlgorithmInfinite::check_convergence_entg_entropy(std::optional<double> sen
     }
 }
 
-void AlgorithmInfinite::write_to_file(StorageReason storage_reason, std::optional<CopyPolicy> copy_policy) {
-    StorageLevel             storage_level;
-    std::string              state_prefix = fmt::format("{}/{}", status.algo_type_sv(), tensors.state->get_name()); // May get modified
-    std::string              model_prefix = fmt::format("{}/{}", status.algo_type_sv(), "model");
-    std::vector<std::string> table_prefxs = {fmt::format("{}/{}", state_prefix, "tables")}; // Common tables
-
-    switch(storage_reason) {
-        case StorageReason::NONE: return;
-        case StorageReason::FINISHED: {
-            storage_level = settings::storage::storage_level_finished;
-            state_prefix += "/finished";
-            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
-            break;
-        }
-        case StorageReason::SAVEPOINT: {
-            if(settings::storage::savepoint_frequency == 0 or num::mod(status.iter, settings::storage::savepoint_frequency) != 0) return;
-            state_prefix += "/savepoint";
-            storage_level = settings::storage::storage_level_savepoint;
-            if(settings::storage::savepoint_keep_newest_only)
-                state_prefix += "/iter_last";
-            else
-                state_prefix += fmt::format("/iter_{}", status.iter);
-            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
-            break;
-        }
-        case StorageReason::CHECKPOINT: {
-            if(settings::storage::checkpoint_frequency == 0 or num::mod(status.iter, settings::storage::checkpoint_frequency) != 0) return;
-            state_prefix += "/checkpoint";
-            storage_level = settings::storage::storage_level_checkpoint;
-            if(settings::storage::checkpoint_keep_newest_only)
-                state_prefix += "/iter_last";
-            else
-                state_prefix += fmt::format("/iter_{}", status.iter);
-            table_prefxs.emplace_back(state_prefix); // Appends to its own table as well as the common ones
-            break;
-        }
-        case StorageReason::BOND_INCREASE: {
-            if(settings::strategy::bond_increase_when == UpdateWhen::NEVER) return;
-            storage_level = settings::storage::storage_level_bond_state;
-            state_prefix += "/bond";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::TRNC_DECREASE: {
-            if(settings::strategy::trnc_decrease_when == UpdateWhen::NEVER) return;
-            storage_level = settings::storage::storage_level_trnc_state;
-            state_prefix += "/trnc";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::FES: {
-            if(settings::strategy::fes_rate == 0) return;
-            storage_level = settings::storage::storage_level_fes_state;
-            state_prefix += "/fes";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::PROJ_STATE: {
-            storage_level = settings::storage::storage_level_proj_state;
-            state_prefix += "/projection";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::INIT_STATE: {
-            storage_level = settings::storage::storage_level_init_state;
-            state_prefix += "/state_init";
-            table_prefxs = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::EMIN_STATE: {
-            storage_level = settings::storage::storage_level_emin_state;
-            state_prefix  = fmt::format("{}/state_emin", status.algo_type_sv());
-            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::EMAX_STATE: {
-            storage_level = settings::storage::storage_level_emax_state;
-            state_prefix  = fmt::format("{}/state_emax", status.algo_type_sv());
-            table_prefxs  = {state_prefix}; // Should not pollute tables other than its own
-            break;
-        }
-        case StorageReason::MODEL: {
-            storage_level = settings::storage::storage_level_model;
-            tools::infinite::h5::save::model(*h5file, model_prefix + "/hamiltonian", storage_level, *tensors.model);
-            tools::infinite::h5::save::mpo(*h5file, model_prefix + "/mpo", storage_level, *tensors.model);
-            copy_from_tmp(storage_reason, CopyPolicy::TRY);
-            return;
-        }
-    }
-    if(storage_level == StorageLevel::NONE) return;
-    if(state_prefix.empty()) throw except::runtime_error("State prefix is empty");
-    tools::log->debug("Writing to file: Reason [{}] | Level [{}] | hdf5 prefix [{}]", enum2sv(storage_reason), enum2sv(storage_level), state_prefix);
+void AlgorithmInfinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
+    auto sinfo = StorageInfo(status, tensors.state->get_name(), storage_event);
+    if(sinfo.storage_level == StorageLevel::NONE) return;
+    tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
+                      sinfo.get_state_prefix());
     // Start saving tensors and metadata
-    tools::infinite::h5::save::bonds(*h5file, state_prefix, storage_level, *tensors.state, status);
-    tools::infinite::h5::save::state(*h5file, state_prefix, storage_level, *tensors.state, status);
-    tools::infinite::h5::save::edges(*h5file, state_prefix, storage_level, *tensors.edges);
-    tools::common::h5::save::meta(*h5file, storage_level, storage_reason, settings::model::model_type, settings::model::model_size, tensors.state->get_name(),
-                                  state_prefix, model_prefix, table_prefxs, status);
+    tools::infinite::h5::save::bonds(*h5file, sinfo, *tensors.state);
+    tools::infinite::h5::save::state(*h5file, sinfo, *tensors.state);
+    tools::infinite::h5::save::edges(*h5file, sinfo, *tensors.edges);
+    //    tools::common::h5::save::meta(*h5file, storage_level, storage_event, settings::model::model_type, settings::model::model_size,
+    //    tensors.state->get_name(),
+    //                                  state_prefix, model_prefix, table_prefxs, status);
     // Some storage reasons should not go further. Like projection.
-    if(storage_reason == StorageReason::PROJ_STATE) return;
+    if(storage_event == StorageEvent::PROJ_STATE) return;
 
     // The main results have now been written. Next we append data to tables
-    for(const auto &table_prefix : table_prefxs) {
-        tools::infinite::h5::save::measurements(*h5file, table_prefix, storage_level, tensors, status);
-        tools::common::h5::save::status(*h5file, table_prefix, storage_level, status);
-        tools::common::h5::save::timer(*h5file, table_prefix, storage_level, status);
-        tools::common::h5::save::mem(*h5file, table_prefix, storage_level, status);
-    }
+    tools::infinite::h5::save::measurements(*h5file, sinfo, tensors, status);
+    tools::common::h5::save::status(*h5file, sinfo, status);
+    tools::common::h5::save::timer(*h5file, sinfo);
+    tools::common::h5::save::mem(*h5file, sinfo);
     // Copy from temporary location to destination depending on given policy
-    copy_from_tmp(storage_reason, copy_policy);
+    copy_from_tmp(storage_event, copy_policy);
 }
 
 void AlgorithmInfinite::print_status() {

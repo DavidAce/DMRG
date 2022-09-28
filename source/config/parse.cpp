@@ -53,7 +53,6 @@ int settings::parse(int argc, char **argv) {
     auto s2e_logh5pp = mapStr2Enum<h5pp::LogLevel>("trace", "debug", "info");
     auto s2e_model   = ModelType_s2e;
     int  dummy       = 0;
-    bool noseedname  = false;
 
     auto preload = [&argc, &argv, &s2e_log]() -> int {
         CLI::App pre;
@@ -97,7 +96,7 @@ int settings::parse(int argc, char **argv) {
     app.add_option("-o,--outfile"                      , storage::output_filepath       , "Path to the output file. The seed number gets appended by default (see -x)");
     app.add_option("-s,--seed"                         , input::seed                    , "Positive number seeds the random number generator");
     app.add_option("-t,--ompthreads"                   , threading::omp_threads         , "Number of OpenMP threads");
-    app.add_flag  ("-x,--noseedname"                   , noseedname                     , "Do not append seed to the output filename");
+    app.add_flag  ("--append-seed, !--no-append-seed"  , storage::output_append_seed    , "Append seed to the output filename")->default_val(true);
     app.add_option("-z,--compression"                  , storage::compression_level     , "Compression level of h5pp")->check(CLI::Range(0,9));
     app.add_flag  ("-r,--resume"                                                        , "Resume simulation from last iteration");
     app.add_option("--resume-iter"                     , storage::file_resume_iter      , "Resume from iteration");
@@ -118,7 +117,7 @@ int settings::parse(int argc, char **argv) {
     //    for(const auto &res : app.get_options()) fmt::print("{:<32} = {}\n", res->get_name(), res->results());
 
     // Generate the correct output filename based on given seeds
-    if(not noseedname) {
+    if(storage::output_append_seed) {
         settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::seed);
         settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::bitfield);
     }

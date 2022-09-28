@@ -72,11 +72,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
 
     dmrg_config.load_parameter("storage::output_filepath"                     , storage::output_filepath);
-    dmrg_config.load_parameter("storage::save_timers"                         , storage::save_timers);
-    dmrg_config.load_parameter("storage::savepoint_keep_newest_only"          , storage::savepoint_keep_newest_only);
-    dmrg_config.load_parameter("storage::savepoint_frequency"                 , storage::savepoint_frequency);
-    dmrg_config.load_parameter("storage::checkpoint_keep_newest_only"         , storage::checkpoint_keep_newest_only);
-    dmrg_config.load_parameter("storage::checkpoint_frequency"                , storage::checkpoint_frequency);
+    dmrg_config.load_parameter("storage::output_append_seed"                  , storage::output_append_seed);
+    dmrg_config.load_parameter("storage::storage_interval"                    , storage::storage_interval);
     dmrg_config.load_parameter("storage::use_temp_dir"                        , storage::use_temp_dir);
     dmrg_config.load_parameter("storage::copy_from_temp_freq"                 , storage::copy_from_temp_freq);
     dmrg_config.load_parameter("storage::temp_dir"                            , storage::temp_dir);
@@ -85,17 +82,18 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::file_resume_policy"                  , storage::file_resume_policy);
     dmrg_config.load_parameter("storage::file_resume_name"                    , storage::file_resume_name);
     dmrg_config.load_parameter("storage::file_resume_iter"                    , storage::file_resume_iter);
-    dmrg_config.load_parameter("storage::storage_level_model"                 , storage::storage_level_model);
-    dmrg_config.load_parameter("storage::storage_level_savepoint"             , storage::storage_level_savepoint);
-    dmrg_config.load_parameter("storage::storage_level_checkpoint"            , storage::storage_level_checkpoint);
-    dmrg_config.load_parameter("storage::storage_level_finished"              , storage::storage_level_finished);
-    dmrg_config.load_parameter("storage::storage_level_proj_state"            , storage::storage_level_proj_state);
+
+    dmrg_config.load_parameter("storage::storage_level_iter_state"            , storage::storage_level_iter_state);
     dmrg_config.load_parameter("storage::storage_level_init_state"            , storage::storage_level_init_state);
+    dmrg_config.load_parameter("storage::storage_level_last_state"            , storage::storage_level_last_state);
+    dmrg_config.load_parameter("storage::storage_level_proj_state"            , storage::storage_level_proj_state);
     dmrg_config.load_parameter("storage::storage_level_emin_state"            , storage::storage_level_emin_state);
     dmrg_config.load_parameter("storage::storage_level_emax_state"            , storage::storage_level_emax_state);
     dmrg_config.load_parameter("storage::storage_level_bond_state"            , storage::storage_level_bond_state);
     dmrg_config.load_parameter("storage::storage_level_trnc_state"            , storage::storage_level_trnc_state);
     dmrg_config.load_parameter("storage::storage_level_fes_state"             , storage::storage_level_fes_state);
+    dmrg_config.load_parameter("storage::storage_level_model"                 , storage::storage_level_model);
+    dmrg_config.load_parameter("storage::storage_level_timers"                , storage::storage_level_timers);
 
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);
     dmrg_config.load_parameter("model::model_size"                            , model::model_size);
@@ -212,7 +210,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::compute_lbit_length"     , flbit::compute_lbit_length);
     dmrg_config.load_parameter("flbit::compute_lbit_stats"      , flbit::compute_lbit_stats);
     dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
-    dmrg_config.load_parameter("flbit::save_swap_gates"         , flbit::save_swap_gates);
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
