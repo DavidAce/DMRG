@@ -318,11 +318,10 @@
     },
     {
       "name": "tetralith",
-      "displayName": "Release|gcc-10|march=native|conan|mkl",
+      "displayName": "Release|march=native|conan|mkl",
       "inherits": [
         "release",
         "native",
-        "gcc-10",
         "pkg-conan",
         "default"
       ],
@@ -405,7 +404,7 @@
     },
     {
       "name": "tetralith",
-      "displayName": "Release|gcc-10|march=native|conan|mkl",
+      "displayName": "Release|march=native|conan|mkl",
       "configurePreset": "tetralith",
       "jobs": 16
     },
@@ -495,7 +494,7 @@
     },
     {
       "name": "tetralith",
-      "displayName": "Release|gcc-10|march=native|conan|mkl",
+      "displayName": "Release|march=native|conan|mkl",
       "configurePreset": "tetralith",
       "execution": {
         "jobs": 4

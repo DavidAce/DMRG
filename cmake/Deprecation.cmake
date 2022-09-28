@@ -32,7 +32,7 @@ endif()
 
 if(DMRG_ENABLE_LTO)
     message(FATAL_ERROR "The option [DMRG_ENABLE_LTO] has been deprecated. Replace by:\n"
-            "COMPILER_ENABLE_LTOCMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=[TRUE|FALSE]")
+            "CMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=[TRUE|FALSE]")
 endif()
 
 if(DMRG_ENABLE_PCH)
