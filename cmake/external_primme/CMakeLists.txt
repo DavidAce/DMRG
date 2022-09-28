@@ -52,8 +52,8 @@ else()
     externalproject_add_step(
             external_primme
             install_static_lib
-            DEPENDEES build
-            COMMENT "Installing static lib to ${CMAKE_INSTALL_PREFIX}/lib"
-            COMMAND cmake -E copy <SOURCE_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib
+            DEPENDEES build install
+            COMMENT "Installing static lib to <INSTALL_DIR>/lib"
+            COMMAND cmake -E copy <SOURCE_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX} <INSTALL_DIR>/lib/libprimme${CMAKE_STATIC_LIBRARY_SUFFIX}
     )
 endif()
