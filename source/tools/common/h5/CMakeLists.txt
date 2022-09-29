@@ -8,6 +8,7 @@ add_source_target(dmrg-tools-common-h5
                   OBJECT_LINK_LIBRARIES
                   dmrg-deps dmrg-flags
                   INTERFACE_LINK_LIBRARIES
+                  dmrg-io
                   dmrg-tid
                   dmrg-config
                   dmrg-algorithms-status
