@@ -230,11 +230,8 @@ h5pp_ur::item::~item() noexcept { free(name); }
 void h5pp_ur::item::copy_name(std::string_view name_) {
     // Note that we must use C-style malloc/free here rather than C++-style new/delete, since that is what HDF5 uses internally.
     // This is particularly important when we read data from file, and let HDF5 allocate the vlen buffer
-    size_t len  = name_.size();
-    size_t size = (len + 1) * sizeof(char);
-    name        = static_cast<char *>(malloc(size)); // Add +1 for null terminator
-    strncpy(name, name_.data(), len * sizeof(char));
-    name[name_.size()] = '\0'; // Make sure name is null-terminated!
+    name = static_cast<char *>(malloc((name_.size() + 1) * sizeof(char))); // Add +1 for null terminator
+    strcpy(name, name_.data());
 }
 h5pp_ur::h5pp_ur() { register_table_type(); }
 void h5pp_ur::register_table_type() {
