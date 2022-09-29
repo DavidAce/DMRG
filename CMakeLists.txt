@@ -59,6 +59,10 @@ include(cmake/CompilerFlags.cmake)
 ################################################################
 include(cmake/environment.cmake)
 
+### Create the main executable
+add_executable(DMRG++)
+set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
+
 # Setup paths that find_package should search and
 # let cmake find our Find<package>.cmake modules
 include(cmake/SetupPaths.cmake)
@@ -67,8 +71,6 @@ include(cmake/SetupPaths.cmake)
 include(cmake/SetupDependencies.cmake)
 
 ###  Add all source files
-add_executable(DMRG++)
-set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
 add_subdirectory(source)
 
 ### Link all the things!
