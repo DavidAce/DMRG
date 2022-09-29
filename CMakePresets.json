@@ -329,7 +329,7 @@
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install"
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install"
       }
     }
   ],
