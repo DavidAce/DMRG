@@ -84,7 +84,7 @@ if(tblis_FOUND AND NOT TARGET tblis::tblis)
             set_target_properties(hwloc::hwloc PROPERTIES IMPORTED_LOCATION "${HWLOC_LIBRARY}")
             # Force the linker to add rpath to hwloc, otherwise we need LD_LIBRARY_PATH to point to hwloc.
             # For some reason CMake is not able to detect that we need an rpath here, as it does for the MKL library
-            set_property(GLOBAL APPEND PROPERTY BUILD_RPATH "$<TARGET_FILE_DIR:hwloc::hwloc>")
+            set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY BUILD_RPATH "$<TARGET_LINKER_FILE_DIR:hwloc::hwloc>")
             target_link_libraries(tblis::tblis INTERFACE hwloc::hwloc)
         endif()
         if(ATOMIC_LIBRARY)
