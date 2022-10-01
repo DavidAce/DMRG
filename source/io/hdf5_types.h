@@ -140,7 +140,7 @@ class h5pp_table_data {
         static std::array<size_t, nfieldsFixed> get_offset(size_t data_size) {
             std::array<size_t, nfieldsFixed> ext = get_extent(data_size);
             std::array<size_t, nfieldsFixed> off = {0};
-            std::partial_sum(ext.begin(), ext.end(), off.begin() + 1, std::plus<size_t>());
+            std::partial_sum(ext.begin(), ext.end() - 1, off.begin() + 1, std::plus<size_t>());
             return off;
         }
         static size_t get_entry_size(size_t data_size) {
