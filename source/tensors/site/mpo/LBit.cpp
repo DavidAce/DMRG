@@ -10,6 +10,38 @@
 #include <math/tenx.h>
 #include <qm/spin.h>
 
+namespace settings {
+    inline constexpr bool debug_lbit = false;
+}
+
+std::string format_mpo(const Eigen::Tensor<std::complex<double>, 4> &mpo, double J1_rand, const std::vector<double> &J2_rand, double J3_rand) {
+    std::string str;
+    using namespace qm::spin::half;
+    auto ext = std::array<long, 4>{1, 1, 2, 2};
+    auto sh2 = std::array<long, 2>{2, 2};
+    for(long i = 0; i < mpo.dimension(0); i++) {
+        for(long j = 0; j < mpo.dimension(1); j++) {
+            auto                                   off = std::array<long, 4>{i, j, 0, 0};
+            Eigen::Tensor<std::complex<double>, 2> mat = mpo.slice(off, ext).reshape(sh2);
+            if(tenx::MatrixMap(mat) == sz)
+                str.append("z   ");
+            else if(tenx::MatrixMap(mat) == id)
+                str.append("i   ");
+            else if(tenx::isZero(mat))
+                str.append("0   ");
+            else {
+                if(tenx::MatrixMap(mat).isApprox(J1_rand * sz)) str.append(fmt::format("J1z "));
+                if(tenx::MatrixMap(mat).isApprox(J3_rand * sz)) str.append(fmt::format("J3z "));
+                for(const auto &[r, J2] : iter::enumerate(J2_rand)) {
+                    if(tenx::MatrixMap(mat).isApprox(J2 * sz)) str.append(fmt::format("J2{} ", r));
+                }
+            }
+        }
+        str.append("\n");
+    }
+    return str;
+}
+
 LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, position_) {
     h5tb.param.J1_mean  = settings::model::lbit::J1_mean;
     h5tb.param.J2_mean  = settings::model::lbit::J2_mean;
@@ -261,11 +293,11 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO();
-    auto   Rul                        = h5tb.param.J2_ctof;                    // Range unsigned long
+    auto   Rul                        = h5tb.param.J2_ctof;                    // Range unsigned long (with "full range": R = L-1)
     long   R                          = static_cast<long>(h5tb.param.J2_ctof); // Range
-    long   F                          = R + 2l;                                // Final index of mpo
+    long   F                          = R + 2l;                                // Last index of mpo
     size_t pos                        = get_position();
-    auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 to include R
+    auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
     double J1_on                      = 0.0;
     double J2_on                      = 0.0;
     double J3_on                      = 0.0;
@@ -283,21 +315,23 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
     auto   J2_rand = h5tb.param.get_J2_rand();
     double J3_rand = h5tb.param.J3_rand;
     if(skip) {
-        for(const auto &s : skip.value()) {
-            if(pos == s) {
-                // This site is skipped. No interactions should be contributed from here
-                J1_rand = 0.0;
-                J3_rand = 0.0;
-                for(auto &J2r : J2_rand) J2r = 0;
-            } else {
-                // This site is not skipped, but we need to make sure not to interact with the one that is skipped.
-                for(const auto &r : J2_range) {
-                    if(r >= J2_rand.size()) break;
-                    if(pos + r == s) J2_rand[r] = 0;
-                }
-
-                if(s == std::clamp<size_t>(s, pos, pos + 3)) J3_rand = 0;
+        auto skip_this_pos = std::find(skip->begin(), skip->end(), get_position()) != skip->end();
+        if(skip_this_pos) {
+            // This site is skipped. No interactions should be contributed from here. Set all interactions to zero
+            J1_rand = 0.0;
+            J3_rand = 0.0;
+            for(auto &J2r : J2_rand) J2r = 0;
+        } else {
+            // This site is not skipped, but we need to make sure not to interact with ones that are.
+            for(const auto &r : J2_range) {
+                if(r >= J2_rand.size()) break;
+                auto skip_that_pos = std::find(skip->begin(), skip->end(), pos + r) != skip->end();
+                if(skip_that_pos) J2_rand[r] = 0;
             }
+            // Same for 3-body interactions
+            auto skip_nnn1_pos = std::find(skip->begin(), skip->end(), pos + 1) != skip->end();
+            auto skip_nnn2_pos = std::find(skip->begin(), skip->end(), pos + 2) != skip->end();
+            if(skip_nnn1_pos or skip_nnn2_pos) J3_rand = 0;
         }
     }
     using namespace qm::spin::half;
@@ -307,10 +341,9 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
     Eigen::Tensor<cplx, 2> n = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id); // identity
 
-    auto J2_count = J2_rand;
     for(const auto &r : J2_range) {
+        double J2_count = 1.0;
         if(r >= J2_rand.size()) break;
-        J2_count[r] = 1.0;
         if(adjust_for_double_counting) {
             // Calculate double counting compensation
             // An interaction between sites i,j could be included multiple times in different multisite mpos.
@@ -338,7 +371,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
             //      Since in this example, pos == 2, we should compute the counts for [2,3], [2,4] and [2,5] in this function.
             //      If r == 2 in this loop, we should compute [2,4]: 2, because this mpo contributes J[2,4] twice as seen above.
 
-            J2_count[r] = 0.0;     // For this particular r, for interaction from posL to posL+r
+            J2_count    = 0.0;     // For this particular r, for interaction from posL to posL+r
             size_t posI = pos;     // "i" in the interaction J(i,j)
             size_t posJ = pos + r; // "j" in the interaction J(i,j)
             for(size_t posL = 0; posL < settings::model::model_size - 1ul; posL++) {
@@ -346,13 +379,13 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
                 // posL and posR are the left and right edges of the multisite mpo
                 size_t posR = posL + Rul;
                 if(posR >= settings::model::model_size) break;
-                if(posI >= posL and posJ <= posR) J2_count[r] += 1.0; // Count if the interaction is in the multisite mpo
+                if(posI >= posL and posJ <= posR) J2_count += 1.0; // Count if the interaction is in the multisite mpo
             }
-            J2_count[r] = std::max(J2_count[r], 1.0); // Avoid dividing by zero!
+            J2_count = std::max(J2_count, 1.0); // Avoid dividing by zero!
         }
-        J2_rand[r] /= J2_count[r];
+        if(J2_count > 1.0) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", J2_count, get_position());
+        J2_rand[r] /= J2_count;
     }
-
     MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_shift * I);
 
     if(R >= 1)
@@ -362,7 +395,9 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
         }
 
     MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * n;
-
+    if constexpr(settings::debug_lbit)
+        tools::log->info("Creating mpo | pos {} | nbody {} | skip {} \n{}", get_position(), nbody.value(), skip ? skip.value() : std::vector<size_t>{-1ul},
+                         format_mpo(MPO_nbody, J1_rand, J2_rand, J3_rand));
     return MPO_nbody;
 }
 
