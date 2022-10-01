@@ -36,6 +36,7 @@ namespace tools::common::h5 {
 
     void save::status(h5pp::File &h5file, const StorageInfo &sinfo, const AlgorithmStatus &status) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         // Check if the current entry has already been appended
         // Status is special, flags can be updated without changing iter or step
         std::string table_path    = fmt::format("{}/status", sinfo.get_state_prefix());
@@ -55,6 +56,7 @@ namespace tools::common::h5 {
 
     void save::mem(h5pp::File &h5file, const StorageInfo &sinfo) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         // Check if the current entry has already been appended
         std::string                    table_path = fmt::format("{}/mem_usage", sinfo.get_state_prefix());
         h5pp_table_memory_usage::table mem_usage_entry{};
@@ -202,6 +204,7 @@ namespace tools::common::h5 {
         if(not settings::timer::on) return;
         if(settings::storage::storage_level_timers == StorageLevel::NONE) return;
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto t_timers   = tid::tic_token("timers", tid::level::extra);
         auto table_path = fmt::format("{}/timers", sinfo.get_state_prefix());
 

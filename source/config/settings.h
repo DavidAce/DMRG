@@ -53,8 +53,8 @@ namespace settings {
      *
      *  enum StorageLevel:
      *       - `NONE`:   no data is saved at all
-     *       - `LIGHT`:  Tables have mid-chain data at the last iteration (rows are replaced). No MPS
-     *       - `NORMAL`: Tables have mid-chain data at all iterations (rows are appended). No MPS
+     *       - `LIGHT`:  Tables have mid-chain data (e.g. schmidt values, bond dims). No MPS
+     *       - `NORMAL`: Tables have full-chain data. No MPS
      *       - `FULL`:   Tables have full-chain data at all iterations. MPS is saved.
      *
      * **Note: Resume**

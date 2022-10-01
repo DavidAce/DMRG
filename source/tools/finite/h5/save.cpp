@@ -72,8 +72,8 @@ namespace tools::finite::h5 {
     }
 
     void save::correlations(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.algo_type != AlgorithmType::xDMRG) return;
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
         tools::finite::measure::correlation_matrix_xyz(state);
         /* clang-format off */
@@ -83,8 +83,8 @@ namespace tools::finite::h5 {
         /* clang-format on */
     }
     void save::structure_factors(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.algo_type != AlgorithmType::xDMRG) return;
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
         tools::finite::measure::structure_factors_xyz(state);
         save::data_as_table(h5file, sinfo, state.measurements.structure_factor_x, "structure_factor_x", "structure factor x", "f");
@@ -93,8 +93,8 @@ namespace tools::finite::h5 {
     }
 
     void save::kvornings_marker(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.algo_type != AlgorithmType::xDMRG) return;
+        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
         tools::finite::measure::kvornings_marker(state);
         save::data_as_table(h5file, sinfo, state.measurements.kvornings_marker, "kvornings_marker", "Kvornings marker", "eigval");
@@ -158,6 +158,7 @@ namespace tools::finite::h5 {
 
     void save::schmidt_values(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto                     t_hdf      = tid::tic_scope("schmidt_values", tid::level::extra);
         auto                     table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "schmidt_values");
         const long               cols       = state.get_length<long>() + 1; // Number of bonds matrices (1d arrays)
@@ -193,18 +194,22 @@ namespace tools::finite::h5 {
 
     void save::truncation_errors(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto t_hdf = tid::tic_scope("truncation_errors", tid::level::extra);
         data_as_table(h5file, sinfo, tools::finite::measure::truncation_errors(state), "truncation_errors", "Truncation errors", "L_");
     }
 
     void save::entropies_neumann(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
         data_as_table(h5file, sinfo, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
     }
 
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.algo_type != AlgorithmType::fLBIT) return;
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(not state.measurements.number_probabilities) return;
         auto t_hdf      = tid::tic_scope("probabilities", tid::level::extra);
         auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "number_probabilities");
@@ -230,6 +235,7 @@ namespace tools::finite::h5 {
 
     void save::entropies_renyi(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
         auto inf   = std::numeric_limits<double>::infinity();
         data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
@@ -240,6 +246,7 @@ namespace tools::finite::h5 {
 
     void save::entropies_number(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(sinfo.algo_type != AlgorithmType::fLBIT) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
         data_as_table(h5file, sinfo, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
@@ -247,6 +254,7 @@ namespace tools::finite::h5 {
 
     void save::expectations(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(sinfo.algo_type != AlgorithmType::xDMRG) return;
         auto t_hdf = tid::tic_scope("expectations", tid::level::extra);
         tools::finite::measure::expectation_values_xyz(state);
@@ -260,23 +268,35 @@ namespace tools::finite::h5 {
 
     void save::bonds(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto t_hdf = tid::tic_scope("bonds", tid::level::extra);
         // Transform from cplx to real to save space
-        using real                                 = MpsSite::real;
-        auto                                h5real = h5pp::type::getH5Type<real>();
-        std::vector<Eigen::Tensor<real, 1>> bonds_real;
-        bonds_real.reserve(state.get_length<size_t>() + 1);
-        for(const auto &mps : state.mps_sites) {
-            bonds_real.emplace_back(mps->get_L().real());
-            if(mps->isCenter()) { bonds_real.emplace_back(mps->get_LC().real()); }
+        using real      = MpsSite::real;
+        auto h5real     = h5pp::type::getH5Type<real>();
+        auto bonds_real = std::vector<Eigen::Tensor<real, 1>>();
+        auto bonds_hvla = std::vector<hvl_t>();
+
+        std::string column_name = "L_";
+        std::string table_title = "Bonds (singular values)";
+
+        if(settings::storage::storage_level_tables == StorageLevel::LIGHT) {
+            bonds_real.emplace_back(state.get_midchain_bond().real());
+            column_name = "L";
+            table_title = "Midchain Bond (singular values)";
+        } else {
+            bonds_real.reserve(state.get_length<size_t>() + 1);
+            for(const auto &mps : state.mps_sites) {
+                bonds_real.emplace_back(mps->get_L().real());
+                if(mps->isCenter()) { bonds_real.emplace_back(mps->get_LC().real()); }
+            }
         }
-        std::vector<hvl_t> bonds_hvla;
         for(auto &bond : bonds_real) bonds_hvla.emplace_back(hvl_t{static_cast<size_t>(bond.size()), bond.data()});
-        data_as_table_vla(h5file, sinfo, bonds_hvla, h5real, "bonds", "Singular Values", "L_");
+        data_as_table_vla(h5file, sinfo, bonds_hvla, h5real, "bonds", table_title, column_name);
     }
 
     void save::state(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level < StorageLevel::FULL) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         auto t_hdf      = tid::tic_scope("state", tid::level::extra);
         auto mps_prefix = sinfo.get_mps_prefix();
 
@@ -308,7 +328,8 @@ namespace tools::finite::h5 {
     /*! Write down the Hamiltonian model type and site info as attributes */
     void save::model(h5pp::File &h5file, const StorageInfo &sinfo, const ModelFinite &model) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
-        std::string table_path = fmt::format("{}/hamiltonian", sinfo.get_state_prefix());
+        if(sinfo.storage_event != StorageEvent::MODEL) return;
+        std::string table_path = fmt::format("{}/model/hamiltonian", sinfo.algo_name);
         if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
         tools::log->trace("Storing table: [{}]", table_path);
@@ -321,6 +342,7 @@ namespace tools::finite::h5 {
     /*! Write all the MPO's with site info in attributes */
     void tools::finite::h5::save::mpo(h5pp::File &h5file, const StorageInfo &sinfo, const ModelFinite &model) {
         if(sinfo.storage_level < StorageLevel::FULL) return;
+        if(sinfo.storage_event != StorageEvent::MODEL) return;
         std::string mpo_prefix = fmt::format("{}/model/mpo", sinfo.get_state_prefix());
         // We do not expect the MPO's to change. Therefore, if they exist, there is nothing else to do here
         if(h5file.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
@@ -402,43 +424,26 @@ namespace tools::finite::h5 {
         tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
                           sinfo.get_state_prefix());
 
-        // Start saving tensors and metadata
-        if(sinfo.storage_event == StorageEvent::MODEL) {
-            tools::finite::h5::save::model(h5file, sinfo, model);
-            return;
-        }
         // The file can be kept open during writes
         h5file.setKeepFileOpened();
 
-        switch(sinfo.storage_event) {
-            case StorageEvent::BOND_INCREASE:
-            case StorageEvent::TRNC_DECREASE:
-            case StorageEvent::FES: break;
-            default: {
-                tools::finite::h5::save::state(h5file, sinfo, state);
-                tools::finite::h5::save::correlations(h5file, sinfo, state);
-                break;
-            }
-        }
-
-        //        tools::common::h5::save::meta(h5file, storage_level, storage_event, settings::model::model_type, settings::model::model_size,
-        //        state.get_name(),
-        //                                      state_prefix, model_prefix, status);
-
         // The main results have now been written. Next we append data to tables
+        tools::finite::h5::save::model(h5file, sinfo, model);
+        tools::finite::h5::save::state(h5file, sinfo, state);
         tools::common::h5::save::status(h5file, sinfo, status);
         tools::common::h5::save::mem(h5file, sinfo);
         tools::common::h5::save::timer(h5file, sinfo);
         tools::finite::h5::save::measurements(h5file, sinfo, state, model, edges, status);
         tools::finite::h5::save::bond_dimensions(h5file, sinfo, state);
         tools::finite::h5::save::bonds(h5file, sinfo, state);
-        tools::finite::h5::save::schmidt_values(h5file, sinfo, state);
+        //                tools::finite::h5::save::schmidt_values(h5file, sinfo, state);
         tools::finite::h5::save::truncation_errors(h5file, sinfo, state);
         tools::finite::h5::save::entropies_neumann(h5file, sinfo, state);
         tools::finite::h5::save::entropies_renyi(h5file, sinfo, state);
         tools::finite::h5::save::entropies_number(h5file, sinfo, state);
         tools::finite::h5::save::expectations(h5file, sinfo, state);
         tools::finite::h5::save::structure_factors(h5file, sinfo, state);
+        tools::finite::h5::save::correlations(h5file, sinfo, state);
         tools::finite::h5::save::kvornings_marker(h5file, sinfo, state);
         tools::finite::h5::save::number_probabilities(h5file, sinfo, state);
 

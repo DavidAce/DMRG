@@ -288,7 +288,7 @@ void xdmrg::run_fes_analysis() {
 
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
-        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES);
+        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES_STATE);
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
 

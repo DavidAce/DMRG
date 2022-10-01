@@ -34,7 +34,7 @@ std::string StorageInfo::get_mps_prefix() const {
         case StorageEvent::PROJ_STATE: return fmt::format("{}/mps/proj", state_prefix);
         case StorageEvent::BOND_INCREASE: return fmt::format("{}/{}/mps/bond_{}", state_prefix, bond_lim);
         case StorageEvent::TRNC_DECREASE: return fmt::format("{}/{}/mps/trnc_{:.2e}", state_prefix, trnc_lim);
-        case StorageEvent::FES: return fmt::format("{}/{}/mps/fes_{}", state_prefix, bond_lim);
+        case StorageEvent::FES_STATE: return fmt::format("{}/{}/mps/fes_{}", state_prefix, bond_lim);
         case StorageEvent::EMIN_STATE: return fmt::format("{}/state_emin/mps", algo_name);
         case StorageEvent::EMAX_STATE: return fmt::format("{}/state_emax/mps", algo_name);
         case StorageEvent::MODEL: throw except::logic_error("get_mps_prefix(): Invalid event: [MODEL]");
@@ -62,7 +62,7 @@ StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_n
         case StorageEvent::PROJ_STATE: storage_level = settings::storage::storage_level_proj_state; break;
         case StorageEvent::BOND_INCREASE: storage_level = settings::storage::storage_level_bond_state; break;
         case StorageEvent::TRNC_DECREASE: storage_level = settings::storage::storage_level_trnc_state; break;
-        case StorageEvent::FES: storage_level = settings::storage::storage_level_fes_state; break;
+        case StorageEvent::FES_STATE: storage_level = settings::storage::storage_level_fes_state; break;
         case StorageEvent::MODEL: storage_level = settings::storage::storage_level_model; break;
         case StorageEvent::NONE: break;
     }
