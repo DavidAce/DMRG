@@ -104,7 +104,7 @@ long tools::finite::measure::bond_dimension_current(const StateFinite &state) {
 
 long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
     if(state.measurements.bond_mid) return state.measurements.bond_mid.value();
-    state.measurements.bond_mid = state.midchain_bond().dimension(0);
+    state.measurements.bond_mid = state.get_midchain_bond().dimension(0);
     return state.measurements.bond_mid.value();
 }
 
@@ -160,7 +160,7 @@ double tools::finite::measure::entanglement_entropy_current(const StateFinite &s
 double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_midchain) return state.measurements.entanglement_entropy_midchain.value();
     auto                   t_ent                     = tid::tic_scope("neumann_entropy");
-    auto                  &LC                        = state.midchain_bond();
+    auto                  &LC                        = state.get_midchain_bond();
     Eigen::Tensor<cplx, 0> SE                        = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
     state.measurements.entanglement_entropy_midchain = std::abs(SE(0));
     return state.measurements.entanglement_entropy_midchain.value();

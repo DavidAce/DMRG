@@ -63,7 +63,7 @@ class StateFinite {
     void                        set_algorithm(const AlgorithmType &algo_type);
     [[nodiscard]] AlgorithmType get_algorithm() const;
 
-    const Eigen::Tensor<Scalar, 1> &midchain_bond() const;
+    const Eigen::Tensor<Scalar, 1> &get_midchain_bond() const;
     const Eigen::Tensor<Scalar, 1> &current_bond() const;
 
     template<typename T = size_t>

@@ -267,7 +267,7 @@ void StateFinite::assert_validity() const {
     }
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::midchain_bond() const {
+const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::get_midchain_bond() const {
     auto pos = get_position<long>();
     auto cnt = (get_length<long>() - 1) / 2;
     if(pos < cnt) return get_mps_site(cnt).get_L();
