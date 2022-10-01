@@ -15,7 +15,7 @@ IsingRandomField::IsingRandomField(ModelType model_type_, size_t position_) : Mp
     h5tb.param.h_mean   = settings::model::ising_tf_rf::h_mean;
     h5tb.param.h_wdth   = settings::model::ising_tf_rf::h_wdth;
     h5tb.param.spin_dim = settings::model::ising_tf_rf::spin_dim;
-    copy_c_str(settings::model::ising_tf_rf::distribution, h5tb.param.distribution);
+    h5tb.param.set_distribution(settings::model::ising_tf_rf::distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     using namespace qm::spin::half;
@@ -42,7 +42,8 @@ void IsingRandomField::set_parameters(TableMap &parameters) {
     h5tb.param.h_wdth   = std::any_cast<double>(parameters["h_wdth"]);
     h5tb.param.h_rand   = std::any_cast<double>(parameters["h_rand"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    copy_c_str(std::any_cast<std::string>(parameters["distribution"]), h5tb.param.distribution);
+    h5tb.param.set_distribution(std::any_cast<std::string>(parameters["distribution"]));
+
     if(h5tb.param.J2 != 0.0) throw except::runtime_error("mpo({}): use of [J2] - Next-nearest neighbor coupling - is not implemented yet", get_position());
     all_mpo_parameters_have_been_set = true;
 }
@@ -57,7 +58,7 @@ IsingRandomField::TableMap IsingRandomField::get_parameters() const {
     parameters["h_wdth"]        = h5tb.param.h_wdth;
     parameters["h_rand"]        = h5tb.param.h_rand;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
-    parameters["distribution"]  = std::string(h5tb.param.distribution);
+    parameters["distribution"]  = std::string(h5tb.param.get_distribution());
     return parameters;
     /* clang-format on */
 }
@@ -99,14 +100,14 @@ void IsingRandomField::build_mpo()
 }
 
 void IsingRandomField::randomize_hamiltonian() {
-    if(std::string(h5tb.param.distribution) == "normal") {
+    if(h5tb.param.get_distribution() == "normal") {
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(std::string(h5tb.param.distribution) == "lognormal") {
+    } else if(h5tb.param.get_distribution() == "lognormal") {
         h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(std::string(h5tb.param.distribution) == "uniform") {
+    } else if(h5tb.param.get_distribution() == "uniform") {
         h5tb.param.h_rand = rnd::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_wdth / 2.0, h5tb.param.h_mean + h5tb.param.h_wdth / 2.0);
     } else {
-        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform", h5tb.param.distribution);
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform", h5tb.param.get_distribution());
     }
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
@@ -178,7 +179,7 @@ void IsingRandomField::save_hamiltonian(h5pp::File &file, std::string_view table
     file.writeAttribute(h5tb.param.h_mean, "h_mean", table_path);
     file.writeAttribute(h5tb.param.h_wdth, "h_wdth", table_path);
     file.writeAttribute(h5tb.param.h_tran, "h_tran", table_path);
-    file.writeAttribute(h5tb.param.distribution, "distribution", table_path);
+    file.writeAttribute(h5tb.param.get_distribution(), "distribution", table_path);
     file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
 }
 

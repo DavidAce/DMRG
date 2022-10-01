@@ -26,7 +26,7 @@ IsingMajorana::IsingMajorana(ModelType model_type_, size_t position_) : MpoSite(
         throw except::logic_error("error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
 
     h5tb.param.spin_dim = settings::model::ising_majorana::spin_dim;
-    copy_c_str(settings::model::ising_majorana::distribution, h5tb.param.distribution);
+    h5tb.param.set_distribution(settings::model::ising_majorana::distribution);
     parity_sep = settings::model::ising_majorana::parity_sep;
 
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
@@ -49,7 +49,7 @@ void IsingMajorana::set_parameters(TableMap &parameters) {
     h5tb.param.g        = std::any_cast<double>(parameters["g"]);
     h5tb.param.delta    = std::any_cast<double>(parameters["delta"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    copy_c_str(std::any_cast<std::string>(parameters["distribution"]), h5tb.param.distribution);
+    h5tb.param.set_distribution(std::any_cast<std::string>(parameters["distribution"]));
     all_mpo_parameters_have_been_set = true;
 }
 
@@ -65,7 +65,7 @@ IsingMajorana::TableMap IsingMajorana::get_parameters() const {
     parameters["g"]        = h5tb.param.g;
     parameters["delta"]    = h5tb.param.delta;
     parameters["spin_dim"] = h5tb.param.spin_dim;
-    parameters["distribution"] = std::string(h5tb.param.distribution);
+    parameters["distribution"]  = std::string(h5tb.param.get_distribution());
     return parameters;
     /* clang-format on */
 }
@@ -120,20 +120,20 @@ void IsingMajorana::build_mpo()
 }
 
 void IsingMajorana::randomize_hamiltonian() {
-    if(std::string_view(h5tb.param.distribution) == "normal") {
+    if(h5tb.param.get_distribution() == "normal") {
         h5tb.param.J_rand = rnd::normal(h5tb.param.J_mean, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(std::string_view(h5tb.param.distribution) == "lognormal") {
+    } else if(h5tb.param.get_distribution() == "lognormal") {
         h5tb.param.J_rand = rnd::log_normal(h5tb.param.J_mean, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(std::string_view(h5tb.param.distribution) == "uniform") {
+    } else if(h5tb.param.get_distribution() == "uniform") {
         h5tb.param.J_rand = rnd::uniform_double_box(0, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::uniform_double_box(0, h5tb.param.h_wdth);
-    } else if(std::string_view(h5tb.param.distribution) == "constant") {
+    } else if(h5tb.param.get_distribution() == "constant") {
         h5tb.param.J_rand = h5tb.param.J_mean;
         h5tb.param.h_rand = h5tb.param.h_mean;
     } else {
-        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.get_distribution());
     }
 
     all_mpo_parameters_have_been_set = false;
@@ -195,7 +195,7 @@ void IsingMajorana::save_hamiltonian(h5pp::File &file, std::string_view hamilton
     file.writeAttribute(h5tb.param.h_wdth, hamiltonian_table_path, "h_wdth");
     file.writeAttribute(h5tb.param.g, hamiltonian_table_path, "g");
     file.writeAttribute(h5tb.param.delta, hamiltonian_table_path, "delta");
-    file.writeAttribute(h5tb.param.distribution, hamiltonian_table_path, "distribution");
+    file.writeAttribute(h5tb.param.get_distribution(), hamiltonian_table_path, "distribution");
     file.writeAttribute(h5tb.param.spin_dim, hamiltonian_table_path, "spin_dim");
 }
 
@@ -216,8 +216,8 @@ void IsingMajorana::load_hamiltonian(const h5pp::File &file, std::string_view mo
     if(std::abs(h5tb.param.g - g) > 1e-6) throw except::runtime_error("g {:.16f} != {:.16f} ising_majorana::g", h5tb.param.g, g);
     if(std::abs(h5tb.param.J_wdth - J_wdth) > 1e-6) throw except::runtime_error("J_wdth {:.16f} != {:.16f} ising_majorana::J_wdth", h5tb.param.J_wdth, J_wdth);
     if(std::abs(h5tb.param.h_wdth - h_wdth) > 1e-6) throw except::runtime_error("h_wdth {:.16f} != {:.16f} ising_majorana::h_wdth", h5tb.param.h_wdth, h_wdth);
-    if(h5tb.param.distribution != distribution)
-        throw except::runtime_error("distribution {} != {} ising_majorana::distribution", h5tb.param.distribution, distribution);
+    if(h5tb.param.get_distribution() != distribution)
+        throw except::runtime_error("distribution {} != {} ising_majorana::distribution", h5tb.param.get_distribution(), distribution);
 
     // Sanity check on delta, J_mean, h_mean
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
