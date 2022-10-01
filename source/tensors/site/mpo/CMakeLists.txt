@@ -1,18 +1,19 @@
 add_source_target(dmrg-tensors-mpo
-        TARGET_SOURCES
-        MpoSite.cpp
-        MpoFactory.cpp
-        IsingSelfDual.cpp
-        IsingMajorana.cpp
-        IsingRandomField.cpp
-        LBit.cpp
-        OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
-        INTERFACE_LINK_LIBRARIES
-        dmrg-config
-        dmrg-math-hash
-        dmrg-math-rnd
-        dmrg-math-tenx
-        dmrg-qm-spin
-        dmrg-tools-common-log
-        )
+                  TARGET_SOURCES
+                  MpoSite.cpp
+                  MpoFactory.cpp
+                  MpoParameters.cpp
+                  IsingSelfDual.cpp
+                  IsingMajorana.cpp
+                  IsingRandomField.cpp
+                  LBit.cpp
+                  OBJECT_LINK_LIBRARIES
+                  dmrg-deps dmrg-flags
+                  INTERFACE_LINK_LIBRARIES
+                  dmrg-config
+                  dmrg-math-hash
+                  dmrg-math-rnd
+                  dmrg-math-tenx
+                  dmrg-qm-spin
+                  dmrg-tools-common-log
+                  )
