@@ -9,26 +9,31 @@
 #include <hdf5_hl.h>
 #include <stdexcept>
 
-template<typename SrcType, typename TgtType, size_t size>
-void copy_c_str(const SrcType &src, TgtType (&tgt)[size])
-// Use to copy the distribution char array from string
-{
-    tgt[src.copy(tgt, size - 1)] = 0; // Null terminates
-}
-
 class h5tb_ising_selfdual {
     public:
     struct table {
-        double J_mean           = 0;         /*!< Mean for the distrbution of J_rand */
-        double J_wdth           = 0;         /*!< Width for the distrbution of J_rand */
-        double J_rand           = 0;         /*!< Randomly distributed nearest neighbour coupling */
-        double h_mean           = 0;         /*!< Mean for the distrbution of h_rand */
-        double h_wdth           = 0;         /*!< Width for the distrbution of h_rand */
-        double h_rand           = 0;         /*!< Randomly distributed on-site field */
-        double lambda           = 0;         /*!< Factor involved in next-nearest neighbor interaction */
-        double delta            = 0;         /*!< Difference log(J_mean) - log(h_mean) */
-        long   spin_dim         = 2;         /*!< Spin dimension */
-        char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        double J_mean       = 0;       /*!< Mean for the distrbution of J_rand */
+        double J_wdth       = 0;       /*!< Width for the distrbution of J_rand */
+        double J_rand       = 0;       /*!< Randomly distributed nearest neighbour coupling */
+        double h_mean       = 0;       /*!< Mean for the distrbution of h_rand */
+        double h_wdth       = 0;       /*!< Width for the distrbution of h_rand */
+        double h_rand       = 0;       /*!< Randomly distributed on-site field */
+        double lambda       = 0;       /*!< Factor involved in next-nearest neighbor interaction */
+        double delta        = 0;       /*!< Difference log(J_mean) - log(h_mean) */
+        long   spin_dim     = 2;       /*!< Spin dimension */
+        char  *distribution = nullptr; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        ~table() noexcept {
+            if(distribution != nullptr) { free(distribution); }
+        }
+        std::string_view get_distribution() const {
+            if(distribution == nullptr) throw except::runtime_error("distribution == nullptr");
+            return distribution;
+        }
+        void set_distribution(std::string_view dist) {
+            if(distribution != nullptr) free(distribution);
+            distribution = static_cast<char *>(malloc((dist.size() + 1) * sizeof(char))); // Add +1 for null terminator
+            strcpy(distribution, dist.data());
+        }
     };
     static inline h5pp::hid::h5t h5_type;
     table                        param;
@@ -38,12 +43,8 @@ class h5tb_ising_selfdual {
         if(h5_type.valid()) return;
 
         // Create a type for the char array from the template H5T_C_S1
-        // The template describes a string with a single char.
-        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
         h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
-        H5Tset_size(h5t_custom_string, 16);
-
-        // Optionally set the null terminator '\0'
+        H5Tset_size(h5t_custom_string, H5T_VARIABLE);
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
 
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
@@ -70,7 +71,7 @@ class h5tb_ising_selfdual {
         if(p == "lambda")           return fmt::format(FMT_STRING("{:<7.4f}") , param.lambda);
         if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
-        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.get_distribution());
         /* clang-format on */
         throw except::runtime_error("Unrecognized parameter: {}", p);
     }
@@ -95,16 +96,28 @@ class h5tb_ising_selfdual {
 class h5tb_ising_majorana {
     public:
     struct table {
-        double J_mean           = 0; /*!< Mean for the distrbution of J_rand */
-        double J_wdth           = 0; /*!< Width for the distrbution of J_rand */
-        double J_rand           = 0; /*!< Randomly distributed nearest neighbour coupling */
-        double h_mean           = 0; /*!< Mean for the distrbution of h_rand */
-        double h_wdth           = 0; /*!< Width for the distrbution of h_rand */
-        double h_rand           = 0; /*!< Randomly distributed on-site field */
-        double g                = 0; /*!< Interaction parameter for nearest ZZ and next-nearest XX neighbor coupling */
-        double delta            = 0; /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing delta = 2lnW, W = J_wdth = 1/h_wdth */
-        long   spin_dim         = 2; /*!< Spin dimension */
-        char   distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        double J_mean       = 0; /*!< Mean for the distrbution of J_rand */
+        double J_wdth       = 0; /*!< Width for the distrbution of J_rand */
+        double J_rand       = 0; /*!< Randomly distributed nearest neighbour coupling */
+        double h_mean       = 0; /*!< Mean for the distrbution of h_rand */
+        double h_wdth       = 0; /*!< Width for the distrbution of h_rand */
+        double h_rand       = 0; /*!< Randomly distributed on-site field */
+        double g            = 0; /*!< Interaction parameter for nearest ZZ and next-nearest XX neighbor coupling */
+        double delta        = 0; /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing delta = 2lnW, W = J_wdth = 1/h_wdth */
+        long   spin_dim     = 2; /*!< Spin dimension */
+        char  *distribution = nullptr; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        ~table() noexcept {
+            if(distribution != nullptr) { free(distribution); }
+        }
+        std::string_view get_distribution() const {
+            if(distribution == nullptr) throw except::runtime_error("distribution == nullptr");
+            return distribution;
+        }
+        void set_distribution(std::string_view dist) {
+            if(distribution != nullptr) free(distribution);
+            distribution = static_cast<char *>(malloc((dist.size() + 1) * sizeof(char))); // Add +1 for null terminator
+            strcpy(distribution, dist.data());
+        }
     };
     static inline h5pp::hid::h5t h5_type;
     table                        param;
@@ -114,12 +127,8 @@ class h5tb_ising_majorana {
         if(h5_type.valid()) return;
 
         // Create a type for the char array from the template H5T_C_S1
-        // The template describes a string with a single char.
-        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
         h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
-        H5Tset_size(h5t_custom_string, 16);
-
-        // Optionally set the null terminator '\0'
+        H5Tset_size(h5t_custom_string, H5T_VARIABLE);
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
 
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
@@ -146,7 +155,7 @@ class h5tb_ising_majorana {
         if(p == "g")                return fmt::format(FMT_STRING("{:<7.4f}") , param.g);
         if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
-        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.get_distribution());
         /* clang-format on */
         throw except::runtime_error("Unrecognized parameter: {}", p);
     }
@@ -171,14 +180,26 @@ class h5tb_ising_majorana {
 class h5tb_ising_tf_rf {
     public:
     struct table {
-        double J1               = 0;         /*!< Nearest neighbor coupling */
-        double J2               = 0;         /*!< Next-nearest neighbor coupling */
-        double h_tran           = 0;         /*!< Transverse field strength */
-        double h_mean           = 0;         /*!< Random field mean of distribution */
-        double h_wdth           = 0;         /*!< Random field width of distribution. */
-        double h_rand           = 0;         /*!< Random field value */
-        long   spin_dim         = 2;         /*!< Spin dimension */
-        char   distribution[16] = "uniform"; /*!< The random distribution of J_rand and h_rand. Choose between lognormal, normal or uniform */
+        double J1           = 0;       /*!< Nearest neighbor coupling */
+        double J2           = 0;       /*!< Next-nearest neighbor coupling */
+        double h_tran       = 0;       /*!< Transverse field strength */
+        double h_mean       = 0;       /*!< Random field mean of distribution */
+        double h_wdth       = 0;       /*!< Random field width of distribution. */
+        double h_rand       = 0;       /*!< Random field value */
+        long   spin_dim     = 2;       /*!< Spin dimension */
+        char  *distribution = nullptr; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        ~table() noexcept {
+            if(distribution != nullptr) { free(distribution); }
+        }
+        std::string_view get_distribution() const {
+            if(distribution == nullptr) throw except::runtime_error("distribution == nullptr");
+            return distribution;
+        }
+        void set_distribution(std::string_view dist) {
+            if(distribution != nullptr) free(distribution);
+            distribution = static_cast<char *>(malloc((dist.size() + 1) * sizeof(char))); // Add +1 for null terminator
+            strcpy(distribution, dist.data());
+        }
     };
 
     static inline h5pp::hid::h5t h5_type;
@@ -189,12 +210,10 @@ class h5tb_ising_tf_rf {
     static void register_table_type() {
         if(h5_type.valid()) return;
         // Create a type for the char array from the template H5T_C_S1
-        // The template describes a string with a single char.
-        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
         h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
-        H5Tset_size(h5t_custom_string, 16);
-        // Optionally set the null terminator '\0'
+        H5Tset_size(h5t_custom_string, H5T_VARIABLE);
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
+
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "J1", HOFFSET(table, J1), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2", HOFFSET(table, J2), H5T_NATIVE_DOUBLE);
@@ -215,7 +234,7 @@ class h5tb_ising_tf_rf {
         if(p == "h_wdth")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_wdth);
         if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
-        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.get_distribution());
         /* clang-format on */
         throw except::runtime_error("Unrecognized parameter: {}", p);
     }
@@ -236,30 +255,51 @@ class h5tb_ising_tf_rf {
 };
 
 class h5tb_lbit {
-    private:
-    static constexpr size_t                 J2_size = 64;
-    static constexpr std::array<hsize_t, 1> J2_dims = {J2_size};
-
     public:
-    using J2Type = std::array<double, J2_size>;
-
     struct table {
-        double   J1_rand          = 0;         /*!< On-site interaction */
-        J2Type   J2_rand          = {};        /*!< Two-body interaction */
-        double   J3_rand          = 0;         /*!< Three-body interaction */
-        double   J1_mean          = 0;         /*!< Constant offset for on-site */
-        double   J2_mean          = 0;         /*!< Constant offset for two-body interaction */
-        double   J3_mean          = 0;         /*!< Constant offset for three-body interaction */
-        double   J1_wdth          = 0;         /*!< Width of the distribution J1 */
-        double   J2_wdth          = 0;         /*!< Width of the distribution J2 */
-        double   J3_wdth          = 0;         /*!< Width of the distribution J3 */
-        double   J2_xcls          = 0;         /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
-        size_t   J2_span          = 0;         /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
-        size_t   J2_ctof          = 0;         /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
-        double   f_mixer          = 0;         /*!< Mixing factor for unitary transformation to real-space */
-        uint64_t u_layer          = 0;         /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
-        long     spin_dim         = 2;         /*!< Spin dimension */
-        char     distribution[16] = "uniform"; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        double   J1_rand      = 0;       /*!< On-site interaction */
+        hvl_t    J2_rand      = {};      /*!< Two-body interaction */
+        double   J3_rand      = 0;       /*!< Three-body interaction */
+        double   J1_mean      = 0;       /*!< Constant offset for on-site */
+        double   J2_mean      = 0;       /*!< Constant offset for two-body interaction */
+        double   J3_mean      = 0;       /*!< Constant offset for three-body interaction */
+        double   J1_wdth      = 0;       /*!< Width of the distribution J1 */
+        double   J2_wdth      = 0;       /*!< Width of the distribution J2 */
+        double   J3_wdth      = 0;       /*!< Width of the distribution J3 */
+        double   J2_xcls      = 0;       /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
+        size_t   J2_span      = 0;       /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
+        size_t   J2_ctof      = 0;       /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
+        double   f_mixer      = 0;       /*!< Mixing factor for unitary transformation to real-space */
+        uint64_t u_layer      = 0;       /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
+        long     spin_dim     = 2;       /*!< Spin dimension */
+        char    *distribution = nullptr; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
+        table() noexcept : J2_rand(hvl_t{0, nullptr}) {}
+        ~table() noexcept {
+            free(distribution);
+            free(J2_rand.p);
+        }
+        std::string_view get_distribution() const {
+            if(distribution == nullptr) throw except::runtime_error("distribution == nullptr");
+            return distribution;
+        }
+        void set_distribution(std::string_view dist) {
+            free(distribution);
+            distribution = static_cast<char *>(malloc((dist.size() + 1) * sizeof(char))); // Add +1 for null terminator
+            strcpy(distribution, dist.data());
+        }
+        std::vector<double> get_J2_rand() const {
+            if(J2_rand.p == nullptr) throw except::runtime_error("J2_rand.p == nullptr");
+            auto bgn = static_cast<double *>(J2_rand.p);
+            auto end = static_cast<double *>(J2_rand.p) + J2_rand.len;
+            return std::vector<double>(bgn, end);
+        }
+        size_t get_J2_rand_size() const { return J2_rand.len; }
+        void   set_J2_rand(const std::vector<double> &J2) {
+            free(J2_rand.p);
+            J2_rand.p   = static_cast<double *>(malloc(J2.size() * sizeof(double)));
+            J2_rand.len = J2.size();
+            std::copy_n(J2.data(), J2.size(), static_cast<double *>(J2_rand.p));
+        }
     };
 
     static inline h5pp::hid::h5t h5_type;
@@ -269,18 +309,16 @@ class h5tb_lbit {
 
     static void register_table_type() {
         if(h5_type.valid()) return;
-        h5pp::hid::h5t H5T_JARRAY_DOUBLE = H5Tarray_create(H5T_NATIVE_DOUBLE, J2_dims.size(), J2_dims.data());
+        h5pp::hid::h5t H5T_VARRAY_DOUBLE = H5Tvlen_create(H5T_NATIVE_DOUBLE);
 
         // Create a type for the char array from the template H5T_C_S1
-        // The template describes a string with a single char.
-        // Set the size with H5Tset_size, or h5pp::hdf5::setStringSize(...)
         h5pp::hid::h5t h5t_custom_string = H5Tcopy(H5T_C_S1);
-        H5Tset_size(h5t_custom_string, 16);
+        H5Tset_size(h5t_custom_string, H5T_VARIABLE);
         // Optionally set the null terminator '\0'
         H5Tset_strpad(h5t_custom_string, H5T_STR_NULLTERM);
         h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
         H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), H5T_JARRAY_DOUBLE);
+        H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), H5T_VARRAY_DOUBLE);
         H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J1_mean", HOFFSET(table, J1_mean), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "J2_mean", HOFFSET(table, J2_mean), H5T_NATIVE_DOUBLE);
@@ -297,13 +335,18 @@ class h5tb_lbit {
         H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5t_custom_string);
     }
 
-    [[nodiscard]] std::string J2_str() const {
-        return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_ctof + 1, ","));
-    }
+    [[nodiscard]] std::string J2_str() const { return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.get_J2_rand(), ",")); }
     [[nodiscard]] std::string fmt_value(std::string_view p) const {
+        // J2_rand is special since it varies in length for each mpo. Let's just pad with nan to make it pretty
+        if(p == "J2_rand") {
+            auto J2_rand = param.get_J2_rand();
+            J2_rand.reserve(param.J2_ctof + 1);
+            for(size_t i = J2_rand.size(); i < param.J2_ctof + 1; i++) J2_rand.emplace_back(std::numeric_limits<double>::quiet_NaN());
+            return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(J2_rand, ","));
+        }
+
         /* clang-format off */
         if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"),param.J1_rand);
-        if(p == "J2_rand")     return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(param.J2_rand.begin(), param.J2_rand.begin() + param.J2_ctof + 1, ","));;
         if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand);
         if(p == "J1_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_mean);
         if(p == "J2_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2_mean);
@@ -312,12 +355,12 @@ class h5tb_lbit {
         if(p == "J2_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_wdth);
         if(p == "J3_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J3_wdth);
         if(p == "J2_xcls")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_xcls);
-        if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span);
+        if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
         if(p == "J2_ctof")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_ctof);
         if(p == "f_mixer")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.f_mixer);
         if(p == "u_layer")     return fmt::format(FMT_STRING("{:>7}"),     param.u_layer);
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
-        if(p == "distribution")return fmt::format(FMT_STRING("{:<12}")    ,param.distribution);
+        if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.get_distribution());
         /* clang-format on */
         throw except::runtime_error("Unrecognized parameter: {}", p);
     }

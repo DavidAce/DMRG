@@ -25,7 +25,7 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
 
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
     h5tb.param.J2_ctof = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
-    copy_c_str(settings::model::lbit::distribution, h5tb.param.distribution);
+    h5tb.param.set_distribution(settings::model::lbit::distribution);
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     h5tb_lbit::register_table_type();
@@ -39,8 +39,8 @@ void LBit::print_parameter_names() const { h5tb.print_parameter_names(); }
 void LBit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void LBit::set_parameters(TableMap &parameters) {
-    h5tb.param.J1_rand  = std::any_cast<double>(parameters["J1_rand"]);
-    h5tb.param.J2_rand  = std::any_cast<h5tb_lbit::J2Type>(parameters["J2_rand"]);
+    h5tb.param.J1_rand = std::any_cast<double>(parameters["J1_rand"]);
+    h5tb.param.set_J2_rand(std::any_cast<std::vector<double>>(parameters["J2_rand"]));
     h5tb.param.J3_rand  = std::any_cast<double>(parameters["J3_rand"]);
     h5tb.param.J1_wdth  = std::any_cast<double>(parameters["J1_wdth"]);
     h5tb.param.J2_wdth  = std::any_cast<double>(parameters["J2_wdth"]);
@@ -50,7 +50,7 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.f_mixer  = std::any_cast<double>(parameters["f_mixer"]);
     h5tb.param.u_layer  = std::any_cast<size_t>(parameters["u_layer"]);
     h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    std::strcpy(h5tb.param.distribution, std::any_cast<std::string>(parameters["distribution"]).c_str());
+    h5tb.param.set_distribution(std::any_cast<std::string>(parameters["distribution"]));
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
     h5tb.param.J2_ctof               = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
     all_mpo_parameters_have_been_set = true;
@@ -60,7 +60,7 @@ LBit::TableMap LBit::get_parameters() const {
     /* clang-format off */
     TableMap parameters;
     parameters["J1_rand"]       = h5tb.param.J1_rand;
-    parameters["J2_rand"]       = h5tb.param.J2_rand;
+    parameters["J2_rand"]       = h5tb.param.get_J2_rand();
     parameters["J3_rand"]       = h5tb.param.J3_rand;
     parameters["J1_wdth"]       = h5tb.param.J1_wdth;
     parameters["J2_wdth"]       = h5tb.param.J2_wdth;
@@ -71,7 +71,7 @@ LBit::TableMap LBit::get_parameters() const {
     parameters["f_mixer"]       = h5tb.param.f_mixer;
     parameters["u_layer"]       = h5tb.param.u_layer;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
-    parameters["distribution"]  = std::string(h5tb.param.distribution);
+    parameters["distribution"]  = std::string(h5tb.param.get_distribution());
     return parameters;
     /* clang-format on */
 }
@@ -101,6 +101,8 @@ void LBit::build_mpo()
                         | J1*n J21*n J22*n J23*n J24*n J25*n J26*n J27*n J28*n J3*n    I | F
 
        where
+        *   F is the linear size of the MPO
+        *   R is the the max range of interactions, i.e site i can interact with i+8
         *	i,j are site indices
         *   n = 0.5 * (1 + σ^z),
         *   σ^z is the diagonal 2x2 pauli matrix
@@ -160,8 +162,9 @@ void LBit::build_mpo()
     tools::log->debug("mpo({}): building lbit mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
-    if(h5tb.param.J2_ctof >= h5tb.param.J2_rand.size())
-        throw except::logic_error("expected J2_ctof ({}) < J2_rand.size()({})", h5tb.param.J2_ctof, h5tb.param.J2_rand.size());
+    if(h5tb.param.get_J2_rand().empty()) throw except::logic_error("expected non-empty J2_rand");
+    if(h5tb.param.get_J2_rand_size() > h5tb.param.J2_ctof + 1)
+        throw except::logic_error("expected J2_rand.size()({}) <= 1+J2_ctof ({})", h5tb.param.get_J2_rand_size(), h5tb.param.J2_ctof);
 
 //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
 #pragma message "using sz instead of number operator"
@@ -183,8 +186,8 @@ void LBit::build_mpo()
     mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * n - e_shift * I;
 
     if(R >= 1)
-        for(const auto &i : num::range<long>(1, R + 1)) {
-            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[static_cast<size_t>(i)] * n;
+        for(const auto &i : num::range<long>(1, h5tb.param.get_J2_rand_size())) {
+            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.get_J2_rand()[static_cast<size_t>(i)] * n;
         }
     mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * n;
 
@@ -215,32 +218,37 @@ void LBit::randomize_hamiltonian() {
     // We take the absolute value here to get the order of magnitude of the interactions.
 
     using namespace settings::model::lbit;
-    auto J2_exp = std::vector<double>(h5tb.param.J2_rand.size(), 0.0);
-    for(size_t r = 0; r < h5tb.param.J2_rand.size(); ++r) {
-        if(r == 0) continue;                                         // J2 does not describe self-interaction
-        if(r > h5tb.param.J2_ctof) break;                            // Can't interact further than this
+    auto J2_rnd = std::vector<double>();
+    auto J2_exp = std::vector<double>();
+    for(size_t r = 0; r < h5tb.param.J2_ctof + 1; ++r) {
+        if(r == 0) {
+            // J2 does not describe self-interaction
+            J2_exp.emplace_back(0);
+            continue;
+        }
         if(r + get_position() >= settings::model::model_size) break; // No more sites to interact with
-        J2_exp[r] = std::exp(-(static_cast<double>(r) - 1) / settings::model::lbit::J2_xcls);
+        J2_exp.emplace_back(std::exp(-(static_cast<double>(r) - 1) / settings::model::lbit::J2_xcls));
     }
-    if(std::string(h5tb.param.distribution) == "normal") {
+    if(h5tb.param.get_distribution() == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::normal(J3_mean, J3_wdth);
-        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = rnd::normal(J2_mean, J2_exp[r]);
-    } else if(std::string(h5tb.param.distribution) == "lognormal") {
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(rnd::normal(J2_mean, w));
+    } else if(h5tb.param.get_distribution() == "lognormal") {
         h5tb.param.J1_rand = rnd::log_normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::log_normal(J3_mean, J3_wdth);
-        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = rnd::log_normal(J2_mean, J2_exp[r]);
-    } else if(std::string(h5tb.param.distribution) == "uniform") {
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(rnd::log_normal(J2_mean, w));
+    } else if(h5tb.param.get_distribution() == "uniform") {
         h5tb.param.J1_rand = rnd::uniform_double_box(J1_mean - J1_wdth / 2.0, J1_mean + J1_wdth / 2.0);
         h5tb.param.J3_rand = rnd::uniform_double_box(J3_mean - J3_wdth / 2.0, J3_mean + J3_wdth / 2.0);
-        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = J2_exp[r] * rnd::uniform_double_box(J2_mean - J2_wdth / 2.0, J2_mean + J2_wdth / 2.0);
-    } else if(std::string(h5tb.param.distribution) == "constant") {
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(w * rnd::uniform_double_box(J2_mean - J2_wdth / 2.0, J2_mean + J2_wdth / 2.0));
+    } else if(h5tb.param.get_distribution() == "constant") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean;
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
-        for(auto &&[r, J2r] : iter::enumerate(h5tb.param.J2_rand)) J2r = J2_exp[r] * settings::model::lbit::J2_mean;
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(w * settings::model::lbit::J2_mean);
     } else {
-        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.get_distribution());
     }
+    h5tb.param.set_J2_rand(J2_rnd);
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
 }
@@ -272,7 +280,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
 
     // Decide whether to skip interactions. All the J2 values are taken later
     double J1_rand = h5tb.param.J1_rand;
-    auto   J2_rand = h5tb.param.J2_rand;
+    auto   J2_rand = h5tb.param.get_J2_rand();
     double J3_rand = h5tb.param.J3_rand;
     if(skip) {
         for(const auto &s : skip.value()) {
@@ -284,6 +292,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
             } else {
                 // This site is not skipped, but we need to make sure not to interact with the one that is skipped.
                 for(const auto &r : J2_range) {
+                    if(r >= J2_rand.size()) break;
                     if(pos + r == s) J2_rand[r] = 0;
                 }
 
@@ -300,6 +309,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
 
     auto J2_count = J2_rand;
     for(const auto &r : J2_range) {
+        if(r >= J2_rand.size()) break;
         J2_count[r] = 1.0;
         if(adjust_for_double_counting) {
             // Calculate double counting compensation
@@ -346,7 +356,10 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
     MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_shift * I);
 
     if(R >= 1)
-        for(const auto &r : J2_range) { MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * n; }
+        for(const auto &r : J2_range) {
+            if(r >= J2_rand.size()) break;
+            MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * n;
+        }
 
     MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * n;
 
@@ -378,7 +391,7 @@ long LBit::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite) {
     tools::log->debug("LBIT MPO ({}): Setting averages", get_position());
     if(not infinite) {
-        lattice_parameters.back()["J2_rand"]    = h5tb_lbit::J2Type{0};
+        lattice_parameters.back()["J2_rand"]    = std::vector<double>{0};
         lattice_parameters.back()["J3_rand"]    = 0.0;
         lattice_parameters.end()[-2]["J3_rand"] = 0.0;
     }
@@ -387,7 +400,7 @@ void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameter
     for(auto &site_params : lattice_parameters) {
         auto J1_ = std::any_cast<double>(site_params["J1_rand"]);
         auto J3_ = std::any_cast<double>(site_params["J3_rand"]);
-        auto J2_ = std::any_cast<h5tb_lbit::J2Type>(site_params["J2_rand"]);
+        auto J2_ = std::any_cast<std::vector<double>>(site_params["J2_rand"]);
         J_sum += J1_ + J3_;
         for(const auto &j2 : J2_) J_sum += j2;
     }
@@ -412,7 +425,7 @@ void LBit::save_hamiltonian(h5pp::File &file, std::string_view table_path) const
     file.writeAttribute(h5tb.param.J2_ctof, table_path, "J2_ctof");
     file.writeAttribute(h5tb.param.f_mixer, table_path, "f_mixer");
     file.writeAttribute(h5tb.param.u_layer, table_path, "u_layer");
-    file.writeAttribute(h5tb.param.distribution, table_path, "distribution");
+    file.writeAttribute(h5tb.param.get_distribution(), table_path, "distribution");
     file.writeAttribute(h5tb.param.spin_dim, table_path, "spin_dim");
 }
 
@@ -435,7 +448,8 @@ void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefi
     if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw except::runtime_error("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth);
     if(std::abs(h5tb.param.J2_xcls - J2_xcls) > 1e-6) throw except::runtime_error("J2_xcls {:.16f} != {:.16f} lbit::J2_xcls", h5tb.param.J2_xcls, J2_xcls);
     if(std::abs(h5tb.param.f_mixer - f_mixer) > 1e-6) throw except::runtime_error("f_mixer {:.16f} != {:.16f} lbit::f_mixer", h5tb.param.f_mixer, f_mixer);
-    if(h5tb.param.distribution != distribution) throw except::runtime_error("distribution {} != {} lbit::distribution", h5tb.param.distribution, distribution);
+    if(h5tb.param.get_distribution() != distribution)
+        throw except::runtime_error("distribution {} != {} lbit::distribution", h5tb.param.get_distribution(), distribution);
     if(h5tb.param.J2_span != J2_span) throw except::runtime_error("J2_span {} != {} lbit::J2_span", h5tb.param.J2_span, J2_span);
     if(h5tb.param.u_layer != u_layer) throw except::runtime_error("u_layer {:.16f} != {:.16f} lbit::u_layer", h5tb.param.u_layer, u_layer);
 
