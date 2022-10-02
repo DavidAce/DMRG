@@ -21,16 +21,18 @@ void fdmrg::resume() {
     // 2) Resume a previously successful simulation. This may be desireable if the config
     //    wants something that is not present in the file.
     //      a) A certain number of states
-    //      b) A state inside of a particular energy window
+    //      b) A state inside a particular energy window
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states =
-        tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, settings::storage::file_resume_name, settings::storage::file_resume_iter);
-    if(resumable_states.empty()) throw except::runtime_error("Could not resume: no valid state candidates found for resume");
-    for(const auto &state_prefix : resumable_states) {
+    auto state_prefixes = tools::common::h5::resume::find_state_prefixes(*h5file, status.algo_type, "state_");
+    if(state_prefixes.empty()) throw except::state_error("no resumable states were found");
+    for(const auto &state_prefix : state_prefixes) {
         tools::log->info("Resuming state [{}]", state_prefix);
-        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        try {
+            tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        } catch(const except::load_error &le) { continue; }
+
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);

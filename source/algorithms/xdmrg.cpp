@@ -36,13 +36,13 @@ void xdmrg::resume() {
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
-    auto resumable_states =
-        tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, settings::storage::file_resume_name, settings::storage::file_resume_iter);
-    if(resumable_states.empty()) throw except::state_error("no resumable states were found");
-
-    for(const auto &state_prefix : resumable_states) {
+    auto state_prefixes = tools::common::h5::resume::find_state_prefixes(*h5file, status.algo_type, "state_");
+    if(state_prefixes.empty()) throw except::state_error("no resumable states were found");
+    for(const auto &state_prefix : state_prefixes) {
         tools::log->info("Resuming state [{}]", state_prefix);
-        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        try {
+            tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        } catch(const except::load_error &le) { continue; }
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to infer it from the state prefix itself

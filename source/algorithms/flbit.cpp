@@ -41,10 +41,13 @@ void flbit::resume() {
     if(state_name.empty()) state_name = "state_real";
 
     auto state_prefixes = tools::common::h5::resume::find_state_prefixes(*h5file, status.algo_type, state_name);
+    if(state_prefixes.empty()) throw except::state_error("no resumable states were found");
     for(const auto &state_prefix : state_prefixes) {
-        if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);
-        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        try {
+            tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
+        } catch(const except::load_error &le) { continue; }
+
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
         auto name = tools::common::h5::resume::extract_state_name(state_prefix);

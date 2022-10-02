@@ -425,7 +425,7 @@ long LBit::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite) {
     tools::log->debug("LBIT MPO ({}): Setting averages", get_position());
     if(not infinite) {
-        lattice_parameters.back()["J2_rand"]    = std::vector<double>{0};
+        lattice_parameters.back()["J2_rand"]    = h5pp::varr_t<double>{0};
         lattice_parameters.back()["J3_rand"]    = 0.0;
         lattice_parameters.end()[-2]["J3_rand"] = 0.0;
     }
