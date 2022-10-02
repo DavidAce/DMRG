@@ -12,7 +12,7 @@ basename    = 'mbl'
 location    = "input"
 
 
-sites               = [8,12]
+sites               = [8,12,16,20]
 J                   = [[0.000, 0.000, 0.000]]
 w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
 f                   = [0.2500]
