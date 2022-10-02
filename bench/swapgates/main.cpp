@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     std::atexit(tools::common::timer::print_timers);
     std::at_quick_exit(debug::print_mem_usage);
     std::at_quick_exit(tools::common::timer::print_timers);
-    settings::timer::level = tid::detailed;
+    settings::timer::level = tid::highest;
     auto t_bench           = tid::tic_scope("fLBIT");
 
     using cplx = std::complex<double>;

@@ -123,7 +123,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         throw except::runtime_error("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
                                     spin_dims, positions);
 
-    auto t_split = tid::tic_scope("split", tid::level::extra);
+    auto t_split = tid::tic_scope("split", tid::level::higher);
 
     // Set up the svd settings if not given explicitly
     if(not svd_cfg) svd_cfg = svd::config();
@@ -226,7 +226,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         svd::solver svd(svd_cfg);
         std::tie(U, S, V) = svd.schmidt_multisite(multisite_mps, dL, dR, chiL, chiR);
         mps_sites_As.emplace_back(U, std::nullopt, positions.front(), 0, "AC");
-        mps_sites_As.back().set_LC(S.template cast<cplx>(), svd.get_truncation_error());
+        mps_sites_As.back().set_LC(S, svd.get_truncation_error());
         mps_sites_Bs.emplace_back(V, std::nullopt, positions.back(), 0, "B");
 
     } else if(positions_left.size() >= positions_right.size()) {

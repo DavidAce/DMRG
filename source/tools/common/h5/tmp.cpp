@@ -161,7 +161,7 @@ void tools::common::h5::tmp::copy_file(std::string_view src, std::string_view tg
         tools::log->warn("Could not copy: source file does not exist [{}]", src);
         return;
     }
-    auto t_copy = tid::tic_token("copy", tid::level::extra);
+    auto t_copy = tid::tic_token("copy", tid::level::higher);
     if(not fs::exists(target_path.parent_path())) { tools::common::h5::tmp::create_directory(target_path.string()); }
     if(fs::exists(target_path)) {
         std::ifstream                          target_stream(target_path.string(), std::ios_base::binary);

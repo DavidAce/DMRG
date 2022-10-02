@@ -40,7 +40,7 @@ namespace tools::common::h5 {
         // Check if the current entry has already been appended
         // Status is special, flags can be updated without changing iter or step
         std::string table_path    = fmt::format("{}/status", sinfo.get_state_prefix());
-        auto        t_hdf         = tid::tic_scope("status", tid::level::detailed);
+        auto        t_hdf         = tid::tic_scope("status", tid::level::highest);
         auto        h5_save_point = save::get_last_save_point(h5file, table_path);
         auto        save_point    = std::make_pair(status.iter, status.step);
         h5pp_table_algorithm_status::register_table_type();
@@ -156,7 +156,7 @@ namespace tools::common::h5 {
     //        if(storage_reason == StorageEvent::MODEL) return;
     //        //        if(not h5file.linkExists(state_prefix)) return; // No point in saving metadata for non-existing state prefixes
     //        tools::log->trace("Writing metadata to /common");
-    //        auto t_meta = tid::tic_scope("meta", tid::level::detailed);
+    //        auto t_meta = tid::tic_scope("meta", tid::level::highest);
     //        // Checks if the current entries have already been written
     //        static std::unordered_map<std::string, AlgorithmStatus> save_log;
     //        bootstrap_meta_log(save_log, h5file, state_prefix);

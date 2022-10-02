@@ -144,7 +144,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, 
 
     if constexpr(std::is_same_v<Scalar, double>) {
         {
-            auto                            t_mativec = tid::tic_token("matrix_inverse_vector_product", tid::level::extra);
+            auto                            t_mativec = tid::tic_token("matrix_inverse_vector_product", tid::level::higher);
             static tenx::VectorType<Scalar> guess_mr;
             if(guess_mr.size() != res.size()) guess_mr = res;
 
@@ -158,7 +158,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, 
             guess_mr = res;
         }
     } else {
-        auto                            t_mativec = tid::tic_token("matrix_inverse_vector_product", tid::level::extra);
+        auto                            t_mativec = tid::tic_token("matrix_inverse_vector_product", tid::level::higher);
         static tenx::VectorType<Scalar> guess_cbs;
         if(guess_cbs.size() != res.size()) guess_cbs = res;
         Eigen::ConjugateGradient<MatrixReplacement<Scalar>, Eigen::Upper | Eigen::Lower, Eigen::IdentityPreconditioner> solver;

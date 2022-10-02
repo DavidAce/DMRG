@@ -176,7 +176,7 @@ namespace tid {
 
     std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match) {
         std::vector<internal::ur_ref_t> matches;
-        for(const auto &t : get_tree(u, "", level::detailed)) {
+        for(const auto &t : get_tree(u, "", level::highest)) {
             if(t.key.find(match) != std::string_view::npos) matches.push_back(t);
         }
         return matches;
@@ -184,7 +184,7 @@ namespace tid {
 
     std::vector<internal::ur_ref_t> search(std::string_view match) {
         std::vector<internal::ur_ref_t> matches;
-        for(const auto &t : get_tree("", level::detailed)) {
+        for(const auto &t : get_tree("", level::highest)) {
             if(t.key.find(match) != std::string_view::npos) matches.push_back(t);
         }
         return matches;

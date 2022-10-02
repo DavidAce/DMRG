@@ -754,7 +754,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     //    number_entropies_mpo(state);
 
     auto t_num      = tid::tic_scope("number_entropy");
-    auto state_copy = state; // Make a local copy so we can move it to the middle without touching the original state
+    auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy);
 
     auto state_pos       = state_copy.get_position<long>();

@@ -5,6 +5,7 @@
 #include "math/num.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
+#include "tools/common/log.h"
 #include <utility>
 
 EnvVar::EnvVar(std::string side_, const MpsSite &mps, const MpoSite &mpo) : EnvBase(std::move(side_), "var", mps, mpo) { set_edge_dims(mps, mpo); }
