@@ -47,9 +47,9 @@ class TensorsFinite {
     TensorsFinite &operator=(TensorsFinite &&other);      // default move assign
     TensorsFinite(const TensorsFinite &other);            // copy ctor
     TensorsFinite &operator=(const TensorsFinite &other); // copy assign
-    TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
+    TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
 
-    void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
+    void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
     void randomize_model();
     void randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view sector, bool use_eigenspinors, size_t bitfield,
                          long bond_lim);

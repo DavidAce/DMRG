@@ -53,11 +53,11 @@ TensorsFinite &TensorsFinite::operator=(const TensorsFinite &other) {
     return *this;
 }
 
-TensorsFinite::TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) : TensorsFinite() {
+TensorsFinite::TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position) : TensorsFinite() {
     initialize(algo_type, model_type, model_size, position);
 }
 
-void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
+void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position) {
     tools::log->debug("Initializing tensors: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
                       position);
     state->initialize(algo_type, model_size, position);
