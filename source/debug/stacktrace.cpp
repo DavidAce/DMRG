@@ -105,7 +105,7 @@ void debug::register_callbacks() {
     #include <backward.hpp>
 void debug::print_stack_trace() {
     backward::StackTrace st;
-    st.load_here(64);
+    st.load_here(128);
     // Skip this scope (1) , as well as the signal_callback_handler scope (2)
     st.skip_n_firsts(2);
     backward::Printer p;
