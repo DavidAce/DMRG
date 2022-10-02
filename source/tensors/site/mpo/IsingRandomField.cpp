@@ -1,32 +1,30 @@
 #include "IsingRandomField.h"
-#include <config/settings.h>
-#include <debug/exceptions.h>
+#include "config/settings.h"
+#include "debug/exceptions.h"
+#include "math/num.h"
+#include "math/rnd.h"
+#include "math/tenx.h"
+#include "qm/spin.h"
+#include "tools/common/log.h"
 #include <h5pp/h5pp.h>
-#include <iomanip>
-#include <math/num.h>
-#include <math/rnd.h>
-#include <math/tenx.h>
-#include <qm/spin.h>
 
 IsingRandomField::IsingRandomField(ModelType model_type_, size_t position_) : MpoSite(model_type_, position_) {
-    h5tb.param.J1       = settings::model::ising_tf_rf::J1;
-    h5tb.param.J2       = settings::model::ising_tf_rf::J2;
-    h5tb.param.h_tran   = settings::model::ising_tf_rf::h_tran;
-    h5tb.param.h_mean   = settings::model::ising_tf_rf::h_mean;
-    h5tb.param.h_wdth   = settings::model::ising_tf_rf::h_wdth;
-    h5tb.param.spin_dim = settings::model::ising_tf_rf::spin_dim;
-    h5tb.param.set_distribution(settings::model::ising_tf_rf::distribution);
-    extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
-    extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
+    h5tb.param.J1           = settings::model::ising_tf_rf::J1;
+    h5tb.param.J2           = settings::model::ising_tf_rf::J2;
+    h5tb.param.h_tran       = settings::model::ising_tf_rf::h_tran;
+    h5tb.param.h_mean       = settings::model::ising_tf_rf::h_mean;
+    h5tb.param.h_wdth       = settings::model::ising_tf_rf::h_wdth;
+    h5tb.param.spin_dim     = settings::model::ising_tf_rf::spin_dim;
+    h5tb.param.distribution = settings::model::ising_tf_rf::distribution;
+    extent4                 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
+    extent2                 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
     using namespace qm::spin::half;
     qm::spin::half::SX = qm::spin::gen_manybody_spins(sx, 2);
     qm::spin::half::SY = qm::spin::gen_manybody_spins(sy, 2);
     qm::spin::half::SZ = qm::spin::gen_manybody_spins(sz, 2);
     qm::spin::half::II = qm::spin::gen_manybody_spins(id, 2);
-
-    h5tb_ising_tf_rf::register_table_type();
     all_mpo_parameters_have_been_set =
-        false; // There are no full lattice parameters but we set it to true here since the model is not supposed to be randomized per site
+        false; // There are no full lattice parameters, but we set it to true here since the model is not supposed to be randomized per site
 }
 
 double IsingRandomField::get_field() const { return h5tb.param.h_tran + h5tb.param.h_rand; }
@@ -35,32 +33,30 @@ void   IsingRandomField::print_parameter_names() const { h5tb.print_parameter_na
 void   IsingRandomField::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void IsingRandomField::set_parameters(TableMap &parameters) {
-    h5tb.param.J1       = std::any_cast<double>(parameters["J1"]);
-    h5tb.param.J2       = std::any_cast<double>(parameters["J2"]);
-    h5tb.param.h_tran   = std::any_cast<double>(parameters["h_tran"]);
-    h5tb.param.h_mean   = std::any_cast<double>(parameters["h_mean"]);
-    h5tb.param.h_wdth   = std::any_cast<double>(parameters["h_wdth"]);
-    h5tb.param.h_rand   = std::any_cast<double>(parameters["h_rand"]);
-    h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    h5tb.param.set_distribution(std::any_cast<std::string>(parameters["distribution"]));
+    h5tb.param.J1           = std::any_cast<double>(parameters["J1"]);
+    h5tb.param.J2           = std::any_cast<double>(parameters["J2"]);
+    h5tb.param.h_tran       = std::any_cast<double>(parameters["h_tran"]);
+    h5tb.param.h_mean       = std::any_cast<double>(parameters["h_mean"]);
+    h5tb.param.h_wdth       = std::any_cast<double>(parameters["h_wdth"]);
+    h5tb.param.h_rand       = std::any_cast<double>(parameters["h_rand"]);
+    h5tb.param.spin_dim     = std::any_cast<long>(parameters["spin_dim"]);
+    h5tb.param.distribution = std::any_cast<h5pp::vstr_t>(parameters["distribution"]);
 
     if(h5tb.param.J2 != 0.0) throw except::runtime_error("mpo({}): use of [J2] - Next-nearest neighbor coupling - is not implemented yet", get_position());
     all_mpo_parameters_have_been_set = true;
 }
 
 IsingRandomField::TableMap IsingRandomField::get_parameters() const {
-    /* clang-format off */
     TableMap parameters;
-    parameters["J1"]            = h5tb.param.J1;
-    parameters["J2"]            = h5tb.param.J2;
-    parameters["h_tran"]        = h5tb.param.h_tran;
-    parameters["h_mean"]        = h5tb.param.h_mean;
-    parameters["h_wdth"]        = h5tb.param.h_wdth;
-    parameters["h_rand"]        = h5tb.param.h_rand;
-    parameters["spin_dim"]      = h5tb.param.spin_dim;
-    parameters["distribution"]  = std::string(h5tb.param.get_distribution());
+    parameters["J1"]           = h5tb.param.J1;
+    parameters["J2"]           = h5tb.param.J2;
+    parameters["h_tran"]       = h5tb.param.h_tran;
+    parameters["h_mean"]       = h5tb.param.h_mean;
+    parameters["h_wdth"]       = h5tb.param.h_wdth;
+    parameters["h_rand"]       = h5tb.param.h_rand;
+    parameters["spin_dim"]     = h5tb.param.spin_dim;
+    parameters["distribution"] = h5tb.param.distribution;
     return parameters;
-    /* clang-format on */
 }
 
 void IsingRandomField::build_mpo()
@@ -100,14 +96,14 @@ void IsingRandomField::build_mpo()
 }
 
 void IsingRandomField::randomize_hamiltonian() {
-    if(h5tb.param.get_distribution() == "normal") {
+    if(h5tb.param.distribution == "normal") {
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(h5tb.param.get_distribution() == "lognormal") {
+    } else if(h5tb.param.distribution == "lognormal") {
         h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(h5tb.param.get_distribution() == "uniform") {
+    } else if(h5tb.param.distribution == "uniform") {
         h5tb.param.h_rand = rnd::uniform_double_box(h5tb.param.h_mean - h5tb.param.h_wdth / 2.0, h5tb.param.h_mean + h5tb.param.h_wdth / 2.0);
     } else {
-        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform", h5tb.param.get_distribution());
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform", h5tb.param.distribution);
     }
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
@@ -169,18 +165,8 @@ void IsingRandomField::set_averages([[maybe_unused]] std::vector<TableMap> latti
 }
 
 void IsingRandomField::save_hamiltonian(h5pp::File &file, std::string_view table_path) const {
-    if(not file.linkExists(table_path)) file.createTable(h5tb_ising_tf_rf::h5_type, table_path, "Transverse-field Ising");
-    file.appendTableRecords(h5tb, table_path);
-    // Position 0 is also responsible for writing attributes
-    if(position.value() != 0) return;
-
-    file.writeAttribute(h5tb.param.J1, "J1", table_path);
-    file.writeAttribute(h5tb.param.J2, "J2", table_path);
-    file.writeAttribute(h5tb.param.h_mean, "h_mean", table_path);
-    file.writeAttribute(h5tb.param.h_wdth, "h_wdth", table_path);
-    file.writeAttribute(h5tb.param.h_tran, "h_tran", table_path);
-    file.writeAttribute(h5tb.param.get_distribution(), "distribution", table_path);
-    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", table_path);
+    if(not file.linkExists(table_path)) file.createTable(h5tb.get_h5_type(), table_path, "Transverse-field Ising");
+    file.appendTableRecords(h5tb.param, table_path);
 }
 
 void IsingRandomField::load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) {

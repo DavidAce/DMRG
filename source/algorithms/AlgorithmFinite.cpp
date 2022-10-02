@@ -63,11 +63,12 @@ void AlgorithmFinite::run()
     auto t_tot  = tid::get_unscoped("t_tot").tic_token();
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     // We may want to resume this simulation.
-    auto storage_level_exists = h5file->linkExists("common/storage_level");
-    auto policy_set_to_resume =
+    auto finished_exists = h5file->linkExists("common/finished_all");
+    auto algo_exists     = h5file->linkExists(status.algo_type_sv());
+    auto policy_is_resume =
         settings::storage::file_collision_policy == FileCollisionPolicy::RESUME or settings::storage::file_collision_policy == FileCollisionPolicy::REVIVE;
-    tools::log->debug("common/storage_level exists: {} | should resume: {}", storage_level_exists, policy_set_to_resume);
-    if(storage_level_exists and policy_set_to_resume) {
+    tools::log->debug("common/finished_all exists: {} | should resume: {}", finished_exists, policy_is_resume);
+    if(finished_exists and algo_exists and policy_is_resume) {
         try {
             tools::log->info("Attempting resume");
             resume();

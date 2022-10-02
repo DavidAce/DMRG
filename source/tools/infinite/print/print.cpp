@@ -1,11 +1,12 @@
 #include "../print.h"
-#include <tensors/edges/EdgesInfinite.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/site/env/EnvEne.h>
-#include <tensors/site/mpo/MpoSite.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateInfinite.h>
-#include <tensors/TensorsInfinite.h>
+#include "tensors/edges/EdgesInfinite.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/site/env/EnvEne.h"
+#include "tensors/site/mpo/MpoSite.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateInfinite.h"
+#include "tensors/TensorsInfinite.h"
+#include "tools/common/log.h"
 
 void tools::infinite::print::print_hamiltonians(const ModelInfinite &model) {
     model.get_mpo_siteA().print_parameter_names();

@@ -31,6 +31,16 @@ class h5_enum_storage_level {
     static void            commit(const h5pp::hid::h5f &file_id);
 };
 
+class h5_enum_algo_type {
+    private:
+    static inline h5pp::hid::h5t h5_algo_type;
+
+    public:
+    static h5pp::hid::h5t &get_h5t();
+    static void            create();
+    static void            commit(const h5pp::hid::h5f &file_id);
+};
+
 class h5pp_table_measurements_finite {
     public:
     static inline h5pp::hid::h5t h5_type;
@@ -184,8 +194,8 @@ class h5pp_table_data {
             H5Tinsert(h5comp_t, "bond_lim", offset[4], H5T_NATIVE_INT64);
 
             h5pp::hid::h5t h5data_t;
-            if constexpr(std::is_same_v<T, hvl_t>)
-                h5data_t = h5pp::hid::h5t(H5Tvlen_create(h5elem_t));
+            if constexpr(h5pp::type::sfinae::is_varr_v<T> or h5pp::type::sfinae::is_vstr_v<T>)
+                h5data_t = T::get_h5type();
             else if constexpr(h5pp::type::sfinae::is_std_array_v<T>) {
                 auto dims = std::array<hsize_t, 1>{std::tuple_size<T>::value}; // Gets N in std::array<S,N>
                 h5data_t  = H5Tarray_create(h5elem_t, dims.size(), dims.data());

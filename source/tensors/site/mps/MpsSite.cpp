@@ -25,13 +25,10 @@ MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> 
     set_L(L_);
     set_truncation_error(error);
 }
-MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_) {
-    set_position(pos);
-    set_label(label_);
-    set_M(M_.cast<cplx>());
-    set_L(L_.cast<cplx>());
-    set_truncation_error(error);
-}
+MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_)
+    : MpsSite(Eigen::Tensor<cplx, 3>(M_.cast<cplx>()), Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), pos, error, label_) {}
+MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_)
+    : MpsSite(M_, Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), pos, error, label_) {}
 
 MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_) {
     set_position(pos);
@@ -45,13 +42,13 @@ MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<r
     set_position(pos);
     set_label(label_);
     set_M(M_.cast<cplx>());
-    if(L_) set_L(L_.value().cast<cplx>());
+    if(L_) set_L(L_.value());
     set_truncation_error(error);
 }
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
-// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Otherwise, unique_ptr will forcibly inline its own default deleter.
 // Here we follow "rule of five", so we must also define
 // our own copy/move ctor and copy/move assignments
 // This has the side effect that we must define our own
@@ -128,7 +125,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
         throw except::runtime_error("MpsSite::get_M_bare(): M has not been set at position {}", get_position());
 }
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
-    auto t_get = tid::tic_scope("get_M", tid::level::detailed);
+    auto t_get = tid::tic_scope("get_M", tid::level::highest);
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw except::runtime_error("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0),
@@ -226,7 +223,9 @@ void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx
     set_L(L_);
     set_truncation_error(error);
 }
-
+void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, double error, std::string_view label_) {
+    set_mps(M_, Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), error, label_);
+}
 void MpsSite::set_M(const Eigen::Tensor<cplx, 3> &M_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
     if(position) {
@@ -254,7 +253,9 @@ void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error /* Negative i
     } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
 }
+void MpsSite::set_L(const Eigen::Tensor<real, 1> &L_, double error) { set_L(Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), error); }
 void MpsSite::set_L(const std::pair<Eigen::Tensor<cplx, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
+void MpsSite::set_L(const std::pair<Eigen::Tensor<real, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
 
 void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative is ignored */) {
     if constexpr(settings::debug) {
@@ -274,8 +275,9 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
 }
-
+void MpsSite::set_LC(const Eigen::Tensor<real, 1> &LC_, double error) { set_LC(Eigen::Tensor<cplx, 1>(LC_.cast<cplx>()), error); }
 void MpsSite::set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
+void MpsSite::set_LC(const std::pair<Eigen::Tensor<real, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
 
 void MpsSite::set_truncation_error(double error /* Negative is ignored */) {
     if(error >= 0.0) {
@@ -310,7 +312,7 @@ void MpsSite::unset_L() {
 }
 
 void MpsSite::fuse_mps(const MpsSite &other) {
-    auto t_fuse = tid::tic_scope("fuse", tid::level::detailed);
+    auto t_fuse = tid::tic_scope("fuse", tid::level::highest);
     // This operation is done when merging mps after an svd split, for instance
     auto tag  = get_tag();       // tag, (example: A[3])
     auto otag = other.get_tag(); // other tag, (example: AC[3])
@@ -445,7 +447,7 @@ void MpsSite::drop_stash() const {
 }
 
 void MpsSite::take_stash(const MpsSite &other) {
-    auto t_stash = tid::tic_token("take_stash", tid::level::detailed);
+    auto t_stash = tid::tic_token("take_stash", tid::level::highest);
     if(other.V_stash and other.V_stash->pos_dst == get_position()) {
         /* Left-to-right move.
          * In this case there is a "V" in "other" that should be absorbed into this site from the left.

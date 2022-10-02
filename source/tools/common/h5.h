@@ -1,4 +1,5 @@
 #pragma once
+#include "config/enums.h"
 #include "h5/storage_info.h"
 #include <h5pp/details/h5ppHid.h>
 #include <map>
@@ -6,11 +7,6 @@
 #include <string>
 #include <unordered_map>
 class AlgorithmStatus;
-enum class StorageLevel;
-enum class ModelType;
-enum class AlgorithmType;
-enum class StorageEvent;
-enum class CopyPolicy;
 
 namespace h5pp {
     class File;
@@ -18,13 +14,21 @@ namespace h5pp {
 
 namespace tools::common::h5 {
     /* clang-format off */
+    struct MpsInfo{
+        std::string pfx;
+        size_t iter = -1ul;
+        size_t step = -1ul;
+        StorageEvent event = StorageEvent::NONE;
+    };
     namespace find{
         extern std::optional<std::string> find_duplicate_save(const h5pp::File &h5file, std::string_view state_prefix, const AlgorithmStatus & status);
     }
     namespace resume{
-        extern std::optional<size_t>   extract_state_number     (std::string_view  state_prefix);
-        extern std::string             extract_state_name       (std::string_view  state_prefix);
-        extern std::vector<std::string>find_resumable_states    (const h5pp::File & h5file, AlgorithmType algo_type, std::string_view name = "", size_t iter = -1ul);
+        extern std::optional<size_t>    extract_state_number    (std::string_view  state_prefix);
+        extern std::string              extract_state_name      (std::string_view  state_prefix);
+        extern std::vector<std::string> find_state_prefixes     (const h5pp::File &h5file, AlgorithmType algo_type, std::string_view name);
+        extern std::vector<std::string> find_resumable_states   (const h5pp::File & h5file, AlgorithmType algo_type, std::string_view name = "", size_t iter = -1ul);
+        extern std::vector<MpsInfo>     find_fully_stored_mps   (const h5pp::File & h5file, std::string_view state_prefix);
     }
     namespace save{
 //        extern void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
@@ -36,11 +40,11 @@ namespace tools::common::h5 {
         extern void status   (h5pp::File & h5file, const StorageInfo & sinfo, const AlgorithmStatus &status);
         extern void mem      (h5pp::File & h5file, const StorageInfo & sinfo);
         extern void timer    (h5pp::File & h5file, const StorageInfo & sinfo);
-        extern void meta     (h5pp::File &h5file, const StorageInfo & sinfo);
+        extern void meta     (h5pp::File & h5file, const StorageInfo & sinfo);
 
     }
     namespace load {
-        extern void status   (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status);
+        extern void status   (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status, const MpsInfo & info = MpsInfo());
         extern void timer    (const h5pp::File & h5file, std::string_view state_prefix, const AlgorithmStatus & status);
     }
 

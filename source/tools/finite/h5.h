@@ -16,6 +16,10 @@ namespace h5pp {
         class h5t;
     }
 }
+namespace tools::common::h5 {
+    struct MpsInfo;
+}
+
 struct StorageInfo;
 
 namespace tools::finite::h5 {
@@ -83,9 +87,10 @@ namespace tools::finite::h5 {
                                                                   size_t iter);
     }
     namespace load {
+        using MpsInfo = tools::common::h5::MpsInfo;
         extern void simulation (const h5pp::File & h5file, std::string_view  state_prefix, TensorsFinite & tensors, AlgorithmStatus & status, AlgorithmType algo_type);
-        extern void state   (const h5pp::File & h5file, std::string_view  state_prefix, StateFinite & state, const AlgorithmStatus & status);
-        extern void model   (const h5pp::File & h5file, std::string_view  state_prefix, ModelFinite & model);
+        extern void state   (const h5pp::File & h5file, std::string_view  state_prefix, StateFinite & state, MpsInfo & mpsinfo);
+        extern void model   (const h5pp::File & h5file, AlgorithmType algo_type, ModelFinite & model);
         extern void validate (const h5pp::File & h5file, std::string_view  state_prefix, TensorsFinite & tensors, AlgorithmType algo_type);
     }
 

@@ -87,7 +87,7 @@ namespace settings {
         inline StorageLevel     storage_level_trnc_state = StorageLevel::NORMAL; /*!< Storage level for states written on truncation error limit change */
         inline StorageLevel     storage_level_fes_state  = StorageLevel::NORMAL; /*!< Storage level for states written during finite entanglement scaling (fes) after the main simulation */
         inline StorageLevel     storage_level_model      = StorageLevel::NORMAL; /*!< Storage level for the model realization. NONE: OFF. LIGHT|NORMAL|FULL: the Hamiltonian parameter table */
-        inline StorageLevel     storage_level_timers     = StorageLevel::LIGHT;  /*!< Storage level for timers. NONE: off, LIGHT: tid::normal. NORMAL: tid::extra. FULL: tid::detailed */
+        inline StorageLevel     storage_level_timers     = StorageLevel::LIGHT;  /*!< Storage level for timers. NONE: off, LIGHT: tid::normal. NORMAL: tid::higher. FULL: tid::highest */
         inline StorageLevel     storage_level_tables     = StorageLevel::LIGHT;  /*!< Storage level for tables. Where applicable: NONE: off, LIGHT: center site. NORMAL: center sites. FULL: all sites */
 
         namespace tmp{
@@ -100,7 +100,7 @@ namespace settings {
     /*!  \namespace settings::timer Settings for performance profiling */
     namespace timer {
         inline bool         on        = false;                         /*!< If true, turns on timers. These will be shown on console. */
-        inline tid::level   level     = tid::normal;                   /*!< How much extra to print on exit [normal | extra | detailed]  */
+        inline tid::level   level     = tid::normal;                   /*!< How much extra to print on exit [normal | higher | highest]  */
         inline size_t       precision = 5;                             /*!< Sets precision (number of decimals) of time storage. */
     }
 

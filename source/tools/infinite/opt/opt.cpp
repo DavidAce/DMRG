@@ -1,14 +1,15 @@
 #include "../opt.h"
-#include <math/eig.h>
-#include <math/eig/matvec/matvec_mpo.h>
-#include <math/tenx.h>
-#include <tensors/edges/EdgesInfinite.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/site/mpo/MpoSite.h>
-#include <tensors/site/mps/MpsSite.h>
-#include <tensors/state/StateInfinite.h>
-#include <tensors/TensorsInfinite.h>
-#include <tid/tid.h>
+#include "math/eig.h"
+#include "math/eig/matvec/matvec_mpo.h"
+#include "math/tenx.h"
+#include "tensors/edges/EdgesInfinite.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/site/mpo/MpoSite.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateInfinite.h"
+#include "tensors/TensorsInfinite.h"
+#include "tid/tid.h"
+#include "tools/common/log.h"
 
 namespace tools::infinite::opt {
     Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &state, OptRitz ritz) {

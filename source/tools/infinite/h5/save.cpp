@@ -8,6 +8,7 @@
 #include "tensors/TensorsInfinite.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"
+#include "tools/common/log.h"
 #include "tools/infinite/h5.h"
 #include "tools/infinite/measure.h"
 #include <h5pp/h5pp.h>

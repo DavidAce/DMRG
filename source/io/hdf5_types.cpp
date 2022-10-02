@@ -60,6 +60,29 @@ void h5_enum_storage_level::commit(const h5pp::hid::h5f &file_id) {
     if(err < 0) throw except::runtime_error("Failed to commit StorageLevel to file");
 }
 
+h5pp::hid::h5t &h5_enum_algo_type::get_h5t() {
+    create();
+    return h5_algo_type;
+}
+
+void h5_enum_algo_type::create() {
+    if(h5_algo_type.valid()) return;
+    h5_algo_type = H5Tenum_create(H5T_NATIVE_INT);
+    int val;
+    H5Tenum_insert(h5_algo_type, "iDMRG", (val = static_cast<int>(AlgorithmType::iDMRG), &val));
+    H5Tenum_insert(h5_algo_type, "fDMRG", (val = static_cast<int>(AlgorithmType::fDMRG), &val));
+    H5Tenum_insert(h5_algo_type, "xDMRG", (val = static_cast<int>(AlgorithmType::xDMRG), &val));
+    H5Tenum_insert(h5_algo_type, "iTEBD", (val = static_cast<int>(AlgorithmType::iTEBD), &val));
+    H5Tenum_insert(h5_algo_type, "fLBIT", (val = static_cast<int>(AlgorithmType::fLBIT), &val));
+    H5Tenum_insert(h5_algo_type, "ANY", (val = static_cast<int>(AlgorithmType::ANY), &val));
+}
+
+void h5_enum_algo_type::commit(const h5pp::hid::h5f &file_id) {
+    if(H5Tcommitted(get_h5t()) > 0) return;
+    herr_t err = H5Tcommit(file_id, "AlgorithmType", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
+}
+
 h5pp_table_measurements_finite::h5pp_table_measurements_finite() { register_table_type(); }
 void h5pp_table_measurements_finite::register_table_type() {
     if(h5_type.valid()) return;
@@ -242,8 +265,8 @@ void h5pp_ur::register_table_type() {
         int val;
         H5Tenum_insert(h5_level_type, "parent", (val = tid::level::parent, &val));
         H5Tenum_insert(h5_level_type, "normal", (val = tid::level::normal, &val));
-        H5Tenum_insert(h5_level_type, "extra", (val = tid::level::extra, &val));
-        H5Tenum_insert(h5_level_type, "detailed", (val = tid::level::detailed, &val));
+        H5Tenum_insert(h5_level_type, "higher", (val = tid::level::higher, &val));
+        H5Tenum_insert(h5_level_type, "highest", (val = tid::level::highest, &val));
     }
 
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(item));

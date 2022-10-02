@@ -1,5 +1,6 @@
 #include "ModelInfinite.h"
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/num.h"
 #include "math/svd.h"
@@ -10,7 +11,7 @@ ModelInfinite::ModelInfinite() = default;
 
 // We need to define the destructor and other special functions
 // because we enclose data in unique_ptr for this pimpl idiom.
-// Otherwise unique_ptr will forcibly inline its own default deleter.
+// Otherwise, unique_ptr will forcibly inline its own default deleter.
 // Here we follow "rule of five", so we must also define
 // our own copy/move ctor and copy/move assignments
 // This has the side effect that we must define our own

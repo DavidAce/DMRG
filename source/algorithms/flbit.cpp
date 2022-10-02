@@ -33,20 +33,15 @@ void flbit::resume() {
     // 2) Resume a previously successful simulation. This may be desireable if the config
     //    wants something that is not present in the file.
     //      a) A certain number of states
-    //      b) A state inside of a particular energy window
+    //      b) A state inside a particular energy window
     //      c) The ground or "roof" states
     // To guide the behavior, we check the setting ResumePolicy.
 
     auto state_name = settings::storage::file_resume_name;
     if(state_name.empty()) state_name = "state_real";
 
-    auto resumable_states = tools::common::h5::resume::find_resumable_states(*h5file, status.algo_type, state_name, settings::storage::file_resume_iter);
-    tools::log->debug("Resumable states: {}", resumable_states);
-    exit(0);
-    // Find the unitary circuit
-    //    auto ulayer_prefix =
-
-    for(const auto &state_prefix : resumable_states) {
+    auto state_prefixes = tools::common::h5::resume::find_state_prefixes(*h5file, status.algo_type, state_name);
+    for(const auto &state_prefix : state_prefixes) {
         if(state_prefix.empty()) throw except::state_error("Could not resume: no valid state candidates found for resume");
         tools::log->info("Resuming state [{}]", state_prefix);
         tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
@@ -504,7 +499,7 @@ void flbit::create_hamiltonian_swap_gates() {
             ham_swap_gates_2body.emplace_back(ham_swap_gate);
         }
     }
-    // Ignore Hamiltonians with entries smaller than J2_zero: the time scale is too small to resolve them.
+    // Ignore Hamiltonians with entries smaller than J2_zero: the timescale is too small to resolve them.
 
     for(auto pos : list_3site) {
         auto range = 2ul;                                                                  // Distance to next-nearest neighbor when 3 sites interact

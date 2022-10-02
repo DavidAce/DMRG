@@ -36,7 +36,7 @@ namespace tools::finite::h5 {
         if(h5_save_point and h5_save_point.value() == save_point) return; // Already saved
 
         tools::log->trace("Appending to table: {}", table_path);
-        auto t_hdf = tid::tic_scope("measurements", tid::level::extra);
+        auto t_hdf = tid::tic_scope("measurements", tid::level::higher);
         h5pp_table_measurements_finite::register_table_type();
         if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_finite::h5_type, table_path, "measurements");
 
@@ -159,7 +159,7 @@ namespace tools::finite::h5 {
     void save::schmidt_values(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto                     t_hdf      = tid::tic_scope("schmidt_values", tid::level::extra);
+        auto                     t_hdf      = tid::tic_scope("schmidt_values", tid::level::higher);
         auto                     table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "schmidt_values");
         const long               cols       = state.get_length<long>() + 1; // Number of bonds matrices (1d arrays)
         const long               rows       = sinfo.bond_max;               // Max number of schmidt values in each bond (singular values)
@@ -195,14 +195,14 @@ namespace tools::finite::h5 {
     void save::truncation_errors(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto t_hdf = tid::tic_scope("truncation_errors", tid::level::extra);
+        auto t_hdf = tid::tic_scope("truncation_errors", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::truncation_errors(state), "truncation_errors", "Truncation errors", "L_");
     }
 
     void save::entropies_neumann(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
+        auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
     }
 
@@ -211,7 +211,7 @@ namespace tools::finite::h5 {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(not state.measurements.number_probabilities) return;
-        auto t_hdf      = tid::tic_scope("probabilities", tid::level::extra);
+        auto t_hdf      = tid::tic_scope("probabilities", tid::level::higher);
         auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "number_probabilities");
         tools::log->trace("Appending to table: {}", table_path);
         // Check if the current entry has already been appended
@@ -236,7 +236,7 @@ namespace tools::finite::h5 {
     void save::entropies_renyi(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
+        auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         auto inf   = std::numeric_limits<double>::infinity();
         data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Renyi Entropy 2", "L_");
         data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 3), "renyi_entropies_3", "Renyi Entropy 3", "L_");
@@ -248,7 +248,7 @@ namespace tools::finite::h5 {
         if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(sinfo.algo_type != AlgorithmType::fLBIT) return;
-        auto t_hdf = tid::tic_scope("entropies", tid::level::extra);
+        auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
     }
 
@@ -256,7 +256,7 @@ namespace tools::finite::h5 {
         if(sinfo.storage_level <= StorageLevel::LIGHT) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(sinfo.algo_type != AlgorithmType::xDMRG) return;
-        auto t_hdf = tid::tic_scope("expectations", tid::level::extra);
+        auto t_hdf = tid::tic_scope("expectations", tid::level::higher);
         tools::finite::measure::expectation_values_xyz(state);
         tools::log->trace("Saving expectations to {}", sinfo.get_state_prefix());
         /* clang-format off */
@@ -269,35 +269,33 @@ namespace tools::finite::h5 {
     void save::bonds(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto t_hdf = tid::tic_scope("bonds", tid::level::extra);
+        auto t_hdf = tid::tic_scope("bonds", tid::level::higher);
         // Transform from cplx to real to save space
         using real      = MpsSite::real;
         auto h5real     = h5pp::type::getH5Type<real>();
-        auto bonds_real = std::vector<Eigen::Tensor<real, 1>>();
-        auto bonds_hvla = std::vector<hvl_t>();
+        auto bonds_real = std::vector<h5pp::varr_t<real>>();
 
         std::string column_name = "L_";
         std::string table_title = "Bonds (singular values)";
 
         if(settings::storage::storage_level_tables == StorageLevel::LIGHT) {
-            bonds_real.emplace_back(state.get_midchain_bond().real());
+            bonds_real.emplace_back(Eigen::Tensor<real, 1>(state.get_midchain_bond().real()));
             column_name = "L";
             table_title = "Midchain Bond (singular values)";
         } else {
             bonds_real.reserve(state.get_length<size_t>() + 1);
             for(const auto &mps : state.mps_sites) {
-                bonds_real.emplace_back(mps->get_L().real());
-                if(mps->isCenter()) { bonds_real.emplace_back(mps->get_LC().real()); }
+                bonds_real.emplace_back(Eigen::Tensor<real, 1>(mps->get_L().real()));
+                if(mps->isCenter()) { bonds_real.emplace_back(Eigen::Tensor<real, 1>(mps->get_LC().real())); }
             }
         }
-        for(auto &bond : bonds_real) bonds_hvla.emplace_back(hvl_t{static_cast<size_t>(bond.size()), bond.data()});
-        data_as_table_vla(h5file, sinfo, bonds_hvla, h5real, "bonds", table_title, column_name);
+        data_as_table_vla(h5file, sinfo, bonds_real, h5real, "bonds", table_title, column_name);
     }
 
     void save::state(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level < StorageLevel::FULL) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto t_hdf      = tid::tic_scope("state", tid::level::extra);
+        auto t_hdf      = tid::tic_scope("state", tid::level::higher);
         auto mps_prefix = sinfo.get_mps_prefix();
 
         // Check if the current entry has already been saved
@@ -309,20 +307,32 @@ namespace tools::finite::h5 {
         for(const auto &mps : state.mps_sites) {
             auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
             h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
+            // TODO: what happens if L is shorter than an existing L? Does it overwrite?
+            h5file.deleteAttribute(dsetName, "L");
+            h5file.deleteAttribute(dsetName, "LC");
+            h5file.deleteAttribute(dsetName, "truncation_error_LC");
+            h5file.writeAttribute(Eigen::Tensor<double, 1>(mps->get_L().real()), dsetName, "L");
             h5file.writeAttribute(mps->get_position<long>(), dsetName, "position");
             h5file.writeAttribute(mps->get_M_bare().dimensions(), dsetName, "dimensions");
             h5file.writeAttribute(mps->get_label(), dsetName, "label");
+            h5file.writeAttribute(mps->get_truncation_error(), dsetName, "truncation_error");
             h5file.writeAttribute(mps->get_unique_id(), dsetName, "unique_id");
+            h5file.writeAttribute(mps->isCenter(), dsetName, "isCenter");
+            if(mps->isCenter()) {
+                h5file.writeAttribute(mps->get_LC(), dsetName, "LC");
+                h5file.writeAttribute(mps->get_truncation_error_LC(), dsetName, "truncation_error_LC");
+            }
         }
-        h5file.writeAttribute(state.get_length(), mps_prefix, "model_size");
+        h5file.writeAttribute(state.get_length<size_t>(), mps_prefix, "model_size");
         h5file.writeAttribute(state.get_position<long>(), mps_prefix, "position");
-        h5file.writeAttribute(state.get_labels(), mps_prefix, "labels");
         h5file.writeAttribute(sinfo.iter, mps_prefix, "iter");
         h5file.writeAttribute(sinfo.step, mps_prefix, "step");
         h5file.writeAttribute(sinfo.bond_lim, mps_prefix, "bond_lim");
         h5file.writeAttribute(sinfo.bond_max, mps_prefix, "bond_max");
         // Save the storage level as an attribute, to decide if we can resume later
+        h5file.writeAttribute(sinfo.algo_type, mps_prefix, "algo_type", std::nullopt, h5_enum_algo_type::get_h5t());
         h5file.writeAttribute(sinfo.storage_level, mps_prefix, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
+        h5file.writeAttribute(sinfo.storage_event, mps_prefix, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
     }
 
     /*! Write down the Hamiltonian model type and site info as attributes */
@@ -333,10 +343,11 @@ namespace tools::finite::h5 {
         if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
         tools::log->trace("Storing table: [{}]", table_path);
-        auto t_hdf = tid::tic_scope("model", tid::level::extra);
+        auto t_hdf = tid::tic_scope("model", tid::level::higher);
         for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5file, table_path);
-        h5file.writeAttribute(enum2sv(settings::model::model_type), table_path, "model_type");
         h5file.writeAttribute(settings::model::model_size, table_path, "model_size");
+        h5file.writeAttribute(settings::model::model_type, table_path, "model_type");
+        h5file.writeAttribute(enum2sv(settings::model::model_type), table_path, "model_name");
     }
 
     /*! Write all the MPO's with site info in attributes */
@@ -346,7 +357,7 @@ namespace tools::finite::h5 {
         std::string mpo_prefix = fmt::format("{}/model/mpo", sinfo.get_state_prefix());
         // We do not expect the MPO's to change. Therefore, if they exist, there is nothing else to do here
         if(h5file.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
-        auto t_hdf = tid::tic_scope("mpo", tid::level::extra);
+        auto t_hdf = tid::tic_scope("mpo", tid::level::higher);
         tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(sinfo.storage_level));
         for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5file, mpo_prefix); }
         h5file.writeAttribute(settings::model::model_size, mpo_prefix, "model_size");
@@ -385,7 +396,7 @@ namespace tools::finite::h5 {
     void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, CopyPolicy copy_policy) {
         // Setup this save
         auto t_h5     = tid::tic_scope("h5");
-        auto t_reason = tid::tic_scope(enum2sv(sinfo.storage_event), tid::level::extra);
+        auto t_reason = tid::tic_scope(enum2sv(sinfo.storage_event), tid::level::higher);
 
         std::string prefix;
         switch(sinfo.storage_event) {

@@ -60,7 +60,7 @@ TensorsFinite::TensorsFinite(AlgorithmType algo_type, ModelType model_type, size
 void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
     tools::log->debug("Initializing tensors: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
                       position);
-    state->initialize(algo_type, model_type, model_size, position);
+    state->initialize(algo_type, model_size, position);
     model->initialize(model_type, model_size);
     edges->initialize(model_size);
 }

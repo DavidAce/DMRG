@@ -1,10 +1,11 @@
 #pragma once
 
+#include "config/enums.h"
 #include "MpoParameters.h"
 #include <any>
-#include <config/enums.h>
 #include <map>
 #include <memory>
+#include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace h5pp {

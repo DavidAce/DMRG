@@ -5,8 +5,8 @@
 #include "math/rnd.h"
 #include "math/tenx.h"
 #include "qm/spin.h"
+#include "tools/common/log.h"
 #include <h5pp/h5pp.h>
-#include <iomanip>
 
 double delta_to_J_mean(double delta) { return std::min(1.0, std::exp(delta)); }
 
@@ -22,13 +22,12 @@ IsingSelfDual::IsingSelfDual(ModelType model_type_, size_t position_) : MpoSite(
     if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
         throw except::logic_error("error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
 
-    h5tb.param.spin_dim = settings::model::ising_sdual::spin_dim;
-    h5tb.param.set_distribution(settings::model::ising_sdual::distribution);
-    parity_sep = settings::model::ising_sdual::parity_sep;
+    h5tb.param.spin_dim     = settings::model::ising_sdual::spin_dim;
+    h5tb.param.distribution = settings::model::ising_sdual::distribution;
+    parity_sep              = settings::model::ising_sdual::parity_sep;
 
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
-    h5tb_ising_selfdual::register_table_type();
 }
 
 double IsingSelfDual::get_coupling() const { return h5tb.param.J_rand; }
@@ -37,34 +36,32 @@ void   IsingSelfDual::print_parameter_names() const { h5tb.print_parameter_names
 void   IsingSelfDual::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void IsingSelfDual::set_parameters(TableMap &parameters) {
-    h5tb.param.J_mean   = std::any_cast<double>(parameters["J_mean"]);
-    h5tb.param.J_wdth   = std::any_cast<double>(parameters["J_wdth"]);
-    h5tb.param.J_rand   = std::any_cast<double>(parameters["J_rand"]);
-    h5tb.param.h_mean   = std::any_cast<double>(parameters["h_mean"]);
-    h5tb.param.h_wdth   = std::any_cast<double>(parameters["h_wdth"]);
-    h5tb.param.h_rand   = std::any_cast<double>(parameters["h_rand"]);
-    h5tb.param.lambda   = std::any_cast<double>(parameters["lambda"]);
-    h5tb.param.delta    = std::any_cast<double>(parameters["delta"]);
-    h5tb.param.spin_dim = std::any_cast<long>(parameters["spin_dim"]);
-    h5tb.param.set_distribution(std::any_cast<std::string>(parameters["distribution"]));
+    h5tb.param.J_mean                = std::any_cast<double>(parameters["J_mean"]);
+    h5tb.param.J_wdth                = std::any_cast<double>(parameters["J_wdth"]);
+    h5tb.param.J_rand                = std::any_cast<double>(parameters["J_rand"]);
+    h5tb.param.h_mean                = std::any_cast<double>(parameters["h_mean"]);
+    h5tb.param.h_wdth                = std::any_cast<double>(parameters["h_wdth"]);
+    h5tb.param.h_rand                = std::any_cast<double>(parameters["h_rand"]);
+    h5tb.param.lambda                = std::any_cast<double>(parameters["lambda"]);
+    h5tb.param.delta                 = std::any_cast<double>(parameters["delta"]);
+    h5tb.param.spin_dim              = std::any_cast<long>(parameters["spin_dim"]);
+    h5tb.param.distribution          = std::any_cast<h5pp::vstr_t>(parameters["distribution"]);
     all_mpo_parameters_have_been_set = true;
 }
 
 IsingSelfDual::TableMap IsingSelfDual::get_parameters() const {
-    /* clang-format off */
     TableMap parameters;
-    parameters["J_mean"]   = h5tb.param.J_mean;
-    parameters["J_wdth"]   = h5tb.param.J_wdth;
-    parameters["J_rand"]   = h5tb.param.J_rand;
-    parameters["h_mean"]   = h5tb.param.h_mean;
-    parameters["h_wdth"]   = h5tb.param.h_wdth;
-    parameters["h_rand"]   = h5tb.param.h_rand;
-    parameters["lambda"]   = h5tb.param.lambda;
-    parameters["delta"]    = h5tb.param.delta;
-    parameters["spin_dim"] = h5tb.param.spin_dim;
-    parameters["distribution"]  = std::string(h5tb.param.get_distribution());
+    parameters["J_mean"]       = h5tb.param.J_mean;
+    parameters["J_wdth"]       = h5tb.param.J_wdth;
+    parameters["J_rand"]       = h5tb.param.J_rand;
+    parameters["h_mean"]       = h5tb.param.h_mean;
+    parameters["h_wdth"]       = h5tb.param.h_wdth;
+    parameters["h_rand"]       = h5tb.param.h_rand;
+    parameters["lambda"]       = h5tb.param.lambda;
+    parameters["delta"]        = h5tb.param.delta;
+    parameters["spin_dim"]     = h5tb.param.spin_dim;
+    parameters["distribution"] = h5tb.param.distribution;
     return parameters;
-    /* clang-format on */
 }
 
 void IsingSelfDual::build_mpo()
@@ -118,29 +115,29 @@ void IsingSelfDual::build_mpo()
 }
 
 void IsingSelfDual::randomize_hamiltonian() {
-    if(h5tb.param.get_distribution() == "normal") {
+    if(h5tb.param.distribution == "normal") {
         h5tb.param.J_wdth = 1.0;
         h5tb.param.h_wdth = 1.0;
         h5tb.param.J_rand = rnd::normal(h5tb.param.J_mean, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(h5tb.param.get_distribution() == "lognormal") {
+    } else if(h5tb.param.distribution == "lognormal") {
         // See http://arxiv.org/abs/1711.00020
         h5tb.param.J_wdth = 1.0;
         h5tb.param.h_wdth = 1.0;
         h5tb.param.J_rand = rnd::log_normal(h5tb.param.J_mean, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(h5tb.param.get_distribution() == "uniform") {
+    } else if(h5tb.param.distribution == "uniform") {
         h5tb.param.J_wdth = 2.0 * h5tb.param.J_mean;
         h5tb.param.h_wdth = 2.0 * h5tb.param.h_mean;
         h5tb.param.J_rand = rnd::uniform_double_box(0, h5tb.param.J_wdth);
         h5tb.param.h_rand = rnd::uniform_double_box(0, h5tb.param.h_wdth);
-    } else if(h5tb.param.get_distribution() == "constant") {
+    } else if(h5tb.param.distribution == "constant") {
         h5tb.param.J_wdth = 0.0;
         h5tb.param.h_wdth = 0.0;
         h5tb.param.J_rand = h5tb.param.J_mean;
         h5tb.param.h_rand = h5tb.param.h_mean;
     } else {
-        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.get_distribution());
+        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
     }
 
     all_mpo_parameters_have_been_set = false;
@@ -191,16 +188,8 @@ void IsingSelfDual::set_averages(std::vector<TableMap> all_parameters, bool infi
 }
 
 void IsingSelfDual::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {
-    if(not file.linkExists(hamiltonian_table_path)) file.createTable(h5tb_ising_selfdual::h5_type, hamiltonian_table_path, "Selfdual Ising");
-    file.appendTableRecords(h5tb, hamiltonian_table_path);
-    // Position 0 is also responsible for writing attributes
-    if(position.value() != 0) return;
-    file.writeAttribute(h5tb.param.J_mean, "J_mean", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.h_mean, "h_mean", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.lambda, "lambda", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.delta, "delta", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.get_distribution(), "distribution", hamiltonian_table_path);
-    file.writeAttribute(h5tb.param.spin_dim, "spin_dim", hamiltonian_table_path);
+    if(not file.linkExists(hamiltonian_table_path)) file.createTable(h5tb.get_h5_type(), hamiltonian_table_path, "Selfdual Ising");
+    file.appendTableRecords(h5tb.param, hamiltonian_table_path);
 }
 
 void IsingSelfDual::load_hamiltonian(const h5pp::File &file, std::string_view model_path) {
@@ -215,8 +204,8 @@ void IsingSelfDual::load_hamiltonian(const h5pp::File &file, std::string_view mo
     using namespace settings::model::ising_sdual;
     if(std::abs(h5tb.param.delta - delta) > 1e-6) throw except::runtime_error("delta  {:.16f} != {:.16f} ising_sdual::delta", h5tb.param.delta, delta);
     if(std::abs(h5tb.param.lambda - lambda) > 1e-6) throw except::runtime_error("lambda {:.16f} != {:.16f} ising_sdual::lambda", h5tb.param.lambda, lambda);
-    if(h5tb.param.get_distribution() != distribution)
-        throw except::runtime_error("distribution {} != {} ising_sdual::distribution", h5tb.param.get_distribution(), distribution);
+    if(h5tb.param.distribution != distribution)
+        throw except::runtime_error("distribution {} != {} ising_sdual::distribution", h5tb.param.distribution, distribution);
 
     // Sanity check on delta, J_mean, h_mean
     double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);

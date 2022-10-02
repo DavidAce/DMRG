@@ -54,8 +54,8 @@ class StateFinite {
     StateFinite &operator=(StateFinite &&other) noexcept; // default move assign
     StateFinite(const StateFinite &other);                // copy ctor
     StateFinite &operator=(const StateFinite &other);     // copy assign
-    StateFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
-    void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position);
+    StateFinite(AlgorithmType algo_type, size_t model_size, long position, long spin_dim = 2);
+    void initialize(AlgorithmType algo_type, size_t model_size, long position, long spin_dim = 2);
 
     void                           set_name(std::string_view statename);
     [[nodiscard]] std::string_view get_name() const;
@@ -108,11 +108,11 @@ class StateFinite {
     std::vector<MpsSite> get_mps_sites(const std::vector<size_t> &sites) const;
     void                 set_mps_sites(const std::vector<MpsSite> &mps_list);
     // For multisite
-    std::array<long, 3> active_dimensions() const;
-    long                active_problem_size() const;
-    std::vector<long>   get_spin_dims(const std::vector<size_t> &sites) const;
-    std::vector<long>   get_spin_dims() const;
-
+    std::array<long, 3>             active_dimensions() const;
+    long                            active_problem_size() const;
+    std::vector<long>               get_spin_dims(const std::vector<size_t> &sites) const;
+    std::vector<long>               get_spin_dims() const;
+    long                            get_spin_dim() const;
     Eigen::Tensor<Scalar, 3>        get_multisite_mps(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3> &get_multisite_mps() const;
 

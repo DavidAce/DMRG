@@ -6,6 +6,7 @@
 #include "math/tenx.h"
 #include "qm/qm.h"
 #include "qm/spin.h"
+#include "tools/common/log.h"
 #include <h5pp/h5pp.h>
 #include <utility>
 

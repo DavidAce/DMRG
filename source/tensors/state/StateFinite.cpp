@@ -63,25 +63,14 @@ StateFinite &StateFinite::operator=(const StateFinite &other) {
     return *this;
 }
 
-StateFinite::StateFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
-    initialize(algo_type, model_type, model_size, position);
-}
+StateFinite::StateFinite(AlgorithmType algo_type, size_t model_size, long position, long spin_dim) { initialize(algo_type, model_size, position, spin_dim); }
 
-void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, size_t position) {
-    tools::log->debug("Initializing state: algorithm [{}] | model [{}] | sites [{}] | position [{}]", enum2sv(algo_type), enum2sv(model_type), model_size,
-                      position);
+void StateFinite::initialize(AlgorithmType algo_type, size_t model_size, long position, long spin_dim) {
     set_algorithm(algo_type);
+    tools::log->debug("Initializing state: sites {} | position {} | spin_dim {}", model_size, position, spin_dim);
     if(model_size < 2) throw except::logic_error("Tried to initialize state with less than 2 sites");
     if(model_size > 2048) throw except::logic_error("Tried to initialize state with more than 2048 sites");
-    if(position >= model_size) throw except::logic_error("Tried to initialize state at a position larger than the number of sites");
-
-    long spin_dim = 2;
-    switch(model_type) {
-        case ModelType::ising_tf_rf: spin_dim = settings::model::ising_tf_rf::spin_dim; break;
-        case ModelType::ising_sdual: spin_dim = settings::model::ising_sdual::spin_dim; break;
-        case ModelType::lbit: spin_dim = settings::model::lbit::spin_dim; break;
-        default: spin_dim = 2;
-    }
+    if(position >= static_cast<long>(model_size)) throw except::logic_error("Tried to initialize state at a position larger than the number of sites");
 
     mps_sites.clear();
 
@@ -91,20 +80,15 @@ void StateFinite::initialize(AlgorithmType algo_type, ModelType model_type, size
     M(0, 0, 0)        = 0;
     M(1, 0, 0)        = 1;
     L(0)              = 1;
-    std::string label = "A";
     for(size_t site = 0; site < model_size; site++) {
+        std::string label = static_cast<long>(site) <= position ? "A" : "B";
         mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, site, 0.0, label));
-        if(site == position) {
-            mps_sites.back()->set_LC(L);
-            label = "B";
-        }
+        if(static_cast<long>(site) == position) { mps_sites.back()->set_LC(L); }
     }
     if(mps_sites.size() != model_size) throw except::logic_error("Initialized state with wrong size");
     if(not get_mps_site(position).isCenter()) throw except::logic_error("Initialized state center bond at the wrong position");
-    if(get_position() != position) throw except::logic_error("Initialized state at the wrong position");
+    if(get_position<long>() != position) throw except::logic_error("Initialized state at the wrong position");
     tag_normalized_sites = std::vector<bool>(model_size, false);
-    //    tag_edge_ene_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
-    //    tag_edge_var_status  = std::vector<EdgeStatus> (model_size,EdgeStatus::STALE);
 }
 
 void             StateFinite::set_name(std::string_view statename) { name = statename; }
@@ -349,6 +333,7 @@ std::vector<long> StateFinite::get_spin_dims(const std::vector<size_t> &sites) c
 }
 
 std::vector<long> StateFinite::get_spin_dims() const { return get_spin_dims(active_sites); }
+long              StateFinite::get_spin_dim() const { return get_mps_site(0).spin_dim(); }
 
 Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");

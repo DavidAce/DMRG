@@ -28,10 +28,11 @@ class MpsSite {
 
     public:
     ~MpsSite(); // Read comment on implementation
-    MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_);
-    MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
-    MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_);
-    MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<real, 1>> L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<real, 1>> L_, size_t pos, double error, std::string_view label_);
     MpsSite();                                    // ctor
     MpsSite(const MpsSite &other);                // default copy ctor
     MpsSite(MpsSite &&other) noexcept;            // default move ctor
@@ -74,14 +75,19 @@ class MpsSite {
 
     void set_M(const Eigen::Tensor<cplx, 3> &M_);
     void set_L(const Eigen::Tensor<cplx, 1> &L_, double error = 0);
+    void set_L(const Eigen::Tensor<real, 1> &L_, double error = 0);
     void set_L(const std::pair<Eigen::Tensor<cplx, 1>, double> &L_and_error);
+    void set_L(const std::pair<Eigen::Tensor<real, 1>, double> &L_and_error);
     void set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error = 0);
+    void set_LC(const Eigen::Tensor<real, 1> &LC_, double error = 0);
     void set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_error);
+    void set_LC(const std::pair<Eigen::Tensor<real, 1>, double> &LC_and_error);
     void set_truncation_error(double error);
     void set_truncation_error_LC(double error);
     void set_label(std::string_view label_);
     void set_position(size_t position_);
     void set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, double error, std::string_view label_);
+    void set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, double error, std::string_view label_);
 
     void unset_LC();
     void unset_L();

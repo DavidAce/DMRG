@@ -52,7 +52,7 @@ void AlgorithmLauncher::start_h5file() {
     // 2) The .h5 file does not exist yet -> start new simulation
 
     if(h5pp::fs::exists(settings::storage::output_filepath)) {
-        tools::log->trace("Found existing HDF5 file: {}", settings::storage::output_filepath);
+        tools::log->info("Found existing HDF5 file: {}", settings::storage::output_filepath);
         switch(settings::storage::file_collision_policy) {
             case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
@@ -64,10 +64,8 @@ void AlgorithmLauncher::start_h5file() {
                 // and consult .cfg if there is anything more to be done.
                 try {
                     h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READONLY);
-                    tools::log->trace("Checking if HDF5 file is valid: {}", settings::storage::output_filepath);
+                    tools::log->debug("Checking if HDF5 file is valid: {}", settings::storage::output_filepath);
                     if(not h5file->fileIsValid()) throw except::runtime_error("HDF5 file is not valid: {}", settings::storage::output_filepath);
-                    if(not h5file->linkExists(".env/DMRG++"))
-                        throw except::runtime_error("Could not find link .env/DMRG++ in file: {}", settings::storage::output_filepath);
                     if(not h5file->linkExists("common/finished_all"))
                         throw except::runtime_error("Could not find link common/finished_all in file: {}", settings::storage::output_filepath);
                     auto finished_all = h5file->readDataset<bool>("common/finished_all");
@@ -78,9 +76,6 @@ void AlgorithmLauncher::start_h5file() {
                         tools::log->info("All simulations have finished. Nothing more to do.");
                         exit(0);
                     }
-                    if(not h5file->linkExists("common/storage_level"))
-                        throw except::runtime_error("Could not find link common/storage_level in file: {}", settings::storage::output_filepath);
-
                     tools::log->info("Found dataset [finished_all = {}]. Attempting to open file with READWRITE access", finished_all);
                     h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READWRITE);
                 } catch(const std::exception &ex) {
