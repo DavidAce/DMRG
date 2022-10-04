@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.18)
 
 if(NOT WIN32)
     if("$ENV{CLICOLOR}" OR "$ENV{CLICOLOR_FORCE}")
@@ -163,7 +163,7 @@ endfunction()
 
 # Print summary of project targets
 function(print_project_summary prj)
-    include(cmake/getExpandedTarget.cmake)
+    include(${CMAKE_CURRENT_FUNCTION_LIST_DIR}/getExpandedTarget.cmake)
     if(NOT TARGET ${prj})
         message(FATAL_ERROR "${prj} is not a valid target")
     endif()

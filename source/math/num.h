@@ -231,10 +231,11 @@ namespace num {
      *   \example Let <code> v = {1,2,3,4}</code>. Then <code> sum(v,0,3) = 10 </code>.
      */
     template<typename Input>
-    [[nodiscard]] auto sum(const Input &in, long from = 0, long num = -1) {
-        if(num < 0) num = in.size();
-        num = std::min<long>(num, static_cast<long>(in.size()) - from);
-        return std::accumulate(std::begin(in) + from, std::begin(in) + from + num, static_cast<typename Input::value_type>(0));
+    [[nodiscard]] auto sum(const Input &in, size_t from = 0, size_t num = -1ul) {
+        if(num == -1ul) num = in.size();
+        num = std::min<size_t>(num, static_cast<size_t>(in.size()) - from);
+        return std::accumulate(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num),
+                               static_cast<typename Input::value_type>(0));
     }
 
     /*! \brief Product operator for containers such as vector

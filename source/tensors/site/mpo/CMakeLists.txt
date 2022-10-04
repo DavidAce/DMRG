@@ -1,8 +1,8 @@
+add_subdirectory(h5tb)
 add_source_target(dmrg-tensors-mpo
                   TARGET_SOURCES
                   MpoSite.cpp
                   MpoFactory.cpp
-                  MpoParameters.cpp
                   IsingSelfDual.cpp
                   IsingMajorana.cpp
                   IsingRandomField.cpp
@@ -10,7 +10,9 @@ add_source_target(dmrg-tensors-mpo
                   OBJECT_LINK_LIBRARIES
                   dmrg-deps dmrg-flags
                   INTERFACE_LINK_LIBRARIES
+                  dmrg-tensors-mpo-h5tb
                   dmrg-config
+                  dmrg-debug
                   dmrg-math-hash
                   dmrg-math-rnd
                   dmrg-math-tenx

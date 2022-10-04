@@ -17,6 +17,7 @@
         "DMRG_ENABLE_BENCH": "TRUE",
         "DMRG_ENABLE_RSVD": "FALSE",
         "DMRG_ENABLE_TBLIS": "TRUE",
+        "DMRG_BUILD_TOOLS": "TRUE",
         "DMRG_BENCH_CONTRACTION": "FALSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "find",

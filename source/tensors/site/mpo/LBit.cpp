@@ -442,7 +442,6 @@ void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefi
     auto ham_table = fmt::format("{}/hamiltonian", model_prefix);
     if(file.linkExists(ham_table)) {
         h5tb.param = file.readTableRecords<h5tb_lbit::table>(ham_table, position);
-        file.vlenDropReclaims();
         all_mpo_parameters_have_been_set = true;
     } else {
         throw except::runtime_error("Could not load MPO. Table [{}] does not exist", ham_table);
