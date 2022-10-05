@@ -1,9 +1,9 @@
 #pragma once
 
+#include "general/sfinae.h"
 #include <optional>
 #include <string>
 #include <string_view>
-
 namespace text {
     extern bool        endsWith(std::string_view str, std::string_view suffix);
     extern bool        startsWith(std::string_view str, std::string_view prefix);
@@ -38,12 +38,15 @@ namespace text {
 
     extern bool natcomp(std::string_view sa, std::string_view sb);
 
-    template<typename T1, typename T2>
+    template<typename T1 = std::initializer_list<std::string_view>, typename T2 = std::initializer_list<std::string_view>>
     std::optional<std::string> match(const T1 &v1, const T2 &v2) {
+        static_assert(sfinae::is_iterable_v<T1>);
+        static_assert(sfinae::is_iterable_v<T2>);
+        static_assert(sfinae::has_text_v<T1>);
+        static_assert(sfinae::has_text_v<T2>);
         for(const auto &s1 : v1)
             for(const auto &s2 : v2)
                 if(s1 == s2) return std::string(s1);
         return std::nullopt;
     }
-
 }

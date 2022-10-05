@@ -26,7 +26,9 @@ namespace tools::finite::h5 {
 
     void save::measurements(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges,
                             const AlgorithmStatus &status) {
-        if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_level <= StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
+
         sinfo.assert_well_defined();
         std::string table_path = fmt::format("{}/measurements", sinfo.get_state_prefix());
 
@@ -153,6 +155,7 @@ namespace tools::finite::h5 {
 
     void save::bond_dimensions(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
         data_as_table(h5file, sinfo, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
     }
 

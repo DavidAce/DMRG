@@ -315,7 +315,8 @@
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install"
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install",
+        "DMRG_BUILD_TOOLS": "TRUE"
       }
     },
     {
@@ -330,7 +331,8 @@
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install"
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
+        "DMRG_BUILD_TOOLS": "FALSE"
       }
     }
   ],

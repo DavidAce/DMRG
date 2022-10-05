@@ -153,19 +153,45 @@ namespace sfinae {
         template<typename U>
         static constexpr bool test() {
             using DecayType = typename std::decay<U>::type;
-            if constexpr(std::is_array_v<DecayType>) return test<typename std::remove_all_extents_t<DecayType>>();
-            if constexpr(std::is_pointer_v<DecayType>) return test<typename std::remove_pointer_t<DecayType>>();
-            if constexpr(std::is_const_v<DecayType>) return test<typename std::remove_cv_t<DecayType>>();
-            if constexpr(std::is_reference_v<DecayType>) return test<typename std::remove_reference_t<DecayType>>();
-            if constexpr(sfinae::has_value_type_v<DecayType>) return test<typename DecayType::value_type>();
-            return std::is_same<DecayType, char>::value; // No support for wchar_t, char16_t and char32_t
+            // No support for wchar_t, char16_t and char32_t
+            if constexpr(has_c_str_v<DecayType>) return true;
+            if constexpr(std::is_same_v<DecayType, std::string>) return true;
+            if constexpr(std::is_same_v<DecayType, std::string_view>) return true;
+            if constexpr(std::is_same_v<DecayType, const char *>) return true;
+            if constexpr(std::is_same_v<DecayType, const char[]>) return true;
+            if constexpr(std::is_same_v<DecayType, char *>) return true;
+            if constexpr(std::is_same_v<DecayType, char[]>) return true;
+            if constexpr(std::is_same_v<DecayType, char>)
+                return true;
+            else
+                return false;
+        }
+
+        public:
+        static constexpr bool value = test<T>();
+    };
+
+    template<typename T>
+    inline constexpr bool is_text_v = is_text<T>::value;
+
+    template<typename T>
+    struct has_text {
+        private:
+        template<typename U>
+        static constexpr bool test() {
+            using DecayType = typename std::decay<U>::type;
+            if constexpr(is_text_v<U>) return false;
+            if constexpr(std::is_array_v<DecayType>) return is_text_v<typename std::remove_all_extents_t<DecayType>>;
+            if constexpr(std::is_pointer_v<DecayType>) return is_text_v<typename std::remove_pointer_t<DecayType>>;
+            if constexpr(has_value_type_v<DecayType>) return is_text_v<typename DecayType::value_type>;
+            return false;
         }
 
         public:
         static constexpr bool value = test<T>();
     };
     template<typename T>
-    inline constexpr bool is_text_v = is_text<T>::value;
+    inline constexpr bool has_text_v = has_text<T>::value;
 
     template<typename...>
     struct print_type_and_exit_compile_time;

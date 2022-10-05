@@ -1,9 +1,9 @@
 #include "h5xf.h"
+#include "config/enums.h"
 #include "debug/exceptions.h"
 #include "meld-io/logger.h"
 #include "tid/tid.h"
 #include <h5pp/h5pp.h>
-
 namespace tools::h5xf {
 
     namespace internal {
@@ -13,12 +13,12 @@ namespace tools::h5xf {
             h5pp::DataInfo dataInfo;
 
             // The axis parameter must be  < srcInfo.rank+1
-            if(axis > srcInfo.dsetDims->size()) {
+            if(axis >= srcInfo.dsetDims->size()) {
                 dataInfo.dataByte = srcInfo.dsetByte;
                 dataInfo.dataSize = srcInfo.dsetSize;
                 dataInfo.dataRank = tgtInfo.dsetRank; // E.g. if stacking rank 2 matrices then axis == 2 and so data rank must be 3.
                 dataInfo.dataDims = std::vector<hsize_t>(axis + 1, 1ull);
-                for(size_t i = 0; i < srcInfo.dsetDims->size(); i++) dataInfo.dataDims.value()[i] = srcInfo.dsetDims.value()[i];
+                std::copy_n(srcInfo.dsetDims->begin(), srcInfo.dsetDims->size(), dataInfo.dataDims->begin());
                 dataInfo.h5Space = h5pp::util::getMemSpace(dataInfo.dataSize.value(), dataInfo.dataDims.value());
             } else {
                 dataInfo.dataDims = srcInfo.dsetDims;
@@ -32,6 +32,18 @@ namespace tools::h5xf {
             tgtInfo.dsetSlab->extent               = dataInfo.dataDims;
             tgtInfo.dsetSlab->offset               = std::vector<hsize_t>(tgtInfo.dsetDims->size(), 0);
             tgtInfo.dsetSlab->offset.value()[axis] = index;
+
+            if(tgtInfo.dsetSlab->extent->size() != tgtInfo.dsetSlab->offset->size()) {
+                throw except::logic_error("dsetSlab has mismatching ranks: \n "
+                                          "target: offset {}:{} != extent {}:{} | dset {}\n"
+                                          "source: dsetDimms {}:{} | dset {} \n"
+                                          "axis: {}",
+                                          tgtInfo.dsetSlab->offset.value(), tgtInfo.dsetSlab->offset->size(), tgtInfo.dsetSlab->extent.value(),
+                                          tgtInfo.dsetSlab->extent->size(), tgtInfo.dsetPath.value(), srcInfo.dsetDims.value(), srcInfo.dsetDims->size(),
+                                          srcInfo.dsetPath.value(), axis
+
+                );
+            }
 
             h5_tgt.appendToDataset(data, dataInfo, tgtInfo, static_cast<size_t>(axis));
             // Restore previous settings
@@ -135,14 +147,14 @@ namespace tools::h5xf {
                         const FileId &fileId) {
         // In this function we take series data from each srcTable and create multiple tables tgtTable, one for each
         // index (e.g. iter, bond dim, etc). Each entry in tgtTable corresponds to the same index point on different realizations.
-        auto                   t_scope = tid::tic_scope(__FUNCTION__);
-        std::vector<std::byte> srcReadBuffer;
-        std::vector<size_t>    srcIndices; // We can assume all tables have the same indexing numbers. Only update on mismatch
+        auto                      t_scope = tid::tic_scope(__FUNCTION__);
+        std::vector<std::byte>    srcReadBuffer;
+        std::vector<size_t>       srcIndices; // We can assume all tables have the same indexing numbers. Only update on mismatch
+        std::vector<StorageEvent> srcEvents;  // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
         for(const auto &srcKey : srcKeys) {
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::logic_error("Key [{}] was not found in source map", srcKey.key);
-            auto &srcInfo    = srcTableDb[srcKey.key];
-            auto  srcRecords = srcInfo.numRecords.value();
-            tools::logger::log->trace("Transferring {} table {} | records {}", srcKey.classtag, srcInfo.tablePath.value(), srcRecords);
+            auto &srcInfo = srcTableDb[srcKey.key];
+            tools::logger::log->trace("Transferring {} table {} | records {}", srcKey.classtag, srcInfo.tablePath.value(), srcInfo.numRecords.value());
 
             // Iterate over all table elements. These should be a time series measured at every iteration
             // Note that there could in principle exist duplicate entries, which is why we can't trust the
@@ -150,18 +162,24 @@ namespace tools::h5xf {
             // Try getting the iteration number, which is more accurate.
 
             try {
-                if(srcIndices.size() != srcRecords) { // Update iteration numbers if it's not the same that we have already.
+                if(srcIndices.size() != srcInfo.numRecords.value()) { // Update iteration numbers if it's not the same that we have already.
                     auto t_read     = tid::tic_scope("readTableField");
                     auto indexfield = text::match(srcKey.index, srcInfo.fieldNames.value());
+                    auto eventfield = text::match({"event"}, srcInfo.fieldNames.value());
                     if(not indexfield)
                         throw std::runtime_error(fmt::format("Index field was not found in table [{}]\n Expected fields {}\n Existing fields {}",
                                                              srcInfo.tablePath.value(), srcKey.index, srcInfo.fieldNames.value()));
+                    if(not eventfield)
+                        throw std::runtime_error(
+                            fmt::format("Event field was not found in table [{}]\n Existing fields {}", srcInfo.tablePath.value(), srcInfo.fieldNames.value()));
                     h5pp::hdf5::readTableField(srcIndices, srcInfo, {indexfield.value()});
+                    h5pp::hdf5::readTableField(srcEvents, srcInfo, {eventfield.value()});
                 }
             } catch(const std::exception &ex) { throw std::logic_error(fmt::format("Failed to get iteration numbers: {}", ex.what())); }
-            for(size_t rec = 0; rec < srcRecords; rec++) {
+            for(size_t rec = 0; rec < srcInfo.numRecords.value(); rec++) {
                 size_t srcIndex = rec;
-                if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Get the actual index number from the table
+                if(not srcEvents.empty() and srcEvents[rec] != StorageEvent::ITER_STATE) continue; // Only take cronos from iteration events
+                if(not srcIndices.empty()) srcIndex = srcIndices[rec];                             // Get the actual index number from the table
                 auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
                 auto tgtPath = pathid.create_path<KeyT>(tgtName, srcIndex);
 
