@@ -1,0 +1,117 @@
+
+# This is a modified style based on seaborn-darkgrid
+
+# Seaborn common parameters
+# .15 = dark_gray
+# .8 = light_gray
+figure.facecolor        : white
+text.color              : .15
+axes.labelcolor         : .15
+
+
+xtick.direction         : out
+ytick.direction         : out
+xtick.color             : .15
+ytick.color             : .15
+axes.axisbelow          : True
+image.cmap              : Greys
+grid.linestyle          : -
+lines.solid_capstyle    : round
+
+
+# Seaborn darkgrid parameters
+axes.grid               : True
+axes.facecolor          : 0.9
+axes.edgecolor          : white
+axes.linewidth          : 0
+grid.color              : white
+xtick.major.size        : 0
+ytick.major.size        : 0
+xtick.minor.size        : 0
+ytick.minor.size        : 0
+
+
+# Special sauce
+# Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
+
+axes.titlesize          : small # Font size of subtplot title
+
+
+text.usetex        		: true
+font.size               : 11
+font.family             : serif
+font.serif              : STIX
+mathtext.fontset        : stix
+
+lines.linewidth         : 1.0
+lines.markersize        : 5
+
+#figure.figsize          : 7, 4 # Two subplots side by side
+#figure.figsize          : 5, 4 # Single plot
+figure.figsize          : 10, 8 # More plots
+#figure.figsize          : 2.53125, 3.00 # 75% width
+
+
+## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
+
+figure.subplot.top      : 0.90   # the top of the subplots of the figure (Make room for title and subtitle)
+figure.subplot.left     : 0.20   # Make room for ylabel
+figure.subplot.bottom   : 0.15
+
+## Dimensions as fraction of font size:
+legend.fontsize         : 10
+#legend.fontsize         : 8.33
+legend.title_fontsize   : 10
+#legend.title_fontsize   : 8.33
+legend.frameon          : False # if True, draw the legend on a background patch
+legend.loc              : center left
+legend.borderpad        : 0.25      # border whitespace
+legend.labelspacing     : 0.15      # the vertical space between the legend entries
+legend.handlelength     : 1.0       # the length of the legend lines
+legend.handletextpad    : 0.5       # the space between the legend line and legend text
+legend.borderaxespad    : 0.0       # the border between the axes and legend edge
+legend.columnspacing    : 0.5       # column separation
+legend.framealpha       : 0.7       # legend patch transparency
+legend.facecolor        : inherit   # inherit from axes.facecolor; or color spec
+legend.edgecolor        : k         # background patch boundary color
+legend.fancybox         : False     # if True, use a rounded box for the
+                                    # legend background, else a rectangle
+legend.shadow           : False     # if True, give background a shadow effect
+legend.numpoints        : 1
+legend.scatterpoints    : 1
+
+
+
+
+
+# Defaults
+#figure.subplot.top     : 0.88   # the top of the subplots of the figure (Make room for title and subtitle)
+#figure.subplot.left    : 0.125  # the left side of the subplots of the figure
+#figure.subplot.right   : 0.9    # the right side of the subplots of the figure
+#figure.subplot.bottom  : 0.11   # the bottom of the subplots of the figure
+#figure.subplot.wspace  : 0.2    # the amount of width reserved for space between subplots,
+                                 # expressed as a fraction of the average axis width
+#figure.subplot.hspace  : 0.2    # the amount of height reserved for space between subplots,
+                                 # expressed as a fraction of the average axis height
+figure.autolayout       : False  # Applies tight_layout
+
+# Saving figures
+## The default savefig parameters can be different from the display parameters
+## e.g., you may want a higher resolution, or to make the figure
+## background white
+
+savefig.dpi            : 600     # figure dots per inch or 'figure'
+savefig.facecolor      : auto    # figure face color when saving
+savefig.edgecolor      : auto    # figure edge color when saving
+savefig.format         : svg     # {png, ps, pdf, svg}
+savefig.bbox           : tight   # {tight, standard}
+                                 # 'tight' is incompatible with pipe-based animation
+                                 # backends (e.g. 'ffmpeg') but will work with those
+                                 # based on temporary files (e.g. 'ffmpeg_file')
+savefig.pad_inches     : 0.0     # Padding to be used when bbox is set to 'tight'
+
+#savefig.directory      : ~       # default directory in savefig dialog box,
+#                                # leave empty to always use current working directory
+#savefig.transparent: False     # setting that controls whether figures are saved with a
+                                # transparent background by default
+#savefig.orientation: portrait  # Orientation of saved figure

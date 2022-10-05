@@ -1,0 +1,8 @@
+# Better to plot the extremes of colors for contrast
+axes.prop_cycle         : cycler('color', ['000000', 'FF0000', '0000FF', '00FF00', 'FF00FF', '00FFFF'])
+                                 #000000 : black
+                                 #FF0000 : red
+                                 #0000FF : blue
+                                 #00FF00 : green
+                                 #FF00FF : magenta
+                                 #00FFFF : cyan

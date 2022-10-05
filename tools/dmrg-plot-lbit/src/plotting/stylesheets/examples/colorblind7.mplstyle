@@ -1,0 +1,6 @@
+# Line colors to address color blindness, color names are *similar* to the following html colors
+# This mpl style is modeled to be compatible with the APS Phys. Rev. Journal 
+# Color style is from Wong, B. (2011) Nature Methods 8:441
+
+axes.prop_cycle         : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73', 'f0e442', '0072b2', 'd55e00', 'cc79a7'])
+
