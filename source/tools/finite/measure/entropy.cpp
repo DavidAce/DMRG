@@ -146,7 +146,7 @@ struct Amplitude {
     void eval(const StateFinite &state, long tgt_pos, std::vector<Amplitude<from>> &cache) {
         if constexpr(from == From::A) {
             if(pos < tgt_pos) {
-                auto t_evalA = tid::tic_scope("evalA");
+                auto t_evalA = tid::tic_scope("evalA", tid::level::highest);
                 // There are missing mps in the amplitude. Let's add them
                 // First, check if it is already available in the amplitudes database
                 // We can look it up by transforming the bits between 0 to bit_site to an integer
@@ -215,7 +215,7 @@ struct Amplitude {
             // Start by calculating the mps sites that should be included in the amplitude
             // Remember that in eval_from_B we calculate the amplitude starting from the right-end of the chain
             if(pos > tgt_pos) {
-                auto t_evalB = tid::tic_scope("evalB");
+                auto t_evalB = tid::tic_scope("evalB", tid::level::highest);
 
                 // There are missing mps in the amplitude. Let's add them
                 // First, check if it is already available in the amplitudes database
@@ -753,7 +753,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     }
     //    number_entropies_mpo(state);
 
-    auto t_num      = tid::tic_scope("number_entropy");
+    auto t_num      = tid::tic_scope("number_entropy", tid::level::highest);
     auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy);
 

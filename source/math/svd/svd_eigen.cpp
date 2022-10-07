@@ -25,7 +25,7 @@
 template<typename Scalar>
 std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
     svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols) const {
-    auto t_eigen = tid::tic_scope("eigen", tid::higher);
+    auto t_eigen = tid::tic_scope("eigen", tid::highest);
     svd::log->trace("Starting SVD with Eigen");
     auto                                 minRC = std::min(rows, cols);
     Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);

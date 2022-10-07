@@ -62,7 +62,7 @@ size_t tools::finite::measure::length(const StateFinite &state) { return state.g
 double tools::finite::measure::norm(const StateFinite &state, bool full) {
     if(state.measurements.norm) return state.measurements.norm.value();
     double norm;
-    auto   t_norm = tid::tic_scope("norm");
+    auto   t_norm = tid::tic_scope("norm", tid::level::highest);
     if(not full) {
         // We know the all sites are normalized. We can check that the current position is normalized
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
@@ -110,7 +110,7 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
 
 std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &state) {
     if(state.measurements.bond_dims) return state.measurements.bond_dims.value();
-    auto              t_chi = tid::tic_scope("chi");
+    auto              t_chi = tid::tic_scope("chi", tid::level::highest);
     std::vector<long> bond_dims;
     bond_dims.reserve(state.get_length() + 1);
     if(not state.has_center_point()) bond_dims.emplace_back(state.mps_sites.front()->get_chiL());
@@ -127,7 +127,7 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFini
     // Here we get the bond dimensions of the bonds that were merged into the full state in the last step
     // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
     // If active sites is just {4}, it returns the bond between {4,5} when going right, and {3,4} when going left.
-    auto t_chi = tid::tic_scope("bond_merged");
+    auto t_chi = tid::tic_scope("bond_merged", tid::level::highest);
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
         // Because of subspace expansion, the only bond dimension that grows is the one directly behind
@@ -147,7 +147,7 @@ std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFini
 
 double tools::finite::measure::entanglement_entropy_current(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_current) return state.measurements.entanglement_entropy_current.value();
-    auto t_ent = tid::tic_scope("neumann_entropy");
+    auto t_ent = tid::tic_scope("neumann_entropy", tid::level::highest);
     if(state.has_center_point()) {
         auto                  &LC                       = state.current_bond();
         Eigen::Tensor<cplx, 0> SE                       = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
@@ -159,7 +159,7 @@ double tools::finite::measure::entanglement_entropy_current(const StateFinite &s
 
 double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &state) {
     if(state.measurements.entanglement_entropy_midchain) return state.measurements.entanglement_entropy_midchain.value();
-    auto                   t_ent                     = tid::tic_scope("neumann_entropy");
+    auto                   t_ent                     = tid::tic_scope("neumann_entropy", tid::level::highest);
     auto                  &LC                        = state.get_midchain_bond();
     Eigen::Tensor<cplx, 0> SE                        = -LC.square().contract(LC.square().log().eval(), tenx::idx({0}, {0}));
     state.measurements.entanglement_entropy_midchain = std::abs(SE(0));
@@ -168,7 +168,7 @@ double tools::finite::measure::entanglement_entropy_midchain(const StateFinite &
 
 std::vector<double> tools::finite::measure::entanglement_entropies(const StateFinite &state) {
     if(state.measurements.entanglement_entropies) return state.measurements.entanglement_entropies.value();
-    auto                t_ent = tid::tic_scope("neumann_entropy");
+    auto                t_ent = tid::tic_scope("neumann_entropy", tid::level::highest);
     std::vector<double> entanglement_entropies;
     entanglement_entropies.reserve(state.get_length() + 1);
     if(not state.has_center_point()) entanglement_entropies.emplace_back(0);
@@ -197,7 +197,7 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
     if(q == 3.0 and state.measurements.renyi_3) return state.measurements.renyi_3.value();
     if(q == 4.0 and state.measurements.renyi_4) return state.measurements.renyi_4.value();
     if(q == inf and state.measurements.renyi_inf) return state.measurements.renyi_inf.value();
-    auto                t_ren = tid::tic_scope("renyi_entropy");
+    auto                t_ren = tid::tic_scope("renyi_entropy", tid::level::highest);
     std::vector<double> renyi_q;
     renyi_q.reserve(state.get_length() + 1);
     if(not state.has_center_point()) renyi_q.emplace_back(0);
@@ -248,7 +248,7 @@ std::array<double, 3> tools::finite::measure::spin_components(const StateFinite 
 }
 
 double tools::finite::measure::spin_component(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix) {
-    auto t_spn       = tid::tic_scope("spin");
+    auto t_spn       = tid::tic_scope("spin", tid::level::highest);
     auto [mpo, L, R] = qm::mpo::pauli_mpo(paulimatrix);
     Eigen::Tensor<cplx, 3> temp;
     for(const auto &mps : state.mps_sites) {
@@ -284,7 +284,7 @@ int tools::finite::measure::spin_sign(const StateFinite &state, std::string_view
 
 std::vector<double> tools::finite::measure::truncation_errors(const StateFinite &state) {
     if(state.measurements.truncation_errors) return state.measurements.truncation_errors.value();
-    auto                t_chi = tid::tic_scope("trunc");
+    auto                t_chi = tid::tic_scope("trunc", tid::level::highest);
     std::vector<double> truncation_errors;
     if(not state.has_center_point()) truncation_errors.emplace_back(0);
     for(const auto &mps : state.mps_sites) {
@@ -355,13 +355,13 @@ double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type
                                         model.active_sites, edges.active_sites);
         return tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements);
     } else {
-        auto        t_msr = tid::tic_scope("measure");
+        auto        t_msr = tid::tic_scope("measure", tid::level::highest);
         const auto &mpo   = model.get_multisite_mpo();
         const auto &env   = edges.get_multisite_env_ene_blk();
         if constexpr(settings::debug)
             tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
                               model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
-        auto   t_ene        = tid::tic_scope("ene");
+        auto   t_ene        = tid::tic_scope("ene", tid::level::highest);
         double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         if(measurements != nullptr) measurements->energy_minus_energy_shift = e_minus_ered;
         return e_minus_ered;
@@ -445,7 +445,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         else
             energy = tools::finite::measure::energy(state, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
 
-        auto   t_msr = tid::tic_scope("measure");
+        auto   t_msr = tid::tic_scope("measure", tid::level::highest);
         double E2    = energy * energy;
 
         if(not num::all_equal(model.active_sites, edges.active_sites))
@@ -460,7 +460,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(state.dimension(0) != mpo2.dimension(2))
             throw std::runtime_error(
                 fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo2.dimension(2)));
-        auto   t_var = tid::tic_scope("var");
+        auto   t_var = tid::tic_scope("var", tid::level::highest);
         double H2    = tools::common::contraction::expectation_value(state, mpo2, env2.L, env2.R);
         double var   = std::abs(H2 - E2);
         if(measurements != nullptr) measurements->energy_variance = var;

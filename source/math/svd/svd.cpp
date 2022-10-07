@@ -68,7 +68,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     constexpr bool has_rsvd = false;
 #endif
 
-    auto t_svd = tid::tic_scope("svd");
+    auto t_svd = tid::tic_scope("svd", tid::level::highest);
 
     copy_config(svd_cfg);
     auto sizeS    = std::min(rows, cols);

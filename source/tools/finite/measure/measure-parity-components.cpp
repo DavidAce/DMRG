@@ -11,7 +11,7 @@
 #include "tools/common/log.h"
 namespace tools::finite::measure {
     void parity_components(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix) {
-        auto t_spn                 = tid::tic_scope("spin");
+        auto t_spn                 = tid::tic_scope("spin", tid::level::highest);
         auto [mpo, L, R]           = qm::mpo::pauli_mpo(paulimatrix);
         auto                   mid = state.get_length<long>() / 2;
         Eigen::Tensor<cplx, 3> temp;

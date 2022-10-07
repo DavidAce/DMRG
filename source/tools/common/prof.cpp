@@ -3,8 +3,8 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 void tools::common::timer::print_timers() {
-    if(settings::timer::on) {
         tid::level lvl = settings::timer::level;
+        tools::log->info("Printing tid tree level {}", enum2sv(lvl));
         if(settings::itebd::on)
             for(const auto &t : tid::get_tree("iTEBD", lvl)) tools::log->info("{}", t.str());
 
@@ -21,5 +21,4 @@ void tools::common::timer::print_timers() {
             for(const auto &t : tid::get_tree("fDMRG", lvl)) tools::log->info("{}", t.str());
             for(const auto &t : tid::get_tree("xDMRG", lvl)) tools::log->info("{}", t.str());
         }
-    }
 }

@@ -72,7 +72,7 @@ Eigen::DSizes<long, 3> MpsSite::dimensions() const { return Eigen::DSizes<long, 
 bool MpsSite::is_real() const { return tenx::isReal(get_M_bare()) and tenx::isReal(get_L()); }
 bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) or tenx::hasNaN(get_L()); }
 bool MpsSite::is_normalized(double prec) const {
-    auto t_dbg = tid::tic_token("is_normalized");
+    auto t_dbg = tid::tic_token("is_normalized", tid::level::highest);
     if(isCenter() or get_label() == "AC") {
         auto norm = tools::common::contraction::contract_mps_norm(get_M());
         return std::abs(norm - 1) <= prec;
@@ -368,7 +368,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
 }
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
-    auto t_mpo = tid::tic_token("apply_mpo");
+    auto t_mpo = tid::tic_token("apply_mpo", tid::level::higher);
     tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {})", get_tag(), mpo.dimensions());
     if constexpr(settings::debug_apply_mpo) {
         tools::log->trace("L({}):\n{}\n", get_position(), linalg::tensor::to_string(get_L(), 16, 18));
@@ -411,7 +411,7 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
 }
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo) {
-    auto                   t_mpo = tid::tic_token("apply_mpo");
+    auto                   t_mpo = tid::tic_token("apply_mpo", tid::level::higher);
     Eigen::Tensor<cplx, 3> M_bare_temp(mpo.dimension(1), get_chiL(), get_chiR());
     M_bare_temp.device(tenx::threads::getDevice()) = mpo.contract(get_M_bare(), tenx::idx({0}, {0}));
     set_M(M_bare_temp);

@@ -220,7 +220,7 @@ void tools::finite::ops::project_to_axis(StateFinite &state, const Eigen::Matrix
 }
 
 std::optional<double> tools::finite::ops::get_spin_component_along_axis(StateFinite &state, std::string_view axis) {
-    auto t_align = tid::tic_scope("align");
+    auto t_align = tid::tic_scope("align", tid::level::higher);
     if(qm::spin::half::is_valid_axis(axis)) {
         return tools::finite::measure::spin_component(state, qm::spin::half::get_pauli(axis));
     } else
@@ -240,7 +240,7 @@ int tools::finite::ops::project_to_nearest_axis(StateFinite &state, std::string_
      */
 
     tools::log->debug("Projecting state to axis nearest {}", axis);
-    auto t_prj                     = tid::tic_scope("proj");
+    auto t_prj                     = tid::tic_scope("proj", tid::level::higher);
     auto spin_component_along_axis = get_spin_component_along_axis(state, axis);
     if(spin_component_along_axis.has_value()) {
         auto sign           = qm::spin::half::get_sign(axis);

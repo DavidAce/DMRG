@@ -378,7 +378,7 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo(const std::ve
     else
         tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody.value());
 
-    auto                               t_mpo = tid::tic_scope("mpo");
+    auto                               t_mpo = tid::tic_scope("get_multisite_mpo", tid::level::highest);
     Eigen::Tensor<cplx, 4>             multisite_mpo, temp;
     constexpr auto                     shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto                     contract_idx = tenx::idx({1}, {0});
@@ -513,7 +513,7 @@ const Eigen::Tensor<ModelFinite::cplx, 2> &ModelFinite::get_multisite_ham() cons
 }
 
 Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_shifted_view(double energy_per_site) const {
-    auto                   t_mpo = tid::tic_scope("mpo");
+    auto                   t_mpo = tid::tic_scope("mpo_shifted_view");
     Eigen::Tensor<cplx, 4> multisite_mpo, temp;
     constexpr auto         shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto         contract_idx = tenx::idx({1}, {0});
@@ -555,7 +555,7 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_squared(const
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo squared tensor");
     if(sites == active_sites and cache.multisite_mpo_squared and not nbody) return cache.multisite_mpo_squared.value();
     tools::log->trace("Contracting multisite mpo² tensor with sites {}", sites);
-    auto                   t_mpo     = tid::tic_scope("mpo");
+    auto                   t_mpo     = tid::tic_scope("get_multisite_mpo_squared", tid::level::highest);
     auto                   positions = num::range<size_t>(sites.front(), sites.back() + 1);
     Eigen::Tensor<cplx, 4> multisite_mpo_squared;
     constexpr auto         shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};

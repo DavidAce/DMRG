@@ -35,7 +35,6 @@ namespace tools::common::h5 {
     }
 
     void load::timer(const h5pp::File &h5file, std::string_view state_prefix, [[maybe_unused]] const AlgorithmStatus &status) {
-        if(not settings::timer::on) return;
         auto table_path = fmt::format("{}/timers", state_prefix);
         if(h5file.linkExists(table_path)) {
             tools::log->info("Loading timers from table: [{}]", table_path);

@@ -248,8 +248,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("itebd::print_freq"           , itebd::print_freq);
 
     //Timers
-    dmrg_config.load_parameter("timer::on"         , timer::on        );
-    dmrg_config.load_parameter("timer::precision"  , timer::precision );
     dmrg_config.load_parameter("timer::level"      , timer::level     );
     //Console settings
     dmrg_config.load_parameter("console::loglevel"    , console::loglevel);

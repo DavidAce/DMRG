@@ -106,7 +106,7 @@ namespace tools::finite::h5 {
     void save::data_as_table(h5pp::File &h5file, const StorageInfo &sinfo, const T *const data, size_t size, std::string_view table_name,
                              std::string_view table_title, std::string_view fieldname) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
-        auto t_hdf      = tid::tic_scope(table_name);
+        auto t_hdf      = tid::tic_scope(table_name, tid::level::highest);
         auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), table_name);
         tools::log->trace("Appending to table: {}", table_path);
 
@@ -214,7 +214,7 @@ namespace tools::finite::h5 {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
         if(not state.measurements.number_probabilities) return;
-        auto t_hdf      = tid::tic_scope("probabilities", tid::level::higher);
+        auto t_hdf      = tid::tic_scope("number_probabilities", tid::level::higher);
         auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "number_probabilities");
         tools::log->trace("Appending to table: {}", table_path);
         // Check if the current entry has already been appended
@@ -398,8 +398,8 @@ namespace tools::finite::h5 {
     template<typename T>
     void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, CopyPolicy copy_policy) {
         // Setup this save
-        auto t_h5     = tid::tic_scope("h5");
-        auto t_reason = tid::tic_scope(enum2sv(sinfo.storage_event), tid::level::higher);
+        auto t_h5    = tid::tic_scope("h5");
+        auto t_event = tid::tic_scope(enum2sv(sinfo.storage_event), tid::level::highest);
 
         std::string prefix;
         switch(sinfo.storage_event) {
@@ -431,9 +431,8 @@ namespace tools::finite::h5 {
         if(sinfo.storage_event == StorageEvent::NONE) return;
         if(sinfo.storage_level == StorageLevel::NONE) return;
 
-        auto t_h5     = tid::tic_scope("h5");
-        auto t_sim    = tid::tic_scope("sim");
-        auto t_reason = tid::tic_scope(enum2sv(status.event));
+        auto t_h5    = tid::tic_scope("h5");
+        auto t_event = tid::tic_scope(enum2sv(status.event), tid::level::highest);
 
         tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
                           sinfo.get_state_prefix());

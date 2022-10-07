@@ -108,9 +108,7 @@ namespace settings {
 
     /*!  \namespace settings::timer Settings for performance profiling */
     namespace timer {
-        inline bool         on        = false;                         /*!< If true, turns on timers. These will be shown on console. */
         inline tid::level   level     = tid::normal;                   /*!< How much extra to print on exit [normal | higher | highest]  */
-        inline size_t       precision = 5;                             /*!< Sets precision (number of decimals) of time storage. */
     }
 
     /*! \namespace settings::console Settings for console output */

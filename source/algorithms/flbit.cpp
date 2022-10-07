@@ -334,7 +334,7 @@ void flbit::update_time_step() {
 
 void flbit::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
-    auto t_con = tid::tic_scope("conv");
+    auto t_con = tid::tic_scope("check_conv");
     check_convergence_entg_entropy();
     if(status.entanglement_saturated_for > 0)
         status.algorithm_saturated_for++;
@@ -397,7 +397,7 @@ void flbit::create_time_points() {
 void flbit::create_hamiltonian_gates() {
     if(ready_hamiltonian_gates) throw except::logic_error("Hamiltonian gates have already been constructed");
     tools::log->info("Creating Hamiltonian gates");
-    auto t_hamgates = tid::tic_scope("hamgates");
+    auto t_hamgates = tid::tic_scope("create_ham_gates");
     ham_gates_1body.clear();
     ham_gates_2body.clear();
     ham_gates_3body.clear();
@@ -466,7 +466,7 @@ void flbit::create_hamiltonian_gates() {
 void flbit::create_hamiltonian_swap_gates() {
     if(ready_hamiltonian_swap_gates) throw except::logic_error("Hamiltonian swap gates have already been constructed");
     tools::log->info("Creating Hamiltonian swap gates");
-    auto t_swaphamgates = tid::tic_scope("swaphamgates");
+    auto t_swaphamgates = tid::tic_scope("create_ham_gates_swap");
     ham_swap_gates_1body.clear();
     ham_swap_gates_2body.clear();
     ham_swap_gates_3body.clear();
@@ -562,7 +562,7 @@ void flbit::transform_to_real_basis() {
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
     for(const auto &layer : unitary_gates_2site_layers)
-        tools::finite::mps::apply_gates(*tensors.state, layer, false, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
+        tools::finite::mps::apply_gates(*tensors.state, layer, false, GateMove::OFF, svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
     for(const auto &layer : unitary_gates_2site_layers)
         for(const auto &u : layer) u.unmark_as_used();
 
@@ -640,7 +640,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     // Save the unitaries once
     if(storage_event == StorageEvent::MODEL) {
         auto        t_h5      = tid::tic_scope("h5");
-        auto        t_model   = tid::tic_scope("MODEL");
+        auto        t_event   = tid::tic_scope(enum2sv(storage_event), tid::highest);
         auto        t_gates   = tid::tic_scope("gates");
         std::string grouppath = "/fLBIT/model/unitary_gates";
         if(h5file->linkExists(grouppath)) return;
@@ -661,7 +661,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     // Save the lbit analysis once
     if(storage_event == StorageEvent::MODEL) {
         auto t_h5    = tid::tic_scope("h5");
-        auto t_model = tid::tic_scope("MODEL");
+        auto t_event = tid::tic_scope(enum2sv(storage_event), tid::highest);
         if(h5file->linkExists("/fLBIT/model/lbits")) return;
         std::vector<size_t> urange;
         std::vector<double> frange;

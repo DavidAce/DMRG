@@ -96,7 +96,7 @@ void tools::infinite::h5::save::model(h5pp::File &h5file, const StorageInfo &sin
 
 void tools::infinite::h5::save::mpo(h5pp::File &h5file, const StorageInfo &sinfo, const ModelInfinite &model) {
     if(sinfo.storage_level < StorageLevel::FULL) return;
-    // We do not expect the MPO's to change. Therefore if they exist, there is nothing else to do here
+    // We do not expect the MPO's to change. Therefore, if they exist, there is nothing else to do here
     auto model_prefix = fmt::format("{}/model", sinfo.algo_name);
     if(h5file.linkExists(model_prefix)) return tools::log->trace("The model has already been written to [{}]", model_prefix);
     tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2sv(sinfo.storage_level));

@@ -67,7 +67,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if(VT.cols() != A.cols()) throw except::logic_error("VT.cols():{} != A.cols():{}", VT.cols(), A.cols());
         return std::make_tuple(VT.adjoint(), S, U.adjoint());
     }
-    auto t_lpk = tid::tic_scope("lapacke", tid::higher);
+    auto t_lpk = tid::tic_scope("lapacke", tid::highest);
 
     // Sanity checks
     if(rows <= 0) throw std::runtime_error("SVD error: rows() <= 0");

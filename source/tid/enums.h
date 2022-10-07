@@ -20,10 +20,10 @@ namespace tid {
         }
     }
     constexpr level sv2level(std::string_view l) {
-        if(l == "parent") return tid::level::normal;
-        if(l == "normal") return tid::level::higher;
-        if(l == "higher") return tid::level::highest;
-        if(l == "highest") return tid::level::parent;
+        if(l == "parent") return tid::level::parent;
+        if(l == "normal") return tid::level::normal;
+        if(l == "higher") return tid::level::higher;
+        if(l == "highest") return tid::level::highest;
         throw std::runtime_error("Given item is not a tid::level enum");
     }
 }

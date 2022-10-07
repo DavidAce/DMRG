@@ -553,7 +553,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen
 }
 
 void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, GateMove gm, std::optional<svd::config> svd_cfg) {
-    auto t_apply_gates = tid::tic_scope("apply_gates");
+    auto t_apply_gates = tid::tic_scope("apply_gates", tid::level::higher);
 
     if(gates.empty()) return;
     auto svd_count     = svd::solver::get_count();
@@ -749,7 +749,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
 
     // Apply the gate
     {
-        auto t_apply = tid::tic_token("apply");
+        auto t_apply = tid::tic_token("apply", tid::level::higher);
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse)
             temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
@@ -780,7 +780,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
 }
 
 void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, bool reverse, GateMove gm, std::optional<svd::config> svd_cfg) {
-    auto t_swapgate = tid::tic_scope("apply_swap_gates");
+    auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
     if(gates.empty()) return;
     state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
     // Sanity check

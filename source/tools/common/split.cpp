@@ -109,7 +109,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     if constexpr(std::is_same_v<Scalar, cplx>) {
         auto chiL   = multisite_mps.dimension(1);
         auto chiR   = multisite_mps.dimension(2);
-        auto t_real = tid::tic_scope("isReal");
+        auto t_real = tid::tic_scope("isReal", tid::level::highest);
         if(chiL * chiR > 512 * 512 and tenx::isReal(multisite_mps)) {
             tools::log->info("Converting to real!");
             return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, svd_cfg);
@@ -123,7 +123,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         throw except::runtime_error("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
                                     spin_dims, positions);
 
-    auto t_split = tid::tic_scope("split", tid::level::higher);
+    auto t_split = tid::tic_scope("split");
 
     // Set up the svd settings if not given explicitly
     if(not svd_cfg) svd_cfg = svd::config();
@@ -357,7 +357,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "U" without sites in it ( U*S will become a center bond).
     if(positions.empty()) return {};
-    auto t_to_a = tid::tic_scope("to_a");
+    auto t_to_a = tid::tic_scope("to_a", tid::level::highest);
     // Initialize the resulting container of split sites
     std::vector<MpsSite> mps_sites;
 
@@ -474,7 +474,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     // A special case is when we do one-site tensors. Then we expect
     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
     if(positions.empty()) return {};
-    auto t_to_b = tid::tic_scope("to_b");
+    auto t_to_b = tid::tic_scope("to_b", tid::level::highest);
 
     // Initialize the resulting container of split sites
     std::deque<MpsSite> mps_sites;
@@ -592,7 +592,7 @@ template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(c
 //     // A special case is when we do one-site tensors. Then we expect
 //     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
 //     if(positions.empty()) return std::deque<MpsSite>();
-//     auto t_to_b = tid::tic_scope("to_b");
+//     auto t_to_b = tid::tic_scope("to_b", tid::level::highest);
 //
 //     // Initialize the resulting container of split sites
 //     std::deque<MpsSite> mps_sites;

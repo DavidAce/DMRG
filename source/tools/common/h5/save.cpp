@@ -201,7 +201,6 @@ namespace tools::common::h5 {
     //    }
 
     void save::timer(h5pp::File &h5file, const StorageInfo &sinfo) {
-        if(not settings::timer::on) return;
         if(settings::storage::storage_level_timers == StorageLevel::NONE) return;
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
