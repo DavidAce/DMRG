@@ -29,6 +29,8 @@ def parse(project_name):
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
     parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
     parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=1)
+    parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', default="cores", choices=['threads', 'cores', 'sockets'])
+    parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', default="close", choices=['true', 'false', 'close', 'spread','master'])
     parser.add_argument('--ntasks-per-core', type=int, help='Number of tasks (sims) on each core', default=1)
     parser.add_argument('--dryrun', action='store_true', help='Dry run')
     parser.add_argument('--debug', action='store_true', help='Debug this script')
@@ -108,6 +110,10 @@ def generate_sbatch_commands(project_name, args):
         sbatch_env['OMP_DYNAMIC'] = str(args.omp_dynamic)
     if args.omp_max_active_levels:
         sbatch_env['OMP_MAX_ACTIVE_LEVELS'] = str(args.omp_max_active_levels)
+    if args.omp_places:
+        sbatch_env['OMP_PLACES'] = str(args.omp_places)
+    if args.omp_proc_bind:
+        sbatch_env['OMP_PROC_BIND'] = str(args.omp_proc_bind)
 
     # Find executable
     if args.build_type == 'None':
