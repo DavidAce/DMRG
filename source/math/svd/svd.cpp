@@ -129,7 +129,8 @@ template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>
     svd::solver::do_svd_ptr(const cplx *, long, long, const svd::config &);
 
 template<typename Scalar>
-void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec) const {
+void svd::solver::print_matrix([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols,
+                               [[maybe_unused]] long dec) const {
 #if !defined(NDEBUG)
     auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
     svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
@@ -143,7 +144,7 @@ void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long
 #endif
 }
 template<typename Scalar>
-void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) const {
+void svd::solver::print_vector([[maybe_unused]] const Scalar *vec_ptr, [[maybe_unused]] long size, [[maybe_unused]] long dec) const {
 #if !defined(NDEBUG)
     auto V = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(vec_ptr, size);
     svd::log->warn("Print matrix of size {}\n", size);
