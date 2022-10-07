@@ -49,8 +49,7 @@
         "CMAKE_CUDA_HOST_COMPILER": "g++-10"
       },
       "environment": {
-        "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
+        "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:"
       }
     },
     {
