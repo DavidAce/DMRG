@@ -130,6 +130,7 @@ template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>
 
 template<typename Scalar>
 void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec) const {
+#if !defined(NDEBUG)
     auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
     svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
     for(long r = 0; r < A.rows(); r++) {
@@ -139,15 +140,18 @@ void svd::solver::print_matrix(const Scalar *mat_ptr, long rows, long cols, long
             for(long c = 0; c < A.cols(); c++) fmt::print("{1:.{0}f} ", dec, A(r, c));
         fmt::print("\n");
     }
+#endif
 }
 template<typename Scalar>
 void svd::solver::print_vector(const Scalar *vec_ptr, long size, long dec) const {
+#if !defined(NDEBUG)
     auto V = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(vec_ptr, size);
     svd::log->warn("Print matrix of size {}\n", size);
     if constexpr(std::is_same_v<Scalar, std::complex<double>>)
         for(long i = 0; i < V.size(); i++) fmt::print("({1:.{0}f},{2:+.{0}f})\n", dec, std::real(V[i]), std::imag(V[i]));
     else
         for(long i = 0; i < V.size(); i++) fmt::print("{1:.{0}f}\n", dec, V[i]);
+#endif
 }
 
 template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, long dec) const;
