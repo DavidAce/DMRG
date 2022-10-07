@@ -1,0 +1,83 @@
+cores close
+[2022-10-05 10:34:17][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 40.90s ptime:2.92e+03s itime:4.82s mem[rss 154.5|peak 165.1|vm 1372.5]MB
+
+cores spread
+[2022-10-05 10:35:43][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 46.00s ptime:2.92e+03s itime:5.35s mem[rss 148.6|peak 159.2|vm 1366.3]MB
+
+cores true
+[2022-10-05 10:37:02][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 45.84s ptime:2.92e+03s itime:5.33s mem[rss 152.8|peak 163.4|vm 1370.7]MB
+
+cores true -t4 -n1
+[2022-10-05 10:41:48][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 52.48s ptime:2.92e+03s itime:6.40s mem[rss 160.8|peak 160.8|vm 1377.3]MB
+
+cores close -t2 -n2
+[2022-10-05 10:44:27][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 65.58s ptime:2.92e+03s itime:7.81s mem[rss 165.6|peak 165.6|vm 1302.9]MB
+
+threads close -t1 -n4
+[2022-10-05 10:48:08][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 51.98s ptime:2.92e+03s itime:6.39s mem[rss 165.1|peak 165.1|vm 1377.9]MB
+
+cores close -t1 -n4
+[2022-10-05 10:49:48][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 52.07s ptime:2.92e+03s itime:6.40s mem[rss 160.0|peak 160.0|vm 1374.3]MB
+
+cores close -t4 -n4
+[2022-10-05 10:50:57][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 34.36s ptime:2.92e+03s itime:3.70s mem[rss 164.9|peak 164.9|vm 1586.7]MB
+
+cores close -t1 -n1
+[2022-10-05 10:53:22][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 59.49s ptime:2.92e+03s itime:7.49s mem[rss 147.7|peak 152.4|vm 1155.5]MB
+
+threads close -t2 -n2
+[2022-10-05 10:57:18][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 65.71s ptime:2.92e+03s itime:8.00s mem[rss 166.6|peak 166.6|vm 1304.2]MB
+
+cores spread -t2 -n2
+[2022-10-05 10:58:43][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 51.42s ptime:2.92e+03s itime:5.95s mem[rss 162.6|peak 162.6|vm 1299.7]MB
+
+cores spread -t1 -n2
+[2022-10-05 11:01:49][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 56.92s ptime:2.92e+03s itime:7.07s mem[rss 149.9|peak 156.3|vm 1229.8]MB
+
+cores close omp 4 std 4
+[2022-10-07 09:22:47][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 39.77s ptime:2.92e+03s itime:4.51s mem[rss 165.0|peak 165.0|vm 1588.0]MB
+
+cores close omp 2 std 2
+[2022-10-07 09:24:55][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 46.84s ptime:2.92e+03s itime:5.51s mem[rss 167.2|peak 167.2|vm 1305.2]MB
+
+cores close omp 16 std 1
+[2022-10-07 09:26:23][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 41.98s ptime:2.92e+03s itime:4.69s mem[rss 177.7|peak 188.3|vm 2238.1]MB
+
+cores close omp 1 std 16
+[2022-10-07 09:29:20][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 58.93s ptime:2.92e+03s itime:7.25s mem[rss 138.1|peak 154.3|vm 2164.6]MB
+
+cores close omp1 std 2
+[2022-10-07 09:47:52][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 58.30s ptime:2.92e+03s itime:7.23s mem[rss 153.5|peak 153.5|vm 1222.1]MB
+
+cores close omp 2 std 2
+[2022-10-07 09:49:30][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 46.90s ptime:2.92e+03s itime:5.53s mem[rss 164.6|peak 164.6|vm 1306.2]MB
+
+cores spread omp 2 std 2
+[2022-10-07 09:51:14][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 53.70s ptime:2.92e+03s itime:6.23s mem[rss 144.4|peak 164.5|vm 1309.0]MB
+
+cores close omp 2 std 2 dynamic true nested true levels 2
+[2022-10-07 10:05:44][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 48.14s ptime:2.92e+03s itime:5.67s mem[rss 159.8|peak 159.8|vm 1300.2]MB
+
+cores close omp 2 std 2 dynamic true nested false levels 1
+[2022-10-07 10:07:52][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 48.06s ptime:2.92e+03s itime:5.71s mem[rss 148.2|peak 161.1|vm 1305.2]MB
+
+sockets close omp 2 std 2 dynamic false nested false levels 1
+[2022-10-07 10:09:43][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 50.68s ptime:2.92e+03s itime:5.69s mem[rss 161.9|peak 161.9|vm 1299.0]MB
+
+threads close omp 2 std 2 dynamic false nested false levels 1
+[2022-10-07 10:11:33][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 72.71s ptime:2.92e+03s itime:8.74s mem[rss 165.5|peak 165.5|vm 1303.4]MB
+
+threads spread omp 2 std 2 dynamic false nested false levels 1
+[2022-10-07 10:13:01][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 56.14s ptime:2.92e+03s itime:6.53s mem[rss 166.4|peak 166.4|vm 1309.9]MB
+
+cores spread omp 2 std 2 dynamic false nested false levels 1
+[2022-10-07 10:15:51][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 53.57s ptime:2.92e+03s itime:6.22s mem[rss 166.6|peak 166.6|vm 1304.0]MB
+
+cores close omp 2 std 2 dynamic false nested false levels 1
+[2022-10-07 10:17:07][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 47.09s ptime:2.92e+03s itime:5.54s mem[rss 158.8|peak 158.8|vm 1301.2]MB
+
+cores close omp 1 std 1
+[2022-10-07 10:25:14][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 59.34s ptime:2.92e+03s itime:7.45s mem[rss 138.4|peak 149.0|vm 1146.1]MB
+
+cores close omp 2 std 1
+[2022-10-07 10:30:25][fLBIT][  info  ] state_real iter:35   step:700   L:20 l:0  ε:9.92e-11 Sₑ(L/2):2.36169498 Sₙ(L/2):0.37948590 χ:2048|2048|354 wtime: 47.97s ptime:2.92e+03s itime:5.72s mem[rss 141.7|peak 161.6|vm 1228.1]MB

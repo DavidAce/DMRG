@@ -6,29 +6,17 @@
 #include "algorithms/xdmrg.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "debug/info.h"
 #include "env/environment.h"
+#include "math/rnd.h"
 #include "tensors/state/StateFinite.h"
 #include "tensors/state/StateInfinite.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
 #include "tools/common/prof.h"
+#include <cstdlib>
 #include <h5pp/h5pp.h>
 #include <memory>
-
-// #include <stdlib.h>
-#include <cstdlib>
-#include <debug/info.h>
-#include <debug/stacktrace.h>
-#include <math/rnd.h>
-
-AlgorithmLauncher::AlgorithmLauncher(std::shared_ptr<h5pp::File> h5ppFile_) : h5file(std::move(h5ppFile_)) {
-    tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::loglevel, settings::console::timestamp);
-    // Called in reverse order
-    std::atexit(debug::print_mem_usage);
-    std::atexit(tools::common::timer::print_timers);
-    std::at_quick_exit(debug::print_mem_usage);
-    setup_temp_path();
-}
 
 AlgorithmLauncher::AlgorithmLauncher() {
     tools::log = tools::Logger::setLogger("DMRG++ launch", settings::console::loglevel, settings::console::timestamp);

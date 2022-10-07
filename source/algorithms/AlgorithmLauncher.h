@@ -6,14 +6,13 @@ namespace h5pp {
 }
 
 class AlgorithmLauncher {
-    public:
+    private:
     std::shared_ptr<h5pp::File> h5file;
 
-    explicit AlgorithmLauncher(std::shared_ptr<h5pp::File> h5ppFile_);
+    public:
     AlgorithmLauncher();
     void start_h5file();
     void setup_temp_path();
-
     void run_algorithms();
     void run_idmrg();
     void run_fdmrg();
