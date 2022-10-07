@@ -103,7 +103,7 @@ def generate_sbatch_commands(project_name, args):
     sbatch_env = os.environ.copy()  # Add environment variables here
 
     if args.omp_num_threads:
-        sbatch_env['OMP_NUM_THREADS'] = args.omp_threads
+        sbatch_env['OMP_NUM_THREADS'] = args.omp_num_threads
     if args.omp_dynamic:
         sbatch_env['OMP_DYNAMIC'] = args.omp_dynamic
     if args.omp_max_active_levels:
