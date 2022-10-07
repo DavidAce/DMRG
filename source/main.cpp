@@ -21,7 +21,7 @@
 #include "debug/info.h"
 #include "debug/stacktrace.h"
 #include "env/environment.h"
-#include <thread>
+#include <omp.h>
 
 void clean_up() {
     if(not settings::storage::use_temp_dir) return;
@@ -62,22 +62,43 @@ int main(int argc, char *argv[]) {
     // This is to make reproducible simulations
     rnd::seed(settings::input::seed);
 
-// Set the number of threads to be used
+    // Set the number of threads to be used
+    tools::log->info("OpenMP | omp_threads {} | max active levels {} | dynamic {} | proc bind {} | num procs {}", omp_get_max_threads(),
+                     omp_get_max_active_levels(), omp_get_dynamic(), omp_get_proc_bind(), omp_get_num_procs());
+
+    std::string eigen_msg;
+#if defined(EIGEN_USE_MKL_ALL)
+    eigen_msg.append(" | EIGEN_USE_MKL_ALL");
+#endif
+#if defined(EIGEN_USE_BLAS)
+    eigen_msg.append(" | EIGEN_USE_BLAS");
+#endif
 #if defined(EIGEN_USE_THREADS)
-    if(settings::threading::stl_threads <= 0) { settings::threading::stl_threads = (int) std::thread::hardware_concurrency(); }
-    tenx::omp::setNumThreads(settings::threading::stl_threads);
-    tools::log->info("Eigen3 Tensor | stl threads {}", tenx::omp::num_threads);
+    eigen_msg.append(" | EIGEN_USE_THREADS");
+#endif
+#if defined(EIGEN_USE_THREADS)
+    {
+        /*
+         * num_threads = omp_threads + num_std_threads = Eigen::nbThreads() + std_threads
+         * If num_threads <  omp_threads --> num_threads  = omp_max_threads
+         * If num_threads == omp_threads --> std_threads = 1 (can't be zero)
+         * If num_threads >  omp_threads --> std_threads = num_threads - omp_max_threads
+         * If num_threads == 0 or -1ul   --> num_threads = max_threads, and std_threads = num_threads - omp_threads (i.e. "the rest")
+         */
+        using namespace settings::threading;
+        unsigned int omp_threads = static_cast<unsigned int>(omp_get_max_threads());
+        unsigned int std_threads = omp_threads <= 1 or omp_threads == num_threads ? 1 : 0;
+        num_threads              = std::clamp(num_threads, omp_threads, max_threads);
+        std_threads              = std::clamp(num_threads - omp_threads + std_threads, num_threads - omp_threads, num_threads);
+        tenx::threads::setNumThreads(std_threads);
+        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::num_threads, max_threads, eigen_msg);
+    }
+
 #else
     if(settings::threading::stl_threads > 1)
         tools::log->warn("EIGEN_USE_THREADS is not defined: "
                          "Failed to enable threading in Eigen::Tensor with stl_threads = {}",
                          settings::threading::stl_threads);
-#endif
-
-#if defined(_OPENMP)
-    if(settings::threading::omp_threads <= 0) { settings::threading::omp_threads = (int) std::thread::hardware_concurrency(); }
-    omp_set_num_threads(settings::threading::omp_threads); // Should only need this. Both Eigen (non-Tensor) and MKL listen to this
-    tools::log->info("OpenMP | threads {} | max active levels {}", omp_get_max_threads(), omp_get_max_active_levels());
 #endif
 
 #if defined(OPENBLAS_AVAILABLE)
@@ -94,15 +115,6 @@ int main(int argc, char *argv[]) {
 #if defined(MKL_AVAILABLE)
     tools::log->info("Intel MKL | threads {}", mkl_get_max_threads());
 #endif
-
-#if defined(EIGEN_USE_MKL_ALL)
-    tools::log->info("Eigen3 | threads {} | EIGEN_USE_MKL_ALL", Eigen::nbThreads());
-#elif defined(EIGEN_USE_BLAS)
-    tools::log->info("Eigen3 | threads {} | EIGEN_USE_BLAS", Eigen::nbThreads());
-#else
-    tools::log->info("Eigen3 | threads {} | No BLAS backend", Eigen::nbThreads());
-#endif
-
     // Initialize the algorithm class
     // This class stores simulation data automatically to a file specified in the config file
     AlgorithmLauncher launcher;

@@ -194,7 +194,7 @@ struct Amplitude {
                         tools::log->trace("from A: contraction: pos {:>2} | tgt {:>2} | bits {} -> {}", mps_pos, tgt_pos, to_string(), to_string(mps_pos + 1));
 
                     temp.resize(size);
-                    temp.device(tenx::omp::getDevice()) =
+                    temp.device(tenx::threads::getDevice()) =
                         ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
                     ampl = temp;    // Update the current amplitude
                     pos  = mps_pos; // Update the current site
@@ -268,7 +268,7 @@ struct Amplitude {
                         tools::log->trace("from B: contraction: pos  {:>2} | tgt {:>2} | bits {} <- {}", mps_pos, tgt_pos, to_string(state_size - mps_pos),
                                           to_string());
                     temp.resize(size);
-                    temp.device(tenx::omp::getDevice()) =
+                    temp.device(tenx::threads::getDevice()) =
                         mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
                     ampl = temp;    // Update the current amplitude
                     pos  = mps_pos; // Update the current site

@@ -4,7 +4,7 @@
 #include "config/settings.h"
 #include "debug/info.h"
 #include "env/environment.h"
-#include "math/tenx/omp.h"
+#include "math/tenx/threads.h"
 #include "nanobench.h"
 #include "qm/gate.h"
 #include "tensors/state/StateFinite.h"
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
                     svdset.truncation_lim = truncation;
                     omp_set_num_threads(num_thread);
                     mkl_set_num_threads(num_thread);
-                    tenx::omp::setNumThreads(num_thread);
+                    tenx::threads::setNumThreads(num_thread);
                     auto name =
                         fmt::format("threads {} | switchsize {} | truncation {:.1e} | bond_lim {}", num_thread, switchsize, truncation, status.bond_lim);
                     bench.name(name).run([&]() {

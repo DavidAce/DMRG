@@ -82,7 +82,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
                 continue;
             }
             temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-            temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+            temp.device(tenx::threads::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
 
             chain = temp;
         }
@@ -629,8 +629,8 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
             M = mps->get_M();
         }
         temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-        temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
-        chain                               = temp;
+        temp.device(tenx::threads::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
+        chain                                   = temp;
     }
 
     auto expval = tenx::MatrixMap(chain).trace();

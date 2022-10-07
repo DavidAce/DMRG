@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 #ifdef _OPENMP
     omp_set_num_threads(num_threads);
     Eigen::setNbThreads(num_threads);
-    tenx::omp::setNumThreads(num_threads);
+    tenx::threads::setNumThreads(num_threads);
     #ifdef OpenBLAS_AVAILABLE
     openblas_set_num_threads(num_threads);
     std::cout << OPENBLAS_VERSION << " compiled with parallel mode " << openblas_get_parallel() << " for target " << openblas_get_corename() << " with config "

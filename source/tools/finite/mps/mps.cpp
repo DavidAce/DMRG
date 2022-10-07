@@ -525,9 +525,9 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         auto t_apply = tid::tic_token("apply");
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse)
-            temp.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+            temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
         else
-            temp.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+            temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
         gate.mark_as_used();
     }
     if constexpr(settings::debug_gates) tools::log->trace("apply_gate: applied pos {} | gm {} | svds {}", gate.pos, enum2sv(gm), svd::solver::get_count());
@@ -752,9 +752,9 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         auto t_apply = tid::tic_token("apply");
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(reverse)
-            temp.device(tenx::omp::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+            temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
         else
-            temp.device(tenx::omp::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+            temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
         gate.mark_as_used();
     }
     if constexpr(settings::debug_gates)

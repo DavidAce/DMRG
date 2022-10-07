@@ -25,7 +25,10 @@ def parse(project_name):
     parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release', choices=['None', 'Debug', 'Release', 'RelWithDebInfo', 'Profile'])
     parser.add_argument('-c', '--cluster', type=str, help='Comma separated list of Slurm clusters', default=None, choices=['kraken', 'draken', 'kthulu', 'tetralith'])
     parser.add_argument('--config', type=str, help='File or path to files containing simulation config files (suffixed .cfg)', default='input')
-    parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task (sims)', default=1)
+    parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task (sims) = omp-threads + std-threads', default=1)
+    parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
+    parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
+    parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=1)
     parser.add_argument('--ntasks-per-core', type=int, help='Number of tasks (sims) on each core', default=1)
     parser.add_argument('--dryrun', action='store_true', help='Dry run')
     parser.add_argument('--debug', action='store_true', help='Debug this script')
@@ -98,6 +101,14 @@ def generate_sbatch_commands(project_name, args):
     sbatch_cmd = []
     sbatch_arg = []
     sbatch_env = os.environ.copy()  # Add environment variables here
+
+    if args.omp_num_threads:
+        sbatch_env['OMP_NUM_THREADS'] = args.omp_threads
+    if args.omp_dynamic:
+        sbatch_env['OMP_DYNAMIC'] = args.omp_dynamic
+    if args.omp_max_active_levels:
+        sbatch_env['OMP_MAX_ACTIVE_LEVELS'] = args.omp_max_active_levels
+
     # Find executable
     if args.build_type == 'None':
         exec = '../build/{}'.format(args.execname)

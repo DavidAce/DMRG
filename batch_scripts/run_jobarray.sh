@@ -75,7 +75,7 @@ for id in $(seq $start_id $end_id); do
   if [ "$num_cols" -eq 2 ]; then
       echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.txt"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.txt
+        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.txt
         exit_code=$?
         echo "EXIT CODE                : $exit_code"
         if [ "$exit_code" != "0" ]; then
@@ -86,9 +86,9 @@ for id in $(seq $start_id $end_id); do
   elif [ "$num_cols" -eq 3 ]; then
       bit_field=$(echo $arg_line | cut -d " " -f3)
       echo "BITFIELD                 : $bit_field"
-      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
+      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -n $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
+        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
         exit_code=$?
         echo "EXIT CODE         : $exit_code"
         if [ "$exit_code" != "0" ]; then

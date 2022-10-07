@@ -4,8 +4,8 @@
 #include "enums.h"
 #include "tid/enums.h"
 #include <string>
+#include <thread>
 #include <vector>
-
 class Loader;
 namespace h5pp {
     class File;
@@ -33,10 +33,19 @@ namespace settings {
 
 
 
-    /*!  \namespace settings::threading Parameters for multithreading */
+    /*!  \namespace settings::threading Parameters for multithreading
+     *   num_threads is the total number of threads, num_threads = OMP_NUM_THREADS + std::threads
+     *   If num_threads <= 0 then it is set to OMP_NUM_THREADS, or 1 if OMP_NUM_THREADS is not defined.
+     *   If num_threads == OMP_NUM_THREADS then Eigen::Tensor multithreading is disabled.
+     */
     namespace threading{
-        inline int omp_threads = 1;                                              /*!< Number of threads for openmp threads used in blas/lapack and Eigen. num_threads <= 0 will try to use as many as possible */
-        inline int stl_threads = 1;                                              /*!< Number of threads for c++11 threading. Used in Eigen::Tensor. stl_threads <= 0 will try to use as many as possible */
+        /*! Total number of threads, num_threads = OMP_NUM_THREADS + std::threads.
+         * If num_threads == OMP_NUM_THREADS, disables std::threads for Eigen::Tensor are disabled  num_threads <= 0 will try to use as many as possible
+         * */
+        inline unsigned int num_threads = 1;                                              /*!< Total number of threads, num_threads = OMP_NUM_THREADS + std::threads. If num_threads == OMP_NUM_THREADS, disables std::threads for Eigen::Tensor are disabled  num_threads <= 0 will try to use as many as possible */
+        inline unsigned int max_threads = std::thread::hardware_concurrency();
+//        inline int omp_threads = 1;                                              /*!< Number of threads for openmp threads used in blas/lapack and Eigen. num_threads <= 0 will try to use as many as possible */
+//        inline int stl_threads = 1;                                              /*!< Number of threads for c++11 threading. Used in Eigen::Tensor. stl_threads <= 0 will try to use as many as possible */
     }
 
     /*!  \namespace settings::input Settings for initialization */

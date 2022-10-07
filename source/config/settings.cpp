@@ -65,8 +65,7 @@ void settings::load(Loader &dmrg_config) {
     input::config_filename      = dmrg_config.file_path.string();
     input::config_file_contents = dmrg_config.get_config_file_as_string();
     /* clang-format off */
-    dmrg_config.load_parameter("threading::omp_threads"                       , threading::omp_threads);
-    dmrg_config.load_parameter("threading::stl_threads"                       , threading::stl_threads);
+    dmrg_config.load_parameter("threading::num_threads"                       , threading::num_threads);
 
     dmrg_config.load_parameter("input::seed"                                  , input::seed);
     dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);

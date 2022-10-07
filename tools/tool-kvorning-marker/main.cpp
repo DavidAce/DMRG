@@ -150,8 +150,8 @@ int main(int argc, char *argv[]) {
 // Set the number of threads to be used
 #if defined(EIGEN_USE_THREADS)
     if(settings::threading::stl_threads <= 0) { settings::threading::stl_threads = (int) std::thread::hardware_concurrency(); }
-    tenx::omp::setNumThreads(settings::threading::stl_threads);
-    tools::log->info("Eigen3 Tensor | stl threads {}", tenx::omp::num_threads);
+    tenx::threads::setNumThreads(settings::threading::stl_threads);
+    tools::log->info("Eigen3 Tensor | stl threads {}", tenx::threads::num_threads);
 #else
     if(settings::threading::stl_threads > 1)
         tools::log->warn("EIGEN_USE_THREADS is not defined: "

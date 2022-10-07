@@ -373,8 +373,8 @@ MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &m
         tools::common::contraction::matrix_vector_product(H2_mps, mps_j, mpo2, env2.L, env2.R);
         for(auto row = col; row < eignum; row++) {
             const auto &mps_i                    = std::next(eigvecs.begin(), row)->get_tensor();
-            H2_ij.device(tenx::omp::getDevice()) = mps_i.conjugate().contract(H2_mps, tenx::idx({0, 1, 2}, {0, 1, 2}));
-            H2_sub(row, col)                     = H2_ij(0);
+            H2_ij.device(tenx::threads::getDevice()) = mps_i.conjugate().contract(H2_mps, tenx::idx({0, 1, 2}, {0, 1, 2}));
+            H2_sub(row, col)                         = H2_ij(0);
             H2_sub(col, row)                     = std::conj(H2_ij(0));
         }
     }

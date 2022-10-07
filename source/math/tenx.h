@@ -7,9 +7,9 @@
 #endif
 
 #include "tenx/eval.h"
-#include "tenx/omp.h"
 #include "tenx/sfinae.h"
 #include "tenx/span.h"
+#include "tenx/threads.h"
 #include <array>
 #include <complex>
 #include <unsupported/Eigen/CXX11/Tensor>

@@ -375,7 +375,7 @@ Eigen::Tensor<T, 6> MatVecMPO<T>::get_tensor() const {
     auto                d2 = shape_mps[2];
     Eigen::Tensor<T, 6> tensor;
     tensor.resize(tenx::array6{d0, d1, d2, d0, d1, d2});
-    tensor.device(tenx::omp::getDevice()) =
+    tensor.device(tenx::threads::getDevice()) =
         get_envL().contract(get_mpo(), tenx::idx({2}, {0})).contract(get_envR(), tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
     return tensor;
 }

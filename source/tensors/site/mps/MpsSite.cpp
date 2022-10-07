@@ -396,10 +396,10 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
         set_LC(LC_temp);
     }
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
-    M_bare_temp.device(tenx::omp::getDevice()) = get_M_bare()
-                                                     .contract(mpo, tenx::idx({0}, {2}))
-                                                     .shuffle(tenx::array5{4, 0, 2, 1, 3})
-                                                     .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+    M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
+                                                         .contract(mpo, tenx::idx({0}, {2}))
+                                                         .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                                         .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
 
     set_L(L_temp);
     set_M(M_bare_temp);
@@ -413,7 +413,7 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo) {
     auto                   t_mpo = tid::tic_token("apply_mpo");
     Eigen::Tensor<cplx, 3> M_bare_temp(mpo.dimension(1), get_chiL(), get_chiR());
-    M_bare_temp.device(tenx::omp::getDevice()) = mpo.contract(get_M_bare(), tenx::idx({0}, {0}));
+    M_bare_temp.device(tenx::threads::getDevice()) = mpo.contract(get_M_bare(), tenx::idx({0}, {0}));
     set_M(M_bare_temp);
 }
 

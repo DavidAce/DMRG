@@ -1,15 +1,15 @@
-#include "omp.h"
+#include "threads.h"
 #include <memory>
+#include <omp.h>
+#include <thread>
 #include <unsupported/Eigen/CXX11/Tensor>
-
-namespace tenx::omp {
-    int num_threads = 1;
+namespace tenx::threads {
 #if defined(EIGEN_USE_THREADS)
     std::unique_ptr<Eigen::ThreadPool>       tp;
     std::unique_ptr<Eigen::ThreadPoolDevice> dev;
-    void                                     setNumThreads(int num) {
-        num_threads = num;
-        if(not dev or not tp or tp->NumThreads() != num_threads) {
+    void                                     setNumThreads(unsigned int num) {
+        num_threads = std::clamp<unsigned int>(num, static_cast<unsigned int>(1), std::thread::hardware_concurrency());
+        if(not dev or not tp or tp->NumThreads() != static_cast<int>(num_threads)) {
             tp  = std::make_unique<Eigen::ThreadPool>(num_threads);
             dev = std::make_unique<Eigen::ThreadPoolDevice>(tp.get(), num_threads);
         }

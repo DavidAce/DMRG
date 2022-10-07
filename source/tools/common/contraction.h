@@ -5,7 +5,7 @@
 #include <complex>
 #include <debug/exceptions.h>
 #include <math/tenx/eval.h>
-#include <math/tenx/omp.h>
+#include <math/tenx/threads.h>
 
 namespace tools::common::contraction {
     using cplx = std::complex<double>;
@@ -154,8 +154,8 @@ namespace tools::common::contraction {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(bnd_type::NumIndices == 1 and "Wrong bnd tensor rank != 1");
         auto &res_ref  = static_cast<res_type &>(res);
-        auto  mps_eval = tenx::asEval(mps, tenx::omp::getDevice());
-        auto  bnd_eval = tenx::asEval(bnd, tenx::omp::getDevice());
+        auto  mps_eval = tenx::asEval(mps, tenx::threads::getDevice());
+        auto  bnd_eval = tenx::asEval(bnd, tenx::threads::getDevice());
 
         res_ref.resize(mps_eval.dimensions());
         contract_mps_bnd(res_ref.data(), res_ref.dimensions(), mps_eval.data(), mps_eval.dimensions(), bnd_eval.data(), bnd_eval.dimensions());
@@ -167,8 +167,8 @@ namespace tools::common::contraction {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(bnd_type::NumIndices == 1 and "Wrong bnd tensor rank != 1");
         auto &res_ref  = static_cast<res_type &>(res);
-        auto  mps_eval = tenx::asEval(mps, tenx::omp::getDevice());
-        auto  bnd_eval = tenx::asEval(bnd, tenx::omp::getDevice());
+        auto  mps_eval = tenx::asEval(mps, tenx::threads::getDevice());
+        auto  bnd_eval = tenx::asEval(bnd, tenx::threads::getDevice());
         res_ref.resize(mps_eval.dimensions());
         contract_bnd_mps(res_ref.data(), res_ref.dimensions(), bnd_eval.data(), bnd_eval.dimensions(), mps_eval.data(), mps_eval.dimensions());
     }

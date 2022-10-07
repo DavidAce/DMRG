@@ -412,9 +412,10 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo(const std::ve
 
         temp.resize(new_dims);
         if(nbody or skip)
-            temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO_nbody_view(nbody, skip), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            temp.device(tenx::threads::getDevice()) =
+                multisite_mpo.contract(mpo.MPO_nbody_view(nbody, skip), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         else { // Avoids creating a temporary
-            temp.device(tenx::omp::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            temp.device(tenx::threads::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         }
 
         bool do_trace = skip.has_value() and std::find(skip->begin(), skip->end(), pos) != skip->end();
@@ -528,7 +529,7 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_shifted_view(
         long                dim3     = multisite_mpo.dimension(3) * mpo.MPO().dimension(3);
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        temp.device(tenx::omp::getDevice()) =
+        temp.device(tenx::threads::getDevice()) =
             multisite_mpo.contract(mpo.MPO_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo = temp;
     }
@@ -543,7 +544,7 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_squared_shift
     long                   dim3                  = multisite_mpo_shifted.dimension(3);
     std::array<long, 4>    mpo_squared_dims      = {dim0, dim1, dim2, dim3};
     Eigen::Tensor<cplx, 4> multisite_mpo_squared_shifted(mpo_squared_dims);
-    multisite_mpo_squared_shifted.device(tenx::omp::getDevice()) =
+    multisite_mpo_squared_shifted.device(tenx::threads::getDevice()) =
         multisite_mpo_shifted.contract(multisite_mpo_shifted, tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(mpo_squared_dims);
     return multisite_mpo_squared_shifted;
 }
@@ -589,10 +590,10 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_squared(const
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
         if(nbody_local) // Avoids creating a temporary
-            temp.device(tenx::omp::getDevice()) =
+            temp.device(tenx::threads::getDevice()) =
                 multisite_mpo_squared.contract(mpo.MPO2_nbody_view(nbody_local), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         else
-            temp.device(tenx::omp::getDevice()) = multisite_mpo_squared.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            temp.device(tenx::threads::getDevice()) = multisite_mpo_squared.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
 
         if(skip) {
             /*! We just got handed a multisite-mpo created as
