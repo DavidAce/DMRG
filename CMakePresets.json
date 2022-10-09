@@ -303,11 +303,10 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|gcc-11|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
         "release",
         "haswell",
-        "gcc-11",
         "pkg-conan",
         "default"
       ],
@@ -403,7 +402,7 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|gcc-11|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|mkl",
       "configurePreset": "kraken"
     },
     {
@@ -493,7 +492,7 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|gcc-11|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|mkl",
       "configurePreset": "kraken"
     },
     {
