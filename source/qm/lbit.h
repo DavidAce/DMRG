@@ -26,6 +26,6 @@ namespace qm::lbit {
     extern std::tuple<Eigen::MatrixXd,
                       Eigen::MatrixXd,
                       Eigen::Tensor<double, 3>,
-                      Eigen::Tensor<double, 4>> get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t sites, size_t reps);
+                      Eigen::Tensor<double, 5>> get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites);
     /* clang-format on */
 }

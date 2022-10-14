@@ -192,7 +192,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
     // Substitution and carrying out the trace gives Tr(ρ' σ^z_j) / Tr(ρ') = 1/2^L Tr(σ' σ^z_j).
     //
     // Note that when the light-cone from site i can't reach site j in the unitary circuit, then
-    // ρ'_i has no support where σ^z_j connects.  Therefore we effectively get
+    // ρ'_i has no support where σ^z_j connects.  Therefore, we effectively get
     //        Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
     //   or alternatively
     //        Tr(ρ'_i σ^z_j) = (1/2^L) Tr([(σ^z_i +1) ⊗ I_i' ] σ^z_j) = (1/2^L) Tr( [2^L] σ^z_i ⊗ σ^z_j ) = Tr(σ^z_i) Tr(σ^z_j) = 0
@@ -264,7 +264,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
             std::vector<size_t> pos_outside;
             std::set_difference(g.pos.begin(), g.pos.end(), pos_needed.begin(), pos_needed.end(), back_inserter(pos_outside));
             if(not pos_outside.empty()) {
-                // Found positions outside of the light cone. Trace them
+                // Found positions outside the light cone. Trace them
                 auto pos_old = g.pos;
                 g            = g.trace_pos(pos_outside);
                 // Normalize by divinding the trace of each 2x2 identity.
@@ -283,7 +283,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
         if(g.op.dimension(0) * g.op.dimension(1) != 1) // g.op should be a rank-2 tensor of dimensions 1x1
             throw except::runtime_error("Expected empty gate to have cplx op: Got dims {}", g.op.dimensions());
         // This happens when the light cone from site i can't reach site j within the current depth of the unitary circuit.
-        // Essentially, ρ'_i has no support where σ^z_j connects. Therefore we effectively get
+        // Essentially, ρ'_i has no support where σ^z_j connects. Therefore, we effectively get
         //      Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
 
         Eigen::Tensor<cplx, 0> g_sig_trace = g.op.trace() * sig_gate.op.trace();
@@ -310,7 +310,6 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
     tools::log->debug("Computed Tr(ρ_{} σ_{}) / Tr(ρ_{}) = {:.6f}{:+.6f}i", pos_rho, pos_sig, pos_rho, result.real(), result.imag());
     if constexpr(settings::debug_circuit)
         for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | log: {}", layer, log[idx]);
-
     return result;
 }
 
@@ -419,22 +418,23 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eig
     //    return {avg,err};
 }
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Tensor<double, 4>>
-    qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t sites, size_t reps) {
+std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Tensor<double, 5>>
+    qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites) {
     auto t_lbit_analysis = tid::tic_scope("lbit_analysis");
 
     long                     rows = static_cast<long>(fmix_vec.size());
     long                     cols = static_cast<long>(udepth_vec.size());
+    long                     repl = static_cast<long>(reps);
     Eigen::MatrixXd          cls_avg(rows, cols);
     Eigen::MatrixXd          cls_err(rows, cols);
     Eigen::MatrixXd          sse_avg(rows, cols);
     Eigen::MatrixXd          sse_err(rows, cols);
     Eigen::Tensor<double, 3> lbit_decay(rows, cols, static_cast<long>(sites));
-    Eigen::Tensor<double, 4> lbit_lioms(rows, cols, static_cast<long>(sites), static_cast<long>(sites));
+    Eigen::Tensor<double, 5> lbit_lioms(rows, cols, repl, static_cast<long>(sites), static_cast<long>(sites));
     lbit_decay.setZero();
     lbit_lioms.setZero();
     std::array<long, 3> offset3{}, extent3{};
-    std::array<long, 4> offset4{}, extent4{};
+    std::array<long, 5> offset5{}, extent5{};
 
     for(size_t uidx = 0; uidx < udepth_vec.size(); uidx++) {
         for(size_t fidx = 0; fidx < fmix_vec.size(); fidx++) {
@@ -451,7 +451,10 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             for(size_t i = 0; i < reps; i++) {
                 std::vector<std::vector<qm::Gate>> layers;
                 for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer(sites, fmix));
-                lbit_overlap_vec[i] = qm::lbit::get_lbit_real_overlap(layers, sites);
+                lbit_overlap_vec[i]                = qm::lbit::get_lbit_real_overlap(layers, sites);
+                offset5                            = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};
+                extent5                            = {1, 1, 1, lbit_overlap_vec[i].dimension(0), lbit_overlap_vec[i].dimension(1)};
+                lbit_lioms.slice(offset5, extent5) = lbit_overlap_vec[i].abs().reshape(extent5);
             }
 
             auto lbit_overlap_avg = qm::lbit::get_lbit_overlap_averaged(lbit_overlap_vec);
@@ -462,7 +465,7 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
 
 #if defined(_OPENMP)
             tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | threads {} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep,
-                             fmix, cls, sse, omp_get_num_threads(), ur_iter.get_last_interval(), c, fmt::join(y, ", "));
+                             fmix, cls, sse, omp_get_max_threads(), ur_iter.get_last_interval(), c, fmt::join(y, ", "));
 #else
             tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep, fmix, cls, sse,
                              ur_iter.get_last_interval(), c, fmt::join(y, ", "));
@@ -472,10 +475,7 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
 
             offset3                            = {static_cast<long>(fidx), static_cast<long>(uidx), 0};
             extent3                            = {1, 1, static_cast<long>(y.size())};
-            offset4                            = {static_cast<long>(fidx), static_cast<long>(uidx), 0, 0};
-            extent4                            = {1, 1, lbit_overlap_avg.dimension(0), lbit_overlap_avg.dimension(1)};
             lbit_decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 3>>(y.data(), extent3);
-            lbit_lioms.slice(offset4, extent4) = lbit_overlap_avg.real().reshape(extent4);
         }
     }
     return {cls_avg, sse_avg, lbit_decay, lbit_lioms};

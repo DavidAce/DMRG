@@ -663,27 +663,26 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(storage_event), tid::highest);
         if(h5file->linkExists("/fLBIT/model/lbits")) return;
-        std::vector<size_t> urange;
-        std::vector<double> frange;
-        size_t              sample = 1;
-        if(settings::flbit::compute_lbit_stats) {
-            sample = 500;
-            urange = num::range<size_t>(1, 5);
+        auto urange = std::vector<size_t>{settings::model::lbit::u_layer};
+        auto frange = std::vector<double>{settings::model::lbit::f_mixer};
+        auto sample = settings::flbit::compute_lbit_stats;
+        if(sample > 1) {
+            urange = num::range<size_t>(3, 5);
             frange = num::range<double>(0.025, 0.425, 0.025);
-        } else if(settings::flbit::compute_lbit_length) {
-            urange = {settings::model::lbit::u_layer};
-            frange = {settings::model::lbit::f_mixer};
         }
-        if(not urange.empty() and not frange.empty()) {
+        if(sample > 0) {
             tools::log->info("Computing the lbit characteristic length-scale");
-            auto [cls_avg, sse_avg, decay, data] = qm::lbit::get_lbit_analysis(urange, frange, tensors.get_length(), sample);
+            auto [cls_avg, sse_avg, decay, data] = qm::lbit::get_lbit_analysis(urange, frange, sample, tensors.get_length());
             h5file->writeDataset(cls_avg, "/fLBIT/model/lbits/cls_avg");
             h5file->writeDataset(sse_avg, "/fLBIT/model/lbits/sse_avg");
             h5file->writeDataset(decay, "/fLBIT/model/lbits/decay");
             h5file->writeAttribute(urange, "/fLBIT/model/lbits", "u_layer");
             h5file->writeAttribute(frange, "/fLBIT/model/lbits", "f_mixer");
             h5file->writeAttribute(sample, "/fLBIT/model/lbits", "samples");
-            if(settings::storage::storage_level_model == StorageLevel::FULL) h5file->writeDataset(data, "/fLBIT/model/lbits/data");
+            if(settings::storage::storage_level_model != StorageLevel::NONE) {
+                h5file->writeDataset(data, "/fLBIT/model/lbits/data");
+                h5file->writeAttribute(std::vector<std::string>{"f_mixer", "u_layer", "sample", "i", "j"}, "/fLBIT/model/lbits/data", "dims");
+            }
         }
     }
 }

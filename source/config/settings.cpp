@@ -193,22 +193,21 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("fdmrg::store_wavefn"            , fdmrg::store_wavefn);
 
     //Parameters controlling finite-LBIT
-    dmrg_config.load_parameter("flbit::on"                      , flbit::on);
-    dmrg_config.load_parameter("flbit::max_iters"               , flbit::max_iters);
-    dmrg_config.load_parameter("flbit::min_iters"               , flbit::min_iters);
-    dmrg_config.load_parameter("flbit::use_swap_gates"          , flbit::use_swap_gates);
-    dmrg_config.load_parameter("flbit::bond_max"                , flbit::bond_max);
-    dmrg_config.load_parameter("flbit::bond_init"               , flbit::bond_init);
-    dmrg_config.load_parameter("flbit::time_start_real"         , flbit::time_start_real);
-    dmrg_config.load_parameter("flbit::time_start_imag"         , flbit::time_start_imag);
-    dmrg_config.load_parameter("flbit::time_final_real"         , flbit::time_final_real);
-    dmrg_config.load_parameter("flbit::time_final_imag"         , flbit::time_final_imag);
-    dmrg_config.load_parameter("flbit::time_num_steps"          , flbit::time_num_steps);
-    dmrg_config.load_parameter("flbit::time_gate_id_threshold"  , flbit::time_gate_id_threshold);
-    dmrg_config.load_parameter("flbit::print_freq"              , flbit::print_freq);
-    dmrg_config.load_parameter("flbit::compute_lbit_length"     , flbit::compute_lbit_length);
-    dmrg_config.load_parameter("flbit::compute_lbit_stats"      , flbit::compute_lbit_stats);
-    dmrg_config.load_parameter("flbit::store_wavefn"            , flbit::store_wavefn);
+    dmrg_config.load_parameter("flbit::on"                           , flbit::on);
+    dmrg_config.load_parameter("flbit::max_iters"                    , flbit::max_iters);
+    dmrg_config.load_parameter("flbit::min_iters"                    , flbit::min_iters);
+    dmrg_config.load_parameter("flbit::use_swap_gates"               , flbit::use_swap_gates);
+    dmrg_config.load_parameter("flbit::bond_max"                     , flbit::bond_max);
+    dmrg_config.load_parameter("flbit::bond_init"                    , flbit::bond_init);
+    dmrg_config.load_parameter("flbit::time_start_real"              , flbit::time_start_real);
+    dmrg_config.load_parameter("flbit::time_start_imag"              , flbit::time_start_imag);
+    dmrg_config.load_parameter("flbit::time_final_real"              , flbit::time_final_real);
+    dmrg_config.load_parameter("flbit::time_final_imag"              , flbit::time_final_imag);
+    dmrg_config.load_parameter("flbit::time_num_steps"               , flbit::time_num_steps);
+    dmrg_config.load_parameter("flbit::time_gate_id_threshold"       , flbit::time_gate_id_threshold);
+    dmrg_config.load_parameter("flbit::print_freq"                   , flbit::print_freq);
+    dmrg_config.load_parameter("flbit::compute_lbit_stats"           , flbit::compute_lbit_stats);
+    dmrg_config.load_parameter("flbit::store_wavefn"                 , flbit::store_wavefn);
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);
