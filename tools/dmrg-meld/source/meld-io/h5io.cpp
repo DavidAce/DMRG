@@ -398,27 +398,7 @@ namespace tools::h5io {
             std::optional<hsize_t> numRecords_old;
             if(srcTableDb.find(key) == srcTableDb.end()) {
                 srcTableDb[key] = h5_src.getTableInfo(path);
-                if(srcTableDb[key].tableExists.value()) {
-                    tools::logger::log->debug("Detected new source {}: {}", srcKey.classtag, key);
-#pragma message "remove investigation"
-                    if(key.find("status") != std::string::npos) {
-                        auto &tb = srcTableDb[key];
-                        tools::logger::log->info("Investigating : [{}]", path);
-                        tools::logger::log->info("  has h5Type  : {}", tb.h5Type.has_value());
-                        tools::logger::log->info("  offsets     : {}", tb.fieldSizes.value());
-                        tools::logger::log->info("  offsets     : {}", tb.fieldOffsets.value());
-                        if(tb.h5Type) {
-                            std::vector<size_t> offsets;
-                            auto                nmember = H5Tget_nmembers(tb.h5Type.value());
-                            for(unsigned int i = 0; i < static_cast<unsigned int>(nmember); i++) {
-                                auto offset = H5Tget_member_offset(tb.h5Type.value(), i);
-                                offsets.emplace_back(offset);
-                            }
-                            tools::logger::log->info("  offsets(h5t): {}", offsets);
-                            //                            if(offsets != tb.fieldOffsets ) throw std::runtime_error("mismatching field offsets");
-                        }
-                    }
-                }
+                if(srcTableDb[key].tableExists.value()) tools::logger::log->debug("Detected new source {}: {}", srcKey.classtag, key);
             } else {
                 auto t_read = tid::tic_scope("readTableInfo");
 
