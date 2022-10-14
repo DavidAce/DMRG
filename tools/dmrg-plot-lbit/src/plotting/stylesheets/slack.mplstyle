@@ -89,7 +89,7 @@ legend.scatterpoints    : 1
 #figure.subplot.left    : 0.125  # the left side of the subplots of the figure
 #figure.subplot.right   : 0.9    # the right side of the subplots of the figure
 #figure.subplot.bottom  : 0.11   # the bottom of the subplots of the figure
-#figure.subplot.wspace  : 0.2    # the amount of width reserved for space between subplots,
+#figure.subplot.wspace  : 0.0    # the amount of width reserved for space between subplots,
                                  # expressed as a fraction of the average axis width
 #figure.subplot.hspace  : 0.2    # the amount of height reserved for space between subplots,
                                  # expressed as a fraction of the average axis height
@@ -100,18 +100,18 @@ figure.autolayout       : False  # Applies tight_layout
 ## e.g., you may want a higher resolution, or to make the figure
 ## background white
 
-savefig.dpi            : 600     # figure dots per inch or 'figure'
-savefig.facecolor      : auto    # figure face color when saving
-savefig.edgecolor      : auto    # figure edge color when saving
-savefig.format         : svg     # {png, ps, pdf, svg}
-savefig.bbox           : tight   # {tight, standard}
-                                 # 'tight' is incompatible with pipe-based animation
-                                 # backends (e.g. 'ffmpeg') but will work with those
-                                 # based on temporary files (e.g. 'ffmpeg_file')
-savefig.pad_inches     : 0.0     # Padding to be used when bbox is set to 'tight'
+savefig.dpi            : 600      # figure dots per inch or 'figure'
+savefig.facecolor      : auto     # figure face color when saving
+savefig.edgecolor      : auto     # figure edge color when saving
+savefig.format         : svg      # {png, ps, pdf, svg}
+savefig.bbox           : tight    # {tight, standard}
+                                  # 'tight' is incompatible with pipe-based animation
+                                  # backends (e.g. 'ffmpeg') but will work with those
+                                  # based on temporary files (e.g. 'ffmpeg_file')
+savefig.pad_inches     : 0.02      # Padding to be used when bbox is set to 'tight'
 
 #savefig.directory      : ~       # default directory in savefig dialog box,
-#                                # leave empty to always use current working directory
-#savefig.transparent: False     # setting that controls whether figures are saved with a
-                                # transparent background by default
-#savefig.orientation: portrait  # Orientation of saved figure
+#                                 # leave empty to always use current working directory
+#savefig.transparent: False       # setting that controls whether figures are saved with a
+                                  # transparent background by default
+#savefig.orientation: portrait    # Orientation of saved figure

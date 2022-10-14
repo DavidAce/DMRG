@@ -7,6 +7,7 @@ import matplotlib.patheffects as pe
 from pathlib import Path
 import logging
 from numba import njit
+from matplotlib.ticker import MaxNLocator
 
 
 @njit(parallel=True, cache=True)
@@ -19,16 +20,17 @@ def stretched_log(x, C, xi, beta):
     return np.log(C) - (x / xi) ** beta
 
 
-def main():
+plotdir = 'plots/lbit-decay'
+datafile = '../../output/mbl_10003.h5'
+lbitpath = 'fLBIT/model/lbits'
+
+
+def plot_decay():
     logging.basicConfig(level=logging.WARN)
     logger_lbit = logging.getLogger('lbit').setLevel(level=logging.WARN)
     logger_tools = logging.getLogger('tools').setLevel(level=logging.INFO)
 
-    plotdir = 'plots/lbit-decay'
-    datadir = 'data'
-    avgfile = datadir + '/lbit_decay10.h5'
-
-    h5data = h5open(avgfile, 'r')
+    h5data = h5open(datafile, 'r')
 
     meta = {
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -53,6 +55,7 @@ def main():
         # 'legend_in_subfig': False
     }
 
+
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
     if 'plotdir' in meta and 'mplstyle' in meta:
@@ -66,25 +69,23 @@ def main():
     else:
         palette_name = "colorblind"
         path_effects = None
+    meta['filename'] = "{}/{}_liom-decay".format(meta['plotdir'], meta['plotprefix'])
 
-    cnames = ['curves', 'decay']
+    frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
+    urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
+    cls_avg = h5data["{}/cls_avg".format(lbitpath)][()]
+    sse_avg = h5data["{}/sse_avg".format(lbitpath)][()]
+    decay = h5data["{}/decay".format(lbitpath)]  # formerly "curves"
 
-    cls_avg = h5data["fLBIT/analysis/cls_avg"][()]
-    sse_avg = h5data["fLBIT/analysis/sse_avg"][()]
-    curves = h5data["fLBIT/analysis"][cnames[0]][()] if cnames[0] in h5data else h5data["fLBIT/analysis"][cnames[1]][()]
-
-    frange = h5data["fLBIT/analysis/cls_avg"].attrs["f_mixer"][()]
-    urange = h5data["fLBIT/analysis/cls_avg"].attrs["u_depth"][()]
-
-    print("curves shape", np.shape(curves))
+    print("decay shape", np.shape(decay))
     rows, cols = np.shape(cls_avg)
     cls_fit = np.zeros((rows, cols))
     cls_std = np.zeros((rows, cols))
     cls_1pc = np.zeros((rows, cols))
     cls_bet = np.zeros((rows, cols))
     print(rows, cols)
-    fmix_range = range(1, rows, 2)
-    ucol_range = range(0, 4, 1)
+    fmix_range = range(0, len(frange), 2)
+    ucol_range = range(0, len(urange), 2)
     numplots = len(ucol_range)
     print(numplots)
     f = get_fig_meta(numplots, meta=meta)
@@ -97,7 +98,7 @@ def main():
         fit = {'u': urange[col], 'color': [], 'f': [], 'y0': [], 'xi': [], 'beta': []}
         for i, row in enumerate(fmix_range):
             color = next(current_palette)
-            y = curves[row, col, :]
+            y = decay[row, col, :]
             y = y[y > 1e-15]
             x = np.array(range(len(y)))
             p0 = 0.9, 0.4, 1.0
@@ -166,7 +167,7 @@ def main():
     if not figin:
         figin = f['fig'].add_axes([0.50, 0.20, 0.15, 0.15])
     for uidx, (xi, beta, color) in enumerate(zip(fits['xi'], fits['beta'], fits['color'])):
-        if uidx == 3:
+        if uidx + 1 == len(fits['xi']):
             figin.scatter(xi, beta, color=color, marker='o')
     figin.tick_params(labelsize=7, length=2, pad=2.0)
     figin.set_yticks([1.0, 1.4])
@@ -174,11 +175,106 @@ def main():
     bbox = {'edgecolor': 'white', 'facecolor': 'white', 'pad': 2, 'alpha': 0.0}
     figin.set_ylabel('$\\beta$', labelpad=-10, fontsize=7, bbox=bbox)
     figin.set_xlabel('$\\xi$', labelpad=-5, fontsize=7, bbox=bbox)
+    return f
 
-    f['filename'] = "{}/{}_liom4x4".format(meta['plotdir'], meta['plotprefix'])
-    save_figure(f)
-    plt.show()
+
+def plot_lbits():
+    h5data = h5open(datafile, 'r')
+
+    meta = {
+        'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
+        'ylabel': '$O(L/2,j)$',
+        'xlabel': '$j$',
+        # 'yticks': [1e-0, 1e-4, 1e-8, 1e-12],
+        # 'xticks': [0, 2, 4, 6, 8],
+        'sharex': 'col',
+        'sharey': 'row',
+        'yscale': 'log',
+        'ynopos': 'mask',
+        # 'box_aspect': 1,
+        # 'xscale': 'linear',
+        'ymin': 1e-10,
+        'plotprefix': 'lbit-decay',
+        'plotdir': plotdir,
+        # 'mplstyle': './src/plotting/stylesheets/prb.mplstyle',
+        'mplstyle': './src/plotting/stylesheets/slack.mplstyle',
+        'legendcols': ['f'],
+        'legendoutside': False,
+        'legendcollect': False,
+        'legendlocation': 'upper right',
+        'owr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
+        'ohr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
+        # 'legendcols': ['f', 'xi', 'beta'],
+        # 'legend_in_subfig': False
+    }
+
+    if 'mplstyle' in meta:
+        plt.style.use(meta['mplstyle'])
+    if 'plotdir' in meta and 'mplstyle' in meta:
+        if Path(meta['plotdir']).stem != Path(meta['mplstyle']).stem:
+            meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
+            Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
+            print("Setting plotdir: ", meta['plotdir'])
+    if 'slack' in meta.get('mplstyle'):
+        palette_name = "Spectral_r"
+        path_effects = [pe.SimpleLineShadow(offset=(-0.3, -0.5), alpha=0.4), pe.Normal()]
+    else:
+        palette_name = "colorblind"
+        path_effects = None
+    meta['filename'] = "{}/{}_lioms".format(meta['plotdir'], meta['plotprefix'])
+
+    frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
+    urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
+    lbits = h5data["{}".format(lbitpath)]["data"][()]
+
+    lbits = lbits[1::4, 1::1, :, :, :]
+    frange = frange[1::4]
+    urange = urange[1::1]
+    print('frange: {}'.format(frange))
+    print('urange: {}'.format(urange))
+
+    flen, ulen, reps, rows, cols = np.shape(lbits)
+    print(rows, cols)
+    numplots = flen * ulen
+    print(numplots)
+
+    print('Defining f')
+    f = get_fig_meta(numplots, meta=meta)
+    print('Defining colors')
+    sns.set_palette(sns.color_palette(palette_name, n_colors=reps))
+    print('Starting plots colors')
+    for fidx, fval in enumerate(frange):
+        for uidx, uval in enumerate(urange):
+            current_palette = itertools.cycle(sns.color_palette())
+            idx = ((fidx + 1) * (uidx + 1)) - 1
+            print(idx)
+            ax = f['ax'][idx]
+            mid = int(rows / 2)
+            x = range(cols)
+            l = lbits[fidx, uidx, range(reps), [mid], :].T
+            y = np.mean(l, axis=1)
+            e = np.std(l, axis=1)
+            print(np.shape(l))
+            line, = ax.plot(x, y, linewidth=1.5)
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            f['legends'][idx][0]['handle'].append(line)
+            f['legends'][idx][0]['label'].append('{:.2f}'.format(fval))
+            f['legends'][idx][0]['title'] = '$f$'
+
+            for ridx in range(reps):
+                color = next(current_palette)
+                y = lbits[fidx, uidx, ridx, [mid], :].T
+                ax.plot(x, y, alpha=0.20, color='gray')
+
+                if not idx in f['axes_used']:
+                    f['axes_used'].append(idx)
+
+    return f
 
 
 if __name__ == '__main__':
-    main()
+    # f = plot_decay()
+    # save_figure(f)
+    f = plot_lbits()
+    save_figure(f)
+    plt.show()

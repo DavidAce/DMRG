@@ -27,28 +27,28 @@ def find_saturation_idx2(ydata, threshold=1e-2):
     return idx
 
 
-def find_loglog_window(tdata, ydata, threshold1=0.6, threshold2=1e-2):
-    if len(ydata) <= 2:
-        return
-    ylog = -np.log10(ydata)
-    ylog = ylog / ylog[-1]
-    sdata = []
-    w = 2
-    for i, yl in enumerate(ylog):
-        min_idx = np.min([len(ylog) - w, i])
-        min_idx = np.max([min_idx, 0])
-        s = np.std(ylog[min_idx:])
-        sdata.append(s)
-    tdx = np.argwhere(np.asarray(tdata) >= 1.0)
-    idx1 = np.argwhere(np.asarray(sdata) < threshold1)
-    idx2 = np.argwhere(np.asarray(sdata) < threshold2)
-
-    tdx = tdx[0, 0] if len(tdx) > 0 else 0
-    idx1 = idx1[0, 0] if len(idx1) > 0 else 0
-    idx2 = idx2[0, 0] if len(idx2) > 0 else 0
-
-    idx1 = np.max([tdx, idx1])
-    return idx1, idx2
+# def find_loglog_window(tdata, ydata, threshold1=0.6, threshold2=1e-2):
+#     if len(ydata) <= 2:
+#         return
+#     ylog = -np.log10(ydata)
+#     ylog = ylog / ylog[-1]
+#     sdata = []
+#     w = 2
+#     for i, yl in enumerate(ylog):
+#         min_idx = np.min([len(ylog) - w, i])
+#         min_idx = np.max([min_idx, 0])
+#         s = np.std(ylog[min_idx:])
+#         sdata.append(s)
+#     tdx = np.argwhere(np.asarray(tdata) >= 1.0)
+#     idx1 = np.argwhere(np.asarray(sdata) < threshold1)
+#     idx2 = np.argwhere(np.asarray(sdata) < threshold2)
+#
+#     tdx = tdx[0, 0] if len(tdx) > 0 else 0
+#     idx1 = idx1[0, 0] if len(idx1) > 0 else 0
+#     idx2 = idx2[0, 0] if len(idx2) > 0 else 0
+#
+#     idx1 = np.max([tdx, idx1])
+#     return idx1, idx2
 
 
 def page_entropy(L):
@@ -162,7 +162,7 @@ def plot_S_vs_Time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, s
                             l1_legend['handle'].append(line)
                             l1_legend['label'].append(
                                 "${}={}$ (n:{}, ${}:{:>4.1f}$min)".format(l1[0], db_vals[l1[0]], np.min(ndata), "\\bar t_\mathrm{sim}", np.mean(adata) / 60))
-                            idx1, idx2 = find_loglog_window(tdata, sdata)
+                            idx1, idx2 = find_loglog_window2(tdata, sdata)
                             mark, = ax.plot([xdata[idx1], xdata[idx2]], [ydata[idx1], ydata[idx2]], color=color, marker='o', markersize=4, linestyle='None',
                                             path_effects=[pe.Stroke(linewidth=2, foreground='black'), pe.Normal()])
                             ymin = np.min([ymin, ydata[idx1]]) if ymin else ydata[idx1]

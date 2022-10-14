@@ -5,6 +5,7 @@ from timeit import default_timer as timer
 import numba as nb
 import tables as tb
 import tables.parameters
+from numba import njit
 from tables import NaturalNameWarning
 
 from ..io.h5ops import *
@@ -169,8 +170,7 @@ stattables = {
 }
 
 constant_cols = [
-    'iter', 'step', 'position', 'num', 'num_iters', 'max_iters'
-                                                    'chi_lim_init', 'chi_lim_max', 'chi_lim',
+    'iter', 'step', 'position', 'num', 'num_iters', 'max_iters', 'bond_lim', 'event',
     'bond_dimension_current', 'bond_dimension_max',
     'phys_time', 'algo_type', 'algo_stop']
 
@@ -281,9 +281,9 @@ def get_dtype(tablenode, req_columns, num=True):
                 formats.append('complex128')
             else:
                 formats.append(('{}=f{}'.format(dtype.shape, dtype.alignment)))
-    if num and 'hartley_number_entropy_midchain' in req_columns:
-        names.append('hartley_number_entropy_midchain')
-        formats.append(('<f8'))
+            if num and col == 'number_entropy_midchain' and 'hartley_number_entropy_midchain' in req_columns:
+                names.append('hartley_number_entropy_midchain')
+                formats.append(('<f8'))
 
     return np.dtype({"names": names, "formats": formats})
 
@@ -408,137 +408,99 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
                   ))
 
 
-def write_statistics_crono3(nodemeta, crono_tables, tgt):
-    # Props contains the names of the tables as keys, and each value contains either "ALL" or a list of desired columns
-    # We should generate the statistics for each column in the table, averaging each time point over all realizations
-    t_tot = timer()
-    t_stat = 0
-    t_crt = 0
-    t_pre = 0
-    t_itr = 0
-    t_app = 0
-    itername = nodemeta[0]  # The name of the iteration group, e.g. 'iter_1'
-    iterpath = nodemeta[1]  # The path of the iteration group, e.g. '...u_3/r_8/fLBIT/state_real/tables/iter_1'
-    iternode = nodemeta[2]  # The node of the iteration group
-    if not isinstance(iternode, h5py.Group):
-        raise TypeError("write_statistics_crono3: meta should point to a h5py.Group. Got: ", nodemeta)
-    point_node = iternode.parent
-    point_path = point_node.name
-    # open h5 file for appending
-    with tb.File(tgt, 'a') as h5f:
-        for tablename, tablepath, tablenode in h5py_node_iterator(node=iternode, keypattern=crono_tables, dep=1,
-                                                                  nodeType=h5py.Dataset):
-            t_pre_start = timer()
-            # We now have a source table
-            table_columns = crono_tables[tablename]
-            dt = get_dtype(tablenode=tablenode, req_columns=crono_tables[tablename])
-            t_pre = t_pre + timer() - t_pre_start
-            statgroup = '{}/{}'.format(point_path, tablename)
-            statrows = {}
-            num = len(tablenode)
-            for statkey in stattables.keys():
-                t_crt_start = timer()
-                statpath = '{}/{}/{}'.format(point_path, tablename, statkey)
-                stattitle = '{} {}'.format(tablename, statkey)
-                if not statpath in h5f:
-                    a = h5f.create_table(statgroup, name=statkey, title=stattitle,
-                                         description=dt.newbyteorder('<'),
-                                         createparents=True,
-                                         expectedrows=num,
-                                         filters=tb.Filters(3),
-                                         track_times=False)
-
-                else:
-                    a = h5f.get_node(statgroup, name=statkey, classname="Table")
-                t_crt = t_crt + (timer() - t_crt_start)
-                t_itr_start = timer()
-                # create dataset row iterator
-                a_row = a.row
-                for r in a_row:
-                    r.append()
-                statrows[statkey] = {'it': a_row, 'tb': a}
-
-                t_itr = t_itr + timer() - t_itr_start
-
-            t_stat_start = timer()
-            for col, (dtype, offset) in dt.fields.items():
-                # print("getting stats for table {} | col {} | dtype {}".format(tablepath, col, dtype))
-                if col == 'num':
-                    stats = np.full(6, num)
-                elif col in constant_cols:
-                    stats = np.full(6, tablenode.fields(col)[0])
-                elif col == 'delta_t' or np.issubdtype(np.complex128, dtype):  # For constant complex values
-                    stats = np.full(6, tablenode.fields(col)[0].view(dtype=np.complex128))
-                else:
-                    stats = get_stats(data=tablenode.fields(col)[()])
-
-                for stat_tgt, stat_src in zip(statrows.values(), stats):
-                    stat_tgt['it'][col] = stat_src
-
-            t_stat = t_stat + (timer() - t_stat_start)
-            t_app_start = timer()
-            for key, stat in statrows.items():
-                stat['it'].append()
-                stat['tb'].flush()
-            t_app = t_app + timer() - t_app_start
-
-    t_model_start = timer()
-    h5_tgt = h5open(tgt, 'a')
-    model_path = iterpath[0: iterpath.index("LBIT")] + "LBIT/model"
-    if model_path in iternode.file:
-        model_node = iternode.file[model_path]
-        attrs_path = model_node.parent.parent.name
-        attrs_node = h5_tgt.require_group(attrs_path)
-        for key, dset in model_node.items():
-            if '.db' in key:
-                continue
-            if key in attrs_node.attrs:
-                break
-            # print(key,dset,model_node)
-            attrs_node.attrs.create(name=key, data=dset)
-    else:
-        raise LookupError("Could not find [" + model_path + "] in ", iternode.file)
-    h5close(h5_tgt)
-    t_mod = timer() - t_model_start
-    t_tot = timer() - t_tot
-    print('crono3: {} | '
-          'tot {:8.3e} | '
-          'pre {:8.3e} {:.1f}% | '
-          'crt {:8.3e} {:.1f}% | '
-          'itr {:8.3e} {:.1f}% | '
-          'stat {:8.3e} {:.1f}% | '
-          'app {:8.3e} {:.1f}% | '
-          'mod {:8.3e} {:.1f}% | '
-          .format(iterpath,
-                  t_tot,
-                  t_pre,
-                  t_pre / t_tot * 100,
-                  t_crt,
-                  t_crt / t_tot * 100,
-                  t_itr,
-                  t_itr / t_tot * 100,
-                  t_stat,
-                  t_stat / t_tot * 100,
-                  t_app,
-                  t_app / t_tot * 100,
-                  t_mod,
-                  t_mod / t_tot * 100,
-                  ))
-
-
 def getmaxiter(iternode):
     statuspath = '{}/tables/status'.format(iternode.name.split('cronos/', 1)[0])
     statusnode = iternode.file[statuspath]
     return statusnode['iter'][0]
 
 
-def get_renyi(data, alpha, pn_cutoff=-np.inf):
-    # Assume indices are n, site, time
-    data[data < pn_cutoff] = 0.0
-    r = 1.0 / (1 - alpha) * np.log(np.sum(data ** alpha, axis=0))
-    r[np.isinf(r)] = 0.0
-    print("Calculated renyi: alpha {:.2e} | cutoff {:.2e} | shape {} --> {}".format(alpha, pn_cutoff, np.shape(data), np.shape(r)))
-    return r
+@njit(cache=True)
+def get_count(array1d, cutoff=1e-6):
+    count = 0
+    for val in array1d:
+        if val >= cutoff:
+            count += 1
+    return count
+
+
+@njit(cache=True)
+def get_sum_power(array1d, alpha=1e-3, cutoff=1e-6):
+    sum = 0
+    for val in array1d:
+        if val >= cutoff:
+            sum += val ** alpha
+    return sum
+
+
+@njit(parallel=True, cache=True)
+def get_renyi(data, alpha=1e-3, cutoff=1e-6):
+    # Assume indices are n, site , time, realization
+
+    sh = np.shape(data)
+    re = np.zeros((sh[1], sh[2], sh[3]))
+    for s in range(sh[1]):  # Site index
+        for t in range(sh[2]):  # Time index
+            for r in nb.prange(sh[3]):  # Realization index
+                re[s, t, r] = 1.0 / (1 - alpha) * np.log(get_sum_power(data[:, s, t, r], alpha, cutoff))
+
+    return re
+
+
+@njit(parallel=True, cache=True)
+def get_hartley(data, cutoff=1e-6):
+    # Assume indices are n, site , time, realization
+    sh = np.shape(data)
+    ha = np.zeros((sh[1], sh[2], sh[3]))
+    for s in range(sh[1]):  # Site index
+        for t in range(sh[2]):  # Time index
+            for r in nb.prange(sh[3]):  # Realization index
+                ha[s, t, r] = np.log(get_count(data[:, s, t, r], cutoff=cutoff))
+    return ha
+
+
+def get_earray(h5f,
+               where,
+               name,
+               dtype,
+               shape,
+               chunkshape=None,
+               expectedrows=None):
+    statpath = "{}/{}".format(where, name)
+    if statpath in h5f:
+        return h5f.get_node(where=where, name=name, classname="EArray")
+    else:
+        return h5f.create_earray(where=where,
+                                 name=name,
+                                 atom=tb.Atom.from_dtype(dtype),
+                                 shape=shape,
+                                 title="Midchain data",
+                                 chunkshape=chunkshape,
+                                 createparents=True,
+                                 expectedrows=expectedrows,
+                                 filters=tb.Filters(3),
+                                 track_times=False)
+
+
+def get_table(h5f,
+              where,
+              name,
+              description,
+              title=None,
+              chunkshape=None,
+              expectedrows=None):
+    statpath = "{}/{}".format(where, name)
+    if statpath in h5f:
+        return h5f.get_node(where=where, name=name, classname="Table")
+    else:
+        return h5f.create_table(where=where,
+                                name=name,
+                                title=title,
+                                description=description,
+                                createparents=True,
+                                chunkshape=None,
+                                expectedrows=expectedrows,
+                                filters=tb.Filters(3),
+                                track_times=False)
 
 
 def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
@@ -561,51 +523,51 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         raise TypeError("write_statistics_crono3: meta should point to a h5py.Group. Got: ", nodemeta)
     point_node = iternode.parent
     point_path = point_node.name
-
+    # if 'number_probabilities' in crono_tables:
     pn_node = point_node.parent['number_probabilities']
     if write_statistics_crono4.hartley_number_entropy_data is None or \
             write_statistics_crono4.number_probabilities_path is None or \
             write_statistics_crono4.number_probabilities_path != pn_node.name:
         pn_shape = np.shape(pn_node)
-        print("Found number_probabilities:", pn_node.name)
-        pn_mid = int(pn_shape[0] / 2)
-        pn_data = pn_node[:, pn_mid, :, :]
-        write_statistics_crono4.hartley_number_entropy_data = get_renyi(pn_data, alpha=1e-3, pn_cutoff=1e-6)
+        print("Found number_probabilities: {}: {}".format(pn_shape, pn_node.name))
+        pn_sites = [int(pn_shape[0] / 2)]
+        print("Calculating renyi on shape {}, sites {}".format(np.shape(pn_node), pn_sites))
+        write_statistics_crono4.hartley_number_entropy_data = np.squeeze(get_renyi(pn_node[:, pn_sites, :, :], alpha=1e-3, cutoff=1e-6))
         write_statistics_crono4.number_probabilities_path = pn_node.name
 
     fastforward = True
     tableiter = None
-    # open h5 file for appending
+
     for tablename, tablepath, tablenode in h5py_node_iterator(node=iternode, keypattern=crono_tables, dep=1,
                                                               nodeType=h5py.Dataset):
         t_pre_start = timer()
         # srciter = tablenode['iter'][0] # We can check if this source iteration is already in the target table (in which case skip)
         # We now have a source table
-
         table_columns = crono_tables[tablename]
         dt_num = get_dtype(tablenode=tablenode, req_columns=table_columns, num=True)
         t_pre = t_pre + timer() - t_pre_start
         statgroup = '{}/{}'.format(point_path, tablename)
         statrows = {}
-        num = len(tablenode)
+        nbins = 60
+        statelen = sum('L_' in s for s in dt_num.fields.keys())
+        statemid = int(statelen / 2)
+
+        # Create the tables/datasets
         for statkey in ['avg', 'std', 'ste', 'med', 'max', 'min']:
             t_crt_start = timer()
             statpath = '{}/{}/{}'.format(point_path, tablename, statkey)
             stattitle = '{} {}'.format(tablename, statkey)
             if not statgroup in nodecache:
                 nodecache[statgroup] = {}
-            if not statpath in h5f:
-                nodecache[statgroup][statkey] = h5f.create_table(statgroup, name=statkey, title=stattitle,
-                                                                 description=dt_num.newbyteorder('<'),
-                                                                 createparents=True,
-                                                                 expectedrows=num,
-                                                                 filters=tb.Filters(3),
-                                                                 track_times=False)
-            else:
-                nodecache[statgroup][statkey] = h5f.get_node(statgroup, name=statkey, classname="Table")
+            nodecache[statgroup][statkey] = get_table(h5f=h5f,
+                                                      where=statgroup,
+                                                      name=statkey,
+                                                      title=stattitle,
+                                                      description=dt_num.newbyteorder('<'),
+                                                      expectedrows=itermax)
             t_crt = t_crt + timer() - t_crt_start
             t_itr_start = timer()
-            # create dataset row iterator
+            # create table row iterator
             a_row = nodecache[statgroup][statkey].row
             for r in a_row:
                 r.append()
@@ -634,7 +596,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
             if col == 'iter' and not tableiter:
                 tableiter = tabledata[col][0]
             elif col == 'num':
-                stats = np.full(6, num)
+                stats = np.full(6, itermax)
             elif col == 'hartley_number_entropy_midchain':
                 pn_itr = statrows[statkey]['tb'].nrows
                 stats = get_stats(data=write_statistics_crono4.hartley_number_entropy_data[pn_itr])
@@ -644,6 +606,19 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                 stats = np.full(6, tabledata[col][0].view(dtype=np.complex128))
             else:
                 stats = get_stats(data=tabledata[col])
+                # Save midchain data for histograms
+                if 'L_{}'.format(statemid) in col and tablename in crono_tables['__save_data__']:
+                    dataname = 'data'
+                    datasize = len(tabledata[col])
+                    nodecache[statgroup]['data'] = get_earray(
+                        h5f=h5f,
+                        where=statgroup,
+                        name=dataname,
+                        dtype=dtype,
+                        shape=(0, datasize),
+                        chunkshape=(20, datasize),
+                        expectedrows=itermax)
+                    nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
             for stat_tgt, stat_src in zip(statrows.values(), stats):
                 stat_tgt['it'][col] = stat_src
 

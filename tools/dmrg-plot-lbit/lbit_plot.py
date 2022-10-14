@@ -59,6 +59,14 @@ def lbit_plot(args):
     # l1   = ['u']
 
     # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_dist_fig4_sub3(db=db, meta=meta['dist-num'], fig4=['J', 'x:.2f', 'r', 'w'], sub3=['f', 'u', 'L'], f=f, palette_name=palette)
+    save_figure(f)
+    for h5avg in h5avgs:
+        h5close(h5avg)
+    plt.show()
+    exit(0)
 
     f = None
     for db, palette in zip(dbs, palettes):

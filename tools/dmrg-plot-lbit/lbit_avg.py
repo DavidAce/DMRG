@@ -63,6 +63,8 @@ def lbit_avg(args):
                     'entanglement_entropies': 'ALL',
                     'number_entropies': 'ALL',
                     'truncation_errors': 'ALL',
+                    'number_probabilities': 'ALL',
+                    '__save_data__': ['entanglement_entropies', 'number_entropies']
                 },
 
         }

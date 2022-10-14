@@ -198,6 +198,7 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
         },
         'tex': {
             'L': '$L$', 'J': '$J$', 'w': '$w$', 'x': '$\\xi$', 'f': '$f$', 'u': '$u$', 'r': '$r$',
+            't': '$t$',
             'algo': 'algo',
             'model': 'model',
             'state': 'state',
@@ -347,10 +348,14 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                             for metakey, descr in meta.items():
                                                 if metakey == 'include' or metakey == 'common':
                                                     continue
-                                                if not 'colname' in descr:  # Consider only tables
+                                                objname = None
+                                                if 'colname' in descr:  # Consider only tables
+                                                    objname = descr['colname']
+                                                elif 'dsetname' in descr:  # ... or datasets
+                                                    objname = descr['dsetname']
+                                                else:
                                                     continue
-
-                                                print("Loading time database version 2: {}[{}]".format(descr['groupname'], descr['colname']))
+                                                print("Loading time database version 2: {}[{}]".format(descr['groupname'], objname))
 
                                                 for datakey, datapath, datanode in h5py_node_iterator(node=crononode,
                                                                                                       keypattern=descr['groupname'],
@@ -360,10 +365,18 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                                         continue
                                                     if debug:
                                                         print(Lkey, Jkey, wkey, xkey, fkey, ukey, algokey, statekey, cronokey, datakey)
-
-                                                    num = np.max(datanode['max']['num'][()])
-                                                    tsim = np.max(datanode['avg']['algorithm_time'][()]) / 60
-                                                    bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, datanode)
+                                                    num = 0
+                                                    tsim = 0.0
+                                                    bavg_key = 0.0
+                                                    if 'colname' in descr:  # We have a table!
+                                                        num = np.max(datanode['max']['num'][()])
+                                                        tsim = np.max(datanode['avg']['algorithm_time'][()]) / 60
+                                                        bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, datanode)
+                                                    else:
+                                                        mmntnode = datanode.parent['measurements']
+                                                        num = np.shape(datanode['data'])[1]
+                                                        tsim = np.max(mmntnode['avg']['algorithm_time'][()]) / 60
+                                                        bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, mmntnode)
 
                                                     if debug:
                                                         print("Adding node data")

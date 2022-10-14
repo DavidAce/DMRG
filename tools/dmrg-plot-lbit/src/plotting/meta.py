@@ -1,5 +1,5 @@
-# mplstyle = './src/plotting/stylesheets/prb.mplstyle'
-mplstyle = './src/plotting/stylesheets/slack.mplstyle'
+mplstyle = './src/plotting/stylesheets/prb.mplstyle'
+# mplstyle = './src/plotting/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
 
@@ -299,6 +299,7 @@ def get_meta(plotdir):
             'legendlocation': 'best',
         },
         'lbit': {
+            'groupname': 'lbits',
             'dsetname': 'decay',
             'titlename': 'l-bit',
             'ylabel': '$\langle \langle \mathrm{l-bit} \\rangle\\rangle$ ',
@@ -313,7 +314,36 @@ def get_meta(plotdir):
             'legendcollect': legendcollect,
             'legendlocation': 'best',
         },
-
+        'dist-num': {
+            'groupname': 'number_entropies',
+            'dsetname': 'data',
+            'normpage': False,
+            'titlename': 'Number Entropy',
+            'figsize': (6.75, 6.00),
+            'ylabel': '$p(S_N(L/2))$',
+            'yscale': 'log',
+            'yformat': '%.2f',
+            'tidx': [0, 1, 2, 5, 7, 10],  # Time indices for which to plot the distribution
+            'bins': 60,
+            'xlabel': '$S_N$',
+            'density': True,
+            'plotprefix': 'SN',
+            'plotdir': plotdir,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            # 'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'x', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': 'center right',
+        },
     }
 
     return meta

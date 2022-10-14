@@ -1,3 +1,4 @@
+import matplotlib.pyplot
 import numpy as np
 from numba import njit
 import matplotlib.pyplot as plt
@@ -10,6 +11,7 @@ import pkg_resources
 from packaging import version
 import logging
 import matplotlib.gridspec as gs
+
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -139,16 +141,16 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin1 = 1.0 / w1
     tmax1 = 1.0 / w1
 
-    r2max = np.min([r, int(L / 2)])  # Maximum range of 2-body interactions, i.e. max(|i-j|/2)
-    Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of largest 2-body terms (nearest neighbor)
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2  # Order of magnitude of smallest 2-body terms (furthest neighbor, up to L/2)
+    r2max = np.min([r, int((L - 1) / 2)])  # Number of sites from the center site to the edge site, max(|i-j|)/2
+    Jmin2 = np.exp(-(r2max - 1) / x) * w2  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
+    tmax2 = 0.5 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
-    tmax2 = 1.0 / Jmin2  # Time that it takes for the most remote site to interact with the middle
 
     tmin3 = 1.0 / w3
     tmax3 = 1.0 / w3
 
-    tmin = np.max([tmin1, tmin2, tmin3])  # Can't have negatives in log-log.
+    tmin = np.max([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
     tmax = np.max([tmax1, tmax2, tmax3])
 
     tmin = np.min([tmin, tmax])  # Can't have negatives in log-log.
@@ -247,6 +249,7 @@ def get_legend_row(db, datanode, legend_col_keys):
             legendrow[idx] = '{0:{1}}{2}'.format(dbval['vals'][key], fmt, sfx)
         elif key in dbval['tex']['vals']:
             legendrow[idx] = dbval['tex']['vals'][key]
+
         if legendrow[idx] is None:
             print(legend_col_keys)
             print(legendrow)
@@ -259,11 +262,14 @@ def get_legend_row(db, datanode, legend_col_keys):
 def get_fig_meta(numplots: int, meta: dict):
     f = {
         'fig': None,
-        'filename': None,
+        'filename': meta.get('filename'),
+        'constrained_layout': meta.get('constrained_layout'),
         'numplots': numplots,
         'axin': None,  # For insets
         'nrows': None,
         'ncols': None,
+        'figsize': meta.get('figsize'),
+        'box_aspect': meta.get('box_aspect'),
         'crows': 1,  # Common row put at the bottom of all subplots
         'ccols': 1,  # Common col put at the right of all subplots
         'irows': 2,  # We make a 2x2 grid where 0,0 is the plot, and 0,1 and 1,0 are legends
@@ -271,23 +277,24 @@ def get_fig_meta(numplots: int, meta: dict):
 
         'owr': None,
         'ohr': None,
-        'iwr': [1000, 1],  # Width ratio between plot and right legend
-        'ihr': [1000, 1],  # Height ratio between plot and bottom legend
+        'iwr': [10000, 1],  # Width ratio between plot and right legend
+        'ihr': [10000, 1],  # Height ratio between plot and bottom legend
         'owr_pad': meta.get('owr_pad') if 'owr_pad' in meta else 1.25,
         'ohr_pad': meta.get('ohr_pad') if 'ohr_pad' in meta else 1.25,
 
         'go': None,  # Outer gridspec
         'gi': [],  # Inner gridspec
+        'rc': [],  # List of coordinates "(row,col)" for each ax
         'ax': [],  # List of subplots with plots (i.e. [0,0] in gsi)
         'lr': [],  # List of subplots with legend right (i.e. [0,1] in gsi)
         'lb': [],  # List of subplots with legend below (i.e. [1,0] in gsi)
         'lc': [],  # List of subplots with legend common to all subplots
-        'ymax': None,
-        'ymin': None,
-        'xmax': None,
-        'xmin': None,
-        'sharex': meta.get('sharex') if 'sharex' in meta else 'all',
-        'sharey': meta.get('sharey') if 'sharey' in meta else 'all',
+        'ymax': meta.get('ymax'),
+        'ymin': meta.get('ymin'),
+        'xmax': meta.get('xmax'),
+        'xmin': meta.get('xmin'),
+        'sharex': meta.get('sharex') if 'sharex' in meta else 'none',
+        'sharey': meta.get('sharey') if 'sharey' in meta else 'none',
         'xscale': meta.get('xscale') if 'xscale' in meta else 'linear',
         'yscale': meta.get('yscale') if 'yscale' in meta else 'linear',
         'xnopos': meta.get('xnopos'),
@@ -301,7 +308,7 @@ def get_fig_meta(numplots: int, meta: dict):
     logger.info('Generated f dict: \n {}'.format(f))
     # Initialize a figure. The size is taken from the stylesheet
     # constrained_layout will make sure to add objects to fill the area
-    f['fig'] = plt.figure(constrained_layout=True)
+    f['fig'] = plt.figure(constrained_layout=f.get('constrained_layout'), figsize=f.get('figsize'))
     # Set padding between subplots
     # w_pad: Width padding in inches.
     #        This is the pad around Axes and is meant to make sure there is enough room for fonts to look good.
@@ -323,8 +330,8 @@ def get_fig_meta(numplots: int, meta: dict):
     f['ohr'] = [1.0] * (f['nrows'] + f['crows'])
     f['owr'][0] *= f['owr_pad']  # The left-most subplot needs more space for the ylabel (NEEDS FINE TUNING)
     f['ohr'][-2] *= f['ohr_pad']  # The bottom subplot needs more space for the xlabel (NEEDS FINE TUNING)
-    f['owr'][-1] = 0.001  # The right common area can be small to begin with
-    f['ohr'][-1] = 0.001  # The bottom common area can be small to begin with
+    f['owr'][-1] = 0.0001  # The right common area can be small to begin with
+    f['ohr'][-1] = 0.0001  # The bottom common area can be small to begin with
 
     # Create the outer subplot grid  ([g]rid[o]uter)
     f['go'] = f['fig'].add_gridspec(nrows=f['nrows'] + f['crows'], ncols=f['ncols'] + f['ccols'], width_ratios=f['owr'],
@@ -333,28 +340,58 @@ def get_fig_meta(numplots: int, meta: dict):
     # Generate the outer grid common areas
     f['lc'].append(f['fig'].add_subplot(f['go'][:, -1]))  # The right common area
     f['lc'].append(f['fig'].add_subplot(f['go'][-1, :]))  # The bottom common area
-    f['lc'][0].set(yticklabels=[], xticklabels=[], ylabel=None, xlabel=None, xticks=[], yticks=[])
-    f['lc'][0].tick_params(labelbottom=False, labelleft=False)
-    f['lc'][1].set(yticklabels=[], xticklabels=[], ylabel=None, xlabel=None, xticks=[], yticks=[])
-    f['lc'][1].tick_params(labelbottom=False, labelleft=False)
+    # Turn off their axes
+    for lc in f['lc']:
+        lc.axis('off')
+
+    # Keep track of the axes rows/cols
+    ax_matrix = np.empty(shape=(f['nrows'], f['ncols']), dtype=plt.Axes)
 
     # Generate the inner grids
     for ir, ic in np.ndindex(f['nrows'], f['ncols']):
         go = f['go'][ir, ic]
         logger.info('Setting up outer gridspec: row {} col {}'.format(ir, ic))
         f['gi'].append(go.subgridspec(nrows=f['irows'], ncols=f['icols'], width_ratios=f['iwr'], height_ratios=f['ihr'],
-                                      wspace=0.01, hspace=0.01))
+                                      wspace=0.02, hspace=0.02))
 
         gi = f['gi'][-1]
-        f['ax'].append(f['fig'].add_subplot(gi[0, 0]))
+
+        # Setup axis sharing
+        sharex = None
+        sharey = None
+        if shx := f.get('sharex'):
+            if shx == 'col':
+                sharex = ax_matrix[0, ic]
+            if shx == 'all' or shx is True:
+                sharex = ax_matrix[0, 0]
+        if shy := f.get('sharey'):
+            if shy == 'row':
+                sharey = ax_matrix[ir, 0]
+            if shy == 'all' or shy is True:
+                sharey = ax_matrix[0, 0]
+
+        f['ax'].append(f['fig'].add_subplot(gi[0, 0], sharex=sharex, sharey=sharey))
         f['lr'].append(f['fig'].add_subplot(gi[0, 1]))
         f['lb'].append(f['fig'].add_subplot(gi[1, 0]))
+        ax_matrix[ir, ic] = f['ax'][-1]
 
         # Turn off axis elements on the legend box
-        f['lr'][-1].set(yticklabels=[], xticklabels=[], ylabel=None, xlabel=None, xticks=[], yticks=[])
-        f['lb'][-1].set(yticklabels=[], xticklabels=[], ylabel=None, xlabel=None, xticks=[], yticks=[])
-        f['lr'][-1].tick_params(labelbottom=False, labelleft=False)
-        f['lb'][-1].tick_params(labelbottom=False, labelleft=False)
+        f['lr'][-1].axis('off')
+        f['lb'][-1].axis('off')
+
+        is_last_row = ir + 1 == f['nrows']
+        is_first_col = ic == 0
+        print('sharex {} {}: {}'.format(ir, ic, sharex))
+        if not is_last_row and f.get('sharex') in ['col', 'all', True]:
+            f['ax'][-1].tick_params(bottom=False, labelbottom=False)
+            f['ax'][-1].xaxis.label.set_visible(False)
+            # f['ax'][-1].xaxis.set_visible(False)
+        if not is_first_col and f.get('sharey') in ['row', 'all', True]:
+            f['ax'][-1].tick_params(left=False, labelleft=False)
+            f['ax'][-1].yaxis.label.set_visible(False)
+
+        if box_aspect := f['box_aspect']:
+            f['ax'][-1].set_box_aspect(box_aspect)
 
         if f['xnopos']:
             f['ax'][-1].set_xscale(f['xscale'], nonpositive=f['xnopos'])
@@ -364,6 +401,15 @@ def get_fig_meta(numplots: int, meta: dict):
             f['ax'][-1].set_yscale(f['yscale'], nonpositive=f['ynopos'])
         else:
             f['ax'][-1].set_yscale(f['yscale'])
+
+        if ymax := f['ymax']:
+            f['ax'][-1].set_ylim(ymax=ymax)
+        if ymin := f['ymin']:
+            f['ax'][-1].set_ylim(ymin=ymin)
+        if xmax := f['xmax']:
+            f['ax'][-1].set_xlim(xmax=xmax)
+        if xmin := f['xmin']:
+            f['ax'][-1].set_xlim(xmin=xmin)
 
         # Apply things from meta
         if xticks := meta.get('xticks'):
@@ -385,33 +431,11 @@ def get_fig_meta(numplots: int, meta: dict):
         if 'xformat' in meta:
             f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(meta['xformat']))
 
-        # Set aspect ratios
-        f['ax'][-1].set(aspect='auto', anchor='C')
-
-        # Hide y labels in the bulk
-        if ic > 0:
-            logger.info('Turning off ytick and ylabel on {} x {}'.format(ir, ic))
-            f['ax'][-1].set(yticklabels=[], ylabel=None)
-        # Hide x labels in the bulk
-        if ir + 1 < f['nrows']:
-            f['ax'][-1].set(xticklabels=[], xlabel=None)
 
     # Set title
     if title := meta.get('suptitle'):
         f['fig'].suptitle(title)
 
-    # Let all subplots share axes
-    if f['sharex'] != 'none' and f['sharex'] != False:
-        f['ax'][0].get_shared_x_axes().join(*f['ax'])
-    if f['sharey'] != 'none' and f['sharey'] != False:
-        f['ax'][0].get_shared_y_axes().join(*f['ax'])
-
-    # Hide axes for legend areas
-    for lr, lb in zip(f['lr'], f['lb']):
-        lr.axis('off')
-        lb.axis('off')
-    for lc in f['lc']:
-        lc.axis('off')
 
     legend = {'handle': [], 'label': [], 'title': None}  # One such per legend column
 
@@ -504,6 +528,7 @@ def get_formatted_columns(columns):
     # Now we get the maximum string length of each column
     column_longest = [0] * num_cols
     column_phantom = [''] * num_cols  # The longest string in each column, not including the title
+    print(columns)
     for icol, col in enumerate(columns):  # Iterate columns
         maxlenstr = max([str(c) for c in col[1:]], key=len)  # Get the longest string in the column
         column_longest[icol] = len(maxlenstr)
@@ -987,9 +1012,10 @@ def prettify_plot5(fmeta):
             fmeta['fig'].delaxes(lr)
             fmeta['fig'].delaxes(lb)
             logger.info('Deleting unused subplot idx {}'.format(idx))
-
     # Add legends
     add_legend5(fmeta=fmeta)
+    return
+
     # Remove legend boxes that are not used
     for idx, (lr, lb) in enumerate(zip(fmeta['lr'], fmeta['lb'])):
         # Get all legend objects from lr
