@@ -231,7 +231,7 @@ void LBit::build_mpo()
 }
 
 void LBit::randomize_hamiltonian() {
-    // J2(i,j) = J2_exp(r) * Random_ij(J2_mean, J2_wdth), for i < j,
+    // J2(i,j) = J2_exp(r) * Random_ij with mean J2_mean and standard deviation J2_wdth * J2_exp(r), for i < j,
     // where
     //    * J2_exp(r) = exp(-(r-1)/J2_xcls)
     //    * J2_xcls: characteristic length scale for decay of pairwise interactions
@@ -241,7 +241,7 @@ void LBit::randomize_hamiltonian() {
     //      i.e.  exponential decay starts after 1 site, and so J2_wdth sets the size of nearest neighbor interaction.
     //
     // For normal and lognormal we can instead put the decay in the standard deviation
-    //      J2(i,j) = N(J2_mean, J2_exp(r))
+    //      J2(i,j) = (Log)Normal(J2_mean, J2_wdth * J2_exp(r))
     // This definition is the same as Eq. 7: https://link.aps.org/doi/10.1103/PhysRevB.97.214202
     // Note that the saturation time is predictably:
     //      tmax ~ [J2_wdth * exp(-(L/2 - 1)/J2_xcls)]^-1
@@ -263,11 +263,11 @@ void LBit::randomize_hamiltonian() {
     if(h5tb.param.distribution == "normal") {
         h5tb.param.J1_rand = rnd::normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::normal(J3_mean, J3_wdth);
-        for(const auto &w : J2_exp) J2_rnd.emplace_back(rnd::normal(J2_mean, w));
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(rnd::normal(J2_mean, J2_wdth * w));
     } else if(h5tb.param.distribution == "lognormal") {
         h5tb.param.J1_rand = rnd::log_normal(J1_mean, J1_wdth);
         h5tb.param.J3_rand = rnd::log_normal(J3_mean, J3_wdth);
-        for(const auto &w : J2_exp) J2_rnd.emplace_back(rnd::log_normal(J2_mean, w));
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(rnd::log_normal(J2_mean, J2_wdth * w));
     } else if(h5tb.param.distribution == "uniform") {
         h5tb.param.J1_rand = rnd::uniform_double_box(J1_mean - J1_wdth / 2.0, J1_mean + J1_wdth / 2.0);
         h5tb.param.J3_rand = rnd::uniform_double_box(J3_mean - J3_wdth / 2.0, J3_mean + J3_wdth / 2.0);
@@ -275,7 +275,7 @@ void LBit::randomize_hamiltonian() {
     } else if(h5tb.param.distribution == "constant") {
         h5tb.param.J1_rand = settings::model::lbit::J1_mean;
         h5tb.param.J3_rand = settings::model::lbit::J3_mean;
-        for(const auto &w : J2_exp) J2_rnd.emplace_back(w * settings::model::lbit::J2_mean);
+        for(const auto &w : J2_exp) J2_rnd.emplace_back(J2_wdth * w + J2_mean);
     } else {
         throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
     }
@@ -441,7 +441,7 @@ void LBit::save_hamiltonian(h5pp::File &file, std::string_view table_path) const
 void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefix) {
     auto ham_table = fmt::format("{}/hamiltonian", model_prefix);
     if(file.linkExists(ham_table)) {
-        h5tb.param = file.readTableRecords<h5tb_lbit::table>(ham_table, position);
+        h5tb.param                       = file.readTableRecords<h5tb_lbit::table>(ham_table, position);
         all_mpo_parameters_have_been_set = true;
     } else {
         throw except::runtime_error("Could not load MPO. Table [{}] does not exist", ham_table);
