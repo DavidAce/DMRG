@@ -241,7 +241,8 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                             if not idx in f['axes_used']:
                                 f['axes_used'].append(idx)
                     if dbval:
-                        ax.set_title(get_title(dbval, sub3), x=0, horizontalalignment='left')
+                        ax.set_title(get_title(dbval, sub3, width=16), fontstretch="ultra-condensed", bbox=dict(facecolor='white', alpha=1.0))
+
                     ax.set_xlabel("$t$")
                     if meta.get('timeloglevel'):
                         if meta['timeloglevel'] == 1:
@@ -278,18 +279,6 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                          )
                         ax.indicate_inset_zoom(f['axin'], edgecolor="black")
 
-                    if ymin := meta.get('ymin'):
-                        f['ymin'] = ymin
-                        ax.set_ylim(ymin=ymin)
-                    if ymax := meta.get('ymax'):
-                        f['ymax'] = ymax
-                        ax.set_ylim(ymax=ymax)
-                    if xmin := meta.get('xmin'):
-                        f['xmin'] = xmin
-                        ax.set_xlim(xmin=xmin)
-                    if xmax := meta.get('xmax'):
-                        f['xmax'] = xmax
-                        ax.set_xlim(xmax=xmax)
 
                 if f['ymin']:
                     f['ymin'] = 0.9 * f['ymin']

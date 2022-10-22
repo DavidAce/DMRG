@@ -50,8 +50,8 @@ def lbit_plot(args):
     # l1   = ['f']
 
     fig3 = ['J', 'x:.2f', 'r']
-    sub3 = ['f', 'u', 'w']
-    l1 = ['L']
+    sub3 = ['f', 'u', 'L']
+    l1 = ['w']
 
     # #
     # fig3 = ['J', 'x:.2f', 'r']
@@ -63,10 +63,6 @@ def lbit_plot(args):
     for db, palette in zip(dbs, palettes):
         f = plot_dist_fig4_sub3(db=db, meta=meta['dist-num'], fig4=['J', 'x:.2f', 'r', 'w'], sub3=['f', 'u', 'L'], f=f, palette_name=palette)
     save_figure(f)
-    for h5avg in h5avgs:
-        h5close(h5avg)
-    plt.show()
-    exit(0)
 
     f = None
     for db, palette in zip(dbs, palettes):

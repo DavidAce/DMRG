@@ -37,7 +37,7 @@ legend.handlelength     : 1.0       # the length of the legend lines
 legend.handletextpad    : 0.5       # the space between the legend line and legend text
 legend.borderaxespad    : 1.0       # the border between the axes and legend edge
 legend.columnspacing    : 0.5       # column separation
-legend.framealpha       : 0.8       # legend patch transparency
+legend.framealpha       : 0.6       # legend patch transparency
 legend.facecolor        : inherit   # inherit from axes.facecolor; or color spec
 legend.edgecolor        : k         # background patch boundary color
 legend.fancybox         : False     # if True, use a rounded box for the
@@ -72,20 +72,40 @@ mathtext.fontset        : stix
 lines.linewidth         : 0.7
 lines.markersize        : 2.0
 
-
+axes.axisbelow          : True
 axes.titlelocation      : center  # alignment of the title: {left, right, center}
 axes.titlesize          : small   # font size of the axes title
 axes.titleweight        : normal  # font weight of title
 axes.titlecolor         : auto    # color of the axes title, auto falls back to
                                   # text.color as default value
-axes.titley             : 1.0     # position title (axes relative units).  None implies auto
-axes.titlepad           : -10     # pad between axes and title in points
+axes.titley             : 1.02    # position title (axes relative units).  None implies auto
+axes.titlepad           : 0       # pad between axes and title in points
+
+#axes.formatter.limits: -5, 6  # use scientific notation if log10
+                               # of the axis range is smaller than the
+                               # first or larger than the second
+#axes.formatter.use_locale: False  # When True, format tick labels
+                                   # according to the user's locale.
+                                   # For example, use ',' as a decimal
+                                   # separator in the fr_FR locale.
+axes.formatter.use_mathtext: True  # When True, use mathtext for scientific
+                                     # notation.
+#axes.formatter.min_exponent: 0  # minimum exponent to format in scientific notation
+#axes.formatter.useoffset: True  # If True, the tick label formatter
+                                 # will default to labeling ticks relative
+                                 # to an offset when the data range is
+                                 # small compared to the minimum absolute
+                                 # value of the data.
+#axes.formatter.offset_threshold: 4  # When useoffset is True, the offset
+                                     # will be used when it can remove
+                                     # at least this number of significant
+                                     # digits from tick labels.
 
 ## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
 figure.subplot.top      : 1.00   # the top of the subplots of the figure (Make room for title and subtitle)
 figure.subplot.left     : 0.00   # the left side of the subplots of the figure
 figure.subplot.bottom   : 0.00   # the bottom of the subplots of the figure
-figure.autolayout       : False  # Applies tight_layout
+figure.autolayout       : True   # Applies tight_layout
 
 figure.subplot.wspace  : 0.0     # the amount of width reserved for space between subplots,
                                  # expressed as a fraction of the average axis width

@@ -63,9 +63,9 @@ def plot_dist_fig4_sub3(db, meta, fig4, sub3, algo_filter=None, state_filter=Non
 
                     keyprod = list(product(*get_keys(db, sub3)))
                     numplots = len(keyprod)
-                    if not f:
+                    if f is None:
                         f = get_fig_meta(numplots, meta=meta)
-                    for idx, ((key4, key5, key6), ax) in enumerate(zip(keyprod, f['ax'])):
+                    for idx, ((key4, key5, key6), ax, lstyle) in enumerate(zip(keyprod, f['ax'], f['lstyles'])):
                         popt = None
                         pcov = None
                         dbval = None
@@ -82,11 +82,19 @@ def plot_dist_fig4_sub3(db, meta, fig4, sub3, algo_filter=None, state_filter=Non
                                 # raise LookupError("Found incorrect number of datanodes")
                             datanode = datanode[0]
                             mmntnode = datanode.parent['measurements']
+                            dbval = db['dsets'][datanode.name]
                             ndata = datanode['avg']['num'][()]
                             if np.min(ndata) < 10:
                                 continue
-                            for i, (tidx, color) in enumerate(zip(meta['tidx'], palette)):
-                                dbval = db['dsets'][datanode.name]
+
+                            tidxs = meta.get('tidx')
+                            if isinstance(tidxs, str) and 'window' in tidxs:
+                                tdata = mmntnode['avg']['physical_time']
+                                ydata = mmntnode['avg']['entanglement_entropy_midchain']
+                                widxs = find_loglog_window2(tdata=tdata, ydata=ydata, db=dbval)
+                                tidxs = [1, 5, widxs[0], len(tdata) - 1]
+
+                            for i, (tidx, color) in enumerate(zip(tidxs, palette)):
                                 data = datanode['data'][tidx, :]
                                 dbval['vals']['t'] = mmntnode['avg']['physical_time'][tidx]
                                 dbval['vals']['bavg'] = mmntnode['avg']['bond_mid'][tidx]
@@ -101,7 +109,7 @@ def plot_dist_fig4_sub3(db, meta, fig4, sub3, algo_filter=None, state_filter=Non
                                 hist, edges = np.histogram(data, bins=meta['bins'], density=True)
                                 bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                                 line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
-                                                color=color, path_effects=path_effects)
+                                                color=color, path_effects=path_effects, linestyle=lstyle)
 
                                 legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                                 for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
@@ -119,22 +127,7 @@ def plot_dist_fig4_sub3(db, meta, fig4, sub3, algo_filter=None, state_filter=Non
                                 if not idx in f['axes_used']:
                                     f['axes_used'].append(idx)
                         if dbval:
-                            ax.set_title(get_title(dbval, sub3), x=0, horizontalalignment='left')
-                        if xlabel := meta.get('xlabel'):
-                            ax.set_xlabel(xlabel)
-
-                        if ymin := meta.get('ymin'):
-                            f['ymin'] = ymin
-                            ax.set_ylim(ymin=ymin)
-                        if ymax := meta.get('ymax'):
-                            f['ymax'] = ymax
-                            ax.set_ylim(ymax=ymax)
-                        if xmin := meta.get('xmin'):
-                            f['xmin'] = xmin
-                            ax.set_xlim(xmin=xmin)
-                        if xmax := meta.get('xmax'):
-                            f['xmax'] = xmax
-                            ax.set_xlim(xmax=xmax)
+                            ax.set_title(get_title(dbval, sub3, width=16), fontstretch="ultra-condensed", bbox=dict(facecolor='white', alpha=1.0))
 
                 if not prb_style and dbval:
                     f['fig'].suptitle('{} distribution\n{}'.format(meta['titlename'], get_title(dbval, fig4)))

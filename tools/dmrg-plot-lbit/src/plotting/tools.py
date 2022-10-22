@@ -12,13 +12,39 @@ from packaging import version
 import logging
 import matplotlib.gridspec as gs
 
-
 logger = logging.getLogger('tools')
 import tikzplotlib
 
 matplotlib_version = pkg_resources.get_distribution("matplotlib").version
 if version.parse(matplotlib_version) == version.parse("3.5"):
     logger.warning("Matplotlib version {} may not work correctly with gridspec".format(matplotlib_version))
+
+
+def get_markerlist():
+    return itertools.cycle(('^', 'v', '<', '>', 'o'))
+
+
+def get_linestyles():
+    return itertools.cycle(("-", "--", "-.", ":"))
+
+
+def get_uniform_palette_names(num):
+    if num > 6:
+        raise ValueError("num == {} must be smaller than 7".format(num))
+    palettes = [
+        'Blues',  # sequential from matplotlib
+        'Greens',  # sequential from matplotlib
+        'Oranges',  # sequential from matplotlib
+        'Purples',  # sequential from matplotlib
+        'Reds',  # sequential from matplotlib
+        'crest',  # perceptually uniform from seaborn
+        'flare',  # perceptually uniform from seaborn
+        'magma_r',  # perceptually uniform from matplotlib (reversed)
+        'viridis_r',  # perceptually uniform from matplotlib (reversed)
+        'dark:salmon_r',
+    ]
+
+    return palettes[0:num]
 
 
 def write_attributes(*args, **kwargs):
@@ -194,8 +220,9 @@ def get_tex(db, keyfmt):
     return get_prop(db, keyfmt, 'tex')
 
 
-def get_title(db, keys):
+def get_title(db, keys, width=20):
     fmtvals = []
+    newline = 0
     for s in keys:
         key, fmt = s.split(':') if ':' in s else [s, '']
         if key in db['vals'] and key in db['tex']['keys']:
@@ -207,6 +234,9 @@ def get_title(db, keys):
                 fmtvals.append('${}={}$'.format(db['tex']['keys'][key].strip('$'), '{0:{1}}'.format(db['vals'][key], fmt)))
         elif key in db['tex']['eqs']:
             fmtvals.append(db['tex']['eqs'][key])
+        if len(fmtvals) - newline >= width:
+            newline = len(fmtvals)
+            fmtvals.append('\n')
     return ', '.join(fmtvals)
 
 
@@ -263,6 +293,7 @@ def get_fig_meta(numplots: int, meta: dict):
     f = {
         'fig': None,
         'filename': meta.get('filename'),
+        'lstyles': get_linestyles(),
         'constrained_layout': meta.get('constrained_layout'),
         'numplots': numplots,
         'axin': None,  # For insets
@@ -279,8 +310,8 @@ def get_fig_meta(numplots: int, meta: dict):
         'ohr': None,
         'iwr': [10000, 1],  # Width ratio between plot and right legend
         'ihr': [10000, 1],  # Height ratio between plot and bottom legend
-        'owr_pad': meta.get('owr_pad') if 'owr_pad' in meta else 1.25,
-        'ohr_pad': meta.get('ohr_pad') if 'ohr_pad' in meta else 1.25,
+        'owr_pad': meta.get('owr_pad') if 'owr_pad' in meta else 1.00,
+        'ohr_pad': meta.get('ohr_pad') if 'ohr_pad' in meta else 1.00,
 
         'go': None,  # Outer gridspec
         'gi': [],  # Inner gridspec
@@ -289,16 +320,31 @@ def get_fig_meta(numplots: int, meta: dict):
         'lr': [],  # List of subplots with legend right (i.e. [0,1] in gsi)
         'lb': [],  # List of subplots with legend below (i.e. [1,0] in gsi)
         'lc': [],  # List of subplots with legend common to all subplots
+        'suptitle': meta.get('suptitle'),
         'ymax': meta.get('ymax'),
         'ymin': meta.get('ymin'),
         'xmax': meta.get('xmax'),
         'xmin': meta.get('xmin'),
-        'sharex': meta.get('sharex') if 'sharex' in meta else 'none',
-        'sharey': meta.get('sharey') if 'sharey' in meta else 'none',
+        'sharex': meta.get('sharex') if 'sharex' in meta else 'all',
+        'sharey': meta.get('sharey') if 'sharey' in meta else 'all',
         'xscale': meta.get('xscale') if 'xscale' in meta else 'linear',
         'yscale': meta.get('yscale') if 'yscale' in meta else 'linear',
         'xnopos': meta.get('xnopos'),
         'ynopos': meta.get('ynopos'),
+        'xmaloc': meta.get('xmaloc'),
+        'ymaloc': meta.get('ymaloc'),
+        'xmiloc': meta.get('xmiloc'),
+        'ymiloc': meta.get('ymiloc'),
+        'xmafmt': meta.get('xmafmt'),
+        'ymafmt': meta.get('ymafmt'),
+        'xmifmt': meta.get('xmifmt'),
+        'ymifmt': meta.get('ymifmt'),
+        'xformat': meta.get('xformat'),
+        'yformat': meta.get('yformat'),
+        'xticks': meta.get('xticks'),
+        'yticks': meta.get('yticks'),
+        'xlabel': meta.get('xlabel'),
+        'ylabel': meta.get('ylabel'),
         'axes_used': [],
         'legends': [],
         'legendoutside': meta.get('legendoutside'),
@@ -379,28 +425,19 @@ def get_fig_meta(numplots: int, meta: dict):
         f['lr'][-1].axis('off')
         f['lb'][-1].axis('off')
 
-        is_last_row = ir + 1 == f['nrows']
-        is_first_col = ic == 0
-        print('sharex {} {}: {}'.format(ir, ic, sharex))
-        if not is_last_row and f.get('sharex') in ['col', 'all', True]:
-            f['ax'][-1].tick_params(bottom=False, labelbottom=False)
-            f['ax'][-1].xaxis.label.set_visible(False)
-            # f['ax'][-1].xaxis.set_visible(False)
-        if not is_first_col and f.get('sharey') in ['row', 'all', True]:
-            f['ax'][-1].tick_params(left=False, labelleft=False)
-            f['ax'][-1].yaxis.label.set_visible(False)
-
         if box_aspect := f['box_aspect']:
             f['ax'][-1].set_box_aspect(box_aspect)
 
-        if f['xnopos']:
-            f['ax'][-1].set_xscale(f['xscale'], nonpositive=f['xnopos'])
-        else:
-            f['ax'][-1].set_xscale(f['xscale'])
-        if f['ynopos']:
-            f['ax'][-1].set_yscale(f['yscale'], nonpositive=f['ynopos'])
-        else:
-            f['ax'][-1].set_yscale(f['yscale'])
+        if xscale := f.get('xscale'):
+            if xnopos := f.get('xnopos'):
+                f['ax'][-1].set_xscale(xscale, nonpositive=xnopos)
+            else:
+                f['ax'][-1].set_xscale(xscale)
+        if yscale := f.get('yscale'):
+            if ynopos := f.get('ynopos'):
+                f['ax'][-1].set_yscale(yscale, nonpositive=ynopos)
+            else:
+                f['ax'][-1].set_yscale(yscale)
 
         if ymax := f['ymax']:
             f['ax'][-1].set_ylim(ymax=ymax)
@@ -411,29 +448,52 @@ def get_fig_meta(numplots: int, meta: dict):
         if xmin := f['xmin']:
             f['ax'][-1].set_xlim(xmin=xmin)
 
-        # Apply things from meta
-        if xticks := meta.get('xticks'):
+        if xticks := f.get('xticks'):
             f['ax'][-1].set_xticks(xticks)
-        if yticks := meta.get('yticks'):
+        if yticks := f.get('yticks'):
             f['ax'][-1].set_yticks(yticks)
-        if 'ylabel' in meta:
-            f['ax'][-1].set_ylabel(meta['ylabel'])
-        elif 'plotprefix' in meta:
-            f['fig'].set_ylabel(meta['plotprefix'])
-        else:
-            f['fig'].set_ylabel('?')
+        if xlabel := f.get('xlabel'):
+            f['ax'][-1].set_xlabel(xlabel)
+        if ylabel := f.get('ylabel'):
+            f['ax'][-1].set_ylabel(ylabel)
 
-        if 'xlabel' in meta:
-            f['ax'][-1].set_xlabel(meta['xlabel'])
+        # if yformat := f.get('yformat'):
+        #     f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(yformat))
+        # if xformat := f.get('xformat'):
+        #     f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(xformat))
+        # if ymafmt := f.get('ymafmt'):
+        #     f['ax'][-1].yaxis.set_major_formatter(ymafmt)
+        # if xmafmt := f.get('xmafmt'):
+        #     f['ax'][-1].xaxis.set_major_formatter(xmafmt)
+        # if ymifmt := f.get('ymifmt'):
+        #     f['ax'][-1].yaxis.set_minor_formatter(ymifmt)
+        # if xmifmt := f.get('xmifmt'):
+        #     f['ax'][-1].xaxis.set_minor_formatter(xmifmt)
+        #
+        # if ymaloc := f.get('ymaloc'):
+        #     f['ax'][-1].yaxis.set_major_locator(ymaloc)
+        # if xmaloc := f.get('xmaloc'):
+        #     f['ax'][-1].xaxis.set_major_locator(xmaloc)
+        # if ymiloc := f.get('ymiloc'):
+        #     f['ax'][-1].yaxis.set_minor_locator(ymiloc)
+        # if xmiloc := f.get('xmiloc'):
+        #     f['ax'][-1].xaxis.set_minor_locator(xmiloc)
 
-        if 'yformat' in meta:
-            f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(meta['yformat']))
-        if 'xformat' in meta:
-            f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(meta['xformat']))
+        is_last_row = ir + 1 == f['nrows']
+        is_first_col = ic == 0
+        print('sharex {} {}: {} | is_last_row {}'.format(ir, ic, sharex, is_last_row))
+        print('sharey {} {}: {} | is_first_col {}'.format(ir, ic, sharey, is_first_col))
+        if not is_last_row and f.get('sharex') in ['col', 'all', True]:
+            f['ax'][-1].tick_params(axis='x', which='both', labelbottom=False, zorder=0)
+            f['ax'][-1].xaxis.label.set_visible(False)
+
+        if not is_first_col and f.get('sharey') in ['row', 'all', True]:
+            f['ax'][-1].tick_params(axis='y', which='both', labelleft=False, zorder=0)
+            f['ax'][-1].yaxis.label.set_visible(False)
 
 
     # Set title
-    if title := meta.get('suptitle'):
+    if title := f.get('suptitle'):
         f['fig'].suptitle(title)
 
 
@@ -972,7 +1032,7 @@ def add_legend5(fmeta):
         formatted_labels = get_formatted_columns(columns)
         if iax_tgt is not None:
             iax = iax_tgt  # Put legends on common axis
-        lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, loc=loc_eq)
+        lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, loc=loc_eq, prop=dict(stretch="ultra-condensed"))
         lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
         if collect:
             break
@@ -998,7 +1058,8 @@ def add_legend5(fmeta):
         ymin, ymax = fmeta['ax'][iax].get_ylim()
         titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0, zorder=0)
         formatted_labels = get_formatted_columns(columns)
-        lg = fmeta[legend_nq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=''.join(formatted_labels), loc=loc_nq)
+        lg = fmeta[legend_nq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=''.join(formatted_labels), loc=loc_nq,
+                                          prop=dict(stretch="ultra-condensed"))
         lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
 
     return fmeta
@@ -1014,7 +1075,6 @@ def prettify_plot5(fmeta):
             logger.info('Deleting unused subplot idx {}'.format(idx))
     # Add legends
     add_legend5(fmeta=fmeta)
-    return
 
     # Remove legend boxes that are not used
     for idx, (lr, lb) in enumerate(zip(fmeta['lr'], fmeta['lb'])):
@@ -1035,6 +1095,33 @@ def prettify_plot5(fmeta):
             fmeta['fig'].delaxes(lc)
             logger.info('Deleting unused lc idx {}'.format(idx))
 
+    for ax in fmeta['ax']:
+        if yformat := fmeta.get('yformat'):
+            ax.yaxis.set_major_formatter(FormatStrFormatter(yformat))
+        if xformat := fmeta.get('xformat'):
+            ax.yaxis.set_major_formatter(FormatStrFormatter(xformat))
+        if ymafmt := fmeta.get('ymafmt'):
+            ax.yaxis.set_major_formatter(ymafmt)
+        if xmafmt := fmeta.get('xmafmt'):
+            ax.xaxis.set_major_formatter(xmafmt)
+        if ymifmt := fmeta.get('ymifmt'):
+            ax.yaxis.set_minor_formatter(ymifmt)
+        if xmifmt := fmeta.get('xmifmt'):
+            ax.xaxis.set_minor_formatter(xmifmt)
+        if ymaloc := fmeta.get('ymaloc'):
+            ax.yaxis.set_major_locator(ymaloc)
+        if xmaloc := fmeta.get('xmaloc'):
+            ax.xaxis.set_major_locator(xmaloc)
+        if ymiloc := fmeta.get('ymiloc'):
+            ax.yaxis.set_minor_locator(ymiloc)
+        if xmiloc := fmeta.get('xmiloc'):
+            ax.xaxis.set_minor_locator(xmiloc)
+        # f['ax'][-1].ticklabel_format(axis='x', scilimits=[-3, 20])
+        # f['ax'][-1].xaxis.grid(True, which='minor')
+        # ax.locator_params(tight=True)
+        # ax.autoscale()
+        print("xticks:", ax.get_xticks())
+
 
 def save_figure(f):
     prettify_plot5(f)
@@ -1045,10 +1132,6 @@ def save_figure(f):
     tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
 
 
-def get_markerlist():
-    return itertools.cycle(('^', 'v', '<', '>', 'o'))
-
-
 def plt_scatter(x, y, xlabel, ylabel, ax, markerlist, label='', xscale='linear', yscale='linear', markersize=20):
     ax.scatter(x, y, marker=next(markerlist), label=label, alpha=.90, s=markersize)
     if xlabel != '':  ax.set_xlabel(xlabel)
@@ -1057,21 +1140,3 @@ def plt_scatter(x, y, xlabel, ylabel, ax, markerlist, label='', xscale='linear',
     ax.set_yscale(yscale)
     if label != '': ax.legend()
 
-
-def get_uniform_palette_names(num):
-    if num > 6:
-        raise ValueError("num == {} must be smaller than 7".format(num))
-    palettes = [
-        'Blues',  # sequential from matplotlib
-        'Greens',  # sequential from matplotlib
-        'Oranges',  # sequential from matplotlib
-        'Purples',  # sequential from matplotlib
-        'Reds',  # sequential from matplotlib
-        'crest',  # perceptually uniform from seaborn
-        'flare',  # perceptually uniform from seaborn
-        'magma_r',  # perceptually uniform from matplotlib (reversed)
-        'viridis_r',  # perceptually uniform from matplotlib (reversed)
-        'dark:salmon_r',
-    ]
-
-    return palettes[0:num]

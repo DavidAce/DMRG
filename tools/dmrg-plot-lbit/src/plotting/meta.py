@@ -2,6 +2,8 @@ mplstyle = './src/plotting/stylesheets/prb.mplstyle'
 # mplstyle = './src/plotting/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
+from matplotlib.ticker import LogLocator, LogFormatter, LogFormatterExponent, LogFormatterSciNotation, LogFormatterMathtext, NullFormatter, MultipleLocator
+import numpy as np
 
 
 def get_meta(plotdir):
@@ -27,6 +29,10 @@ def get_meta(plotdir):
             'normpage': False,
             'titlename': 'von Neumann entropy',
             'ylabel': '$\langle \langle S_\mathrm{vN}(L/2)\\rangle \\rangle$',
+            'xlabel': '$t$',
+            # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
+            # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
+            'xmafmt': LogFormatterMathtext(),
             'plotprefix': 'SvN',
             'plotdir': plotdir,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
@@ -286,6 +292,16 @@ def get_meta(plotdir):
             'titlename': 'Truncation Error',
             'ylabel': '$\epsilon$',
             'yscale': 'log',
+            'sharex': 'all',
+            'sharey': 'all',
+            # MultipleLocator(tick_spacing)
+            # 'xmaloc': LogLocator(base=10, numticks=99, numdecs=16),
+            # 'xmiloc': LogLocator(base=10, numticks=99, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
+            # 'xmafmt': LogFormatter(base=10.0, labelOnlyBase=True, minor_thresholds=(1.0, 0.4), linthresh=None),
+            # 'xmaloc': LogLocator(numticks=9, numdecs=32),
+            # 'xmiloc': LogLocator(subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
+            'xmafmt': LogFormatterMathtext(labelOnlyBase=True),
+
             'plotprefix': 'eps',
             'plotdir': plotdir,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
@@ -293,7 +309,7 @@ def get_meta(plotdir):
             'markloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['x', 'w', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'best',
@@ -319,12 +335,14 @@ def get_meta(plotdir):
             'dsetname': 'data',
             'normpage': False,
             'titlename': 'Number Entropy',
-            'figsize': (6.75, 6.00),
+            'figsize': (3.375, 3.00),
             'ylabel': '$p(S_N(L/2))$',
             'yscale': 'log',
             'yformat': '%.2f',
-            'tidx': [0, 1, 2, 5, 7, 10],  # Time indices for which to plot the distribution
-            'bins': 60,
+            'sharex': 'all',
+            'sharey': 'all',
+            'tidx': 'window',  # Time indices for which to plot the distribution
+            'bins': 40,
             'xlabel': '$S_N$',
             'density': True,
             'plotprefix': 'SN',
@@ -339,10 +357,10 @@ def get_meta(plotdir):
             # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['f', 'x', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'x', 'w', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
-            'legendlocation': 'center right',
+            'legendlocation': 'lower left',
         },
     }
 

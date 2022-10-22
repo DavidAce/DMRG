@@ -21,7 +21,7 @@ def stretched_log(x, C, xi, beta):
 
 
 plotdir = 'plots/lbit-decay'
-datafile = '../../output/mbl_10003.h5'
+datafile = '../../output/mbl_10003-normal.h5'
 lbitpath = 'fLBIT/model/lbits'
 
 
@@ -179,8 +179,6 @@ def plot_decay():
 
 
 def plot_lbits():
-    h5data = h5open(datafile, 'r')
-
     meta = {
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
         'ylabel': '$O(L/2,j)$',
@@ -194,7 +192,7 @@ def plot_lbits():
         # 'box_aspect': 1,
         # 'xscale': 'linear',
         'ymin': 1e-10,
-        'plotprefix': 'lbit-decay',
+        'plotprefix': 'lbit-decay-normal',
         'plotdir': plotdir,
         # 'mplstyle': './src/plotting/stylesheets/prb.mplstyle',
         'mplstyle': './src/plotting/stylesheets/slack.mplstyle',
@@ -223,6 +221,7 @@ def plot_lbits():
         path_effects = None
     meta['filename'] = "{}/{}_lioms".format(meta['plotdir'], meta['plotprefix'])
 
+    h5data = h5open(datafile, 'r')
     frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
     urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
     lbits = h5data["{}".format(lbitpath)]["data"][()]
