@@ -61,77 +61,78 @@ def lbit_plot(args):
     # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_dist_fig4_sub3(db=db, meta=meta['dist-num'], fig4=['J', 'x:.2f', 'r', 'w'], sub3=['f', 'u', 'L'], f=f, palette_name=palette)
+        f = plot_dist_fig4_sub3(db=db, meta=meta['dist-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
+    save_figure(f)
+    # plt.show()
+    # exit(0)
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['trn'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['trn'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['chi'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['chi'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num1'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num1'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num2'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num2'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numH1'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numH1'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numH2'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numH2'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numa'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numa'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numHa'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numHa'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['nument1'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['nument1'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['nument2'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['nument2'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['tsim'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['tsim'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['titr'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['titr'], fig3=fig3, sub3=sub3, l1=l1, f=f, palette_name=palette)
-    save_figure(f)
-
-    f = None
-    for db, palette in zip(dbs, palettes):
-        f = plot_v2_lbit_fig3_sub3_line1(db=db, meta=meta['lbit'], fig3=['J', 'r', 'f'], sub3=['w', 'u', 'x:.2f'], l1=['L'], f=f, palette_name=palette)
+        f = plot_v2_lbit_fig3_sub3_line1(db=db, meta=meta['lbit'], fig3=['J', 'r', 'f'], sub3=['w', 'u', 'x:.2f'], l1=['L'], figs=f, palette_name=palette)
     save_figure(f)
     for h5avg in h5avgs:
         h5close(h5avg)

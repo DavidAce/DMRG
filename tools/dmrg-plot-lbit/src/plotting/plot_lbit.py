@@ -4,7 +4,7 @@ import seaborn as sns
 from .tools import *
 
 
-def plot_v2_lbit_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_filter=None, f=None, palette_name=None):
+def plot_v2_lbit_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_filter=None, figs=None, palette_name=None):
     if len(fig3) != 3:
         raise AssertionError("fig must have length 3")
     if len(sub3) != 3:
@@ -42,8 +42,10 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
     for key0, key1, key2 in figprod:
         subprod = list(product(*get_keys(db, sub3)))
         numplots = len(subprod)
-        if not f:
-            f = get_fig_meta(numplots, meta=meta)
+        if figs is None:
+            figs = []
+        figs.append(get_fig_meta(numplots, meta=meta))
+        f = figs[-1]
         for idx, ((key3, key4, key5), ax) in enumerate(zip(subprod, f['ax'])):
             axin = None
             popt = None
@@ -80,21 +82,9 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
+
             if dbval:
-                ax.set_title(get_title(dbval, sub3), x=0, horizontalalignment='left')
-            ax.set_xlabel("$|i-j|$")
-            if ymin := meta.get('ymin'):
-                f['ymin'] = ymin
-                ax.set_ylim(ymin=ymin)
-            if ymax := meta.get('ymax'):
-                f['ymax'] = ymax
-                ax.set_ylim(ymax=ymax)
-            if xmin := meta.get('xmin'):
-                f['xmin'] = xmin
-                ax.set_xlim(xmin=xmin)
-            if xmax := meta.get('xmax'):
-                f['xmax'] = xmax
-                ax.set_xlim(xmax=xmax)
+                ax.set_title(get_title(dbval, sub3, width=16), fontstretch="ultra-condensed", bbox=dict(facecolor='white', alpha=1.0))
 
         if not prb_style and dbval:
             f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, fig3)))

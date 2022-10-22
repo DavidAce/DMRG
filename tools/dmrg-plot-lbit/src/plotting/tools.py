@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot
 import numpy as np
 from numba import njit
@@ -11,6 +13,7 @@ import pkg_resources
 from packaging import version
 import logging
 import matplotlib.gridspec as gs
+from git import Repo
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -511,53 +514,6 @@ def get_fig_meta(numplots: int, meta: dict):
 
     return f
 
-
-def add_legend(ax, handles_labels, title=None, loc=None, ncol=1):
-    unique_handles = []
-    unique_labels = []
-    for handle, label in zip(handles_labels['line'], handles_labels['text']):
-        if not label in unique_labels:
-            unique_handles.append(handle)
-            unique_labels.append(label)
-    second_legend = plt.legend(handles=unique_handles, labels=unique_labels,
-                               title=title, loc=loc,
-                               framealpha=0.7, fontsize='x-small', labelspacing=0.25, ncol=ncol)
-    ax.add_artist(second_legend)
-
-
-def add_legend2(ax, legend_meta):
-    loc = legend_meta['loc'] if 'loc' in legend_meta else rcParams['legend.loc']
-    ncol = legend_meta['ncol'] if 'ncol' in legend_meta else 1
-    title = legend_meta['title'] if 'title' in legend_meta else None
-    fontsize = legend_meta['fontsize'] if 'fontsize' in legend_meta else rcParams['legend.fontsize']
-    framealpha = legend_meta['framealpha'] if 'framealpha' in legend_meta else rcParams['legend.framealpha']
-    labelspacing = legend_meta['labelspacing'] if 'labelspacing' in legend_meta else rcParams['legend.labelspacing']
-    unique = legend_meta['unique'] if 'unique' in legend_meta else True
-    insubfig = legend_meta['insubfig'] if 'insubfig' in legend_meta else False
-    handles = []
-    labels = []
-    if insubfig:
-        legend_objects = []
-        for ax, handle, label in zip(legend_meta['ax'], legend_meta['handle'], legend_meta['label']):
-            handle.set_label(label)
-        ax.legend(title=title, loc=loc, framealpha=framealpha,
-                  fontsize=fontsize, labelspacing=labelspacing, ncol=ncol)
-    else:
-        for handle, label in zip(legend_meta['handle'], legend_meta['label']):
-            if unique:
-                if not label in labels:
-                    handles.append(handle)
-                    labels.append(label)
-            else:
-                handles.append(handle)
-                labels.append(label)
-
-        legend_object = plt.legend(handles=handles, labels=labels,
-                                   title=title, loc=loc, framealpha=framealpha,
-                                   fontsize=fontsize, labelspacing=labelspacing, ncol=ncol)
-        ax.add_artist(legend_object)
-
-
 def get_formatted_columns(columns):
     # columns is a list of legend columns like
 
@@ -618,250 +574,6 @@ def px_to_cm(w, h):
     return 2.54 * w, 2.54 * h
 
 
-def prettify_plot(fig, axes, cols, rows, axes_used, xmax=None, xmin=None, ymax=None, ymin=None, nlabel=None,
-                  ntitle=None, Llabel=None, Ltitle=None, ncol=1, loc=None, legend_in_subfig=True):
-    for idx, ax in enumerate(np.ravel(axes)):  # Last one is for the legend
-        if not idx in axes_used:
-            fig.delaxes(ax)
-        else:
-            ax.set_ylim(ymin=ymin, ymax=ymax)
-            ax.set_xlim(xmin=xmin, xmax=xmax)
-
-    handles_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
-    unique_handles = []
-    unique_labels = []
-    for handles, labels in handles_labels:
-        for handle, label in zip(handles, labels):
-            if not label in unique_labels:
-                unique_handles.append(handle)
-                unique_labels.append(label)
-
-    if legend_in_subfig:
-        if not loc:
-            loc = 'best'
-        for idx, ax in enumerate(np.ravel(axes)):
-            print('loc:', loc)
-            ax.legend(loc=loc, ncol=ncol)
-        return
-    else:
-        # Create a legend for the first line.
-        if not loc:
-            if nlabel or Llabel:
-                loc = 'upper center'
-            else:
-                loc = 'center right'
-
-        ax = fig.add_subplot(rows, cols + 1, rows * cols + 1)
-
-        first_legend = plt.legend(handles=unique_handles, labels=unique_labels, loc=loc, ncol=ncol)
-
-        # Add the legend manually to the current Axes.
-        plt.gca().add_artist(first_legend)
-
-        if nlabel:
-            add_legend(ax, nlabel, ntitle, loc='best', ncol=2)
-
-        if Llabel:
-            add_legend(ax, Llabel, Ltitle, loc='best', ncol=2)
-        ax.axis('off')
-
-
-def prettify_plot2(fig, axes, cols, rows, axes_used, xmax=None, xmin=None, ymax=None, ymin=None, extra_legend=None):
-    for idx, ax in enumerate(np.ravel(axes)):  # Last one is for the legend
-        if not idx in axes_used:
-            fig.delaxes(ax)
-        else:
-            ax.set_ylim(ymin=ymin, ymax=ymax)
-            ax.set_xlim(xmin=xmin, xmax=xmax)
-
-    ax = fig.add_subplot(rows, cols, rows * cols)
-    ax.axis('off')
-
-    # Create a legend for the first line.
-    if extra_legend:
-        if isinstance(extra_legend, list):
-            for l in extra_legend:
-                add_legend2(ax, l)
-        elif isinstance(extra_legend, dict):
-            add_legend2(ax, extra_legend)
-
-
-def add_legend3(fig, lgnd_meta, lgnd_list=None):
-    # meta should be a dict with keys 'ax' with the corresponding axes and 'legends' which names the extra legends
-
-    for lkey in lgnd_meta['legend_keys']:
-        ax = lgnd_meta['ax']
-        l = lgnd_meta[lkey]
-        handles = l['handle']
-        labels = l['label']
-        loc = l['loc'] if 'loc' in l else rcParams['legend.loc']
-        ncol = l['ncol'] if 'ncol' in l else 1
-        title = l['title'] if 'title' in l else None
-        fontsize = l['fontsize'] if 'fontsize' in l else rcParams['legend.fontsize']
-        framealpha = l['framealpha'] if 'framealpha' in l else rcParams['legend.framealpha']
-        labelspacing = l['labelspacing'] if 'labelspacing' in l else rcParams['legend.labelspacing']
-        unique = l['unique'] if 'unique' in l else True
-        insubfig = l['insubfig'] if 'insubfig' in l else False
-
-        if not insubfig:
-            gs = ax.get_gridspec()
-            rows = gs.nrows
-            cols = gs.ncols
-            # ax = fig.add_subplot(rows, cols, rows * cols)
-            # ax.axis('off')
-            raise AssertionError("insubfig==false has not been implemented in add_legend3")
-
-        if len(handles) == 0:
-            continue
-        print(lgnd_meta)
-        # Detects wether this is an 'l' or an 'm' plot
-        # 'l' plots are for the main data characteristics, such as 'L', 'num', bond dimensions, etc.
-        # 'm' is to show the saturation window
-        if 'l' in lkey:
-            anchor = (1.01, 1.01)  # anchor the upper left corner of the legend to this coordinate on the subplot
-        else:
-            anchor = (1.01, 0.5)  # anchor the upper left corner of the legend to this coordinate on the subplot
-
-        # Shrink current axis by 20%
-        # box = ax.get_position()
-        # ax.set_position([box.x0, box.y0, box.width * 0.5, box.height])
-        dummy = mpatches.Patch(alpha=0.0, label=None)
-
-        formatted_labels = get_formatted_columns([title] + labels)
-
-        lg = ax.legend(handles=[dummy] + handles, labels=formatted_labels,
-                       title=None, framealpha=framealpha,
-                       fontsize=fontsize, labelspacing=labelspacing, ncol=ncol,
-                       bbox_to_anchor=anchor,
-                       bbox_transform=ax.transAxes,
-                       borderaxespad=0.
-                       )
-        lg._legend_box.align = "right"  # Align the legend title right (i.e. the dummy row)
-        ax.add_artist(lg)
-        if isinstance(lgnd_list, list):
-            lgnd_list.append(lg)
-
-    # else:
-    #     for handle, label in zip(legend_meta['handle'], legend_meta['label']):
-    #         if unique:
-    #             if not label in labels:
-    #                 handles.append(handle)
-    #                 labels.append(label)
-    #         else:
-    #             handles.append(handle)
-    #             labels.append(label)
-    #
-    #     legend_object = plt.legend(handles=handles, labels=labels,
-    #                                title=title, loc=loc, framealpha=framealpha,
-    #                                fontsize=fontsize, labelspacing=labelspacing, ncol=ncol)
-    #     ax.add_artist(legend_object)
-
-
-def prettify_plot3(fig, axes, cols, rows, axes_used, xmax=None, xmin=None, ymax=None, ymin=None, lgnd_meta=None, lgnd_list=None):
-    for idx, ax in enumerate(np.ravel(axes)):  # Last one is for the legend
-        if not idx in axes_used:
-            fig.delaxes(ax)
-        else:
-            ax.set_ylim(ymin=ymin, ymax=ymax)
-            ax.set_xlim(xmin=xmin, xmax=xmax)
-
-    # Create a legend for the first line.
-    if lgnd_meta:
-        if isinstance(lgnd_meta, list):
-            for l in lgnd_meta:
-                add_legend3(fig=fig, lgnd_meta=l, lgnd_list=lgnd_list)
-        elif isinstance(lgnd_meta, dict):
-            add_legend3(fig=fig, lgnd_meta=lgnd_meta, lgnd_list=lgnd_list)
-
-        # cols = 1
-        # if(not isinstance(axes,plt.Axes)): # axes can be Axes or array
-        #     cols = np.shape(axes)[-1]
-
-        # Where is the right edge of the last subfigure, excluding legend, as a fraction of the whole figure?
-        # It depends on cols. Example: Let cols == 3, and rect=[0,0,0.75,1] then we should fit 3 subfigures,
-        # where 2 of them have a legend included (due to tigth_layout(rect=[...])) but the third legend would
-        # not fit inside the figure. So then, interpreting 100% as the figure including the legend, the right
-        # edge must be at (3-1)+ 0.75 /3
-        # frac = 0.75
-        # redg = 0.95*((cols - 1) + frac)/cols
-        # fig.tight_layout(rect=[0, 0, frac, 1]) # Reshapes each subplot to be 75% of its original width, to fit a legend
-        # fig.subplots_adjust(wspace=frac, right=redg) # Reshape the figure so that the right-most legend will fit. 0.8 is a fraction of the total figure size
-
-        if lgnd_list:
-            # Figure out w_pad for tight layout
-            fig.canvas.draw()
-            # figsize = fig.get_size_inches() * fig.dpi  # figure (width,height) in pixels
-            font_size_in_pixels = rcParams['font.size']
-            # Get the widest legend
-            w_max_in_pixels = 0.
-            h_max_in_pixels = 0.
-            # print('lgnd_list', lgnd_list)
-
-            for lg in lgnd_list:
-                # print('getting lg frame', lg)
-                f = lg.get_frame()
-                w_max_in_pixels = max(w_max_in_pixels, f.get_width())
-                h_max_in_pixels = max(h_max_in_pixels, f.get_height())
-
-            # We have the widest legend box in units of pixels. Convert to units of font size
-            w_max_in_centimeter = w_max_in_pixels / 2560 * 27 * 2.54
-            w_max_in_font_units = w_max_in_pixels / font_size_in_pixels
-            h_max_in_font_units = h_max_in_pixels / font_size_in_pixels
-            print("font_size_in_pixels: ", font_size_in_pixels)
-            print("w_max_in_centimeter: ", w_max_in_centimeter)
-            print("w_max_in_pixels    : ", w_max_in_pixels)
-            print("w_max_in_font_units: ", w_max_in_font_units)
-
-            ax_w_max_in_pixels = 0.
-            ax_h_max_in_pixels = 0.
-            for lmeta in lgnd_meta:
-                ax = lmeta['ax']
-                ax_tbox = ax.get_tightbbox(fig.canvas.get_renderer())
-                # ax_tbox = ax.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
-                # ax_bbox = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-                ax_bbox = ax.get_window_extent()
-                w_bbox, h_bbox = ax_bbox.width, ax_bbox.height
-                w_tbox, h_tbox = ax_tbox.width, ax_tbox.height
-                # ax_w_max_in_pixels = max(ax_w_max_in_pixels, width)
-                # ax_h_max_in_pixels = max(ax_h_max_in_pixels, height)
-                print('bbox: {} px | {} in | {} cm'.format((w_bbox, h_bbox), px_to_in(w_bbox, h_bbox), px_to_cm(w_bbox, h_bbox)))
-                print('tbox: {} px | {} in | {} cm'.format((w_tbox, h_tbox), px_to_in(w_tbox, h_tbox), px_to_cm(w_tbox, h_tbox)))
-
-            # We have the widest axes box in units of pixels. Convert to units of font size
-            # w_max_in_centimeter = w_max_in_pixels / 2560*27*2.54
-            # w_max_in_font_units = w_max_in_pixels / font_size_in_pixels
-            # h_max_in_font_units = h_max_in_pixels / font_size_in_pixels
-            # print("font_size_in_pixels: ", font_size_in_pixels)
-            # print("w_max_in_centimeter: ", w_max_in_centimeter)
-            # print("w_max_in_pixels    : ", w_max_in_pixels)
-            # print("w_max_in_font_units: ", w_max_in_font_units)
-
-            figcols = 1
-            if (not isinstance(axes, plt.Axes)):  # axes can be Axes or array
-                figcols = np.shape(axes)[-1]
-
-            # Where is the right edge of the last subfigure, excluding legend, as a fraction of the whole figure?
-            # It depends on figcols. Example: Let cols == 3, and rect=[0,0,0.75,1] then we should fit 3 subfigures,
-            # where 2 of them have a legend included (due to tigth_layout(rect=[...])) but the third legend would
-            # not fit inside the figure. So then, interpreting 100% as the figure including the legend, the right
-            # edge must be at (3-1)+ 0.75 /3
-            frac = 1
-            redg = 0.95 * ((figcols - 1) + frac) / figcols
-            # fig.tight_layout(rect=[0, 0, frac, 1]) # Reshapes each subplot to be 75% of its original width, to fit a legend
-            # fig.tight_layout(w_pad = w_max_in_font_units,
-            # rect=[0, 0, frac, 1]
-            # ) # h_pad/w_pad: padding (height/width) between edges of adjacent subplots, as a fraction of the font size.
-            # Reshape the figure so that the right-most legend will fit. 0.8 is a fraction of the total figure
-            # fig.subplots_adjust(
-            # wspace=frac,
-            # right=redg
-            # )
-
-
-    else:
-        fig.tight_layout()
-
-
 def labels_are_equal(lgnd_meta):
     # Gather all the labels for the different kinds of legend keys (e.g. "l", "m" type legends)
     labels = {}
@@ -891,80 +603,6 @@ def columns_are_equal(fmeta):
             all(fmeta['legends'][0][icol]['label'] == fmeta['legends'][iax][icol]['label'] for iax in range(numaxes)))
 
     return columns_equal
-
-
-def add_legend4(fmeta, lgnd_meta):
-    # meta should be a dict with keys 'ax' with the corresponding axes and 'legends' which names the extra legends
-    # for (oidx,gso),(nrow,ncol) in zip(enumerate(fmeta['gso']), np.ndindex((fmeta['nrows'], fmeta['ncols']))):
-    n = len(fmeta['ax'])
-    if not all(len(x) == n for x in [fmeta['ax'], fmeta['lr'], fmeta['lb'], lgnd_meta]):
-        raise AssertionError("Not equal lengths")
-    labels_equal = labels_are_equal(lgnd_meta)
-    for idx, (ax, lr, lb, lgnd) in enumerate(zip(fmeta['ax'], fmeta['lr'], fmeta['lb'], lgnd_meta)):
-        for lkey in lgnd['legend_keys']:
-            l = lgnd[lkey]  # The legend description dict
-            handles = l['handle']
-            labels = l['label']
-            loc = l['loc'] if 'loc' in l else rcParams['legend.loc']
-            ncol = l['ncol'] if 'ncol' in l else 1
-            title = l['title'] if 'title' in l else None
-            fontsize = l['fontsize'] if 'fontsize' in l else rcParams['legend.fontsize']
-            framealpha = l['framealpha'] if 'framealpha' in l else rcParams['legend.framealpha']
-            labelspacing = l['labelspacing'] if 'labelspacing' in l else rcParams['legend.labelspacing']
-            unique = l['unique'] if 'unique' in l else True
-            insubfig = l['insubfig'] if 'insubfig' in l else False
-
-            if len(handles) == 0:
-                continue
-            if labels_equal[lkey] and idx > 0:
-                continue
-
-            titlepatch = mpatches.Patch(alpha=0.0, label=None)
-            formatted_labels = get_formatted_columns([title] + labels)
-
-            # Decide where to put it. ax, lr, lg or lc[0]/lc[1]
-            if insubfig:
-                lg = ax.legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, ncol=ncol)
-            elif labels_equal[lkey] and 'l' in lkey:
-                lg = fmeta['lc'][0].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, ncol=ncol)
-            elif labels_equal[lkey] and 'm' in lkey:
-                lg = fmeta['lc'][1].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, ncol=ncol)
-            else:
-                if 'l' in lkey:
-                    lg = lr.legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, ncol=ncol)
-                else:
-                    lg = lb.legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, ncol=ncol)
-
-            lg._legend_box.align = "right"  # Align the legend title right (i.e. the dummy row)
-            # ax.add_artist(lg)
-
-
-def prettify_plot4(fmeta, lgnd_meta=None):
-    for idx, (ax, lr, lb) in enumerate(zip(fmeta['ax'], fmeta['lr'], fmeta['lb'])):
-        if not idx in fmeta['axes_used']:
-            fmeta['fig'].delaxes(ax)
-            fmeta['fig'].delaxes(lr)
-            fmeta['fig'].delaxes(lb)
-
-    # Add legends
-    if lgnd_meta:
-        add_legend4(fmeta=fmeta, lgnd_meta=lgnd_meta)
-
-        # Remove legend boxes that are not used
-        for lr, lb in zip(fmeta['lr'], fmeta['lb']):
-            # Get all legend objects from lr
-            objs_lr = [c for c in lr.get_children() if isinstance(c, legend.Legend)]
-            objs_lb = [c for c in lb.get_children() if isinstance(c, legend.Legend)]
-            if (len(objs_lr) == 0):
-                fmeta['fig'].delaxes(lr)
-            if (len(objs_lb) == 0):
-                fmeta['fig'].delaxes(lb)
-
-        for lc in fmeta['lc']:
-            objs_lc = [c for c in lc.get_children() if isinstance(c, legend.Legend)]
-            if (len(objs_lc) == 0):
-                fmeta['fig'].delaxes(lc)
-
 
 def add_legend5(fmeta):
     # meta should be a dict with keys 'ax' with the corresponding axes and 'legends' which names the extra legends
@@ -1120,17 +758,30 @@ def prettify_plot5(fmeta):
         # f['ax'][-1].xaxis.grid(True, which='minor')
         # ax.locator_params(tight=True)
         # ax.autoscale()
-        print("xticks:", ax.get_xticks())
+        # print("xticks:", ax.get_xticks())
 
 
 def save_figure(f):
-    prettify_plot5(f)
-    f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
-    f['fig'].savefig('{}.png'.format(f['filename']), format='png')
-    f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
-    f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
-    tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
+    if f is None:
+        return
+    if isinstance(f, list):
+        for fig in f:
+            save_figure(fig)
+    elif isinstance(f, dict):
+        prettify_plot5(f)
+        f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
+        f['fig'].savefig('{}.png'.format(f['filename']), format='png')
+        f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
+        f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
 
+        with open('{}.git'.format(f['filename']), 'w') as gitfile:
+            repo = Repo(search_parent_directories=True)
+            commit_hash = repo.git.rev_parse("HEAD")
+            gitfile.write(commit_hash)
+
+        tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
+    else:
+        raise TypeError("Unexpected type: ", type(f))
 
 def plt_scatter(x, y, xlabel, ylabel, ax, markerlist, label='', xscale='linear', yscale='linear', markersize=20):
     ax.scatter(x, y, marker=next(markerlist), label=label, alpha=.90, s=markersize)

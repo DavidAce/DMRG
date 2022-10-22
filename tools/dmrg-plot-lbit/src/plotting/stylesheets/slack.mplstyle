@@ -1,3 +1,13 @@
+# Font sizes
+# xx-small 5.79
+# x-small 6.94
+# small 8.33
+# medium 10.0
+# large 12.0
+# x-large 14.4
+# xx-large 17.28
+# larger 12.0
+# smaller 8.33
 
 # This is a modified style based on seaborn-darkgrid
 
@@ -51,13 +61,6 @@ lines.markersize        : 5
 figure.figsize          : 10, 8 # More plots
 #figure.figsize          : 2.53125, 3.00 # 75% width
 
-
-## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
-
-figure.subplot.top      : 0.90   # the top of the subplots of the figure (Make room for title and subtitle)
-figure.subplot.left     : 0.20   # Make room for ylabel
-figure.subplot.bottom   : 0.15
-
 ## Dimensions as fraction of font size:
 legend.fontsize         : 10
 #legend.fontsize         : 8.33
@@ -84,26 +87,35 @@ legend.scatterpoints    : 1
 
 
 
-# Defaults
-#figure.subplot.top     : 0.88   # the top of the subplots of the figure (Make room for title and subtitle)
-#figure.subplot.left    : 0.125  # the left side of the subplots of the figure
-#figure.subplot.right   : 0.9    # the right side of the subplots of the figure
-#figure.subplot.bottom  : 0.11   # the bottom of the subplots of the figure
-#figure.subplot.wspace  : 0.0    # the amount of width reserved for space between subplots,
-                                 # expressed as a fraction of the average axis width
-#figure.subplot.hspace  : 0.2    # the amount of height reserved for space between subplots,
+## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
+figure.autolayout      : False  # Applies tight_layout
+figure.subplot.top     : 1.00   # the top of the subplots of the figure (Make room for title and subtitle)
+figure.subplot.bottom  : 0.05   # the bottom of the subplots of the figure
+figure.subplot.left    : 0.10   # the left side of the subplots of the figure
+figure.subplot.right   : 1.0    # the right side of the subplots of the figure
+figure.subplot.wspace  : 0.0    # the amount of width reserved for space between subplots,
+                                # expressed as a fraction of the average axis width
+figure.subplot.hspace  : 0.0    # the amount of height reserved for space between subplots,
                                  # expressed as a fraction of the average axis height
-figure.autolayout       : False  # Applies tight_layout
+
+#figure.constrained_layout.use: True   # When True, automatically make plot
+                                       # elements fit on the figure. (Not
+                                       # compatible with `autolayout`, above).
+#figure.constrained_layout.h_pad:  0   # Padding around axes objects. Float representing
+#figure.constrained_layout.w_pad:  0   # inches. Default is 3/72 inches (3 points)
+#figure.constrained_layout.hspace: 0   # Space between subplot groups. Float representing
+#figure.constrained_layout.wspace: 0   # a fraction of the subplot widths being separated.
+
 
 # Saving figures
 ## The default savefig parameters can be different from the display parameters
 ## e.g., you may want a higher resolution, or to make the figure
 ## background white
 
-savefig.dpi            : 600      # figure dots per inch or 'figure'
+savefig.dpi            : figure   # figure dots per inch or 'figure'
 savefig.facecolor      : auto     # figure face color when saving
 savefig.edgecolor      : auto     # figure edge color when saving
-savefig.format         : svg      # {png, ps, pdf, svg}
+savefig.format         : pdf      # {png, ps, pdf, svg}
 savefig.bbox           : tight    # {tight, standard}
                                   # 'tight' is incompatible with pipe-based animation
                                   # backends (e.g. 'ffmpeg') but will work with those

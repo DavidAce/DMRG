@@ -1,9 +1,10 @@
-mplstyle = './src/plotting/stylesheets/prb.mplstyle'
-# mplstyle = './src/plotting/stylesheets/slack.mplstyle'
-legendoutside = False
-legendcollect = False
 from matplotlib.ticker import LogLocator, LogFormatter, LogFormatterExponent, LogFormatterSciNotation, LogFormatterMathtext, NullFormatter, MultipleLocator
 import numpy as np
+
+# mplstyle = './src/plotting/stylesheets/prb.mplstyle'
+mplstyle = './src/plotting/stylesheets/slack.mplstyle'
+legendoutside = False
+legendcollect = False
 
 
 def get_meta(plotdir):
@@ -54,8 +55,8 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
-            'ymin': 0.41,
-            'ymax': 0.45,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
             'xmin': 1,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
@@ -77,8 +78,8 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
-            'ymin': 0.40,
-            'ymax': 0.45,
+            # 'ymin': 0.40,
+            # 'ymax': 0.45,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -118,7 +119,7 @@ def get_meta(plotdir):
             'titlename': ' HartleyNumber Entropy',
             'ylabel': '$\langle S_H(L/2)\\rangle$',
             'yformat': '%.2f',
-            'ymin': 1.27,
+            # 'ymin': 1.27,
             'plotprefix': 'SH',
             'plotdir': plotdir,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
@@ -319,6 +320,7 @@ def get_meta(plotdir):
             'dsetname': 'decay',
             'titlename': 'l-bit',
             'ylabel': '$\langle \langle \mathrm{l-bit} \\rangle\\rangle$ ',
+            'xlabel': "$|i-j|$",
             'yscale': 'log',
             'ynopos': 'clip',
             'plotprefix': 'lbit',
@@ -335,7 +337,7 @@ def get_meta(plotdir):
             'dsetname': 'data',
             'normpage': False,
             'titlename': 'Number Entropy',
-            'figsize': (3.375, 3.00),
+            # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_N(L/2))$',
             'yscale': 'log',
             'yformat': '%.2f',
