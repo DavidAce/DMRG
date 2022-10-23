@@ -581,7 +581,7 @@ void flbit::transform_to_real_basis() {
         // Check normalization
         for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
 
-        // Double check the transform operation
+        // Double-check the transform operation
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
         for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
