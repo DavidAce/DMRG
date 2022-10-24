@@ -30,7 +30,8 @@ def parse():
                             # 'lbit41', # Mini test to check progress on new storage form
                             # 'lbit42', # Big run, 5000 realizations L = 8..24
                             # 'lbit43', # Small test w-dependence, L = 16
-                            'lbit44',  # Small test of normally distributed random circuit L = 16
+                            # 'lbit44',  # Small test of normally distributed random circuit L = [4...16]
+                            'lbit45',  # Small test of squared distributed random circuit L = [4...16]
                         ])
 
     args = parser.parse_args()
