@@ -596,7 +596,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
             if col == 'iter' and not tableiter:
                 tableiter = tabledata[col][0]
             elif col == 'num':
-                stats = np.full(6, itermax)
+                stats = np.full(6, len(tabledata))
             elif col == 'hartley_number_entropy_midchain':
                 pn_itr = statrows[statkey]['tb'].nrows
                 stats = get_stats(data=write_statistics_crono4.hartley_number_entropy_data[pn_itr])

@@ -71,6 +71,7 @@ mathtext.fontset        : stix
 
 lines.linewidth         : 0.7
 lines.markersize        : 2.0
+errorbar.capsize        : 3  # length of end cap on error bars in pixels
 
 axes.axisbelow          : True
 axes.titlelocation      : center  # alignment of the title: {left, right, center}
@@ -78,8 +79,8 @@ axes.titlesize          : small   # font size of the axes title
 axes.titleweight        : normal  # font weight of title
 axes.titlecolor         : auto    # color of the axes title, auto falls back to
                                   # text.color as default value
-axes.titley             : 1.02    # position title (axes relative units).  None implies auto
-axes.titlepad           : 0       # pad between axes and title in points
+axes.titley             : 0.95    # position title (axes relative units).  None implies auto
+axes.titlepad           : 0.00    # pad between axes and title in points
 
 #axes.formatter.limits: -5, 6  # use scientific notation if log10
                                # of the axis range is smaller than the
@@ -103,10 +104,10 @@ axes.formatter.use_mathtext: True  # When True, use mathtext for scientific
 
 ## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
 figure.autolayout       : False  # Applies tight_layout
-figure.subplot.top      : 1.00   # the top of the subplots of the figure (Make room for title and subtitle)
-figure.subplot.bottom   : 0.00   # the bottom of the subplots of the figure
-figure.subplot.left     : 0.00   # the left side of the subplots of the figure
-figure.subplot.right    : 1.0    # the right side of the subplots of the figure
+figure.subplot.top      : 0.99   # the top of the subplots of the figure (Make room for title and subtitle)
+figure.subplot.bottom   : 0.125  # the bottom of the subplots of the figure
+figure.subplot.left     : 0.185  # the left side of the subplots of the figure
+figure.subplot.right    : 0.95   # the right side of the subplots of the figure
 figure.subplot.wspace   : 0.0    # the amount of width reserved for space between subplots,
                                  # expressed as a fraction of the average axis width
 figure.subplot.hspace   : 0.0    # the amount of height reserved for space between subplots,

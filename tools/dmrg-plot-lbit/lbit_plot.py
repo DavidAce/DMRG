@@ -50,21 +50,39 @@ def lbit_plot(args):
     # l1   = ['f']
 
     fig3 = ['J', 'x:.2f', 'r']
-    sub3 = ['f', 'u', 'L']
-    l1 = ['w']
+    sub3 = ['f', 'u', 'w']
+    sub2 = ['f', 'u']
+    l1 = ['L']
 
     # #
     # fig3 = ['J', 'x:.2f', 'r']
     # sub3 = ['L', 'f', 'w']
     # l1   = ['u']
 
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
+    save_figure(f)
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_tavg_fig3_sub2_line1(db=db, meta=meta['tavg-ent'], fig3=fig3, sub2=sub2, l1=['w'], x1=['L'], figs=f, palette_name=palette)
+    save_figure(f)
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_tavg_fig3_sub2_line1(db=db, meta=meta['tavg-num'], fig3=fig3, sub2=sub2, l1=['w'], x1=['L'], figs=f, palette_name=palette)
+    save_figure(f)
     # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_dist_fig4_sub3(db=db, meta=meta['dist-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
+        f = plot_dist_fig3_sub3_line1(db=db, meta=meta['dist-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
     # plt.show()
     # exit(0)
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
+    save_figure(f)
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['trn'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)

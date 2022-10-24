@@ -1,8 +1,10 @@
-from matplotlib.ticker import LogLocator, LogFormatter, LogFormatterExponent, LogFormatterSciNotation, LogFormatterMathtext, NullFormatter, MultipleLocator
+from matplotlib.ticker import LogLocator, \
+    LogFormatter, LogFormatterExponent, LogFormatterSciNotation, \
+    LogFormatterMathtext, NullFormatter, MultipleLocator, MaxNLocator
 import numpy as np
 
-# mplstyle = './src/plotting/stylesheets/prb.mplstyle'
-mplstyle = './src/plotting/stylesheets/slack.mplstyle'
+mplstyle = './src/plotting/stylesheets/prb.mplstyle'
+# mplstyle = './src/plotting/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
 
@@ -29,12 +31,12 @@ def get_meta(plotdir):
             'colname': 'entanglement_entropy_midchain',
             'normpage': False,
             'titlename': 'von Neumann entropy',
-            'ylabel': '$\langle \langle S_\mathrm{vN}(L/2)\\rangle \\rangle$',
+            'ylabel': '$\langle \langle S_\mathrm{E}(L/2)\\rangle \\rangle$',
             'xlabel': '$t$',
             # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
             # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
             'xmafmt': LogFormatterMathtext(),
-            'plotprefix': 'SvN',
+            'plotprefix': 'SE',
             'plotdir': plotdir,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
@@ -57,7 +59,7 @@ def get_meta(plotdir):
             'plotdir': plotdir,
             # 'ymin': 0.41,
             # 'ymax': 0.45,
-            'xmin': 1,
+            # 'xmin': 1,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -98,7 +100,7 @@ def get_meta(plotdir):
             'titlename': ' HartleyNumber Entropy',
             'ylabel': '$\langle S_H(L/2)\\rangle$',
             'yformat': '%.2f',
-            'ymin': 1.26,
+            # 'ymin': 1.26,
             'plotprefix': 'SH',
             'plotdir': plotdir,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
@@ -359,7 +361,103 @@ def get_meta(plotdir):
             # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['f', 'x', 'w', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'w', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': 'lower left',
+        },
+        'divg-num': {  # Distribution of infinite time averaged entropy
+            'groupname': 'number_entropies',
+            'dsetname': 'data',
+            'normpage': False,
+            'titlename': 'Number Entropy',
+            # 'figsize': (3.375, 3.00),
+            'ylabel': '$p(S_N^\infty(L/2))$',
+            'yscale': 'log',
+            'yformat': '%.2f',
+            'sharex': 'all',
+            'sharey': 'all',
+            'xmin': 0.0,
+            'xmax': 1.5,
+            'tidx': 'window',  # Time indices for which to plot the distribution
+            'bins': 40,
+            'xlabel': '$S_N^\infty$',
+            'density': True,
+            'plotprefix': 'SN',
+            'plotdir': plotdir,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            # 'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'x', 'w', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': 'lower left',
+        },
+        'tavg-ent': {
+            'groupname': 'entanglement_entropies',
+            'dsetname': 'data',
+            'normpage': False,
+            'titlename': 'Infinite time average of von Neumann Entropy',
+            # 'figsize': (3.375, 3.00),
+            'ylabel': '$\langle \langle S_\mathrm{E}^\infty(L/2) \\rangle \\rangle$',
+            'yformat': '%.2f',
+            'xmaloc': MaxNLocator(integer=True),
+            'sharex': 'all',
+            'sharey': 'all',
+            'xlabel': '$L$',
+            'density': True,
+            'plotprefix': 'SE',
+            'plotdir': plotdir,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            # 'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': 'lower left',
+        },
+        'tavg-num': {
+            'groupname': 'number_entropies',
+            'dsetname': 'data',
+            'normpage': False,
+            'titlename': 'Infinite time average of Number Entropies',
+            # 'figsize': (3.375, 3.00),
+            'ylabel': '$\langle \langle S_\mathrm{N}^\infty(L/2) \\rangle \\rangle$',
+            'yformat': '%.2f',
+            'xmaloc': MaxNLocator(integer=True),
+            'sharex': 'all',
+            'sharey': 'all',
+            'xlabel': '$L$',
+            'density': True,
+            'plotprefix': 'SN',
+            'plotdir': plotdir,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            # 'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',

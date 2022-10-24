@@ -133,7 +133,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                     y = np.abs(y - ysat)
                                     try:
                                         if idx2 <= idx1:
-                                            raise RuntimeError("Invalid values: idx1 {} | idx2 {}", idx1, idx2)
+                                            raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
                                         bounds = ([-np.inf, -np.inf], [np.inf, 0])
                                         with np.errstate(invalid='ignore'):
                                             try:
@@ -156,8 +156,9 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                                 pass
 
 
-                                    except RuntimeError as e:
-                                        raise RuntimeError(e)
+                                    except IndexError as e:
+                                        pass
+                                        # raise RuntimeError(e)
 
 
                                 else:
@@ -170,9 +171,11 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                     legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                                     for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                                         key, fmt = key.split(':') if ':' in key else [key, '']
+
                                         f['legends'][idx][icol]['handle'].append(line)
                                         f['legends'][idx][icol]['label'].append(col)
                                         f['legends'][idx][icol]['title'] = db['tex'][key]
+                                        f['legends'][idx][icol]['header'] = get_title(dbval, sub3, width=16)
 
                                 if meta.get('findloglogwindow') and 'entanglement_entropy_midchain' in datanode['avg'].dtype.fields:
                                     sdata = datanode['avg']['entanglement_entropy_midchain'][()]
@@ -243,7 +246,11 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                             if not idx in f['axes_used']:
                                 f['axes_used'].append(idx)
                     if dbval:
-                        ax.set_title(get_title(dbval, sub3, width=16), fontstretch="ultra-condensed", bbox=dict(facecolor='white', alpha=1.0))
+                        ax.set_title(get_title(dbval, sub3, width=16),
+                                     horizontalalignment='left', x=0.05,
+                                     fontstretch="ultra-condensed",
+                                     # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
+                                     )
 
                     ax.set_xlabel("$t$")
                     if meta.get('timeloglevel'):

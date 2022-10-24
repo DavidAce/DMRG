@@ -23,7 +23,8 @@ def stretched_log(x, C, xi, beta):
 plotdir = 'plots/lbit-decay'
 datafiles = [
     '../../output/mbl_10003-uniform500.h5',
-    '../../output/mbl_10003-normal500.h5'
+    '../../output/mbl_10003-normal500.h5',
+    '../../output/mbl_10003-squared500.h5',
 ]
 
 lbitpath = 'fLBIT/model/lbits'

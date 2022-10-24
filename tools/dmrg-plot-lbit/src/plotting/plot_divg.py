@@ -25,7 +25,7 @@ def fpower(x, a, b):
         return a * x ** b
 
 
-def plot_dist_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_filter=None, point_filter=None, figs=None, palette_name=None):
+def plot_divg_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_filter=None, point_filter=None, figs=None, palette_name=None):
     if len(fig3) != 3:
         raise AssertionError("fig must have length 3")
     if len(sub3) != 3:
@@ -73,7 +73,8 @@ def plot_dist_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_
                     pcov = None
                     dbval = None
                     for algokey, statekey, cronokey in product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']):
-                        for key6, lstyle in zip(get_keys(db, l1[0]), f['lstyles']):
+                        palette = sns.color_palette(palette=palette_name, n_colors=len(db['keys'][l1[0]]))
+                        for key6, color in zip(get_keys(db, l1[0]), palette):
                             findlist = [key0, key1, key2, key3, key4, key5, key6, algokey, statekey, cronokey, meta['groupname']]
                             datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                         all(k in key for k in findlist)]
@@ -87,47 +88,37 @@ def plot_dist_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_
                             ndata = datanode['avg']['num'][()]
                             if np.min(ndata) < 10:
                                 continue
+                            t = mmntnode['avg']['physical_time']
+                            y = datanode['data']
+                            n = datanode['avg']['num'][()][0]
+                            if meta.get('normpage'):
+                                y /= page_entropy(dbval['L'])
+                            if normalize := meta.get('normalize'):
+                                y /= normalize
+                            # Calculate the infinite time average (1/T) integral_0^T y(t) dt
+                            ytavg = np.trapz(y=y, x=t, axis=0) / t[-1]
 
-                            tidxs = meta.get('tidx')
-                            if isinstance(tidxs, str) and 'window' in tidxs:
-                                tdata = mmntnode['avg']['physical_time']
-                                ydata = mmntnode['avg']['entanglement_entropy_midchain']
-                                widxs = find_loglog_window2(tdata=tdata, ydata=ydata, db=dbval)
-                                tidxs = [1, 5, widxs[0], len(tdata) - 1]
-                            palette = sns.color_palette(palette=palette_name, n_colors=len(meta['tidx']))
-                            for i, (tidx, color) in enumerate(zip(tidxs, palette)):
-                                data = datanode['data'][tidx, :]
-                                dbval['vals']['t'] = mmntnode['avg']['physical_time'][tidx]
-                                dbval['vals']['bavg'] = mmntnode['avg']['bond_mid'][tidx]
-                                dbval['vals']['num'] = np.shape(datanode['data'])[1]
+                            hist, edges = np.histogram(ytavg, bins=meta['bins'], density=True)
+                            bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
+                            line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
+                                            color=color, path_effects=path_effects)
+                            ax.axvline(x=np.log(2), color='grey')
+                            ax.axvline(x=np.log(3), color='darkseagreen')
+                            # ax.set_xticks(list(ax.get_xticks()) + [np.log(2), np.log(3)])
+                            trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+                            ax.text(np.log(2), 0.8, '$\ln 2$', fontsize='small', color='grey', ha='right', va='center', rotation='vertical', transform=trans)
+                            ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
+                                    transform=trans)
+                            legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
+                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                                key, fmt = key.split(':') if ':' in key else [key, '']
+                                f['legends'][idx][icol]['handle'].append(line)
+                                f['legends'][idx][icol]['title'] = db['tex'][key]
+                                f['legends'][idx][icol]['label'].append(col)
 
-                                if meta.get('normpage') == True:
-                                    p = page_entropy(dbval['L'])
-                                    data /= page_entropy(dbval['L'])
-                                if 'normalize' in meta:
-                                    data /= meta['normalize']
+                            if not idx in f['axes_used']:
+                                f['axes_used'].append(idx)
 
-                                hist, edges = np.histogram(data, bins=meta['bins'], density=True)
-                                bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                                line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
-                                                color=color, path_effects=path_effects, linestyle=lstyle)
-                                ax.axvline(x=np.log(2), color='grey')
-                                ax.axvline(x=np.log(3), color='darkseagreen')
-                                # ax.set_xticks(list(ax.get_xticks()) + [np.log(2), np.log(3)])
-                                trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
-                                ax.text(np.log(2), 0.8, '$\ln 2$', fontsize='small', color='grey', ha='right', va='center', rotation='vertical',
-                                        transform=trans)
-                                ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
-                                        transform=trans)
-                                legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                                for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                                    key, fmt = key.split(':') if ':' in key else [key, '']
-                                    f['legends'][idx][icol]['handle'].append(line)
-                                    f['legends'][idx][icol]['title'] = db['tex'][key]
-                                    f['legends'][idx][icol]['label'].append(col)
-
-                                if not idx in f['axes_used']:
-                                    f['axes_used'].append(idx)
                     if dbval:
                         ax.set_title(get_title(dbval, sub3),
                                      horizontalalignment='left', x=0.05,
@@ -143,7 +134,7 @@ def plot_dist_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_
                     suffix = ''
                     suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
                     suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-                    f['filename'] = "{}/{}_dist_fig({}_{}_{})_sub({}_{}_{}){}".format(meta['plotdir'], meta['plotprefix'],
+                    f['filename'] = "{}/{}_divg_fig({}_{}_{})_sub({}_{}_{}){}".format(meta['plotdir'], meta['plotprefix'],
                                                                                       str(key0), str(key1), str(key2), sub3[0], sub3[1], sub3[2],
                                                                                       suffix)
 

@@ -13,11 +13,11 @@ location    = "input"
 
 
 sites               = [16]
-J                   = [[0.000, 0.000, 0.000]]
+J                   = [[0.000, 0.100, 0.100]]
 w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
-f                   = [0.2500]
+f                   = [0.1500,0.2500]
 u                   = [4]
-x                   = [0.8]
+x                   = [0.85]
 r                   = [-1]
 initial_state       = ["PRODUCT_STATE_NEEL"]
 output_prefix       = "output"
@@ -56,7 +56,6 @@ for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x
         "model::lbit::J3_mean"               : str_J3,
         "model::lbit::J1_wdth"               : str_w1,
         "model::lbit::J2_wdth"               : str_w2,
-        "model::lbit::J3_wdth"               : str_w3,
         "model::lbit::J3_wdth"               : str_w3,
         "model::lbit::J2_xcls"               : str_x,
         "model::lbit::J2_span"               : str_r,

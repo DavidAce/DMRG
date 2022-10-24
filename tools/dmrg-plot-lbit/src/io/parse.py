@@ -28,8 +28,9 @@ def parse():
                             # 'lbit39', # serious-trial-L28: Check loglog window. Predict ~5 decades of S_N growth (YES!):  L:12-28, w2:0.25, x:0.8, f:0.25, u:4
                             # 'lbit40', # Mini test to check progress on new storage form
                             # 'lbit41', # Mini test to check progress on new storage form
-                            # 'lbit42',  # Big run, 5000 realizations L = 8..24
-                            'lbit43',  # Big run, 5000 realizations L = 8..24
+                            # 'lbit42', # Big run, 5000 realizations L = 8..24
+                            # 'lbit43', # Small test w-dependence, L = 16
+                            'lbit44',  # Small test of normally distributed random circuit L = 16
                         ])
 
     args = parser.parse_args()

@@ -84,7 +84,11 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                         f['axes_used'].append(idx)
 
             if dbval:
-                ax.set_title(get_title(dbval, sub3, width=16), fontstretch="ultra-condensed", bbox=dict(facecolor='white', alpha=1.0))
+                ax.set_title(get_title(dbval, sub3),
+                             horizontalalignment='left', x=0.05,
+                             fontstretch="ultra-condensed",
+                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
+                             )
 
         if not prb_style and dbval:
             f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, fig3)))

@@ -484,8 +484,6 @@ def get_fig_meta(numplots: int, meta: dict):
 
         is_last_row = ir + 1 == f['nrows']
         is_first_col = ic == 0
-        print('sharex {} {}: {} | is_last_row {}'.format(ir, ic, sharex, is_last_row))
-        print('sharey {} {}: {} | is_first_col {}'.format(ir, ic, sharey, is_first_col))
         if not is_last_row and f.get('sharex') in ['col', 'all', True]:
             f['ax'][-1].tick_params(axis='x', which='both', labelbottom=False, zorder=0)
             f['ax'][-1].xaxis.label.set_visible(False)
@@ -500,7 +498,7 @@ def get_fig_meta(numplots: int, meta: dict):
         f['fig'].suptitle(title)
 
 
-    legend = {'handle': [], 'label': [], 'title': None}  # One such per legend column
+    legend = {'handle': [], 'label': [], 'title': None, 'header': None}  # One such per legend column
 
     f['legends'] = {}
     for i, ax in enumerate(f['ax']):
@@ -544,7 +542,6 @@ def get_formatted_columns(columns):
     # Now we get the maximum string length of each column
     column_longest = [0] * num_cols
     column_phantom = [''] * num_cols  # The longest string in each column, not including the title
-    print(columns)
     for icol, col in enumerate(columns):  # Iterate columns
         maxlenstr = max([str(c) for c in col[1:]], key=len)  # Get the longest string in the column
         column_longest[icol] = len(maxlenstr)
@@ -670,8 +667,10 @@ def add_legend5(fmeta):
         formatted_labels = get_formatted_columns(columns)
         if iax_tgt is not None:
             iax = iax_tgt  # Put legends on common axis
-        lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=None, loc=loc_eq, prop=dict(stretch="ultra-condensed"))
-        lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
+        lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                          title=None,  # title=fmeta['legends'][iax][0]['header'],
+                                          loc=loc_eq, prop=dict(stretch="ultra-condensed"))
+        # lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
         if collect:
             break
 

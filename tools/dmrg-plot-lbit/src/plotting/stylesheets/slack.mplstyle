@@ -55,6 +55,8 @@ mathtext.fontset        : stix
 
 lines.linewidth         : 1.0
 lines.markersize        : 5
+errorbar.capsize        : 3  # length of end cap on error bars in pixels
+
 
 #figure.figsize          : 7, 4 # Two subplots side by side
 #figure.figsize          : 5, 4 # Single plot
@@ -65,7 +67,6 @@ figure.figsize          : 10, 8 # More plots
 legend.fontsize         : 10
 #legend.fontsize         : 8.33
 legend.title_fontsize   : 10
-#legend.title_fontsize   : 8.33
 legend.frameon          : False # if True, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.25      # border whitespace
@@ -89,7 +90,7 @@ legend.scatterpoints    : 1
 
 ## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
 figure.autolayout      : False  # Applies tight_layout
-figure.subplot.top     : 1.00   # the top of the subplots of the figure (Make room for title and subtitle)
+figure.subplot.top     : 0.90   # the top of the subplots of the figure (Make room for title and subtitle)
 figure.subplot.bottom  : 0.05   # the bottom of the subplots of the figure
 figure.subplot.left    : 0.10   # the left side of the subplots of the figure
 figure.subplot.right   : 1.0    # the right side of the subplots of the figure
