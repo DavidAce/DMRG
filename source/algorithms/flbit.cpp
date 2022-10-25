@@ -348,7 +348,7 @@ void flbit::check_convergence() {
     else
         status.algorithm_has_stuck_for = 0;
 
-    status.algorithm_has_to_stop = status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
+    status.algorithm_has_to_stop = false; // Never stop due to saturation
 
     tools::log->debug("Simulation report: converged {} | saturated {} | stuck {} | succeeded {} | has to stop {}", status.algorithm_converged_for,
                       status.algorithm_saturated_for, status.algorithm_has_stuck_for, status.algorithm_has_succeeded, status.algorithm_has_to_stop);

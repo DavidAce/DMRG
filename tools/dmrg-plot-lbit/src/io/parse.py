@@ -32,7 +32,9 @@ def parse():
                             # 'lbit43', # Small test w-dependence, L = 16
                             # 'lbit44',  # Small test of normally distributed random circuit L = [4...16]
                             # 'lbit45',  # Small test of squared distributed random circuit L = [4...16]
-                            'lbit46',  # Small test of squared distributed random circuit L = [4...16]
+                            # 'lbit46',  # Small test of squared distributed random circuit L = [8...16]
+                            # 'lbit47',  # Small test of big bias on the J2 and J3 parameters L = [8...16]
+                            'lbit48',  # Small test of choked unitaries on the J2 and J3 parameters L = [8...16]
                         ])
 
     args = parser.parse_args()

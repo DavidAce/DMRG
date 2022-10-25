@@ -207,6 +207,8 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                                         path_effects=path_effects)
                                         except IndexError as e:
                                             pass
+                                        except ValueError as e:
+                                            print("Fit failed:", e)
 
 
                                     if meta.get('zoomloglogwindow') and i in meta['zoomloglogwindow']['colnum']:

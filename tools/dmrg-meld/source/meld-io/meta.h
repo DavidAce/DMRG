@@ -15,9 +15,10 @@ struct Key {
     std::string algo, state, point;
     std::string name;
     std::string key;
-    Key() = default;
-    Key(std::string_view algo_, std::string_view state_, std::string_view point_, std::string_view name_)
-        : algo(algo_), state(state_), point(point_), name(name_) {}
+    size_t      expected_size = -1ul;
+    Key()                     = default;
+    Key(std::string_view algo_, std::string_view state_, std::string_view point_, std::string_view name_, size_t expected_size_ = -1ul)
+        : algo(algo_), state(state_), point(point_), name(name_), expected_size(expected_size_) {}
 };
 
 struct DsetKey : public Key {

@@ -417,10 +417,14 @@ namespace tools::h5io {
             auto &srcInfo = srcTableDb[key];
             if(srcInfo.tableExists and srcInfo.tableExists.value()) {
                 // Check that the tables are the same size before and after
-                if constexpr(strictTableSize == StrictTableSize::TRUE)
-                    if(numRecords_old and numRecords_old.value() != srcInfo.numRecords.value())
-                        throw std::runtime_error(
-                            fmt::format("Table size mismatch: num records {} | expected {}: {}", srcInfo.numRecords.value(), numRecords_old.value(), key));
+                if constexpr(strictTableSize == StrictTableSize::TRUE) {
+                    if(srcKey.expected_size != -1ul and srcInfo.numRecords.value() != srcKey.expected_size)
+                        throw except::runtime_error("Table size mismatch: num records {} | expected {}: {}", srcInfo.numRecords.value(), srcKey.expected_size,
+                                                    key);
+                    //                    if(numRecords_old and numRecords_old.value() != srcInfo.numRecords.value())
+                    //                        throw except::runtime_error("Table size mismatch: num records {} | expected {}: {}", srcInfo.numRecords.value(),
+                    //                        numRecords_old.value(), key);
+                }
 
                 keys.emplace_back(srcKey);
                 keys.back().key = key;
@@ -485,7 +489,7 @@ namespace tools::h5io {
                     } catch(const std::runtime_error &ex) { tools::logger::log->error("Bondd transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
                     try {
                         auto t_crono   = tid::tic_scope("crono");
-                        auto cronoKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.crono, pathid, keys.cronos);
+                        auto cronoKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
                         tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
                     } catch(const std::runtime_error &ex) { tools::logger::log->error("Crono transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
                 }

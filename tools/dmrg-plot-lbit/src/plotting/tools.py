@@ -171,16 +171,16 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmax1 = 1.0 / w1
 
     r2max = np.min([r, int((L - 1) / 2)])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
-    tmax2 = 0.5 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
+    tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
 
     tmin3 = 1.0 / w3
     tmax3 = 1.0 / w3
 
-    tmin = np.max([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
-    tmax = np.max([tmax1, tmax2, tmax3])
+    tmin = tmin2  # np.max([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
+    tmax = tmax2  # np.max([tmax1, tmax2, tmax3])
 
     tmin = np.min([tmin, tmax])  # Can't have negatives in log-log.
     tmax = np.max([tmin, tmax])  # Make sure the time points are ordered
