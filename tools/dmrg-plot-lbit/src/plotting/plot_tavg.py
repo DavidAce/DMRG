@@ -70,6 +70,9 @@ def plot_tavg_fig3_sub2_line1(db, meta, fig3, sub2, l1, x1, algo_filter=None, st
                     figs = []
                 figs.append(get_fig_meta(numplots, meta=meta))
                 f = figs[-1]
+                # print(f['ax'])
+                # print(keyprod)
+
                 for idx, ((key3, key4), ax) in enumerate(zip(keyprod, f['ax'])):
                     popt = None
                     pcov = None
@@ -90,6 +93,7 @@ def plot_tavg_fig3_sub2_line1(db, meta, fig3, sub2, l1, x1, algo_filter=None, st
                                     print("ERROR: found", len(datanode), "datanodes: ", datanode, " | findlist: ", findlist)
                                     continue
                                     # raise LookupError("Found incorrect number of datanodes")
+                                print("Found: ", findlist)
                                 datanode = datanode[0]
                                 mmntnode = datanode.parent['measurements']
                                 dbval = db['dsets'][datanode.name]

@@ -12,6 +12,7 @@ namespace qm::lbit {
     extern std::vector<qm::Gate>                get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
     extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
     extern std::vector<qm::Gate>                get_unitary_2gate_layer(size_t sites, double fmix);
+    extern std::vector<qm::Gate>                get_unitary_2gate_layer_choked(size_t sites, double fmix, const std::vector<double> & fields, double fieldvar);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &twosite_hams);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<cplx, 4>> &mpos);
@@ -26,6 +27,6 @@ namespace qm::lbit {
     extern std::tuple<Eigen::MatrixXd,
                       Eigen::MatrixXd,
                       Eigen::Tensor<double, 3>,
-                      Eigen::Tensor<double, 5>> get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites);
+                      Eigen::Tensor<double, 5>> get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites, const std::vector<double> & fields = {}, double fieldvar = 0);
     /* clang-format on */
 }

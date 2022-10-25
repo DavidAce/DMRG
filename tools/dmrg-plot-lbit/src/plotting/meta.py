@@ -3,8 +3,8 @@ from matplotlib.ticker import LogLocator, \
     LogFormatterMathtext, NullFormatter, MultipleLocator, MaxNLocator
 import numpy as np
 
-mplstyle = './src/plotting/stylesheets/prb.mplstyle'
-# mplstyle = './src/plotting/stylesheets/slack.mplstyle'
+# mplstyle = './src/plotting/stylesheets/prb.mplstyle'
+mplstyle = './src/plotting/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
 

@@ -551,8 +551,12 @@ void flbit::create_unitary_circuit_gates() {
     if(unitary_gates_2site_layers.size() == settings::model::lbit::u_layer) return;
     tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
     unitary_gates_2site_layers.clear();
+    std::vector<double> fields;
+    for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
+    tools::log->info("Fields: {}", fields);
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++)
-        unitary_gates_2site_layers.emplace_back(qm::lbit::get_unitary_2gate_layer(settings::model::model_size, settings::model::lbit::f_mixer));
+        unitary_gates_2site_layers.emplace_back(
+            qm::lbit::get_unitary_2gate_layer_choked(settings::model::model_size, settings::model::lbit::f_mixer, fields, settings::model::lbit::J1_wdth));
 }
 
 void flbit::transform_to_real_basis() {
@@ -672,7 +676,10 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         }
         if(sample > 0) {
             tools::log->info("Computing the lbit characteristic length-scale");
-            auto [cls_avg, sse_avg, decay, data] = qm::lbit::get_lbit_analysis(urange, frange, sample, tensors.get_length());
+            std::vector<double> fields;
+            for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
+            auto [cls_avg, sse_avg, decay, data] =
+                qm::lbit::get_lbit_analysis(urange, frange, sample, tensors.get_length(), fields, settings::model::lbit::J1_wdth);
             h5file->writeDataset(cls_avg, "/fLBIT/model/lbits/cls_avg");
             h5file->writeDataset(sse_avg, "/fLBIT/model/lbits/sse_avg");
             h5file->writeDataset(decay, "/fLBIT/model/lbits/decay");

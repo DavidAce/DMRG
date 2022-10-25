@@ -67,7 +67,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                     figs = []
                 figs.append(get_fig_meta(numplots, meta=meta))
                 f = figs[-1]
-                for idx, ((key3, key4, key5), ax) in enumerate(zip(keyprod, f['ax'])):
+                for idx, ((key3, key4, key5), ax, ix) in enumerate(zip(keyprod, f['ax'], f['ix'])):
                     popt = None
                     pcov = None
                     dbval = None
@@ -134,6 +134,8 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                     try:
                                         if idx2 <= idx1:
                                             raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
+                                        if idx1 + 5 > idx2:
+                                            raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
                                         bounds = ([-np.inf, -np.inf], [np.inf, 0])
                                         with np.errstate(invalid='ignore'):
                                             try:
@@ -155,10 +157,8 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                             except:
                                                 pass
 
-
                                     except IndexError as e:
                                         pass
-                                        # raise RuntimeError(e)
 
 
                                 else:
@@ -189,31 +189,34 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                                         path_effects=path_effects)
 
                                     if meta.get('fitloglogwindow') and not meta.get('zoomloglogwindow'):
-                                        if idx + 5 < idx2:
-                                            # bounds = ([0., 0., 1.], [np.inf, np.inf, np.exp(1)])
-                                            try:
-                                                # popt, pcov = curve_fit(f=floglog, xdata=tdata[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds)
-                                                if idx2 <= idx1:
-                                                    raise RuntimeError("Invalid values: idx1 {} | idx2 {}", idx1, idx2)
-                                                bounds_v2 = ([-np.inf, 0], [np.inf, np.inf])
-                                                with np.errstate(invalid='ignore'):
-                                                    tloglog = np.log(np.log(tdata))
-                                                    popt, pcov = curve_fit(f=flinear, xdata=tloglog[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds_v2)
-                                                    print("{} | idx {} {} | {}".format(popt, idx1, idx2, findlist))
-                                                    ax.plot(xdata, flinear(tloglog, *popt), marker=None, linewidth=0.8,
-                                                            linestyle='--', label='fit', color=color,
-                                                            path_effects=path_effects)
-                                            except RuntimeError as e:
-                                                pass
+                                        # bounds = ([0., 0., 1.], [np.inf, np.inf, np.exp(1)])
+                                        try:
+                                            # popt, pcov = curve_fit(f=floglog, xdata=tdata[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds)
+                                            if idx2 <= idx1:
+                                                raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
+                                            if idx1 + 5 > idx2:
+                                                raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
+
+                                            bounds_v2 = ([-np.inf, 0], [np.inf, np.inf])
+                                            with np.errstate(invalid='ignore'):
+                                                tloglog = np.log(np.log(tdata))
+                                                popt, pcov = curve_fit(f=flinear, xdata=tloglog[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds_v2)
+                                                print("{} | idx {} {} | {}".format(popt, idx1, idx2, findlist))
+                                                ax.plot(xdata, flinear(tloglog, *popt), marker=None, linewidth=0.8,
+                                                        linestyle='--', label='fit', color=color,
+                                                        path_effects=path_effects)
+                                        except IndexError as e:
+                                            pass
+
 
                                     if meta.get('zoomloglogwindow') and i in meta['zoomloglogwindow']['colnum']:
-                                        if f['axin'] is None:
+                                        if ix is None:
                                             # pos tells where to put the inset, x0,y0, width, height in % units
-                                            f['axin'] = ax.inset_axes(meta['zoomloglogwindow']['pos'])
-                                        f['axin'].fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.15, label=None,
-                                                               color=color)
-                                        f['axin'].plot(xdata, y, marker=None, linestyle=linestyle,
-                                                       label=None, color=color, path_effects=path_effects)
+                                            ix = ax.inset_axes(meta['zoomloglogwindow']['pos'])
+                                        ix.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.15, label=None,
+                                                        color=color)
+                                        ix.plot(xdata, y, marker=None, linestyle=linestyle,
+                                                label=None, color=color, path_effects=path_effects)
                                         x1, x2, y1, y2 = meta['zoomloglogwindow']['coords']
                                         x1 = np.min([x1, xdata[idx1]]) if x1 else xdata[idx1]
                                         x2 = np.max([x2, xdata[idx2]]) if x2 else xdata[idx2]
@@ -231,17 +234,17 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                                         tloglog = np.log(np.log(tdata))
                                                         popt, pcov = curve_fit(f=flinear, xdata=tloglog[idx1:idx2],
                                                                                ydata=y[idx1:idx2], bounds=bounds_v2)
-                                                        f['axin'].plot(xdata, flinear(tloglog, *popt), marker=None,
-                                                                       linewidth=0.8,
-                                                                       linestyle='--', label=None, color=color,
-                                                                       path_effects=path_effects)
+                                                        ix.plot(xdata, flinear(tloglog, *popt), marker=None,
+                                                                linewidth=0.8,
+                                                                linestyle='--', label=None, color=color,
+                                                                path_effects=path_effects)
                                                 except RuntimeError as e:
                                                     pass
                                         if meta.get('markloglogwindow'):
-                                            f['axin'].plot([xdata[idx1], xdata[idx2]], [y[idx1], y[idx2]],
-                                                           color=color,
-                                                           marker='o', markersize=6, linestyle='None', markeredgecolor='w',
-                                                           path_effects=path_effects)
+                                            ix.plot([xdata[idx1], xdata[idx2]], [y[idx1], y[idx2]],
+                                                    color=color,
+                                                    marker='o', markersize=6, linestyle='None', markeredgecolor='w',
+                                                    path_effects=path_effects)
 
                             if not idx in f['axes_used']:
                                 f['axes_used'].append(idx)
@@ -258,35 +261,35 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                             ax.set_xscale('log')
                             ymin = None
                             ymax = None
-                            if f['axin'] is not None:
-                                f['axin'].set_xscale('log')
+                            if ix is not None:
+                                ix.set_xscale('log')
 
                         if meta['timeloglevel'] == 2:
                             ax.set_xlabel("$\ln\ln t$")
 
-                    if meta.get('zoomloglogwindow') and f['axin'] is not None:
+                    if meta.get('zoomloglogwindow') and ix is not None:
                         x1, x2, y1, y2 = meta['zoomloglogwindow']['coords']  # sub region of the original image
-                        f['axin'].set_xlim(xmin=0.1 * x1, xmax=10 * x2)
-                        f['axin'].set_ylim(ymin=0.975 * y1, ymax=1.025 * y2)
-                        # f['axin'].set_xticklabels('')
-                        # f['axin'].set_yticklabels('')
-                        f['axin'].tick_params(axis='both', which='both', labelsize='x-small')
-                        # f['axin'].xaxis.set_major_locator(plt.MaxNLocator(5))
-                        f['axin'].xaxis.set_major_locator(plt.LogLocator(base=10, numticks=6))
+                        ix.set_xlim(xmin=0.1 * x1, xmax=10 * x2)
+                        ix.set_ylim(ymin=0.975 * y1, ymax=1.025 * y2)
+                        # ix.set_xticklabels('')
+                        # ix.set_yticklabels('')
+                        ix.tick_params(axis='both', which='both', labelsize='x-small')
+                        # ix.xaxis.set_major_locator(plt.MaxNLocator(5))
+                        ix.xaxis.set_major_locator(plt.LogLocator(base=10, numticks=6))
                         if 'timeloglevel' in meta and meta['timeloglevel'] == 2:
-                            f['axin'].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
-                            f['axin'].xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+                            ix.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+                            ix.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
-                        f['axin'].yaxis.tick_right()
-                        f['axin'].patch.set_linewidth('2')
-                        f['axin'].patch.set_edgecolor('black')
-                        f['axin'].legend(title=meta['zoomloglogwindow']['legendtitle'], fontsize='x-small',
-                                         loc='lower center', framealpha=0.9,
-                                         bbox_to_anchor=(0.49, -0.01),
-                                         bbox_transform=f['axin'].transAxes,
-                                         borderaxespad=0.5
-                                         )
-                        ax.indicate_inset_zoom(f['axin'], edgecolor="black")
+                        ix.yaxis.tick_right()
+                        ix.patch.set_linewidth('2')
+                        ix.patch.set_edgecolor('black')
+                        ix.legend(title=meta['zoomloglogwindow']['legendtitle'], fontsize='x-small',
+                                  loc='lower center', framealpha=0.9,
+                                  bbox_to_anchor=(0.49, -0.01),
+                                  bbox_transform=ix.transAxes,
+                                  borderaxespad=0.5
+                                  )
+                        ax.indicate_inset_zoom(ix, edgecolor="black")
 
 
                 if f['ymin']:

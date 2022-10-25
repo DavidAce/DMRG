@@ -59,6 +59,20 @@ IsingRandomField::TableMap IsingRandomField::get_parameters() const {
     return parameters;
 }
 
+std::any IsingRandomField::get_parameter(const std::string &name) const {
+    /* clang-format off */
+   if     (name == "J1")            return  h5tb.param.J1;
+   else if(name == "J2")            return  h5tb.param.J2;
+   else if(name == "h_tran")        return  h5tb.param.h_tran;
+   else if(name == "h_mean")        return  h5tb.param.h_mean;
+   else if(name == "h_wdth")        return  h5tb.param.h_wdth;
+   else if(name == "h_rand")        return  h5tb.param.h_rand;
+   else if(name == "spin_dim")      return  h5tb.param.spin_dim;
+   else if(name == "distribution")  return  h5tb.param.distribution;
+    /* clang-format on */
+    throw except::logic_error("Invalid parameter name for IsingRandomField model: {}", name);
+}
+
 void IsingRandomField::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
 

@@ -1,4 +1,5 @@
 #pragma once
+#include <any>
 #include <array>
 #include <complex>
 #include <config/enums.h>
@@ -57,10 +58,11 @@ class ModelFinite {
     const MpoSite &get_mpo(size_t pos) const;
     MpoSite       &get_mpo(size_t pos);
 
-    [[nodiscard]] bool   is_shifted() const; // For shifted energy MPO's
-    [[nodiscard]] bool   is_compressed_mpo_squared() const;
-    [[nodiscard]] double get_energy_shift() const;
-    [[nodiscard]] double get_energy_shift_per_site() const;
+    [[nodiscard]] bool                  is_shifted() const; // For shifted energy MPO's
+    [[nodiscard]] bool                  is_compressed_mpo_squared() const;
+    [[nodiscard]] double                get_energy_shift() const;
+    [[nodiscard]] double                get_energy_shift_per_site() const;
+    [[nodiscard]] std::vector<std::any> get_parameter(const std::string &fieldname);
 
     // For multisite
     std::array<long, 4>           active_dimensions() const;

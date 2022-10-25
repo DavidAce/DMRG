@@ -57,14 +57,14 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
         double               th2 = rnd::normal(0, 1);
         double               th3 = rnd::normal(0, 1);
         std::complex<double> t(rnd::normal(0, 1), rnd::normal(0, 1));
-#pragma message "Trying square distribution for unitary circuit factors"
-        //        double               th0 = rnd::uniform_double_box(-1, 1);
-        //        double               th1 = rnd::uniform_double_box(-1, 1);
-        //        double               th2 = rnd::uniform_double_box(-1, 1);
-        //        double               th3 = rnd::uniform_double_box(-1, 1);
-        //        double               rx  = rnd::uniform_double_box(-1, 1);
-        //        double               ix  = rnd::uniform_double_box(-1, 1);
-        //        std::complex<double> t(num::sign(rx) * rx * rx, num::sign(ix) * ix * ix);
+        // #pragma message "Trying square distribution for unitary circuit factors"
+        //         double               th0 = rnd::uniform_double_box(-1, 1);
+        //         double               th1 = rnd::uniform_double_box(-1, 1);
+        //         double               th2 = rnd::uniform_double_box(-1, 1);
+        //         double               th3 = rnd::uniform_double_box(-1, 1);
+        //         double               rx  = rnd::uniform_double_box(-1, 1);
+        //         double               ix  = rnd::uniform_double_box(-1, 1);
+        //         std::complex<double> t(num::sign(rx) * rx * rx, num::sign(ix) * ix * ix);
 
         auto             indices = std::vector<size_t>{idx, idx + 1};
         Eigen::Matrix4cd H       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
@@ -91,6 +91,91 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             Eigen::Tensor<cplx, 2> H_shuffled = tenx::TensorMap(H, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
             Eigen::MatrixXcd       expifH     = (imn * fmix * tenx::MatrixMap(H_shuffled)).exp();
             unitaries.emplace_back(tenx::TensorMap(expifH), indices, spin_dims);
+        }
+    }
+    if constexpr(settings::debug) {
+        // Sanity check
+        for(const auto &u : unitaries)
+            if(not tenx::MatrixMap(u.op).isUnitary()) throw except::logic_error("u is not unitary!");
+    }
+
+    return unitaries;
+}
+
+std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, double fmix, const std::vector<double> &fields, double fieldvar) {
+    /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
+     *
+     *
+     @verbatim
+                   0      1                0
+                   |      |                |
+                 [ exp(-ifK) ]  ---> [ exp(-ifK) ]
+                   |      |               |
+                   2      3               1
+     @endverbatim
+    */
+
+    tools::log->trace("Generating correlated twosite unitaries");
+    if(fields.size() != sites) throw except::logic_error("fields.size() {} != sites {}", fields.size(), sites);
+    constexpr bool        kroneckerSwap = false;
+    auto                  SZ            = qm::spin::half::gen_twobody_spins(qm::spin::half::sz, kroneckerSwap); // We use these as matrices
+    auto                  SP            = qm::spin::half::gen_twobody_spins(qm::spin::half::sp, kroneckerSwap); // We use these as matrices
+    auto                  SM            = qm::spin::half::gen_twobody_spins(qm::spin::half::sm, kroneckerSwap); // We use these as matrices
+    auto                  ID            = qm::spin::half::gen_twobody_spins(qm::spin::half::id, kroneckerSwap); // We use these as matrices
+    auto                  N             = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
+    auto                  spin_dims     = std::vector<long>{2l, 2l};
+    std::vector<qm::Gate> unitaries;
+    unitaries.reserve(sites - 1);
+    for(size_t idx = 0; idx < sites - 1; idx++) {
+        // This 2-site gate connects sites idx and idx+1
+        double diff = std::abs(fields[idx] - fields[idx + 1]);
+        double cvar = fieldvar * std::exp(-diff / 0.5);
+
+        //        double               th0 = rnd::uniform_double_box(-1, 1);
+        //        double               th1 = rnd::uniform_double_box(-1, 1);
+        //        double               th2 = rnd::uniform_double_box(-1, 1);
+        //        double               th3 = rnd::uniform_double_box(-1, 1);
+        //        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
+#pragma message "Trying normal distribution for unitary circuit factors"
+        double               th0 = rnd::normal(0, 1);
+        double               th1 = rnd::normal(0, 1);
+        double               th2 = rnd::normal(0, 1);
+        double               th3 = rnd::normal(0, 1);
+        std::complex<double> c(rnd::normal(0, cvar), rnd::normal(0, cvar));
+        // #pragma message "Trying square distribution for unitary circuit factors"
+        //         double               th0 = rnd::uniform_double_box(-1, 1);
+        //         double               th1 = rnd::uniform_double_box(-1, 1);
+        //         double               th2 = rnd::uniform_double_box(-1, 1);
+        //         double               th3 = rnd::uniform_double_box(-1, 1);
+        //         double               rx  = rnd::uniform_double_box(-1, 1);
+        //         double               ix  = rnd::uniform_double_box(-1, 1);
+        //         std::complex<double> t(num::sign(rx) * rx * rx, num::sign(ix) * ix * ix);
+
+        auto             indices = std::vector<size_t>{idx, idx + 1};
+        Eigen::Matrix4cd K       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
+                             SP[0] * SM[1] * c + SP[1] * SM[0] * std::conj(c);
+
+        if constexpr(kroneckerSwap) {
+            // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
+
+            //         0               0      1
+            //         |               |      |
+            //   [ exp(-ifK) ]  ==  [ exp(-ifK) ]
+            //        |               |      |
+            //        1               2      3
+
+            unitaries.emplace_back(tenx::TensorMap((imn * fmix * K).exp().eval()), indices, spin_dims);
+        } else {
+            // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
+            // the kronecker product that generated two-site gates above has indexed right-to-left
+            //         0                   1      0              0      1                0
+            //         |                   |      |              |      |                |
+            //   [ exp(-ifK) ]  --->    [ exp(-ifK) ]   --->  [ exp(-ifK) ]  --->  [ exp(-ifK) ]
+            //         |                   |      |              |      |                |
+            //         1                   3      2              2      3                1
+            Eigen::Tensor<cplx, 2> K_shuffled = tenx::TensorMap(K, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+            Eigen::MatrixXcd       expifK     = (imn * fmix * tenx::MatrixMap(K_shuffled)).exp();
+            unitaries.emplace_back(tenx::TensorMap(expifK), indices, spin_dims);
         }
     }
     if constexpr(settings::debug) {
@@ -426,7 +511,8 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eig
 }
 
 std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Tensor<double, 5>>
-    qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites) {
+    qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites,
+                                const std::vector<double> &fields, double fieldvar) {
     auto t_lbit_analysis = tid::tic_scope("lbit_analysis");
 
     long                     rows = static_cast<long>(fmix_vec.size());
@@ -457,7 +543,11 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             std::vector<Eigen::Tensor<cplx, 2>> lbit_overlap_vec(reps);
             for(size_t i = 0; i < reps; i++) {
                 std::vector<std::vector<qm::Gate>> layers;
-                for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer(sites, fmix));
+                if(fields.empty())
+                    for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer(sites, fmix));
+                else
+                    for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer_choked(sites, fmix, fields, fieldvar));
+
                 lbit_overlap_vec[i]                = qm::lbit::get_lbit_real_overlap(layers, sites);
                 offset5                            = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};
                 extent5                            = {1, 1, 1, lbit_overlap_vec[i].dimension(0), lbit_overlap_vec[i].dimension(1)};

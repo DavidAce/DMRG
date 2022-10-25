@@ -127,6 +127,12 @@ double ModelFinite::get_energy_shift_per_site() const {
     return e_shift;
 }
 
+std::vector<std::any> ModelFinite::get_parameter(const std::string &fieldname) {
+    std::vector<std::any> fields;
+    for(const auto &mpo : MPO) { fields.emplace_back(mpo->get_parameter(fieldname)); }
+    return fields;
+}
+
 void ModelFinite::randomize() {
     tools::log->info("Randomizing hamiltonian");
     std::vector<MpoSite::TableMap> all_params;

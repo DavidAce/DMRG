@@ -64,6 +64,22 @@ IsingSelfDual::TableMap IsingSelfDual::get_parameters() const {
     return parameters;
 }
 
+std::any IsingSelfDual::get_parameter(const std::string &name) const {
+    /* clang-format off */
+    if     (name == "J_mean")        return h5tb.param.J_mean;
+    else if(name == "J_wdth")        return h5tb.param.J_wdth;
+    else if(name == "J_rand")        return h5tb.param.J_rand;
+    else if(name == "h_mean")        return h5tb.param.h_mean;
+    else if(name == "h_wdth")        return h5tb.param.h_wdth;
+    else if(name == "h_rand")        return h5tb.param.h_rand;
+    else if(name == "lambda")        return h5tb.param.lambda;
+    else if(name == "delta")         return h5tb.param.delta;
+    else if(name == "spin_dim")      return h5tb.param.spin_dim;
+    else if(name == "distribution")  return h5tb.param.distribution;
+    /* clang-format on */
+    throw except::logic_error("Invalid parameter name for IsingSelfDual model: {}", name);
+}
+
 void IsingSelfDual::build_mpo()
 /*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
  *

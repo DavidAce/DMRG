@@ -22,9 +22,10 @@ def stretched_log(x, C, xi, beta):
 
 plotdir = 'plots/lbit-decay'
 datafiles = [
-    '../../output/mbl_10003-uniform500.h5',
-    '../../output/mbl_10003-normal500.h5',
-    '../../output/mbl_10003-squared500.h5',
+    # '../../output/mbl_10003-uniform500.h5',
+    # '../../output/mbl_10003-normal500.h5',
+    '../../output/mbl_10003-choked100.h5',
+    # '../../output/mbl_10003-squared500.h5',
 ]
 
 lbitpath = 'fLBIT/model/lbits'
@@ -269,7 +270,7 @@ def plot_lbits():
 
                 for ridx in range(reps):
                     y = lbits[fidx, uidx, ridx, [mid], :].T
-                    ax.plot(x, y, alpha=0.05, color=color)
+                    ax.plot(x, y, alpha=0.15, color=color)
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)

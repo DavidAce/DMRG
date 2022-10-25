@@ -76,6 +76,7 @@ class MpoSite {
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const                         = 0;
     [[nodiscard]] virtual long                     get_spin_dimension() const                                                   = 0;
     [[nodiscard]] virtual TableMap                 get_parameters() const                                                       = 0;
+    [[nodiscard]] virtual std::any                 get_parameter(const std::string &name) const                                 = 0;
 
     virtual void print_parameter_names() const                                             = 0;
     virtual void print_parameter_values() const                                            = 0;

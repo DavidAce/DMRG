@@ -107,6 +107,25 @@ LBit::TableMap LBit::get_parameters() const {
     /* clang-format on */
 }
 
+std::any LBit::get_parameter(const std::string &name) const {
+    /* clang-format off */
+    if     (name == "J1_rand")       return h5tb.param.J1_rand;
+    else if(name == "J2_rand")       return h5tb.param.J2_rand;
+    else if(name == "J3_rand")       return h5tb.param.J3_rand;
+    else if(name == "J1_wdth")       return h5tb.param.J1_wdth;
+    else if(name == "J2_wdth")       return h5tb.param.J2_wdth;
+    else if(name == "J3_wdth")       return h5tb.param.J3_wdth;
+    else if(name == "J2_xcls")       return h5tb.param.J2_xcls;
+    else if(name == "J2_span")       return h5tb.param.J2_span;
+    else if(name == "J2_ctof")       return h5tb.param.J2_ctof;
+    else if(name == "f_mixer")       return h5tb.param.f_mixer;
+    else if(name == "u_layer")       return h5tb.param.u_layer;
+    else if(name == "spin_dim")      return h5tb.param.spin_dim;
+    else if(name == "distribution")  return h5tb.param.distribution;
+    /* clang-format on */
+    throw except::logic_error("Invalid parameter name for LBIT model: {}", name);
+}
+
 void LBit::build_mpo()
 
 /*

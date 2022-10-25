@@ -58,12 +58,13 @@ def lbit_plot(args):
     # fig3 = ['J', 'x:.2f', 'r']
     # sub3 = ['L', 'f', 'w']
     # l1   = ['u']
+    # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
 
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
-
+    #
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_tavg_fig3_sub2_line1(db=db, meta=meta['tavg-ent'], fig3=fig3, sub2=sub2, l1=['w'], x1=['L'], figs=f, palette_name=palette)
@@ -72,13 +73,11 @@ def lbit_plot(args):
     for db, palette in zip(dbs, palettes):
         f = plot_tavg_fig3_sub2_line1(db=db, meta=meta['tavg-num'], fig3=fig3, sub2=sub2, l1=['w'], x1=['L'], figs=f, palette_name=palette)
     save_figure(f)
-    # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_dist_fig3_sub3_line1(db=db, meta=meta['dist-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
     save_figure(f)
-    # plt.show()
-    # exit(0)
+
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], fig3=fig3, sub3=sub3, l1=l1, figs=f, palette_name=palette)
@@ -152,6 +151,7 @@ def lbit_plot(args):
     for db, palette in zip(dbs, palettes):
         f = plot_v2_lbit_fig3_sub3_line1(db=db, meta=meta['lbit'], fig3=['J', 'r', 'f'], sub3=['w', 'u', 'x:.2f'], l1=['L'], figs=f, palette_name=palette)
     save_figure(f)
+
     for h5avg in h5avgs:
         h5close(h5avg)
     plt.show()

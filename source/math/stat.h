@@ -95,15 +95,18 @@ namespace stat {
         for(auto &x : Xlog) x = std::log(std::abs(x));
         return std::exp(mean(Xlog, start_point, end_point));
     }
-
     template<typename ContainerType>
-    double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    double variance(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         auto n            = static_cast<double>(std::distance(x_it, x_en));
         if(n == 0) return 0.0;
         double X_mean = stat::mean(X, start_point, end_point);
         double sum    = std::accumulate(x_it, x_en, 0.0, [&X_mean](auto &x1, auto &x2) { return x1 + (x2 - X_mean) * (x2 - X_mean); });
-        return std::sqrt(sum / n);
+        return sum / n;
+    }
+    template<typename ContainerType>
+    double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+        return std::sqrt(variance(X, start_point, end_point));
     }
 
     template<typename ContainerType>

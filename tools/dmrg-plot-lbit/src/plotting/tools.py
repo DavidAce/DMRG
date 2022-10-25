@@ -299,7 +299,6 @@ def get_fig_meta(numplots: int, meta: dict):
         'lstyles': get_linestyles(),
         'constrained_layout': meta.get('constrained_layout'),
         'numplots': numplots,
-        'axin': None,  # For insets
         'nrows': None,
         'ncols': None,
         'figsize': meta.get('figsize'),
@@ -320,6 +319,7 @@ def get_fig_meta(numplots: int, meta: dict):
         'gi': [],  # Inner gridspec
         'rc': [],  # List of coordinates "(row,col)" for each ax
         'ax': [],  # List of subplots with plots (i.e. [0,0] in gsi)
+        'ix': [],  # List of insets, one for each subplot axis
         'lr': [],  # List of subplots with legend right (i.e. [0,1] in gsi)
         'lb': [],  # List of subplots with legend below (i.e. [1,0] in gsi)
         'lc': [],  # List of subplots with legend common to all subplots
@@ -420,6 +420,7 @@ def get_fig_meta(numplots: int, meta: dict):
                 sharey = ax_matrix[0, 0]
 
         f['ax'].append(f['fig'].add_subplot(gi[0, 0], sharex=sharex, sharey=sharey))
+        f['ix'].append(None)
         f['lr'].append(f['fig'].add_subplot(gi[0, 1]))
         f['lb'].append(f['fig'].add_subplot(gi[1, 0]))
         ax_matrix[ir, ic] = f['ax'][-1]
@@ -768,17 +769,17 @@ def save_figure(f):
             save_figure(fig)
     elif isinstance(f, dict):
         prettify_plot5(f)
-        # f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
-        # f['fig'].savefig('{}.png'.format(f['filename']), format='png')
-        # f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
-        # f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
+        f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
+        f['fig'].savefig('{}.png'.format(f['filename']), format='png')
+        f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
+        f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
 
-        # with open('{}.git'.format(f['filename']), 'w') as gitfile:
-        #     repo = Repo(search_parent_directories=True)
-        #     commit_hash = repo.git.rev_parse("HEAD")
-        #     gitfile.write(commit_hash)
+        with open('{}.git'.format(f['filename']), 'w') as gitfile:
+            repo = Repo(search_parent_directories=True)
+            commit_hash = repo.git.rev_parse("HEAD")
+            gitfile.write(commit_hash)
 
-        # tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
+        tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
     else:
         raise TypeError("Unexpected type: ", type(f))
 

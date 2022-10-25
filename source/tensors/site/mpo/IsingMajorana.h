@@ -27,6 +27,7 @@ class IsingMajorana : public MpoSite {
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const final;
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
+    [[nodiscard]] std::any                 get_parameter(const std::string &name) const override;
     void                                   print_parameter_names() const final;
     void                                   print_parameter_values() const final;
     void                                   set_parameters(TableMap &parameters) final;
