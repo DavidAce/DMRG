@@ -129,7 +129,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, dou
     for(size_t idx = 0; idx < sites - 1; idx++) {
         // This 2-site gate connects sites idx and idx+1
         double diff = std::abs(fields[idx] - fields[idx + 1]);
-        double cvar = fieldvar * std::exp(-diff / 0.5);
+        double cvar = fieldvar * std::exp(-diff);
 
         //        double               th0 = rnd::uniform_double_box(-1, 1);
         //        double               th1 = rnd::uniform_double_box(-1, 1);

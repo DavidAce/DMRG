@@ -779,7 +779,7 @@ def save_figure(f):
             commit_hash = repo.git.rev_parse("HEAD")
             gitfile.write(commit_hash)
 
-        tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
+        # tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
     else:
         raise TypeError("Unexpected type: ", type(f))
 
