@@ -51,10 +51,10 @@ namespace settings {
         }
 
 #else
-        if(settings::threading::stl_threads > 1)
+        if(settings::threading::num_threads > 1)
             tools::log->warn("EIGEN_USE_THREADS is not defined: "
                              "Failed to enable threading in Eigen::Tensor with stl_threads = {}",
-                             settings::threading::stl_threads);
+                             settings::threading::num_threads);
 #endif
 
 #if defined(OPENBLAS_AVAILABLE)
