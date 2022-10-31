@@ -9,8 +9,8 @@ include(ExternalProject)
 
 set(cc ${CMAKE_C_COMPILER})
 set(cxx ${CMAKE_CXX_COMPILER})
-set(cflags "-fPIC ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
-set(cxxflags "-fPIC ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
+set(cflags "-std=c17 -fPIC ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
+set(cxxflags "-std=c++17 -fPIC ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 set(ldflags "${CMAKE_EXE_LINKER_FLAGS}")
 set(libs "-lm -ldl")
 
@@ -20,6 +20,7 @@ externalproject_add(external_tblis
                     #         GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
                     GIT_PROGRESS TRUE
                     #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
+                    PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-config.patch # For 7d979b66
 
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
@@ -41,7 +42,7 @@ externalproject_add(external_tblis
                     COMMAND export CFLAGS=${cflags}
                     COMMAND export CXXFLAGS=${cxxflags}
                     COMMAND export LDFLAGS=${ldflags}
-                    COMMAND ./configure --enable-config=haswell,skx1,zen --prefix=<INSTALL_DIR>
+                    COMMAND ./configure --enable-config=haswell,skx,zen --prefix=<INSTALL_DIR>
 
                     BUILD_COMMAND
                     make -j${NUM_THREADS}

@@ -1,0 +1,20 @@
+diff --git a/src/configs/configs.cxx b/src/configs/configs.cxx
+index b8c1479..0e07071 100644
+--- a/src/configs/configs.cxx
++++ b/src/configs/configs.cxx
+@@ -94,11 +94,11 @@ const config& get_config(const std::string& name)
+ {
+     for (int cfg = 0;cfg < num_configs;cfg++)
+     {
+-        if (names[cfg] == name)
++        if(strstr(names[cfg], name.c_str()) != nullptr)
+         {
+-            if (check[cfg]() == -1)
+-                tblis_abort_with_message(nullptr,
+-                    "tblis: Configuration %s cannot be used!", name.c_str());
++//            if (check[cfg]() == -1)
++//                tblis_abort_with_message(nullptr,
++//                    "tblis: Configuration %s cannot be used!", name.c_str());
+             return instance[cfg]();
+         }
+     }
