@@ -1,0 +1,6 @@
+convdata/
+ed_data/
+new_ed_data/
+merged/
+*.h5
+*.pk

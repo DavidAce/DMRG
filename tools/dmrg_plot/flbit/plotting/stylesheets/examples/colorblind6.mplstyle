@@ -1,0 +1,5 @@
+# Line colors to address color blindness, color names are *similar* to the following html colors
+# Orchid, Green, Medium Purple, Silver, Chartreuse, Lime Green 
+#
+# Colors taken from Matthew Petroff June 2019 Preliminary Color Cycle Order Rankings
+axes.prop_cycle : cycler('color', ['dc89fb', '097b36', '88749d', 'c6d5cf', '61fc51', '3fb926'])

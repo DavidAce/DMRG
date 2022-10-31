@@ -1,0 +1,741 @@
+from src.plotting.tools import *
+import matplotlib.pyplot as plt
+from src.database.database import *
+from src.general.filter import *
+from src.plotting.filter import *
+import random
+from matplotlib.ticker import MaxNLocator
+
+
+def bootstrap_sterr(data, chunksize, reps=50):
+    sterr_list = []
+    ndata = len(data[0, :])
+    for r in range(reps):
+        idx = random.sample(range(0, ndata - 1), chunksize)
+        idx.sort()
+        sterr = np.nanstd(np.array(data[:, idx]), axis=1) / np.sqrt(chunksize)
+        # sterr = np.nanmean(np.array(data[:,idx]), axis=1)
+        sterr_list.append(sterr)
+    print("shape", np.shape(sterr_list))
+    # return np.nanstd(sterr_list,axis=0)
+    return np.nanmean(sterr_list, axis=0)
+
+
+def multiplot_S_vs_Site_fig1_sub1_l1(h5_src, db, meta, plotdir='', g3=['algo', 'state', 'point'], algo_inc='', state_inc='', fig1=['L'],
+                                     sub1=['d'], l1=['l'], vwin=None):
+    print('Plotting: S vs Site for: ', algo_inc, state_inc)
+    if len(fig1) != 1:
+        raise AssertionError("fig1 must have length 1")
+    if len(sub1) != 1:
+        raise AssertionError("sub2 must have length 1")
+    if len(l1) != 1:
+        raise AssertionError("l1 must have length 1")
+    if 'mplstyle' in meta:
+        plt.style.use(meta['mplstyle'])
+    # One figure per L
+    # One subplot per delta
+    # One line per lambda per state
+    # One figure per L
+    # One subplot per delta
+    # One line per lambda per state
+    for figidx, key0 in enumerate(db['keys'][fig1[0]]):
+        numsub = len(db['keys'][sub1[0]])
+        figrows, figcols = get_optimal_subplot_num(numsub)
+        fig, axes = plt.subplots(nrows=figrows, ncols=figcols, figsize=(4 * figcols, 4 * figrows), sharey='all')
+        fig.tight_layout(pad=5, w_pad=1.0, h_pad=2.0)
+        fig.subplots_adjust(wspace=0.2, hspace=0.3)
+        axes_used = []
+        for subidx, (key1, ax) in enumerate(zip(db['keys'][sub1[0]], np.ravel(axes))):
+            ed_palette = itertools.cycle(sns.color_palette("Set2"))
+            numcolors = len(db['keys'][g3[0]]) * len(db['keys'][g3[1]]) * len(db['keys'][g3[2]])
+            current_palette = itertools.cycle(sns.color_palette("colorblind", numcolors))
+            lstyles = itertools.cycle(['-.', '-', '--', ':', ])
+            mstyles = itertools.cycle(('.', ',', '+', 'o', '*'))
+            delt = None
+            size = None
+            for lidx, key2 in enumerate(db['keys'][l1[0]]):
+                for gidx, (key3, key4, key5) in enumerate(product(db['keys'][g3[0]], db['keys'][g3[1]], db['keys'][g3[2]])):
+                    findlist = [key0, key1, key2, key3, key4, key5, meta['groupname']]
+                    datanode = [value['datanode'] for key, value in db['dsets'].items() if all(k in key for k in findlist)]
+                    if len(datanode) != 1:
+                        continue
+                    if not any(k in datanode[0].name for k in algo_inc):
+                        continue
+                    if not any(k in datanode[0].name for k in state_inc):
+                        continue
+
+                        # raise LookupError("Found incorrect number of datanodes")
+                    datanode = datanode[0]
+                    mmntnode = datanode.parent
+                    db_vals = db['dsets'][datanode.name]
+                    statekey = db_vals['keys']['state']
+                    algokey = db_vals['keys']['algo']
+                    midx = db_vals['midx']
+                    lamb = db_vals['l']
+                    delt = db_vals['d']
+                    size = db_vals['L']
+                    style = db_vals['style']
+
+                    ydata = get_data(datanode['avg'], 'L_', 'f8')
+                    edata = get_data(datanode['ste'], 'L_', 'f8')
+                    ndata = get_data(datanode['num'], 'L_', 'f8')
+                    xdata = range(len(ydata))
+
+                    lstyle = next(lstyles)
+                    mstyle = next(mstyles)
+
+                    if vwin:
+                        ydata, xdata, edata, ndata = get_v_filtered_edata(ydata, xdata, edata, ndata, db_vals, vwin)
+
+                    if "states" in statekey:
+                        color = next(ed_palette)
+                        mstyle = None
+                        lstyle = 'solid'
+                        lgnd = "ED ({})".format(ndata)
+                        # nicename = "ED e=[" + statenode.attrs["efmt"] + "]"
+                    else:
+                        color = next(current_palette)
+                        lgnd = "{} {} ({})".format(re.sub(r'[\W_]', ' ', "{} {}".format(algokey, statekey)), db['tex'][key2], ndata)
+                    ax.errorbar(x=xdata, y=ydata, yerr=edata, label=lgnd, capsize=2,
+                                color=color, elinewidth=0.3, markeredgewidth=0.8,
+                                marker=mstyle, markersize=4.0, linestyle=lstyle,
+                                linewidth=style['lwidth'], alpha=style['lalpha'])
+
+            ax.set_xlabel('Site $l$')
+            ax.set_ylabel('$S_E(l)$')
+            ax.set_title('{}'.format(db['tex'][key1]))
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            ax.legend(loc='lower center', fontsize='small', labelspacing=0.25)
+            fig.suptitle('Entanglement entropy vs site @ {}'.format(db['tex'][key0]))
+
+            # $\Delta = $' + str(delt) + '$\lambda = $' + str(lamb))
+            axes_used.append(subidx) if not subidx in axes_used else axes_used
+
+        remove_empty_subplots(fig=fig, axes=axes, axes_used=axes_used)
+        if plotdir != '':
+            plt.savefig('{}/S_vs_Site_{}.pdf'.format(plotdir, key0), format='pdf')
+            plt.savefig('{}/S_vs_Site_{}.png'.format(plotdir, key0), format='png')
+
+    return
+
+    # One figure per unique_l, unique_J and unique_h
+    for l in path_l:
+        for d in path_d:
+            # In each figure we want one subplot per unique_L
+            rows, cols = get_optimal_subplot_num(len(path_L))
+            fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(7 * cols, 7 * rows))
+            fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+            fig.subplots_adjust(wspace=0.3, hspace=0.3)
+            used_ax = 0
+            delt = 0
+            lamb = 0
+            max_S = 0
+            for ax, L in zip(np.ravel(axes), path_L):
+                ed_palette = itertools.cycle(sns.color_palette("Set2"))
+                current_palette = itertools.cycle(sns.color_palette())
+                basenode = h5_src[L][l][d]
+                size = basenode.attrs['L']
+                delt = basenode.attrs['d']
+                lamb = basenode.attrs['l']
+                for algokey, algopath, algonode in h5py_group_iterator(g=basenode, filter=algo_inc, dep=1):
+                    for statekey, statepath, statenode in h5py_group_iterator(g=algonode, filter=state_inc,
+                                                                              dep=1):
+                        for v_win_idx, v_win in enumerate(variance_window_limits):
+                            for e_win_idx, e_win in enumerate(energy_window_limits):
+                                idx = get_v_e_filtered_index_list(statenode, v_win, e_win)
+                                for datakey, datapath, datanode in h5py_node_finder(g=statenode,
+                                                                                    filter='entanglement_entropies',
+                                                                                    dep=8):
+                                    ndata = datanode['num'][()]
+                                    ydata = np.array(datanode['avg'])
+                                    edata = np.array(datanode['ste'])
+                                    xdata = range(len(ydata))
+
+                                    if np.any(np.isnan(ydata)):
+                                        raise ValueError("Data contains nan's")
+                                    if np.any(np.isnan(ydata)):
+                                        raise ValueError("Standard error contains nan's")
+
+                                    if "states" in statekey:
+                                        color = next(ed_palette)
+                                        nicename = "ED e=[" + statenode.attrs["efmt"] + "]"
+                                        lwidth = 3.0
+                                        lalpha = 0.9
+                                        mstyle = None
+                                        lstyle = 'solid'
+                                        # Test taking a subset of states
+                                        # edata = bootstrap_sterr(data=datanode['data'],chunksize=2000)
+
+                                        # idx = random.sample(range(0,ndata-1),2000)
+                                        # idx.sort()
+                                        # ydata = np.nanmean(np.array(datanode['data'][:,idx]),axis=1)
+
+
+                                    else:
+                                        color = next(current_palette)
+                                        nicename = re.sub(r'[\W_]', ' ', str(algokey + " " + statekey))
+                                        lwidth = 1.4
+                                        lalpha = 1.0
+                                        mstyle = '.'
+                                        lstyle = 'dotted'
+
+                                    nicename = nicename + ' (' + str(ndata) + ')'
+                                    ax.errorbar(x=xdata, y=ydata, yerr=edata, label=nicename, capsize=2,
+                                                color=color,
+                                                elinewidth=0.3, markeredgewidth=0.8, marker=mstyle,
+                                                linestyle=lstyle,
+                                                linewidth=lwidth, alpha=lalpha)
+                                    max_S = np.max([max_S, np.max(ydata)])
+
+                                    # Select a random subset of the data
+                                    if "states" in statekey:
+                                        continue
+                                    data = np.array(datanode['data'])
+                                    ndata = int(data.shape[1] * 0.5)
+                                    for rep in range(0):
+                                        idx = np.random.choice(data.shape[1], ndata, replace=False)
+                                        subdata = data[:, idx]
+                                        std = np.nanstd(subdata, axis=1)
+                                        ydata = np.nanmean(subdata, axis=1)
+                                        edata = std / np.sqrt(ndata)
+                                        nicename = re.sub(r'[\W_]', ' ',
+                                                          str(algokey + " " + statekey)) + ' (random ' + str(
+                                            ndata) + ')'
+                                        ax.errorbar(x=xdata, y=ydata, yerr=edata, label=nicename, capsize=2,
+                                                    elinewidth=0.3, markeredgewidth=0.8, linewidth=0.3)
+                                        max_S = np.max([max_S, np.max(ydata)])
+
+                ax.set_xlabel('Site $l$')
+                ax.set_ylabel('$S_E(l)$')
+                ax.set_title('$L = ' + str(size) + '$')
+                used_ax = used_ax + 1
+                ax.legend()
+
+            for ax in np.ravel(axes)[used_ax:]:
+                fig.delaxes(ax)
+            for ax in np.ravel(axes):
+                ax.set_ylim(ymin=0, ymax=max_S * 1.2)
+            fig.suptitle('Entanglement entropy vs site @ $\Delta = ' + str(delt) + '\quad \lambda = ' + str(
+                lamb) + '$')
+            if plotdir != '':
+                plt.savefig(plotdir + '/S_vs_Site_' + l + '_' + d + '.pdf', format='pdf')
+                plt.savefig(plotdir + '/S_vs_Site_' + l + '_' + d + '.png', format='png')
+
+    h5close(h5_src)
+
+
+def multiplot_S_vs_Site_old2(h5_src, db=None, plotdir='', algo_filter='', state_filter='', vwin=None):
+    print('Plotting: S vs Site for: ', algo_filter, state_filter)
+    if not db:
+        db = load_database(h5_src, 'entanglement_entropies', algo_filter, state_filter)
+
+    # One figure per L
+    # One subplot per delta
+    # One line per lambda per state
+    # One figure per L
+    # One subplot per delta
+    # One line per lambda per state
+    for Lkey in db['keys']['L']:
+        figrows, figcols = get_optimal_subplot_num(1 + len(db['keys']['d']))  # Add one for the legend
+        fig, axes = plt.subplots(nrows=figrows, ncols=figcols, figsize=(5 * figcols, 5 * figrows), sharey='all')
+        fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+        fig.subplots_adjust(wspace=0.2, hspace=0.2)
+        axes_used = []
+        for didx, (dkey, ax) in enumerate(zip(db['keys']['d'], np.ravel(axes))):
+            ed_palette = itertools.cycle(sns.color_palette("Set2"))
+            numcolors = len(db['keys']['state']) * len(db['keys']['l'])
+            current_palette = itertools.cycle(sns.color_palette("colorblind", numcolors))
+            lstyles = itertools.cycle(['-.', '-', '--', ':', ])
+            mstyles = itertools.cycle(('.', ',', '+', 'o', '*'))
+            delt = None
+            size = None
+            for algoidx, algokey in enumerate(db['keys']['algo']):
+                for stateidx, statekey in enumerate(db['keys']['state']):
+                    if not contains(algokey, algo_filter) or not contains(statekey, state_filter):
+                        continue
+                    dsetkeys = [x for x in db['dsets'] if
+                                Lkey in x and dkey in x and algokey in x and statekey in x]
+                    if not dsetkeys:
+                        continue
+
+                    lstyle = next(lstyles)
+                    mstyle = next(mstyles)
+                    # Now we have a set of setkeys with fixed L,d,algo and state, varying l.
+                    for dsetidx, dsetkey in enumerate(dsetkeys):
+                        meta = db['dsets'][dsetkey]
+                        midx = meta['midx']
+                        lamb = meta['l']
+                        delt = meta['d']
+                        size = meta['L']
+                        ndata = meta['num']
+                        style = meta['style']
+
+                        ydata = np.array(meta['datanode']['avg'])
+                        edata = np.array(meta['datanode']['ste'])
+                        xdata = range(len(ydata))
+                        if vwin:
+                            ydata, xdata, edata, ndata = get_v_filtered_edata(ydata, xdata, edata, ndata, meta, vwin)
+                        if "states" in statekey:
+                            color = next(ed_palette)
+                            mstyle = None
+                            lstyle = 'solid'
+                            lgnd = "ED $\lambda = {:.3f}$ ({})".format(lamb, ndata)
+                            # nicename = "ED e=[" + statenode.attrs["efmt"] + "]"
+                        else:
+                            color = next(current_palette)
+                            lgnd = "{} $\lambda={:.3f} ({})$".format(re.sub(r'[\W_]', ' ', str(algokey + " " + statekey)), lamb, ndata)
+                        ax.errorbar(x=xdata, y=ydata, yerr=edata, label=lgnd, capsize=2,
+                                    color=color, elinewidth=0.3, markeredgewidth=0.8,
+                                    marker=mstyle, markersize=4.0, linestyle=lstyle,
+                                    linewidth=style['lwidth'], alpha=style['lalpha'])
+
+            ax.set_xlabel('Site $l$')
+            ax.set_ylabel('$S_E(l)$')
+            ax.set_title('$\Delta = {}$'.format(delt))
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            ax.legend(loc='lower center', fontsize='small', labelspacing=0.25)
+            fig.suptitle('Entanglement entropy vs site @ $L = {} $'.format(size))  # $\Delta = ' + str(delt) + '\quad \lambda = ' + str(
+
+            # $\Delta = $' + str(delt) + '$\lambda = $' + str(lamb))
+            axes_used.append(didx) if not didx in axes_used else axes_used
+
+        remove_empty_subplots(fig=fig, axes=axes, axes_used=axes_used)
+        if plotdir != '':
+            plt.savefig(plotdir + '/S_vs_Site_' + Lkey + '.pdf', format='pdf')
+            plt.savefig(plotdir + '/S_vs_Site_' + Lkey + '.png', format='png')
+    return
+
+    # One figure per unique_l, unique_J and unique_h
+    for l in path_l:
+        for d in path_d:
+            # In each figure we want one subplot per unique_L
+            rows, cols = get_optimal_subplot_num(len(path_L))
+            fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(7 * cols, 7 * rows))
+            fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+            fig.subplots_adjust(wspace=0.3, hspace=0.3)
+            used_ax = 0
+            delt = 0
+            lamb = 0
+            max_S = 0
+            for ax, L in zip(np.ravel(axes), path_L):
+                ed_palette = itertools.cycle(sns.color_palette("Set2"))
+                current_palette = itertools.cycle(sns.color_palette())
+                basenode = h5_src[L][l][d]
+                chain_length = basenode.attrs['model_size']
+                delt = basenode.attrs['d']
+                lamb = basenode.attrs['l']
+                for algokey, algopath, algonode in h5py_group_iterator(g=basenode, filter=algo_filter, dep=1):
+                    for statekey, statepath, statenode in h5py_group_iterator(g=algonode, filter=state_filter,
+                                                                              dep=1):
+                        for v_win_idx, v_win in enumerate(variance_window_limits):
+                            for e_win_idx, e_win in enumerate(energy_window_limits):
+                                idx = get_v_e_filtered_index_list(statenode, v_win, e_win)
+                                for datakey, datapath, datanode in h5py_node_finder(g=statenode,
+                                                                                    filter='entanglement_entropies',
+                                                                                    dep=8):
+                                    ndata = datanode['num'][()]
+                                    ydata = np.array(datanode['avg'])
+                                    edata = np.array(datanode['ste'])
+                                    xdata = range(len(ydata))
+
+                                    if np.any(np.isnan(ydata)):
+                                        raise ValueError("Data contains nan's")
+                                    if np.any(np.isnan(ydata)):
+                                        raise ValueError("Standard error contains nan's")
+
+                                    if "states" in statekey:
+                                        color = next(ed_palette)
+                                        nicename = "ED e=[" + statenode.attrs["efmt"] + "]"
+                                        lwidth = 3.0
+                                        lalpha = 0.9
+                                        mstyle = None
+                                        lstyle = 'solid'
+                                        # Test taking a subset of states
+                                        # edata = bootstrap_sterr(data=datanode['data'],chunksize=2000)
+
+                                        # idx = random.sample(range(0,ndata-1),2000)
+                                        # idx.sort()
+                                        # ydata = np.nanmean(np.array(datanode['data'][:,idx]),axis=1)
+
+
+                                    else:
+                                        color = next(current_palette)
+                                        nicename = re.sub(r'[\W_]', ' ', str(algokey + " " + statekey))
+                                        lwidth = 1.4
+                                        lalpha = 1.0
+                                        mstyle = '.'
+                                        lstyle = 'dotted'
+
+                                    nicename = nicename + ' (' + str(ndata) + ')'
+                                    ax.errorbar(x=xdata, y=ydata, yerr=edata, label=nicename, capsize=2,
+                                                color=color,
+                                                elinewidth=0.3, markeredgewidth=0.8, marker=mstyle,
+                                                linestyle=lstyle,
+                                                linewidth=lwidth, alpha=lalpha)
+                                    max_S = np.max([max_S, np.max(ydata)])
+
+                                    # Select a random subset of the data
+                                    if "states" in statekey:
+                                        continue
+                                    data = np.array(datanode['data'])
+                                    ndata = int(data.shape[1] * 0.5)
+                                    for rep in range(0):
+                                        idx = np.random.choice(data.shape[1], ndata, replace=False)
+                                        subdata = data[:, idx]
+                                        std = np.nanstd(subdata, axis=1)
+                                        ydata = np.nanmean(subdata, axis=1)
+                                        edata = std / np.sqrt(ndata)
+                                        nicename = re.sub(r'[\W_]', ' ',
+                                                          str(algokey + " " + statekey)) + ' (random ' + str(
+                                            ndata) + ')'
+                                        ax.errorbar(x=xdata, y=ydata, yerr=edata, label=nicename, capsize=2,
+                                                    elinewidth=0.3, markeredgewidth=0.8, linewidth=0.3)
+                                        max_S = np.max([max_S, np.max(ydata)])
+
+                ax.set_xlabel('Site $l$')
+                ax.set_ylabel('$S_E(l)$')
+                ax.set_title('$L = ' + str(chain_length) + '$')
+                used_ax = used_ax + 1
+                ax.legend()
+
+            for ax in np.ravel(axes)[used_ax:]:
+                fig.delaxes(ax)
+            for ax in np.ravel(axes):
+                ax.set_ylim(ymin=0, ymax=max_S * 1.2)
+            fig.suptitle('Entanglement entropy vs site @ $\Delta = ' + str(delt) + '\quad \lambda = ' + str(
+                lamb) + '$')
+            if plotdir != '':
+                plt.savefig(plotdir + '/S_vs_Site_' + l + '_' + d + '.pdf', format='pdf')
+                plt.savefig(plotdir + '/S_vs_Site_' + l + '_' + d + '.png', format='png')
+
+    h5close(h5_src)
+
+
+def multiplot_S_vs_Site_old(src, plotdir='', algo_filter='', state_filter='', type='average'):
+    print('Plotting: S vs Site for: ', algo_filter, state_filter)
+    h5_src = h5open(src, 'r')
+    path_L = h5py_unique_finder(h5_src, filter='L_', dep=1)
+    path_l = h5py_unique_finder(h5_src, filter='l_', dep=2)
+    path_d = h5py_unique_finder(h5_src, filter='d_', dep=3)
+
+    # One figure per unique_l, unique_J and unique_h
+    for l in path_l:
+        for d in path_d:
+            # In each figure we want one subplot per unique_L
+            rows, cols = get_optimal_subplot_num(len(path_L))
+            fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(7 * cols, 7 * rows))
+            fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+            fig.subplots_adjust(wspace=0.3, hspace=0.3)
+            used_ax = 0
+            delt = 0
+            lamb = 0
+            max_S = 0
+            for ax, L in zip(np.ravel(axes), path_L):
+                ed_palette = itertools.cycle(sns.color_palette("Set2"))
+                current_palette = itertools.cycle(sns.color_palette())
+                basenode = h5_src[L][l][d]
+                chain_length = basenode.attrs['model_size']
+                delt = basenode.attrs['d']
+                lamb = basenode.attrs['l']
+                for algokey, algopath, algonode in h5py_group_iterator(g=basenode, filter=algo_filter, dep=1):
+                    for statekey, statepath, statenode in h5py_group_iterator(g=algonode, filter=state_filter,
+                                                                              dep=1):
+                        for v_win_idx, v_win in enumerate(variance_window_limits):
+                            for e_win_idx, e_win in enumerate(energy_window_limits):
+                                idx = get_v_e_filtered_index_list(statenode, v_win, e_win)
+                                for datakey, datapath, datanode in h5py_node_finder(g=statenode,
+                                                                                    filter='entanglement_entropies',
+                                                                                    dep=8):
+                                    ndata = datanode['num'][()]
+                                    ydata = np.array(datanode['avg'])
+                                    edata = np.array(datanode['ste'])
+                                    xdata = range(len(ydata))
+
+                                    if np.any(np.isnan(ydata)):
+                                        raise ValueError("Data contains nan's")
+                                    if np.any(np.isnan(ydata)):
+                                        raise ValueError("Standard error contains nan's")
+
+                                    if "states" in statekey:
+                                        color = next(ed_palette)
+                                        nicename = "ED e=[" + statenode.attrs["efmt"] + "]"
+                                        lwidth = 3.0
+                                        lalpha = 0.9
+                                        mstyle = None
+                                        lstyle = 'solid'
+                                        # Test taking a subset of states
+                                        # edata = bootstrap_sterr(data=datanode['data'],chunksize=2000)
+
+                                        # idx = random.sample(range(0,ndata-1),2000)
+                                        # idx.sort()
+                                        # ydata = np.nanmean(np.array(datanode['data'][:,idx]),axis=1)
+
+
+                                    else:
+                                        color = next(current_palette)
+                                        nicename = re.sub(r'[\W_]', ' ', str(algokey + " " + statekey))
+                                        lwidth = 1.4
+                                        lalpha = 1.0
+                                        mstyle = '.'
+                                        lstyle = 'dotted'
+
+                                    nicename = nicename + ' (' + str(ndata) + ')'
+                                    ax.errorbar(x=xdata, y=ydata, yerr=edata, label=nicename, capsize=2,
+                                                color=color,
+                                                elinewidth=0.3, markeredgewidth=0.8, marker=mstyle,
+                                                linestyle=lstyle,
+                                                linewidth=lwidth, alpha=lalpha)
+                                    max_S = np.max([max_S, np.max(ydata)])
+
+                                    # Select a random subset of the data
+                                    if "states" in statekey:
+                                        continue
+                                    data = np.array(datanode['data'])
+                                    ndata = int(data.shape[1] * 0.5)
+                                    for rep in range(0):
+                                        idx = np.random.choice(data.shape[1], ndata, replace=False)
+                                        subdata = data[:, idx]
+                                        std = np.nanstd(subdata, axis=1)
+                                        ydata = np.nanmean(subdata, axis=1)
+                                        edata = std / np.sqrt(ndata)
+                                        nicename = re.sub(r'[\W_]', ' ',
+                                                          str(algokey + " " + statekey)) + ' (random ' + str(
+                                            ndata) + ')'
+                                        ax.errorbar(x=xdata, y=ydata, yerr=edata, label=nicename, capsize=2,
+                                                    elinewidth=0.3, markeredgewidth=0.8, linewidth=0.3)
+                                        max_S = np.max([max_S, np.max(ydata)])
+
+                ax.set_xlabel('Site $l$')
+                ax.set_ylabel('$S_E(l)$')
+                ax.set_title('$L = ' + str(chain_length) + '$')
+                used_ax = used_ax + 1
+                ax.legend()
+
+            for ax in np.ravel(axes)[used_ax:]:
+                fig.delaxes(ax)
+            for ax in np.ravel(axes):
+                ax.set_ylim(ymin=0, ymax=max_S * 1.2)
+            fig.suptitle('Entanglement entropy vs site @ $\Delta = ' + str(delt) + '\quad \lambda = ' + str(
+                lamb) + '$')
+            if plotdir != '':
+                plt.savefig(plotdir + '/S_vs_Site_' + l + '_' + d + '.pdf', format='pdf')
+                plt.savefig(plotdir + '/S_vs_Site_' + l + '_' + d + '.png', format='png')
+
+    h5close(h5_src)
+
+    # # One figure per unique_L
+    # # In each figure we want one subplot per unique_l and unique_h
+    # for L in path_L:
+    #     rows, cols = get_optimal_subplot_num(len(path_d)*len(path_l))
+    #     fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(3.5 * cols, 3.5 * rows))
+    #     fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+    #     fig.subplots_adjust(wspace=0.3, hspace=0.3)
+    #     used_ax = 0
+    #     delt = 0
+    #     lamb = 0
+    #     length = 0
+    #     for d in path_d:
+    #         for l in path_l:
+    #             max_S = 0
+    #             ax = np.ravel(axes)[used_ax]
+    #             for key in h5_src[L][l][d].keys():
+    #                 node         = h5_src[L][l][d][key]['entanglement_entropies']
+    #                 length       = node.attrs['chain_length']
+    #                 lamb         = node.attrs['l']
+    #                 delt         = node.attrs['d']
+    #                 ydata        = np.asarray(node['avg'])
+    #                 edata        = np.asarray(node['ste'])
+    #                 xdata        = range(len(ydata))
+    #                 nicename = re.sub(r'[\W_]', ' ', str(key))
+    #                 legend = nicename + ' (' + str(node['num'][()]) + ')'
+    #                 ax.errorbar(x=xdata, y=ydata, yerr=edata, label=legend, capsize=2, elinewidth=0.3, markeredgewidth=0.8)
+    #                 max_S = np.max([max_S, np.max(ydata)])
+    #                 if not np.isnan(max_S):
+    #                     ax.set_ylim(0, max_S * 1.2)
+    #
+    #             if(delt == 0 and lamb == 0 and length == 16):
+    #                 S = [0, 0.374471, 0.472247, 0.523218, 0.552671, 0.573738, 0.587836, 0.594864, 0.596525, 0.594907, 0.586336, 0.572526, 0.554162, 0.523051, 0.471988, 0.373509, 0]
+    #                 error = [0, 0.00102476, 0.00115219, 0.00123002, 0.00127545, 0.00130646, 0.00133261, 0.00134472, 0.00134827, 0.00133873, 0.00132296, 0.00130463, 0.00127609, 0.00123216, 0.00115692, 0.001028340, 0]
+    #                 X = range(len(S))
+    #                 ax.errorbar(x=X, y=S, yerr=error,label='ED', capsize=2, elinewidth=0.3,markeredgewidth=0.8)
+    #             if(delt == 0 and lamb == 0 and length == 20):
+    #                 S = [0,0.373, 0.471249, 0.522481, 0.55781, 0.580094, 0.596833, 0.607267, 0.613621, 0.618359, 0.618011, 0.617369, 0.612451, 0.605299, 0.593242, 0.57919, 0.557428, 0.523598, 0.475332, 0.375457,0]
+    #                 X = range(len(S))
+    #                 error = [0,0.00101869, 0.00114315, 0.00121947, 0.00126443, 0.00129272, 0.00132133, 0.00134265, 0.00134894, 0.00135087, 0.00135763, 0.00135267, 0.00135099, 0.00133986, 0.00132104, 0.00129401, 0.00126394, 0.0012185, 0.00114213, 0.00101948,0]
+    #                 ax.errorbar(x=X, y=S, yerr=error,label='ED', capsize=2, elinewidth=0.3,markeredgewidth=0.8)
+    #             if(delt == 0 and lamb == 0 and length == 24):
+    #                 S = [0,0.37461736352091407, 0.4725763540937676, 0.5227031165354324, 0.5542200744364754, 0.5758221102784965, 0.5938080916214405, 0.6061505552727909, 0.615498525184133, 0.6226707105840117, 0.6260032405610142, 0.6288501829396799, 0.6299770044181504, 0.6311934512689692, 0.6291701530943633, 0.6219089008669284, 0.6143429792361674, 0.6050723264602603, 0.5946600879240719, 0.5798447124123601, 0.5566384691004214, 0.5245997914863004, 0.47141376336639035, 0.3727081401273881,0]
+    #                 X = range(len(S))
+    #                 error = [0,0.0010166, 0.00114359, 0.00121893, 0.0012695, 0.00129574, 0.0013202, 0.00133471, 0.00134827, 0.00135663, 0.00137044, 0.0013722, 0.00136483, 0.00136554, 0.00136365, 0.00136013, 0.00134999, 0.00133435, 0.00131441, 0.00128837, 0.00125913, 0.00121221, 0.00114432, 0.00101821,0]
+    #                 ax.errorbar(x=X, y=S, yerr=error,label='ED', capsize=2, elinewidth=0.3,markeredgewidth=0.8)
+    #
+    #             if(delt == 0 and lamb == 0 and length == 28):
+    #                 S = [0,0.373628, 0.471354, 0.524944, 0.557051, 0.578698, 0.594773, 0.608878, 0.618423,
+    #                      0.625545, 0.632077, 0.637698, 0.641019, 0.642286, 0.643614, 0.642264, 0.638517,
+    #                      0.637435, 0.632265, 0.626954, 0.619498, 0.607997, 0.595997, 0.579926, 0.556749,
+    #                      0.524608, 0.473192, 0.373848,0]
+    #                 X = range(len(S))
+    #                 error = [0,0.00101788, 0.00114517, 0.00122205, 0.00126571, 0.00129543, 0.00131021,
+    #                          0.00133502, 0.00135903, 0.00136457, 0.00136902, 0.00137835, 0.00137895,
+    #                          0.00138376, 0.00138815, 0.00138321, 0.00137414, 0.00137163, 0.00137223,
+    #                          0.00136042, 0.00134497, 0.00133506, 0.00131516, 0.00129404, 0.00126898,
+    #                          0.00122117, 0.00114738, 0.00101925,0]
+    #                 ax.errorbar(x=X, y=S, yerr=error,label='ED', capsize=2, elinewidth=0.3,markeredgewidth=0.8)
+    #
+    #             if(delt == 0 and lamb == 0 and length == 32):
+    #                 S = [0,0.374089, 0.471729, 0.522618, 0.555267, 0.577773, 0.595709, 0.608997, 0.617723,
+    #                      0.628575, 0.633758, 0.639552, 0.644951, 0.647703, 0.650074, 0.651359, 0.651945,
+    #                      0.650796, 0.649983, 0.646755, 0.644332, 0.637778, 0.632488, 0.626712, 0.619418,
+    #                      0.607465, 0.595365, 0.578531, 0.556161, 0.522405, 0.472208, 0.3755,0]
+    #                 X = range(len(S))
+    #                 error = [0,0.00101825, 0.00114809, 0.00121922, 0.00126688, 0.0012968, 0.00132185,
+    #                          0.00133899, 0.00135762, 0.00136437, 0.00138122, 0.00138054, 0.00138744,
+    #                          0.001388, 0.00139313, 0.001395, 0.00139175, 0.00140125, 0.00139372, 0.0013929,
+    #                          0.00138127, 0.00137573, 0.00136636, 0.00136352, 0.00135417, 0.00134357,
+    #                          0.001319, 0.00129467, 0.00125492, 0.00121383, 0.00113988, 0.00101578,0]
+    #                 ax.errorbar(x=X, y=S, yerr=error,label='ED', capsize=2, elinewidth=0.3,markeredgewidth=0.8)
+    #
+    #             if(delt == 0 and lamb == 0 and length == 36):
+    #                 S = [0,0.373552, 0.473465, 0.526165, 0.559651, 0.579821, 0.596138, 0.6084, 0.618548,
+    #                      0.627826, 0.635767, 0.641627, 0.646387, 0.651642, 0.653668, 0.65635, 0.658692,
+    #                      0.660192, 0.658136, 0.659071, 0.657466, 0.655574, 0.652659, 0.651128, 0.64598,
+    #                      0.641066, 0.635263, 0.626342, 0.618127, 0.60799, 0.59512, 0.578946, 0.554724,
+    #                      0.522394, 0.472139, 0.373299,0]
+    #                 X = range(len(S))
+    #                 error = [0,0.0010177, 0.00114565, 0.00121946, 0.00126327, 0.0012966, 0.00132245,
+    #                          0.00134516, 0.00135709, 0.00136254, 0.00137484, 0.00138625, 0.00139435,
+    #                          0.00139612, 0.00140128, 0.00140103, 0.00140282, 0.00140423, 0.00140601,
+    #                          0.00140425, 0.00139926, 0.00139787, 0.00139663, 0.0013912, 0.00138992,
+    #                          0.00138378, 0.00136701, 0.00135737, 0.00135367, 0.00133836, 0.00131677,
+    #                          0.00129163, 0.00126626, 0.00121859, 0.00114422, 0.00101824,0]
+    #                 ax.errorbar(x=X, y=S, yerr=error,label='ED', capsize=2, elinewidth=0.3,markeredgewidth=0.8)
+    #
+    #
+    #
+    #
+    #             ax.set_xlabel('Site $l$')
+    #             ax.set_ylabel('Entanglement entropy $S(l)$')
+    #             ax.set_title('$L = $' + str(length) + '\quad $\Delta = $' + str(delt) + ' $\quad \lambda = $' + str(lamb))
+    #             used_ax = used_ax + 1
+    #             ax.legend()
+    #     for ax in np.ravel(axes)[used_ax:]:
+    #         fig.delaxes(ax)
+    #     fig.suptitle('Entanglement entropy vs site')
+    #
+    #     if plotdir != '':
+    #         plt.savefig(plotdir + '/S_vs_l_' + L + '.pdf', format='pdf')
+    #
+
+    # used_ax = 0
+    # for i, (path_L, node_L) in enumerate(h5py_node_finder(g=h5_src, filter='L_')):
+    #
+    #     datasets = h5py_node_finder(node_L, filter='S_vs_Site')
+    #     num_deltas   = []
+    #     all_deltas   = []
+    #     for dataset in [x[1] for x in datasets]:
+    #         num_deltas.append(dataset.shape[1])
+    #         all_deltas.append(dataset[0][:].T[0])
+    #     max_deltas = max(num_deltas)
+    #     loc        = np.argmax(num_deltas)
+    #     val_deltas = all_deltas[loc]
+    #
+    #     rows, cols = get_optimal_subplot_num(max_deltas)
+    #     fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(3.5 * cols, 3.5 * rows))
+    #     fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+    #     fig.subplots_adjust(wspace=0.3, hspace=0.3)
+    #     fig.suptitle('Entanglement entropy vs Site -- ' + type + ' values')
+    #     used_ax = 0
+    #
+    #     for ax, delta in zip(np.ravel(axes), val_deltas):
+    #         max_S = 0
+    #         for dataset in [x[1] for x in datasets]:
+    #             available_deltas = dataset[0][:].T[0]
+    #             idx = np.where(available_deltas == delta)[0]
+    #             if len(idx) == 0:
+    #                 continue
+    #             else:
+    #                 idx=idx[0]
+    #                 if (type =='typical'):
+    #                     ax.plot(dataset[5][idx], label='$\lambda = $' + str(dataset.attrs['l']))
+    #                     max_S = np.max([max_S, np.max(dataset[5][idx])])
+    #                     ax.set_ylim(0, max_S*1.2)
+    #                 elif(type == 'average'):
+    #                     ax.errorbar(x=range(len(dataset[2][idx])), y=dataset[2][idx], yerr=dataset[4][idx],
+    #                                 label='$\lambda = $' + str(dataset.attrs['l']), capsize=2, elinewidth=0.3,
+    #                                 markeredgewidth=0.8)
+    #                     max_S = np.max([max_S, np.max(dataset[2][idx])])
+    #                     ax.set_ylim(0, max_S*1.2)
+    #
+    #                     # ax.plot(dataset[2][idx], label='$\lambda = $' + str(dataset.attrs['l']))
+    #
+    #         ax.legend()
+    #         ax.set_xlabel('Site')
+    #         ax.set_ylabel(dataset.attrs['ylabel'])
+    #         ax.set_title('$\Delta = ' + str(delta) + '$, $L =' + dataset.attrs['chain_length'] + '$')
+    #         used_ax = used_ax + 1
+    #
+    #     for ax in np.ravel(axes)[used_ax:]:
+    #         fig.delaxes(ax)
+    #
+    #     if plotdir != '':
+    #         plt.savefig(plotdir + '/S_vs_Site_' + type + '_L_' + dataset.attrs['chain_length'] + '.pdf', format='pdf')
+    # h5close(h5_src)
+
+
+def multiplot_S_vs_l_foreach_lambda_old(src, plotdir='', type='typical'):
+    print('Plotting:     S vs l at every delta, for each lambda -- ' + type)
+    h5_src = h5open(src, 'r')
+    used_ax = 0
+    for i, (path_L, node_L) in enumerate(h5py_node_finder(g=h5_src, filter='L_')):
+
+        datasets = h5py_node_finder(node_L, filter='S_vs_Site')
+        num_deltas = []
+        all_deltas = []
+        for dataset in [x[1] for x in datasets]:
+            num_deltas.append(dataset.shape[1])
+            all_deltas.append(dataset[0][:].T[0])
+        max_deltas = max(num_deltas)
+        loc = np.argmax(num_deltas)
+        val_deltas = all_deltas[loc]
+
+        rows, cols = get_optimal_subplot_num(max_deltas)
+        fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(3.5 * cols, 3.5 * rows))
+        fig.tight_layout(pad=5, w_pad=1.0, h_pad=1.0)
+        fig.subplots_adjust(wspace=0.3, hspace=0.3)
+        fig.suptitle('Entanglement entropy vs Site -- ' + type + ' values')
+        used_ax = 0
+
+        for ax, delta in zip(np.ravel(axes), val_deltas):
+            max_S = 0
+            for dataset in [x[1] for x in datasets]:
+                available_deltas = dataset[0][:].T[0]
+                idx = np.where(available_deltas == delta)[0]
+                if len(idx) == 0:
+                    continue
+                else:
+                    idx = idx[0]
+                    if (type == 'typical'):
+                        ax.plot(dataset[5][idx], label='$\lambda = $' + str(dataset.attrs['l']))
+                        max_S = np.max([max_S, np.max(dataset[5][idx])])
+                        ax.set_ylim(0, max_S * 1.2)
+                    elif (type == 'average'):
+                        ax.errorbar(x=range(len(dataset[2][idx])), y=dataset[2][idx], yerr=dataset[4][idx],
+                                    label='$\lambda = $' + str(dataset.attrs['l']), capsize=2, elinewidth=0.3,
+                                    markeredgewidth=0.8)
+                        max_S = np.max([max_S, np.max(dataset[2][idx])])
+                        ax.set_ylim(0, max_S * 1.2)
+
+                        # ax.plot(dataset[2][idx], label='$\lambda = $' + str(dataset.attrs['l']))
+
+            ax.legend()
+            ax.set_xlabel('Site')
+            ax.set_ylabel(dataset.attrs['ylabel'])
+            ax.set_title('$\Delta = ' + str(delta) + '$, $L =' + dataset.attrs['chain_length'] + '$')
+            used_ax = used_ax + 1
+
+        for ax in np.ravel(axes)[used_ax:]:
+            fig.delaxes(ax)
+
+        if plotdir != '':
+            plt.savefig(plotdir + '/S_vs_Site_' + type + '_L_' + dataset.attrs['chain_length'] + '.pdf', format='pdf')
+    h5close(h5_src)
