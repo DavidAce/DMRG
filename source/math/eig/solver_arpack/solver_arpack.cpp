@@ -22,10 +22,10 @@
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_sparse.h"
+#include "tid/tid.h"
 #include <algorithm>
 #include <arpack++/arrseig.h>
 #include <general/sfinae.h>
-#include <tid/tid.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <variant>
 
@@ -75,17 +75,14 @@ template<typename MatrixType>
 eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_)
     : matrix(matrix_), config(config_), result(result_) {
     if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual_norm pointer
-
-    t_tot        = std::make_unique<tid::ur>("total");
-    t_mul        = std::make_unique<tid::ur>("matvec");
-    t_fnd        = std::make_unique<tid::ur>("find_eigenpair");
-    t_pre        = std::make_unique<tid::ur>("preparation");
     nev_internal = std::clamp<int>(static_cast<int>(config.maxNev.value()), 1, matrix.rows() / 2);
     ncv_internal = std::clamp<int>(static_cast<int>(config.maxNcv.value()), static_cast<int>(config.maxNev.value()) + 1, matrix.rows());
 }
 
 template<typename MatrixType>
 void eig::solver_arpack<MatrixType>::eigs() {
+    auto t_arp = tid::tic_scope("arpack");
+
     result.reset();
     nev_internal = std::clamp<int>(static_cast<int>(config.maxNev.value()), 1, matrix.rows() / 2);
     ncv_internal = std::clamp<int>(static_cast<int>(config.maxNcv.value()), static_cast<int>(config.maxNev.value()) + 1, matrix.rows());
@@ -194,54 +191,54 @@ void eig::solver_arpack<MatrixType>::eigs_comp_rc() {
 template<typename MatrixType>
 template<typename Derived>
 void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_type nev) {
-    using ShiftType  = decltype(solver.GetShift());
-    auto t_tot_token = t_tot->tic_token();
+    using ShiftType = decltype(solver.GetShift());
 
     // Start by preparing the matrix for solving. Apply shifts, do inversion/factorization and then compress
-    auto t_pre_token = t_pre->tic_token();
-    if constexpr(MatrixType::can_shift) {
-        if(config.sigma) {
-            eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
-            matrix.set_shift(config.sigma.value());
-            if constexpr(MatrixType::can_shift_invert) {
-                if(config.shift_invert == Shinv::ON) {
-                    eig::log->trace("Enabling shift-invert mode");
-                    matrix.FactorOP();
-                    if constexpr(std::is_same_v<ShiftType, cplx>) solver.SetShiftInvertMode(config.sigma.value(), &matrix, &MatrixType::MultOPv);
-                    if constexpr(std::is_same_v<ShiftType, real>) solver.SetShiftInvertMode(std::real(config.sigma.value()), &matrix, &MatrixType::MultOPv);
-                }
-            } else if(config.shift_invert == Shinv::ON)
-                throw std::runtime_error("Tried to shift-invert an incompatible matrix");
+    {
+        auto t_prep = tid::tic_scope("prep");
+        if constexpr(MatrixType::can_shift) {
+            if(config.sigma) {
+                eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
+                matrix.set_shift(config.sigma.value());
+                if constexpr(MatrixType::can_shift_invert) {
+                    if(config.shift_invert == Shinv::ON) {
+                        eig::log->trace("Enabling shift-invert mode");
+                        matrix.FactorOP();
+                        if constexpr(std::is_same_v<ShiftType, cplx>) solver.SetShiftInvertMode(config.sigma.value(), &matrix, &MatrixType::MultOPv);
+                        if constexpr(std::is_same_v<ShiftType, real>) solver.SetShiftInvertMode(std::real(config.sigma.value()), &matrix, &MatrixType::MultOPv);
+                    }
+                } else if(config.shift_invert == Shinv::ON)
+                    throw std::runtime_error("Tried to shift-invert an incompatible matrix");
+            }
+        } else if(config.sigma) {
+            throw std::runtime_error("Tried to apply shift on an incompatible matrix");
         }
-    } else if(config.sigma) {
-        throw std::runtime_error("Tried to apply shift on an incompatible matrix");
-    }
 
-    if constexpr(MatrixType::can_compress) {
-        if(config.compress and config.compress.value()) matrix.compress();
-    }
-    t_pre_token.toc();
-
-    auto t_mul_token = t_mul->tic_token();
-    solver.FindArnoldiBasis();
-    result.meta.arnoldi_found = solver.ArnoldiBasisFound();
-    t_mul_token.toc();
-    auto t_fnd_token = t_fnd->tic_token();
-    if(solver.ArnoldiBasisFound()) {
-        if(config.compute_eigvecs) {
-            eig::log->trace("Finding eigenvectors");
-            solver.FindEigenvectors();
-            if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
-            if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
-        } else {
-            eig::log->trace("Finding eigenvalues");
-            solver.FindEigenvalues();
-            if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
+        if constexpr(MatrixType::can_compress) {
+            if(config.compress and config.compress.value()) matrix.compress();
         }
     }
+    {
+        auto t_mult = tid::tic_scope("mult");
+        solver.FindArnoldiBasis();
+        result.meta.arnoldi_found = solver.ArnoldiBasisFound();
+    }
+    {
+        auto t_find = tid::tic_scope("find");
+        if(solver.ArnoldiBasisFound()) {
+            if(config.compute_eigvecs) {
+                eig::log->trace("Finding eigenvectors");
+                solver.FindEigenvectors();
+                if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
+                if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
+            } else {
+                eig::log->trace("Finding eigenvalues");
+                solver.FindEigenvalues();
+                if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
+            }
+        }
+    }
 
-    t_fnd_token.toc();
-    t_tot_token.toc();
     if(config.side == eig::Side::L)
         result.meta.eigvecsL_found = solver.EigenvectorsFound();
     else
@@ -262,9 +259,9 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     result.meta.tag           = config.tag;
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = solver.GetShift();
-    result.meta.time_total    = t_tot->get_time();
-    result.meta.time_mv       = t_mul->get_time() + t_fnd->get_time();
-    result.meta.time_prep     = t_pre->get_time();
+    result.meta.time_total    = tid::get("arpack").get_last_interval();
+    result.meta.time_mv       = tid::get("mult").get_last_interval() + tid::get("find").get_last_interval();
+    result.meta.time_prep     = tid::get("prep").get_last_interval();
 
     /* clang-format off */
     eig::log->trace("- {:<30} = {}"     ,"arnoldi_found",  result.meta.arnoldi_found);
@@ -293,93 +290,92 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
 template<typename MatrixType>
 template<typename Derived>
 void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
-    using ShiftType  = decltype(solver.GetShift());
-    auto t_tot_token = t_tot->tic_token();
-
+    using ShiftType = decltype(solver.GetShift());
+    auto t_arpack   = tid::tic_scope("arpack");
     // Start by prepare the matrix for solving. Apply shifts, do inversion/factorization and then compress
-    auto t_pre_token = t_pre->tic_token();
-    if constexpr(MatrixType::can_shift) {
-        if(config.sigma) {
-            eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
-            matrix.set_shift(config.sigma.value());
-            if constexpr(MatrixType::can_shift_invert) {
-                if(config.shift_invert == Shinv::ON) {
-                    eig::log->trace("Enabling shift-invert mode");
-                    matrix.FactorOP();
-                    if constexpr(std::is_same_v<ShiftType, cplx>) solver.SetShiftInvertMode(config.sigma.value());
-                    if constexpr(std::is_same_v<ShiftType, real>) solver.SetShiftInvertMode(std::real(config.sigma.value()));
-                }
-            } else if(config.shift_invert == Shinv::ON)
-                throw std::runtime_error("Tried to shift-invert an incompatible matrix");
+    {
+        auto t_prep = tid::tic_scope("prep");
+        if constexpr(MatrixType::can_shift) {
+            if(config.sigma) {
+                eig::log->trace("Setting shift with sigma = {}", std::real(config.sigma.value()));
+                matrix.set_shift(config.sigma.value());
+                if constexpr(MatrixType::can_shift_invert) {
+                    if(config.shift_invert == Shinv::ON) {
+                        eig::log->trace("Enabling shift-invert mode");
+                        matrix.FactorOP();
+                        if constexpr(std::is_same_v<ShiftType, cplx>) solver.SetShiftInvertMode(config.sigma.value());
+                        if constexpr(std::is_same_v<ShiftType, real>) solver.SetShiftInvertMode(std::real(config.sigma.value()));
+                    }
+                } else if(config.shift_invert == Shinv::ON)
+                    throw std::runtime_error("Tried to shift-invert an incompatible matrix");
+            }
+        } else if(config.sigma) {
+            throw std::runtime_error("Tried to apply shift on an incompatible matrix");
         }
-    } else if(config.sigma) {
-        throw std::runtime_error("Tried to apply shift on an incompatible matrix");
-    }
 
-    if constexpr(MatrixType::can_compress) {
-        if(config.compress and config.compress.value()) matrix.compress();
+        if constexpr(MatrixType::can_compress) {
+            if(config.compress and config.compress.value()) matrix.compress();
+        }
     }
-    t_pre_token.toc();
 
     // Generate an Arnoldi basis
-    int step = 0;
-    int nops = 0;
-    int iter = 0;
-    while(not solver.ArnoldiBasisFound()) {
-        if(step == 0) {
-            if(config.logTime) {
-                auto time_since_last_log = std::abs(t_tot->get_time() - result.meta.last_log_time);
-                if(time_since_last_log > config.logTime.value()) {
-                    eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops, t_tot->get_time(),
-                                    t_mul->get_last_interval() / nops * 1000);
-                    result.meta.last_log_time = t_tot->get_time();
+    {
+        auto t_mult = tid::tic_scope("mult");
+        int  step   = 0;
+        int  nops   = 0;
+        int  iter   = 0;
+        while(not solver.ArnoldiBasisFound()) {
+            if(step == 0) {
+                if(config.logTime) {
+                    auto time_since_last_log = std::abs(t_arpack->get_last_interval() - result.meta.last_log_time);
+                    if(time_since_last_log > config.logTime.value()) {
+                        eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops, t_arpack->get_last_interval(),
+                                        t_mult->get_last_interval() / nops * 1000);
+                        result.meta.last_log_time = t_arpack->get_last_interval();
+                    }
                 }
+            }
+
+            if(config.maxTime and config.maxTime.value() <= t_arpack->get_last_interval()) break;
+
+            solver.TakeStep();
+            if(std::abs(solver.GetIdo()) == 1) {
+                if constexpr(MatrixType::can_shift_invert) {
+                    if(matrix.isReadyFactorOp())
+                        matrix.MultOPv(solver.GetVector(), solver.PutVector());
+                    else
+                        matrix.MultAx(solver.GetVector(), solver.PutVector());
+                } else
+                    matrix.MultAx(solver.GetVector(), solver.PutVector());
+            }
+            step++;
+            nops++;
+            if((iter == 0 and step > solver.GetNev()) or (step > solver.GetNcv() - solver.GetNev())) {
+                step = 0;
+                iter++;
             }
         }
 
-        if(config.maxTime and config.maxTime.value() <= t_tot->get_time()) break;
-
-        solver.TakeStep();
-        if(std::abs(solver.GetIdo()) == 1) {
-            t_mul->tic();
-            if constexpr(MatrixType::can_shift_invert) {
-                if(matrix.isReadyFactorOp())
-                    matrix.MultOPv(solver.GetVector(), solver.PutVector());
-                else
-                    matrix.MultAx(solver.GetVector(), solver.PutVector());
-            } else
-                matrix.MultAx(solver.GetVector(), solver.PutVector());
-            t_mul->toc();
-        }
-        step++;
-        nops++;
-        if((iter == 0 and step > solver.GetNev()) or (step > solver.GetNcv() - solver.GetNev())) {
-            step = 0;
-            iter++;
-        }
+        eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), nops, iter, t_arpack->get_last_interval(),
+                        t_arpack->get_last_interval() / solver.GetIter() * 1000, solver.GetIter());
+        result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
+        if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");
     }
-
-    eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), nops, iter, t_tot->get_time(),
-                    t_tot->get_time() / solver.GetIter() * 1000, solver.GetIter());
-    result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
-    if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");
-
     // Find the eigenvectors/eigenvalues
-    auto t_fnd_token = t_fnd->tic_token();
-    if(solver.ArnoldiBasisFound()) {
-        if(config.compute_eigvecs) {
-            solver.FindEigenvectors();
-            if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
-            if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
-        } else {
-            eig::log->trace("Finding eigenvalues");
-            solver.FindEigenvalues();
-            if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
+    {
+        auto t_find = tid::tic_scope("find");
+        if(solver.ArnoldiBasisFound()) {
+            if(config.compute_eigvecs) {
+                solver.FindEigenvectors();
+                if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
+                if(not solver.EigenvectorsFound()) eig::log->warn("Eigenvectors were not found");
+            } else {
+                eig::log->trace("Finding eigenvalues");
+                solver.FindEigenvalues();
+                if(not solver.EigenvaluesFound()) eig::log->warn("Eigenvalues were not found");
+            }
         }
     }
-
-    t_fnd_token.toc();
-    t_tot_token.toc();
 
     if(config.side == eig::Side::L)
         result.meta.eigvecsL_found = solver.EigenvectorsFound();
@@ -402,9 +398,9 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
     result.meta.tag           = config.tag;
     result.meta.ritz          = solver.GetWhich();
     result.meta.sigma         = (config.sigma ? config.sigma.value() : result.meta.sigma); // solver.GetShift() is only for shift-invert
-    result.meta.time_total    = t_tot->get_time();
-    result.meta.time_mv       = t_mul->get_time() + t_fnd->get_time();
-    result.meta.time_prep     = t_pre->get_time();
+    result.meta.time_total    = t_arpack->get_last_interval();
+    result.meta.time_mv       = tid::get("mult").get_last_interval() + tid::get("find").get_last_interval();
+    result.meta.time_prep     = tid::get("prep").get_last_interval();
 
     /* clang-format off */
     eig::log->trace("Arpack finished");
@@ -500,11 +496,6 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
             compute_residual_norms<eigvec_type, eigval_type, Side::L>();
         }
     }
-
-    tid::get("arpack") += *t_tot;
-    tid::get("arpack.matvec") += *t_mul;
-    tid::get("arpack.findeig") += *t_fnd;
-    tid::get("arpack.prep") += *t_pre;
 }
 
 template<typename MatrixType>

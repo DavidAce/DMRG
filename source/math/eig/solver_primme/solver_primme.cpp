@@ -109,13 +109,15 @@ inline primme_projection stringToProj(std::optional<std::string> projstring) {
 
 template<typename MatrixProductType>
 void eig::solver::MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+    auto t_mv = tid::tic_scope("matvec");
     if(primme->matrix == nullptr) throw std::logic_error("primme->matrix == nullptr");
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
-    return matrix_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
+    matrix_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
 }
 
 template<typename MatrixProductType>
 void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
+    auto t_iv = tid::tic_scope("invvec");
     if(primme->matrix == nullptr) throw std::logic_error("primme->matrix == nullptr");
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
     matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
@@ -132,10 +134,11 @@ std::string getLogMessage(struct primme_params *primme) {
     auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
     std::string msg_grad = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
-    return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s | {}"),
+    return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
+                                  "it/s | {:8.2e} mv/s | {}"),
                        primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff, msg_grad,
                        result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
-                       primme->stats.numMatvecs / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
+                       static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
 }
 
 void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSize, [[maybe_unused]] int *basisFlags, [[maybe_unused]] int *iblock,
@@ -194,11 +197,9 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
 
 template<typename MatrixProductType>
 int eig::solver::eigs_primme(MatrixProductType &matrix) {
-    using Scalar = typename MatrixProductType::Scalar;
-
-    tid::ur t_tot, t_pre;
-    auto    t_tot_token = t_tot.tic_token();
-    auto    t_pre_token = t_pre.tic_token();
+    using Scalar  = typename MatrixProductType::Scalar;
+    auto t_primme = tid::tic_scope("primme");
+    auto t_prep   = tid::tic_scope("prep");
     if constexpr(MatrixProductType::can_shift) {
         if(config.sigma) {
             eig::log->debug("Setting shift with sigma = {}", std::real(config.sigma.value()));
@@ -218,7 +219,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if constexpr(MatrixProductType::can_compress) {
         if(config.compress and config.compress.value()) matrix.compress();
     }
-    t_pre_token.toc();
 
     primme_params primme;
 
@@ -303,7 +303,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     if(config.primme_max_inner_iterations) primme.correctionParams.maxInnerIterations = config.primme_max_inner_iterations.value();
     //    primme.restartingParams.maxPrevRetain = 2;
     primme.minRestartSize = primme.numEvals; // As few as possible for gd+k
-    //    primme.maxBlockSize = 8;
+                                             //    primme.maxBlockSize = omp_get_max_threads();
     //    primme.orth = primme_orth_explicit_I;
     //    if(primme.maxBlockSize == 1) primme.restartingParams.maxPrevRetain = 1;
     primme.maxBasisSize = std::max(primme.maxBasisSize, 1 + primme.minRestartSize + primme.restartingParams.maxPrevRetain);
@@ -326,7 +326,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
             primme.initSize = std::max(primme.initSize, static_cast<int>(ig.idx) + 1);
         }
     }
-
+    t_prep.toc();
     /* Call primme  */
     int info = 0;
     if constexpr(std::is_same_v<Scalar, eig::real>) {
@@ -345,7 +345,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         throw std::runtime_error("Primme: type not implemented {}", eig::sfinae::type_name<typename MatrixProductType::Scalar>());
     }
 
-    t_tot_token.toc();
     if(info == 0) {
         switch(primme.dynamicMethodSwitch) {
             case -1: eig::log->debug("Recommended method for next run: DEFAULT_MIN_MATVECS\n"); break;
@@ -382,24 +381,14 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     result.meta.num_op         = matrix.num_op;
     result.meta.time_mv        = primme.stats.timeMatvec;
     result.meta.time_pc        = primme.stats.timePrecond;
+    result.meta.time_op        = matrix.t_multOPv->get_time();
     result.meta.n              = primme.n;
     result.meta.tag            = config.tag;
     result.meta.ritz           = TargetToString(primme.target);
     result.meta.form           = config.form.value();
     result.meta.type           = config.type.value();
-    result.meta.time_total     = t_tot.get_time();
+    result.meta.time_total     = primme.stats.elapsedTime;
     result.meta.last_res_norm  = *std::max_element(result.meta.residual_norms.begin(), result.meta.residual_norms.end());
-
-    tid::get(config.tag) += t_tot.get_time();
-    tid::get(config.tag).add_count(1ul);
-    tid::get(fmt::format("{}.prep", config.tag)) += t_pre.get_time();
-    tid::get(fmt::format("{}.prep", config.tag)).add_count(1ul);
-    tid::get(fmt::format("{}.matvec", config.tag)) += primme.stats.timeMatvec;
-    tid::get(fmt::format("{}.matvec", config.tag)).add_count(static_cast<size_t>(primme.stats.numMatvecs));
-    if(config.primme_preconditioner) {
-        tid::get(fmt::format("{}.precond", config.tag)) += primme.stats.timePrecond;
-        tid::get(fmt::format("{}.precond", config.tag)).add_count(static_cast<size_t>(primme.stats.numPreconds));
-    }
     primme_free(&primme);
     return info;
 }

@@ -208,10 +208,12 @@ void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz
     if(not config.logTime) {
         if(eig::log->level() == spdlog::level::trace) config.logTime = 10.0;
         if(eig::log->level() == spdlog::level::debug) config.logTime = 60.0;
-        if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+        //        if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+        if(eig::log->level() >= spdlog::level::info) config.logTime = 10.0;
         if(eig::log->level() == spdlog::level::trace) config.logIter = 100;
         if(eig::log->level() == spdlog::level::debug) config.logIter = 1000;
-        if(eig::log->level() == spdlog::level::info) config.logIter = 5000;
+        //        if(eig::log->level() == spdlog::level::info) config.logIter = 5000;
+        if(eig::log->level() == spdlog::level::info) config.logIter = 1000;
     }
 }
 template void eig::solver::eigs_init(size_type L, size_type nev, size_type ncv, Ritz ritz, Form form, Type type, Side side, std::optional<cplx> sigma,
@@ -267,10 +269,12 @@ void eig::solver::set_default_config(const MatrixProductType &matrix) {
     if(not config.logTime) {
         if(eig::log->level() == spdlog::level::trace) config.logTime = 10.0;
         if(eig::log->level() == spdlog::level::debug) config.logTime = 60.0;
-        if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+        //        if(eig::log->level() >= spdlog::level::info) config.logTime = 60.0 * 10;
+        if(eig::log->level() >= spdlog::level::info) config.logTime = 10;
         if(eig::log->level() == spdlog::level::trace) config.logIter = 100;
         if(eig::log->level() == spdlog::level::debug) config.logIter = 1000;
-        if(eig::log->level() == spdlog::level::info) config.logIter = 5000;
+        //        if(eig::log->level() == spdlog::level::info) config.logIter = 5000;
+        if(eig::log->level() == spdlog::level::info) config.logIter = 1000;
     }
 }
 

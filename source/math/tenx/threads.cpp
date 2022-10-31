@@ -1,6 +1,4 @@
 #include "threads.h"
-#include <memory>
-#include <omp.h>
 #include <thread>
 #include <unsupported/Eigen/CXX11/Tensor>
 namespace tenx::threads {

@@ -2,6 +2,7 @@
 #include "io/fmt.h"
 #include "math/tenx.h"
 #include "tid/tid.h"
+#include <omp.h>
 #include <tblis/tblis.h>
 #include <tblis/util/thread.h>
 
@@ -119,7 +120,13 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     auto   tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
     double alpha = 1.0;
     double beta  = 0.0;
-    tblis::mult(alpha, ta, la.c_str(), tb, lb.c_str(), beta, tc, lc.c_str());
+
+    tblis::tblis_tensor          A_s(alpha, ta);
+    tblis::tblis_tensor          B_s(tb);
+    tblis::tblis_tensor          C_s(beta, tc);
+    const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
+    tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
+    //    tblis::mult(alpha, ta, la.c_str(), tb, lb.c_str(), beta, tc, lc.c_str());
 }
 
 /* clang-format off */
@@ -147,7 +154,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     if constexpr(std::is_same_v<Scalar, real>){
-        tblis_set_num_threads(static_cast<unsigned int>(tenx::threads::num_threads));
+        tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));

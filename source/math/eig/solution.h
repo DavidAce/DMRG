@@ -44,6 +44,7 @@ namespace eig {
             long           num_op         = 0; // Number of operations, for instance in primme if maxblocksize > 1
             double         time_total     = 0;
             double         time_mv        = 0;
+            double         time_op        = 0;
             double         time_pc        = 0;
             double         time_prep      = 0;
             bool           eigvals_found  = false;

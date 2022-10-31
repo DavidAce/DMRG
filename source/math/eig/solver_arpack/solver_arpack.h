@@ -6,9 +6,6 @@
 #include <complex>
 #include <memory>
 #include <vector>
-namespace tid {
-    class ur;
-}
 
 namespace eig {
     template<typename MatrixType>
@@ -27,10 +24,6 @@ namespace eig {
 
         public:
         using Scalar = typename MatrixType::Scalar;
-        std::unique_ptr<tid::ur> t_tot;
-        std::unique_ptr<tid::ur> t_pre;
-        std::unique_ptr<tid::ur> t_mul;
-        std::unique_ptr<tid::ur> t_fnd;
 
         void eigs();
         template<typename Derived>
