@@ -192,6 +192,7 @@ void TensorsFinite::set_parity_shift_mpo_squared(std::string_view axis) {
     bool modified = model->set_parity_shift_mpo_squared(sign, axis); // will ignore the sign on the axis string if present
     if(modified) {
         clear_cache();
+        rebuild_edges_var();
         if constexpr(settings::debug) assert_validity();
     }
 }
