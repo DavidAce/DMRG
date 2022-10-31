@@ -24,6 +24,7 @@
 
 xdmrg::xdmrg(std::shared_ptr<h5pp::File> h5ppFile_) : AlgorithmFinite(std::move(h5ppFile_), AlgorithmType::xDMRG) {
     tools::log->trace("Constructing class_xdmrg");
+    tensors.state->set_name(fmt::format("state_{}", excited_state_number));
 }
 
 void xdmrg::resume() {
