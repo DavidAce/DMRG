@@ -1,5 +1,5 @@
-from src.database.database import *
-from src.plotting.tools import *
+from database.database import *
+from plotting.tools import *
 from itertools import product
 from copy import deepcopy
 import numpy as np

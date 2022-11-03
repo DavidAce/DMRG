@@ -1,9 +1,9 @@
 from glob import glob
 from os import remove
 from os import path
-from src.io.h5ops import *
-from src.io.parse import parse
-from src.statistics.write_statistics import *
+from dmrg_plot.common.io.h5ops import *
+from dmrg_plot.common.io.parse import parse
+from statistics.write_statistics import *
 
 
 def lbit_avg(args):

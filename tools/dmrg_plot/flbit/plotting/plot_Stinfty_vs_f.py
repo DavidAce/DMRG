@@ -1,7 +1,7 @@
 from itertools import product
 import numpy as np
-from src.database.database import *
-from src.plotting.tools import *
+from database.database import *
+from plotting.tools import *
 import seaborn as sns
 import matplotlib.patheffects as pe
 

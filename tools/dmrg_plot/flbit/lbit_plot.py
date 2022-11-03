@@ -1,13 +1,14 @@
-import argparse
 import glob
 import os.path
-from src.plotting.multiplot import *
+
 import matplotlib.pyplot as plt
-from src.database.database import *
-from src.io.h5ops import *
-from src.plotting.meta import *
-from src.io.parse import parse
+from dmrg_plot.common.io.h5ops import *
+from dmrg_plot.common.io.parse import parse
+
+from database.database import *
 from lbit_avg import lbit_avg
+from plotting.meta import *
+from plotting.multiplot import *
 
 
 def lbit_plot(args):
@@ -43,7 +44,6 @@ def lbit_plot(args):
         "Set2",
         "magma",
     ]
-
 
     # fig3 = ['J', 'x:.2f', 'r']
     # sub3 = ['L', 'u', 'w']
@@ -165,6 +165,6 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse()
+    args = parse('fLBIT')
     lbit_avg(args)
     lbit_plot(args)

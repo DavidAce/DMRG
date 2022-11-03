@@ -1,6 +1,6 @@
 from itertools import product
-from src.database.database import *
-from src.plotting.tools import *
+from database.database import *
+from plotting.tools import *
 
 
 def find_saturation_idx(ydata, std_threshold):

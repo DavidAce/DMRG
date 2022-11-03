@@ -17,6 +17,8 @@ axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73
 
 figure.facecolor        : 'white'
 figure.figsize          : 3.375, 3.00
+#figure.figsize          : 3.375, 6.00
+#figure.figsize          : 6.75, 6.00
 #figure.figsize          : 2.53125, 3.00 # 75% width
 
 
@@ -27,7 +29,7 @@ grid.linestyle          : -
 ## Dimensions as fraction of font size:
 legend.fontsize         : 8.33
 legend.title_fontsize   : 8.33
-legend.frameon          : True # if True, draw the legend on a background patch
+legend.frameon          : True      # if True, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.25      # border whitespace
 legend.labelspacing     : 0.15      # the vertical space between the legend entries
@@ -35,7 +37,7 @@ legend.handlelength     : 1.0       # the length of the legend lines
 legend.handletextpad    : 0.5       # the space between the legend line and legend text
 legend.borderaxespad    : 1.0       # the border between the axes and legend edge
 legend.columnspacing    : 0.5       # column separation
-legend.framealpha       : 0.8       # legend patch transparency
+legend.framealpha       : 0.6       # legend patch transparency
 legend.facecolor        : inherit   # inherit from axes.facecolor; or color spec
 legend.edgecolor        : k         # background patch boundary color
 legend.fancybox         : False     # if True, use a rounded box for the
@@ -45,7 +47,7 @@ legend.shadow           : False     # if True, give background a shadow effect
 xtick.direction         : in
 xtick.top               : True
 xtick.bottom            : True
-xtick.major.size        : 5
+xtick.major.size        : 3
 xtick.minor.size        : 2
 xtick.major.width       : 1.0
 xtick.minor.width       : 0.5
@@ -53,7 +55,7 @@ xtick.minor.width       : 0.5
 ytick.direction         : in
 ytick.left              : True
 ytick.right             : True
-ytick.major.size        : 5
+ytick.major.size        : 3
 ytick.minor.size        : 2
 ytick.major.width       : 1.0
 ytick.minor.width       : 0.5
@@ -62,28 +64,64 @@ ytick.minor.width       : 0.5
 # Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
 
 text.usetex        		: true
-text.latex.preamble     : \usepackage{amsmath}\usepackage{mathtools}
-
 font.size               : 11
 font.family             : serif
 font.serif              : STIX
 mathtext.fontset        : stix
 
-lines.linewidth         : 1.1
-lines.markersize        : 5
+lines.linewidth         : 0.7
+lines.markersize        : 2.0
+errorbar.capsize        : 3  # length of end cap on error bars in pixels
 
-axes.titlesize          : small # Font size of subtplot title
+axes.axisbelow          : True
+axes.titlelocation      : center  # alignment of the title: {left, right, center}
+axes.titlesize          : small   # font size of the axes title
+axes.titleweight        : normal  # font weight of title
+axes.titlecolor         : auto    # color of the axes title, auto falls back to
+                                  # text.color as default value
+axes.titley             : 0.95    # position title (axes relative units).  None implies auto
+axes.titlepad           : 0.00    # pad between axes and title in points
+
+#axes.formatter.limits: -5, 6  # use scientific notation if log10
+                               # of the axis range is smaller than the
+                               # first or larger than the second
+#axes.formatter.use_locale: False  # When True, format tick labels
+                                   # according to the user's locale.
+                                   # For example, use ',' as a decimal
+                                   # separator in the fr_FR locale.
+axes.formatter.use_mathtext: True  # When True, use mathtext for scientific
+                                     # notation.
+#axes.formatter.min_exponent: 0  # minimum exponent to format in scientific notation
+#axes.formatter.useoffset: True  # If True, the tick label formatter
+                                 # will default to labeling ticks relative
+                                 # to an offset when the data range is
+                                 # small compared to the minimum absolute
+                                 # value of the data.
+#axes.formatter.offset_threshold: 4  # When useoffset is True, the offset
+                                     # will be used when it can remove
+                                     # at least this number of significant
+                                     # digits from tick labels.
 
 ## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
-figure.subplot.top      : 1.00   # the top of the subplots of the figure (Make room for title and subtitle)
-figure.subplot.left     : 0.00   # the left side of the subplots of the figure
-figure.subplot.bottom   : 0.00   # the bottom of the subplots of the figure
 figure.autolayout       : False  # Applies tight_layout
-
-#figure.subplot.wspace  : 0.2    # the amount of width reserved for space between subplots,
+figure.subplot.top      : 0.99   # the top of the subplots of the figure (Make room for title and subtitle)
+figure.subplot.bottom   : 0.125  # the bottom of the subplots of the figure
+figure.subplot.left     : 0.185  # the left side of the subplots of the figure
+figure.subplot.right    : 0.95   # the right side of the subplots of the figure
+figure.subplot.wspace   : 0.0    # the amount of width reserved for space between subplots,
                                  # expressed as a fraction of the average axis width
-#figure.subplot.hspace  : 0.2    # the amount of height reserved for space between subplots,
+figure.subplot.hspace   : 0.0    # the amount of height reserved for space between subplots,
                                  # expressed as a fraction of the average axis height
+
+#figure.constrained_layout.use: True   # When True, automatically make plot
+                                       # elements fit on the figure. (Not
+                                       # compatible with `autolayout`, above).
+#figure.constrained_layout.h_pad:  0   # Padding around axes objects. Float representing
+#figure.constrained_layout.w_pad:  0   # inches. Default is 3/72 inches (3 points)
+#figure.constrained_layout.hspace: 0   # Space between subplot groups. Float representing
+#figure.constrained_layout.wspace: 0   # a fraction of the subplot widths being separated.
+
+
 
 
 # Saving figures
@@ -99,7 +137,7 @@ savefig.bbox           : tight   # {tight, standard}
                                  # 'tight' is incompatible with pipe-based animation
                                  # backends (e.g. 'ffmpeg') but will work with those
                                  # based on temporary files (e.g. 'ffmpeg_file')
-savefig.pad_inches     : 0.025   # Padding to be used when bbox is set to 'tight'
+savefig.pad_inches     : 0.02    # Padding to be used when bbox is set to 'tight'
 
 #savefig.directory      : ~       # default directory in savefig dialog box,
 #                                # leave empty to always use current working directory

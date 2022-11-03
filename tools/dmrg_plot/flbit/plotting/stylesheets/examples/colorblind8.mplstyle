@@ -1,5 +1,0 @@
-# Line colors to address color blindness, names are only suggestive
-# Violet, Orange, Pale Green, Magenta, Gray, Gunmetal Gray, Yellow, Brown
-# 
-# Taken from matplotlib issue #9460 comment by user mpetroff
-axes.prop_cycle         : cycler('color', ['7b85d4', 'f37738', '83c995', 'd7369e', 'c4c9d8', '859795', 'e9d043', 'ad5b50'])
