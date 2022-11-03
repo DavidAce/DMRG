@@ -108,13 +108,15 @@ class StateFinite {
     std::vector<MpsSite> get_mps_sites(const std::vector<size_t> &sites) const;
     void                 set_mps_sites(const std::vector<MpsSite> &mps_list);
     // For multisite
-    std::array<long, 3>             active_dimensions() const;
-    long                            active_problem_size() const;
-    std::vector<long>               get_spin_dims(const std::vector<size_t> &sites) const;
-    std::vector<long>               get_spin_dims() const;
-    long                            get_spin_dim() const;
-    Eigen::Tensor<Scalar, 3>        get_multisite_mps(const std::vector<size_t> &sites) const;
-    const Eigen::Tensor<Scalar, 3> &get_multisite_mps() const;
+    std::array<long, 3>              active_dimensions() const;
+    long                             active_problem_size() const;
+    std::vector<long>                get_spin_dims(const std::vector<size_t> &sites) const;
+    std::vector<long>                get_spin_dims() const;
+    long                             get_spin_dim() const;
+    std::vector<std::array<long, 3>> get_mps_dims(const std::vector<size_t> &sites) const;
+    std::vector<std::array<long, 3>> get_mps_dims_active() const;
+    Eigen::Tensor<Scalar, 3>         get_multisite_mps(const std::vector<size_t> &sites) const;
+    const Eigen::Tensor<Scalar, 3>  &get_multisite_mps() const;
 
     public:
     void                set_truncation_error(size_t pos, double error);

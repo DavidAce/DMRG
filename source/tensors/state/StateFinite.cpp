@@ -77,9 +77,9 @@ void StateFinite::initialize(AlgorithmType algo_type, size_t model_size, long po
     // Generate a simple state with all spins equal
     Eigen::Tensor<Scalar, 3> M(static_cast<long>(spin_dim), 1, 1);
     Eigen::Tensor<Scalar, 1> L(1);
-    M(0, 0, 0)        = 0;
-    M(1, 0, 0)        = 1;
-    L(0)              = 1;
+    M(0, 0, 0) = 0;
+    M(1, 0, 0) = 1;
+    L(0)       = 1;
     for(size_t site = 0; site < model_size; site++) {
         std::string label = static_cast<long>(site) <= position ? "A" : "B";
         mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, site, 0.0, label));
@@ -335,6 +335,14 @@ std::vector<long> StateFinite::get_spin_dims(const std::vector<size_t> &sites) c
 std::vector<long> StateFinite::get_spin_dims() const { return get_spin_dims(active_sites); }
 long              StateFinite::get_spin_dim() const { return get_mps_site(0).spin_dim(); }
 
+std::vector<std::array<long, 3>> StateFinite::get_mps_dims(const std::vector<size_t> &sites) const {
+    std::vector<std::array<long, 3>> dims;
+    for(const auto &pos : sites) dims.emplace_back(get_mps_site(pos).dimensions());
+    return dims;
+}
+
+std::vector<std::array<long, 3>> StateFinite::get_mps_dims_active() const { return get_mps_dims(active_sites); }
+
 Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
@@ -521,18 +529,17 @@ bool StateFinite::is_normalized_on_all_sites() const {
             msg += fmt::format(" | full {} {:.3e}", normalized_full, norm);
         }
         if(normalized_tags and normalized_fast and normalized_full) {
-            std::string site;
+            std::vector<long> site_list;
             for(const auto &mps : mps_sites) {
-                if(not mps->is_normalized(settings::precision::max_norm_error)) {
-                    normalized_site = false;
-                    break;
-                    site = fmt::format("({}) ", mps->get_position());
-                }
+                if(not mps->is_normalized(settings::precision::max_norm_error)) { site_list.emplace_back(mps->get_position<long>()); }
             }
-            msg += fmt::format(" | site {}{}", site, normalized_site);
+            if(not site_list.empty()) {
+                normalized_site = false;
+                msg += fmt::format(" | non-normalized sites {}", site_list);
+            }
         }
     }
-    tools::log->trace("{} normalized: {}", get_name(), msg);
+    tools::log->debug("{} normalized: {}", get_name(), msg);
     return normalized_tags and normalized_fast and normalized_full and normalized_site;
 }
 
