@@ -426,6 +426,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
         if(m1.chosen_sites.size() == 1) m1.alpha_expansion = status.env_expansion_alpha;
     }
 
+    m1.validate();
     metas.emplace_back(m1);
     if(not m1.retry) return metas;
     /*
