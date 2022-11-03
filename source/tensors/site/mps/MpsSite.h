@@ -102,6 +102,7 @@ class MpsSite {
     void stash_C(const std::pair<Eigen::Tensor<cplx, 1>, double> &S_and_error, size_t dst) const;
     void stash_V(const Eigen::Tensor<cplx, 3> &V, size_t dst) const;
     void drop_stash() const;
+    void drop_stashed_errors() const;
     void take_stash(const MpsSite &other);
 
     std::optional<stash<Eigen::Tensor<cplx, 3>>> &get_U_stash() const;

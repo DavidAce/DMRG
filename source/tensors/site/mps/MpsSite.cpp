@@ -446,6 +446,19 @@ void MpsSite::drop_stash() const {
     V_stash = std::nullopt;
 }
 
+void MpsSite::drop_stashed_errors() const {
+    if constexpr(settings::debug) {
+        if(U_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from U_stash", get_tag());
+        if(S_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from S_stash", get_tag());
+        if(C_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from C_stash", get_tag());
+        if(V_stash) tools::log->trace("MpsSite({})::drop_stash: Dropping errors from V_stash", get_tag());
+    }
+    if(U_stash) U_stash->error = -1.0;
+    if(S_stash) S_stash->error = -1.0;
+    if(C_stash) C_stash->error = -1.0;
+    if(V_stash) V_stash->error = -1.0;
+}
+
 void MpsSite::take_stash(const MpsSite &other) {
     auto t_stash = tid::tic_token("take_stash", tid::level::highest);
     if(other.V_stash and other.V_stash->pos_dst == get_position()) {

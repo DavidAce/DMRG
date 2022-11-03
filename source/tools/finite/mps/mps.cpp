@@ -195,7 +195,7 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
                                         "multisite_mps    :\n{}",
                                         sites, center_position, current_position, linalg::tensor::to_string(multisite_mps, 3, 6));
 
-        // We have to allow non-normalized multisite mps! Otherwise we won't be able to make them normalized
+        // We have to allow non-normalized multisite mps! Otherwise, we won't be able to make them normalized
         auto norm = tenx::VectorCast(multisite_mps).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->debug("Multisite mps for positions {} has norm far from unity: {:.16f}", sites, norm);
     }
@@ -279,24 +279,27 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
         // inject lc_move if there is any waiting
         if(lc_move and pos == lc_move->pos_dst) { mps_src.set_L(lc_move->data, lc_move->error); }
 
+        // No need to copy the svd truncation errors if no svd config was given. This
+        if(not svd_cfg) mps_src.drop_stashed_errors();
+
         mps_tgt.fuse_mps(mps_src);
         state.tag_site_normalized(pos, true); // Fused site is normalized
 
         // Now take stashes for neighboring sites
-        // Note that if U or V is pushed onto the next site, that site may lose its normalization!
-        // This is usually not a problem since that site is probably updated next anyway.
-        // Marking it as non-normalized lets us determine whether a full normalization is required later.
+        // Note that if U or V are rectangular and pushed onto the next site, that next site loses its normalization, unless
+        // we are pushing across the center matrix.
+        // Tagging it as non-normalized lets us determine whether a full normalization is required later.
         if(pos < state.get_length() - 1) {
-            bool has_V_stash_for_nbr = mps_src.get_V_stash() and mps_src.get_V_stash()->pos_dst == pos + 1;
-            bool ruins_normalization = has_V_stash_for_nbr and not mps_tgt.isCenter(); // It's ok to push V stash from AC to B.
-            if(ruins_normalization) state.tag_site_normalized(pos + 1, false);
-            state.get_mps_site(pos + 1).take_stash(mps_src); // Take stashed S,V (and possibly LC)
+            auto &mps_nbr  = state.get_mps_site(pos + 1);
+            auto  old_chiL = mps_nbr.get_chiL();
+            mps_nbr.take_stash(mps_src);                                                                                 // Take stashed S,V (and possibly LC)
+            if(mps_nbr.get_label() != "B" and mps_nbr.get_chiL() != old_chiL) state.tag_site_normalized(pos + 1, false); // Normalization may have been ruined
         }
         if(pos > 0) {
-            bool has_U_stash_for_nbr = mps_src.get_U_stash() and mps_src.get_U_stash()->pos_dst == pos - 1;
-            bool ruins_normalization = has_U_stash_for_nbr and not state.get_mps_site(pos - 1).isCenter(); // It's ok for U to push stash from B to AC.
-            if(ruins_normalization) state.tag_site_normalized(pos - 1, false);
-            state.get_mps_site(pos - 1).take_stash(mps_src); // Take stashed U,S (and possibly LC)
+            auto &mps_nbr  = state.get_mps_site(pos - 1);
+            auto  old_chiR = mps_nbr.get_chiR();
+            mps_nbr.take_stash(mps_src);                                                                                 // Take stashed U,S (and possibly LC)
+            if(mps_nbr.get_label() == "B" and mps_nbr.get_chiR() != old_chiR) state.tag_site_normalized(pos - 1, false); // Normalization may have been ruined
         }
         mps_src.drop_stash(); // Discard whatever is left stashed at the edge (this normalizes the state)
     }
