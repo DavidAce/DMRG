@@ -123,17 +123,17 @@ std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &sta
     return state.measurements.bond_dims.value();
 }
 
-std::vector<long> tools::finite::measure::bond_dimensions_merged(const StateFinite &state) {
+std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFinite &state) {
     // Here we get the bond dimensions of the bonds that were merged into the full state in the last step
     // For instance, if the active sites are {2,3,4,5,6} this returns the 4 bonds connecting {2,3}, {3,4}, {4,5} and {5,6}
-    // If active sites is just {4}, it returns the bond between {4,5} when going right, and {3,4} when going left.
+    // If active sites is just {4}, it returns the bond between {4,5} when going left or right.
     auto t_chi = tid::tic_scope("bond_merged", tid::level::highest);
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
-        // Because of subspace expansion, the only bond dimension that grows is the one directly behind
-        // mps, relative to the current direction.
-        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
-        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_chiL()};
+        // In single-site DMRG the active site is a center "AC" site:
+        //  * Going left-to-right, the left bond is expanded, and the right bond (LC) is truncated after optimization
+        //  * Going right-to-left, the right bond (LC) is both expanded and truncated with SVD.
+        return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     std::vector<long> bond_dims;
@@ -302,10 +302,10 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
     // If active sites is just {4}, it returns the bond between {4,5} when going right, and {3,4} when going left.
     if(state.active_sites.empty()) return {};
     if(state.active_sites.size() == 1) {
-        // Because of subspace expansion, the only bond dimension that grows is the one directly behind
-        // mps, relative to the current direction.
-        if(state.get_direction() == 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
-        if(state.get_direction() != 1) return {state.get_mps_site(state.active_sites[0]).get_truncation_error()};
+        // In single-site DMRG the active site is a center "AC" site:
+        //  * Going left-to-right, the left bond is expanded, and the right bond (LC) is truncated after optimization
+        //  * Going right-to-left, the right bond (LC) is both expanded and truncated with SVD.
+        return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_truncation_error_LC()};
     std::vector<double> truncation_errors;

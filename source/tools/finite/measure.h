@@ -37,7 +37,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern size_t length                                      (const EdgesFinite & edges);
     [[nodiscard]] extern long   bond_dimension_current                      (const StateFinite & state);
     [[nodiscard]] extern long   bond_dimension_midchain                     (const StateFinite & state);
-    [[nodiscard]] extern std::vector<long> bond_dimensions_merged           (const StateFinite & state);
+    [[nodiscard]] extern std::vector<long> bond_dimensions_active           (const StateFinite & state);
     [[nodiscard]] extern std::vector<long> bond_dimensions                  (const StateFinite & state);
     [[nodiscard]] extern double norm                                        (const StateFinite & state, bool full = false);
 
