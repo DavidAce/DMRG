@@ -6,7 +6,7 @@ namespace tenx::threads {
     std::unique_ptr<Eigen::ThreadPool>       tp;
     std::unique_ptr<Eigen::ThreadPoolDevice> dev;
     void                                     setNumThreads(unsigned int num) {
-        num_threads = std::clamp<unsigned int>(num, static_cast<unsigned int>(1), std::thread::hardware_concurrency());
+        num_threads = std::clamp<unsigned int>(num, 1, std::thread::hardware_concurrency());
         if(not dev or not tp or tp->NumThreads() != static_cast<int>(num_threads)) {
             tp  = std::make_unique<Eigen::ThreadPool>(num_threads);
             dev = std::make_unique<Eigen::ThreadPoolDevice>(tp.get(), num_threads);
