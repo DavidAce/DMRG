@@ -25,6 +25,7 @@ namespace tools::common::split {
                     split_mps_into_As(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
+                                      long                            center_position,
                                       svd::config                   & svd_cfg);
 
         template<typename Scalar>
@@ -32,6 +33,7 @@ namespace tools::common::split {
                     split_mps_into_Bs(const Eigen::Tensor<Scalar,3> & multisite_mps,
                                       const std::vector<long>       & spin_dims,
                                       const std::vector<size_t>     & positions,
+                                      long                            center_position,
                                       svd::config                   & svd_cfg);
     }
 
