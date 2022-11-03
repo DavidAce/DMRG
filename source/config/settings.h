@@ -124,7 +124,7 @@ namespace settings {
     namespace solver {
         inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
         inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
-        inline double   eigs_tol_max                    = 1e-8 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
+        inline double   eigs_tol_max                    = 1e-8 ;                   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_ncv                        = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
         inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
         inline size_t   iter_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on BFGS/EIGS by this factor when stuck */
@@ -132,8 +132,8 @@ namespace settings {
         inline long     max_size_shift_invert           = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
         inline OptEigs  prefer_eigs_over_bfgs           = OptEigs::ALWAYS;         /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose {WHEN_SATURATED, ALWAYS} */
         inline bool     bfgs_fix_rnorm_w_eigs           = true;                    /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
-        inline double   svd_truncation_lim              = 5e-32 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
-        inline double   svd_truncation_init             = 1e-4  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
+        inline double   svd_truncation_lim              = 1e-16 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
+        inline double   svd_truncation_init             = 1e-3  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
     }
 
@@ -167,7 +167,7 @@ namespace settings {
         inline UpdateWhen    bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
         inline double        bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
         inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
-        inline double        trnc_decrease_rate          = 1e-2;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
+        inline double        trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
     }
 
 
@@ -178,8 +178,8 @@ namespace settings {
         inline bool     use_mpo_energy_shift            = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
         inline bool     use_mpo_parity_shift            = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
-        inline double   variance_saturation_sensitivity = 1e-2  ;                  /*!< Energy variance saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-1 to 1e-4   */
-        inline double   entropy_saturation_sensitivity  = 1e-6  ;                  /*!< Entanglement entropy saturates when it stops changing. This sets the sensitivity to change. Good values are 1e-3 to 1e-8   */
+        inline double   variance_saturation_sensitivity = 1e-1  ;                  /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
+        inline double   entropy_saturation_sensitivity  = 1e-3  ;                  /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
         inline double   target_subspace_error           = 1e-10 ;                  /*!< The target subspace error 1-Σ|<ϕ_i|ψ>|². Eigenvectors are found until reaching this value. Measures whether the incomplete basis of eigenstates spans the current state. */
         inline size_t   max_subspace_size               = 256   ;                  /*!< Maximum number of candidate eigenstates to keep for a subspace optimization step */
         inline long     max_size_multisite              = 131072;                  /*!< Maximum problem size for multisite dmrg. If the linear size is larger than this, the algorithm prefers 1-site dmrg. */

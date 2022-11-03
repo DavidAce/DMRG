@@ -55,11 +55,12 @@ namespace svd {
         solver(const svd::config &svd_cfg);
         solver(std::optional<svd::config> svd_cfg);
 
-        long     rank_max       = -1;    // -1 means determine from given matrix
-        long     rank_min       = -1;    // -1 means disabled.
-        double   truncation_lim = 5e-32; // Truncation error limit, discard all lambda_i for highest i satisfying truncation_lim < sum_i lambda_i^2
-        size_t   switchsize_bdc = 16;    // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
-        size_t   switchsize_rnd = 2048;  // Use Randomized SVD algorithm when rows < switchsize_rnd and BDC otherwise
+        long   rank_max = -1; // -1 means determine from given matrix
+        long   rank_min = -1; // -1 means disabled.
+        double truncation_lim =
+            std::numeric_limits<double>::epsilon(); // Truncation error limit, discard all lambda_i for highest i satisfying truncation_lim < norm(lambda_i)
+        size_t   switchsize_bdc = 16;               // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
+        size_t   switchsize_rnd = 2048;             // Use Randomized SVD algorithm when rows < switchsize_rnd and BDC otherwise
         svd::lib svd_lib        = svd::lib::lapacke;
         bool     use_bdc        = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize_bdc
         bool     save_fail      = false;
