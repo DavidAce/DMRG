@@ -622,12 +622,14 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             auto variance_new  = tools::finite::measure::energy_variance(tensors);
             auto spincomp_new  = tools::finite::measure::spin_components(*tensors.state);
             auto entropies_new = tools::finite::measure::entanglement_entropies(*tensors.state);
-            tools::log->info("Projection result: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
-                             fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
-            if(tools::log->level() <= spdlog::level::debug)
-                for(const auto &[i, e] : iter::enumerate(entropies_old)) {
-                    tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
-                }
+            if(variance_new != variance_old or entropies_new != entropies_old) {
+                tools::log->info("Projection result: variance {:8.2e} -> {:8.2e}  | spin components {:.16f} -> {:.16f}", variance_old, variance_new,
+                                 fmt::join(spincomp_old, ", "), fmt::join(spincomp_new, ", "));
+                if(tools::log->level() <= spdlog::level::debug)
+                    for(const auto &[i, e] : iter::enumerate(entropies_old)) {
+                        tools::log->debug("entropy [{:>2}] = {:>8.6f} --> {:>8.6f} | change {:8.5e}", i, e, entropies_new[i], entropies_new[i] - e);
+                    }
+            }
         }
         if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
         write_to_file(StorageEvent::PROJ_STATE, CopyPolicy::OFF);
