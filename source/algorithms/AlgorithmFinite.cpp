@@ -359,9 +359,11 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, 
         else
             throw except::logic_error("invalid rate {}", rate);
         bond_new = std::floor(std::max(bond_new, 1.0));
-        if(bond_new == static_cast<double>(status.bond_lim))
-            status.algo_stop = AlgorithmStop::SUCCESS; // There would be no change in bond_lim
-        else {
+        if(bond_new == static_cast<double>(status.bond_lim) // There would be no change in bond_lim
+           or bond_new < 4                                  // No point in running such small bond dims.
+        ) {
+            status.algo_stop = AlgorithmStop::SUCCESS;
+        } else {
             if(storage_event != StorageEvent::NONE) tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
             status.bond_lim = static_cast<long>(bond_new);
         }

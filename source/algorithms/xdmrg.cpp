@@ -268,18 +268,10 @@ void xdmrg::run_fes_analysis() {
     tensors.activate_sites({tensors.get_position()});
     tensors.rebuild_edges();
     auto bond_max_dim = static_cast<long>(std::pow(2.0, tensors.get_length<double>() / 2));
-    while(status.bond_lim > std::min(bond_max_dim, status.bond_max)) {
-        // Reduce bond dimension from bond_max down to the current maximum.
-        status.iter += 1;
-        status.step += tensors.get_length<size_t>();
-        status.algorithm_converged_for = 1;
-        status.algorithm_saturated_for = 0;
-        reduce_bond_dimension_limit(1, UpdateWhen::ITERATION, StorageEvent::NONE);
-        status.wall_time = tid::get_unscoped("t_tot").get_time();
-        status.algo_time = t_fes->get_time();
-    }
+    status.bond_lim   = std::min(bond_max_dim, status.bond_max);
     while(true) {
-        tools::log->trace("Starting xDMRG FES step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+        tools::log->trace("Starting xDMRG FES step {}, iter {}, pos {}, dir {}, bond_lim {}, trnc_lim {:.2e}", status.step, status.iter, status.position,
+                          status.direction, status.bond_lim, status.trnc_lim);
         update_state();
         status.wall_time       = tid::get_unscoped("t_tot").get_time();
         status.algo_time       = t_fes->get_time();
@@ -287,7 +279,8 @@ void xdmrg::run_fes_analysis() {
         print_status();
         check_convergence();
 
-        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}, bond_lim {}, trnc_lim {:.2e}", status.step, status.iter, status.position,
+                          status.direction, status.bond_lim, status.trnc_lim);
 
         reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES_STATE);
         // It's important not to perform the last move, so we break now: that last state would not get optimized
@@ -338,10 +331,12 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
                            ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
                            : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
 
-    m1.eigs_tol = status.algorithm_has_stuck_for == 0 ? std::clamp(status.energy_variance_lowest,  // Increase precision as variance decreases
-                                                                   settings::solver::eigs_tol_min, // From min
-                                                                   settings::solver::eigs_tol_max) // to max
-                                                      : settings::solver::eigs_tol_min;
+    m1.eigs_tol = std::clamp(status.energy_variance_lowest,                              // Increase precision as variance decreases
+                             settings::solver::eigs_tol_min,                             // From min
+                             settings::solver::eigs_tol_max);                            // to max
+    if(status.algorithm_has_stuck_for > 0) m1.eigs_tol = settings::solver::eigs_tol_min; // Set to high precision when stuck
+    if(status.fes_is_running) m1.eigs_tol = settings::solver::eigs_tol_max;              // No need for high precision during FES.
+
     m1.eigs_ncv = settings::solver::eigs_ncv;
     // Adjust the maximum number of sites to consider
     if(status.algorithm_has_succeeded)
