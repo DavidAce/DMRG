@@ -152,11 +152,11 @@ namespace tools::finite::opt {
             if(solver.config.sigma and solver.config.sigma.value() != 0.0 and tensors.model->is_compressed_mpo_squared())
                 throw except::logic_error("eigs_optimize_variance with PRIMME with sigma requires non-compressed MPO²");
         }
-        tools::log->debug("Finding excited state of operator [(H-E)²{}]{}{} | {} {} | maxIter {} | init on | size {} | mps {} | mpo {}",
+        tools::log->debug("Finding excited state of operator [(H-E)²{}]{}{} | {} {} | maxIter {} | tol {:.2e} | init on | size {} | mps {} | mpo {}",
                           solver.config.sigma ? "-σ" : "", solver.config.shift_invert == eig::Shinv::ON ? "⁻¹" : "",
                           solver.config.sigma ? fmt::format(" | σ = {:.16f}", solver.config.sigma->real()) : "", eig::LibToString(solver.config.lib),
-                          eig::RitzToString(solver.config.ritz), solver.config.maxIter.value(), hamiltonian_squared.rows(), hamiltonian_squared.get_shape_mps(),
-                          hamiltonian_squared.get_shape_mpo());
+                          eig::RitzToString(solver.config.ritz), solver.config.maxIter.value(), solver.config.tol.value(), hamiltonian_squared.rows(),
+                          hamiltonian_squared.get_shape_mps(), hamiltonian_squared.get_shape_mpo());
 
         solver.eigs(hamiltonian_squared);
         internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);

@@ -50,7 +50,7 @@ namespace tools::finite::opt {
         hamiltonian.factorization = eig::Factorization::NONE; // No LU factorization by default
 
         // https://www.cs.wm.edu/~andreas/software/doc/appendix.html#c.primme_params.eps
-        solver.config.tol             = 1e-12;
+        solver.config.tol             = settings::solver::eigs_tol_min;
         solver.config.compress        = settings::precision::use_compressed_mpo_squared_otf;
         solver.config.compute_eigvecs = eig::Vecs::ON;
         solver.config.lib             = eig::Lib::PRIMME;
