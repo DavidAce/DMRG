@@ -395,8 +395,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
     }
 
     // If we got here we want to decrease the truncation error limit progressively during the simulation
-    bool is_saturated      = status.algorithm_saturated_for > 0; // Allow one round while saturated so that extra efforts get a chance.
-    bool is_has_stuck      = status.algorithm_has_stuck_for > 0; // Allow one round while saturated so that extra efforts get a chance.
+    bool is_saturated      = status.algorithm_saturated_for > 0; // Allow one round so that extra efforts get a chance.
+    bool is_has_stuck      = status.algorithm_has_stuck_for > 0; // Allow one round so that extra efforts get a chance.
     bool is_truncated      = tensors.state->is_limited_by_bond(status.bond_lim) or tensors.state->is_truncated(status.trnc_lim);
     bool drop_if_truncated = settings::strategy::trnc_decrease_when == UpdateWhen::TRUNCATED;
     bool drop_if_saturated = settings::strategy::trnc_decrease_when == UpdateWhen::SATURATED;
@@ -429,7 +429,8 @@ void AlgorithmFinite::update_truncation_error_limit() {
 
     auto trnc_new = std::max(status.trnc_min, status.trnc_lim * rate);
 
-    tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {}", status.trnc_lim, trnc_new, is_truncated, is_saturated);
+    tools::log->info("Updating truncation error limit {:8.2e} -> {:8.2e} | truncated {} | saturated {} | stuck {}", status.trnc_lim, trnc_new, is_truncated,
+                     is_saturated, is_has_stuck);
     status.trnc_lim                   = trnc_new;
     status.trnc_limit_has_reached_min = status.trnc_lim == status.trnc_min;
 
@@ -857,22 +858,15 @@ void AlgorithmFinite::print_status() {
     report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error_active_max());
     if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.env_expansion_alpha);
     report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_lim);
-    size_t comma_width       = settings::strategy::multisite_mps_site_max <= 2 ? 0 : 2; // ", "
-    size_t bracket_width     = 2;                                                       // The {} edges
-    size_t bond_single_width = static_cast<size_t>(std::log10(settings::get_bond_max(status.algo_type))) + 1;
-    size_t bond_num_elements = settings::strategy::multisite_mps_site_max == 1 ? 1 : settings::strategy::multisite_mps_site_max - 1;
-    size_t bond_string_width = bracket_width + (bond_single_width + comma_width) // The width of an element like " 54,"
-                                                   * bond_num_elements;          // Number of bonds
-    std::vector<long> bonds_merged = tools::finite::measure::bond_dimensions_merged(*tensors.state);
-    if(bonds_merged.empty())
-        report += fmt::format(FMT_STRING("{0:<{1}} "), " ", bond_string_width);
-    else {
-        std::string bonds_string = fmt::format("{}", bonds_merged);
-        report += fmt::format(FMT_STRING("{0:<{1}} "), bonds_string, bond_string_width);
-    }
+    auto bonds_maxims = std::vector<long>(std::max<size_t>(1, settings::strategy::multisite_mps_site_def - 1), settings::get_bond_max(status.algo_type));
+    auto bonds_merged = tools::finite::measure::bond_dimensions_active(*tensors.state);
+    auto bonds_padlen = fmt::format(FMT_STRING("{}"), fmt::join(bonds_maxims, ",")).size();
+    auto bonds_string = fmt::format(FMT_STRING("{}"), fmt::join(bonds_merged, ","));
+    report += fmt::format(FMT_STRING("{0:<{1}} "), bonds_string, bonds_padlen);
 
     if(last_optmode and last_optspace)
         report += fmt::format(FMT_STRING("opt:[{}|{}] "), enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
+    report += fmt::format(FMT_STRING("con:{:<1} "), status.algorithm_converged_for);
     report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
     report += fmt::format(FMT_STRING("sat:{:<1}[σ² {:<1} Sₑ {:<1}] "), status.algorithm_saturated_for, status.variance_mpo_saturated_for,
                           status.entanglement_saturated_for);
