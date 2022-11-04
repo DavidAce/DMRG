@@ -138,7 +138,6 @@ namespace stat {
             res.emplace_back(sterr(X, idx_beg, idx_end));
             x_it++;
         }
-        printf("\n");
         return res;
     }
 

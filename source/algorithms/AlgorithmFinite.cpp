@@ -686,21 +686,21 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
         if(tools::log->level() >= spdlog::level::debug)
             tools::log->debug("Energy variance convergence: converged {} | saturated {} (since {})", status.variance_mpo_converged_for, report.saturated_count,
                               report.saturated_point);
-        if(tools::log->level() <= spdlog::level::debug) {
-            tools::log->debug("Energy variance slope details:");
-            tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-            tools::log->debug(" -- threshold          = {:7.4e}", threshold.value());
-            tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
-            tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
-            tools::log->debug(" -- converged count    = {} ", status.variance_mpo_converged_for);
-            tools::log->debug(" -- sat history        = {}", report.Y_sat);
-            tools::log->debug(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->debug(" -- min history        = {:7.4e}", fmt::join(report.Y_min, ", "));
-            tools::log->debug(" -- max history        = {:7.4e}", fmt::join(report.Y_max, ", "));
-            tools::log->debug(" -- std var history    = {:7.4e}", fmt::join(report.Y_vec_std, ", "));
-            tools::log->debug(" -- std min history    = {:7.4e}", fmt::join(report.Y_min_std, ", "));
-            tools::log->debug(" -- std max history    = {:7.4e}", fmt::join(report.Y_max_std, ", "));
-            tools::log->debug(" -- ste mov history    = {:7.4e}", fmt::join(report.Y_mov_ste, ", "));
+        if(tools::log->level() <= spdlog::level::trace) {
+            tools::log->trace("Energy variance slope details:");
+            tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+            tools::log->trace(" -- threshold          = {:7.4e}", threshold.value());
+            tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
+            tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+            tools::log->trace(" -- converged count    = {} ", status.variance_mpo_converged_for);
+            tools::log->trace(" -- sat history        = {}", report.Y_sat);
+            tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+            tools::log->trace(" -- min history        = {:7.4e}", fmt::join(report.Y_min, ", "));
+            tools::log->trace(" -- max history        = {:7.4e}", fmt::join(report.Y_max, ", "));
+            tools::log->trace(" -- std var history    = {:7.4e}", fmt::join(report.Y_vec_std, ", "));
+            tools::log->trace(" -- std min history    = {:7.4e}", fmt::join(report.Y_min_std, ", "));
+            tools::log->trace(" -- std max history    = {:7.4e}", fmt::join(report.Y_max_std, ", "));
+            tools::log->trace(" -- ste mov history    = {:7.4e}", fmt::join(report.Y_mov_ste, ", "));
         }
     }
 }
@@ -744,20 +744,20 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
             if(tools::log->level() >= spdlog::level::debug)
                 tools::log->debug("Entanglement ent. convergence at site {}: converged {} | saturated {} iters (since {})", last_saturated_site,
                                   status.entanglement_converged_for, report.saturated_count, report.saturated_point);
-            if(tools::log->level() <= spdlog::level::debug) {
-                tools::log->debug("Entanglement slope details:");
-                tools::log->debug(" -- site               = {}", last_saturated_site);
-                tools::log->debug(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
-                tools::log->debug(" -- saturated point    = {} ", report.saturated_point);
-                tools::log->debug(" -- saturated count    = {} ", report.saturated_count);
-                tools::log->debug(" -- sat history        = {}", report.Y_sat);
-                tools::log->debug(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-                tools::log->debug(" -- min history        = {:7.4e}", fmt::join(report.Y_min, ", "));
-                tools::log->debug(" -- max history        = {:7.4e}", fmt::join(report.Y_max, ", "));
-                tools::log->debug(" -- std ent history    = {:7.4e}", fmt::join(report.Y_vec_std, ", "));
-                tools::log->debug(" -- std min history    = {:7.4e}", fmt::join(report.Y_min_std, ", "));
-                tools::log->debug(" -- std max history    = {:7.4e}", fmt::join(report.Y_max_std, ", "));
-                tools::log->debug(" -- ste mov history    = {:7.4e}", fmt::join(report.Y_mov_ste, ", "));
+            if(tools::log->level() <= spdlog::level::trace) {
+                tools::log->trace("Entanglement slope details:");
+                tools::log->trace(" -- site               = {}", last_saturated_site);
+                tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
+                tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
+                tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
+                tools::log->trace(" -- sat history        = {}", report.Y_sat);
+                tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
+                tools::log->trace(" -- min history        = {:7.4e}", fmt::join(report.Y_min, ", "));
+                tools::log->trace(" -- max history        = {:7.4e}", fmt::join(report.Y_max, ", "));
+                tools::log->trace(" -- std ent history    = {:7.4e}", fmt::join(report.Y_vec_std, ", "));
+                tools::log->trace(" -- std min history    = {:7.4e}", fmt::join(report.Y_min_std, ", "));
+                tools::log->trace(" -- std max history    = {:7.4e}", fmt::join(report.Y_max_std, ", "));
+                tools::log->trace(" -- ste mov history    = {:7.4e}", fmt::join(report.Y_mov_ste, ", "));
             }
         }
     }
