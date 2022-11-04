@@ -75,12 +75,8 @@ int MatVecMPO<T>::cols() const {
 template<typename T>
 void MatVecMPO<T>::FactorOP() {
     auto t_token = t_factorOP->tic_token();
-    if(readyFactorOp) {
-        auto t_token2 = t_genMat->tic_token(); // No time taken here
-        return;                                // happens only once
-    }
+    if(readyFactorOp) { return; }
     if(factorization == eig::Factorization::NONE) {
-        auto t_token2 = t_genMat->tic_token(); // No time taken here
         readyFactorOp = true;
         return;
     }
@@ -217,7 +213,6 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     // This only works if the MPO is not compressed already.
     if(readyShift) return;
     if(sigma == shift) return;
-
     if(readyCompress) {
         if(factorization == eig::Factorization::NONE)
             throw std::runtime_error("Cannot shift the matrix with Factorization::NONE: mpo is already compressed!");
@@ -242,14 +237,12 @@ void MatVecMPO<T>::set_shift(std::complex<double> shift) {
     std::array<long, 4> offset4{offset1, 0, 0, 0};
     std::array<long, 4> extent4{1, 1, spindim, spindim};
     std::array<long, 2> extent2{spindim, spindim};
-
-    auto id = tenx::TensorIdentity<T>(spindim);
+    auto                id = tenx::TensorIdentity<T>(spindim);
     // We undo the previous sigma and then subtract the new one. We are aiming for [A - I*shift]
     if constexpr(std::is_same_v<T, eig::real>)
         mpo.slice(offset4, extent4).reshape(extent2) += id * std::real(sigma - shift);
     else
         mpo.slice(offset4, extent4).reshape(extent2) += id * (sigma - shift);
-
     sigma = shift;
     eig::log->debug("Shifted MPO dimensions {}", mpo.dimensions());
 

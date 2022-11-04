@@ -75,20 +75,48 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
     if(Y_vec.size() < min_data_points) { return report; }
 
     report.Y_vec = Y_vec;
+
+    // Rescale
     if(scale == SaturationScale::log)
         for(auto &y : report.Y_vec) y = std::log10(y);
 
-    // Running average and standard deviation from i to end
-    report.Y_avg.resize(report.Y_vec.size());
-    report.Y_std.resize(report.Y_vec.size());
-    for(const auto &[i, y] : iter::enumerate(report.Y_vec)) {
-        report.Y_avg[i] = stat::mean(report.Y_vec, i);
-        report.Y_std[i] = stat::stdev(report.Y_vec, i);
-    }
+    // Get the cumulative max/min of the rescaled signal
+    report.Y_max = num::cummax(report.Y_vec);
+    report.Y_min = num::cummin(report.Y_vec);
     report.Y_sat.resize(report.Y_vec.size());
-    for(const auto &[i, s] : iter::enumerate(report.Y_std)) report.Y_sat[i] = static_cast<int>(s < sensitivity); // Below sensitivity --> saturated
 
-    // Since the last element is always zero, we just copy the saturation state of the second to last element.
+    if(not num::all_equal(report.Y_vec.size(), report.Y_min.size(), report.Y_max.size(), report.Y_sat.size()))
+        throw except::logic_error("Report vectors are not equal size:\n Y_vec {}\n Y_min {}\n Y_max {}\n Y_sat {}", report.Y_vec.size(), report.Y_min.size(),
+                                  report.Y_max.size(), report.Y_sat.size());
+
+    auto Y_avg_full    = stat::mean(report.Y_vec);
+    auto Y_avg_left    = stat::mean(report.Y_vec, 0, report.Y_vec.size() / 2);
+    auto Y_avg_rite    = stat::mean(report.Y_vec, report.Y_vec.size() / 2);
+    bool is_decreasing = Y_avg_left > Y_avg_full and Y_avg_full > Y_avg_rite;
+    bool is_increasing = Y_avg_left < Y_avg_full and Y_avg_full < Y_avg_rite;
+    bool is_uncreasing = not is_increasing and not is_decreasing; // May be more complicated
+
+    // Calculate the running standard deviation from i to end
+    report.Y_vec_std.resize(report.Y_vec.size());
+    report.Y_min_std.resize(report.Y_min.size());
+    report.Y_max_std.resize(report.Y_max.size());
+    for(size_t i = 0; i < report.Y_vec.size(); ++i) report.Y_vec_std[i] = stat::stdev(report.Y_vec, i);
+    for(size_t i = 0; i < report.Y_min.size(); ++i) report.Y_min_std[i] = stat::stdev(report.Y_min, i);
+    for(size_t i = 0; i < report.Y_max.size(); ++i) report.Y_max_std[i] = stat::stdev(report.Y_max, i);
+    report.Y_mov_ste = stat::sterr_moving(report.Y_vec, 0.25);
+
+    for(size_t i = 0; i < report.Y_sat.size(); ++i) {
+        // Below sensitivity --> saturated
+        bool vec_sat = report.Y_vec_std[i] < sensitivity;
+        bool min_sat = report.Y_min_std[i] < sensitivity;
+        bool max_sat = report.Y_max_std[i] < sensitivity;
+        bool mov_sat = report.Y_mov_ste[i] < sensitivity;
+        if(is_decreasing) report.Y_sat[i] = vec_sat or mov_sat or min_sat;
+        if(is_increasing) report.Y_sat[i] = vec_sat or mov_sat or max_sat;
+        if(is_uncreasing) report.Y_sat[i] = vec_sat or mov_sat;
+    }
+
+    // Since the last element in Y_vec is always zero, Y_sat is always one. we just copy the saturation state of the second to last element.
     if(report.Y_sat.size() > 1) report.Y_sat.back() = report.Y_sat.rbegin()[1];
 
     // From the end, count how many Y_sat[i] are 1,  before finding a 0.

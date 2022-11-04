@@ -202,11 +202,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     auto t_prep   = tid::tic_scope("prep");
     if constexpr(MatrixProductType::can_shift) {
         if(config.sigma) {
+            auto t_shift = tid::tic_scope("shift");
             eig::log->debug("Setting shift with sigma = {}", std::real(config.sigma.value()));
             matrix.set_shift(config.sigma.value());
             if constexpr(MatrixProductType::can_shift_invert) {
                 if(config.shift_invert == Shinv::ON) {
                     eig::log->debug("Enabling shift-invert mode");
+                    auto t_inv = tid::tic_scope("invert");
                     matrix.FactorOP();
                 }
             } else if(config.shift_invert == Shinv::ON)
@@ -316,27 +318,34 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     eigvecs.resize(static_cast<size_t>(primme.numEvals) * static_cast<size_t>(primme.n));
     result.meta.residual_norms.resize(static_cast<size_t>(primme.numEvals));
 
-    // Copy initial guess
-    primme.initSize = 0;
-    for(const auto &ig : config.initial_guess) {
-        if(ig.idx < primme.numEvals and ig.idx >= 0) {
-            auto source = static_cast<Scalar *>(ig.ptr);
-            auto target = eigvecs.data() + static_cast<size_t>(ig.idx * primme.n);
-            std::copy_n(source, primme.n, target);
-            primme.initSize = std::max(primme.initSize, static_cast<int>(ig.idx) + 1);
+    {
+        // Copy initial guess
+        auto t_copy     = tid::tic_scope("copy");
+        primme.initSize = 0;
+        for(const auto &ig : config.initial_guess) {
+            if(ig.idx < primme.numEvals and ig.idx >= 0) {
+                auto source = static_cast<Scalar *>(ig.ptr);
+                auto target = eigvecs.data() + static_cast<size_t>(ig.idx * primme.n);
+                std::copy_n(source, primme.n, target);
+                primme.initSize = std::max(primme.initSize, static_cast<int>(ig.idx) + 1);
+            }
         }
     }
+
     t_prep.toc();
     /* Call primme  */
+    /* clang-format off */
     int info = 0;
     if constexpr(std::is_same_v<Scalar, eig::real>) {
         try {
+            auto t_dprimme = tid::tic_scope("dprimme");
             info = dprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
         } catch(const std::exception &ex) { eig::log->error("dprimme has exited with error: info {} | msg: {}", info, ex.what()); } catch(...) {
             eig::log->error("dprimme has exited with error: info {}", info);
         }
     } else if constexpr(std::is_same_v<typename MatrixProductType::Scalar, eig::cplx>) {
         try {
+            auto t_zprimme = tid::tic_scope("zprimme");
             info = zprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
         } catch(const std::exception &ex) { eig::log->error("zprimme has exited with error: info {} | msg: {}", info, ex.what()); } catch(...) {
             eig::log->error("zprimme has exited with error: info {}", info);
@@ -344,6 +353,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     } else {
         throw std::runtime_error("Primme: type not implemented {}", eig::sfinae::type_name<typename MatrixProductType::Scalar>());
     }
+    /* clang-format on */
 
     if(info == 0) {
         switch(primme.dynamicMethodSwitch) {

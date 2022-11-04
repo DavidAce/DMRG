@@ -25,49 +25,46 @@ namespace stat {
     inline constexpr bool is_iterable_v = is_iterable<T>::value;
 
     template<typename ContainerType>
-    void check_bounds(ContainerType &X, std::optional<long> start_point = std::nullopt, std::optional<long> end_point = std::nullopt) {
-        if(start_point.has_value() and (num::cmp_greater_equal(start_point.value(), std::size(X)) or start_point.value() < 0))
-            throw std::range_error("Start point is out of range");
+    void check_bounds(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+        if(start_point.has_value() and num::cmp_greater_equal(start_point.value(), std::size(X))) throw std::range_error("Start point is out of range");
         if(end_point.has_value() and (num::cmp_greater(end_point.value(), std::size(X)) or end_point.value() < start_point))
             throw std::range_error("End point is out of range");
     }
 
     template<typename ContainerType>
-    auto get_start_end_iterators(ContainerType &X, std::optional<long> start_point = std::nullopt, std::optional<long> end_point = std::nullopt) {
+    [[nodiscard]] auto get_start_end_iterators(ContainerType &X, std::optional<size_t> start_point = std::nullopt,
+                                               std::optional<size_t> end_point = std::nullopt) {
+        if(end_point.has_value() and end_point.value() == -1ul) end_point = X.size();
         try {
             check_bounds(X, start_point, end_point);
         } catch(std::exception &err) { throw std::range_error("check_bounds failed: " + std::string(err.what())); }
         if(not start_point.has_value()) start_point = 0;
         if(not end_point.has_value()) end_point = X.size();
-        auto x_it = X.begin();
-        auto x_en = X.begin();
-        std::advance(x_it, start_point.value());
-        std::advance(x_en, end_point.value());
-        return std::make_pair(x_it, x_en);
+        return std::make_pair(X.begin() + start_point.value(), X.begin() + end_point.value());
     }
 
     template<typename ContainerType>
-    auto min(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] auto min(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         return *std::min_element(x_it, x_en);
     }
     template<typename ContainerType>
-    auto max(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] auto max(ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         return *std::max_element(x_it, x_en);
     }
 
     template<typename ContainerType>
-    typename ContainerType::value_type mean(ContainerType &X, std::optional<size_t> start_point = std::nullopt,
-                                            std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] typename ContainerType::value_type mean(ContainerType &X, std::optional<size_t> start_point = std::nullopt,
+                                                          std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         auto n            = static_cast<double>(std::distance(x_it, x_en));
         return std::accumulate(x_it, x_en, static_cast<typename ContainerType::value_type>(0.0)) / n;
     }
 
     template<typename ContainerType>
-    typename ContainerType::value_type median(ContainerType &X, std::optional<size_t> start_point = std::nullopt,
-                                              std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] typename ContainerType::value_type median(ContainerType &X, std::optional<size_t> start_point = std::nullopt,
+                                                            std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         auto n            = static_cast<double>(std::distance(x_it, x_en));
         if(n == 0) return 0;
@@ -90,13 +87,13 @@ namespace stat {
     }
 
     template<typename ContainerType>
-    auto typical(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] auto typical(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         ContainerType Xlog = X;
         for(auto &x : Xlog) x = std::log(std::abs(x));
         return std::exp(mean(Xlog, start_point, end_point));
     }
     template<typename ContainerType>
-    double variance(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] double variance(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         auto n            = static_cast<double>(std::distance(x_it, x_en));
         if(n == 0) return 0.0;
@@ -105,21 +102,80 @@ namespace stat {
         return sum / n;
     }
     template<typename ContainerType>
-    double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         return std::sqrt(variance(X, start_point, end_point));
     }
 
     template<typename ContainerType>
-    double sterr(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] double sterr(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         if(x_it == x_en) return 0.0;
         auto n = static_cast<double>(std::distance(x_it, x_en));
         return stdev(X, start_point, end_point) / std::sqrt(n);
     }
 
+    template<typename ContainerType>
+    [[nodiscard]] std::vector<double> sterr_moving(const ContainerType &X, double width = 0.1, std::optional<size_t> start_point = std::nullopt,
+                                                   std::optional<size_t> end_point = std::nullopt) {
+        std::vector<double> res;
+        width             = std::clamp<double>(width, 0.0, 1.0);
+        auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
+        long idx0         = std::distance(X.begin(), x_it);
+        long idxN         = std::distance(X.begin(), x_en);
+        long xlen         = std::distance(x_it, x_en);                                               // Number of points to consider in X
+        long wlen         = std::max<long>(2, static_cast<long>(width * static_cast<double>(xlen))); // Number of points in the moving window
+        while(x_it != x_en) {
+            long idx_beg = std::distance(X.begin(), x_it); // Center around x_it
+            long idx_end = std::distance(X.begin(), x_it); // Center around x_it
+            while(idx_end - idx_beg < wlen) {
+                idx_end = std::clamp(idx_end + 1, idx_end, idxN); // Move forward 1 step if possible.
+                if(idx_end - idx_beg < wlen) {
+                    idx_beg = std::clamp(idx_beg - 1, idx0, idx_beg); // Move back 1 step if possible.
+                }
+                if(idx_beg == idx0 and idx_end == idxN) break;
+            }
+            if(idx_end < 0 or idx_end > X.size()) break;
+            res.emplace_back(sterr(X, idx_beg, idx_end));
+            x_it++;
+        }
+        printf("\n");
+        return res;
+    }
+
     template<typename ContainerType1, typename ContainerType2, typename = std::enable_if_t<is_iterable_v<ContainerType1> and is_iterable_v<ContainerType2>>>
-    std::pair<double, double> slope(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,
-                                    std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] std::vector<double> cumtrapz(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,
+                                               std::optional<size_t> end_point = std::nullopt) {
+        auto [x_it, x_en]       = get_start_end_iterators(X, start_point, end_point);
+        auto [y_it, y_en]       = get_start_end_iterators(Y, start_point, end_point);
+        auto                num = std::min(std::distance(x_it, x_en), std::distance(y_it, y_en));
+        std::vector<double> res;
+        res.reserve(num);
+        for(long i = 0; i < num; i++) { res.emplace_back(num::trapz(X, Y, i, num - i)); }
+        return res;
+    }
+    template<typename ContainerType1, typename ContainerType2, typename = std::enable_if_t<is_iterable_v<ContainerType1> and is_iterable_v<ContainerType2>>>
+    [[nodiscard]] std::vector<double> cumtrapz_avg(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,
+                                                   std::optional<size_t> end_point = std::nullopt) {
+        auto [x_it, x_en]           = get_start_end_iterators(X, start_point, end_point);
+        auto [y_it, y_en]           = get_start_end_iterators(Y, start_point, end_point);
+        auto                num     = std::min(std::distance(x_it, x_en), std::distance(y_it, y_en));
+        auto                idx_end = std::min(std::distance(X.begin(), x_en), std::distance(Y.begin(), y_en));
+        std::vector<double> res;
+        res.reserve(num);
+        while(x_it != x_en and y_it != y_en) {
+            auto idx_start = std::min(std::distance(X.begin(), x_it), std::distance(Y.begin(), y_it));
+            auto div       = static_cast<double>(X[idx_end] - X[idx_start]);
+            num            = std::min(std::distance(x_it, x_en), std::distance(y_it, y_en));
+            res.emplace_back(num::trapz(X, Y, idx_start, num) / div);
+            x_it++;
+            y_it++;
+        }
+        return res;
+    }
+
+    template<typename ContainerType1, typename ContainerType2, typename = std::enable_if_t<is_iterable_v<ContainerType1> and is_iterable_v<ContainerType2>>>
+    [[nodiscard]] std::pair<double, double> slope(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,
+                                                  std::optional<size_t> end_point = std::nullopt) {
         if(X.size() != Y.size())
             throw std::range_error("slope: size mismatch in arrays: X.size() == " + std::to_string(X.size()) + " | Y.size() == " + std::to_string(Y.size()));
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
@@ -144,21 +200,22 @@ namespace stat {
     }
 
     template<typename ContainerType>
-    std::pair<double, double> slope(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] std::pair<double, double> slope(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt,
+                                                  std::optional<size_t> end_point = std::nullopt) {
         ContainerType X(Y.size());
         std::iota(X.begin(), X.end(), 0);
         return slope(X, Y, start_point, end_point);
     }
 
     template<typename ContainerType1, typename ContainerType2>
-    double slope_at(const ContainerType1 &X, const ContainerType2 &Y, size_t at, size_t width = 1) {
+    [[nodiscard]] double slope_at(const ContainerType1 &X, const ContainerType2 &Y, size_t at, size_t width = 1) {
         auto min_idx = static_cast<size_t>(std::max(static_cast<long>(at) - static_cast<long>(width), 0l));
         auto max_idx = static_cast<size_t>(std::min(at + width, Y.size()));
         return slope(X, Y, min_idx, max_idx).first;
     }
 
     template<typename ContainerType>
-    ContainerType smooth(const ContainerType &X, long width = 2) {
+    [[nodiscard]] ContainerType smooth(const ContainerType &X, long width = 2) {
         if(X.size() <= 2) return X;
         width = std::min<long>(4, static_cast<long>(X.size()) / 2);
         ContainerType S;
@@ -172,7 +229,8 @@ namespace stat {
     }
 
     template<typename ContainerType>
-    size_t find_last_valid_point(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] size_t find_last_valid_point(const ContainerType &Y, std::optional<size_t> start_point = std::nullopt,
+                                               std::optional<size_t> end_point = std::nullopt) {
         auto [y_it, y_en] = get_start_end_iterators(Y, start_point, end_point);
         auto n            = static_cast<double>(std::distance(y_it, y_en));
         if(n == 0) return start_point.has_value() ? start_point.value() : 0;
@@ -186,8 +244,8 @@ namespace stat {
     }
 
     template<typename ContainerType>
-    size_t find_saturation_point(const ContainerType &Y, double slope_tolerance = 1, double std_tolerance = 1, std::optional<size_t> start_point = std::nullopt,
-                                 std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] size_t find_saturation_point(const ContainerType &Y, double slope_tolerance = 1, double std_tolerance = 1,
+                                               std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
         auto [y_it, y_en] = get_start_end_iterators(Y, start_point, end_point);
         auto n            = static_cast<double>(std::distance(y_it, y_en));
         auto idx          = start_point.has_value() ? start_point.value() : 0;

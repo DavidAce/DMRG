@@ -28,6 +28,21 @@ namespace num {
 
         template<typename T>
         inline constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
+
+        template<typename ContainerType>
+        auto get_start_end_iterators(ContainerType &X, std::optional<long> start_point = std::nullopt, std::optional<long> end_point = std::nullopt) {
+            try {
+                check_bounds(X, start_point, end_point);
+            } catch(std::exception &err) { throw std::range_error("check_bounds failed: " + std::string(err.what())); }
+            if(not start_point.has_value()) start_point = 0;
+            if(not end_point.has_value()) end_point = X.size();
+            auto x_it = X.begin();
+            auto x_en = X.begin();
+            std::advance(x_it, start_point.value());
+            std::advance(x_en, end_point.value());
+            return std::make_pair(x_it, x_en);
+        }
+
     }
 
     // Safe integer comparison functions from C++20
@@ -250,6 +265,76 @@ namespace num {
         if(num < 0) num = in.size();
         num = std::min<long>(num, static_cast<long>(in.size()) - from);
         return std::accumulate(std::begin(in) + from, std::begin(in) + from + num, 1, std::multiplies<>());
+    }
+
+    /*! \brief Cumulative operator for containers such as vector
+     *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.
+     *   \param from first element to add (default == 0)
+     *   \param to last element to add (default == -1: from - size)
+     *   \return binary op of of elements with type Input::value_type .
+     *   \example Let <code> v = {1,2,3,4}</code>. Then <code> cumop(v,std::plus<>(),0,3) = {1,3,6,10} </code>.
+     */
+    template<typename Input, typename BinaryOp>
+    [[nodiscard]] Input cumop(const Input &in, BinaryOp op, size_t from = 0, size_t num = -1ul) {
+        Input res;
+        from = std::clamp<size_t>(from, 0, in.size());
+        num  = std::clamp<size_t>(num, 0, in.size());
+        std::partial_sum(in.begin() + from, in.begin() + num, std::back_inserter(res), op);
+        return res;
+    }
+
+    template<typename Input>
+    [[nodiscard]] Input cumsum(const Input &in, size_t from = 0, size_t num = -1ul) {
+        return cumop(in, std::plus<typename Input::value_type>(), from, num);
+    }
+    template<typename Input>
+    [[nodiscard]] Input cumsub(const Input &in, size_t from = 0, size_t num = -1ul) {
+        return cumop(in, std::minus<typename Input::value_type>(), from, num);
+    }
+    template<typename Input>
+    [[nodiscard]] Input cumprod(const Input &in, size_t from = 0, size_t num = -1ul) {
+        return cumop(in, std::multiplies<typename Input::value_type>(), from, num);
+    }
+    template<typename Input>
+    [[nodiscard]] Input cummin(const Input &in, size_t from = 0, size_t num = -1ul) {
+        return cumop(
+            in, [](auto &a, auto &b) { return std::min(a, b); }, from, num);
+    }
+    template<typename Input>
+    [[nodiscard]] Input cummax(const Input &in, size_t from = 0, size_t num = -1ul) {
+        return cumop(
+            in, [](auto &a, auto &b) { return std::max(a, b); }, from, num);
+    }
+
+    /*! \brief Trapezoidal rule for numerical integration
+     *   \param X a vector-like container
+     *   \param Y a vector-like container
+     *   \param from first element to multiply (default == 0)
+     *   \param to last element to multiply (default == -1: from - size)
+     *   \return product of of elements with type Input::value_type .
+     *   \example Let <code> v = {1,2,3,4}</code>. Then <code> prod(v,0,3) = 24 </code>.
+     */
+    template<typename ContainerType1, typename ContainerType2>
+    double trapz(const ContainerType1 &X, const ContainerType2 &Y, long from = 0, long num = -1) {
+        auto   xfrm = std::clamp<long>(from, 0, static_cast<long>(X.size()));
+        auto   yfrm = std::clamp<long>(from, 0, static_cast<long>(Y.size()));
+        auto   xnum = std::clamp<long>(num, xfrm, static_cast<long>(X.size()));
+        auto   ynum = std::clamp<long>(num, yfrm, static_cast<long>(Y.size()));
+        auto   x_it = X.begin() + from;
+        auto   y_it = Y.begin() + from;
+        auto   x_en = X.begin() + xnum;
+        auto   y_en = Y.begin() + ynum;
+        double res  = 0.0;
+        while(x_it != x_en and y_it != y_en) {
+            auto x_nx = std::next(x_it);
+            auto y_nx = std::next(y_it);
+            if(x_nx == x_en) break;
+            if(y_nx == y_en) break;
+            res += (*x_nx - *x_it) * 0.5 * (*y_nx + *y_it);
+            x_it++;
+            y_it++;
+        }
+        return res;
     }
 
     /*! \brief Checks if multiple values are equal to each other

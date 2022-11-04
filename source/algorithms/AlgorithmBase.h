@@ -51,15 +51,20 @@ class AlgorithmBase {
     protected:
     enum class SaturationScale { lin, log };
     struct SaturationReport {
-        bool                                     has_computed    = false;
-        bool                                     has_saturated   = false;
-        size_t                                   saturated_count = 0;
-        size_t                                   saturated_point = 0;
-        SaturationScale                          saturated_scale = SaturationScale::lin;
-        std::vector<double>                      Y_vec; // The values used to measure saturation. This is the log of given data when log is on
-        std::vector<double>                      Y_avg; // Running average from [i:end] of Y_vec
-        std::vector<double>                      Y_std; // The "moving" standard deviation of Y_vec (or Y_log) from [i:end]
-        std::vector<int>                         Y_sat; // Flags that tell if Y_vec has saturated at that index
+        bool                has_computed    = false;
+        bool                has_saturated   = false;
+        size_t              saturated_count = 0;
+        size_t              saturated_point = 0;
+        SaturationScale     saturated_scale = SaturationScale::lin;
+        std::vector<double> Y_vec;     // The values used to measure saturation. This is the log of given data when log is on
+        std::vector<double> Y_min;     // The cumulative minimum of Y_vec
+        std::vector<double> Y_max;     // The cumulative maximum of Y_vec
+        std::vector<double> Y_vec_std; // The "moving start" standard deviation of Y_vec from [i:end]
+        std::vector<double> Y_min_std; // The "moving start" standard deviation of Y_min from [i:end]
+        std::vector<double> Y_max_std; // The "moving start" standard deviation of Y_max from [i:end]
+        std::vector<double> Y_mov_ste; // The "moving window" standard error of 25% width.
+        std::vector<int>    Y_sat;     // Flags that tell if Y_vec has saturated at that index
+
         [[nodiscard]] constexpr std::string_view get_saturated_scale() noexcept {
             switch(saturated_scale) {
                 case SaturationScale::lin: return "lin";
