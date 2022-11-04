@@ -227,6 +227,8 @@ def generate_sbatch_commands(project_name, args):
         sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -f {}'
                           .format(' '.join(sbatch_arg),numseeds, args.sims_per_task, exec, jobfile))
 
+    Path("logs").mkdir(parents=True, exist_ok=True)
+
     if args.debug:
         print('sbatch args:', ' '.join(sbatch_arg))
         print('environment:', ' '.join(sbatch_env))
