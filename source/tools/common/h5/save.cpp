@@ -60,6 +60,8 @@ namespace tools::common::h5 {
         h5pp_table_memory_usage::table mem_usage_entry{};
         mem_usage_entry.iter     = sinfo.iter;
         mem_usage_entry.step     = sinfo.step;
+        mem_usage_entry.position = sinfo.position;
+        mem_usage_entry.event    = sinfo.storage_event;
         mem_usage_entry.bond_lim = sinfo.bond_lim;
         mem_usage_entry.rss      = debug::mem_rss_in_mb();
         mem_usage_entry.hwm      = debug::mem_hwm_in_mb();
@@ -90,7 +92,6 @@ namespace tools::common::h5 {
             if(settings::storage::storage_level_timers == StorageLevel::LIGHT and t->get_level() > tid::level::normal) continue;
             if(settings::storage::storage_level_timers == StorageLevel::NORMAL and t->get_level() > tid::level::higher) continue;
             if(settings::storage::storage_level_timers == StorageLevel::FULL and t->get_level() > tid::level::highest) continue;
-            tools::log->info("Appending {:10} : {}", enum2sv(t->get_level()), t.key);
             table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
         }
         tools::log->trace("Appending to table: {}", table_path);

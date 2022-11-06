@@ -854,15 +854,14 @@ void AlgorithmFinite::print_status() {
         report += fmt::format("l:⟨{}| ", site_str);
     }
 
-    double epsite = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
-    report += fmt::format(FMT_STRING("E:{:<20.16f} "), epsite);
-
     if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("e:{:<5.3f} "), status.energy_dens); }
+    double ene = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
+    double var = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
+    report += fmt::format(FMT_STRING("E:{:<20.16f} "), ene);
+    report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), var, status.energy_variance_lowest);
     report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(),
                           tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
-    double variance = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
-    report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), variance, status.energy_variance_lowest);
     report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error_active_max());
     if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.env_expansion_alpha);
     report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_lim);
