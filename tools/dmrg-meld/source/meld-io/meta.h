@@ -1,4 +1,5 @@
 #pragma once
+#include "config/enums.h"
 #include <string>
 
 // Define the allowed items
@@ -31,19 +32,22 @@ struct DsetKey : public Key {
 
 struct TableKey : public Key {
     using Key::Key;
-    static constexpr std::string_view classtag = "table";
+    static constexpr std::array<StorageEvent, 1> event    = {StorageEvent::LAST_STATE};
+    static constexpr std::string_view            classtag = "table";
 };
 
 struct BonddKey : public Key {
     using Key::Key;
     static constexpr std::string_view                classtag = "bondd"; // Name of this type of key
+    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::FES_STATE};
     static constexpr std::array<std::string_view, 3> index    = {"bond_lim", "bond_limit",
                                                                  "bond_dimension_limit"}; // Index this data according to this table field (first match)
 };
 
 struct CronoKey : public Key {
     using Key::Key;
-    static constexpr std::string_view                classtag = "crono";  // Name of this type of key
+    static constexpr std::string_view                classtag = "crono"; // Name of this type of key
+    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::ITER_STATE};
     static constexpr std::array<std::string_view, 1> index    = {"iter"}; // Index this data according to this table field (first match)
 };
 

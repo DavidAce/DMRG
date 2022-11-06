@@ -94,7 +94,8 @@ namespace tools::h5io {
                 if(key.empty())
                     found.emplace_back(key);
                 else if(key.back() == '*') {
-                    std::string_view key_match = std::string_view(key).substr(0, key.size() - 2); // .substr(0,key.size()-2);
+                    std::string_view key_match = std::string_view(key).substr(0, key.size() - 2);
+                    tools::logger::log->info("key_match: ", key_match);
                     for(auto &item : h5_src.findGroups(key_match, root, hits, depth)) {
                         if(not text::startsWith(item, key_match)) continue;
                         if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;

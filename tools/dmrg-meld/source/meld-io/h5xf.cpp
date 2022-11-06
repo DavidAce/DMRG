@@ -113,7 +113,8 @@ namespace tools::h5xf {
     void transferTables(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtTableDb,
                         std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<TableKey> &srcTableKeys,
                         const FileId &fileId) {
-        auto t_scope = tid::tic_scope(__FUNCTION__);
+        auto                      t_scope = tid::tic_scope(__FUNCTION__);
+        std::vector<StorageEvent> srcEvents; // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
         for(const auto &srcKey : srcTableKeys) {
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw std::runtime_error(h5pp::format("Key [{}] was not found in source map", srcKey.key));
             auto &srcInfo = srcTableDb[srcKey.key];
