@@ -19,7 +19,7 @@
 #include <string>
 
 tools::finite::opt::opt_mps tools::finite::opt::get_opt_initial_mps(const TensorsFinite &tensors) {
-    auto    t_init = tid::tic_scope("initial_mps");
+    auto    t_init = tid::tic_scope("initial_mps", tid::level::higher);
     opt_mps initial_mps("current mps", tensors.get_multisite_mps(), tensors.active_sites,
                         tools::finite::measure::energy_minus_energy_shift(tensors), // Eigval
                         tools::finite::measure::energy_shift(tensors),              // Shifted energy for full system
@@ -152,6 +152,7 @@ tools::finite::opt::opt_mps tools::finite::opt::find_excited_state(const Tensors
 
 tools::finite::opt::opt_mps tools::finite::opt::find_ground_state(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
                                                                   OptMeta &meta) {
+    auto t_opt = tid::tic_scope("opt");
     return internal::eigs_optimize_energy(tensors, initial_mps, status, meta);
 }
 

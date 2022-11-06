@@ -33,13 +33,12 @@ namespace tools::finite::opt {
             else
                 return initial_mps.get_tensor();
         } else {
-            // Return whichever of initial_mps or results that has the lowest variance or gradient
-            auto it = std::min_element(results.begin(), results.end(), internal::comparator::gradient);
+            // Return whichever of initial_mps or results that has the lowest variance
+            auto it = std::min_element(results.begin(), results.end(), internal::comparator::variance);
             if(it == results.end()) return get_initial_guess<Scalar>(initial_mps, {});
 
-            if(it->get_grad_max() < initial_mps.get_grad_max()) {
-                tools::log->debug("Previous result is a good initial guess: {} | var {:8.2e}  ∇fᵐᵃˣ {:8.2e}", it->get_name(), it->get_variance(),
-                                  it->get_grad_max());
+            if(it->get_variance() < initial_mps.get_variance()) {
+                tools::log->debug("Previous result is a good initial guess: {} | var {:8.2e}", it->get_name(), it->get_variance());
                 return get_initial_guess<Scalar>(*it, {});
             } else
                 return get_initial_guess<Scalar>(initial_mps, {});
@@ -70,24 +69,6 @@ namespace tools::finite::opt {
                         init.push_back({results_idx_n.back().get().get_tensor(), n});
                     }
                 }
-                //
-                //
-                //                // Return whichever of initial_mps or results that has the lowest variance or gradient
-                //
-                //
-                //
-                //                long min_idx = min_gradient_idx(results, n);
-                //                if(min_idx >= 0) {
-                //                    auto &res = results.at(static_cast<size_t>(min_idx));
-                //                    tools::log->debug("Found good initial guess for nev {}: idx {} {:<34} | lg var {:.8f}  ∇fᵐᵃˣ {:8.2e}", n, min_idx,
-                //                    res.get_name(),
-                //                                      std::log10(res.get_variance()), res.get_grad_max());
-                //
-                //                    if constexpr(std::is_same_v<Scalar, real>)
-                //                        init.push_back({res.get_tensor().real(), idx});
-                //                    else
-                //                        init.push_back({res.get_tensor(), idx});
-                //                }
             }
         }
         if(init.size() > static_cast<size_t>(nev)) throw except::logic_error("Found too many initial guesses");
@@ -214,7 +195,7 @@ namespace tools::finite::opt {
         if(not tensors.model->is_shifted()) throw std::runtime_error("eigs_optimize_variance requires energy-shifted MPO²");
         reports::eigs_add_entry(initial_mps, spdlog::level::debug);
 
-        auto                 t_var = tid::tic_scope("eigs-var");
+        auto                 t_var = tid::tic_scope("eigs-var", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
             case OptType::REAL: eigs_manager<real>(tensors, initial_mps, results, meta); break;

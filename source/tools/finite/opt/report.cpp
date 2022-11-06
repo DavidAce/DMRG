@@ -110,7 +110,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
         eigs_log.clear();
         return;
     }
-    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}"),
+    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}"),
                       "Optimization report",
                       "size",
                       "ritz",
@@ -118,7 +118,6 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
                       "nev",
                       "ncv",
                       "tol",
-                      "|∇Ψ|ᵐᵃˣ",
                       "E",
                       "λ",
                       "σ²H", // Special characters are counted properly in fmt 1.7.0
@@ -133,9 +132,9 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
 
     for(const auto &[idx,entry] : iter::enumerate(eigs_log)){
         if(max_entries and max_entries.value() <= idx) break;
-        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}"),
+        tools::log->log(level, FMT_STRING("- {:<50} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8.2e} {:<+22.15f} {:<+22.15f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<7} {:<10.2e} {:<10.2e}"),
                           entry.description,
-                          entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol, entry.grad,
+                          entry.size, entry.ritz,entry.idx, entry.nev, entry.ncv, entry.tol,
                           entry.energy,entry.eigval,
                           entry.variance,
                           entry.overlap,entry.norm, entry.rnorm,

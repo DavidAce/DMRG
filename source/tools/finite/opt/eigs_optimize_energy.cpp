@@ -134,7 +134,7 @@ namespace tools::finite::opt {
         if(tensors.active_problem_size() <= settings::solver::max_size_full_eigs) return eig_optimize_energy(tensors, initial_mps, status, meta);
 
         tools::log->debug("Energy optimization with ritz {} | type {}", enum2sv(meta.optRitz), enum2sv(meta.optType));
-        auto                 t_eigs = tid::tic_scope("eigs-ene");
+        auto                 t_eigs = tid::tic_scope("eigs-ene", tid::higher);
         std::vector<opt_mps> results;
         if(meta.optType == OptType::REAL) results = eigs_energy_executor<real>(tensors, initial_mps, meta);
         if(meta.optType == OptType::CPLX) results = eigs_energy_executor<cplx>(tensors, initial_mps, meta);

@@ -27,12 +27,16 @@ void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     // No need for energy or variance in fLBIT simulations. In fact, we don't update the ene and var environments,
     // so this operation would give an error
     if(tensors.state->get_algorithm() == AlgorithmType::fLBIT) return;
-    tensors.measurements.energy          = measure::energy(tensors); // This number is needed for variance calculation!
-    tensors.measurements.energy_variance = measure::energy_variance(tensors);
+    {
+        auto t_msr                           = tid::tic_scope("measure", tid::level::higher);
+        tensors.measurements.energy          = measure::energy(tensors); // This number is needed for variance calculation!
+        tensors.measurements.energy_variance = measure::energy_variance(tensors);
+    }
     do_all_measurements(*tensors.state);
 }
 
 void tools::finite::measure::do_all_measurements(const StateFinite &state) {
+    auto t_msr                                       = tid::tic_scope("measure", tid::level::higher);
     state.measurements.length                        = measure::length(state);
     state.measurements.norm                          = measure::norm(state);
     state.measurements.bond_dim                      = measure::bond_dimension_current(state);
@@ -110,7 +114,7 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
 
 std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &state) {
     if(state.measurements.bond_dims) return state.measurements.bond_dims.value();
-    auto              t_chi = tid::tic_scope("chi", tid::level::highest);
+    auto              t_bond = tid::tic_scope("bond_dims", tid::level::highest);
     std::vector<long> bond_dims;
     bond_dims.reserve(state.get_length() + 1);
     if(not state.has_center_point()) bond_dims.emplace_back(state.mps_sites.front()->get_chiL());
@@ -355,13 +359,12 @@ double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type
                                         model.active_sites, edges.active_sites);
         return tools::finite::measure::energy_minus_energy_shift(state.get_multisite_mps(), model, edges, measurements);
     } else {
-        auto        t_msr = tid::tic_scope("measure", tid::level::highest);
+        auto        t_ene = tid::tic_scope("ene", tid::level::highest);
         const auto &mpo   = model.get_multisite_mpo();
         const auto &env   = edges.get_multisite_env_ene_blk();
         if constexpr(settings::debug)
             tools::log->trace("Measuring energy: state dims {} | model sites {} dims {} | edges sites {} dims [L{} R{}]", state.dimensions(),
                               model.active_sites, mpo.dimensions(), edges.active_sites, env.L.dimensions(), env.R.dimensions());
-        auto   t_ene        = tid::tic_scope("ene", tid::level::highest);
         double e_minus_ered = tools::common::contraction::expectation_value(state, mpo, env.L, env.R);
         if(measurements != nullptr) measurements->energy_minus_energy_shift = e_minus_ered;
         return e_minus_ered;
@@ -445,7 +448,7 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         else
             energy = tools::finite::measure::energy(state, model, edges, measurements); // energy_minus_energy_shift could work here too, but this is clear
 
-        auto   t_msr = tid::tic_scope("measure", tid::level::highest);
+        auto   t_var = tid::tic_scope("var", tid::level::highest);
         double E2    = energy * energy;
 
         if(not num::all_equal(model.active_sites, edges.active_sites))
@@ -460,7 +463,6 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(state.dimension(0) != mpo2.dimension(2))
             throw std::runtime_error(
                 fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo2.dimension(2)));
-        auto   t_var = tid::tic_scope("var", tid::level::highest);
         double H2    = tools::common::contraction::expectation_value(state, mpo2, env2.L, env2.R);
         double var   = std::abs(H2 - E2);
         if(measurements != nullptr) measurements->energy_variance = var;

@@ -61,7 +61,7 @@ namespace tools::finite::opt {
         if(meta.optRitz == OptRitz::SM and not tensors.model->is_shifted())
             throw std::runtime_error("eig_optimize_energy with ritz [SM] requires energy-shifted MPO ");
 
-        auto                 t_gs = tid::tic_scope("eig-ene");
+        auto                 t_gs = tid::tic_scope("eig-ene", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
             case OptType::REAL: eig_executor<real>(tensors, initial_mps, results, meta); break;

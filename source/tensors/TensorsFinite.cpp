@@ -66,6 +66,7 @@ void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, si
 }
 
 void TensorsFinite::randomize_model() {
+    auto tic = tid::tic_scope("rnd_model");
     model->randomize();
     rebuild_mpo();
     rebuild_mpo_squared();
@@ -458,6 +459,7 @@ size_t TensorsFinite::move_center_point_to_middle(std::optional<svd::config> svd
 
 void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_tensor, std::optional<svd::config> svd_cfg, LogPolicy log_policy) {
     // Make sure the active sites are the same everywhere
+    auto t_merge = tid::tic_scope("merge");
     if(not num::all_equal(active_sites, state->active_sites, model->active_sites, edges->active_sites))
         throw except::runtime_error("All active sites are not equal: tensors {} | state {} | model {} | edges {}", active_sites, state->active_sites,
                                     model->active_sites, edges->active_sites);
@@ -468,6 +470,7 @@ void TensorsFinite::merge_multisite_mps(const Eigen::Tensor<cplx, 3> &multisite_
 
 std::vector<size_t> TensorsFinite::expand_environment(std::optional<double> alpha, EnvExpandMode envExpandMode, std::optional<svd::config> svd_cfg) {
     if(active_sites.empty()) throw except::runtime_error("No active sites for subspace expansion");
+    auto t_exp = tid::tic_scope("exp_env");
     // Follows the subspace expansion technique explained in https://link.aps.org/doi/10.1103/PhysRevB.91.155115
     auto pos_expanded = tools::finite::env::expand_environment(*state, *model, *edges, alpha, envExpandMode, svd_cfg);
     if(alpha) clear_measurements(LogPolicy::QUIET); // No change if alpha == std::nullopt

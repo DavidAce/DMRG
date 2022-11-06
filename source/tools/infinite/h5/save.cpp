@@ -35,19 +35,17 @@ void tools::infinite::h5::save::bonds(h5pp::File &h5file, const StorageInfo &sin
 
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
-    auto tic           = tid::tic_token("state");
-    auto bonds_prefix  = fmt::format("{}/bonds", sinfo.get_state_prefix());
-    auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, bonds_prefix);
-    auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
-    if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
+    auto tic          = tid::tic_token("state");
+    auto bonds_prefix = fmt::format("{}/bonds", sinfo.get_state_prefix());
+
+    // Check if the current entry has already been appended
+    long same = tools::common::h5::save::has_same_attrs(h5file, bonds_prefix, sinfo);
+    if(same > 0) return;
+
     h5file.writeDataset(state.LA(), bonds_prefix + "/L_A");
     h5file.writeDataset(state.LB(), bonds_prefix + "/L_B");
     h5file.writeDataset(state.LC(), bonds_prefix + "/L_C");
-    h5file.writeAttribute(sinfo.iter, bonds_prefix, "iter");
-    h5file.writeAttribute(sinfo.step, bonds_prefix, "step");
-    h5file.writeAttribute(sinfo.bond_lim, bonds_prefix, "bond_lim");
-    h5file.writeAttribute(sinfo.bond_max, bonds_prefix, "bond_max");
-    h5file.writeAttribute(state.get_truncation_error(), bonds_prefix, "truncation_error");
+    tools::common::h5::save::set_save_attrs(h5file, bonds_prefix, sinfo);
 }
 
 void tools::infinite::h5::save::state(h5pp::File &h5file, const StorageInfo &sinfo, const StateInfinite &state) {
@@ -55,18 +53,13 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, const StorageInfo &sin
 
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
-    auto tic           = tid::tic_token("state");
-    auto mps_prefix    = sinfo.get_mps_prefix();
-    auto h5_save_point = tools::common::h5::save::get_last_save_point(h5file, mps_prefix);
-    auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
-    if(h5_save_point and h5_save_point.value() == save_point) return; // No need to rewrite.
+    auto tic        = tid::tic_token("state");
+    auto mps_prefix = sinfo.get_mps_prefix();
+    long same       = tools::common::h5::save::has_same_attrs(h5file, mps_prefix, sinfo);
+    if(same > 0) return;
     h5file.writeDataset(state.A_bare(), mps_prefix + "/M_A");
     h5file.writeDataset(state.B(), mps_prefix + "/M_B");
-    h5file.writeAttribute(sinfo.iter, mps_prefix, "iter");
-    h5file.writeAttribute(sinfo.step, mps_prefix, "step");
-    h5file.writeAttribute(sinfo.bond_lim, mps_prefix, "bond_lim");
-    h5file.writeAttribute(sinfo.bond_max, mps_prefix, "bond_max");
-    h5file.writeAttribute(state.get_truncation_error(), mps_prefix, "truncation_error");
+    tools::common::h5::save::set_save_attrs(h5file, mps_prefix, sinfo);
 }
 
 void tools::infinite::h5::save::edges(h5pp::File &h5file, const StorageInfo &sinfo, const EdgesInfinite &edges) {
@@ -121,8 +114,7 @@ void tools::infinite::h5::save::measurements(h5pp::File &h5file, const StorageIn
     if(save_log[table_path] == save_point) return;
 
     log->trace("Appending to table: {}", table_path);
-    h5pp_table_measurements_infinite::register_table_type();
-    if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_infinite::h5_type, table_path, "measurements");
+    if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_table_measurements_infinite::get_h5t(), table_path, "measurements");
 
     h5pp_table_measurements_infinite::table measurement_entry{};
     const auto                             &state = *tensors.state;

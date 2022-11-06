@@ -346,7 +346,7 @@ std::vector<std::array<long, 3>> StateFinite::get_mps_dims_active() const { retu
 Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");
     if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
-    auto                     t_mps = tid::tic_scope("gen_mps");
+    auto                     t_mps = tid::tic_scope("gen_mps", tid::level::highest);
     Eigen::Tensor<Scalar, 3> multisite_mps;
     Eigen::Tensor<Scalar, 3> temp;
     for(auto &site : sites) {

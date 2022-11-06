@@ -194,7 +194,7 @@ void tools::finite::ops::project_to_axis(StateFinite &state, const Eigen::Matrix
 
     if(std::abs(sign) != 1) throw except::runtime_error("Expected 'sign' +1 or -1. Got [{}]", sign);
     tools::log->debug("Projecting state to axis with sign {}", sign);
-    auto t_prj = tid::tic_scope("projection");
+    auto t_prj = tid::tic_scope("projection", tid::level::higher);
     tools::finite::mps::normalize_state(state, svd_cfg, NormPolicy::IFNEEDED);
 
     state.clear_measurements();

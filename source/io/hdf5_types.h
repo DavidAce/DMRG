@@ -42,9 +42,11 @@ class h5_enum_algo_type {
 };
 
 class h5pp_table_measurements_finite {
-    public:
+    private:
     static inline h5pp::hid::h5t h5_type;
+    static void                  register_table_type();
 
+    public:
     struct table {
         uint64_t              iter                          = 0;
         uint64_t              step                          = 0;
@@ -66,15 +68,15 @@ class h5pp_table_measurements_finite {
         double                algorithm_time                = 0;
         double                physical_time                 = 0;
     };
-
-    h5pp_table_measurements_finite();
-    static void register_table_type();
+    static h5pp::hid::h5t get_h5t();
 };
 
 class h5pp_table_measurements_infinite {
-    public:
+    private:
     static inline h5pp::hid::h5t h5_type;
+    static void                  register_table_type();
 
+    public:
     struct table {
         uint64_t             iter                         = 0;
         uint64_t             step                         = 0;
@@ -99,26 +101,27 @@ class h5pp_table_measurements_infinite {
         double               phys_time                    = 0;
         std::complex<double> time_step;
     };
-
-    h5pp_table_measurements_infinite();
-    static void register_table_type();
+    static h5pp::hid::h5t get_h5t();
 };
 
 class h5pp_table_algorithm_status {
-    public:
+    private:
+    static void                  register_table_type();
     static inline h5pp::hid::h5t h5_type;
     static inline h5pp::hid::h5t h5_algo_type;
     static inline h5pp::hid::h5t h5_algo_stop;
-    using table = AlgorithmStatus;
 
-    h5pp_table_algorithm_status();
-    static void register_table_type();
+    public:
+    using table = AlgorithmStatus;
+    static h5pp::hid::h5t get_h5t();
 };
 
 class h5pp_table_memory_usage {
-    public:
+    private:
     static inline h5pp::hid::h5t h5_type;
+    static void                  register_table_type();
 
+    public:
     struct table {
         uint64_t     iter     = 0;
         uint64_t     step     = 0;
@@ -129,9 +132,7 @@ class h5pp_table_memory_usage {
         double       hwm      = 0;
         double       vm       = 0;
     };
-
-    h5pp_table_memory_usage();
-    static void register_table_type();
+    static h5pp::hid::h5t get_h5t();
 };
 
 template<typename T>
@@ -215,9 +216,13 @@ class h5pp_table_data {
 
 class h5pp_ur {
     public:
+    private:
     static inline h5pp::hid::h5t h5_type;
     static inline h5pp::hid::h5t h5_level_type;
     static constexpr size_t      nlen = 255;
+    static void                  register_table_type();
+
+    public:
     struct item {
         char  *name;
         double time;
@@ -230,11 +235,10 @@ class h5pp_ur {
         item(const item &it);
         item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count);
         ~item() noexcept; // Automatically deallocate when no longer needed
-
-        private:
         void copy_name(std::string_view name_);
     };
 
-    h5pp_ur();
-    static void register_table_type();
+    static h5pp::hid::h5t get_h5t();
+
+    private:
 };

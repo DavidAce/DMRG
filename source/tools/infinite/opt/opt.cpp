@@ -18,7 +18,7 @@ namespace tools::infinite::opt {
 
     Eigen::Tensor<cplx, 3> find_ground_state(const TensorsInfinite &tensors, std::string_view ritzstring) {
         tools::log->trace("Starting ground state optimization");
-        auto t_eig = tid::tic_scope("eig");
+        auto t_opt = tid::tic_scope("opt");
 
         eig::Ritz ritz = eig::stringToRitz(ritzstring);
 

@@ -30,7 +30,7 @@ namespace tools::finite::opt::internal {
         initial_mps.validate_basis_vector();
         if(not tensors.model->is_shifted()) throw std::runtime_error("eig_optimize_variance requires energy-shifted MPO²");
         reports::eigs_add_entry(initial_mps, spdlog::level::debug);
-        auto                 t_var = tid::tic_scope("eig-var");
+        auto                 t_var = tid::tic_scope("eig-var", tid::level::higher);
         std::vector<opt_mps> results;
         switch(meta.optType) {
             case OptType::REAL: eig_variance_executor<real>(tensors, initial_mps, results, meta); break;

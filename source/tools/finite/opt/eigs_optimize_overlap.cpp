@@ -15,7 +15,7 @@ using namespace tools::finite::opt::internal;
 opt_mps tools::finite::opt::internal::eigs_optimize_overlap(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
                                                             OptMeta &meta) {
     tools::log->trace("Optimizing in OVERLAP mode");
-    auto t_olap = tid::tic_scope("overlap");
+    auto t_olap = tid::tic_scope("overlap", tid::level::higher);
     initial_mps.validate_initial_mps();
     /*
      * Overlap optimization

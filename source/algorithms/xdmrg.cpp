@@ -688,7 +688,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
         tools::log->info("Not allowed more resets due to saturation: num resets {} > max resets {}", status.num_resets, settings::strategy::max_resets);
         return;
     }
-    auto t_rnd             = tid::tic_scope("rnd_state");
+    auto t_rnd             = tid::tic_scope("rnd_state_ewin", tid::level::higher);
     int  counter           = 0;
     bool outside_of_window = true;
     tensors.activate_sites(settings::solver::max_size_full_eigs, 2);

@@ -687,7 +687,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             h5file->writeAttribute(frange, "/fLBIT/model/lbits", "f_mixer");
             h5file->writeAttribute(sample, "/fLBIT/model/lbits", "samples");
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
-                h5file->writeDataset(data, "/fLBIT/model/lbits/data");
+                h5file->writeDataset(data, "/fLBIT/model/lbits/data", H5D_CHUNKED);
                 h5file->writeAttribute(std::vector<std::string>{"f_mixer", "u_layer", "sample", "i", "j"}, "/fLBIT/model/lbits/data", "dims");
             }
         }

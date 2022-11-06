@@ -3,6 +3,7 @@
 #include "tensors/model/ModelInfinite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateInfinite.h"
+#include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/infinite/env.h"
 #include "tools/infinite/measure.h"
@@ -49,6 +50,7 @@ void TensorsInfinite::initialize(ModelType model_type_) {
 }
 
 void TensorsInfinite::randomize_model() {
+    auto t_rnd = tid::tic_scope("rnd_model", tid::level::higher);
     model->randomize();
     model->rebuild_mpo_squared();
     reset_edges();

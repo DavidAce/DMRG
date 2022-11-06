@@ -83,7 +83,10 @@ void h5_enum_algo_type::commit(const h5pp::hid::h5f &file_id) {
     if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
 }
 
-h5pp_table_measurements_finite::h5pp_table_measurements_finite() { register_table_type(); }
+h5pp::hid::h5t h5pp_table_measurements_finite::get_h5t() {
+    register_table_type();
+    return h5_type;
+}
 void h5pp_table_measurements_finite::register_table_type() {
     if(h5_type.valid()) return;
     h5_enum_storage_event::create();
@@ -113,7 +116,10 @@ void h5pp_table_measurements_finite::register_table_type() {
     /* clang-format on */
 }
 
-h5pp_table_measurements_infinite::h5pp_table_measurements_infinite() { register_table_type(); }
+h5pp::hid::h5t h5pp_table_measurements_infinite::get_h5t() {
+    register_table_type();
+    return h5_type;
+}
 void h5pp_table_measurements_infinite::register_table_type() {
     if(h5_type.valid()) return;
     h5_enum_storage_event::create();
@@ -141,10 +147,14 @@ void h5pp_table_measurements_infinite::register_table_type() {
         H5Tinsert(h5_type, "wall_time",                    HOFFSET(table, wall_time),                    H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "phys_time",                    HOFFSET(table, phys_time),                    H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "time_step", HOFFSET(table, time_step), h5pp::type::compound::H5T_COMPLEX<double>::h5type());
-    /* clang-format on */
+        /* clang-format on */
 }
 
-h5pp_table_algorithm_status::h5pp_table_algorithm_status() { register_table_type(); }
+h5pp::hid::h5t h5pp_table_algorithm_status::get_h5t() {
+    register_table_type();
+    return h5_type;
+}
+
 void h5pp_table_algorithm_status::register_table_type() {
     if(h5_type.valid()) return;
     h5_enum_storage_event::create();
@@ -224,10 +234,14 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "fes_is_running",              HOFFSET(table, fes_is_running),             H5T_NATIVE_UINT8);
-    /* clang-format on */
+        /* clang-format on */
 }
 
-h5pp_table_memory_usage::h5pp_table_memory_usage() { register_table_type(); }
+h5pp::hid::h5t h5pp_table_memory_usage::get_h5t() {
+    register_table_type();
+    return h5_type;
+}
+
 void h5pp_table_memory_usage::register_table_type() {
     if(h5_type.valid()) return;
     h5_enum_storage_event::create();
@@ -257,7 +271,10 @@ void h5pp_ur::item::copy_name(std::string_view name_) {
     name = static_cast<char *>(malloc((name_.size() + 1) * sizeof(char))); // Add +1 for null terminator
     strcpy(name, name_.data());
 }
-h5pp_ur::h5pp_ur() { register_table_type(); }
+h5pp::hid::h5t h5pp_ur::get_h5t() {
+    register_table_type();
+    return h5_type;
+}
 void h5pp_ur::register_table_type() {
     if(h5_type.valid()) return;
     if(not h5_level_type.valid()) {

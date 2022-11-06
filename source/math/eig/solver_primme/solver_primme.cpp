@@ -109,7 +109,7 @@ inline primme_projection stringToProj(std::optional<std::string> projstring) {
 
 template<typename MatrixProductType>
 void eig::solver::MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
-    auto t_mv = tid::tic_scope("matvec");
+    auto t_mv = tid::tic_scope("matvec", tid::level::highest);
     if(primme->matrix == nullptr) throw std::logic_error("primme->matrix == nullptr");
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
     matrix_ptr->MultAx(x, ldx, y, ldy, blockSize, primme, ierr);
@@ -117,7 +117,7 @@ void eig::solver::MultAx_wrapper(void *x, int *ldx, void *y, int *ldy, int *bloc
 
 template<typename MatrixProductType>
 void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *ierr) {
-    auto t_iv = tid::tic_scope("invvec");
+    auto t_iv = tid::tic_scope("invvec", tid::level::highest);
     if(primme->matrix == nullptr) throw std::logic_error("primme->matrix == nullptr");
     auto matrix_ptr = static_cast<MatrixProductType *>(primme->matrix);
     matrix_ptr->MultOPv(x, ldx, y, ldy, blockSize, primme, ierr);
@@ -133,10 +133,9 @@ std::string getLogMessage(struct primme_params *primme) {
     auto       &result   = solver.result;
     auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
-    std::string msg_grad = primme->convTestFun != nullptr ? fmt::format(" | ∇fᵐᵃˣ {:8.2e}", result.meta.last_grad_max) : "";
-    return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
+    return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
                                   "it/s | {:8.2e} mv/s | {}"),
-                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff, msg_grad,
+                       primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff,
                        result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
                        static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
 }
@@ -198,17 +197,17 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
 template<typename MatrixProductType>
 int eig::solver::eigs_primme(MatrixProductType &matrix) {
     using Scalar  = typename MatrixProductType::Scalar;
-    auto t_primme = tid::tic_scope("primme");
+    auto t_primme = tid::tic_scope("primme", tid::level::higher);
     auto t_prep   = tid::tic_scope("prep");
     if constexpr(MatrixProductType::can_shift) {
         if(config.sigma) {
-            auto t_shift = tid::tic_scope("shift");
+            auto t_shift = tid::tic_scope("shift", tid::level::highest);
             eig::log->debug("Setting shift with sigma = {}", std::real(config.sigma.value()));
             matrix.set_shift(config.sigma.value());
             if constexpr(MatrixProductType::can_shift_invert) {
                 if(config.shift_invert == Shinv::ON) {
                     eig::log->debug("Enabling shift-invert mode");
-                    auto t_inv = tid::tic_scope("invert");
+                    auto t_inv = tid::tic_scope("invert", tid::level::highest);
                     matrix.FactorOP();
                 }
             } else if(config.shift_invert == Shinv::ON)
@@ -320,7 +319,6 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
 
     {
         // Copy initial guess
-        auto t_copy     = tid::tic_scope("copy");
         primme.initSize = 0;
         for(const auto &ig : config.initial_guess) {
             if(ig.idx < primme.numEvals and ig.idx >= 0) {

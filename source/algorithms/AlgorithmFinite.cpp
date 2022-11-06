@@ -381,7 +381,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
         return;
     }
     if(status.trnc_limit_has_reached_min) return;
-    auto tic = tid::tic_scope("trnc_down");
+    auto tic = tid::tic_scope("trnc_down", tid::level::higher);
 
     if constexpr(settings::debug) {
         if(tools::log->level() == spdlog::level::trace) {
@@ -472,7 +472,6 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
 
 void AlgorithmFinite::randomize_model() {
     tools::log->info("Randomizing model");
-    auto tic = tid::tic_scope("rnd_model");
     tensors.randomize_model();
     clear_convergence_status();
 }
@@ -480,7 +479,7 @@ void AlgorithmFinite::randomize_model() {
 void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
                                       std::optional<bool> use_eigenspinors, std::optional<size_t> bitfield, std::optional<long> bond_lim,
                                       std::optional<double> trnc_lim) {
-    auto t_rnd = tid::tic_scope("rnd_state");
+    auto t_rnd = tid::tic_scope("rnd_state", tid::level::higher);
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);

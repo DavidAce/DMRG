@@ -22,43 +22,41 @@ namespace tools::common::h5 {
         }
     }
 
-    template<typename AttrType>
-    void save::attr(h5pp::File &h5file, const AttrType &attrData, std::string_view linkPath, std::string_view attrName, std::string_view linkText,
-                    std::optional<h5pp::hid::h5t> h5type) {
-        if(not h5file.linkExists(attrName)) {
-            tools::log->trace("link [{}] does not exist. Returning ...", attrName);
-            return; // This means that there is nothing written to the state_prefix in attrName.
-        }
-        if(not h5file.linkExists(linkPath)) h5file.writeDataset(linkText, linkPath);
-        tools::log->trace("Link {:<32} | attribute -- {: <40}", linkPath, attrName);
-        h5file.writeAttribute(attrData, linkPath, attrName, std::nullopt, h5type);
-    }
-
     void save::status(h5pp::File &h5file, const StorageInfo &sinfo, const AlgorithmStatus &status) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
+        auto t_hdf = tid::tic_scope("status", tid::level::highest);
+        sinfo.assert_well_defined();
+
+        // Define the table
+        std::string table_path = fmt::format("{}/status", sinfo.get_state_prefix());
+
         // Check if the current entry has already been appended
-        // Status is special, flags can be updated without changing iter or step
-        std::string table_path    = fmt::format("{}/status", sinfo.get_state_prefix());
-        auto        t_hdf         = tid::tic_scope("status", tid::level::highest);
-        auto        h5_save_point = save::get_last_save_point(h5file, table_path);
-        auto        save_point    = std::make_pair(status.iter, status.step);
-        h5pp_table_algorithm_status::register_table_type();
-        if(not h5_save_point) h5file.createTable(h5pp_table_algorithm_status::h5_type, table_path, "Algorithm Status");
-        auto info   = h5file.getTableInfo(table_path);
-        auto offset = h5_save_point and h5_save_point.value() == save_point ? info.numRecords.value() - 1 : info.numRecords.value();
-        h5pp::hdf5::writeTableRecords(status, info, offset, 1);
-        h5file.writeAttribute(status.iter, table_path, "iter");
-        h5file.writeAttribute(status.step, table_path, "step");
-        h5file.writeAttribute(status.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(status.bond_max, table_path, "bond_max");
+        long same = tools::common::h5::save::has_same_attrs(h5file, table_path, sinfo);
+        if(same < 0) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
+        if(same > 0) return;
+
+        tools::log->trace("Appending to table: {}", table_path);
+        h5file.appendTableRecords(status, table_path);
+        save::set_save_attrs(h5file, table_path, sinfo);
     }
 
     void save::mem(h5pp::File &h5file, const StorageInfo &sinfo) {
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event <= StorageEvent::MODEL) return;
+        auto t_hdf = tid::tic_scope("mem", tid::level::highest);
+        sinfo.assert_well_defined();
+
+        // Define the table
+        std::string table_path = fmt::format("{}/mem_usage", sinfo.get_state_prefix());
+
         // Check if the current entry has already been appended
-        std::string                    table_path = fmt::format("{}/mem_usage", sinfo.get_state_prefix());
+        long same = tools::common::h5::save::has_same_attrs(h5file, table_path, sinfo);
+        if(same < 0) h5file.createTable(h5pp_table_memory_usage::get_h5t(), table_path, "Memory usage");
+        if(same > 0) return;
+
+        // Define the table entry
+        tools::log->trace("Appending to table: {}", table_path);
         h5pp_table_memory_usage::table mem_usage_entry{};
         mem_usage_entry.iter     = sinfo.iter;
         mem_usage_entry.step     = sinfo.step;
@@ -67,24 +65,43 @@ namespace tools::common::h5 {
         mem_usage_entry.hwm      = debug::mem_hwm_in_mb();
         mem_usage_entry.vm       = debug::mem_vm_in_mb();
 
-        auto h5_save_point = save::get_last_save_point(h5file, table_path);
-        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
-        h5pp_table_memory_usage::register_table_type();
-        if(not h5_save_point) h5file.createTable(h5pp_table_memory_usage::h5_type, table_path, "Memory usage");
-        auto info   = h5file.getTableInfo(table_path);
-        auto offset = h5_save_point and h5_save_point.value() == save_point ? info.numRecords.value() - 1 : info.numRecords.value();
-        h5pp::hdf5::writeTableRecords(mem_usage_entry, info, offset, 1);
-        h5file.writeAttribute(sinfo.iter, table_path, "iter");
-        h5file.writeAttribute(sinfo.step, table_path, "step");
-        h5file.writeAttribute(sinfo.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(sinfo.bond_max, table_path, "bond_max");
+        h5file.appendTableRecords(mem_usage_entry, table_path);
+        save::set_save_attrs(h5file, table_path, sinfo);
     }
 
+    void save::timer(h5pp::File &h5file, const StorageInfo &sinfo) {
+        if(settings::storage::storage_level_timers == StorageLevel::NONE) return;
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event <= StorageEvent::MODEL) return;
+        auto t_timers = tid::tic_token("timers", tid::level::higher);
+
+        // Define the table
+        auto table_path = fmt::format("{}/timers", sinfo.get_state_prefix());
+
+        long same = tools::common::h5::save::has_same_attrs(h5file, table_path, sinfo);
+        if(same < 0) h5file.createTable(h5pp_ur::get_h5t(), table_path, fmt::format("{} Timings", sinfo.algo_name));
+        if(same > 0) return;
+
+        // Make a table entry
+        auto tid_tree    = tid::search(sinfo.algo_name);
+        auto table_items = std::vector<h5pp_ur::item>{};
+        table_items.reserve(tid_tree.size());
+        for(const auto &[i, t] : iter::enumerate(tid_tree)) {
+            if(settings::storage::storage_level_timers == StorageLevel::LIGHT and t->get_level() > tid::level::normal) continue;
+            if(settings::storage::storage_level_timers == StorageLevel::NORMAL and t->get_level() > tid::level::higher) continue;
+            if(settings::storage::storage_level_timers == StorageLevel::FULL and t->get_level() > tid::level::highest) continue;
+            tools::log->info("Appending {:10} : {}", enum2sv(t->get_level()), t.key);
+            table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
+        }
+        tools::log->trace("Appending to table: {}", table_path);
+        h5file.writeTableRecords(table_items, table_path, 0);
+        save::set_save_attrs(h5file, table_path, sinfo);
+    }
     std::optional<std::string> find::find_duplicate_save(const h5pp::File &h5file, std::string_view state_prefix, const AlgorithmStatus &status) {
         if(not h5file.linkExists("common/status")) return std::nullopt;
         if(not h5file.linkExists("common/state_root")) return std::nullopt;
         h5pp::Options opt_status;
-        opt_status.h5Type   = h5pp_table_algorithm_status::h5_type;
+        opt_status.h5Type   = h5pp_table_algorithm_status::get_h5t();
         opt_status.linkPath = "common/status";
         AlgorithmStatus h5_status;
         for(const auto &h5_state_prefix : h5file.getAttributeNames("common/status")) {
@@ -115,117 +132,57 @@ namespace tools::common::h5 {
         return std::nullopt;
     }
 
-    std::optional<std::pair<uint64_t, uint64_t>> save::get_last_save_point(const h5pp::File &h5file, std::string_view link_path) {
+    std::optional<StorageAttrs> save::get_save_attrs(const h5pp::File &h5file, std::string_view link_path) {
         auto link_info = h5file.getLinkInfo(link_path);
         if(link_info.linkExists.value()) {
-            auto iter_exists = h5pp::hdf5::checkIfAttrExists(link_info.getLocId(), link_path, "iter");
-            auto step_exists = h5pp::hdf5::checkIfAttrExists(link_info.getLocId(), link_path, "step");
-            if(iter_exists and step_exists) {
-                auto iter = h5file.readAttribute<uint64_t>(link_path, "iter");
-                auto step = h5file.readAttribute<uint64_t>(link_path, "step");
-                return std::make_pair(iter, step);
-            }
+            StorageAttrs sinfo;
+            auto         iter = h5file.readAttribute<std::optional<uint64_t>>(link_path, "iter");
+            auto         step = h5file.readAttribute<std::optional<uint64_t>>(link_path, "step");
+            auto         blim = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_lim");
+            auto         bmax = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_max");
+            auto         trnc = h5file.readAttribute<std::optional<double>>(link_path, "trnc_lim");
+            auto         evnt = h5file.readAttribute<std::optional<StorageEvent>>(link_path, "storage_event");
+            auto         levl = h5file.readAttribute<std::optional<StorageLevel>>(link_path, "storage_level");
+            if(iter) sinfo.iter = iter.value();
+            if(step) sinfo.step = step.value();
+            if(blim) sinfo.bond_lim = blim.value();
+            if(bmax) sinfo.bond_max = bmax.value();
+            if(trnc) sinfo.trnc_lim = trnc.value();
+            if(evnt) sinfo.storage_event = evnt.value();
+            if(levl) sinfo.storage_level = levl.value();
+            return sinfo;
         }
         return std::nullopt;
     }
+    void save::set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageAttrs &info) {
+        bool link_exists = h5file.linkExists(link_path);
+        if(link_exists) {
+            h5file.writeAttribute(info.iter, link_path, "iter");
+            h5file.writeAttribute(info.step, link_path, "step");
+            h5file.writeAttribute(info.bond_lim, link_path, "bond_lim");
+            h5file.writeAttribute(info.bond_max, link_path, "bond_max");
+            h5file.writeAttribute(info.trnc_lim, link_path, "trnc_lim");
+            h5file.writeAttribute(info.storage_event, link_path, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
+            h5file.writeAttribute(info.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
+        }
+    }
+    void save::set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo &info) {
+        bool link_exists = h5file.linkExists(link_path);
+        if(link_exists) {
+            h5file.writeAttribute(info.iter, link_path, "iter");
+            h5file.writeAttribute(info.step, link_path, "step");
+            h5file.writeAttribute(info.bond_lim, link_path, "bond_lim");
+            h5file.writeAttribute(info.bond_max, link_path, "bond_max");
+            h5file.writeAttribute(info.trnc_lim, link_path, "trnc_lim");
+            h5file.writeAttribute(info.storage_event, link_path, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
+            h5file.writeAttribute(info.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
+        }
+    }
 
-    //    void save::meta(h5pp::File &h5file, const StorageLevel &storage_level, const StorageEvent &storage_reason, const ModelType &model_type, size_t
-    //    model_size,
-    //                    std::string_view state_name, std::string_view state_prefix, std::string_view model_prefix, const AlgorithmStatus &status) {
-    //        // Write metadata into /common so that we can find state paths later.
-    //        // Under /common we have the following dummy datasets defining attributes which map state_prefix to useful information:
-    //        //
-    //        // -- finished       | true or 1 if state_prefix is finished
-    //        // -- storage_level  | state_prefix -> storage_level
-    //        // -- storage_reason | state_prefix -> storage_reason
-    //        // -- state_root     | state_prefix -> state_root
-    //        // -- hamiltonian    | state_prefix -> path to hamiltonian table
-    //        // -- table_prefix   | state_prefix -> path to tables. There can be multiple
-    //        // -- timer_prefix   | state_prefix -> path to timer data
-    //        // -- mps_prefix     | state_prefix -> mps_prefix
-    //        // -- mpo_prefix     | state_prefix -> mpo_prefix
-    //        // -- model_type     | state_prefix -> model_type
-    //        // -- model_size     | state_prefix -> model_size
-    //        // -- algo_type      | state_prefix -> algo_type
-    //        // -- state_name     | state_prefix -> state_name
-    //        // -- iteration      | state_prefix -> iteration
-    //        // -- step           | state_prefix -> step
-    //        // -- position       | state_prefix -> position of the mps
-    //
-    //        if(storage_level == StorageLevel::NONE) return;
-    //        if(storage_reason == StorageEvent::MODEL) return;
-    //        //        if(not h5file.linkExists(state_prefix)) return; // No point in saving metadata for non-existing state prefixes
-    //        tools::log->trace("Writing metadata to /common");
-    //        auto t_meta = tid::tic_scope("meta", tid::level::highest);
-    //        // Checks if the current entries have already been written
-    //        static std::unordered_map<std::string, AlgorithmStatus> save_log;
-    //        bootstrap_meta_log(save_log, h5file, state_prefix);
-    //        if(save_log.count(std::string(state_prefix)) and save_log.at(std::string(state_prefix)) == status) {
-    //            tools::log->debug("Returning because status hasn't changed (?)");
-    //            return;
-    //        }
-    //        if(not h5file.linkExists(state_prefix)) {
-    //            tools::log->debug("Returning because state_prefix does not exist: {}", state_prefix);
-    //            return;
-    //        }
-    //
-    //        tools::log->trace("Writing attribute metadata for state_prefix: [{}]", state_prefix);
-    //        auto storage_level_sv  = enum2sv(storage_level);
-    //        auto storage_reason_sv = enum2sv(storage_reason);
-    //        auto model_name_sv     = enum2sv(model_type);
-    //        auto state_root        = fmt::format("{}/{}", status.algo_type_sv(), state_name);
-    //        auto hamiltonian       = fmt::format("{}/hamiltonian", model_prefix);
-    //        auto mpo_prefix        = fmt::format("{}/mpo", model_prefix);
-    //        auto mps_prefix        = fmt::format("{}/mps", state_prefix);
-    //        auto bonds_prefix      = fmt::format("{}/bonds", state_prefix);
-    //
-    //        h5pp_table_algorithm_status::register_table_type();
-    //        save::attr(h5file, status, "common/status", state_prefix, "Maps state_prefix -> status", h5pp_table_algorithm_status::h5_type);
-    //        save::attr(h5file, status.algorithm_has_finished, "common/finished", state_prefix, "Maps state_prefix -> finished");
-    //        save::attr(h5file, storage_level_sv, "common/storage_level", state_prefix, "Maps state_prefix -> storage_level");
-    //        save::attr(h5file, storage_reason_sv, "common/storage_reason", state_prefix, "Maps state_prefix -> storage_reason");
-    //        save::attr(h5file, state_root, "common/state_root", state_prefix, "Maps state_prefix -> state_root");
-    //        save::attr(h5file, model_prefix, "common/model_prefix", state_prefix, "Maps state_prefix -> model_prefix");
-    //        save::attr(h5file, hamiltonian, "common/hamiltonian", state_prefix, "Maps state_prefix -> hamiltonian table");
-    //        save::attr(h5file, mps_prefix, "common/mps_prefix", state_prefix, "Maps state_prefix -> mps_prefix");
-    //        save::attr(h5file, bonds_prefix, "common/bonds_prefix", state_prefix, "Maps state_prefix -> bonds_prefix");
-    //        save::attr(h5file, model_name_sv, "common/model_type", state_prefix, "Maps state_prefix -> model_type");
-    //        save::attr(h5file, model_size, "common/model_size", state_prefix, "Maps state_prefix -> model_size");
-    //        save::attr(h5file, status.algo_type_sv(), "common/algo_type", state_prefix, "Maps state_prefix -> algo_type");
-    //        save::attr(h5file, state_name, "common/state_name", state_prefix, "Maps state_prefix -> state_name");
-    //        save::attr(h5file, status.iter, "common/iter", state_prefix, "Maps state_prefix -> iter");
-    //        save::attr(h5file, status.step, "common/step", state_prefix, "Maps state_prefix -> step");
-    //        save::attr(h5file, status.position, "common/position", state_prefix, "Maps state_prefix -> position");
-    //        if(not table_prfxs.empty()) save::attr(h5file, table_prfxs, "common/table_prfxs", state_prefix, "Maps state_prefix -> one or more table
-    //        prefixes"); save_log.insert({std::string(state_prefix), status});
-    //    }
-
-    void save::timer(h5pp::File &h5file, const StorageInfo &sinfo) {
-        if(settings::storage::storage_level_timers == StorageLevel::NONE) return;
-        if(sinfo.storage_level == StorageLevel::NONE) return;
-        if(sinfo.storage_event <= StorageEvent::MODEL) return;
-        auto t_timers   = tid::tic_token("timers", tid::level::higher);
-        auto table_path = fmt::format("{}/timers", sinfo.get_state_prefix());
-
-        auto h5_save_point = save::get_last_save_point(h5file, table_path);
-        auto save_point    = std::make_pair(sinfo.iter, sinfo.step);
-        if(h5_save_point and h5_save_point.value() == save_point) return;
-
-        // Make a table entry
-        auto tid_tree    = tid::search(sinfo.algo_name);
-        auto table_items = std::vector<h5pp_ur::item>();
-        table_items.reserve(tid_tree.size());
-        for(const auto &[i, t] : iter::enumerate(tid_tree))
-            table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
-
-        h5pp_ur::register_table_type();
-        if(not h5file.linkExists(table_path)) h5file.createTable(h5pp_ur::h5_type, table_path, fmt::format("{} Timings", sinfo.algo_name));
-        h5file.writeTableRecords(table_items, table_path, 0);
-
-        h5file.writeAttribute(sinfo.iter, table_path, "iter");
-        h5file.writeAttribute(sinfo.step, table_path, "step");
-        h5file.writeAttribute(sinfo.bond_lim, table_path, "bond_lim");
-        h5file.writeAttribute(sinfo.bond_max, table_path, "bond_max");
+    long save::has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo &info) {
+        auto attrs = get_save_attrs(h5file, link_path);
+        if(not attrs.has_value()) return -1;
+        return static_cast<long>(attrs.value() == info);
     }
 
 }

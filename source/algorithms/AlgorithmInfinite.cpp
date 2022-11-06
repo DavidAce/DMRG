@@ -41,7 +41,6 @@ void AlgorithmInfinite::run_postprocessing() {
 
 void AlgorithmInfinite::randomize_model() {
     tools::log->info("Randomizing model");
-    auto t_rnd = tid::tic_scope("rnd_model");
     tensors.randomize_model();
     clear_convergence_status();
 }
@@ -129,7 +128,7 @@ void AlgorithmInfinite::update_truncation_error_limit() {
         return;
     }
     if(status.trnc_limit_has_reached_min) return;
-    auto tic = tid::tic_scope("trnc_down");
+    auto tic = tid::tic_scope("trnc_down", tid::level::higher);
 
     // If we got here we want to decrease the truncation error limit progressively during the simulation
     bool is_saturated      = status.algorithm_saturated_for > 1; // Allow one round while saturated so that extra efforts get a chance.

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <complex>
 #include <exception>
@@ -28,20 +29,6 @@ namespace num {
 
         template<typename T>
         inline constexpr bool is_reference_wrapper_v = is_reference_wrapper<T>::value;
-
-        template<typename ContainerType>
-        auto get_start_end_iterators(ContainerType &X, std::optional<long> start_point = std::nullopt, std::optional<long> end_point = std::nullopt) {
-            try {
-                check_bounds(X, start_point, end_point);
-            } catch(std::exception &err) { throw std::range_error("check_bounds failed: " + std::string(err.what())); }
-            if(not start_point.has_value()) start_point = 0;
-            if(not end_point.has_value()) end_point = X.size();
-            auto x_it = X.begin();
-            auto x_en = X.begin();
-            std::advance(x_it, start_point.value());
-            std::advance(x_en, end_point.value());
-            return std::make_pair(x_it, x_en);
-        }
 
     }
 

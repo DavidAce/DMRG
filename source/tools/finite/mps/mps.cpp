@@ -29,7 +29,7 @@ namespace settings {
 bool tools::finite::mps::init::bitfield_is_valid(size_t bitfield) { return bitfield != -1ul and init::used_bitfields.count(bitfield) == 0; }
 
 size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std::optional<svd::config> svd_cfg) {
-    auto t_move = tid::tic_scope("move");
+    auto t_move = tid::tic_scope("move", tid::level::higher);
     if(state.position_is_outward_edge()) {
         if(state.get_direction() == -1 and state.get_mps_site(0l).get_chiL() != 1)
             throw except::logic_error("chiL at position 0 must have dimension 1, but it has dimension {}. Mps dims {}", state.get_mps_site(0l).get_chiL(),
@@ -158,7 +158,7 @@ size_t tools::finite::mps::move_center_point_to_middle(StateFinite &state, std::
 
 size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<size_t> &sites,
                                                long center_position, std::optional<svd::config> svd_cfg, std::optional<LogPolicy> logPolicy) {
-    auto t_merge          = tid::tic_scope("merge");
+    auto t_merge          = tid::tic_scope("merge", tid::level::higher);
     auto current_position = state.get_position<long>();
     auto moves            = static_cast<size_t>(std::abs(center_position - current_position));
     if constexpr(settings::debug)

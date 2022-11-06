@@ -70,3 +70,22 @@ StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_n
 }
 
 StorageInfo::~StorageInfo() noexcept { storage_event = StorageEvent::NONE; }
+
+StorageAttrs::StorageAttrs(const StorageInfo &sinfo) {
+    iter          = sinfo.iter;
+    step          = sinfo.step;
+    bond_lim      = sinfo.bond_lim;
+    bond_max      = sinfo.bond_max;
+    trnc_lim      = sinfo.trnc_lim;
+    storage_event = sinfo.storage_event;
+    storage_level = sinfo.storage_level;
+}
+bool StorageAttrs::operator==(const StorageAttrs &sinfo) {
+    return iter == sinfo.iter and step == sinfo.step and bond_lim == sinfo.bond_lim and bond_max == sinfo.bond_max and trnc_lim == sinfo.trnc_lim and
+           storage_event == sinfo.storage_event and storage_level == sinfo.storage_level;
+}
+
+bool StorageAttrs::operator==(const StorageInfo &sinfo) {
+    return iter == sinfo.iter and step == sinfo.step and bond_lim == sinfo.bond_lim and bond_max == sinfo.bond_max and trnc_lim == sinfo.trnc_lim and
+           storage_event == sinfo.storage_event and storage_level == sinfo.storage_level;
+}
