@@ -5,9 +5,9 @@
 [requires]
 ceres-solver/2.1.0
 #glog/0.6.0
-h5pp/1.10.1@davidace/dev
-fmt/8.1.1
-spdlog/1.10.0
+h5pp/1.11.0@davidace/dev
+fmt/9.1.0
+spdlog/1.11.0
 eigen/3.4.0
 arpack++/2.3.0@davidace/dev
 cli11/2.2.0
