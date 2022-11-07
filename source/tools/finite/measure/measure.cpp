@@ -945,12 +945,21 @@ std::array<Eigen::Tensor<double, 2>, 3> tools::finite::measure::correlation_matr
 }
 
 std::array<double, 3> tools::finite::measure::structure_factor_xyz(const StateFinite &state) {
-    measure::correlation_matrix_xyz(state);
-    if(not state.measurements.structure_factor_x)
+    Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
+    if(not state.measurements.structure_factor_x) {
+        if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
         state.measurements.structure_factor_x = measure::structure_factor(state, state.measurements.correlation_matrix_sx.value());
-    if(not state.measurements.structure_factor_y)
+    }
+    if(not state.measurements.structure_factor_y) {
+        if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
         state.measurements.structure_factor_y = measure::structure_factor(state, state.measurements.correlation_matrix_sy.value());
-    if(not state.measurements.structure_factor_z)
+    }
+    if(not state.measurements.structure_factor_z) {
+        if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
         state.measurements.structure_factor_z = measure::structure_factor(state, state.measurements.correlation_matrix_sz.value());
+    }
+
     return {state.measurements.structure_factor_x.value(), state.measurements.structure_factor_y.value(), state.measurements.structure_factor_z.value()};
 }
