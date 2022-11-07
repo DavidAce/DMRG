@@ -133,7 +133,7 @@ namespace tools::finite::h5 {
             tensors.state->clear_cache();
             tensors.state->clear_measurements();
             tensors.state->do_all_measurements();
-            compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy_midchain, 1e-8,
+            compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy, 1e-8,
                     "Entanglement entropy");
         } else {
             auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);

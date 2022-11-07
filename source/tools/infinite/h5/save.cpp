@@ -39,8 +39,8 @@ void tools::infinite::h5::save::bonds(h5pp::File &h5file, const StorageInfo &sin
     auto bonds_prefix = fmt::format("{}/bonds", sinfo.get_state_prefix());
 
     // Check if the current entry has already been appended
-    long same = tools::common::h5::save::has_same_attrs(h5file, bonds_prefix, sinfo);
-    if(same > 0) return;
+    auto attrs = tools::common::h5::save::get_save_attrs(h5file, bonds_prefix);
+    if(attrs == sinfo) return;
 
     h5file.writeDataset(state.LA(), bonds_prefix + "/L_A");
     h5file.writeDataset(state.LB(), bonds_prefix + "/L_B");
@@ -55,8 +55,8 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, const StorageInfo &sin
     // If it is empty because we are resuming, check if there is a log entry on file already
     auto tic        = tid::tic_token("state");
     auto mps_prefix = sinfo.get_mps_prefix();
-    long same       = tools::common::h5::save::has_same_attrs(h5file, mps_prefix, sinfo);
-    if(same > 0) return;
+    auto attrs      = tools::common::h5::save::get_save_attrs(h5file, mps_prefix);
+    if(attrs == sinfo) return;
     h5file.writeDataset(state.A_bare(), mps_prefix + "/M_A");
     h5file.writeDataset(state.B(), mps_prefix + "/M_B");
     tools::common::h5::save::set_save_attrs(h5file, mps_prefix, sinfo);

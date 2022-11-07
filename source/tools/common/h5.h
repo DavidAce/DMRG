@@ -36,10 +36,11 @@ namespace tools::common::h5 {
 //        extern void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
 //        extern void bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
         extern void bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
-        extern std::optional<StorageAttrs> get_save_attrs(const h5pp::File &h5file, std::string_view link_path);
-        extern void                    set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageAttrs & info);
-        extern void                    set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
-        extern long                    has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
+        extern StorageAttrs get_save_attrs(const h5pp::File &h5file, std::string_view link_path);
+        extern void         set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageAttrs & info);
+        extern void         set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
+//        extern long         has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
+        extern hsize_t      get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo & sinfo, const StorageAttrs & attrs);
         template<typename AttrType>
         extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view linkPath, std::string_view attrName, std::string_view linkText, std::optional<h5pp::hid::h5t> h5type = std::nullopt);
         extern void status   (h5pp::File & h5file, const StorageInfo & sinfo, const AlgorithmStatus &status);

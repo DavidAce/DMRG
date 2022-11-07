@@ -57,7 +57,6 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
     state.measurements.renyi_4         = measure::renyi_entropies(state, 4);
     state.measurements.renyi_inf       = measure::renyi_entropies(state, std::numeric_limits<double>::infinity());
     state.measurements.spin_components = measure::spin_components(state);
-
 }
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -240,6 +239,19 @@ std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &s
         return state.measurements.renyi_inf.value();
     }
     return renyi_q;
+}
+
+double tools::finite::measure::renyi_entropy_midchain(const StateFinite &state, double q) {
+    auto inf = std::numeric_limits<double>::infinity();
+    if(q == 1.0) return entanglement_entropy_midchain(state);
+    auto                   t_ren = tid::tic_scope("renyi_entropy_midchain", tid::level::highest);
+    auto                  &LC    = state.get_midchain_bond();
+    Eigen::Tensor<cplx, 0> renyi_q;
+    if(q == inf)
+        renyi_q(0) = -2.0 * std::log(LC(0));
+    else
+        renyi_q = 1.0 / (1.0 - q) * LC.pow(2.0 * q).sum().log();
+    return std::abs(renyi_q(0));
 }
 
 std::array<double, 3> tools::finite::measure::spin_components(const StateFinite &state) {
@@ -463,8 +475,8 @@ double tools::finite::measure::energy_variance(const state_or_mps_type &state, c
         if(state.dimension(0) != mpo2.dimension(2))
             throw std::runtime_error(
                 fmt::format("State and model have incompatible physical dimension: state dim {} | model dim {}", state.dimension(0), mpo2.dimension(2)));
-        double H2    = tools::common::contraction::expectation_value(state, mpo2, env2.L, env2.R);
-        double var   = std::abs(H2 - E2);
+        double H2  = tools::common::contraction::expectation_value(state, mpo2, env2.L, env2.R);
+        double var = std::abs(H2 - E2);
         if(measurements != nullptr) measurements->energy_variance = var;
         return var;
     }
@@ -879,7 +891,7 @@ Eigen::Tensor<double, 2> tools::finite::measure::kvornings_matrix(const StateFin
     return tenx::TensorMap(R);
 }
 
-void tools::finite::measure::kvornings_marker(const StateFinite &state) {
+Eigen::Tensor<double, 1> tools::finite::measure::kvornings_marker(const StateFinite &state) {
     if(not state.measurements.kvornings_marker) {
         auto R = kvornings_matrix(state);
         //        tools::log->info("Kvornings matrix: \n{}\n", linalg::tensor::to_string(R, 5));
@@ -888,6 +900,7 @@ void tools::finite::measure::kvornings_marker(const StateFinite &state) {
         state.measurements.kvornings_marker = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
         tools::log->info("Kvornings marker: {:+9.4e}", fmt::join(tenx::span(state.measurements.kvornings_marker.value()), ", "));
     }
+    return state.measurements.kvornings_marker.value();
 }
 
 double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<double, 2> &correlation_matrix) {
@@ -899,25 +912,39 @@ double tools::finite::measure::structure_factor(const StateFinite &state, const 
     return tenx::MatrixMap(correlation_matrix).cwiseAbs2().colwise().sum().sum() / state.get_length<double>();
 }
 
-void tools::finite::measure::expectation_values_xyz(const StateFinite &state) {
+std::array<Eigen::Tensor<double, 1>, 3> tools::finite::measure::expectation_values_xyz(const StateFinite &state) {
     Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
     Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
     if(not state.measurements.expectation_values_sx) state.measurements.expectation_values_sx = measure::expectation_values(state, sx);
     if(not state.measurements.expectation_values_sy) state.measurements.expectation_values_sy = measure::expectation_values(state, sy);
     if(not state.measurements.expectation_values_sz) state.measurements.expectation_values_sz = measure::expectation_values(state, sz);
+    return {state.measurements.expectation_values_sx.value(), state.measurements.expectation_values_sy.value(),
+            state.measurements.expectation_values_sz.value()};
 }
 
-void tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
+std::array<double, 3> tools::finite::measure::expectation_value_xyz(const StateFinite &state) {
+    tools::log->trace("Measuring local (midchain) spin expectation values");
+    Eigen::Tensor<cplx, 2> sx  = tenx::TensorMap(qm::spin::half::sx);
+    Eigen::Tensor<cplx, 2> sy  = tenx::TensorMap(qm::spin::half::sy);
+    Eigen::Tensor<cplx, 2> sz  = tenx::TensorMap(qm::spin::half::sz);
+    auto                   pos = (state.get_length<long>() - 1) / 2;
+    return {measure::expectation_value(state, {LocalObservableOp{sx, pos}}), measure::expectation_value(state, {LocalObservableOp{sy, pos}}),
+            measure::expectation_value(state, {LocalObservableOp{sz, pos}})};
+}
+
+std::array<Eigen::Tensor<double, 2>, 3> tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
     Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
     Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
     if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
     if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
     if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
+    return {state.measurements.correlation_matrix_sx.value(), state.measurements.correlation_matrix_sy.value(),
+            state.measurements.correlation_matrix_sz.value()};
 }
 
-void tools::finite::measure::structure_factors_xyz(const StateFinite &state) {
+std::array<double, 3> tools::finite::measure::structure_factor_xyz(const StateFinite &state) {
     measure::correlation_matrix_xyz(state);
     if(not state.measurements.structure_factor_x)
         state.measurements.structure_factor_x = measure::structure_factor(state, state.measurements.correlation_matrix_sx.value());
@@ -925,4 +952,5 @@ void tools::finite::measure::structure_factors_xyz(const StateFinite &state) {
         state.measurements.structure_factor_y = measure::structure_factor(state, state.measurements.correlation_matrix_sy.value());
     if(not state.measurements.structure_factor_z)
         state.measurements.structure_factor_z = measure::structure_factor(state, state.measurements.correlation_matrix_sz.value());
+    return {state.measurements.structure_factor_x.value(), state.measurements.structure_factor_y.value(), state.measurements.structure_factor_z.value()};
 }

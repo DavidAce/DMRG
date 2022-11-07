@@ -245,7 +245,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
     config.compute_eigvecs = eig::Vecs::ON;
     config.initial_guess.push_back({init.data(), 0});
     config.primme_locking = 1;
-    config.loglevel       = 1;
+    config.loglevel       = 2;
     if(initial_mps.size() <= settings::solver::max_size_shift_invert) {
         hamiltonian.set_readyCompress(tensors.model->is_compressed_mpo_squared());
         hamiltonian.factorization   = eig::Factorization::LU;

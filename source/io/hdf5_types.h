@@ -45,28 +45,35 @@ class h5pp_table_measurements_finite {
     private:
     static inline h5pp::hid::h5t h5_type;
     static void                  register_table_type();
+    static constexpr auto        nan = std::numeric_limits<double>::quiet_NaN();
 
     public:
     struct table {
-        uint64_t              iter                          = 0;
-        uint64_t              step                          = 0;
-        long                  position                      = 0;
-        StorageEvent          event                         = StorageEvent::NONE;
-        uint64_t              length                        = 0;
-        long                  bond_mid                      = 0;
-        long                  bond_lim                      = 0;
-        long                  bond_max                      = 0;
-        double                entanglement_entropy_midchain = 0;
-        double                number_entropy_midchain       = 0;
-        double                norm                          = 0;
-        double                energy                        = 0;
-        double                energy_variance               = 0;
-        double                energy_variance_lowest        = 0;
-        std::array<double, 3> spin_components               = {0};
-        double                truncation_error              = 0;
-        double                total_time                    = 0;
-        double                algorithm_time                = 0;
-        double                physical_time                 = 0;
+        uint64_t              iter                   = 0;
+        uint64_t              step                   = 0;
+        long                  position               = -1;
+        StorageEvent          event                  = StorageEvent::NONE;
+        uint64_t              length                 = 0;
+        double                energy                 = nan;
+        double                energy_variance        = nan;
+        double                energy_variance_lowest = nan;
+        double                norm                   = nan;
+        double                truncation_error       = nan;
+        long                  bond_mid               = -1;
+        long                  bond_lim               = -1;
+        long                  bond_max               = -1;
+        double                entanglement_entropy   = nan;
+        double                renyi_entropy_2        = nan;
+        double                renyi_entropy_3        = nan;
+        double                renyi_entropy_4        = nan;
+        double                renyi_entropy_inf      = nan;
+        double                number_entropy         = nan;
+        std::array<double, 3> spin_global            = {nan, nan, nan};
+        std::array<double, 3> spin_local             = {nan, nan, nan};
+        std::array<double, 3> structure_factors      = {nan, nan, nan};
+        double                total_time             = 0;
+        double                algorithm_time         = 0;
+        double                physical_time          = 0;
     };
     static h5pp::hid::h5t get_h5t();
 };

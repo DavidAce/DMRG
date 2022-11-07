@@ -32,12 +32,13 @@ namespace tools::common::h5 {
         std::string table_path = fmt::format("{}/status", sinfo.get_state_prefix());
 
         // Check if the current entry has already been appended
-        long same = tools::common::h5::save::has_same_attrs(h5file, table_path, sinfo);
-        if(same < 0) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
-        if(same > 0) return;
-
-        tools::log->trace("Appending to table: {}", table_path);
-        h5file.appendTableRecords(status, table_path);
+        auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+        if(not attrs.link_exists) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
+        if(attrs == sinfo) return;
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
+        tools::log->trace("Writing to table: {} | event {} | level {} | offset {}", table_path, enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
+                          offset);
+        h5file.writeTableRecords(status, table_path, offset);
         save::set_save_attrs(h5file, table_path, sinfo);
     }
 
@@ -51,9 +52,10 @@ namespace tools::common::h5 {
         std::string table_path = fmt::format("{}/mem_usage", sinfo.get_state_prefix());
 
         // Check if the current entry has already been appended
-        long same = tools::common::h5::save::has_same_attrs(h5file, table_path, sinfo);
-        if(same < 0) h5file.createTable(h5pp_table_memory_usage::get_h5t(), table_path, "Memory usage");
-        if(same > 0) return;
+        auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+        if(not attrs.link_exists) h5file.createTable(h5pp_table_memory_usage::get_h5t(), table_path, "Memory usage");
+        if(attrs == sinfo) return;
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         // Define the table entry
         tools::log->trace("Appending to table: {}", table_path);
@@ -66,8 +68,8 @@ namespace tools::common::h5 {
         mem_usage_entry.rss      = debug::mem_rss_in_mb();
         mem_usage_entry.hwm      = debug::mem_hwm_in_mb();
         mem_usage_entry.vm       = debug::mem_vm_in_mb();
-
-        h5file.appendTableRecords(mem_usage_entry, table_path);
+        tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
+        h5file.writeTableRecords(mem_usage_entry, table_path, offset);
         save::set_save_attrs(h5file, table_path, sinfo);
     }
 
@@ -79,10 +81,9 @@ namespace tools::common::h5 {
 
         // Define the table
         auto table_path = fmt::format("{}/timers", sinfo.get_state_prefix());
-
-        long same = tools::common::h5::save::has_same_attrs(h5file, table_path, sinfo);
-        if(same < 0) h5file.createTable(h5pp_ur::get_h5t(), table_path, fmt::format("{} Timings", sinfo.algo_name));
-        if(same > 0) return;
+        auto attrs      = tools::common::h5::save::get_save_attrs(h5file, table_path);
+        if(not attrs.link_exists) h5file.createTable(h5pp_ur::get_h5t(), table_path, fmt::format("{} Timings", sinfo.algo_name));
+        if(attrs == sinfo) return;
 
         // Make a table entry
         auto tid_tree    = tid::search(sinfo.algo_name);
@@ -133,30 +134,30 @@ namespace tools::common::h5 {
         return std::nullopt;
     }
 
-    std::optional<StorageAttrs> save::get_save_attrs(const h5pp::File &h5file, std::string_view link_path) {
-        auto link_info = h5file.getLinkInfo(link_path);
-        if(link_info.linkExists.value()) {
-            StorageAttrs sinfo;
-            auto         iter = h5file.readAttribute<std::optional<uint64_t>>(link_path, "iter");
-            auto         step = h5file.readAttribute<std::optional<uint64_t>>(link_path, "step");
-            auto         blim = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_lim");
-            auto         bmax = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_max");
-            auto         trnc = h5file.readAttribute<std::optional<double>>(link_path, "trnc_lim");
-            auto         evnt = h5file.readAttribute<std::optional<StorageEvent>>(link_path, "storage_event");
-            auto         levl = h5file.readAttribute<std::optional<StorageLevel>>(link_path, "storage_level");
-            if(iter) sinfo.iter = iter.value();
-            if(step) sinfo.step = step.value();
-            if(blim) sinfo.bond_lim = blim.value();
-            if(bmax) sinfo.bond_max = bmax.value();
-            if(trnc) sinfo.trnc_lim = trnc.value();
-            if(evnt) sinfo.storage_event = evnt.value();
-            if(levl) sinfo.storage_level = levl.value();
-            return sinfo;
+    StorageAttrs save::get_save_attrs(const h5pp::File &h5file, std::string_view link_path) {
+        auto         link_info = h5file.getLinkInfo(link_path);
+        StorageAttrs attrs;
+        attrs.link_exists = link_info.linkExists.value();
+        if(attrs.link_exists) {
+            auto iter = h5file.readAttribute<std::optional<uint64_t>>(link_path, "iter");
+            auto step = h5file.readAttribute<std::optional<uint64_t>>(link_path, "step");
+            auto blim = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_lim");
+            auto bmax = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_max");
+            auto trnc = h5file.readAttribute<std::optional<double>>(link_path, "trnc_lim");
+            auto evnt = h5file.readAttribute<std::optional<StorageEvent>>(link_path, "storage_event");
+            auto levl = h5file.readAttribute<std::optional<StorageLevel>>(link_path, "storage_level");
+            if(iter) attrs.iter = iter.value();
+            if(step) attrs.step = step.value();
+            if(blim) attrs.bond_lim = blim.value();
+            if(bmax) attrs.bond_max = bmax.value();
+            if(trnc) attrs.trnc_lim = trnc.value();
+            if(evnt) attrs.storage_event = evnt.value();
+            if(levl) attrs.storage_level = levl.value();
         }
-        return std::nullopt;
+        return attrs;
     }
     void save::set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageAttrs &info) {
-        bool link_exists = h5file.linkExists(link_path);
+        bool link_exists = info.link_exists or h5file.linkExists(link_path);
         if(link_exists) {
             h5file.writeAttribute(info.iter, link_path, "iter");
             h5file.writeAttribute(info.step, link_path, "step");
@@ -167,23 +168,41 @@ namespace tools::common::h5 {
             h5file.writeAttribute(info.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
         }
     }
-    void save::set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo &info) {
+    void save::set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo &sinfo) {
         bool link_exists = h5file.linkExists(link_path);
         if(link_exists) {
-            h5file.writeAttribute(info.iter, link_path, "iter");
-            h5file.writeAttribute(info.step, link_path, "step");
-            h5file.writeAttribute(info.bond_lim, link_path, "bond_lim");
-            h5file.writeAttribute(info.bond_max, link_path, "bond_max");
-            h5file.writeAttribute(info.trnc_lim, link_path, "trnc_lim");
-            h5file.writeAttribute(info.storage_event, link_path, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
-            h5file.writeAttribute(info.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
+            h5file.writeAttribute(sinfo.iter, link_path, "iter");
+            h5file.writeAttribute(sinfo.step, link_path, "step");
+            h5file.writeAttribute(sinfo.bond_lim, link_path, "bond_lim");
+            h5file.writeAttribute(sinfo.bond_max, link_path, "bond_max");
+            h5file.writeAttribute(sinfo.trnc_lim, link_path, "trnc_lim");
+            h5file.writeAttribute(sinfo.storage_event, link_path, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
+            h5file.writeAttribute(sinfo.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
         }
     }
 
-    long save::has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo &info) {
-        auto attrs = get_save_attrs(h5file, link_path);
-        if(not attrs.has_value()) return -1;
-        return static_cast<long>(attrs.value() == info);
+    //    long save::has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo &info) {
+    //        auto attrs = get_save_attrs(h5file, link_path);
+    //        if(not attrs.has_value()) return -1;
+    //        return static_cast<long>(attrs.value() == info);
+    //    }
+    hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
+        // Get the number of records in this table to append
+        if(sinfo.storage_level == StorageLevel::LIGHT) {
+            // find the last occurrence of this event type to replace it.
+            auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
+            auto offset = events.size();
+            for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
+                if(evn == sinfo.storage_event) {
+                    offset = off;
+                    break;
+                }
+            }
+            return offset;
+        } else {
+            auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, attrs.link_exists, h5file.plists.dsetAccess);
+            auto dims = h5pp::hdf5::getDimensions(dset);
+            return dims.front(); // Append by default
+        }
     }
-
 }

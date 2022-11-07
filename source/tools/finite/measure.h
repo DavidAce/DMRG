@@ -52,6 +52,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double entanglement_entropy_current                (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_midchain               (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies         (const StateFinite & state);
+    [[nodiscard]] extern double renyi_entropy_midchain                      (const StateFinite & state, double q);
     [[nodiscard]] extern std::vector<double> renyi_entropies                (const StateFinite & state, double q);
     [[nodiscard]] extern double number_entropy_current                      (const StateFinite & state);
     [[nodiscard]] extern double number_entropy_midchain                     (const StateFinite & state);
@@ -113,12 +114,14 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double                   correlation            (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2, long pos1, long pos2);
     [[nodiscard]] extern Eigen::Tensor<double, 2> correlation_matrix     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
     [[nodiscard]] extern Eigen::Tensor<double, 2> kvornings_matrix       (const StateFinite & state);
-                  extern void                     kvornings_marker       (const StateFinite & state);
-                  extern void                     expectation_values_xyz (const StateFinite & state);
-                  extern void                     correlation_matrix_xyz (const StateFinite & state);
+    [[nodiscard]] extern Eigen::Tensor<double, 1> kvornings_marker       (const StateFinite & state);
+    [[nodiscard]] extern std::array<Eigen::Tensor<double,1>, 3>
+                                                  expectation_values_xyz (const StateFinite & state);
+    [[nodiscard]] extern std::array<double, 3>    expectation_value_xyz  (const StateFinite & state);
+    [[nodiscard]] extern std::array<Eigen::Tensor<double,2>, 3>
+                                                  correlation_matrix_xyz (const StateFinite & state);
     [[nodiscard]] extern double                   structure_factor       (const StateFinite & state, const Eigen::Tensor<double, 2> &correlation_matrix);
-                  extern void                     structure_factors_xyz  (const StateFinite & state);
-
+    [[nodiscard]] extern std::array<double, 3>    structure_factor_xyz   (const StateFinite & state);
                   extern void                     parity_components(const StateFinite &state, const Eigen::Matrix2cd &paulimatrix);
 
 }

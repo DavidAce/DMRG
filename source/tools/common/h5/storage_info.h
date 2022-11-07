@@ -32,6 +32,7 @@ struct StorageAttrs {
     double       trnc_lim      = -1;
     StorageEvent storage_event = StorageEvent::NONE;
     StorageLevel storage_level = StorageLevel::NONE;
+    mutable bool link_exists   = false;
     StorageAttrs()             = default;
     StorageAttrs(const StorageInfo &sinfo);
     bool operator==(const StorageAttrs &sinfo);

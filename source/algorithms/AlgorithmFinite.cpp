@@ -919,20 +919,16 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Spin components (global X,Y,Z)     = {:.16f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
 
     if(status.algo_type == AlgorithmType::xDMRG) {
-        tools::finite::measure::expectation_values_xyz(*tensors.state);
-        tools::finite::measure::correlation_matrix_xyz(*tensors.state);
-        tools::finite::measure::structure_factors_xyz(*tensors.state);
-        tools::finite::measure::kvornings_marker(*tensors.state);
-        tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}",
-                         fmt::join(tenx::span(tensors.state->measurements.expectation_values_sx.value()), ", "));
-        tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}",
-                         fmt::join(tenx::span(tensors.state->measurements.expectation_values_sy.value()), ", "));
-        tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}",
-                         fmt::join(tenx::span(tensors.state->measurements.expectation_values_sz.value()), ", "));
-        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_x.value());
-        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_y.value());
-        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", tensors.state->measurements.structure_factor_z.value());
-        tools::log->info("Kvornings marker ⟨σ+..σz..σ-⟩      = {:.8f}", fmt::join(tenx::span(tensors.state->measurements.kvornings_marker.value()), ", "));
+        auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(*tensors.state);
+        auto structure_factor_xyz   = tools::finite::measure::structure_factor_xyz(*tensors.state);
+        auto kvornings_marker       = tools::finite::measure::kvornings_marker(*tensors.state);
+        tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[0]), ", "));
+        tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[1]), ", "));
+        tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[2]), ", "));
+        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", structure_factor_xyz[0]);
+        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", structure_factor_xyz[1]);
+        tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", structure_factor_xyz[2]);
+        tools::log->info("Kvornings marker ⟨σ+..σz..σ-⟩      = {:.8f}", fmt::join(tenx::span(kvornings_marker), ", "));
     }
 
     tools::log->info("Truncation Error limit             = {:8.2e}", status.trnc_lim);
