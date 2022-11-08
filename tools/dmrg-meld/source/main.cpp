@@ -171,114 +171,67 @@ int main(int argc, char *argv[]) {
         tools::h5db::Keys keys;
         switch(model) {
             case Model::SDUAL: {
-                //            keys.algo  = {"xDMRG"};
-                //            keys.state = {"state_*"};
-                //            keys.point = {"finished", "checkpoint/iter_*"};
-                //            keys.models = {"hamiltonian"};
-                //            keys.tables = {"measurements", "profiling", "status", "mem_usage"};
-                //            keys.cronos = {};
-                //            //    std::vector<std::string> dsets = {"bond_dimensions", "entanglement_entropies", "truncation_errors"};
-                //
-                //            keys.dsets = {{Type::LONG, Size::FIX, "bond_dimensions", ""},
-                //                     {Type::DOUBLE, Size::FIX, "entanglement_entropies", ""},
-                //                     {Type::DOUBLE, Size::FIX, "truncation_errors", ""},
-                //                     {Type::COMPLEX, Size::VAR, "schmidt_midchain", ""}};
-                //            keys.bonds = DsetKey{Type::COMPLEX, Size::VAR, "L_", ""};
-
                 keys.models.emplace_back(ModelKey("xDMRG", "model", "hamiltonian"));
 
                 // A table records data from the last time step
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "status"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "mem_usage"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "measurements"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "bond_dims"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "bond_dimensions"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "entanglement_entropies"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "renyi_entropies_2"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "renyi_entropies_3"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "renyi_entropies_4"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "renyi_entropies_inf"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "tables", "truncation_errors"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "status"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "mem_usage"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "measurements"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "bond_dims"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "bond_dimensions"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "entanglement_entropies"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_2"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_3"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_4"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_inf"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "truncation_errors"));
 
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "measurements"));
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "bond_dims"));
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "bond_dimensions"));
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "entanglement_entropies"));
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "truncation_errors"));
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "mem_usage"));
-                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "fes", "bond_*", "status"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "measurements"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "bond_dims"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "bond_dimensions"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "entanglement_entropies"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "truncation_errors"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "mem_usage"));
+                keys.fesups.emplace_back(FesUpKey("xDMRG", "state_*", "status"));
 
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "correlation_matrix_sx", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "correlation_matrix_sy", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "correlation_matrix_sz", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "expectation_values_sx", Size::FIX, 1));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "expectation_values_sy", Size::FIX, 1));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "expectation_values_sz", Size::FIX, 1));
-
-                //                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "entanglement_entropies", Size::FIX, Type::DOUBLE));
-                //                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "truncation_errors", Size::FIX, Type::DOUBLE));
-                //                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished", "schmidt_midchain", Size::VAR, Type::COMPLEX));
-                //                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "finished/profiling", "xDMRG.run", Size::FIX, Type::TID));
-                //
-                //                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "finished", "status"));
-                //                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "finished", "mem_usage"));
-                //                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "finished", "measurements"));
-
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "correlation_matrix_sx", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "correlation_matrix_sy", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "correlation_matrix_sz", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "expectation_values_sx", Size::FIX, 1));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "expectation_values_sy", Size::FIX, 1));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "expectation_values_sz", Size::FIX, 1));
                 break;
             }
             case Model::MAJORANA: {
-                //            keys.algo  = {"xDMRG"};
-                //            keys.state = {"state_*"};
-                //            keys.point = {"finished", "checkpoint/iter_*"};
-                //            keys.models = {"hamiltonian"};
-                //            keys.tables = {"measurements", "profiling", "status", "mem_usage"};
-                //            keys.cronos = {};
-                //            //    std::vector<std::string> dsets = {"bond_dimensions", "entanglement_entropies", "truncation_errors"};
-                //
-                //            keys.dsets = {{Type::LONG, Size::FIX, "bond_dimensions", ""},
-                //                     {Type::DOUBLE, Size::FIX, "entanglement_entropies", ""},
-                //                     {Type::DOUBLE, Size::FIX, "truncation_errors", ""},
-                //                     {Type::COMPLEX, Size::VAR, "schmidt_midchain", ""}};
-                //            keys.bonds = DsetKey{Type::COMPLEX, Size::VAR, "L_", ""};
-
                 keys.models.emplace_back(ModelKey("xDMRG", "model", "hamiltonian"));
 
                 // A table records data from the last time step
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "status"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "mem_usage"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "measurements"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "bond_dims"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "bond_dimensions"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "entanglement_entropies"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "renyi_entropies_2"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "renyi_entropies_3"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "renyi_entropies_4"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "renyi_entropies_inf"));
-                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "", "truncation_errors"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "status"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "mem_usage"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "measurements"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "bond_dims"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "bond_dimensions"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "entanglement_entropies"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_2"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_3"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_4"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "renyi_entropies_inf"));
+                keys.tables.emplace_back(TableKey("xDMRG", "state_*", "truncation_errors"));
 
-                //                std::vector<int> bondlims = {8, 12, 16, 20, 28, 36, 48, 60, 64}; // data162
-                //                std::vector<int> bondlims = {8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128}; // data163
-                //                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "checkpoint", "bond_*", "measurements", bondlims));
-                //                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "checkpoint", "bond_*", "bond_dimensions", bondlims));
-                //                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "checkpoint", "bond_*", "entanglement_entropies", bondlims));
-                //                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "checkpoint", "bond_*", "truncation_errors", bondlims));
-                //                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "checkpoint", "bond_*", "mem_usage", bondlims));
-                //                keys.scales.emplace_back(ScaleKey("xDMRG", "state_*", "checkpoint", "bond_*", "status", bondlims));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "measurements"));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "bond_dims"));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "bond_dimensions"));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "entanglement_entropies"));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "truncation_errors"));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "mem_usage"));
+                keys.fesdns.emplace_back(FesDnKey("xDMRG", "state_*", "status"));
 
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "measurements"));
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "bond_dims"));
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "bond_dimensions"));
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "entanglement_entropies"));
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "truncation_errors"));
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "mem_usage"));
-                keys.bondds.emplace_back(BonddKey("xDMRG", "state_*", "", "status"));
-
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "", "correlation_matrix_sx", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "", "correlation_matrix_sy", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "", "correlation_matrix_sz", Size::FIX, 2));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "", "expectation_values_sx", Size::FIX, 1));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "", "expectation_values_sy", Size::FIX, 1));
-                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "", "expectation_values_sz", Size::FIX, 1));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "correlation_matrix_sx", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "correlation_matrix_sy", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "correlation_matrix_sz", Size::FIX, 2));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "expectation_values_sx", Size::FIX, 1));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "expectation_values_sy", Size::FIX, 1));
+                keys.dsets.emplace_back(DsetKey("xDMRG", "state_*", "expectation_values_sz", Size::FIX, 1));
 
                 break;
             }
@@ -286,20 +239,21 @@ int main(int argc, char *argv[]) {
                 keys.models.emplace_back(ModelKey("fLBIT", "model", "hamiltonian"));
 
                 // A table records data from the last time step
-                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "*", "status"));
-                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "*", "mem_usage"));
+                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "status"));
+                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "mem_usage"));
                 // A crono records data from each time step
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "*", "measurements", 200));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "*", "bond_dimensions", 200));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "*", "bond_dims", 200));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "*", "entanglement_entropies", 200));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "*", "number_entropies", 200));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "*", "truncation_errors", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", 200));
 
                 // Last argument is the axis along which to build the time series
-                keys.dsets.emplace_back(DsetKey("fLBIT", "analysis", "", "decay", Size::FIX, 0));
-                keys.dsets.emplace_back(DsetKey("fLBIT", "model", "lbits", "decay", Size::FIX, 0));
-                keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "*", "number_probabilities", Size::FIX, 3));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "analysis", "decay", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
+#pragma message "model/lbits may not work"
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay", Size::FIX, 0));
 
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished", "schmidt_midchain", Size::VAR, Type::COMPLEX));
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished/profiling", "fLBIT.run", Size::FIX, Type::TID));
@@ -378,8 +332,8 @@ int main(int argc, char *argv[]) {
                 tgtdb.dset    = tools::h5db::loadDatabase<h5pp::DsetInfo>(h5_tgt, keys.dsets);
                 tgtdb.table   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt, keys.tables);
                 tgtdb.crono   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.cronos);
-                tgtdb.scale   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.scales);
-                tgtdb.bondd   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.bondds);
+                tgtdb.fesup   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.fesups);
+                tgtdb.fesdn   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.fesdns);
                 tgtdb.model   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt, keys.models);
             }
             {
@@ -387,8 +341,8 @@ int main(int argc, char *argv[]) {
                 for(const auto &[infoKey, infoId] : tgtdb.dset) infoId.info.assertReadReady();
                 //                for(const auto &[infoKey, infoId] : tgtdb.model) infoId.info.assertReadReady() ;
                 for(const auto &[infoKey, infoId] : tgtdb.crono) infoId.info.assertReadReady();
-                for(const auto &[infoKey, infoId] : tgtdb.scale) infoId.info.assertReadReady();
-                for(const auto &[infoKey, infoId] : tgtdb.bondd) infoId.info.assertReadReady();
+                for(const auto &[infoKey, infoId] : tgtdb.fesup) infoId.info.assertReadReady();
+                for(const auto &[infoKey, infoId] : tgtdb.fesdn) infoId.info.assertReadReady();
             }
             uintmax_t tgtBytes = h5pp::fs::file_size(h5_tgt.getFilePath());
 
@@ -537,16 +491,16 @@ int main(int argc, char *argv[]) {
             tools::h5db::saveDatabase(h5_tgt, tgtdb.model);
             tools::h5db::saveDatabase(h5_tgt, tgtdb.table);
             tools::h5db::saveDatabase(h5_tgt, tgtdb.crono);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.scale);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.bondd);
+            tools::h5db::saveDatabase(h5_tgt, tgtdb.fesup);
+            tools::h5db::saveDatabase(h5_tgt, tgtdb.fesdn);
             tools::h5db::saveDatabase(h5_tgt, tgtdb.dset);
 
             tgtdb.file.clear();
             tgtdb.model.clear();
             tgtdb.table.clear();
             tgtdb.crono.clear();
-            tgtdb.scale.clear();
-            tgtdb.bondd.clear();
+            tgtdb.fesup.clear();
+            tgtdb.fesdn.clear();
             tgtdb.dset.clear();
 
             // TODO: Put the lines below in a "at quick exit" function
