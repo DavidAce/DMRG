@@ -272,7 +272,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
             solver.config.initial_guess.clear();
             for(long n = 0; n < eigvecs.cols(); n++) { solver.config.initial_guess.push_back({eigvecs.col(n).data(), n}); }
         }
-        tools::log->info("Running eigensolver | nev {} | ncv {}", solver.config.maxNev.value(), solver.config.maxNcv.value());
+        tools::log->trace("Running eigensolver | nev {} | ncv {}", solver.config.maxNev.value(), solver.config.maxNcv.value());
         solver.eigs(hamiltonian);
         eigvals = eig::view::get_eigvals<eig::real>(solver.result, false);
         eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R, false);

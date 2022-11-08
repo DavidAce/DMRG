@@ -57,8 +57,6 @@ for val_L,val_g, val_d, init, multi in  product(sites,gs,deltas,initial_state,mu
     settings = {
         "storage::output_filepath"            : "{}/L_{}/g_{}/d_{}/{}.h5".format(output_prefix+extra_prefix,str_L,str_g,str_d, basename),
         "storage::temp_dir"                  : tmp_storage,
-        "threading::stl_threads"             : "1",
-        "threading::omp_threads"             : "1",
         "console::loglevel"                  : "2",
         "model::model_size"                  : str_L,
         "model::ising_majorana::delta"       : str_d,
