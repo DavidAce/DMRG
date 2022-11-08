@@ -93,6 +93,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::storage_level_fes_state"             , storage::storage_level_fes_state);
     dmrg_config.load_parameter("storage::storage_level_model"                 , storage::storage_level_model);
     dmrg_config.load_parameter("storage::storage_level_timers"                , storage::storage_level_timers);
+    dmrg_config.load_parameter("storage::storage_level_tables"                , storage::storage_level_tables);
 
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);
     dmrg_config.load_parameter("model::model_size"                            , model::model_size);

@@ -29,10 +29,6 @@ namespace settings {
     extern long     get_bond_max(AlgorithmType algo_type);
     extern bool     store_wave_function(AlgorithmType algo_type);
 
-
-
-
-
     /*!  \namespace settings::threading Parameters for multithreading
      *   num_threads is the total number of threads, num_threads = OMP_NUM_THREADS + std::threads
      *   If num_threads <= 0 then it is set to OMP_NUM_THREADS, or 1 if OMP_NUM_THREADS is not defined.
@@ -62,15 +58,15 @@ namespace settings {
      *
      *  enum StorageLevel:
      *       - `NONE`:   no data is saved at all
-     *       - `LIGHT`:  Tables have mid-chain data (e.g. schmidt values, bond dims). No MPS
-     *       - `NORMAL`: Tables have full-chain data. No MPS
-     *       - `FULL`:   Tables have full-chain data at all iterations. MPS is saved.
+     *       - `LIGHT`:  Tables entries replace last. Mid-chain  data. No MPS
+     *       - `NORMAL`: Tables entries are appended. Full chain data. No MPS
+     *       - `FULL`:   Tables entries are appended. Full chain data. MPS is saved.
      *
+     * **Note: Mid-chain**
+     * The 'measurements' table takes mid-chain data so the corresponding tables are redundant and skipped.
+
      * **Note: Resume**
-     *
      * Simulations can only be resumed from a state with `StorageLevel::FULL`, except LBIT simulations, which can always resume.
-     *
-     * The only exception is `storage_level_model == StorageLevel::NORMAL` which is enough to recreate MPOs, since they can be reconstructed from the Hamiltonian parameter table
      *
      */
     namespace storage {
@@ -86,25 +82,24 @@ namespace settings {
         inline std::string         file_resume_name                = ""  ;                         /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
         inline size_t              file_resume_iter                = -1ul;                         /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
 
-        inline StorageLevel     storage_level_iter_state = StorageLevel::LIGHT;  /*!< Storage level for states during each iteration.  */
-        inline StorageLevel     storage_level_init_state = StorageLevel::LIGHT;  /*!< Storage level for states before the zeroth iteration */
-        inline StorageLevel     storage_level_last_state = StorageLevel::LIGHT;  /*!< Storage level for states after the last iteration. */
-        inline StorageLevel     storage_level_emin_state = StorageLevel::LIGHT;  /*!< Storage level for the minimum energy state (ground state) */
-        inline StorageLevel     storage_level_emax_state = StorageLevel::LIGHT;  /*!< Storage level for the maximum energy state */
-        inline StorageLevel     storage_level_proj_state = StorageLevel::LIGHT;  /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
-        inline StorageLevel     storage_level_bond_state = StorageLevel::NORMAL; /*!< Storage level for states written on bond limit change */
-        inline StorageLevel     storage_level_trnc_state = StorageLevel::NORMAL; /*!< Storage level for states written on truncation error limit change */
-        inline StorageLevel     storage_level_fes_state  = StorageLevel::NORMAL; /*!< Storage level for states written during finite entanglement scaling (fes) after the main simulation */
-        inline StorageLevel     storage_level_model      = StorageLevel::NORMAL; /*!< Storage level for the model realization. NONE: OFF. LIGHT|NORMAL|FULL: the Hamiltonian parameter table */
-        inline StorageLevel     storage_level_timers     = StorageLevel::LIGHT;  /*!< Storage level for timers. NONE: off, LIGHT: tid::normal. NORMAL: tid::higher. FULL: tid::highest */
-        inline StorageLevel     storage_level_tables     = StorageLevel::LIGHT;  /*!< Storage level for tables. Where applicable: NONE: off, LIGHT: center site. NORMAL: center sites. FULL: all sites */
+        inline StorageLevel        storage_level_iter_state        = StorageLevel::LIGHT;          /*!< Storage level for states during each iteration. */
+        inline StorageLevel        storage_level_init_state        = StorageLevel::LIGHT;          /*!< Storage level for states before the zeroth iteration */
+        inline StorageLevel        storage_level_last_state        = StorageLevel::LIGHT;          /*!< Storage level for states after the last iteration. */
+        inline StorageLevel        storage_level_emin_state        = StorageLevel::LIGHT;          /*!< Storage level for the minimum energy state (ground state) */
+        inline StorageLevel        storage_level_emax_state        = StorageLevel::LIGHT;          /*!< Storage level for the maximum energy state */
+        inline StorageLevel        storage_level_proj_state        = StorageLevel::LIGHT;          /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
+        inline StorageLevel        storage_level_bond_state        = StorageLevel::NORMAL;         /*!< Storage level for states written on bond limit change */
+        inline StorageLevel        storage_level_trnc_state        = StorageLevel::NORMAL;         /*!< Storage level for states written on truncation error limit change */
+        inline StorageLevel        storage_level_fes_state         = StorageLevel::NORMAL;         /*!< Storage level for states written during finite entanglement scaling (fes) after the main simulation */
+        inline StorageLevel        storage_level_model             = StorageLevel::NORMAL;         /*!< Storage level for the model realization. NONE: OFF. LIGHT|NORMAL|FULL: the Hamiltonian parameter table */
+        inline StorageLevel        storage_level_timers            = StorageLevel::LIGHT;          /*!< Storage level for timers. NONE: off, LIGHT: tid::normal. NORMAL: tid::higher. FULL: tid::highest */
+        inline StorageLevel        storage_level_tables            = StorageLevel::LIGHT;          /*!< Storage level for tables. Where applicable: NONE: off, LIGHT: center site. NORMAL: all sites. FULL: all sites */
 
         namespace tmp{
             inline std::string hdf5_temp_path;
             inline std::string hdf5_final_path;
         }
     }
-
 
     /*!  \namespace settings::timer Settings for performance profiling */
     namespace timer {
@@ -113,12 +108,10 @@ namespace settings {
 
     /*! \namespace settings::console Settings for console output */
     namespace console {
-//        inline size_t verbosity     = 2;                            /*!< Level of verbosity desired [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
         inline bool   timestamp     = false;                          /*!< Whether to put a timestamp on console outputs */
         inline size_t loglevel      = 2;                              /*!< Verbosity [0-6]. Level 0 prints everything, 6 nothing. Level 2 or 3 is recommended for normal use */
         inline size_t logh5pp       = 2;                              /*!< Verbosity of h5pp library [0-6] Level 2 or 3 is recommended for normal use */
 }
-
 
     /*! \namespace settings::solvers Settings affecting the solvers (eig, eigs, bfgs, svd) */
     namespace solver {
@@ -157,7 +150,7 @@ namespace settings {
         inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
         inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
         inline MultisiteMove multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::NEVER;                     /*!< When to increase the number of sites in a DMRG step {OFF, STUCK, SATURATED, ALWAYS} */
+        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {OFF, STUCK, SATURATED, ALWAYS} */
         inline std::string   target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
         inline std::string   initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */

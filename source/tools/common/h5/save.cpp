@@ -35,7 +35,7 @@ namespace tools::common::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
         tools::log->trace("Writing to table: {} | event {} | level {} | offset {}", table_path, enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
                           offset);
         h5file.writeTableRecords(status, table_path, offset);
@@ -55,7 +55,7 @@ namespace tools::common::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5pp_table_memory_usage::get_h5t(), table_path, "Memory usage");
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
 
         // Define the table entry
         tools::log->trace("Appending to table: {}", table_path);
@@ -186,7 +186,7 @@ namespace tools::common::h5 {
     //        if(not attrs.has_value()) return -1;
     //        return static_cast<long>(attrs.value() == info);
     //    }
-    hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
+    hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo) {
         // Get the number of records in this table to append
         if(sinfo.storage_level == StorageLevel::LIGHT) {
             // find the last occurrence of this event type to replace it.
@@ -200,7 +200,7 @@ namespace tools::common::h5 {
             }
             return offset;
         } else {
-            auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, attrs.link_exists, h5file.plists.dsetAccess);
+            auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
             auto dims = h5pp::hdf5::getDimensions(dset);
             return dims.front(); // Append by default
         }

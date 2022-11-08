@@ -38,7 +38,7 @@ namespace tools::finite::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5pp_table_measurements_finite::get_h5t(), table_path, "measurements");
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
 
         // Define the table entry
         tools::log->trace("Appending to table: {}", table_path);
@@ -127,7 +127,7 @@ namespace tools::finite::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5_type, table_path, table_title);
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
 
         tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
@@ -151,12 +151,9 @@ namespace tools::finite::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5_type, table_path, table_title);
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
 
         tools::log->trace("Appending to table: {}", table_path);
-
-        // Register the table and create if it doesn't exist
-        if(not h5file.linkExists(table_path)) h5file.createTable(h5_type, table_path, table_title);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
