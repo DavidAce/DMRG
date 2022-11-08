@@ -31,14 +31,16 @@ namespace tools::h5db {
         auto                                              dbGroups = h5_tgt.findGroups(".db");
         auto                                              keyword  = [&keys]() {
             if(keys.empty()) return std::string{};
-            if constexpr(std::is_same_v<KeyType, ModelKey>)
-                return keys.front().model;
-            else if constexpr(std::is_same_v<KeyType, CronoKey>)
-                return std::string("cronos");
-            else if constexpr(std::is_same_v<KeyType, ScaleKey>)
-                return std::string("scales"); // Or fes?
+            //            return std::string(KeyType::classtag);
+            if constexpr(std::is_same_v<KeyType, ModelKey>) return keys.front().model;
+            //            else if constexpr(std::is_same_v<KeyType, CronoKey>)
+            //                return std::string("cronos");
+            //            else if constexpr(std::is_same_v<KeyType, FesUpKey>)
+            //                return std::string("fes"); // Or fes?
+            //            else if constexpr(std::is_same_v<KeyType, FesUpKey>)
+            //                return std::string("fes"); // Or fes?
             else
-                return keys.front().point;
+                return keys.front().state;
         };
 
         auto missing = [keyword](const std::string &group) {
@@ -89,8 +91,8 @@ namespace tools::h5db {
     template std::unordered_map<std::string, InfoId<h5pp::DsetInfo>>    loadDatabase(const h5pp::File &h5_tgt, const std::vector<DsetKey> &keys);
     template std::unordered_map<std::string, InfoId<h5pp::TableInfo>>   loadDatabase(const h5pp::File &h5_tgt, const std::vector<TableKey> &keys);
     template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<CronoKey> &keys);
-    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<ScaleKey> &keys);
-    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<BonddKey> &keys);
+    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<FesUpKey> &keys);
+    template std::unordered_map<std::string, InfoId<BufferedTableInfo>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<FesDnKey> &keys);
     template std::unordered_map<std::string, InfoId<h5pp::TableInfo>>   loadDatabase(const h5pp::File &h5_tgt, const std::vector<ModelKey> &keys);
 
     void saveDatabase(h5pp::File &h5_tgt, const std::unordered_map<std::string, FileId> &fileIdDb) {

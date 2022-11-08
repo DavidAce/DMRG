@@ -96,19 +96,19 @@ struct ModelId {
 struct PathId {
     public:
     std::string src_path, tgt_path;
-    std::string base, algo, state, point;
-    PathId(std::string_view base_, std::string_view algo_, std::string_view state_, std::string_view point_);
-    [[nodiscard]] bool        match(std::string_view algo_pattern, std::string_view state_pattern, std::string_view point_pattern) const;
+    std::string base, algo, state;
+    PathId(std::string_view base_, std::string_view algo_, std::string_view state_);
+    [[nodiscard]] bool        match(std::string_view algo_pattern, std::string_view state_pattern) const;
     [[nodiscard]] std::string dset_path(std::string_view dsetname) const;
     [[nodiscard]] std::string table_path(std::string_view tablename) const;
     [[nodiscard]] std::string crono_path(std::string_view tablename, size_t iter) const;
-    [[nodiscard]] std::string scale_path(std::string_view tablename, size_t chi) const;
-    [[nodiscard]] std::string bondd_path(std::string_view tablename, size_t bondd) const;
+    [[nodiscard]] std::string scale_path(std::string_view tablename, size_t bond) const;
+    [[nodiscard]] std::string fesle_path(std::string_view tablename, size_t bond) const;
     template<typename KeyT>
     [[nodiscard]] std::string create_path(std::string_view tablename, size_t idx) const;
 
     private:
-    static bool match(std::string_view comp, std::string_view pattern);
+    static bool match_pattern(std::string_view comp, std::string_view pattern);
 };
 
 template<typename InfoType>

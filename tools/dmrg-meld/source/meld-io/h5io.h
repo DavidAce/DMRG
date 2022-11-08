@@ -36,12 +36,6 @@ namespace tools::h5io {
                                          const std::vector<DsetKey> &srcKeys);
     std::vector<TableKey> gatherTableKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
                                           const std::vector<TableKey> &tables);
-    std::vector<CronoKey> gatherCronoKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
-                                          const std::vector<CronoKey> &cronos);
-    std::vector<ScaleKey> gatherScaleKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
-                                          const std::vector<ScaleKey> &scales);
-    std::vector<BonddKey> gatherBonddKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
-                                          const std::vector<BonddKey> &bondds);
 
     template<typename ModelType>
     void merge(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys, tools::h5db::TgtDb &tgtdb);

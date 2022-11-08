@@ -6,8 +6,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 #if defined(SPDLOG_FMT_EXTERNAL)
-    #include <fmt/ostream.h>
     #include <fmt/ranges.h>
+    #include <fmt/std.h>
 #else
     #include <spdlog/fmt/bundled/ostream.h>
     #include <spdlog/fmt/bundled/ranges.h>

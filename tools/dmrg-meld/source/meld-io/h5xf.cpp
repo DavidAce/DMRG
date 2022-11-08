@@ -1,9 +1,11 @@
 #include "h5xf.h"
 #include "config/enums.h"
 #include "debug/exceptions.h"
+#include "general/seq.h"
 #include "meld-io/logger.h"
 #include "tid/tid.h"
 #include <h5pp/h5pp.h>
+
 namespace tools::h5xf {
 
     namespace internal {
@@ -134,7 +136,7 @@ namespace tools::h5xf {
 
             // Determine the target index where to copy this record
             hsize_t index = tgtId.get_index(fileId.seed); // Positive if it has been read already, numeric_limits::max if it's new
-            tools::logger::log->debug("Transferring table {} -> {}", tgtPath, srcInfo.numRecords.value(), index);
+            tools::logger::log->debug("Transferring table {} | src idx {} -> tgt idx {}", tgtPath, srcInfo.numRecords.value(), index);
             auto t_copy = tid::tic_scope("copyTableRecords");
             h5_tgt.copyTableRecords(srcInfo, tgtInfo, h5pp::TableSelection::LAST, index);
             // Update the database
@@ -155,7 +157,6 @@ namespace tools::h5xf {
         for(const auto &srcKey : srcKeys) {
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::logic_error("Key [{}] was not found in source map", srcKey.key);
             auto &srcInfo = srcTableDb[srcKey.key];
-            tools::logger::log->trace("Transferring {} table {} | records {}", srcKey.classtag, srcInfo.tablePath.value(), srcInfo.numRecords.value());
 
             // Iterate over all table elements. These should be a time series measured at every iteration
             // Note that there could in principle exist duplicate entries, which is why we can't trust the
@@ -179,8 +180,10 @@ namespace tools::h5xf {
             } catch(const std::exception &ex) { throw std::logic_error(fmt::format("Failed to get iteration numbers: {}", ex.what())); }
             for(size_t rec = 0; rec < srcInfo.numRecords.value(); rec++) {
                 size_t srcIndex = rec;
-                if(not srcEvents.empty() and srcEvents[rec] != StorageEvent::ITER_STATE) continue; // Only take cronos from iteration events
-                if(not srcIndices.empty()) srcIndex = srcIndices[rec];                             // Get the actual index number from the table
+                if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Get the actual index number from the table
+                if(not srcEvents.empty()) {
+                    if(not seq::has(srcKey.event, srcEvents[rec])) continue;
+                }
                 auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
                 auto tgtPath = pathid.create_path<KeyT>(tgtName, srcIndex);
 
@@ -204,6 +207,9 @@ namespace tools::h5xf {
                 // the size of the table (so we can append)
                 hsize_t tgtIndex = tgtId.get_index(fileId.seed);
 
+                tools::logger::log->trace("Transferring {} table {} ({} records) | {} {} @ idx {} -> tgt {}", srcKey.classtag, srcInfo.tablePath.value(),
+                                          srcInfo.numRecords.value(), srcKey.index, srcIndex, rec, tgtIndex);
+
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
                 auto t_buffer = tid::tic_scope(fmt::format("bufferRecords-{}", srcKey.classtag));
                 srcReadBuffer.resize(srcInfo.recordBytes.value());
@@ -219,69 +225,10 @@ namespace tools::h5xf {
                                  std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<CronoKey> &srcKeys,
                                  const FileId &fileId);
     template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
-                                 std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<BonddKey> &srcKeys,
+                                 std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<FesDnKey> &srcKeys,
                                  const FileId &fileId);
-
-    void transferScales(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
-                        std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<ScaleKey> &srcScaleKeys,
-                        const FileId &fileId) {
-        // In this function we take time series data from each srcTable and create multiple tables tgtTable, one for each
-        // time point (iteration). Each entry in tgtTable corresponds to the same time point on different realizations.
-        auto                   t_scope = tid::tic_scope(__FUNCTION__);
-        std::vector<std::byte> srcReadBuffer;
-        for(const auto &srcKey : srcScaleKeys) {
-            if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw std::logic_error(h5pp::format("Key [{}] was not found in source map", srcKey.key));
-            auto &srcInfo    = srcTableDb[srcKey.key];
-            auto  srcRecords = srcInfo.numRecords.value();
-            tools::logger::log->trace("Transferring scale table {}", srcInfo.tablePath.value());
-            auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
-            auto tgtPath = pathid.scale_path(tgtName, srcKey.dim);
-
-            if(tgtTableDb.find(tgtPath) == tgtTableDb.end()) {
-                auto t_create = tid::tic_scope("createTable");
-                tools::logger::log->debug("Adding target scale {}", tgtPath);
-                h5pp::TableInfo tableInfo = h5_tgt.getTableInfo(tgtPath);
-                // Disabling compression is supposed to give a nice speedup. Read here:
-                // https://support.hdfgroup.org/HDF5/doc1.8/Advanced/DirectChunkWrite/UsingDirectChunkWrite.pdf
-                if(not tableInfo.tableExists.value())
-                    tableInfo = h5_tgt.createTable(srcInfo.h5Type.value(), tgtPath, srcInfo.tableTitle.value(), std::nullopt, true);
-
-                tgtTableDb[tgtPath] = tableInfo;
-                //                    tgtTableDb[tgtPath].info.assertWriteReady();
-            }
-            auto &tgtId   = tgtTableDb[tgtPath];
-            auto &tgtBuff = tgtId.buff;
-            //                auto &tgtInfo = tgtTableDb[tgtPath].info;
-
-            // Determine the target index where to copy this record
-            // Under normal circumstances, the "index" counts the number of realizations, or simulation seeds.
-            // tgtInfo.numRecords is the total number of realizations registered until now
-
-            hsize_t index = tgtId.get_index(fileId.seed); // Positive if it has been read already
-                                                          //            if(index != std::numeric_limits<hsize_t>::max()) {
-                                                          //                // The table entry for the current realization may already have been added
-            //                // This happens for instance if we make extra entries in "finished" after adding them to "checkpoint" and/or "savepoint"
-            //                // However, these entries should be identical, so no need to copy them again.
-            // #pragma message "Skipping here may not be wise?"
-            //                tools::logger::log->info("Skip copying existing scale entry: {} | index {}", tgtPath, index);
-            //                continue;
-            //            }
-
-            //            index = index == std::numeric_limits<hsize_t>::max() ? tgtBuff.get_count() : index;
-
-            // read a source record at "iter" into the "index" position in the buffer
-            auto t_buffer = tid::tic_scope("bufferScaleRecords");
-            srcReadBuffer.resize(srcInfo.recordBytes.value());
-            h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, srcRecords - 1, 1); // Read the last entry
-            tgtBuff.insert(srcReadBuffer, index);
-
-            // copy/append a source record at "iter" into the "index" position on the table.
-            //                tools::logger::log->trace("Copying scale index {} -> {}: {}", rec, index, tgtPath);
-            //                auto t_copy = tid::tic_scope("copyTableRecords");
-            //                h5_tgt.copyTableRecords(srcInfo, rec, 1, tgtInfo, static_cast<hsize_t>(index));
-            // Update the database
-            tgtId.insert(fileId.seed, index);
-        }
-    }
+    template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
+                                 std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<FesUpKey> &srcKeys,
+                                 const FileId &fileId);
 
 }

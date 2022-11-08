@@ -15,8 +15,6 @@
 #include <functional>
 #include <h5pp/h5pp.h>
 #include <h5tb.h>
-#include <regex>
-#include <set>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -42,7 +40,7 @@ namespace tools::h5io {
         };
     }
 
-    std::string get_tmp_dirname(std::string_view exename) { return fmt::format("{}.{}", h5pp::fs::path(exename).filename().string(), getenv("USER")); }
+    std::string get_tmp_dirname(std::string_view exename) { return fmt::format("{}.{}", h5pp::fs::path(exename).filename(), getenv("USER")); }
 
     template<typename T>
     std::string get_standardized_base(const ModelId<T> &H, int decimals) {
@@ -262,7 +260,7 @@ namespace tools::h5io {
         h5pp::Options options;
         for(auto &srcKey : srcKeys) {
             // Make sure to only collect keys for objects that we have asked for.
-            if(not pathid.match(srcKey.algo, srcKey.state, srcKey.point)) continue;
+            if(not pathid.match(srcKey.algo, srcKey.state)) continue;
 
             // A "srcKey" is a struct describing a dataset that we want, with name, type, size, etc
             // Here we look for a matching dataset in the given group path, and generate a key for it.
@@ -301,83 +299,6 @@ namespace tools::h5io {
         return keys;
     }
 
-    std::vector<ScaleKey> gatherScaleKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
-                                          const std::vector<ScaleKey> &srcKeys) {
-        auto                  t_scope = tid::tic_scope(__FUNCTION__);
-        std::vector<ScaleKey> keys;
-        h5pp::Options         options;
-        std::string           srcParentPath = h5pp::fs::path(h5_src.getFilePath()).parent_path();
-        for(const auto &srcKey : srcKeys) {
-            // Make sure to only collect keys for objects that we have asked for.
-            if(not pathid.match(srcKey.algo, srcKey.state, srcKey.point)) continue;
-
-            // A "srcKey" is a struct describing a table that we want, with name, type, size, etc
-            // Here we look for a matching table in the given group path, and generate a key for it.
-            // The srcKeys that match an existing table are returned in "keys", with an additional parameter ".key" which
-            // is an unique identifier to find the TableInfo object in the map srcTableDb
-            // The database srcTableDb  is used to keep track the TableInfo structs for found datasets.
-
-            // scaleKeys should be a vector [ "bond_8", "bond_16", "bond_24" ...] with tables for each scaling measurement
-            // Find the largest existing dim dimension. We need this to fill missing keys
-            std::string              scaleKeyMax;
-            std::vector<std::string> scaleKeys;
-
-            if(srcKey.allKeys.empty()) {
-                scaleKeys   = findKeys(h5_src, pathid.src_path, {srcKey.scale}, -1, 1);
-                scaleKeyMax = scaleKeys.back();
-            } else {
-                auto foundKeys = findKeys(h5_src, pathid.src_path, {srcKey.scale}, -1, 1, false);
-                if(not foundKeys.empty()) scaleKeyMax = foundKeys.back();
-                scaleKeys = std::vector<std::string>(srcKey.allKeys.begin(), srcKey.allKeys.end());
-            }
-
-            for(const auto &scaleKey : scaleKeys) {
-                auto path = fmt::format("{}/{}/{}", pathid.src_path, scaleKey, srcKey.name);
-                auto key  = fmt::format("{}|{}", srcParentPath, path);
-                auto dim  = tools::parse::extract_parameter_from_path<size_t>(path, "bond_");
-                if(srcTableDb.find(key) == srcTableDb.end()) {
-                    srcTableDb[key] = h5_src.getTableInfo(path);
-                    if(srcTableDb[key].tableExists.value()) tools::logger::log->debug("Detected new source scale {}", key);
-                } else {
-                    auto t_read = tid::tic_scope("readTableInfo");
-
-                    auto &srcInfo = srcTableDb[key];
-                    // We reuse the struct srcDsetDb[dsetKey] for every source file,
-                    // but each time have to renew the following fields
-
-                    srcInfo.h5File      = h5_src.openFileHandle();
-                    srcInfo.h5Dset      = std::nullopt;
-                    srcInfo.numRecords  = std::nullopt;
-                    srcInfo.tableExists = std::nullopt;
-                    srcInfo.tablePath   = path;
-                    h5pp::scan::readTableInfo(srcInfo, srcInfo.h5File.value(), options, h5_src.plists);
-                }
-
-                auto &srcInfo = srcTableDb[key];
-                if(srcInfo.tableExists and srcInfo.tableExists.value()) {
-                    keys.emplace_back(srcKey);
-                    keys.back().key = key;
-                    keys.back().dim = dim; // Here we save the dim value to use later for generating a target path
-                } else {
-                    tools::logger::log->debug("Missing scale [{}] in file [{}].", path, h5_src.getFilePath());
-                    if(not scaleKeyMax.empty()) {
-                        tools::logger::log->debug("Extrapolating with [{}]", scaleKeyMax);
-                        auto pathMax = fmt::format("{}/{}/{}", pathid.src_path, scaleKeyMax, srcKey.name);
-                        auto keyMax  = fmt::format("{}|{}", srcParentPath, pathMax);
-                        //                        auto dimMax     = tools::parse::extract_parameter_from_path<size_t>(pathMax, "bond_");
-                        srcTableDb[key] = srcTableDb[keyMax]; // This now points to the largest bond_# group that actually exists in the source file.
-
-                        // Here we mock a larger dim dimension by reusing the largest one
-                        keys.emplace_back(srcKey);
-                        keys.back().key = keyMax;
-                        keys.back().dim = dim; // Here we save the missing dim dimension to use later for generating a target path
-                    }
-                }
-            }
-        }
-        return keys;
-    }
-
     template<StrictTableSize strictTableSize, typename KeyT>
     std::vector<KeyT> gatherTableKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
                                       const std::vector<KeyT> &srcKeys) {
@@ -387,7 +308,7 @@ namespace tools::h5io {
         std::string       srcParentPath = h5pp::fs::path(h5_src.getFilePath()).parent_path();
         for(auto &srcKey : srcKeys) {
             // Make sure to only collect keys for objects that we have asked for.
-            if(not pathid.match(srcKey.algo, srcKey.state, srcKey.point)) continue;
+            if(not pathid.match(srcKey.algo, srcKey.state)) continue;
 
             // A "srcKey" is a struct describing a table that we want, with name, type, size, etc
             // Here we look for a matching table in the given group path, and generate a key for it.
@@ -463,37 +384,34 @@ namespace tools::h5io {
             // and transfer them to the target file
             auto state_groups = tools::h5io::findKeys(h5_src, algo, keys.get_states(), -1, 0);
             for(const auto &state : state_groups) {
-                auto point_groups = tools::h5io::findKeys(h5_src, fmt::format("{}/{}", algo, state), keys.get_points(), -1, 1);
-                for(const auto &point : point_groups) {
-                    auto pathid = PathId(tgt_base, algo, state, point);
-                    // Try gathering all the tables
-                    try {
-                        auto t_dsets  = tid::tic_scope("dsets");
-                        auto dsetKeys = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
-                        tools::h5xf::transferDatasets(h5_tgt, tgtdb.dset, h5_src, srcdb.dset, pathid, dsetKeys, fileId);
-                    } catch(const std::runtime_error &ex) { tools::logger::log->warn("Dset transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
+                auto pathid = PathId(tgt_base, algo, state);
+                // Try gathering all the tables
+                try {
+                    auto t_dsets  = tid::tic_scope("dsets");
+                    auto dsetKeys = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
+                    tools::h5xf::transferDatasets(h5_tgt, tgtdb.dset, h5_src, srcdb.dset, pathid, dsetKeys, fileId);
+                } catch(const std::runtime_error &ex) { tools::logger::log->warn("Dset transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
 
-                    try {
-                        auto t_table   = tid::tic_scope("table");
-                        auto tableKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.table, pathid, keys.tables);
-                        tools::h5xf::transferTables(h5_tgt, tgtdb.table, srcdb.table, pathid, tableKeys, fileId);
-                    } catch(const std::runtime_error &ex) { tools::logger::log->error("Table transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
-                    try {
-                        auto t_scale   = tid::tic_scope("scale");
-                        auto scaleKeys = tools::h5io::gatherScaleKeys(h5_src, srcdb.scale, pathid, keys.scales);
-                        tools::h5xf::transferScales(h5_tgt, tgtdb.scale, srcdb.scale, pathid, scaleKeys, fileId);
-                    } catch(const std::runtime_error &ex) { tools::logger::log->error("Scale transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
-                    try {
-                        auto t_bondd   = tid::tic_scope("bondd");
-                        auto bonddKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.bondd, pathid, keys.bondds);
-                        tools::h5xf::transferSeries(h5_tgt, tgtdb.bondd, srcdb.bondd, pathid, bonddKeys, fileId);
-                    } catch(const std::runtime_error &ex) { tools::logger::log->error("Bondd transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
-                    try {
-                        auto t_crono   = tid::tic_scope("crono");
-                        auto cronoKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
-                        tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
-                    } catch(const std::runtime_error &ex) { tools::logger::log->error("Crono transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
-                }
+                try {
+                    auto t_table   = tid::tic_scope("table");
+                    auto tableKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.table, pathid, keys.tables);
+                    tools::h5xf::transferTables(h5_tgt, tgtdb.table, srcdb.table, pathid, tableKeys, fileId);
+                } catch(const std::runtime_error &ex) { tools::logger::log->error("Table transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
+                try {
+                    auto t_fesup   = tid::tic_scope("fesup");
+                    auto fesupKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.fesup, pathid, keys.fesups);
+                    tools::h5xf::transferSeries(h5_tgt, tgtdb.fesup, srcdb.fesup, pathid, fesupKeys, fileId);
+                } catch(const std::runtime_error &ex) { tools::logger::log->error("Fesup transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
+                try {
+                    auto t_fesdn   = tid::tic_scope("fesdn");
+                    auto fesdnKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.fesdn, pathid, keys.fesdns);
+                    tools::h5xf::transferSeries(h5_tgt, tgtdb.fesdn, srcdb.fesdn, pathid, fesdnKeys, fileId);
+                } catch(const std::runtime_error &ex) { tools::logger::log->error("Fesdn transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
+                try {
+                    auto t_crono   = tid::tic_scope("crono");
+                    auto cronoKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
+                    tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
+                } catch(const std::runtime_error &ex) { tools::logger::log->error("Crono transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
             }
         }
 

@@ -78,13 +78,12 @@ InfoId<BufferedTableInfo> &InfoId<BufferedTableInfo>::operator=(const h5pp::Tabl
     return *this;
 }
 
-PathId::PathId(std::string_view base_, std::string_view algo_, std::string_view state_, std::string_view point_)
-    : base(base_), algo(algo_), state(state_), point(point_) {
-    src_path = fmt::format("{}/{}/{}", algo, state, point);
-    tgt_path = fmt::format("{}/{}/{}/{}", base, algo, state, point);
+PathId::PathId(std::string_view base_, std::string_view algo_, std::string_view state_) : base(base_), algo(algo_), state(state_) {
+    src_path = fmt::format("{}/{}", algo, state);
+    tgt_path = fmt::format("{}/{}/{}", base, algo, state);
 }
 
-bool PathId::match(std::string_view comp, std::string_view pattern) {
+bool PathId::match_pattern(std::string_view comp, std::string_view pattern) {
     auto t_scope  = tid::tic_scope(__FUNCTION__);
     auto fuzz_pos = pattern.find_first_of('*', 0);
     auto has_fuzz = fuzz_pos != std::string_view::npos;
@@ -94,8 +93,8 @@ bool PathId::match(std::string_view comp, std::string_view pattern) {
         return comp == pattern;
 }
 
-bool PathId::match(std::string_view algo_pattern, std::string_view state_pattern, std::string_view point_pattern) const {
-    return match(algo, algo_pattern) and match(state, state_pattern) and match(point, point_pattern);
+bool PathId::match(std::string_view algo_pattern, std::string_view state_pattern) const {
+    return match_pattern(algo, algo_pattern) and match_pattern(state, state_pattern);
 }
 
 [[nodiscard]] std::string PathId::dset_path(std::string_view dsetname) const { return h5pp::format("{}/{}/{}/dsets/{}", base, algo, state, dsetname); }
@@ -110,37 +109,37 @@ bool PathId::match(std::string_view algo_pattern, std::string_view state_pattern
      */
     return h5pp::format("{}/{}/{}/cronos/iter_{}/{}", base, algo, state, iter, tablename);
 }
-[[nodiscard]] std::string PathId::scale_path(std::string_view tablename, size_t chi) const {
+[[nodiscard]] std::string PathId::scale_path(std::string_view tablename, size_t bond) const {
     /*
      * When collecting a "scale" kind of table:
-     *      - the source path is <base>/<algo>/<state>/fes/bond_#/<tablename>
-     *      - we want the last entry in each <tablename>
+     *      - the source path is <base>/<algo>/<state>/tablename>
+     *      - we want all entries of event type BOND_STATE in each <tablename>
      *      - we collect the contribution from each realization to each bond_# separately
      *      - the target path <base>/<algo>/<state>/fes/bond_<#>/<tablename>, collects all the contributions
      */
-    return h5pp::format("{}/{}/{}/fes/bond_{}/{}", base, algo, state, chi, tablename);
+    return h5pp::format("{}/{}/{}/fes-inc/bond_{}/{}", base, algo, state, bond, tablename);
 }
 
-[[nodiscard]] std::string PathId::bondd_path(std::string_view tablename, size_t dim) const {
+[[nodiscard]] std::string PathId::fesle_path(std::string_view tablename, size_t bond) const {
     /*
-     * When collecting a "bondd" kind of table:
-     *      - the source path is <base>/<algo>/<state>/<point>/bond_#/<tablename>
-     *      - we want the last entry in each <tablename>
+     * When collecting a "FES" kind of table:
+     *      - the source paths are at <base>/<algo>/<state>/<tablename>
+     *      - we want all entries of event type FES_STATE in each <tablename>
      *      - we collect the contribution from each realization to each bond_# separately
      *      - the target path <base>/<algo>/<state>/fes/bond_<#>/<tablename>, collects all the contributions
      */
-    return h5pp::format("{}/{}/{}/{}/bond_{}/{}", base, algo, state, point, dim, tablename);
+    return h5pp::format("{}/{}/{}/fes-dec/bond_{}/{}", base, algo, state, bond, tablename);
 }
 
 template<typename KeyT>
 [[nodiscard]] std::string PathId::create_path(std::string_view tablename, size_t idx) const {
-    static_assert(sfinae::is_any_v<KeyT, BonddKey, ScaleKey, CronoKey>);
-    if constexpr(std::is_same_v<KeyT, BonddKey>) return bondd_path(tablename, idx);
-    if constexpr(std::is_same_v<KeyT, ScaleKey>) return scale_path(tablename, idx);
+    static_assert(sfinae::is_any_v<KeyT, FesDnKey, FesUpKey, CronoKey>);
+    if constexpr(std::is_same_v<KeyT, FesDnKey>) return fesle_path(tablename, idx);
+    if constexpr(std::is_same_v<KeyT, FesUpKey>) return scale_path(tablename, idx);
     if constexpr(std::is_same_v<KeyT, CronoKey>) return crono_path(tablename, idx);
 }
-template std::string PathId::create_path<BonddKey>(std::string_view tablename, size_t idx) const;
-template std::string PathId::create_path<ScaleKey>(std::string_view tablename, size_t idx) const;
+template std::string PathId::create_path<FesDnKey>(std::string_view tablename, size_t idx) const;
+template std::string PathId::create_path<FesUpKey>(std::string_view tablename, size_t idx) const;
 template std::string PathId::create_path<CronoKey>(std::string_view tablename, size_t idx) const;
 
 H5T_FileId::H5T_FileId() { register_table_type(); }
