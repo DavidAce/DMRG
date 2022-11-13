@@ -102,7 +102,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     return unitaries;
 }
 
-std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, double fmix, const std::vector<double> &fields, double fieldvar) {
+std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, double fmix, const std::vector<double> &fields, [[maybe_unused]] double fieldvar) {
     /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
      *
      *
@@ -129,7 +129,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, dou
     for(size_t idx = 0; idx < sites - 1; idx++) {
         // This 2-site gate connects sites idx and idx+1
         double diff = std::abs(fields[idx] - fields[idx + 1]);
-        double cvar = fieldvar * std::exp(-diff);
+        double cvar = std::exp(-2.0 * diff); // Squared exponential decay
 
         //        double               th0 = rnd::uniform_double_box(-1, 1);
         //        double               th1 = rnd::uniform_double_box(-1, 1);
@@ -141,7 +141,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, dou
         double               th1 = rnd::normal(0, 1);
         double               th2 = rnd::normal(0, 1);
         double               th3 = rnd::normal(0, 1);
-        std::complex<double> c(rnd::normal(0, cvar), rnd::normal(0, cvar));
+        std::complex<double> c(rnd::normal(0, cvar), rnd::normal(0, cvar)); // standard complex normal random variable
         // #pragma message "Trying square distribution for unitary circuit factors"
         //         double               th0 = rnd::uniform_double_box(-1, 1);
         //         double               th1 = rnd::uniform_double_box(-1, 1);
