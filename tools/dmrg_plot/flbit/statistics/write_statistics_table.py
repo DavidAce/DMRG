@@ -205,7 +205,7 @@ def get_stat(data, colname, statkey):
 #     std = np.std(data)
 #     return np.mean(data), std, std / np.sqrt(num), np.median(data), np.max(data), np.min(data)
 
-@nb.njit(nogil=False, parallel=True, cache=True)
+@nb.njit(parallel=True, cache=True)
 def get_stats(data):
     num = np.shape(data)[0]
     std = np.std(data)
@@ -281,8 +281,8 @@ def get_dtype(tablenode, req_columns, num=True):
                 formats.append('complex128')
             else:
                 formats.append(('{}=f{}'.format(dtype.shape, dtype.alignment)))
-            if num and col == 'number_entropy_midchain' and 'hartley_number_entropy_midchain' in req_columns:
-                names.append('hartley_number_entropy_midchain')
+            if num and col == 'number_entropy' and 'hartley_number_entropy' in req_columns:
+                names.append('hartley_number_entropy')
                 formats.append(('<f8'))
 
     return np.dtype({"names": names, "formats": formats})
@@ -423,7 +423,7 @@ def get_count(array1d, cutoff=1e-6):
     return count
 
 
-@njit(cache=True)
+@njit(parallel=False, cache=True)
 def get_sum_power(array1d, alpha=1e-3, cutoff=1e-6):
     sum = 0
     for val in array1d:
@@ -568,15 +568,15 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
             t_crt = t_crt + timer() - t_crt_start
             t_itr_start = timer()
             # create table row iterator
+            # print("Writing to table: {}/{} | iter {}/{}".format(statgroup, statkey,iterval,itermax))
             a_row = nodecache[statgroup][statkey].row
             for r in a_row:
                 r.append()
             statrows[statkey] = {'it': a_row, 'tb': nodecache[statgroup][statkey]}
 
             t_itr = t_itr + timer() - t_itr_start
-
         if fastforward and all(stat['tb'].nrows > 0 and stat['tb'][-1]['iter'] >= iterval for stat in statrows.values()):
-            # print('crono4: {} | iteration {}({}) already exists: {}'.format(iterpath, iterval, nodecache[statgroup][statkey].nrows, tablename))
+            #print('crono4: table entry already exists: {}/{} | table rows {} | tableiter {} | {}'.format(iterval, itermax, nodecache[statgroup][statkey].nrows,tableiter, tablename))
             tableiter = nodecache[statgroup][statkey].nrows
             continue
         else:
@@ -590,14 +590,13 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         if len(tabledata) == 0:
             print("table is empty: {} | shape {}".format(tablepath, np.shape(tablepath)))
             continue
-
         t_stat_start = timer()
         for col, (dtype, offset) in dt_num.fields.items():
             if col == 'iter' and not tableiter:
                 tableiter = tabledata[col][0]
-            elif col == 'num':
+            if col == 'num':
                 stats = np.full(6, len(tabledata))
-            elif col == 'hartley_number_entropy_midchain':
+            elif col == 'hartley_number_entropy':
                 pn_itr = statrows[statkey]['tb'].nrows
                 stats = get_stats(data=write_statistics_crono4.hartley_number_entropy_data[pn_itr])
             elif col in constant_cols:
@@ -607,18 +606,35 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
             else:
                 stats = get_stats(data=tabledata[col])
                 # Save midchain data for histograms
-                if 'L_{}'.format(statemid) in col and tablename in crono_tables['__save_data__']:
+                if '__save_mid__' in crono_tables and tablename in crono_tables['__save_mid__'] and 'L_{}'.format(statemid) in col:
+                    # print('saving column L_{} from table {}...'.format(statemid, tablename))
                     dataname = 'data'
                     datasize = len(tabledata[col])
-                    nodecache[statgroup]['data'] = get_earray(
+                    nodecache[statgroup][dataname] = get_earray(
                         h5f=h5f,
                         where=statgroup,
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(20, datasize),
+                        chunkshape=(100, datasize),
                         expectedrows=itermax)
                     nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
+                    # print('saving column L_{} from table {}... done'.format(statemid, tablename))
+                elif '__save_col__' in crono_tables and col in crono_tables['__save_col__']:
+                    dataname = col
+                    datasize = len(tabledata[col])
+                    # print('saving column {} from table {} to table {}...'.format(col, tablename, dataname))
+                    nodecache[statgroup][dataname] = get_earray(
+                        h5f=h5f,
+                        where=statgroup,
+                        name=dataname,
+                        dtype=dtype,
+                        shape=(0, datasize),
+                        chunkshape=(100, datasize),
+                        expectedrows=itermax)
+                    nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
+                    # print('saving column {} from table {} to table {}... done'.format(col, tablename, dataname))
+
             for stat_tgt, stat_src in zip(statrows.values(), stats):
                 stat_tgt['it'][col] = stat_src
 

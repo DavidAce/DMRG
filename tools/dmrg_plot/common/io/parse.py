@@ -37,7 +37,8 @@ def parse(algo):
                                 # 'lbit46',  # Small test of squared distributed random circuit L = [8...16]
                                 # 'lbit47',  # Small test of big bias on the J2 and J3 parameters L = [8...16]
                                 # 'lbit48',  # Small test of choked unitaries on the J2 and J3 parameters L = [8...16]
-                                'lbit49',  # Small test of choked unitaries on the J2 and J3 parameters L = [8...16]
+                                # 'lbit49',  # Small test of choked unitaries on the J2 and J3 parameters L = [8...16]
+                                'lbit50',  # Large production run, start with 5000 realz L = [8...16]
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',

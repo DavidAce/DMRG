@@ -130,8 +130,8 @@ def plot_S_vs_Time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, s
                                 continue
                             print(np.min(ndata), datanode.name)
 
-                            if meta['dsetname'] == 'number_entropy_midchain':
-                                sdata, _, _, _, _ = gather_time_series(mmntnode, yname='entanglement_entropy_midchain',
+                            if meta['dsetname'] == 'number_entropy':
+                                sdata, _, _, _, _ = gather_time_series(mmntnode, yname='entanglement_entropy',
                                                                        tname="physical_time", aname="algorithm_time")
                             else:
                                 sdata = ydata

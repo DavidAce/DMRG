@@ -25,13 +25,9 @@ def fpower(x, a, b):
         return a * x ** b
 
 
-def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, state_filter=None, point_filter=None, figs=None, palette_name=None):
-    if len(fig3) != 3:
-        raise AssertionError("fig must have length 3")
-    if len(sub3) != 3:
-        raise AssertionError("sub must have length 3")
-    if len(l1) != 1:
-        raise AssertionError("l must have length 1")
+def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None, point_filter=None, figs=None, palette_name=None):
+    if len(figspec) + len(subspec) + len(linspec) != 7:
+        raise AssertionError("Must add to 7 elems: \n figspec {}\n subspec {}\n linespec {}")
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
     if 'plotdir' in meta and 'mplstyle' in meta:
@@ -52,30 +48,33 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
     # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
-    legend_col_keys = l1.copy()
+    legend_col_keys = linspec.copy()
     if legendcols := meta['legendcols']:
         for col in legendcols:
-            if not col in [l.split(':')[0] for l in sub3 + l1]:
+            if not col in [l.split(':')[0] for l in subspec + linspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(product(*get_keys(db, fig3)))  # All combinations of fig3
-    subprod = list(product(*get_keys(db, sub3)))  # All combinations of sub3
+    figprod = list(product(*get_keys(db, figspec)))  # All combinations of figspecs (names of parameters that iterate figures)
+    subprod = list(product(*get_keys(db, subspec)))  # All combinations of subspecs (names of parameters that iterate subplots)
+    linprod = list(product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
+    dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
 
-    for (key0, key1, key2), f in zip(figprod, figs):
+    for figkeys, f in zip(figprod, figs):
+        print('- plotting figkeys: {}'.format(figkeys))
         dbval = None
-        for idx, ((key3, key4, key5), ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
+        for idx, (subkeys, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             popt = None
             pcov = None
-            for algokey, statekey, cronokey in product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']):
+            print('-- plotting subkeys: {}'.format(subkeys))
+            for dirkeys in dirprod:
                 # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
-                palette = sns.color_palette(palette=palette_name, n_colors=len(db['keys'][l1[0]]))
-                for key6, color in zip(get_keys(db, l1[0]), palette):
-                    findlist = [key0, key1, key2, key3, key4, key5, key6, algokey, statekey, cronokey,
-                                meta['groupname']]
+                palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
+                for linkeys, color, lstyle in zip(linprod, palette, lstyles):
+                    findlist = list(figkeys) + list(subkeys) + list(linkeys) + list(dirkeys) + [meta['groupname']]
                     datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                 all(k in key for k in findlist)]
                     if len(datanode) != 1:
@@ -126,7 +125,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                             label = '$S_\mathrm{N}$'
 
                         if meta.get('plotsatapproach'):
-                            sdata = datanode['avg']['entanglement_entropy_midchain'][()]
+                            sdata = datanode['avg']['entanglement_entropy'][()]
                             idx1, idx2 = find_loglog_window2(tdata, sdata, dbval)
                             ysat = np.mean(ydata[idx2:])  # Saturation value
                             y = np.abs(y - ysat)
@@ -174,10 +173,10 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                                 f['legends'][idx][icol]['handle'].append(line)
                                 f['legends'][idx][icol]['label'].append(col)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
-                                f['legends'][idx][icol]['header'] = get_title(dbval, sub3, width=16)
+                                f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
 
-                        if meta.get('findloglogwindow') and 'entanglement_entropy_midchain' in datanode['avg'].dtype.fields:
-                            sdata = datanode['avg']['entanglement_entropy_midchain'][()]
+                        if meta.get('findloglogwindow') and 'entanglement_entropy' in datanode['avg'].dtype.fields:
+                            sdata = datanode['avg']['entanglement_entropy'][()]
                             idx1, idx2 = find_loglog_window2(tdata, sdata, dbval)
                             f['ymax'] = np.max([f['ymax'], np.max(y)]) if f['ymax'] else np.max(y)
                             f['ymin'] = np.min([f['ymin'], y[idx1]]) if f['ymin'] else y[idx1]
@@ -249,7 +248,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
             if dbval:
-                ax.set_title(get_title(dbval, sub3, width=16),
+                ax.set_title(get_title(dbval, subspec, width=16),
                              horizontalalignment='left', x=0.05,
                              fontstretch="ultra-condensed",
                              # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
@@ -297,14 +296,16 @@ def plot_v2_time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, sta
             f['ymax'] = 1.1 * f['ymax']
 
         if not prb_style and dbval:
-            f['fig'].suptitle('{} vs Time\n{}'.format(meta['titlename'], get_title(dbval, fig3)))
+            f['fig'].suptitle('{} vs Time\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         if not f['filename']:
             suffix = ''
             suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
             suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-            f['filename'] = "{}/{}(t)_fig({}_{}_{})_sub({}_{}_{}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                                            str(key0), str(key1), str(key2), sub3[0], sub3[1], sub3[2], suffix)
+            f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                                '-'.join(map(str, figkeys)),
+                                                                '-'.join(map(str, get_keys(db, subspec))),
+                                                                suffix)
 
     return figs

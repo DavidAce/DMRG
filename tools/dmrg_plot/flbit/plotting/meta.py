@@ -28,7 +28,7 @@ def get_meta(plotdir):
 
         'ent': {
             'groupname': 'measurements',
-            'colname': 'entanglement_entropy_midchain',
+            'colname': 'entanglement_entropy',
             'normpage': False,
             'titlename': 'Entanglement Entropy',
             'ylabel': '$\langle \langle S_\mathrm{E}(L/2)\\rangle \\rangle$',
@@ -50,7 +50,7 @@ def get_meta(plotdir):
         },
         'num1': {
             'groupname': 'measurements',
-            'colname': 'number_entropy_midchain',
+            'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
             'ylabel': '$\langle S_N(L/2)\\rangle$',
@@ -73,7 +73,7 @@ def get_meta(plotdir):
         },
         'num2': {
             'groupname': 'measurements',
-            'colname': 'number_entropy_midchain',
+            'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
             'ylabel': '$\langle S_N(L/2)\\rangle$',
@@ -95,7 +95,7 @@ def get_meta(plotdir):
         },
         'numH1': {  # Hartley number entropy
             'groupname': 'measurements',
-            'colname': 'hartley_number_entropy_midchain',
+            'colname': 'hartley_number_entropy',
             'normpage': False,
             'titlename': ' HartleyNumber Entropy',
             'ylabel': '$\langle S_H(L/2)\\rangle$',
@@ -116,7 +116,7 @@ def get_meta(plotdir):
         },
         'numH2': {  # Hartley number entropy
             'groupname': 'measurements',
-            'colname': 'hartley_number_entropy_midchain',
+            'colname': 'hartley_number_entropy',
             'normpage': False,
             'titlename': ' HartleyNumber Entropy',
             'ylabel': '$\langle S_H(L/2)\\rangle$',
@@ -137,7 +137,7 @@ def get_meta(plotdir):
         },
         'numa': {
             'groupname': 'measurements',
-            'colname': 'number_entropy_midchain',
+            'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy Approach to saturation',
             'ylabel': '$|S_\mathrm{N}(L/2, t) - \\tilde{S}_\mathrm{N}(L/2)|$',
@@ -159,7 +159,7 @@ def get_meta(plotdir):
         },
         'numHa': {
             'groupname': 'measurements',
-            'colname': 'hartley_number_entropy_midchain',
+            'colname': 'hartley_number_entropy',
             'normpage': False,
             'titlename': 'Hartley Number Entropy Approach to saturation',
             'ylabel': '$|S_\mathrm{H}(L/2, t) - \\tilde{S}_\mathrm{H}(L/2)|$',
@@ -181,7 +181,7 @@ def get_meta(plotdir):
         },
         'nument1': {
             'groupname': 'measurements',
-            'colname': ['number_entropy_midchain', 'entanglement_entropy_midchain'],
+            'colname': ['number_entropy', 'entanglement_entropy'],
             'normpage': False,
             'titlename': 'Entanglement and Number Entropies',
             'ylabel': '$\langle S(L/2)\\rangle$',
@@ -209,7 +209,7 @@ def get_meta(plotdir):
         },
         'nument2': {
             'groupname': 'measurements',
-            'colname': ['number_entropy_midchain', 'entanglement_entropy_midchain'],
+            'colname': ['number_entropy', 'entanglement_entropy'],
             'normpage': False,
             'titlename': 'Entanglement and Number Entropies',
             'ylabel': '$\langle S(L/2)\\rangle$',
@@ -237,7 +237,7 @@ def get_meta(plotdir):
 
         'chi': {
             'groupname': 'measurements',
-            'colname': ['bond_mid', 'bond_dimension_midchain'],
+            'colname': ['bond_mid'],
             'titlename': 'Bond Dimension',
             'ylabel': '$\langle\chi\\rangle$',
             'plotprefix': 'chi',
@@ -336,14 +336,14 @@ def get_meta(plotdir):
             'legendlocation': 'best',
         },
         'dist-num': {
-            'groupname': 'number_entropies',
-            'dsetname': 'data',
+            'groupname': 'measurements',
+            'dsetname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_N(L/2))$',
             'yscale': 'log',
-            'yformat': '%.2f',
+            # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
             'tidx': 'window',  # Time indices for which to plot the distribution
@@ -369,8 +369,8 @@ def get_meta(plotdir):
             'legendlocation': 'lower left',
         },
         'divg-ent': {  # Distribution of infinite time averaged entropy
-            'groupname': 'entanglement_entropies',
-            'dsetname': 'data',
+            'groupname': 'measurements',
+            'dsetname': 'entanglement_entropy',
             'normpage': False,
             'titlename': 'Entanglement Entropy',
             # 'figsize': (3.375, 3.00),
@@ -404,8 +404,8 @@ def get_meta(plotdir):
             'legendlocation': 'lower left',
         },
         'divg-num': {  # Distribution of infinite time averaged entropy
-            'groupname': 'number_entropies',
-            'dsetname': 'data',
+            'groupname': 'measurements',
+            'dsetname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
             # 'figsize': (3.375, 3.00),
@@ -439,10 +439,10 @@ def get_meta(plotdir):
             'legendlocation': 'lower left',
         },
         'tavg-ent': {
-            'groupname': 'entanglement_entropies',
-            'dsetname': 'data',
+            'groupname': 'measurements',
+            'dsetname': 'entanglement_entropy',
             'normpage': False,
-            'titlename': 'Infinite time average of Entanglement Entropy',
+            'titlename': 'Average Entanglement entropy as $t\\rightarrow \infty$',
             # 'figsize': (3.375, 3.00),
             'ylabel': '$\langle \langle S_\mathrm{E}^\infty(L/2) \\rangle \\rangle$',
             'yformat': '%.2f',
@@ -469,10 +469,10 @@ def get_meta(plotdir):
             'legendlocation': 'lower left',
         },
         'tavg-num': {
-            'groupname': 'number_entropies',
-            'dsetname': 'data',
+            'groupname': 'measurements',
+            'dsetname': 'number_entropy',
             'normpage': False,
-            'titlename': 'Infinite time average of Number Entropies',
+            'titlename': 'Average Number Entropy as $t\\rightarrow \infty$',
             # 'figsize': (3.375, 3.00),
             'ylabel': '$\langle \langle S_\mathrm{N}^\infty(L/2) \\rangle \\rangle$',
             'yformat': '%.2f',
@@ -493,7 +493,7 @@ def get_meta(plotdir):
             # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',

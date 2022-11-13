@@ -9,12 +9,12 @@ def get_bond_info(statenode, datanode):
     bavg = None
     bmax = None
     try:
-        bavg_key = next(k for k in ['bond_mid', 'bond_dimension_midchain'] if k in datanode['avg'].dtype.fields.keys())
+        bavg_key = next(k for k in ['bond_mid'] if k in datanode['avg'].dtype.fields.keys())
         bavg = np.max(datanode['avg'][bavg_key][()])
     except:
         pass
     try:
-        bmax_key = next(k for k in ['bond_lim', 'chi_lim'] if k in statenode['tables']['status']['max'].dtype.fields.keys())
+        bmax_key = next(k for k in ['bond_lim'] if k in statenode['tables']['status']['max'].dtype.fields.keys())
         bmax = np.max(statenode['tables']['status']['max'][bmax_key][()])
     except:
         pass
@@ -404,7 +404,7 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                                         db['dsets'][dname]['node']['f'] = fnode
                                                         db['dsets'][dname]['node']['u'] = unode
                                                         db['dsets'][dname]['node']['state'] = statenode
-                                                        db['dsets'][dname]['node']['table'] = statenode['tables']
+                                                        db['dsets'][dname]['node']['table'] = statenode.get('tables')
                                                         db['dsets'][dname]['node']['crono'] = crononode
                                                         db['dsets'][dname]['node']['data'] = datanode
                                                         db['dsets'][dname]['node']['avg'] = datanode['avg']

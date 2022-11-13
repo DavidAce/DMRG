@@ -14,6 +14,8 @@ from packaging import version
 import logging
 import matplotlib.gridspec as gs
 from git import Repo
+import seaborn as sns
+from itertools import product
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -49,6 +51,23 @@ def get_uniform_palette_names(num):
 
     return palettes[0:num]
 
+
+def get_colored_lstyles(db, linspec, default_palette):
+    linprod = list(product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
+    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
+    lstyles = [None] * len(linprod)
+    if len(linspec) == 2:
+        linkey0 = get_keys(db, linspec[0])  # Sets number of colors
+        linkey1 = get_keys(db, linspec[1])  # Sets number of linestyles
+        if len(linkey0) == 2:
+            palette = reversed(sns.color_palette(palette='tab20', n_colors=len(linprod)))
+        if len(linkey0) == 3:
+            palette = reversed(sns.color_palette(palette='tab20c', n_colors=len(linprod)))
+            del palette[4 - 1::4]
+        if len(linkey0) == 4:
+            palette = reversed(sns.color_palette(palette='tab20c', n_colors=len(linprod)))
+
+    return palette, lstyles
 
 def write_attributes(*args, **kwargs):
     for a in args:
@@ -281,9 +300,10 @@ def get_safe_table_field_name(node, keys):
         if keys in node.dtype.fields.keys():
             match.append(keys)
     if not match:
-        raise LookupError('No field keys found in table:\n'
+        raise LookupError('Field not found in table:\n'
+                          'Table   : {}\n'
                           'Expected: {}\n'
-                          'In table: {}'.format(keys, node.dtype.fields.keys()))
+                          'Existing: {}'.format(node.name, keys, node.dtype.fields.keys()))
     return match
 
 

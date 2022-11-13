@@ -34,14 +34,13 @@ def lbit_avg(args):
                 'decay': {'axis': 0, },
                 # 'number_probabilities': {
                 #     'copy': False,  # Copy the dataset as is, without averaging
-                #     'hartley': True # Compute the hartley number entropy
+                #     'hartley': True,  # Compute the hartley number entropy
                 # },
             },
 
             'tables': {  # For data at the last time step
                 'status': ['iter',
-                           'chi_lim', 'bond_lim', 'bond_limit', 'bond_dimension_limit',
-                           'bond_max', 'bond_dimension_max', 'bond_dimension_maximum',
+                           'bond_lim', 'bond_max',
                            'phys_time', 'algo_time', 'delta_t'],
                 'mem_usage': 'ALL',
                 'bond_dimensions': 'ALL',
@@ -51,10 +50,10 @@ def lbit_avg(args):
             'cronos':  # For data at each time step
                 {
                     'measurements': ['iter',
-                                     'entanglement_entropy_midchain',
-                                     'number_entropy_midchain',
-                                     'hartley_number_entropy_midchain',
-                                     'bond_mid', 'bond_dimension_midchain',
+                                     'entanglement_entropy',
+                                     'number_entropy',
+                                     'hartley_number_entropy',
+                                     'bond_mid', 'bond_lim',
                                      'truncation_error',
                                      'algorithm_time',
                                      'physical_time'],
@@ -64,7 +63,10 @@ def lbit_avg(args):
                     'number_entropies': 'ALL',
                     'truncation_errors': 'ALL',
                     'number_probabilities': 'ALL',
-                    '__save_data__': ['entanglement_entropies', 'number_entropies']
+                    # If a table with this name exists, save its midchain column to a new dataset with the same name
+                    '__save_mid__': ['entanglement_entropies', 'number_entropies'],
+                    # If a table has this column, save all columns to a new dataset with the same name
+                    '__save_col__': ['entanglement_entropy', 'number_entropy'],
                 },
 
         }
@@ -73,6 +75,6 @@ def lbit_avg(args):
 
 
 if __name__ == '__main__':
-    args = parse()
+    args = parse('fLBIT')
     args.clear = True
     lbit_avg(args)
