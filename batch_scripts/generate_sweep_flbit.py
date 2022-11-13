@@ -15,7 +15,7 @@ location    = "input"
 sites               = [8,12,16]
 J                   = [[0.000, 0.100, 0.100]]
 w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
-f                   = [0.2500,0.3500]
+f                   = [0.3500, 0.4500]
 u                   = [4,5]
 x                   = [0.85]
 r                   = [-1]
@@ -64,7 +64,7 @@ for val_L,val_J,val_w, val_x, val_f,val_u, val_r, init, in  product(sites,J,w, x
         "flbit::bond_max"                    : "2048",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
-        "flbit::time_final_real"             : "1e12",
+        "flbit::time_final_real"             : "1e10",
         "flbit::time_final_imag"             : "0",
         "flbit::time_num_steps"              : "200",
     }
