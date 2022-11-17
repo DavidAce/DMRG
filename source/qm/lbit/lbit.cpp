@@ -276,7 +276,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
     // where I_i' is the identity matrix on sites j != i
     // Then ρ represents a state |psi><psi| where site i is at level 0 with probability 1, and
     // the others sites are at level 0 or 1 with probability 1/2.
-    // Eg. ρ could be a state with magnetization 1 at site i, and 0 elsewhere,
+    // E.g. ρ could be a state with magnetization 1 at site i, and 0 elsewhere,
     // or ρ could be a state with 1 particle at site i, and cat state of 0 and 1 particles elsewhere.
     // Applying the unitary circuit gives
     //      ρ' = U† ρ U = (1/2^L) (U† σ^z_i U + 1),
@@ -333,7 +333,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
 
                 // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
                 // For a successful connection, at least one pos in g should be present in u gate.
-                // After connecting a full layer, trace away legs of g that are outside of the light-cone intersection between rho and sigma.
+                // After connecting a full layer, trace away legs of g that are outside the light-cone intersection between rho and sigma.
 
                 // Check if g.pos and u.pos have sites in common
                 std::vector<size_t> pos_isect;
@@ -534,8 +534,8 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             //    for(const auto & [uidx,udep] : iter::enumerate(udepth_vec)){
 
             //        for (const auto & [fidx,fmix] : iter::enumerate(fmix_vec) ){
-            auto ur_iter = tid::ur("lbit-cls");
-            ur_iter.tic();
+            auto t_cls = tid::ur("lbit-cls");
+            t_cls.tic();
             auto                                fmix = fmix_vec[fidx];
             auto                                udep = udepth_vec[uidx];
             std::vector<double>                 cls_vec(reps);
@@ -552,17 +552,16 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
                 offset5                            = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};
                 extent5                            = {1, 1, 1, lbit_overlap_vec[i].dimension(0), lbit_overlap_vec[i].dimension(1)};
                 lbit_lioms.slice(offset5, extent5) = lbit_overlap_vec[i].abs().reshape(extent5);
+                tools::log->info("Computed u {} | f {} | rep {} | {:.3e}s", udep, fmix, i, t_cls.restart_lap());
             }
 
             auto lbit_overlap_avg = qm::lbit::get_lbit_overlap_averaged(lbit_overlap_vec);
             auto lbit_overlap_per = qm::lbit::get_lbit_overlap_permuted(lbit_overlap_avg);
 
             auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_overlap_per);
-            ur_iter.toc();
-
 #if defined(_OPENMP)
             tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | threads {} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep,
-                             fmix, cls, sse, omp_get_max_threads(), ur_iter.get_last_interval(), c, fmt::join(y, ", "));
+                             fmix, cls, sse, omp_get_max_threads(), t_cls.get_last_interval(), c, fmt::join(y, ", "));
 #else
             tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep, fmix, cls, sse,
                              ur_iter.get_last_interval(), c, fmt::join(y, ", "));

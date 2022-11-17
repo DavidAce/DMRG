@@ -52,7 +52,7 @@ std::vector<T> concat(const std::vector<T> &v1, const std::vector<T> &v2) {
 }
 
 template<typename T, auto N, auto M>
-auto concat(const std::array<T, N> &a1, const std::array<T, M> &a2) {
+constexpr auto concat(const std::array<T, N> &a1, const std::array<T, M> &a2) {
     std::array<T, N + M> result{};
     std::copy(a1.cbegin(), a1.cend(), result.begin());
     std::copy(a2.cbegin(), a2.cend(), result.begin() + N);
@@ -77,7 +77,7 @@ auto group(const std::vector<long> &dim, const std::vector<size_t> &pattern) {
 }
 
 template<auto N, auto M>
-auto group(const std::array<long, N> &dim, const std::array<size_t, M> &pattern) {
+constexpr auto group(const std::array<long, N> &dim, const std::array<size_t, M> &pattern) {
     // Group tensor indices together.
     std::array<long, M> res{};
     size_t              dim_offset = 0;
