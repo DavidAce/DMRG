@@ -61,8 +61,8 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
-            'ymin': 0.235,
-            'ymax': 0.275,
+            # 'ymin': 0.235,
+            # 'ymax': 0.275,
             'xmin': 1,
             'xmax': 1e6,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
@@ -88,8 +88,8 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
-            'ymin': 0.235,
-            'ymax': 0.275,
+            # 'ymin': 0.235,
+            # 'ymax': 0.275,
             'xmin': 0,
             'xmax': 2.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau

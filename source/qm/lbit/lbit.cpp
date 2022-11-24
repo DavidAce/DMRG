@@ -517,7 +517,6 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
         return result;
     }
     // Setup debug printing of unitary circuits
-    bool                    deb       = tools::log->level() <= spdlog::level::debug;
     size_t                  uw        = 7;                                // Width of a unitary 2-site gate box
     size_t                  op        = 3;                                // Overlap of a unitary 2-site gate box
     size_t                  tw        = 6;                                // Tag width
@@ -724,12 +723,9 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_real_overlap(const std::vector<std
     */
 
     Eigen::MatrixXcd szi = qm::spin::half::sz;
-    // #pragma omp parallel for collapse(2) schedule(dynamic)
+#pragma omp parallel for collapse(2) schedule(dynamic)
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
-            //            lbit_overlap(i, j) =
-            //                qm::lbit::get_lbit_exp_value2(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz,
-            //                static_cast<size_t>(j), ssites);
             lbit_overlap(i, j) =
                 qm::lbit::get_lbit_exp_value3(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz, static_cast<size_t>(j), ssites);
         }

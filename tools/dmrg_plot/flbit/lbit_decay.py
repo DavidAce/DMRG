@@ -36,7 +36,8 @@ datafiles = [
     # '../../../output/mbl_10003-constricted50-random-L20-u[2-5]-f0.45.h5',
     # '../../../output/mbl_10003-constricted50-random-L24-u[2-5]-f0.45.h5',
     # '../../../output/mbl_10003-constricted50-random-L24-u[2-5]-f[0.25-0.45].h5',
-    '../../../output/mbl_10003-constricted50-random-L32-u[2-8]-f[0.25-0.45].h5',
+    # '../../../output/mbl_10003-constricted50-random-L32-u[2-8]-f[0.25-0.45].h5',
+    '../../../output/mbl_10003-constricted10-random-L32-u[8]-f[0.2-0.5].h5',
 
 ]
 
@@ -256,8 +257,8 @@ def plot_lbits(figs=None):
         # lbits = lbits[-7::7, -1::1, :, :, :]
         # frange = frange[-7::7]
         # urange = urange[-1::1]
-        lbits = lbits[0::4, 0::1, :, :, :]
-        frange = frange[0::4]
+        # lbits = lbits[0::4, 0::1, :, :, :]
+        # frange = frange[0::4]
         # urange = urange[::1]
 
         print('frange: {}'.format(frange))

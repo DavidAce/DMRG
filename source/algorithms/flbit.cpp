@@ -671,8 +671,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto frange = std::vector<double>{settings::model::lbit::f_mixer};
         auto sample = settings::flbit::compute_lbit_stats;
         if(sample > 1) {
-            urange = num::range<size_t>(2, 5);
-            frange = num::range<double>(0.25, 0.50, 0.05);
+            urange = {8};          // num::range<size_t>(8, 9);
+            frange = {0.20, 0.50}; // num::range<double>(0.25, 0.50, 0.05);
         }
         if(sample > 0) {
             tools::log->info("Computing the lbit characteristic length-scale");

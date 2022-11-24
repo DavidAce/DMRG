@@ -62,13 +62,6 @@ def lbit_plot(args):
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numa'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
-    save_figure(f)
-    plt.show()
-    exit(0)
-
-    f = None
-    for db, palette in zip(dbs, palettes):
         f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
     save_figure(f)
 
