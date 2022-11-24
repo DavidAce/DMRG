@@ -257,6 +257,52 @@ std::vector<size_t> qm::Gate::idx_dn(const std::vector<size_t> &pos_) const {
     return idx;
 }
 
+bool qm::Gate::has_pos(const std::vector<size_t> &pos_) const {
+    for(const auto &p_ : pos_) {
+        for(const auto &p : pos) {
+            if(p_ == p) return true;
+        }
+    }
+    return false;
+}
+
+std::vector<size_t> qm::Gate::pos_intersection(const std::vector<size_t> &pos_) const {
+    if(pos == std::vector<size_t>{-1ul}) return {};
+    // Return indices that pos and pos_ have in common
+    std::vector<size_t> pos_isect;
+    std::set_intersection(pos.begin(), pos.end(), pos_.begin(), pos_.end(), back_inserter(pos_isect));
+    return pos_isect;
+}
+
+std::vector<size_t> qm::Gate::pos_difference(const std::vector<size_t> &pos_) const {
+    if(pos == std::vector<size_t>{-1ul}) return {};
+    // Return indices that pos and pos_ do not have in common
+    std::vector<size_t> pos_nsect;
+    std::set_difference(pos.begin(), pos.end(), pos_.begin(), pos_.end(), back_inserter(pos_nsect));
+    return pos_nsect;
+}
+
+void qm::Gate::draw_pos(std::string &layer_str, std::optional<std::string> layer_tag) const {
+    if(pos.empty()) return;
+    if(pos == std::vector<size_t>{-1ul}) return;
+
+    constexpr size_t ow = 3; // Overlap width of a unitary 2-site gate box
+    constexpr size_t tw = 6; // Tag width
+    constexpr size_t w2 = 7; // Width of a unitary 2-site gate box. E.g. [0 , 1]
+
+    if(layer_tag) layer_str.replace(0, tw, layer_tag.value());
+    std::string gate_str;
+    size_t      from = tw + pos.front() * (w2 - ow);
+    if(pos.size() == 2) {
+        gate_str = fmt::format("[{:<2},{:>2}]", pos.front(), pos.back());
+    } else if(pos.size() == 1) {
+        gate_str = fmt::format("{}", pos);
+    } else {
+        gate_str = fmt::format("[{:2}]", fmt::join(pos, ","));
+    }
+    layer_str.replace(from, gate_str.size(), gate_str);
+}
+
 qm::Gate qm::Gate::insert(const Gate &other) const { return qm::insert(*this, other); }
 qm::Gate qm::Gate::connect_above(const Gate &other) const { return qm::connect(other, *this); }
 qm::Gate qm::Gate::connect_under(const Gate &other) const { return qm::connect(*this, other); }
@@ -273,18 +319,22 @@ qm::Gate qm::Gate::trace_pos(const std::vector<size_t> &pos_) const { return qm:
 qm::Gate qm::Gate::trace_pos(size_t pos_) const { return qm::trace_pos(*this, pos_); }
 qm::cplx qm::Gate::trace() const { return qm::trace(*this); }
 
-std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::vector<qm::Gate> &layer) {
+template<typename L>
+std::vector<std::vector<size_t>> qm::get_gate_sequence(const L &layer, bool reverse_odd) {
+    static_assert(std::is_same_v<L, std::vector<qm::Gate>> or std::is_same_v<L, std::deque<qm::Gate>>);
     std::vector<std::vector<size_t>> gate_sequence;
     size_t                           gate_size = layer.front().pos.size();
     size_t                           pos_max   = layer.back().pos.back();
     for(size_t offset = 0; offset < gate_size; offset++) {
         if(offset + gate_size > pos_max + 1) break;
         auto off_idx = num::range<size_t>(offset, pos_max - gate_size + 2, gate_size);
-        if(num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
+        if(reverse_odd and num::mod<size_t>(offset, 2) == 1) std::reverse(off_idx.begin(), off_idx.end()); // If odd, reverse the sequence
         gate_sequence.emplace_back(off_idx);
     }
     return gate_sequence;
 }
+template std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::vector<qm::Gate> &layer, bool reverse_odd);
+template std::vector<std::vector<size_t>> qm::get_gate_sequence(const std::deque<qm::Gate> &layer, bool reverse_odd);
 
 template<iter::order o>
 std::vector<std::vector<size_t>> qm::get_lightcone(const std::vector<std::vector<qm::Gate>> &layers, size_t pos) {
@@ -345,6 +395,44 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
     }
 
     return int_cone;
+}
+
+std::vector<std::deque<qm::Gate>> qm::get_lightcone_gate_selection(const std::vector<std::vector<qm::Gate>> &unitary_layers,
+                                                                   const std::vector<std::vector<size_t>> &lightcone_intersection, bool reverse_odd) {
+    size_t                            idx_int = 0;
+    std::vector<std::deque<qm::Gate>> unitary_slayers; // Selected gates in the unitary layers
+    for(const auto &[idx_layer, layer] : iter::enumerate(unitary_layers)) {
+        auto gate_sequence = qm::get_gate_sequence(layer, reverse_odd);
+        for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
+            std::deque<qm::Gate> gates;
+            for(const auto &[idx_seq, pos_gate] : iter::enumerate(seq)) {
+                const auto &u = layer.at(pos_gate);
+                if(u.has_pos(lightcone_intersection.at(idx_int))) gates.emplace_back(u);
+            }
+            idx_int++;
+            unitary_slayers.push_back(gates);
+        }
+    }
+    return unitary_slayers;
+}
+std::vector<std::deque<qm::Gate>> qm::get_lightcone_gate_selection(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t pos_tau, size_t pos_sig,
+                                                                   bool reverse_odd) {
+    auto                              intersection = qm::get_lightcone_intersection(unitary_layers, pos_tau, pos_sig);
+    size_t                            idx_int      = 0;
+    std::vector<std::deque<qm::Gate>> unitary_slayers; // Selected gates in the unitary layers
+    for(const auto &[idx_layer, layer] : iter::enumerate(unitary_layers)) {
+        auto gate_sequence = qm::get_gate_sequence(layer, reverse_odd);
+        for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
+            std::deque<qm::Gate> gates;
+            for(const auto &[idx_seq, pos_gate] : iter::enumerate(seq)) {
+                const auto &u = layer.at(pos_gate);
+                if(u.has_pos(intersection.at(idx_int))) gates.emplace_back(u);
+            }
+            idx_int++;
+            unitary_slayers.push_back(gates);
+        }
+    }
+    return unitary_slayers;
 }
 
 std::vector<std::string> qm::get_lightcone_picture(const std::vector<std::vector<qm::Gate>> &layers, const std::vector<std::vector<size_t>> &cone,

@@ -17,6 +17,8 @@ namespace qm::lbit {
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<cplx, 4>> &mpos);
     extern cplx                                 get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &rho, size_t pos_rho, const Eigen::Matrix2cd &sig, size_t pos_sig);
+    extern cplx                                 get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
+    extern cplx                                 get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern Eigen::Tensor<cplx, 2>               get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites);
     extern Eigen::Tensor<cplx, 2>               get_lbit_overlap_averaged(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_overlap_vec);
     extern Eigen::Tensor<cplx, 2>               get_lbit_overlap_permuted(const Eigen::Tensor<cplx, 2> &lbit_overlap);

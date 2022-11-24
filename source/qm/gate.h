@@ -20,10 +20,14 @@ namespace qm {
 
     /* clang-format off */
     class Gate;
-    [[nodiscard]] std::vector<std::vector<size_t>> get_gate_sequence(const std::vector<qm::Gate> & layer);
+    template<typename L>
+    [[nodiscard]] std::vector<std::vector<size_t>> get_gate_sequence(const L & layer, bool reverse_odd = true);
     template<iter::order o>
-    [[nodiscard]] std::vector<std::vector<size_t>> get_lightcone(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
-    [[nodiscard]] std::vector<std::vector<size_t>> get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> & layers, size_t pos_tau, size_t pos_sig);
+    [[nodiscard]] std::vector<std::vector<size_t>>   get_lightcone(const std::vector<std::vector<qm::Gate>> & layers, size_t pos);
+    [[nodiscard]] std::vector<std::vector<size_t>>   get_lightcone_intersection(const std::vector<std::vector<qm::Gate>> & layers, size_t pos_tau, size_t pos_sig);
+    [[nodiscard]] std::vector<std::deque<qm::Gate>>  get_lightcone_gate_selection(const std::vector<std::vector<qm::Gate>> & layers,
+                                                                                  const std::vector<std::vector<size_t>> & lightcone_intersection, bool reverse_odd = true);
+    [[nodiscard]] std::vector<std::deque<qm::Gate>> get_lightcone_gate_selection(const std::vector<std::vector<qm::Gate>> & layers, size_t pos_tau, size_t pos_sig, bool reverse_odd = true);
     [[nodiscard]] std::vector<std::string> get_lightcone_picture(const std::vector<std::vector<qm::Gate>> & layers,
                                                                 const std::vector<std::vector<size_t>> & cone, std::string_view tag,
                                                                 size_t point_width = 3, std::string_view sep = ",");
@@ -73,6 +77,10 @@ namespace qm {
         [[nodiscard]] std::vector<size_t> idx(const std::vector<size_t> &pos_) const;
         [[nodiscard]] std::vector<size_t> idx_up(const std::vector<size_t> &pos_) const;
         [[nodiscard]] std::vector<size_t> idx_dn(const std::vector<size_t> &pos_) const;
+        [[nodiscard]] bool has_pos(const std::vector<size_t> &pos_) const;
+        [[nodiscard]] std::vector<size_t> pos_intersection(const std::vector<size_t> &pos_) const;
+        [[nodiscard]] std::vector<size_t> pos_difference(const std::vector<size_t> &pos_) const;
+        void draw_pos(std::string & layer_str, std::optional<std::string> layer_tag = std::nullopt) const;
     };
     /* clang-format on */
     struct Rwap;
