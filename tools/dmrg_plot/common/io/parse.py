@@ -38,7 +38,11 @@ def parse(algo):
                                 # 'lbit47',  # Small test of big bias on the J2 and J3 parameters L = [8...16]
                                 # 'lbit48',  # Small test of choked unitaries on the J2 and J3 parameters L = [8...16]
                                 # 'lbit49',  # Small test of choked unitaries on the J2 and J3 parameters L = [8...16]
-                                'lbit50',  # Large production run, start with 5000 realz L = [8...16]
+                                # 'lbit50',  # 5000 realizations of choked unitaries, u=[4,5], f=[0.25,0.35], L = [8...16]
+                                # 'lbit51',  # FOR POSTER! exp(-2dh) constriction in unitaries, u=[5], f=[0.45], L = [8...20]
+                                # 'lbit52', # Trial increasing u and L together... not very useful
+                                # 'lbit53', # 10000 realizations squared constriction, u8, f0.25, L=[8,12,16]
+                                'lbit54',  # 10000 realizations squared constriction, u8, f0.50, L=[8,12,16]
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',
