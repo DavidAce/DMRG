@@ -106,8 +106,14 @@ def h5py_node_iterator(node, keypattern=None, dep=1, excludeKeys=None, nodeType=
                         dep = 0
                     # print('yield 0 dep', dep)
                     yield (key, path, item)
-                elif isinstance(keypattern, list) or isinstance(keypattern, dict):
-                    if any(f in key for f in keypattern):
+                elif isinstance(keypattern, list):
+                    if any((f in key or path.endswith(f)) for f in keypattern):
+                        if not godeeper:
+                            dep = 0
+                        # print('yield 1')
+                        yield (key, path, item)
+                elif isinstance(keypattern, dict):
+                    if any((f in key or path.endswith(f)) for f in keypattern.keys()):
                         if not godeeper:
                             dep = 0
                         # print('yield 1')
