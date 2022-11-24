@@ -63,7 +63,7 @@ def get_colored_lstyles(db, linspec, default_palette):
             palette = reversed(sns.color_palette(palette='tab20', n_colors=len(linprod)))
         if len(linkey0) == 3:
             palette = reversed(sns.color_palette(palette='tab20c', n_colors=len(linprod)))
-            del palette[4 - 1::4]
+            # del palette[4 - 1::4]
         if len(linkey0) == 4:
             palette = reversed(sns.color_palette(palette='tab20c', n_colors=len(linprod)))
 
@@ -236,8 +236,10 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
     tmax3 = 1.0 / w3
 
     tmax = np.max([tmax1, tmax2, tmax3])
-    idx2 = np.where(tdata <= tmax)[0][-1]
-    return idx2
+    idx = np.where(tdata <= tmax)[0][-1]
+    idx = np.min([idx, len(tdata) - 10])  # Retain at least 10 points
+    idx = np.max([idx, 0])  # Make sure its non-negative
+    return idx
 
 
 @njit(parallel=True, cache=True)
@@ -828,7 +830,7 @@ def save_figure(figs):
                 commit_hash = repo.git.rev_parse("HEAD")
                 gitfile.write(commit_hash)
 
-            tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
+            # tikzplotlib.save('{}.tex'.format(f['filename']), figure=f['fig'])
     else:
         raise TypeError("Unexpected type: ", type(figs))
 

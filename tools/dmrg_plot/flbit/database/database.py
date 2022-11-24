@@ -197,7 +197,7 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
             'data': [],
         },
         'tex': {
-            'L': '$L$', 'J': '$J$', 'w': '$w$', 'x': '$\\xi$', 'f': '$f$', 'u': '$u$', 'r': '$r$',
+            'L': '$L$', 'J': '$J$', 'w': '$\omega$', 'x': '$\\xi_J$', 'f': '$f$', 'u': '$d_u$', 'r': '$r$',
             't': '$t$',
             'algo': 'algo',
             'model': 'model',
@@ -282,12 +282,12 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                                 continue
                                             if not 'dsetname' in descr:
                                                 continue
+                                            print('Looking for dataset {} in {}'.format(descr['dsetname'], modelnode.name))
                                             for datakey, datapath, datanode in h5py_node_iterator(node=modelnode,
                                                                                                   keypattern=descr['dsetname'],
-                                                                                                  dep=2,
+                                                                                                  dep=4,
                                                                                                   nodeType=h5py.Group):
-                                                print("Loading dset database version 2: {}[{}]".format(modelkey,
-                                                                                                       descr['dsetname']))
+                                                print("Loading dset database version 2: {}".format(datapath))
 
                                                 num = np.max(datanode['num'][()])
                                                 for dname in [datanode.name]:
@@ -355,7 +355,7 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                                     objname = descr['dsetname']
                                                 else:
                                                     continue
-                                                print("Loading time database version 2: {}[{}]".format(descr['groupname'], objname))
+                                                print("Loading time database version 2: {}".format(cronopath))
 
                                                 for datakey, datapath, datanode in h5py_node_iterator(node=crononode,
                                                                                                       keypattern=descr['groupname'],

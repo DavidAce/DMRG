@@ -77,11 +77,12 @@ def plot_tavg_fig3_sub2_line1(db, meta, figspec, subspec, linspec, x1, algo_filt
                 palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
                 for linkeys, color, lstyle in zip(linprod, palette, lstyles):
                     x1len = len(get_keys(db, x1[0]))
-                    ydata = np.empty(shape=(x1len,), dtype=np.float)
-                    xdata = np.empty(shape=(x1len,), dtype=np.float)
-                    edata = np.empty(shape=(x1len,), dtype=np.float)
-                    ndata = np.empty(shape=(x1len,), dtype=np.int)
+                    ydata = []
+                    xdata = []
+                    edata = []
+                    ndata = []
                     for xidx, key6 in enumerate(get_keys(db, x1[0])):
+                        print(xidx, key6)
                         findlist = list(figkeys) + list(subkeys) + list(linkeys) + list(dirkeys) + [key6, meta['groupname']]
                         datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                     all(k in key for k in findlist)]
@@ -103,19 +104,24 @@ def plot_tavg_fig3_sub2_line1(db, meta, figspec, subspec, linspec, x1, algo_filt
                             y /= page_entropy(dbval['L'])
                         if normalize := meta.get('normalize'):
                             y /= normalize
+                        if t[-1] == t[idx_sat]:
+                            print('Time window is not long enough: saturation index = {} / {}', idx_sat, len(t))
+                            continue
                         # Calculate the infinite time average (1/T) integral_0^T y(t) dt, where [0,T] is
                         # a range where y has saturated (i.e. after the transient)
+
                         ytavg = np.trapz(y=y[idx_sat:], x=t[idx_sat:], axis=0) / (t[-1] - t[idx_sat])
                         # Calculate the infinite time average (1/T) integral_0^T y(t) dt
-                        ydata[xidx] = np.mean(ytavg)
-                        xdata[xidx] = get_vals(dbval, x1[0])
-                        edata[xidx] = np.std(ytavg) / np.sqrt(len(ytavg))
-                        ndata[xidx] = n
+                        ydata.append(np.mean(ytavg))
+                        xdata.append(get_vals(dbval, x1[0]))
+                        edata.append(np.std(ytavg) / np.sqrt(len(ytavg)))
+                        ndata.append(n)
                     print('--- plotting linkeys: {}'.format(linkeys))
                     line = ax.errorbar(x=xdata, y=ydata, yerr=edata, color=color, linestyle=lstyle, path_effects=path_effects)
                     # ax.fill_between(x=xdata, y1=ydata - edata, y2=ydata + edata, alpha=0.10, color=color)
                     # line, = ax.plot(xdata, ydata, marker=None, color=color, path_effects=path_effects)
-
+                    if not datanode:
+                        continue
                     legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                     for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                         key, fmt = key.split(':') if ':' in key else [key, '']
@@ -126,12 +132,12 @@ def plot_tavg_fig3_sub2_line1(db, meta, figspec, subspec, linspec, x1, algo_filt
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
 
-            if dbval:
-                ax.set_title(get_title(dbval, subspec),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
+            # if dbval:
+            #     ax.set_title(get_title(dbval, subspec),
+            #                  horizontalalignment='left', x=0.05,
+            #                  fontstretch="ultra-condensed",
+            #                  # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
+            #                  )
 
         if not prb_style and dbval:
             f['fig'].suptitle('{} distribution\n{}'.format(meta['titlename'], get_title(dbval, figspec)))

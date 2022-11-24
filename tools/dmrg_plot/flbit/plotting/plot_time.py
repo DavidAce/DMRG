@@ -43,7 +43,8 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
     else:
         if not palette_name:
             palette_name = "colorblind"
-        path_effects = None
+        # path_effects = None
+        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
 
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
@@ -110,8 +111,10 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     if meta.get('timeloglevel') == 2:
                         with np.errstate(invalid='ignore'):
                             xdata = np.log(np.log(tdata))
-                            ax.set_xlim(-1, 1.05 * xdata[-1])
-
+                            if not 'xmin' in meta:
+                                ax.set_xlim(xmin=-1)
+                            if not 'xmax' in meta:
+                                ax.set_xlim(xmax=1.05 * xdata[-1])
                     else:
                         xdata = tdata
                     for i, (y, e, colname) in enumerate(zip(ydata.T, edata.T, colnames)):
@@ -132,7 +135,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                             try:
                                 if idx2 <= idx1:
                                     raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
-                                if idx1 + 5 > idx2:
+                                if idx1 + 10 > idx2:
                                     raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
                                 bounds = ([-np.inf, -np.inf], [np.inf, 0])
                                 with np.errstate(invalid='ignore'):
@@ -159,7 +162,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 pass
 
 
-                        else:
+                        elif meta.get('fillerror'):
                             ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
 
                         line, = ax.plot(xdata, y, marker=None, linestyle=linestyle, label=label, color=color,
@@ -192,7 +195,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                     # popt, pcov = curve_fit(f=floglog, xdata=tdata[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds)
                                     if idx2 <= idx1:
                                         raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
-                                    if idx1 + 5 > idx2:
+                                    if idx1 + 10 > idx2:
                                         raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
 
                                     bounds_v2 = ([-np.inf, 0], [np.inf, np.inf])
@@ -200,7 +203,11 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                         tloglog = np.log(np.log(tdata))
                                         popt, pcov = curve_fit(f=flinear, xdata=tloglog[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds_v2)
                                         print("{} | idx {} {} | {}".format(popt, idx1, idx2, findlist))
-                                        ax.plot(xdata, flinear(tloglog, *popt), marker=None, linewidth=0.8,
+                                        idx_min = int(idx1 * 0.75)
+                                        idx_max = int(np.min([len(tdata) - 1, idx2 * 1.25]))
+                                        tfit = xdata[idx_min:idx_max]
+                                        yfit = flinear(tloglog[idx_min:idx_max], *popt)
+                                        ax.plot(tfit, yfit, marker=None, linewidth=0.8, alpha=1.0, zorder=50,
                                                 linestyle='--', label='fit', color=color,
                                                 path_effects=path_effects)
                                 except IndexError as e:

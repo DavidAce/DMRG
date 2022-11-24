@@ -31,6 +31,11 @@ def get_renyi(data, alpha, pn_cutoff=-np.inf):
     print(np.shape(data), '-->', np.shape(r))
     return r
 
+def get_matching_prop(props, dsetpath):
+    for prop in props.keys():
+        if dsetpath.endswith(prop):
+            return prop
+    return None
 
 def write_statistics_dset(meta, props, h5_tgt):
     # Props contains the names of the datasets
@@ -38,8 +43,9 @@ def write_statistics_dset(meta, props, h5_tgt):
     dsetpath = meta[1]
     dsetnode = meta[2]
     dsetdata = dsetnode[()]
-    dsetaxis = props.get(dsetname).get('axis')
-    dsetcopy = props.get(dsetname).get('copy')
+    dsetprop = get_matching_prop(props, dsetpath)
+    dsetaxis = props.get(dsetprop).get('axis')
+    dsetcopy = props.get(dsetprop).get('copy')
     if not dsetaxis:
         dsetaxis = 0
     if (dsetname == 'schmidt_midchain'):
@@ -51,12 +57,13 @@ def write_statistics_dset(meta, props, h5_tgt):
         tgt_node = h5_tgt.require_group(hartley_number_entropy_path)
         write_stats_to_node(data=hartley_number_entropy_data, tgt_node=tgt_node, axis=2)
 
-    tgt_node = h5_tgt.require_group(dsetpath)
     if dsetcopy:
-        print('copying dset "{}"'.format(dsetname))
-        tgt_node.create_dataset(name='data', data=dsetdata, compression="gzip", compression_opts=9)
+        tgt_node = h5_tgt.require_group(dsetnode.parent.name)
+        # print('copying dset "{}"'.format(dsetname))
+        tgt_node.create_dataset(name=dsetname, data=dsetdata, compression="gzip", compression_opts=9)
     else:
-        print('writing dset "{}" along axis {}'.format(dsetname, dsetaxis))
+        tgt_node = h5_tgt.require_group(dsetpath)
+        # print('writing dset "{}" along axis {}'.format(dsetname, dsetaxis))
         write_stats_to_node(data=dsetdata, tgt_node=tgt_node, axis=dsetaxis)
 
 
@@ -131,8 +138,8 @@ def write_statistics(src, tgt, reqs):
         print('Averaging dsets')
         for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
                                                                nodeType=h5py.Dataset):
+            print('Found dset: {}'.format(dsetpath))
             write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
-
     print('Averaging tables')
     for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20, excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                               nodeType=h5py.Dataset):

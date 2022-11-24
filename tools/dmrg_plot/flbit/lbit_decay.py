@@ -24,9 +24,20 @@ plotdir = 'plots/lbit-decay'
 datafiles = [
     # '../../../output/mbl_10003-uniform500.h5',
     # '../../../output/mbl_10003-normal500.h5',
-    '../../../output/mbl_10003-choked10.h5',
+    # '../../../output/mbl_10003-choked10.h5',
     # '../../../output/mbl_10003-choked100.h5',
     # '../../../output/mbl_10003-squared500.h5',
+    # '../../../output/mbl_10003-constricted50.h5',
+    # '../../../output/mbl_10003-unconstricted50.h5',
+    # '../../../output/mbl_10003-constricted50-L20-u5-f0.45.h5',
+    # '../../../output/mbl_10003-constricted50-L24-u5-f0.45.h5',
+    # '../../../output/mbl_10003-constricted50-random-L12-u[2-5]-f0.45.h5',
+    # '../../../output/mbl_10003-constricted50-random-L16-u[2-5]-f0.45.h5',
+    # '../../../output/mbl_10003-constricted50-random-L20-u[2-5]-f0.45.h5',
+    # '../../../output/mbl_10003-constricted50-random-L24-u[2-5]-f0.45.h5',
+    # '../../../output/mbl_10003-constricted50-random-L24-u[2-5]-f[0.25-0.45].h5',
+    '../../../output/mbl_10003-constricted50-random-L32-u[2-8]-f[0.25-0.45].h5',
+
 ]
 
 lbitpath = 'fLBIT/model/lbits'
@@ -136,7 +147,7 @@ def plot_decay():
                 cls_1pc[row, col] = popt[1] * (np.log(popt[0] / (1.0 / 100.0)) ** (1.0 / popt[2]))
                 line, = ax.plot(x, y, marker='o', linestyle='None', color=color, path_effects=path_effects)
                 ax.plot(x, stretched_exp(x, popt[0], popt[1], popt[2]), label=None, color=color, path_effects=path_effects)
-                ax.set_title("$d_u={}$".format(urange[col]), bbox={'facecolor': 'white', 'pad': 2})
+                # ax.set_title("$d_u={}$".format(urange[col]), bbox={'facecolor': 'white', 'pad': 2})
                 # if insetpos := meta.get('inset').get('pos'):
                 # if not axin:
                 #     axin = ax.inset_axes([0.175,0.10,0.35,0.35])
@@ -201,7 +212,7 @@ def plot_lbits(figs=None):
         'ynopos': 'mask',
         # 'box_aspect': 1,
         # 'xscale': 'linear',
-        'ymin': 1e-12,
+        'ymin': 1e-18,
         'plotprefix': 'lbit-decay',
         'plotdir': plotdir,
         # 'mplstyle': '../common/stylesheets/prb.mplstyle',
@@ -239,10 +250,16 @@ def plot_lbits(figs=None):
         frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
         urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
         lbits = h5data["{}".format(lbitpath)]["data"][()]
+        print('frange: {}'.format(frange))
+        print('urange: {}'.format(urange))
 
-        lbits = lbits[1::4, 1::1, :, :, :]
-        frange = frange[1::4]
-        urange = urange[1::1]
+        # lbits = lbits[-7::7, -1::1, :, :, :]
+        # frange = frange[-7::7]
+        # urange = urange[-1::1]
+        lbits = lbits[0::4, 0::1, :, :, :]
+        frange = frange[0::4]
+        # urange = urange[::1]
+
         print('frange: {}'.format(frange))
         print('urange: {}'.format(urange))
 
@@ -257,22 +274,30 @@ def plot_lbits(figs=None):
         print('Starting plots colors')
         for fidx, fval in enumerate(frange):
             for uidx, uval in enumerate(urange):
-                idx = ((fidx + 1) * (uidx + 1)) - 1
+                idx = np.ravel_multi_index([[fidx], [uidx]], dims=(flen, ulen), )[0]
+                print('idx {} | fidx {} | uidx {}'.format(idx, fidx, uidx))
                 ax = f['ax'][idx]
                 mid = int(rows / 2)
+                # mid = 0
+                maxreps = np.min([reps, 50])
                 x = range(cols)
-                l = lbits[fidx, uidx, range(reps), [mid], :].T
+                l = lbits[fidx, uidx, range(maxreps), [mid], :].T
                 y = np.mean(l, axis=1)
                 e = np.std(l, axis=1)
-                line, = ax.plot(x, y, linewidth=2.0, color=color)
-                ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+                line, = ax.plot(x, y, linewidth=1.0, color=color, alpha=0.5)
+                # ax.xaxis.set_major_locator(MaxNLocator(integer=True))
                 f['legends'][idx][0]['handle'].append(line)
-                f['legends'][idx][0]['label'].append('{:.2f}'.format(fval))
-                f['legends'][idx][0]['title'] = '$f$'
-
-                for ridx in range(reps):
+                f['legends'][idx][0]['label'].append('{}'.format(cols))
+                f['legends'][idx][0]['title'] = '$L$'
+                f['legends'][idx][1]['handle'].append(line)
+                f['legends'][idx][1]['label'].append('{:.2f}'.format(fval))
+                f['legends'][idx][1]['title'] = '$f$'
+                f['legends'][idx][2]['handle'].append(line)
+                f['legends'][idx][2]['label'].append('{}'.format(uval))
+                f['legends'][idx][2]['title'] = '$d_u$'
+                for ridx in range(maxreps):
                     y = lbits[fidx, uidx, ridx, [mid], :].T
-                    ax.plot(x, y, alpha=0.15, color=color)
+                    ax.plot(x, y, alpha=0.30, color=color)
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)

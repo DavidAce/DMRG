@@ -59,13 +59,37 @@ def lbit_plot(args):
     # sub3 = ['L', 'f', 'w']
     # l1   = ['u']
     # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
+
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_dist_fig3_sub3_line1(db=db, meta=meta['dist-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numa'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
     save_figure(f)
+    plt.show()
+    exit(0)
+
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+    save_figure(f)
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num1'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+    save_figure(f)
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num2'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+    save_figure(f)
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+    save_figure(f)
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numa'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
     save_figure(f)
     plt.show()
     exit(0)
@@ -93,7 +117,6 @@ def lbit_plot(args):
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_dist_fig3_sub3_line1(db=db, meta=meta['dist-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
-
     save_figure(f)
 
     f = None

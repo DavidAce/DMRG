@@ -37,7 +37,7 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
     figprod = list(product(*get_keys(db, figspec)))  # All combinations of figspecs (names of parameters that iterate figures)
     subprod = list(product(*get_keys(db, subspec)))  # All combinations of subspecs (names of parameters that iterate subplots)
     linprod = list(product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
-    dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
+    dirprod = list(product(db['keys']['algo'], db['keys']['model']))
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:

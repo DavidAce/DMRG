@@ -3,8 +3,8 @@ from matplotlib.ticker import LogLocator, \
     LogFormatterMathtext, NullFormatter, MultipleLocator, MaxNLocator
 import numpy as np
 
-# mplstyle = '../common/stylesheets/prb.mplstyle'
-mplstyle = '../common/stylesheets/slack.mplstyle'
+mplstyle = '../common/stylesheets/prb.mplstyle'
+# mplstyle = '../common/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
 
@@ -14,6 +14,7 @@ def get_meta(plotdir):
         'common': {
             'include': {
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
+                # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_24', 'L_32'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
@@ -21,7 +22,9 @@ def get_meta(plotdir):
                 # 'f': ['f_0.1500','f_0.2000'],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
                 # 'u': ['u_2', 'u_3'],
-                # 'u': ['u_4'],
+                # 'f': ['f_0.4500'],
+                # 'u': ['u_5', 'u_6'],
+                # 'u': ['u_5'],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
             },
         },
@@ -31,7 +34,7 @@ def get_meta(plotdir):
             'colname': 'entanglement_entropy',
             'normpage': False,
             'titlename': 'Entanglement Entropy',
-            'ylabel': '$\langle \langle S_\mathrm{E}(L/2)\\rangle \\rangle$',
+            'ylabel': '$\langle \langle S(L/2)\\rangle \\rangle$',
             'xlabel': '$t$',
             # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
             # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
@@ -43,7 +46,8 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'x', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'lower right',
@@ -53,45 +57,54 @@ def get_meta(plotdir):
             'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
-            'ylabel': '$\langle S_N(L/2)\\rangle$',
+            'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
-            # 'ymin': 0.41,
-            # 'ymax': 0.45,
-            # 'xmin': 1,
+            'ymin': 0.235,
+            'ymax': 0.275,
+            'xmin': 1,
+            'xmax': 1e6,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
+            'shadederror': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
-            'legendlocation': 'lower right',
+            # 'legendlocation': 'lower right',
+            'legendlocation': (0.01, 0.65),
         },
         'num2': {
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
-            'ylabel': '$\langle S_N(L/2)\\rangle$',
+            'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
-            # 'ymin': 0.40,
-            # 'ymax': 0.45,
+            'ymin': 0.235,
+            'ymax': 0.275,
+            'xmin': 0,
+            'xmax': 2.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
+            'fillerror': False,
             'timeloglevel': 2,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
-            'legendlocation': 'lower right',
+            # 'legendlocation': 'center left',
+            'legendlocation': (0.01, 0.65),
         },
         'numH1': {  # Hartley number entropy
             'groupname': 'measurements',
@@ -202,7 +215,8 @@ def get_meta(plotdir):
             'timeloglevel': 1,
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'upper left',
@@ -362,7 +376,8 @@ def get_meta(plotdir):
             # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'w', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
@@ -376,7 +391,7 @@ def get_meta(plotdir):
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_E^\infty(L/2))$',
             'yscale': 'log',
-            'yformat': '%.2f',
+            # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
             'xmin': 0.0,
@@ -411,11 +426,12 @@ def get_meta(plotdir):
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_N^\infty(L/2))$',
             'yscale': 'log',
-            'yformat': '%.2f',
+            # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
             'xmin': 0.0,
-            'xmax': 1.5,
+            'xmax': 1.05,
+            'ymin': 1e-2,
             'tidx': 'window',  # Time indices for which to plot the distribution
             'bins': 40,
             'xlabel': '$S_N^\infty$',
@@ -433,7 +449,8 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'x', 'w', 'num'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L', 'f', 'x', 'w', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',
@@ -476,7 +493,7 @@ def get_meta(plotdir):
             # 'figsize': (3.375, 3.00),
             'ylabel': '$\langle \langle S_\mathrm{N}^\infty(L/2) \\rangle \\rangle$',
             'yformat': '%.2f',
-            'xmaloc': MaxNLocator(integer=True),
+            'xmaloc': MaxNLocator(integer=True, nbins=4),
             'sharex': 'all',
             'sharey': 'all',
             'xlabel': '$L$',
@@ -493,10 +510,48 @@ def get_meta(plotdir):
             # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'x'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
-            'legendlocation': 'lower left',
+            'legendlocation': 'lower right',
+        },
+        'dist-tsim': {
+            'groupname': 'measurements',
+            'dsetname': 'algorithm_time',
+            'normpage': False,
+            'titlename': 'Simulation time',
+            # 'figsize': (3.375, 3.00),
+            'ylabel': '$p(t_\mathrm{sim})$',
+            'yscale': 'log',
+            'xscale': 'log',
+            # 'yformat': '%.2f',
+            'sharex': 'all',
+            'sharey': 'all',
+            'tidx': [-1],  # Time indices for which to plot the distribution
+            'bins': 50,
+            'normalize': 60,
+            'xlabel': '$t_\mathrm{sim}$',
+            'density': True,
+            'plotprefix': 'SN',
+            'plotdir': plotdir,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
+            'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': False,
+            'markloglogwindow': False,
+            'fitloglogwindow': False,
+            # 'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'w', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': 'upper right',
         },
     }
 

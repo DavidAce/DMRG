@@ -31,7 +31,10 @@ def lbit_avg(args):
         data_props = {
             'dsets': {  # For time independent data (or at the last time step)
                 'schmidt_midchain': {},
-                'decay': {'axis': 0, },
+                'model/lbits/decay': {'axis': 0, },
+                'model/lbits/data': {
+                    'copy': True,
+                },
                 # 'number_probabilities': {
                 #     'copy': False,  # Copy the dataset as is, without averaging
                 #     'hartley': True,  # Compute the hartley number entropy
@@ -66,7 +69,7 @@ def lbit_avg(args):
                     # If a table with this name exists, save its midchain column to a new dataset with the same name
                     '__save_mid__': ['entanglement_entropies', 'number_entropies'],
                     # If a table has this column, save all columns to a new dataset with the same name
-                    '__save_col__': ['entanglement_entropy', 'number_entropy'],
+                    '__save_col__': ['entanglement_entropy', 'number_entropy', 'bond_mid', 'algorithm_time'],
                 },
 
         }

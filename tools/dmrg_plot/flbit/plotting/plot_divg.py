@@ -45,7 +45,8 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
     else:
         if not palette_name:
             palette_name = "colorblind"
-        path_effects = None
+        # path_effects = None
+        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
 
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
@@ -76,7 +77,8 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
             for dirkeys in dirprod:
                 palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
                 for linkeys, color, lstyle in zip(linprod, palette, lstyles):
-                    findlist = list(figkeys) + list(subkeys) + list(linkeys) + list(dirkeys) + [meta['groupname']]
+                    print('-- plotting linkeys: {}'.format(subkeys))
+                    findlist = list(figkeys) + list(subkeys) + list(dirkeys) + list(linkeys) + [meta['groupname']]
                     datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                 all(k in key for k in findlist)]
                     if len(datanode) != 1:
@@ -88,6 +90,7 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                     dbval = db['dsets'][datanode.name]
                     ndata = datanode['avg']['num'][()]
                     if np.min(ndata) < 10:
+                        print("ndata < 10: in {}\n\t continuing".format(datanode))
                         continue
                     t = mmntnode['avg']['physical_time'][()]
                     s = mmntnode['avg']['entanglement_entropy'][()]
@@ -98,19 +101,24 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         y /= page_entropy(dbval['L'])
                     if normalize := meta.get('normalize'):
                         y /= normalize
+                    if t[-1] == t[idx_sat]:
+                        print('Time window is not long enough: saturation index = {} / {}', idx_sat, len(t))
+                        continue
                     # Calculate the infinite time average (1/T) integral_0^T y(t) dt in the saturated interval
                     ytavg = np.trapz(y=y[idx_sat:, :], x=t[idx_sat:], axis=0) / (t[-1] - t[idx_sat])
                     hist, edges = np.histogram(ytavg, bins=meta['bins'], density=True)
                     bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                     line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
                                     color=color, path_effects=path_effects)
-                    ax.axvline(x=np.log(2), color='grey')
-                    ax.axvline(x=np.log(3), color='darkseagreen')
-                    # ax.set_xticks(list(ax.get_xticks()) + [np.log(2), np.log(3)])
+                    # line = ax.scatter(x=bincentres, y=hist, label=None,
+                    #                    color=color, path_effects=path_effects)
+                    ax.axvline(x=np.log(2), color='black', alpha=0.75)
                     trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
-                    ax.text(np.log(2), 0.8, '$\ln 2$', fontsize='small', color='grey', ha='right', va='center', rotation='vertical', transform=trans)
-                    ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
+                    ax.text(np.log(2), 0.25, '$\ln 2$', fontsize='small', color='black', alpha=0.75, ha='right', va='center', rotation='vertical',
                             transform=trans)
+                    # ax.axvline(x=np.log(3), color='darkseagreen')
+                    # ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
+                    #         transform=trans)
                     legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                     for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                         key, fmt = key.split(':') if ':' in key else [key, '']
@@ -118,21 +126,24 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         f['legends'][idx][icol]['title'] = db['tex'][key]
                         f['legends'][idx][icol]['label'].append(col)
 
-                    if 'number' in meta['dsetname'] and 'L_16' in findlist:
-                        # Plot Luitz data
-                        with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
-                            hist = h5ext['L16/W5.0']['hist[NE1][100]'][()]
-                            edges = h5ext['L16/W5.0']['binedges[NE1][100]'][()]
-                            bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='black')
-                            # for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                            #     key, fmt = key.split(':') if ':' in key else [key, '']
-                            #     f['legends'][idx][icol]['handle'].append(line_ext)
-                            #     f['legends'][idx][icol]['title'] = db['tex'][key]
-                            #     f['legends'][idx][icol]['label'].append('PhysRevB.102.100202')
-
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
+
+                    if 'number' in meta['dsetname'] and linkeys == linprod[-1]:
+                        # Plot Luitz data
+                        with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
+                            hist = h5ext['L16/W6.0']['hist[NE1][100]'][()]
+                            edges = h5ext['L16/W6.0']['binedges[NE1][100]'][()]
+                            bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
+                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.85, zorder=0)
+                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                                key, fmt = key.split(':') if ':' in key else [key, '']
+                                f['legends'][idx][icol]['handle'].append(line_ext)
+                                f['legends'][idx][icol]['title'] = db['tex'][key]
+                                if key == 'L':
+                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202}')
+                            else:
+                                f['legends'][idx][icol]['label'].append('')
 
             if dbval:
                 ax.set_title(get_title(dbval, subspec),

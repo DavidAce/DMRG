@@ -11,13 +11,16 @@
 
 
 axes.labelsize          : 10.0
-axes.linewidth          : 1.0
+axes.linewidth          : 1.5
 #axes.prop_cycle        : cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
 axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73', 'f0e442', '0072b2', 'd55e00', 'cc79a7'])
 
 figure.facecolor        : 'white'
+
+#figure.figsize          : 1.6875, 1.50
 figure.figsize          : 3.375, 3.00
 #figure.figsize          : 3.375, 6.00
+#figure.figsize           : 4.21875, 3.75
 #figure.figsize          : 6.75, 6.00
 #figure.figsize          : 2.53125, 3.00 # 75% width
 
@@ -29,7 +32,7 @@ grid.linestyle          : -
 ## Dimensions as fraction of font size:
 legend.fontsize         : 8.33
 legend.title_fontsize   : 8.33
-legend.frameon          : True      # if True, draw the legend on a background patch
+legend.frameon          : False     # if True, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.25      # border whitespace
 legend.labelspacing     : 0.15      # the vertical space between the legend entries

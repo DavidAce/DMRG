@@ -97,8 +97,8 @@ def plot_dist_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         widxs = find_loglog_window2(tdata=tdata, ydata=ydata, db=dbval)
                         # tidxs = [1, 5, widxs[0], len(tdata) - 1]
                         tidxs = [len(tdata) - 1]
-                    palette = sns.color_palette(palette=palette_name, n_colors=len(meta['tidx']))
-                    for i, (tidx, color) in enumerate(zip(tidxs, palette)):
+                    # palette = sns.color_palette(palette=palette_name, n_colors=len(meta['tidx']))
+                    for i, tidx in enumerate(tidxs):
                         data = datanode[meta['dsetname']][tidx, :]
                         dbval['vals']['t'] = mmntnode['avg']['physical_time'][tidx]
                         dbval['vals']['bavg'] = mmntnode['avg']['bond_mid'][tidx]
@@ -114,14 +114,21 @@ def plot_dist_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                         line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
                                         color=color, path_effects=path_effects, linestyle=lstyle)
-                        ax.axvline(x=np.log(2), color='grey')
-                        ax.axvline(x=np.log(3), color='darkseagreen')
-                        # ax.set_xticks(list(ax.get_xticks()) + [np.log(2), np.log(3)])
-                        trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
-                        ax.text(np.log(2), 0.8, '$\ln 2$', fontsize='small', color='grey', ha='right', va='center', rotation='vertical',
-                                transform=trans)
-                        ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
-                                transform=trans)
+                        if 'number_' in meta['dsetname']:
+                            ax.axvline(x=np.log(2), color='grey')
+                            ax.axvline(x=np.log(3), color='darkseagreen')
+                            # ax.set_xticks(list(ax.get_xticks()) + [np.log(2), np.log(3)])
+                            trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+                            ax.text(np.log(2), 0.8, '$\ln 2$', fontsize='small', color='grey', ha='right', va='center', rotation='vertical',
+                                    transform=trans)
+                            ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
+                                    transform=trans)
+                        if 'algorithm_time' in meta['dsetname']:
+                            t_mean = np.mean(data)
+                            trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+                            ax.axvline(x=t_mean, color=color)
+                            ax.text(t_mean, 0.8, 'avg', fontsize='small', color='grey', ha='right', va='center', rotation='vertical',
+                                    transform=trans)
                         legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                         for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                             key, fmt = key.split(':') if ':' in key else [key, '']
@@ -132,8 +139,8 @@ def plot_dist_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         if 'number' in meta['dsetname'] and tidx == tidxs[-1] and 'L_16' in findlist:
                             # Plot Luitz data
                             with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
-                                hist = h5ext['L16/W5.0']['hist[NE1][100]'][()]
-                                edges = h5ext['L16/W5.0']['binedges[NE1][100]'][()]
+                                hist = h5ext['L16/W8.0']['hist[NE1][100]'][()]
+                                edges = h5ext['L16/W8.0']['binedges[NE1][100]'][()]
                                 bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                                 line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='black')
                                 # for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
