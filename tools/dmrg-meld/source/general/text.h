@@ -1,13 +1,19 @@
 #pragma once
 
 #include "general/sfinae.h"
+#include <functional>
 #include <optional>
 #include <string>
 #include <string_view>
 namespace text {
-    extern bool        endsWith(std::string_view str, std::string_view suffix);
-    extern bool        startsWith(std::string_view str, std::string_view prefix);
-    extern std::string replace(std::string_view str, std::string_view from, std::string_view to);
+    extern bool                          endsWith(std::string_view str, std::string_view suffix);
+    extern bool                          startsWith(std::string_view str, std::string_view prefix);
+    extern std::string                   replace(std::string_view str, std::string_view from, std::string_view to);
+    extern std::vector<std::string_view> split(std::string_view str, std::string_view dlm);
+    template<typename T, typename Pred>
+    extern void erase_if(std::vector<T> &v, Pred &&pred) {
+        if(not v.empty()) v.erase(std::remove_if(v.begin(), v.end(), pred), v.end());
+    }
 
     template<typename T>
     [[nodiscard]] std::optional<T> extract_value(std::string_view input) {

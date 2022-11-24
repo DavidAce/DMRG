@@ -89,21 +89,46 @@ namespace tools::h5io {
                 cacheMsg = " | cache hit";
             } else {
                 std::vector<std::string> found;
-                if(key.empty())
-                    found.emplace_back(key);
-                else if(key.back() == '*') {
-                    std::string_view key_match = std::string_view(key).substr(0, key.size() - 2);
-                    tools::logger::log->info("key_match: ", key_match);
-                    for(auto &item : h5_src.findGroups(key_match, root, hits, depth)) {
-                        if(not text::startsWith(item, key_match)) continue;
-                        if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;
-                        found.emplace_back(item);
-                    }
+                auto                     key_split = text::split(key, "/");
+                if(key_split.size() > 1) {
+                    // We try to find the last key given the current root at infinite depth. Then we keep
+                    // groups if all the key_split elements are present in the path
+                    auto key_last = key_split.back();
+                    found         = h5_src.findGroups(key_last, root, -1, -1);
+                    // Prune found items if they do not have the expected path depth
+                    text::erase_if(found, [&key_split](auto &item) -> bool {
+                        auto rel_depth = std::count(item.begin(), item.end(), '/');
+                        return rel_depth + 1 != static_cast<long>(key_split.size());
+                    });
+
+                    // Prune found items if they do not have the same groups as key_split
+                    text::erase_if(found, [&key_split](auto &item) -> bool {
+                        // Check that all parts of key_split exist in item
+                        for(const auto &s : key_split) {
+                            auto fuzz_pos    = s.find_first_of('*', 0);
+                            auto key_in_item = item.find(s.substr(0, fuzz_pos)) != std::string::npos;
+                            if(not key_in_item) return true;
+                        }
+                        return false;
+                    });
+
                 } else {
-                    for(auto &item : h5_src.findGroups(key, root, hits, depth)) {
-                        if(not text::endsWith(item, key)) continue;
-                        if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;
-                        found.emplace_back(item);
+                    if(key.empty())
+                        found.emplace_back(key);
+                    else if(key.back() == '*') {
+                        std::string_view key_match = std::string_view(key).substr(0, key.size() - 2);
+                        for(auto &item : h5_src.findGroups(key_match, root, hits, depth)) {
+                            if(not text::startsWith(item, key_match)) continue;
+                            if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;
+                            found.emplace_back(item);
+                        }
+                    } else {
+                        for(auto &item : h5_src.findGroups(key, root, hits, depth)) {
+                            tools::logger::log->info("Found item [{}]", item);
+                            if(not text::endsWith(item, key)) continue;
+                            if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;
+                            found.emplace_back(item);
+                        }
                     }
                 }
                 auto [it, ok] = cache.insert(searchQuery);
@@ -116,7 +141,7 @@ namespace tools::h5io {
             }
             // Sort
             std::sort(result.begin(), result.end(), text::natcomp);
-            tools::logger::log->trace("Search: key [{}] | result {}{}", key, result, cacheMsg);
+            tools::logger::log->trace("Search: root {} | key [{}] | result {}{}", root, key, result, cacheMsg);
         }
         return result;
     }
@@ -260,7 +285,10 @@ namespace tools::h5io {
         h5pp::Options options;
         for(auto &srcKey : srcKeys) {
             // Make sure to only collect keys for objects that we have asked for.
-            if(not pathid.match(srcKey.algo, srcKey.state)) continue;
+            if(not pathid.match(srcKey.algo, srcKey.state)) {
+                tools::logger::log->debug("Failed to match pathid {} to algo: [{}] and state: [{}]", pathid.src_path, srcKey.algo, srcKey.state);
+                continue;
+            }
 
             // A "srcKey" is a struct describing a dataset that we want, with name, type, size, etc
             // Here we look for a matching dataset in the given group path, and generate a key for it.
@@ -271,7 +299,10 @@ namespace tools::h5io {
             auto key  = fmt::format("{}|{}", srcParentPath, path);
             if(srcDsetDb.find(key) == srcDsetDb.end()) {
                 srcDsetDb[key] = h5_src.getDatasetInfo(path);
-                if(srcDsetDb[key].dsetExists.value()) tools::logger::log->debug("Detected new source dataset {}", key);
+                if(srcDsetDb[key].dsetExists.value())
+                    tools::logger::log->debug("Detected new source dataset {}", key);
+                else
+                    tools::logger::log->trace("Missing source dataset {}", key);
             } else {
                 auto t_read = tid::tic_scope("readDsetInfo");
 

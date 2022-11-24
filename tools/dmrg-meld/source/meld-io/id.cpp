@@ -1,5 +1,6 @@
 #include "id.h"
 #include "general/sfinae.h"
+#include "logger.h"
 #include "meta.h"
 #include "tid/tid.h"
 #include <h5pp/details/h5ppHdf5.h>
@@ -84,10 +85,20 @@ PathId::PathId(std::string_view base_, std::string_view algo_, std::string_view 
 }
 
 bool PathId::match_pattern(std::string_view comp, std::string_view pattern) {
-    auto t_scope  = tid::tic_scope(__FUNCTION__);
-    auto fuzz_pos = pattern.find_first_of('*', 0);
-    auto has_fuzz = fuzz_pos != std::string_view::npos;
-    if(has_fuzz)
+    auto t_scope   = tid::tic_scope(__FUNCTION__);
+    auto fuzz_pos  = pattern.find_first_of('*', 0);
+    auto slash_pos = pattern.find_first_of('/', 0);
+    auto has_fuzz  = fuzz_pos != std::string_view::npos;
+    auto has_slash = slash_pos != std::string_view::npos;
+    if(has_slash) {
+        for(const auto &part : text::split(pattern, "/")) {
+            fuzz_pos           = part.find_first_of('*', 0);
+            auto partial_match = comp.find(part.substr(0, fuzz_pos), 0) != std::string_view::npos;
+            if(not partial_match) return false;
+        }
+        return true;
+
+    } else if(has_fuzz)
         return text::startsWith(comp, pattern.substr(0, fuzz_pos));
     else
         return comp == pattern;

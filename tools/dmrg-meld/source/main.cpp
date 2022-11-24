@@ -254,6 +254,7 @@ int main(int argc, char *argv[]) {
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
 #pragma message "model/lbits may not work"
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 2));
 
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished", "schmidt_midchain", Size::VAR, Type::COMPLEX));
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished/profiling", "fLBIT.run", Size::FIX, Type::TID));
