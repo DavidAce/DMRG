@@ -60,6 +60,7 @@ def lbit_plot(args):
     # l1   = ['u']
     # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
 
+
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
@@ -105,6 +106,11 @@ def lbit_plot(args):
     f = None
     for db, palette in zip(dbs, palettes):
         f = plot_tavg_fig3_sub2_line1(db=db, meta=meta['tavg-num'], figspec=fig3, subspec=['w'], linspec=['f', 'u'], x1=['L'], figs=f, palette_name=palette)
+    save_figure(f)
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_dist_fig3_sub3_line1(db=db, meta=meta['dist-chi'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
     save_figure(f)
 
     f = None

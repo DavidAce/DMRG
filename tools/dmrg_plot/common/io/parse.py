@@ -42,7 +42,8 @@ def parse(algo):
                                 # 'lbit51',  # FOR POSTER! exp(-2dh) constriction in unitaries, u=[5], f=[0.45], L = [8...20]
                                 # 'lbit52', # Trial increasing u and L together... not very useful
                                 # 'lbit53', # 10000 realizations squared constriction, u8, f0.25, L=[8,12,16]
-                                'lbit54',  # 10000 realizations squared constriction, u8, f0.50, L=[8,12,16]
+                                # 'lbit54',  # 10000 realizations squared constriction, u8, f0.50, L=[8,12,16]
+                                'lbit55',  # 2500 realizations constricted, u8, f=[0.1-0.5], L=[8,12,16]
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',

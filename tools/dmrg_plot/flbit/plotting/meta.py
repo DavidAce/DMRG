@@ -15,7 +15,7 @@ def get_meta(plotdir):
             'include': {
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
-                # 'L': ['L_24', 'L_32'],
+                # 'L': ['L_16'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
@@ -88,6 +88,8 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             'plotprefix': 'SN',
             'plotdir': plotdir,
+            'sharex': 'all',
+            'sharey': 'none',
             # 'ymin': 0.235,
             # 'ymax': 0.275,
             'xmin': 0,
@@ -430,8 +432,8 @@ def get_meta(plotdir):
             'sharex': 'all',
             'sharey': 'all',
             'xmin': 0.0,
-            'xmax': 1.05,
-            'ymin': 1e-2,
+            'xmax': 1.2,
+            'ymin': 1e-3,
             'tidx': 'window',  # Time indices for which to plot the distribution
             'bins': 40,
             'xlabel': '$S_N^\infty$',
@@ -449,8 +451,8 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            # 'legendcols': ['L', 'f', 'x', 'w', 'num'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'num'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',
@@ -533,6 +535,41 @@ def get_meta(plotdir):
             'bins': 50,
             'normalize': 60,
             'xlabel': '$t_\mathrm{sim}$',
+            'density': True,
+            'plotprefix': 'SN',
+            'plotdir': plotdir,
+            # 'ymin': 0.41,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
+            'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': False,
+            'markloglogwindow': False,
+            'fitloglogwindow': False,
+            # 'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['f', 'x', 'w', 'num', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': False,
+            'legendcollect': False,
+            'legendlocation': 'upper right',
+        },
+        'dist-chi': {
+            'groupname': 'measurements',
+            'dsetname': 'bond_mid',
+            'normpage': False,
+            'titlename': 'Bond dimension',
+            # 'figsize': (3.375, 3.00),
+            'ylabel': '$p(\chi)$',
+            # 'yscale': 'log',
+            # 'xscale': 'log',
+            # 'yformat': '%.2f',
+            'sharex': 'all',
+            'sharey': 'all',
+            'tidx': [-1],  # Time indices for which to plot the distribution
+            'bins': 20,
+            'xlabel': '$\chi$',
             'density': True,
             'plotprefix': 'SN',
             'plotdir': plotdir,

@@ -121,7 +121,8 @@ int main(int argc, char *argv[]) {
                 for(auto &dir : matching_dirs) error_msg.append(dir.string() + '\n');
                 throw std::runtime_error(error_msg);
             }
-            if(matching_dirs.empty()) throw std::runtime_error(h5pp::format("No directories match the pattern: {}", (src_base / src_sim).string()));
+            if(matching_dirs.empty())
+                throw std::runtime_error(h5pp::format("No directories match the pattern: {} (subdir: [{}])", (src_base / src_sim).string(), src_out));
             // We have multiple matches. Append them
             for(auto &match : matching_dirs) src_sims.emplace_back(match);
         } else
@@ -252,7 +253,6 @@ int main(int argc, char *argv[]) {
                 // Last argument is the axis along which to build the time series
                 keys.dsets.emplace_back(DsetKey("fLBIT", "analysis", "decay", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
-#pragma message "model/lbits may not work"
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 2));
 

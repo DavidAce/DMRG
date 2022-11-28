@@ -1,7 +1,7 @@
 #include "../lbit.h"
 #include "../spin.h"
 #include "config/debug.h"
-#include "config/settings.h"
+// #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "io/fmt.h"
@@ -30,10 +30,29 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
      @verbatim
                    0      1                0
                    |      |                |
-                 [ exp(-ifH) ]  ---> [ exp(-ifH) ]
+                 [ exp(-ifK) ]  ---> [ exp(-ifK) ]
                    |      |               |
                    2      3               1
+
      @endverbatim
+
+     Where K is defined as
+        θ³n[i]n[i+1] +
+        θ²n[i](1-n[i+1]) +
+        θ¹(1-n[i])n[i+1] +
+        θ⁰(1-n[i])(1-n[i+1]) +
+        c  σ+σ- +
+        c* σ-σ+
+
+     and n[i] = 0.5(σz[i] + 1) acts on site i.
+     Alternatively, we could write this in terms of σz operators, as
+        θ³/4 (1+σz[i])(1+σz[i+1]) +
+        θ²/4 (1+σz[i])(1-σz[i+1]) +
+        θ¹/4 (1-σz[i])(1+σz[i+1]) +
+        θ⁰/4 (1-σz[i])(1-σz[i+1]) +
+        c  σ+σ- +
+        c* σ-σ+
+
     */
 
     tools::log->trace("Generating twosite unitaries");
@@ -57,7 +76,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
         double               th1 = rnd::normal(0, 1);
         double               th2 = rnd::normal(0, 1);
         double               th3 = rnd::normal(0, 1);
-        std::complex<double> t(rnd::normal(0, 1), rnd::normal(0, 1));
+        std::complex<double> c(rnd::normal(0, 1), rnd::normal(0, 1));
         // #pragma message "Trying square distribution for unitary circuit factors"
         //         double               th0 = rnd::uniform_double_box(-1, 1);
         //         double               th1 = rnd::uniform_double_box(-1, 1);
@@ -69,14 +88,14 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
 
         auto             indices = std::vector<size_t>{idx, idx + 1};
         Eigen::Matrix4cd H       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
-                             SP[0] * SM[1] * t + SP[1] * SM[0] * std::conj(t);
+                             SP[0] * SM[1] * c + SP[1] * SM[0] * std::conj(c);
 
         if constexpr(kroneckerSwap) {
             // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
 
             //         0               0      1
             //         |               |      |
-            //   [ exp(-ifH) ]  ==  [ exp(-ifH) ]
+            //   [ exp(-ifK) ]  ==  [ exp(-ifK) ]
             //        |               |      |
             //        1               2      3
 
@@ -86,12 +105,12 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
             // the kronecker product that generated two-site gates above has indexed right-to-left
             //         0                   1      0              0      1                0
             //         |                   |      |              |      |                |
-            //   [ exp(-ifH) ]  --->    [ exp(-ifH) ]   --->  [ exp(-ifH) ]  --->  [ exp(-ifH) ]
+            //   [ exp(-ifK) ]  --->    [ exp(-ifK) ]   --->  [ exp(-ifK) ]  --->  [ exp(-ifK) ]
             //         |                   |      |              |      |                |
             //         1                   3      2              2      3                1
-            Eigen::Tensor<cplx, 2> H_shuffled = tenx::TensorMap(H, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
-            Eigen::MatrixXcd       expifH     = (imn * fmix * tenx::MatrixMap(H_shuffled)).exp();
-            unitaries.emplace_back(tenx::TensorMap(expifH), indices, spin_dims);
+            Eigen::Tensor<cplx, 2> K_shuffled = tenx::TensorMap(H, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+            Eigen::MatrixXcd       expifK     = (imn * fmix * tenx::MatrixMap(K_shuffled)).exp();
+            unitaries.emplace_back(tenx::TensorMap(expifK), indices, spin_dims);
         }
     }
     if constexpr(settings::debug) {
@@ -114,6 +133,23 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, dou
                    |      |               |
                    2      3               1
      @endverbatim
+
+     Where K is defined as
+        θ³n[i]n[i+1] +
+        θ²n[i](1-n[i+1]) +
+        θ¹(1-n[i])n[i+1] +
+        θ⁰(1-n[i])(1-n[i+1]) +
+        c  σ+σ- +
+        c* σ-σ+
+
+     and n[i] = 0.5(σz[i] + 1) acts on site i.
+     Alternatively, we could write this in terms of σz operators, as
+        θ³/4 (1+σz[i])(1+σz[i+1]) +
+        θ²/4 (1+σz[i])(1-σz[i+1]) +
+        θ¹/4 (1-σz[i])(1+σz[i+1]) +
+        θ⁰/4 (1-σz[i])(1-σz[i+1]) +
+        c  σ+σ- +
+        c* σ-σ+
     */
 
     tools::log->trace("Generating correlated twosite unitaries");
@@ -293,7 +329,7 @@ qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &
     // See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
 
     // Generate gates for the operators
-    tools::log->trace("Computing Tr (ρ_{} σ_{}) / Tr(ρ_{})", pos_rho, pos_sig);
+    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (ρ_{} σ_{}) / Tr(ρ_{})", pos_rho, pos_sig);
     //    auto t_lexp   = tid::tic_scope("lbit_exp_value");
     auto rho_gate = qm::Gate(rho, {pos_rho}, {2l});
     auto sig_gate = qm::Gate(sig, {pos_sig}, {2l});
@@ -415,7 +451,7 @@ qm::cplx qm::lbit::get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> 
         See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
     */
     // Generate gates for the operators
-    tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
+    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
 
     auto result          = cplx(0, 0);
     auto szi_gate        = qm::Gate(szi, {pos_szi}, {2l}); //
@@ -502,7 +538,7 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
         See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
     */
     // Generate gates for the operators
-    tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
+    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
     auto t_olap = tid::ur();
     t_olap.tic();
 
@@ -634,7 +670,7 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
 
                 std::vector<size_t> pos_out;
                 if(go_right) {
-                    tools::log->trace("-> insert u[{}]:{}", idx_slayer, slayer.back().pos);
+                    //                    tools::log->trace("-> insert u[{}]:{}", idx_slayer, slayer.back().pos);
                     if constexpr(settings::debug_circuit) {
                         slayer.back().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                         story_str.append(fmt::format("insert u{} ", slayer.back().pos));
@@ -643,7 +679,7 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
                     pos_out = slayer.back().pos_difference(intersection.at(idx_slayer + 1));
                     slayer.pop_back();
                 } else {
-                    tools::log->trace("<- insert u[{}]:{}", idx_slayer, slayer.front().pos);
+                    //                    tools::log->trace("<- insert u[{}]:{}", idx_slayer, slayer.front().pos);
                     if constexpr(settings::debug_circuit) {
                         slayer.front().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                         story_str.append(fmt::format("insert u{} ", slayer.front().pos));
@@ -656,7 +692,7 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
                 // Collect positions that could be traced
                 if(not pos_out.empty()) {                                                      // Trace positions outside the light cone intersection
                     pos_out.erase(std::unique(pos_out.begin(), pos_out.end()), pos_out.end()); // Keep unique elements
-                    tools::log->trace("trace[{}]:{}", idx_slayer, pos_out);
+                    //                    tools::log->trace("trace[{}]:{}", idx_slayer, pos_out);
                     g    = g.trace_pos(pos_out);
                     g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
                     if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
@@ -675,7 +711,7 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
             for(auto &sgate : slayer) {
                 if(g.has_pos(sgate.pos)) {
                     g = g.insert(sgate);
-                    tools::log->trace("insert u[{}]:{}", idx_slayer, sgate.pos);
+                    //                    tools::log->trace("insert u[{}]:{}", idx_slayer, sgate.pos);
                     if constexpr(settings::debug_circuit) {
                         sgate.draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                         story_str.append(fmt::format("insert u{} ", sgate.pos));
@@ -848,16 +884,17 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             std::vector<double>                 sse_vec(reps);
             std::vector<Eigen::Tensor<cplx, 2>> lbit_overlap_vec(reps);
             for(size_t i = 0; i < reps; i++) {
-#pragma message "disable random field override"
+// #pragma message "disable random field override"
 #pragma message "remove the settings header"
-                std::vector<double> fields_random;
-                for(auto &field : fields) fields_random.emplace_back(rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth));
+                //                std::vector<double> fields_random;
+                //                for(auto &field : fields) fields_random.emplace_back(rnd::normal(settings::model::lbit::J1_mean,
+                //                settings::model::lbit::J1_wdth));
 
                 std::vector<std::vector<qm::Gate>> layers;
                 if(fields.empty())
                     for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer(sites, fmix));
                 else
-                    for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer_choked(sites, fmix, fields_random, fieldvar));
+                    for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer_choked(sites, fmix, fields, fieldvar));
 
                 lbit_overlap_vec[i]                = qm::lbit::get_lbit_real_overlap(layers, sites);
                 offset5                            = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};

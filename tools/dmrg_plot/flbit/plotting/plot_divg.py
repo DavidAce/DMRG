@@ -108,7 +108,7 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                     ytavg = np.trapz(y=y[idx_sat:, :], x=t[idx_sat:], axis=0) / (t[-1] - t[idx_sat])
                     hist, edges = np.histogram(ytavg, bins=meta['bins'], density=True)
                     bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                    line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
+                    line, = ax.step(x=bincentres, y=hist, where='mid', label=None, linewidth=1.25,
                                     color=color, path_effects=path_effects)
                     # line = ax.scatter(x=bincentres, y=hist, label=None,
                     #                    color=color, path_effects=path_effects)
@@ -128,22 +128,48 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
-
                     if 'number' in meta['dsetname'] and linkeys == linprod[-1]:
                         # Plot Luitz data
                         with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
-                            hist = h5ext['L16/W6.0']['hist[NE1][100]'][()]
-                            edges = h5ext['L16/W6.0']['binedges[NE1][100]'][()]
+                            hist = h5ext['L16/W4.0']['hist[NE1][100]'][()]
+                            edges = h5ext['L16/W4.0']['binedges[NE1][100]'][()]
                             bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.85, zorder=0)
+                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=1.0, zorder=0)
+
                             for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                                 key, fmt = key.split(':') if ':' in key else [key, '']
                                 f['legends'][idx][icol]['handle'].append(line_ext)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
-                                if key == 'L':
-                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202}')
-                            else:
-                                f['legends'][idx][icol]['label'].append('')
+                                if key in linkeys[0]:
+                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 W=4.0}')
+                                else:
+                                    f['legends'][idx][icol]['label'].append('')
+
+                            hist = h5ext['L16/W6.0']['hist[NE1][100]'][()]
+                            edges = h5ext['L16/W6.0']['binedges[NE1][100]'][()]
+                            bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
+                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.70, zorder=0)
+                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                                key, fmt = key.split(':') if ':' in key else [key, '']
+                                f['legends'][idx][icol]['handle'].append(line_ext)
+                                f['legends'][idx][icol]['title'] = db['tex'][key]
+                                if key in linkeys[0]:
+                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 W=6.0}')
+                                else:
+                                    f['legends'][idx][icol]['label'].append('')
+
+                            hist = h5ext['L16/W8.0']['hist[NE1][100]'][()]
+                            edges = h5ext['L16/W8.0']['binedges[NE1][100]'][()]
+                            bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
+                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.40, zorder=0)
+                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                                key, fmt = key.split(':') if ':' in key else [key, '']
+                                f['legends'][idx][icol]['handle'].append(line_ext)
+                                f['legends'][idx][icol]['title'] = db['tex'][key]
+                                if key in linkeys[0]:
+                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 W=8.0}')
+                                else:
+                                    f['legends'][idx][icol]['label'].append('')
 
             if dbval:
                 ax.set_title(get_title(dbval, subspec),

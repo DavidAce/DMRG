@@ -1,6 +1,7 @@
 #include "../mps.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "general/iter.h"
 #include "math/num.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
@@ -58,6 +59,38 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     } else {
         throw except::runtime_error("Expected initial axis string: \"random\"|{}. Got \"{}\"", qm::spin::half::valid_axis_str, axis);
     }
+}
+
+void tools::finite::mps::init::random_product_state_zeromag(StateFinite &state, StateInitType type, std::string_view axis, bool use_eigenspinors) {
+    tools::log->info("Setting random product state with zero magnetization of type {} on axis {}", enum2sv(type), axis);
+    Eigen::Tensor<cplx, 1> L(1);
+    L.setConstant(1.0);
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
+    std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+                                                     tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
+    std::array<std::string_view, 2>       arrows  = {"↓", "↑"};
+    std::string                           str;
+    std::vector<size_t>                   seq(state.get_length(), 0);
+    for(auto &&[i, s] : iter::enumerate(seq)) s = num::mod<size_t>(i, 2); // Set Neel pattern 010101010101...
+    std::shuffle(seq.begin(), seq.end(), rnd::internal::rng);             // Shuffle the sequence randomly like 101011110100...
+
+    tools::log->debug("Setting random product state with zero magnetization using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axus, axus);
+    std::string label = "A";
+    for(const auto &mps_ptr : state.mps_sites) {
+        auto &&mps = *mps_ptr;
+        auto   idx = seq.at(mps.get_position<size_t>());
+        mps.set_mps(spinors.at(idx), L, 0, label);
+        str.append(arrows.at(idx));
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->debug("Random state: {}", str);
 }
 
 void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, StateInitType type, std::string_view axis) {
@@ -142,7 +175,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(S
 
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
-    std::string label      = "A";
+    std::string label = "A";
     for(auto &mps_ptr : state.mps_sites) {
         auto &mps  = *mps_ptr;
         int   sign = 2 * bs[mps.get_position()] - 1;

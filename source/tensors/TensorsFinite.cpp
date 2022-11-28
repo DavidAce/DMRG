@@ -76,7 +76,7 @@ void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, St
                                     size_t bitfield, long bond_lim) {
     state->clear_measurements();
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | bond_lim {} | eigspinors {} | bitfield {}", state->get_name(),
-                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type), sector, use_eigenspinors, bitfield, bond_lim);
+                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type), sector, bond_lim, use_eigenspinors, bitfield);
 
     tools::log->debug("Randomizing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));

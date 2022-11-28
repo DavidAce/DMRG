@@ -88,9 +88,11 @@ void xdmrg::resume() {
         switch(settings::strategy::secondary_states) {
             case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
             case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
+            case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
             case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
             case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
-            case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
+            case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG:
+                throw except::runtime_error("TODO! Random product state with zero magnetization initialization not implemented yet");
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         task_list.emplace_back(xdmrg_task::POST_DEFAULT);
@@ -118,6 +120,8 @@ void xdmrg::run_default_task_list() {
             case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
             case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
             case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
+            case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG:
+                throw except::runtime_error("TODO! Random product state with zero magnetization initialization not implemented yet");
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
         default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);

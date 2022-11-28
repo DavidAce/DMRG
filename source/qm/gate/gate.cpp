@@ -12,6 +12,10 @@
 #include <unsupported/Eigen/MatrixFunctions>
 #include <utility>
 
+namespace settings {
+    inline constexpr bool debug_gates = false;
+}
+
 template<typename T>
 std::vector<T> subset(const std::vector<T> &vec, size_t idx_start, size_t num) {
     if(idx_start + num > vec.size()) throw except::range_error("Vector subset start {} num {} out of range for vector of size {}", idx_start, num, vec.size());
@@ -383,15 +387,17 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
         std::set_intersection(tau_sublayer.begin(), tau_sublayer.end(), sig_sublayer.begin(), sig_sublayer.end(), back_inserter(pos_isect));
         int_cone.emplace_back(pos_isect);
     }
-    bool deb = tools::log->level() == spdlog::level::trace;
-    if(deb) {
-        fmt::print("Lightcones\n");
-        auto tau_pic = get_lightcone_picture(unitary_layers, tau_cone, "tau");
-        auto sig_pic = get_lightcone_picture(unitary_layers, sig_cone, "sig");
-        auto int_pic = get_lightcone_picture(unitary_layers, int_cone, "int");
-        for(const auto &c : iter::reverse(tau_pic)) fmt::print("{}\n", c);
-        for(const auto &c : iter::reverse(sig_pic)) fmt::print("{}\n", c);
-        for(const auto &c : iter::reverse(int_pic)) fmt::print("{}\n", c);
+    if constexpr(settings::debug_gates) {
+        bool deb = tools::log->level() == spdlog::level::trace;
+        if(deb) {
+            fmt::print("Lightcones\n");
+            auto tau_pic = get_lightcone_picture(unitary_layers, tau_cone, "tau");
+            auto sig_pic = get_lightcone_picture(unitary_layers, sig_cone, "sig");
+            auto int_pic = get_lightcone_picture(unitary_layers, int_cone, "int");
+            for(const auto &c : iter::reverse(tau_pic)) fmt::print("{}\n", c);
+            for(const auto &c : iter::reverse(sig_pic)) fmt::print("{}\n", c);
+            for(const auto &c : iter::reverse(int_pic)) fmt::print("{}\n", c);
+        }
     }
 
     return int_cone;
@@ -517,8 +523,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             idx1 = tenx::idx({3}, {0});
             idx2 = tenx::idx({2, 3}, {2, 3});
         }
-        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos, updown_gate.pos,
-                          pos_isect, pos_nsect, inc);
+        if constexpr(settings::debug_gates)
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos,
+                              updown_gate.pos, pos_isect, pos_nsect, inc);
         auto op = contract_b(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
         return qm::Gate{op, updown_gate.pos, updown_gate.dim};
     }
@@ -620,8 +627,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             dim  = concat(subset(middle_gate.dim, 0, merged), updown_gate.dim);
             dim2 = repeat(std::array<long, 1>{shp_mid4[0] * shp_udn2[0]});
         }
-        tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_a", middle_gate.pos, updown_gate.pos,
-                          pos_isect, pos_nsect, inc);
+        if constexpr(settings::debug_gates)
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_a", middle_gate.pos,
+                              updown_gate.pos, pos_isect, pos_nsect, inc);
         auto op = contract_a(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
         return qm::Gate{op, pos, dim};
     }
@@ -682,8 +690,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 idx_dn = tenx::idx({2}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
 
                 shf4 = tenx::array4{0, 1, 3, 2};
-                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
-                                  updown_gate.pos, pos_isect, pos_nsect, inc);
+                if constexpr(settings::debug_gates)
+                    tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
+                                      updown_gate.pos, pos_isect, pos_nsect, inc);
                 op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
             } else if(offset == offmax) {
                 /*  Insert at offmax
@@ -725,8 +734,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 idx_dn = tenx::idx({3}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
                 shf4   = tenx::array4{1, 0, 2, 3};
             }
-            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
-                              updown_gate.pos, pos_isect, pos_nsect, inc);
+            if constexpr(settings::debug_gates)
+                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
+                                  updown_gate.pos, pos_isect, pos_nsect, inc);
             op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
         } else {
             /*  Insert at offmax
@@ -765,8 +775,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             idx_up = tenx::idx({1}, {1});
             idx_dn = tenx::idx({4}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
             shf6   = tenx::array6{1, 0, 2, 3, 5, 4};
-            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos,
-                              updown_gate.pos, pos_isect, pos_nsect, inc);
+            if constexpr(settings::debug_gates)
+                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos,
+                                  updown_gate.pos, pos_isect, pos_nsect, inc);
             op = contract_c(middle_gate.op, updown_gate.op, shp_mid6, idx_up, idx_dn, shf6, dim2);
         }
         if(op.size() == 0) throw std::logic_error("No op computed!");
@@ -785,7 +796,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
     bool inc = std::includes(dn_gate.pos.begin(), dn_gate.pos.end(), up_gate.pos.begin(), up_gate.pos.end());
     if(pos_isect.empty()) return dn_gate;
 
-    tools::log->trace("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
+    if constexpr(settings::debug_gates) tools::log->trace("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
 
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // This case is a vertical stack. Should be the simplest case
@@ -973,10 +984,12 @@ template<auto N>
 qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpairs) {
     // Trace off pairs of indices on a gate
     // This is done one by one recursively until all pairs have been traced
-    if constexpr(N == 1) tools::log->trace("Tracing pos {} | dim {} | index pair [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
-    if constexpr(N == 2)
-        tools::log->trace("Tracing gate pos {} | dim {} | index pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second,
-                          idxpairs[1].first, idxpairs[1].second);
+    if constexpr(settings::debug_gates) {
+        if constexpr(N == 1) tools::log->trace("Tracing pos {} | dim {} | index pair [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
+        if constexpr(N == 2)
+            tools::log->trace("Tracing gate pos {} | dim {} | index pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second,
+                              idxpairs[1].first, idxpairs[1].second);
+    }
 
     // Compute the remaining indices positions and dimensions
     auto idx = gate.idx(); // Twice as long as pos and dim! It has the top and bottom indices

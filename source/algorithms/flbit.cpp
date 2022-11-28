@@ -119,6 +119,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
         switch(task) {
             case flbit_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_ZEROMAG: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE_ZEROMAG); break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;

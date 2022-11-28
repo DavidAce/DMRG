@@ -9,18 +9,19 @@ import platform
 
 template_filename = 'input_template_flbit.cfg'
 basename    = 'mbl'
-location    = "input-L[8-16]-u8-f[0.1-0.5]-const"
+location    = "input-L[8-16]-u8-f[0.1-1.0]-zeromag"
 
 
 sites               = [8,12,16]
 J                   = [[0.000, 0.100, 0.100]]
 w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
-f                   = [0.1, 0.2, 0.3, 0.4, 0.5]
+f                   = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 u                   = [8]
 x                   = [0.85]
 r                   = [-1]
-initial_state       = ["PRODUCT_STATE_NEEL"]
-output_prefix       = "output-u8-f[0.2-0.4]-const"
+# initial_state       = ["PRODUCT_STATE_NEEL"]
+initial_state       = ["RANDOM_PRODUCT_STATE_ZEROMAG"]
+output_prefix       = "output-u8-f[0.1-1.0]-zeromag"
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
     tmp_storage = "/scratch/local"
