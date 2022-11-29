@@ -884,8 +884,8 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             std::vector<double>                 sse_vec(reps);
             std::vector<Eigen::Tensor<cplx, 2>> lbit_overlap_vec(reps);
             for(size_t i = 0; i < reps; i++) {
-// #pragma message "disable random field override"
-#pragma message "remove the settings header"
+                // #pragma message "disable random field override"
+                // #pragma message "remove the settings header"
                 //                std::vector<double> fields_random;
                 //                for(auto &field : fields) fields_random.emplace_back(rnd::normal(settings::model::lbit::J1_mean,
                 //                settings::model::lbit::J1_wdth));

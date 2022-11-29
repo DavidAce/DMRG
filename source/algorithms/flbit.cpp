@@ -56,8 +56,13 @@ void flbit::resume() {
 
         // Create an initial state in the real basis
         auto bond_lim = settings::get_bond_init(status.algo_type);
-        if(settings::strategy::initial_state != StateInit::PRODUCT_STATE_NEEL)
-            tools::log->warn("Expected initial_state == PRODUCT_STATE_NEEL. Got {}", enum2sv(settings::strategy::initial_state));
+        switch(settings::strategy::initial_state) {
+            case StateInit::PRODUCT_STATE_NEEL:
+            case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG: break;
+            default:
+                tools::log->warn("Expected initial_state: PRODUCT_STATE_NEEL|RANDOM_PRODUCT_STATE_ZEROMAG. Got {}", enum2sv(settings::strategy::initial_state));
+        }
+
         if(settings::strategy::initial_axis != "+z") tools::log->warn("Expected initial_axis == +z. Got {}", settings::strategy::initial_axis);
 
         tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_axis,
