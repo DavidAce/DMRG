@@ -173,7 +173,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, dou
         //        double               th2 = rnd::uniform_double_box(-1, 1);
         //        double               th3 = rnd::uniform_double_box(-1, 1);
         //        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
-#pragma message "Trying normal distribution for unitary circuit factors"
+#pragma message "Trying normal distribution for ALL terms in the unitary gates"
         double               th0 = rnd::normal(0, 1);
         double               th1 = rnd::normal(0, 1);
         double               th2 = rnd::normal(0, 1);
