@@ -1,14 +1,16 @@
-unset(BACKWARD_LIBRARY)
-unset(BACKWARD_LIBRARY CACHE)
+
+if(TARGET Backward::Backward OR Backward_FOUND)
+    return()
+endif()
 
 find_path(BACKWARD_INCLUDE_DIR
-        backward.hpp
-        HINTS ${DMRG_DEPS_INSTALL_DIR}
-        PATH_SUFFIXES include backward/include
-        NO_CMAKE_ENVIRONMENT_PATH
-        NO_SYSTEM_ENVIRONMENT_PATH
-        NO_CMAKE_SYSTEM_PATH
-        )
+          backward.hpp
+          HINTS ${DMRG_DEPS_INSTALL_DIR}
+          PATH_SUFFIXES include backward/include
+          NO_CMAKE_ENVIRONMENT_PATH
+          NO_SYSTEM_ENVIRONMENT_PATH
+          NO_CMAKE_SYSTEM_PATH
+          )
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Backward
