@@ -225,8 +225,7 @@ void LBit::build_mpo()
         throw except::logic_error("expected J2_rand.length()({}) <= 1+J2_ctof ({})", h5tb.param.J2_rand.length(), h5tb.param.J2_ctof);
 
 //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
-#pragma message "using sz instead of number operator"
-    Eigen::Tensor<cplx, 2> n = tenx::TensorMap(sz);
+    Eigen::Tensor<cplx, 2> Z = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);
     long                   R = static_cast<long>(h5tb.param.J2_ctof);
     long                   F = R + 2l;
@@ -235,19 +234,19 @@ void LBit::build_mpo()
 
     mpo_internal.slice(tenx::array4{0, 0, 0, 0}, extent4).reshape(extent2) = I;
     mpo_internal.slice(tenx::array4{F, F, 0, 0}, extent4).reshape(extent2) = I;
-    mpo_internal.slice(tenx::array4{1, 0, 0, 0}, extent4).reshape(extent2) = n;
+    mpo_internal.slice(tenx::array4{1, 0, 0, 0}, extent4).reshape(extent2) = Z;
 
     if(R >= 2)
         for(const auto &i : num::range<long>(2, R + 1)) { mpo_internal.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
 
-    mpo_internal.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = n;
-    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * n - e_shift * I;
+    mpo_internal.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = Z;
+    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * Z - e_shift * I;
 
     if(R >= 1)
         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.length())) {
-            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[static_cast<size_t>(i)] * n;
+            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[static_cast<size_t>(i)] * Z;
         }
-    mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * n;
+    mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * Z;
 
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
@@ -359,10 +358,8 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
     }
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> MPO_nbody = MPO(); // Start with the full mpo
-#pragma message "using sz instead of number operator"
-    //    Eigen::Tensor<cplx, 2> n         = tenx::TensorCast(0.5 * (id + sz)); // Number operator
-    Eigen::Tensor<cplx, 2> n = tenx::TensorMap(sz);
-    Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id); // identity
+    Eigen::Tensor<cplx, 2> Z         = tenx::TensorMap(sz);
+    Eigen::Tensor<cplx, 2> I         = tenx::TensorMap(id); // identity
 
     for(const auto &r : J2_range) {
         double J2_count = 1.0;
@@ -409,15 +406,15 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
         if(J2_count > 1.0) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", J2_count, get_position());
         J2_rand[r] /= J2_count;
     }
-    MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * n - e_shift * I);
+    MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * Z - e_shift * I);
 
     if(R >= 1)
         for(const auto &r : J2_range) {
             if(r >= J2_rand.size()) break;
-            MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * n;
+            MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * Z;
         }
 
-    MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * n;
+    MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * Z;
     if constexpr(settings::debug_lbit)
         tools::log->info("Creating mpo | pos {} | nbody {} | skip {} \n{}", get_position(), nbody.value(), skip ? skip.value() : std::vector<size_t>{-1ul},
                          format_mpo(MPO_nbody, J1_rand, J2_rand, J3_rand));
@@ -433,12 +430,9 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_shifted_view(double site_energy) const
     long                   row  = temp.dimension(0) - 1;
     long                   col  = 0;
     if(parity_sep) row = temp.dimension(0) - 2;
-#pragma message "using sz instead of number operator"
-
-    //    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorCast(0.5 * (id + sz));
-    Eigen::Tensor<cplx, 2> n                                           = tenx::TensorMap(sz);
-    Eigen::Tensor<cplx, 2> i                                           = tenx::TensorMap(id);
-    temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * n - site_energy * i;
+    Eigen::Tensor<cplx, 2> Z                                           = tenx::TensorMap(sz);
+    Eigen::Tensor<cplx, 2> I                                           = tenx::TensorMap(id);
+    temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = h5tb.param.J1_rand * Z - site_energy * I;
     return temp;
 }
 
