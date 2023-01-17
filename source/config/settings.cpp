@@ -127,6 +127,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::u_layer"                         , model::lbit::u_layer);
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
+    dmrg_config.load_parameter("model::lbit::ugate_type"                      , model::lbit::ugate_type);
 
     dmrg_config.load_parameter("strategy::move_sites_when_stuck"              , strategy::move_sites_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);

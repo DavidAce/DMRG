@@ -15,6 +15,7 @@ enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
+enum class UnitaryGateType { UNIFORM, BLOCKED };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageEvent : int {
@@ -241,6 +242,10 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == GateMove::OFF)                                       return "OFF";
         if(item == GateMove::ON)                                        return "ON";
         if(item == GateMove::AUTO)                                      return "AUTO";
+    }
+    if constexpr(std::is_same_v<T, UnitaryGateType>) {
+        if(item == UnitaryGateType::UNIFORM)                            return "UNIFORM";
+        if(item == UnitaryGateType::BLOCKED)                            return "BLOCKED";
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
@@ -496,6 +501,7 @@ constexpr auto sv2enum(std::string_view item) {
         SVDLibrary,
         UpdateWhen,
         GateMove,
+        UnitaryGateType,
         ModelType,
         EdgeStatus,
         StorageLevel,
@@ -564,6 +570,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "OFF")                                   return GateMove::OFF;
         if(item == "ON")                                    return GateMove::ON;
         if(item == "AUTO")                                  return GateMove::AUTO;
+    }
+    if constexpr(std::is_same_v<T, UnitaryGateType>) {
+        if(item == "UNIFORM")                               return UnitaryGateType::UNIFORM;
+        if(item == "FIELD_CONSTRICTION")                    return UnitaryGateType::BLOCKED;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;

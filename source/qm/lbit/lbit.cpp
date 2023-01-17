@@ -1,11 +1,14 @@
 #include "../lbit.h"
 #include "../spin.h"
 #include "config/debug.h"
+#include "config/enums.h"
 // #include "config/settings.h"
+#include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "io/fmt.h"
 #include "io/spdlog.h"
+#include "math/fit.h"
 #include "math/linalg.h"
 #include "math/num.h"
 #include "math/rnd.h"
@@ -30,13 +33,13 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
      @verbatim
                    0      1                0
                    |      |                |
-                 [ exp(-ifK) ]  ---> [ exp(-ifK) ]
+                 [ exp(-ifM) ]  ---> [ exp(-ifM) ]
                    |      |               |
                    2      3               1
 
      @endverbatim
 
-     Where K is defined as
+     Where M is defined as
         θ³n[i]n[i+1] +
         θ²n[i](1-n[i+1]) +
         θ¹(1-n[i])n[i+1] +
@@ -56,62 +59,34 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     */
 
     tools::log->trace("Generating twosite unitaries");
-    constexpr bool        kroneckerSwap = false;
-    auto                  SZ            = qm::spin::half::gen_twobody_spins(qm::spin::half::sz, kroneckerSwap); // We use these as matrices
-    auto                  SP            = qm::spin::half::gen_twobody_spins(qm::spin::half::sp, kroneckerSwap); // We use these as matrices
-    auto                  SM            = qm::spin::half::gen_twobody_spins(qm::spin::half::sm, kroneckerSwap); // We use these as matrices
-    auto                  ID            = qm::spin::half::gen_twobody_spins(qm::spin::half::id, kroneckerSwap); // We use these as matrices
-    auto                  N             = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
-    auto                  spin_dims     = std::vector<long>{2l, 2l};
+    auto                  SZ        = qm::spin::half::gen_twobody_spins(qm::spin::half::sz); // We use these as matrices
+    auto                  SP        = qm::spin::half::gen_twobody_spins(qm::spin::half::sp); // We use these as matrices
+    auto                  SM        = qm::spin::half::gen_twobody_spins(qm::spin::half::sm); // We use these as matrices
+    auto                  ID        = qm::spin::half::gen_twobody_spins(qm::spin::half::id); // We use these as matrices
+    auto                  N         = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
+    auto                  spin_dims = std::vector<long>{2l, 2l};
     std::vector<qm::Gate> unitaries;
     unitaries.reserve(sites - 1);
     for(size_t idx = 0; idx < sites - 1; idx++) {
-        //        double               th0 = rnd::uniform_double_box(-1, 1);
-        //        double               th1 = rnd::uniform_double_box(-1, 1);
-        //        double               th2 = rnd::uniform_double_box(-1, 1);
-        //        double               th3 = rnd::uniform_double_box(-1, 1);
-        //        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
-#pragma message "Trying normal distribution for unitary circuit factors"
         double               th0 = rnd::normal(0, 1);
         double               th1 = rnd::normal(0, 1);
         double               th2 = rnd::normal(0, 1);
         double               th3 = rnd::normal(0, 1);
         std::complex<double> c(rnd::normal(0, 1), rnd::normal(0, 1));
-        // #pragma message "Trying square distribution for unitary circuit factors"
-        //         double               th0 = rnd::uniform_double_box(-1, 1);
-        //         double               th1 = rnd::uniform_double_box(-1, 1);
-        //         double               th2 = rnd::uniform_double_box(-1, 1);
-        //         double               th3 = rnd::uniform_double_box(-1, 1);
-        //         double               rx  = rnd::uniform_double_box(-1, 1);
-        //         double               ix  = rnd::uniform_double_box(-1, 1);
-        //         std::complex<double> t(num::sign(rx) * rx * rx, num::sign(ix) * ix * ix);
-
-        auto             indices = std::vector<size_t>{idx, idx + 1};
-        Eigen::Matrix4cd H       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
+        auto                 indices = std::vector<size_t>{idx, idx + 1};
+        Eigen::Matrix4cd     H       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
                              SP[0] * SM[1] * c + SP[1] * SM[0] * std::conj(c);
 
-        if constexpr(kroneckerSwap) {
-            // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
-
-            //         0               0      1
-            //         |               |      |
-            //   [ exp(-ifK) ]  ==  [ exp(-ifK) ]
-            //        |               |      |
-            //        1               2      3
-
-            unitaries.emplace_back(tenx::TensorMap((imn * fmix * H).exp().eval()), indices, spin_dims);
-        } else {
-            // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
-            // the kronecker product that generated two-site gates above has indexed right-to-left
-            //         0                   1      0              0      1                0
-            //         |                   |      |              |      |                |
-            //   [ exp(-ifK) ]  --->    [ exp(-ifK) ]   --->  [ exp(-ifK) ]  --->  [ exp(-ifK) ]
-            //         |                   |      |              |      |                |
-            //         1                   3      2              2      3                1
-            Eigen::Tensor<cplx, 2> K_shuffled = tenx::TensorMap(H, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
-            Eigen::MatrixXcd       expifK     = (imn * fmix * tenx::MatrixMap(K_shuffled)).exp();
-            unitaries.emplace_back(tenx::TensorMap(expifK), indices, spin_dims);
-        }
+        // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
+        // the kronecker product that generated two-site gates above has indexed right-to-left
+        //         0                   1      0              0      1                0
+        //         |                   |      |              |      |                |
+        //   [ exp(-ifM) ]  --->    [ exp(-ifM) ]   --->  [ exp(-ifM) ]  --->  [ exp(-ifM) ]
+        //         |                   |      |              |      |                |
+        //         1                   3      2              2      3                1
+        Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(H, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+        Eigen::MatrixXcd       expifM     = (imn * fmix * tenx::MatrixMap(M_shuffled)).exp();
+        unitaries.emplace_back(tenx::TensorMap(expifM), indices, spin_dims);
     }
     if constexpr(settings::debug) {
         // Sanity check
@@ -122,19 +97,20 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(size_t sites, double fmi
     return unitaries;
 }
 
-std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, double fmix, const std::vector<double> &fields, [[maybe_unused]] double fieldvar) {
+std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_blocked(size_t sites, double fmix, const std::vector<double> &fields,
+                                                                [[maybe_unused]] double fieldvar) {
     /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
      *
      *
      @verbatim
                    0      1                0
                    |      |                |
-                 [ exp(-ifK) ]  ---> [ exp(-ifK) ]
+                 [ exp(-ifM) ]  ---> [ exp(-ifM) ]
                    |      |               |
                    2      3               1
      @endverbatim
 
-     Where K is defined as
+     Where M is defined as
         θ³n[i]n[i+1] +
         θ²n[i](1-n[i+1]) +
         θ¹(1-n[i])n[i+1] +
@@ -166,54 +142,28 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer_choked(size_t sites, dou
     for(size_t idx = 0; idx < sites - 1; idx++) {
         // This 2-site gate connects sites idx and idx+1
         double diff = std::abs(fields[idx] - fields[idx + 1]);
-        double cvar = std::exp(-2.0 * diff); // Squared exponential decay
-
-        //        double               th0 = rnd::uniform_double_box(-1, 1);
-        //        double               th1 = rnd::uniform_double_box(-1, 1);
-        //        double               th2 = rnd::uniform_double_box(-1, 1);
-        //        double               th3 = rnd::uniform_double_box(-1, 1);
-        //        std::complex<double> t(rnd::uniform_double_box(-1, 1), rnd::uniform_double_box(-1, 1));
-#pragma message "Trying normal distribution for ALL terms in the unitary gates"
-        double               th0 = rnd::normal(0, 1);
-        double               th1 = rnd::normal(0, 1);
-        double               th2 = rnd::normal(0, 1);
-        double               th3 = rnd::normal(0, 1);
-        std::complex<double> c(rnd::normal(0, cvar), rnd::normal(0, cvar)); // standard complex normal random variable
-        // #pragma message "Trying square distribution for unitary circuit factors"
-        //         double               th0 = rnd::uniform_double_box(-1, 1);
-        //         double               th1 = rnd::uniform_double_box(-1, 1);
-        //         double               th2 = rnd::uniform_double_box(-1, 1);
-        //         double               th3 = rnd::uniform_double_box(-1, 1);
-        //         double               rx  = rnd::uniform_double_box(-1, 1);
-        //         double               ix  = rnd::uniform_double_box(-1, 1);
-        //         std::complex<double> t(num::sign(rx) * rx * rx, num::sign(ix) * ix * ix);
+        double dcay = std::exp(-2.0 * diff); // Squared exponential decay
+        auto   th0  = rnd::normal(0, 1);
+        auto   th1  = rnd::normal(0, 1);
+        auto   th2  = rnd::normal(0, 1);
+        auto   th3  = rnd::normal(0, 1);
+#pragma message "Trying c with larger variance = 2²"
+        auto c = std::complex<double>(rnd::normal(0, 2), rnd::normal(0, 2)) * dcay; // complex normal random variable
 
         auto             indices = std::vector<size_t>{idx, idx + 1};
-        Eigen::Matrix4cd K       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
+        Eigen::Matrix4cd M       = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
                              SP[0] * SM[1] * c + SP[1] * SM[0] * std::conj(c);
 
-        if constexpr(kroneckerSwap) {
-            // Here the kronecker already has index pattern left-to-right and there is no need to shuffle
-
-            //         0               0      1
-            //         |               |      |
-            //   [ exp(-ifK) ]  ==  [ exp(-ifK) ]
-            //        |               |      |
-            //        1               2      3
-
-            unitaries.emplace_back(tenx::TensorMap((imn * fmix * K).exp().eval()), indices, spin_dims);
-        } else {
-            // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
-            // the kronecker product that generated two-site gates above has indexed right-to-left
-            //         0                   1      0              0      1                0
-            //         |                   |      |              |      |                |
-            //   [ exp(-ifK) ]  --->    [ exp(-ifK) ]   --->  [ exp(-ifK) ]  --->  [ exp(-ifK) ]
-            //         |                   |      |              |      |                |
-            //         1                   3      2              2      3                1
-            Eigen::Tensor<cplx, 2> K_shuffled = tenx::TensorMap(K, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
-            Eigen::MatrixXcd       expifK     = (imn * fmix * tenx::MatrixMap(K_shuffled)).exp();
-            unitaries.emplace_back(tenx::TensorMap(expifK), indices, spin_dims);
-        }
+        // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
+        // the kronecker product that generated two-site gates above has indexed right-to-left
+        //         0                   1      0              0      1                0
+        //         |                   |      |              |      |                |
+        //   [ exp(-ifM) ]  --->    [ exp(-ifM) ]   --->  [ exp(-ifM) ]  --->  [ exp(-ifM) ]
+        //         |                   |      |              |      |                |
+        //         1                   3      2              2      3                1
+        Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(M, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+        Eigen::MatrixXcd       expifM     = (imn * fmix * tenx::MatrixMap(M_shuffled)).exp();
+        unitaries.emplace_back(tenx::TensorMap(expifM), indices, spin_dims);
     }
     if constexpr(settings::debug) {
         // Sanity check
@@ -305,238 +255,47 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site
     return time_evolution_operators;
 }
 
-qm::cplx qm::lbit::get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &rho, size_t pos_rho,
-                                      const Eigen::Matrix2cd &sig, size_t pos_sig) {
-    // We calculate the operator overlap = Tr(ρ' σ^z_j) / Tr(ρ') = 1/2^L Tr(σ' σ^z_j)
-    // Define
-    //      ρ = (1/2^L)  (σ^z_i + 1 ) ⊗ I_i',
-    // where I_i' is the identity matrix on sites j != i
-    // Then ρ represents a state |psi><psi| where site i is at level 0 with probability 1, and
-    // the others sites are at level 0 or 1 with probability 1/2.
-    // E.g. ρ could be a state with magnetization 1 at site i, and 0 elsewhere,
-    // or ρ could be a state with 1 particle at site i, and cat state of 0 and 1 particles elsewhere.
-    // Applying the unitary circuit gives
-    //      ρ' = U† ρ U = (1/2^L) (U† σ^z_i U + 1),
-    // where σ' = U† σ^z_i U acts non-trivially on all sites.
-    // Substitution and carrying out the trace gives Tr(ρ' σ^z_j) / Tr(ρ') = 1/2^L Tr(σ' σ^z_j).
-    //
-    // Note that when the light-cone from site i can't reach site j in the unitary circuit, then
-    // ρ'_i has no support where σ^z_j connects.  Therefore, we effectively get
-    //        Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
-    //   or alternatively
-    //        Tr(ρ'_i σ^z_j) = (1/2^L) Tr([(σ^z_i +1) ⊗ I_i' ] σ^z_j) = (1/2^L) Tr( [2^L] σ^z_i ⊗ σ^z_j ) = Tr(σ^z_i) Tr(σ^z_j) = 0
-
-    // See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
-
-    // Generate gates for the operators
-    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (ρ_{} σ_{}) / Tr(ρ_{})", pos_rho, pos_sig);
-    //    auto t_lexp   = tid::tic_scope("lbit_exp_value");
-    auto rho_gate = qm::Gate(rho, {pos_rho}, {2l});
-    auto sig_gate = qm::Gate(sig, {pos_sig}, {2l});
-    auto g        = rho_gate; // Start with the bottom rho gate
-    auto lc2      = qm::get_lightcone_intersection(unitary_layers, pos_rho, pos_sig);
-
-    // Setup debug printing of unitary circuits
-    bool                     deb = tools::log->level() <= spdlog::level::debug;
-    std::vector<std::string> net; // Great for debugging
-    std::vector<std::string> log; // Great for debugging
-    std::string              empty_layer;
-    size_t                   uw = 7; // Width of a unitary 2-site gate box
-    size_t                   op = 3; // Overlap of a unitary 2-site gate box
-    size_t                   tw = 6; // Tag width
-
-    // Start contracting the unitary circuit
-    for(const auto &[idx_layer, layer] : iter::enumerate(unitary_layers)) {
-        // Generate
-        if(layer.empty()) continue;
-        size_t gate_size     = layer.front().pos.size();
-        size_t pos_max       = std::max(layer.front().pos.back(), layer.back().pos.back());
-        auto   gate_sequence = qm::get_gate_sequence(layer);
-        if(deb and net.empty()) {
-            auto str_rho = fmt::format("[{}]", pos_rho);
-            empty_layer  = fmt::format("{0:^{1}}", " ", tw + pos_max * (uw - op) + op);
-            net.emplace_back(empty_layer);
-            net.back().replace(0, tw, "rho  :");
-            net.back().replace(tw + pos_rho * (uw - op), str_rho.size(), str_rho);
-            log.emplace_back(fmt::format("insert rho[{}] now{}", pos_rho, g.pos));
-        }
-        for(const auto &[idx_sublayer, seq] : iter::enumerate(gate_sequence)) {
-            std::string layer_str = empty_layer;
-            std::string story_str;
-            for(const auto &[idx_seq, pos_gate] : iter::enumerate(seq)) {
-                auto &u            = layer.at(pos_gate);
-                auto  idx_sublayer = num::mod<size_t>(pos_gate, gate_size);
-                if constexpr(settings::debug_circuit) layer_str.replace(0, tw, fmt::format("u[{:^2}]:", 2 * idx_layer + idx_sublayer)); // Setup layer tag
-
-                // Going through the sequence first forward, then backward, we are handed u gates which may or may not connect to our current g gate.
-                // For a successful connection, at least one pos in g should be present in u gate.
-                // After connecting a full layer, trace away legs of g that are outside the light-cone intersection between rho and sigma.
-
-                // Check if g.pos and u.pos have sites in common
-                std::vector<size_t> pos_isect;
-                std::set_intersection(g.pos.begin(), g.pos.end(), u.pos.begin(), u.pos.end(), back_inserter(pos_isect));
-
-                if(not pos_isect.empty()) {
-                    // Found a matching u. Connect it
-                    auto pos_old = g.pos;
-                    g            = g.insert(u);
-                    if constexpr(settings::debug_circuit)
-                        layer_str.replace(tw + u.pos.front() * (uw - op), uw,
-                                          fmt::format("[{1:^{0}}]", uw - 2, fmt::format("{:<2},{:>2}", u.pos.front(), u.pos.back())));
-                    if constexpr(settings::debug_circuit) story_str.append(fmt::format("insert u{} ", u.pos));
-                }
-            }
-            // Determine the positions that are allowed
-            const std::vector<size_t> &pos_needed = lc2[2 * idx_layer + idx_sublayer + 1]; // This specifies sites that are needed to connect the coming gate
-
-            // Check if g.pos has non-needed sites
-            std::vector<size_t> pos_outside;
-            std::set_difference(g.pos.begin(), g.pos.end(), pos_needed.begin(), pos_needed.end(), back_inserter(pos_outside));
-            if(not pos_outside.empty()) {
-                // Found positions outside the light cone. Trace them
-                auto pos_old = g.pos;
-                g            = g.trace_pos(pos_outside);
-                // Normalize by divinding the trace of each 2x2 identity.
-                // When out of the light cone, gates do not connect to the final operator, and on those sites we
-                // the unitary circuit cancels, becoming equivalent to an identity. (as in U^dagger U = I).
-                for([[maybe_unused]] const auto &p : pos_outside) g.op = g.op * g.op.constant(0.5);
-                if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_outside));
-            }
-            if constexpr(settings::debug_circuit) story_str.append(fmt::format("now{} ", g.pos));
-            if constexpr(settings::debug_circuit) net.emplace_back(layer_str);
-            if constexpr(settings::debug_circuit) log.emplace_back(story_str);
-        }
-    }
-    cplx result;
-    if(g.pos.empty()) {
-        if(g.op.dimension(0) * g.op.dimension(1) != 1) // g.op should be a rank-2 tensor of dimensions 1x1
-            throw except::runtime_error("Expected empty gate to have cplx op: Got dims {}", g.op.dimensions());
-        // This happens when the light cone from site i can't reach site j within the current depth of the unitary circuit.
-        // Essentially, ρ'_i has no support where σ^z_j connects. Therefore, we effectively get
-        //      Tr(ρ'_i σ^z_j) =  Tr(ρ_i ⊗ σ^z_j) =  Tr(ρ_i) Tr(σ^z_j) = 0
-
-        Eigen::Tensor<cplx, 0> g_sig_trace = g.op.trace() * sig_gate.op.trace();
-        result                             = g_sig_trace.coeff(0);
-        if constexpr(settings::debug_circuit) net.emplace_back(empty_layer);
-        if constexpr(settings::debug_circuit) net.back().replace(0, tw, "sig  :");
-        if constexpr(settings::debug_circuit) log.emplace_back(fmt::format("sigma not connected -> result = {:.1f}{:+.1f}i", result.real(), result.imag()));
-    } else {
-        // In the last step we connect the sigma operator and trace everything down to a cplx
-        auto g_trace     = g.trace();
-        auto norm        = (rho * sig).trace();               // Will be 1 or 2 depending on what rho is (i.e. either sz or 0.5*(1+sz))
-        auto g_sig_trace = g.connect_under(sig_gate).trace(); //
-        if(std::abs(g_trace) > 1e-8) norm *= g_trace;
-        result = g_sig_trace / norm; // What is the correct liom normalization here?
-        if constexpr(settings::debug_circuit) {
-            auto str_sig = fmt::format("[{}]", pos_sig);
-            net.emplace_back(empty_layer);
-            net.back().replace(0, tw, "sig  :");
-            net.back().replace(tw + pos_sig * (uw - op), str_sig.size(), str_sig);
-            log.emplace_back(fmt::format("insert sigma[{0}] now{1} trace{1} result = {2:.1f}{3:+.1f}i", pos_sig, g.pos, result.real(), result.imag()));
-        }
-    }
-
-    tools::log->debug("Computed Tr(ρ_{} σ_{}) / Tr(ρ_{}) = {:.6f}{:+.6f}i", pos_rho, pos_sig, pos_rho, result.real(), result.imag());
-    if constexpr(settings::debug_circuit)
-        for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | log: {}", layer, log[idx]);
-    return result;
-}
-
-qm::cplx qm::lbit::get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi,
-                                       const Eigen::Matrix2cd &szj, size_t pos_szj, long sites) {
-    /*! \brief Calculates the operator overlap = Tr(τ^z_i σ^z_j) / Tr(σ^z_j)
-        Where
-            τ^z_i = U† σ^z_i  U,
-        and U is expressed as a unitary circuit transformation.
-        See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
-    */
-    // Generate gates for the operators
-    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
-
-    auto result          = cplx(0, 0);
-    auto szi_gate        = qm::Gate(szi, {pos_szi}, {2l}); //
-    auto szj_gate        = qm::Gate(szj, {pos_szj}, {2l});
-    auto intersection    = qm::get_lightcone_intersection(unitary_layers, pos_szi, pos_szj);
-    auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_layers, intersection); // Selected gates in each layer
-    auto is_disconnected = std::any_of(intersection.begin(), intersection.end(), [](auto &layer) { return layer.empty(); });
-    if(is_disconnected) {
-        if constexpr(settings::debug_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
-        return result;
-    }
-    // Setup debug printing of unitary circuits
-    std::deque<std::string> net;                                          // Great for debugging
-    std::deque<std::string> log;                                          // Great for debugging
-    size_t                  uw        = 7;                                // Width of a unitary 2-site gate box
-    size_t                  op        = 3;                                // Overlap of a unitary 2-site gate box
-    size_t                  tw        = 6;                                // Tag width
-    size_t                  mp        = static_cast<size_t>(sites) - 1ul; // Max pos
-    auto                    empty_str = fmt::format("{0:^{1}}", " ", tw + mp * (uw - op) + op);
-
-    // Start contracting selected unitary gates bottom to top.
-    auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
-    if constexpr(settings::debug_circuit) {
-        std::string layer_str = empty_str;
-        szi_gate.draw_pos(layer_str, "szi  :");
-        net.push_front(layer_str);
-        log.push_front(fmt::format("insert σzi{}", szi_gate.pos));
-    }
-
-    for(auto &&[idx_slayer, slayer] : iter::enumerate(unitary_slayers)) {
-        std::string layer_str = empty_str;
-        std::string story_str;
-        for(auto &sgate : slayer) {
-            if(g.has_pos(sgate.pos)) {
-                g = g.insert(sgate);
-                if constexpr(settings::debug_circuit) {
-                    sgate.draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
-                    story_str.append(fmt::format("insert u{} ", sgate.pos));
-                }
-                auto pos_out = sgate.pos_difference(intersection.at(idx_slayer + 1));
-                if(not pos_out.empty()) {
-                    // Trace positions outside the light cone intersection
-                    g    = g.trace_pos(pos_out);
-                    g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
-                    if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
-                }
-            }
-        }
-        if constexpr(settings::debug_circuit) {
-            story_str.append(fmt::format("now{} ", g.pos));
-            if(layer_str != empty_str or not story_str.empty()) {
-                log.emplace_back(story_str);
-                net.emplace_back(layer_str);
-            }
-        }
-    }
-
-    if(g.has_pos(szj_gate.pos)) {
-        // Connect σ^z_j at the top
-        log.push_back(fmt::format("insert σzj{} ", szj_gate.pos));
-        g = szj_gate.connect_above(g);
-        szj_gate.mark_as_used();
-        std::string layer_str = empty_str;
-        szj_gate.draw_pos(layer_str, "szj  :");
-        net.push_back(layer_str);
-    }
-
-    // In the last step we trace everything down to a cplx
-    result = g.trace();
-    result /= std::pow(2, g.pos.size()); // Normalize by dividing the trace of each 2x2 identity.
-    if constexpr(settings::debug_circuit) {
-        log.back().append(fmt::format("result = {:.6f}", result));
-        for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | {}", layer, log[idx]);
-    }
-    return result;
-}
-
 qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi,
                                        const Eigen::Matrix2cd &szj, size_t pos_szj, long sites) {
-    /*! \brief Calculates the operator overlap = Tr(τ^z_i σ^z_j) / Tr(σ^z_j)
-        Where
-            τ^z_i = U† σ^z_i  U,
-        and U is expressed as a unitary circuit transformation.
-        See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+    /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌'_i σ^z_j) / Tr(𝜌'_i) = Tr(τ^z_i σ^z_j) / 2^L
+
+        Consider first the density matrix
+
+             ρ_i = 1/2^L  (σ^z_i + 1 ) ⊗ I_i',
+
+        where I_i' is the identity matrix on sites j != i.
+        Then ρ_i represents a state |psi><psi| where site i is at level 0 with probability 1,
+        and the others sites are in a cat-state of level 0 or 1. E.g. ρ could be a state with
+        magnetization 1 at site i, and 0 elsewhere, or ρ could be a state with 1 particle at
+        site i, and cat state of 0 and 1 particles elsewhere.
+
+        Applying the unitary transformation does not change the trace, since it is just a
+        change of basis. We get
+
+             ρ'_i = U† ρ_i U
+                  = 1/2^L (U† σ^z_i U + 1)
+                  = 1/2^L (τ^z_i + 1) ,
+
+        where the l-bit τ^z_i = U† σ^z_i U acts non-trivially on all sites. Carrying out the
+        trace gives us
+
+            Tr(ρ'_i σ^z_j) / Tr(ρ'_i) = 1/2^L Tr(τ^z_i σ^z_j).
+
+        where we used Tr(1) = 2^L, Tr(ρ_i) = Tr(ρ'_i) = 1 and Tr(τ^z_i) = 0.
+
+        We expect an l-bit fully localized at site i to give O(i,i) = 1,  and a fully
+        delocalized l-bit to give O(i,j) = 0.5.
+
+        Note that when the light-cone from site i can't reach site j in the unitary circuit, then
+        τ^z_i has no support where σ^z_j connects.  Therefore, we get
+
+               Tr(τ^z_i σ^z_j) = Tr(τ^z_i ⊗ σ^z_j) = Tr(τ^z_i) Tr(σ^z_j) = 0
+
+        Read more here:
+        https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+        https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
     */
+
     // Generate gates for the operators
     if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
     auto t_olap = tid::ur();
@@ -649,7 +408,7 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
     auto diagr = slayer_diagr();
     auto diagl = slayer_diagl();
 
-    bool go_diagonal = std::min(diagl, diagr) < width; // Avoid long  thin diagonals.
+    bool go_diagonal = std::min(diagl, diagr) < width; // Avoid long thin diagonals.
 
     // Start contracting selected unitary gates bottom to top.
     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
@@ -735,7 +494,6 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
         log.back().append(fmt::format("insert σzj{} ", szj_gate.pos));
         g = szj_gate.connect_above(g);
     }
-
     // In the last step we trace everything down to a cplx
     result = g.trace();
     result /= std::pow(2, g.pos.size()); // Normalize by dividing the trace of each 2x2 identity.
@@ -747,19 +505,25 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
     return result;
 }
 
-Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_real_overlap(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
+Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
     auto                       ssites = static_cast<long>(sites);
     Eigen::Tensor<qm::cplx, 2> lbit_overlap(ssites, ssites);
 
-    /*! \brief Calculates the operator overlap = Tr(τ^z_i σ^z_j) / Tr(σ^z_j)
+    /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
+                                                      = Tr(τ^z_i σ^z_j) / 2^L
+                                                      = Tr(U†σ^z_iU σ^z_j) / 2^L
         Where
-            τ^z_i = U† σ^z_i  U,
-        and U is expressed as a unitary circuit transformation.
-        See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
-    */
+            𝜌_i   = 1/2^L (1 + τ^z_i)   a density matrix describing a state localized around site i
+            τ^z_i = U† σ^z_i  U,        is an l-bit operator at site i
+            U                           is a unitary transformation in the form of a finite-depth circuit.
+        The second equality comes from the fact that Tr(τ^z_i) = 0 (l-bit operators are traceless) and Tr(1) = 2^L.
+        An l-bit fully localized at site i gives O(i,i) = 1,  and when fully delocalized one gets O(i,j) = 0.5
 
-    Eigen::MatrixXcd szi = qm::spin::half::sz;
-#pragma omp parallel for collapse(2) schedule(dynamic)
+        Read more here:
+        https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+        https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
+    */
+#pragma omp parallel for collapse(2) schedule(guided, 4)
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
             lbit_overlap(i, j) =
@@ -767,23 +531,22 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_real_overlap(const std::vector<std
         }
     }
     // We require that lbit_overlap(i,j) has rows that sum up to 1
-    auto sums = tenx::MatrixMap(lbit_overlap).rowwise().sum();
-    if(not sums.cwiseAbs().isOnes(1e-4)) {
-        tools::log->info("lbit_overlap: \n{}\nsums\n{}\n", linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums, 6));
+    auto sums_rowwise = tenx::MatrixMap(lbit_overlap).rowwise().sum();
+    if(not sums_rowwise.cwiseAbs().isOnes(1e-4)) {
+        tools::log->info("lbit_overlap: \n{}\nsums\n{}\n", linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums_rowwise, 6));
         throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
     }
-
     return lbit_overlap;
 }
 
-Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_permuted(const Eigen::Tensor<cplx, 2> &lbit_overlap) {
+Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_permuted_support(const Eigen::Tensor<cplx, 2> &lbit_support) {
     // First, subtract the center position of each lbit, so we get L lbits centered around zero.
-    // In practice, we make a cyclic permutation of the rows of lbit_overlap
+    // In practice, we make a cyclic permutation of the rows of lbit_support
     // In addition, we mirror the lbit along its vertical, so that we can average its left and right half together
-    long                   rows = lbit_overlap.dimension(0);
-    long                   cols = lbit_overlap.dimension(1);
-    Eigen::Tensor<cplx, 2> lbit_overlap_permuted(rows, cols);
-    lbit_overlap_permuted.setConstant(0);
+    long                   rows = lbit_support.dimension(0);
+    long                   cols = lbit_support.dimension(1);
+    Eigen::Tensor<cplx, 2> lbit_permuted_support(rows, cols);
+    lbit_permuted_support.setConstant(0);
     for(long j = 0; j < cols; j++) {
         for(long i = 0; i < rows; i++) {
             // If i < j, this corresponds to the left side of an lbit.
@@ -801,39 +564,109 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_permuted(const Eigen::Tensor<c
                 if(j_twin >= cols) j_twin = j;
             }
             tools::log->debug("({:>2},{:>2}): twin ({:>2},{:>2}) | perm = ({:>2},{:>2}) | values {:.6f}, {:.6f} = {:.6f}", i, j, i, j_twin, i, j_perm,
-                              std::real(lbit_overlap(i, j)), std::real(lbit_overlap(i, j_twin)),
-                              0.5 * (std::real(lbit_overlap(i, j)) + std::real(lbit_overlap(i, j_twin))));
-            if(std::abs(std::imag(lbit_overlap(i, j))) > 1e-12)
-                tools::log->warn("lbit_overlap({},{}) has imaginary component : |Im({})| > 1e-12", i, j, lbit_overlap(i, j));
-            lbit_overlap_permuted(i, j_perm) = 0.5 * (lbit_overlap(i, j) + lbit_overlap(i, j_twin));
+                              std::real(lbit_support(i, j)), std::real(lbit_support(i, j_twin)),
+                              0.5 * (std::real(lbit_support(i, j)) + std::real(lbit_support(i, j_twin))));
+            if(std::abs(std::imag(lbit_support(i, j))) > 1e-12)
+                tools::log->warn("lbit_overlap({},{}) has imaginary component : |Im({})| > 1e-12", i, j, lbit_support(i, j));
+            lbit_permuted_support(i, j_perm) = 0.5 * (lbit_support(i, j) + lbit_support(i, j_twin));
         }
     }
-    return lbit_overlap_permuted;
+    return lbit_permuted_support;
 }
 
 std::tuple<double, double, std::vector<double>, size_t> qm::lbit::get_characteristic_length_scale(const Eigen::Tensor<cplx, 2> &lbit_overlap_permuted) {
     // Average along each column to get an estimate of the lbit
-    Eigen::Tensor<double, 1> lbit_overlap_avg = lbit_overlap_permuted.real().mean(std::array<long, 1>{0});
-    Eigen::Tensor<double, 1> lbit_overlap_log = lbit_overlap_avg.log();
+    Eigen::Tensor<double, 1> lbit_overlap_perm_avg = lbit_overlap_permuted.real().mean(std::array<long, 1>{0}).abs(); // Average each column
+    Eigen::Tensor<double, 1> lbit_overlap_perm_log = lbit_overlap_perm_avg.log();                                     // Make all values positive, and take log
+    tools::log->info("lbit_overlap_perm_avg: \n{}\n", linalg::tensor::to_string(lbit_overlap_perm_avg.real(), 18, 20));
+    tools::log->info("lbit_overlap_perm_log: \n{}\n", linalg::tensor::to_string(lbit_overlap_perm_log.real(), 18, 20));
+
     // Data becomes noisy if the exponential has decayed, so find a cutoff to get the slope using only the first part of the curve
-    auto yavg         = std::vector<double>(lbit_overlap_avg.data(), lbit_overlap_avg.data() + lbit_overlap_avg.size());
-    auto v            = stat::find_last_valid_point(yavg);
-    auto c            = std::count_if(yavg.begin(), yavg.begin() + static_cast<long>(v), [](auto &val) { return val > 1e-16; });
-    auto x            = num::range<double>(0, c);
-    auto ylog         = std::vector<double>(lbit_overlap_log.data(), lbit_overlap_log.data() + c);
-    auto [slope, res] = stat::slope(x, ylog, 0, c);
-    double cls        = 1.0 / std::abs(slope);
-    tools::log->debug("Computed lbit cls {:>8.6f} | sse {:>8.6f} | using {} points", cls, res, c);
-    return {cls, res, yavg, c};
+    auto y      = std::vector<double>(lbit_overlap_perm_avg.data(), lbit_overlap_perm_avg.data() + lbit_overlap_perm_avg.size());
+    auto v      = stat::find_last_valid_point(y);
+    auto c      = std::count_if(y.begin(), y.begin() + static_cast<long>(v), [](auto &val) { return std::abs(val) > std::numeric_limits<double>::epsilon(); });
+    auto x_full = num::range<double>(0, c);
+    auto x_tail = num::range<double>(c / 2, c);
+    auto y_full = tenx::span(lbit_overlap_perm_avg.data(), c);
+    auto y_tail = tenx::span(y_full.data() + c / 2, y_full.data() + c);
+    auto ylog_full                = tenx::span(lbit_overlap_perm_log.data(), c);
+    auto ylog_tail                = tenx::span(ylog_full.data() + c / 2, ylog_full.data() + c);
+    auto [slope_full, res_full]   = stat::slope(x_full, ylog_full);
+    auto [slope_tail, res_tail]   = stat::slope(x_tail, ylog_tail);
+    double cls_full               = 1.0 / std::abs(slope_full);
+    double cls_tail               = 1.0 / std::abs(slope_tail);
+    auto   fit_log_stretched_full = fit::log_stretched(x_full, ylog_full, {0.9, 1.0, 1.0});
+    auto   fit_log_stretched_tail = fit::log_stretched(x_tail, ylog_tail, {0.9, 1.0, 1.0});
+    auto   fit_log_full           = fit::log(x_full, ylog_full, {1.0, 1.0});
+    auto   fit_log_tail           = fit::log(x_tail, ylog_tail, {1.0, 1.0});
+    auto   fit_exp_stretched_full = fit::exp_stretched(x_full, y_full, {0.9, 1.0, 1.0});
+    auto   fit_exp_stretched_tail = fit::exp_stretched(x_tail, y_tail, {0.9, 1.0, 1.0});
+    auto   fit_exp_full           = fit::exp(x_full, y_full, {1.0, 1.0});
+    auto   fit_exp_tail           = fit::exp(x_tail, y_tail, {1.0, 1.0});
+
+    tools::log->info("Computed fit full slope    cls    {:>8.6f} | sse {:>8.6f} | using {} points: {::8.6f}", cls_full, res_full, ylog_full.size(), ylog_full);
+    tools::log->info("Computed fit tail slope    cls    {:>8.6f} | sse {:>8.6f} | using {} points: {::8.6f}", cls_tail, res_tail, ylog_tail.size(), ylog_tail);
+    tools::log->info("Computed fit full log_stretched coeffs {::>8.6f} | status {}", fit_log_stretched_full.coeffs, fit_log_stretched_full.status);
+    tools::log->info("Computed fit tail log_stretched coeffs {::>8.6f} | status {}", fit_log_stretched_tail.coeffs, fit_log_stretched_tail.status);
+    tools::log->info("Computed fit full log           coeffs {::>8.6f} | status {}", fit_log_full.coeffs, fit_log_full.status);
+    tools::log->info("Computed fit tail log           coeffs {::>8.6f} | status {}", fit_log_tail.coeffs, fit_log_tail.status);
+    tools::log->info("Computed fit full exp_stretched coeffs {::>8.6f} | status {}", fit_exp_stretched_full.coeffs, fit_exp_stretched_full.status);
+    tools::log->info("Computed fit tail exp_stretched coeffs {::>8.6f} | status {}", fit_exp_stretched_tail.coeffs, fit_exp_stretched_tail.status);
+    tools::log->info("Computed fit full exp           coeffs {::>8.6f} | status {}", fit_exp_full.coeffs, fit_exp_full.status);
+    tools::log->info("Computed fit tail exp           coeffs {::>8.6f} | status {}", fit_exp_tail.coeffs, fit_exp_tail.status);
+    return {cls_full, res_full, y, c};
 }
 
-Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_overlap_vec) {
+std::tuple<double, double, std::vector<double>, size_t> qm::lbit::get_characteristic_length_scale2(const Eigen::Tensor<cplx, 2> &lbit_overlap_permuted) {
+    // Average along each column to get an estimate of the lbit
+    Eigen::Tensor<double, 1> lbit_overlap_perm_avg = lbit_overlap_permuted.real().abs().mean(std::array<long, 1>{0}); // Average each column
+    Eigen::Tensor<double, 1> lbit_overlap_perm_log = lbit_overlap_perm_avg.log();                                     // Make all values positive, and take log
+    tools::log->info("lbit_overlap_perm_avg: \n{}\n", linalg::tensor::to_string(lbit_overlap_perm_avg.real(), 18, 20));
+    tools::log->info("lbit_overlap_perm_log: \n{}\n", linalg::tensor::to_string(lbit_overlap_perm_log.real(), 18, 20));
+
+    // Data becomes noisy if the exponential has decayed, so find a cutoff to get the slope using only the first part of the curve
+    auto y      = std::vector<double>(lbit_overlap_perm_avg.data(), lbit_overlap_perm_avg.data() + lbit_overlap_perm_avg.size());
+    auto v      = stat::find_last_valid_point(y);
+    auto c      = std::count_if(y.begin(), y.begin() + static_cast<long>(v), [](auto &val) { return std::abs(val) > std::numeric_limits<double>::epsilon(); });
+    auto x_full = num::range<double>(0, c);
+    auto x_tail = num::range<double>(c / 2, c);
+    auto y_full = tenx::span(lbit_overlap_perm_avg.data(), c);
+    auto y_tail = tenx::span(y_full.data() + c / 2, y_full.data() + c);
+    auto ylog_full                = tenx::span(lbit_overlap_perm_log.data(), c);
+    auto ylog_tail                = tenx::span(ylog_full.data() + c / 2, ylog_full.data() + c);
+    auto [slope_full, res_full]   = stat::slope(x_full, ylog_full);
+    auto [slope_tail, res_tail]   = stat::slope(x_tail, ylog_tail);
+    double cls_full               = 1.0 / std::abs(slope_full);
+    double cls_tail               = 1.0 / std::abs(slope_tail);
+    auto   fit_log_stretched_full = fit::log_stretched(x_full, ylog_full, {0.9, 1.0, 1.0});
+    auto   fit_log_stretched_tail = fit::log_stretched(x_tail, ylog_tail, {0.9, 1.0, 1.0});
+    auto   fit_log_full           = fit::log(x_full, ylog_full, {1.0, 1.0});
+    auto   fit_log_tail           = fit::log(x_tail, ylog_tail, {1.0, 1.0});
+    auto   fit_exp_stretched_full = fit::exp_stretched(x_full, y_full, {0.9, 1.0, 1.0});
+    auto   fit_exp_stretched_tail = fit::exp_stretched(x_tail, y_tail, {0.9, 1.0, 1.0});
+    auto   fit_exp_full           = fit::exp(x_full, y_full, {1.0, 1.0});
+    auto   fit_exp_tail           = fit::exp(x_tail, y_tail, {1.0, 1.0});
+
+    tools::log->info("Computed fit full slope    cls    {:>8.6f} | sse {:>8.6f} | using {} points: {::8.6f}", cls_full, res_full, ylog_full.size(), ylog_full);
+    tools::log->info("Computed fit tail slope    cls    {:>8.6f} | sse {:>8.6f} | using {} points: {::8.6f}", cls_tail, res_tail, ylog_tail.size(), ylog_tail);
+    tools::log->info("Computed fit full log_stretched coeffs {::>8.6f} | status {}", fit_log_stretched_full.coeffs, fit_log_stretched_full.status);
+    tools::log->info("Computed fit tail log_stretched coeffs {::>8.6f} | status {}", fit_log_stretched_tail.coeffs, fit_log_stretched_tail.status);
+    tools::log->info("Computed fit full log           coeffs {::>8.6f} | status {}", fit_log_full.coeffs, fit_log_full.status);
+    tools::log->info("Computed fit tail log           coeffs {::>8.6f} | status {}", fit_log_tail.coeffs, fit_log_tail.status);
+    tools::log->info("Computed fit full exp_stretched coeffs {::>8.6f} | status {}", fit_exp_stretched_full.coeffs, fit_exp_stretched_full.status);
+    tools::log->info("Computed fit tail exp_stretched coeffs {::>8.6f} | status {}", fit_exp_stretched_tail.coeffs, fit_exp_stretched_tail.status);
+    tools::log->info("Computed fit full exp           coeffs {::>8.6f} | status {}", fit_exp_full.coeffs, fit_exp_full.status);
+    tools::log->info("Computed fit tail exp           coeffs {::>8.6f} | status {}", fit_exp_tail.coeffs, fit_exp_tail.status);
+    return {cls_full, res_full, y, c};
+}
+
+Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_support_averaged(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_overlap_vec) {
     Eigen::Tensor<cplx, 2> avg;
     //    Eigen::Tensor<cplx,2> err;
     if(not lbit_overlap_vec.empty()) {
-        long              rows = lbit_overlap_vec.front().dimension(0);
-        long              cols = lbit_overlap_vec.front().dimension(1);
-        size_t            reps = lbit_overlap_vec.size();
+        long              rows = lbit_overlap_vec.front().dimension(0); // dim 0
+        long              cols = lbit_overlap_vec.front().dimension(1); // dim 1
+        size_t            reps = lbit_overlap_vec.size();               // dim 2
         std::vector<cplx> slice(reps);
         avg.resize(rows, cols);
         for(long c = 0; c < cols; c++) {
@@ -852,22 +685,15 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_lbit_overlap_averaged(const std::vector<Eig
     //    return {avg,err};
 }
 
-std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Tensor<double, 5>>
-    qm::lbit::get_lbit_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps, size_t sites,
-                                const std::vector<double> &fields, double fieldvar) {
+qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps,
+                                                                  size_t sites, const UnitaryGateProperties &ugate_props, bool randomize_fields) {
     auto t_lbit_analysis = tid::tic_scope("lbit_analysis");
 
-    long                     rows = static_cast<long>(fmix_vec.size());
-    long                     cols = static_cast<long>(udepth_vec.size());
-    long                     repl = static_cast<long>(reps);
-    Eigen::MatrixXd          cls_avg(rows, cols);
-    Eigen::MatrixXd          cls_err(rows, cols);
-    Eigen::MatrixXd          sse_avg(rows, cols);
-    Eigen::MatrixXd          sse_err(rows, cols);
-    Eigen::Tensor<double, 3> lbit_decay(rows, cols, static_cast<long>(sites));
-    Eigen::Tensor<double, 5> lbit_lioms(rows, cols, repl, static_cast<long>(sites), static_cast<long>(sites));
-    lbit_decay.setZero();
-    lbit_lioms.setZero();
+    long                rows = static_cast<long>(fmix_vec.size());
+    long                cols = static_cast<long>(udepth_vec.size());
+    long                repl = static_cast<long>(reps);
+    long                size = static_cast<long>(sites);
+    lbitSupportAnalysis lbitSA(rows, cols, repl, size);
     std::array<long, 3> offset3{}, extent3{};
     std::array<long, 5> offset5{}, extent5{};
 
@@ -878,51 +704,76 @@ std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::Tensor<double, 3>, Eigen::Te
             //        for (const auto & [fidx,fmix] : iter::enumerate(fmix_vec) ){
             auto t_cls = tid::ur("lbit-cls");
             t_cls.tic();
+            auto                                uldx = static_cast<long>(uidx);
+            auto                                fldx = static_cast<long>(fidx);
             auto                                fmix = fmix_vec[fidx];
             auto                                udep = udepth_vec[uidx];
             std::vector<double>                 cls_vec(reps);
             std::vector<double>                 sse_vec(reps);
-            std::vector<Eigen::Tensor<cplx, 2>> lbit_overlap_vec(reps);
+            std::vector<Eigen::Tensor<cplx, 2>> lbit_supp_vec(reps);
             for(size_t i = 0; i < reps; i++) {
-                // #pragma message "disable random field override"
-                // #pragma message "remove the settings header"
-                //                std::vector<double> fields_random;
-                //                for(auto &field : fields) fields_random.emplace_back(rnd::normal(settings::model::lbit::J1_mean,
-                //                settings::model::lbit::J1_wdth));
-
                 std::vector<std::vector<qm::Gate>> layers;
-                if(fields.empty())
-                    for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer(sites, fmix));
-                else
-                    for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer_choked(sites, fmix, fields, fieldvar));
+                switch(ugate_props.ugate_type) {
+                    case UnitaryGateType::UNIFORM: {
+                        for(size_t l = 0; l < udep; l++) layers.emplace_back(qm::lbit::get_unitary_2gate_layer(sites, fmix));
+                        break;
+                    }
+                    case UnitaryGateType::BLOCKED: {
+                        if(ugate_props.fields.empty())
+                            throw except::runtime_error("Fields empty, but are required when given UnitaryGateType::FIELD_CONSTRICTION");
+                        if(ugate_props.fieldvar == 0)
+                            tools::log->warn("Field variance is 0. This does not make sense when given UnitaryGateType::FIELD_CONSTRICTION");
+                        for(size_t l = 0; l < udep; l++) {
+                            if(randomize_fields) {
+                                auto ugate_props_random_fields = ugate_props;
+                                for(auto &field : ugate_props_random_fields.fields) {
+                                    if(settings::model::lbit::distribution == "normal")
+                                        field = rnd::normal(settings::model::lbit::J1_mean, settings::model::lbit::J1_wdth);
+                                    else if(settings::model::lbit::distribution == "uniform")
+                                        field = rnd::uniform_double_box(settings::model::lbit::J1_mean - settings::model::lbit::J1_wdth / 2.0,
+                                                                        settings::model::lbit::J1_mean + settings::model::lbit::J1_wdth / 2.0);
+                                    else
+                                        throw except::runtime_error("Distribution not implemented: {}", settings::model::lbit::distribution);
+                                }
+                                layers.emplace_back(qm::lbit::get_unitary_2gate_layer_blocked(sites, fmix, ugate_props_random_fields.fields,
+                                                                                              ugate_props_random_fields.fieldvar));
+                            } else {
+                                layers.emplace_back(qm::lbit::get_unitary_2gate_layer_blocked(sites, fmix, ugate_props.fields, ugate_props.fieldvar));
+                            }
+                        }
+                        break;
+                    }
+                }
 
-                lbit_overlap_vec[i]                = qm::lbit::get_lbit_real_overlap(layers, sites);
-                offset5                            = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};
-                extent5                            = {1, 1, 1, lbit_overlap_vec[i].dimension(0), lbit_overlap_vec[i].dimension(1)};
-                lbit_lioms.slice(offset5, extent5) = lbit_overlap_vec[i].abs().reshape(extent5);
-                tools::log->info("Computed u {} | f {} | rep {} | {:.3e}s", udep, fmix, i, t_cls.restart_lap());
+                lbit_supp_vec[i]                     = qm::lbit::get_lbit_support(layers, sites);
+                offset5                              = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};
+                extent5                              = {1, 1, 1, lbit_supp_vec[i].dimension(0), lbit_supp_vec[i].dimension(1)};
+                lbitSA.supps.slice(offset5, extent5) = lbit_supp_vec[i].real().reshape(extent5);
+                lbitSA.pupps.slice(offset5, extent5) = qm::lbit::get_lbit_permuted_support(lbit_supp_vec[i]).real().reshape(extent5);
+                tools::log->info("Computed u {} | f {} | rep {} | randomize fields {} | {} | {:.3e}s", udep, fmix, i, randomize_fields,
+                                 enum2sv(ugate_props.ugate_type), t_cls.restart_lap());
             }
 
-            auto lbit_overlap_avg = qm::lbit::get_lbit_overlap_averaged(lbit_overlap_vec);
-            auto lbit_overlap_per = qm::lbit::get_lbit_overlap_permuted(lbit_overlap_avg);
-
-            auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_overlap_per);
+            auto lbit_supp_avg    = qm::lbit::get_lbit_support_averaged(lbit_supp_vec);
+            auto lbit_pupp_avg    = qm::lbit::get_lbit_permuted_support(lbit_supp_avg);
+            auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_pupp_avg);
+            qm::lbit::get_characteristic_length_scale2(lbit_pupp_avg);
 #if defined(_OPENMP)
-            tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | threads {} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep,
-                             fmix, cls, sse, omp_get_max_threads(), t_cls.get_last_interval(), c, fmt::join(y, ", "));
+            tools::log->info("Computed u {} | f {:.4f} | {} | lbit cls {:>8.6f} | sse {:>8.6f} | threads {} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep,
+                             fmix, enum2sv(ugate_props.ugate_type), cls, sse, omp_get_max_threads(), t_cls.get_last_interval(), c, fmt::join(y, ", "));
 #else
-            tools::log->info("Computed u {} | f {:.4f} | lbit cls {:>8.6f} | sse {:>8.6f} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep, fmix, cls, sse,
-                             ur_iter.get_last_interval(), c, fmt::join(y, ", "));
+            tools::log->info("Computed u {} | f {:.4f} | {} | lbit cls {:>8.6f} | sse {:>8.6f} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep, fmix,
+                             enum2sv(ugate_props.ugate_type), cls, sse, ur_iter.get_last_interval(), c, fmt::join(y, ", "));
 #endif
-            cls_avg(static_cast<long>(fidx), static_cast<long>(uidx)) = cls;
-            sse_avg(static_cast<long>(fidx), static_cast<long>(uidx)) = sse;
+            lbitSA.cls_avg(fldx, uldx) = cls;
+            lbitSA.sse_avg(fldx, uldx) = sse;
 
-            offset3                            = {static_cast<long>(fidx), static_cast<long>(uidx), 0};
-            extent3                            = {1, 1, static_cast<long>(y.size())};
-            lbit_decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 3>>(y.data(), extent3);
+            offset3                              = {fldx, uldx, 0};
+            extent3                              = {1, 1, static_cast<long>(y.size())};
+            lbitSA.decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 3>>(y.data(), extent3);
         }
     }
-    return {cls_avg, sse_avg, lbit_decay, lbit_lioms};
+    return lbitSA;
 
     /* Example result for L = 24 result
         u 2 | f 0.0500 | decay (5 sites) : 9.94e-01, 3.22e-03, 5.24e-06, 4.90e-09, 3.98e-12, 2.75e-18
