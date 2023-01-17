@@ -685,7 +685,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto ugate_props = qm::lbit::UnitaryGateProperties{settings::model::lbit::ugate_type, fields, settings::model::lbit::J1_wdth};
             tools::log->info("Computing the lbit characteristic length-scale with {} gates", enum2sv(settings::model::lbit::ugate_type));
-            auto lbitSA = qm::lbit::get_lbit_support_analysis(urange, frange, sample, tensors.get_length(), ugate_props);
+            auto lbitSA = qm::lbit::get_lbit_support_analysis(urange, frange, sample, tensors.get_length(), ugate_props, false);
 
             h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
             h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
@@ -696,13 +696,12 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 h5file->writeDataset(lbitSA.supps, "/fLBIT/model/lbits/data", H5D_CHUNKED);
                 h5file->writeDataset(lbitSA.pupps, "/fLBIT/model/lbits/pata", H5D_CHUNKED);
-                h5file->writeAttribute("The operator overlap matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
-                h5file->writeAttribute("The operator overlap matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/pata", "description");
+                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
+                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/pata", "description");
                 h5file->writeAttribute(std::vector<std::string>{"f_mixer", "u_layer", "sample", "i", "j"}, "/fLBIT/model/lbits/data", "dims");
             }
         }
     }
-    exit(0);
 }
 
 void flbit::print_status() {

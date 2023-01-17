@@ -37,12 +37,18 @@ def lbit_plot(args):
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
 
-    palettes = [
+    palettes = [  # Distinguishable colors
         "tab10",
         "husl",
         "YlOrBr",
         "Set2",
         "magma",
+    ]
+
+    palettes = [  # Sequential colors
+        "summer_r",
+        "magma_r",
+        "winter_r",
     ]
 
     # fig3 = ['J', 'x:.2f', 'r']
@@ -60,31 +66,73 @@ def lbit_plot(args):
     # l1   = ['u']
     # MAKE PLOTS OF FIGURE 4 IN https://journals.aps.org/prb/abstract/10.1103/PhysRevB.103.024203
 
+    # f = None
+    # for db, palette in zip(dbs, palettes):
+    #     f = plot_v2_cls_fig3_sub3_line1(db=db, meta=meta['cls'], figspec=['J', 'r', 'w'], subspec=['L', 'u', 'x:.2f'], linspec=['f'], figs=f, palette_name=palette)
+    # save_figure(f)
+    #
+
+    # plt.show()
+    # exit(0)
+
+    # f = None
+    # for db, palette in zip(dbs, palettes):
+    #     f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
+    # save_figure(f)
+    #
+    # f = None
+    # for db, palette in zip(dbs, palettes):
+    #     f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num1'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
+    # save_figure(f)
+    #
+    # f = None
+    # for db, palette in zip(dbs, palettes):
+    #     f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num2'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
+    # save_figure(f)
+    #
+    # f = None
+    plot_divg_fig3_sub3_line1.prb = None
+    # for db, palette in zip(dbs, palettes):
+    #     f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
+    # save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+        f = plot_v2_lbit_fig3_sub3_line1(db=db, meta=meta['lbit'], figspec=['J', 'r', 'f'], subspec=['L', 'u', 'x:.2f'],
+                                         linspec=['w'], figs=f,
+                                         palette_name=palette)
+    save_figure(f)
+
+    fig3 = ['J', 'x:.2f', 'r']
+    sub3 = ['L', 'u', 'f']
+    sub2 = ['f', 'u']
+    l1 = ['w']
+
+    f = None
+    for db, palette in zip(dbs, palettes):
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['ent'], figspec=fig3, subspec=sub3, linspec=l1, figs=f,
+                                         palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num1'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num1'], figspec=fig3, subspec=sub3, linspec=l1, figs=f,
+                                         palette_name=palette)
     save_figure(f)
 
     f = None
     for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num2'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['num2'], figspec=fig3, subspec=sub3, linspec=l1, figs=f,
+                                         palette_name=palette)
     save_figure(f)
 
     f = None
+    plot_divg_fig3_sub3_line1.prb = None
     for db, palette in zip(dbs, palettes):
-        f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name='summer_r')
+        f = plot_divg_fig3_sub3_line1(db=db, meta=meta['divg-num'], figspec=fig3, subspec=sub3, linspec=l1, figs=f,
+                                      palette_name=palette)
     save_figure(f)
 
-    f = None
-    for db, palette in zip(dbs, palettes):
-        f = plot_v2_time_fig3_sub3_line1(db=db, meta=meta['numa'], figspec=fig3, subspec=sub3, linspec=l1, figs=f, palette_name=palette)
-    save_figure(f)
     plt.show()
     exit(0)
 

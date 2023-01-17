@@ -18,7 +18,9 @@ axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73
 figure.facecolor        : 'white'
 
 #figure.figsize          : 1.6875, 1.50
-figure.figsize          : 3.375, 3.00
+#figure.figsize          : 3.375, 3.00
+#figure.figsize          : 2.53125, 2.25
+figure.figsize          : 2.3625, 2.01
 #figure.figsize          : 3.375, 6.00
 #figure.figsize           : 4.21875, 3.75
 #figure.figsize          : 6.75, 6.00

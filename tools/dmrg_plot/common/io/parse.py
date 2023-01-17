@@ -43,7 +43,10 @@ def parse(algo):
                                 # 'lbit52', # Trial increasing u and L together... not very useful
                                 # 'lbit53', # 10000 realizations squared constriction, u8, f0.25, L=[8,12,16]
                                 # 'lbit54',  # 10000 realizations squared constriction, u8, f0.50, L=[8,12,16]
-                                'lbit55',  # 2500 realizations constricted, u8, f=[0.1-0.5], L=[8,12,16]
+                                # 'lbit55',  # 25000 realizations constricted, u8, f=[0.1-0.5], L=[8,12,16]
+                                # 'lbit56',  # 25000 realizations constricted, random init, u8, f=[0.1-1.0], L=[8,12,16]
+                                # 'lbit57',  # 25000 realizations constricted, random init, u8, f=[2.0-5.0], L=[16]
+                                'lbit58',  # 10000 realizations constricted, random init, u8, f=0.5, L=[16], varying w
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',

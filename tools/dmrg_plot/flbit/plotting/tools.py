@@ -16,7 +16,7 @@ import matplotlib.gridspec as gs
 from git import Repo
 import seaborn as sns
 from itertools import product
-
+from scipy.optimize import curve_fit
 logger = logging.getLogger('tools')
 import tikzplotlib
 
@@ -130,6 +130,78 @@ def find_saturation_idx(ydata, std_threshold):
 #     return np.argmax(sdiff)
 
 
+def flinear(x, a, b):
+    with np.errstate(invalid='ignore'):
+        return a + b * x
+
+
+@njit(parallel=True, cache=True)
+def stretched_exp(x, C, xi, beta):
+    return C * np.exp(-(x / xi) ** beta)
+
+
+@njit(parallel=True, cache=True)
+def stretched_log(x, C, xi, beta):
+    return np.log(C) - (x / xi) ** beta
+
+
+def get_lbit_cls(avg):
+    idx0 = 0
+    idxN = np.argmax(np.ndarray.flatten(avg) <= 1e-8) - 1
+    ydata = np.ndarray.flatten(avg)[idx0:idxN]
+    xdata = np.array(range(len(ydata)))
+    p0 = 0.5, 1.0, 1.2
+    bounds_v2 = ([0.3, 0.0, 1.0], [1.0, 2.0, np.inf])
+    print(ydata)
+
+    try:
+        if idxN >= 0 and idxN <= idx0:
+            raise IndexError("Invalid index order: idx0 {} | idxN {}".format(idx0, idxN))
+        if idxN >= 0 and idxN < idx0 + 2:
+            raise IndexError("Too few datapoints for a fit: idx0 {} | idxN {}".format(idx0, idxN))
+
+        with np.errstate(invalid='ignore'):
+            ylog = np.log(ydata)
+            popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylog, p0=p0, bounds=bounds_v2)
+            print('Fit C exp(-(d/xi)**beta): C {:.4f} | xi {:.4f} | beta {:.4f}'.format(popt[0], popt[1], popt[2]))
+            return popt[0], popt[1], popt[2]
+    except IndexError as e:
+        print("Index error:", e)
+        pass
+    except ValueError as e:
+        print("Fit failed:", e)
+
+    return None, None, None
+
+
+def get_lbit_cls2(avg):
+    idx0 = 0
+    idxN = np.argmax(np.ndarray.flatten(avg) <= 1e-8) - 1
+    ydata = np.ndarray.flatten(avg)[idx0:idxN]
+    xdata = np.array(range(len(ydata)))
+    p0 = 0.5, 1.0, 1.2
+    # bounds_v2 = ([0.5, 0.0, 1.0], [1.0, 2.0, np.inf])
+    print(ydata)
+
+    try:
+        if idxN >= 0 and idxN <= idx0:
+            raise IndexError("Invalid index order: idx0 {} | idxN {}".format(idx0, idxN))
+        if idxN >= 0 and idxN < idx0 + 2:
+            raise IndexError("Too few datapoints for a fit: idx0 {} | idxN {}".format(idx0, idxN))
+
+        with np.errstate(invalid='ignore'):
+            popt, pcov = curve_fit(stretched_exp, xdata=xdata, ydata=ydata, p0=p0)
+            print('Fit C exp(-(d/xi)**beta): C {:.4f} | xi {:.4f} | beta {:.4f}'.format(popt[0], popt[1], popt[2]))
+            return popt[0], popt[1], popt[2]
+    except IndexError as e:
+        print("Index error:", e)
+        pass
+    except ValueError as e:
+        print("Fit failed:", e)
+
+    return None, None, None
+
+
 def find_saturation_idx2(ydata, threshold=1e-2):
     if len(ydata) <= 2:
         return
@@ -191,6 +263,7 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
 
     r2max = np.min([r, int((L - 1) / 2)])  # Number of sites from the center site to the edge site, max(|i-j|)/2
     Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    # Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
@@ -198,14 +271,20 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin3 = 1.0 / w3
     tmax3 = 1.0 / w3
 
-    tmin = np.max([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
+    tmin = np.min([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
     tmax = np.max([tmax1, tmax2, tmax3])
-
+    tmin = tmin2
+    tmax = tmax2
+    print('tmin: ', [tmin1, tmin2, tmin3])
+    print('tmax: ', [tmax1, tmax2, tmax3])
     tmin = np.min([tmin, tmax])  # Can't have negatives in log-log.
     tmax = np.max([tmin, tmax])  # Make sure the time points are ordered
 
-    idx1 = np.where(tdata >= tmin)[0][0]
-    idx2 = np.where(tdata <= tmax)[0][-1]
+    idx1 = np.argmax(tdata >= tmin) - 1
+    idx2 = np.argmax(tdata >= tmax) - 1
+
+    # idx1 = np.where(tdata >= tmin)[0][0]
+    # idx2 = np.where(tdata <= tmax)[0][-1]
     if idx2 == len(tdata) - 1:
         idx2 = np.max([idx1, idx2 - 1])
     return idx1, idx2
@@ -404,6 +483,7 @@ def get_fig_meta(numplots: int, meta: dict):
         'legendoutside': meta.get('legendoutside'),
         'legendcollect': meta.get('legendcollect'),
         'legendlocation': meta.get('legendlocation'),
+        'legendtitle': meta.get('legendtitle'),
     }
     logger.info('Generated f dict: \n {}'.format(f))
     # Initialize a figure. The size is taken from the stylesheet
@@ -717,10 +797,11 @@ def add_legend5(fmeta):
         ymin, ymax = fmeta['ax'][iax].get_ylim()
         titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0, zorder=0)
         formatted_labels = get_formatted_columns(columns)
+        legendtitle = fmeta.get('legendtitle')
         if iax_tgt is not None:
             iax = iax_tgt  # Put legends on common axis
         lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
-                                          title=None,  # title=fmeta['legends'][iax][0]['header'],
+                                          title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
                                           loc=loc_eq, prop=dict(stretch="ultra-condensed"))
         # lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
         if collect:

@@ -15,12 +15,14 @@ def get_meta(plotdir):
             'include': {
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
-                # 'L': ['L_16'],
+                'L': ['L_16'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
                 # 'f': ['f_0.1500','f_0.2000'],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
+                # 'f': ['f_0.4000', 'f_0.5000', 'f_0.6000'],
+                'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
                 # 'u': ['u_2', 'u_3'],
                 # 'f': ['f_0.4500'],
                 # 'u': ['u_5', 'u_6'],
@@ -337,16 +339,39 @@ def get_meta(plotdir):
             'groupname': 'lbits',
             'dsetname': 'decay',
             'titlename': 'l-bit',
-            'ylabel': '$\langle \langle \mathrm{l-bit} \\rangle\\rangle$ ',
+            'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
             'xlabel': "$|i-j|$",
             'yscale': 'log',
-            'ynopos': 'clip',
+            'ynopos': 'mask',
             'plotprefix': 'lbit',
             'plotdir': plotdir,
             'mplstyle': mplstyle,
-            'xmax': 12,
-            'ymin': 1e-15,
-            'legendcols': ['num'],  # Choose 'num', 'bmax','tsim'
+            'xmax': 16,
+            'ymin': 1e-14,
+            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            'legendlocation': 'best',
+            'legendtitle': '$y = C e^{-(|i-j|/\\xi_\\tau)^\\beta}$',
+            'inset-cls': {
+                # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
+                'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
+                'coords': [None, None, None, None],
+                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+                'legendtitle': '$\\xi_\\tau$'
+            },
+
+        },
+        'cls': {
+            'groupname': 'lbits',
+            'dsetname': 'decay',
+            'titlename': 'Characteristic length scale of l-bits',
+            'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
+            'xlabel': "$f$",
+            'plotprefix': 'lbit',
+            'plotdir': plotdir,
+            'mplstyle': mplstyle,
+            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'best',

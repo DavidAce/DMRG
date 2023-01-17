@@ -46,7 +46,7 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
     for figkeys, f in zip(figprod, figs):
         print('- plotting figkeys: {}'.format(figkeys))
         dbval = None
-        for idx, (subkeys, ax) in enumerate(zip(subprod, f['ax'])):
+        for idx, (subkeys, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             print('-- plotting subkeys: {}'.format(subkeys))
             for dirkeys in dirprod:
                 palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
@@ -63,11 +63,13 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     ydata, _ = get_table_data(datanode['avg'])
                     edata, _ = get_table_data(datanode['ste'])
                     ndata = datanode['num'][()]
-                    xdata = range(len(ydata))
+                    xdata = np.array(range(len(ydata)))
+                    fdata = get_lbit_cls(ydata)  # Fit to get characteristic length-scale
+
                     if np.min(ndata) < 10:
                         continue
                     for i, (y, e) in enumerate(zip(ydata.T, edata.T)):
-                        ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
+                        # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
                         line, = ax.plot(xdata, y, marker=None, color=color, path_effects=path_effects)
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
@@ -76,9 +78,29 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 f['legends'][idx][icol]['handle'].append(line)
                                 f['legends'][idx][icol]['label'].append(col)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
+                            icol = len(legendrow)
+                            f['legends'][idx][icol + 0]['handle'].append(line)
+                            f['legends'][idx][icol + 0]['label'].append('{:.2f}'.format(fdata[0]))
+                            f['legends'][idx][icol + 0]['title'] = '$C$'
+                            f['legends'][idx][icol + 1]['handle'].append(line)
+                            f['legends'][idx][icol + 1]['label'].append('{:.2f}'.format(fdata[1]))
+                            f['legends'][idx][icol + 1]['title'] = '$\\xi_\\tau$'
+                            f['legends'][idx][icol + 2]['handle'].append(line)
+                            f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(fdata[2]))
+                            f['legends'][idx][icol + 2]['title'] = '$\\beta$'
 
-                    if not idx in f['axes_used']:
-                        f['axes_used'].append(idx)
+                        line, = ax.plot(xdata, stretched_exp(xdata, *fdata), marker=None, linestyle='dashed',
+                                        color=color, path_effects=path_effects)
+                        if 'inset-cls' in meta:
+                            if ix is None:
+                                # pos tells where to put the inset, x0,y0, width, height in % units
+                                ix = ax.inset_axes(meta['inset-cls']['pos'])
+                                ix.set_ylabel('$\\xi_\\tau$')
+                                ix.set_xlabel('$f$')
+                            ix.scatter(dbval['vals']['f'], fdata[1], color=color)
+
+                if not idx in f['axes_used']:
+                    f['axes_used'].append(idx)
 
             if dbval:
                 ax.set_title(get_title(dbval, subspec),

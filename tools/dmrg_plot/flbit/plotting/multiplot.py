@@ -7,3 +7,4 @@ from .plot_tavg import *
 from .plot_lbit import *
 from .plot_dist import *
 from .plot_divg import *
+from .plot_cls import *

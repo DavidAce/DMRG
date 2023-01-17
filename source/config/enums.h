@@ -573,7 +573,7 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, UnitaryGateType>) {
         if(item == "UNIFORM")                               return UnitaryGateType::UNIFORM;
-        if(item == "FIELD_CONSTRICTION")                    return UnitaryGateType::BLOCKED;
+        if(item == "BLOCKED")                               return UnitaryGateType::BLOCKED;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;

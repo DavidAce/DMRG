@@ -643,7 +643,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         t_app_start = timer()
         for key, stat in statrows.items():
             stat['it'].append()
-            stat['tb'].flush()  ## not needed? becomes slower
+            # stat['tb'].flush()  ## not needed? becomes slower
             if not tableiter:
                 tableiter = stat['it']['iter']
         t_app = t_app + timer() - t_app_start
