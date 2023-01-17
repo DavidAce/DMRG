@@ -477,9 +477,8 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo(const std::ve
             long d4 = multisite_mpo.dimension(3);
             long d5 = mpo.MPO().dimension(3);
 
-            Eigen::Tensor<cplx, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5});
-            Eigen::Tensor<cplx, 4> temp3 = linalg::tensor::trace(temp2, tenx::idx({3}, {5}));
-            multisite_mpo                = temp3 * temp3.constant(0.5);
+            Eigen::Tensor<cplx, 4> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5}).trace(tenx::array2{3, 5});
+            multisite_mpo                = temp2 * temp2.constant(0.5);
         } else {
             multisite_mpo = temp;
         }
@@ -621,8 +620,8 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_squared(const
             long d4 = multisite_mpo_squared.dimension(3);
             long d5 = mpo.MPO().dimension(3);
 
-            Eigen::Tensor<cplx, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5});
-            multisite_mpo_squared        = linalg::tensor::trace(temp2, tenx::idx({3}, {5}));
+            Eigen::Tensor<cplx, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5}).trace(tenx::array2{3, 5});
+            multisite_mpo_squared        = temp2 * temp2.constant(0.5);
         } else {
             multisite_mpo_squared = temp;
         }

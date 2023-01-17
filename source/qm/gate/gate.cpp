@@ -1017,49 +1017,38 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
     long dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>()); // Product of all dimensions of the remaining top legs of the gate
     std::array<long, 2> dim2{dim_prod, dim_prod};
 
-    // Shorthand tensors
-    using T2  = Eigen::Tensor<cplx, 2>;
-    using T4  = Eigen::Tensor<cplx, 4>;
-    using T6  = Eigen::Tensor<cplx, 6>;
-    using T8  = Eigen::Tensor<cplx, 8>;
-    using T10 = Eigen::Tensor<cplx, 10>;
-    using T12 = Eigen::Tensor<cplx, 12>;
-    using T14 = Eigen::Tensor<cplx, 14>;
-    using T16 = Eigen::Tensor<cplx, 16>;
-    using T18 = Eigen::Tensor<cplx, 18>;
-    using T20 = Eigen::Tensor<cplx, 20>;
-    using T22 = Eigen::Tensor<cplx, 22>;
-    using T24 = Eigen::Tensor<cplx, 24>;
-    using T26 = Eigen::Tensor<cplx, 26>;
-    using T28 = Eigen::Tensor<cplx, 28>;
-    using T30 = Eigen::Tensor<cplx, 30>;
-    using T32 = Eigen::Tensor<cplx, 32>;
-    Eigen::Tensor<cplx, 2> op_traced;
+    // Flatten the index pairs to a list
+    Eigen::array<Eigen::Index, 2 * N> idx_list;
+    for(size_t i = 0; i < idxpairs.size(); i++) {
+        idx_list[2 * i]     = idxpairs[i].first;
+        idx_list[2 * i + 1] = idxpairs[i].second;
+    }
 
     // Trace
+    Eigen::Tensor<cplx, 2> op_traced;
     if(gate.dim.size() == 1) {
         if constexpr(N == 1) { // dim size 1 is special! It can't take 2 index pairs
-            op_traced = linalg::tensor::trace(static_cast<T2>(gate.op.reshape(gate.shape<2>())), idxpairs).reshape(dim2);
+            op_traced = gate.op.reshape(gate.shape<2>()).trace(idx_list).reshape(dim2);
         } else {
             throw except::runtime_error("Can't trace {} index pairs on gate with pos {}", N, gate.pos);
         }
     }
     /* clang-format off */
-    else if(gate.dim.size() == 2 ) op_traced = linalg::tensor::trace(static_cast<T4>(gate.op.reshape(gate.shape<4>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 3 ) op_traced = linalg::tensor::trace(static_cast<T6>(gate.op.reshape(gate.shape<6>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 4 ) op_traced = linalg::tensor::trace(static_cast<T8>(gate.op.reshape(gate.shape<8>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 5 ) op_traced = linalg::tensor::trace(static_cast<T10>(gate.op.reshape(gate.shape<10>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 6 ) op_traced = linalg::tensor::trace(static_cast<T12>(gate.op.reshape(gate.shape<12>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 7 ) op_traced = linalg::tensor::trace(static_cast<T14>(gate.op.reshape(gate.shape<14>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 8 ) op_traced = linalg::tensor::trace(static_cast<T16>(gate.op.reshape(gate.shape<16>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 9 ) op_traced = linalg::tensor::trace(static_cast<T18>(gate.op.reshape(gate.shape<18>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 10) op_traced = linalg::tensor::trace(static_cast<T20>(gate.op.reshape(gate.shape<20>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 11) op_traced = linalg::tensor::trace(static_cast<T22>(gate.op.reshape(gate.shape<22>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 12) op_traced = linalg::tensor::trace(static_cast<T24>(gate.op.reshape(gate.shape<24>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 13) op_traced = linalg::tensor::trace(static_cast<T26>(gate.op.reshape(gate.shape<26>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 14) op_traced = linalg::tensor::trace(static_cast<T28>(gate.op.reshape(gate.shape<28>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 15) op_traced = linalg::tensor::trace(static_cast<T30>(gate.op.reshape(gate.shape<30>())), idxpairs).reshape(dim2);
-    else if(gate.dim.size() == 16) op_traced = linalg::tensor::trace(static_cast<T32>(gate.op.reshape(gate.shape<32>())), idxpairs).reshape(dim2);
+    else if(gate.dim.size() == 2 ) op_traced = gate.op.reshape(gate.shape<4>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 3 ) op_traced = gate.op.reshape(gate.shape<6>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 4 ) op_traced = gate.op.reshape(gate.shape<8>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 5 ) op_traced = gate.op.reshape(gate.shape<10>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 6 ) op_traced = gate.op.reshape(gate.shape<12>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 7 ) op_traced = gate.op.reshape(gate.shape<14>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 8 ) op_traced = gate.op.reshape(gate.shape<16>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 9 ) op_traced = gate.op.reshape(gate.shape<18>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 10 ) op_traced = gate.op.reshape(gate.shape<20>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 11 ) op_traced = gate.op.reshape(gate.shape<22>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 12 ) op_traced = gate.op.reshape(gate.shape<24>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 13 ) op_traced = gate.op.reshape(gate.shape<26>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 14 ) op_traced = gate.op.reshape(gate.shape<28>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 15 ) op_traced = gate.op.reshape(gate.shape<30>()).trace(idx_list).reshape(dim2);
+    else if(gate.dim.size() == 16 ) op_traced = gate.op.reshape(gate.shape<32>()).trace(idx_list).reshape(dim2);
     /* clang-format on */
     else
         throw except::runtime_error("Trace not implemented: N == {} | dim.size() == {}", N, gate.dim.size());
