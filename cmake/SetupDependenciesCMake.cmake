@@ -61,6 +61,8 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     # Lapacke is needed by arpack++, included in MKL or OpenBLAS
     find_package(Lapacke REQUIRED)
 
+    install_package(pcg-cpp)
+
     # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
     install_package(arpack-ng VERSION 3.8.0
             TARGET_NAME ARPACK::ARPACK
@@ -106,6 +108,7 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
 
     target_link_libraries(dmrg-deps INTERFACE
             CLI11::CLI11
+            pcg-cpp::pcg-cpp
             h5pp::h5pp
             arpack++::arpack++
             Ceres::ceres

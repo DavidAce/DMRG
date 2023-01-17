@@ -562,7 +562,7 @@ void flbit::create_unitary_circuit_gates() {
     tools::log->info("Fields: {}", fields);
     for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++)
         unitary_gates_2site_layers.emplace_back(
-            qm::lbit::get_unitary_2gate_layer_choked(settings::model::model_size, settings::model::lbit::f_mixer, fields, settings::model::lbit::J1_wdth));
+            qm::lbit::get_unitary_2gate_layer_blocked(settings::model::model_size, settings::model::lbit::f_mixer, fields, settings::model::lbit::J1_wdth));
 }
 
 void flbit::transform_to_real_basis() {
@@ -677,27 +677,32 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto frange = std::vector<double>{settings::model::lbit::f_mixer};
         auto sample = settings::flbit::compute_lbit_stats;
         if(sample > 1) {
-            urange = {8};          // num::range<size_t>(8, 9);
-            frange = {0.20, 0.50}; // num::range<double>(0.25, 0.50, 0.05);
+            urange = {8};   // num::range<size_t>(8, 9);
+            frange = {0.5}; // num::range<double>(0.25, 0.50, 0.05);
         }
         if(sample > 0) {
-            tools::log->info("Computing the lbit characteristic length-scale");
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
-            auto [cls_avg, sse_avg, decay, data] =
-                qm::lbit::get_lbit_analysis(urange, frange, sample, tensors.get_length(), fields, settings::model::lbit::J1_wdth);
-            h5file->writeDataset(cls_avg, "/fLBIT/model/lbits/cls_avg");
-            h5file->writeDataset(sse_avg, "/fLBIT/model/lbits/sse_avg");
-            h5file->writeDataset(decay, "/fLBIT/model/lbits/decay");
+            auto ugate_props = qm::lbit::UnitaryGateProperties{settings::model::lbit::ugate_type, fields, settings::model::lbit::J1_wdth};
+            tools::log->info("Computing the lbit characteristic length-scale with {} gates", enum2sv(settings::model::lbit::ugate_type));
+            auto lbitSA = qm::lbit::get_lbit_support_analysis(urange, frange, sample, tensors.get_length(), ugate_props);
+
+            h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
+            h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
+            h5file->writeDataset(lbitSA.decay, "/fLBIT/model/lbits/decay");
             h5file->writeAttribute(urange, "/fLBIT/model/lbits", "u_layer");
             h5file->writeAttribute(frange, "/fLBIT/model/lbits", "f_mixer");
             h5file->writeAttribute(sample, "/fLBIT/model/lbits", "samples");
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
-                h5file->writeDataset(data, "/fLBIT/model/lbits/data", H5D_CHUNKED);
+                h5file->writeDataset(lbitSA.supps, "/fLBIT/model/lbits/data", H5D_CHUNKED);
+                h5file->writeDataset(lbitSA.pupps, "/fLBIT/model/lbits/pata", H5D_CHUNKED);
+                h5file->writeAttribute("The operator overlap matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
+                h5file->writeAttribute("The operator overlap matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/pata", "description");
                 h5file->writeAttribute(std::vector<std::string>{"f_mixer", "u_layer", "sample", "i", "j"}, "/fLBIT/model/lbits/data", "dims");
             }
         }
     }
+    exit(0);
 }
 
 void flbit::print_status() {

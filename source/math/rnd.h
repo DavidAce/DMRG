@@ -1,7 +1,7 @@
 #pragma once
-#include "rnd/pcg_random.hpp"
 #include <complex>
 #include <optional>
+#include <pcg_random.hpp>
 #include <vector>
 
 namespace rnd {

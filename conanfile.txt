@@ -10,9 +10,10 @@ fmt/9.1.0
 spdlog/1.11.0
 eigen/3.4.0
 arpack++/2.3.0@davidace/dev
-cli11/2.2.0
+cli11/2.3.1
 backward-cpp/1.6
 zlib/1.2.12
+pcg-cpp/cci.20210406
 
 [generators]
 CMakeDeps

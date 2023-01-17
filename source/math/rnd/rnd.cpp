@@ -1,8 +1,20 @@
 #include "../rnd.h"
 #include <algorithm>
 #include <cstdio>
+#include <omp.h>
 #include <random>
 #include <stdexcept>
+
+#if defined(NDEBUG)
+namespace rnd {
+    static constexpr bool debug = false;
+}
+#else
+    #include <omp.h>
+namespace rnd {
+    static constexpr bool debug = true;
+}
+#endif
 
 namespace rnd {
 
@@ -31,12 +43,22 @@ namespace rnd {
         std::srand(static_cast<unsigned>(internal::rng()));
     }
 
-    int uniform_integer_01() { return internal::rand_int_01(internal::rng); }
+    int uniform_integer_01() {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_integer_01 is not thread safe!");
+        return internal::rand_int_01(internal::rng);
+    }
 
-    double uniform_double_01() { return internal::rand_double_01(internal::rng); }
+    double uniform_double_01() {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_double_01 is not thread safe!");
+        return internal::rand_double_01(internal::rng);
+    }
 
     template<typename T>
     T uniform_integer_box(T min, T max) {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_integer_box is not thread safe!");
         std::uniform_int_distribution<T> rand_int(std::min(min, max), std::max(min, max));
         return rand_int(internal::rng);
     }
@@ -46,10 +68,14 @@ namespace rnd {
     template size_t   uniform_integer_box(size_t min, size_t max);
 
     double uniform_double_box(double min, double max) {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_double_box is not thread safe!");
         std::uniform_real_distribution<> rand_real(std::min(min, max), std::max(min, max));
         return rand_real(internal::rng);
     }
     double uniform_double_box(double halfwidth) {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform_double_box is not thread safe!");
         std::uniform_real_distribution<> rand_real(-halfwidth, halfwidth);
         return rand_real(internal::rng);
     }
@@ -91,6 +117,8 @@ namespace rnd {
     }
 
     double normal(const double mean, const double std) {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::normal is not thread safe!");
         std::normal_distribution<double> distribution(mean, std);
         return distribution(internal::rng);
     }

@@ -103,6 +103,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Use CONFIG to avoid MODULE mode. This is recommended for the cmake_find_package_multi generator
 
     find_package(CLI11 2.2.0 REQUIRED CONFIG)
+    find_package(pcg-cpp REQUIRED CONFIG)
     find_package(Eigen3 3.4 REQUIRED CONFIG)
     find_package(h5pp 1.11.0 REQUIRED CONFIG)
     find_package(fmt 9.1.0 REQUIRED CONFIG)
@@ -127,6 +128,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
 
     target_link_libraries(dmrg-deps INTERFACE
                           CLI11::CLI11
+                          pcg-cpp::pcg-cpp
                           h5pp::h5pp
                           arpack++::arpack++
                           primme::primme
