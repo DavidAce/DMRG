@@ -5,9 +5,15 @@
 #include <vector>
 
 namespace rnd {
+
+    enum class dist { uniform, normal, lognormal };
+    constexpr std::string_view enum2sv(const dist &d);
+    constexpr dist             sv2enum(std::string_view d);
+
     namespace internal {
         // The random number engine
         inline pcg64 rng;
+
     }
     // Random functions
     void                        seed(std::optional<long> n = std::nullopt);
@@ -33,5 +39,10 @@ namespace rnd {
 
     template<typename T>
     void shuffle(T &list);
+
+    extern double              random(dist d, double mean, double width);
+    extern double              random(std::string_view distribution, double mean, double width);
+    extern std::vector<double> random(std::string_view distribution, double mean, double width, size_t num);
+    extern std::vector<double> random(std::string_view distribution, double mean, double width, const std::vector<double> &weights);
 
 }

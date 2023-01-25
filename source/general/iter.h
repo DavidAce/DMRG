@@ -21,10 +21,10 @@ namespace iter {
 
     namespace internal {
 
-        template<class Iterator, bool reverse = false>
+        template<class Iterator, bool reverse = false, typename idx_t = std::size_t>
         struct enumerate_iterator {
             using iterator   = Iterator;
-            using index_type = std::size_t;
+            using index_type = idx_t;
             using reference  = typename std::iterator_traits<iterator>::reference;
             using pointer    = typename std::iterator_traits<iterator>::pointer;
 
@@ -47,10 +47,10 @@ namespace iter {
             iterator   iter;
         };
 
-        template<class Iterator, bool reverse = false>
+        template<class Iterator, bool reverse = false, typename idx_t = std::size_t>
         struct enumerate_range {
-            using index_type = std::size_t;
-            using iterator   = enumerate_iterator<Iterator, reverse>;
+            using index_type = idx_t;
+            using iterator   = enumerate_iterator<Iterator, reverse, idx_t>;
 
             enumerate_range(Iterator first, Iterator last, index_type initial, index_type final) : first(first), last(last), initial(initial), final(final) {}
 
@@ -70,14 +70,14 @@ namespace iter {
         return internal::enumerate_range<Iterator, false>(first, last, initial);
     }
 
-    template<class Container>
+    template<typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate(Container &content) {
-        return internal::enumerate_range<typename Container::iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
+        return internal::enumerate_range<typename Container::iterator, false, idx_t>(std::begin(content), std::end(content), 0, content.size() - 1);
     }
 
-    template<class Container>
+    template<typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate(const Container &content) {
-        return internal::enumerate_range<typename Container::const_iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
+        return internal::enumerate_range<typename Container::const_iterator, false, idx_t>(std::begin(content), std::end(content), 0, content.size() - 1);
     }
 
     template<class Iterator>

@@ -170,8 +170,8 @@ void h5tb_lbit::register_table_type() const {
     H5Tinsert(h5_type, "J2_xcls", HOFFSET(table, J2_xcls), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_ULONG);
     H5Tinsert(h5_type, "J2_ctof", HOFFSET(table, J2_ctof), H5T_NATIVE_ULONG);
-    H5Tinsert(h5_type, "f_mixer", HOFFSET(table, f_mixer), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "u_layer", HOFFSET(table, u_layer), H5T_NATIVE_UINT64);
+    H5Tinsert(h5_type, "u_fmix", HOFFSET(table, u_fmix), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_depth", HOFFSET(table, u_depth), H5T_NATIVE_UINT64);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5pp::vstr_t::get_h5type());
 }
@@ -197,8 +197,8 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
         if(p == "J2_xcls")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_xcls);
         if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
         if(p == "J2_ctof")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_ctof);
-        if(p == "f_mixer")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.f_mixer);
-        if(p == "u_layer")     return fmt::format(FMT_STRING("{:>7}"),     param.u_layer);
+        if(p == "u_fmix")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_fmix);
+        if(p == "u_depth")     return fmt::format(FMT_STRING("{:>7}"),     param.u_depth);
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
         if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.distribution);
     /* clang-format on */
@@ -207,5 +207,5 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
 
 std::vector<std::string_view> h5tb_lbit::get_parameter_names() const noexcept {
     return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth",  "J2_wdth",
-            "J3_wdth", "J2_xcls", "J2_span", "J2_ctof", "f_mixer", "u_layer", "spin_dim", "distribution"};
+            "J3_wdth", "J2_xcls", "J2_span", "J2_ctof", "u_fmix",  "u_depth", "spin_dim", "distribution"};
 }

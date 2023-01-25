@@ -18,6 +18,20 @@ namespace rnd {
 
 namespace rnd {
 
+    constexpr std::string_view enum2sv(const dist &d) {
+        switch(d) {
+            case dist::uniform: return "uniform";
+            case dist::normal: return "normal";
+            case dist::lognormal: return "lognormal";
+        }
+    }
+    constexpr dist sv2enum(std::string_view d) {
+        if(d == "uniform") return dist::uniform;
+        if(d == "normal") return dist::normal;
+        if(d == "lognormal") return dist::lognormal;
+        throw std::runtime_error("rnd: unrecognized distribution: " + std::string(d));
+    }
+
     namespace internal {
         // Make a random number engine
         //        inline pcg64 rng;
@@ -124,6 +138,8 @@ namespace rnd {
     }
 
     double log_normal(const double mean, const double std) {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::log_normal is not thread safe!");
         std::lognormal_distribution<double> distribution(mean, std);
         return distribution(internal::rng);
     }
@@ -162,4 +178,41 @@ namespace rnd {
     template void shuffle(std::vector<long> &list);
     template void shuffle(std::vector<size_t> &list);
     template void shuffle(std::vector<double> &list);
+
+    template<typename Distribution>
+    std::vector<double> random(Distribution &&d, size_t num) {
+        auto rndvec = std::vector<double>(num);
+        for(size_t i = 0; i < num; ++i) rndvec[i] = d(internal::rng);
+        return rndvec;
+    }
+
+    double random(dist d, double mean, double width) {
+        switch(d) {
+            case dist::uniform: return uniform_double_box(mean - width / 2, mean + width / 2);
+            case dist::normal: return normal(mean, width);
+            case dist::lognormal: return log_normal(mean, width);
+            default: throw std::runtime_error("Invalid distribution");
+        }
+    }
+    double random(std::string_view distribution, double mean, double width) { return random(sv2enum(distribution), mean, width); }
+
+    std::vector<double> random(dist d, double mean, double width, size_t num) {
+        switch(d) {
+            case dist::uniform: return random(std::uniform_real_distribution<double>(mean - width / 2, mean + width / 2), num);
+            case dist::normal: return random(std::normal_distribution<double>(mean, width), num);
+            case dist::lognormal: return random(std::lognormal_distribution<double>(mean, width), num);
+            default: throw std::runtime_error("Invalid distribution");
+        }
+    }
+    std::vector<double> random(dist d, double mean, double width, const std::vector<double> &weights) {
+        auto rndvec = random(d, mean, width, weights.size());
+        for(size_t i = 0; i < weights.size(); ++i) rndvec[i] *= weights[i];
+        return rndvec;
+    }
+
+    std::vector<double> random(std::string_view distribution, double mean, double width, size_t num) { return random(sv2enum(distribution), mean, width, num); }
+    std::vector<double> random(std::string_view distribution, double mean, double width, const std::vector<double> &weights) {
+        return random(sv2enum(distribution), mean, width, weights);
+    }
+
 }

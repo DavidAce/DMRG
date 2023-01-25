@@ -15,7 +15,7 @@ enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
-enum class UnitaryGateType { UNIFORM, BLOCKED };
+enum class UnitaryGateWeight { IDENTITY, EXPDECAY };
 enum class EdgeStatus { STALE, FRESH };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageEvent : int {
@@ -243,9 +243,9 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == GateMove::ON)                                        return "ON";
         if(item == GateMove::AUTO)                                      return "AUTO";
     }
-    if constexpr(std::is_same_v<T, UnitaryGateType>) {
-        if(item == UnitaryGateType::UNIFORM)                            return "UNIFORM";
-        if(item == UnitaryGateType::BLOCKED)                            return "BLOCKED";
+    if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
+        if(item == UnitaryGateWeight::IDENTITY)                         return "IDENTITY";
+        if(item == UnitaryGateWeight::EXPDECAY)                         return "EXPDECAY";
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
@@ -452,6 +452,14 @@ constexpr std::string_view enum2sv(const T &item) {
 }
 
 template<typename T>
+std::vector<std::string_view> enum2sv(const std::vector<T> &items) {
+    auto v = std::vector<std::string_view>();
+    v.reserve(items.size());
+    for (const auto & item : items) v.emplace_back(enum2sv(item));
+    return v;
+}
+
+template<typename T>
 std::string flag2str(const T &item) {
     static_assert((std::is_same_v<T, OptExit> or std::is_same_v<T,OptWhen>) and
         "flag2str only works with OptWhen or OptExit");
@@ -483,17 +491,18 @@ std::string flag2str(const T &item) {
 
 }
 
-
+namespace enum_sfinae{
 template<class T, class... Ts>
 struct is_any : std::disjunction<std::is_same<T, Ts>...> {};
 template<class T, class... Ts>
 inline constexpr bool is_any_v = is_any<T, Ts...>::value;
+}
 
 
 
 template<typename T>
 constexpr auto sv2enum(std::string_view item) {
-    static_assert(is_any_v<T,
+    static_assert(enum_sfinae::is_any_v<T,
         AlgorithmType,
         AlgorithmStop,
         MultisiteMove,
@@ -501,7 +510,7 @@ constexpr auto sv2enum(std::string_view item) {
         SVDLibrary,
         UpdateWhen,
         GateMove,
-        UnitaryGateType,
+        UnitaryGateWeight,
         ModelType,
         EdgeStatus,
         StorageLevel,
@@ -571,9 +580,9 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ON")                                    return GateMove::ON;
         if(item == "AUTO")                                  return GateMove::AUTO;
     }
-    if constexpr(std::is_same_v<T, UnitaryGateType>) {
-        if(item == "UNIFORM")                               return UnitaryGateType::UNIFORM;
-        if(item == "BLOCKED")                               return UnitaryGateType::BLOCKED;
+    if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
+        if(item == "IDENTITY")                              return UnitaryGateWeight::IDENTITY;
+        if(item == "EXPDECAY")                              return UnitaryGateWeight::EXPDECAY;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;

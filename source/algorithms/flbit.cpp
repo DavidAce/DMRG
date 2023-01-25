@@ -75,8 +75,8 @@ void flbit::resume() {
         std::string grouppath = "/fLBIT/model/unitary_gates";
         if(not h5file->linkExists(grouppath)) throw except::runtime_error("Missing link: {}", grouppath);
         auto num_layers = h5file->readAttribute<size_t>(grouppath, "num_layers");
-        if(num_layers != settings::model::lbit::u_layer)
-            throw except::runtime_error("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_layer);
+        if(num_layers != settings::model::lbit::u_depth)
+            throw except::runtime_error("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_depth);
         unitary_gates_2site_layers.resize(num_layers);
         for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
             std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
@@ -554,19 +554,17 @@ void flbit::update_time_evolution_swap_gates() {
 }
 
 void flbit::create_unitary_circuit_gates() {
-    if(unitary_gates_2site_layers.size() == settings::model::lbit::u_layer) return;
-    tools::log->info("Creating {} layers of 2-site unitary gates", settings::model::lbit::u_layer);
-    unitary_gates_2site_layers.clear();
+    if(unitary_gates_2site_layers.size() == settings::model::lbit::u_depth) return;
     std::vector<double> fields;
     for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
-    tools::log->info("Fields: {}", fields);
-    for(size_t idx = 0; idx < settings::model::lbit::u_layer; idx++)
-        unitary_gates_2site_layers.emplace_back(
-            qm::lbit::get_unitary_2gate_layer_blocked(settings::model::model_size, settings::model::lbit::f_mixer, fields, settings::model::lbit::J1_wdth));
+    unitary_gates_2site_layers.resize(settings::model::lbit::u_depth);
+    auto uprop = qm::lbit::UnitaryGateProperties(fields);
+    tools::log->info("Creating unitary circuit of 2-site gates {}", uprop.string());
+    for(auto &ulayer : unitary_gates_2site_layers) ulayer = qm::lbit::get_unitary_2gate_layer(uprop);
 }
 
 void flbit::transform_to_real_basis() {
-    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_unitary_circuit_gates();
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_depth) create_unitary_circuit_gates();
     auto t_map    = tid::tic_scope("l2r");
     tensors.state = std::make_unique<StateFinite>(*state_lbit);
     tensors.state->set_name("state_real");
@@ -606,7 +604,7 @@ void flbit::transform_to_real_basis() {
 }
 
 void flbit::transform_to_lbit_basis() {
-    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_layer) create_unitary_circuit_gates();
+    if(unitary_gates_2site_layers.size() != settings::model::lbit::u_depth) create_unitary_circuit_gates();
     auto t_map = tid::tic_scope("r2l");
     state_lbit = std::make_unique<StateFinite>(*tensors.state);
     state_lbit->set_name("state_lbit");
@@ -673,32 +671,51 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(storage_event), tid::highest);
         if(h5file->linkExists("/fLBIT/model/lbits")) return;
-        auto urange = std::vector<size_t>{settings::model::lbit::u_layer};
-        auto frange = std::vector<double>{settings::model::lbit::f_mixer};
-        auto sample = settings::flbit::compute_lbit_stats;
-        if(sample > 1) {
-            urange = {8};   // num::range<size_t>(8, 9);
-            frange = {0.5}; // num::range<double>(0.25, 0.50, 0.05);
+        auto utgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_tgw8};
+        auto ucgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_cgw8};
+        auto udpths = std::vector<size_t>{settings::model::lbit::u_depth};
+        auto ufmixs = std::vector<double>{settings::model::lbit::u_fmix};
+        auto utstds = std::vector<double>{settings::model::lbit::u_tstd};
+        auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
+        auto nsamps = settings::flbit::compute_lbit_stats;
+        bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+        if(nsamps > 1) {
+            udpths = {8};
+            ufmixs = {0.5};
+            utstds = {1.0};
+            ucstds = {0.001, 0.01, 0.1, 1.0, 10};
+            utgw8s = {UnitaryGateWeight::IDENTITY};
+            ucgw8s = {UnitaryGateWeight::EXPDECAY};
         }
-        if(sample > 0) {
+        if(nsamps > 0) {
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
-            auto ugate_props = qm::lbit::UnitaryGateProperties{settings::model::lbit::ugate_type, fields, settings::model::lbit::J1_wdth};
-            tools::log->info("Computing the lbit characteristic length-scale with {} gates", enum2sv(settings::model::lbit::ugate_type));
-            auto lbitSA = qm::lbit::get_lbit_support_analysis(urange, frange, sample, tensors.get_length(), ugate_props, false);
-
-            h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
-            h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
-            h5file->writeDataset(lbitSA.decay, "/fLBIT/model/lbits/decay");
-            h5file->writeAttribute(urange, "/fLBIT/model/lbits", "u_layer");
-            h5file->writeAttribute(frange, "/fLBIT/model/lbits", "f_mixer");
-            h5file->writeAttribute(sample, "/fLBIT/model/lbits", "samples");
+            auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
+            auto lbitSA        = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
-                h5file->writeDataset(lbitSA.supps, "/fLBIT/model/lbits/data", H5D_CHUNKED);
-                h5file->writeDataset(lbitSA.pupps, "/fLBIT/model/lbits/pata", H5D_CHUNKED);
-                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
-                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/pata", "description");
-                h5file->writeAttribute(std::vector<std::string>{"f_mixer", "u_layer", "sample", "i", "j"}, "/fLBIT/model/lbits/data", "dims");
+                h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
+                h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
+                h5file->writeDataset(lbitSA.decay_avg, "/fLBIT/model/lbits/decay_avg");
+                h5file->writeDataset(lbitSA.decay_err, "/fLBIT/model/lbits/decay_err");
+                h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
+                h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
+                h5file->writeAttribute(utstds, "/fLBIT/model/lbits", "u_tstd");
+                h5file->writeAttribute(ucstds, "/fLBIT/model/lbits", "u_cstd");
+                h5file->writeAttribute(enum2sv(utgw8s), "/fLBIT/model/lbits", "u_tgw8");
+                h5file->writeAttribute(enum2sv(ucgw8s), "/fLBIT/model/lbits", "u_cgw8");
+                h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
+                h5file->writeAttribute(rndfld, "/fLBIT/model/lbits", "rndfld");
+                if(settings::storage::storage_level_model > StorageLevel::LIGHT) {
+                    h5file->writeDataset(lbitSA.support, "/fLBIT/model/lbits/data", H5D_CHUNKED);
+                    h5file->writeDataset(lbitSA.permute, "/fLBIT/model/lbits/data_shifted", H5D_CHUNKED);
+                    h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
+                    h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/data_shifted",
+                                           "description");
+                    h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "samples", "i", "j"},
+                                           "/fLBIT/model/lbits/data", "dimensions");
+                    h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "samples", "i", "j"},
+                                           "/fLBIT/model/lbits/data_shifted", "dimensions");
+                }
             }
         }
     }

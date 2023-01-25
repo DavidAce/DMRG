@@ -97,8 +97,10 @@ class h5tb_lbit : public h5tb_base {
         double               J2_xcls  = 0;  /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
         size_t               J2_span  = 0;  /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
         size_t               J2_ctof  = 0;  /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
-        double               f_mixer  = 0;  /*!< Mixing factor for unitary transformation to real-space */
-        uint64_t             u_layer  = 0;  /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
+        uint64_t             u_depth  = 0;  /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
+        double               u_fmix   = 0;  /*!< Mixing factor for unitary transformation to real-space */
+        double               u_tstd   = 0;  /*!< Standard deviation for theta-factors in the unitary gates */
+        double               u_cstd   = 0;  /*!< Standard deviation for c-factors in the unitary gates */
         long                 spin_dim = 2;  /*!< Spin dimension */
         h5pp::vstr_t         distribution;  /*!< The random distribution of h_rand. Choose between lognormal, normal or uniform */
     };

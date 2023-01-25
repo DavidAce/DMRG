@@ -122,12 +122,14 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::J3_wdth"                         , model::lbit::J3_wdth);
     dmrg_config.load_parameter("model::lbit::J2_xcls"                         , model::lbit::J2_xcls);
     dmrg_config.load_parameter("model::lbit::J2_span"                         , model::lbit::J2_span);
-
-    dmrg_config.load_parameter("model::lbit::f_mixer"                         , model::lbit::f_mixer);
-    dmrg_config.load_parameter("model::lbit::u_layer"                         , model::lbit::u_layer);
+    dmrg_config.load_parameter("model::lbit::u_depth"                         , model::lbit::u_depth);
+    dmrg_config.load_parameter("model::lbit::u_fmix"                          , model::lbit::u_fmix);
+    dmrg_config.load_parameter("model::lbit::u_tstd"                          , model::lbit::u_tstd);
+    dmrg_config.load_parameter("model::lbit::u_cstd"                          , model::lbit::u_cstd);
+    dmrg_config.load_parameter("model::lbit::u_tgw8"                          , model::lbit::u_tgw8);
+    dmrg_config.load_parameter("model::lbit::u_cgw8"                          , model::lbit::u_cgw8);
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);
-    dmrg_config.load_parameter("model::lbit::ugate_type"                      , model::lbit::ugate_type);
 
     dmrg_config.load_parameter("strategy::move_sites_when_stuck"              , strategy::move_sites_when_stuck);
     dmrg_config.load_parameter("strategy::project_on_saturation"              , strategy::project_on_saturation);
