@@ -17,8 +17,10 @@ from git import Repo
 import seaborn as sns
 from itertools import product
 from scipy.optimize import curve_fit
+
 logger = logging.getLogger('tools')
 import tikzplotlib
+from pathlib import Path
 
 matplotlib_version = pkg_resources.get_distribution("matplotlib").version
 if version.parse(matplotlib_version) == version.parse("3.5"):
@@ -901,10 +903,12 @@ def save_figure(figs):
             if not isinstance(f, dict):
                 raise TypeError("Expected type(f): dict")
             prettify_plot5(f)
+            Path(f['filename']).parent.mkdir(parents=True, exist_ok=True)
+            print('Saving figure: {}'.format(f['filename']))
             f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
             f['fig'].savefig('{}.png'.format(f['filename']), format='png')
             f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
-            f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
+            # f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
 
             with open('{}.git'.format(f['filename']), 'w') as gitfile:
                 repo = Repo(search_parent_directories=True)

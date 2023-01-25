@@ -103,8 +103,8 @@ def plot_decay(meta, figs=None, palette=None):
         pe_expfit = None
 
     h5data = h5open(meta['datafile'], 'r')
-    frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
-    urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
+    frange = h5data["{}".format(lbitpath)].attrs["u_fmix"][()]
+    urange = h5data["{}".format(lbitpath)].attrs["u_depth"][()]  # formerly u_depth
     data = h5data["{}/pata".format(lbitpath)]
 
     fmix_range = range(0, len(frange), 2)
@@ -216,7 +216,7 @@ def plot_lbits(meta, figs=None, color=None):
         color = next(itertools.cycle(sns.color_palette()))
 
     frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
-    urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
+    urange = h5data["{}".format(lbitpath)].attrs["u_depth"][()]
     lbits = h5data["{}".format(lbitpath)]["data"][()]
     decay = h5data["{}/decay".format(lbitpath)]  # formerly "curves"
     fields = h5data["fLBIT/model/hamiltonian"]['J1_rand']
@@ -532,8 +532,8 @@ if __name__ == '__main__':
 #     for datafile in datafiles:
 #         h5data = h5open(datafile, 'r')
 #         color = next(current_palette)
-#         frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
-#         urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]  # formerly u_depth
+#         frange = h5data["{}".format(lbitpath)].attrs["u_fmix"][()]
+#         urange = h5data["{}".format(lbitpath)].attrs["u_depth"][()]
 #         lbits = h5data["{}".format(lbitpath)]["data"][()]
 #         print('frange: {}'.format(frange))
 #         print('urange: {}'.format(urange))

@@ -2,9 +2,10 @@ from matplotlib.ticker import LogLocator, \
     LogFormatter, LogFormatterExponent, LogFormatterSciNotation, \
     LogFormatterMathtext, NullFormatter, MultipleLocator, MaxNLocator
 import numpy as np
+from pathlib import Path
 
-mplstyle = '../common/stylesheets/prb.mplstyle'
-# mplstyle = '../common/stylesheets/slack.mplstyle'
+# mplstyle = '../common/stylesheets/prb.mplstyle'
+mplstyle = '../common/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
 
@@ -15,14 +16,14 @@ def get_meta(plotdir):
             'include': {
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
-                'L': ['L_16'],
+                'L': ['L_12'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
-                # 'f': ['f_0.1500','f_0.2000'],
+                'f': ['f_0.5000'],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
                 # 'f': ['f_0.4000', 'f_0.5000', 'f_0.6000'],
-                'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
+                # 'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
                 # 'u': ['u_2', 'u_3'],
                 # 'f': ['f_0.4500'],
                 # 'u': ['u_5', 'u_6'],
@@ -42,7 +43,7 @@ def get_meta(plotdir):
             # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
             'xmafmt': LogFormatterMathtext(),
             'plotprefix': 'SE',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -62,11 +63,11 @@ def get_meta(plotdir):
             'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.2f',
             'plotprefix': 'SN',
-            'plotdir': plotdir,
-            # 'ymin': 0.235,
-            # 'ymax': 0.275,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'ymin': 0.21,
+            'ymax': 0.40,
             'xmin': 1,
-            'xmax': 1e6,
+            'xmax': 1e3,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -89,7 +90,7 @@ def get_meta(plotdir):
             'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.2f',
             'plotprefix': 'SN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',
             # 'ymin': 0.235,
@@ -119,7 +120,7 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             # 'ymin': 1.26,
             'plotprefix': 'SH',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -140,7 +141,7 @@ def get_meta(plotdir):
             'yformat': '%.2f',
             # 'ymin': 1.27,
             'plotprefix': 'SH',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -161,7 +162,7 @@ def get_meta(plotdir):
             # 'yformat': '%.2f',
             'yscale': 'log',
             'plotprefix': 'SNA',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -183,7 +184,7 @@ def get_meta(plotdir):
             # 'yformat': '%.2f',
             'yscale': 'log',
             'plotprefix': 'SHA',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -203,7 +204,7 @@ def get_meta(plotdir):
             'titlename': 'Entanglement and Number Entropies',
             'ylabel': '$\langle S(L/2)\\rangle$',
             'plotprefix': 'SESN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -232,7 +233,7 @@ def get_meta(plotdir):
             'titlename': 'Entanglement and Number Entropies',
             'ylabel': '$\langle S(L/2)\\rangle$',
             'plotprefix': 'SESN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -259,7 +260,7 @@ def get_meta(plotdir):
             'titlename': 'Bond Dimension',
             'ylabel': '$\langle\chi\\rangle$',
             'plotprefix': 'chi',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
             'timeloglevel': 1,
@@ -276,7 +277,7 @@ def get_meta(plotdir):
             'ylabel': 'Avg. Simulation Time [min]',
             'yscale': 'log',
             'plotprefix': 'tsim',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'normalize': 60,
             'realizations': 600,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
@@ -295,7 +296,7 @@ def get_meta(plotdir):
             'ydiff': True,  # Plot the difference in y instead.
             'yscale': 'log',
             'plotprefix': 'titr',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'normalize': 60,
             'realizations': 600,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
@@ -324,7 +325,7 @@ def get_meta(plotdir):
             'xmafmt': LogFormatterMathtext(labelOnlyBase=True),
 
             'plotprefix': 'eps',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
             'markloglogwindow': False,
@@ -344,7 +345,7 @@ def get_meta(plotdir):
             'yscale': 'log',
             'ynopos': 'mask',
             'plotprefix': 'lbit',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'xmax': 16,
             'ymin': 1e-14,
@@ -358,7 +359,7 @@ def get_meta(plotdir):
                 'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
                 'coords': [None, None, None, None],
                 # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
-                'legendtitle': '$\\xi_\\tau$'
+                'legendtitle': '$\\xi_\\tau$',
             },
 
         },
@@ -369,7 +370,7 @@ def get_meta(plotdir):
             'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
             'xlabel': "$f$",
             'plotprefix': 'lbit',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
@@ -392,7 +393,7 @@ def get_meta(plotdir):
             'xlabel': '$S_N$',
             'density': True,
             'plotprefix': 'SN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -428,7 +429,7 @@ def get_meta(plotdir):
             'xlabel': '$S_E^\infty$',
             'density': True,
             'plotprefix': 'SE',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -464,7 +465,7 @@ def get_meta(plotdir):
             'xlabel': '$S_N^\infty$',
             'density': True,
             'plotprefix': 'SN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -496,7 +497,7 @@ def get_meta(plotdir):
             'xlabel': '$L$',
             'density': True,
             'plotprefix': 'SE',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -526,7 +527,7 @@ def get_meta(plotdir):
             'xlabel': '$L$',
             'density': True,
             'plotprefix': 'SN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -562,7 +563,7 @@ def get_meta(plotdir):
             'xlabel': '$t_\mathrm{sim}$',
             'density': True,
             'plotprefix': 'SN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -597,7 +598,7 @@ def get_meta(plotdir):
             'xlabel': '$\chi$',
             'density': True,
             'plotprefix': 'SN',
-            'plotdir': plotdir,
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,

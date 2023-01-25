@@ -32,10 +32,6 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
         raise AssertionError("Must add to 7 elems: \n figspec {}\n subspec {}\n linespec {}")
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
-    if 'plotdir' in meta and 'mplstyle' in meta:
-        if Path(meta['plotdir']).stem != Path(meta['mplstyle']).stem:
-            meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
-            Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
     if 'mplstyle' in meta and 'slack' in meta['mplstyle']:
         # palette_name = "Spectral"
         if not palette_name:
@@ -77,7 +73,6 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
             for dirkeys in dirprod:
                 palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
                 for linkeys, color, lstyle in zip(linprod, palette, lstyles):
-                    print('-- plotting linkeys: {}'.format(subkeys))
                     findlist = list(figkeys) + list(subkeys) + list(dirkeys) + list(linkeys) + [meta['groupname']]
                     datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                 all(k in key for k in findlist)]
@@ -85,6 +80,7 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         print("ERROR: found", len(datanode), "datanodes: ", datanode, " | findlist: ", findlist)
                         continue
                         # raise LookupError("Found incorrect number of datanodes")
+                    print('-- plotting linkeys: {}'.format(linkeys))
                     datanode = datanode[0]
                     mmntnode = datanode.parent['measurements']
                     dbval = db['dsets'][datanode.name]
@@ -105,13 +101,15 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                         print('Time window is not long enough: saturation index = {} / {}', idx_sat, len(t))
                         continue
                     legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-
+                    print('linkeys:', linkeys)
                     if 'number' in meta['dsetname'] and linkeys == linprod[
                         -1] and plot_divg_fig3_sub3_line1.prb is None:
                         # Plot Luitz data
                         with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
-                            hist = h5ext['L16/W4.0']['hist[NE1][100]'][()]
-                            edges = h5ext['L16/W4.0']['binedges[NE1][100]'][()]
+                            lenval = "{}".format(get_vals(db=dbval, keyfmt='L'))
+                            lenkey = f"L{lenval}"
+                            hist = h5ext[f'{lenkey}/W4.0']['hist[NE1][100]'][()]
+                            edges = h5ext[f'{lenkey}/W4.0']['binedges[NE1][100]'][()]
                             bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                             line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=1.0,
                                                 zorder=0)
@@ -119,26 +117,31 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                                 key, fmt = key.split(':') if ':' in key else [key, '']
                                 f['legends'][idx][icol]['handle'].append(line_ext)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
-                                if key in linkeys[0]:
-                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 W=4.0}')
-                                else:
-                                    f['legends'][idx][icol]['label'].append('')
+                                f['legends'][idx][icol]['label'].append(
+                                    '\makebox[3ex][l]{PRB:102.100202 ' + 'L={},W=4.0'.format(lenval) + '}')
+                                # if key in linkeys[0]:
+                                #     f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 ' + 'L={},W=4.0'.format(lenval) + '}')
+                                # else:
+                                #     f['legends'][idx][icol]['label'].append('')
 
-                            hist = h5ext['L16/W6.0']['hist[NE1][100]'][()]
-                            edges = h5ext['L16/W6.0']['binedges[NE1][100]'][()]
+                            hist = h5ext[f'{lenkey}/W6.0']['hist[NE1][100]'][()]
+                            edges = h5ext[f'{lenkey}/W6.0']['binedges[NE1][100]'][()]
                             bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.70, zorder=0)
+                            line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.70,
+                                                zorder=0)
                             for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                                 key, fmt = key.split(':') if ':' in key else [key, '']
                                 f['legends'][idx][icol]['handle'].append(line_ext)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
-                                if key in linkeys[0]:
-                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 W=6.0}')
-                                else:
-                                    f['legends'][idx][icol]['label'].append('')
+                                f['legends'][idx][icol]['label'].append(
+                                    '\makebox[3ex][l]{PRB:102.100202 ' + 'L={},W=6.0'.format(lenval) + '}')
+                                # if key in linkeys[0]:
+                                #     f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 ' + 'L={},W=6.0'.format(lenval) + '}')
+                                # else:
+                                #     f['legends'][idx][icol]['label'].append('')
 
-                            hist = h5ext['L16/W8.0']['hist[NE1][100]'][()]
-                            edges = h5ext['L16/W8.0']['binedges[NE1][100]'][()]
+                            hist = h5ext[f'{lenkey}/W8.0']['hist[NE1][100]'][()]
+                            edges = h5ext[f'{lenkey}/W8.0']['binedges[NE1][100]'][()]
                             bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                             line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=0.40,
                                                 zorder=0)
@@ -146,10 +149,13 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
                                 key, fmt = key.split(':') if ':' in key else [key, '']
                                 f['legends'][idx][icol]['handle'].append(line_ext)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
-                                if key in linkeys[0]:
-                                    f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 W=8.0}')
-                                else:
-                                    f['legends'][idx][icol]['label'].append('')
+                                f['legends'][idx][icol]['label'].append(
+                                    '\makebox[3ex][l]{PRB:102.100202 ' + 'L={},W=8.0'.format(lenval) + '}')
+
+                                # if key in linkeys[0]:
+                                # f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 L={},W=8.0}'.format(lenval))
+                                # else:
+                                #     f['legends'][idx][icol]['label'].append('')
 
                             plot_divg_fig3_sub3_line1.prb = True
 
@@ -189,13 +195,12 @@ def plot_divg_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=N
             f['fig'].suptitle('{} distribution\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
-        if not f['filename']:
-            suffix = ''
-            suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-            suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-            f['filename'] = "{}/{}_divg_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                                  '-'.join(map(str, figkeys)),
-                                                                  '-'.join(map(str, get_keys(db, subspec))),
-                                                                  suffix)
+        suffix = ''
+        suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
+        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        f['filename'] = "{}/{}_divg_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                              '-'.join(map(str, figkeys)),
+                                                              '-'.join(map(str, get_keys(db, subspec))),
+                                                              suffix)
 
     return figs

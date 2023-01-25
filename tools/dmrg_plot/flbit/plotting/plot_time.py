@@ -184,6 +184,7 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                             f['ymax'] = np.max([f['ymax'], np.max(y)]) if f['ymax'] else np.max(y)
                             f['ymin'] = np.min([f['ymin'], y[idx1]]) if f['ymin'] else y[idx1]
                             if meta.get('markloglogwindow'):
+                                print('window:', [y[idx1], y[idx2]])
                                 mark, = ax.plot([xdata[idx1], xdata[idx2]], [y[idx1], y[idx2]],
                                                 color=color,
                                                 marker='o', markersize=6, linestyle='None', markeredgecolor='w',
@@ -306,13 +307,12 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
             f['fig'].suptitle('{} vs Time\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
-        if not f['filename']:
-            suffix = ''
-            suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-            suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-            f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                                '-'.join(map(str, figkeys)),
-                                                                '-'.join(map(str, get_keys(db, subspec))),
-                                                                suffix)
+        suffix = ''
+        suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
+        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                            '-'.join(map(str, figkeys)),
+                                                            '-'.join(map(str, get_keys(db, subspec))),
+                                                            suffix)
 
     return figs

@@ -29,10 +29,11 @@ def lbit_plot(args):
             batchdir = batchglob[0]
             avgfile = '{}/analysis/data/averaged.h5'.format(batchdir)
             plotdir = '{}/analysis/plots'.format(batchdir)
-            if meta is None:
-                meta = get_meta(plotdir)
+            # if meta is None:
+            meta = get_meta(plotdir)
             h5avgs.append(h5py.File(avgfile, 'r'))
-            dbs.append(load_time_database2(h5avgs[-1], meta, algo_filter=algo_filter, model_filter=model_filter, state_filter=state_filter, debug=False))
+            dbs.append(load_time_database2(h5avgs[-1], meta, algo_filter=algo_filter, model_filter=model_filter,
+                                           state_filter=state_filter, debug=False))
 
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)

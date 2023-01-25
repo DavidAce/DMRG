@@ -57,10 +57,19 @@ lines.linewidth         : 1.0
 lines.markersize        : 5
 errorbar.capsize        : 3  # length of end cap on error bars in pixels
 
+axes.axisbelow          : True
+axes.titlelocation      : center  # alignment of the title: {left, right, center}
+axes.titlesize          : small   # font size of the axes title
+axes.titleweight        : normal  # font weight of title
+axes.titlecolor         : auto    # color of the axes title, auto falls back to
+                                  # text.color as default value
+axes.titley             : 0.95    # position title (axes relative units).  None implies auto
+axes.titlepad           : 0.00    # pad between axes and title in points
+
 
 #figure.figsize          : 7, 4 # Two subplots side by side
-#figure.figsize          : 5, 4 # Single plot
-figure.figsize          : 10, 8 # More plots
+figure.figsize          : 5, 4 # Single plot
+#figure.figsize          : 10, 8 # More plots
 #figure.figsize          : 2.53125, 3.00 # 75% width
 
 ## Dimensions as fraction of font size:

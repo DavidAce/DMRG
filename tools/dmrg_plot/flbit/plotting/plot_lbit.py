@@ -10,11 +10,6 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
 
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
-    if 'plotdir' in meta and 'mplstyle' in meta:
-        if Path(meta['plotdir']).stem != Path(meta['mplstyle']).stem:
-            meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
-            Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
-            print("Setting plotdir: ", meta['plotdir'])
     if 'mplstyle' in meta and 'slack' in meta['mplstyle']:
         # palette_name = "Spectral"
         if not palette_name:
@@ -112,9 +107,8 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         if not prb_style and dbval:
             f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
-        if not f['filename']:
-            f['filename'] = "{}/{}_lbit_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
-                                                                '-'.join(map(str, figkeys)),
-                                                                '-'.join(map(str, get_keys(db, subspec))))
+        f['filename'] = "{}/{}_lbit_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
+                                                            '-'.join(map(str, figkeys)),
+                                                            '-'.join(map(str, get_keys(db, subspec))))
 
     return figs

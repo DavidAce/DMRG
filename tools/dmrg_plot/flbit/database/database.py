@@ -76,24 +76,33 @@ def load_time_database(h5_src, dsetname, algo_filter=None, state_filter=None, po
                                                 if datanode.name in db['dsets']:
                                                     continue
                                                 if debug:
-                                                    print(Lkey, Jkey, wkey, bkey, fkey, ukey, algokey, statekey, pointkey, datakey)
+                                                    print(Lkey, Jkey, wkey, bkey, fkey, ukey, algokey, statekey,
+                                                          pointkey, datakey)
 
                                                 L = rnode.attrs['model_size']
-                                                J = [rnode.attrs['J1_mean'], rnode.attrs['J2_mean'], rnode.attrs['J3_mean']]
-                                                w = [rnode.attrs['J1_wdth'], rnode.attrs['J2_wdth'], rnode.attrs['J3_wdth']]
+                                                J = [rnode.attrs['J1_mean'], rnode.attrs['J2_mean'],
+                                                     rnode.attrs['J3_mean']]
+                                                w = [rnode.attrs['J1_wdth'], rnode.attrs['J2_wdth'],
+                                                     rnode.attrs['J3_wdth']]
                                                 b = rnode.attrs['J2_base']
-                                                f = rnode.attrs['f_mixer']
-                                                u = rnode.attrs['u_layer']
+                                                f = rnode.attrs['u_fmix']
+                                                u = rnode.attrs['u_depth']
                                                 r = rnode.attrs['J2_span']
 
                                                 if debug:
                                                     print("Adding keys")
-                                                db['keys']['L'].append(Lkey) if not Lkey in db['keys']['L'] else db['keys']['L']
-                                                db['keys']['J'].append(Jkey) if not Jkey in db['keys']['J'] else db['keys']['J']
-                                                db['keys']['w'].append(wkey) if not wkey in db['keys']['w'] else db['keys']['w']
-                                                db['keys']['b'].append(bkey) if not bkey in db['keys']['b'] else db['keys']['b']
-                                                db['keys']['f'].append(fkey) if not fkey in db['keys']['f'] else db['keys']['f']
-                                                db['keys']['u'].append(ukey) if not ukey in db['keys']['u'] else db['keys']['u']
+                                                db['keys']['L'].append(Lkey) if not Lkey in db['keys']['L'] else \
+                                                db['keys']['L']
+                                                db['keys']['J'].append(Jkey) if not Jkey in db['keys']['J'] else \
+                                                db['keys']['J']
+                                                db['keys']['w'].append(wkey) if not wkey in db['keys']['w'] else \
+                                                db['keys']['w']
+                                                db['keys']['b'].append(bkey) if not bkey in db['keys']['b'] else \
+                                                db['keys']['b']
+                                                db['keys']['f'].append(fkey) if not fkey in db['keys']['f'] else \
+                                                db['keys']['f']
+                                                db['keys']['u'].append(ukey) if not ukey in db['keys']['u'] else \
+                                                db['keys']['u']
                                                 db['keys']['r'].append(rkey) if not rkey in db['keys']['r'] else db['keys']['r']
                                                 db['keys']['algo'].append(algokey) if not algokey in db['keys']['algo'] else db['keys']['algo']
                                                 db['keys']['state'].append(statekey) if not statekey in db['keys']['state'] else db['keys']['state']
@@ -239,8 +248,8 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                 J = [rnode.attrs['J1_mean'], rnode.attrs['J2_mean'], rnode.attrs['J3_mean']]
                                 w = [rnode.attrs['J1_wdth'], rnode.attrs['J2_wdth'], rnode.attrs['J3_wdth']]
                                 x = rnode.attrs['J2_xcls']
-                                f = rnode.attrs['f_mixer']
-                                u = rnode.attrs['u_layer']
+                                f = rnode.attrs['u_fmix']
+                                u = rnode.attrs['u_depth']
                                 r = rnode.attrs['J2_span']
                                 if debug:
                                     print("Adding keys")

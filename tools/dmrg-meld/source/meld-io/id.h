@@ -60,9 +60,9 @@ struct lbit {
     double                   J1_wdth, J2_wdth, J3_wdth;
     double                   J2_xcls;
     size_t                   J2_span;
-    double                   f_mixer;
-    size_t                   u_layer;
-    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_xcls", "J2_span", "f_mixer", "u_layer"};
+    double                   u_fmix;
+    size_t                   u_depth;
+    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_xcls", "J2_span", "u_fmix", "u_depth"};
 };
 
 struct sdual {
