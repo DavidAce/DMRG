@@ -715,6 +715,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                                            "/fLBIT/model/lbits/data", "dimensions");
                     h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "samples", "i", "j"},
                                            "/fLBIT/model/lbits/data_shifted", "dimensions");
+                    h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "|i-j|"},
+                                           "/fLBIT/model/lbits/data_shifted", "dimensions");
                 }
             }
         }

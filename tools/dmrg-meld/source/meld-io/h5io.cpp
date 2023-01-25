@@ -183,8 +183,12 @@ namespace tools::h5io {
                     hamiltonian.J3_wdth     = h5tb_hamiltonian.J3_wdth;
                     hamiltonian.J2_xcls     = h5tb_hamiltonian.J2_xcls;
                     hamiltonian.J2_span     = h5tb_hamiltonian.J2_span;
-                    hamiltonian.u_fmix      = h5tb_hamiltonian.u_fmix;
                     hamiltonian.u_depth     = h5tb_hamiltonian.u_depth;
+                    hamiltonian.u_fmix      = h5tb_hamiltonian.u_fmix;
+                    hamiltonian.u_tstd      = h5tb_hamiltonian.u_tstd;
+                    hamiltonian.u_cstd      = h5tb_hamiltonian.u_cstd;
+                    hamiltonian.u_tgw8      = h5tb_hamiltonian.u_tgw8;
+                    hamiltonian.u_cgw8      = h5tb_hamiltonian.u_cgw8;
                     srcModelId.distribution = h5tb_hamiltonian.distribution;
                 }
                 srcModelId.model_size = h5_src.readAttribute<size_t>(path, "model_size");
@@ -264,8 +268,12 @@ namespace tools::h5io {
                 h5_tgt.writeDataset(modelId.p.J3_wdth, fmt::format("{}/J3_wdth", modelPath));
                 h5_tgt.writeDataset(modelId.p.J2_xcls, fmt::format("{}/J2_xcls", modelPath));
                 h5_tgt.writeDataset(modelId.p.J2_span, fmt::format("{}/J2_span", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_fmix, fmt::format("{}/u_fmix", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_depth, fmt::format("{}/u_depth", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_fmix, fmt::format("{}/u_fmix", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_tstd, fmt::format("{}/u_tstd", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_tgw8, fmt::format("{}/u_tgw8", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_cstd, fmt::format("{}/u_cstd", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_cgw8, fmt::format("{}/u_cgw8", modelPath));
             }
         }
     }

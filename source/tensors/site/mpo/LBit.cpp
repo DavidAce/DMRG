@@ -55,6 +55,8 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.u_fmix   = settings::model::lbit::u_fmix;
     h5tb.param.u_tstd   = settings::model::lbit::u_tstd;
     h5tb.param.u_cstd   = settings::model::lbit::u_cstd;
+    h5tb.param.u_tgw8   = settings::model::lbit::u_tgw8;
+    h5tb.param.u_cgw8   = settings::model::lbit::u_cgw8;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
 
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
@@ -84,6 +86,8 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.u_fmix       = std::any_cast<double>(parameters["u_fmix"]);
     h5tb.param.u_tstd       = std::any_cast<double>(parameters["u_tstd"]);
     h5tb.param.u_cstd       = std::any_cast<double>(parameters["u_cstd"]);
+    h5tb.param.u_tgw8       = std::any_cast<UnitaryGateWeight>(parameters["u_tgw8"]);
+    h5tb.param.u_cgw8       = std::any_cast<UnitaryGateWeight>(parameters["u_cgw8"]);
     h5tb.param.spin_dim     = std::any_cast<long>(parameters["spin_dim"]);
     h5tb.param.distribution = std::any_cast<h5pp::vstr_t>(parameters["distribution"]);
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
@@ -107,6 +111,8 @@ LBit::TableMap LBit::get_parameters() const {
     parameters["u_fmix"]        = h5tb.param.u_fmix;
     parameters["u_tstd"]        = h5tb.param.u_tstd;
     parameters["u_cstd"]        = h5tb.param.u_cstd;
+    parameters["u_tgw8"]        = h5tb.param.u_tgw8;
+    parameters["u_cgw8"]        = h5tb.param.u_cgw8;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
     parameters["distribution"]  = h5tb.param.distribution;
     return parameters;
@@ -128,6 +134,8 @@ std::any LBit::get_parameter(const std::string &name) const {
     else if(name == "u_fmix")        return h5tb.param.u_fmix;
     else if(name == "u_tstd")        return h5tb.param.u_tstd;
     else if(name == "u_cstd")        return h5tb.param.u_cstd;
+    else if(name == "u_tgw8")        return h5tb.param.u_tgw8;
+    else if(name == "u_cgw8")        return h5tb.param.u_cgw8;
     else if(name == "spin_dim")      return h5tb.param.spin_dim;
     else if(name == "distribution")  return h5tb.param.distribution;
     /* clang-format on */

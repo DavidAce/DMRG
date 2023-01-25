@@ -1,4 +1,5 @@
 #pragma once
+#include "config/enums.h"
 #include <h5pp/details/h5ppHid.h>
 #include <h5pp/details/h5ppVarr.h>
 #include <h5pp/details/h5ppVstr.h>
@@ -101,8 +102,10 @@ class h5tb_lbit : public h5tb_base {
         double               u_fmix   = 0;  /*!< Mixing factor for unitary transformation to real-space */
         double               u_tstd   = 0;  /*!< Standard deviation for theta-factors in the unitary gates */
         double               u_cstd   = 0;  /*!< Standard deviation for c-factors in the unitary gates */
-        long                 spin_dim = 2;  /*!< Spin dimension */
-        h5pp::vstr_t         distribution;  /*!< The random distribution of h_rand. Choose between lognormal, normal or uniform */
+        UnitaryGateWeight    u_tgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of thetas in unitary gates */
+        UnitaryGateWeight    u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
+        long                 spin_dim = 2;                           /*!< Spin dimension */
+        h5pp::vstr_t         distribution;                           /*!< The random distribution of h_rand. Choose between lognormal, normal or uniform */
     };
 
     table                                       param;
