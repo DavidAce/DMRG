@@ -112,4 +112,11 @@ class h5tb_lbit : public h5tb_base {
     void                                        register_table_type() const;
     [[nodiscard]] std::string                   fmt_value(std::string_view p) const;
     [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
+
+    static h5pp::hid::h5t &get_h5t_enum_w8();
+    static void            create_enum_w8();
+    static void            commit_enum_w8(const h5pp::hid::h5f &file_id);
+
+    private:
+    static inline h5pp::hid::h5t enum_w8;
 };

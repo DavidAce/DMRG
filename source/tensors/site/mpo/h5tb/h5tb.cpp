@@ -155,6 +155,25 @@ std::vector<std::string_view> h5tb_ising_tf_rf::get_parameter_names() const noex
  *
  */
 
+h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_w8() {
+    create_enum_w8();
+    return enum_w8;
+}
+
+void h5tb_lbit::create_enum_w8() {
+    if(enum_w8.valid()) return;
+    enum_w8 = H5Tenum_create(H5T_NATIVE_INT);
+    int val;
+    H5Tenum_insert(enum_w8, "IDENTITY", (val = static_cast<int>(UnitaryGateWeight::IDENTITY), &val));
+    H5Tenum_insert(enum_w8, "EXPDECAY", (val = static_cast<int>(UnitaryGateWeight::EXPDECAY), &val));
+}
+
+void h5tb_lbit::commit_enum_w8(const h5pp::hid::h5f &file_id) {
+    if(H5Tcommitted(get_h5t_enum_w8()) > 0) return;
+    herr_t err = H5Tcommit(file_id, "UnitaryGateWeight", get_h5t_enum_w8(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
+}
+
 void h5tb_lbit::register_table_type() const {
     if(h5_type.valid()) return;
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
@@ -170,8 +189,12 @@ void h5tb_lbit::register_table_type() const {
     H5Tinsert(h5_type, "J2_xcls", HOFFSET(table, J2_xcls), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_ULONG);
     H5Tinsert(h5_type, "J2_ctof", HOFFSET(table, J2_ctof), H5T_NATIVE_ULONG);
-    H5Tinsert(h5_type, "u_fmix", HOFFSET(table, u_fmix), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "u_depth", HOFFSET(table, u_depth), H5T_NATIVE_UINT64);
+    H5Tinsert(h5_type, "u_fmix", HOFFSET(table, u_fmix), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_tstd", HOFFSET(table, u_tstd), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_cstd", HOFFSET(table, u_cstd), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_tgw8", HOFFSET(table, u_tgw8), get_h5t_enum_w8());
+    H5Tinsert(h5_type, "u_cgw8", HOFFSET(table, u_cgw8), get_h5t_enum_w8());
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5pp::vstr_t::get_h5type());
 }
@@ -197,12 +220,16 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
         if(p == "J2_xcls")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_xcls);
         if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
         if(p == "J2_ctof")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_ctof);
-        if(p == "u_fmix")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_fmix);
         if(p == "u_depth")     return fmt::format(FMT_STRING("{:>7}"),     param.u_depth);
+        if(p == "u_fmix")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_fmix);
+        if(p == "u_tstd")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_tstd);
+        if(p == "u_cstd")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_cstd);
+        if(p == "u_tgw8")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_tgw8));
+        if(p == "u_cgw8")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_cgw8));
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
         if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.distribution);
-    /* clang-format on */
-    throw except::runtime_error("Unrecognized parameter: {}", p);
+        /* clang-format on */
+        throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
 std::vector<std::string_view> h5tb_lbit::get_parameter_names() const noexcept {

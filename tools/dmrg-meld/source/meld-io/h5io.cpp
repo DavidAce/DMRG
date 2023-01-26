@@ -45,21 +45,22 @@ namespace tools::h5io {
     template<typename T>
     std::string get_standardized_base(const ModelId<T> &H, int decimals) {
         auto t_scope = tid::tic_scope(__FUNCTION__);
-        if constexpr(std::is_same_v<T, sdual>) return h5pp::format("L_{1}/l_{2:.{0}f}/d_{3:+.{0}f}", decimals, H.model_size, H.p.lambda, H.p.delta);
-        if constexpr(std::is_same_v<T, majorana>) return h5pp::format("L_{1}/g_{2:.{0}f}/d_{3:+.{0}f}", decimals, H.model_size, H.p.g, H.p.delta);
+        if constexpr(std::is_same_v<T, sdual>) return h5pp::format("L{1}/l{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.lambda, H.p.delta);
+        if constexpr(std::is_same_v<T, majorana>) return h5pp::format("L{1}/g{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.g, H.p.delta);
         if constexpr(std::is_same_v<T, lbit>) {
-            std::string J_mean_str = fmt::format("J[{1:+.{0}f}_{2:+.{0}f}_{3:+.{0}f}]", decimals, H.p.J1_mean, H.p.J2_mean, H.p.J3_mean);
-            std::string J_wdth_str = fmt::format("w[{1:+.{0}f}_{2:+.{0}f}_{3:+.{0}f}]", decimals, H.p.J1_wdth, H.p.J2_wdth, H.p.J3_wdth);
-            std::string x_str      = fmt::format("x_{1:.{0}f}", decimals, H.p.J2_xcls);
-            std::string f_str      = fmt::format("f_{1:.{0}f}", decimals, H.p.u_fmix);
-            std::string u_str      = fmt::format("u_{}", H.p.u_depth);
-            std::string r_str;
-            // J2_span is special since it can be -1ul. We prefer putting -1 in the path rather than 18446744073709551615
-            if(H.p.J2_span == -1ul)
-                r_str = fmt::format("r_L");
-            else
-                r_str = fmt::format("r_{}", H.p.J2_span);
-            auto base = h5pp::format("L_{}/{}/{}/{}/{}/{}/{}", H.model_size, J_mean_str, J_wdth_str, x_str, f_str, u_str, r_str);
+            auto L_str = fmt::format(FMT_COMPILE("L{}"), H.model_size);
+
+            //            std::string J_mean_str = fmt::format("J[{1:+.{0}f}_{2:+.{0}f}_{3:+.{0}f}]", decimals, H.p.J1_mean, H.p.J2_mean, H.p.J3_mean);
+            //            std::string J_wdth_str = fmt::format("w[{1:+.{0}f}_{2:+.{0}f}_{3:+.{0}f}]", decimals, H.p.J1_wdth, H.p.J2_wdth, H.p.J3_wdth);
+            auto J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:+.{0}f}_{3:+.{0}f}±{4:+.{0}f}_{5:+.{0}f}±{6:+.{0}f}]"), decimals, H.p.J1_mean, H.p.J1_wdth,
+                                     H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth);
+            auto x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), decimals, H.p.J2_xcls);
+            // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
+            auto r_str = H.p.J2_span == -1ul ? fmt::format("r_L") : fmt::format("r_{}", H.p.J2_span);
+            // The unitary gate string is also a bit special...
+            auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}]"), decimals, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
+                                     enum2sv(H.p.u_tgw8), H.p.u_cstd, enum2sv(H.p.u_tgw8));
+            auto base  = fmt::format(FMT_COMPILE("{0}/{1}/{2}/{3}/{4}"), L_str, J_str, x_str, r_str, u_str);
             tools::logger::log->info("creating base with {} decimals: {}", decimals, base);
             return base;
         }

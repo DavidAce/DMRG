@@ -13,8 +13,8 @@ location    = "input-L12-u8-f0.5-zeromag-w8test"
 
 
 sites               = [12]
-J                   = [[0.000, 0.100, 0.100]]
-w                   = [[1.000, 0.250, 0.100]] # for w2, nearest neighbors have this order of magnitude
+J                   = [[0.00, 0.10, 0.10]]
+w                   = [[1.00, 0.25, 0.10]] # for w2, nearest neighbors have this order of magnitude
 x                   = [0.85]
 r                   = [-1]
 u_depth             = [8]
@@ -39,14 +39,16 @@ print(f"Generating {batch_size} input files")
 
 for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8, val_cgw8, init in product(sites,J,w, x, r, u_depth, u_fmix, u_tstd, u_cstd, u_tgw8, u_cgw8, initial_state):
     str_L = str(val_L)
-    str_J = "[{:+.3f}_{:+.3f}_{:+.3f}]".format(val_J[0], val_J[1], val_J[2])
-    str_J1,str_J2, str_J3 = "{:+.3f}".format(val_J[0]),"{:+.3f}".format(val_J[1]),"{:+.3f}".format(val_J[2])
-    str_w1,str_w2, str_w3 = "{:+.3f}".format(val_w[0]),"{:+.3f}".format(val_w[1]),"{:+.3f}".format(val_w[2])
-    str_w = "[{:.3f}_{:.3f}_{:.3f}]".format(val_w[0], val_w[1], val_w[2])
-    str_x = "{:.3f}".format(val_x)
+    str_J = "[{:+.2f}±{:.2f}_{:+.2f}±{:.2f}_{:+.2f}±{:.2f}]".format(val_J[0], val_w[0],val_J[1], val_w[1], val_J[2], val_w[2])
+    # str_J1,str_J2, str_J3 = "{:+.2f}".format(val_J[0]),"{:+.2f}".format(val_J[1]),"{:+.2f}".format(val_J[2])
+    # str_w1,str_w2, str_w3 = "{:+.2f}".format(val_w[0]),"{:+.2f}".format(val_w[1]),"{:+.2f}".format(val_w[2])
+    str_J1,str_J2, str_J3 = ["{:+.2f}".format(val) for val in val_J]
+    str_w1,str_w2, str_w3 = ["{:+.2f}".format(val) for val in val_w]
+    str_x = "{:.2f}".format(val_x)
     str_r = "{}".format(val_r)
+    str_rL = "{}".format(val_r) if val_r >= 0 else "L"
     str_u = "{}".format(val_u)
-    str_f = "{:.3f}".format(val_f)
+    str_f = "{:.2f}".format(val_f)
     str_tstd = "{:.2f}".format(val_tstd)
     str_cstd = "{:.2f}".format(val_cstd)
     str_tgw8 = "{}".format(val_tgw8)
@@ -55,14 +57,12 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
 
     # Generate a unique identifier for the config file and output directory
     # Hamiltonian part:
-    input_filename =  f"{location}/{basename}_L{str_L}_J{str_J}_w{str_w}_x{str_x}_r{str_r}"
-    output_filedir =   f"{output_prefix}/L{str_L}/J{str_J}/w{str_w}/x{str_x}"
+    input_filename =  f"{location}/{basename}_L{str_L}_J{str_J}_x{str_x}_r{str_rL}"
+    output_filedir =   f"{output_prefix}/L{str_L}/J{str_J}/x{str_x}/r{str_rL}"
     # Unitary circuit string:
     str_circuit = f"d{str_u}_f{str_f}"
-    str_circuit += (f"_tstd{str_tstd}" if len(u_tstd) > 1 else '')
-    str_circuit += (f"_cstd{str_cstd}" if len(u_cstd) > 1 else '')
-    str_circuit += (f"_tgw8{str_tgw8[:3].lower()}" if len(u_tgw8) > 1 else '')
-    str_circuit += (f"_cgw8{str_cgw8[:3].lower()}" if len(u_cgw8) > 1 else '')
+    str_circuit += (f"_tw{str_tstd}{str_tgw8[:2]}" if (len(u_tstd) > 1 or len(u_tgw8) > 1) else '')
+    str_circuit += (f"_cw{str_cstd}{str_cgw8[:2]}" if (len(u_cstd) > 1 or len(u_cgw8) > 1) else '')
     input_filename += f"_u[{str_circuit}].cfg"
     output_filedir += f"/u[{str_circuit}]"
 
