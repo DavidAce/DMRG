@@ -31,8 +31,12 @@ def lbit_avg(args):
         data_props = {
             'dsets': {  # For time independent data (or at the last time step)
                 'schmidt_midchain': {},
-                'model/lbits/decay': {'axis': 0, },
+                'model/lbits/decay_avg': {'axis': 0, },
+                'model/lbits/decay_err': {'axis': 0, },
                 'model/lbits/data': {
+                    'copy': True,
+                },
+                'model/lbits/data_shifted': {
                     'copy': True,
                 },
                 # 'number_probabilities': {

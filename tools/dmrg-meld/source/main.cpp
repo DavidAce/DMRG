@@ -251,8 +251,9 @@ int main(int argc, char *argv[]) {
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", 200));
 
                 // Last argument is the axis along which to build the time series
-                keys.dsets.emplace_back(DsetKey("fLBIT", "analysis", "decay", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 6));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data_shifted", Size::FIX, 6));
 

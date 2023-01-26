@@ -693,10 +693,29 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
             auto lbitSA        = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
+                // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
+                auto label_decay = std::vector<std::string>{"sample", "|i-j|"};
+                auto label_data  = std::vector<std::string>{"sample", "i", "j"};
+                auto shape_decay = std::vector<long>{1, lbitSA.decay_avg.size()};
+                auto shape_data  = std::vector<long>{1, static_cast<long>(settings::model::model_size), static_cast<long>(settings::model::model_size)};
+                if(nsamps > 1) { // Used when we investigate lbit properties for various gate parameters
+                    label_decay = {"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "|i-j|"};
+                    label_data  = {"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "sample", "i", "j"};
+                    shape_decay = std::vector<long>(lbitSA.decay_avg.dimensions().begin(), lbitSA.decay_avg.dimensions().end());
+                    shape_data  = std::vector<long>(lbitSA.support.dimensions().begin(), lbitSA.support.dimensions().end());
+                }
                 h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
                 h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
-                h5file->writeDataset(lbitSA.decay_avg, "/fLBIT/model/lbits/decay_avg");
-                h5file->writeDataset(lbitSA.decay_err, "/fLBIT/model/lbits/decay_err");
+                h5file->writeDataset(lbitSA.decay_avg, "/fLBIT/model/lbits/decay_avg", H5D_CHUNKED, shape_decay);
+                h5file->writeDataset(lbitSA.decay_err, "/fLBIT/model/lbits/decay_err", H5D_CHUNKED, shape_decay);
+                if(settings::storage::storage_level_model > StorageLevel::LIGHT) {
+                    h5file->writeDataset(lbitSA.support, "/fLBIT/model/lbits/data", H5D_CHUNKED, shape_data);
+                    h5file->writeDataset(lbitSA.permute, "/fLBIT/model/lbits/data_shifted", H5D_CHUNKED, shape_data);
+                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/data", "dimensions");
+                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/data_shifted", "dimensions");
+                    h5file->writeAttribute(label_decay, "/fLBIT/model/lbits/decay_avg", "dimensions");
+                    h5file->writeAttribute(label_decay, "/fLBIT/model/lbits/decay_err", "dimensions");
+                }
                 h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
                 h5file->writeAttribute(utstds, "/fLBIT/model/lbits", "u_tstd");
@@ -705,19 +724,11 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute(enum2sv(ucgw8s), "/fLBIT/model/lbits", "u_cgw8");
                 h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
                 h5file->writeAttribute(rndfld, "/fLBIT/model/lbits", "rndfld");
-                if(settings::storage::storage_level_model > StorageLevel::LIGHT) {
-                    h5file->writeDataset(lbitSA.support, "/fLBIT/model/lbits/data", H5D_CHUNKED);
-                    h5file->writeDataset(lbitSA.permute, "/fLBIT/model/lbits/data_shifted", H5D_CHUNKED);
-                    h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
-                    h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/data_shifted",
-                                           "description");
-                    h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "samples", "i", "j"},
-                                           "/fLBIT/model/lbits/data", "dimensions");
-                    h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "samples", "i", "j"},
-                                           "/fLBIT/model/lbits/data_shifted", "dimensions");
-                    h5file->writeAttribute(std::vector<std::string>{"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "|i-j|"},
-                                           "/fLBIT/model/lbits/data_shifted", "dimensions");
-                }
+                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
+                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/data_shifted",
+                                       "description");
+                h5file->writeAttribute("Site averaged <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_avg", "description");
+                h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
             }
         }
     }

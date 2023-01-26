@@ -42,32 +42,50 @@ namespace tools::h5io {
 
     std::string get_tmp_dirname(std::string_view exename) { return fmt::format("{}.{}", h5pp::fs::path(exename).filename(), getenv("USER")); }
 
-    template<typename T>
-    std::string get_standardized_base(const ModelId<T> &H, int decimals) {
-        auto t_scope = tid::tic_scope(__FUNCTION__);
-        if constexpr(std::is_same_v<T, sdual>) return h5pp::format("L{1}/l{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.lambda, H.p.delta);
-        if constexpr(std::is_same_v<T, majorana>) return h5pp::format("L{1}/g{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.g, H.p.delta);
-        if constexpr(std::is_same_v<T, lbit>) {
-            auto L_str = fmt::format(FMT_COMPILE("L{}"), H.model_size);
+    size_t get_num_decimals(double val) {
+        auto s       = fmt::format("{}", val);
+        auto pos_dot = s.find('.');
+        if(pos_dot == std::string::npos) return 0;
+        return s.substr(pos_dot + 1).size();
+    }
+    size_t get_max_decimals(std::initializer_list<double> l) {
+        if(l.size() == 0) throw std::runtime_error("l is empty");
+        std::vector<size_t> decs(l.size());
+        std::transform(l.begin(), l.end(), decs.begin(), get_num_decimals);
+        return *std::max_element(decs.begin(), decs.end());
+    }
 
-            //            std::string J_mean_str = fmt::format("J[{1:+.{0}f}_{2:+.{0}f}_{3:+.{0}f}]", decimals, H.p.J1_mean, H.p.J2_mean, H.p.J3_mean);
-            //            std::string J_wdth_str = fmt::format("w[{1:+.{0}f}_{2:+.{0}f}_{3:+.{0}f}]", decimals, H.p.J1_wdth, H.p.J2_wdth, H.p.J3_wdth);
-            auto J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:+.{0}f}_{3:+.{0}f}±{4:+.{0}f}_{5:+.{0}f}±{6:+.{0}f}]"), decimals, H.p.J1_mean, H.p.J1_wdth,
-                                     H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth);
-            auto x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), decimals, H.p.J2_xcls);
+    template<typename T>
+    std::string get_standardized_base(const ModelId<T> &H) {
+        auto t_scope = tid::tic_scope(__FUNCTION__);
+        if constexpr(std::is_same_v<T, sdual>) {
+            size_t decimals = 4;
+            return h5pp::format("L{1}/l{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.lambda, H.p.delta);
+        }
+        if constexpr(std::is_same_v<T, majorana>) {
+            size_t decimals = 4;
+            return h5pp::format("L{1}/g{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.g, H.p.delta);
+        }
+        if constexpr(std::is_same_v<T, lbit>) {
+            size_t J_dec = get_max_decimals({H.p.J1_mean, H.p.J1_wdth, H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth});
+            size_t x_dec = get_max_decimals({H.p.J2_xcls});
+            size_t u_dec = get_max_decimals({H.p.u_fmix, H.p.u_tstd, H.p.u_cstd});
+            auto   L_str = fmt::format(FMT_COMPILE("L{}"), H.model_size);
+            auto   J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:.{0}f}_{3:+.{0}f}±{4:.{0}f}_{5:+.{0}f}±{6:.{0}f}]"), J_dec, H.p.J1_mean, H.p.J1_wdth,
+                                       H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth);
+            auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, H.p.J2_xcls);
             // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
-            auto r_str = H.p.J2_span == -1ul ? fmt::format("r_L") : fmt::format("r_{}", H.p.J2_span);
-            // The unitary gate string is also a bit special...
-            auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}]"), decimals, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
+            auto r_str = H.p.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", H.p.J2_span);
+            auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}]"), u_dec, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
                                      enum2sv(H.p.u_tgw8), H.p.u_cstd, enum2sv(H.p.u_tgw8));
             auto base  = fmt::format(FMT_COMPILE("{0}/{1}/{2}/{3}/{4}"), L_str, J_str, x_str, r_str, u_str);
-            tools::logger::log->info("creating base with {} decimals: {}", decimals, base);
+            tools::logger::log->info("creating base: {}", base);
             return base;
         }
     }
-    template std::string get_standardized_base(const ModelId<sdual> &H, int decimals);
-    template std::string get_standardized_base(const ModelId<majorana> &H, int decimals);
-    template std::string get_standardized_base(const ModelId<lbit> &H, int decimals);
+    template std::string get_standardized_base(const ModelId<sdual> &H);
+    template std::string get_standardized_base(const ModelId<majorana> &H);
+    template std::string get_standardized_base(const ModelId<lbit> &H);
 
     std::vector<std::string> findKeys(const h5pp::File &h5_src, const std::string &root, const std::vector<std::string> &expectedKeys, long hits, long depth,
                                       bool usecache) {

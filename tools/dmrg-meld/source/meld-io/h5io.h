@@ -20,7 +20,7 @@ namespace tools::h5io {
     std::string get_tmp_dirname(std::string_view exename);
 
     template<typename T>
-    std::string get_standardized_base(const ModelId<T> &H, int decimals = 4);
+    std::string get_standardized_base(const ModelId<T> &H);
 
     std::vector<std::string> findKeys(const h5pp::File &h5_src, const std::string &root, const std::vector<std::string> &expectedKeys, long hits = -1,
                                       long depth = 0, bool usecache = true);
