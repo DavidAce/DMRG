@@ -750,7 +750,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
     if(u_tstds.empty())  u_tstds  = {u_defaults.tstd};
     if(u_cstds.empty())  u_cstds  = {u_defaults.cstd};
     if(u_tgw8s.empty())  u_tgw8s  = {u_defaults.tgw8};
-    if(u_cgw8s.empty())  u_tgw8s  = {u_defaults.cgw8};
+    if(u_cgw8s.empty())  u_cgw8s  = {u_defaults.cgw8};
 
     lbitSupportAnalysis lbitSA(u_depths.size(), u_fmixs.size(), u_tstds.size(), u_cstds.size(),u_tgw8s.size(),u_cgw8s.size() , reps, u_defaults.sites);
     std::array<long, 7> offset7{}, extent7{};

@@ -53,20 +53,20 @@ def write_statistics_table(meta, props, h5_tgt):
         tgt_node.create_dataset(name='num', data=num)
         tgt_node.create_dataset(name='data', data=data)
         # Generate some nice attributes for later plotting
-    model_path = tablepath[0: tablepath.index("LBIT")] + "LBIT/model"
-    if model_path in tabledset.file:
-        model_node = tabledset.file[model_path]
-        attrs_path = model_node.parent.parent.name
-        attrs_node = h5_tgt.require_group(attrs_path)
-        for key, dset in model_node.items():
-            if '.db' in key:
-                continue
-            if key in attrs_node.attrs:
-                break
-            # print(key,dset,model_node)
-            attrs_node.attrs.create(name=key, data=dset)
-    else:
-        raise LookupError("Could not find [" + model_path + "] in ", tabledset.file)
+    # model_path = tablepath[0: tablepath.index("LBIT")] + "LBIT/model"
+    # if model_path in tabledset.file:
+    #     model_node = tabledset.file[model_path]
+    #     attrs_path = model_node.parent.parent.name
+    #     attrs_node = h5_tgt.require_group(attrs_path)
+    #     for key, dset in model_node.items():
+    #         if '.db' in key:
+    #             continue
+    #         if key in attrs_node.attrs:
+    #             break
+    #         # print(key,dset,model_node)
+    #         attrs_node.attrs.create(name=key, data=dset)
+    # else:
+    #     raise LookupError("Could not find [" + model_path + "] in ", tabledset.file)
 
 
 def write_statistics_crono(meta, props, h5_tgt):
@@ -365,20 +365,21 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
             stat['tb'].flush()
         t_app = t_app + timer() - t_app_start
     with h5py.File(tgt, 'a') as h5f:
-        model_path = tablepath[0: tablepath.index("LBIT")] + "LBIT/model"
+        # Add model parameters as attributes to the fLBIT path
+        flbit_path = tablepath[0: tablepath.index("fLBIT")] + "fLBIT"
+        model_path = flbit_path + "/model"
         if model_path in tablenode.file:
             model_node = tablenode.file[model_path]
-            attrs_path = model_node.parent.parent.name
-            attrs_node = h5f.require_group(attrs_path)
+            flbit_node = h5f.require_group(flbit_path)
             for key, dset in model_node.items():
                 if isinstance(dset, h5py.Group):
                     continue
-                if '.db' in key:
+                if '.db' in key or dset.dtype.type is np.void:  # Tables are np.void
                     continue
-                if key in attrs_node.attrs:
+                if key in flbit_node.attrs:
                     break
                 # print(key,dset,model_node)
-                attrs_node.attrs.create(name=key, data=dset)
+                flbit_node.attrs.create(name=key, data=dset)
         else:
             raise LookupError("Could not find [" + model_path + "] in ", tablenode.file)
 

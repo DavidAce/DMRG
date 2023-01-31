@@ -16,11 +16,11 @@ def get_meta(plotdir):
             'include': {
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
-                'L': ['L_12'],
+                # 'L': ['L_12'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
-                'f': ['f_0.5000'],
+                # 'f': ['f_0.5000'],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
                 # 'f': ['f_0.4000', 'f_0.5000', 'f_0.6000'],
                 # 'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
@@ -29,6 +29,25 @@ def get_meta(plotdir):
                 # 'u': ['u_5', 'u_6'],
                 # 'u': ['u_5'],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
+            },
+            'include_vals': {
+                # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
+                # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
+                # 'L': ['L_12'],
+                # 'x': ['x_0.5000', 'x_1.0000'],
+                # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
+                # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
+                # 'f': ['f_0.5000'],
+                # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
+                # 'f': ['f_0.4000', 'f_0.5000', 'f_0.6000'],
+                # 'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
+                # 'u': ['u_2', 'u_3'],
+                # 'f': ['f_0.4500'],
+                # 'u': ['u_5', 'u_6'],
+                # 'u': ['u_5'],
+                # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
+                'tgw8': ['EX'],
+                'cgw8': ['EX']
             },
         },
 
@@ -61,13 +80,13 @@ def get_meta(plotdir):
             'normpage': False,
             'titlename': 'Number Entropy',
             'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
-            'yformat': '%.2f',
+            'yformat': '%.3f',
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'ymin': 0.21,
-            'ymax': 0.40,
-            'xmin': 1,
-            'xmax': 1e3,
+            # 'ymin': 0.21,
+            # 'ymax': 0.40,
+            'xmin': 1e-2,
+            'xmax': 1e4,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -88,15 +107,15 @@ def get_meta(plotdir):
             'normpage': False,
             'titlename': 'Number Entropy',
             'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
-            'yformat': '%.2f',
+            'yformat': '%.3f',
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',
             # 'ymin': 0.235,
             # 'ymax': 0.275,
-            'xmin': 0,
-            'xmax': 2.5,
+            'xmin': -2,
+            'xmax': 3.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -338,7 +357,7 @@ def get_meta(plotdir):
         },
         'lbit': {
             'groupname': 'lbits',
-            'dsetname': 'decay',
+            'dsetname': 'decay_avg',
             'titlename': 'l-bit',
             'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
             'xlabel': "$|i-j|$",
@@ -349,7 +368,7 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             'xmax': 16,
             'ymin': 1e-14,
-            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'best',
@@ -365,7 +384,7 @@ def get_meta(plotdir):
         },
         'cls': {
             'groupname': 'lbits',
-            'dsetname': 'decay',
+            'dsetname': 'decay_avg',
             'titlename': 'Characteristic length scale of l-bits',
             'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
             'xlabel': "$f$",
@@ -457,8 +476,8 @@ def get_meta(plotdir):
             # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
-            'xmin': 0.0,
-            'xmax': 1.2,
+            # 'xmin': 0.0,
+            # 'xmax': 1.2,
             'ymin': 1e-3,
             'tidx': 'window',  # Time indices for which to plot the distribution
             'bins': 40,
@@ -477,7 +496,7 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'num', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
@@ -615,6 +634,33 @@ def get_meta(plotdir):
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'upper right',
+        },
+        'slope-num2': {
+            'groupname': 'measurements',
+            'colname': 'number_entropy',
+            'normpage': False,
+            'titlename': 'Number Entropy fit to $\\alpha + \\beta \log \log t$',
+            'ylabel': '$\\beta$',
+            'yformat': '%.3f',
+            'plotprefix': 'SN-slope',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'sharex': 'all',
+            'sharey': 'none',
+            'xmin': 0.0,
+            'xmax': 2.1,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            'fillerror': False,
+            'timeloglevel': 2,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'num', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            'legendlocation': 'center left',
+            # 'legendlocation': (0.01, 0.65),
         },
     }
 

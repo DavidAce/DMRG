@@ -77,7 +77,7 @@ namespace tools::h5io {
             // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
             auto r_str = H.p.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", H.p.J2_span);
             auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}]"), u_dec, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
-                                     enum2sv(H.p.u_tgw8), H.p.u_cstd, enum2sv(H.p.u_tgw8));
+                                     enum2sv(H.p.u_tgw8), H.p.u_cstd, enum2sv(H.p.u_cgw8));
             auto base  = fmt::format(FMT_COMPILE("{0}/{1}/{2}/{3}/{4}"), L_str, J_str, x_str, r_str, u_str);
             tools::logger::log->info("creating base: {}", base);
             return base;
@@ -209,6 +209,7 @@ namespace tools::h5io {
                     hamiltonian.u_tgw8      = h5tb_hamiltonian.u_tgw8;
                     hamiltonian.u_cgw8      = h5tb_hamiltonian.u_cgw8;
                     srcModelId.distribution = h5tb_hamiltonian.distribution;
+                    tools::logger::log->info("{}: u_tgw8 {} u_cgw8 {}", path, enum2sv(hamiltonian.u_tgw8), enum2sv(hamiltonian.u_cgw8));
                 }
                 srcModelId.model_size = h5_src.readAttribute<size_t>(path, "model_size");
                 srcModelId.model_type = h5_src.readAttribute<std::string>(path, "model_name");
@@ -216,6 +217,7 @@ namespace tools::h5io {
                 srcModelId.key        = key;
                 srcModelId.path       = path;
                 srcModelId.basepath   = get_standardized_base(srcModelId);
+                tools::logger::log->info("srcModelId.basepath = {} | key {}", srcModelId.basepath, key);
             }
             keys.emplace_back(srcKey);
             keys.back().key = key;
@@ -290,8 +292,8 @@ namespace tools::h5io {
                 h5_tgt.writeDataset(modelId.p.u_depth, fmt::format("{}/u_depth", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_fmix, fmt::format("{}/u_fmix", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_tstd, fmt::format("{}/u_tstd", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_tgw8, fmt::format("{}/u_tgw8", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_cstd, fmt::format("{}/u_cstd", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_tgw8, fmt::format("{}/u_tgw8", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_cgw8, fmt::format("{}/u_cgw8", modelPath));
             }
         }

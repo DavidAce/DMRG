@@ -48,8 +48,9 @@ def parse(algo):
                                 # 'lbit57',  # 25000 realizations constricted, random init, u8, f=[2.0-5.0], L=[16]
                                 # 'lbit58',  # 10000 realizations constricted, random init, u8, f=0.5, L=[16], varying w
                                 # 'lbit59', # 1000 realizations blocked (constricted), random init, u8, f=0.5, L=12, increased c = 2
-                                'lbit60',
-                                # 10 realizations testing a bunch of different unitary gates. random init, u8, f=0.5, L=12
+                                # 'lbit60', # 1000 realizations u8, f=0.5, L=12, testing weights ID/EX std=[0.1,1.0,4.0]
+                                'lbit61',
+                                # 1000 realizations u8, f=0.5, L=14, testing weights ID/EX std=[0.25, 0.5 ...2.0]. This one motivates the choice f=1.0, cw=EX, sigma_c=1.0, and wt=EX/ID (doesn't matter), sigma_t=1.0 in the unitary gates
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',

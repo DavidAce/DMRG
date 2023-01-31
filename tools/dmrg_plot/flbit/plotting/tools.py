@@ -17,6 +17,7 @@ from git import Repo
 import seaborn as sns
 from itertools import product
 from scipy.optimize import curve_fit
+from collections.abc import Iterable
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -55,7 +56,8 @@ def get_uniform_palette_names(num):
 
 
 def get_colored_lstyles(db, linspec, default_palette):
-    linprod = list(product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
+    linprod = list(
+        product(*get_vals(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
     palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     lstyles = [None] * len(linprod)
     if len(linspec) == 2:
@@ -70,6 +72,38 @@ def get_colored_lstyles(db, linspec, default_palette):
             palette = reversed(sns.color_palette(palette='tab20c', n_colors=len(linprod)))
 
     return palette, lstyles
+
+
+def match_datanodes(db, meta, specs, vals):
+    nodes = set()
+    gname = meta.get('groupname')
+    # dname = meta.get('dsetname')
+    for dsetpath, dset in db['dsets'].items():
+        # print('-- checking', dsetpath)
+        if gname is not None:
+            if isinstance(gname, Iterable) and not any([g in dsetpath for g in gname]):
+                continue
+            elif not gname in dsetpath:
+                continue
+        # if dname is not None:
+        #     if isinstance(dname, Iterable) and not any([d in dsetpath for d in dname]):
+        #         continue
+        #     elif not dname in dsetpath:
+        #         continue
+        equal = True
+        for s, v in zip(specs, vals):
+            s_noformat = s.split(':')[0]
+            if isinstance(s, Iterable) and isinstance(v, Iterable):
+                equal = all([x == y for x, y in zip(dset['vals'][s_noformat], v)])
+            else:
+                equal = dset['vals'][s_noformat] == v
+            if not equal:
+                break
+        if not equal:
+            continue
+        nodes.add(dset['node']['data'])
+    return nodes
+
 
 def write_attributes(*args, **kwargs):
     for a in args:
@@ -132,11 +166,6 @@ def find_saturation_idx(ydata, std_threshold):
 #     return np.argmax(sdiff)
 
 
-def flinear(x, a, b):
-    with np.errstate(invalid='ignore'):
-        return a + b * x
-
-
 @njit(parallel=True, cache=True)
 def stretched_exp(x, C, xi, beta):
     return C * np.exp(-(x / xi) ** beta)
@@ -147,6 +176,26 @@ def stretched_log(x, C, xi, beta):
     return np.log(C) - (x / xi) ** beta
 
 
+# def floglog(x, a, b,c):
+#     return a + b*np.log(np.log(x + c))
+@njit(parallel=True, cache=True)
+def floglog_v2(x, a, b, c):
+    with np.errstate(invalid='ignore'):
+        return a + b * np.log(np.log(x - c))
+
+
+@njit(parallel=True, cache=True)
+def fpower(x, a, b):
+    with np.errstate(invalid='ignore'):
+        return a * x ** b
+
+
+# @njit(parallel=True, cache=True)
+def flinear(x, a, b):
+    with np.errstate(invalid='ignore'):
+        return a + b * x
+
+
 def get_lbit_cls(avg):
     idx0 = 0
     idxN = np.argmax(np.ndarray.flatten(avg) <= 1e-8) - 1
@@ -154,8 +203,6 @@ def get_lbit_cls(avg):
     xdata = np.array(range(len(ydata)))
     p0 = 0.5, 1.0, 1.2
     bounds_v2 = ([0.3, 0.0, 1.0], [1.0, 2.0, np.inf])
-    print(ydata)
-
     try:
         if idxN >= 0 and idxN <= idx0:
             raise IndexError("Invalid index order: idx0 {} | idxN {}".format(idx0, idxN))
@@ -165,7 +212,7 @@ def get_lbit_cls(avg):
         with np.errstate(invalid='ignore'):
             ylog = np.log(ydata)
             popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylog, p0=p0, bounds=bounds_v2)
-            print('Fit C exp(-(d/xi)**beta): C {:.4f} | xi {:.4f} | beta {:.4f}'.format(popt[0], popt[1], popt[2]))
+            # print('Fit C exp(-(d/xi)**beta): C {:.4f} | xi {:.4f} | beta {:.4f}'.format(popt[0], popt[1], popt[2]))
             return popt[0], popt[1], popt[2]
     except IndexError as e:
         print("Index error:", e)
@@ -232,7 +279,6 @@ def find_loglog_window(tdata, ydata, J2_width, J2_ctof, threshold1=0.6, threshol
         min_idx = np.max([min_idx, 0])
         s = np.std(ylog[min_idx:])
         sdata.append(s)
-    print(sdata)
     tdx = np.argwhere(np.asarray(tdata) >= 1.0)
     idx1 = np.argwhere(np.asarray(sdata) < threshold1)
     idx2 = np.argwhere(np.asarray(sdata) < threshold2)
@@ -277,8 +323,6 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmax = np.max([tmax1, tmax2, tmax3])
     tmin = tmin2
     tmax = tmax2
-    print('tmin: ', [tmin1, tmin2, tmin3])
-    print('tmax: ', [tmax1, tmax2, tmax3])
     tmin = np.min([tmin, tmax])  # Can't have negatives in log-log.
     tmax = np.max([tmin, tmax])  # Make sure the time points are ordered
 
@@ -333,13 +377,22 @@ def page_entropy(L):
 
 
 def get_prop(db, keyfmt, prop):
-    if isinstance(keyfmt, list):
+    if isinstance(keyfmt, list) or isinstance(keyfmt, tuple):
         keys = []
         for kf in keyfmt:
-            keys.append(db[prop][kf.split(':')[0]] if ':' in kf else db[prop][kf])
+            if prop in db:
+                if kf in db[prop]:
+                    keys.append(db[prop][kf])
+                elif kf.split(':')[0] in db[prop]:
+                    keys.append(db[prop][kf.split(':')[0]])
         return keys
     else:
-        return db[prop][keyfmt.split(':')[0]] if ':' in keyfmt else db[prop][keyfmt]
+        if prop in db:
+            if keyfmt in db[prop]:
+                return db[prop][keyfmt]
+            if keyfmt.split(':')[0] in db[prop]:
+                return db[prop][keyfmt.split(':')[0]]
+        return []
 
 
 def get_vals(db, keyfmt):
@@ -365,7 +418,11 @@ def get_title(db, keys, width=20):
                     db['tex']['keys'][key].strip('$'),
                     ','.join('{0:{1}}'.format(val, fmt) for val in db['vals'][key])))
             else:
-                fmtvals.append('${}={}$'.format(db['tex']['keys'][key].strip('$'), '{0:{1}}'.format(db['vals'][key], fmt)))
+                if key == 'r' and db['vals'][key] == np.iinfo(np.uint64).max:
+                    fmtvals.append(db['tex']['eqs'][key])
+                else:
+                    fmtvals.append(
+                        '${}={}$'.format(db['tex']['keys'][key].strip('$'), '{0:{1}}'.format(db['vals'][key], fmt)))
         elif key in db['tex']['eqs']:
             fmtvals.append(db['tex']['eqs'][key])
         if len(fmtvals) - newline >= width:
@@ -397,7 +454,7 @@ def get_table_data(node, keys=None, dtype='f8', transpose=None):
     elif node.dtype.fields == None:
         # This is a scalar put inside an ndarray, so that we have
         # a consistent return type
-        return np.ndarray(node[()]), []
+        return np.array(node[()]), []
     else:
         # Find the column names that match keys
         cols = get_safe_table_field_name(node, keys)
@@ -419,7 +476,6 @@ def get_legend_row(db, datanode, legend_col_keys):
             print(legend_col_keys)
             print(legendrow)
             print(dbval['tex'])
-            print(dbval[key])
             raise
     return legendrow
 
@@ -576,14 +632,14 @@ def get_fig_meta(numplots: int, meta: dict):
             else:
                 f['ax'][-1].set_yscale(yscale)
 
-        if ymax := f['ymax']:
-            f['ax'][-1].set_ylim(ymax=ymax)
-        if ymin := f['ymin']:
-            f['ax'][-1].set_ylim(ymin=ymin)
-        if xmax := f['xmax']:
-            f['ax'][-1].set_xlim(xmax=xmax)
-        if xmin := f['xmin']:
-            f['ax'][-1].set_xlim(xmin=xmin)
+        if f['ymax'] is not None:
+            f['ax'][-1].set_ylim(ymax=f['ymax'])
+        if f['ymin'] is not None:
+            f['ax'][-1].set_ylim(ymin=f['ymin'])
+        if f['xmax'] is not None:
+            f['ax'][-1].set_xlim(xmax=f['xmax'])
+        if f['xmin'] is not None:
+            f['ax'][-1].set_xlim(xmin=f['xmin'])
 
         if xticks := f.get('xticks'):
             f['ax'][-1].set_xticks(xticks)

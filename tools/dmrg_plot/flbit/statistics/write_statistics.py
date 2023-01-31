@@ -59,8 +59,9 @@ def write_statistics_dset(meta, props, h5_tgt):
 
     if dsetcopy:
         tgt_node = h5_tgt.require_group(dsetnode.parent.name)
-        # print('copying dset "{}"'.format(dsetname))
-        tgt_node.create_dataset(name=dsetname, data=dsetdata, compression="gzip", compression_opts=9)
+        zlvl = None if np.shape(dsetdata) == () else 9
+        zlbl = None if np.shape(dsetdata) == () else "gzip"
+        tgt_node.create_dataset(name=dsetname, data=dsetdata, compression=zlbl, compression_opts=zlvl)
     else:
         tgt_node = h5_tgt.require_group(dsetpath)
         # print('writing dset "{}" along axis {}'.format(dsetname, dsetaxis))
@@ -144,6 +145,7 @@ def write_statistics(src, tgt, reqs):
     for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20, excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                               nodeType=h5py.Dataset):
         write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
+
     with tb.File(tgt, 'a') as h5f:
         print('Averaging cronos v4')
         node_cache = {}

@@ -23,7 +23,6 @@ xtick.direction         : out
 ytick.direction         : out
 xtick.color             : .15
 ytick.color             : .15
-axes.axisbelow          : True
 image.cmap              : Greys
 grid.linestyle          : -
 lines.solid_capstyle    : round
@@ -43,9 +42,6 @@ ytick.minor.size        : 0
 
 # Special sauce
 # Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
-
-axes.titlesize          : small # Font size of subtplot title
-
 
 text.usetex        		: true
 font.size               : 11

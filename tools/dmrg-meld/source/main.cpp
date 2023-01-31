@@ -254,8 +254,8 @@ int main(int argc, char *argv[]) {
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
-                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 6));
-                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data_shifted", Size::FIX, 6));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data_shifted", Size::FIX, 0));
 
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished", "schmidt_midchain", Size::VAR, Type::COMPLEX));
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished/profiling", "fLBIT.run", Size::FIX, Type::TID));
@@ -294,7 +294,6 @@ int main(int argc, char *argv[]) {
                 tools::logger::log->error("Replacing broken file: [{}]: {}", h5_tgt_path);
                 h5_tgt = h5pp::File(h5_tgt_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
             }
-
             //            auto h5_tgt = h5pp::File(h5_tgt_path, perm, verbosity_h5pp);
             tools::h5dbg::assert_no_dangling_ids(h5_tgt, __FUNCTION__, __LINE__); // Check that there are no open HDF5 handles
             //        hsize_t fsp_size; size_t pbs_size;
