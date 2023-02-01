@@ -95,9 +95,9 @@ class h5tb_lbit : public h5tb_base {
         double               J1_wdth  = 0;  /*!< Width of the distribution J1 */
         double               J2_wdth  = 0;  /*!< Width of the distribution J2 */
         double               J3_wdth  = 0;  /*!< Width of the distribution J3 */
-        double               J2_xcls  = 0;  /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/J2_xcls) * J2_rand */
         size_t               J2_span  = 0;  /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
         size_t               J2_ctof  = 0;  /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
+        double               xi_Jcls  = 0;  /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/xi_Jcls) * J2_rand */
         uint64_t             u_depth  = 0;  /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
         double               u_fmix   = 0;  /*!< Mixing factor for unitary transformation to real-space */
         double               u_tstd   = 0;  /*!< Standard deviation for theta-factors in the unitary gates */
@@ -105,7 +105,7 @@ class h5tb_lbit : public h5tb_base {
         UnitaryGateWeight    u_tgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of thetas in unitary gates */
         UnitaryGateWeight    u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
         long                 spin_dim = 2;                           /*!< Spin dimension */
-        h5pp::vstr_t         distribution;                           /*!< The random distribution of h_rand. Choose between lognormal, normal or uniform */
+        h5pp::vstr_t         distribution;                           /*!< The random number distribution. Choose between lognormal, normal or uniform */
     };
 
     table                                       param;

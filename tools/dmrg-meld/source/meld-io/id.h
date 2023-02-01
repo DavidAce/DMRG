@@ -59,14 +59,14 @@ struct FileId {
 struct lbit {
     double                   J1_mean, J2_mean, J3_mean;
     double                   J1_wdth, J2_wdth, J3_wdth;
-    double                   J2_xcls;
     size_t                   J2_span;
+    double                   xi_Jcls;
     size_t                   u_depth;
     double                   u_fmix;
     double                   u_tstd, u_cstd;
     UnitaryGateWeight        u_tgw8, u_cgw8;
-    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_xcls",
-                                       "J2_span", "u_fmix",  "u_depth", "u_tstd",  "u_cstd",  "u_tgw8",  "u_cgw8"};
+    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span",
+                                       "xi_Jcls", "u_fmix",  "u_depth", "u_tstd",  "u_cstd",  "u_tgw8",  "u_cgw8"};
 };
 
 struct sdual {

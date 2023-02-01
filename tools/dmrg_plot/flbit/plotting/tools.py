@@ -319,10 +319,10 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin3 = 1.0 / w3
     tmax3 = 1.0 / w3
 
-    tmin = np.min([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
+    tmin = np.max([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
     tmax = np.max([tmax1, tmax2, tmax3])
-    tmin = tmin2
-    tmax = tmax2
+    # tmin = tmin2
+    # tmax = tmax2
     tmin = np.min([tmin, tmax])  # Can't have negatives in log-log.
     tmax = np.max([tmin, tmax])  # Make sure the time points are ordered
 
@@ -331,6 +331,9 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
 
     # idx1 = np.where(tdata >= tmin)[0][0]
     # idx2 = np.where(tdata <= tmax)[0][-1]
+    print(tmin1, tmin2, tmin3)
+    print(tmax1, tmax2, tmax3)
+    print(tdata[idx1], tdata[idx2])
     if idx2 == len(tdata) - 1:
         idx2 = np.max([idx1, idx2 - 1])
     return idx1, idx2

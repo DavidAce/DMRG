@@ -219,7 +219,10 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             'data': set(),
         },
         'tex': {
-            'L': '$L$', 'J': '$J$', 'w': '$\omega$', 'x': '$\\xi_J$', 'r': '$r$',
+            'L': '$L$',
+            'J': '$J$', 'J1': '$J_1$', 'J2': '$J_2$', 'J3': '$J_3$',
+            'w': '$w$', 'w1': '$w_1$', 'w2': '$w_2$', 'w3': '$w_3$',
+            'x': '$\\xi_J$', 'r': '$r$',
             'u': '$d_u$', 'f': '$f$', 'tstd': '$\sigma_\\theta$', 'cstd': '$\sigma_c$', 'tgw8': '$w_\\theta$',
             'cgw8': '$w_c$',
             't': '$t$',
@@ -252,8 +255,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         L = modelnode['model_size'][()]
         J = hamiltonian['J1_mean', 'J2_mean', 'J3_mean'][0]
         w = hamiltonian['J1_wdth', 'J2_wdth', 'J3_wdth'][0]
-        x = hamiltonian['J2_xcls'][0]
         r = hamiltonian['J2_span'][0]
+        x = hamiltonian['xi_Jcls'][0] if 'xi_Jcls' in hamiltonian.dtype.fields else hamiltonian['J2_xcls'][0]
         u = hamiltonian['u_depth'][0]
         f = hamiltonian['u_fmix'][0]
         tstd = hamiltonian['u_tstd'][0]
@@ -315,7 +318,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                     db['dsets'][dname]['vals'] = {}
                     db['dsets'][dname]['vals']['L'] = L
                     db['dsets'][dname]['vals']['J'] = J
+                    db['dsets'][dname]['vals']['J1'] = J[0]
+                    db['dsets'][dname]['vals']['J2'] = J[1]
+                    db['dsets'][dname]['vals']['J3'] = J[2]
                     db['dsets'][dname]['vals']['w'] = w
+                    db['dsets'][dname]['vals']['w1'] = w[0]
+                    db['dsets'][dname]['vals']['w2'] = w[1]
+                    db['dsets'][dname]['vals']['w3'] = w[2]
                     db['dsets'][dname]['vals']['x'] = x
                     db['dsets'][dname]['vals']['r'] = r
                     db['dsets'][dname]['vals']['u'] = u
@@ -346,7 +355,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         'vals': {
                             'L': '{}'.format(L),
                             'J': '{}'.format(J),
+                            'J1': '{}'.format(J[0]),
+                            'J2': '{}'.format(J[1]),
+                            'J3': '{}'.format(J[2]),
                             'w': '{}'.format(w),
+                            'w1': '{}'.format(w[0]),
+                            'w2': '{}'.format(w[1]),
+                            'w3': '{}'.format(w[2]),
                             'x': '{:.2f}'.format(x),
                             'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
                             'u': '{}'.format(u),
@@ -361,7 +376,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         'eqs': {
                             'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
                             'J': '$J:{}$'.format(J),
+                            'J1': '$J_1:{}$'.format(J[0]),
+                            'J2': '$J_2:{}$'.format(J[1]),
+                            'J3': '$J_3:{}$'.format(J[2]),
                             'w': '$w:{}$'.format(w),
+                            'w1': '$w_1:{}$'.format(w[0]),
+                            'w2': '$w_2:{}$'.format(w[1]),
+                            'w3': '$w_3:{}$'.format(w[2]),
                             'x': '${}{}{:>.2f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
                             'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
                             'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
@@ -412,7 +433,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                             db['dsets'][dname]['vals'] = {}
                             db['dsets'][dname]['vals']['L'] = L
                             db['dsets'][dname]['vals']['J'] = J
+                            db['dsets'][dname]['vals']['J1'] = J[0]
+                            db['dsets'][dname]['vals']['J2'] = J[1]
+                            db['dsets'][dname]['vals']['J3'] = J[2]
                             db['dsets'][dname]['vals']['w'] = w
+                            db['dsets'][dname]['vals']['w1'] = w[0]
+                            db['dsets'][dname]['vals']['w2'] = w[1]
+                            db['dsets'][dname]['vals']['w3'] = w[2]
                             db['dsets'][dname]['vals']['x'] = x
                             db['dsets'][dname]['vals']['r'] = r
                             db['dsets'][dname]['vals']['num'] = num
@@ -449,7 +476,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                                 'vals': {
                                     'L': '{}'.format(L),
                                     'J': '{}'.format(J),
+                                    'J1': '{}'.format(J[0]),
+                                    'J2': '{}'.format(J[1]),
+                                    'J3': '{}'.format(J[2]),
                                     'w': '{}'.format(w),
+                                    'w1': '{}'.format(w[0]),
+                                    'w2': '{}'.format(w[1]),
+                                    'w3': '{}'.format(w[2]),
                                     'x': '{:.2f}'.format(x),
                                     'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
                                     'u': '{}'.format(u),
@@ -470,7 +503,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                                 'eqs': {
                                     'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
                                     'J': '$J:{}$'.format(J),
+                                    'J1': '$J:{}$'.format(J[0]),
+                                    'J2': '$J:{}$'.format(J[1]),
+                                    'J3': '$J:{}$'.format(J[2]),
                                     'w': '$w:{}$'.format(w),
+                                    'w1': '$w:{}$'.format(w[0]),
+                                    'w2': '$w:{}$'.format(w[1]),
+                                    'w3': '$w:{}$'.format(w[2]),
                                     'x': '${}{}{:>.4f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
                                     'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
                                     'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
@@ -563,10 +602,10 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                 L = rnode.attrs['model_size']
                                 J = [rnode.attrs['J1_mean'], rnode.attrs['J2_mean'], rnode.attrs['J3_mean']]
                                 w = [rnode.attrs['J1_wdth'], rnode.attrs['J2_wdth'], rnode.attrs['J3_wdth']]
-                                x = rnode.attrs['J2_xcls']
+                                r = rnode.attrs['J2_span']
+                                x = rnode.attrs['xi_Jcls']
                                 f = rnode.attrs['f_mixer']
                                 u = rnode.attrs['u_layer']
-                                r = rnode.attrs['J2_span']
                                 if debug:
                                     print("Adding keys")
                                 db['keys']['L'].append(Lkey) if not Lkey in db['keys']['L'] else db['keys']['L']

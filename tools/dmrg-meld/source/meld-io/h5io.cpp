@@ -68,12 +68,12 @@ namespace tools::h5io {
         }
         if constexpr(std::is_same_v<T, lbit>) {
             size_t J_dec = get_max_decimals({H.p.J1_mean, H.p.J1_wdth, H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth});
-            size_t x_dec = get_max_decimals({H.p.J2_xcls});
+            size_t x_dec = get_max_decimals({H.p.xi_Jcls});
             size_t u_dec = get_max_decimals({H.p.u_fmix, H.p.u_tstd, H.p.u_cstd});
             auto   L_str = fmt::format(FMT_COMPILE("L{}"), H.model_size);
             auto   J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:.{0}f}_{3:+.{0}f}±{4:.{0}f}_{5:+.{0}f}±{6:.{0}f}]"), J_dec, H.p.J1_mean, H.p.J1_wdth,
                                        H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth);
-            auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, H.p.J2_xcls);
+            auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, H.p.xi_Jcls);
             // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
             auto r_str = H.p.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", H.p.J2_span);
             auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}]"), u_dec, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
@@ -200,7 +200,7 @@ namespace tools::h5io {
                     hamiltonian.J1_wdth     = h5tb_hamiltonian.J1_wdth;
                     hamiltonian.J2_wdth     = h5tb_hamiltonian.J2_wdth;
                     hamiltonian.J3_wdth     = h5tb_hamiltonian.J3_wdth;
-                    hamiltonian.J2_xcls     = h5tb_hamiltonian.J2_xcls;
+                    hamiltonian.xi_Jcls     = h5tb_hamiltonian.xi_Jcls;
                     hamiltonian.J2_span     = h5tb_hamiltonian.J2_span;
                     hamiltonian.u_depth     = h5tb_hamiltonian.u_depth;
                     hamiltonian.u_fmix      = h5tb_hamiltonian.u_fmix;
@@ -287,8 +287,8 @@ namespace tools::h5io {
                 h5_tgt.writeDataset(modelId.p.J1_wdth, fmt::format("{}/J1_wdth", modelPath));
                 h5_tgt.writeDataset(modelId.p.J2_wdth, fmt::format("{}/J2_wdth", modelPath));
                 h5_tgt.writeDataset(modelId.p.J3_wdth, fmt::format("{}/J3_wdth", modelPath));
-                h5_tgt.writeDataset(modelId.p.J2_xcls, fmt::format("{}/J2_xcls", modelPath));
                 h5_tgt.writeDataset(modelId.p.J2_span, fmt::format("{}/J2_span", modelPath));
+                h5_tgt.writeDataset(modelId.p.xi_Jcls, fmt::format("{}/xi_Jcls", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_depth, fmt::format("{}/u_depth", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_fmix, fmt::format("{}/u_fmix", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_tstd, fmt::format("{}/u_tstd", modelPath));

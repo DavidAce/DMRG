@@ -120,8 +120,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::J1_wdth"                         , model::lbit::J1_wdth);
     dmrg_config.load_parameter("model::lbit::J2_wdth"                         , model::lbit::J2_wdth);
     dmrg_config.load_parameter("model::lbit::J3_wdth"                         , model::lbit::J3_wdth);
-    dmrg_config.load_parameter("model::lbit::J2_xcls"                         , model::lbit::J2_xcls);
     dmrg_config.load_parameter("model::lbit::J2_span"                         , model::lbit::J2_span);
+    dmrg_config.load_parameter("model::lbit::xi_Jcls"                         , model::lbit::xi_Jcls);
     dmrg_config.load_parameter("model::lbit::u_depth"                         , model::lbit::u_depth);
     dmrg_config.load_parameter("model::lbit::u_fmix"                          , model::lbit::u_fmix);
     dmrg_config.load_parameter("model::lbit::u_tstd"                          , model::lbit::u_tstd);

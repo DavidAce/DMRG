@@ -130,6 +130,15 @@ def lbit_plot(args):
     subspec = ['u', 'f', 'cgw8', 'tgw8', 'tstd', 'cstd']
     linspec = ['x:.2f']
 
+    # For lbit64
+    figspec_x = ['L', 'J', 'r']
+    subspec_x = ['u', 'f', 'tstd', 'cstd', 'cgw8', 'tgw8']
+    linspec_x = ['J2']
+    xaxspec_x = ['w2']
+    figspec = ['L', 'J', 'r']
+    subspec = ['u', 'f', 'cgw8', 'tgw8', 'tstd', 'cstd']
+    linspec = ['w']
+
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
         f = plot_rise_fig_sub_line(db=db, meta=meta['rise-num2'], figspec=figspec_x, subspec=subspec_x,

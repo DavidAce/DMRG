@@ -49,8 +49,8 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.J1_wdth  = settings::model::lbit::J1_wdth;
     h5tb.param.J2_wdth  = settings::model::lbit::J2_wdth;
     h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
-    h5tb.param.J2_xcls  = settings::model::lbit::J2_xcls;
     h5tb.param.J2_span  = settings::model::lbit::J2_span; // Can be 0. If -1ul = MAX then this means we want the cutoff to be full system range
+    h5tb.param.xi_Jcls  = settings::model::lbit::xi_Jcls;
     h5tb.param.u_depth  = settings::model::lbit::u_depth;
     h5tb.param.u_fmix   = settings::model::lbit::u_fmix;
     h5tb.param.u_tstd   = settings::model::lbit::u_tstd;
@@ -80,8 +80,8 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.J1_wdth      = std::any_cast<double>(parameters["J1_wdth"]);
     h5tb.param.J2_wdth      = std::any_cast<double>(parameters["J2_wdth"]);
     h5tb.param.J3_wdth      = std::any_cast<double>(parameters["J3_wdth"]);
-    h5tb.param.J2_xcls      = std::any_cast<double>(parameters["J2_xcls"]);
     h5tb.param.J2_span      = std::any_cast<size_t>(parameters["J2_span"]);
+    h5tb.param.xi_Jcls      = std::any_cast<double>(parameters["xi_Jcls"]);
     h5tb.param.u_depth      = std::any_cast<size_t>(parameters["u_depth"]);
     h5tb.param.u_fmix       = std::any_cast<double>(parameters["u_fmix"]);
     h5tb.param.u_tstd       = std::any_cast<double>(parameters["u_tstd"]);
@@ -104,8 +104,8 @@ LBit::TableMap LBit::get_parameters() const {
     parameters["J1_wdth"]       = h5tb.param.J1_wdth;
     parameters["J2_wdth"]       = h5tb.param.J2_wdth;
     parameters["J3_wdth"]       = h5tb.param.J3_wdth;
-    parameters["J2_xcls"]       = h5tb.param.J2_xcls;
     parameters["J2_span"]       = h5tb.param.J2_span;
+    parameters["xi_Jcls"]       = h5tb.param.xi_Jcls;
     parameters["J2_ctof"]       = h5tb.param.J2_ctof;
     parameters["u_depth"]       = h5tb.param.u_depth;
     parameters["u_fmix"]        = h5tb.param.u_fmix;
@@ -127,9 +127,9 @@ std::any LBit::get_parameter(const std::string &name) const {
     else if(name == "J1_wdth")       return h5tb.param.J1_wdth;
     else if(name == "J2_wdth")       return h5tb.param.J2_wdth;
     else if(name == "J3_wdth")       return h5tb.param.J3_wdth;
-    else if(name == "J2_xcls")       return h5tb.param.J2_xcls;
     else if(name == "J2_span")       return h5tb.param.J2_span;
     else if(name == "J2_ctof")       return h5tb.param.J2_ctof;
+    else if(name == "xi_Jcls")       return h5tb.param.xi_Jcls;
     else if(name == "u_depth")       return h5tb.param.u_depth;
     else if(name == "u_fmix")        return h5tb.param.u_fmix;
     else if(name == "u_tstd")        return h5tb.param.u_tstd;
@@ -182,9 +182,9 @@ void LBit::build_mpo()
         *   σ^z is the diagonal 2x2 pauli matrix
         *   I is the 2x2 identity matrix
         *   J1,J2? and J3 are random 1,2 and 3-body couplings
-        *   Jij = J21, J22... couples sites i,j at distance r = |i-j|
-        *   Jij = J2_rand(i,j) = exp(-(r-1)/J2_xcls) * Random(m,w) , where
-                * J2_xcls is the exponential decay rate (with respect to distance) of the 2-body interaction
+        *   Jij = J21, J22... couples sites at distance |i-j|
+        *   Jij = J2_rand(i,j) = exp(-|i-j|/xi_Jcls) * Random(m,w) , where
+                * xi_Jcls is the exponential decay rate (with respect to distance) of the interactions
                 * w=width is the width of the distribution (e.g. standard deviation or box width)
                 * m=mean is a constant offset of the distribution
 
@@ -240,7 +240,7 @@ void LBit::build_mpo()
     if(h5tb.param.J2_rand.length() > h5tb.param.J2_ctof + 1)
         throw except::logic_error("expected J2_rand.length()({}) <= 1+J2_ctof ({})", h5tb.param.J2_rand.length(), h5tb.param.J2_ctof);
 
-//    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
+    //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<cplx, 2> Z = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);
     long                   R = static_cast<long>(h5tb.param.J2_ctof);
@@ -273,34 +273,33 @@ void LBit::build_mpo()
 }
 
 void LBit::randomize_hamiltonian() {
-    // J2(i,j) = J2_exp(r) * Random_ij for i < j,
-    // where
-    //    * r = r(i,j) = |i-j|
-    //    * J2_exp(r) = exp(-(r-1)/J2_xcls)
-    //    * J2_xcls: characteristic length scale for decay of pairwise interactions
-    //    * Random_ij(J2_mean, J2_wdth) are drawn randomly for each i,j, according to some distribution.
-    //    * The "-1" in the exponent disables the exponential suppression on nearest neighbors,
-    //      i.e.  exponential decay starts after 1 site, and so J2_wdth sets the size of nearest neighbor interaction.
+    // J1(i)     = Random(J1_mean, J2_width)
+    // J2(i,j)   = exp(-|i-j|/xi_Jcls) * Random(J2_mean, J2_width), where |i-j| = 1,2,3... L-1 and i < j
+    // J3(i,j,k) = exp(-|i-k|/xi_Jcls) * Random(J3_mean, J3_width), where |i-k| = 2, and i < j < k
+    // Note 1:
+    //    * xi_Jcls: characteristic length scale
+    //    * Random(...) are drawn randomly for each i,j,k according to some distribution.
+    //    * Exponential decay starts after 0 sites, so J2_wdth*exp(-1) sets the size of nearest neighbor interaction.
     //
-    // Note that the saturation time is predictably:
-    //      tmax ~ [J2_wdth * exp(-(L/2 - 1)/J2_xcls)]^-1
+    // Note 2: the saturation time is predictable. The smallest interaction sets the longest time scale.
+    //      tmax ~ [J2_wdth * exp(-(L/2)/xi_Jcls)]^-1
     // where 2/pi comes from using the half-normal distribution |N(...)| (see wiki).
     // We take the absolute value here to get the order of magnitude of the interactions.
 
     using namespace settings::model::lbit;
-    auto J2_exp = std::vector<double>();
-    for(size_t r = 0; r < h5tb.param.J2_ctof + 1; ++r) {
-        if(r == 0) {
-            // J2 does not describe self-interaction
-            J2_exp.emplace_back(0);
-            continue;
+    auto expw  = std::vector<double>(); // The exponentially decaying weights
+    auto pos_i = get_position();
+    for(size_t pos_j = pos_i; pos_j < settings::model::model_size; ++pos_j) {
+        if(pos_j == pos_i) {
+            expw.emplace_back(0.0);
+        } else {
+            auto r = std::abs(static_cast<double>(pos_i) - static_cast<double>(pos_j));
+            expw.emplace_back(std::exp(-r / xi_Jcls));
         }
-        if(r + get_position() >= settings::model::model_size) break; // No more sites to interact with
-        J2_exp.emplace_back(std::exp(-(static_cast<double>(r) - 1) / J2_xcls));
     }
-    h5tb.param.J1_rand               = rnd::random(h5tb.param.distribution, J1_mean, J1_wdth);
-    h5tb.param.J2_rand               = rnd::random(h5tb.param.distribution, J2_mean, J2_wdth, J2_exp);
-    h5tb.param.J3_rand               = rnd::random(h5tb.param.distribution, J3_mean, J3_wdth);
+    h5tb.param.J1_rand               = rnd::random(distribution, J1_mean, J1_wdth);
+    h5tb.param.J2_rand               = rnd::random(distribution, J2_mean, J2_wdth, expw);
+    h5tb.param.J3_rand               = rnd::random(distribution, J3_mean, J3_wdth) * expw[2];
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
 }
@@ -471,7 +470,7 @@ void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefi
     if(std::abs(h5tb.param.J1_wdth - J1_wdth) > 1e-6) throw except::runtime_error("J1_wdth {:.16f} != {:.16f} lbit::J1_wdth", h5tb.param.J1_wdth, J1_wdth);
     if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6) throw except::runtime_error("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth);
     if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw except::runtime_error("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth);
-    if(std::abs(h5tb.param.J2_xcls - J2_xcls) > 1e-6) throw except::runtime_error("J2_xcls {:.16f} != {:.16f} lbit::J2_xcls", h5tb.param.J2_xcls, J2_xcls);
+    if(std::abs(h5tb.param.xi_Jcls - xi_Jcls) > 1e-6) throw except::runtime_error("xi_Jcls {:.16f} != {:.16f} lbit::xi_Jcls", h5tb.param.xi_Jcls, xi_Jcls);
     if(std::abs(h5tb.param.u_fmix - u_fmix) > 1e-6) throw except::runtime_error("u_fmix {:.16f} != {:.16f} lbit::u_fmix", h5tb.param.u_fmix, u_fmix);
     if(h5tb.param.distribution != distribution)
         throw except::runtime_error("distribution [{}] != lbit::distribution [{}]", h5tb.param.distribution, distribution);
