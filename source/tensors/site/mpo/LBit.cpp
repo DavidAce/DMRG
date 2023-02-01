@@ -162,17 +162,17 @@ void LBit::build_mpo()
 
       MPO example with F = 10,  R = 8:
                              0     1     2     3     4     5     6     7     8    9    F
-           2            |    I     .     .     .     .     .     .     .     .    .    . | 0
-           |            |    n     .     .     .     .     .     .     .     .    .    . | 1
-       0---M---1    =   |    .     I     .     .     .     .     .     .     .    .    . | 2
-           |            |    .     .     I     .     .     .     .     .     .    .    . | 3
-           3            |    .     .     .     I     .     .     .     .     .    .    . | 4
-                        |    .     .     .     .     I     .     .     .     .    .    . | 5
-                        |    .     .     .     .     .     I     .     .     .    .    . | 6
-                        |    .     .     .     .     .     .     I     .     .    .    . | 7
-                        |    .     .     .     .     .     .     .     I     .    .    . | 8
-                        |    .     n     .     .     .     .     .     .     .    .    . | 9
-                        | J1*n J21*n J22*n J23*n J24*n J25*n J26*n J27*n J28*n J3*n    I | F
+           2          0 |    I     .     .     .     .     .     .     .     .    .    . |
+           |          1 |    n     .     .     .     .     .     .     .     .    .    . |
+       0---M---1    = 2 |    .     I     .     .     .     .     .     .     .    .    . |
+           |          3 |    .     .     I     .     .     .     .     .     .    .    . |
+           3          4 |    .     .     .     I     .     .     .     .     .    .    . |
+                      5 |    .     .     .     .     I     .     .     .     .    .    . |
+                      6 |    .     .     .     .     .     I     .     .     .    .    . |
+                      7 |    .     .     .     .     .     .     I     .     .    .    . |
+                      8 |    .     .     .     .     .     .     .     I     .    .    . |
+                      9 |    .     n     .     .     .     .     .     .     .    .    . |
+                      F | J1*n J21*n J22*n J23*n J24*n J25*n J26*n J27*n J28*n J3*n    I |
 
        where
         *   F is the linear size of the MPO
@@ -182,33 +182,33 @@ void LBit::build_mpo()
         *   σ^z is the diagonal 2x2 pauli matrix
         *   I is the 2x2 identity matrix
         *   J1,J2? and J3 are random 1,2 and 3-body couplings
-        *   Jij = J21, J22... couples sites i,j at |i-j| <= 5
-        *   Jij = J2_rand(i,j) = exp(-|i-j|/J2_xcls) * Random(-w+m,w+m) , where
-                * J2_decay is the exponential decay rate (with respect to distance) of the 2-body interaction
-                * w is the box width of the uniform distribution
+        *   Jij = J21, J22... couples sites i,j at distance r = |i-j|
+        *   Jij = J2_rand(i,j) = exp(-(r-1)/J2_xcls) * Random(m,w) , where
+                * J2_xcls is the exponential decay rate (with respect to distance) of the 2-body interaction
+                * w=width is the width of the distribution (e.g. standard deviation or box width)
                 * m=mean is a constant offset of the distribution
 
        The MPO is built from the following finite-state-machine ([k] are matrix indices and the machine gives us an adjacency matrix)
 
-       I==[0]-------------J1*n(i)--------------[F]==I
-           |                                    |
-           |---n(i)---[1]----------J21*n(i+1)---| if R >= 1
-                       |                        |
-                       |-n(i+1)-[F-1]-J3*n(i+2)-|
-                       |                        |
-                       |--I--[2]---J22*n(i+2)---| if R >= 2
-                              I                 |
-                             [3]---J23*n(i+3)---| if R >= 3
-                              I                 |
-                             [4]---J24*n(i+4)---| ...
-                              I                 |
-                             [5]---J25*n(i+5)---|
-                              I                 |
-                             [6]---J26*n(i+6)---|
-                              I                 |
-                             [7]---J27*n(i+7)---|
-                              I                 |
-                             [8]---J28*n(i+8)---|
+       I==[0]---------------------------------J1*n(i)-------------[F]==I
+           |                                                       |
+           |---n(i)---[1]-------------------J21*n(i+1)-------------| if R >= 1
+                       |                                           |
+                       |-----n(i+1)-----[F-1]-----J3*n(i+2)--------|
+                       |                                           |
+                       |--I--[2]------------J22*n(i+2)-------------| if R >= 2
+                              I                                    |
+                             [3]------------J23*n(i+3)-------------| if R >= 3
+                              I                                    |
+                             [4]------------J24*n(i+4)-------------| ...
+                              I                                    |
+                             [5]------------J25*n(i+5)-------------|
+                              I                                    |
+                             [6]------------J26*n(i+6)-------------|
+                              I                                    |
+                             [7]------------J27*n(i+7)-------------|
+                              I                                    |
+                             [8]------------J28*n(i+8)-------------|
                              .
                              .
                              .

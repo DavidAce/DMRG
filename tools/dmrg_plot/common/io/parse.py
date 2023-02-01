@@ -49,8 +49,10 @@ def parse(algo):
                                 # 'lbit58',  # 10000 realizations constricted, random init, u8, f=0.5, L=[16], varying w
                                 # 'lbit59', # 1000 realizations blocked (constricted), random init, u8, f=0.5, L=12, increased c = 2
                                 # 'lbit60', # 1000 realizations u8, f=0.5, L=12, testing weights ID/EX std=[0.1,1.0,4.0]
-                                'lbit61',
-                                # 1000 realizations u8, f=0.5, L=14, testing weights ID/EX std=[0.25, 0.5 ...2.0]. This one motivates the choice f=1.0, cw=EX, sigma_c=1.0, and wt=EX/ID (doesn't matter), sigma_t=1.0 in the unitary gates
+                                # 'lbit61', # 1000 realizations u8, f=0.5, L=14, testing weights ID/EX std=[0.25, 0.5 ...2.0]. This one motivates the choice f=1.0, cw=EX, sigma_c=1.0, and wt=EX/ID (doesn't matter), sigma_t=1.0 in the unitary gates
+                                # 'lbit62', # 6000 realizations u8, f=1.0, L=14, testing xi=[0.8, 0.9 ... 2.0]. This shows that the SN(t=inf) values are kind of random, mostly decreasing with xi. Probably we need more realizations or lower svd threshold.
+                                'lbit63',
+                                # 2000 realizations u8, f=1.0, L=14, testing xi=[0.8, 0.9 ... 2.0] with lower svd threshold.
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',

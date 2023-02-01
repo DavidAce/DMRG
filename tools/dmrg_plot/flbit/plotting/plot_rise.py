@@ -6,11 +6,11 @@ from scipy.optimize import curve_fit
 import logging
 from .tools import *
 
-logger = logging.getLogger('plot-slope')
+logger = logging.getLogger('plot-rise')
 
 
-def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
-                               point_filter=None, figs=None, palette_name=None):
+def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
+                              point_filter=None, figs=None, palette_name=None):
     if db['version'] != 3:
         raise ValueError("plot_v3_time_fig3_sub3_line1 requires db version 3")
 
@@ -74,7 +74,7 @@ def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, alg
                     for datanode in datanodes:
                         dbval = db['dsets'][datanode.name]
                         ydata = datanode['avg'][meta['colname']][()]
-                        edata = datanode['std'][meta['colname']][()]  # Use standard deviation for curve_fit
+                        edata = datanode['ste'][meta['colname']][()]  # Use standard deviation for curve_fit
                         tdata = datanode['avg']['physical_time'][()]
                         ndata = datanode['avg']['num'][()]
 
@@ -101,9 +101,21 @@ def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, alg
                                                    ydata=ydata[idx1:idx2],
                                                    sigma=edata[idx1:idx2], bounds=bounds_v2)
                             pstd = np.sqrt(np.diag(pcov))
+                            yval1 = flinear(np.log(np.log(tdata[idx1])), *popt)
+                            yval2 = np.mean(flinear(np.log(np.log(tdata[idx2:])), *popt))
+                            ydiff = yval2 - yval1
+                            ediff = np.sqrt(pstd[0] ** 2 + pstd[0] ** 2)
+                            # ediff = np.sqrt(edata[idx2]**2 + edata[idx1]**2) ## Adding/subtracting adds variances of normally distributed random variables
+
+                            if meta.get('relative'):
+                                ydiff /= yval2
+                                # ediff /= yidx2
+                                # ediff = 0
+                                if ylabel := meta.get('ylabel_relative'):
+                                    ax.set_ylabel(ylabel)
                             xvals.append(xaxvals)
-                            yvals.append(popt[1])
-                            evals.append(pstd[1])
+                            yvals.append(ydiff)
+                            evals.append(ediff)
                         except IndexError as e:
                             logger.error("Fit failed: {}".format(e))
                             pass
@@ -128,8 +140,6 @@ def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, alg
                              fontstretch="ultra-condensed",
                              # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
                              )
-                # ax.set_xlabel(dbval['tex']['keys'][xaxspec[0].split(':')[0]])
-
                 ax.set_xlabel(get_tex(dbval, xaxspec))
         if not prb_style and dbval:
             f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
@@ -146,8 +156,8 @@ def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, alg
     return figs
 
 
-def plot_v2_slope_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
-                                  point_filter=None, figs=None, palette_name=None):
+def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
+                                 point_filter=None, figs=None, palette_name=None):
     if len(figspec) + len(subspec) + len(linspec) != 7:
         raise AssertionError("Must add to 7 elems: \n figspec {}\n subspec {}\n linespec {}")
     if 'mplstyle' in meta:
@@ -438,8 +448,8 @@ def plot_v2_slope_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, 
     return figs
 
 
-def plot_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
-                            point_filter=None, figs=None, palette_name=None):
+def plot_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
+                           point_filter=None, figs=None, palette_name=None):
     if db['version'] == 2:
         specs = figspec + subspec + linspec
         nonv3spec = lambda x: x not in ['cstd', 'tstd', 'tgw8', 'cgw8']
@@ -448,13 +458,13 @@ def plot_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_f
         sub2 = specs[3:5]
         lin1 = specs[5:6]
         xax1 = specs[6:7]
-        return plot_v2_slope_fig3_sub3_line1(db=db, meta=meta, figspec=fig3, subspec=sub2, linspec=lin1, xaxspec=xax1,
-                                             algo_filter=algo_filter, state_filter=state_filter,
-                                             point_filter=point_filter, figs=figs, palette_name=palette_name)
+        return plot_v2_rise_fig3_sub3_line1(db=db, meta=meta, figspec=fig3, subspec=sub2, linspec=lin1, xaxspec=xax1,
+                                            algo_filter=algo_filter, state_filter=state_filter,
+                                            point_filter=point_filter, figs=figs, palette_name=palette_name)
     elif db['version'] == 3:
-        return plot_v3_slope_fig_sub_line(db=db, meta=meta, figspec=figspec, subspec=subspec, linspec=linspec,
-                                          xaxspec=xaxspec,
-                                          algo_filter=algo_filter, state_filter=state_filter, point_filter=point_filter,
-                                          figs=figs, palette_name=palette_name)
+        return plot_v3_rise_fig_sub_line(db=db, meta=meta, figspec=figspec, subspec=subspec, linspec=linspec,
+                                         xaxspec=xaxspec,
+                                         algo_filter=algo_filter, state_filter=state_filter, point_filter=point_filter,
+                                         figs=figs, palette_name=palette_name)
     else:
         raise NotImplementedError('database version not implemented:' + db['version'])

@@ -380,18 +380,20 @@ def get_prop(db, keyfmt, prop):
     if isinstance(keyfmt, list) or isinstance(keyfmt, tuple):
         keys = []
         for kf in keyfmt:
+            k = kf.split(':')[0]
             if prop in db:
-                if kf in db[prop]:
-                    keys.append(db[prop][kf])
-                elif kf.split(':')[0] in db[prop]:
-                    keys.append(db[prop][kf.split(':')[0]])
+                if k in db[prop]:
+                    keys.append(db[prop][k])
+                elif k in db[prop]['keys']:
+                    keys.append(db[prop]['keys'][k])
         return keys
     else:
         if prop in db:
-            if keyfmt in db[prop]:
-                return db[prop][keyfmt]
-            if keyfmt.split(':')[0] in db[prop]:
-                return db[prop][keyfmt.split(':')[0]]
+            k = keyfmt.split(':')[0]
+            if k in db[prop]:
+                return db[prop][k]
+            elif k in db[prop]['keys']:
+                return db[prop]['keys'][k]
         return []
 
 
@@ -404,7 +406,10 @@ def get_keys(db, keyfmt):
 
 
 def get_tex(db, keyfmt):
-    return get_prop(db, keyfmt, 'tex')
+    keys = get_prop(db, keyfmt, 'tex')
+    if isinstance(keys, list):
+        keys = '$' + ', '.join([k.strip('$') for k in keys]) + '$'
+    return keys
 
 
 def get_title(db, keys, width=20):

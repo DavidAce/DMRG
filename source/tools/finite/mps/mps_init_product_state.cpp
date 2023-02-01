@@ -90,7 +90,7 @@ void tools::finite::mps::init::random_product_state_zeromag(StateFinite &state, 
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->debug("Random state: {}", str);
+    tools::log->info("Random product state: {}", str);
 }
 
 void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, StateInitType type, std::string_view axis) {

@@ -64,7 +64,8 @@ axes.titlepad           : 0.00    # pad between axes and title in points
 
 
 #figure.figsize          : 7, 4 # Two subplots side by side
-figure.figsize          : 5, 4 # Single plot
+#figure.figsize          : 5, 4 # Single plot
+figure.figsize          : 7.5, 6 # Large single plot
 #figure.figsize          : 10, 8 # More plots
 #figure.figsize          : 2.53125, 3.00 # 75% width
 

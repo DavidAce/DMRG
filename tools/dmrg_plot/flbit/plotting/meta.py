@@ -46,7 +46,7 @@ def get_meta(plotdir):
                 # 'u': ['u_5', 'u_6'],
                 # 'u': ['u_5'],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
-                'tgw8': ['EX'],
+                'tgw8': ['ID'],
                 'cgw8': ['EX']
             },
         },
@@ -660,6 +660,35 @@ def get_meta(plotdir):
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'center left',
+            # 'legendlocation': (0.01, 0.65),
+        },
+        'rise-num2': {
+            'groupname': 'measurements',
+            'colname': 'number_entropy',
+            'normpage': False,
+            'titlename': 'Number Entropy rise',
+            'ylabel': '$S_N(t_2) - S_N(t_1)$',
+            'yformat': '%.3f',
+            'plotprefix': 'SN-rise',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'sharex': 'all',
+            'sharey': 'none',
+            'xmin': 0.0,
+            'xmax': 2.75,
+            'relative': False,
+            'ylabel_relative': '$\\frac{S_N(t_2) - S_N(t_1)}{S_N(t_2)}$',
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            'fillerror': False,
+            'timeloglevel': 2,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            'legendlocation': 'center right',
             # 'legendlocation': (0.01, 0.65),
         },
     }
