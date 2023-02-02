@@ -8,8 +8,9 @@ import platform
 # while replacing the fields stated in find_replace.
 
 template_filename = 'input_template_flbit.cfg'
-basename    = 'mbl'
-location    = "input-htest"
+basename          = 'mbl'
+input_prefix      = "input-utest"
+output_prefix     = "output-utest"
 
 
 sites               = [12]
@@ -25,7 +26,6 @@ u_tgw8              = ['IDENTITY']
 u_cgw8              = ['EXPDECAY']
 # initial_state       = ["PRODUCT_STATE_NEEL"]
 initial_state       = ["RANDOM_PRODUCT_STATE_ZEROMAG"]
-output_prefix       = "output-htest"
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
     tmp_storage = "/scratch/local"
@@ -57,7 +57,7 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
 
     # Generate a unique identifier for the config file and output directory
     # Hamiltonian part:
-    input_filename =  f"{location}/{basename}_L{str_L}_J{str_J}_x{str_x}_r{str_rL}"
+    input_filename =  f"{input_prefix}/{basename}_L{str_L}_J{str_J}_x{str_x}_r{str_rL}"
     output_filedir =   f"{output_prefix}/L{str_L}/J{str_J}/x{str_x}/r{str_rL}"
     # Unitary circuit string:
     str_circuit = f"d{str_u}_f{str_f}"
@@ -93,7 +93,7 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
         "flbit::time_final_imag"             : "0",
         "flbit::time_num_steps"              : "500",
     }
-    os.makedirs(location, exist_ok=True)
+    os.makedirs(input_prefix, exist_ok=True)
     num_total = num_total + 1
     print(input_filename)
     generate_input_file(settings, input_filename, template_filename)
