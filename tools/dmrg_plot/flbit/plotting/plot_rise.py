@@ -93,7 +93,7 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         try:
                             if idx2 <= idx1:
                                 raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
-                            if idx1 + 10 > idx2:
+                            if idx1 + 4 > idx2:
                                 raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
 
                             bounds_v2 = ([-np.inf, 0], [np.inf, np.inf])

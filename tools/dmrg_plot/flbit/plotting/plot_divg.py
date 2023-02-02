@@ -124,6 +124,8 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     lenval = "{}".format(get_vals(db=dbval, keyfmt='L'))
                     lenkey = f"L{lenval}"
                     for W in [4.0, 6.0, 8.0]:
+                        if h5ext.get(f'{lenkey}/W{W}') is None:
+                            continue
                         hist = h5ext[f'{lenkey}/W{W}']['hist[NE1][100]'][()]
                         edges = h5ext[f'{lenkey}/W{W}']['binedges[NE1][100]'][()]
                         bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]

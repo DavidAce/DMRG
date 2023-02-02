@@ -678,12 +678,14 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto utstds = std::vector<double>{settings::model::lbit::u_tstd};
         auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
         auto nsamps = settings::flbit::compute_lbit_stats;
+        //        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
         bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+                             // #pragma message "Revert randomfield to false"
         if(nsamps > 1) {
-            udpths = {8};
-            ufmixs = {0.5};
+            udpths = {8, 10, 12, 14, 16};
+            ufmixs = {0.25, 0.5, 1.0};
             utstds = {1.0};
-            ucstds = {0.001, 0.01, 0.1, 1.0, 10};
+            ucstds = {1.0};
             utgw8s = {UnitaryGateWeight::IDENTITY};
             ucgw8s = {UnitaryGateWeight::EXPDECAY};
         }
@@ -731,6 +733,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
             }
         }
+        //        exit(0);
     }
 }
 

@@ -12,13 +12,13 @@ basename    = 'mbl'
 location    = "input-htest"
 
 
-sites               = [14]
-J                   = [[0.00, 0.10, 0.10], [0.00, 0.10, -0.10]]
-w                   = [[1.00, 0.25, 0.10], [1.00, 0.37, 0.14]] # for w2, nearest neighbors have this order of magnitude
+sites               = [12]
+J                   = [[0.00, 0.00, 0.00]]
+w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [8]
-u_fmix              = [1.0]
+u_depth             = [8,10,12,14,16]
+u_fmix              = [0.25, 0.5, 1.0]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']
@@ -78,8 +78,8 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
         "model::lbit::J1_wdth"               : str_w1,
         "model::lbit::J2_wdth"               : str_w2,
         "model::lbit::J3_wdth"               : str_w3,
-        "model::lbit::J2_xcls"               : str_x,
         "model::lbit::J2_span"               : str_r,
+        "model::lbit::xi_Jcls"               : str_x,
         "model::lbit::u_depth"               : str_u,
         "model::lbit::u_fmix"                : str_f,
         "model::lbit::u_tstd"                : str_tstd,
@@ -91,7 +91,7 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "1e10",
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "200",
+        "flbit::time_num_steps"              : "500",
     }
     os.makedirs(location, exist_ok=True)
     num_total = num_total + 1

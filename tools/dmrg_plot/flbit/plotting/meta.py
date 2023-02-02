@@ -646,8 +646,8 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',
-            'xmin': 0.0,
-            'xmax': 2.1,
+            # 'xmin': 0.0,
+            # 'xmax': 2.1,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -673,8 +673,8 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',
-            'xmin': 0.0,
-            'xmax': 2.75,
+            # 'xmin': 0.0,
+            # 'xmax': 2.75,
             'relative': False,
             'ylabel_relative': '$\\frac{S_N(t_2) - S_N(t_1)}{S_N(t_2)}$',
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau

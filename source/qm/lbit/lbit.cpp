@@ -35,8 +35,8 @@ qm::lbit::UnitaryGateProperties::UnitaryGateProperties(const std::vector<double>
 }
 
 std::string qm::lbit::UnitaryGateProperties::string() const {
-    return fmt::format("depth {} | fmix {:.3f} | tstd {:.3f} | cstd {:.3f} | tw8 {} | cw8 {} | hvals {}", depth, fmix, tstd, cstd, enum2sv(tgw8), enum2sv(cgw8),
-                       hvals);
+    return fmt::format("depth {} | fmix {:.3f} | tstd {:.3f} | cstd {:.3f} | tw8 {} | cw8 {} | hvals {::.3e}", depth, fmix, tstd, cstd, enum2sv(tgw8),
+                       enum2sv(cgw8), hvals);
 }
 
 void qm::lbit::UnitaryGateProperties::randomize_hvals() const { hvals = rnd::random(hdist, hmean, hwdth, sites); }
@@ -520,6 +520,267 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
     }
     return result;
 }
+
+// qm::cplx qm::lbit::get_lbit_exp_value4(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi,
+//                                        const Eigen::Matrix2cd &szj, size_t pos_szj, long sites) {
+//     /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌'_i σ^z_j) / Tr(𝜌'_i) = Tr(τ^z_i σ^z_j) / 2^L
+//
+//         Consider first the density matrix
+//
+//              ρ_i = 1/2^L  (σ^z_i + 1 ) ⊗ I_i',
+//
+//         where I_i' is the identity matrix on sites j != i.
+//         Then ρ_i represents a state |psi><psi| where site i is at level 0 with probability 1,
+//         and the others sites are in a cat-state of level 0 or 1. E.g. ρ could be a state with
+//         magnetization 1 at site i, and 0 elsewhere, or ρ could be a state with 1 particle at
+//         site i, and cat state of 0 and 1 particles elsewhere.
+//
+//         Applying the unitary transformation does not change the trace, since it is just a
+//         change of basis. We get
+//
+//              ρ'_i = U† ρ_i U
+//                   = 1/2^L (U† σ^z_i U + 1)
+//                   = 1/2^L (τ^z_i + 1) ,
+//
+//         where the l-bit τ^z_i = U† σ^z_i U acts non-trivially on all sites. Carrying out the
+//         trace gives us
+//
+//             Tr(ρ'_i σ^z_j) / Tr(ρ'_i) = 1/2^L Tr(τ^z_i σ^z_j).
+//
+//         where we used Tr(1) = 2^L, Tr(ρ_i) = Tr(ρ'_i) = 1 and Tr(τ^z_i) = 0.
+//
+//         We expect an l-bit fully localized at site i to give O(i,i) = 1,  and a fully
+//         delocalized l-bit to give O(i,j) = 0.5.
+//
+//         Note that when the light-cone from site i can't reach site j in the unitary circuit, then
+//         τ^z_i has no support where σ^z_j connects.  Therefore, we get
+//
+//                Tr(τ^z_i σ^z_j) = Tr(τ^z_i ⊗ σ^z_j) = Tr(τ^z_i) Tr(σ^z_j) = 0
+//
+//         Read more here:
+//         https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+//         https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
+//     */
+//
+//     // Generate gates for the operators
+//     if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
+//     auto t_olap = tid::ur();
+//     t_olap.tic();
+//
+//     auto result          = cplx(0, 0);
+//     auto szi_gate        = qm::Gate(szi, {pos_szi}, {2l}); //
+//     auto szj_gate        = qm::Gate(szj, {pos_szj}, {2l});
+//     auto intersection    = qm::get_lightcone_intersection(unitary_layers, pos_szi, pos_szj);
+//     auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_layers, intersection, false); // Selected gates in each layer
+//     auto is_disconnected = std::any_of(intersection.begin(), intersection.end(), [](auto &layer) { return layer.empty(); });
+//     if(is_disconnected) {
+//         if constexpr(settings::debug_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
+//         return result;
+//     }
+//     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
+//     for(const auto & layer : unitary_layers){
+//         for (const auto & ugate : layer) {
+//             g = g.insert(ugate).split();
+//
+//         }
+//     }
+//
+//
+//     exit(0);
+//
+//     // Setup debug printing of unitary circuits
+//     size_t                  uw        = 7;                                // Width of a unitary 2-site gate box
+//     size_t                  op        = 3;                                // Overlap of a unitary 2-site gate box
+//     size_t                  tw        = 6;                                // Tag width
+//     size_t                  mp        = static_cast<size_t>(sites) - 1ul; // Max pos
+//     auto                    empty_str = fmt::format("{0:^{1}}", " ", tw + mp * (uw - op) + op);
+//     std::deque<std::string> net(2 + unitary_slayers.size(), empty_str); // Great for debugging
+//     std::deque<std::string> log(2 + unitary_slayers.size());            // Great for debugging
+//
+//     auto all_empty = [](const auto &slayers) {
+//         return std::all_of(slayers.begin(), slayers.end(), [](const auto &slayer) -> bool { return slayer.empty(); });
+//     };
+//     auto num_gates_L = [](const auto &slayers, size_t idx = 0) {
+//         size_t num = 0;
+//         for(size_t i = idx + 1; i < slayers.size(); i++) {
+//             if(slayers.at(i - 1).empty()) return num;
+//             if(slayers.at(i).empty()) return num;
+//             size_t posLL = slayers.at(i).front().pos.front();
+//             size_t posL  = slayers.at(i - 1).front().pos.front();
+//             if(posLL + 1 == posL)
+//                 num++;
+//             else
+//                 break;
+//         }
+//         return num;
+//     };
+//     auto num_gates_R = [](const auto &slayers, size_t idx = 0) {
+//         size_t num = 0;
+//         for(size_t i = idx + 1; i < slayers.size(); i++) {
+//             if(slayers.at(i - 1).empty()) return num;
+//             if(slayers.at(i).empty()) return num;
+//             size_t posRR = slayers.at(i).back().pos.back();
+//             size_t posR  = slayers.at(i - 1).back().pos.back();
+//             if(posR + 1 == posRR)
+//                 num++;
+//             else
+//                 break;
+//         }
+//         return num;
+//     };
+//     auto slayer_width = [&]() -> size_t {
+//         size_t width = 0;
+//         for(const auto &s : unitary_slayers) {
+//             size_t w = 0;
+//             for(const auto &l : s) w += l.pos.size();
+//             width = std::max(width, w);
+//         }
+//         return width;
+//     };
+//     auto slayer_diagl = [&]() -> size_t {
+//         size_t lb = -1ul; // left bottom position
+//         size_t rb = -1ul; // right bottom position
+//         size_t lt = -1ul; // left  top position
+//         size_t rt = -1ul; // right top position
+//         for(const auto &us : unitary_slayers) {
+//             if(not us.empty()) {
+//                 if(lb == -1ul) lb = us.front().pos.front();
+//                 if(rb == -1ul) rb = us.front().pos.back();
+//                 lb = std::min(lb, us.front().pos.front());
+//             }
+//         }
+//         for(const auto &us : iter::reverse(unitary_slayers)) {
+//             if(not us.empty()) {
+//                 if(rt == -1ul) rt = us.front().pos.back();
+//                 if(lt == -1ul) lt = us.front().pos.front();
+//                 rt = std::max(rt, us.back().pos.back());
+//             }
+//         }
+//         return std::max(rb - lb, rt - lt) + 1;
+//     };
+//
+//     auto slayer_diagr = [&]() -> size_t {
+//         size_t lb = -1ul; // left bottom position
+//         size_t rb = -1ul; // right bottom position
+//         size_t lt = -1ul; // left  top position
+//         size_t rt = -1ul; // right top position
+//         for(const auto &us : unitary_slayers) {
+//             if(not us.empty()) {
+//                 if(lb == -1ul) lb = us.back().pos.front();
+//                 if(rb == -1ul) rb = us.back().pos.back();
+//                 rb = std::max(rb, us.back().pos.back());
+//             }
+//         }
+//         for(const auto &us : iter::reverse(unitary_slayers)) {
+//             if(not us.empty()) {
+//                 if(rt == -1ul) rt = us.back().pos.back();
+//                 if(lt == -1ul) lt = us.back().pos.front();
+//                 lt = std::min(lt, us.front().pos.front());
+//             }
+//         }
+//         return std::max(rb - lb, rt - lt) + 1;
+//     };
+//
+//     auto width = slayer_width();
+//     auto diagr = slayer_diagr();
+//     auto diagl = slayer_diagl();
+//
+//     bool go_diagonal = std::min(diagl, diagr) < width; // Avoid long thin diagonals.
+//
+//     // Start contracting selected unitary gates bottom to top.
+//     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
+//     if constexpr(settings::debug_circuit) {
+//         szi_gate.draw_pos(net.front(), "szi  :");
+//         log.front().append(fmt::format("insert σzi{}", szi_gate.pos));
+//     }
+//     if(go_diagonal) {
+//         // Decide to take the left or right diagonal (whatever is cheapest)
+//         bool go_right = diagr <= diagl;
+//         while(not all_empty(unitary_slayers)) {
+//             for(auto &&[idx_slayer, slayer] : iter::enumerate(unitary_slayers)) {
+//                 if(slayer.empty()) continue; // Already applied the whole slayer
+//                 auto &layer_str = net.at(idx_slayer + 1);
+//                 auto &story_str = log.at(idx_slayer + 1);
+//                 auto  numL      = num_gates_L(unitary_slayers, idx_slayer); // number of gates remaining to take going left
+//                 auto  numR      = num_gates_R(unitary_slayers, idx_slayer); // number of gates remaining to take going right
+//
+//                 std::vector<size_t> pos_out;
+//                 if(go_right) {
+//                     //                    tools::log->trace("-> insert u[{}]:{}", idx_slayer, slayer.back().pos);
+//                     if constexpr(settings::debug_circuit) {
+//                         slayer.back().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
+//                         story_str.append(fmt::format("insert u{} ", slayer.back().pos));
+//                     }
+//                     g       = g.insert(slayer.back());
+//                     pos_out = slayer.back().pos_difference(intersection.at(idx_slayer + 1));
+//                     slayer.pop_back();
+//                 } else {
+//                     //                    tools::log->trace("<- insert u[{}]:{}", idx_slayer, slayer.front().pos);
+//                     if constexpr(settings::debug_circuit) {
+//                         slayer.front().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
+//                         story_str.append(fmt::format("insert u{} ", slayer.front().pos));
+//                     }
+//                     g       = g.insert(slayer.front());
+//                     pos_out = slayer.front().pos_difference(intersection.at(idx_slayer + 1));
+//                     slayer.pop_front();
+//                 }
+//
+//                 // Collect positions that could be traced
+//                 if(not pos_out.empty()) {                                                      // Trace positions outside the light cone intersection
+//                     pos_out.erase(std::unique(pos_out.begin(), pos_out.end()), pos_out.end()); // Keep unique elements
+//                     //                    tools::log->trace("trace[{}]:{}", idx_slayer, pos_out);
+//                     g    = g.trace_pos(pos_out);
+//                     g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
+//                     if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
+//                 }
+//
+//                 if((numR == 0 and go_right) or (numL == 0 and not go_right)) {
+//                     if constexpr(settings::debug_circuit) story_str.append(fmt::format("break {} ", g.pos));
+//                     break; // Start from the bottom of the circuit
+//                 }
+//             }
+//         }
+//     } else {
+//         for(auto &&[idx_slayer, slayer] : iter::enumerate(unitary_slayers)) {
+//             auto &layer_str = net.at(idx_slayer + 1);
+//             auto &story_str = log.at(idx_slayer + 1);
+//             for(auto &sgate : slayer) {
+//                 if(g.has_pos(sgate.pos)) {
+//                     g = g.insert(sgate);
+//                     //                    tools::log->trace("insert u[{}]:{}", idx_slayer, sgate.pos);
+//                     if constexpr(settings::debug_circuit) {
+//                         sgate.draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
+//                         story_str.append(fmt::format("insert u{} ", sgate.pos));
+//                     }
+//                     auto pos_out = sgate.pos_difference(intersection.at(idx_slayer + 1));
+//                     if(not pos_out.empty()) {
+//                         // Trace positions outside the light cone intersection
+//                         g    = g.trace_pos(pos_out);
+//                         g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
+//                         if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
+//                     }
+//                 }
+//             }
+//             if constexpr(settings::debug_circuit) story_str.append(fmt::format("now{} ", g.pos));
+//         }
+//     }
+//
+//     if(g.has_pos(szj_gate.pos)) {
+//         // Connect σ^z_j at the top
+//         szj_gate.draw_pos(net.back(), "szj  :");
+//         log.back().append(fmt::format("insert σzj{} ", szj_gate.pos));
+//         g = szj_gate.connect_above(g);
+//     }
+//     // In the last step we trace everything down to a cplx
+//     result = g.trace();
+//     result /= std::pow(2, g.pos.size()); // Normalize by dividing the trace of each 2x2 identity.
+//     t_olap.toc();
+//     if constexpr(settings::debug_circuit) {
+//         log.back().append(fmt::format("result = {:.6f} | time {:.3e}", result, t_olap.get_time()));
+//         for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | {}", layer, log[idx]);
+//     }
+//     return result;
+// }
 
 Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
     auto                       ssites = static_cast<long>(sites);

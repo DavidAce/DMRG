@@ -43,6 +43,7 @@ namespace qm {
     class Gate {
         protected:
         Eigen::Tensor<cplx,2> exp_internal(const Eigen::Tensor<cplx,2> & op_, cplx alpha) const;
+        mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
         mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
         mutable bool used = false;
         public:
@@ -106,6 +107,18 @@ namespace qm {
         void                   generate_swap_sequences();
         size_t                 cancel_swaps(std::deque<Rwap> &other_rwaps);
         size_t                 cancel_rwaps(std::deque<Swap> &other_swaps);
+    };
+
+    class MpoGate : public Gate {
+        protected:
+        std::vector<Eigen::Tensor<cplx, 4>> ops;
+
+        public:
+        [[nodiscard]] MpoGate                insert(const MpoGate &other) const;
+        [[nodiscard]] MpoGate                insert(const Gate &other) const;
+        [[nodiscard]] Eigen::Tensor<cplx, 4> get_op();
+        [[nodiscard]] Eigen::Tensor<cplx, 4> get_op(const std::vector<size_t> &pos);
+        [[nodiscard]] Gate                   split() const; /*!< Split into individual sites with svd */
     };
 
 }

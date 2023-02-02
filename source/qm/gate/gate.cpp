@@ -5,6 +5,7 @@
 #include "general/iter.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
+#include "math/svd.h"
 #include "math/tenx.h"
 #include "tools/common/log.h"
 #include <Eigen/Core>

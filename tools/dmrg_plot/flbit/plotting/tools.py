@@ -300,40 +300,49 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     wn = db['vals']['w']
 
     w1 = wn[0]  # The width of distribution for on-site field.
-    w2 = wn[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
+    w2 = wn[
+        1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
     w3 = wn[2]  # The width of distribution for three-body interactions.
 
     if r == np.iinfo(np.uint64).max:
         r = L
 
-    tmin1 = 1.0 / w1
-    tmax1 = 1.0 / w1
+    # We multiply by np.sqrt(2 / np.pi) because we are interested in <|N(0,w)|>
+    w1 *= np.sqrt(1 - 2 / np.pi)
+    w2 *= np.sqrt(1 - 2 / np.pi)
+    w3 *= np.sqrt(1 - 2 / np.pi)
 
-    r2max = np.min([r, int((L - 1) / 2)])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-    # Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-    Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
+    J1min = w1 * np.exp(0 / x)
+    J1max = w1 * np.exp(0 / x)
+    tmin1 = 1.0 / J1max
+    tmax1 = 1.0 / J1min
+
+    r2max = np.min([r, int((L - 1))])  # Maximum interaction range, max(|i-j|)
+    Jmin2 = w2 * np.exp(
+        - r2max / (2 * x))  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmax2 = w2 * np.exp(- 1 / x)  # Order of magnitude of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
 
-    tmin3 = 1.0 / w3
-    tmax3 = 1.0 / w3
+    J3min = w3 * np.exp(-2 / x)
+    J3max = w3 * np.exp(-2 / x)
+    tmin3 = 1.0 / J3max
+    tmax3 = 1.0 / J3min
 
-    tmin = np.max([tmin1, tmin2, tmin3])  # Should this be max? Also, can't have negatives in log-log.
+    tmin = np.max([tmin1, tmin2, tmin3])
     tmax = np.max([tmax1, tmax2, tmax3])
-    # tmin = tmin2
-    # tmax = tmax2
-    tmin = np.min([tmin, tmax])  # Can't have negatives in log-log.
-    tmax = np.max([tmin, tmax])  # Make sure the time points are ordered
+    # Make sure the time points are ordered
+    tmin = np.min([tmin, tmax])
+    tmax = np.max([tmin, tmax])
 
     idx1 = np.argmax(tdata >= tmin) - 1
     idx2 = np.argmax(tdata >= tmax) - 1
 
     # idx1 = np.where(tdata >= tmin)[0][0]
     # idx2 = np.where(tdata <= tmax)[0][-1]
-    print(tmin1, tmin2, tmin3)
-    print(tmax1, tmax2, tmax3)
-    print(tdata[idx1], tdata[idx2])
+    # print(tmin1, tmin2, tmin3)
+    # print(tmax1, tmax2, tmax3)
+    # print(tdata[idx1], tdata[idx2])
     if idx2 == len(tdata) - 1:
         idx2 = np.max([idx1, idx2 - 1])
     return idx1, idx2

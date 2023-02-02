@@ -314,6 +314,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 num = np.max(datanode['num'][()])
                 for dname in [datanode.name]:
                     db['dsets'][dname] = {}
+                    db['dsets'][dname]['version'] = db['version']
                     db['dsets'][dname]['keys'] = db['keys']
                     db['dsets'][dname]['vals'] = {}
                     db['dsets'][dname]['vals']['L'] = L
@@ -429,6 +430,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                             print("Adding node data")
                         for dname in [datanode.name]:
                             db['dsets'][dname] = {}
+                            db['dsets'][dname]['version'] = db['version']
                             db['dsets'][dname]['keys'] = db['keys']
                             db['dsets'][dname]['vals'] = {}
                             db['dsets'][dname]['vals']['L'] = L
@@ -659,6 +661,7 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                                 num = np.max(datanode['num'][()])
                                                 for dname in [datanode.name]:
                                                     db['dsets'][dname] = {}
+                                                    db['dsets'][dname]['version'] = db['version']
                                                     db['dsets'][dname]['keys'] = db['keys']
                                                     db['dsets'][dname]['vals'] = {}
                                                     db['dsets'][dname]['vals']['L'] = L
@@ -752,6 +755,7 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
                                                         print("Adding node data")
                                                     for dname in [datanode.name]:
                                                         db['dsets'][dname] = {}
+                                                        db['dsets'][dname]['version'] = db['version']
                                                         db['dsets'][dname]['keys'] = db['keys']
                                                         db['dsets'][dname]['vals'] = {}
                                                         db['dsets'][dname]['vals']['L'] = L
