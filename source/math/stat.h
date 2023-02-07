@@ -40,7 +40,7 @@ namespace stat {
         } catch(std::exception &err) { throw std::range_error("check_bounds failed: " + std::string(err.what())); }
         if(not start_point.has_value()) start_point = 0;
         if(not end_point.has_value()) end_point = X.size();
-        return std::make_pair(X.begin() + start_point.value(), X.begin() + end_point.value());
+        return std::make_pair(X.begin() + static_cast<std::ptrdiff_t>(start_point.value()), X.begin() + static_cast<std::ptrdiff_t>(end_point.value()));
     }
 
     template<typename ContainerType>

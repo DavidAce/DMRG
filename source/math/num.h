@@ -247,11 +247,12 @@ namespace num {
      *   \return product of of elements with type Input::value_type .
      *   \example Let <code> v = {1,2,3,4}</code>. Then <code> prod(v,0,3) = 24 </code>.
      */
-    template<typename Input, typename From, typename To>
-    [[nodiscard]] auto prod(const Input &in, long from = 0, long num = -1) {
-        if(num < 0) num = in.size();
-        num = std::min<long>(num, static_cast<long>(in.size()) - from);
-        return std::accumulate(std::begin(in) + from, std::begin(in) + from + num, 1, std::multiplies<>());
+    template<typename Input>
+    [[nodiscard]] auto prod(const Input &in, size_t from = 0, size_t num = -1ul) {
+        num  = std::min<long>(num, static_cast<long>(in.size()) - from);
+        from = std::clamp<size_t>(from, 0, in.size());
+        num  = std::clamp<size_t>(num, 0, in.size());
+        return std::accumulate(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), 1, std::multiplies<>());
     }
 
     /*! \brief Cumulative operator for containers such as vector
@@ -266,7 +267,7 @@ namespace num {
         Input res;
         from = std::clamp<size_t>(from, 0, in.size());
         num  = std::clamp<size_t>(num, 0, in.size());
-        std::partial_sum(in.begin() + from, in.begin() + num, std::back_inserter(res), op);
+        std::partial_sum(in.begin() + static_cast<long>(from), in.begin() + static_cast<long>(from + num), std::back_inserter(res), op);
         return res;
     }
 
