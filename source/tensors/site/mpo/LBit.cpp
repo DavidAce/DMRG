@@ -299,7 +299,7 @@ void LBit::randomize_hamiltonian() {
     }
     h5tb.param.J1_rand               = rnd::random(distribution, J1_mean, J1_wdth);
     h5tb.param.J2_rand               = rnd::random(distribution, J2_mean, J2_wdth, expw);
-    h5tb.param.J3_rand               = rnd::random(distribution, J3_mean, J3_wdth) * expw[2];
+    h5tb.param.J3_rand               = rnd::random(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
 }
