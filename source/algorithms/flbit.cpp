@@ -196,7 +196,7 @@ void flbit::run_preprocessing() {
     if(settings::model::model_size <= 6) {
         // Create a copy of the state as a full state vector for ED comparison
         auto list_Lsite = num::range<size_t>(0, settings::model::model_size, 1);
-        Upsi_ed         = tools::finite::measure::mps_wavefn(*tensors.state);
+        Upsi_ed         = tools::finite::measure::mps2tensor(*tensors.state);
         tools::log->info("<Ψ_ed|Ψ_ed>   : {:.16f}", tenx::VectorMap(Upsi_ed).norm());
         auto nbody = std::vector<size_t>{1, 2, 3};
         ham_gates_Lsite.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lsite, nbody), list_Lsite, tensors.state->get_spin_dims(list_Lsite)));

@@ -17,6 +17,7 @@
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
+#include "tools/finite/ops.h"
 
 using cplx = tools::finite::measure::cplx;
 using real = tools::finite::measure::real;
@@ -333,33 +334,50 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
     return truncation_errors;
 }
 
-Eigen::Tensor<cplx, 1> tools::finite::measure::mps_wavefn(const StateFinite &state) {
-    Eigen::Tensor<cplx, 2> temp;
-    Eigen::Tensor<cplx, 2> chain(1, 1);
-    chain.setConstant(1.0);
-    // The "chain" is a matrix whose 0 index keeps growing.
-    // For each site that passes, it grows by GA.dimension(0) = phys dim
-    // Say the state is a 16x7 matrix (having contracted 4 particles, and the latest
-    // chi was 7). Then contracting the next site, with dimensions 2x7x9 will get you a
-    // 16x2x9 tensor. Now the reshaping convert it into a 32 x 9 matrix. Because
-    // Eigen is column major, the doubling 16->32 will stack the third index twice.
-
-    for(auto &mps : state.mps_sites) {
-        long dim0 = mps->spin_dim();
-        long dimR = mps->get_chiR();
-        long dimL = chain.dimension(0);
-        temp      = chain.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(tenx::array2{dimL * dim0, dimR});
-        chain     = temp;
+template<typename Scalar>
+Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std::unique_ptr<MpsSite>> &mps_sites) {
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        bool all_real = std::all_of(mps_sites.begin(), mps_sites.end(), [](const auto &mps) -> bool { return mps->is_real(); });
+        if(all_real) return mps2tensor<real>(mps_sites);
     }
 
-    Eigen::Tensor<cplx, 1> mps_chain  = chain.reshape(tenx::array1{chain.dimension(0)});
-    double                 norm_chain = tenx::VectorMap(chain).norm();
-    if(std::abs(norm_chain - 1.0) > settings::precision::max_norm_error) {
-        tools::log->warn("Norm far from unity: {}", norm_chain);
-        throw except::runtime_error("Norm too far from unity: {:.16f}", norm_chain);
+    auto spindims = std::vector<long>();
+    auto bonddims = std::vector<long>();
+    for(auto &mps : mps_sites) {
+        spindims.emplace_back(mps->spin_dim());
+        bonddims.emplace_back(num::prod(spindims) * mps->get_chiR());
     }
-    return mps_chain;
+    long memsize = bonddims.empty() ? 0 : *std::max_element(bonddims.begin(), bonddims.end());
+    auto statev  = Eigen::Tensor<Scalar, 1>(memsize);
+    auto off1    = std::array<long, 1>{0};
+    auto ext1    = std::array<long, 1>{1};
+    auto ext2    = std::array<long, 2>{1, 1};
+    statev.slice(off1, ext1).setConstant(1.0);
+    // For each site that we contract, the state vector grows by mps->spin_dim()
+    // If 4 spin1/2 have been contracted, the state vector could have size 16x7 if the last chi was 7.
+    // Then contracting the next site, with dimensions 2x7x9 will get you a 16x2x9 tensor.
+    // Lastly, one should reshape it back into a 32 x 9 state vector
+
+    for(auto &mps : mps_sites) {
+        auto temp = Eigen::Tensor<Scalar, 2>(statev.slice(off1, ext1).reshape(ext2)); // Make a temporary copy of the state vector
+        ext1      = {mps->spin_dim() * temp.dimension(0) * mps->get_chiR()};
+        ext2      = {mps->spin_dim() * temp.dimension(0), mps->get_chiR()};
+        if(ext1[0] > memsize) throw except::logic_error("Size of ext1[0] > memsize");
+        tools::log->info("Contracting temp {} | M[{}]:{} | off1 {} | ext1 {} | ext2 {}", temp.dimensions(), mps->get_position(), mps->get_M().dimensions(),
+                         off1, ext1, ext2);
+        if constexpr(std::is_same_v<Scalar, cplx>) {
+            statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
+        } else {
+            Eigen::Tensor<real, 3> M                                    = mps->get_M().real();
+            statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
+        }
+    }
+    double norm = tenx::norm(statev);
+    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("Norm far from unity: {}", norm); }
+    return statev.slice(off1, ext1).template cast<cplx>();
 }
+
+Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites); }
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,

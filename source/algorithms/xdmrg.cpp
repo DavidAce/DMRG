@@ -248,7 +248,8 @@ void xdmrg::run_algorithm() {
         try_parity_shift();              // This shifts the variance of the opposite spin parity sector, to resolve degeneracy/spectral pairing
         shift_mpo_energy();              // Subtracts the current energy per site E/L from each MPO.
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
-        move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
+        try_residual_optimization();
+        move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }

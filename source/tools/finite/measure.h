@@ -8,6 +8,7 @@ class ModelFinite;
 class EdgesFinite;
 class TensorsFinite;
 class MpoSite;
+class MpsSite;
 class AlgorithmStatus;
 struct MeasurementsTensorsFinite;
 namespace tools::finite::measure {
@@ -48,7 +49,9 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double spin_component                              (const StateFinite & state, std::string_view axis);
     [[nodiscard]] extern double spin_alignment                              (const StateFinite & state, std::string_view axis);
     [[nodiscard]] extern int    spin_sign                                   (const StateFinite & state, std::string_view axis);
-    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps_wavefn                   (const StateFinite & state);
+    template<typename Scalar = cplx>
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                   (const std::vector<std::unique_ptr<MpsSite>> & mps_sites);
+    [[nodiscard]] extern Eigen::Tensor<cplx,1> mps2tensor                   (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_current                (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_midchain               (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies         (const StateFinite & state);
@@ -99,12 +102,13 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double energy_variance             (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_variance_per_site    (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, MeasurementsTensorsFinite * measurements = nullptr);
     [[nodiscard]] extern double energy_normalized           (const Eigen::Tensor<cplx,3> &mps, const TensorsFinite & tensors, double energy_minimum, double energy_maximum, MeasurementsTensorsFinite * measurements = nullptr);
-    [[nodiscard]] extern double residual_norm                    (const Eigen::Tensor<cplx, 3> &mps,
+    [[nodiscard]] extern double residual_norm               (const Eigen::Tensor<cplx, 3> &mps,
                                                              const Eigen::Tensor<cplx, 4> &mpo,
                                                              const Eigen::Tensor<cplx, 3> &envL,
                                                              const Eigen::Tensor<cplx, 3> &envR);
-    [[nodiscard]] extern double residual                    (const TensorsFinite & tensors);
+    [[nodiscard]] extern double residual_norm                (const TensorsFinite & tensors);
 
+    [[nodiscard]] extern double residual_norm_full           (const StateFinite &state, const ModelFinite &model);
 
 
     [[nodiscard]] extern double                   expectation_value      (const StateFinite & op, const std::vector<LocalObservableOp> & ops);
