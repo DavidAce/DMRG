@@ -8,6 +8,7 @@
 #include <complex>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
+class TensorsLocal;
 class StateFinite;
 class ModelFinite;
 class EdgesFinite;

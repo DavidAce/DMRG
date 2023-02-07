@@ -8,7 +8,7 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 class MpoSite;
 class TensorsFinite;
-
+class ModelLocal;
 class ModelFinite {
     public:
     using cplx = std::complex<double>;
@@ -63,6 +63,10 @@ class ModelFinite {
     [[nodiscard]] double                get_energy_shift() const;
     [[nodiscard]] double                get_energy_shift_per_site() const;
     [[nodiscard]] std::vector<std::any> get_parameter(const std::string &fieldname);
+
+    // For local operations
+    ModelLocal get_local(const std::vector<size_t> &sites) const;
+    ModelLocal get_local() const;
 
     // For multisite
     std::array<long, 4>           active_dimensions() const;

@@ -7,10 +7,12 @@
 #include "math/linalg/tensor.h"
 #include "math/svd.h"
 #include "ModelFinite.h"
+#include "ModelLocal.h"
 #include "qm/spin.h"
 #include "tensors/site/mpo/MpoFactory.h"
 #include "tid/tid.h"
 #include "tools/finite/multisite.h"
+
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
 
 // We need to define the destructor and other special functions
@@ -367,6 +369,26 @@ bool ModelFinite::has_parity_shift_mpo_squared() const {
     auto parity_shift = get_parity_shift_mpo_squared();
     return parity_shift.first != 0 and not parity_shift.second.empty();
 }
+ModelLocal ModelFinite::get_local(const std::vector<size_t> &sites) const {
+    if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
+    auto mlocal    = ModelLocal();
+    auto positions = num::range<size_t>(sites.front(), sites.back() + 1);
+    auto skip      = std::optional<std::vector<size_t>>();
+    if(sites != positions) {
+        skip = std::vector<size_t>{};
+        for(const auto &pos : positions) {
+            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip->emplace_back(pos);
+        }
+    }
+    for(const auto &pos : positions) {
+        bool do_skip = std::find(skip->begin(), skip->end(), pos) != skip->end();
+        if(do_skip) continue;
+        mlocal.mpos.emplace_back(get_mpo(pos).clone());
+    }
+    return mlocal;
+}
+
+ModelLocal ModelFinite::get_local() const { return get_local(active_sites); }
 
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
@@ -384,12 +406,13 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo(const std::ve
     else
         tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody.value());
 
-    auto                               t_mpo = tid::tic_scope("get_multisite_mpo", tid::level::highest);
-    Eigen::Tensor<cplx, 4>             multisite_mpo, temp;
-    constexpr auto                     shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
-    constexpr auto                     contract_idx = tenx::idx({1}, {0});
-    auto                               positions    = num::range<size_t>(sites.front(), sites.back() + 1);
-    std::optional<std::vector<size_t>> skip;
+    auto                   t_mpo        = tid::tic_scope("get_multisite_mpo", tid::level::highest);
+    constexpr auto         shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
+    constexpr auto         contract_idx = tenx::idx({1}, {0});
+    auto                   positions    = num::range<size_t>(sites.front(), sites.back() + 1);
+    auto                   skip         = std::optional<std::vector<size_t>>();
+    Eigen::Tensor<cplx, 4> multisite_mpo, temp;
+
     if(sites != positions) {
         skip = std::vector<size_t>{};
         for(const auto &pos : positions) {
@@ -620,7 +643,7 @@ Eigen::Tensor<ModelFinite::cplx, 4> ModelFinite::get_multisite_mpo_squared(const
             long d4 = multisite_mpo_squared.dimension(3);
             long d5 = mpo.MPO().dimension(3);
 
-            Eigen::Tensor<cplx, 6> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5}).trace(tenx::array2{3, 5});
+            Eigen::Tensor<cplx, 4> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5}).trace(tenx::array2{3, 5});
             multisite_mpo_squared        = temp2 * temp2.constant(0.5);
         } else {
             multisite_mpo_squared = temp;
