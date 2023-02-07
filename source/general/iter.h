@@ -72,12 +72,14 @@ namespace iter {
 
     template<typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate(Container &content) {
-        return internal::enumerate_range<typename Container::iterator, false, idx_t>(std::begin(content), std::end(content), 0, content.size() - 1);
+        return internal::enumerate_range<typename Container::iterator, false, idx_t>(std::begin(content), std::end(content), 0,
+                                                                                     static_cast<idx_t>(content.size() - 1));
     }
 
     template<typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate(const Container &content) {
-        return internal::enumerate_range<typename Container::const_iterator, false, idx_t>(std::begin(content), std::end(content), 0, content.size() - 1);
+        return internal::enumerate_range<typename Container::const_iterator, false, idx_t>(std::begin(content), std::end(content), 0,
+                                                                                           static_cast<idx_t>(content.size() - 1));
     }
 
     template<class Iterator>
@@ -85,31 +87,37 @@ namespace iter {
         return internal::enumerate_range<Iterator, true>(first, last, initial, final);
     }
 
-    template<class Container>
+    template<typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate_reverse(Container &content) {
-        return internal::enumerate_range<typename Container::reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
+        return internal::enumerate_range<typename Container::reverse_iterator, true, idx_t>(std::rbegin(content), std::rend(content),
+                                                                                            static_cast<idx_t>(content.size() - 1), 0);
     }
 
-    template<class Container>
+    template<typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate_reverse(const Container &content) {
-        return internal::enumerate_range<typename Container::const_reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
+        return internal::enumerate_range<typename Container::const_reverse_iterator, true, idx_t>(std::rbegin(content), std::rend(content),
+                                                                                                  static_cast<idx_t>(content.size() - 1), 0);
     }
 
     enum class order { def, rev };
 
-    template<order o, class Container>
+    template<order o, typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate(Container &content) {
         if constexpr(o == order::rev)
-            return internal::enumerate_range<typename Container::reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
+            return internal::enumerate_range<typename Container::reverse_iterator, true, idx_t>(std::rbegin(content), std::rend(content),
+                                                                                                static_cast<idx_t>(content.size() - 1), 0);
         else
-            return internal::enumerate_range<typename Container::iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
+            return internal::enumerate_range<typename Container::iterator, false, idx_t>(std::begin(content), std::end(content), 0,
+                                                                                         static_cast<idx_t>(content.size() - 1));
     }
 
-    template<order o, class Container>
+    template<order o, typename idx_t = std::size_t, class Container>
     decltype(auto) enumerate(const Container &content) {
         if constexpr(o == order::rev)
-            return internal::enumerate_range<typename Container::const_reverse_iterator, true>(std::rbegin(content), std::rend(content), content.size() - 1, 0);
+            return internal::enumerate_range<typename Container::const_reverse_iterator, true, idx_t>(std::rbegin(content), std::rend(content),
+                                                                                                      static_cast<idx_t>(content.size() - 1), 0);
         else
-            return internal::enumerate_range<typename Container::const_iterator, false>(std::begin(content), std::end(content), 0, content.size() - 1);
+            return internal::enumerate_range<typename Container::const_iterator, false, idx_t>(std::begin(content), std::end(content), 0,
+                                                                                               static_cast<idx_t>(content.size() - 1));
     }
 }
