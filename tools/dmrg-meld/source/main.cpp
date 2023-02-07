@@ -243,12 +243,12 @@ int main(int argc, char *argv[]) {
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "status"));
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "mem_usage"));
                 // A crono records data from each time step
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", 50));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", 50));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", 50));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", 50));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", 50));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", 50));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", 200));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", 200));
 
                 // Last argument is the axis along which to build the time series
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
