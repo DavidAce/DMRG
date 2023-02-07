@@ -61,7 +61,7 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     }
 }
 
-void tools::finite::mps::init::random_product_state_zeromag(StateFinite &state, StateInitType type, std::string_view axis, bool use_eigenspinors) {
+void tools::finite::mps::init::random_product_state_zeromag(StateFinite &state, StateInitType type, std::string_view axis) {
     tools::log->info("Setting random product state with zero magnetization of type {} on axis {}", enum2sv(type), axis);
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);

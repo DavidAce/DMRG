@@ -375,7 +375,7 @@ void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, Sta
                                          size_t bitfield, long bond_lim) {
     switch(init) {
         case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, sector, use_eigenspinors, bitfield);
-        case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG: return init::random_product_state_zeromag(state, type, sector, use_eigenspinors);
+        case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG: return init::random_product_state_zeromag(state, type, sector);
         case StateInit::RANDOM_ENTANGLED_STATE: return init::random_entangled_state(state, type, sector, bond_lim, use_eigenspinors);
         case StateInit::RANDOMIZE_PREVIOUS_STATE: return init::randomize_given_state(state, type);
         case StateInit::PRODUCT_STATE_ALIGNED: return init::set_product_state_aligned(state, type, sector);
