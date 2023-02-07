@@ -13,6 +13,7 @@
 #include "math/num.h"
 #include "math/rnd.h"
 #include "math/stat.h"
+#include "math/svd.h"
 #include "math/tenx.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
@@ -28,8 +29,8 @@ using cplx = qm::cplx;
 
 qm::lbit::UnitaryGateProperties::UnitaryGateProperties(const std::vector<double> &h)
     : sites(settings::model::model_size), depth(settings::model::lbit::u_depth), fmix(settings::model::lbit::u_fmix), tstd(settings::model::lbit::u_tstd),
-      cstd(settings::model::lbit::u_cstd), tgw8(settings::model::lbit::u_tgw8), cgw8(settings::model::lbit::u_cgw8), hdist(settings::model::lbit::distribution),
-      hvals(h) {
+      cstd(settings::model::lbit::u_cstd), tgw8(settings::model::lbit::u_tgw8), cgw8(settings::model::lbit::u_cgw8), hmean(settings::model::lbit::J1_mean),
+      hwdth(settings::model::lbit::J1_wdth), hdist(settings::model::lbit::distribution), hvals(h) {
     if(tgw8 == UnitaryGateWeight::EXPDECAY and hvals.empty()) throw except::logic_error("No onsite fields h given for t UnitaryGateWeight::EXPDECAY");
     if(cgw8 == UnitaryGateWeight::EXPDECAY and hvals.empty()) throw except::logic_error("No onsite fields h given for c UnitaryGateWeight::EXPDECAY");
 }
@@ -188,6 +189,200 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
     }
 
     return gates;
+}
+
+/*! \brief Make MPO's out of a layer of unitary 2-site gates.
+ *
+ * Step 1: Reshape the first unitary gate, introducing a dummy 0 index.
+ *         The numbers 01 denotes the site indices in the gate.
+ * @verbatim
+ *          0     1            1     2          1     3
+ *          |     |            |     |          |     |
+ *         [ g(01) ]   =   0--[ g(01) ]  =  0--[ g(01) ]
+ *          |     |            |     |          |     |
+ *          2     3            3     4          2     4
+ * @endverbatim
+ *
+ * Step 2: Make a matrix merging indices (012,34) and split the gate using SVD into an MPO and a gate:
+ * @verbatim
+ *            1     3                                   2               1
+ *            |     |   SVD                             |               |
+ *        0--[ g(01) ]   =  US^0.5 S^0.5V^T  =  0--[ mpo(0) ]--1   0--[g(1)]
+ *            |     |                                   |               |
+ *            2     4                                   3               2
+ * @endverbatim
+ *
+ * Step 3: Connect g(1) to the next gate. Connect from under if g is odd, or from above if g is even:
+ * @verbatim
+ *                0     1
+ *                |     |
+ *               [ g(12) ]             2     3               1     3
+ *                |     |              |     |               |     |
+ *                2     3      =   0--[ g(12) ]     =    0--[ g(12) ]
+ *                1                    |     |               |     |
+ *                |                    1     4               2     4
+ *          0--[g(1)]
+ *                |
+ *                2
+ * or
+ *                1
+ *                |
+ *          0--[g(1)]
+ *                |                    1     2               1     3
+ *                2                    |     |               |     |
+ *                0     1      =   0--[ g(12) ]     =    0--[ g(12) ]
+ *                |     |              |     |               |     |
+ *               [ g(12) ]             3     4               2     4
+ *                |     |
+ *                2     3
+ * @endverbatim
+ *
+ * Repeat from step 2, replacing g(01) with g(12), and so on, until there are no more gates.
+ *
+ * Step 4: Add a dummy index with dimension 1 to the remaining right-most gate, to convert it to an mpo.
+ */
+std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::vector<qm::Gate> &ulayer) {
+    if(ulayer.empty()) return {};
+    if(ulayer.size() <= 1) throw except::logic_error("Can't make MPO's with less than two gates");
+    auto mpos = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
+    auto svd  = svd::solver();
+    // Start Step 1 with the first gate
+    const auto &ugate0 = ulayer.front();                                                  // The left-most unitary gate
+    auto        dims4  = ugate0.shape<4>();                                               // Original shape of the gate
+    auto        dims5  = std::array<long, 5>{1, dims4[0], dims4[1], dims4[2], dims4[3]};  // Shape including the dummy index
+    auto        shuf5  = std::array<long, 5>{0, 1, 3, 2, 4};                              // Shuffling to prepare for SVD
+    auto        gate5  = Eigen::Tensor<cplx, 5>(ugate0.op.reshape(dims5).shuffle(shuf5)); // The gate including dummy index
+    auto        gate3  = Eigen::Tensor<cplx, 3>();                                        // Temporary used in step 2
+
+    // There are L-1 gates on a single layer of the unitary circuit
+    for(size_t gidx = 0; gidx < ulayer.size() /* == L-1 */; ++gidx) {
+        // Step 2
+        std::tie(mpos[gidx], gate3) = svd.split_mpo_gate(gate5);
+        if(gidx + 1 >= ulayer.size()) break; // We can't add more gates. Now gate 3 has the mpo corresponding to site L
+        // Step 3
+        const auto &ugate = ulayer[gidx + 1];
+        dims4             = ugate.shape<4>(); // Original shape of the gate
+        if((gidx % 2) == 0 /* even */) {
+            gate5 = gate3.contract(ugate.op.reshape(dims4), tenx::idx({1}, {2})).shuffle(std::array<long, 5>{0, 2, 1, 3, 4});
+        } else {
+            gate5 = gate3.contract(ugate.op.reshape(dims4), tenx::idx({2}, {0})).shuffle(std::array<long, 5>{0, 1, 3, 2, 4});
+        }
+    }
+    if(gate3.size() != 0) {
+        // Step 4:
+        mpos.back() = gate3.reshape(std::array<long, 4>{gate3.dimension(0), 1, gate3.dimension(1), gate3.dimension(2)});
+    }
+
+    for(const auto &[i, mpo] : iter::enumerate(mpos)) tools::log->info("mpo {}: {}", i, mpo.dimensions());
+    return mpos;
+}
+
+std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const UnitaryGateProperties &u) {
+    return get_unitary_mpo_layer(get_unitary_2gate_layer(u));
+}
+
+/*! \brief Merge two MPO layers into a single one using SVD.
+ *
+ * Step 1:
+ * @verbatim
+ *                                        2                    2
+ *                                        |                    |
+ *        1        4              0--[ mpo_up_L ]--1   0--[ mpo_up_R ]--1
+ *        |        |                      |                    |
+ *   0--[ mpo_updn_L ]--3   =             3                    3
+ *        |        |                      2                    2
+ *        2        5                      |                    |
+ *                               0--[ mpo_dn_L ]--1   0--[ mpo_dn_R ]--1
+ *                                        |                    |
+ *                                        3                    3
+ *
+ * @endverbatim
+ *
+ * Step 2:
+ * @verbatim
+ *          1       4                       2                    2
+ *          |       |       SVD             |                    |
+ *     0--[ mpo_up_LR ]--3   =      0--[ mpo(i) ]--1   0--[ mpo_updn_tmp ]--1
+ *          |       |                       |                    |
+ *          2       5                       3                    3
+ * @endverbatim
+ *
+ * Step 3:
+ * @verbatim
+ *
+ *
+ *                                           2
+ *                                           |
+ *                2                  0--[ mpo_up_R ]--1
+ *                |                          |
+ *      0--[ mpo_updn_tmp ]--1               3
+ *                |                          2
+ *                3                          |
+ *                                   0--[ mpo_dn_R ]--1
+ *                                           |
+ *                                           3
+ *
+ * @endverbatim
+ */
+std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> &mpos_dn,
+                                                                       const std::vector<Eigen::Tensor<cplx, 4>> &mpos_up) {
+    if(mpos_dn.size() != mpos_up.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
+    tools::log->info("Merging mpos");
+    auto mpos     = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
+    auto ddn      = mpos_dn[0].dimensions();
+    auto dup      = mpos_up[0].dimensions();
+    auto shf6     = std::array<long, 6>{0, 3, 1, 4, 5, 2};
+    auto rsh4     = std::array<long, 4>{ddn[0] * dup[0], ddn[1] * dup[1], dup[2], ddn[3]};
+    auto mpo_updn = Eigen::Tensor<cplx, 4>(mpos_dn[0].contract(mpos_up[0], tenx::idx({2}, {3})).shuffle(shf6).reshape(rsh4));
+
+    auto cfg           = svd::config();
+    cfg.rank_max       = 128;
+    cfg.truncation_lim = 1e-12;
+    cfg.svd_lib        = svd::lib::lapacke;
+    cfg.switchsize_bdc = 16;
+    cfg.use_bdc        = true;
+    auto   svd         = svd::solver(cfg);
+    auto   S           = Eigen::Tensor<cplx, 1>();
+    auto   VT          = Eigen::Tensor<cplx, 2>();
+    auto   Rm          = Eigen::MatrixXcd(); // The R in matrix form
+    auto   Qm          = Eigen::MatrixXcd(); // The Q in matrix form
+    auto   qr          = Eigen::ColPivHouseholderQR<Eigen::MatrixXcd>();
+    auto   mpo_updn_R  = Eigen::Tensor<cplx, 4>();
+    double t_conR      = 0;
+    double t_svd       = 0;
+    double t_conSVR    = 0;
+    for(size_t idx = 0; idx < mpos.size() - 1; ++idx) {
+        auto dud = mpo_updn.dimensions();
+        {
+            auto t     = tid::ur();
+            ddn        = mpos_dn[idx + 1].dimensions();
+            dup        = mpos_up[idx + 1].dimensions();
+            rsh4       = std::array<long, 4>{ddn[0] * dup[0], ddn[1] * dup[1], dup[2], ddn[3]};
+            mpo_updn_R = Eigen::Tensor<cplx, 4>(mpos_dn[idx + 1].contract(mpos_up[idx + 1], tenx::idx({2}, {3})).shuffle(shf6).reshape(rsh4));
+            t_conR     = t.get_last_interval();
+        }
+        {
+            auto t                     = tid::ur();
+            std::tie(mpos[idx], S, VT) = svd.split_mpo_l2r(mpo_updn, cfg);
+            t_svd                      = t.get_last_interval();
+            mpo_updn                   = tenx::asDiagonal(S).contract(VT, tenx::idx({1}, {0})).contract(mpo_updn_R, tenx::idx({1}, {0}));
+            t_conSVR                   = t.get_last_interval() - t_svd;
+        }
+        tools::log->info("split svd mpo {}: {} --> mpo {} + S {} VT {} | mpoR {} | trunc {:.4e} | time svd {:.3e} conR {:.3e} + conSVR {:.3e} = tot {:.3e}",
+                         idx, dud, mpos[idx].dimensions(), S.dimensions(), VT.dimensions(), mpo_updn_R.dimensions(), svd.get_truncation_error(), t_svd, t_conR,
+                         t_conSVR, t_svd + t_conR);
+    }
+    mpos.back() = mpo_updn;
+
+    return mpos;
+}
+
+/*! \brief Merge multiple MPO layers into a single one using SVD.
+ */
+std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers) {
+    auto mpo_merged = std::vector<Eigen::Tensor<cplx, 4>>(mpo_layers.front());
+    for(size_t idx = 1; idx < mpo_layers.size(); ++idx) { mpo_merged = merge_unitary_mpo_layers(mpo_merged, mpo_layers[idx]); }
+    return mpo_merged;
 }
 
 Eigen::Tensor<cplx, 2> qm::lbit::get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<cplx, 2> &H) {
@@ -521,266 +716,128 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
     return result;
 }
 
-// qm::cplx qm::lbit::get_lbit_exp_value4(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi,
-//                                        const Eigen::Matrix2cd &szj, size_t pos_szj, long sites) {
-//     /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌'_i σ^z_j) / Tr(𝜌'_i) = Tr(τ^z_i σ^z_j) / 2^L
-//
-//         Consider first the density matrix
-//
-//              ρ_i = 1/2^L  (σ^z_i + 1 ) ⊗ I_i',
-//
-//         where I_i' is the identity matrix on sites j != i.
-//         Then ρ_i represents a state |psi><psi| where site i is at level 0 with probability 1,
-//         and the others sites are in a cat-state of level 0 or 1. E.g. ρ could be a state with
-//         magnetization 1 at site i, and 0 elsewhere, or ρ could be a state with 1 particle at
-//         site i, and cat state of 0 and 1 particles elsewhere.
-//
-//         Applying the unitary transformation does not change the trace, since it is just a
-//         change of basis. We get
-//
-//              ρ'_i = U† ρ_i U
-//                   = 1/2^L (U† σ^z_i U + 1)
-//                   = 1/2^L (τ^z_i + 1) ,
-//
-//         where the l-bit τ^z_i = U† σ^z_i U acts non-trivially on all sites. Carrying out the
-//         trace gives us
-//
-//             Tr(ρ'_i σ^z_j) / Tr(ρ'_i) = 1/2^L Tr(τ^z_i σ^z_j).
-//
-//         where we used Tr(1) = 2^L, Tr(ρ_i) = Tr(ρ'_i) = 1 and Tr(τ^z_i) = 0.
-//
-//         We expect an l-bit fully localized at site i to give O(i,i) = 1,  and a fully
-//         delocalized l-bit to give O(i,j) = 0.5.
-//
-//         Note that when the light-cone from site i can't reach site j in the unitary circuit, then
-//         τ^z_i has no support where σ^z_j connects.  Therefore, we get
-//
-//                Tr(τ^z_i σ^z_j) = Tr(τ^z_i ⊗ σ^z_j) = Tr(τ^z_i) Tr(σ^z_j) = 0
-//
-//         Read more here:
-//         https://link.aps.org/doi/10.1103/PhysRevB.91.085425
-//         https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
-//     */
-//
-//     // Generate gates for the operators
-//     if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
-//     auto t_olap = tid::ur();
-//     t_olap.tic();
-//
-//     auto result          = cplx(0, 0);
-//     auto szi_gate        = qm::Gate(szi, {pos_szi}, {2l}); //
-//     auto szj_gate        = qm::Gate(szj, {pos_szj}, {2l});
-//     auto intersection    = qm::get_lightcone_intersection(unitary_layers, pos_szi, pos_szj);
-//     auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_layers, intersection, false); // Selected gates in each layer
-//     auto is_disconnected = std::any_of(intersection.begin(), intersection.end(), [](auto &layer) { return layer.empty(); });
-//     if(is_disconnected) {
-//         if constexpr(settings::debug_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
-//         return result;
-//     }
-//     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
-//     for(const auto & layer : unitary_layers){
-//         for (const auto & ugate : layer) {
-//             g = g.insert(ugate).split();
-//
-//         }
-//     }
-//
-//
-//     exit(0);
-//
-//     // Setup debug printing of unitary circuits
-//     size_t                  uw        = 7;                                // Width of a unitary 2-site gate box
-//     size_t                  op        = 3;                                // Overlap of a unitary 2-site gate box
-//     size_t                  tw        = 6;                                // Tag width
-//     size_t                  mp        = static_cast<size_t>(sites) - 1ul; // Max pos
-//     auto                    empty_str = fmt::format("{0:^{1}}", " ", tw + mp * (uw - op) + op);
-//     std::deque<std::string> net(2 + unitary_slayers.size(), empty_str); // Great for debugging
-//     std::deque<std::string> log(2 + unitary_slayers.size());            // Great for debugging
-//
-//     auto all_empty = [](const auto &slayers) {
-//         return std::all_of(slayers.begin(), slayers.end(), [](const auto &slayer) -> bool { return slayer.empty(); });
-//     };
-//     auto num_gates_L = [](const auto &slayers, size_t idx = 0) {
-//         size_t num = 0;
-//         for(size_t i = idx + 1; i < slayers.size(); i++) {
-//             if(slayers.at(i - 1).empty()) return num;
-//             if(slayers.at(i).empty()) return num;
-//             size_t posLL = slayers.at(i).front().pos.front();
-//             size_t posL  = slayers.at(i - 1).front().pos.front();
-//             if(posLL + 1 == posL)
-//                 num++;
-//             else
-//                 break;
-//         }
-//         return num;
-//     };
-//     auto num_gates_R = [](const auto &slayers, size_t idx = 0) {
-//         size_t num = 0;
-//         for(size_t i = idx + 1; i < slayers.size(); i++) {
-//             if(slayers.at(i - 1).empty()) return num;
-//             if(slayers.at(i).empty()) return num;
-//             size_t posRR = slayers.at(i).back().pos.back();
-//             size_t posR  = slayers.at(i - 1).back().pos.back();
-//             if(posR + 1 == posRR)
-//                 num++;
-//             else
-//                 break;
-//         }
-//         return num;
-//     };
-//     auto slayer_width = [&]() -> size_t {
-//         size_t width = 0;
-//         for(const auto &s : unitary_slayers) {
-//             size_t w = 0;
-//             for(const auto &l : s) w += l.pos.size();
-//             width = std::max(width, w);
-//         }
-//         return width;
-//     };
-//     auto slayer_diagl = [&]() -> size_t {
-//         size_t lb = -1ul; // left bottom position
-//         size_t rb = -1ul; // right bottom position
-//         size_t lt = -1ul; // left  top position
-//         size_t rt = -1ul; // right top position
-//         for(const auto &us : unitary_slayers) {
-//             if(not us.empty()) {
-//                 if(lb == -1ul) lb = us.front().pos.front();
-//                 if(rb == -1ul) rb = us.front().pos.back();
-//                 lb = std::min(lb, us.front().pos.front());
-//             }
-//         }
-//         for(const auto &us : iter::reverse(unitary_slayers)) {
-//             if(not us.empty()) {
-//                 if(rt == -1ul) rt = us.front().pos.back();
-//                 if(lt == -1ul) lt = us.front().pos.front();
-//                 rt = std::max(rt, us.back().pos.back());
-//             }
-//         }
-//         return std::max(rb - lb, rt - lt) + 1;
-//     };
-//
-//     auto slayer_diagr = [&]() -> size_t {
-//         size_t lb = -1ul; // left bottom position
-//         size_t rb = -1ul; // right bottom position
-//         size_t lt = -1ul; // left  top position
-//         size_t rt = -1ul; // right top position
-//         for(const auto &us : unitary_slayers) {
-//             if(not us.empty()) {
-//                 if(lb == -1ul) lb = us.back().pos.front();
-//                 if(rb == -1ul) rb = us.back().pos.back();
-//                 rb = std::max(rb, us.back().pos.back());
-//             }
-//         }
-//         for(const auto &us : iter::reverse(unitary_slayers)) {
-//             if(not us.empty()) {
-//                 if(rt == -1ul) rt = us.back().pos.back();
-//                 if(lt == -1ul) lt = us.back().pos.front();
-//                 lt = std::min(lt, us.front().pos.front());
-//             }
-//         }
-//         return std::max(rb - lb, rt - lt) + 1;
-//     };
-//
-//     auto width = slayer_width();
-//     auto diagr = slayer_diagr();
-//     auto diagl = slayer_diagl();
-//
-//     bool go_diagonal = std::min(diagl, diagr) < width; // Avoid long thin diagonals.
-//
-//     // Start contracting selected unitary gates bottom to top.
-//     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
-//     if constexpr(settings::debug_circuit) {
-//         szi_gate.draw_pos(net.front(), "szi  :");
-//         log.front().append(fmt::format("insert σzi{}", szi_gate.pos));
-//     }
-//     if(go_diagonal) {
-//         // Decide to take the left or right diagonal (whatever is cheapest)
-//         bool go_right = diagr <= diagl;
-//         while(not all_empty(unitary_slayers)) {
-//             for(auto &&[idx_slayer, slayer] : iter::enumerate(unitary_slayers)) {
-//                 if(slayer.empty()) continue; // Already applied the whole slayer
-//                 auto &layer_str = net.at(idx_slayer + 1);
-//                 auto &story_str = log.at(idx_slayer + 1);
-//                 auto  numL      = num_gates_L(unitary_slayers, idx_slayer); // number of gates remaining to take going left
-//                 auto  numR      = num_gates_R(unitary_slayers, idx_slayer); // number of gates remaining to take going right
-//
-//                 std::vector<size_t> pos_out;
-//                 if(go_right) {
-//                     //                    tools::log->trace("-> insert u[{}]:{}", idx_slayer, slayer.back().pos);
-//                     if constexpr(settings::debug_circuit) {
-//                         slayer.back().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
-//                         story_str.append(fmt::format("insert u{} ", slayer.back().pos));
-//                     }
-//                     g       = g.insert(slayer.back());
-//                     pos_out = slayer.back().pos_difference(intersection.at(idx_slayer + 1));
-//                     slayer.pop_back();
-//                 } else {
-//                     //                    tools::log->trace("<- insert u[{}]:{}", idx_slayer, slayer.front().pos);
-//                     if constexpr(settings::debug_circuit) {
-//                         slayer.front().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
-//                         story_str.append(fmt::format("insert u{} ", slayer.front().pos));
-//                     }
-//                     g       = g.insert(slayer.front());
-//                     pos_out = slayer.front().pos_difference(intersection.at(idx_slayer + 1));
-//                     slayer.pop_front();
-//                 }
-//
-//                 // Collect positions that could be traced
-//                 if(not pos_out.empty()) {                                                      // Trace positions outside the light cone intersection
-//                     pos_out.erase(std::unique(pos_out.begin(), pos_out.end()), pos_out.end()); // Keep unique elements
-//                     //                    tools::log->trace("trace[{}]:{}", idx_slayer, pos_out);
-//                     g    = g.trace_pos(pos_out);
-//                     g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
-//                     if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
-//                 }
-//
-//                 if((numR == 0 and go_right) or (numL == 0 and not go_right)) {
-//                     if constexpr(settings::debug_circuit) story_str.append(fmt::format("break {} ", g.pos));
-//                     break; // Start from the bottom of the circuit
-//                 }
-//             }
-//         }
-//     } else {
-//         for(auto &&[idx_slayer, slayer] : iter::enumerate(unitary_slayers)) {
-//             auto &layer_str = net.at(idx_slayer + 1);
-//             auto &story_str = log.at(idx_slayer + 1);
-//             for(auto &sgate : slayer) {
-//                 if(g.has_pos(sgate.pos)) {
-//                     g = g.insert(sgate);
-//                     //                    tools::log->trace("insert u[{}]:{}", idx_slayer, sgate.pos);
-//                     if constexpr(settings::debug_circuit) {
-//                         sgate.draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
-//                         story_str.append(fmt::format("insert u{} ", sgate.pos));
-//                     }
-//                     auto pos_out = sgate.pos_difference(intersection.at(idx_slayer + 1));
-//                     if(not pos_out.empty()) {
-//                         // Trace positions outside the light cone intersection
-//                         g    = g.trace_pos(pos_out);
-//                         g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
-//                         if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
-//                     }
-//                 }
-//             }
-//             if constexpr(settings::debug_circuit) story_str.append(fmt::format("now{} ", g.pos));
-//         }
-//     }
-//
-//     if(g.has_pos(szj_gate.pos)) {
-//         // Connect σ^z_j at the top
-//         szj_gate.draw_pos(net.back(), "szj  :");
-//         log.back().append(fmt::format("insert σzj{} ", szj_gate.pos));
-//         g = szj_gate.connect_above(g);
-//     }
-//     // In the last step we trace everything down to a cplx
-//     result = g.trace();
-//     result /= std::pow(2, g.pos.size()); // Normalize by dividing the trace of each 2x2 identity.
-//     t_olap.toc();
-//     if constexpr(settings::debug_circuit) {
-//         log.back().append(fmt::format("result = {:.6f} | time {:.3e}", result, t_olap.get_time()));
-//         for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | {}", layer, log[idx]);
-//     }
-//     return result;
-// }
+qm::cplx qm::lbit::get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi,
+                                       const Eigen::Matrix2cd &szj, size_t pos_szj) {
+    /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌'_i σ^z_j) / Tr(𝜌'_i) = Tr(τ^z_i σ^z_j) / 2^L
+
+        Consider first the density matrix
+
+             ρ_i = 1/2^L  (σ^z_i + 1 ) ⊗ I_i',
+
+        where I_i' is the identity matrix on sites j != i.
+        Then ρ_i represents a state |psi><psi| where site i is at level 0 with probability 1,
+        and the others sites are in a cat-state of level 0 or 1. E.g. ρ could be a state with
+        magnetization 1 at site i, and 0 elsewhere, or ρ could be a state with 1 particle at
+        site i, and cat state of 0 and 1 particles elsewhere.
+
+        Applying the unitary transformation does not change the trace, since it is just a
+        change of basis. We get
+
+             ρ'_i = U† ρ_i U
+                  = 1/2^L (U† σ^z_i U + 1)
+                  = 1/2^L (τ^z_i + 1) ,
+
+        where the l-bit τ^z_i = U† σ^z_i U acts non-trivially on all sites. Carrying out the
+        trace gives us
+
+            Tr(ρ'_i σ^z_j) / Tr(ρ'_i) = 1/2^L Tr(τ^z_i σ^z_j).
+
+        where we used Tr(1) = 2^L, Tr(ρ_i) = Tr(ρ'_i) = 1 and Tr(τ^z_i) = 0.
+
+        We expect an l-bit fully localized at site i to give O(i,i) = 1,  and a fully
+        delocalized l-bit to give O(i,j) = 0.5.
+
+        Note that when the light-cone from site i can't reach site j in the unitary circuit, then
+        τ^z_i has no support where σ^z_j connects.  Therefore, we get
+
+               Tr(τ^z_i σ^z_j) = Tr(τ^z_i ⊗ σ^z_j) = Tr(τ^z_i) Tr(σ^z_j) = 0
+
+        Read more here:
+        https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+        https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
+
+
+        In this implementation we have contracted the unitary circuit into a series of MPOs.
+
+        Step 1: Contract the top operator (I or sigma_j) on top of the upper mpo
+
+        @verbatim
+                          0
+                          |
+                        [opj]
+                          |                       3
+                          1                       |
+                          2          =    0--[ mpo_up_opj ]--1
+                          |                       |
+                   0--[ mpo_up ]--1               2
+                          |
+                          3
+
+        @endverbatim
+
+        Step 2: Similarly, contract the middle operator (I or sigma_i) on top of the bottom mpo^dagger
+        @verbatim
+                           0                                      0
+                           |                                      |
+                         [opi]                                  [opi]
+                           |                                      |                            3                                   2
+                           1                   shuffle            1                            |              shuffle              |
+                  [        2         ]^dagger    =                3             =     0--[ mpo_dn_opi  ]--1     =         0--[ mpo_dn_opi  ]--1
+                  [        |         ]                            |                            |                                   |
+                  [ 0--[ mpo_dn ]--1 ]                     0--[ mpo_dn*]--1                    2                                   3
+                  [        |         ]                            |
+                  [        3         ]                            2
+
+        We can save two shuffles by contracting on the opposite spin index immediately instead
+                           0
+                           |
+                         [opi]
+                           |                                      2
+                           1 ------------                         |
+                           2            |                0--[ mpo_dn_opi  ]--1
+                           |            |       =                 |
+                    0--[ mpo_dn* ]--1   |                         3
+                           |            |
+                           3 <-----------
+
+        Then contract this object upside down using leg 3 when conecting to mpo_up_opj.
+        @endverbatim
+
+     Step 3: Contract like
+
+
+        |
+
+
+
+    */
+
+    // Generate gates for the operators
+    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
+    auto t_olap = tid::ur();
+    t_olap.tic();
+
+    auto id         = tenx::TensorCast(qm::spin::half::id);
+    auto si         = tenx::TensorCast(szi);
+    auto sj         = tenx::TensorCast(szj);
+    auto result     = Eigen::Tensor<cplx, 2>(1, 1);
+    auto temp       = Eigen::Tensor<cplx, 2>();
+    auto mpo_dn_opi = Eigen::Tensor<cplx, 4>();
+    auto mpo_up_opj = Eigen::Tensor<cplx, 4>();
+    result.setConstant(1.0);
+    for(size_t idx = 0; idx < mpo_layer.size(); ++idx) {
+        auto opi   = idx == pos_szi ? si : id;
+        auto opj   = idx == pos_szj ? sj : id;
+        mpo_up_opj = Eigen::Tensor<cplx, 4>(mpo_layer[idx].contract(opj, tenx::idx({2}, {1}))); //.shuffle(std::array<long, 4>{0, 1, 3, 2}));
+        mpo_dn_opi = Eigen::Tensor<cplx, 4>(mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {1})));
+
+        // Start contracting with the result
+        temp   = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3}, {0, 2})).trace(std::array<long, 2>{1, 3});
+        result = temp / temp.constant(2.0); // Divide by two for each trace
+    }
+    tools::log->info("result {:+.16f}{:+.16f}i | time tot {:.3e}", std::real(result.coeff(0)), std::imag(result.coeff(0)), t_olap.get_last_interval());
+    return result.coeff(0);
+}
 
 Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
     auto                       ssites = static_cast<long>(sites);
@@ -810,8 +867,46 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vec
     // We require that lbit_overlap(i,j) has rows that sum up to 1
     auto sums_rowwise = tenx::MatrixMap(lbit_overlap).rowwise().sum();
     if(not sums_rowwise.cwiseAbs().isOnes(1e-4)) {
-        tools::log->info("lbit_overlap: \n{}\nsums\n{}\n", linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums_rowwise, 6));
-        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
+        tools::log->error("lbit overlap rows do not sum to one. Perhaps normalization is wrong.\n"
+                          "lbit_overlap: \n{}\nsums\n{}\n",
+                          linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums_rowwise, 6));
+        //        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
+    }
+    return lbit_overlap;
+}
+
+Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer) {
+    auto                       ssites = static_cast<long>(mpo_layer.size());
+    Eigen::Tensor<qm::cplx, 2> lbit_overlap(ssites, ssites);
+
+    /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
+                                                      = Tr(τ^z_i σ^z_j) / 2^L
+                                                      = Tr(U†σ^z_iU σ^z_j) / 2^L
+        Where
+            𝜌_i   = 1/2^L (1 + τ^z_i)   a density matrix describing a state localized around site i
+            τ^z_i = U† σ^z_i  U,        is an l-bit operator at site i
+            U                           is a unitary transformation in the form of a finite-depth circuit.
+        The second equality comes from the fact that Tr(τ^z_i) = 0 (l-bit operators are traceless) and Tr(1) = 2^L.
+        An l-bit fully localized at site i gives O(i,i) = 1,  and when fully delocalized one gets O(i,j) = 0.5
+
+        Read more here:
+        https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+        https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
+    */
+#pragma omp parallel for collapse(2) schedule(guided, 4)
+    for(long j = 0; j < ssites; j++) {
+        for(long i = 0; i < ssites; i++) {
+            lbit_overlap(i, j) =
+                qm::lbit::get_lbit_exp_value4(mpo_layer, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz, static_cast<size_t>(j));
+        }
+    }
+    // We require that lbit_overlap(i,j) has rows that sum up to 1
+    auto sums_rowwise = tenx::MatrixMap(lbit_overlap).rowwise().sum();
+    if(not sums_rowwise.cwiseAbs().isOnes(1e-4)) {
+        tools::log->error("lbit overlap rows do not sum to one. Perhaps normalization is wrong\n"
+                          "lbit_overlap: \n{}\nsums\n{}\n",
+                          linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums_rowwise, 6));
+        //        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
     }
     return lbit_overlap;
 }
@@ -822,7 +917,8 @@ std::tuple<double, double, std::vector<double>, size_t> qm::lbit::get_characteri
     Eigen::Tensor<double, 1> lbit_permuted_disorder_avg_site_avg_abs_log =
         lbit_permuted_disorder_avg_site_avg.abs().log(); // Abs Log for fitting                                 // Make all values positive, and take log
     //    tools::log->info("lbit_permuted_disorder_avg_site_avg    : \n{}\n", linalg::tensor::to_string(lbit_permuted_disorder_avg_site_avg, 18, 20));
-    //    tools::log->info("lbit_permuted_disorder_avg_site_avg_log: \n{}\n", linalg::tensor::to_string(lbit_permuted_disorder_avg_site_avg_abs_log, 18, 20));
+    //    tools::log->info("lbit_permuted_disorder_avg_site_avg_log: \n{}\n", linalg::tensor::to_string(lbit_permuted_disorder_avg_site_avg_abs_log, 18,
+    //    20));
 
     // Data becomes noisy if the exponential has decayed, so find a cutoff to get the slope using only the first part of the curve
     auto y      = std::vector<double>(lbit_permuted_disorder_avg_site_avg.data(),
@@ -922,74 +1018,12 @@ std::pair<Eigen::Tensor<double, 2>, Eigen::Tensor<double, 2>> qm::lbit::get_lbit
     return get_lbit_support_stats(lbit_permute_vec);
 }
 
-// qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec, size_t reps,
-//                                                                   const UnitaryGateProperties &uprop, bool randomize_fields) {
-//     auto t_lbit_analysis = tid::tic_scope("lbit_analysis");
-//
-//     long                rows = static_cast<long>(fmix_vec.size());
-//     long                cols = static_cast<long>(udepth_vec.size());
-//     long                repl = static_cast<long>(reps);
-//     long                size = static_cast<long>(uprop.width);
-//     lbitSupportAnalysis lbitSA(rows, cols, repl, size);
-//     std::array<long, 3> offset3{}, extent3{};
-//     std::array<long, 5> offset5{}, extent5{};
-//
-//     for(size_t uidx = 0; uidx < udepth_vec.size(); uidx++) {
-//         for(size_t fidx = 0; fidx < fmix_vec.size(); fidx++) {
-//             //    for(const auto & [uidx,udep] : iter::enumerate(udepth_vec)){
-//             //        for (const auto & [fidx,fmix] : iter::enumerate(fmix_vec) ){
-//             auto t_cls = tid::ur("lbit-cls");
-//             t_cls.tic();
-//             auto                                uldx = static_cast<long>(uidx);
-//             auto                                fldx = static_cast<long>(fidx);
-//             auto                                fmix = fmix_vec[fidx];
-//             auto                                udep = udepth_vec[uidx];
-//             std::vector<double>                 cls_vec(reps);
-//             std::vector<double>                 sse_vec(reps);
-//             std::vector<Eigen::Tensor<cplx, 2>> lbit_supp_vec(reps);
-//             for(size_t i = 0; i < reps; i++) {
-//                 std::vector<std::vector<qm::Gate>> ulayers;
-//                 if(randomize_fields) { uprop.randomize_hvals(); }
-//                 for(size_t l = 0; l < udep; l++) { ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop)); }
-//
-//                 lbit_supp_vec[i]                     = qm::lbit::get_lbit_support(ulayers, uprop.width);
-//                 offset5                              = {static_cast<long>(fidx), static_cast<long>(uidx), static_cast<long>(i), 0, 0};
-//                 extent5                              = {1, 1, 1, lbit_supp_vec[i].dimension(0), lbit_supp_vec[i].dimension(1)};
-//                 lbitSA.supps.slice(offset5, extent5) = lbit_supp_vec[i].real().reshape(extent5);
-//                 lbitSA.pupps.slice(offset5, extent5) = qm::lbit::get_lbit_permuted_support(lbit_supp_vec[i]).real().reshape(extent5);
-//                 tools::log->info("Computed u {} | f {} | rep {} | randomize fields {} | {} | {:.3e}s", udep, fmix, i, randomize_fields, enum2sv(uprop.type),
-//                                  t_cls.restart_lap());
-//             }
-//
-//             auto lbit_supp_avg    = qm::lbit::get_lbit_support_averaged(lbit_supp_vec);
-//             auto lbit_pupp_avg    = qm::lbit::get_lbit_permuted_support(lbit_supp_avg);
-//             auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_pupp_avg);
-//             qm::lbit::get_characteristic_length_scale2(lbit_pupp_avg);
-// #if defined(_OPENMP)
-//             tools::log->info("Computed u {} | f {:.4f} | {} | lbit cls {:>8.6f} | sse {:>8.6f} | threads {} | time {:8.3f} s | decay {:2} sites: {:8.2e}",
-//             udep,
-//                              fmix, enum2sv(uprop.type), cls, sse, omp_get_max_threads(), t_cls.get_last_interval(), c, fmt::join(y, ", "));
-// #else
-//             tools::log->info("Computed u {} | f {:.4f} | {} | lbit cls {:>8.6f} | sse {:>8.6f} | time {:8.3f} s | decay {:2} sites: {:8.2e}", udep, fmix,
-//                              enum2sv(ugate_props.ugate_type), cls, sse, ur_iter.get_last_interval(), c, fmt::join(y, ", "));
-// #endif
-//             lbitSA.cls_avg(fldx, uldx) = cls;
-//             lbitSA.sse_avg(fldx, uldx) = sse;
-//
-//             offset3                              = {fldx, uldx, 0};
-//             extent3                              = {1, 1, static_cast<long>(y.size())};
-//             lbitSA.decay.slice(offset3, extent3) = Eigen::TensorMap<Eigen::Tensor<double, 3>>(y.data(), extent3);
-//         }
-//     }
-//     return lbitSA;
-// }
-
 std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_lbit_supports(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields) {
     auto lbit_supp_vec = std::vector<Eigen::Tensor<cplx, 2>>(reps);
     for(auto &lbit_supp : lbit_supp_vec) {
         if(randomize_fields) { uprop.randomize_hvals(); }
-        auto ulayers = std::vector<std::vector<qm::Gate>>(uprop.depth);
-        for(auto &ulayer : ulayers) ulayer = qm::lbit::get_unitary_2gate_layer(uprop);
+        auto ulayers = std::vector<std::vector<qm::Gate>>();
+        for(size_t idx = 0; idx < uprop.depth; ++idx) { ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop)); }
         lbit_supp = qm::lbit::get_lbit_support(ulayers, uprop.sites);
     }
     return lbit_supp_vec;

@@ -71,14 +71,20 @@ namespace qm::lbit {
     extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
 //    extern std::vector<qm::Gate>                get_unitary_2gate_layer(size_t sites, double fmix);
     extern std::vector<qm::Gate>                get_unitary_2gate_layer(const UnitaryGateProperties & u);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const std::vector<qm::Gate> & ulayer);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const UnitaryGateProperties & u);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn, const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> & mpos);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &twosite_hams);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<cplx, 4>> &mpos);
     extern cplx                                 get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &rho, size_t pos_rho, const Eigen::Matrix2cd &sig, size_t pos_sig);
     extern cplx                                 get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
+    extern cplx                                 get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj);
 //    extern cplx                                 get_lbit_exp_value4(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites);
+    extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_lbit_supports(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields);
     extern std::pair<Eigen::Tensor<double, 2>,Eigen::Tensor<double, 2>>
                                                 get_lbit_support_stats(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_support_vec);
