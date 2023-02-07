@@ -148,6 +148,23 @@ def lbit_plot(args):
     subspec = ['w', 'u', 'f', 'cgw8', 'tgw8', 'tstd', 'cstd']
     linspec = ['L']
 
+    # For lbit66
+    figspec_x = ['L', 'tstd', 'cstd', 'cgw8', 'tgw8']
+    subspec_x = ['J', 'w', 'r']
+    linspec_x = ['u']
+    xaxspec_x = ['f']
+    figspec = ['L', 'J', 'r']
+    subspec = ['f', 'w', 'cgw8', 'tgw8', 'tstd', 'cstd']
+    linspec = ['u']
+
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_svnt_fig_sub_line(db=db, meta=meta['num-svnt'], figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f,
+                                   palette_name=palette)
+    save_figure(f)
+    #   plt.show()
+    #    exit(0)
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
         f = plot_rise_fig_sub_line(db=db, meta=meta['rise-num2'], figspec=figspec_x, subspec=subspec_x,

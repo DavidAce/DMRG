@@ -691,6 +691,33 @@ def get_meta(plotdir):
             'legendlocation': 'center right',
             # 'legendlocation': (0.01, 0.65),
         },
+        'num-svnt': {
+            'groupname': 'measurements',
+            'colname': 'number_entropy',
+            'normpage': True,
+            'titlename': 'Number Entropy',
+            'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle / S_\mathrm{Page}$',
+            'yformat': '%.3f',
+            'plotprefix': 'SN',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            # 'ymin': 0.21,
+            # 'ymax': 0.40,
+            # 'xmin': 1e-2,
+            # 'xmax': 1e4,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'fitloglogwindow': True,
+            'shadederror': False,
+            'timeloglevel': 0,
+            'mplstyle': mplstyle,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            # 'legendlocation': 'lower right',
+            'legendlocation': (0.01, 0.65),
+        },
     }
 
     return meta
