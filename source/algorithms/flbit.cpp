@@ -302,7 +302,7 @@ void flbit::update_state() {
         if(settings::model::model_size <= 6) {
             if(Upsi_ed.dimension(0) != time_gates_Lsite[0].op.dimension(1))
                 throw except::logic_error("Upsi_ed may not have been initialized: Upsi_ed: {}", Upsi_ed.dimensions());
-            Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps_wavefn(*tensors.state);
+            Eigen::Tensor<Scalar, 1> Upsi_mps = tools::finite::measure::mps2tensor(*tensors.state);
             Eigen::Tensor<Scalar, 1> Upsi_tmp = time_gates_Lsite[0].op.contract(Upsi_ed, tenx::idx({1}, {0}));
             Upsi_ed                           = Upsi_tmp * std::exp(std::arg(Upsi_tmp(0)) * Scalar(0, -1));
             Upsi_mps                          = Upsi_mps * std::exp(std::arg(Upsi_mps(0)) * Scalar(0, -1));
@@ -682,8 +682,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
                              // #pragma message "Revert randomfield to false"
         if(nsamps > 1) {
-            udpths = {8, 10, 12, 14, 16};
-            ufmixs = {0.25, 0.5, 1.0};
+            udpths = {8};
+            ufmixs = {1.0};
             utstds = {1.0};
             ucstds = {1.0};
             utgw8s = {UnitaryGateWeight::IDENTITY};
