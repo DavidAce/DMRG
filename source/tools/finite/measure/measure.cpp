@@ -621,11 +621,29 @@ double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, 
     return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();
 }
 
-double tools::finite::measure::residual(const TensorsFinite &tensors) {
+double tools::finite::measure::residual_norm(const TensorsFinite &tensors) {
     const auto &mps = tensors.get_multisite_mps();
     const auto &mpo = tensors.get_multisite_mpo();
     const auto &env = tensors.get_multisite_env_ene_blk();
     return residual_norm(mps, mpo, env.L, env.R);
+}
+
+double tools::finite::measure::residual_norm_full(const StateFinite &state, const ModelFinite &model) {
+    // Calculate the residual_norm r = |Hv - Ev|, where H is the full Hamiltonian and v is the full mps
+    tools::log->info("Calculating residual norm with full system");
+    auto                                Hstate = state;
+    std::vector<Eigen::Tensor<cplx, 4>> mpos;
+    for(const auto &mpo : model.MPO) mpos.emplace_back(mpo->MPO());
+    tools::log->info("Applying MPOs");
+    ops::apply_mpos(Hstate, mpos, model.MPO.front()->get_MPO_edge_left(), model.MPO.back()->get_MPO_edge_right());
+    tools::log->info("Creating Ht tensor");
+    auto Ht = mps2tensor(Hstate);
+    tools::log->info("Creating t tensor");
+    auto t  = mps2tensor(state);
+    auto Hv = tenx::VectorMap(Ht);
+    auto v  = tenx::VectorMap(t);
+    tools::log->info("Calculating (Hv - v.dot(Hv) * v).norm()");
+    return (Hv - v.dot(Hv) * v).norm();
 }
 
 double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {

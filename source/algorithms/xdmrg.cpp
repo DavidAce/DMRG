@@ -258,6 +258,21 @@ void xdmrg::run_algorithm() {
     //    tools::finite::measure::parity_components(*tensors.state, qm::spin::half::sz);
 }
 
+void xdmrg::try_residual_optimization() {
+    if(not tensors.position_is_inward_edge_left()) return;
+    if(status.energy_variance_lowest > 1e-2) return;
+    auto t_resopt = tid::tic_scope("residual_optimization");
+    auto t_var    = tid::tic_scope("variance");
+    auto variance = tools::finite::measure::energy_variance(tensors);
+    t_var.toc();
+    auto t_res    = tid::tic_scope("residual");
+    auto residual = tools::finite::measure::residual_norm_full(*tensors.state, *tensors.model);
+    t_res.toc();
+    tools::log->info("Variance          : {:.3e} | t = {:.3e}", variance, t_var->get_time());
+    tools::log->info("Standard deviation: {:.3e} | t = {:.3e}", std::sqrt(variance), t_var->get_time());
+    tools::log->info("Residual norm full: {:.3e} | t = {:.3e}", residual, t_res->get_time());
+}
+
 void xdmrg::run_fes_analysis() {
     if(settings::strategy::fes_rate == 0) return;
     tools::log = tools::Logger::setLogger(status.algo_type_str() + "-fes", settings::console::loglevel, settings::console::timestamp);
