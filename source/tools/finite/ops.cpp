@@ -321,6 +321,6 @@ double tools::finite::ops::overlap(const StateFinite &state1, const StateFinite 
         overlap = temp;
     }
 
-    double norm_chain = std::real(tenx::MatrixMap(overlap).trace());
-    return norm_chain;
+    Eigen::Tensor<StateFinite::Scalar, 0> norm_chain = overlap.trace();
+    return norm_chain.coeff(0).real();
 }

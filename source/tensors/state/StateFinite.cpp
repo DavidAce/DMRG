@@ -286,8 +286,8 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
 }
 template const MpsSite &StateFinite::get_mps_site(size_t pos) const;
 template const MpsSite &StateFinite::get_mps_site(long pos) const;
-template const MpsSite &StateFinite::get_mps_site(int) const;
-template const MpsSite &StateFinite::get_mps_site(unsigned long long) const; // hsize_t
+template const MpsSite &StateFinite::get_mps_site(int pos) const;
+template const MpsSite &StateFinite::get_mps_site(unsigned long long pos) const; // hsize_t
 
 template<typename T>
 MpsSite &StateFinite::get_mps_site(T pos) {
@@ -295,6 +295,8 @@ MpsSite &StateFinite::get_mps_site(T pos) {
 }
 template MpsSite &StateFinite::get_mps_site(size_t pos);
 template MpsSite &StateFinite::get_mps_site(long pos);
+template MpsSite &StateFinite::get_mps_site(int pos);
+template MpsSite &StateFinite::get_mps_site(unsigned long long pos); // hsize_t
 
 const MpsSite &StateFinite::get_mps_site() const { return get_mps_site(get_position()); }
 

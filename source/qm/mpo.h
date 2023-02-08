@@ -7,7 +7,7 @@
 
 namespace qm::mpo {
     extern std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(const Eigen::MatrixXcd &paulimatrix);
-    extern std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(std::string_view axis);
+    extern std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> prod_pauli_mpo(std::string_view axis);
 
     extern std::tuple<std::vector<Eigen::Tensor<cplx, 4>>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>>
         parity_projector_mpos(const Eigen::MatrixXcd &paulimatrix, size_t sites, int sector = 1);

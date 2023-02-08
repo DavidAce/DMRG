@@ -7,6 +7,7 @@
 #include "math/num.h"
 #include "math/tenx.h"
 #include "qm/lbit.h"
+#include "qm/spin.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
@@ -694,6 +695,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
             auto lbitSA        = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_decay = std::vector<std::string>{"sample", "|i-j|"};

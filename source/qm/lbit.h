@@ -6,6 +6,7 @@
 #include <vector>
 
 enum class UnitaryGateWeight;
+class StateFinite;
 
 namespace qm::lbit {
     struct UnitaryGateProperties {
@@ -82,6 +83,7 @@ namespace qm::lbit {
     extern cplx                                 get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj);
+    extern cplx                                 get_lbit_correlator(StateFinite & state1, StateFinite & state2, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
 //    extern cplx                                 get_lbit_exp_value4(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites);
     extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);

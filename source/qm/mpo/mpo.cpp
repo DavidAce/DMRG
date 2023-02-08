@@ -35,7 +35,7 @@ namespace qm::mpo {
         Redge(0, 0, 0) = 1;
         return {MPO, Ledge, Redge};
     }
-    std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(std::string_view axis) {
+    std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> prod_pauli_mpo(std::string_view axis) {
         return qm::mpo::pauli_mpo(spin::half::get_pauli(axis));
     }
 

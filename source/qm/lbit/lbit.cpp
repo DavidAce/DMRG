@@ -15,8 +15,12 @@
 #include "math/stat.h"
 #include "math/svd.h"
 #include "math/tenx.h"
+#include "tensors/site/mps/MpsSite.h"
+#include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
+#include "tools/finite/mps.h"
+#include "tools/finite/ops.h"
 #include <algorithm>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
@@ -835,14 +839,20 @@ qm::cplx qm::lbit::get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>>
         temp   = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3}, {0, 2})).trace(std::array<long, 2>{1, 3});
         result = temp / temp.constant(2.0); // Divide by two for each trace
     }
-    tools::log->info("result {:+.16f}{:+.16f}i | time tot {:.3e}", std::real(result.coeff(0)), std::imag(result.coeff(0)), t_olap.get_last_interval());
+    //    tools::log->info("result {:+.16f}{:+.16f}i | time tot {:.3e}", std::real(result.coeff(0)), std::imag(result.coeff(0)), t_olap.get_last_interval());
     return result.coeff(0);
 }
 
-Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
-    auto                       ssites = static_cast<long>(sites);
-    Eigen::Tensor<qm::cplx, 2> lbit_overlap(ssites, ssites);
+qm::cplx qm::lbit::get_lbit_correlator(StateFinite &state1, StateFinite &state2, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj,
+                                       size_t pos_szj, long len) {
+    state1.get_mps_site(pos_szi).apply_mpo(tenx::TensorCast(szi));
+    state2.get_mps_site(pos_szj).apply_mpo(tenx::TensorCast(szj));
+    auto overlap = tools::finite::ops::overlap(state1, state2);
+    tools::log->info("overlap²: {:.3e}", std::pow(overlap, 2));
+    return std::pow(overlap, 2);
+}
 
+Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
     /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
                                                       = Tr(τ^z_i σ^z_j) / 2^L
                                                       = Tr(U†σ^z_iU σ^z_j) / 2^L
@@ -857,11 +867,22 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vec
         https://link.aps.org/doi/10.1103/PhysRevB.91.085425
         https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
     */
+    auto ssites       = static_cast<long>(sites);
+    auto lbit_overlap = Eigen::Tensor<qm::cplx, 2>(ssites, ssites);
+    auto state        = StateFinite(AlgorithmType::fLBIT, sites, 0, 2);
+    auto pauli        = qm::spin::half::sz;
+    tools::finite::mps::init::set_product_state_aligned(state, StateInitType::REAL, "+x");
+    for(const auto &layer : unitary_layers) { tools::finite::mps::apply_gates(state, layer, true, GateMove::AUTO); }
+
 #pragma omp parallel for collapse(2) schedule(guided, 4)
     for(long j = 0; j < ssites; j++) {
+        auto state_j = StateFinite(state);
         for(long i = 0; i < ssites; i++) {
+            auto state_i = StateFinite(state);
             lbit_overlap(i, j) =
-                qm::lbit::get_lbit_exp_value3(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz, static_cast<size_t>(j), ssites);
+                //                qm::lbit::get_lbit_exp_value3(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz,
+                //                static_cast<size_t>(j), ssites);
+                qm::lbit::get_lbit_correlator(state_i, state_j, pauli, static_cast<size_t>(i), pauli, static_cast<size_t>(j), ssites);
         }
     }
     // We require that lbit_overlap(i,j) has rows that sum up to 1
@@ -869,7 +890,7 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vec
     if(not sums_rowwise.cwiseAbs().isOnes(1e-4)) {
         tools::log->error("lbit overlap rows do not sum to one. Perhaps normalization is wrong.\n"
                           "lbit_overlap: \n{}\nsums\n{}\n",
-                          linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums_rowwise, 6));
+                          linalg::tensor::to_string(lbit_overlap.real(), 16), linalg::matrix::to_string(sums_rowwise, 6));
         //        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
     }
     return lbit_overlap;
@@ -905,7 +926,7 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<Eigen::T
     if(not sums_rowwise.cwiseAbs().isOnes(1e-4)) {
         tools::log->error("lbit overlap rows do not sum to one. Perhaps normalization is wrong\n"
                           "lbit_overlap: \n{}\nsums\n{}\n",
-                          linalg::tensor::to_string(lbit_overlap, 6), linalg::matrix::to_string(sums_rowwise, 6));
+                          linalg::tensor::to_string(lbit_overlap, 16), linalg::matrix::to_string(sums_rowwise, 6));
         //        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
     }
     return lbit_overlap;
