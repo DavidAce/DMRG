@@ -848,7 +848,7 @@ qm::cplx qm::lbit::get_lbit_correlator(StateFinite &state1, StateFinite &state2,
     state1.get_mps_site(pos_szi).apply_mpo(tenx::TensorCast(szi));
     state2.get_mps_site(pos_szj).apply_mpo(tenx::TensorCast(szj));
     auto overlap = tools::finite::ops::overlap(state1, state2);
-    tools::log->info("overlap²: {:.3e}", std::pow(overlap, 2));
+    //    tools::log->info("overlap²: {:.3e}", std::pow(overlap, 2));
     return std::pow(overlap, 2);
 }
 
@@ -873,12 +873,13 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vec
     auto pauli        = qm::spin::half::sz;
     tools::finite::mps::init::set_product_state_aligned(state, StateInitType::REAL, "+x");
     for(const auto &layer : unitary_layers) { tools::finite::mps::apply_gates(state, layer, true, GateMove::AUTO); }
-
-#pragma omp parallel for collapse(2) schedule(guided, 4)
+    auto state_i = StateFinite();
+    auto state_j = StateFinite();
+    // #pragma omp parallel for collapse(2) schedule(guided, 4)
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
-            auto state_j = StateFinite(state);
-            auto state_i = StateFinite(state);
+            state_j = state;
+            state_i = state;
             lbit_overlap(i, j) =
                 //                qm::lbit::get_lbit_exp_value3(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz,
                 //                static_cast<size_t>(j), ssites);
