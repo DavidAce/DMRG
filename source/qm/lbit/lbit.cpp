@@ -876,8 +876,8 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vec
 
 #pragma omp parallel for collapse(2) schedule(guided, 4)
     for(long j = 0; j < ssites; j++) {
-        auto state_j = StateFinite(state);
         for(long i = 0; i < ssites; i++) {
+            auto state_j = StateFinite(state);
             auto state_i = StateFinite(state);
             lbit_overlap(i, j) =
                 //                qm::lbit::get_lbit_exp_value3(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz,
