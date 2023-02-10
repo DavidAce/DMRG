@@ -21,15 +21,15 @@ namespace settings {
     inline constexpr bool debug_projection = false;
 }
 
-void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &Ledge,
-                                   const Eigen::Tensor<Scalar, 3> &Redge) {
-    std::vector<Eigen::Tensor<Scalar, 4>> mpos(state.get_length(), mpo);
+void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &Ledge,
+                                   const Eigen::Tensor<cplx, 3> &Redge) {
+    std::vector<Eigen::Tensor<cplx, 4>> mpos(state.get_length(), mpo);
     apply_mpos(state, mpos, Ledge, Redge);
 }
 
-void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 1> &Ledge,
-                                    const Eigen::Tensor<Scalar, 1> &Redge) {
-    Eigen::Tensor<Scalar, 3> Ledge3, Redge3;
+void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 1> &Ledge,
+                                    const Eigen::Tensor<cplx, 1> &Redge) {
+    Eigen::Tensor<cplx, 3> Ledge3, Redge3;
     {
         auto mps_dims = state.mps_sites.front()->dimensions();
         auto mpo_dims = mpos.front().dimensions();
@@ -63,8 +63,8 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     apply_mpos(state, mpos, Ledge3, Redge3);
 }
 
-void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<Scalar, 4>> &mpos, const Eigen::Tensor<Scalar, 3> &Ledge,
-                                    const Eigen::Tensor<Scalar, 3> &Redge) {
+void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 3> &Ledge,
+                                    const Eigen::Tensor<cplx, 3> &Redge) {
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
@@ -112,14 +112,14 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         auto                     label    = mps.get_label();
         long                     mpoDimL  = mpos.front().dimension(0);
         auto                     Ldim     = Ledge.dimension(0);
-        Eigen::Tensor<Scalar, 3> M_temp =
+        Eigen::Tensor<cplx, 3>   M_temp =
             Ledge
                 .shuffle(tenx::array3{0, 2, 1})                  // Start by shuffling the legs into consecutive order before merge
                 .reshape(tenx::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
                 .contract(mps.get_M_bare(), tenx::idx({0}, {1})) // Contract with M which already has the mpo on it (not including LC, possibly)
                 .shuffle(tenx::array3{1, 0, 2});                 // Shuffle back to convention
         if(isCenter or label != "B") {
-            Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Ldim).constant(1.0);
+            Eigen::Tensor<cplx, 1> one = Eigen::Tensor<cplx, 1>(Ldim).constant(1.0);
             mps.set_mps(M_temp, one, 0, label);
         } else {
             // The left edge is a B-site.
@@ -150,11 +150,11 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
         bool                     isCenter = mps.isCenter();
         long                     mpoDimR  = mpos.back().dimension(1);
         auto                     Rdim     = Redge.dimension(0);
-        Eigen::Tensor<Scalar, 3> M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
-                                              .reshape(tenx::array2{Rdim * mpoDimR, Rdim})
-                                              .contract(mps.get_M(), tenx::idx({0}, {2})) // Include LC if it's there
-                                              .shuffle(tenx::array3{1, 2, 0});
-        Eigen::Tensor<Scalar, 1> one = Eigen::Tensor<Scalar, 1>(Rdim).constant(1.0);
+        Eigen::Tensor<cplx, 3>   M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
+                                            .reshape(tenx::array2{Rdim * mpoDimR, Rdim})
+                                            .contract(mps.get_M(), tenx::idx({0}, {2})) // Include LC if it's there
+                                            .shuffle(tenx::array3{1, 2, 0});
+        Eigen::Tensor<cplx, 1> one = Eigen::Tensor<cplx, 1>(Rdim).constant(1.0);
         if(isCenter) {
             mps.set_M(M_temp);
             mps.set_LC(one, 0);
@@ -310,17 +310,17 @@ StateFinite tools::finite::ops::get_projection_to_nearest_axis(const StateFinite
     return state_projected;
 }
 
-double tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) {
-    assert(state1.get_length() == state2.get_length() and "ERROR: States have different lengths! Can't do overlap.");
-    assert(state1.get_position() == state2.get_position() and "ERROR: States need to be at the same position! Can't do overlap.");
+auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) -> cplx {
+    if(state1.get_length() != state2.get_length()) except::logic_error("ERROR: States have different lengths! Can't do overlap.");
+    if(state1.get_position() != state2.get_position()) except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
     size_t pos     = 0;
     auto   overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0, 1});
     for(pos = 1; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<Scalar, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
-                                            .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
+        Eigen::Tensor<cplx, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
+                                          .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
         overlap = temp;
     }
 
-    Eigen::Tensor<StateFinite::Scalar, 0> norm_chain = overlap.trace();
-    return norm_chain.coeff(0).real();
+    Eigen::Tensor<cplx, 0> norm_chain = overlap.trace();
+    return norm_chain.coeff(0);
 }

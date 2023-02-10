@@ -495,7 +495,7 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
 template std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, bool range_long_to_short);
 template std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, bool reverse, bool range_long_to_short);
 
-void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, GateMove gm,
+void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, bool adjoint, GateMove gm,
                                     std::optional<svd::config> svd_cfg) {
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
     if(gate.was_used()) throw except::runtime_error("gate was already used: pos {} ", gate.pos);
@@ -528,7 +528,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
     {
         auto t_apply = tid::tic_token("apply");
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        if(reverse)
+        if(adjoint)
             temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
         else
             temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
@@ -543,7 +543,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
                           svd::solver::get_count());
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool reverse, GateMove gm,
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool adjoint, GateMove gm,
                                      std::optional<svd::config> svd_cfg) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
@@ -553,26 +553,43 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen
         auto dim = std::vector<long>(pos.size(), 2);
         gates.emplace_back(qm::Gate(nsite_tensors[idx], pos, dim));
     }
-    apply_gates(state, gates, reverse, gm, svd_cfg);
+    apply_gates(state, gates, adjoint, gm, svd_cfg);
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool adjoint, GateMove gm, std::optional<svd::config> svd_cfg) {
     auto t_apply_gates = tid::tic_scope("apply_gates", tid::level::higher);
 
     if(gates.empty()) return;
     auto svd_count     = svd::solver::get_count();
-    auto gate_sequence = generate_gate_sequence(state, gates, reverse);
+    auto gate_sequence = generate_gate_sequence(state, gates, adjoint);
     if constexpr(settings::debug_gates)
         tools::log->trace("apply_gates: current pos {} dir {} | gate_sequence {}", state.get_position<long>(), state.get_direction(), gate_sequence);
 
     state.clear_cache(LogPolicy::QUIET);
     Eigen::Tensor<cplx, 3> gate_mps;
-    for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, reverse, gm, svd_cfg);
+    for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, adjoint, gm, svd_cfg);
 
     move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
     svd_count = svd::solver::get_count() - svd_count;
     if constexpr(settings::debug_gates)
         tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
+}
+
+void tools::finite::mps::apply_circuit(StateFinite &state, const std::vector<std::vector<qm::Gate>> &circuit, bool adjoint, bool mark_as_used, GateMove gm,
+                                       std::optional<svd::config> svd_cfg) {
+    if(adjoint) {
+        for(const auto &gates : iter::reverse(circuit)) {
+            apply_gates(state, gates, adjoint, gm, svd_cfg);
+            if(not mark_as_used)
+                for(const auto &gate : gates) gate.unmark_as_used();
+        }
+    } else {
+        for(const auto &gates : circuit) {
+            apply_gates(state, gates, adjoint, gm, svd_cfg);
+            if(not mark_as_used)
+                for(const auto &gate : gates) gate.unmark_as_used();
+        }
+    }
 }
 
 template<typename T>
@@ -699,7 +716,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     }
 }
 
-void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, Eigen::Tensor<cplx, 3> &temp, bool reverse, std::vector<size_t> &sites,
+void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, Eigen::Tensor<cplx, 3> &temp, bool adjoint, std::vector<size_t> &sites,
                                          GateMove gm, std::optional<svd::config> svd_cfg) {
     if(gate.was_used()) return;
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
@@ -755,7 +772,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     {
         auto t_apply = tid::tic_token("apply", tid::level::higher);
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        if(reverse)
+        if(adjoint)
             temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
         else
             temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
@@ -783,7 +800,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     }
 }
 
-void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, bool reverse, GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, bool adjoint, GateMove gm, std::optional<svd::config> svd_cfg) {
     auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
     if(gates.empty()) return;
     state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
@@ -812,13 +829,13 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     [[maybe_unused]] size_t swap_count = 0;
     [[maybe_unused]] size_t rwap_count = 0;
 
-    auto gate_sequence = generate_gate_sequence(state, gates, reverse);
+    auto gate_sequence = generate_gate_sequence(state, gates, adjoint);
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto &gate = gates.at(gate_idx);
         if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
         swap_count += gate.swaps.size();
         rwap_count += gate.rwaps.size();
-        apply_swap_gate(state, gate, temp, reverse, sites, gm, svd_cfg);
+        apply_swap_gate(state, gate, temp, adjoint, sites, gm, svd_cfg);
     }
     move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
     svds_count = svd::solver::get_count() - svds_count;

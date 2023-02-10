@@ -32,13 +32,14 @@ namespace tools::finite::mps {
     extern void truncate_all_sites                   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_active_sites                (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_next_sites                  (StateFinite & state, size_t num_sites = 4, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, bool reverse, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates_old                      (StateFinite &state, const std::vector<qm::Gate> &gates, bool reverse, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, Eigen::Tensor<cplx, 3> & temp, bool adjoint, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, bool adjoint, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool adjoint, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates_old                      (StateFinite & state, const std::vector<qm::Gate> & gates, bool reverse, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_circuit                        (StateFinite & state, const std::vector<std::vector<qm::Gate>> & gates, bool adjoint = false, bool mark_as_used = false, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & sites, GateMove gm);
-    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool reverse, std::vector<size_t> & sites, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool reverse, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool adjoint, std::vector<size_t> & sites, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool adjoint, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     namespace init{
         inline std::set<size_t> used_bitfields;
         extern bool bitfield_is_valid (size_t bitfield);
@@ -50,8 +51,8 @@ namespace tools::finite::mps {
 
         // Product states
         extern void set_random_product_state_with_random_spinors(StateFinite & state, StateInitType type);
-        extern void set_random_product_state_on_axis_using_bitfield(StateFinite & state, StateInitType type, std::string_view axis, size_t bitfield);
-        extern void set_random_product_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis);
+        extern void set_random_product_state_on_axis_using_bitfield(StateFinite & state, StateInitType type, std::string_view axis, size_t bitfield, LogPolicy logPolicy = LogPolicy::NORMAL);
+        extern void set_random_product_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, LogPolicy logPolicy = LogPolicy::NORMAL);
         extern void set_random_product_state_on_axis(StateFinite & state, StateInitType type, std::string_view axis);
         extern void set_product_state_aligned(StateFinite & state, StateInitType type, std::string_view axis);
         extern void set_product_state_neel(StateFinite & state, StateInitType type, std::string_view axis);

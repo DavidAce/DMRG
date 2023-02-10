@@ -159,10 +159,9 @@ void tools::finite::mps::init::set_random_product_state_with_random_spinors(Stat
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(StateFinite &state, StateInitType type, std::string_view axis, size_t bitfield) {
+void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(StateFinite &state, StateInitType type, std::string_view axis, size_t bitfield,
+                                                                               LogPolicy logPolicy) {
     auto axus = qm::spin::half::get_axis_unsigned(axis);
-    tools::log->info("Setting random product state using the bitset of number {} to select eigenspinors of σ{}", bitfield, axus);
-
     if(bitfield == -1ul) throw except::logic_error("Can't set product state from bitfield == -1ul");
     if(type == StateInitType::REAL and axus == "y") throw except::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
 
@@ -180,44 +179,49 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(S
         auto &mps  = *mps_ptr;
         int   sign = 2 * bs[mps.get_position()] - 1;
         mps.set_mps(tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1), L, 0, label);
-        std::string arrow = sign < 0 ? "↓" : "↑";
-        ud_vec.emplace_back(arrow);
+        ud_vec.emplace_back((sign < 0 ? "↓" : "↑"));
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
         }
     }
+    if(logPolicy == LogPolicy::NORMAL)
+        tools::log->info("Set random product state using the bitset of number {} to select eigenspinors of σ{}: {}", bitfield, axus, fmt::join(ud_vec, ""));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
-void tools::finite::mps::init::set_random_product_state_on_axis_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view axis) {
+void tools::finite::mps::init::set_random_product_state_on_axis_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view axis,
+                                                                                   LogPolicy logPolicy) {
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
-    auto axus      = qm::spin::half::get_axis_unsigned(axis);
-    int  sign      = qm::spin::half::get_sign(axis);
-    int  last_sign = 1;
+    auto axus     = qm::spin::half::get_axis_unsigned(axis);
+    int  sign_tgt = qm::spin::half::get_sign(axis);
+    int  sign_now = 1;
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
-    tools::log->info("Setting random product state on axis {} using eigenspinors of the pauli matrix σ{}", axis, axus);
-    std::string label = "A";
+    std::string              label = "A";
+    std::vector<std::string> ud_vec;
     for(auto &mps_ptr : state.mps_sites) {
-        auto &mps = *mps_ptr;
-        last_sign = 2 * rnd::uniform_integer_01() - 1;
-        mps.set_mps(tenx::TensorCast(qm::spin::half::get_spinor(axus, last_sign).normalized(), 2, 1, 1), L, 0, label);
+        auto &mps  = *mps_ptr;
+        auto  sign = 2 * rnd::uniform_integer_01() - 1;
+        mps.set_mps(tenx::TensorCast(qm::spin::half::get_spinor(axus, sign_now).normalized(), 2, 1, 1), L, 0, label);
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
         }
+        ud_vec.emplace_back((sign < 0 ? "↓" : "↑"));
+        sign_now *= sign;
     }
-    auto spin_component = tools::finite::measure::spin_component(state, axus);
-    if(spin_component * sign < 0) {
-        auto &mps = *state.mps_sites.back();
-        mps.set_mps(tenx::TensorCast(qm::spin::half::get_spinor(axus, -last_sign).normalized(), 2, 1, 1), L, 0, label);
-        spin_component = tools::finite::measure::spin_component(state, axus);
+    if(sign_now * sign_tgt < 0) {
+        // Flip the last spin to get the correct overall sign
+        auto &mps     = *state.mps_sites.back();
+        auto  sign    = -sign_now;
+        ud_vec.back() = (sign < 0 ? "↓" : "↑");
+        mps.set_mps(tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1), L, 0, label);
     }
-    state.clear_measurements();
-    if(spin_component * sign < 0) throw except::logic_error("Could not initialize_state on the correct axis");
+    if(logPolicy == LogPolicy::NORMAL)
+        tools::log->info("Set random product state on axis {} using eigenspinors of the pauli matrix σ{}: {}", axis, axus, fmt::join(ud_vec, ""));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites

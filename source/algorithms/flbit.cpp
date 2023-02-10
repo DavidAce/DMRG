@@ -599,7 +599,7 @@ void flbit::transform_to_real_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 10 * status.trnc_lim)
+        if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
             throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
     }
 }
@@ -639,7 +639,7 @@ void flbit::transform_to_lbit_basis() {
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1) > 10 * status.trnc_lim)
+        if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
             throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
     }
 }
@@ -680,15 +680,15 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
         auto nsamps = settings::flbit::compute_lbit_stats;
         //        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-        bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-                             // #pragma message "Revert randomfield to false"
+        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+                            // #pragma message "Revert randomfield to false"
         if(nsamps > 1) {
-            udpths = {8};
-            ufmixs = {1.0};
+            udpths = {64};
+            ufmixs = {0.1};
             utstds = {1.0};
             ucstds = {1.0};
             utgw8s = {UnitaryGateWeight::IDENTITY};
-            ucgw8s = {UnitaryGateWeight::EXPDECAY};
+            ucgw8s = {UnitaryGateWeight::IDENTITY};
         }
         if(nsamps > 0) {
             std::vector<double> fields;
@@ -735,7 +735,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
             }
         }
-        //        exit(0);
+        exit(0);
     }
 }
 

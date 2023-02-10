@@ -470,7 +470,7 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site
     return time_evolution_operators;
 }
 
-qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi,
+qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi,
                                        const Eigen::Matrix2cd &szj, size_t pos_szj, long sites) {
     /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌'_i σ^z_j) / Tr(𝜌'_i) = Tr(τ^z_i σ^z_j) / 2^L
 
@@ -487,11 +487,11 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
         Applying the unitary transformation does not change the trace, since it is just a
         change of basis. We get
 
-             ρ'_i = U† ρ_i U
-                  = 1/2^L (U† σ^z_i U + 1)
+             ρ'_i = U ρ_i U†
+                  = 1/2^L (U σ^z_i U† + 1)
                   = 1/2^L (τ^z_i + 1) ,
 
-        where the l-bit τ^z_i = U† σ^z_i U acts non-trivially on all sites. Carrying out the
+        where the l-bit τ^z_i = U σ^z_i U† acts non-trivially on all sites. Carrying out the
         trace gives us
 
             Tr(ρ'_i σ^z_j) / Tr(ρ'_i) = 1/2^L Tr(τ^z_i σ^z_j).
@@ -519,8 +519,8 @@ qm::cplx qm::lbit::get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> 
     auto result          = cplx(0, 0);
     auto szi_gate        = qm::Gate(szi, {pos_szi}, {2l}); //
     auto szj_gate        = qm::Gate(szj, {pos_szj}, {2l});
-    auto intersection    = qm::get_lightcone_intersection(unitary_layers, pos_szi, pos_szj);
-    auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_layers, intersection, false); // Selected gates in each layer
+    auto intersection    = qm::get_lightcone_intersection(unitary_circuit, pos_szi, pos_szj);
+    auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_circuit, intersection, false); // Selected gates in each layer
     auto is_disconnected = std::any_of(intersection.begin(), intersection.end(), [](auto &layer) { return layer.empty(); });
     if(is_disconnected) {
         if constexpr(settings::debug_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
@@ -737,11 +737,11 @@ qm::cplx qm::lbit::get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>>
         Applying the unitary transformation does not change the trace, since it is just a
         change of basis. We get
 
-             ρ'_i = U† ρ_i U
-                  = 1/2^L (U† σ^z_i U + 1)
+             ρ'_i = U ρ_i U†
+                  = 1/2^L (U σ^z_i U† + 1)
                   = 1/2^L (τ^z_i + 1) ,
 
-        where the l-bit τ^z_i = U† σ^z_i U acts non-trivially on all sites. Carrying out the
+        where the l-bit τ^z_i = U σ^z_i U† acts non-trivially on all sites. Carrying out the
         trace gives us
 
             Tr(ρ'_i σ^z_j) / Tr(ρ'_i) = 1/2^L Tr(τ^z_i σ^z_j).
@@ -843,22 +843,13 @@ qm::cplx qm::lbit::get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>>
     return result.coeff(0);
 }
 
-qm::cplx qm::lbit::get_lbit_correlator(StateFinite &state1, StateFinite &state2, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj,
-                                       size_t pos_szj, long len) {
-    state1.get_mps_site(pos_szi).apply_mpo(tenx::TensorCast(szi));
-    state2.get_mps_site(pos_szj).apply_mpo(tenx::TensorCast(szj));
-    auto overlap = tools::finite::ops::overlap(state1, state2);
-    //    tools::log->info("overlap²: {:.3e}", std::pow(overlap, 2));
-    return std::pow(overlap, 2);
-}
-
-Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_layers, size_t sites) {
+Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites) {
     /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
                                                       = Tr(τ^z_i σ^z_j) / 2^L
-                                                      = Tr(U†σ^z_iU σ^z_j) / 2^L
+                                                      = Tr(Uσ^z_iU† σ^z_j) / 2^L
         Where
             𝜌_i   = 1/2^L (1 + τ^z_i)   a density matrix describing a state localized around site i
-            τ^z_i = U† σ^z_i  U,        is an l-bit operator at site i
+            τ^z_i = U σ^z_i U†,        is an l-bit operator at site i
             U                           is a unitary transformation in the form of a finite-depth circuit.
         The second equality comes from the fact that Tr(τ^z_i) = 0 (l-bit operators are traceless) and Tr(1) = 2^L.
         An l-bit fully localized at site i gives O(i,i) = 1,  and when fully delocalized one gets O(i,j) = 0.5
@@ -869,21 +860,11 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<std::vec
     */
     auto ssites       = static_cast<long>(sites);
     auto lbit_overlap = Eigen::Tensor<qm::cplx, 2>(ssites, ssites);
-    auto state        = StateFinite(AlgorithmType::fLBIT, sites, 0, 2);
-    auto pauli        = qm::spin::half::sz;
-    tools::finite::mps::init::set_product_state_aligned(state, StateInitType::REAL, "+x");
-    for(const auto &layer : unitary_layers) { tools::finite::mps::apply_gates(state, layer, true, GateMove::AUTO); }
-    auto state_i = StateFinite();
-    auto state_j = StateFinite();
-    // #pragma omp parallel for collapse(2) schedule(guided, 4)
+#pragma omp parallel for collapse(2) schedule(guided, 4)
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
-            state_j = state;
-            state_i = state;
             lbit_overlap(i, j) =
-                //                qm::lbit::get_lbit_exp_value3(unitary_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz,
-                //                static_cast<size_t>(j), ssites);
-                qm::lbit::get_lbit_correlator(state_i, state_j, pauli, static_cast<size_t>(i), pauli, static_cast<size_t>(j), ssites);
+                qm::lbit::get_lbit_exp_value3(unitary_circuit, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz, static_cast<size_t>(j), ssites);
         }
     }
     // We require that lbit_overlap(i,j) has rows that sum up to 1
@@ -903,10 +884,10 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<Eigen::T
 
     /*! \brief Calculates the operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
                                                       = Tr(τ^z_i σ^z_j) / 2^L
-                                                      = Tr(U†σ^z_iU σ^z_j) / 2^L
+                                                      = Tr(Uσ^z_iU† σ^z_j) / 2^L
         Where
             𝜌_i   = 1/2^L (1 + τ^z_i)   a density matrix describing a state localized around site i
-            τ^z_i = U† σ^z_i  U,        is an l-bit operator at site i
+            τ^z_i = U σ^z_i  U†,        is an l-bit operator at site i
             U                           is a unitary transformation in the form of a finite-depth circuit.
         The second equality comes from the fact that Tr(τ^z_i) = 0 (l-bit operators are traceless) and Tr(1) = 2^L.
         An l-bit fully localized at site i gives O(i,i) = 1,  and when fully delocalized one gets O(i,j) = 0.5
@@ -931,6 +912,92 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_support(const std::vector<Eigen::T
         //        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
     }
     return lbit_overlap;
+}
+
+Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_correlations(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states,
+                                                           double tol) {
+    /*! \brief Calculates the correlation < τ^z_i σ^z_j > for a product state with spins aligned along +x = [(1,1)^T]^{\otimes L}
+     *
+     * We construct
+     * state_i = U σ^z_i U† | up >
+     * state_j = σ^z_j | up >
+     *
+     * and then take their overlap
+     *
+     */
+    auto svd_cfg             = svd::config();
+    svd_cfg.truncation_lim   = 1e-12;
+    svd_cfg.rank_max         = 1024;
+    auto num_states          = static_cast<Eigen::Index>(std::pow(2, sites));
+    auto ssites              = static_cast<Eigen::Index>(sites);
+    auto lbit_correlator_avg = Eigen::Tensor<cplx, 2>(ssites, ssites);
+    auto lbit_correlator_std = Eigen::Tensor<cplx, 2>(ssites, ssites);
+    lbit_correlator_avg.setZero();
+    //    auto stds_rowwise = Eigen::ArrayXcd(ssites);
+    auto state    = StateFinite(AlgorithmType::fLBIT, sites, 0, 2);
+    auto szi      = tenx::TensorCast(qm::spin::half::sz);
+    auto szj      = tenx::TensorCast(qm::spin::half::sz);
+    auto t_r      = tid::ur();
+    auto t_i      = tid::ur();
+    auto t_i_u    = tid::ur();
+    auto t_j      = tid::ur();
+    auto bitmasks = num::range<long>(0, num_states);
+    std::shuffle(bitmasks.begin(), bitmasks.end(), rnd::internal::rng);
+    long r = 0;
+    for(const auto &b : bitmasks) {
+        t_r.tic();
+        auto lbit_corr = Eigen::Tensor<cplx, 2>(ssites, ssites);
+        tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(state, StateInitType::REAL, "x", static_cast<size_t>(b), LogPolicy::QUIET);
+        auto state_U = StateFinite(state);
+        tools::finite::mps::apply_circuit(state_U, unitary_circuit, false, false, GateMove::ON, svd_cfg); // Apply U on state:
+        t_r.toc();
+        for(long i = 0; i < ssites; i++) {
+            t_i.tic();
+            auto state_i = StateFinite(state_U);    // Make a copy of state_U
+            state_i.get_mps_site(i).apply_mpo(szi); // Apply σ^z_i on state_i
+            t_i_u.tic();
+            tools::finite::mps::apply_circuit(state_i, unitary_circuit, true, false, GateMove::ON, svd_cfg); // Apply U† on state_i
+            t_i_u.toc();
+            t_i.toc();
+            for(long j = 0; j < ssites; j++) {
+                t_j.tic();
+                auto state_j = StateFinite(state);
+                // Apply σ^z_j on state j
+                state_j.get_mps_site(j).apply_mpo(szj);
+                lbit_corr(i, j) = tools::finite::ops::overlap(state_i, state_j);
+                t_j.toc();
+            }
+        }
+        lbit_correlator_avg = Eigen::Tensor<cplx, 2>(lbit_correlator_avg * lbit_corr.constant(static_cast<double>(r)) + lbit_corr) /
+                              lbit_corr.constant(static_cast<double>(r + 1));
+        //        tools::log->info("lbit_correlator_avg: \n{}\n", linalg::tensor::to_string(lbit_correlator_avg, 16, 20));
+        auto sums_rowwise = Eigen::Tensor<cplx, 1>(lbit_correlator_avg.sum(std::array<long, 1>{1}));
+        auto sums_vec     = tenx::VectorCast(sums_rowwise); // Each row should sum to 1, imag vanishes
+        auto sums_std     = std::sqrt((sums_vec.array() - sums_vec.mean()).square().sum() / static_cast<double>(sums_vec.size() - 1));
+        //        tools::log->info("sums_vec b {} r {} \n{}\n", b, r, linalg::matrix::to_string(sums_vec, 16));
+        tools::log->info("sums_vec r {} std {:.3e}", r, sums_std);
+        r++;
+        if(std::abs(sums_std) < tol) break;
+        if(static_cast<size_t>(r) > max_num_states) break;
+    }
+    tools::log->info("t_r {:.3e} {:.3e} | t_i {:.3e} {:.3e} (u {:.3e} {:.3e}) | t_j {:.3e} {:.3e} | total {:.3e}", t_r.get_time(), t_r.get_time_avg(),
+                     t_i.get_time(), t_i.get_time_avg(), t_i_u.get_time(), t_i_u.get_time_avg(), t_j.get_time(), t_j.get_time_avg(),
+                     t_r.get_time() + t_i.get_time() + t_j.get_time());
+    //    Eigen::Tensor<cplx, 2> lbit_overlap_typ = lbit_overlap_rnd.log().mean(std::array<long, 1>{0}).exp().cast<cplx>(); // Calculate the typical
+    //    Eigen::Tensor<cplx, 2> lbit_overlap_typ = lbit_overlap_rnd.log().maximum(std::array<long, 1>{0}).exp().cast<cplx>(); // Calculate the typical
+    //    Eigen::Tensor<cplx, 2> lbit_overlap_avg = lbit_overlap_rnd.mean(std::array<long, 1>{0}).cast<cplx>(); // Calculate the typical
+
+    // #pragma omp parallel for collapse(2) schedule(guided, 4)
+
+    // We require that lbit_overlap(i,j) has rows that sum up to 1
+    //    auto sums_rowwise = tenx::MatrixMap(lbit_overlap_avg).rowwise().sum();
+    //    if(not sums_rowwise.cwiseAbs().isOnes(1e-4)) {
+    //        tools::log->error("lbit overlap rows do not sum to one. Perhaps normalization is wrong.\n"
+    //                          "lbit_overlap: \n{}\nsums\n{}\n",
+    //                          linalg::tensor::to_string(lbit_overlap_avg.real(), 16), linalg::matrix::to_string(sums_rowwise, 6));
+    //        throw except::logic_error("lbit overlap rows do not sum to one. Perhaps normalization is wrong");
+    //    }
+    return lbit_correlator_avg.real().cast<cplx>();
 }
 
 std::tuple<double, double, std::vector<double>, size_t> qm::lbit::get_characteristic_length_scale(const Eigen::Tensor<double, 2> &lbit_permuted_disorder_avg) {
@@ -1046,7 +1113,8 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_lbit_supports(const UnitaryGat
         if(randomize_fields) { uprop.randomize_hvals(); }
         auto ulayers = std::vector<std::vector<qm::Gate>>();
         for(size_t idx = 0; idx < uprop.depth; ++idx) { ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop)); }
-        lbit_supp = qm::lbit::get_lbit_support(ulayers, uprop.sites);
+        //                lbit_supp = qm::lbit::get_lbit_support(ulayers, uprop.sites);
+        lbit_supp = qm::lbit::get_lbit_correlations(ulayers, uprop.sites, 256, 1e-3);
     }
     return lbit_supp_vec;
 }
