@@ -951,8 +951,9 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_correlations(const std::vector<std
     for(const auto &[idx, b] : iter::enumerate(bitmasks)) {
         t_r.tic();
         long r = static_cast<long>(idx);
-        tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(state, StateInitType::REAL, "x", static_cast<size_t>(b), LogPolicy::QUIET);
-        //        tools::finite::mps::init::set_random_entangled_state_with_random_spinors(state, StateInitType::REAL, 8);
+        //        tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(state, StateInitType::REAL, "x", static_cast<size_t>(b),
+        //        LogPolicy::QUIET);
+        tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspinors(state, StateInitType::REAL, "x", 256);
         auto lbit_corr = Eigen::Tensor<cplx, 2>(ssites, ssites);
         auto state_U   = StateFinite(state);
         tools::finite::mps::apply_circuit(state_U, unitary_circuit, false, false, GateMove::AUTO, svd_cfg); // Apply U on state:
@@ -994,7 +995,7 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_correlations(const std::vector<std
 
         //        tools::log->info("lbit_correlator_all: \n{}\n",
         //                         linalg::tensor::to_string(lbit_correlator_slc.reshape(std::array<long, 2>{r + 1, ssites * ssites}), 16));
-        //        tools::log->info("lbit_correlator_avg: \n{}\n", linalg::tensor::to_string(lbit_correlator_avg, 16));
+        tools::log->info("lbit_correlator_avg: \n{}\n", linalg::tensor::to_string(lbit_correlator_avg, 16));
         //        tools::log->info("lbit_correlator_std: \n{}\n", linalg::tensor::to_string(lbit_correlator_std, 16));
         //        tools::log->info("lbit_correlator_rsd: \n{}\n", linalg::tensor::to_string(lbit_correlator_rsd, 16));
         tools::log->info("lbit_correlator_avg_diff_norm: {:.3e} r {} bmax {} {} {} ", lbit_correlator_avg_diff_norm, r, bond_maxU, bond_maxi, bond_maxj);
