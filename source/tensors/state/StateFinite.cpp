@@ -58,6 +58,7 @@ StateFinite &StateFinite::operator=(const StateFinite &other) {
         active_sites         = other.active_sites;
         measurements         = other.measurements;
         mps_sites.clear();
+        mps_sites.reserve(other.mps_sites.size());
         for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<MpsSite>(*mps));
     }
     return *this;
