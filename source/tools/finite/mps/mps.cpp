@@ -407,8 +407,8 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
     //         * layer 1: [1,2,3], [4,5,6]...,
     //         * layer 2: [2,3,4], [5,6,7], and so on.
     //
-    // To avoid having to move/swap all the way back between layers, one can flip odd layers to generate a zig-zag pattern.
-    // Then, when applying the inverse operation, both layers as well as gates within a layer are flipped
+    // To avoid having to move/swap all the way back between layers, one can flip odd layers to generate a zigzag pattern.
+    // Then, when applying the adjoint operation, both the layer and gates within that layer are flipped
     //
     // Now consider a sequence of long-range gates such as [0,1], [0,2], ... [0,L-1], [1,2], [1,3]...., [1,L-1]
     // To generate a performant sequence of gates with respect to swaps, it's important to note which gates commute.
@@ -510,7 +510,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         // When gm == GateMove::ON, applying swap operators automatically moves the center position onto posL. This can
         // happen IFF the center position is already on one of posL-1, posL or posR.
         // To get this process going we need to move the center into one of these positions first.
-        // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise they are front/back of gate.pos.
+        // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise, they are front/back of gate.pos.
         // Note 2: both the swap and apply operations will set the current center on the left-most site of the gate.
         auto tgt_gate = gate.pos;
         auto tgt_posC = std::clamp<long>(old_posC, static_cast<long>(tgt_gate.front()) - 1l, static_cast<long>(tgt_gate.back()));
@@ -527,11 +527,17 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
     // Apply the gate
     {
         auto t_apply = tid::tic_token("apply");
-        temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        if(adjoint)
-            temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
-        else
-            temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+        if(adjoint) {
+            // Contracting index 1 is the same as transposing/shuffling gate.op with {1,0}
+            //            tools::log->info("apply_gate pos {} | adjoint {}:\n{}\n", gate.pos, adjoint,
+            //                             linalg::tensor::to_string(gate.op.conjugate().shuffle(tenx::array2{1, 0}), 8));
+            temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+            temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({1}, {0}));
+        } else {
+            //            tools::log->info("apply_gate pos {} | adjoint {}:\n{}\n", gate.pos, adjoint, linalg::tensor::to_string(gate.op, 8));
+            temp.resize(std::array<long, 3>{gate.op.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+            temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({1}, {0}));
+        }
         gate.mark_as_used();
     }
     if constexpr(settings::debug_gates) tools::log->trace("apply_gate: applied pos {} | gm {} | svds {}", gate.pos, enum2sv(gm), svd::solver::get_count());
@@ -577,19 +583,16 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
 
 void tools::finite::mps::apply_circuit(StateFinite &state, const std::vector<std::vector<qm::Gate>> &circuit, bool adjoint, bool mark_as_used, GateMove gm,
                                        std::optional<svd::config> svd_cfg) {
+    //    tools::log->debug("Applying circuit | adjoint: {} | gm {}", adjoint, enum2sv(gm));
     if(adjoint) {
-        for(const auto &gates : iter::reverse(circuit)) {
-            apply_gates(state, gates, adjoint, gm, svd_cfg);
-            if(not mark_as_used)
-                for(const auto &gate : gates) gate.unmark_as_used();
-        }
+        for(const auto &gates : iter::reverse(circuit)) apply_gates(state, gates, adjoint, gm, svd_cfg);
     } else {
-        for(const auto &gates : circuit) {
-            apply_gates(state, gates, adjoint, gm, svd_cfg);
-            if(not mark_as_used)
-                for(const auto &gate : gates) gate.unmark_as_used();
-        }
+        for(const auto &gates : circuit) apply_gates(state, gates, adjoint, gm, svd_cfg);
     }
+
+    if(not mark_as_used)
+        for(const auto &gates : circuit)
+            for(const auto &g : gates) g.unmark_as_used();
 }
 
 template<typename T>
@@ -773,9 +776,9 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         auto t_apply = tid::tic_token("apply", tid::level::higher);
         temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         if(adjoint)
-            temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({0}, {0}));
+            temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({1}, {0}));
         else
-            temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({0}, {0}));
+            temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({1}, {0}));
         gate.mark_as_used();
     }
     if constexpr(settings::debug_gates)
