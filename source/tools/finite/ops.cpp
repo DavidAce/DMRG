@@ -107,12 +107,12 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
          *    |
          *    |------ 1
          */
-        auto                    &mps      = state.get_mps_site(0ul);
-        auto                     isCenter = mps.isCenter();
-        auto                     label    = mps.get_label();
-        long                     mpoDimL  = mpos.front().dimension(0);
-        auto                     Ldim     = Ledge.dimension(0);
-        Eigen::Tensor<cplx, 3>   M_temp =
+        auto                  &mps      = state.get_mps_site(0ul);
+        auto                   isCenter = mps.isCenter();
+        auto                   label    = mps.get_label();
+        long                   mpoDimL  = mpos.front().dimension(0);
+        auto                   Ldim     = Ledge.dimension(0);
+        Eigen::Tensor<cplx, 3> M_temp =
             Ledge
                 .shuffle(tenx::array3{0, 2, 1})                  // Start by shuffling the legs into consecutive order before merge
                 .reshape(tenx::array2{Ldim * mpoDimL, Ldim})     // Merge the legs
@@ -145,12 +145,12 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
          *                                                        |
          *                                                1 ------|
          */
-        auto                    &mps      = state.get_mps_site(state.get_length() - 1);
-        auto                     label    = mps.get_label();
-        bool                     isCenter = mps.isCenter();
-        long                     mpoDimR  = mpos.back().dimension(1);
-        auto                     Rdim     = Redge.dimension(0);
-        Eigen::Tensor<cplx, 3>   M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
+        auto                  &mps      = state.get_mps_site(state.get_length() - 1);
+        auto                   label    = mps.get_label();
+        bool                   isCenter = mps.isCenter();
+        long                   mpoDimR  = mpos.back().dimension(1);
+        auto                   Rdim     = Redge.dimension(0);
+        Eigen::Tensor<cplx, 3> M_temp   = Redge.shuffle(tenx::array3{0, 2, 1})
                                             .reshape(tenx::array2{Rdim * mpoDimR, Rdim})
                                             .contract(mps.get_M(), tenx::idx({0}, {2})) // Include LC if it's there
                                             .shuffle(tenx::array3{1, 2, 0});
@@ -315,10 +315,13 @@ auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &s
     if(state1.get_position() != state2.get_position()) except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
     size_t pos     = 0;
     auto   overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0, 1});
+    Eigen::Tensor<cplx, 2> temp;
     for(pos = 1; pos < state1.get_length(); pos++) {
-        Eigen::Tensor<cplx, 2> temp = overlap.contract(state1.get_mps_site(pos).get_M(), tenx::idx({0}, {1}))
-                                          .contract(state2.get_mps_site(pos).get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
-        overlap = temp;
+        const auto &M1 = state1.get_mps_site(pos).get_M();
+        const auto &M2 = state2.get_mps_site(pos).get_M();
+        temp.resize(M1.dimension(2), M2.dimension(2));
+        temp.device(tenx::threads::getDevice()) = overlap.contract(M1.conjugate(), tenx::idx({0}, {1})).contract(M2, tenx::idx({0, 1}, {1, 0}));
+        overlap                                 = temp;
     }
 
     Eigen::Tensor<cplx, 0> norm_chain = overlap.trace();
