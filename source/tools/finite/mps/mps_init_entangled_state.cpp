@@ -1,6 +1,7 @@
 #include "../mps.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "math/linalg/matrix.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
 #include "qm/spin.h"
@@ -9,21 +10,83 @@
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include <bitset>
+#include <Eigen/QR>
+
+template<typename Scalar>
+Eigen::Tensor<Scalar, 2> get_random_unitary_matrix(long rows, long cols) {
+    using mat_t   = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    using vec_t   = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+    auto gaussian = []() -> Scalar {
+        if constexpr(std::is_same_v<Scalar, std::complex<double>>)
+            return Scalar(rnd::normal(0, 1), rnd::normal(0, 1)) / std::sqrt(2.0);
+        else
+            return rnd::normal(0, 1);
+    };
+    mat_t M = mat_t::NullaryExpr(rows, cols, gaussian);
+
+    auto qr = Eigen::ColPivHouseholderQR<mat_t>();
+    qr.compute(M);
+    mat_t Q = qr.householderQ().setLength(qr.nonzeroPivots());
+    if(rows != cols) { return tenx::TensorCast(Q.leftCols(std::min(Q.cols(), cols))); }
+    vec_t R = qr.matrixR().diagonal().topRows(qr.nonzeroPivots());
+    Q *= R.cwiseProduct(R.cwiseAbs().cwiseInverse()).asDiagonal();
+    return tenx::TensorMap(Q);
+}
 
 std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_lim) {
     // Construct a valid set of bond dimensions
-    std::vector<long> bond_dimensions(sizeplusone, bond_lim);
+    std::vector<long> bond_dimensions(sizeplusone, 1);
     bond_dimensions.front() = 1;
     bond_dimensions.back()  = 1;
-    for(size_t i = 1; i < bond_dimensions.size() / 2; i++) {
-        auto max_bond_dim  = spin_dim * std::min(bond_dimensions[i - 1], bond_dimensions[i + 1]);
-        bond_dimensions[i] = std::min(bond_dimensions[i], max_bond_dim);
-    }
-    for(size_t i = bond_dimensions.size() - 1; i >= bond_dimensions.size() / 2; i--) {
-        auto max_bond_dim  = spin_dim * std::min(bond_dimensions[i - 1], bond_dimensions[i + 1]);
-        bond_dimensions[i] = std::min(bond_dimensions[i], max_bond_dim);
+    for(size_t i = 1; i < bond_dimensions.size() / 2; i++) { bond_dimensions.at(i) = std::min(spin_dim * bond_dimensions.at(i - 1), bond_lim); }
+    for(size_t i = bond_dimensions.size() - 2; i >= bond_dimensions.size() / 2; i--) {
+        bond_dimensions.at(i) = std::min(spin_dim * bond_dimensions.at(i + 1), bond_lim);
     }
     return bond_dimensions;
+}
+
+void tools::finite::mps::init::set_random_entangled_state_haar(StateFinite &state, StateInitType type, long bond_lim, LogPolicy logPolicy) {
+    if(logPolicy == LogPolicy::NORMAL) tools::log->info("Setting random entangled state with Haar distribution | bond_lim {}", bond_lim);
+    const auto  spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
+    auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
+    bool        pastCenter      = false;
+    std::string label           = "A";
+    for(auto &mps_ptr : state.mps_sites) {
+        auto &mps  = *mps_ptr;
+        auto  chiL = bond_dimensions[mps.get_position()];
+        auto  chiR = bond_dimensions[mps.get_position() + 1];
+
+        Eigen::Tensor<cplx, 2> U;
+        Eigen::Tensor<cplx, 3> G(spin_dim, chiL, chiR);
+        if(label == "A") {
+            if(type == StateInitType::REAL) U = get_random_unitary_matrix<qm::real>(spin_dim * chiL, chiR).cast<qm::cplx>();
+            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<qm::cplx>(spin_dim * chiL, chiR);
+            chiR     = U.dimension(1);
+            auto rsh = std::array<long, 3>{spin_dim, chiL, chiR};
+            G        = U.reshape(rsh);
+        }
+        if(label == "B") {
+            if(type == StateInitType::REAL) U = get_random_unitary_matrix<qm::real>(spin_dim * chiR, chiL).cast<qm::cplx>();
+            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<qm::cplx>(spin_dim * chiR, chiL);
+            chiL     = U.dimension(1);
+            auto rsh = std::array<long, 3>{spin_dim, chiR, chiL};
+            auto shf = std::array<long, 3>{0, 2, 1};
+            G        = U.reshape(rsh).shuffle(shf);
+        }
+        auto smdt = pastCenter ? chiR : chiL;
+        auto L    = tenx::TensorCast(Eigen::VectorXd::Ones(smdt).normalized());
+
+        mps.set_mps(G, L, 0, label);
+        if(mps.isCenter()) {
+            auto LC = tenx::TensorCast(Eigen::VectorXd::Ones(chiR).normalized());
+            mps.set_LC(LC);
+            pastCenter = true;
+            label      = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
 void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateInitType type, [[maybe_unused]] std::string_view axis,
@@ -32,8 +95,8 @@ void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateI
     set_random_entangled_state_with_random_spinors(state, type, bond_lim);
 }
 
-void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_lim) {
-    tools::log->info("Setting random entangled state with random unit spinors");
+void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_lim, LogPolicy logPolicy) {
+    if(logPolicy == LogPolicy::NORMAL) tools::log->info("Setting random entangled state with random unit spinors");
     const auto  spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     bool        pastCenter      = false;
@@ -71,14 +134,82 @@ void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(St
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
+Eigen::Tensor<std::complex<double>, 3> get_random_spinor_tensor(const std::array<long, 3> &dims, std::string_view label,
+                                                                const std::vector<Eigen::VectorXcd> &eigenspinors) {
+    if(label == "A") {
+        auto G = Eigen::Tensor<std::complex<double>, 3>(dims);
+        G.setZero();
+        auto   Gmap       = Eigen::Map<Eigen::MatrixXcd>(G.data(), dims[0] * dims[1], dims[2]);
+        auto   ext        = std::array<long, 3>{2, 1, 1};
+        size_t rounds     = 0;
+        bool   isIdentity = false;
+        while(true) {
+            for(long j = 0; j < dims[2]; ++j) {
+                for(long i = 0; i < dims[1]; ++i) {
+                    auto idx          = rnd::uniform_integer_box(0ul, eigenspinors.size() - 1);
+                    auto off          = std::array<long, 3>{0, i, j};
+                    G.slice(off, ext) = tenx::TensorMap(eigenspinors.at(idx)).reshape(ext);
+                }
+                Gmap.colwise().normalize();
+                auto GtG   = Gmap.adjoint() * Gmap;
+                isIdentity = GtG.isIdentity(1e-12);
+                tools::log->info("G round {}:\n{}\n{}\n", rounds, linalg::matrix::to_string(Gmap, 16), linalg::matrix::to_string(GtG, 16));
+                if(isIdentity) break;
+            }
+            rounds++;
+            if(isIdentity) break;
+        }
+        return G;
+    } else if(label == "B") {
+        return get_random_spinor_tensor(std::array<long, 3>{dims[0], dims[2], dims[1]}, "A", eigenspinors).shuffle(std::array<long, 3>{0, 2, 1});
+    }
+    throw except::logic_error("Unexpected label: {}", label);
+}
+
+void tools::finite::mps::init::set_random_entangled_state_on_axes_using_eigenspinors(StateFinite &state, StateInitType type,
+                                                                                     const std::vector<std::string> &axes, long bond_lim, LogPolicy logPolicy) {
+    auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
+    auto bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
+    auto eigenspinors    = std::vector<Eigen::VectorXcd>();
+    if(logPolicy == LogPolicy::NORMAL) tools::log->info("Setting random entangled state on axes {}: bond dims {}", axes, bond_dimensions);
+
+    for(const auto &axis : axes) {
+        auto axus = qm::spin::half::get_axis_unsigned(axis);
+        if(type == StateInitType::REAL and axus == "y") throw except::logic_error("axis y is incompatible with StateInitType::REAL");
+        eigenspinors.emplace_back(qm::spin::half::get_spinor(axus, 1));
+        eigenspinors.emplace_back(qm::spin::half::get_spinor(axus, -1));
+    }
+    bool        past_center = false;
+    std::string label       = "A";
+    for(auto &mps_ptr : state.mps_sites) {
+        auto &mps  = *mps_ptr;
+        auto  chiL = bond_dimensions[mps.get_position()];
+        auto  chiR = bond_dimensions[mps.get_position() + 1];
+        auto  dims = std::array<long, 3>{spin_dim, chiL, chiR};
+        auto  G    = get_random_spinor_tensor(dims, label, eigenspinors);
+        auto  L    = Eigen::Tensor<double, 1>(tenx::TensorCast(Eigen::VectorXd::Ones((past_center ? chiR : chiL)).normalized()));
+
+        mps.set_mps(G, L, 0, label);
+        if(mps.isCenter()) {
+            Eigen::Tensor<double, 1> LC = tenx::TensorCast(Eigen::VectorXd::Ones(chiR).normalized());
+            mps.set_LC(LC);
+            past_center = true;
+            label       = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+}
+
 void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view axis,
-                                                                                     long bond_lim) {
+                                                                                     long bond_lim, LogPolicy logPolicy) {
     const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     auto       axus            = qm::spin::half::get_axis_unsigned(axis);
     auto       sign            = qm::spin::half::get_sign(axis);
-    tools::log->info("Setting random entangled state on axis {} using eigenspinors of the pauli matrix σ{}", axis, axus);
-    tools::log->info("Target bond dimensions: {}", bond_dimensions);
+    if(logPolicy == LogPolicy::NORMAL)
+        tools::log->info("Setting random entangled state on axis {} using eigenspinors of the pauli matrix σ{}: bond dims {}", axis, axus, bond_dimensions);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
     bool        past_center = false;
     std::string label       = "A";

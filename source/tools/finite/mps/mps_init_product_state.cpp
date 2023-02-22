@@ -159,6 +159,35 @@ void tools::finite::mps::init::set_random_product_state_with_random_spinors(Stat
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
+void tools::finite::mps::init::set_random_product_state_with_gaussian_spinors(StateFinite &state, StateInitType type) {
+    tools::log->info("Setting random product state with gaussian spinors");
+    Eigen::Tensor<cplx, 1> L(1);
+    L.setConstant(1.0);
+    std::string label    = "A";
+    auto        gaussian = [&type]() -> std::complex<double> {
+        switch(type) {
+            case StateInitType::REAL: return std::complex<double>(rnd::normal(0, 1), 0);
+            case StateInitType::CPLX: {
+                auto re = rnd::normal(0, 1);
+                auto im = rnd::normal(0, 1);
+                return std::complex<double>(re, im);
+            }
+            default: return std::complex<double>(rnd::normal(0, 1), 0);
+        }
+    };
+    for(auto &mps_ptr : state.mps_sites) {
+        auto &mps = *mps_ptr;
+        mps.set_mps(tenx::TensorCast(Eigen::VectorXcd::NullaryExpr(2, gaussian).normalized(), 2, 1, 1), L, 0, label);
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+}
+
 void tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(StateFinite &state, StateInitType type, std::string_view axis, size_t bitfield,
                                                                                LogPolicy logPolicy) {
     auto axus = qm::spin::half::get_axis_unsigned(axis);
