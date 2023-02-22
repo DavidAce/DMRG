@@ -51,6 +51,7 @@ namespace tools::finite::mps {
 
         // Product states
         extern void set_random_product_state_with_random_spinors(StateFinite & state, StateInitType type);
+        extern void set_random_product_state_with_gaussian_spinors(StateFinite & state, StateInitType type);
         extern void set_random_product_state_on_axis_using_bitfield(StateFinite & state, StateInitType type, std::string_view axis, size_t bitfield, LogPolicy logPolicy = LogPolicy::NORMAL);
         extern void set_random_product_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, LogPolicy logPolicy = LogPolicy::NORMAL);
         extern void set_random_product_state_on_axis(StateFinite & state, StateInitType type, std::string_view axis);
@@ -59,8 +60,10 @@ namespace tools::finite::mps {
 
         // Entangled states
         extern void randomize_given_state (StateFinite & state, StateInitType type);
-        extern void set_random_entangled_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, long bond_lim);
-        extern void set_random_entangled_state_with_random_spinors(StateFinite & state, StateInitType type, long bond_lim);
+        extern void set_random_entangled_state_on_axes_using_eigenspinors(StateFinite & state, StateInitType type, const std::vector<std::string> & axes, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
+        extern void set_random_entangled_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
+        extern void set_random_entangled_state_with_random_spinors(StateFinite & state, StateInitType type, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
+        extern void set_random_entangled_state_haar(StateFinite & state, StateInitType type, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
     }
 }
 
