@@ -299,7 +299,7 @@ void tools::common::contraction::contract_mps_mps_partial(      Scalar *       r
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
     auto idxs = tenx::idx(idx,idx);
-    res.device(tenx::threads::getDevice()) = mps1.contract(mps2.conjugate(), idxs);
+    res.device(tenx::threads::getDevice()) = mps1.conjugate().contract(mps2, idxs);
 }
 
 template void tools::common::contraction::contract_mps_mps_partial(      cplx *       res_ptr , std::array<long,2> res_dims,
