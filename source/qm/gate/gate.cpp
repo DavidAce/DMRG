@@ -109,24 +109,33 @@ void erase(std::vector<T1> &vec, T2 val) {
 Eigen::Tensor<qm::cplx, 2> contract_a(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
                                       const std::array<long, 4> &shp_udn4, const std::array<long, 6> &shf6, const tenx::idxlistpair<1> &idx1,
                                       const tenx::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
-    return ud.reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.conjugate().reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
+    auto res = Eigen::Tensor<qm::cplx, 2>(dim2);
+    res.device(tenx::threads::getDevice()) =
+        ud.reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.conjugate().reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
+    return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> contract_b(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 2> &shp_udn2,
                                       const std::array<long, 4> &shp_udn4, const tenx::idxlistpair<1> &idx1, const tenx::idxlistpair<2> &idx2) {
-    return ud.reshape(shp_udn4).contract(m, idx1).contract(ud.conjugate().reshape(shp_udn4), idx2).reshape(shp_udn2);
+    auto res                               = Eigen::Tensor<qm::cplx, 2>(shp_udn2);
+    res.device(tenx::threads::getDevice()) = ud.reshape(shp_udn4).contract(m, idx1).contract(ud.conjugate().reshape(shp_udn4), idx2).reshape(shp_udn2);
+    return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> contract_c(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 6> &shp_mid6,
                                       const tenx::idxlistpair<1> &idx_up, const tenx::idxlistpair<1> &idx_dn, const std::array<long, 6> &shf6,
                                       const std::array<long, 2> &dim2) {
-    return ud.contract(m.reshape(shp_mid6), idx_up).contract(ud.conjugate(), idx_dn).shuffle(shf6).reshape(dim2);
+    auto res                               = Eigen::Tensor<qm::cplx, 2>(dim2);
+    res.device(tenx::threads::getDevice()) = ud.contract(m.reshape(shp_mid6), idx_up).contract(ud.conjugate(), idx_dn).shuffle(shf6).reshape(dim2);
+    return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> contract_d(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
                                       const tenx::idxlistpair<1> &idx_up, const tenx::idxlistpair<1> &idx_dn, const std::array<long, 4> &shf4,
                                       const std::array<long, 2> &dim2) {
-    return ud.contract(m.reshape(shp_mid4), idx_up).contract(ud.conjugate(), idx_dn).shuffle(shf4).reshape(dim2);
+    auto res                               = Eigen::Tensor<qm::cplx, 2>(dim2);
+    res.device(tenx::threads::getDevice()) = ud.contract(m.reshape(shp_mid4), idx_up).contract(ud.conjugate(), idx_dn).shuffle(shf4).reshape(dim2);
+    return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> qm::Gate::exp_internal(const Eigen::Tensor<cplx, 2> &op_, cplx alpha) const {
@@ -310,7 +319,7 @@ void qm::Gate::draw_pos(std::string &layer_str, std::optional<std::string> layer
 
 qm::Gate qm::Gate::insert(const Gate &other) const { return qm::insert(*this, other); }
 qm::Gate qm::Gate::connect_above(const Gate &other) const { return qm::connect(other, *this); }
-qm::Gate qm::Gate::connect_under(const Gate &other) const { return qm::connect(*this, other); }
+qm::Gate qm::Gate::connect_below(const Gate &other) const { return qm::connect(*this, other); }
 
 template<auto N>
 qm::Gate qm::Gate::trace(const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpair) const {
@@ -471,8 +480,12 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // In this case we stack gates vertically that are equally wide.
         // Should be the simplest case
-        Eigen::Tensor<cplx, 2> op =
-            updown_gate.op.contract(middle_gate.op, tenx::idx({1}, {0})).contract(updown_gate.op.conjugate().shuffle(tenx::array2{1, 0}), tenx::idx({1}, {0}));
+        if constexpr(settings::debug_gates)
+            tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {}", middle_gate.pos, updown_gate.pos, pos_isect,
+                              pos_nsect, inc);
+        auto op = Eigen::Tensor<cplx, 2>(middle_gate.op.dimensions());
+        op.device(tenx::threads::getDevice()) =
+            updown_gate.op.contract(middle_gate.op, tenx::idx({1}, {0})).contract(updown_gate.op.conjugate(), tenx::idx({1}, {1}));
         return qm::Gate{op, middle_gate.pos, middle_gate.dim};
     }
     if(pos_isect.size() == 1 and pos_nsect.size() == 1 and middle_gate.pos.size() == 1 and updown_gate.pos.size() == 2) {
@@ -622,7 +635,6 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             if(pos_nsect.size() == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{merged, 1, merged, 1});
             idx1 = tenx::idx({2}, {1});
             idx2 = tenx::idx({5, 2}, {2, 3});
-
             shf6 = std::array<Eigen::Index, 6>{2, 0, 1, 3, 4, 5};
             pos  = concat(subset(middle_gate.pos, 0, merged), updown_gate.pos);
             dim  = concat(subset(middle_gate.dim, 0, merged), updown_gate.dim);
@@ -662,13 +674,13 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                  *           (0)  1               |   1             |   1
                  *            |   |               |   |             |   |
                  *          [  mid  ]   ===>    [  mid  ]         [  mid  ]     ===> shuffle({0,1,3,2})
-                 *           |   |               |   |             |   |
-                 *           2   3              (2)   3            |   2
-                 *           0                  (0)                |
-                 *           |                   |                 |
-                 *          [dn]                [dn]              [dn]
-                 *           |                   |                 |
-                 *           1                   1                 3
+                 *            |   |               |   |             |   |
+                 *            2   3              (2)   3            |   2
+                 *            0                  (0)                |
+                 *            |                   |                 |
+                 *           [dn]                [dn]              [dn]
+                 *            |                   |                 |
+                 *            1                   1                 3
                  *
                  */
                 if(msize == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t, 4>{usize, merged, usize, merged});
