@@ -32,10 +32,10 @@ namespace qm::lbit {
         Eigen::Tensor<real, 6> cls_err; // Standard error of cls
         Eigen::Tensor<real, 6> sse_avg; // Squared sum error of fits
         Eigen::Tensor<real, 6> sse_err;
-        Eigen::Tensor<cplx, 7> decay_avg; // The decay of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<cplx, 7> decay_err; // The sterr of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<cplx, 9> corrmat;   // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
-        Eigen::Tensor<cplx, 9> permute;   // The permuted lbit correlation matrices O(i, |i-j|) for each realization
+        Eigen::Tensor<real, 7> decay_avg; // The decay of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<real, 7> decay_err; // The sterr of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<real, 9> corrmat;   // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
+        Eigen::Tensor<real, 9> permute;   // The permuted lbit correlation matrices O(i, |i-j|) for each realization
         lbitSupportAnalysis() {
             cls_avg.setZero();
             cls_err.setZero();
@@ -85,16 +85,16 @@ namespace qm::lbit {
     extern cplx                                 get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj);
 //    extern cplx                                 get_lbit_exp_value4(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
-    extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
-    extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
-    extern Eigen::Tensor<cplx, 2>               get_lbit_correlations(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states = 256, double tol = 1e-2);
-    extern std::vector<Eigen::Tensor<cplx, 2>>  get_lbit_supports(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool exact);
-    extern std::pair<Eigen::Tensor<cplx, 2>,Eigen::Tensor<cplx, 2>>
-                                                get_lbit_corrmat_stats(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_corrmats);
+    extern Eigen::Tensor<real, 2>               get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
+    extern Eigen::Tensor<real, 2>               get_lbit_support(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
+    extern Eigen::Tensor<real, 2>               get_lbit_correlations(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states, double tol);
+    extern std::vector<Eigen::Tensor<real, 2>>  get_lbit_supports(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool exact);
+    extern std::pair<Eigen::Tensor<real, 2>,Eigen::Tensor<real, 2>>
+                                                get_lbit_corrmat_stats(const std::vector<Eigen::Tensor<real, 2>> &lbit_corrmats);
     extern std::tuple<double,
                       double,
-                      std::vector<cplx>,
-                      size_t>                   get_characteristic_length_scale(const Eigen::Tensor<cplx, 2> &lbit_corrmat_disorder_avg);
+                      std::vector<double>,
+                      size_t>                   get_characteristic_length_scale(const Eigen::Tensor<real, 2> &lbit_corrmat_disorder_avg, double tol);
 //    extern lbitSupportAnalysis                  get_lbit_support_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec,
 //                                                                          size_t reps, const UnitaryGateProperties & uprop, bool randomize_fields = false);
 //    extern lbitSupportAnalysis                  get_lbit_support_analysis(const std::vector<UnitaryGateProperties> &uprops, bool randomize_fields = false);

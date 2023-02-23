@@ -287,9 +287,9 @@ void flbit::update_state() {
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3site, false, GateMove::AUTO, svd_cfg);
     } else {
         tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, GateMove::AUTO, svd_cfg);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, GateMove::AUTO, svd_cfg);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_1site, false, true, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, true, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, true, GateMove::AUTO, svd_cfg);
     }
     tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
@@ -573,7 +573,8 @@ void flbit::transform_to_real_basis() {
     tensors.state->set_name("state_real");
     tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
     for(const auto &layer : unitary_gates_2site_layers)
-        tools::finite::mps::apply_gates(*tensors.state, layer, false, GateMove::OFF, svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
+        tools::finite::mps::apply_gates(*tensors.state, layer, false, true, GateMove::OFF,
+                                        svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
     for(const auto &layer : unitary_gates_2site_layers)
         for(const auto &u : layer) u.unmark_as_used();
 
@@ -596,7 +597,7 @@ void flbit::transform_to_real_basis() {
         // Check that the transform backwards is equal to to the original state
         auto state_lbit_debug = *tensors.state;
         for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-            tools::finite::mps::apply_gates(state_lbit_debug, layer, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
+            tools::finite::mps::apply_gates(state_lbit_debug, layer, true, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
         for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
@@ -616,7 +617,7 @@ void flbit::transform_to_lbit_basis() {
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-        tools::finite::mps::apply_gates(*state_lbit, layer, true, GateMove::AUTO,
+        tools::finite::mps::apply_gates(*state_lbit, layer, true, true, GateMove::AUTO,
                                         svd::config(status.bond_lim, status.trnc_lim)); // L16: true 28 | false 29 svds
     for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
         for(const auto &u : layer) u.unmark_as_used();
@@ -636,7 +637,7 @@ void flbit::transform_to_lbit_basis() {
         for(auto &layer : unitary_gates_2site_layers)
             for(auto &g : layer) g.unmark_as_used();
         for(const auto &layer : unitary_gates_2site_layers)
-            tools::finite::mps::apply_gates(state_real_debug, layer, false, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
+            tools::finite::mps::apply_gates(state_real_debug, layer, false, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
         for(const auto &layer : unitary_gates_2site_layers)
             for(const auto &u : layer) u.unmark_as_used();
         auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
@@ -682,54 +683,38 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
         auto nsamps = settings::flbit::compute_lbit_stats;
         //        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-        bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-                             // #pragma message "Revert randomfield to false"
-        bool exact = true;
+#pragma message "Revert randomfield to false"
+        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+        bool exact  = true;
         if(nsamps > 1) {
-            udpths = {64};
-            ufmixs = {0.1};
+            udpths = {8};
+            ufmixs = {0.25};
             utstds = {1.0};
             ucstds = {1.0};
             utgw8s = {UnitaryGateWeight::IDENTITY};
-            ucgw8s = {UnitaryGateWeight::IDENTITY};
+            ucgw8s = {UnitaryGateWeight::EXPDECAY};
         }
         if(nsamps > 0) {
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
             auto plt           = AsciiPlotter("lbit decay", 80, 30);
-#pragma message "Remove default circuit below here"
-            for(size_t idx = 0; idx < uprop_default.depth; ++idx) { uprop_default.ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop_default)); }
-
-            Eigen::Tensor<double, 2> lbit_corrmat_otr;
-            Eigen::Tensor<double, 2> lbit_corrmat_avg;
-            auto                     lognoinf = [](const auto &v) -> double {
+            // #pragma message "Remove default circuit below here"
+            //             for(size_t idx = 0; idx < uprop_default.depth; ++idx) {
+            //             uprop_default.ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop_default)); }
+            //
+            auto lognoinf = [](const auto &v) -> double {
                 auto res = std::log10(std::abs(v));
                 if(std::isinf(res) or std::isinf((-res))) return -16.0;
                 return res;
             };
-            {
-                auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, exact, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
-                auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
-                auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
-                auto ylog   = num::cast<qm::real>(yraw, lognoinf);
-                plt.addStaticPlot(ylog, fmt::format("otr cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), 'x');
-                auto dims = std::array<long, 2>{static_cast<long>(fields.size()), static_cast<long>(fields.size())};
-                lbit_corrmat_otr =
-                    lbitSA.corrmat.slice(std::array<long, 9>{0}, std::array<long, 9>{1, 1, 1, 1, 1, 1, 1, dims[0], dims[1]}).reshape(dims).real();
-            }
             {
                 auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, false, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
                 auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
                 auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
                 auto ylog   = num::cast<qm::real>(yraw, lognoinf);
                 plt.addPlot(ylog, fmt::format("avg cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), '.');
-                auto dims = std::array<long, 2>{static_cast<long>(fields.size()), static_cast<long>(fields.size())};
-                lbit_corrmat_avg =
-                    lbitSA.corrmat.slice(std::array<long, 9>{0}, std::array<long, 9>{1, 1, 1, 1, 1, 1, 1, dims[0], dims[1]}).reshape(dims).real();
             }
-            tools::log->info("lbit_corrmat_otr: \n{}\n", linalg::tensor::to_string(lbit_corrmat_otr, 15));
-            tools::log->info("lbit_corrmat_avg: \n{}\n", linalg::tensor::to_string(lbit_corrmat_avg, 15));
 
             plt.enable_legend();
             plt.show();

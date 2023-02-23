@@ -260,6 +260,23 @@ namespace num {
         num  = std::clamp<size_t>(num, 0, in.size() - from);
         return std::accumulate(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), 1, std::multiplies<>());
     }
+    template<typename Input>
+    [[nodiscard]] auto diff(const Input &in, size_t from = 0, size_t num = -1ul) {
+        from = std::clamp<size_t>(from, 0, in.size());
+        num  = std::clamp<size_t>(num, 0, in.size() - from);
+        if constexpr(std::is_default_constructible_v<Input>) {
+            Input res;
+            res.reserve(num);
+            std::adjacent_difference(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), std::back_inserter(res));
+            return res;
+        } else {
+            using value_type = typename Input::value_type;
+            std::vector<value_type> res;
+            res.reserve(num);
+            std::adjacent_difference(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), std::back_inserter(res));
+            return res;
+        }
+    }
 
     /*! \brief Cumulative operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.

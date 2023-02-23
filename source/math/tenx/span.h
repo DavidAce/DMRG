@@ -10,6 +10,7 @@ namespace tenx {
         std::size_t len_;
 
         public:
+        using value_type = T;
         template<typename size_type>
         span(T *ptr, size_type len) noexcept : ptr_{ptr}, len_{static_cast<std::size_t>(len)} {
             static_assert(std::is_integral_v<size_type>);

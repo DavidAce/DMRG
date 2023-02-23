@@ -549,8 +549,8 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
                           svd::solver::get_count());
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool adjoint, GateMove gm,
-                                     std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool adjoint,
+                                     bool moveback, GateMove gm, std::optional<svd::config> svd_cfg) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
     gates.reserve(nsite_tensors.size());
@@ -559,10 +559,11 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen
         auto dim = std::vector<long>(pos.size(), 2);
         gates.emplace_back(qm::Gate(nsite_tensors[idx], pos, dim));
     }
-    apply_gates(state, gates, adjoint, gm, svd_cfg);
+    apply_gates(state, gates, adjoint, moveback, gm, svd_cfg);
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool adjoint, GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, bool adjoint, bool moveback, GateMove gm,
+                                     std::optional<svd::config> svd_cfg) {
     auto t_apply_gates = tid::tic_scope("apply_gates", tid::level::higher);
 
     if(gates.empty()) return;
@@ -575,19 +576,19 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     Eigen::Tensor<cplx, 3> gate_mps;
     for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, adjoint, gm, svd_cfg);
 
-    move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
+    if(moveback) move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
     svd_count = svd::solver::get_count() - svd_count;
     if constexpr(settings::debug_gates)
         tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
 }
 
-void tools::finite::mps::apply_circuit(StateFinite &state, const std::vector<std::vector<qm::Gate>> &circuit, bool adjoint, bool mark_as_used, GateMove gm,
-                                       std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_circuit(StateFinite &state, const std::vector<std::vector<qm::Gate>> &circuit, bool adjoint, bool mark_as_used, bool moveback,
+                                       GateMove gm, std::optional<svd::config> svd_cfg) {
     //    tools::log->debug("Applying circuit | adjoint: {} | gm {}", adjoint, enum2sv(gm));
     if(adjoint) {
-        for(const auto &gates : iter::reverse(circuit)) apply_gates(state, gates, adjoint, gm, svd_cfg);
+        for(const auto &gates : iter::reverse(circuit)) apply_gates(state, gates, adjoint, moveback, gm, svd_cfg);
     } else {
-        for(const auto &gates : circuit) apply_gates(state, gates, adjoint, gm, svd_cfg);
+        for(const auto &gates : circuit) apply_gates(state, gates, adjoint, moveback, gm, svd_cfg);
     }
 
     if(not mark_as_used)
