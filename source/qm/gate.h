@@ -63,7 +63,7 @@ namespace qm {
         [[nodiscard]] Eigen::Tensor<cplx,2>& adjoint() const;
         [[nodiscard]] Gate insert(const Gate & other) const;
         [[nodiscard]] Gate connect_above(const Gate & other) const;
-        [[nodiscard]] Gate connect_under(const Gate & other) const;
+        [[nodiscard]] Gate connect_below(const Gate & other) const;
         template<auto N>
         [[nodiscard]] Gate trace(const std::array<Eigen::IndexPair<Eigen::Index>, N> & idxpair) const;
         [[nodiscard]] Gate trace_idx(const std::vector<long> & idx_) const;

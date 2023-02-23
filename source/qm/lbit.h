@@ -10,31 +10,32 @@ class StateFinite;
 
 namespace qm::lbit {
     struct UnitaryGateProperties {
-        size_t                      sites; /*!< Width of the circuit, i.e. system length/number of sites */
-        size_t                      depth; /*!< Number of layers in the unitary circuit (1 layer connects all neighbors once) */
-        double                      fmix;  /*!< The mixing factor f in exp(-ifM) */
-        double                      tstd;  /*!< Standard deviation for the theta parameters in the unitary gate */
-        double                      cstd;  /*!< Standard deviation for the c parameters in the unitary gate  */
-        UnitaryGateWeight           tgw8;  /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
-        UnitaryGateWeight           cgw8;  /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
-        double                      hmean; /*!< mean of random onsite fields */
-        double                      hwdth; /*!< width of random onsite fields (st.dev. if normal) */
-        std::string_view            hdist; /*!< distribution of onsite fields */
-        mutable std::vector<double> hvals; /*!< onsite fields of the l-bit hamiltonian, needed for type == UnitaryGateWeight::EXPDECAY */
+        size_t                                     sites;   /*!< Width of the circuit, i.e. system length/number of sites */
+        size_t                                     depth;   /*!< Number of layers in the unitary circuit (1 layer connects all neighbors once) */
+        double                                     fmix;    /*!< The mixing factor f in exp(-ifM) */
+        double                                     tstd;    /*!< Standard deviation for the theta parameters in the unitary gate */
+        double                                     cstd;    /*!< Standard deviation for the c parameters in the unitary gate  */
+        UnitaryGateWeight                          tgw8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
+        UnitaryGateWeight                          cgw8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
+        double                                     hmean;   /*!< mean of random onsite fields */
+        double                                     hwdth;   /*!< width of random onsite fields (st.dev. if normal) */
+        std::string_view                           hdist;   /*!< distribution of onsite fields */
+        mutable std::vector<double>                hvals;   /*!< onsite fields of the l-bit hamiltonian, needed for type == UnitaryGateWeight::EXPDECAY */
+        mutable std::vector<std::vector<qm::Gate>> ulayers; /*!< The generated unitary circuit of two-site gates */
         UnitaryGateProperties() = default;
         UnitaryGateProperties(const std::vector<double> &h = {});
         std::string string() const;
         void        randomize_hvals() const;
     };
     struct lbitSupportAnalysis {
-        Eigen::Tensor<double, 6> cls_avg; // Characteristic length-scale of lbits
-        Eigen::Tensor<double, 6> cls_err; // Standard error of cls
-        Eigen::Tensor<double, 6> sse_avg; // Squared sum error of fits
-        Eigen::Tensor<double, 6> sse_err;
-        Eigen::Tensor<double, 7> decay_avg; // The decay of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<double, 7> decay_err; // The sterr of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<double, 9> support;   // The raw data from l-bit support matrices O(i,j) for each realization
-        Eigen::Tensor<double, 9> permute;   // The permuted lbit support matrices O(i, |i-j|) for each realization
+        Eigen::Tensor<real, 6> cls_avg; // Characteristic length-scale of lbits
+        Eigen::Tensor<real, 6> cls_err; // Standard error of cls
+        Eigen::Tensor<real, 6> sse_avg; // Squared sum error of fits
+        Eigen::Tensor<real, 6> sse_err;
+        Eigen::Tensor<cplx, 7> decay_avg; // The decay of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<cplx, 7> decay_err; // The sterr of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<cplx, 9> corrmat;   // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
+        Eigen::Tensor<cplx, 9> permute;   // The permuted lbit correlation matrices O(i, |i-j|) for each realization
         lbitSupportAnalysis() {
             cls_avg.setZero();
             cls_err.setZero();
@@ -42,7 +43,7 @@ namespace qm::lbit {
             sse_err.setZero();
             decay_avg.setZero();
             decay_err.setZero();
-            support.setZero();
+            corrmat.setZero();
             permute.setZero();
         }
         lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ntgw8, size_t ncgw8, size_t nreps, size_t nsize)
@@ -61,7 +62,7 @@ namespace qm::lbit {
             sse_err.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
             decay_avg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
             decay_err.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
-            support.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
+            corrmat.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
             permute.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
         }
     };
@@ -79,31 +80,30 @@ namespace qm::lbit {
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &twosite_hams);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<cplx, 4>> &mpos);
-    extern cplx                                 get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &rho, size_t pos_rho, const Eigen::Matrix2cd &sig, size_t pos_sig);
-    extern cplx                                 get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
+    extern cplx                                 get_lbit_exp_value(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &rho, size_t pos_rho, const Eigen::Matrix2cd &sig, size_t pos_sig);
+    extern cplx                                 get_lbit_exp_value2(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_exp_value3(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_exp_value4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj);
 //    extern cplx                                 get_lbit_exp_value4(const std::vector<std::vector<qm::Gate>> &unitary_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
     extern Eigen::Tensor<cplx, 2>               get_lbit_support(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
     extern Eigen::Tensor<cplx, 2>               get_lbit_correlations(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states = 256, double tol = 1e-2);
-    extern std::vector<Eigen::Tensor<cplx, 2>>  get_lbit_supports(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields);
-    extern std::pair<Eigen::Tensor<double, 2>,Eigen::Tensor<double, 2>>
-                                                get_lbit_support_stats(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_support_vec);
-    extern std::pair<Eigen::Tensor<double, 2>,Eigen::Tensor<double, 2>>
-                                                get_lbit_permute_stats(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_support_vec);
+    extern std::vector<Eigen::Tensor<cplx, 2>>  get_lbit_supports(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool exact);
+    extern std::pair<Eigen::Tensor<cplx, 2>,Eigen::Tensor<cplx, 2>>
+                                                get_lbit_corrmat_stats(const std::vector<Eigen::Tensor<cplx, 2>> &lbit_corrmats);
     extern std::tuple<double,
                       double,
-                      std::vector<double>,
-                      size_t>                   get_characteristic_length_scale(const Eigen::Tensor<double, 2> &lbit_overlap_permuted);
+                      std::vector<cplx>,
+                      size_t>                   get_characteristic_length_scale(const Eigen::Tensor<cplx, 2> &lbit_corrmat_disorder_avg);
 //    extern lbitSupportAnalysis                  get_lbit_support_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec,
 //                                                                          size_t reps, const UnitaryGateProperties & uprop, bool randomize_fields = false);
 //    extern lbitSupportAnalysis                  get_lbit_support_analysis(const std::vector<UnitaryGateProperties> &uprops, bool randomize_fields = false);
 
     extern lbitSupportAnalysis                  get_lbit_support_analysis(
-                                                                  const UnitaryGateProperties      u_defaults,
+                                                                  const UnitaryGateProperties      & u_defaults,
                                                                   size_t                           reps = 1,
                                                                   bool                             randomize_fields = false,
+                                                                  bool                             exact = true,
                                                                   std::vector<size_t          >    u_depths = {},
                                                                   std::vector<double          >    u_fmixs = {},
                                                                   std::vector<double          >    u_tstds = {},
