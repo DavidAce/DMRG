@@ -4,6 +4,7 @@
 #include "debug/info.h"
 #include "general/iter.h"
 #include "io/fmt.h"
+#include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/tenx.h"
 #include "qm/lbit.h"
@@ -14,6 +15,7 @@
 #include "tid/tid.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
+#include "tools/common/plot.h"
 #include "tools/common/prof.h"
 #include "tools/finite/h5.h"
 #include "tools/finite/measure.h"
@@ -680,8 +682,9 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
         auto nsamps = settings::flbit::compute_lbit_stats;
         //        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-                            // #pragma message "Revert randomfield to false"
+        bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+                             // #pragma message "Revert randomfield to false"
+        bool exact = true;
         if(nsamps > 1) {
             udpths = {64};
             ufmixs = {0.1};
@@ -694,8 +697,44 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
-            auto lbitSA        = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+            auto plt           = AsciiPlotter("lbit decay", 80, 30);
+#pragma message "Remove default circuit below here"
+            for(size_t idx = 0; idx < uprop_default.depth; ++idx) { uprop_default.ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop_default)); }
 
+            Eigen::Tensor<double, 2> lbit_corrmat_otr;
+            Eigen::Tensor<double, 2> lbit_corrmat_avg;
+            auto                     lognoinf = [](const auto &v) -> double {
+                auto res = std::log10(std::abs(v));
+                if(std::isinf(res) or std::isinf((-res))) return -16.0;
+                return res;
+            };
+            {
+                auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, exact, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+                auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
+                auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
+                auto ylog   = num::cast<qm::real>(yraw, lognoinf);
+                plt.addStaticPlot(ylog, fmt::format("otr cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), 'x');
+                auto dims = std::array<long, 2>{static_cast<long>(fields.size()), static_cast<long>(fields.size())};
+                lbit_corrmat_otr =
+                    lbitSA.corrmat.slice(std::array<long, 9>{0}, std::array<long, 9>{1, 1, 1, 1, 1, 1, 1, dims[0], dims[1]}).reshape(dims).real();
+            }
+            {
+                auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, false, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+                auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
+                auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
+                auto ylog   = num::cast<qm::real>(yraw, lognoinf);
+                plt.addPlot(ylog, fmt::format("avg cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), '.');
+                auto dims = std::array<long, 2>{static_cast<long>(fields.size()), static_cast<long>(fields.size())};
+                lbit_corrmat_avg =
+                    lbitSA.corrmat.slice(std::array<long, 9>{0}, std::array<long, 9>{1, 1, 1, 1, 1, 1, 1, dims[0], dims[1]}).reshape(dims).real();
+            }
+            tools::log->info("lbit_corrmat_otr: \n{}\n", linalg::tensor::to_string(lbit_corrmat_otr, 15));
+            tools::log->info("lbit_corrmat_avg: \n{}\n", linalg::tensor::to_string(lbit_corrmat_avg, 15));
+
+            plt.enable_legend();
+            plt.show();
+            exit(0);
+            auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, false, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_decay = std::vector<std::string>{"sample", "|i-j|"};
@@ -706,14 +745,14 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                     label_decay = {"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "|i-j|"};
                     label_data  = {"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "sample", "i", "j"};
                     shape_decay = std::vector<long>(lbitSA.decay_avg.dimensions().begin(), lbitSA.decay_avg.dimensions().end());
-                    shape_data  = std::vector<long>(lbitSA.support.dimensions().begin(), lbitSA.support.dimensions().end());
+                    shape_data  = std::vector<long>(lbitSA.corrmat.dimensions().begin(), lbitSA.corrmat.dimensions().end());
                 }
                 h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
                 h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
                 h5file->writeDataset(lbitSA.decay_avg, "/fLBIT/model/lbits/decay_avg", H5D_CHUNKED, shape_decay);
                 h5file->writeDataset(lbitSA.decay_err, "/fLBIT/model/lbits/decay_err", H5D_CHUNKED, shape_decay);
                 if(settings::storage::storage_level_model > StorageLevel::LIGHT) {
-                    h5file->writeDataset(lbitSA.support, "/fLBIT/model/lbits/data", H5D_CHUNKED, shape_data);
+                    h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/data", H5D_CHUNKED, shape_data);
                     h5file->writeDataset(lbitSA.permute, "/fLBIT/model/lbits/data_shifted", H5D_CHUNKED, shape_data);
                     h5file->writeAttribute(label_data, "/fLBIT/model/lbits/data", "dimensions");
                     h5file->writeAttribute(label_data, "/fLBIT/model/lbits/data_shifted", "dimensions");
@@ -735,7 +774,6 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
             }
         }
-        exit(0);
     }
 }
 
