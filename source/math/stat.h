@@ -93,21 +93,25 @@ namespace stat {
         return std::exp(mean(Xlog, start_point, end_point));
     }
     template<typename ContainerType>
-    [[nodiscard]] double variance(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] typename ContainerType::value_type variance(const ContainerType &X, std::optional<size_t> start_point = std::nullopt,
+                                                              std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         auto n            = static_cast<double>(std::distance(x_it, x_en));
         if(n == 0) return 0.0;
-        double X_mean = stat::mean(X, start_point, end_point);
-        double sum    = std::accumulate(x_it, x_en, 0.0, [&X_mean](auto &x1, auto &x2) { return x1 + (x2 - X_mean) * (x2 - X_mean); });
+        auto X_mean = stat::mean(X, start_point, end_point);
+        auto sum    = std::accumulate(x_it, x_en, static_cast<typename ContainerType::value_type>(0.0),
+                                      [&X_mean](auto &x1, auto &x2) { return x1 + (x2 - X_mean) * (x2 - X_mean); });
         return sum / n;
     }
     template<typename ContainerType>
-    [[nodiscard]] double stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] typename ContainerType::value_type stdev(const ContainerType &X, std::optional<size_t> start_point = std::nullopt,
+                                                           std::optional<size_t> end_point = std::nullopt) {
         return std::sqrt(variance(X, start_point, end_point));
     }
 
     template<typename ContainerType>
-    [[nodiscard]] double sterr(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] typename ContainerType::value_type sterr(const ContainerType &X, std::optional<size_t> start_point = std::nullopt,
+                                                           std::optional<size_t> end_point = std::nullopt) {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         if(x_it == x_en) return 0.0;
         auto n = static_cast<double>(std::distance(x_it, x_en));
@@ -259,7 +263,9 @@ namespace stat {
         auto [y_it, y_en] = get_start_end_iterators(Y, start_point, end_point);
         auto n            = static_cast<double>(std::distance(y_it, y_en));
         if(n == 0) return start_point.has_value() ? start_point.value() : 0;
-        auto y_invalid_it = std::find_if(y_it, y_en, [](auto &val) { return std::isinf(val) or std::isnan(val); });
+        auto y_invalid_it = std::find_if(y_it, y_en, [](const auto &val) {
+            return std::isinf(std::real(val)) or std::isinf(std::imag(val)) or std::isnan(std::real(val)) or std::isnan(std::imag(val));
+        });
         if(y_invalid_it != y_en and y_invalid_it != y_it) {
             // Found an invalid point! Back-track once
             std::advance(y_invalid_it, -1);

@@ -106,6 +106,13 @@ namespace num {
         return !cmp_less(t, u);
     }
 
+    template<typename out_t, typename ContainerT, typename Func>
+    std::vector<out_t> cast(const ContainerT &x, Func &&f) {
+        std::vector<out_t> y;
+        std::transform(x.data(), x.data() + x.size(), std::back_inserter(y), std::forward<Func>(f));
+        return y;
+    }
+
     /*! \brief MatLab-style modulo operator
      *   \param x first number
      *   \param y second number
@@ -249,9 +256,8 @@ namespace num {
      */
     template<typename Input>
     [[nodiscard]] auto prod(const Input &in, size_t from = 0, size_t num = -1ul) {
-        num  = std::min<long>(num, static_cast<long>(in.size()) - from);
         from = std::clamp<size_t>(from, 0, in.size());
-        num  = std::clamp<size_t>(num, 0, in.size());
+        num  = std::clamp<size_t>(num, 0, in.size() - from);
         return std::accumulate(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), 1, std::multiplies<>());
     }
 
