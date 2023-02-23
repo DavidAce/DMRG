@@ -1023,10 +1023,9 @@ Eigen::Tensor<qm::cplx, 2> qm::lbit::get_lbit_correlations(const std::vector<std
         //        if(idx > 0) break;
         t_r.tic();
         long r = static_cast<long>(idx);
-        tools::finite::mps::init::set_random_product_state_with_gaussian_spinors(state, StateInitType::CPLX);
-        //                tools::finite::mps::init::set_random_product_state_on_axis(state, StateInitType::CPLX, "x");
-        //        tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(state, StateInitType::REAL, "x", static_cast<size_t>(b),
-        //        LogPolicy::NORMAL);
+        //        tools::finite::mps::init::set_random_product_state_with_gaussian_spinors(state, StateInitType::CPLX);
+        //        tools::finite::mps::init::set_random_product_state_on_axis(state, StateInitType::CPLX, "x");
+        tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(state, StateInitType::REAL, "x", static_cast<size_t>(b), LogPolicy::NORMAL);
         //                tools::finite::mps::init::set_random_entangled_state_haar(state, StateInitType::CPLX, 64, LogPolicy::QUIET);
         //        tools::finite::mps::init::set_random_entangled_state_on_axes_using_eigenspinors(state, StateInitType::CPLX, {"x", "y"}, 256,
         //        LogPolicy::QUIET);
