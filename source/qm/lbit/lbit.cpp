@@ -358,7 +358,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
                              mpos[idx].dimensions(), mpoUS.dimensions(), svd.get_truncation_error());
     }
     mpos.front() = mpoUS;
-    the return mpos;
+    return mpos;
 }
 
 /*! \brief Merge multiple MPO layers into a single one using SVD.
@@ -1223,7 +1223,7 @@ std::vector<Eigen::Tensor<qm::real, 2>> qm::lbit::get_lbit_supports(const Unitar
         std::vector<std::vector<qm::Gate>> ulayers;
         if(randomize_fields) {
             uprop.randomize_hvals();
-            tools::log->warn("Randomized fields to: {::.4e}", uprop.hvals);
+            tools::log->info("Randomized fields to: {::.4e}", uprop.hvals);
         }
         tools::log->info("Generating circuit of unitary two-site gates: u_depth {} | ulayers.size {}", uprop.depth, uprop.ulayers.size());
         for(size_t idx = 0; idx < uprop.depth; ++idx) { ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop)); }

@@ -28,7 +28,7 @@ void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<cplx,
 }
 
 void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 1> &Ledge,
-                                    const Eigen::Tensor<cplx, 1> &Redge) {
+                                    const Eigen::Tensor<cplx, 1> &Redge, bool adjoint) {
     Eigen::Tensor<cplx, 3> Ledge3, Redge3;
     {
         auto mps_dims = state.mps_sites.front()->dimensions();
@@ -60,11 +60,11 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
             Redge3.slice(offset3, extent3).reshape(extent1) = Redge;
         }
     }
-    apply_mpos(state, mpos, Ledge3, Redge3);
+    apply_mpos(state, mpos, Ledge3, Redge3, adjoint);
 }
 
 void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 3> &Ledge,
-                                    const Eigen::Tensor<cplx, 3> &Redge) {
+                                    const Eigen::Tensor<cplx, 3> &Redge, bool adjoint) {
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
     tools::log->trace("Applying MPO's");
@@ -81,7 +81,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
             throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
     }
     state.clear_measurements();
-    for(const auto &[pos, mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo); // Apply all mpo's
+    for(const auto &[pos, mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo, adjoint); // Apply all mpo's
 
     // Take care of the edges. Apply the left and right MPO-edges on A's and B's
     // so the left- and right-most lambdas become ones.

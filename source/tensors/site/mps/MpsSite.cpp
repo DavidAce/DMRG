@@ -367,7 +367,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     }
 }
 
-void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
+void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
     auto t_mpo = tid::tic_token("apply_mpo", tid::level::higher);
     tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {})", get_tag(), mpo.dimensions());
     if constexpr(settings::debug_apply_mpo) {
@@ -377,15 +377,16 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     }
     long mpoDimL = mpo.dimension(0);
     long mpoDimR = mpo.dimension(1);
-    if(mpoDimL != mpoDimR) throw except::logic_error("MpsSite({})::apply_mpo: Can't apply mpo's with different L/R dims: not implemented yet", get_tag());
+    //    if(mpoDimL != mpoDimR) throw except::logic_error("MpsSite({})::apply_mpo: Can't apply mpo's with different L/R dims: not implemented yet", get_tag());
+    long bcastDimL = get_label() == "B" ? mpoDimR : mpoDimL;
 
-    Eigen::Tensor<cplx, 1> L_temp = tenx::broadcast(get_L(), {mpoDimL});
+    Eigen::Tensor<cplx, 1> L_temp = tenx::broadcast(get_L(), {bcastDimL});
     tenx::normalize(L_temp);
 
     // Sanity check to make sure we are not running into this bug:
     //      https://gitlab.com/libeigen/eigen/-/issues/2351
     if(tenx::hasNaN(L_temp)) throw std::runtime_error("L_temp has nan");
-    if(mpoDimL >= 2 and get_L().size() == 1 and L_temp.size() > 1 and std::abs(L_temp[0] - 1.0) < 1e-10) {
+    if(bcastDimL >= 2 and get_L().size() == 1 and L_temp.size() > 1 and std::abs(L_temp[0] - 1.0) < 1e-10) {
         for(long i = 0; i < L_temp.size(); i++) std::printf("(%.16f, %.16f)\n", L_temp[i].real(), L_temp[i].imag());
         throw std::runtime_error("L_temp is wrong: This may be due to the broadcasting bug: https://gitlab.com/libeigen/eigen/-/issues/2351");
     }
@@ -396,10 +397,17 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
         set_LC(LC_temp);
     }
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
-    M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
-                                                         .contract(mpo, tenx::idx({0}, {2}))
-                                                         .shuffle(tenx::array5{4, 0, 2, 1, 3})
-                                                         .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+    if(adjoint) {
+        M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
+                                                             .contract(mpo.conjugate(), tenx::idx({0}, {2}))
+                                                             .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                                             .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+    } else {
+        M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
+                                                             .contract(mpo, tenx::idx({0}, {3}))
+                                                             .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                                             .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+    }
 
     set_L(L_temp);
     set_M(M_bare_temp);
@@ -410,10 +418,15 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo) {
     }
 }
 
-void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo) {
+void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint) {
     auto                   t_mpo = tid::tic_token("apply_mpo", tid::level::higher);
-    Eigen::Tensor<cplx, 3> M_bare_temp(mpo.dimension(1), get_chiL(), get_chiR());
-    M_bare_temp.device(tenx::threads::getDevice()) = mpo.contract(get_M_bare(), tenx::idx({0}, {0}));
+    auto                   dim0  = adjoint ? mpo.dimension(0) : mpo.dimension(1);
+    Eigen::Tensor<cplx, 3> M_bare_temp(dim0, get_chiL(), get_chiR());
+    if(adjoint) {
+        M_bare_temp.device(tenx::threads::getDevice()) = mpo.conjugate().contract(get_M_bare(), tenx::idx({0}, {0}));
+    } else {
+        M_bare_temp.device(tenx::threads::getDevice()) = mpo.contract(get_M_bare(), tenx::idx({1}, {0}));
+    }
     set_M(M_bare_temp);
 }
 

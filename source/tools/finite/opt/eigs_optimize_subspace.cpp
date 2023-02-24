@@ -23,7 +23,7 @@ using namespace tools::finite::opt::internal;
 
 namespace settings {
 #if defined(NDEBUG)
-    static constexpr bool debug_subspace = true;
+    static constexpr bool debug_subspace = false;
 #else
     static constexpr bool debug_subspace = true;
 #endif

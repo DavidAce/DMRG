@@ -92,8 +92,8 @@ class MpsSite {
     void unset_LC();
     void unset_L();
     void fuse_mps(const MpsSite &other);
-    void apply_mpo(const Eigen::Tensor<cplx, 4> &mpo);
-    void apply_mpo(const Eigen::Tensor<cplx, 2> &mpo);
+    void apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint = false);
+    void apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint = false);
 
     void stash_U(const Eigen::Tensor<cplx, 3> &U, size_t dst) const;
     void stash_S(const Eigen::Tensor<cplx, 1> &S, double error, size_t dst) const;

@@ -528,13 +528,9 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
     {
         auto t_apply = tid::tic_token("apply");
         if(adjoint) {
-            // Contracting index 1 is the same as transposing/shuffling gate.op with {1,0}
-            //            tools::log->info("apply_gate pos {} | adjoint {}:\n{}\n", gate.pos, adjoint,
-            //                             linalg::tensor::to_string(gate.op.conjugate().shuffle(tenx::array2{1, 0}), 8));
             temp.resize(std::array<long, 3>{gate.op.dimension(0), multisite_mps.dimension(1), multisite_mps.dimension(2)});
             temp.device(tenx::threads::getDevice()) = gate.adjoint().contract(multisite_mps, tenx::idx({1}, {0}));
         } else {
-            //            tools::log->info("apply_gate pos {} | adjoint {}:\n{}\n", gate.pos, adjoint, linalg::tensor::to_string(gate.op, 8));
             temp.resize(std::array<long, 3>{gate.op.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
             temp.device(tenx::threads::getDevice()) = gate.op.contract(multisite_mps, tenx::idx({1}, {0}));
         }

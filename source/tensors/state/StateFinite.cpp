@@ -506,12 +506,23 @@ void StateFinite::tag_site_normalized(size_t pos, bool tag) const {
 
 bool StateFinite::is_normalized_on_all_sites() const {
     if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot check normalization status on all sites, size mismatch in site list");
+    // If all tags are false then we should definitely normalize:
+    auto normalized_none = std::none_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
+    if(normalized_none) {
+        tools::log->debug("{} normalized: false (none)", get_name());
+        return false;
+    }
 
-    // Start by checking if the tags are truthful
-    for(const auto &mps : mps_sites) {
-        auto pos = mps->get_position<size_t>();
-        if(not tag_normalized_sites[pos]) {
-            if(mps->is_normalized(settings::precision::max_norm_error)) tag_normalized_sites[pos] = true;
+    if constexpr(settings::debug) {
+        auto normalized_some = std::any_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
+        if(normalized_some) {
+            // In debug mode we check if the tags are truthful
+            for(const auto &mps : mps_sites) {
+                auto pos = mps->get_position<size_t>();
+                if(not tag_normalized_sites[pos]) {
+                    if(mps->is_normalized(settings::precision::max_norm_error)) tag_normalized_sites[pos] = true;
+                }
+            }
         }
     }
     auto normalized_tags = std::all_of(tag_normalized_sites.begin(), tag_normalized_sites.end(), [](bool v) { return v; });
