@@ -257,33 +257,21 @@ void MatVecMPO<T>::compress() {
     svd_cfg.use_bdc        = false;
     svd_cfg.switchsize_bdc = 4096;
     svd::solver svd(svd_cfg);
-
-    Eigen::Tensor<T, 4> mpo_tmp = mpo;
-    Eigen::Tensor<T, 4> mpo_l2r, mpo_r2l;
+    auto        old_dims = mpo.dimensions();
     {
         // Compress left to right
-        auto [U_l2r, S, V_l2r] = svd.split_mpo_l2r(mpo_tmp);
-        mpo_l2r                = U_l2r.contract(tenx::asDiagonal(S), tenx::idx({1}, {0})).shuffle(std::array<long, 4>{0, 3, 1, 2});
-
-        // Contract V_l2r into the right environment
-        Eigen::Tensor<T, 3> envR_tmp = envR.contract(V_l2r, tenx::idx({2}, {1}));
-        envR                         = envR_tmp;
+        Eigen::Tensor<T, 2> V;
+        std::tie(mpo, V) = svd.split_mpo_l2r(mpo);
+        envR             = Eigen::Tensor<T, 3>(envR.contract(V, tenx::idx({2}, {1}))); // Contract V into the right environment
     }
     {
         // Compress right to left
-        auto [U_r2l, S, V_r2l] = svd.split_mpo_r2l(mpo_l2r);
-        mpo_r2l                = tenx::asDiagonal(S).contract(V_r2l, tenx::idx({1}, {0}));
-
-        // Contract U_r2l into the left environment
-        Eigen::Tensor<T, 3> envL_tmp = envL.contract(U_r2l, tenx::idx({2}, {0}));
-        envL                         = envL_tmp;
-    }
-    {
-        // The new mpo is what remains
-        mpo = mpo_r2l;
+        Eigen::Tensor<T, 2> U;
+        std::tie(U, mpo) = svd.split_mpo_r2l(mpo);
+        envL             = Eigen::Tensor<T, 3>(envL.contract(U, tenx::idx({2}, {0}))); // Contract U_r2l into the left environment
     }
     readyCompress = true;
-    eig::log->debug("Compressed MPO dimensions {} -> {}", mpo.dimensions(), mpo_tmp.dimensions());
+    eig::log->debug("Compressed MPO dimensions {} -> {}", old_dims, mpo.dimensions());
 }
 
 template<typename T>
@@ -302,8 +290,10 @@ void MatVecMPO<T>::set_readyCompress(bool compressed) {
 
 template<typename T>
 T MatVecMPO<T>::get_shift() const {
-    if constexpr(std::is_same_v<T, eig::cplx>) return sigma;
-    if constexpr(std::is_same_v<T, eig::real>) return std::real(sigma);
+    if constexpr(std::is_same_v<T, eig::real>)
+        return std::real(sigma);
+    else
+        return sigma;
 }
 
 template<typename T>

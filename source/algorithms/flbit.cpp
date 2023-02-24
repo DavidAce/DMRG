@@ -565,13 +565,15 @@ void flbit::create_unitary_circuit_gates() {
     tools::log->info("Creating unitary circuit of 2-site gates {}", uprop.string());
     for(auto &ulayer : unitary_gates_2site_layers) ulayer = qm::lbit::get_unitary_2gate_layer(uprop);
 
-    auto mpo_layers = std::vector<std::vector<Eigen::Tensor<qm::cplx, 4>>>();
-    for(const auto &ulayer : unitary_gates_2site_layers) mpo_layers.emplace_back(qm::lbit::get_unitary_mpo_layer(ulayer));
-    unitary_gates_mpo_layers = qm::lbit::merge_unitary_mpo_layers(mpo_layers);
-    ledge.resize(1);
-    redge.resize(1);
-    ledge.setConstant(1.0);
-    redge.setConstant(1.0);
+    if(settings::flbit::use_mpo_circuit) {
+        auto mpo_layers = std::vector<std::vector<Eigen::Tensor<qm::cplx, 4>>>();
+        for(const auto &ulayer : unitary_gates_2site_layers) mpo_layers.emplace_back(qm::lbit::get_unitary_mpo_layer(ulayer));
+        unitary_gates_mpo_layers = qm::lbit::merge_unitary_mpo_layers(mpo_layers);
+        ledge.resize(1);
+        redge.resize(1);
+        ledge.setConstant(1.0);
+        redge.setConstant(1.0);
+    }
 }
 
 void flbit::transform_to_real_basis() {
@@ -583,17 +585,22 @@ void flbit::transform_to_real_basis() {
     tensors.state->clear_measurements();
     tensors.clear_measurements();
     tensors.clear_cache();
-    tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(), unitary_gates_2site_layers.size());
-    for(const auto &layer : unitary_gates_2site_layers)
-        tools::finite::mps::apply_gates(*tensors.state, layer, false, true, GateMove::OFF,
-                                        svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
-    for(const auto &layer : unitary_gates_2site_layers)
-        for(const auto &u : layer) u.unmark_as_used();
-    //    tools::log->debug("Transforming {} to {} using 1 unitary mpo layer", state_lbit->get_name(), tensors.state->get_name(),
-    //    unitary_gates_2site_layers.size()); tools::finite::ops::apply_mpos(*tensors.state, unitary_gates_mpo_layers, ledge, redge, false);
+    if(settings::flbit::use_mpo_circuit) {
+        tools::log->debug("Transforming {} to {} using 1 unitary mpo layer", state_lbit->get_name(), tensors.state->get_name(),
+                          unitary_gates_2site_layers.size());
+        tools::finite::ops::apply_mpos(*tensors.state, unitary_gates_mpo_layers, ledge, redge, false);
+    } else {
+        tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(),
+                          unitary_gates_2site_layers.size());
+        for(const auto &layer : unitary_gates_2site_layers)
+            tools::finite::mps::apply_gates(*tensors.state, layer, false, true, GateMove::OFF,
+                                            svd::config(status.bond_lim, status.trnc_lim)); // L16: true 29 | false
+        for(const auto &layer : unitary_gates_2site_layers)
+            for(const auto &u : layer) u.unmark_as_used();
+    }
 
-    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-    tools::finite::mps::normalize_state(*tensors.state, svd_cfg, NormPolicy::IFNEEDED);
+    //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
+    tools::finite::mps::normalize_state(*tensors.state, std::nullopt, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
 
@@ -608,15 +615,26 @@ void flbit::transform_to_real_basis() {
 
         // Double-check the transform operation
         // Check that the transform backwards is equal to the original state
-        auto state_lbit_debug = *tensors.state;
-        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-            tools::finite::mps::apply_gates(state_lbit_debug, layer, true, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
-        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-            for(const auto &u : layer) u.unmark_as_used();
-        auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
-        tools::log->info("Debug overlap: {:.16f}", overlap);
-        if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
-            throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
+        if(settings::flbit::use_mpo_circuit) {
+            auto state_lbit_debug = *tensors.state;
+            tools::finite::ops::apply_mpos(state_lbit_debug, unitary_gates_mpo_layers, ledge, redge, true);
+            tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
+            auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
+            tools::log->info("Debug overlap: {:.16f}", overlap);
+            if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
+                throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
+        }
+        {
+            auto state_lbit_debug = *tensors.state;
+            for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+                tools::finite::mps::apply_gates(state_lbit_debug, layer, true, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
+            for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+                for(const auto &u : layer) u.unmark_as_used();
+            auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
+            tools::log->info("Debug overlap: {:.16f}", overlap);
+            if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
+                throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
+        }
     }
 }
 
@@ -627,19 +645,21 @@ void flbit::transform_to_lbit_basis() {
     state_lbit->set_name("state_lbit");
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
+    if(settings::flbit::use_mpo_circuit) {
+        tools::log->debug("Transforming {} to {} using 1 unitary mpo layer", tensors.state->get_name(), state_lbit->get_name());
+        tools::finite::ops::apply_mpos(*state_lbit, unitary_gates_mpo_layers, ledge, redge, true);
 
-    tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
-    for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-        tools::finite::mps::apply_gates(*state_lbit, layer, true, true, GateMove::AUTO,
-                                        svd::config(status.bond_lim, status.trnc_lim)); // L16: true 28 | false 29 svds
-    for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-        for(const auto &u : layer) u.unmark_as_used();
+    } else {
+        tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
+        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+            tools::finite::mps::apply_gates(*state_lbit, layer, true, true, GateMove::AUTO,
+                                            svd::config(status.bond_lim, status.trnc_lim)); // L16: true 28 | false 29 svds
+        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
+            for(const auto &u : layer) u.unmark_as_used();
+    }
 
-    //        tools::log->debug("Transforming {} to {} using 1 unitary mpo layer", tensors.state->get_name(), state_lbit->get_name(),
-    //        unitary_gates_2site_layers.size()); tools::finite::ops::apply_mpos(*state_lbit, unitary_gates_mpo_layers, ledge, redge, true);
-
-    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-    tools::finite::mps::normalize_state(*state_lbit, svd_cfg, NormPolicy::IFNEEDED);
+    //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
+    tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
@@ -651,10 +671,10 @@ void flbit::transform_to_lbit_basis() {
         for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
 
         // Double-check the that transform operation backwards is equal to the original state
-        {
+        if(settings::flbit::use_mpo_circuit) {
             auto state_real_debug = *state_lbit;
             tools::finite::ops::apply_mpos(state_real_debug, unitary_gates_mpo_layers, ledge, redge, false);
-            tools::finite::mps::normalize_state(state_real_debug, svd_cfg, NormPolicy::IFNEEDED);
+            tools::finite::mps::normalize_state(state_real_debug, std::nullopt, NormPolicy::IFNEEDED);
             auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
             tools::log->info("Debug overlap: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
@@ -713,9 +733,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto nsamps = settings::flbit::compute_lbit_stats;
         // #pragma message "Revert randomfield to false"
         bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-        bool exact  = true;
         if(nsamps > 1) {
-            udpths = {16};
+            udpths = {8};
             ufmixs = {0.5};
             utstds = {1.0};
             ucstds = {1.0};
@@ -727,26 +746,18 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
             auto plt           = AsciiPlotter("lbit decay", 80, 30);
-            // #pragma message "Remove default circuit below here"
-            //             for(size_t idx = 0; idx < uprop_default.depth; ++idx) {
-            //             uprop_default.ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop_default)); }
-            //
-            auto lognoinf = [](const auto &v) -> double {
+            auto lognoinf      = [](const auto &v) -> double {
                 auto res = std::log10(std::abs(v));
                 if(std::isinf(res) or std::isinf((-res))) return -16.0;
                 return res;
             };
-            {
-                auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, false, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
-                auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
-                auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
-                auto ylog   = num::cast<qm::real>(yraw, lognoinf);
-                plt.addPlot(ylog, fmt::format("avg cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), '.');
-            }
-
+            auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+            auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
+            auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
+            auto ylog   = num::cast<qm::real>(yraw, lognoinf);
+            plt.addPlot(ylog, fmt::format("avg cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), '.');
             plt.enable_legend();
             plt.show();
-            auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, false, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_decay = std::vector<std::string>{"sample", "|i-j|"};

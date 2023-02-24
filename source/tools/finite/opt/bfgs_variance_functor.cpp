@@ -264,20 +264,17 @@ void bfgs_variance_functor<Scalar, lagrangeNorm>::compress() {
     svd_cfg.switchsize_bdc = 4096;
     svd::solver svd(svd_cfg);
     auto        old_dimensions = mpo2.dimensions();
-    //    Eigen::Tensor<Scalar, 4> mpo2_l2r;
     {
         // Compress left to right
-        auto [U, S, V]                     = svd.split_mpo_l2r(mpo2);
-        Eigen::Tensor<Scalar, 3> env2R_tmp = env2R.contract(V, tenx::idx({2}, {1}));
-        env2R                              = env2R_tmp;
-        mpo2                               = U.contract(tenx::asDiagonal(S), tenx::idx({1}, {0})).shuffle(std::array<long, 4>{0, 3, 1, 2});
+        Eigen::Tensor<Scalar, 2> V;
+        std::tie(mpo2, V) = svd.split_mpo_l2r(mpo2);
+        env2R             = Eigen::Tensor<Scalar, 3>(env2R.contract(V, tenx::idx({2}, {1})));
     }
     {
         // Compress right to left
-        auto [U, S, V]                     = svd.split_mpo_r2l(mpo2);
-        Eigen::Tensor<Scalar, 3> env2L_tmp = env2L.contract(U, tenx::idx({2}, {0}));
-        env2L                              = env2L_tmp;
-        mpo2                               = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {0}));
+        Eigen::Tensor<Scalar, 2> U;
+        std::tie(U, mpo2) = svd.split_mpo_r2l(mpo2);
+        env2L             = Eigen::Tensor<Scalar, 3>(env2L.contract(U, tenx::idx({2}, {0})));
     }
     readyCompress = true;
     tools::log->debug("Compressed MPO dimensions {} -> {}", old_dimensions, mpo2.dimensions());

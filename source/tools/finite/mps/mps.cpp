@@ -686,18 +686,22 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
         throw except::logic_error("Expected posL in [0,{}]. Got {}", state.get_length() - 1, posL);
 
     if(gm == GateMove::AUTO) gm = GateMove::ON;
-    auto                   old_svd     = svd::solver::get_count();
-    auto                   old_pos     = state.get_position<long>();
-    auto                   dimL        = state.get_mps_site(posL).dimensions();
-    auto                   dimR        = state.get_mps_site(posR).dimensions();
-    auto                   dL          = dimL[0];
-    auto                   dR          = dimR[0];
-    auto                   chiL        = dimL[1];
-    auto                   chiR        = dimR[2];
-    Eigen::Tensor<cplx, 3> swapped_mps = state.get_multisite_mps({posL, posR})
-                                             .reshape(tenx::array4{dL, dR, chiL, chiR})
-                                             .shuffle(tenx::array4{1, 0, 2, 3})           // swap
-                                             .reshape(tenx::array3{dR * dL, chiL, chiR}); // prepare for merge
+    auto           old_svd                         = svd::solver::get_count();
+    auto           old_pos                         = state.get_position<long>();
+    auto           dimL                            = state.get_mps_site(posL).dimensions();
+    auto           dimR                            = state.get_mps_site(posR).dimensions();
+    auto           dL                              = dimL[0];
+    auto           dR                              = dimR[0];
+    auto           chiL                            = dimL[1];
+    auto           chiR                            = dimR[2];
+    auto           rsh4                            = tenx::array4{dL, dR, chiL, chiR};
+    constexpr auto shf4                            = tenx::array4{1, 0, 2, 3};
+    auto           rsh3                            = tenx::array3{dR * dL, chiL, chiR};
+    auto           swapped_mps                     = Eigen::Tensor<cplx, 3>(rsh3);
+    swapped_mps.device(tenx::threads::getDevice()) = state.get_multisite_mps({posL, posR})
+                                                         .reshape(rsh4)
+                                                         .shuffle(shf4)  // swap
+                                                         .reshape(rsh3); // prepare for merge
     auto new_pos = old_pos;
     if(gm == GateMove::ON)
         new_pos = static_cast<long>(posL); // The benefit of GateMove::ON is to prefer "AC-B" splits that require a single SVD as often as possible

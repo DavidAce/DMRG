@@ -254,24 +254,24 @@ namespace svd {
         }
 
         template<typename Scalar>
-        std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 2>> split_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo,
-                                                                                                               const svd::config &svd_cfg = svd::config()) {
+        std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> split_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo,
+                                                                                     const svd::config              &svd_cfg = svd::config()) {
             /*
              * Compress an MPO left to right using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
              *
              *          (2) d
              *             |
              *  (0) m ---[mpo]--- (1) m
-             *            |
-             *        (3) d
+             *             |
+             *         (3) d
              *
              * is shuffled into
              *
              *          (0) d
              *             |
              *  (2) m ---[mpo]--- (3) m
-             *            |
-             *        (1) d
+             *             |
+             *         (1) d
              *
              * and reshaped like
              *
@@ -279,8 +279,8 @@ namespace svd {
              *
              * and subjected to the typical SVD so mpo = USV. This is then reshaped back into
              *
-             *             d
-             *             |
+             *            d
+             *            |
              *     m ---[mpo]---  m'   m'---[S]---'m m'---[V]---m
              *            |
              *            d
@@ -299,18 +299,27 @@ namespace svd {
             auto                     dim_ddm   = dim0 * dim1 * dim2;
             Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3});
             auto [U, S, V]                     = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
-            auto avgS                          = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
-            U *= avgS;
-            S /= avgS;
+
+            //            {
+            //                // Stabilize by setting S = 1,  U = U*sqrt(S), V = sqrt(S)*V
+            //                U = U * S.cwiseSqrt().asDiagonal();
+            //                V = S.cwiseSqrt().asDiagonal() * V;
+            //            }
+            {
+                // Stabilize by inserting avgS *  1/avgS
+                auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
+                U *= avgS;
+                V = (S / avgS).asDiagonal() * V; // Rescaled singular values
+            }
             /* clang-format off */
             return std::make_tuple(
                 tenx::TensorMap(U).reshape(tenx::array4{dim0, dim1, dim2, rank}).shuffle(tenx::array4{2, 3, 0, 1}).template cast<Scalar>(),
-                tenx::TensorMap(S).template cast<Scalar>(),
                 tenx::TensorMap(V).template cast<Scalar>());
-            /* clang-format off */
+            /* clang-format on */
         }
         template<typename Scalar>
-        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 1>, Eigen::Tensor<Scalar, 4>> split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo, const svd::config &svd_cfg = svd::config()) {
+        std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo,
+                                                                                     const svd::config              &svd_cfg = svd::config()) {
             /*
              * Splits an MPO right to left using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
              *
@@ -354,14 +363,22 @@ namespace svd {
             auto dim_ddm = dim1 * dim2 * dim3;
 
             Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm});
-            auto [U, S, V]               = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
-            auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
-            V *= avgS;                                            // Rescaled singular values
-            S /= avgS;                                            // Rescaled singular values
+            auto [U, S, V]                     = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
+
+            //            {
+            //                // Stabilize by setting S = 1,  U = U*sqrt(S), V = sqrt(S)*V
+            //                U = U * S.cwiseSqrt().asDiagonal();
+            //                V = S.cwiseSqrt().asDiagonal() * V;
+            //            }
+
+            {
+                auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
+                V *= avgS;                                            // Rescaled singular values
+                U = U * (S / avgS).asDiagonal();                      // Rescaled singular values
+            }
             /* clang-format off */
             return std::make_tuple(
                 tenx::TensorMap(U).template cast<Scalar>(),
-                tenx::TensorMap(S).template cast<Scalar>(),
                 tenx::TensorMap(V).reshape(tenx::array4{rank, dim1, dim2, dim3}).shuffle(tenx::array4{0, 3, 1, 2}).template cast<Scalar>());
             /* clang-format on */
         }

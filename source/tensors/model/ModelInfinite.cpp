@@ -72,9 +72,9 @@ void ModelInfinite::rebuild_mpo_squared() {
         reset_mpo_squared();
 }
 
-std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compressed_mpo_squared() {
+std::vector<Eigen::Tensor<ModelInfinite::cplx, 4>> ModelInfinite::get_compressed_mpo_squared() {
     // First, rebuild the MPO's
-    std::vector<Eigen::Tensor<Scalar, 4>> mpos_sq;
+    std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
     mpos_sq.emplace_back(HA->get_non_compressed_mpo_squared());
     mpos_sq.emplace_back(HB->get_non_compressed_mpo_squared());
 
@@ -97,8 +97,8 @@ std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compress
 
     for(size_t iter = 0; iter < 1; iter++) {
         // Next compress from left to right
-        Eigen::Tensor<Scalar, 2> T_l2r; // Transfer matrix
-        Eigen::Tensor<Scalar, 4> T_mpo_sq;
+        Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
+        Eigen::Tensor<cplx, 4> T_mpo_sq;
         for(const auto &[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
             if(T_l2r.size() == 0)
                 T_mpo_sq = mpo_sq;
@@ -108,19 +108,16 @@ std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compress
             if(idx == mpos_sq.size() - 1) {
                 mpo_sq = T_mpo_sq;
             } else {
-                auto [U, S, V] = svd.split_mpo_l2r(T_mpo_sq);
-                T_l2r          = tenx::asDiagonal(S).contract(V, tenx::idx({1}, {0}));
-                if(idx < mpos_sq.size() - 1)
-                    mpo_sq = U;
-                else
+                std::tie(mpo_sq, T_l2r) = svd.split_mpo_l2r(T_mpo_sq);
+                if(idx + 1 == mpos_sq.size())
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
-                    mpo_sq = U.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+                    mpo_sq = Eigen::Tensor<cplx, 4>(mpo_sq.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}));
             }
         }
 
         // Now we have done left to right. Next we do right to left
-        Eigen::Tensor<Scalar, 2> T_r2l;    // Transfer matrix
-        Eigen::Tensor<Scalar, 4> mpo_sq_T; // Absorbs transfer matrix
+        Eigen::Tensor<cplx, 2> T_r2l;    // Transfer matrix
+        Eigen::Tensor<cplx, 4> mpo_sq_T; // Absorbs transfer matrix
         for(const auto &[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
             if(T_r2l.size() == 0)
                 mpo_sq_T = mpo_sq;
@@ -129,13 +126,10 @@ std::vector<Eigen::Tensor<ModelInfinite::Scalar, 4>> ModelInfinite::get_compress
             if(idx == 0) {
                 mpo_sq = mpo_sq_T;
             } else {
-                auto [U, S, V] = svd.split_mpo_r2l(mpo_sq_T);
-                T_r2l          = U.contract(tenx::asDiagonal(S), tenx::idx({1}, {0}));
-                if(idx > 0)
-                    mpo_sq = V;
-                else
+                std::tie(T_r2l, mpo_sq) = svd.split_mpo_r2l(mpo_sq_T);
+                if(idx == 0)
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
-                    mpo_sq = T_r2l.contract(V, tenx::idx({1}, {0}));
+                    mpo_sq = Eigen::Tensor<cplx, 4>(T_r2l.contract(mpo_sq, tenx::idx({1}, {0})));
             }
         }
     }
@@ -179,7 +173,7 @@ void ModelInfinite::set_energy_shift_per_site(double energy_shift_per_site) {
     HB->set_energy_shift(energy_shift_per_site);
 }
 
-const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_AB() const {
+const Eigen::Tensor<ModelInfinite::cplx, 4> &ModelInfinite::get_2site_mpo_AB() const {
     if(cache.twosite_mpo_AB) return cache.twosite_mpo_AB.value();
     long dim0            = get_mpo_siteA().MPO().dimension(0);
     long dim1            = get_mpo_siteB().MPO().dimension(1);
@@ -193,7 +187,7 @@ const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_AB()
     return cache.twosite_mpo_AB.value();
 }
 
-const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_BA() const {
+const Eigen::Tensor<ModelInfinite::cplx, 4> &ModelInfinite::get_2site_mpo_BA() const {
     if(cache.twosite_mpo_BA) return cache.twosite_mpo_BA.value();
     long dim0 = get_mpo_siteB().MPO().dimension(0);
     long dim1 = get_mpo_siteA().MPO().dimension(1);
@@ -204,7 +198,7 @@ const Eigen::Tensor<ModelInfinite::Scalar, 4> &ModelInfinite::get_2site_mpo_BA()
     return cache.twosite_mpo_BA.value();
 }
 
-const Eigen::Tensor<ModelInfinite::Scalar, 2> &ModelInfinite::get_2site_ham_AB() const {
+const Eigen::Tensor<ModelInfinite::cplx, 2> &ModelInfinite::get_2site_ham_AB() const {
     if(cache.twosite_ham_AB) return cache.twosite_ham_AB.value();
     auto twosite_mpo_AB  = get_2site_mpo_AB();
     auto edgeL           = get_mpo_siteA().get_MPO_edge_left();
@@ -212,7 +206,7 @@ const Eigen::Tensor<ModelInfinite::Scalar, 2> &ModelInfinite::get_2site_ham_AB()
     cache.twosite_ham_AB = twosite_mpo_AB.contract(edgeL, tenx::idx({0}, {0})).contract(edgeR, tenx::idx({0}, {0}));
     return cache.twosite_ham_AB.value();
 }
-const Eigen::Tensor<ModelInfinite::Scalar, 2> &ModelInfinite::get_2site_ham_BA() const {
+const Eigen::Tensor<ModelInfinite::cplx, 2> &ModelInfinite::get_2site_ham_BA() const {
     if(cache.twosite_ham_BA) return cache.twosite_ham_BA.value();
     auto twosite_mpo_BA  = get_2site_mpo_BA();
     auto edgeL           = get_mpo_siteB().get_MPO_edge_left();

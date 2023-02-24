@@ -201,6 +201,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::max_iters"                    , flbit::max_iters);
     dmrg_config.load_parameter("flbit::min_iters"                    , flbit::min_iters);
     dmrg_config.load_parameter("flbit::use_swap_gates"               , flbit::use_swap_gates);
+    dmrg_config.load_parameter("flbit::use_mpo_circuit"              , flbit::use_mpo_circuit);
     dmrg_config.load_parameter("flbit::bond_max"                     , flbit::bond_max);
     dmrg_config.load_parameter("flbit::bond_init"                    , flbit::bond_init);
     dmrg_config.load_parameter("flbit::time_start_real"              , flbit::time_start_real);

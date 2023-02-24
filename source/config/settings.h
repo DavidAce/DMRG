@@ -276,6 +276,7 @@ namespace settings {
         inline size_t   max_iters               = 10000;                           /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                               /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates          = true;                            /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
+        inline bool     use_mpo_circuit         = true;                            /*!< Cast the unitary circuit to compressed mpo form (this is not generally faster or more accurate, but good for testing) */
         inline long     bond_max                = 1024;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline long     bond_init               = 8;                               /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
         inline double   time_start_real         = 1e-1;                            /*!< Starting time point (real) */

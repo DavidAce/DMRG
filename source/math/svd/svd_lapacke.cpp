@@ -30,12 +30,12 @@ namespace svd {
         std::vector<std::complex<double>> cwork(1ul, 0);
         std::vector<double>               rwork(1ul, 0);
         void                              clear_lapack() {
-                                         iwork = std::vector<int>(1ul, 0);
-                                         cwork = std::vector<std::complex<double>>(1ul, 0);
-                                         rwork = std::vector<double>(1ul, 0);
-                                         iwork.shrink_to_fit();
-                                         cwork.shrink_to_fit();
-                                         rwork.shrink_to_fit();
+            iwork = std::vector<int>(1ul, 0);
+            cwork = std::vector<std::complex<double>>(1ul, 0);
+            rwork = std::vector<double>(1ul, 0);
+            iwork.shrink_to_fit();
+            cwork.shrink_to_fit();
+            rwork.shrink_to_fit();
         }
     }
 }
@@ -115,18 +115,16 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     int ldvt   = rowsVT;
     int ldv    = rowsV;
 
-    int mx = std::max(rowsA, colsA);
-    int mn = std::min(rowsA, colsA);
-
+    int         mx = std::max(rowsA, colsA);
+    int         mn = std::min(rowsA, colsA);
+    std::string errmsg;
     try {
-        // More sanity checks
+        // Sanity checks
+        if constexpr(!NDEBUG)
+            if(A.isZero(1e-16)) svd::log->warn("Lapacke SVD: A is a zero matrix");
         if(not A.allFinite()) {
             print_matrix(A.data(), A.rows(), A.cols());
             throw std::runtime_error("A has inf's or nan's");
-        }
-        if(A.isZero(1e-12)) {
-            print_matrix(A.data(), A.rows(), A.cols(), 16);
-            throw std::runtime_error("A is a zero matrix");
         }
         using namespace svd::internal;
         if constexpr(std::is_same<Scalar, double>::value) {
@@ -377,6 +375,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         VT = VT.topRows(rank).eval();
 
         // Sanity checks
+
         if(not U.allFinite()) {
             print_matrix(U.data(), U.rows(), U.cols());
             throw std::runtime_error("U has inf's or nan's");
@@ -396,7 +395,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
 
     } catch(const std::exception &ex) {
-        //#if !defined(NDEBUG)
+        // #if !defined(NDEBUG)
         if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
         throw except::runtime_error("Lapacke SVD error \n"
                                     "  Truncation Error = {:.4e}\n"
