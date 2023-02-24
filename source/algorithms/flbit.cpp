@@ -745,7 +745,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
-            auto plt           = AsciiPlotter("lbit decay", 80, 30);
+            auto plt           = AsciiPlotter("lbit decay", 50, 20);
             auto lognoinf      = [](const auto &v) -> double {
                 auto res = std::log10(std::abs(v));
                 if(std::isinf(res) or std::isinf((-res))) return -16.0;
