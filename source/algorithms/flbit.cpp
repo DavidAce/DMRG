@@ -742,6 +742,16 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             ucgw8s = {UnitaryGateWeight::EXPDECAY};
         }
         if(nsamps > 0) {
+            You can express a swap gate for sites i,j as a string of L mpos.
+            First, generate a single layer of L-1 dummy two-site gates that are just 4x4 identity matrices.
+            Then split the two-site unitary gate into two unitary mpos.
+            Set dummy indices of dimension 1 on the outer virtual bonds, away from i and j.
+            Then convert the layer into mpo-form, but inject the unitary mpos at sites i and j.
+            During this process dummy identity gates should get dimension 1 on the virtual bonds.
+            Between sites i and j, there should be a string of mpos with virtual bond dimension 4.
+            It is likely that we can stack many mpo layers and that the stack is compressible.
+            Note also that we can generalize this to many-body gates, injecting mpos at sites i,j,k...
+
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
