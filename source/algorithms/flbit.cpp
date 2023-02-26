@@ -733,6 +733,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto nsamps = settings::flbit::compute_lbit_stats;
         // #pragma message "Revert randomfield to false"
         bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+        double tol    = 1e-14;
         if(nsamps > 1) {
             udpths = {4, 6, 8, 10, 12, 14, 16};
             ufmixs = {1.0};
@@ -756,7 +757,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
 
-            auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+            auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, tol, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_decay = std::vector<std::string>{"sample", "|i-j|"};

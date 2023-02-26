@@ -1305,7 +1305,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
             lbitSA.permute.slice(offset9, extent9) = get_permuted(lbit_corrmat).reshape(extent9);
         }
         auto [lbit_corrmat_avg, lbit_corrmat_err] = qm::lbit::get_lbit_correlation_average(lbit_corrmat_vec);
-        auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_avg, 1e-24);
+        auto [cls, sse, y, c] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_avg, tol);
         tools::log->info("Computed lbit decay reps {} | {} | rnd fields {} | threads {} | time {:8.3f} s | cls {:>8.6f} | sse {:>8.6f} | decay {:2} sites: {::8.2e}",
                          reps, uprop.string(), randomize_fields, omp_get_max_threads(), t_lbit_analysis->restart_lap(),cls, sse, c, y);
 

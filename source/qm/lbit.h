@@ -102,6 +102,7 @@ namespace qm::lbit {
                                                                   const UnitaryGateProperties      & u_defaults,
                                                                   size_t                           reps = 1,
                                                                   bool                             randomize_fields = false,
+                                                                  double                           tol = 1e-14,
                                                                   std::vector<size_t          >    udpths = {},
                                                                   std::vector<double          >    ufmixs = {},
                                                                   std::vector<double          >    utstds = {},
