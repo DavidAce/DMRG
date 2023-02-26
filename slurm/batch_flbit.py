@@ -13,13 +13,13 @@ input_prefix      = "input-utest"
 output_prefix     = "output-utest"
 
 
-sites               = [16]
+sites               = [8,12,16,20,24,28,32]
 J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [8,16,24,32,48,64]
-u_fmix              = [0.25, 0.5, 0.75, 1.0]
+u_depth             = [8,12,14,16,18,20]
+u_fmix              = [1.0]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']

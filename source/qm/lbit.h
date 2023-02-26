@@ -102,12 +102,12 @@ namespace qm::lbit {
                                                                   const UnitaryGateProperties      & u_defaults,
                                                                   size_t                           reps = 1,
                                                                   bool                             randomize_fields = false,
-                                                                  std::vector<size_t          >    u_depths = {},
-                                                                  std::vector<double          >    u_fmixs = {},
-                                                                  std::vector<double          >    u_tstds = {},
-                                                                  std::vector<double          >    u_cstds = {},
-                                                                  std::vector<UnitaryGateWeight >  u_tgw8s = {},
-                                                                  std::vector<UnitaryGateWeight >  u_cgw8s = {});
+                                                                  std::vector<size_t          >    udpths = {},
+                                                                  std::vector<double          >    ufmixs = {},
+                                                                  std::vector<double          >    utstds = {},
+                                                                  std::vector<double          >    ucstds = {},
+                                                                  std::vector<UnitaryGateWeight >  utgw8s = {},
+                                                                  std::vector<UnitaryGateWeight >  ucgw8s = {});
 
     /* clang-format on */
 }

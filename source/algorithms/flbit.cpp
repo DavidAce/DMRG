@@ -15,7 +15,6 @@
 #include "tid/tid.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
-#include "tools/common/plot.h"
 #include "tools/common/prof.h"
 #include "tools/finite/h5.h"
 #include "tools/finite/measure.h"
@@ -724,6 +723,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(storage_event), tid::highest);
         if(h5file->linkExists("/fLBIT/model/lbits")) return;
+        auto usites = std::vector<size_t>{settings::model::model_size};
         auto utgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_tgw8};
         auto ucgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_cgw8};
         auto udpths = std::vector<size_t>{settings::model::lbit::u_depth};
@@ -732,42 +732,31 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
         auto nsamps = settings::flbit::compute_lbit_stats;
         // #pragma message "Revert randomfield to false"
-        bool rndfld = false; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
+        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
         if(nsamps > 1) {
-            udpths = {8};
-            ufmixs = {0.5};
+            udpths = {4, 6, 8, 10, 12, 14, 16};
+            ufmixs = {1.0};
             utstds = {1.0};
             ucstds = {1.0};
             utgw8s = {UnitaryGateWeight::IDENTITY};
             ucgw8s = {UnitaryGateWeight::EXPDECAY};
         }
         if(nsamps > 0) {
-            You can express a swap gate for sites i,j as a string of L mpos.
-            First, generate a single layer of L-1 dummy two-site gates that are just 4x4 identity matrices.
-            Then split the two-site unitary gate into two unitary mpos.
-            Set dummy indices of dimension 1 on the outer virtual bonds, away from i and j.
-            Then convert the layer into mpo-form, but inject the unitary mpos at sites i and j.
-            During this process dummy identity gates should get dimension 1 on the virtual bonds.
-            Between sites i and j, there should be a string of mpos with virtual bond dimension 4.
-            It is likely that we can stack many mpo layers and that the stack is compressible.
-            Note also that we can generalize this to many-body gates, injecting mpos at sites i,j,k...
+            //            You can express a swap gate for sites i,j as a string of L mpos.
+            //            First, generate a single layer of L-1 dummy two-site gates that are just 4x4 identity matrices.
+            //            Then split the two-site unitary gate into two unitary mpos.
+            //            Set dummy indices of dimension 1 on the outer virtual bonds, away from i and j.
+            //            Then convert the layer into mpo-form, but inject the unitary mpos at sites i and j.
+            //            During this process dummy identity gates should get dimension 1 on the virtual bonds.
+            //            Between sites i and j, there should be a string of mpos with virtual bond dimension 4.
+            //            It is likely that we can stack many mpo layers and that the stack is compressible.
+            //            Note also that we can generalize this to many-body gates, injecting mpos at sites i,j,k...
 
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
             auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
-            auto plt           = AsciiPlotter("lbit decay", 50, 20);
-            auto lognoinf      = [](const auto &v) -> double {
-                auto res = std::log10(std::abs(v));
-                if(std::isinf(res) or std::isinf((-res))) return -16.0;
-                return res;
-            };
+
             auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
-            auto yraw   = tenx::span(lbitSA.decay_avg.data(), fields.size());
-            auto yrel   = num::cast<qm::real>(yraw, [](const auto &v) { return std::real(v); });
-            auto ylog   = num::cast<qm::real>(yraw, lognoinf);
-            plt.addPlot(ylog, fmt::format("avg cls {:.3e} sse {:.3e}: {::+.4e}", lbitSA.cls_avg.coeff(0), lbitSA.sse_avg.coeff(0), yrel), '.');
-            plt.enable_legend();
-            plt.show();
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_decay = std::vector<std::string>{"sample", "|i-j|"};
@@ -807,6 +796,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
             }
         }
+        if(nsamps > 1) exit(0);
     }
 }
 
