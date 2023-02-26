@@ -797,7 +797,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
             }
         }
-        if(nsamps > 1) exit(0);
+        if(nsamps > 0) exit(0);
     }
 }
 
