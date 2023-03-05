@@ -21,8 +21,15 @@
     #include <lapacke.h>
 #endif
 
+#if defined(NDEBUG)
+static constexpr bool ndebug = true;
+#else
+static constexpr bool ndebug = false;
+#endif
+
 namespace svd {
     static constexpr bool use_jsv = true;
+
     namespace internal {
         // These are workspace arrays used by LAPACK which can be reused for the duration of the program.
         // Call clear() to recover the memory space
@@ -120,7 +127,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     std::string errmsg;
     try {
         // Sanity checks
-        if constexpr(!NDEBUG)
+        if constexpr(!ndebug)
             if(A.isZero(1e-16)) svd::log->warn("Lapacke SVD: A is a zero matrix");
         if(not A.allFinite()) {
             print_matrix(A.data(), A.rows(), A.cols());

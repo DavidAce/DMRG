@@ -33,6 +33,7 @@ def lbit_avg(args):
                 'schmidt_midchain': {},
                 'model/hamiltonian': {'copy': True, },
                 'model/model_size': {'copy': True, },
+                'model/lbits/cls_avg': {'axis': 0, },
                 'model/lbits/decay_avg': {'axis': 0, },
                 'model/lbits/decay_err': {'axis': 0, },
                 'model/lbits/data': {

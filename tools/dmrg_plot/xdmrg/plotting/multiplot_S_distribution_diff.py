@@ -110,12 +110,12 @@ def multiplot_S_distribution_diff(src, plotdir='', algo_filter='', state_filter=
                 ax.legend()
             if normalized:
                 fig.suptitle("Difference of distributions\n"
-                             "No slope means no bias\n"
+                             "No linearFit means no bias\n"
                              "$\Delta = " + str(delt) + '\lambda = ' + str(lamb) + "$"
                              )
             else:
                 fig.suptitle("Difference of distributions (not normalized)\n"
-                             "No slope means no bias\n"
+                             "No linearFit means no bias\n"
                              "$\Delta = " + str(delt) + '\lambda = ' + str(lamb) + "$"
                              )
             for ax in np.ravel(axes)[used_ax:]:

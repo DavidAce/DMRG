@@ -723,64 +723,43 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(storage_event), tid::highest);
         if(h5file->linkExists("/fLBIT/model/lbits")) return;
-        auto usites = std::vector<size_t>{settings::model::model_size};
-        auto utgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_tgw8};
-        auto ucgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_cgw8};
-        auto udpths = std::vector<size_t>{settings::model::lbit::u_depth};
-        auto ufmixs = std::vector<double>{settings::model::lbit::u_fmix};
-        auto utstds = std::vector<double>{settings::model::lbit::u_tstd};
-        auto ucstds = std::vector<double>{settings::model::lbit::u_cstd};
-        auto nsamps = settings::flbit::compute_lbit_stats;
-        // #pragma message "Revert randomfield to false"
-        bool rndfld = true; // Whether to randomize the hamiltonian onsite fields for each circuit realization (used in BLOCKED gates)
-        double tol    = 1e-14;
-        if(nsamps > 1) {
-            udpths = {4, 6, 8, 10, 12, 14, 16};
-            ufmixs = {1.0};
-            utstds = {1.0};
-            ucstds = {1.0};
-            utgw8s = {UnitaryGateWeight::IDENTITY};
-            ucgw8s = {UnitaryGateWeight::EXPDECAY};
-        }
+        auto nsamps = settings::flbit::cls::num_rnd_circuits;
         if(nsamps > 0) {
-            //            You can express a swap gate for sites i,j as a string of L mpos.
-            //            First, generate a single layer of L-1 dummy two-site gates that are just 4x4 identity matrices.
-            //            Then split the two-site unitary gate into two unitary mpos.
-            //            Set dummy indices of dimension 1 on the outer virtual bonds, away from i and j.
-            //            Then convert the layer into mpo-form, but inject the unitary mpos at sites i and j.
-            //            During this process dummy identity gates should get dimension 1 on the virtual bonds.
-            //            Between sites i and j, there should be a string of mpos with virtual bond dimension 4.
-            //            It is likely that we can stack many mpo layers and that the stack is compressible.
-            //            Note also that we can generalize this to many-body gates, injecting mpos at sites i,j,k...
-
+            auto                usites = std::vector<size_t>{settings::model::model_size};
+            auto                utgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_tgw8};
+            auto                ucgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_cgw8};
+            auto                udpths = std::vector<size_t>{settings::model::lbit::u_depth};
+            auto                ufmixs = std::vector<double>{settings::model::lbit::u_fmix};
+            auto                utstds = std::vector<double>{settings::model::lbit::u_tstd};
+            auto                ucstds = std::vector<double>{settings::model::lbit::u_cstd};
+            auto                randhf = settings::flbit::cls::randomize_hfields;
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
-            auto uprop_default = qm::lbit::UnitaryGateProperties(fields);
-
-            auto lbitSA = qm::lbit::get_lbit_support_analysis(uprop_default, nsamps, rndfld, tol, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+            auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
+            uprop_default.ulayers = unitary_gates_2site_layers;
+            auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
             if(settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
-                auto label_decay = std::vector<std::string>{"sample", "|i-j|"};
-                auto label_data  = std::vector<std::string>{"sample", "i", "j"};
-                auto shape_decay = std::vector<long>{1, lbitSA.decay_avg.size()};
-                auto shape_data  = std::vector<long>{1, static_cast<long>(settings::model::model_size), static_cast<long>(settings::model::model_size)};
-                if(nsamps > 1) { // Used when we investigate lbit properties for various gate parameters
-                    label_decay = {"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "|i-j|"};
-                    label_data  = {"u_depth", "u_fmix", "u_tstd", "u_cstd", "u_tgw8", "u_cgw8", "sample", "i", "j"};
-                    shape_decay = std::vector<long>(lbitSA.decay_avg.dimensions().begin(), lbitSA.decay_avg.dimensions().end());
-                    shape_data  = std::vector<long>(lbitSA.corrmat.dimensions().begin(), lbitSA.corrmat.dimensions().end());
-                }
-                h5file->writeDataset(lbitSA.cls_avg, "/fLBIT/model/lbits/cls_avg");
-                h5file->writeDataset(lbitSA.sse_avg, "/fLBIT/model/lbits/sse_avg");
-                h5file->writeDataset(lbitSA.decay_avg, "/fLBIT/model/lbits/decay_avg", H5D_CHUNKED, shape_decay);
-                h5file->writeDataset(lbitSA.decay_err, "/fLBIT/model/lbits/decay_err", H5D_CHUNKED, shape_decay);
+                auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
+                auto shape_avgs = std::vector<long>{1, lbitSA.corravg.size()};
+                auto shape_data = std::vector<long>{1, static_cast<long>(settings::model::model_size), static_cast<long>(settings::model::model_size)};
+                h5file->writeDataset(lbitSA.cls_avg_fit, "/fLBIT/model/lbits/cls_avg_fit");
+                h5file->writeDataset(lbitSA.cls_avg_rms, "/fLBIT/model/lbits/cls_avg_rms");
+                h5file->writeDataset(lbitSA.cls_avg_rsq, "/fLBIT/model/lbits/cls_avg_rsq");
+                h5file->writeDataset(lbitSA.cls_typ_fit, "/fLBIT/model/lbits/cls_typ_fit");
+                h5file->writeDataset(lbitSA.cls_typ_rms, "/fLBIT/model/lbits/cls_typ_rms");
+                h5file->writeDataset(lbitSA.cls_typ_rsq, "/fLBIT/model/lbits/cls_typ_rsq");
+                h5file->writeDataset(lbitSA.corravg, "/fLBIT/model/lbits/corravg", H5D_CHUNKED, shape_avgs);
+                h5file->writeDataset(lbitSA.corrtyp, "/fLBIT/model/lbits/corrtyp", H5D_CHUNKED, shape_avgs);
+                h5file->writeDataset(lbitSA.correrr, "/fLBIT/model/lbits/correrr", H5D_CHUNKED, shape_avgs);
+                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corrtyp", "dimensions");
+                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/correrr", "dimensions");
                 if(settings::storage::storage_level_model > StorageLevel::LIGHT) {
-                    h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/data", H5D_CHUNKED, shape_data);
-                    h5file->writeDataset(lbitSA.permute, "/fLBIT/model/lbits/data_shifted", H5D_CHUNKED, shape_data);
-                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/data", "dimensions");
-                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/data_shifted", "dimensions");
-                    h5file->writeAttribute(label_decay, "/fLBIT/model/lbits/decay_avg", "dimensions");
-                    h5file->writeAttribute(label_decay, "/fLBIT/model/lbits/decay_err", "dimensions");
+                    auto label_data = std::vector<std::string>{"sample", "i", "j"};
+                    h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/corrmat", H5D_CHUNKED, shape_data);
+                    h5file->writeDataset(lbitSA.corroff, "/fLBIT/model/lbits/corroff", H5D_CHUNKED, shape_data);
+                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corrmat", "dimensions");
+                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corroff", "dimensions");
                 }
                 h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
@@ -789,15 +768,15 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute(enum2sv(utgw8s), "/fLBIT/model/lbits", "u_tgw8");
                 h5file->writeAttribute(enum2sv(ucgw8s), "/fLBIT/model/lbits", "u_cgw8");
                 h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
-                h5file->writeAttribute(rndfld, "/fLBIT/model/lbits", "rndfld");
-                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/data", "description");
-                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/data_shifted",
-                                       "description");
-                h5file->writeAttribute("Site averaged <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_avg", "description");
-                h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/decay_err", "description");
+                h5file->writeAttribute(randhf, "/fLBIT/model/lbits", "randomize_hfields");
+                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
+                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff", "description");
+                h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
+                h5file->writeAttribute("Site geometric average <<O(|i-j|)>>_typ", "/fLBIT/model/lbits/corrtyp", "description");
+                h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/correrr", "description");
             }
         }
-        if(nsamps > 0) exit(0);
+        if(settings::flbit::cls::exit_when_done) exit(0);
     }
 }
 

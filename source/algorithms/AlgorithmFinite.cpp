@@ -685,7 +685,7 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->debug("Energy variance convergence: converged {} | saturated {} (since {})", status.variance_mpo_converged_for, report.saturated_count,
                               report.saturated_point);
         if(tools::log->level() <= spdlog::level::trace) {
-            tools::log->trace("Energy variance slope details:");
+            tools::log->trace("Energy variance linearFit details:");
             tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
             tools::log->trace(" -- threshold          = {:7.4e}", threshold.value());
             tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
@@ -743,7 +743,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
                 tools::log->debug("Entanglement ent. convergence at site {}: converged {} | saturated {} iters (since {})", last_saturated_site,
                                   status.entanglement_converged_for, report.saturated_count, report.saturated_point);
             if(tools::log->level() <= spdlog::level::trace) {
-                tools::log->trace("Entanglement slope details:");
+                tools::log->trace("Entanglement linearFit details:");
                 tools::log->trace(" -- site               = {}", last_saturated_site);
                 tools::log->trace(" -- sensitivity        = {:7.4e}", saturation_sensitivity.value());
                 tools::log->trace(" -- saturated point    = {} ", report.saturated_point);

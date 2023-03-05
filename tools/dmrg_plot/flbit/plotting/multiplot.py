@@ -11,3 +11,4 @@ from .plot_divg import *
 from .plot_cls import *
 from .plot_slope import *
 from .plot_rise import *
+from .plot_dset import *

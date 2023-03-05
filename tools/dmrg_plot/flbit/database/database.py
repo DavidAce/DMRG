@@ -265,7 +265,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         cgw8 = 'ID' if hamiltonian['u_cgw8'][0] == 0 else 'EX'
         # L if r == np.iinfo(np.uint64).max else r
         # Skip if not asked for
-        if incl := meta.get('common').get('include_vals'):
+        if incl := meta.get('common').get('include_v3'):
             val_requested = True
             for tag, val in zip(['L', 'J', 'w', 'x', 'r', 'u', 'f', 'tstd', 'cstd', 'tgw8', 'cgw8'],
                                 [L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8]):
@@ -276,6 +276,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 continue
             else:
                 print([L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8])
+
         if debug:
             print("Adding keys")
 

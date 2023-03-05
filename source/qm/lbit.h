@@ -6,6 +6,7 @@
 #include <vector>
 
 enum class UnitaryGateWeight;
+enum class MeanType;
 class StateFinite;
 
 namespace qm::lbit {
@@ -27,24 +28,31 @@ namespace qm::lbit {
         std::string string() const;
         void        randomize_hvals() const;
     };
+
     struct lbitSupportAnalysis {
-        Eigen::Tensor<real, 6> cls_avg; // Characteristic length-scale of lbits
-        Eigen::Tensor<real, 6> cls_err; // Standard error of cls
-        Eigen::Tensor<real, 6> sse_avg; // Squared sum error of fits
-        Eigen::Tensor<real, 6> sse_err;
-        Eigen::Tensor<real, 7> decay_avg; // The decay of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<real, 7> decay_err; // The sterr of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<real, 9> corrmat;   // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
-        Eigen::Tensor<real, 9> permute;   // The permuted lbit correlation matrices O(i, |i-j|) for each realization
+        Eigen::Tensor<real, 6> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 6> cls_avg_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 6> cls_avg_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 6> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 6> cls_typ_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 6> cls_typ_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 7> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
+        Eigen::Tensor<real, 7> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
+        Eigen::Tensor<real, 7> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<real, 9> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
+        Eigen::Tensor<real, 9> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
         lbitSupportAnalysis() {
-            cls_avg.setZero();
-            cls_err.setZero();
-            sse_avg.setZero();
-            sse_err.setZero();
-            decay_avg.setZero();
-            decay_err.setZero();
+            cls_avg_fit.setZero();
+            cls_avg_rms.setZero();
+            cls_avg_rsq.setZero();
+            cls_typ_fit.setZero();
+            cls_typ_rms.setZero();
+            cls_typ_rsq.setZero();
+            corravg.setZero();
+            corrtyp.setZero();
+            correrr.setZero();
             corrmat.setZero();
-            permute.setZero();
+            corroff.setZero();
         }
         lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ntgw8, size_t ncgw8, size_t nreps, size_t nsize)
             : lbitSupportAnalysis() {
@@ -56,14 +64,17 @@ namespace qm::lbit {
             auto icgw8 = static_cast<Eigen::Index>(ncgw8);
             auto ireps = static_cast<Eigen::Index>(nreps);
             auto isize = static_cast<Eigen::Index>(nsize);
-            cls_avg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            cls_err.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            sse_avg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            sse_err.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            decay_avg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
-            decay_err.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
+            cls_avg_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
+            cls_avg_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
+            cls_avg_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
+            cls_typ_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
+            cls_typ_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
+            cls_typ_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
+            corravg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
+            corrtyp.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
+            correrr.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
             corrmat.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
-            permute.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
+            corroff.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
         }
     };
 
@@ -87,22 +98,20 @@ namespace qm::lbit {
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states, double tol);
-    extern std::vector<Eigen::Tensor<real, 2>>  get_lbit_correlation_matrices(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields);
-    extern std::pair<Eigen::Tensor<real, 2>,Eigen::Tensor<real, 2>>
-                                                get_lbit_correlation_average(const std::vector<Eigen::Tensor<real, 2>> &lbit_corrmats);
+    extern std::vector<Eigen::Tensor<real, 2>>  get_lbit_correlation_matrices(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool use_mpo);
+    extern std::tuple<Eigen::Tensor<real, 2>, Eigen::Tensor<qm::real, 2>, Eigen::Tensor<real, 2>>
+                                                get_lbit_correlation_statistics(const std::vector<Eigen::Tensor<real, 2>> &lbit_corrmats);
     extern std::tuple<double,
                       double,
+                      double,
                       std::vector<double>,
-                      size_t>                   get_characteristic_length_scale(const Eigen::Tensor<real, 2> &lbit_corrmat_disorder_avg, double tol);
+                      size_t>                   get_characteristic_length_scale(const Eigen::Tensor<real, 2> &lbit_corrmat_disorder_mean, MeanType);
 //    extern lbitSupportAnalysis                  get_lbit_support_analysis(const std::vector<size_t> &udepth_vec, const std::vector<double> &fmix_vec,
 //                                                                          size_t reps, const UnitaryGateProperties & uprop, bool randomize_fields = false);
 //    extern lbitSupportAnalysis                  get_lbit_support_analysis(const std::vector<UnitaryGateProperties> &uprops, bool randomize_fields = false);
 
     extern lbitSupportAnalysis                  get_lbit_support_analysis(
                                                                   const UnitaryGateProperties      & u_defaults,
-                                                                  size_t                           reps = 1,
-                                                                  bool                             randomize_fields = false,
-                                                                  double                           tol = 1e-14,
                                                                   std::vector<size_t          >    udpths = {},
                                                                   std::vector<double          >    ufmixs = {},
                                                                   std::vector<double          >    utstds = {},

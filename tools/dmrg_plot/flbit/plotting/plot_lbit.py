@@ -55,11 +55,11 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                 for datanode in datanodes:
                     # datanode = datanode[0]
                     dbval = db['dsets'][datanode.name]
+                    ndata, _ = get_table_data(datanode['num'], meta.get('colname'), 'i8')
                     ydata, _ = get_table_data(datanode['avg'])
                     edata, _ = get_table_data(datanode['ste'])
-                    ndata = datanode['num'][()]
                     xdata = np.array(range(len(ydata)))
-                    fdata = get_lbit_cls(ydata)  # Fit to get characteristic length-scale
+                    fdata = get_lbit_cls(xdata, ydata)  # Fit to get characteristic length-scale
                     if 'yscale' in meta and meta['yscale'] == 'log':
                         ydata = np.abs(ydata)
                     if np.min(ndata) < 10:
@@ -82,8 +82,8 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                             f['legends'][idx][icol + 1]['label'].append('{:.2f}'.format(fdata[1]))
                             f['legends'][idx][icol + 1]['title'] = '$\\xi_\\tau$'
                             f['legends'][idx][icol + 2]['handle'].append(line)
-                            f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(fdata[2]))
-                            f['legends'][idx][icol + 2]['title'] = '$\\beta$'
+                            # f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(fdata[2]))
+                            # f['legends'][idx][icol + 2]['title'] = '$\\beta$'
 
                         # line, = ax.plot(xdata, stretched_exp(xdata, *fdata), marker=None, linestyle='dashed',
                         #                 color=color, path_effects=path_effects)
@@ -174,7 +174,8 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     edata, _ = get_table_data(datanode['ste'])
                     ndata = datanode['num'][()]
                     xdata = np.array(range(len(ydata)))
-                    fdata = get_lbit_cls(ydata)  # Fit to get characteristic length-scale
+                    C, xi, beta, yfit, res = get_lbit_cls(np.arange(0, len(ydata)),
+                                                          ydata)  # Fit to get characteristic length-scale
 
                     if np.min(ndata) < 10:
                         continue
@@ -190,16 +191,17 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
                             icol = len(legendrow)
                             f['legends'][idx][icol + 0]['handle'].append(line)
-                            f['legends'][idx][icol + 0]['label'].append('{:.2f}'.format(fdata[0]))
+                            f['legends'][idx][icol + 0]['label'].append('{:.2f}'.format(C))
                             f['legends'][idx][icol + 0]['title'] = '$C$'
                             f['legends'][idx][icol + 1]['handle'].append(line)
-                            f['legends'][idx][icol + 1]['label'].append('{:.2f}'.format(fdata[1]))
+                            f['legends'][idx][icol + 1]['label'].append('{:.2f}'.format(xi))
                             f['legends'][idx][icol + 1]['title'] = '$\\xi_\\tau$'
                             f['legends'][idx][icol + 2]['handle'].append(line)
-                            f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(fdata[2]))
-                            f['legends'][idx][icol + 2]['title'] = '$\\beta$'
+                            if beta is not None:
+                                f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(beta))
+                                f['legends'][idx][icol + 2]['title'] = '$\\beta$'
 
-                        line, = ax.plot(xdata, stretched_exp(xdata, *fdata), marker=None, linestyle='dashed',
+                        line, = ax.plot(xdata, yfit, marker=None, linestyle='dashed',
                                         color=color, path_effects=path_effects)
                         if 'inset-cls' in meta:
                             if ix is None:

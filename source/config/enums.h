@@ -9,6 +9,7 @@
 
 enum class AlgorithmType : int { iDMRG, fDMRG, xDMRG, iTEBD, fLBIT, ANY };
 enum class AlgorithmStop : int { SUCCESS, SATURATED, MAX_ITERS, MAX_RESET, RANDOMIZE, NONE };
+enum class MeanType { ARITHMETIC, GEOMETRIC };
 enum class MultisiteMove { ONE, MID, MAX };
 enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
@@ -265,6 +266,10 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == AlgorithmStop::RANDOMIZE)                            return "RANDOMIZE";
         if(item == AlgorithmStop::NONE)                                 return "NONE";
     }
+    if constexpr(std::is_same_v<T, MeanType>) {
+        if(item == MeanType::ARITHMETIC)                                return "ARITHMETIC";
+        if(item == MeanType::GEOMETRIC)                                 return "GEOMETRIC";
+    }
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == ResetReason::INIT)                                   return "INIT";
         if(item == ResetReason::FIND_WINDOW)                            return "FIND_WINDOW";
@@ -505,6 +510,7 @@ constexpr auto sv2enum(std::string_view item) {
     static_assert(enum_sfinae::is_any_v<T,
         AlgorithmType,
         AlgorithmStop,
+        MeanType,
         MultisiteMove,
         MultisiteWhen,
         SVDLibrary,
@@ -602,6 +608,11 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "RANDOMIZE")                             return AlgorithmStop::RANDOMIZE;
         if(item == "NONE")                                  return AlgorithmStop::NONE;
     }
+    if constexpr(std::is_same_v<T, MeanType>) {
+        if(item == "ARITHMETIC")                            return MeanType::ARITHMETIC;
+        if(item == "GEOMETRIC")                             return MeanType::GEOMETRIC;
+    }
+
     if constexpr(std::is_same_v<T, ResetReason>) {
         if(item == "INIT")                                  return ResetReason::INIT;
         if(item == "FIND_WINDOW")                           return ResetReason::FIND_WINDOW;
@@ -797,18 +808,14 @@ using enumarray_t = std::array<std::pair<std::string, T>, num>;
 template<typename T, typename... Args>
 constexpr auto mapStr2Enum(Args... names) {
     constexpr auto num     = sizeof...(names);
-    auto           pairgen = [](const std::string &name) -> std::pair<std::string, T> {
-        return {name, sv2enum<T>(name)};
-    };
+    auto           pairgen = [](const std::string &name) -> std::pair<std::string, T> { return {name, sv2enum<T>(name)}; };
     return enumarray_t<T, num>{pairgen(names)...};
 }
 
 template<typename T, typename... Args>
 constexpr auto mapEnum2Str(Args... enums) {
     constexpr auto num     = sizeof...(enums);
-    auto           pairgen = [](const T &e) -> std::pair<std::string, T> {
-        return {std::string(enum2sv(e)), e};
-    };
+    auto           pairgen = [](const T &e) -> std::pair<std::string, T> { return {std::string(enum2sv(e)), e}; };
     return enumarray_t<T, num>{pairgen(enums)...};
 }
 

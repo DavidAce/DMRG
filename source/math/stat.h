@@ -12,7 +12,7 @@
 
 /*!
  *  \namespace stat
- *  \brief Small convenience-type statistical functions, mean and slope
+ *  \brief Small convenience-type statistical functions, mean and linearFit
  *  \tableofcontents
  */
 
@@ -88,9 +88,8 @@ namespace stat {
 
     template<typename ContainerType>
     [[nodiscard]] auto typical(const ContainerType &X, std::optional<size_t> start_point = std::nullopt, std::optional<size_t> end_point = std::nullopt) {
-        ContainerType Xlog = X;
-        for(auto &x : Xlog) x = std::log(std::abs(x));
-        return std::exp(mean(Xlog, start_point, end_point));
+        auto xlog = num::cast<double>(X, [](const auto v) { return std::log(std::abs(v)); });
+        return std::exp(stat::mean(xlog, start_point, end_point));
     }
     template<typename ContainerType>
     [[nodiscard]] typename ContainerType::value_type variance(const ContainerType &X, std::optional<size_t> start_point = std::nullopt,
@@ -202,30 +201,46 @@ namespace stat {
         return res;
     }
 
+    /*! \brief Contains the result from fitting (X,Y) data to Y = M + KX */
+    struct LinearFit {
+        double isect = std::numeric_limits<double>::quiet_NaN(); /*!< m: intersection with x=0 */
+        double slope = std::numeric_limits<double>::quiet_NaN(); /*!< k: slope */
+        double rms   = std::numeric_limits<double>::quiet_NaN(); /*!< Root mean squared deviation */
+        double rsq   = std::numeric_limits<double>::quiet_NaN(); /*!< R² or coefficient of determination */
+    };
     template<typename ContainerType1, typename ContainerType2, typename = std::enable_if_t<is_iterable_v<ContainerType1> and is_iterable_v<ContainerType2>>>
-    [[nodiscard]] std::pair<double, double> slope(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,
-                                                  std::optional<size_t> end_point = std::nullopt) {
+    [[nodiscard]] LinearFit linearFit(const ContainerType1 &X, const ContainerType2 &Y, std::optional<size_t> start_point = std::nullopt,
+                                      std::optional<size_t> end_point = std::nullopt) {
         if(X.size() != Y.size())
-            throw std::range_error("slope: size mismatch in arrays: X.size() == " + std::to_string(X.size()) + " | Y.size() == " + std::to_string(Y.size()));
+            throw std::range_error("linearFit: size mismatch in arrays: X.size() == " + std::to_string(X.size()) +
+                                   " | Y.size() == " + std::to_string(Y.size()));
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         auto [y_it, y_en] = get_start_end_iterators(Y, start_point, end_point);
         auto n            = static_cast<double>(std::distance(x_it, x_en));
-        if(n <= 1) return std::make_pair(std::numeric_limits<double>::infinity(), 0.0); // Need at least 2 points
-        double avgX = std::accumulate(x_it, x_en, 0.0) / n;
-        double avgY = std::accumulate(y_it, y_en, 0.0) / n;
-        double sxx  = 0.0;
-        double syy  = 0.0;
-        double sxy  = 0.0;
-        while(x_it != x_en) {
-            sxx += std::pow((static_cast<double>(*x_it) - avgX), 2);
-            syy += std::pow((static_cast<double>(*y_it) - avgY), 2);
-            sxy += (static_cast<double>(*x_it) - avgX) * (static_cast<double>(*y_it) - avgY);
-            y_it++;
-            x_it++;
-        }
-        double slope    = sxy / sxx;
-        double residual = syy * (1 - sxy * sxy / sxx / syy);
-        return std::make_pair(slope, residual);
+        if(n <= 1) return LinearFit(); // Need at least 2 points
+        double avgX    = std::accumulate(x_it, x_en, 0.0) / n;
+        double avgY    = std::accumulate(y_it, y_en, 0.0) / n;
+        auto   xxsqerr = [&](const auto &a, const auto &b) { return (a - avgX) * (b - avgX); };
+        auto   yysqerr = [&](const auto &a, const auto &b) { return (a - avgY) * (b - avgY); };
+        auto   xysqerr = [&](const auto &a, const auto &b) { return (a - avgX) * (b - avgY); };
+        double sxx     = std::inner_product(x_it, x_en, x_it, 0.0, std::plus<>(), xxsqerr);
+        double syy     = std::inner_product(y_it, y_en, y_it, 0.0, std::plus<>(), yysqerr); // aka total sum of squares TSS
+        double sxy     = std::inner_product(x_it, x_en, y_it, 0.0, std::plus<>(), xysqerr);
+        double slope   = sxy / sxx;
+        double isect   = avgY - slope * avgX;
+
+        auto yfiterr = [&](const auto &x, const auto &y) { return std::pow(y - (isect + slope * x), 2); };
+        auto rss     = std::inner_product(x_it, x_en, y_it, 0.0, std::plus<>(), yfiterr);
+
+        double rms = std::sqrt(rss / n);
+        double rsq = 1 - rss / syy;
+
+        auto result  = LinearFit();
+        result.isect = isect;
+        result.slope = slope;
+        result.rms   = rms;
+        result.rsq   = rsq;
+        return result;
     }
 
     template<typename ContainerType>
@@ -233,14 +248,14 @@ namespace stat {
                                                   std::optional<size_t> end_point = std::nullopt) {
         ContainerType X(Y.size());
         std::iota(X.begin(), X.end(), 0);
-        return slope(X, Y, start_point, end_point);
+        return linearFit(X, Y, start_point, end_point);
     }
 
     template<typename ContainerType1, typename ContainerType2>
     [[nodiscard]] double slope_at(const ContainerType1 &X, const ContainerType2 &Y, size_t at, size_t width = 1) {
         auto min_idx = static_cast<size_t>(std::max(static_cast<long>(at) - static_cast<long>(width), 0l));
         auto max_idx = static_cast<size_t>(std::min(at + width, Y.size()));
-        return slope(X, Y, min_idx, max_idx).first;
+        return linearFit(X, Y, min_idx, max_idx).first;
     }
 
     template<typename ContainerType>
@@ -296,7 +311,7 @@ namespace stat {
         auto X = num::range<size_t>(0, Y.size());
         while(idx < end_point.value()) {
             auto std        = stat::stdev(Y, idx, end_point.value());
-            auto [slp, res] = stat::slope(X, Y, idx, end_point.value());
+            auto [slp, res] = stat::linearFit(X, Y, idx, end_point.value());
             printf("std: %g | slp: %g\n", std, slp);
             if(std::abs(slp) < slope_tolerance or std < std_tolerance) {
                 if(idx > 0) {

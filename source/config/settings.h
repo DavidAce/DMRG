@@ -276,7 +276,7 @@ namespace settings {
         inline size_t   max_iters               = 10000;                           /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters               = 4;                               /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates          = true;                            /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
-        inline bool     use_mpo_circuit         = true;                            /*!< Cast the unitary circuit to compressed mpo form (this is not generally faster or more accurate, but good for testing) */
+        inline bool     use_mpo_circuit         = false;                           /*!< Cast the unitary circuit to compressed mpo form (this is not generally faster or more accurate, but good for testing) */
         inline long     bond_max                = 1024;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
         inline long     bond_init               = 8;                               /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
         inline double   time_start_real         = 1e-1;                            /*!< Starting time point (real) */
@@ -286,8 +286,17 @@ namespace settings {
         inline size_t   time_num_steps          = 500;                             /*!< Number of steps from start to finish. Start and final times are included */
         inline double   time_gate_id_threshold  = 1e-8;                            /*!< Skip time evo. gates if exp(-iHt) is ~ 1 within this threshold */
         inline size_t   print_freq              = 1;                               /*!< Print frequency for console output. In units of iterations. (0 = off). */
-        inline size_t   compute_lbit_stats      = 1;                               /*!< Calculate the characteristic length-scale for various u and f parameters, for this many realizations of the unitary circuit */
         inline bool     store_wavefn            = false;                           /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+
+        /*! \namespace settings::flbit::cls Settings for calculating the characteristic length-scale of lbits */
+        namespace  cls {
+            inline size_t   num_rnd_circuits          = 1;                         /*!< Calculate the characteristic length-scale for this many realizations of the unitary circuit */
+            inline bool     exit_when_done            = false;                     /*!< If true, the program exits after calculating cls. Otherwise it starts the time evolution as usual */
+            inline bool     randomize_hfields         = false;                     /*!< Randomize the on-site fields of the Hamiltonian that goes into each realization of the unitary circuits */
+            inline size_t   mpo_circuit_switchdepth   = 10;                        /*!< Cast the unitary circuit to an approximate compressed MPO form when the circuit depth (u_depth) is this value or more    */
+            inline long     mpo_circuit_svd_bondlim   = 128;                       /*!< The bond dimension limit used in the SVD when casting the circuit to compressed MPO form */
+            inline double   mpo_circuit_svd_trnclim   = 1e-14;                     /*!< The truncation error limit used in the SVD when casting the circuit to compressed MPO form */
+        }
 }
 
     /*! \namespace settings::xdmrg Settings for the finite excited-state DMRG algorithm */

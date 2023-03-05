@@ -14,7 +14,7 @@ def get_meta(plotdir):
     meta = {
         'common': {
             'include': {
-                # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
+                # 'L': ['L_32'],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_12'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
@@ -30,8 +30,8 @@ def get_meta(plotdir):
                 # 'u': ['u_5'],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
             },
-            'include_vals': {
-                # 'L': ['L_8', 'L_12', 'L_16', 'L_20', 'L_24'],
+            'include_v3': {
+                # 'L': [32],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_12'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
@@ -366,7 +366,7 @@ def get_meta(plotdir):
             'plotprefix': 'lbit',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'xmax': 16,
+            # 'xmax': 16,
             'ymin': 1e-14,
             'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
@@ -382,13 +382,25 @@ def get_meta(plotdir):
             },
 
         },
-        'cls': {
+        'decay': {
             'groupname': 'lbits',
             'dsetname': 'decay_avg',
             'titlename': 'Characteristic length scale of l-bits',
             'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
-            'xlabel': "$f$",
             'plotprefix': 'lbit',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            'legendlocation': 'best',
+        },
+        'cls': {
+            'groupname': 'lbits',
+            'dsetname': 'cls_avg',
+            'titlename': 'Characteristic length scale of l-bits',
+            'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
+            'plotprefix': 'cls',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
@@ -635,14 +647,14 @@ def get_meta(plotdir):
             'legendcollect': False,
             'legendlocation': 'upper right',
         },
-        'slope-num2': {
+        'linearFit-num2': {
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy fit to $\\alpha + \\beta \log \log t$',
             'ylabel': '$\\beta$',
             'yformat': '%.3f',
-            'plotprefix': 'SN-slope',
+            'plotprefix': 'SN-linearFit',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',

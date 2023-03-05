@@ -252,6 +252,14 @@ int main(int argc, char *argv[]) {
 
                 // Last argument is the axis along which to build the time series
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_fit", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_rms", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_rsq", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corravg", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "correrr", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrmat", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corroff", Size::FIX, 0));
+
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 0));

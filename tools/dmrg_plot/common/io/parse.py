@@ -55,8 +55,9 @@ def parse(algo):
                                 # 'lbit64',  # 2000 realizations u8, f=1.0, L=14, testing J and w to get more SN increase.
                                 # 'lbit65', # 1000 realizations u8, f=1.0, L=[8,12,16,20], checking how well SN grows with the new parameter set.
                                 # 'lbit66',   # 10000 realizations u8, f=1.0, L=12, u=8,10,12,14,16, checking how well SN grows with u depth.
-                                'lbit67',
-                                # 2000 realizations u[8,16...64], f=1.0, L=16, checking how well SN grows with u depth.
+                                # 'lbit67', # 2000 realizations u[8,16...64], f=1.0, L=16, checking how well SN grows with u depth.
+                                'lbit68',
+                                # 300 realizations u[8,16...20], f=1.0, L=[8,...32], checking how well localization length xi.
                             ])
     elif algo == 'xDMRG':
         parser.add_argument('--batches', type=list, help='List of batches to plot data for',

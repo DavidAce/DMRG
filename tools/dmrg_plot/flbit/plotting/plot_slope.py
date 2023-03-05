@@ -6,7 +6,7 @@ from scipy.optimize import curve_fit
 import logging
 from .tools import *
 
-logger = logging.getLogger('plot-slope')
+logger = logging.getLogger('plot-linearFit')
 
 
 def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,

@@ -211,8 +211,14 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::time_num_steps"               , flbit::time_num_steps);
     dmrg_config.load_parameter("flbit::time_gate_id_threshold"       , flbit::time_gate_id_threshold);
     dmrg_config.load_parameter("flbit::print_freq"                   , flbit::print_freq);
-    dmrg_config.load_parameter("flbit::compute_lbit_stats"           , flbit::compute_lbit_stats);
     dmrg_config.load_parameter("flbit::store_wavefn"                 , flbit::store_wavefn);
+    dmrg_config.load_parameter("flbit::cls::num_rnd_circuits"        , flbit::cls::num_rnd_circuits);
+    dmrg_config.load_parameter("flbit::cls::exit_when_done"          , flbit::cls::exit_when_done);
+    dmrg_config.load_parameter("flbit::cls::randomize_hfields"       , flbit::cls::randomize_hfields);
+    dmrg_config.load_parameter("flbit::cls::mpo_circuit_switchdepth" , flbit::cls::mpo_circuit_switchdepth);
+    dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_bondlim" , flbit::cls::mpo_circuit_svd_bondlim);
+    dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_trnclim" , flbit::cls::mpo_circuit_svd_trnclim);
+
 
     //Parameters controlling excited state DMRG
     dmrg_config.load_parameter("xdmrg::on"                           , xdmrg::on);

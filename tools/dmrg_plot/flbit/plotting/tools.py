@@ -17,6 +17,7 @@ from git import Repo
 import seaborn as sns
 from itertools import product
 from scipy.optimize import curve_fit
+from scipy.stats import linregress
 from collections.abc import Iterable
 
 logger = logging.getLogger('tools')
@@ -77,7 +78,7 @@ def get_colored_lstyles(db, linspec, default_palette):
 def match_datanodes(db, meta, specs, vals):
     nodes = set()
     gname = meta.get('groupname')
-    # dname = meta.get('dsetname')
+    dname = meta.get('dsetname')
     for dsetpath, dset in db['dsets'].items():
         # print('-- checking', dsetpath)
         if gname is not None:
@@ -85,11 +86,11 @@ def match_datanodes(db, meta, specs, vals):
                 continue
             elif not gname in dsetpath:
                 continue
-        # if dname is not None:
-        #     if isinstance(dname, Iterable) and not any([d in dsetpath for d in dname]):
-        #         continue
-        #     elif not dname in dsetpath:
-        #         continue
+        if dname is not None:
+            if isinstance(dname, Iterable) and not any([d in dsetpath for d in dname]):
+                continue
+            elif not dname in dsetpath:
+                continue
         equal = True
         for s, v in zip(specs, vals):
             s_noformat = s.split(':')[0]
@@ -176,6 +177,16 @@ def stretched_log(x, C, xi, beta):
     return np.log(C) - (x / xi) ** beta
 
 
+@njit(parallel=True, cache=True)
+def linear_log(x, C, xi):
+    return np.log(C) - (x / xi)
+
+
+@njit(parallel=True, cache=True)
+def linear_fit(x, m, k):
+    return m + k * x
+
+
 # def floglog(x, a, b,c):
 #     return a + b*np.log(np.log(x + c))
 @njit(parallel=True, cache=True)
@@ -196,13 +207,24 @@ def flinear(x, a, b):
         return a + b * x
 
 
-def get_lbit_cls(avg):
-    idx0 = 0
-    idxN = np.argmax(np.ndarray.flatten(avg) <= 1e-8) - 1
-    ydata = np.ndarray.flatten(avg)[idx0:idxN]
-    xdata = np.array(range(len(ydata)))
-    p0 = 0.5, 1.0, 1.2
-    bounds_v2 = ([0.3, 0.0, 1.0], [1.0, 2.0, np.inf])
+# Returns C, xi, beta, yfit, LinregressResult instance or pstd
+def get_lbit_cls(x, y, stretched=False):
+    if np.size(y) <= 1:
+        print('get_lbit_cls: y is too short:', y)
+        return None, None, None, None, None
+    ydata = np.ndarray.flatten(y)
+    xdata = np.ndarray.flatten(x)
+    idx0 = 1  # Skip first entry, which usually doesn't obey exp decay
+    idxN = 0
+    for idx, val in enumerate(ydata):
+        if idx >= 2 and abs(val) > 0.5 * (abs(ydata[idx - 1]) + abs(ydata[idx - 2])):
+            break
+        if val == 0:
+            break
+        idxN = idx
+
+    ydata = ydata[idx0:idxN]
+    xdata = xdata[idx0:idxN]
     try:
         if idxN >= 0 and idxN <= idx0:
             raise IndexError("Invalid index order: idx0 {} | idxN {}".format(idx0, idxN))
@@ -210,46 +232,25 @@ def get_lbit_cls(avg):
             raise IndexError("Too few datapoints for a fit: idx0 {} | idxN {}".format(idx0, idxN))
 
         with np.errstate(invalid='ignore'):
-            ylog = np.log(ydata)
-            popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylog, p0=p0, bounds=bounds_v2)
-            # print('Fit C exp(-(d/xi)**beta): C {:.4f} | xi {:.4f} | beta {:.4f}'.format(popt[0], popt[1], popt[2]))
-            return popt[0], popt[1], popt[2]
+            ylogs = np.log(np.abs(ydata))
+            if stretched:
+                p0 = 0.5, 1.0, 1.0
+                popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylogs, p0=p0)
+                pstd = np.sqrt(np.diag(pcov))
+                return popt[0], popt[1], popt[2], stretched_exp(xdata, *popt), pstd
+            else:
+                result = linregress(x=xdata, y=ylogs, alternative='less')
+                C = np.exp(result.intercept)
+                xi = 1.0 / abs(result.slope)
+                yfit = C * np.exp(-xdata / xi)
+                return C, xi, None, yfit, result
     except IndexError as e:
         print("Index error:", e)
         pass
     except ValueError as e:
         print("Fit failed:", e)
 
-    return None, None, None
-
-
-def get_lbit_cls2(avg):
-    idx0 = 0
-    idxN = np.argmax(np.ndarray.flatten(avg) <= 1e-8) - 1
-    ydata = np.ndarray.flatten(avg)[idx0:idxN]
-    xdata = np.array(range(len(ydata)))
-    p0 = 0.5, 1.0, 1.2
-    # bounds_v2 = ([0.5, 0.0, 1.0], [1.0, 2.0, np.inf])
-    print(ydata)
-
-    try:
-        if idxN >= 0 and idxN <= idx0:
-            raise IndexError("Invalid index order: idx0 {} | idxN {}".format(idx0, idxN))
-        if idxN >= 0 and idxN < idx0 + 2:
-            raise IndexError("Too few datapoints for a fit: idx0 {} | idxN {}".format(idx0, idxN))
-
-        with np.errstate(invalid='ignore'):
-            popt, pcov = curve_fit(stretched_exp, xdata=xdata, ydata=ydata, p0=p0)
-            print('Fit C exp(-(d/xi)**beta): C {:.4f} | xi {:.4f} | beta {:.4f}'.format(popt[0], popt[1], popt[2]))
-            return popt[0], popt[1], popt[2]
-    except IndexError as e:
-        print("Index error:", e)
-        pass
-    except ValueError as e:
-        print("Fit failed:", e)
-
-    return None, None, None
-
+    return None, None, None, None
 
 def find_saturation_idx2(ydata, threshold=1e-2):
     if len(ydata) <= 2:
@@ -466,16 +467,16 @@ def get_safe_table_field_name(node, keys):
 
 def get_table_data(node, keys=None, dtype='f8', transpose=None):
     if keys == None:
-        return node[()].ravel().view((dtype, (1,)))[()], []
+        return node[()].ravel().view((dtype, (1,)))[()], np.array([None], ndmin=2)
 
     elif node.dtype.fields == None:
         # This is a scalar put inside an ndarray, so that we have
         # a consistent return type
-        return np.array(node[()]), []
+        return np.array(node[()]), np.array([None], ndmin=2)
     else:
         # Find the column names that match keys
         cols = get_safe_table_field_name(node, keys)
-        return node.fields(cols)[()].view((dtype, (len(cols),)))[()], cols
+        return node.fields(cols)[()].view(dtype=(dtype, (len(cols),)))[()], np.array(cols)
 
 
 def get_legend_row(db, datanode, legend_col_keys):
