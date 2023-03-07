@@ -67,6 +67,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     for i, (y, e) in enumerate(zip(ydata.T, edata.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
                         line, = ax.plot(xdata, y, marker=None, color=color, path_effects=path_effects)
+                        ax.scatter(xdata[fdata[-1]], y[fdata[-1]], marker='o', color=color, path_effects=path_effects)
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                             for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):

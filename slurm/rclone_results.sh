@@ -6,7 +6,7 @@ usage() {
 
 Usage              : $PROGNAME [-f <input_file>] [-h] [-m <mode>] [-t <target>]
 
--a <address>       : Target machine IP address (default = thinkstation.duckdns.org)
+-a <address>       : Target machine IP address (default = neumann.theophys.kth.se)
 -d                 : Performs a dry run.
 -h                 : Help. Shows this text.
 -p <target prefix> : Prefix at destination (default = /mnt/WDB-AN1500/mbl_transition)
@@ -17,7 +17,7 @@ Usage              : $PROGNAME [-f <input_file>] [-h] [-m <mode>] [-t <target>]
 EOF
   exit 1
 }
-default_adr="thinkstation.duckdns.org"
+default_adr="neumann.theophys.kth.se"
 default_pfx="/mnt/WDB-AN1500/mbl_transition"
 default_src="."
 default_tgt="tmp"
@@ -45,4 +45,4 @@ done
 #if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
-rclone copy $default_src ThinkStation:${default_pfx}/${default_tgt} $follow_sym $dry_run --progress --update --multi-thread-streams=$max_threads --transfers=$max_threads
+rclone copy $default_src neumann:${default_pfx}/${default_tgt} $follow_sym $dry_run --progress --update --multi-thread-streams=$max_threads --transfers=$max_threads

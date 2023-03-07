@@ -159,8 +159,8 @@ def lbit_plot(args):
 
     # For lbit68
     figspec_x = ['tstd', 'cstd', 'cgw8', 'tgw8']
-    subspec_x = ['J', 'w', 'r', 'f']
-    linspec_x = ['u']
+    subspec_x = ['J', 'w', 'r', 'f', 'u']
+    linspec_x = ['ubond']
     xaxspec_x = ['L']
     figspec = ['L', 'J', 'r']
     subspec = ['f', 'w', 'cgw8', 'tgw8', 'tstd', 'cstd']
@@ -168,36 +168,44 @@ def lbit_plot(args):
 
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit'], figspec=['J', 'r', 'f'], subspec=['w', 'x:.2f', 'L'],
-                                   linspec=['u'], figs=f,
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-typ'], figspec=['J', 'r', 'f'],
+                                   subspec=['w', 'x:.2f', 'u', 'L'],
+                                   linspec=['ubond'], figs=f,
                                    palette_name=palette)
     save_figure(f)
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_dset_fig_sub_line(db=db, meta=meta['cls'], figspec=figspec_x, subspec=subspec_x, linspec=linspec_x,
-                                   xaxspec=xaxspec_x, figs=f,
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=['J', 'r', 'f'],
+                                   subspec=['w', 'x:.2f', 'u', 'L'],
+                                   linspec=['ubond'], figs=f,
                                    palette_name=palette)
     save_figure(f)
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_dset_fig_sub_line(db=db, meta=meta['cls'], figspec=figspec_x, subspec=subspec_x, linspec=['L'],
-                                   xaxspec=['u'], figs=f,
-                                   palette_name=palette)
-    save_figure(f)
-
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_cls_fig_sub_line(db=db, meta=meta['decay'], figspec=figspec_x, subspec=subspec_x, linspec=linspec_x,
-                                  xaxspec=xaxspec_x, figs=f,
-                                  palette_name=palette)
-    save_figure(f)
-
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_cls_fig_sub_line(db=db, meta=meta['decay'], figspec=figspec_x, subspec=subspec_x, linspec=['L'],
-                                  xaxspec=['u'], figs=f,
-                                  palette_name=palette)
-    save_figure(f)
+    # f = None
+    # for db, meta, palette in zip(dbs, metas, palettes):
+    #     f = plot_dset_fig_sub_line(db=db, meta=meta['cls'], figspec=figspec_x, subspec=subspec_x, linspec=linspec_x,
+    #                                xaxspec=xaxspec_x, figs=f,
+    #                                palette_name=palette)
+    # save_figure(f)
+    # f = None
+    # for db, meta, palette in zip(dbs, metas, palettes):
+    #     f = plot_dset_fig_sub_line(db=db, meta=meta['cls'], figspec=figspec_x, subspec=subspec_x, linspec=['L'],
+    #                                xaxspec=['u'], figs=f,
+    #                                palette_name=palette)
+    # save_figure(f)
+    #
+    # f = None
+    # for db, meta, palette in zip(dbs, metas, palettes):
+    #     f = plot_cls_fig_sub_line(db=db, meta=meta['decay'], figspec=figspec_x, subspec=subspec_x, linspec=linspec_x,
+    #                               xaxspec=xaxspec_x, figs=f,
+    #                               palette_name=palette)
+    # save_figure(f)
+    #
+    # f = None
+    # for db, meta, palette in zip(dbs, metas, palettes):
+    #     f = plot_cls_fig_sub_line(db=db, meta=meta['decay'], figspec=figspec_x, subspec=subspec_x, linspec=['L'],
+    #                               xaxspec=['u'], figs=f,
+    #                               palette_name=palette)
+    # save_figure(f)
 
     plt.show()
     exit(0)

@@ -65,8 +65,9 @@ struct lbit {
     double                   u_fmix;
     double                   u_tstd, u_cstd;
     UnitaryGateWeight        u_tgw8, u_cgw8;
-    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span",
-                                       "xi_Jcls", "u_fmix",  "u_depth", "u_tstd",  "u_cstd",  "u_tgw8",  "u_cgw8"};
+    long                     u_bond;
+    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span", "xi_Jcls",
+                                       "u_fmix",  "u_depth", "u_tstd",  "u_cstd",  "u_tgw8",  "u_cgw8",  "u_bond"};
 };
 
 struct sdual {

@@ -42,6 +42,13 @@ namespace text {
         return std::nullopt;
     }
 
+    template<typename T>
+    [[nodiscard]] std::optional<T> extract_value_between(std::string_view input, std::string_view lpattern, std::string_view rpattern) {
+        auto lpos = input.find(lpattern) + lpattern.size();
+        auto rpos = input.find(rpattern, lpos);
+        return extract_value<T>(input.substr(lpos, rpos - lpos));
+    }
+
     extern bool natcomp(std::string_view sa, std::string_view sb);
 
     template<typename T1 = std::initializer_list<std::string_view>, typename T2 = std::initializer_list<std::string_view>>

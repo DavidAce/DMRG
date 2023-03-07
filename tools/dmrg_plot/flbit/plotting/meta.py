@@ -44,7 +44,7 @@ def get_meta(plotdir):
                 # 'u': ['u_2', 'u_3'],
                 # 'f': ['f_0.4500'],
                 # 'u': ['u_5', 'u_6'],
-                # 'u': ['u_5'],
+                'u': [32],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
                 'tgw8': ['ID'],
                 'cgw8': ['EX']
@@ -355,9 +355,9 @@ def get_meta(plotdir):
             'legendcollect': legendcollect,
             'legendlocation': 'best',
         },
-        'lbit': {
+        'lbit-avg': {
             'groupname': 'lbits',
-            'dsetname': 'decay_avg',
+            'dsetname': 'corravg',
             'titlename': 'l-bit',
             'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
             'xlabel': "$|i-j|$",
@@ -368,11 +368,38 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'xmax': 16,
             'ymin': 1e-14,
-            'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'best',
-            'legendtitle': '$y = C e^{-(|i-j|/\\xi_\\tau)^\\beta}$',
+            'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+            'inset-cls': {
+                # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
+                'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
+                'coords': [None, None, None, None],
+                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+                'legendtitle': '$\\xi_\\tau$',
+            },
+
+        },
+        'lbit-typ': {
+            'groupname': 'lbits',
+            'dsetname': 'corrtyp',
+            'titlename': 'l-bit',
+            'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'xlabel': "$|i-j|$",
+            'yscale': 'log',
+            'ynopos': 'mask',
+            'plotprefix': 'lbit',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            # 'xmax': 16,
+            'ymin': 1e-14,
+            'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            'legendlocation': 'best',
+            'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             'inset-cls': {
                 # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
                 'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
@@ -384,7 +411,7 @@ def get_meta(plotdir):
         },
         'decay': {
             'groupname': 'lbits',
-            'dsetname': 'decay_avg',
+            'dsetname': 'corrtyp',
             'titlename': 'Characteristic length scale of l-bits',
             'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
             'plotprefix': 'lbit',

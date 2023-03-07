@@ -211,16 +211,21 @@ def flinear(x, a, b):
 def get_lbit_cls(x, y, stretched=False):
     if np.size(y) <= 1:
         print('get_lbit_cls: y is too short:', y)
-        return None, None, None, None, None
+        return None, None, None, None, None, None
     ydata = np.ndarray.flatten(y)
     xdata = np.ndarray.flatten(x)
     idx0 = 1  # Skip first entry, which usually doesn't obey exp decay
     idxN = 0
     for idx, val in enumerate(ydata):
+        if abs(val) < np.max(np.abs(ydata[idx:])):
+            break
         if idx >= 2 and abs(val) > 0.5 * (abs(ydata[idx - 1]) + abs(ydata[idx - 2])):
+            break
+        if abs(val) < 1e-5:
             break
         if val == 0:
             break
+
         idxN = idx
 
     ydata = ydata[idx0:idxN]
@@ -243,14 +248,14 @@ def get_lbit_cls(x, y, stretched=False):
                 C = np.exp(result.intercept)
                 xi = 1.0 / abs(result.slope)
                 yfit = C * np.exp(-xdata / xi)
-                return C, xi, None, yfit, result
+                return C, xi, None, yfit, result, idxN
     except IndexError as e:
         print("Index error:", e)
         pass
     except ValueError as e:
         print("Fit failed:", e)
 
-    return None, None, None, None
+    return None, None, None, None, None, None
 
 def find_saturation_idx2(ydata, threshold=1e-2):
     if len(ydata) <= 2:

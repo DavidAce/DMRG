@@ -7,8 +7,20 @@ from .write_statistics_table import *
 def write_stats_to_node(data, tgt_node, axis):
     std = np.nanstd(data, axis=axis)
     num = np.shape(data)[axis]
+    dama = np.ma.masked_invalid(np.ma.masked_equal(np.abs(data), 0))
+    # dabs = np.abs(data)
+    # dama = np.manp.ma.masked_invalid(dabs)
+    dtyp = np.exp(np.nanmean(np.log(np.abs(data)), axis=axis))
 
-    tgt_node.create_dataset(name='avg', data=np.nanmean(data, axis=axis))
+    if '_typ' in tgt_node.name:
+        if np.any(np.isnan(dama)):
+            print('dama has nans: \n{}', dama)
+        tgt_node.create_dataset(name='avg', data=dtyp)
+        tgt_node.create_dataset(name='typ', data=dtyp)
+    else:
+        tgt_node.create_dataset(name='avg', data=np.nanmean(data, axis=axis))
+        tgt_node.create_dataset(name='typ', data=dtyp)
+
     tgt_node.create_dataset(name='std', data=std)
     tgt_node.create_dataset(name='ste', data=std / np.sqrt(num))
     tgt_node.create_dataset(name='med', data=np.nanmedian(data, axis=axis))
@@ -18,9 +30,6 @@ def write_stats_to_node(data, tgt_node, axis):
     tgt_node.create_dataset(name='q75', data=np.nanpercentile(data, 0.75, axis=axis))
     tgt_node.create_dataset(name='num', data=num)
     tgt_node.create_dataset(compression="gzip", compression_opts=9, name='data', data=data)
-    dama = np.ma.masked_where(np.asarray(data) <= 0, np.asarray(data))
-    tgt_node.create_dataset(name='typ',
-                            data=sc.gmean(dama, axis=axis, dtype=dama.dtype))  # Geometric average
 
 
 def get_renyi(data, alpha, pn_cutoff=-np.inf):

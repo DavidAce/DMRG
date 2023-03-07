@@ -76,8 +76,8 @@ namespace tools::h5io {
             auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, H.p.xi_Jcls);
             // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
             auto r_str = H.p.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", H.p.J2_span);
-            auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}]"), u_dec, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
-                                     enum2sv(H.p.u_tgw8), H.p.u_cstd, enum2sv(H.p.u_cgw8));
+            auto u_str = fmt::format(FMT_COMPILE("u[d{1}_f{2:.{0}f}_tw{3:.{0}f}{4:.2}_cw{5:.{0}f}{6:.2}_bond{7}]"), u_dec, H.p.u_depth, H.p.u_fmix, H.p.u_tstd,
+                                     enum2sv(H.p.u_tgw8), H.p.u_cstd, enum2sv(H.p.u_cgw8), H.p.u_bond);
             auto base  = fmt::format(FMT_COMPILE("{0}/{1}/{2}/{3}/{4}"), L_str, J_str, x_str, r_str, u_str);
             tools::logger::log->info("creating base: {}", base);
             return base;
@@ -193,23 +193,28 @@ namespace tools::h5io {
                     srcModelId.distribution = h5tb_hamiltonian.distribution;
                 }
                 if constexpr(std::is_same_v<T, lbit>) {
-                    auto h5tb_hamiltonian   = h5_src.readTableRecords<h5tb_lbit::table>(path, h5pp::TableSelection::FIRST);
-                    hamiltonian.J1_mean     = h5tb_hamiltonian.J1_mean;
-                    hamiltonian.J2_mean     = h5tb_hamiltonian.J2_mean;
-                    hamiltonian.J3_mean     = h5tb_hamiltonian.J3_mean;
-                    hamiltonian.J1_wdth     = h5tb_hamiltonian.J1_wdth;
-                    hamiltonian.J2_wdth     = h5tb_hamiltonian.J2_wdth;
-                    hamiltonian.J3_wdth     = h5tb_hamiltonian.J3_wdth;
-                    hamiltonian.xi_Jcls     = h5tb_hamiltonian.xi_Jcls;
-                    hamiltonian.J2_span     = h5tb_hamiltonian.J2_span;
-                    hamiltonian.u_depth     = h5tb_hamiltonian.u_depth;
-                    hamiltonian.u_fmix      = h5tb_hamiltonian.u_fmix;
-                    hamiltonian.u_tstd      = h5tb_hamiltonian.u_tstd;
-                    hamiltonian.u_cstd      = h5tb_hamiltonian.u_cstd;
-                    hamiltonian.u_tgw8      = h5tb_hamiltonian.u_tgw8;
-                    hamiltonian.u_cgw8      = h5tb_hamiltonian.u_cgw8;
+                    auto h5tb_hamiltonian = h5_src.readTableRecords<h5tb_lbit::table>(path, h5pp::TableSelection::FIRST);
+                    hamiltonian.J1_mean   = h5tb_hamiltonian.J1_mean;
+                    hamiltonian.J2_mean   = h5tb_hamiltonian.J2_mean;
+                    hamiltonian.J3_mean   = h5tb_hamiltonian.J3_mean;
+                    hamiltonian.J1_wdth   = h5tb_hamiltonian.J1_wdth;
+                    hamiltonian.J2_wdth   = h5tb_hamiltonian.J2_wdth;
+                    hamiltonian.J3_wdth   = h5tb_hamiltonian.J3_wdth;
+                    hamiltonian.xi_Jcls   = h5tb_hamiltonian.xi_Jcls;
+                    hamiltonian.J2_span   = h5tb_hamiltonian.J2_span;
+                    hamiltonian.u_depth   = h5tb_hamiltonian.u_depth;
+                    hamiltonian.u_fmix    = h5tb_hamiltonian.u_fmix;
+                    hamiltonian.u_tstd    = h5tb_hamiltonian.u_tstd;
+                    hamiltonian.u_cstd    = h5tb_hamiltonian.u_cstd;
+                    hamiltonian.u_tgw8    = h5tb_hamiltonian.u_tgw8;
+                    hamiltonian.u_cgw8    = h5tb_hamiltonian.u_cgw8;
+                    auto u_bond           = text::extract_value_between<long>(key, "_bond", "]");
+                    if(not u_bond.has_value()) throw except::logic_error("Failed to get u_bond value from string: {}", key);
+                    hamiltonian.u_bond      = u_bond.value();
                     srcModelId.distribution = h5tb_hamiltonian.distribution;
-                    tools::logger::log->info("{}: u_tgw8 {} u_cgw8 {}", path, enum2sv(hamiltonian.u_tgw8), enum2sv(hamiltonian.u_cgw8));
+                    //                    tools::logger::log->info("{}: u_tgw8 {} u_cgw8 {} u_bond {}", path, enum2sv(hamiltonian.u_tgw8),
+                    //                    enum2sv(hamiltonian.u_cgw8),
+                    //                                             hamiltonian.u_bond);
                 }
                 srcModelId.model_size = h5_src.readAttribute<size_t>(path, "model_size");
                 srcModelId.model_type = h5_src.readAttribute<std::string>(path, "model_name");
@@ -256,11 +261,21 @@ namespace tools::h5io {
 
             // Update an entry of the hamiltonian table with the relevant fields
             tools::logger::log->trace("Copying model {}", modelId.basepath);
-            auto h5t_model = h5pp::util::getFieldTypeId(srcModelInfo, modelId.p.fields); // Generate a h5t with the relevant fields
-            auto modelData =
-                h5_src.readTableField<std::vector<std::byte>>(srcModelInfo, h5t_model, h5pp::TableSelection::LAST); // Read those fields into a buffer
-            tgtInfo = h5_tgt.createTable(h5t_model, tablePath, h5pp::format("{} Hamiltonian", modelId.algorithm));
-            h5_tgt.writeTableRecords(modelData, tablePath);
+
+            {
+                // Copy the table fields that exist in the src model hamiltonian
+                std::vector<std::string> fields;
+                for(size_t fidx = 0; fidx < modelId.p.fields.size(); ++fidx) {
+                    const auto &field = modelId.p.fields[fidx];
+                    auto        fitr  = std::find(srcModelInfo.fieldNames->begin(), srcModelInfo.fieldNames->end(), field);
+                    if(fitr != srcModelInfo.fieldNames->end()) { fields.emplace_back(field); }
+                }
+                auto h5t_model = h5pp::util::getFieldTypeId(srcModelInfo, fields); // Generate a h5t with the relevant fields
+                auto modelData =
+                    h5_src.readTableField<std::vector<std::byte>>(srcModelInfo, h5t_model, h5pp::TableSelection::LAST); // Read those fields into a buffer
+                tgtInfo = h5_tgt.createTable(h5t_model, tablePath, h5pp::format("{} Hamiltonian", modelId.algorithm));
+                h5_tgt.writeTableRecords(modelData, tablePath);
+            }
             // Update the database
             tgtId.insert(fileId.seed, 0);
 
@@ -295,6 +310,7 @@ namespace tools::h5io {
                 h5_tgt.writeDataset(modelId.p.u_cstd, fmt::format("{}/u_cstd", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_tgw8, fmt::format("{}/u_tgw8", modelPath));
                 h5_tgt.writeDataset(modelId.p.u_cgw8, fmt::format("{}/u_cgw8", modelPath));
+                h5_tgt.writeDataset(modelId.p.u_bond, fmt::format("{}/u_bond", modelPath));
             }
         }
     }
