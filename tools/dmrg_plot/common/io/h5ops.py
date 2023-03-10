@@ -8,7 +8,7 @@ def h5open(h5filenames, permission='r', chunk_cache_mem_size=1000 * 1024 ** 2, d
         try:
             return h5py.File(h5filenames, permission, swmr=swmr, rdcc_nbytes=chunk_cache_mem_size, rdcc_nslots=chunk_cache_mem_size, driver=driver)
         except Exception as err:
-            print('Could not open file []', h5filenames, err)
+            print('Could not open file [{}]: {}'.format(h5filenames, err))
             exit(1)
 
     else:

@@ -64,9 +64,9 @@ def lbit_plot(args):
         "Purples"
     ]
     palettes = [  # Sequential2 colors
+        "summer_r",
         "autumn_r",
         "winter_r",
-        "summer_r",
         "spring_r"
     ]
 
@@ -166,18 +166,18 @@ def lbit_plot(args):
     subspec = ['f', 'w', 'cgw8', 'tgw8', 'tstd', 'cstd']
     linspec = ['u']
 
+    # f = None
+    # for db, meta, palette in zip(dbs, metas, palettes):
+    #     f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-typ'], figspec=['J', 'r', 'f'],
+    #                                subspec=['w', 'x:.2f', 'ubond', 'L'],
+    #                                linspec=['u'], figs=f,
+    #                                palette_name=palette)
+    # save_figure(f)
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-typ'], figspec=['J', 'r', 'f'],
-                                   subspec=['w', 'x:.2f', 'u', 'L'],
-                                   linspec=['ubond'], figs=f,
-                                   palette_name=palette)
-    save_figure(f)
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=['J', 'r', 'f'],
-                                   subspec=['w', 'x:.2f', 'u', 'L'],
-                                   linspec=['ubond'], figs=f,
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=['J', 'w', 'r', 'ubond'],
+                                   subspec=['L', 'f:.0f', 'x:.0f'],
+                                   linspec=['u'], figs=f,
                                    palette_name=palette)
     save_figure(f)
     # f = None

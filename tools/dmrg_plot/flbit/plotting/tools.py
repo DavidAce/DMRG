@@ -178,6 +178,11 @@ def stretched_log(x, C, xi, beta):
 
 
 @njit(parallel=True, cache=True)
+def regular_exp(x, C, xi):
+    return C * np.exp(-(x / xi))
+
+
+@njit(parallel=True, cache=True)
 def linear_log(x, C, xi):
     return np.log(C) - (x / xi)
 
@@ -208,7 +213,7 @@ def flinear(x, a, b):
 
 
 # Returns C, xi, beta, yfit, LinregressResult instance or pstd
-def get_lbit_cls(x, y, stretched=False):
+def get_lbit_cls(x, y, stretched=False, ymin=1e-5):
     if np.size(y) <= 1:
         print('get_lbit_cls: y is too short:', y)
         return None, None, None, None, None, None
@@ -221,7 +226,7 @@ def get_lbit_cls(x, y, stretched=False):
             break
         if idx >= 2 and abs(val) > 0.5 * (abs(ydata[idx - 1]) + abs(ydata[idx - 2])):
             break
-        if abs(val) < 1e-5:
+        if abs(val) < ymin:
             break
         if val == 0:
             break
@@ -242,7 +247,7 @@ def get_lbit_cls(x, y, stretched=False):
                 p0 = 0.5, 1.0, 1.0
                 popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylogs, p0=p0)
                 pstd = np.sqrt(np.diag(pcov))
-                return popt[0], popt[1], popt[2], stretched_exp(xdata, *popt), pstd
+                return popt[0], popt[1], popt[2], stretched_exp(xdata, *popt), pstd, idxN
             else:
                 result = linregress(x=xdata, y=ylogs, alternative='less')
                 C = np.exp(result.intercept)

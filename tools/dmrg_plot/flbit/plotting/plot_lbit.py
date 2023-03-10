@@ -4,6 +4,7 @@ import seaborn as sns
 from .tools import *
 import warnings
 import logging
+import matplotlib.patheffects as pe
 
 logger = logging.getLogger('plot-lbit')
 
@@ -18,12 +19,13 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         # palette_name = "Spectral"
         if not palette_name:
             palette_name = "colorblind"
-        # path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-        path_effects = None
+        # path_effects = None
+        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
     else:
         if not palette_name:
             palette_name = "colorblind"
-        path_effects = None
+        # path_effects = None
+        path_effects = [pe.SimpleLineShadow(offset=(-0.5, -0.5), alpha=0.3), pe.Normal()]
 
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
@@ -67,7 +69,9 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     for i, (y, e) in enumerate(zip(ydata.T, edata.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
                         line, = ax.plot(xdata, y, marker=None, color=color, path_effects=path_effects)
-                        ax.scatter(xdata[fdata[-1]], y[fdata[-1]], marker='o', color=color, path_effects=path_effects)
+                        ax.scatter(xdata[1], y[1], marker='o', color=color, path_effects=path_effects)
+                        ax.scatter(xdata[fdata[-1]], y[fdata[-1]], marker='o', color=color, path_effects=path_effects,
+                                   zorder=50)
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
                             for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
@@ -76,18 +80,25 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 f['legends'][idx][icol]['label'].append(col)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
                             icol = len(legendrow)
-                            f['legends'][idx][icol + 0]['handle'].append(line)
-                            f['legends'][idx][icol + 0]['label'].append('{:.2f}'.format(fdata[0]))
-                            f['legends'][idx][icol + 0]['title'] = '$C$'
-                            f['legends'][idx][icol + 1]['handle'].append(line)
-                            f['legends'][idx][icol + 1]['label'].append('{:.2f}'.format(fdata[1]))
-                            f['legends'][idx][icol + 1]['title'] = '$\\xi_\\tau$'
-                            f['legends'][idx][icol + 2]['handle'].append(line)
-                            # f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(fdata[2]))
-                            # f['legends'][idx][icol + 2]['title'] = '$\\beta$'
+                            iuse = 0
+                            if 'C' in meta['legendfits']:
+                                f['legends'][idx][icol + iuse]['handle'].append(line)
+                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fdata[0]))
+                                f['legends'][idx][icol + iuse]['title'] = '$C$'
+                                iuse += 1
+                            if 'xi' in meta['legendfits']:
+                                f['legends'][idx][icol + iuse]['handle'].append(line)
+                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fdata[1]))
+                                f['legends'][idx][icol + iuse]['title'] = '$\\xi_\\tau$'
+                                iuse += 1
+                            if 'beta' in meta['legendfits'] and fdata[2] is not None:
+                                f['legends'][idx][icol + iuse]['handle'].append(line)
+                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fdata[2]))
+                                f['legends'][idx][icol + iuse]['title'] = '$\\beta$'
 
-                        # line, = ax.plot(xdata, stretched_exp(xdata, *fdata), marker=None, linestyle='dashed',
-                        #                 color=color, path_effects=path_effects)
+                        line, = ax.plot(xdata, regular_exp(xdata, fdata[0], fdata[1]), linewidth=1.0, marker=None,
+                                        linestyle='dashed',
+                                        color=color, path_effects=path_effects, zorder=0)
                         # if 'inset-cls' in meta:
                         #     if ix is None:
                         #         # pos tells where to put the inset, x0,y0, width, height in % units
@@ -191,16 +202,21 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 f['legends'][idx][icol]['label'].append(col)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
                             icol = len(legendrow)
-                            f['legends'][idx][icol + 0]['handle'].append(line)
-                            f['legends'][idx][icol + 0]['label'].append('{:.2f}'.format(C))
-                            f['legends'][idx][icol + 0]['title'] = '$C$'
-                            f['legends'][idx][icol + 1]['handle'].append(line)
-                            f['legends'][idx][icol + 1]['label'].append('{:.2f}'.format(xi))
-                            f['legends'][idx][icol + 1]['title'] = '$\\xi_\\tau$'
-                            f['legends'][idx][icol + 2]['handle'].append(line)
-                            if beta is not None:
-                                f['legends'][idx][icol + 2]['label'].append('{:.2f}'.format(beta))
-                                f['legends'][idx][icol + 2]['title'] = '$\\beta$'
+                            iuse = 0
+                            if 'C' in meta['legendfits']:
+                                f['legends'][idx][icol + iuse]['handle'].append(line)
+                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(C))
+                                f['legends'][idx][icol + iuse]['title'] = '$C$'
+                                iuse += 1
+                            if 'xi' in meta['legendfits']:
+                                f['legends'][idx][icol + iuse]['handle'].append(line)
+                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(xi))
+                                f['legends'][idx][icol + iuse]['title'] = '$\\xi_\\tau$'
+                                iuse += 1
+                            if 'beta' in meta['legendfits'] and beta is not None:
+                                f['legends'][idx][icol + iuse]['handle'].append(line)
+                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(beta))
+                                f['legends'][idx][icol + iuse]['title'] = '$\\beta$'
 
                         line, = ax.plot(xdata, yfit, marker=None, linestyle='dashed',
                                         color=color, path_effects=path_effects)

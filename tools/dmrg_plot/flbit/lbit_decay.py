@@ -216,7 +216,7 @@ def plot_lbits(meta, figs=None, color=None):
         color = next(itertools.cycle(sns.color_palette()))
 
     frange = h5data["{}".format(lbitpath)].attrs["f_mixer"][()]
-    urange = h5data["{}".format(lbitpath)].attrs["u_depth"][()]
+    urange = h5data["{}".format(lbitpath)].attrs["u_layer"][()]
     lbits = h5data["{}".format(lbitpath)]["data"][()]
     decay = h5data["{}/decay".format(lbitpath)]  # formerly "curves"
     fields = h5data["fLBIT/model/hamiltonian"]['J1_rand']
@@ -256,13 +256,13 @@ def plot_lbits(meta, figs=None, color=None):
             ax = f['ax'][idx]
             x = np.array(range(cols))
             xmid = int(rows / 2)
-            maxreps = np.min([reps, 500])
-            popt, pstd = get_lbit_decay_stretched(decay[fidx, uidx])
-            print(np.shape(decay))
-            print(popt, pstd)
-
-            ax.plot(x + xmid, fit_exp_stretched(x, popt[0], popt[1], popt[2]), label=None, color='green',
-                    path_effects=pe_expfit, zorder=60, )
+            maxreps = np.min([reps, 50])
+            C, xi, beta, yfit, _, _ = get_lbit_cls(x, decay[fidx, uidx], stretched=True, ymin=1e-10)
+            # print(np.shape(decay))
+            # print(popt, pstd)
+            #
+            # ax.plot(x + xmid, fit_exp_stretched(x, popt[0], popt[1], popt[2]), label=None, color='green',
+            #         path_effects=pe_expfit, zorder=60, )
             # ax.plot(x + xmid, exp_fit(x, popt[0], popt[1]), label=None, color=color, path_effects=pe_expfit)
 
             for site in [xmid]:
@@ -286,11 +286,11 @@ def plot_lbits(meta, figs=None, color=None):
                     f['legends'][idx][2]['title'] = '$d_u$'
                 if 'xi' in meta['legendcols']:
                     f['legends'][idx][3]['handle'].append(line)
-                    f['legends'][idx][3]['label'].append('$\quad{:.2f}$'.format(popt[1]))
+                    f['legends'][idx][3]['label'].append('$\quad{:.2f}$'.format(xi))
                     f['legends'][idx][3]['title'] = '$\quad\\xi_\\tau$'
                 if 'xi' in meta['legendcols']:
                     f['legends'][idx][4]['handle'].append(line)
-                    f['legends'][idx][4]['label'].append('${:.2f}$'.format(popt[2]))
+                    f['legends'][idx][4]['label'].append('${:.2f}$'.format(beta))
                     f['legends'][idx][4]['title'] = '$\\beta$'
 
                 for ridx in range(maxreps):
@@ -323,7 +323,7 @@ def plot_lbits(meta, figs=None, color=None):
 
 
 if __name__ == '__main__':
-    meta_lbit_log_fit_blocked_bigc = {
+    meta_lbit_log_fit_identity_bigc = {
         'filename': "{}/lbit-log-fit".format(plotdir),
         'datafile': 'data/mbl_10004-constricted50-random-bigC-L16-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -345,7 +345,7 @@ if __name__ == '__main__':
         # 'legend_in_subfig': False
     }
 
-    meta_lbit_log_fit_blocked = {
+    meta_lbit_log_fit_expdecay = {
         'filename': "{}/lbit-log-fit".format(plotdir),
         'datafile': 'data/mbl_10004-constricted50-random-L16-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -410,52 +410,55 @@ if __name__ == '__main__':
         # 'legend_in_subfig': False
     }
 
-    meta_lbits_blocked = {
-        'filename': "{}/lbits-blocked".format(plotdir),
-        'datafile': 'data/mbl_10004-constricted500-L32-u8-f0.5.h5',
+    meta_lbits_expdecay = {
+        'filename': "{}/lbits-expedecay".format(plotdir),
+        'datafile': 'data/mbl_10004-constricted50-L24-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
         'ylabel': '$O(L/2,j)$',
         'xlabel': '$j$',
-        # 'yticks': [1e-0, 1e-4, 1e-8, 1e-12],
-        # 'xticks': [0, 8, 16, 24],
-        'xticks': [0, 6, 12, 18, 24, 32],
+        'yticks': [1e-0, 1e-4, 1e-8, 1e-12],
+        'xticks': [0, 8, 16, 24],
+        # 'xticks': [0, 6, 12, 18, 24],
+        'box_aspect': 1,
         'sharex': 'all',
         'sharey': 'all',
         'yscale': 'log',
         'ynopos': 'mask',
         # 'box_aspect': 1,
         # 'xscale': 'linear',
-        'ymin': 1e-20,
+        # 'ymin': 1e-20,
         'ymax': 2e0,
-        # 'ymin': 1e-16,
+        'ymin': 1e-12,
         'xmin': -1,
-        'xmax': 33,
+        'xmax': 25,
         'fieldinset': True,
         'plotfit': True,
         'legendoutside': False,
         'legendcollect': False,
-        'legendlocation': (0.15, 0.25),
+        'legendlocation': (0.54, 0.75),
         'owr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
         'ohr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
-        'legendcols': ['f', 'u', 'xi', 'beta'],
+        # 'legendcols': ['f', 'u', 'xi', 'beta'],
+        'legendcols': ['f', 'u'],
         # 'legend_in_subfig': False
     }
-    meta_lbits_uniform = {
-        'filename': "{}/lbits-uniform".format(plotdir),
-        'datafile': 'data/mbl_10004-uniform50-L24-u8-f0.5.h5',
+    meta_lbits_identity = {
+        'filename': "{}/lbits-identity".format(plotdir),
+        'datafile': 'data/mbl_10004-uniform50-L24-u6-f0.3.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
         'ylabel': '$O(L/2,j)$',
         'xlabel': '$j$',
-        # 'yticks': [1e-0, 1e-4, 1e-8, 1e-12],
-        # 'xticks': [0, 8, 16, 24],
-        'xticks': [0, 6, 12, 18, 24],
+        'yticks': [1e-0, 1e-4, 1e-8, 1e-12],
+        'xticks': [0, 8, 16, 24],
+        # 'xticks': [0, 6, 12, 18, 24],
+        'box_aspect': 1,
         'sharex': 'all',
         'sharey': 'all',
         'yscale': 'log',
         'ynopos': 'mask',
         # 'box_aspect': 1,
         # 'xscale': 'linear',
-        'ymin': 1e-8,
+        'ymin': 1e-12,
         'ymax': 2e0,
         # 'ymin': 1e-16,
         'xmin': -1,
@@ -463,27 +466,24 @@ if __name__ == '__main__':
         'fieldinset': False,
         'legendoutside': False,
         'legendcollect': False,
-        'legendlocation': (0.15, 0.25),
+        'legendlocation': (0.54, 0.75),
         'owr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
         'ohr_pad': 1.0,  # Make the left-most subplot wider by this factor to make space for ylabel and ticklabels
-        'legendcols': ['f', 'u', 'xi', 'beta'],
+        # 'legendcols': ['f', 'u', 'xi', 'beta'],
+        'legendcols': ['f', 'u'],
         # 'legend_in_subfig': False
     }
 
     with plt.style.context(mplstyle):
-        fig_log_fit = plot_decay(meta_lbit_log_fit_blocked)
-        fig_log_fit = plot_decay(meta_lbit_log_fit_blocked_bigc, figs=fig_log_fit)
-        plt.show()
-        exit(0)
-        fig_exp_fit = plot_decay(meta_lbit_exp_fit_blocked)
-        fig_exp_fit = plot_decay(meta_lbit_exp_fit_uniform, figs=fig_exp_fit)
-        save_figure(fig_exp_fit)
+        # fig_exp_fit = plot_decay(meta_lbit_exp_fit_blocked)
+        # fig_exp_fit = plot_decay(meta_lbit_exp_fit_uniform, figs=fig_exp_fit)
+        # save_figure(fig_exp_fit)
 
-        fig_uniform = plot_lbits(meta_lbits_uniform)
-        fig_blocked = plot_lbits(meta_lbits_blocked)
+        fig_identity = plot_lbits(meta_lbits_identity)
+        fig_expdecay = plot_lbits(meta_lbits_expdecay)
 
-        save_figure(fig_uniform)
-        save_figure(fig_blocked)
+        save_figure(fig_identity)
+        save_figure(fig_expdecay)
 
         plt.show()
 

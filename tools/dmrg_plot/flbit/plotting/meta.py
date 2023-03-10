@@ -4,8 +4,8 @@ from matplotlib.ticker import LogLocator, \
 import numpy as np
 from pathlib import Path
 
-# mplstyle = '../common/stylesheets/prb.mplstyle'
-mplstyle = '../common/stylesheets/slack.mplstyle'
+mplstyle = '../common/stylesheets/prb.mplstyle'
+# mplstyle = '../common/stylesheets/slack.mplstyle'
 legendoutside = False
 legendcollect = False
 
@@ -31,7 +31,7 @@ def get_meta(plotdir):
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
             },
             'include_v3': {
-                # 'L': [32],
+                'L': [24],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_12'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
@@ -44,10 +44,12 @@ def get_meta(plotdir):
                 # 'u': ['u_2', 'u_3'],
                 # 'f': ['f_0.4500'],
                 # 'u': ['u_5', 'u_6'],
-                'u': [32],
+                # 'u': [32],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
                 'tgw8': ['ID'],
-                'cgw8': ['EX']
+                'cgw8': ['EX'],
+                'u': [8, 16, 32],
+                'ubond': [256],
             },
         },
 
@@ -359,20 +361,26 @@ def get_meta(plotdir):
             'groupname': 'lbits',
             'dsetname': 'corravg',
             'titlename': 'l-bit',
-            'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'box_aspect': 1,
+            # 'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'ylabel': '$\\bar O(|i-j|)$ ',
             'xlabel': "$|i-j|$",
+            'xticks': [0, 3, 6, 9, 12],
             'yscale': 'log',
             'ynopos': 'mask',
             'plotprefix': 'lbit',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            # 'xmax': 16,
-            'ymin': 1e-14,
-            'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'xmax': 14,
+            'ymin': 1e-12,
+            # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendfits': ['xi'],
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'best',
-            'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
             'inset-cls': {
                 # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
                 'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height

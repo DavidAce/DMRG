@@ -7,24 +7,22 @@
 # x-large 14.4
 # xx-large 17.28
 # larger 12.0
-# smaller 8.33
+# smaller small
 
-
-axes.labelsize          : 10.0
-axes.linewidth          : 1.5
-#axes.prop_cycle        : cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
-axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73', 'f0e442', '0072b2', 'd55e00', 'cc79a7'])
 
 figure.facecolor        : 'white'
 
-#figure.figsize          : 1.6875, 1.50
-#figure.figsize          : 3.375, 3.00
-#figure.figsize          : 2.53125, 2.25
-figure.figsize          : 2.3625, 2.01
-#figure.figsize          : 3.375, 6.00
-#figure.figsize           : 4.21875, 3.75
-#figure.figsize          : 6.75, 6.00
-#figure.figsize          : 2.53125, 3.00 # 75% width
+# In revtex4-2 with a two-column article we get
+# \usepackage{xprintlen}
+# \printlen[10][in]{\columnwidth} : 3.4039025050 in
+# \printlen[10][in]{\linewidth}   : 3.4039025050 in
+# \printlen[10][in]{\textwidth}   : 7.0568710470 in
+#
+# We can use an 8:9 ratio to get
+
+#figure.figsize       : 3.404,3.404 # 100% column width
+figure.figsize       : 2.553,2.553 # 75% column width
+#figure.figsize       : 1.702,1.702 # 50% column width
 
 
 grid.alpha              : 0.5
@@ -32,8 +30,8 @@ grid.color              : k
 grid.linestyle          : -
 
 ## Dimensions as fraction of font size:
-legend.fontsize         : 8.33
-legend.title_fontsize   : 8.33
+legend.fontsize         : small
+legend.title_fontsize   : small
 legend.frameon          : False     # if True, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.25      # border whitespace
@@ -69,13 +67,13 @@ ytick.minor.width       : 0.5
 # Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
 
 text.usetex        		: true
-font.size               : 11
+font.size               : 10
 font.family             : serif
 font.serif              : STIX
 mathtext.fontset        : stix
 
-lines.linewidth         : 0.7
-lines.markersize        : 2.0
+lines.linewidth         : 1.0
+lines.markersize        : 3.0
 errorbar.capsize        : 3  # length of end cap on error bars in pixels
 
 axes.axisbelow          : True
@@ -84,8 +82,14 @@ axes.titlesize          : small   # font size of the axes title
 axes.titleweight        : normal  # font weight of title
 axes.titlecolor         : auto    # color of the axes title, auto falls back to
                                   # text.color as default value
-axes.titley             : 0.95    # position title (axes relative units).  None implies auto
+axes.titley             : 0.05    # position title (axes relative units).  None implies auto
 axes.titlepad           : 0.00    # pad between axes and title in points
+
+axes.labelsize          : small
+axes.labelpad           : 0.0
+axes.linewidth          : 1.0
+#axes.prop_cycle        : cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
+axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73', 'f0e442', '0072b2', 'd55e00', 'cc79a7'])
 
 #axes.formatter.limits: -5, 6  # use scientific notation if log10
                                # of the axis range is smaller than the
