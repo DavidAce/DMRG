@@ -9,8 +9,8 @@ import platform
 
 template_filename = 'input_template_flbit.cfg'
 basename          = 'mbl'
-input_prefix      = "input-utest"
-output_prefix     = "output-utest"
+input_prefix      = "input"
+output_prefix     = "output"
 
 
 sites               = [8,12,16,20,24,28,32]
@@ -25,8 +25,7 @@ u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']
 u_cgw8              = ['EXPDECAY']
 u_bond              = [128]
-# initial_state       = ["PRODUCT_STATE_NEEL"]
-initial_state       = ["RANDOM_PRODUCT_STATE_ZEROMAG"]
+initial_state       = ["PRODUCT_STATE_NEEL_SHUFFLED"]
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
     tmp_storage = "/scratch/local"

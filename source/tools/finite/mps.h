@@ -45,8 +45,8 @@ namespace tools::finite::mps {
         extern bool bitfield_is_valid (size_t bitfield);
         extern std::vector<long> get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_lim);
 
+        extern void product_state_neel_shuffled (StateFinite & state, StateInitType type, std::string_view axis);
         extern void random_product_state (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, size_t bitfield);
-        extern void random_product_state_zeromag (StateFinite & state, StateInitType type, std::string_view axis);
         extern void random_entangled_state (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, long bond_lim);
 
         // Product states

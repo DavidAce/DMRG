@@ -61,8 +61,8 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     }
 }
 
-void tools::finite::mps::init::random_product_state_zeromag(StateFinite &state, StateInitType type, std::string_view axis) {
-    tools::log->info("Setting random product state with zero magnetization of type {} on axis {}", enum2sv(type), axis);
+void tools::finite::mps::init::product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis) {
+    tools::log->info("Setting randomly shuffled neel state of type {} on axis {}", enum2sv(type), axis);
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);

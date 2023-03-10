@@ -60,9 +60,9 @@ void flbit::resume() {
         auto bond_lim = settings::get_bond_init(status.algo_type);
         switch(settings::strategy::initial_state) {
             case StateInit::PRODUCT_STATE_NEEL:
-            case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG: break;
+            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: break;
             default:
-                tools::log->warn("Expected initial_state: PRODUCT_STATE_NEEL|RANDOM_PRODUCT_STATE_ZEROMAG. Got {}", enum2sv(settings::strategy::initial_state));
+                tools::log->warn("Expected initial_state: PRODUCT_STATE_NEEL|PRODUCT_STATE_NEEL_SHUFFLED,. Got {}", enum2sv(settings::strategy::initial_state));
         }
 
         if(settings::strategy::initial_axis != "+z") tools::log->warn("Expected initial_axis == +z. Got {}", settings::strategy::initial_axis);
@@ -126,7 +126,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
         switch(task) {
             case flbit_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_ZEROMAG: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE_ZEROMAG); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_SHUFFLED); break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;

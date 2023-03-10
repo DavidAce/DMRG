@@ -91,7 +91,7 @@ void xdmrg::resume() {
             case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
             case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
             case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
-            case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG:
+            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED:
                 throw except::runtime_error("TODO! Random product state with zero magnetization initialization not implemented yet");
         }
         task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
@@ -120,7 +120,7 @@ void xdmrg::run_default_task_list() {
             case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
             case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
             case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
-            case StateInit::RANDOM_PRODUCT_STATE_ZEROMAG:
+            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED:
                 throw except::runtime_error("TODO! Random product state with zero magnetization initialization not implemented yet");
         }
         default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
