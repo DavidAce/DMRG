@@ -769,6 +769,9 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute(enum2sv(ucgw8s), "/fLBIT/model/lbits", "u_cgw8");
                 h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
                 h5file->writeAttribute(randhf, "/fLBIT/model/lbits", "randomize_hfields");
+                h5file->writeAttribute(settings::flbit::cls::mpo_circuit_svd_bondlim, "/fLBIT/model/lbits", "u_bond");
+                h5file->writeAttribute(settings::flbit::cls::mpo_circuit_svd_trnclim, "/fLBIT/model/lbits", "u_trnc");
+                h5file->writeAttribute(settings::flbit::cls::mpo_circuit_switchdepth, "/fLBIT/model/lbits", "mpo_switchdepth");
                 h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
                 h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff", "description");
                 h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
