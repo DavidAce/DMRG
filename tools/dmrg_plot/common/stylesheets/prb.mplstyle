@@ -21,8 +21,8 @@ figure.facecolor        : 'white'
 # We can use an 8:9 ratio to get
 
 #figure.figsize       : 3.404,3.404 # 100% column width
-figure.figsize       : 2.553,2.553 # 75% column width
-#figure.figsize       : 1.702,1.702 # 50% column width
+#figure.figsize       : 2.553,2.553 # 75% column width
+figure.figsize       : 1.702,1.702 # 50% column width
 
 
 grid.alpha              : 0.5
@@ -34,7 +34,7 @@ legend.fontsize         : small
 legend.title_fontsize   : small
 legend.frameon          : False     # if True, draw the legend on a background patch
 legend.loc              : center left
-legend.borderpad        : 0.25      # border whitespace
+legend.borderpad        : 0.01      # border whitespace
 legend.labelspacing     : 0.15      # the vertical space between the legend entries
 legend.handlelength     : 1.0       # the length of the legend lines
 legend.handletextpad    : 0.5       # the space between the legend line and legend text
@@ -73,7 +73,7 @@ font.serif              : STIX
 mathtext.fontset        : stix
 
 lines.linewidth         : 1.0
-lines.markersize        : 3.0
+lines.markersize        : 4.0
 errorbar.capsize        : 3  # length of end cap on error bars in pixels
 
 axes.axisbelow          : True
@@ -83,7 +83,7 @@ axes.titleweight        : normal  # font weight of title
 axes.titlecolor         : auto    # color of the axes title, auto falls back to
                                   # text.color as default value
 axes.titley             : 0.05    # position title (axes relative units).  None implies auto
-axes.titlepad           : 0.00    # pad between axes and title in points
+axes.titlepad           : 2.00    # pad between axes and title in points
 
 axes.labelsize          : small
 axes.labelpad           : 0.0
@@ -114,9 +114,10 @@ axes.formatter.use_mathtext: True  # When True, use mathtext for scientific
 ## The figure subplot parameters.  All dimensions are a fraction of the figure width and height.
 figure.autolayout       : False  # Applies tight_layout
 figure.subplot.top      : 0.99   # the top of the subplots of the figure (Make room for title and subtitle)
-figure.subplot.bottom   : 0.125  # the bottom of the subplots of the figure
-figure.subplot.left     : 0.185  # the left side of the subplots of the figure
-figure.subplot.right    : 0.95   # the right side of the subplots of the figure
+figure.subplot.bottom   : 0.10   # the bottom of the subplots of the figure
+#figure.subplot.left     : 0.185 # the left side of the subplots of the figure <--- for thin ylabels
+figure.subplot.left     : 0.22   # the left side of the subplots of the figure  <--- for wide ylabels
+figure.subplot.right    : 0.96   # the right side of the subplots of the figure
 figure.subplot.wspace   : 0.0    # the amount of width reserved for space between subplots,
                                  # expressed as a fraction of the average axis width
 figure.subplot.hspace   : 0.0    # the amount of height reserved for space between subplots,
@@ -138,15 +139,15 @@ figure.subplot.hspace   : 0.0    # the amount of height reserved for space betwe
 ## e.g., you may want a higher resolution, or to make the figure
 ## background white
 
-savefig.dpi            : figure  # figure dots per inch or 'figure'
-savefig.facecolor      : auto    # figure face color when saving
-savefig.edgecolor      : auto    # figure edge color when saving
-savefig.format         : pdf     # {png, ps, pdf, svg}
-savefig.bbox           : tight   # {tight, standard}
-                                 # 'tight' is incompatible with pipe-based animation
-                                 # backends (e.g. 'ffmpeg') but will work with those
-                                 # based on temporary files (e.g. 'ffmpeg_file')
-savefig.pad_inches     : 0.02    # Padding to be used when bbox is set to 'tight'
+savefig.dpi            : figure   # figure dots per inch or 'figure'
+savefig.facecolor      : auto     # figure face color when saving
+savefig.edgecolor      : auto     # figure edge color when saving
+savefig.format         : pdf      # {png, ps, pdf, svg}
+savefig.bbox           : standard # {tight, standard}
+                                  # 'tight' is incompatible with pipe-based animation
+                                  # backends (e.g. 'ffmpeg') but will work with those
+                                  # based on temporary files (e.g. 'ffmpeg_file')
+savefig.pad_inches     : 0.02     # Padding to be used when bbox is set to 'tight'
 
 #savefig.directory      : ~       # default directory in savefig dialog box,
 #                                # leave empty to always use current working directory

@@ -62,7 +62,7 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
 }
 
 void tools::finite::mps::init::product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis) {
-    tools::log->info("Setting randomly shuffled neel state of type {} on axis {}", enum2sv(type), axis);
+    tools::log->info("Setting randomly shuffled Néel state of type {} on axis {}", enum2sv(type), axis);
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
@@ -90,7 +90,7 @@ void tools::finite::mps::init::product_state_neel_shuffled(StateFinite &state, S
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->info("Random product state: {}", str);
+    tools::log->info("Initial state: {}", str);
 }
 
 void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, StateInitType type, std::string_view axis) {

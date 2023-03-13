@@ -86,7 +86,10 @@ namespace qm::lbit {
     extern std::vector<qm::Gate>                get_unitary_2gate_layer(const UnitaryGateProperties & u);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const std::vector<qm::Gate> & ulayer);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const UnitaryGateProperties & u);
-    extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn, const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn, const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up, bool adj_dn = false);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn,
+                                                                         const std::vector<Eigen::Tensor<cplx, 4>> & mpos_md,
+                                                                         const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up);
     extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> & mpos);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &twosite_hams);
     extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
@@ -95,8 +98,10 @@ namespace qm::lbit {
     extern cplx                                 get_lbit_2point_correlator2(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_2point_correlator3(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj);
-    extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
+    extern Eigen::Tensor<cplx, 1>               get_lbit_2point_correlator5(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
+    extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers);
+    extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states, double tol);
     extern std::vector<Eigen::Tensor<real, 2>>  get_lbit_correlation_matrices(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool use_mpo);
     extern std::tuple<Eigen::Tensor<real, 2>, Eigen::Tensor<qm::real, 2>, Eigen::Tensor<real, 2>>

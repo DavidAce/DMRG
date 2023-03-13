@@ -193,6 +193,12 @@ void flbit::run_preprocessing() {
     randomize_state(ResetReason::INIT, settings::strategy::initial_state);
     tensors.move_center_point_to_inward_edge();
     tools::finite::print::model(*tensors.model);
+
+    create_unitary_circuit_gates();
+
+    // Store the model
+    write_to_file(StorageEvent::MODEL, CopyPolicy::TRY);
+
     create_time_points();
     update_time_step();
     if(settings::model::model_size <= 6) {
@@ -213,13 +219,10 @@ void flbit::run_preprocessing() {
         update_time_evolution_gates();
     }
 
-    create_unitary_circuit_gates();
-
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
 
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
-    write_to_file(StorageEvent::MODEL, CopyPolicy::TRY);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -645,11 +648,11 @@ void flbit::transform_to_lbit_basis() {
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
     if(settings::flbit::use_mpo_circuit) {
-        tools::log->debug("Transforming {} to {} using 1 unitary mpo layer", tensors.state->get_name(), state_lbit->get_name());
+        tools::log->info("Transforming {} to {} using 1 unitary mpo layer", tensors.state->get_name(), state_lbit->get_name());
         tools::finite::ops::apply_mpos(*state_lbit, unitary_gates_mpo_layers, ledge, redge, true);
 
     } else {
-        tools::log->debug("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
+        tools::log->info("Transforming {} to {}", tensors.state->get_name(), state_lbit->get_name());
         for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
             tools::finite::mps::apply_gates(*state_lbit, layer, true, true, GateMove::AUTO,
                                             svd::config(status.bond_lim, status.trnc_lim)); // L16: true 28 | false 29 svds

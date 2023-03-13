@@ -178,7 +178,7 @@ template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<
 
 // template<typename Scalar>
 std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
-    assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
+    //    assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
     VectorType<double> truncation_errors(S.size() + 1);
     for(long s = 0; s <= S.size(); s++) { truncation_errors[s] = S.bottomRows(S.size() - s).norm(); } // Last one should be zero, i.e. no truncation
     auto rank_    = (truncation_errors.array() >= truncation_lim).count();
@@ -199,3 +199,133 @@ std::pair<long, double> svd::solver::get_rank_from_truncation_error(const Vector
     }
     return {rank_, truncation_errors[rank_]};
 }
+
+template<typename Scalar>
+std::tuple<Eigen::Tensor<Scalar, 4>, Eigen::Tensor<Scalar, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<Scalar, 4> &mpo, const svd::config &svd_cfg) {
+    /*
+     * Compress an MPO left to right using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
+     *
+     *          (2) d
+     *             |
+     *  (0) m ---[mpo]--- (1) m
+     *             |
+     *         (3) d
+     *
+     * is shuffled into
+     *
+     *          (0) d
+     *             |
+     *  (2) m ---[mpo]--- (3) m
+     *             |
+     *         (1) d
+     *
+     * and reshaped like
+     *
+     * ddm (012) ---[mpo]--- (3) m
+     *
+     * and subjected to the typical SVD so mpo = USV. This is then reshaped back into
+     *
+     *            d
+     *            |
+     *     m ---[mpo]---  m'   m'---[S]---'m m'---[V]---m
+     *            |
+     *            d
+     *
+     * where hopefully m' < m and the transfer matrix T = SV is multiplied onto the mpo on the right later.
+     *
+     * To stablize the compression, it is useful to insert avgS *  1/avgS, where one factor is put into U and the other into S.
+     *
+     *
+     */
+
+    auto                     dim0      = mpo.dimension(2);
+    auto                     dim1      = mpo.dimension(3);
+    auto                     dim2      = mpo.dimension(0);
+    auto                     dim3      = mpo.dimension(1);
+    auto                     dim_ddm   = dim0 * dim1 * dim2;
+    Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{2, 3, 0, 1}).reshape(tenx::array2{dim_ddm, dim3});
+    auto [U, S, V]                     = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
+
+    // Stabilize by inserting avgS *  1/avgS
+    auto avgS = num::next_power_of_two<double>(S.head(S.nonZeros()).mean()); // Nearest power of two larger than S.mean()
+    if(avgS > 1) {
+        S /= avgS;
+        U *= avgS;
+    }
+
+    V = S.asDiagonal() * V; // Rescaled singular values
+
+    /* clang-format off */
+    return std::make_tuple(
+        tenx::TensorMap(U).reshape(tenx::array4{dim0, dim1, dim2, rank}).shuffle(tenx::array4{2, 3, 0, 1}).template cast<Scalar>(),
+        tenx::TensorMap(V).template cast<Scalar>());
+    /* clang-format on */
+}
+
+template std::tuple<Eigen::Tensor<real, 4>, Eigen::Tensor<real, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<real, 4> &mpo, const svd::config &svd_cfg);
+template std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 2>> svd::solver::split_mpo_l2r(const Eigen::Tensor<cplx, 4> &mpo, const svd::config &svd_cfg);
+
+template<typename Scalar>
+std::tuple<Eigen::Tensor<Scalar, 2>, Eigen::Tensor<Scalar, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<Scalar, 4> &mpo, const svd::config &svd_cfg) {
+    /*
+     * Splits an MPO right to left using SVD as described in https://journals.aps.org/prb/pdf/10.1103/PhysRevB.95.035129
+     *
+     *          (2) d
+     *             |
+     *  (0) m ---[mpo]--- (1) m
+     *            |
+     *        (3) d
+     *
+     * is shuffled into
+     *
+     *          (1) d
+     *             |
+     *  (0) m ---[mpo]--- (3) m
+     *            |
+     *        (2) d
+     *
+     * and reshaped like
+     *
+     * d (0) ---[mpo]--- (123) ddm
+     *
+     * and subjected to the typical SVD so mpo = USV. This is then reshaped back into
+     *
+     *                                          d
+     *                                          |
+     *   m---[U]---m'   m'---[S]---'m   m' ---[mpo]---  m
+     *                                          |
+     *                                          d
+     *
+     * where hopefully m' < m and the transfer matrix T = US is multiplied onto the mpo on the left later.
+     *
+     * To stablize the compression, it is useful to insert avgS *  1/avgS, where one factor is put into V and the other into S.
+     *
+     *
+     */
+
+    auto dim0    = mpo.dimension(0);
+    auto dim1    = mpo.dimension(2);
+    auto dim2    = mpo.dimension(3);
+    auto dim3    = mpo.dimension(1);
+    auto dim_ddm = dim1 * dim2 * dim3;
+
+    Eigen::Tensor<Scalar, 2> mpo_rank2 = mpo.shuffle(tenx::array4{0, 2, 3, 1}).reshape(tenx::array2{dim0, dim_ddm});
+    auto [U, S, V]                     = do_svd_ptr(mpo_rank2.data(), mpo_rank2.dimension(0), mpo_rank2.dimension(1), svd_cfg);
+
+    // Stabilize by inserting avgS *  1/avgS
+    auto avgS = num::next_power_of_two<double>(S.mean()); // Nearest power of two larger than S.mean();
+    if(avgS > 1) {
+        S /= avgS;
+        V *= avgS;
+    }
+
+    U = U * S.asDiagonal();
+
+    /* clang-format off */
+    return std::make_tuple(
+        tenx::TensorMap(U).template cast<Scalar>(),
+        tenx::TensorMap(V).reshape(tenx::array4{rank, dim1, dim2, dim3}).shuffle(tenx::array4{0, 3, 1, 2}).template cast<Scalar>());
+    /* clang-format on */
+}
+template std::tuple<Eigen::Tensor<real, 2>, Eigen::Tensor<real, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<real, 4> &mpo, const svd::config &svd_cfg);
+template std::tuple<Eigen::Tensor<cplx, 2>, Eigen::Tensor<cplx, 4>> svd::solver::split_mpo_r2l(const Eigen::Tensor<cplx, 4> &mpo, const svd::config &svd_cfg);

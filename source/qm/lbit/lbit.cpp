@@ -48,6 +48,7 @@ std::string qm::lbit::UnitaryGateProperties::string() const {
 
 template<typename Scalar>
 auto get_permuted(const Eigen::Tensor<Scalar, 2> &in, MeanType meanType) {
+    auto t_permute = tid::tic_scope("permute");
     // First, subtract the center position of each lbit, so we get L lbits centered around zero.
     // In practice, we make a cyclic permutation of the rows of lbit_support
     // In addition, we mirror the lbit along its vertical, so that we can average its left and right half together
@@ -84,7 +85,7 @@ auto get_permuted(const Eigen::Tensor<Scalar, 2> &in, MeanType meanType) {
             }
         }
     }
-    tools::log->info("get_permuted {}: out:\n{}\n", enum2sv(meanType), linalg::tensor::to_string(out, 16));
+    if constexpr(settings::debug_circuit) tools::log->debug("get_permuted {}: out:\n{}\n", enum2sv(meanType), linalg::tensor::to_string(out, 16));
     return out;
 }
 
@@ -183,11 +184,11 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
  *
  * Step 2: Make a matrix merging indices (012,34) and split the gate using SVD into an MPO and a gate:
  * @verbatim
- *            1     3                                   2               1
- *            |     |   SVD                             |               |
- *        0--[ g(01) ]   =  US^0.5 S^0.5V^T  =  0--[ mpo(0) ]--1   0--[g(1)]
- *            |     |                                   |               |
- *            2     4                                   3               2
+ *            1     3                                   2                1
+ *            |     |   SVD                             |                |
+ *        0--[ g(01) ]   =  US^0.5 S^0.5 V^T  =  0--[ mpo(0) ]--1   0--[g(1)]
+ *            |     |                                   |                |
+ *            2     4                                   3                2
  * @endverbatim
  *
  * Step 3: Connect g(1) to the next gate. Connect from under if g is odd, or from above if g is even:
@@ -222,8 +223,9 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
 std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::vector<qm::Gate> &ulayer) {
     if(ulayer.empty()) return {};
     if(ulayer.size() <= 1) throw except::logic_error("Can't make MPO's with less than two gates");
-    auto mpos = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
-    auto svd  = svd::solver();
+    auto t_mpolayer = tid::tic_scope("mpo-layer");
+    auto mpos       = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
+    auto svd        = svd::solver();
     // Start Step 1 with the first gate
     const auto &ugate0 = ulayer.front();                                                  // The left-most unitary gate
     auto        dims4  = ugate0.shape<4>();                                               // Original shape of the gate
@@ -258,126 +260,10 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const Unitar
     return get_unitary_mpo_layer(get_unitary_2gate_layer(u));
 }
 
-/*! \brief Merge two MPO layers into a single one using SVD.
- *
- * Step 1:
- * @verbatim
- *                                        2
- *                                        |
- *            2                   0--[ mpo_up_L ]--1
- *            |                           |
- *   0--[ mpo_updn_L ]--1   =             3
- *            |                           2
- *            3                           |
- *                               0--[ mpo_dn_L ]--1
- *                                        |
- *                                        3
- *
- *                                        2
- *                                        |
- *            2                   0--[ mpo_up_R ]--1
- *            |                           |
- *   0--[ mpo_updn_R ]--1   =             3
- *            |                           2
- *            3                           |
- *                               0--[ mpo_dn_R ]--1
- *                                        |
- *                                        3
- *
- * @endverbatim
- *
- * Step 2:
- * @verbatim
- *              1                            2                            2
- *              |             SVD            |                            |
- *     0--[ mpo_updn_L ]--3    =      0--[ mpo(i) ]--1    S*VT* 0--[ mpo_updn_R ]--1
- *              |                            |                            |
- *              2                            3                            3
- * @endverbatim
- *
- *
- * @endverbatim
- */
-std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> &mpos_dn,
-                                                                       const std::vector<Eigen::Tensor<cplx, 4>> &mpos_up) {
-    if(mpos_dn.size() != mpos_up.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
-    if constexpr(settings::debug_circuit) tools::log->debug("Merging mpos");
-    auto mpos     = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
-    auto ddn      = mpos_dn[0].dimensions();
-    auto dup      = mpos_up[0].dimensions();
-    auto shf6     = std::array<long, 6>{0, 3, 1, 4, 5, 2};
-    auto rsh4     = std::array<long, 4>{ddn[0] * dup[0], ddn[1] * dup[1], dup[2], ddn[3]};
-    auto mpo_updn = Eigen::Tensor<cplx, 4>(mpos_dn[0].contract(mpos_up[0], tenx::idx({2}, {3})).shuffle(shf6).reshape(rsh4));
-
-    auto cfg           = svd::config();
-    cfg.rank_max       = settings::flbit::cls::mpo_circuit_svd_bondlim;
-    cfg.truncation_lim = settings::flbit::cls::mpo_circuit_svd_trnclim;
-    cfg.svd_lib        = svd::lib::lapacke;
-    cfg.use_bdc        = true;
-    auto   svd         = svd::solver(cfg);
-    auto   U           = Eigen::Tensor<cplx, 2>();
-    auto   V           = Eigen::Tensor<cplx, 2>();
-    auto   mpo_updn_R  = Eigen::Tensor<cplx, 4>();
-    double t_conR      = 0;
-    double t_svd       = 0;
-    double t_conSVR    = 0;
-    for(size_t idx = 0; idx < mpos.size() - 1; ++idx) {
-        auto dud = mpo_updn.dimensions();
-        {
-            auto t = tid::ur();
-            t.tic();
-            ddn  = mpos_dn[idx + 1].dimensions();
-            dup  = mpos_up[idx + 1].dimensions();
-            rsh4 = std::array<long, 4>{ddn[0] * dup[0], ddn[1] * dup[1], dup[2], ddn[3]};
-            mpo_updn_R.resize(rsh4);
-            mpo_updn_R.device(tenx::threads::getDevice()) =
-                Eigen::Tensor<cplx, 4>(mpos_dn[idx + 1].contract(mpos_up[idx + 1], tenx::idx({2}, {3})).shuffle(shf6).reshape(rsh4));
-            t.toc();
-            t_conR = t.get_last_interval();
-        }
-        {
-            auto t = tid::ur();
-            t.tic();
-            std::tie(mpos[idx], V) = svd.split_mpo_l2r(mpo_updn, cfg);
-            t_svd                  = t.get_last_interval();
-            rsh4                   = std::array<long, 4>{V.dimension(0), mpo_updn_R.dimension(1), mpo_updn_R.dimension(2), mpo_updn_R.dimension(3)};
-            mpo_updn.resize(rsh4);
-            mpo_updn.device(tenx::threads::getDevice()) = V.contract(mpo_updn_R, tenx::idx({1}, {0}));
-            t.toc();
-            t_conSVR = t.get_last_interval() - t_svd;
-        }
-        if constexpr(settings::debug_circuit)
-            tools::log->debug("split svd mpo {}: {} --> mpo {} + V {} | mpoR {} | trunc {:.4e} | time svd {:.3e} conR {:.3e} + conSVR {:.3e} = tot {:.3e}", idx,
-                              dud, mpos[idx].dimensions(), V.dimensions(), mpo_updn_R.dimensions(), svd.get_truncation_error(), t_svd, t_conR, t_conSVR,
-                              t_svd + t_conR);
-    }
-    mpos.back() = mpo_updn;
-
-    // Now compress once backwards
-    {
-        Eigen::Tensor<cplx, 4> mpoUS = mpos.back();
-        for(size_t idx = mpos.size() - 1; idx > 0; --idx) {
-            auto dud               = mpos[idx].dimensions();
-            std::tie(U, mpos[idx]) = svd.split_mpo_r2l(mpoUS, cfg);
-            rsh4                   = std::array<long, 4>{mpos[idx - 1].dimension(0), U.dimension(1), mpos[idx - 1].dimension(2), mpos[idx - 1].dimension(3)};
-            mpoUS.resize(rsh4);
-            mpoUS.device(tenx::threads::getDevice()) = mpos[idx - 1].contract(U, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
-            if constexpr(settings::debug_circuit)
-                tools::log->info("split svd mpo {}: {} --> U {} + mpo {} | mpoUS {} | trunc {:.4e}", idx, dud, U.dimensions(), mpos[idx].dimensions(),
-                                 mpoUS.dimensions(), svd.get_truncation_error());
-        }
-        mpos.front() = mpoUS;
-    }
-
-    if constexpr(settings::debug_circuit)
-        for(const auto &[idx, mpo] : iter::enumerate(mpos)) tools::log->debug("mpo {:2}: {}", idx, mpo.dimensions());
-
-    return mpos;
-}
-
 /*! \brief Merge multiple MPO layers into a single one using SVD.
  */
 std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers) {
+    auto t_mpomerge = tid::tic_scope("mpo-merge");
     auto mpo_merged = std::vector<Eigen::Tensor<cplx, 4>>(mpo_layers.front());
     for(size_t idx = 1; idx < mpo_layers.size(); ++idx) { mpo_merged = merge_unitary_mpo_layers(mpo_merged, mpo_layers[idx]); }
     return mpo_merged;
@@ -878,7 +764,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
                          [opi]
                            |                                      2
                            1 ------------                         |
-                           2            |                0--[ mpo_dn_opi  ]--1
+                           2            |               [0--[ mpo_dn_opi  ]--1]^T
                            |            |       =                 |
                     0--[ mpo_dn* ]--1   |                         3
                            |            |
@@ -887,12 +773,22 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
         Then contract this object upside down using leg 3 when conecting to mpo_up_opj.
         @endverbatim
 
-     Step 3: Contract like
+     Step 3: Zip mpo_dn and mpo_up with the running result
 
+                                  3                           1
+                                  |                           |
+            |------0  -  0--[ mpo_up_opj ]--1                 |----- 0
+            |                     |                           |
+            |                     2                           |
+         [result]                 |                  =        |
+            |                     2                           |
+            |                     |                           |
+            |------1  -  0--[ mpo_dn_opi ]--1                 |----- 2
+                                  |                           |
+                                  3                           3
 
-        |
-
-
+    Step 4: Trace the physical indices 1 and 3, and divide by two, to get a new running result, and go to the next site
+    In practice, we can simply contract these indices immediately in step 3, instead of doing a separate trace.
 
     */
 
@@ -905,7 +801,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
     auto si         = tenx::TensorCast(szi);
     auto sj         = tenx::TensorCast(szj);
     auto result     = Eigen::Tensor<cplx, 2>(1, 1);
-    auto temp       = Eigen::Tensor<cplx, 2>();
+    auto temp2      = Eigen::Tensor<cplx, 2>();
     auto mpo_dn_opi = Eigen::Tensor<cplx, 4>();
     auto mpo_up_opj = Eigen::Tensor<cplx, 4>();
     result.setConstant(1.0);
@@ -914,14 +810,33 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
         auto opj = idx == pos_szj ? sj : id;
         auto dim = mpo_layer[idx].dimensions();
 
-        mpo_up_opj.resize(dim);
-        mpo_dn_opi.resize(dim);
-        mpo_up_opj.device(tenx::threads::getDevice()) = mpo_layer[idx].contract(opj, tenx::idx({2}, {1}));
-        mpo_dn_opi.device(tenx::threads::getDevice()) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {1}));
-
-        // Start contracting with the result
-        temp   = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3}, {0, 2})).trace(std::array<long, 2>{1, 3});
-        result = temp / temp.constant(2.0); // Divide by two for each trace
+        {
+            auto t_opj = tid::tic_token("opj");
+            mpo_up_opj.resize(dim);
+            mpo_up_opj.device(tenx::threads::getDevice()) = mpo_layer[idx].contract(opj, tenx::idx({2}, {1}));
+        }
+        {
+            auto t_opj = tid::tic_token("opi");
+            mpo_dn_opi.resize(dim);
+            mpo_dn_opi.device(tenx::threads::getDevice()) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {1}));
+        }
+        //        {
+        //            auto t_updn = tid::tic_token("updn");
+        //            temp4.resize(mpo_up_opj.dimension(1), mpo_up_opj.dimension(3), mpo_dn_opi.dimension(1), mpo_dn_opi.dimension(3));
+        //            temp4.device(tenx::threads::getDevice()) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3}, {0,
+        //            2}));
+        //        }
+        //        {
+        //            auto t_trace = tid::tic_token("trace");
+        //            temp2        = temp4.trace(std::array<long, 2>{1, 3});
+        //            result       = temp2 / temp2.constant(2.0); // Divide by two for each trace
+        //        }
+        {
+            auto t_updntr = tid::tic_token("updntr");
+            temp2.resize(mpo_dn_opi.dimension(1), mpo_up_opj.dimension(1));
+            temp2.device(tenx::threads::getDevice()) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3, 2}, {0, 2, 3}));
+            result                                   = temp2 / temp2.constant(2.0); // Divide by two for each trace
+        }
     }
     //    tools::log->info("result {:+.16f}{:+.16f}i | time tot {:.3e}", std::real(result.coeff(0)), std::imag(result.coeff(0)), t_olap.get_last_interval());
     return result.coeff(0);
@@ -942,10 +857,9 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
         https://link.aps.org/doi/10.1103/PhysRevB.91.085425
         https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
     */
-
+    auto t_corrmat    = tid::tic_scope("corrmat3");
     auto ssites       = static_cast<long>(sites);
     auto lbit_corrmat = Eigen::Tensor<qm::cplx, 2>(ssites, ssites);
-#pragma omp parallel for collapse(2) schedule(guided, 4) default(none) shared(lbit_corrmat, unitary_circuit, ssites, qm::spin::half::sz)
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
             lbit_corrmat(i, j) = qm::lbit::get_lbit_2point_correlator3(unitary_circuit, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz,
@@ -956,11 +870,12 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
     auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat);
     auto sums_rowwise = lbit_corrmap.rowwise().sum();
     auto sums_colwise = lbit_corrmap.colwise().sum();
-    if(not sums_colwise.cwiseAbs().isOnes(1e-2) or not sums_rowwise.cwiseAbs().isOnes(1e-2)) {
+    if(not sums_colwise.cwiseAbs().isOnes(5e-1) or not sums_rowwise.cwiseAbs().isOnes(5e-1)) {
+        if constexpr(settings::debug) tools::log->warn("lbit_overlap: \n{}\n", linalg::tensor::to_string(lbit_corrmat.real(), 15));
         tools::log->warn("lbit overlap cols or rows do not sum to one. Perhaps normalization is wrong.\n"
-                         "lbit_overlap: \n{}\ncol sums: {}\nrow sums: {}\n",
-                         linalg::tensor::to_string(lbit_corrmat.real(), 15), linalg::matrix::to_string(sums_colwise.real(), 6),
-                         linalg::matrix::to_string(sums_rowwise.real().transpose(), 6));
+                         "col sums: {}\n"
+                         "row sums: {}\n",
+                         linalg::matrix::to_string(sums_colwise.real(), 6), linalg::matrix::to_string(sums_rowwise.real().transpose(), 6));
     }
     if constexpr(settings::debug) {
         if(lbit_corrmap.imag().mean() > 1e-12) {
@@ -988,7 +903,7 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
         https://link.aps.org/doi/10.1103/PhysRevB.91.085425
         https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
     */
-#pragma omp parallel for collapse(2) schedule(guided, 4) default(none) shared(lbit_corrmat, ssites, mpo_layer, qm::spin::half::sz)
+    auto t_corrmat = tid::tic_scope("corrmat4");
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
             lbit_corrmat(i, j) =
@@ -999,16 +914,66 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
     auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat);
     auto sums_rowwise = lbit_corrmap.rowwise().sum();
     auto sums_colwise = lbit_corrmap.colwise().sum();
-    if(not sums_colwise.cwiseAbs().isOnes(1e-2) or not sums_rowwise.cwiseAbs().isOnes(1e-2)) {
+    if(not sums_colwise.cwiseAbs().isOnes(5e-1) or not sums_rowwise.cwiseAbs().isOnes(5e-1)) {
+        if constexpr(settings::debug) tools::log->warn("lbit_overlap: \n{}\n", linalg::tensor::to_string(lbit_corrmat.real(), 15));
         tools::log->warn("lbit overlap cols or rows do not sum to one. Perhaps normalization is wrong.\n"
-                         "lbit_overlap: \n{}\ncol sums: {}\nrow sums: {}\n",
-                         linalg::tensor::to_string(lbit_corrmat.real(), 15), linalg::matrix::to_string(sums_colwise.real(), 6),
-                         linalg::matrix::to_string(sums_rowwise.real().transpose(), 6));
+                         "col sums: {}\n"
+                         "row sums: {}\n",
+                         linalg::matrix::to_string(sums_colwise.real(), 6), linalg::matrix::to_string(sums_rowwise.real().transpose(), 6));
     }
 
     if constexpr(settings::debug) {
         if(lbit_corrmap.imag().mean() > 1e-12) {
             throw except::runtime_error("lbit_corrmat has large imaginary component:\n{}\n", linalg::tensor::to_string(lbit_corrmat, 15));
+        }
+    }
+    return lbit_corrmat.real();
+}
+
+Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers) {
+    if(mpo_layers.empty()) throw except::logic_error("mpo layers is empty");
+    for(const auto &mpo_layer : mpo_layers) {
+        if(mpo_layer.empty()) throw except::logic_error("mpo layer is empty");
+        if(mpo_layer.size() != mpo_layers.front().size()) throw except::logic_error("mpo layer size mismatch");
+    }
+    auto                       ssites = static_cast<long>(mpo_layers.front().size());
+    Eigen::Tensor<qm::cplx, 2> lbit_corrmat(ssites, ssites);
+
+    /*! \brief Calculates the correlator as an operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
+                                                                       = Tr(τ^z_i σ^z_j) / 2^L
+                                                                       = Tr(Uσ^z_iU† σ^z_j) / 2^L
+        Where
+            𝜌_i   = 1/2^L (1 + τ^z_i)   a density matrix describing a state localized around site i
+            τ^z_i = U σ^z_i  U†,        is an l-bit operator at site i
+            U                           is a unitary transformation in the form of a finite-depth circuit.
+        The second equality comes from the fact that Tr(τ^z_i) = 0 (l-bit operators are traceless) and Tr(1) = 2^L.
+        An l-bit fully localized at site i gives O(i,i) = 1,  and when fully delocalized one gets O(i,j) = 0.5
+
+        Read more here:
+        https://link.aps.org/doi/10.1103/PhysRevB.91.085425
+        https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
+    */
+    auto t_corrmat = tid::tic_scope("corrmat5");
+    for(long i = 0; i < ssites; ++i) {
+        lbit_corrmat.chip(i, 0) = qm::lbit::get_lbit_2point_correlator5(mpo_layers, qm::spin::half::sz, static_cast<size_t>(i), qm::spin::half::sz);
+        auto rowsum             = Eigen::Tensor<cplx, 0>(lbit_corrmat.chip(i, 0).sum());
+        tools::log->info("lbit_corrmat row {}/{} sum: {:12.8f}", i, ssites, rowsum.coeff(0));
+    }
+
+    // We require that lbit_overlap(i,j) has rows that sum up to 1
+    auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat);
+    auto sums_rowwise = lbit_corrmap.rowwise().sum();
+    auto sums_colwise = lbit_corrmap.colwise().sum();
+    if(not sums_colwise.cwiseAbs().isOnes(5e-1) or not sums_rowwise.cwiseAbs().isOnes(5e-1)) {
+        if constexpr(settings::debug) tools::log->warn("lbit_overlap: \n{}\n", linalg::tensor::to_string(lbit_corrmat.real(), 15));
+        tools::log->warn("lbit overlap cols or rows do not sum to one. Perhaps normalization is wrong.\n"
+                         "col sums: {}\n"
+                         "row sums: {}\n",
+                         linalg::matrix::to_string(sums_colwise.real(), 6), linalg::matrix::to_string(sums_rowwise.real().transpose(), 6));
+    }
+    if constexpr(settings::debug) {
+        if(lbit_corrmap.imag().mean() > 1e-12) {
+            tools::log->warn("lbit_corrmat has large imaginary component:\n{}\n", linalg::tensor::to_string(lbit_corrmat, 15));
         }
     }
     return lbit_corrmat.real();
@@ -1166,6 +1131,7 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
 
 std::tuple<Eigen::Tensor<qm::real, 2>, Eigen::Tensor<qm::real, 2>, Eigen::Tensor<qm::real, 2>>
     qm::lbit::get_lbit_correlation_statistics(const std::vector<Eigen::Tensor<real, 2>> &lbit_corrmats) {
+    auto                   t_stats = tid::tic_scope("stats");
     Eigen::Tensor<real, 2> avg, typ, err;
     if(lbit_corrmats.size() == 1) {
         avg = lbit_corrmats.front();
@@ -1195,6 +1161,7 @@ std::tuple<Eigen::Tensor<qm::real, 2>, Eigen::Tensor<qm::real, 2>, Eigen::Tensor
 
 std::tuple<double, double, double, std::vector<double>, size_t>
     qm::lbit::get_characteristic_length_scale(const Eigen::Tensor<real, 2> &lbit_corrmat_disorder_mean, MeanType meanType) {
+    auto t_cls = tid::tic_scope("cls");
     // Permute the disorder averaged correlation matrix
     auto                   perm_dis_mean = get_permuted(lbit_corrmat_disorder_mean, meanType);
     Eigen::Tensor<real, 1> perm_dis_mean_site_mean;
@@ -1243,14 +1210,16 @@ std::tuple<double, double, double, std::vector<double>, size_t>
 
 std::vector<Eigen::Tensor<qm::real, 2>> qm::lbit::get_lbit_correlation_matrices(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields,
                                                                                 bool use_mpo) {
+    auto t_reps        = tid::tic_scope(fmt::format("reps", reps));
     auto lbit_supp_vec = std::vector<Eigen::Tensor<real, 2>>();
     for(size_t rep = 0; rep < reps; ++rep) {
         if(use_mpo) {
             auto mpo_layers = std::vector<std::vector<Eigen::Tensor<cplx, 4>>>();
             for(const auto &layer : uprop.ulayers) mpo_layers.emplace_back(get_unitary_mpo_layer(layer));
-            auto mpo_layer = merge_unitary_mpo_layers(mpo_layers);
-            lbit_supp_vec.emplace_back(get_lbit_correlation_matrix(mpo_layer));
-            //            lbit_supp_vec.emplace_back(qm::lbit::get_lbit_correlations(ulayers, uprop.sites, 2048, 1e-5));
+            lbit_supp_vec.emplace_back(get_lbit_correlation_matrix(mpo_layers));
+            //            auto mpo_layer = merge_unitary_mpo_layers(mpo_layers);
+            //            lbit_supp_vec.emplace_back(get_lbit_correlation_matrix(mpo_layer));
+            //                                    lbit_supp_vec.emplace_back(qm::lbit::get_lbit_correlations(ulayers, uprop.sites, 2048, 1e-5));
         } else {
             lbit_supp_vec.emplace_back(qm::lbit::get_lbit_correlation_matrix(uprop.ulayers, uprop.sites));
         }
@@ -1317,6 +1286,8 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         bool use_mpo = uprop.depth >= settings::flbit::cls::mpo_circuit_switchdepth;
         tools::log->debug("Computing lbit supports | reps {} | rand h {} | mpo {} | {}", reps, rndh, use_mpo,uprop.string());
         auto lbit_corrmat_vec = get_lbit_correlation_matrices(uprop, reps, rndh, use_mpo);
+
+        auto t_post = tid::tic_scope("post");
         for (const auto & [i_reps, lbit_corrmat] : iter::enumerate<long>(lbit_corrmat_vec)){
             offset9 = {i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_reps , 0, 0};
             lbitSA.corrmat.slice(offset9, extent9) = lbit_corrmat.reshape(extent9);
@@ -1344,7 +1315,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
 
         extent7                              = {1, 1, 1, 1, 1, 1, static_cast<long>(ytyp.size())};
         lbitSA.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp.data(), extent7);
-
+        auto t_plot = tid::tic_scope("plot");
         auto yavg_log   = num::cast<qm::real>(yavg, lognoinf);
         auto ytyp_log   = num::cast<qm::real>(ytyp, lognoinf);
         auto plt           = AsciiPlotter("lbit decay", 50, 20);
@@ -1352,7 +1323,6 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
         plt.enable_legend();
         plt.show();
-
     }
     /* clang-format on */
     return lbitSA;

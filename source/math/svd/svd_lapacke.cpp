@@ -55,7 +55,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
 
-    // Setup the SVD solver
+    // Set up the SVD solver
     bool use_jacobi = static_cast<size_t>(sizeS) < switchsize_bdc;
 
     if(use_jacobi and rows < cols) {
@@ -373,8 +373,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
 
         svd::log->trace("Truncating singular values");
-        auto max_size                    = S.nonZeros();
-        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size).normalized()); // Truncation error needs normalized singular values
+        auto max_size = S.nonZeros();
+        //        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size).normalized()); // Truncation error needs normalized
+        //        singular values
+        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size));
 
         // Do the truncation
         U  = U.leftCols(rank).eval();

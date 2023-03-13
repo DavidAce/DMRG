@@ -61,16 +61,18 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     ydata, _ = get_table_data(datanode['avg'])
                     edata, _ = get_table_data(datanode['ste'])
                     xdata = np.array(range(len(ydata)))
-                    fdata = get_lbit_cls(xdata, ydata)  # Fit to get characteristic length-scale
+                    fdata = get_lbit_cls(xdata, ydata, ymin=1e-6)  # Fit to get characteristic length-scale
                     if 'yscale' in meta and meta['yscale'] == 'log':
                         ydata = np.abs(ydata)
                     if np.min(ndata) < 10:
                         continue
                     for i, (y, e) in enumerate(zip(ydata.T, edata.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
-                        line, = ax.plot(xdata, y, marker=None, color=color, path_effects=path_effects)
-                        ax.scatter(xdata[1], y[1], marker='o', color=color, path_effects=path_effects)
-                        ax.scatter(xdata[fdata[-1]], y[fdata[-1]], marker='o', color=color, path_effects=path_effects,
+                        ymask = np.ma.masked_invalid(np.ma.masked_equal(np.abs(y), 0))
+                        line, = ax.plot(xdata, np.log10(ymask), marker=None, color=color, path_effects=path_effects)
+                        ax.scatter(xdata[1], np.log10(y[1]), marker='o', color=color, path_effects=path_effects)
+                        ax.scatter(xdata[fdata[-1]], np.log10(y[fdata[-1]]), marker='o', color=color,
+                                   path_effects=path_effects,
                                    zorder=50)
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
@@ -96,7 +98,10 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fdata[2]))
                                 f['legends'][idx][icol + iuse]['title'] = '$\\beta$'
 
-                        line, = ax.plot(xdata, regular_exp(xdata, fdata[0], fdata[1]), linewidth=1.0, marker=None,
+                        slope = fdata[4].slope
+                        icept = fdata[4].intercept
+                        yfit = (icept + xdata * slope) / np.log(10)
+                        line, = ax.plot(xdata, yfit, linewidth=0.75, marker=None,
                                         linestyle='dashed',
                                         color=color, path_effects=path_effects, zorder=0)
                         # if 'inset-cls' in meta:

@@ -13,18 +13,18 @@ input_prefix      = "input"
 output_prefix     = "output"
 
 
-sites               = [8,12,16,20,24,28,32]
+sites               = [8,12,16,20,24,28,32,36,40]
 J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [8,16,24,32,40,48,56,64]
+u_depth             = [8,16,24,32,40,48,56,64,72,80]
 u_fmix              = [1.0]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']
 u_cgw8              = ['EXPDECAY']
-u_bond              = [128]
+u_bond              = [16]
 initial_state       = ["PRODUCT_STATE_NEEL_SHUFFLED"]
 tmp_storage = "/tmp"
 if "lith" in  platform.node():

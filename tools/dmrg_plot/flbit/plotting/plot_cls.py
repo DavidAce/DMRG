@@ -73,7 +73,10 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
                         nvals, _ = get_table_data(datanode['num'], meta.get('colname'), 'i8')
                         ycols, cvals = get_table_data(datanode['avg'], meta.get('colname'), 'f8')
 
-                        _, xi, beta, _, res = get_lbit_cls(np.arange(0, len(ycols)), ycols)
+                        C, xi, beta, yfit, res, idxN = get_lbit_cls(np.arange(0, len(ycols)), ycols,
+                                                                    stretched=meta.get('stretched', False),
+                                                                    ymin=meta.get('fit-ymin', 1e-6),
+                                                                    )
                         if xi is not None:
                             ydata.append(xi)
                             edata.append(res.stderr)
@@ -107,12 +110,12 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
             if dbval:
-                ax.set_title(get_title(dbval, subspec, width=16),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
                 ax.set_xlabel(get_tex(dbval, xaxspec))
+                if meta.get('axestitle', True):
+                    ax.set_title(get_title(dbval, subspec, width=16),
+                                 horizontalalignment='left', x=0.05,
+                                 fontstretch="ultra-condensed",
+                                 )
         if not prb_style and dbval:
             f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
