@@ -11,6 +11,7 @@ endif()
 # Setup dependencies
 include(cmake/SetupDependenciesCMake.cmake)
 include(cmake/SetupDependenciesConan.cmake)
+include(cmake/SetupDependenciesFind.cmake)
 
 # Install dependencies that are not in conan.
 include(cmake/InstallPackage.cmake)

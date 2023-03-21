@@ -46,6 +46,7 @@ function(check_tblis_compiles)
     if(NOT BUILD_SHARED_LIBS OR CMAKE_LINK_SEARCH_START_STATIC)
         set(CMAKE_REQUIRED_LINK_OPTIONS -static-libgcc)
     endif()
+    include(CheckCXXSourceCompiles)
     check_cxx_source_compiles("
                         #include <tblis/tblis.h>
                         #include <tblis/util/thread.h>

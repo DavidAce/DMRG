@@ -1,8 +1,8 @@
 {
-  "version": 2,
+  "version": 3,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 19,
+    "minor": 24,
     "patch": 0
   },
   "configurePresets": [
@@ -141,7 +141,25 @@
       "name": "pkg-conan",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_PACKAGE_MANAGER": "conan"
+        "DMRG_PACKAGE_MANAGER": "find",
+        "CMAKE_PREFIX_PATH": "${sourceDir}/build/${presetName}/conan",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan1/conan_provider.cmake",
+        "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
+      },
+      "environment": {
+        "PATH": "$env{HOME}/miniconda3/envs/dmrg/bin:$env{HOME}/miniconda3/bin:$penv{PATH}"
+      }
+    },
+    {
+      "name": "pkg-conan2",
+      "hidden": true,
+      "cacheVariables": {
+        "DMRG_PACKAGE_MANAGER": "find",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan2/conan_provider.cmake",
+        "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
+      },
+      "environment": {
+        "PATH": "$env{HOME}/miniconda3/envs/dmrg/bin:$env{HOME}/miniconda3/bin:$penv{PATH}"
       }
     },
     {
@@ -189,6 +207,7 @@
         "release-gcc-12-conan"
       ],
       "cacheVariables": {
+        "DMRG_ENABLE_RSVD": "TRUE",
         "COMPILER_ENABLE_MOLD": "TRUE"
       }
     },
