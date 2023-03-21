@@ -54,7 +54,7 @@ auto get_permuted(const Eigen::Tensor<Scalar, 2> &in, MeanType meanType) {
     // In addition, we mirror the lbit along its vertical, so that we can average its left and right half together
     long rows = in.dimension(0);
     long cols = in.dimension(1);
-    auto out  = Eigen::Tensor<Scalar, 2>(cols, rows);
+    auto out  = Eigen::Tensor<Scalar, 2>(rows, cols);
     out.setZero();
     for(long j = 0; j < cols; j++) {
         for(long i = 0; i < rows; i++) {
