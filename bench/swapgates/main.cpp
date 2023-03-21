@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
         for(const auto &num_thread : num_threads) {
             for(const auto &switchsize : switchsizes) {
                 for(const auto &truncation : truncations) {
-                    svdset.switchsize_bdc = switchsize;
-                    svdset.truncation_lim = truncation;
+                    svdset.switchsize_gesdd = switchsize;
+                    svdset.truncation_limit = truncation;
                     omp_set_num_threads(num_thread);
                     mkl_set_num_threads(num_thread);
                     tenx::threads::setNumThreads(num_thread);

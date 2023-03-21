@@ -39,13 +39,11 @@ void test() {
             auto rows                   = A.rows();
             auto cols                   = A.cols();
             auto rank_max               = h5file.readAttribute<long>("rank_max", svd_group);
-            svd_settings.truncation_lim = h5file.readAttribute<double>("threshold", svd_group);
+            svd_settings.truncation_limit = h5file.readAttribute<double>("threshold", svd_group);
             Eigen::MatrixXcd S_mat(rank_max, 4);
             S_mat.setZero();
             {
                 svd_settings.svd_lib        = svd::lib::eigen;
-                svd_settings.use_bdc        = true;
-                svd_settings.switchsize_bdc = 16;
                 svd_settings.rank_max       = rank_max;
                 svd::solver svd(svd_settings);
                 auto        t_eigen = tid::tic_scope("eigen");
@@ -55,9 +53,7 @@ void test() {
                 S_mat.col(0).topRows(S.size()) = S;
             }
             {
-                svd_settings.svd_lib        = svd::lib::lapacke;
-                svd_settings.use_bdc        = true;
-                svd_settings.switchsize_bdc = 16;
+                svd_settings.svd_lib = svd::lib::lapacke;
                 svd::solver svd(svd_settings);
                 auto        t_lapack = tid::tic_scope("lapack");
                 auto [U, S, V]       = svd.do_svd(A);
@@ -66,10 +62,9 @@ void test() {
                 S_mat.col(1).topRows(S.size()) = S;
             }
             {
-                svd_settings.svd_lib        = svd::lib::rsvd;
-                svd_settings.use_bdc        = true;
-                svd_settings.switchsize_bdc = 16;
-                svd_settings.rank_max       = rank_max / 10;
+                svd_settings.svd_lib  = svd::lib::lapacke;
+                svd_settings.svd_rtn  = svd::rtn::gersvd;
+                svd_settings.rank_max = rank_max / 10;
                 svd::solver svd(svd_settings);
                 auto        t_rsvd = tid::tic_scope("rsvd");
 
@@ -92,11 +87,10 @@ void test() {
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Bench split functions") {
         svd::config svd_settings;
-        svd_settings.truncation_lim = 1e-14;
-        svd_settings.loglevel       = 0;
-        svd_settings.use_bdc        = false;
-        svd_settings.switchsize_bdc = 4096;
-        svd_settings.save_fail      = false;
+        svd_settings.truncation_limit = 1e-14;
+        svd_settings.loglevel         = 0;
+        svd_settings.svd_rtn          = svd::rtn::gejsv;
+        svd_settings.save_fail        = false;
         svd_settings.svd_lib        = svd::lib::lapacke;
         auto filename               = fmt::format("{}/svd-failed.h5", BENCH_DATA_DIR);
         if(h5pp::fs::exists(filename)) {
@@ -108,8 +102,8 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
                 auto A          = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
                 fmt::print("S original \n{}\n", linalg::matrix::to_string(S_original, 16));
 
-                svd_settings.rank_max       = h5file.readAttribute<long>("rank_max", svd_group);
-                svd_settings.truncation_lim = h5file.readAttribute<long>("threshold", svd_group);
+                svd_settings.rank_max         = h5file.readAttribute<long>("rank_max", svd_group);
+                svd_settings.truncation_limit = h5file.readAttribute<long>("threshold", svd_group);
 
                 svd::solver svd(svd_settings);
                 auto [U, S, V] = svd.do_svd(A);

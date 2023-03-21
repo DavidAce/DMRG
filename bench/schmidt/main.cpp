@@ -27,10 +27,8 @@
 TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Bench split functions") {
         svd::config svd_settings;
-        svd_settings.truncation_lim = 1e-16;
-        svd_settings.loglevel       = 2;
-        svd_settings.use_bdc        = true;
-        svd_settings.switchsize_bdc = 16;
+        svd_settings.truncation_limit = 1e-16;
+        svd_settings.loglevel         = 2;
         auto filename               = fmt::format("{}/svd-benchmark.h5", BENCH_DATA_DIR);
         if(h5pp::fs::exists(filename)) {
             h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
