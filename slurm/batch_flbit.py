@@ -4,6 +4,26 @@ from fractions import Fraction
 from itertools import product
 import platform
 
+def get_max_time(L, w, x, r):
+
+    w1 = w[0]  # The width of distribution for on-site field.
+    w2 = w[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
+    w3 = w[2]  # The width of distribution for three-body interactions.
+
+    if r == -1:
+        r = L
+
+    tmax1 = 1.0 / w1
+
+    r2max = np.min([r, L])  # Number of sites from the center site to the edge site, max(|i-j|)/2
+    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
+    tmax3 = 1.0 / w3
+    tmax = np.max([tmax1, tmax2, tmax3])
+    return 10 ** np.ceil(np.log10(tmax))
+
+
+
 # Using the input_template.cfg, make num_copies new files enumerated as 0....num_copies,
 # while replacing the fields stated in find_replace.
 
@@ -68,6 +88,10 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
     input_filename += f"_u[{str_circuit}].cfg"
     output_filedir += f"/u[{str_circuit}]"
 
+
+    max_time = get_max_time(L=val_L, w=val_w, x=val_x, r=val_r)
+
+
     settings = {
         "storage::output_filepath"           : f"{output_filedir}/{basename}.h5",
         "storage::temp_dir"                  : tmp_storage,
@@ -91,7 +115,7 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
         "flbit::bond_max"                    : "2048",
         "flbit::time_start_real"             : "1e-1",
         "flbit::time_start_imag"             : "0",
-        "flbit::time_final_real"             : "1e10",
+        "flbit::time_final_real"             : "{:.1e}".format(max_time),
         "flbit::time_final_imag"             : "0",
         "flbit::time_num_steps"              : "500",
         "flbit::cls::mpo_circuit_svd_bondlim": str_bond,
