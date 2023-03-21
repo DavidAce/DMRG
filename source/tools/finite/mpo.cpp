@@ -69,10 +69,9 @@ std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 4>> tools::finite::mpo::sw
 
     Eigen::Tensor<cplx, 6> swapped_mpo = mpoL.contract(mpoR, tenx::idx({1}, {0})).shuffle(tenx::array6{0, 4, 5, 3, 1, 2}); // swap
     auto                   svd_cfg     = svd::config();
-    svd_cfg.truncation_lim             = 1e-16;
+    svd_cfg.truncation_limit           = 1e-16;
     svd_cfg.svd_lib                    = svd::lib::lapacke;
-    svd_cfg.use_bdc                    = false;
-    svd_cfg.switchsize_bdc             = 4096;
+    svd_cfg.svd_rtn                    = svd::rtn::gejsv;
 
     auto svd = svd::solver(svd_cfg);
     return svd.split_mpo_pair(swapped_mpo, svd_cfg);

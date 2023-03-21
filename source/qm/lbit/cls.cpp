@@ -69,15 +69,14 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
                                                                        const std::vector<Eigen::Tensor<cplx, 4>> &mpos_up, bool adj_dn) {
     if(mpos_dn.size() != mpos_up.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
     if constexpr(settings::debug_cls) tools::log->debug("Merging mpos dn and up");
-    auto t_merge       = tid::tic_scope("merge2");
-    auto mpos          = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
-    auto cfg           = svd::config();
-    cfg.rank_max       = settings::flbit::cls::mpo_circuit_svd_bondlim;
-    cfg.truncation_lim = settings::flbit::cls::mpo_circuit_svd_trnclim;
-    cfg.svd_lib        = svd::lib::lapacke;
-    cfg.use_bdc        = true;
-    cfg.switchsize_bdc = 32;
-    auto svd           = svd::solver(cfg);
+    auto t_merge         = tid::tic_scope("merge2");
+    auto mpos            = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
+    auto cfg             = svd::config();
+    cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
+    cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
+    cfg.svd_lib          = svd::lib::lapacke;
+    cfg.svd_rtn          = svd::rtn::geauto;
+    auto svd             = svd::solver(cfg);
 
     {
         // Initialize a dummy SV to start contracting from the left
@@ -87,7 +86,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
         SV.setConstant(1.0);
         for(size_t idx = 0; idx < mpos.size(); ++idx) {
             {
-                auto           t_svmpos = tid::tic_scope("svmpos");
+                auto           t_svmpos      = tid::tic_scope("svmpos");
                 auto           dd       = mpos_dn[idx].dimensions();
                 auto           du       = mpos_up[idx].dimensions();
                 constexpr auto shf5     = std::array<long, 5>{0, 1, 3, 4, 2};
@@ -187,15 +186,14 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     if(mpos_dn.size() != mpos_up.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
     if(mpos_dn.size() != mpos_md.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_md.size());
     if constexpr(settings::debug_cls) tools::log->debug("Merging mpos dn md up");
-    auto t_merge       = tid::tic_scope("merge3");
-    auto mpos          = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
-    auto cfg           = svd::config();
-    cfg.rank_max       = settings::flbit::cls::mpo_circuit_svd_bondlim;
-    cfg.truncation_lim = settings::flbit::cls::mpo_circuit_svd_trnclim;
-    cfg.svd_lib        = svd::lib::lapacke;
-    cfg.use_bdc        = true;
-    cfg.switchsize_bdc = 32;
-    auto svd           = svd::solver(cfg);
+    auto t_merge         = tid::tic_scope("merge3");
+    auto mpos            = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
+    auto cfg             = svd::config();
+    cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
+    cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
+    cfg.svd_lib          = svd::lib::lapacke;
+    cfg.svd_rtn          = svd::rtn::geauto;
+    auto svd             = svd::solver(cfg);
 
     {
         // Initialize a dummy SV to start contracting from the left

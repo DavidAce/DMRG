@@ -253,9 +253,8 @@ template<typename T>
 void MatVecMPO<T>::compress() {
     if(readyCompress) return;
     svd::config svd_cfg;
-    svd_cfg.svd_lib        = svd::lib::lapacke;
-    svd_cfg.use_bdc        = false;
-    svd_cfg.switchsize_bdc = 4096;
+    svd_cfg.svd_lib = svd::lib::lapacke;
+    svd_cfg.svd_rtn = svd::rtn::gejsv;
     svd::solver svd(svd_cfg);
     auto        old_dims = mpo.dimensions();
     {

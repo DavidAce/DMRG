@@ -200,9 +200,8 @@ std::vector<Eigen::Tensor<ModelFinite::cplx, 4>> ModelFinite::get_compressed_mpo
     auto svd_cfg = svd::config();
     // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
     // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
-    svd_cfg.svd_lib        = svd::lib::lapacke;
-    svd_cfg.switchsize_bdc = 4096;
-    svd_cfg.use_bdc        = false;
+    svd_cfg.svd_lib = svd::lib::lapacke;
+    svd_cfg.svd_rtn = svd::rtn::gesvj;
 
     svd::solver svd(svd_cfg);
 

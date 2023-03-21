@@ -7,10 +7,13 @@
 #include <Eigen/QR>
 #include <Eigen/SVD>
 
-//#if !defined(NDEBUG)
-#include <h5pp/h5pp.h>
-//#endif
-//
+namespace svd {
+#if defined(NDEBUG)
+    static constexpr bool ndebug = true;
+#else
+    static constexpr bool ndebug = false;
+#endif
+}
 
 /*! \brief Performs SVD on a matrix
  *  This function is defined in cpp to avoid long compilation times when having Eigen::BDCSVD included everywhere in headers.
@@ -33,24 +36,30 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
     if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
 
-#if !defined(NDEBUG)
-    // These are more expensive debugging operations
-    if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
-    if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
-    if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
-#endif
+    if constexpr(!ndebug) {
+        // These are more expensive debugging operations
+        if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
+        if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
+        if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
+    }
+
     std::vector<std::pair<std::string, std::string>> details;
     if(save_fail or save_result) details = {{"Eigen Version", fmt::format("{}.{}.{}", EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION)}};
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
     // Setup the SVD solver
-    SVD.setSwitchSize(static_cast<int>(switchsize_bdc));
+    if(switchsize_gesdd == -1ul) {
+        SVD.setSwitchSize(static_cast<int>(minRC));
+    } else {
+        SVD.setSwitchSize(static_cast<int>(switchsize_gesdd));
+    }
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(minRC, 5l)) : "";
-    auto svd_info = fmt::format("| {} x {} | rank_max {} | truncation limit {:.4e} | switchsize bdc {}", rows, cols, rank_max, truncation_lim, switchsize_bdc);
-    bool use_jacobi = minRC < static_cast<long>(switchsize_bdc);
-    if(use_jacobi) {
+    auto svd_info =
+        fmt::format("| {} x {} | rank_max {} | truncation limit {:.4e} | switchsize bdc {}", rows, cols, rank_max, truncation_lim, switchsize_gesdd);
+    bool use_jacobi = minRC < static_cast<long>(switchsize_gesdd);
+    if(use_jacobi or svd_rtn == rtn::gejsv or svd_rtn == svd::rtn::gesvj) {
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD {}", svd_info);
         // Run the svd
@@ -84,10 +93,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             print_vector(SVD.singularValues().head(rank).data(), rank, 16);
             svd::log->critical("Eigen SVD error: S is not positive");
         }
-        //#if !defined(NDEBUG)
+        // #if !defined(NDEBUG)
         if(save_fail) save_svd<Scalar>(mat, SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), "Eigen", details);
 
-        //#endif
+        // #endif
 
         throw except::runtime_error("Eigen SVD error \n"
                                     "  Rank max       = {}\n"

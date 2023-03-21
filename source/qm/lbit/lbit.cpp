@@ -1003,10 +1003,10 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
      *                         = ⟨state_i|
      */
     auto svd_cfg           = svd::config();
-    svd_cfg.truncation_lim = tol;
-    svd_cfg.rank_max       = 8;
-    svd_cfg.svd_lib        = svd::lib::lapacke;
-    svd_cfg.use_bdc        = true;
+    svd_cfg.truncation_limit = tol;
+    svd_cfg.rank_max         = 8;
+    svd_cfg.svd_lib          = svd::lib::lapacke;
+    svd_cfg.svd_rtn          = svd::rtn::gejsv;
 
     auto flipbit = [](size_t n, const size_t pos) -> size_t { return n ^= static_cast<size_t>(1) << pos; };
     auto flipall = [&flipbit](size_t n, const size_t len) -> size_t {

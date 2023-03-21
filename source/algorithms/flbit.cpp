@@ -278,10 +278,11 @@ void flbit::update_state() {
     *state_lbit = *state_lbit_init;
 
     // Time evolve from 0 to time_point[iter] here
-    auto t_step  = tid::tic_scope("step");
-    auto t_evo   = tid::tic_scope("time_evo");
-    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-
+    auto t_step     = tid::tic_scope("step");
+    auto t_evo      = tid::tic_scope("time_evo");
+    auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
+    svd_cfg.svd_lib = svd::lib::lapacke;
+    svd_cfg.svd_rtn = svd::rtn::geauto;
     if(settings::flbit::use_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", std::real(status.delta_t), std::imag(status.delta_t));
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1site, false, GateMove::AUTO, svd_cfg);
@@ -587,6 +588,11 @@ void flbit::transform_to_real_basis() {
     tensors.state->clear_measurements();
     tensors.clear_measurements();
     tensors.clear_cache();
+
+    auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
+    svd_cfg.svd_lib = svd::lib::lapacke;
+    svd_cfg.svd_rtn = svd::rtn::geauto;
+
     if(settings::flbit::use_mpo_circuit) {
         tools::log->debug("Transforming {} to {} using 1 unitary mpo layer", state_lbit->get_name(), tensors.state->get_name(),
                           unitary_gates_2site_layers.size());
@@ -647,6 +653,9 @@ void flbit::transform_to_lbit_basis() {
     state_lbit->set_name("state_lbit");
     state_lbit->clear_cache();
     state_lbit->clear_measurements();
+    auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
+    svd_cfg.svd_lib = svd::lib::lapacke;
+    svd_cfg.svd_rtn = svd::rtn::geauto;
     if(settings::flbit::use_mpo_circuit) {
         tools::log->info("Transforming {} to {} using 1 unitary mpo layer", tensors.state->get_name(), state_lbit->get_name());
         tools::finite::ops::apply_mpos(*state_lbit, unitary_gates_mpo_layers, ledge, redge, true);

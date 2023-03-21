@@ -38,15 +38,15 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     //    randomEngine.seed(777);
     //    rnd::
 
-    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Lu> SVD(rnd::internal::rng);
+    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Mgs> SVD(rnd::internal::rng);
 
     svd::log->debug("Running RSVD | {} x {} | truncation limit {:.4e} | rank_lim {}", rows, cols, truncation_lim, rank_lim);
     // Run the svd
     SVD.compute(mat, rank_lim);
 
-    rank = SVD.nonzeroSingularValues();
+    rank = SVD.singularValues().nonZeros();
     // Truncation error needs normalized singular values
-    std::tie(rank, truncation_error) = get_rank_by_truncation_error(SVD.singularValues().normalized());
+    std::tie(rank, truncation_error) = get_rank_from_truncation_error(SVD.singularValues().real().topRows(rank));
 
     if(rank == 0 or not SVD.matrixU().leftCols(rank).allFinite() or not SVD.singularValues().topRows(rank).allFinite() or
        not SVD.matrixV().leftCols(rank).allFinite()) {

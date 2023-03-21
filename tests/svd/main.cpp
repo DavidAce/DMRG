@@ -69,8 +69,8 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
     SECTION("Test that lapack can handle these matrices") {
         using reciter = h5pp::fs::recursive_directory_iterator;
         svd::config svd_settings;
-        svd_settings.truncation_lim = 1e-8;
-        svd_settings.loglevel       = 0;
+        svd_settings.truncation_limit = 1e-8;
+        svd_settings.loglevel         = 0;
         svd_settings.svd_lib        = svd::lib::lapacke;
         size_t      h5pp_logLevel   = 2;
         svd::solver svd(svd_settings);

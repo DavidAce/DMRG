@@ -21,11 +21,13 @@
     #include <lapacke.h>
 #endif
 
+namespace svd {
 #if defined(NDEBUG)
-static constexpr bool ndebug = true;
+    static constexpr bool ndebug = true;
 #else
-static constexpr bool ndebug = false;
+    static constexpr bool ndebug = false;
 #endif
+}
 
 namespace svd {
     static constexpr bool use_jsv = true;
@@ -55,11 +57,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     int colsA = static_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
 
-    // Set up the SVD solver
-    bool use_jacobi = static_cast<size_t>(sizeS) < switchsize_bdc;
-
-    if(use_jacobi and rows < cols) {
-        // The jacobi routine needs a tall matrix
+    if(rows < cols and (svd_rtn == rtn::gejsv or svd_rtn == rtn::gesvj)) {
+        // The jacobi routines needs a tall matrix
         auto t_adj = tid::tic_token("adjoint", tid::highest);
         svd::log->trace("Transposing {}x{} into a tall matrix {}x{}", rows, cols, cols, rows);
         MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
@@ -135,10 +134,43 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
         using namespace svd::internal;
         if constexpr(std::is_same<Scalar, double>::value) {
-            if(use_jacobi) {
-                if constexpr(use_jsv) {
-                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
-                                    sizeS);
+            auto t_svd = tid::tic_token(fmt::format("d{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
+            if constexpr(!ndebug)
+                svd::log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
+                                switchsize_gesdd, sizeS);
+            switch(svd_rtn) {
+                case rtn::gesvd: {
+                    U.resize(rowsU, colsU);
+                    S.resize(sizeS);
+                    VT.resize(rowsVT, colsVT);
+                    rwork.resize(1ul);
+
+                    info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
+                                               -1);
+                    if(info != 0) break;
+                    int lrwork = static_cast<int>(rwork[0]);
+                    rwork.resize(static_cast<size_t>(lrwork));
+
+                    info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
+                                               lrwork);
+                    break;
+                }
+                case rtn::gesvj: {
+                    // For this routine we need rows > cols
+                    S.resize(sizeS);
+                    V.resize(rowsV, colsV); // Local matrix gets transposed after computation
+
+                    int lrwork = std::max(6, rowsA + colsA);
+                    rwork.resize(static_cast<size_t>(lrwork));
+                    info =
+                        LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, rwork.data(), lrwork);
+                    if(info < 0) throw except::runtime_error("Lapacke SVD dgesvj error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("Lapacke SVD dgesvj error: could not converge: info {}", info);
+                    U  = A;
+                    VT = V.adjoint();
+                    break;
+                }
+                case rtn::gejsv: {
                     // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
                     // For this routine we need rows > cols
                     S.resize(sizeS);
@@ -151,93 +183,142 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     rwork.resize(static_cast<size_t>(lrwork));
                     iwork.resize(static_cast<size_t>(liwork));
 
-                    svd::log->trace("Running dgesvj");
-                    auto t_dgejsv = tid::tic_token(fmt::format("dgejsv{}", t_suffix), tid::highest);
-                    info          = LAPACKE_dgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
-                                                        'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
-                                                        'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
-                                                        U.data(), ldu, V.data(), ldv, rwork.data(), lrwork, iwork.data());
-                    t_dgejsv.toc();
+                    info = LAPACKE_dgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
+                                               'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
+                                               'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
+                                               U.data(), ldu, V.data(), ldv, rwork.data(), lrwork, iwork.data());
                     if(info < 0) throw except::runtime_error("Lapacke SVD dgejsv error: parameter {} is invalid", info);
                     if(info > 0) throw except::runtime_error("Lapacke SVD dgejsv error: could not converge: info {}", info);
                     VT = V.adjoint();
                     V.resize(0, 0);
-                } else {
-                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
-                                    sizeS);
-                    // For this routine we need rows > cols
+                    break;
+                }
+                case rtn::gesdd: {
+                    int liwork = std::max(1, 8 * mn);
+                    int lrwork = std::max(1, mn * (6 + 4 * mn) + mx);
+                    iwork.resize(static_cast<size_t>(liwork));
+                    rwork.resize(static_cast<size_t>(lrwork));
+
+                    U.resize(rowsU, colsU);
+                    S.resize(sizeS);
+                    VT.resize(rowsVT, colsVT);
+
+                    info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1,
+                                               iwork.data());
+                    if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
+
+                    lrwork = static_cast<int>(rwork[0]);
+                    rwork.resize(static_cast<size_t>(lrwork));
+
+                    auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix), tid::highest);
+                    info       = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
+                                                     lrwork, iwork.data());
+                    if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
+                    if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
+                    break;
+                }
+                case rtn::gesvdx: {
+                    U.resize(rowsU, colsU);
+                    S.resize(sizeS);
+                    VT.resize(rowsVT, colsVT);
+
+                    double vl    = std::min(1e10, truncation_lim / 5.0);
+                    double vu    = std::max(1e10, truncation_lim / 5.0);
+                    int    il    = 1;
+                    int    iu    = std::min<int>(sizeS, static_cast<int>(rank_max));
+                    char   range = rank_max < sizeS ? 'I' : 'V';
+
+                    if(svdx_select.has_value()) {
+                        if(std::holds_alternative<size_t>(svdx_select.value())) {
+                            int rank_svdx = static_cast<int>(std::get<size_t>(svdx_select.value()));
+                            iu            = std::min<int>(rank_svdx, static_cast<int>(rank_max));
+                            range         = 'I';
+                        } else if(std::holds_alternative<double>(svdx_select.value())) {
+                            double value_svdx = std::get<double>(svdx_select.value());
+                            if(std::isfinite(value_svdx)) vl = value_svdx;
+                            range = 'V';
+                        }
+                    }
+
+                    int ns     = 0;
+                    int lrwork = mn * 2 + mx;
+                    int liwork = 12 * mn;
+                    rwork.resize(static_cast<size_t>(lrwork));
+                    iwork.resize(static_cast<size_t>(liwork));
+
+                    info = LAPACKE_dgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', range, rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
+                                                VT.data(), ldvt, rwork.data(), -1, iwork.data());
+                    if(info != 0) break;
+
+                    lrwork = static_cast<int>(std::real(rwork[0]));
+                    rwork.resize(static_cast<size_t>(lrwork));
+
+                    info = LAPACKE_dgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', 'V', rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
+                                                VT.data(), ldvt, rwork.data(), lrwork, iwork.data());
+
+                    // Select the computed region
+                    U  = U.leftCols(ns).eval();
+                    S  = S.head(ns).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
+                    VT = VT.topRows(ns).eval();
+                    break;
+                }
+                default: throw std::logic_error("invalid case for enum svd::rtn");
+            }
+            if(info < 0) throw except::runtime_error("Lapacke SVD d{} error: parameter {} is invalid", enum2sv(svd_rtn), info);
+            if(info > 0) throw except::runtime_error("Lapacke SVD d{} error: could not converge: info {}", enum2sv(svd_rtn), info);
+        } else if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
+            auto t_svd = tid::tic_token(fmt::format("z{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
+            if constexpr(!ndebug)
+                svd::log->debug("Running Lapacke z{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
+                                switchsize_gesdd, sizeS);
+            switch(svd_rtn) {
+                case rtn::gesvd: {
+                    U.resize(rowsU, colsU);
+                    S.resize(sizeS);
+                    VT.resize(rowsVT, colsVT);
+
+                    int lrwork = std::max(1, 5 * mn);
+                    int lcwork = std::max(1, 2 * mn + mx);
+                    rwork.resize(static_cast<size_t>(lrwork));
+                    cwork.resize(static_cast<size_t>(lcwork));
+
+                    info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
+                                               -1, rwork.data());
+                    if(info != 0) break;
+                    lcwork = static_cast<int>(std::real(cwork[0]));
+                    cwork.resize(static_cast<size_t>(lcwork));
+
+                    info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
+                                               lcwork, rwork.data());
+                    break;
+                }
+                case rtn::gesvj: {
                     S.resize(sizeS);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
 
-                    int lrwork = std::max(6, rowsA + colsA);
+                    int lcwork = std::max(6, rowsA + colsA);
+                    int lrwork = std::max(6, colsA);
+                    cwork.resize(static_cast<size_t>(lcwork));
                     rwork.resize(static_cast<size_t>(lrwork));
 
-                    svd::log->trace("Running dgesvj");
-                    auto t_dgesvj = tid::tic_token(fmt::format("dgesvj{}", t_suffix), tid::highest);
-                    info =
-                        LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, rwork.data(), lrwork);
-                    t_dgesvj.toc();
-                    if(info < 0) throw except::runtime_error("Lapacke SVD dgesvj error: parameter {} is invalid", info);
-                    if(info > 0) throw except::runtime_error("Lapacke SVD dgesvj error: could not converge: info {}", info);
+                    info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), -1,
+                                               rwork.data(), -1);
+                    if(info != 0) break;
+                    lcwork = static_cast<int>(std::real(cwork[0]));
+                    lrwork = static_cast<int>(rwork[0]);
+                    cwork.resize(static_cast<size_t>(lcwork));
+                    rwork.resize(static_cast<size_t>(lrwork));
+
+                    info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), lcwork,
+                                               rwork.data(), lrwork);
+                    if(info != 0) break;
                     U  = A;
                     VT = V.adjoint();
+                    V.resize(0, 0);
+                    break;
                 }
-            } else if(use_bdc) {
-                svd::log->debug("Running Lapacke BDC SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
-                int liwork = std::max(1, 8 * mn);
-                int lrwork = std::max(1, mn * (6 + 4 * mn) + mx);
-                iwork.resize(static_cast<size_t>(liwork));
-                rwork.resize(static_cast<size_t>(lrwork));
-
-                U.resize(rowsU, colsU);
-                S.resize(sizeS);
-                VT.resize(rowsVT, colsVT);
-
-                svd::log->trace("Querying dgesdd");
-                info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1,
-                                           iwork.data());
-                if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
-
-                lrwork = static_cast<int>(rwork[0]);
-                rwork.resize(static_cast<size_t>(lrwork));
-
-                svd::log->trace("Running dgesdd");
-                auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix), tid::highest);
-                info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), lrwork,
-                                           iwork.data());
-                if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
-
-            } else {
-                svd::log->debug("Running Lapacke SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
-
-                U.resize(rowsU, colsU);
-                S.resize(sizeS);
-                VT.resize(rowsVT, colsVT);
-
-                rwork.resize(1ul);
-
-                svd::log->trace("Querying dgesvd");
-                info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1);
-                if(info < 0) throw except::runtime_error("Lapacke SVD dgesvd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD dgesvd error: could not converge: info {}", info);
-
-                int lrwork = static_cast<int>(rwork[0]);
-                rwork.resize(static_cast<size_t>(lrwork));
-
-                svd::log->trace("Running dgesvd");
-                auto t_dgesvd = tid::tic_token(fmt::format("dgesvd{}", t_suffix), tid::highest);
-                info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
-                                           lrwork);
-                if(info < 0) throw except::runtime_error("Lapacke SVD dgesvd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD dgesvd error: could not converge: info {}", info);
-            }
-        } else if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
-            if(use_jacobi) {
-                if constexpr(use_jsv) {
-                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
-                                    sizeS);
+                case rtn::gejsv: {
                     // http://www.netlib.org/lapack/explore-html/d1/d7e/group__double_g_esing_ga8767bfcf983f8dc6ef2842029ab25599.html#ga8767bfcf983f8dc6ef2842029ab25599
                     // For this routine we need rows > cols
                     S.resize(sizeS);
@@ -251,15 +332,11 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     cwork.resize(static_cast<size_t>(lcwork));
                     iwork.resize(static_cast<size_t>(liwork));
 
-                    svd::log->trace("Querying zgejsv");
-                    auto t_zgejsv = tid::tic_token(fmt::format("zgejsv{}", t_suffix), tid::highest);
-                    info          = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
-                                                        'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
-                                                        'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
-                                                        U.data(), ldu, V.data(), ldv, cwork.data(), -1, rwork.data(), -1, iwork.data());
-
-                    if(info < 0) throw except::runtime_error("zgejsv error: parameter {} is invalid", info);
-                    if(info > 0) throw except::runtime_error("zgejsv error: could not converge: info {}", info);
+                    info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
+                                               'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
+                                               'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
+                                               U.data(), ldu, V.data(), ldv, cwork.data(), -1, rwork.data(), -1, iwork.data());
+                    if(info != 0) break;
 
                     lcwork = static_cast<int>(std::real(cwork[0]));
                     lrwork = static_cast<int>(rwork[0]);
@@ -268,114 +345,95 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     rwork.resize(static_cast<size_t>(lrwork));
                     iwork.resize(static_cast<size_t>(liwork));
 
-                    svd::log->trace("Running zgejsv");
                     info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
                                                'N' /* P/N: P will use perturbation to drown denormalized numbers */, rowsA, colsA, A.data(), lda, S.data(),
                                                U.data(), ldu, V.data(), ldv, cwork.data(), lcwork, rwork.data(), lrwork, iwork.data());
-
-                    if(info < 0) throw except::runtime_error("zgejsv error: parameter {} is invalid", info);
-                    if(info > 0) throw except::runtime_error("zgejsv error: could not converge: info {}", info);
+                    if(info != 0) break;
                     VT = V.adjoint();
                     V.resize(0, 0);
-                } else {
-                    svd::log->debug("Running Lapacke Jacobi SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc,
-                                    sizeS);
+                    break;
+                }
+                case rtn::gesdd: {
+                    U.resize(rowsU, colsU);
                     S.resize(sizeS);
-                    V.resize(rowsV, colsV); // Local matrix gets transposed after computation
+                    VT.resize(rowsVT, colsVT);
 
-                    int lcwork = std::max(6, rowsA + colsA);
-                    int lrwork = std::max(6, colsA);
+                    int lcwork = std::max(1, mn * mn + 3 * mn);
+                    int lrwork = std::max(1, mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1));
+                    int liwork = std::max(1, 8 * mn);
+
                     cwork.resize(static_cast<size_t>(lcwork));
                     rwork.resize(static_cast<size_t>(lrwork));
+                    iwork.resize(static_cast<size_t>(liwork));
 
-                    svd::log->trace("Querying zgesvj");
-                    auto t_zgesvj = tid::tic_token(fmt::format("zgesvj{}", t_suffix), tid::highest);
-                    info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), -1,
-                                               rwork.data(), -1);
-
-                    if(info < 0) throw except::runtime_error("zgesvj error: parameter {} is invalid", info);
-                    if(info > 0) throw except::runtime_error("zgesvj error: could not converge: info {}", info);
+                    info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1,
+                                               rwork.data(), iwork.data());
+                    if(info != 0) break;
 
                     lcwork = static_cast<int>(std::real(cwork[0]));
-                    lrwork = static_cast<int>(rwork[0]);
+                    cwork.resize(static_cast<size_t>(lcwork));
+
+                    info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
+                                               lcwork, rwork.data(), iwork.data());
+                    break;
+                }
+                case rtn::gesvdx: {
+                    U.resize(rowsU, colsU);
+                    S.resize(sizeS);
+                    VT.resize(rowsVT, colsVT);
+
+                    double vl    = std::min(1e10, truncation_lim / 5.0);
+                    double vu    = std::max(1e10, truncation_lim / 5.0);
+                    int    il    = 1;
+                    int    iu    = std::min<int>(sizeS, static_cast<int>(rank_max));
+                    char   range = rank_max < sizeS ? 'I' : 'V';
+
+                    if(svdx_select.has_value()) {
+                        if(std::holds_alternative<size_t>(svdx_select.value())) {
+                            int rank_svdx = static_cast<int>(std::get<size_t>(svdx_select.value()));
+                            iu            = std::min<int>(rank_svdx, static_cast<int>(rank_max));
+                            range         = 'I';
+                        } else if(std::holds_alternative<double>(svdx_select.value())) {
+                            double value_svdx = std::get<double>(svdx_select.value());
+                            if(std::isfinite(value_svdx)) vl = value_svdx;
+                            range = 'V';
+                        }
+                    }
+
+                    int ns     = 0;
+                    int lcwork = std::max(1, mn * 2 + mx);
+                    int lrwork = mn * (mn * 2 + 15 * mn);
+                    int liwork = 12 * mn;
+
                     cwork.resize(static_cast<size_t>(lcwork));
                     rwork.resize(static_cast<size_t>(lrwork));
+                    iwork.resize(static_cast<size_t>(liwork));
 
-                    svd::log->trace("Running zgesvj | cwork {} | rwork {}", lcwork, lrwork);
-                    info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), lcwork,
-                                               rwork.data(), lrwork);
-                    if(info < 0) throw except::runtime_error("zgesvj error: parameter {} is invalid", info);
-                    if(info > 0) throw except::runtime_error("zgesvj error: could not converge: info {}", info);
-                    U  = A;
-                    VT = V.adjoint();
-                    V.resize(0, 0);
+                    info = LAPACKE_zgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', range, rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
+                                                VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
+                    if(info != 0) break;
+
+                    lcwork = static_cast<int>(std::real(cwork[0]));
+                    cwork.resize(static_cast<size_t>(lcwork));
+
+                    info = LAPACKE_zgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', 'V', rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
+                                                VT.data(), ldvt, cwork.data(), lcwork, rwork.data(), iwork.data());
+
+                    // Select the computed region
+                    U  = U.leftCols(ns).eval();
+                    S  = S.head(ns).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
+                    VT = VT.topRows(ns).eval();
+                    break;
                 }
-
-            } else if(use_bdc) {
-                svd::log->debug("Running Lapacke BDC SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
-                U.resize(rowsU, colsU);
-                S.resize(sizeS);
-                VT.resize(rowsVT, colsVT);
-
-                int lcwork = std::max(1, mn * mn + 3 * mn);
-                int lrwork = std::max(1, mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1));
-                int liwork = std::max(1, 8 * mn);
-
-                cwork.resize(static_cast<size_t>(lcwork));
-                rwork.resize(static_cast<size_t>(lrwork));
-                iwork.resize(static_cast<size_t>(liwork));
-
-                svd::log->trace("Querying zgesdd");
-                auto t_zgesdd = tid::tic_token(fmt::format("zgesdd{}", t_suffix), tid::highest);
-                /* clang-format off */
-                info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
-                if(info < 0) throw except::runtime_error("Lapacke SVD zgesdd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD zgesdd error: could not converge: info {}", info);
-
-                lcwork = static_cast<int>(std::real(cwork[0]));
-                cwork.resize(static_cast<size_t>(lcwork));
-
-                svd::log->trace("Running zgesdd");
-                info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork, rwork.data(), iwork.data());
-                if(info < 0) throw except::runtime_error("Lapacke SVD zgesdd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD zgesdd error: could not converge: info {}", info);
-                /* clang-format on */
-
-            } else {
-                svd::log->debug("Running Lapacke SVD | truncation limit {:.4e} | switchsize bdc {} | size {}", truncation_lim, switchsize_bdc, sizeS);
-
-                U.resize(rowsU, colsU);
-                S.resize(sizeS);
-                VT.resize(rowsVT, colsVT);
-
-                int lrwork = std::max(1, 5 * mn);
-                int lcwork = std::max(1, 2 * mn + mx);
-                rwork.resize(static_cast<size_t>(lrwork));
-                cwork.resize(static_cast<size_t>(lcwork));
-
-                svd::log->trace("Querying zgesvd");
-                auto t_zgesvd = tid::tic_token(fmt::format("zgesvd{}", t_suffix), tid::highest);
-                /* clang-format off */
-                info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1, rwork.data());
-                if(info < 0) throw except::runtime_error("Lapacke SVD zgesvd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD zgesvd error: could not converge: info {}", info);
-
-                lcwork = static_cast<int>(std::real(cwork[0]));
-                cwork.resize(static_cast<size_t>(lcwork));
-
-                svd::log->trace("Running zgesvd");
-                info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), lcwork, rwork.data());
-                if(info < 0) throw except::runtime_error("Lapacke SVD zgesvd error: parameter {} is invalid", info);
-                if(info > 0) throw except::runtime_error("Lapacke SVD zgesvd error: could not converge: info {}", info);
-                /* clang-format on */
+                default: throw std::logic_error("invalid case for enum svd::rtn");
             }
+            if(info < 0) throw except::runtime_error("z{} error: parameter {} is invalid", enum2sv(svd_rtn), info);
+            if(info > 0) throw except::runtime_error("z{} error: could not converge: info {}", enum2sv(svd_rtn), info);
         }
 
         svd::log->trace("Truncating singular values");
-        auto max_size = S.nonZeros();
-        //        std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size).normalized()); // Truncation error needs normalized
-        //        singular values
+        auto max_size                    = S.nonZeros();
         std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size));
 
         // Do the truncation
@@ -407,12 +465,13 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         // #if !defined(NDEBUG)
         if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
         throw except::runtime_error("Lapacke SVD error \n"
+                                    "  Singular values  = {::.5e}\n"
                                     "  Truncation Error = {:.4e}\n"
                                     "  Rank             = {}\n"
                                     "  Dims             = ({}, {})\n"
                                     "  Lapacke info     : {}\n"
                                     "  Error message    : {}\n",
-                                    truncation_error, rank, rows, cols, info, ex.what());
+                                    S, truncation_error, rank, rows, cols, info, ex.what());
     }
     if(save_result) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
 

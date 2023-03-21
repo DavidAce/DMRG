@@ -7,20 +7,42 @@ long long svd::solver::count = 0;
 svd::solver::solver() { setLogLevel(2); }
 
 svd::config::config(long rank_max_) : rank_max(rank_max_) {}
-svd::config::config(double truncation_lim_) : truncation_lim(truncation_lim_) {}
-svd::config::config(long rank_max_, double truncation_lim_) : rank_max(rank_max_), truncation_lim(truncation_lim_) {}
+svd::config::config(double truncation_lim_) : truncation_limit(truncation_lim_) {}
+svd::config::config(long rank_max_, double truncation_lim_) : rank_max(rank_max_), truncation_limit(truncation_lim_) {}
 svd::config::config(std::optional<long> rank_max_) : rank_max(rank_max_) {}
-svd::config::config(std::optional<double> truncation_lim_) : truncation_lim(truncation_lim_) {}
-svd::config::config(std::optional<long> rank_max_, std::optional<double> truncation_lim_) : rank_max(rank_max_), truncation_lim(truncation_lim_) {}
+svd::config::config(std::optional<double> truncation_lim_) : truncation_limit(truncation_lim_) {}
+svd::config::config(std::optional<long> rank_max_, std::optional<double> truncation_lim_) : rank_max(rank_max_), truncation_limit(truncation_lim_) {}
+
+std::string svd::config::to_string() {
+    /* clang-format off */
+    std::string msg;
+    if(rank_max        ) msg.append(fmt::format(" | rank_max {}", rank_max.value()));
+    if(rank_min        ) msg.append(fmt::format(" | rank_min {}", rank_min.value()));
+    if(truncation_limit  ) msg.append(fmt::format(" | truncation_lim {:.2e}", truncation_limit.value()));
+    if(switchsize_gejsv) msg.append(fmt::format(" | switchsize_gejsv {}", switchsize_gejsv.value()));
+    if(switchsize_gesvd) msg.append(fmt::format(" | switchsize_gesvd {}", switchsize_gesvd.value()));
+    if(switchsize_gesdd) msg.append(fmt::format(" | switchsize_gesdd {}", switchsize_gesdd.value()));
+    if(svdx_select     ) msg.append(fmt::format(" | svdx_select {}", svdx_select.value()));
+    if(loglevel        ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
+    if(svd_lib         ) msg.append(fmt::format(" | svd_lib {}", enum2sv(svd_lib.value())));
+    if(svd_rtn         ) msg.append(fmt::format(" | svd_rtn {}", enum2sv(svd_rtn.value())));
+    if(save_fail       ) msg.append(fmt::format(" | save_fail {}",save_fail.value()));
+    if(benchmark       ) msg.append(fmt::format(" | benchmark {}",benchmark.value()));
+    return msg.empty() ? msg : "svd settings" + msg;
+    /* clang-format on */
+}
 
 void svd::solver::copy_config(const svd::config &svd_cfg) {
     if(svd_cfg.rank_max) rank_max = svd_cfg.rank_max.value();
     if(svd_cfg.rank_min) rank_min = svd_cfg.rank_min.value();
-    if(svd_cfg.truncation_lim) truncation_lim = svd_cfg.truncation_lim.value();
-    if(svd_cfg.switchsize_bdc) switchsize_bdc = svd_cfg.switchsize_bdc.value();
+    if(svd_cfg.truncation_limit) truncation_lim = svd_cfg.truncation_limit.value();
+    if(svd_cfg.switchsize_gejsv) switchsize_gejsv = svd_cfg.switchsize_gejsv.value();
+    if(svd_cfg.switchsize_gesvd) switchsize_gesvd = svd_cfg.switchsize_gesvd.value();
+    if(svd_cfg.switchsize_gesdd) switchsize_gesdd = svd_cfg.switchsize_gesdd.value();
+    if(svd_cfg.svdx_select) svdx_select = svd_cfg.svdx_select.value();
     if(svd_cfg.loglevel) setLogLevel(svd_cfg.loglevel.value());
-    if(svd_cfg.use_bdc) use_bdc = svd_cfg.use_bdc.value();
     if(svd_cfg.svd_lib) svd_lib = svd_cfg.svd_lib.value();
+    if(svd_cfg.svd_rtn) svd_rtn = svd_cfg.svd_rtn.value();
     if(svd_cfg.save_fail) save_fail = svd_cfg.save_fail.value();
     if(svd_cfg.benchmark) benchmark = svd_cfg.benchmark.value();
 }
@@ -73,39 +95,49 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     copy_config(svd_cfg);
     auto sizeS    = std::min(rows, cols);
     long rank_lim = rank_max > 0 ? std::min(sizeS, rank_max) : sizeS;
-    bool use_rsvd = has_rsvd and num::cmp_greater(sizeS, rank_lim * 10) and num::cmp_greater(sizeS, switchsize_rnd);
+
+    // Resolve geauto
+    if(svd_cfg.svd_rtn == svd::rtn::geauto or svd_rtn == svd::rtn::geauto) {
+        svd_rtn = svd::rtn::gesvj;
+        if(switchsize_gejsv != -1ul and num::cmp_greater_equal(sizeS, switchsize_gejsv)) svd_rtn = svd::rtn::gejsv;
+        if(switchsize_gesvd != -1ul and num::cmp_greater_equal(sizeS, switchsize_gesvd)) svd_rtn = svd::rtn::gesvd;
+        if(switchsize_gesdd != -1ul and num::cmp_greater_equal(sizeS, switchsize_gesdd)) svd_rtn = svd::rtn::gesdd;
+
+        if(svd_rtn == rtn::gesdd) {
+            bool is_rank25 = num::cmp_greater_equal(sizeS, rank_lim * 4);  // Will keep at least 25% of the singular values
+            bool is_rank10 = num::cmp_greater_equal(sizeS, rank_lim * 10); // Will keep at least 10% of the singular values
+            if(is_rank25) { svd_rtn = svd::rtn::gesvdx; }
+            if constexpr(has_rsvd) {
+                if(is_rank10) { svd_rtn = svd::rtn::gersvd; }
+            }
+        }
+        //        svd::log->info("sizeS = {} | {} {} {} | {} ", sizeS, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd, enum2sv(svd_rtn));
+    }
+
 #pragma omp atomic
     count++;
     switch(svd_lib) {
         case svd::lib::lapacke: {
             try {
-                if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
+                if(svd_rtn == svd::rtn::gersvd)
                     return do_svd_rsvd(mat_ptr, rows, cols);
                 else
                     return do_svd_lapacke(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
-                svd::log->warn("Lapacke failed to perform SVD: {} | Trying Eigen", std::string_view(ex.what()));
+                svd::log->warn("{} {} failed to perform SVD: {} | Trying Eigen", enum2sv(svd_lib), enum2sv(svd_rtn), std::string_view(ex.what()));
+                svd_rtn = num::cmp_greater_equal(sizeS, switchsize_gesdd) ? rtn::gesdd : rtn::gejsv;
                 return do_svd_eigen(mat_ptr, rows, cols);
             }
             break;
         }
         case svd::lib::eigen: {
             try {
-                if(use_rsvd) // Make sure the problem is large enough so that it pays to use rsvd
+                if(svd_rtn == svd::rtn::gersvd)
                     return do_svd_rsvd(mat_ptr, rows, cols);
                 else
                     return do_svd_eigen(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
-                svd::log->warn("Eigen failed to perform SVD: {} | Trying Lapacke", ex.what());
-                return do_svd_lapacke(mat_ptr, rows, cols);
-            }
-            break;
-        }
-        case svd::lib::rsvd: {
-            try {
-                return do_svd_rsvd(mat_ptr, rows, cols);
-            } catch(const std::exception &ex) {
-                svd::log->warn("Rsvd failed to perform SVD: {} | Trying Lapacke", ex.what());
+                svd::log->warn("{} {} failed to perform SVD: {} | Trying Eigen", enum2sv(svd_lib), enum2sv(svd_rtn), std::string_view(ex.what()));
                 return do_svd_lapacke(mat_ptr, rows, cols);
             }
             break;

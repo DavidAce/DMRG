@@ -23,15 +23,17 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A, const MatrixType<Scalar>
     file.writeAttribute(cols, group_name, "cols");
     file.writeAttribute(S.size(), group_name, "rank");
     file.writeAttribute(rank_max, group_name, "rank_max");
-    file.writeAttribute(use_bdc, group_name, "use_bdc");
+    file.writeAttribute(enum2sv(svd_rtn), group_name, "svd_rtn");
     file.writeAttribute(truncation_lim, group_name, "truncation_lim");
-    file.writeAttribute(switchsize_bdc, group_name, "switchsize_bdc");
+    file.writeAttribute(switchsize_gejsv, group_name, "switchsize_gejsv");
+    file.writeAttribute(switchsize_gesvd, group_name, "switchsize_gesvd");
+    file.writeAttribute(switchsize_gesdd, group_name, "switchsize_gesdd");
     for(const auto &[key, val] : details) file.writeAttribute(val, group_name, key);
 
     //
     //
     //
-    //#if defined(OPENBLAS_AVAILABLE)
+    // #if defined(OPENBLAS_AVAILABLE)
     //    file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
     //    file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
     //    file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);

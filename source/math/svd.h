@@ -55,17 +55,23 @@ namespace svd {
         solver(const svd::config &svd_cfg);
         solver(std::optional<svd::config> svd_cfg);
 
-        long   rank_max = -1; // -1 means determine from given matrix
-        long   rank_min = -1; // -1 means disabled.
-        double truncation_lim =
-            std::numeric_limits<double>::epsilon(); // Truncation error limit, discard all lambda_i for highest i satisfying truncation_lim < norm(lambda_i)
-        size_t   switchsize_bdc = 16;               // Use Jacobi algorithm when rows < switchsize_bdc and BDC otherwise
-        size_t   switchsize_rnd = 2048;             // Use Randomized SVD algorithm when rows < switchsize_rnd and BDC otherwise
-        svd::lib svd_lib        = svd::lib::lapacke;
-        bool     use_bdc        = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize_bdc
-        bool     save_fail      = false;
-        bool     save_result    = false;
-        bool     benchmark      = false;
+        long   rank_max       = -1;                                     /*!< -1 means determine from given matrix */
+        long   rank_min       = -1;                                     /*!< -1 means disabled. */
+        double truncation_lim = std::numeric_limits<double>::epsilon(); /*!< Truncation error limit, discard all lambda_i for highest i satisfying
+                                                                           truncation_lim < norm(lambda_i) */
+
+        // Switch sizes for automatic algorithm promotion (only used with svd::rtn::geauto)
+        size_t                       switchsize_gejsv = 1;   /*!< Default jacobi algorithm (gesjsv) when min(rows,cols) >= swtichsize_gejsv, otherwise gesvj */
+        size_t                       switchsize_gesvd = 64;  /*!< Default preconditioned QR bidiagonalization (gesvd) when min(rows,cols) >= maxsize_gesvd */
+        size_t                       switchsize_gesdd = 128; /*!< Default bidiagonal divide and conquer when  min(rows,cols) >= switchsize_gesdd */
+        svd::lib                     svd_lib          = svd::lib::lapacke;
+        svd::rtn                     svd_rtn          = svd::rtn::geauto;
+        std::optional<svdx_select_t> svdx_select      = std::nullopt;
+
+        //        bool     use_bdc        = true; // Use fast bi-diagonal divide and conquer algorithm if rows >= switchsize_bdc
+        bool save_fail   = false;
+        bool save_result = false;
+        bool benchmark   = false;
 
         void set_config(const svd::config &svd_cfg);
         void set_config(std::optional<svd::config> svd_cfg);

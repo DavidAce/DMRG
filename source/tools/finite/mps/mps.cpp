@@ -536,13 +536,15 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         }
         gate.mark_as_used();
     }
-    if constexpr(settings::debug_gates) tools::log->trace("apply_gate: applied pos {} | gm {} | svds {}", gate.pos, enum2sv(gm), svd::solver::get_count());
+    if constexpr(settings::debug_gates)
+        tools::log->trace("apply_gate: applied pos {} | gm {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gm), svd::solver::get_count(),
+                          state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front() + 1));
 
     auto new_posC = gm == GateMove::ON ? static_cast<long>(gate.pos.front()) : old_posC;
     tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, new_posC, svd_cfg, LogPolicy::QUIET);
     if constexpr(settings::debug_gates)
-        tools::log->trace("apply_gate: merged  pos {} | gm {} | center {} -> {} | svds {}", gate.pos, enum2sv(gm), old_posC, new_posC,
-                          svd::solver::get_count());
+        tools::log->trace("apply_gate: merged  pos {} | gm {} | center {} -> {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gm), old_posC, new_posC,
+                          svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front() + 1));
 }
 
 void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, bool adjoint,
@@ -842,7 +844,10 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
         apply_swap_gate(state, gate, temp, adjoint, sites, gm, svd_cfg);
     }
     move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
-    svds_count = svd::solver::get_count() - svds_count;
-    tools::log->debug("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
-                      rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
+
+    if constexpr(settings::debug_gates) {
+        svds_count = svd::solver::get_count() - svds_count;
+        tools::log->debug("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
+                          rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
+    }
 }
