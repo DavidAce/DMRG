@@ -82,8 +82,10 @@ bool MpsSite::is_normalized(double prec) const {
         return tenx::isIdentity(id, prec);
     }
     if(get_label() == "B") {
-        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
-        return tenx::isIdentity(id, prec);
+        auto id    = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
+        auto is_id = tenx::isIdentity(id, prec);
+        if(not is_id) tools::log->error("B^dagger B:\n{}\n", linalg::tensor::to_string(id, 16));
+        return is_id;
     }
     throw except::runtime_error("MpsSite::is_identity: unexpected label: {}", get_label());
 }
