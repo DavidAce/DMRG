@@ -57,8 +57,10 @@ def parse(algo):
                                 # 'lbit66',   # 10000 realizations u8, f=1.0, L=12, u=8,10,12,14,16, checking how well SN grows with u depth.
                                 # 'lbit67', # 2000 realizations u[8,16...64], f=1.0, L=16, checking how well SN grows with u depth.
                                 # 'lbit68', # 300 realizations u[8,16...20], f=1.0, L=[8,...32], checking how well localization length xi.
-                                'lbit69',
-                                # 300 realizations u[8,16...32], f=1.0, L=[8,...32] and mpo bond dim [64...256], checking if mpo bond dim affects xi
+                                # 'lbit69', # 300 realizations u[8,16...32], f=1.0, L=[8,...32] and mpo bond dim [64...256], checking if mpo bond dim affects xi
+                                # 'lbit70', # 1500 realizations u[8,16...64], f=1.0, L=[8,...32] and mpo bond dim [128], checking what u is needed to reach xi=1
+                                'lbit71',
+                                # 1500 realizations u[8,16...80], f=1.0, L=[8,...40] and mpo bond dim [16] (new faster method), checking what u is needed to reach xi=1
 
                             ])
     elif algo == 'xDMRG':

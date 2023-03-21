@@ -4,8 +4,9 @@ from matplotlib.ticker import LogLocator, \
 import numpy as np
 from pathlib import Path
 
-mplstyle = '../common/stylesheets/prb.mplstyle'
-# mplstyle = '../common/stylesheets/slack.mplstyle'
+# mplstyle = '../common/stylesheets/prb.mplstyle'
+mplstyle = '../common/stylesheets/slack.mplstyle'
+prb = 'prb' in mplstyle
 legendoutside = False
 legendcollect = False
 
@@ -31,8 +32,8 @@ def get_meta(plotdir):
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
             },
             'include_v3': {
-                'L': [24],
-                # 'L': [16,24,32],
+                # 'L': [36],
+                # 'L': [12,16,20,24,28,32,40],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_12'],
                 # 'x': ['x_0.5000', 'x_1.0000'],
@@ -49,8 +50,9 @@ def get_meta(plotdir):
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
                 'tgw8': ['ID'],
                 'cgw8': ['EX'],
-                'u': [8, 16, 32],
-                'ubond': [256],
+                # 'u': [8,16,24,32,40,48,56,64],
+                'u': [8, 16, 32, 64, 80],
+                # 'ubond': [256],
             },
         },
 
@@ -361,30 +363,34 @@ def get_meta(plotdir):
         'lbit-avg': {
             'groupname': 'lbits',
             'dsetname': 'corravg',
-            'titlename': 'l-bit',
+            'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
+            # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             'box_aspect': 1,
             # 'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
             'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$|i-j|$",
-            'xticks': [0, 6, 12, 18],
+            'xticks': [0, 6, 12, 18] if prb else None,
             # 'yticks': [1e0, 1e-4, 1e-9],
-            'yticks': [0, -3, -6, -9],
+            'yticks': [0, -3, -6, -9, -12, -15],
             # 'yscale': 'log',
             # 'ynopos': 'mask',
             'plotprefix': 'lbit',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'ymin': -12,
-            'xmax': 20,
+            'ymin': -16,
+            # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [],  # Choose 'num', 'bmax','tsim'
-            'legendfits': ['xi'],
+            'legendcols': [] if prb else ['num'],  # Choose 'num', 'bmax','tsim'
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
-            'legendlocation': (0.48, 0.58),
+            'legendlocation': (0.48, 0.58) if prb else 'lower left',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            'fit-beta': True,
+            'fit-ymin': 1e-14 if prb else 1e-14,
+            'fit-skip': 0 if prb else 0,
             'inset-cls': {
                 # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
                 'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
@@ -409,6 +415,7 @@ def get_meta(plotdir):
             # 'xmax': 16,
             'ymin': 1e-14,
             'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': 'best',
@@ -440,15 +447,20 @@ def get_meta(plotdir):
             'titlename': 'Characteristic length scale of l-bits',
             'box_aspect': 1,
             'ylabel': '$\langle\langle \\xi_\\tau \\rangle\\rangle$',
-            'yticks': [0.6, 0.7, 0.8, 0.9, 1.0],
+            # 'yticks': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4] if prb else None,
+            # 'xticks': [16,32,48,64,80],
             'plotprefix': 'cls',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [] if prb else ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
+            'fit-beta': True,
+            'fit-ymin': 1e-14,
+            'fit-skip': 0 if prb else 0,
             # 'legendlocation': 'best',
-            'legendlocation': (0.52, 0.05),
+            'legendlocation': 'best',  # "(0.52, 0.05),
             'axestitle': False,
         },
         'dist-num': {

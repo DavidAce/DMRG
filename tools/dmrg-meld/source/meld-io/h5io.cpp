@@ -208,13 +208,12 @@ namespace tools::h5io {
                     hamiltonian.u_cstd    = h5tb_hamiltonian.u_cstd;
                     hamiltonian.u_tgw8    = h5tb_hamiltonian.u_tgw8;
                     hamiltonian.u_cgw8    = h5tb_hamiltonian.u_cgw8;
-                    auto u_bond           = text::extract_value_between<long>(key, "_bond", "]");
+                    auto path_lbits       = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
+                    auto u_bond           = h5_src.readAttribute<std::optional<long>>(path_lbits, "u_bond");
+                    if(not u_bond.has_value()) u_bond = text::extract_value_between<long>(key, "_bond", "]");
                     if(not u_bond.has_value()) throw except::logic_error("Failed to get u_bond value from string: {}", key);
                     hamiltonian.u_bond      = u_bond.value();
                     srcModelId.distribution = h5tb_hamiltonian.distribution;
-                    //                    tools::logger::log->info("{}: u_tgw8 {} u_cgw8 {} u_bond {}", path, enum2sv(hamiltonian.u_tgw8),
-                    //                    enum2sv(hamiltonian.u_cgw8),
-                    //                                             hamiltonian.u_bond);
                 }
                 srcModelId.model_size = h5_src.readAttribute<size_t>(path, "model_size");
                 srcModelId.model_type = h5_src.readAttribute<std::string>(path, "model_name");

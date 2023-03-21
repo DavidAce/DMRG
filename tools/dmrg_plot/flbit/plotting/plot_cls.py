@@ -16,18 +16,7 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
         if Path(meta['plotdir']).stem != Path(meta['mplstyle']).stem:
             meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
             Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
-    if 'mplstyle' in meta and 'slack' in meta['mplstyle']:
-        # palette_name = "Spectral"
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-        path_effects = None
-    else:
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = None
-        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-
+    path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
     # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
@@ -70,16 +59,26 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
                     for datanode in datanodes:
                         dbval = db['dsets'][datanode.name]
                         xvals = get_vals(dbval, xaxspec)[0]  # There can an only be one!
-                        nvals, _ = get_table_data(datanode['num'], meta.get('colname'), 'i8')
-                        ycols, cvals = get_table_data(datanode['avg'], meta.get('colname'), 'f8')
+                        nvals, cvals = get_table_data(datanode['num'], meta.get('colname'), 'i8')
+                        yfold = get_lbit_avg(datanode.parent['corrmat'][()])
+                        ylens = np.arange(len(yfold.mean))
+                        fit = get_lbit_fit_data(ylens, yfold.full, e=yfold.stdv,
+                                                beta=meta.get('fit-beta', True),
+                                                ymin=meta.get('fit-ymin', 1e-8),
+                                                # skip=meta.get('fit-skip', 0),
+                                                )  # Fit to get characteristic length-scale
 
-                        C, xi, beta, yfit, res, idxN = get_lbit_cls(np.arange(0, len(ycols)), ycols,
-                                                                    stretched=meta.get('stretched', False),
-                                                                    ymin=meta.get('fit-ymin', 1e-6),
-                                                                    )
-                        if xi is not None:
-                            ydata.append(xi)
-                            edata.append(res.stderr)
+                        # yavgs, cvals = get_table_data(datanode['avg'], meta.get('colname'), 'f8')
+                        # ylens = np.arange(np.shape(yvals)[1], dtype=np.float64)
+
+                        # C, xi, beta, yfit, stderr, idxN = get_lbit_cls_data(ylens, yvals,
+                        #                                             beta=meta.get('fit-beta', False),
+                        # ymin=meta.get('fit-ymin', 1e-6),
+                        # skip=meta.get('fit-skip', 0),
+                        # )
+                        if np.isfinite(fit.xi):
+                            ydata.append(fit.xi)
+                            edata.append(fit.xierr)
                             xdata.append(xvals)
                             cdata.extend(cvals)
                             ndata.extend(nvals)
@@ -143,17 +142,7 @@ def plot_v2_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter
             meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
             Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
             print("Setting plotdir: ", meta['plotdir'])
-    if 'mplstyle' in meta and 'slack' in meta['mplstyle']:
-        # palette_name = "Spectral"
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-        path_effects = None
-    else:
-        if not palette_name:
-            palette_name = "colorblind"
-        path_effects = None
-
+    path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
     legend_col_keys = linspec.copy()
@@ -198,7 +187,7 @@ def plot_v2_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter
                         if popt is not None:
                             ydata.append(popt[1])
                             xdata.append(dbval['vals']['f'])
-                    line = ax.scatter(xdata, ydata)
+                    line = ax.scatter(xdata, ydata, path_effects=path_effects)
 
                     # for i, (y, e) in enumerate(zip(ydata.T, edata.T)):
                     #     ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)

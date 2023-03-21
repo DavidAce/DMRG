@@ -192,7 +192,7 @@ def lbit_plot(args):
                                   xaxspec=['u'], figs=f,
                                   palette_name=palette)
     save_figure(f)
-    #
+
     plt.show()
     exit(0)
 

@@ -12,17 +12,17 @@
 
 figure.facecolor        : 'white'
 
-# In revtex4-2 with a two-column article we get
+# In revtex4-2 with a two-column article we get (in inches)
 # \usepackage{xprintlen}
 # \printlen[10][in]{\columnwidth} : 3.4039025050 in
 # \printlen[10][in]{\linewidth}   : 3.4039025050 in
 # \printlen[10][in]{\textwidth}   : 7.0568710470 in
 #
-# We can use an 8:9 ratio to get
+# Use these sizes with ax.set_box_aspect(True) to get square axes
 
 #figure.figsize       : 3.404,3.404 # 100% column width
-#figure.figsize       : 2.553,2.553 # 75% column width
-figure.figsize       : 1.702,1.702 # 50% column width
+figure.figsize       : 2.553,2.553 # 75% column width
+#figure.figsize       : 1.702,1.702 # 50% column width
 
 
 grid.alpha              : 0.5
@@ -86,7 +86,7 @@ axes.titley             : 0.05    # position title (axes relative units).  None 
 axes.titlepad           : 2.00    # pad between axes and title in points
 
 axes.labelsize          : small
-axes.labelpad           : 0.0
+axes.labelpad           : 2.0     # Spacing in points from the axes bounding box including ticks and tick labels.
 axes.linewidth          : 1.0
 #axes.prop_cycle        : cycler('color', ['0173b2', 'de8f05', '029e73', 'd55e00', 'cc78bc', 'ca9161', 'fbafe4', '949494', 'ece133', '56b4e9'])
 axes.prop_cycle	        : cycler('color', ['000000', 'e69f00', '56b4e9', '009e73', 'f0e442', '0072b2', 'd55e00', 'cc79a7'])

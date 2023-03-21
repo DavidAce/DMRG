@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot
 import numpy as np
 from numba import njit
+from numba import prange
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.ticker import FormatStrFormatter
@@ -19,6 +20,7 @@ from itertools import product
 from scipy.optimize import curve_fit
 from scipy.stats import linregress
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -212,14 +214,30 @@ def flinear(x, a, b):
         return a + b * x
 
 
-# Returns C, xi, beta, yfit, LinregressResult instance or pstd
-def get_lbit_cls(x, y, stretched=False, ymin=1e-5):
-    if np.size(y) <= 1:
-        print('get_lbit_cls: y is too short:', y)
-        return None, None, None, None, None, None
+@dataclass
+class lbit_fit:
+    C: np.float64 = np.nan
+    xi: np.float64 = np.nan
+    beta: np.float64 = np.nan
+    yfit: np.ndarray = np.empty(shape=(0))
+    xierr: np.float64 = np.nan
+    idxN: np.int = -1
+
+
+def get_lbit_fit(x, y, beta=None, ymin=None, skip=None):
+    if beta is None:
+        beta = False
+    if ymin is None:
+        ymin = 1e-4
+    if skip is None:
+        skip = 2
+
+    if np.size(y) <= skip + 2:
+        print('get_lbit_cls: y is too short (skip={}):{}'.format(skip, y))
+        return lbit_fit()
     ydata = np.ndarray.flatten(y)
     xdata = np.ndarray.flatten(x)
-    idx0 = 1  # Skip first entry, which usually doesn't obey exp decay
+    idx0 = skip  # Skip first tries, which usually do not obey exp decay
     idxN = 0
     for idx, val in enumerate(ydata):
         if abs(val) < np.max(np.abs(ydata[idx:])):
@@ -243,24 +261,135 @@ def get_lbit_cls(x, y, stretched=False, ymin=1e-5):
 
         with np.errstate(invalid='ignore'):
             ylogs = np.log(np.abs(ydata))
-            if stretched:
+            if beta:
                 p0 = 0.5, 1.0, 1.0
                 popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylogs, p0=p0)
-                pstd = np.sqrt(np.diag(pcov))
-                return popt[0], popt[1], popt[2], stretched_exp(xdata, *popt), pstd, idxN
+                pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
+                xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
+                return lbit_fit(popt[0], popt[1], popt[2], stretched_exp(x, *popt), xierr, idxN)
             else:
                 result = linregress(x=xdata, y=ylogs, alternative='less')
                 C = np.exp(result.intercept)
                 xi = 1.0 / abs(result.slope)
-                yfit = C * np.exp(-xdata / xi)
-                return C, xi, None, yfit, result, idxN
+                yfit = C * np.exp(-x / xi)
+                return lbit_fit(C, xi, np.nan, yfit, result.stderr, idxN)
     except IndexError as e:
         print("Index error:", e)
         pass
     except ValueError as e:
         print("Fit failed:", e)
 
-    return None, None, None, None, None, None
+    return lbit_fit()
+
+
+# Returns C, xi, beta, yfit, LinregressResult instance or pstd
+def get_lbit_fit_data(x, y, e=None, ymin=1e-14, beta=None):
+    if beta is None:
+        beta = False
+    try:
+        with np.errstate(invalid='ignore'):
+            ymask = np.ma.masked_where(np.abs(y) < ymin, np.abs(y))
+            emask = np.ma.masked_where(np.ma.getmask(ymask), e)
+            ylogs = np.ndarray.flatten(np.log(ymask.compressed()))
+            elogs = np.ndarray.flatten(np.abs(np.log(emask.compressed())))
+            xtile = np.tile(x, (np.shape(y)[0], 1))
+            xflat = np.ndarray.flatten(np.ma.masked_where(np.ma.getmask(ymask), xtile).compressed())
+            if beta:
+                p0 = 0.5, 1.0, 1.0
+                bs = ([0, 0, 0], [np.inf, 5, 5])
+                # print('x {} \n{}'.format(np.shape(xflat),xflat))
+                # print('y {} \n{}'.format(np.shape(ylogs),ylogs))
+                # print('e {} \n{}'.format(np.shape(elogs),elogs))
+                popt, pcov = curve_fit(stretched_log, xdata=xflat, ydata=ylogs, sigma=elogs, absolute_sigma=False,
+                                       p0=p0, bounds=bs)
+                pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
+                xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
+                return lbit_fit(popt[0], popt[1], popt[2], stretched_exp(x, *popt), xierr, -1)
+            else:
+                result = linregress(x=xflat, y=ylogs, alternative='less')
+                C = np.exp(result.intercept)
+                xi = 1.0 / abs(result.slope)
+                yfit = C * np.exp(-x / xi)
+                return lbit_fit(C, xi, np.nan, yfit, result.stderr, -1)
+    except IndexError as e:
+        print("Index error:", e)
+        pass
+    except ValueError as e:
+        print("Fit failed:", e)
+
+    return lbit_fit()
+
+
+@njit(parallel=True, cache=True)
+def nb_mean_cmat(a):
+    shp = np.shape(a)
+    avg = np.empty(shape=(shp[1], shp[2]))
+    std = np.empty(shape=(shp[1], shp[2]))
+    for i in prange(shp[1]):
+        for j in prange(shp[2]):
+            avg[i, j] = np.nanmean(a[:, i, j])
+            std[i, j] = np.nanstd(a[:, i, j])
+    return avg, std
+
+
+@njit(parallel=True, cache=True)
+def nb_nnz_mean_axis0(a):
+    shp = np.shape(a)
+    res = np.zeros(shape=(shp[1], 1))
+
+    for j in prange(shp[1]):
+        sum = 0.0
+        num = 0.0
+        for i in prange(shp[0]):
+            if a[i, j] > 0.0 and np.isfinite(a[i, j]):
+                sum += a[i, j]
+                num += 1.0
+        if num > 0.0:
+            res[j, 0] += sum / num
+    return res
+
+
+@dataclass
+class lbit_fold:
+    mean: np.ndarray
+    full: np.ndarray
+    stdv: np.ndarray
+
+
+@njit(parallel=True, cache=True)
+def get_folded_matrix(mat, rms=False):
+    fold = np.empty(shape=np.shape(mat))
+    rows = np.shape(mat)[0]
+    for i in range(rows):
+        yl = np.flip(mat[i, :i])
+        yr = mat[i, i + 1:]
+        yn = max(len(yl), len(yr))
+        yz = np.zeros(shape=(yn), dtype=np.float64)
+        for k in range(yn):
+            i1 = 1.0 if k < len(yl) else 0.0
+            i2 = 1.0 if k < len(yr) else 0.0
+            y1 = yl[k] if k < len(yl) else 0.0
+            y2 = yr[k] if k < len(yr) else 0.0
+            if rms:
+                yz[k] = (y1 ** 2 + y2 ** 2) ** 0.5
+            else:
+                yz[k] = (y1 + y2) / (i1 + i2)
+        fold[i, :] = 0.0
+        fold[i, 0] = mat[i, i]
+        fold[i, 1:len(yz) + 1] = yz
+    return fold
+
+
+# @njit(parallel=True, cache=True)
+def get_lbit_avg(corrmat):
+    # ycavg = np.mean(corrmat, axis=0)
+    # ycavg = np.mean(np.abs(corrmat),axis=0)
+    full, stdv = nb_mean_cmat(np.abs(corrmat))
+    full = get_folded_matrix(full, rms=False)
+    stdv = get_folded_matrix(stdv, rms=True)
+    mean = nb_nnz_mean_axis0(full)
+    return lbit_fold(mean, full, stdv)
+
 
 def find_saturation_idx2(ydata, threshold=1e-2):
     if len(ydata) <= 2:
