@@ -33,12 +33,12 @@ input_prefix      = "input"
 output_prefix     = "output"
 
 
-sites               = [8,12,16,20,24,28,32,36,40]
+sites               = [12,16,20,24,28,32]
 J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [8,16,24,32,40,48,56,64,72,80]
+u_depth             = [16]
 u_fmix              = [1.0]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
@@ -117,7 +117,7 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "{:.1e}".format(max_time),
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "500",
+        "flbit::time_num_steps"              : "100",
         "flbit::cls::mpo_circuit_svd_bondlim": str_bond,
     }
     os.makedirs(input_prefix, exist_ok=True)
