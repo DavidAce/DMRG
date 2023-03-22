@@ -11,12 +11,12 @@
 #endif
 
 // complex must be included before lapacke!
-#if __has_include(<mkl_lapacke.h>)
-    #include <mkl_lapacke.h>
-#elif __has_include(<openblas/lapacke.h>)
+#if defined(OPENBLAS_AVAILABLE)
     #include <openblas/cblas.h>
     #include <openblas/lapacke.h>
     #include <openblas_config.h>
+#elif defined(MKL_AVAILABLE)
+    #include <mkl_lapacke.h>
 #else
     #include <lapacke.h>
 #endif
