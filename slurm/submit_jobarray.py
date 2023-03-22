@@ -29,7 +29,7 @@ def parse(project_name):
     parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task', default=1)
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
     parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
-    parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=2)
+    parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=1)
     parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', default="sockets", choices=['threads', 'cores', 'sockets'])
     parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', default="master", choices=['true', 'false', 'close', 'spread','master'])
     parser.add_argument('--openblas-coretype', type=str, help='Sets OPENBLAS_CORETYPE', default=None)
