@@ -29,11 +29,11 @@ namespace settings {
         std::string omp_proc_bind;
         switch(omp_get_proc_bind()) {
             /* clang-format off */
-            case omp_proc_bind_false   : {omp_proc_bind = "false";break;}
-            case omp_proc_bind_true    : {omp_proc_bind = "true";break;}
-            case omp_proc_bind_primary : {omp_proc_bind = "primary";break;}
-            case omp_proc_bind_close   : {omp_proc_bind = "close";break;}
-            case omp_proc_bind_spread  : {omp_proc_bind = "spread";break;}
+            case 0 : {omp_proc_bind = "false";break;}
+            case 1 : {omp_proc_bind = "true";break;}
+            case 2 : {omp_proc_bind = "primary";break;}
+            case 3 : {omp_proc_bind = "close";break;}
+            case 4 : {omp_proc_bind = "spread";break;}
             default: omp_proc_bind = "unknown";
                 /* clang-format on */
         }
