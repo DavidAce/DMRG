@@ -197,6 +197,20 @@
       ]
     },
     {
+      "name": "release-gcc-11-native-conan-openblas",
+      "displayName": "Release|gcc-11|march=native|conan|openblas",
+      "inherits": [
+        "openblas",
+        "native",
+        "release-gcc-11-conan"
+      ],
+      "cacheVariables": {
+        "DMRG_ENABLE_RSVD": "TRUE",
+        "COMPILER_ENABLE_MOLD": "FALSE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+      }
+    },
+    {
       "name": "release-gcc-12-conan",
       "displayName": "Release|gcc-12|conan|mkl",
       "inherits": [
@@ -218,7 +232,7 @@
         "COMPILER_ENABLE_MOLD": "TRUE"
       }
     },
-        {
+    {
       "name": "release-gcc-12-native-conan-openblas",
       "displayName": "Release|gcc-12|march=native|conan|openblas",
       "inherits": [
@@ -389,6 +403,11 @@
       "name": "release-gcc-11-native-conan",
       "displayName": "Release|gcc-11|march=native|conan|mkl",
       "configurePreset": "release-gcc-11-native-conan"
+    },
+    {
+      "name": "release-gcc-11-native-conan-openblas",
+      "displayName": "Release|gcc-11|march=native|conan|openblas",
+      "configurePreset": "release-gcc-11-native-conan-openblas"
     },
     {
       "name": "release-gcc-12-conan",
