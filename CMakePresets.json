@@ -92,6 +92,13 @@
       }
     },
     {
+      "name": "openblas",
+      "hidden": true,
+      "cacheVariables": {
+        "DMRG_ENABLE_MKL": "FALSE"
+      }
+    },
+    {
       "name": "gcc-10",
       "hidden": true,
       "cacheVariables": {
@@ -211,6 +218,19 @@
         "COMPILER_ENABLE_MOLD": "TRUE"
       }
     },
+        {
+      "name": "release-gcc-12-native-conan-openblas",
+      "displayName": "Release|gcc-12|march=native|conan|openblas",
+      "inherits": [
+        "openblas",
+        "native",
+        "release-gcc-12-conan"
+      ],
+      "cacheVariables": {
+        "DMRG_ENABLE_RSVD": "TRUE",
+        "COMPILER_ENABLE_MOLD": "TRUE"
+      }
+    },
     {
       "name": "release-clang-14-conan",
       "displayName": "Release|clang-14|conan|mkl",
@@ -322,8 +342,9 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|openblas",
       "inherits": [
+        "openblas",
         "release",
         "haswell",
         "pkg-conan",
@@ -378,6 +399,11 @@
       "name": "release-gcc-12-native-conan",
       "displayName": "Release|gcc-12|march=native|conan|mkl",
       "configurePreset": "release-gcc-12-native-conan"
+    },
+    {
+      "name": "release-gcc-12-native-conan-openblas",
+      "displayName": "Release|gcc-12|march=native|conan|openblas",
+      "configurePreset": "release-gcc-12-native-conan-openblas"
     },
     {
       "name": "release-clang-14-native-conan",
@@ -473,6 +499,11 @@
       "name": "release-gcc-12-native-conan",
       "displayName": "Release|gcc-12|march=native|conan|mkl",
       "configurePreset": "release-gcc-12-native-conan"
+    },
+    {
+      "name": "release-gcc-12-native-conan-openblas",
+      "displayName": "Release|gcc-12|march=native|conan|openblas",
+      "configurePreset": "release-gcc-12-native-conan-openblas"
     },
     {
       "name": "debug-conan",

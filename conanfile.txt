@@ -19,11 +19,11 @@ pcg-cpp/cci.20210406
 CMakeDeps
 
 [options]
-pkg/arpack-ng:openblas_version=0.3.20
-pkg/openblas:build_lapack=True
-pkg/openblas:dynamic_arch=True
-pkg/ceres-solver:use_glog=False
-pkg/ceres-solver:use_gflags=False
+arpack-ng:openblas_version=0.3.20
+openblas:build_lapack=True
+openblas:dynamic_arch=True
+ceres-solver:use_glog=False
+ceres-solver:use_gflags=False
 
 #gflags:shared=False
 #glog:shared=False

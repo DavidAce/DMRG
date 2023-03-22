@@ -95,6 +95,7 @@ int settings::parse(int argc, char **argv) {
     app.add_option("-o,--outfile"                      , storage::output_filepath       , "Path to the output file. The seed number gets appended by default (see -x)");
     app.add_option("-s,--seed"                         , input::seed                    , "Positive number seeds the random number generator");
     app.add_option("-t,--threads"                      , threading::num_threads         , "Total number of threads (omp + std threads). Use env OMP_NUM_THREADS to control omp.");
+    app.add_flag("--show-threads"                      , threading::show_threads        , "Show information about threading and exit immediately");
     app.add_flag  ("--append-seed, !--no-append-seed"  , storage::output_append_seed    , "Append seed to the output filename")->default_val(true);
     app.add_option("-z,--compression"                  , storage::compression_level     , "Compression level of h5pp")->check(CLI::Range(0,9));
     app.add_flag  ("-r,--resume"                                                        , "Resume simulation from last iteration");

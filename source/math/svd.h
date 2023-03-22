@@ -62,8 +62,8 @@ namespace svd {
 
         // Switch sizes for automatic algorithm promotion (only used with svd::rtn::geauto)
         size_t                       switchsize_gejsv = 1;   /*!< Default jacobi algorithm (gesjsv) when min(rows,cols) >= swtichsize_gejsv, otherwise gesvj */
-        size_t                       switchsize_gesvd = 64;  /*!< Default preconditioned QR bidiagonalization (gesvd) when min(rows,cols) >= maxsize_gesvd */
-        size_t                       switchsize_gesdd = 128; /*!< Default bidiagonal divide and conquer when  min(rows,cols) >= switchsize_gesdd */
+        size_t                       switchsize_gesvd = 32;  /*!< Default preconditioned QR bidiagonalization (gesvd) when min(rows,cols) >= maxsize_gesvd */
+        size_t                       switchsize_gesdd = 64; /*!< Default bidiagonal divide and conquer when  min(rows,cols) >= switchsize_gesdd */
         svd::lib                     svd_lib          = svd::lib::lapacke;
         svd::rtn                     svd_rtn          = svd::rtn::geauto;
         std::optional<svdx_select_t> svdx_select      = std::nullopt;
