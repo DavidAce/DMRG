@@ -294,6 +294,7 @@ void flbit::update_state() {
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, true, GateMove::AUTO, svd_cfg);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, true, GateMove::AUTO, svd_cfg);
     }
+    tools::log->debug("time evo {:.3e}", t_evo->get_last_interval());
     tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
     t_evo.toc();

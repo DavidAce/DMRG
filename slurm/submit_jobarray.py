@@ -31,6 +31,7 @@ def parse(project_name):
     parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=2)
     parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', default="sockets", choices=['threads', 'cores', 'sockets'])
     parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', default="master", choices=['true', 'false', 'close', 'spread','master'])
+    parser.add_argument('--openblas-coretype', type=str, help='Sets OPENBLAS_CORETYPE', default=None)
     parser.add_argument('--ntasks-per-core', type=int, help='Number of tasks (sims) on each core', default=1)
     parser.add_argument('--dryrun', action='store_true', help='Dry run')
     parser.add_argument('--debug', action='store_true', help='Debug this script')
@@ -114,6 +115,8 @@ def generate_sbatch_commands(project_name, args):
         sbatch_env['OMP_PLACES'] = str(args.omp_places)
     if args.omp_proc_bind:
         sbatch_env['OMP_PROC_BIND'] = str(args.omp_proc_bind)
+    if args.openblas_coretype:
+        sbatch_env['OPENBLAS_CORETYPE'] = str(args.openblas_coretype)
 
     # Find executable
     if args.build_type == 'None':
