@@ -1,6 +1,6 @@
 #pragma once
 namespace settings {
-
+    inline bool test_unwind = false;
 #ifdef NDEBUG
     inline constexpr bool debug = false;
 #else

@@ -105,6 +105,8 @@ int settings::parse(int argc, char **argv) {
     app.add_option("-V,--logh5pp"                      , console::logh5pp               , "Log level of h5pp")->transform(CLI::CheckedTransformer(s2e_logh5pp, CLI::ignore_case))->type_name("ENUM");
     app.add_option("--timestamp"                       , console::timestamp             , "Log timestamp");
     app.add_option("--dummyrange"                      , dummy                          , "Dummy")->check(CLI::Range(0,3));
+    app.add_flag("--test-unwind"                       , test_unwind, "Throw an error to test stack unwinding");
+
     /* clang-format on */
 
     app.parse(argc, argv);
@@ -113,7 +115,6 @@ int settings::parse(int argc, char **argv) {
         tools::log->info("Resuming from iter {}", storage::file_resume_iter);
         settings::storage::file_collision_policy = FileCollisionPolicy::RESUME;
     }
-
     //    for(const auto &res : app.get_options()) fmt::print("{:<32} = {}\n", res->get_name(), res->results());
 
     // Generate the correct output filename based on given seeds
@@ -121,6 +122,5 @@ int settings::parse(int argc, char **argv) {
         settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::seed);
         settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::bitfield);
     }
-
     return 0;
 }
