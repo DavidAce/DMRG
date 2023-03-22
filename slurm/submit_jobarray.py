@@ -25,7 +25,8 @@ def parse(project_name):
     parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release', choices=['None', 'Debug', 'Release', 'RelWithDebInfo', 'Profile'])
     parser.add_argument('-c', '--cluster', type=str, help='Comma separated list of Slurm clusters', default=None, choices=['kraken', 'draken', 'kthulu', 'tetralith'])
     parser.add_argument('--config', type=str, help='File or path to files containing simulation config files (suffixed .cfg)', default='input')
-    parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task (sims) = omp-threads + std-threads', default=1)
+    parser.add_argument('--pattern', type=str, help='Only consider simulation config files containing this substring', default=None)
+    parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task', default=1)
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
     parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
     parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=2)
@@ -187,7 +188,10 @@ def generate_sbatch_commands(project_name, args):
         write_joblists(superlist, args.sims_per_array,jobdir)
 
     else:
-        cfgfiles = list(Path(args.config).glob('*.cfg')) #TODO: may have to sort this list
+        if args.pattern:
+            cfgfiles = list(Path(args.config).glob('*{}*.cfg'.format(args.pattern))) #TODO: may have to sort this list
+        else:
+            cfgfiles = list(Path(args.config).glob('*.cfg')) #TODO: may have to sort this list
         if not cfgfiles:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT) + ' (no .cfg files found in)', args.config)
 
