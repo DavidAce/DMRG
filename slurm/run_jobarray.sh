@@ -55,6 +55,7 @@ num_cols=$(awk '{print NF}' $jobfile | head -n 1)
 start_id=$SLURM_ARRAY_TASK_ID
 end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
+ulimit -c unlimited
 
 echo "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 

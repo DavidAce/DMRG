@@ -278,10 +278,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     S.resize(sizeS);
                     VT.resize(rowsVT, colsVT);
 
-                    int lrwork = std::max(1, 5 * mn);
                     int lcwork = std::max(1, 2 * mn + mx);
-                    rwork.resize(static_cast<size_t>(lrwork));
+                    int lrwork = std::max(1, 5 * mn);
                     cwork.resize(static_cast<size_t>(lcwork));
+                    rwork.resize(static_cast<size_t>(lrwork));
 
                     info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
                                                -1, rwork.data());
