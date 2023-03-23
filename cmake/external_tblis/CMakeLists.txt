@@ -45,7 +45,7 @@ externalproject_add(external_tblis
                     COMMAND ./configure --enable-config=haswell,skx,zen --prefix=<INSTALL_DIR>
 
                     BUILD_COMMAND
-                    make -j${NUM_THREADS}
+                    COMMAND make -j${NUM_THREADS}
 
                     INSTALL_COMMAND
                     make install
