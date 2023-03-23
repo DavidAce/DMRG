@@ -20,7 +20,7 @@ externalproject_add(external_tblis
                     #         GIT_TAG  3845b1744c186ca3be45f9c9a69bcf527ac754b6 # develop on May 15, 2021
                     GIT_PROGRESS TRUE
                     #        PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-develop-3845b17.patch
-                    PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-config.patch # For 7d979b66
+                    PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/tblis-config.patch || true # For 7d979b66
 
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
