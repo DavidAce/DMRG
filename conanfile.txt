@@ -11,6 +11,7 @@ spdlog/1.11.0
 eigen/3.4.0
 arpack++/2.3.0@davidace/dev
 cli11/2.3.1
+libunwind/1.6.2
 backward-cpp/1.6
 zlib/1.2.12
 pcg-cpp/cci.20210406
@@ -23,6 +24,10 @@ openblas:build_lapack=True
 openblas:dynamic_arch=True
 ceres-solver:use_glog=False
 ceres-solver:use_gflags=False
+
+backward-cpp:stack_walking=unwind
+backward-cpp:stack_details=dwarf
+
 
 #gflags:shared=False
 #glog:shared=False
