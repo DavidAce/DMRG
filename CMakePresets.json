@@ -315,7 +315,11 @@
         "mkl",
         "gcc-11",
         "debug-conan"
-      ]
+      ],
+      "cacheVariables": {
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
+        "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE"
+      }
     },
     {
       "name": "debug-gcc-11-conan-noasan",
@@ -383,6 +387,23 @@
       "inherits": [
         "openblas",
         "release",
+        "haswell",
+        "pkg-conan",
+        "default"
+      ],
+      "binaryDir": "${sourceDir}/build/Release",
+      "cacheVariables": {
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install",
+        "DMRG_BUILD_TOOLS": "TRUE"
+      }
+    },
+    {
+      "name": "kraken-debug",
+      "displayName": "Debug|march=haswell|conan|openblas",
+      "inherits": [
+        "openblas",
+        "debug",
         "haswell",
         "pkg-conan",
         "default"
@@ -489,8 +510,13 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|openblas",
       "configurePreset": "kraken"
+    },
+    {
+      "name": "kraken-debug",
+      "displayName": "Debug|march=haswell|conan|openblas",
+      "configurePreset": "kraken-debug"
     },
     {
       "name": "tetralith",
@@ -584,8 +610,13 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|openblas",
       "configurePreset": "kraken"
+    },
+    {
+      "name": "kraken-debug",
+      "displayName": "Debug|march=haswell|conan|openblas",
+      "configurePreset": "kraken-debug"
     },
     {
       "name": "tetralith",
