@@ -52,6 +52,25 @@
         "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:"
       }
     },
+        {
+      "name": "openblas",
+      "hidden": true,
+      "cacheVariables": {
+        "DMRG_ENABLE_MKL": "FALSE",
+        "BLA_VENDOR" : "OpenBLAS"
+      }
+    },
+    {
+      "name": "mkl",
+      "hidden": true,
+      "cacheVariables": {
+        "DMRG_ENABLE_MKL": "TRUE",
+        "BLA_VENDOR" : "Intel10_64lp"
+      },
+      "environment": {
+        "MKLROOT": "/opt/intel/oneapi/mkl/latest"
+      }
+    },
     {
       "name": "release",
       "hidden": true,
@@ -89,13 +108,6 @@
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
         "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
         "CMAKE_CUDA_FLAGS_RELEASE": "-O3 -DNDEBUG -g -Xcompiler -march=haswell -Xcompiler -mtune=haswell"
-      }
-    },
-    {
-      "name": "openblas",
-      "hidden": true,
-      "cacheVariables": {
-        "DMRG_ENABLE_MKL": "FALSE"
       }
     },
     {
@@ -173,6 +185,7 @@
       "name": "release-conan",
       "displayName": "Release|conan|mkl",
       "inherits": [
+        "mkl",
         "release",
         "pkg-conan",
         "default"
@@ -182,6 +195,7 @@
       "name": "release-gcc-11-conan",
       "displayName": "Release|gcc-11|conan|mkl",
       "inherits": [
+        "mkl",
         "release",
         "gcc-11",
         "pkg-conan",
@@ -192,6 +206,7 @@
       "name": "release-gcc-11-native-conan",
       "displayName": "Release|gcc-11|conan|mkl",
       "inherits": [
+        "mkl",
         "native",
         "release-gcc-11-conan"
       ]
@@ -214,6 +229,7 @@
       "name": "release-gcc-12-conan",
       "displayName": "Release|gcc-12|conan|mkl",
       "inherits": [
+        "mkl",
         "release",
         "gcc-12",
         "pkg-conan",
@@ -224,6 +240,7 @@
       "name": "release-gcc-12-native-conan",
       "displayName": "Release|gcc-12|march=native|conan|mkl",
       "inherits": [
+        "mkl",
         "native",
         "release-gcc-12-conan"
       ],
@@ -249,6 +266,7 @@
       "name": "release-clang-14-conan",
       "displayName": "Release|clang-14|conan|mkl",
       "inherits": [
+        "mkl",
         "release",
         "clang-14",
         "pkg-conan",
@@ -259,6 +277,7 @@
       "name": "release-clang-14-native-conan",
       "displayName": "Release|clang-14|march=native|conan|mkl",
       "inherits": [
+        "mkl",
         "native",
         "release-clang-14-conan"
       ],
@@ -271,6 +290,7 @@
       "name": "debug-conan",
       "displayName": "Debug|shared|asan|conan",
       "inherits": [
+        "mkl",
         "debug",
         "pkg-conan",
         "default"
@@ -283,6 +303,7 @@
       "name": "debug-gcc-10-conan",
       "displayName": "Debug|gcc-10|shared|asan|conan",
       "inherits": [
+        "mkl",
         "gcc-10",
         "debug-conan"
       ]
@@ -291,6 +312,7 @@
       "name": "debug-gcc-11-conan",
       "displayName": "Debug|gcc-11|shared|asan|conan",
       "inherits": [
+        "mkl",
         "gcc-11",
         "debug-conan"
       ]
@@ -299,6 +321,7 @@
       "name": "debug-gcc-11-conan-noasan",
       "displayName": "Debug|gcc-11|shared|conan",
       "inherits": [
+        "mkl",
         "gcc-11",
         "debug-conan"
       ],

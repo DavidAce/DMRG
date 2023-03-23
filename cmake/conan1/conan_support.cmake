@@ -117,6 +117,7 @@ function(detect_host_profile output_file)
     if(CONAN_LDFLAGS)
         string(APPEND PROFILE "LDFLAGS+=${CONAN_LDFLAGS}\n")
     endif()
+    string(APPEND PROFILE "VERBOSE=1\n")
 
     message(STATUS "cmake-conan: Creating profile ${_FN}")
     file(WRITE ${_FN} ${PROFILE})
@@ -125,13 +126,19 @@ endfunction()
 
 function(conan_install)
     cmake_parse_arguments(ARGS CONAN_ARGS ${ARGN})
+    if(DEFINED CONANFILE AND NOT DEFINED CONAN_PATH_OR_REFERENCE)
+        set(CONAN_PATH_OR_REFERENCE "${CONANFILE}")
+    elseif(NOT DEFINED CONAN_PATH_OR_REFERENCE)
+        set(CONAN_PATH_OR_REFERENCE "${CMAKE_SOURCE_DIR}")
+    endif()
     if(NOT DEFINED CONAN_OUTPUT_FOLDER)
         set(CONAN_OUTPUT_FOLDER "${CMAKE_BINARY_DIR}/conan")
     endif()
+
     # Invoke "conan install" with the provided arguments
     list(APPEND CONAN_ARGS -of=${CONAN_OUTPUT_FOLDER})
-    message(STATUS "cmake-conan: conan install ${CMAKE_SOURCE_DIR} ${CONAN_ARGS} ${ARGN}")
-    execute_process(COMMAND conan install "${CMAKE_SOURCE_DIR}" ${CONAN_ARGS} ${ARGN}
+    message(STATUS "cmake-conan: conan install ${CONAN_PATH_OR_REFERENCE} ${CONAN_ARGS} ${CONAN_OPTIONS} ${ARGN}")
+    execute_process(COMMAND conan install "${CONAN_PATH_OR_REFERENCE}" ${CONAN_ARGS} ${CONAN_OPTIONS} ${ARGN}
             RESULT_VARIABLE return_code
             OUTPUT_VARIABLE conan_stdout
             ERROR_VARIABLE conan_stderr
@@ -155,7 +162,7 @@ function(conan_provide_dependency package_name)
         detect_host_profile(${CMAKE_BINARY_DIR}/conan/conan_host_profile)
         if (NOT CMAKE_CONFIGURATION_TYPES)
             message(STATUS "cmake-conan: Installing single configuration ${CMAKE_BUILD_TYPE}")
-            conan_install(-pr ${CMAKE_BINARY_DIR}/conan/conan_host_profile --build=missing --build=outdated --build=cascade -g CMakeDeps)
+            conan_install(-pr ${CMAKE_BINARY_DIR}/conan/conan_host_profile --build=missing --build=outdated --build=cascade --build=arpack-ng -g CMakeDeps)
         else ()
             message(STATUS "cmake-conan: Installing both Debug and Release")
             conan_install(-pr ${CMAKE_BINARY_DIR}/conan/conan_host_profile -s build_type=Release --build=missing --build=outdated --build=cascade -g CMakeDeps)

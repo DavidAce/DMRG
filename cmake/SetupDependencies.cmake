@@ -1,4 +1,19 @@
 
+##############################################################################
+###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
+##############################################################################
+if(DMRG_ENABLE_MKL)
+    list(APPEND CONAN_OPTIONS -o arpack-ng:bla_vendor=MKL)
+else()
+    list(APPEND CONAN_OPTIONS -o arpack-ng:bla_vendor=OpenBLAS)
+    if(OPENBLAS_DYNAMIC_ARCH)
+        list(APPEND CONAN_OPTIONS -o openblas:dynamic_arch=True)
+    else()
+        list(APPEND CONAN_OPTIONS -o openblas:dynamic_arch=False)
+    endif()
+endif()
+message(STATUS "CONAN_OPTIONS: ${CONAN_OPTIONS}")
+
 find_package(Threads REQUIRED)
 find_package(OpenMP COMPONENTS CXX REQUIRED)
 target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
@@ -8,10 +23,12 @@ if(NOT TARGET dmrg-deps)
     add_library(dmrg-deps INTERFACE)
 endif()
 
+
+
 # Setup dependencies
+include(cmake/SetupDependenciesFind.cmake)
 include(cmake/SetupDependenciesCMake.cmake)
 include(cmake/SetupDependenciesConan.cmake)
-include(cmake/SetupDependenciesFind.cmake)
 
 # Install dependencies that are not in conan.
 include(cmake/InstallPackage.cmake)

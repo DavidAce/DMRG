@@ -336,6 +336,7 @@ function(setup_mkl_targets)
                 endif()
                 if(NOT TARGET mkl::mkl_${fort}_${thread}_${arch})
                     add_library(mkl::mkl_${fort}_${thread}_${arch} INTERFACE IMPORTED)
+                    target_compile_definitions(mkl::mkl_${fort}_${thread}_${arch} INTERFACE MKL_AVAILABLE)
                 endif()
 
                 if(NOT MSVC)
