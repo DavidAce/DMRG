@@ -15,6 +15,10 @@ AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmTyp
     tools::log->set_error_handler([](const std::string &msg) { throw except::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::loglevel, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
+
+    if(settings::test_unwind)
+        throw std::runtime_error("Testing stack unwinding");
+
 }
 
 void AlgorithmBase::copy_from_tmp(StorageEvent storage_event, CopyPolicy copy_policy) {

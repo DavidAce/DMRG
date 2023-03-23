@@ -56,9 +56,6 @@ int main(int argc, char *argv[]) {
     std::atexit(clean_up);
     std::at_quick_exit(clean_up);
 
-    if(settings::test_unwind)
-        throw std::runtime_error("Testing stack unwinding");
-
 
     // Initialize the launcher and run the algorithms
     AlgorithmLauncher().run_algorithms();
