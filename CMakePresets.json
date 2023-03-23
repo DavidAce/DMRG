@@ -408,10 +408,10 @@
         "pkg-conan",
         "default"
       ],
-      "binaryDir": "${sourceDir}/build/Release",
+      "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Debug/pkg-install",
         "DMRG_BUILD_TOOLS": "TRUE"
       }
     },
