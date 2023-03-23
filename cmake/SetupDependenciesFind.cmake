@@ -25,7 +25,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
     find_package(Ceres      2.0    REQUIRED PATH_SUFFIXES ceres ceres/lib)           # ceres-solver (for L-BFGS routine)
     find_package(CLI11      2.1.1  REQUIRED)                                         # Command line argument parser
     find_package(arpack-ng  3.8.0  REQUIRED)                                         # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
-    find_package(libunwind  1.6.2  REQUIRED)
     find_package(Backward   1.6    REQUIRED)
     # Arpack needs to link to extra libraries before moving on
     if(arpack-ng_FOUND AND TARGET ARPACK::ARPACK)
@@ -36,7 +35,9 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
     endif()
     find_package(arpack++ 2.3.0 REQUIRED)                                                 # C++ frontend for arpack-ng. Custom find module.
 
-
+#    set_target_properties(Backward::Backward
+#        PROPERTIES INTERFACE_COMPILE_DEFINITIONS "BACKWARD_HAS_LIBUNWIND=1;BACKWARD_HAS_UNWIND=0;BACKWARD_HAS_DWARF=1;BACKWARD_HAS_BACKTRACE=0;BACKWARD_HAS_BACKTRACE_SYMBOL=0"
+#   )
     target_link_libraries(dmrg-deps INTERFACE
             CLI11::CLI11
             pcg-cpp::pcg-cpp
@@ -44,10 +45,8 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
             arpack++::arpack++
             primme::primme
             Ceres::ceres
-            Backward::Backward
-            libunwind::libunwind
             BLAS::BLAS
-
+            Backward::Backward
             )
 
     # Fix issue with Ceres linking to cuda
@@ -63,4 +62,5 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
     else ()
         target_compile_definitions(dmrg-deps INTERFACE CERES_NO_CUDA)
     endif ()
+
 endif()

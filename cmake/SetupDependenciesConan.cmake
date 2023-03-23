@@ -127,6 +127,10 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
         add_library(lapacke::lapacke ALIAS OpenBLAS::OpenBLAS)
     endif()
 
+#    set_target_properties(Backward::Backward
+#        PROPERTIES INTERFACE_COMPILE_DEFINITIONS "BACKWARD_HAS_LIBUNWIND=1;BACKWARD_HAS_UNWIND=0;BACKWARD_HAS_DWARF=1;BACKWARD_HAS_BACKTRACE=0;BACKWARD_HAS_BACKTRACE_SYMBOL=0"
+#   )
+
     target_link_libraries(dmrg-deps INTERFACE
                           CLI11::CLI11
                           pcg-cpp::pcg-cpp
@@ -134,9 +138,10 @@ if(DMRG_PACKAGE_MANAGER MATCHES "conan")
                           arpack++::arpack++
                           primme::primme
                           Ceres::ceres
-                          Backward::Backward
                           BLAS::BLAS
                           )
+
+    target_link_libraries(dmrg-deps-debug INTERFACE Backward::Backward libunwind::libunwind)
 
     # Fix issue with Ceres linking to cuda
     find_package(CUDA QUIET) # Same call as when building Ceres

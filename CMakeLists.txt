@@ -45,8 +45,8 @@ checkcxxoptional()
 include(cmake/PrintBuildInfo.cmake)
 
 ###  Add targets to collect common settings
-add_library(dmrg-deps INTERFACE)
 add_library(dmrg-flags INTERFACE)
+add_library(dmrg-deps INTERFACE)
 target_include_directories(dmrg-flags INTERFACE source)
 
 ###  Apply compiler flags
