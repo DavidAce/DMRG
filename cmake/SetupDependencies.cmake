@@ -12,8 +12,6 @@ else()
         list(APPEND CONAN_OPTIONS -o openblas:dynamic_arch=False)
     endif()
 endif()
-list(APPEND CONAN_OPTIONS -e libunwind:CFLAGS=-fcommon -e libunwind:LDFLAGS=-fcommon)
-list(APPEND CONAN_OPTIONS --build=backward-cpp)
 message(STATUS "CONAN_OPTIONS: ${CONAN_OPTIONS}")
 
 
