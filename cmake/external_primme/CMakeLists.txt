@@ -7,8 +7,8 @@ if(INIT_CACHE_FILE)
 endif()
 include(ExternalProject)
 
-set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_CXX_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
-set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g -fno-strict-aliasing -fno-omit-frame-pointer ${CMAKE_C_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
+set(cflags "-O3 -DNDEBUG -std=c17 -fPIC -g ${CMAKE_CXX_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
+set(cxxflags "-O3 -DNDEBUG -std=c++17 -fPIC -g ${CMAKE_C_FLAGS_RELEASE} -DPRIMME_BLASINT_SIZE=32 -DPRIMME_INT_SIZE=0")
 
 if(BUILD_SHARED_LIBS)
     set(type solib)
@@ -34,7 +34,7 @@ externalproject_add(external_primme
                     CONFIGURE_COMMAND ""
                     BUILD_COMMAND
                     COMMAND cd <SOURCE_DIR>
-                    COMMAND make VERBOSE=1 ${type} -j${NUM_THREADS} CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
+                    COMMAND make ${type} -j${NUM_THREADS} VERBOSE=1 CXX=${CMAKE_CXX_COMPILER} CC=${CMAKE_C_COMPILER} CXXFLAGS=${cxxflags} CFLAGS=${cflags}
 
                     INSTALL_COMMAND
                     COMMAND cd <SOURCE_DIR>
