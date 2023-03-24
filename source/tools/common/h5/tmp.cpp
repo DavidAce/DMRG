@@ -10,7 +10,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <h5pp/h5pp.h>
-#include <regex>
 
 std::string get_dirname() { return "DMRG." + std::string(getenv("USER")); }
 
@@ -80,23 +79,6 @@ void tools::common::h5::tmp::register_new_file(std::string_view filepath) { inte
 //        tools::log->debug("Set temporary path [{}] -> [{}]", output_filepath, new_filepath.string());
 //        return new_filepath;
 //    }
-//}
-
-// std::string tools::common::h5::tmp::unset_tmp_prefix(std::string_view filepath) {
-//    return init::register_paths(filepath).original_path;
-//    fs::path temp_path = fs::path(get_tmp_dir()) / fs::path(get_dirname());
-//    std::string::size_type pos = output_filepath.find(temp_path.string());
-//    if (pos != std::string::npos){
-//        std::string new_filepath = output_filepath;
-//        new_filepath.erase(pos, temp_path.string().length());
-//        new_filepath = fs::current_path() / std::regex_replace(new_filepath, std::regex("__"), "..");
-//        tools::log->debug("Unset temporary path [{}] -> [{}]", output_filepath, new_filepath);
-//        return new_filepath;
-//    }else{
-//        tools::log->debug("Already final path [{}]", output_filepath);
-//        return output_filepath;
-//    }
-
 //}
 
 void tools::common::h5::tmp::create_directory(std::string_view path) {

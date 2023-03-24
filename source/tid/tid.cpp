@@ -1,7 +1,7 @@
 #include "tid.h"
 #include <fmt/format.h>
-#include <regex>
 #include <string>
+#include <string_view>
 namespace tid {
     namespace internal {
 
@@ -98,7 +98,7 @@ namespace tid {
 
     void reset(std::string_view expr) {
         for(auto &[key, ur] : tid::internal::tid_db) {
-            if(std::regex_match(std::string(key), std::regex(std::string(expr)))) ur.reset();
+            if(key.find(expr) != std::string_view::npos) ur.reset();
         }
     }
 
