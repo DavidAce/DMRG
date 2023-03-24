@@ -18,6 +18,7 @@ ExternalProject_Add(external_Ceres
         BUILD_ALWAYS TRUE # <- True will detect changes in dependencies of ceres
         PREFIX ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 
         #Give Ninja access to the terminal.
         USES_TERMINAL_DOWNLOAD TRUE
@@ -26,7 +27,6 @@ ExternalProject_Add(external_Ceres
         USES_TERMINAL_BUILD TRUE
         USES_TERMINAL_INSTALL TRUE
         USES_TERMINAL_TEST TRUE
-
         CMAKE_ARGS
         ${INIT_CACHE_ARG}
         -DCMAKE_POLICY_DEFAULT_CMP0074=NEW

@@ -24,6 +24,7 @@ externalproject_add(external_tblis
 
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+                    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 
                     #Give Ninja access to the terminal.
                     USES_TERMINAL_DOWNLOAD TRUE
@@ -32,7 +33,6 @@ externalproject_add(external_tblis
                     USES_TERMINAL_BUILD TRUE
                     USES_TERMINAL_INSTALL TRUE
                     USES_TERMINAL_TEST TRUE
-
                     BUILD_ALWAYS TRUE
                     BUILD_IN_SOURCE TRUE
                     CONFIGURE_COMMAND

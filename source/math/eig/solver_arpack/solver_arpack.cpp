@@ -44,7 +44,9 @@
 #if defined(__clang__)
     #pragma clang diagnostic push
     #pragma clang diagnostic ignored "-Woverloaded-virtual"
-#elif defined(__GNUC__) || defined(__GNUG__)
+#elif defined(__GNUC__) && (__GNUC__ >= 12)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
 
 #if __has_include(<arpackpp/arcomp.h>)
@@ -62,11 +64,7 @@
     #error Could not include arpack headers correctly
 #endif
 
-#if defined(__clang__)
-    // turn the warnings back on
-    #pragma clang diagnostic pop
-#elif defined(__GNUC__) || defined(__GNUG__)
-#endif
+
 
 namespace tc = sfinae;
 using namespace eig;
@@ -521,3 +519,10 @@ template class eig::solver_arpack<MatVecSparse<real>>;
 template class eig::solver_arpack<MatVecSparse<cplx>>;
 template class eig::solver_arpack<MatVecMPO<real>>;
 template class eig::solver_arpack<MatVecMPO<cplx>>;
+
+#if defined(__clang__)
+    // turn the warnings back on
+    #pragma clang diagnostic pop
+#elif defined(__GNUC__) && (__GNUC__ >= 12)
+    #pragma GCC diagnostic pop
+#endif

@@ -12,6 +12,8 @@ ExternalProject_Add(external_Backward
         BUILD_ALWAYS TRUE
         PREFIX ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+
         #Give Ninja access to the terminal.
         USES_TERMINAL_DOWNLOAD TRUE
         USES_TERMINAL_UPDATE TRUE
@@ -19,7 +21,6 @@ ExternalProject_Add(external_Backward
         USES_TERMINAL_BUILD TRUE
         USES_TERMINAL_INSTALL TRUE
         USES_TERMINAL_TEST TRUE
-
         UPDATE_COMMAND ""
         TEST_COMMAND ""
         BUILD_COMMAND ""

@@ -21,6 +21,7 @@ externalproject_add(external_primme
                     URL_MD5 b26968d0ea8aa2e6feefc89f3c863062
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+                    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 
                     #Give Ninja access to the terminal.
                     USES_TERMINAL_DOWNLOAD TRUE
@@ -29,7 +30,6 @@ externalproject_add(external_primme
                     USES_TERMINAL_BUILD TRUE
                     USES_TERMINAL_INSTALL TRUE
                     USES_TERMINAL_TEST TRUE
-
                     BUILD_ALWAYS TRUE
                     CONFIGURE_COMMAND ""
                     BUILD_COMMAND

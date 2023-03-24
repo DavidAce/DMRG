@@ -20,6 +20,8 @@ externalproject_add(external_arpack-ng
                     BUILD_ALWAYS TRUE
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
+                    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+
 
                     #Give Ninja access to the terminal.
                     USES_TERMINAL_DOWNLOAD TRUE
