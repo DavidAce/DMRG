@@ -68,7 +68,9 @@
         "BLA_VENDOR" : "Intel10_64lp"
       },
       "environment": {
-        "MKLROOT": "/opt/intel/oneapi/mkl/latest"
+        "BLA_VENDOR" : "Intel10_64lp",
+        "MKLROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}",
+        "MKL_ROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}"
       }
     },
     {
@@ -383,9 +385,9 @@
     },
     {
       "name": "kraken",
-      "displayName": "Release|march=haswell|conan|openblas",
+      "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
-        "openblas",
+        "mkl",
         "release",
         "haswell",
         "pkg-conan",
@@ -394,16 +396,16 @@
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_PREFIX_PATH": "${sourceDir}/build/Release/conan",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE"
       }
     },
     {
       "name": "kraken-debug",
-      "displayName": "Debug|march=haswell|conan|openblas",
+      "displayName": "Debug|march=haswell|conan|mkl",
       "inherits": [
-        "openblas",
+        "mkl",
         "debug",
         "haswell",
         "pkg-conan",
