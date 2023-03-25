@@ -121,7 +121,11 @@ function(target_enable_mold tgt)
             return()
         endif()
         include(CheckLinkerFlag)
-        check_linker_flag(CXX "-fuse-ld=mold" LINK_MOLD)
+        include(cmake/GetNumThreads.cmake)
+        get_num_threads(num_threads)
+        check_linker_flag(CXX "-fuse-ld=mold --thread-count=${num_threads}" LINK_MOLD)
+
+
         if(LINK_MOLD)
             target_link_options(${tgt} PUBLIC -fuse-ld=mold)
         else()

@@ -42,9 +42,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
         if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
     }
-
-    std::vector<std::pair<std::string, std::string>> details;
-    if(save_fail or save_result) details = {{"Eigen Version", fmt::format("{}.{}.{}", EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION)}};
+    save_svd<Scalar>(mat);
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
@@ -54,6 +52,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     } else {
         SVD.setSwitchSize(static_cast<int>(switchsize_gesdd));
     }
+
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(minRC, 5l)) : "";
     auto svd_info =
@@ -94,7 +93,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             svd::log->critical("Eigen SVD error: S is not positive");
         }
         // #if !defined(NDEBUG)
-        if(save_fail) save_svd<Scalar>(mat, SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), "Eigen", details);
+        save_svd<Scalar>(SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), -1);
 
         // #endif
 
@@ -111,9 +110,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     // Truncation error needs normalized singular values
     std::tie(rank, truncation_error) = get_rank_from_truncation_error(SVD.singularValues().head(max_size).normalized());
+    if(svd_save == save::ALL or svd_save != save::LAST)
+        save_svd<Scalar>(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), 0);
 
-    if(save_result)
-        save_svd<Scalar>(mat, SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), "Eigen", details);
     svd::log->trace("SVD with Eigen finished successfully");
     // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint());

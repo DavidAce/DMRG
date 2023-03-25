@@ -190,7 +190,7 @@
       ],
       "cacheVariables": {
         "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
       }
     },
     {
@@ -204,7 +204,7 @@
       ],
       "cacheVariables": {
         "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
       }
     },
     {

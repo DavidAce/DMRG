@@ -26,7 +26,7 @@ std::string svd::config::to_string() {
     if(loglevel        ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
     if(svd_lib         ) msg.append(fmt::format(" | svd_lib {}", enum2sv(svd_lib.value())));
     if(svd_rtn         ) msg.append(fmt::format(" | svd_rtn {}", enum2sv(svd_rtn.value())));
-    if(save_fail       ) msg.append(fmt::format(" | save_fail {}",save_fail.value()));
+    if(svd_save        ) msg.append(fmt::format(" | svd_save {}",enum2sv(svd_save.value())));
     if(benchmark       ) msg.append(fmt::format(" | benchmark {}",benchmark.value()));
     return msg.empty() ? msg : "svd settings" + msg;
     /* clang-format on */
@@ -43,7 +43,7 @@ void svd::solver::copy_config(const svd::config &svd_cfg) {
     if(svd_cfg.loglevel) setLogLevel(svd_cfg.loglevel.value());
     if(svd_cfg.svd_lib) svd_lib = svd_cfg.svd_lib.value();
     if(svd_cfg.svd_rtn) svd_rtn = svd_cfg.svd_rtn.value();
-    if(svd_cfg.save_fail) save_fail = svd_cfg.save_fail.value();
+    if(svd_cfg.svd_save) svd_save = svd_cfg.svd_save.value();
     if(svd_cfg.benchmark) benchmark = svd_cfg.benchmark.value();
 }
 

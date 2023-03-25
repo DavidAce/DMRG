@@ -24,6 +24,12 @@ namespace svd {
         gersvd, /*!< Fastest for very few k. Randomized SVD works well for very low rank approximations of huge matrices */
         geauto  /*!< Defaults to gejsv for small matrices, moving to gesdd for large matrices, and to either gesvdx or gersvd for low k */
     };
+    enum class save{
+        NONE, /*!< Never save svd matrices to file  */
+        ALL, /*!< Save all matrices and their result  */
+        LAST,  /*!< Save the last matrix (overwriting previous)  */
+        FAIL,  /*!< Only save on failure  */
+    };
 
     using svdx_select_t = std::variant<size_t, double>;
 
@@ -47,7 +53,15 @@ namespace svd {
             default: throw std::logic_error("Could not match svd::rtn");
         }
     }
-
+    constexpr inline std::string_view enum2sv(svd::save save) {
+        switch(save) {
+            case svd::save::NONE: return "NONE";
+            case svd::save::ALL: return "ALL";
+            case svd::save::LAST: return "LAST";
+            case svd::save::FAIL: return "FAIL";
+            default: throw std::logic_error("Could not match svd::save");
+        }
+    }
     struct config {
         std::optional<long>          rank_max         = std::nullopt;
         std::optional<long>          rank_min         = std::nullopt; /*!< Keep this many singular values even if they are smaller than truncation_lim */
@@ -59,7 +73,7 @@ namespace svd {
         std::optional<size_t>        loglevel         = std::nullopt;
         std::optional<svd::lib>      svd_lib          = std::nullopt;
         std::optional<svd::rtn>      svd_rtn          = std::nullopt;
-        std::optional<bool>          save_fail        = std::nullopt;
+        std::optional<svd::save>     svd_save         = std::nullopt;
         std::optional<bool>          benchmark        = std::nullopt;
         std::string                  to_string();
         config() = default;

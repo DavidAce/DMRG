@@ -174,6 +174,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("solver::svd_truncation_lim"                   , solver::svd_truncation_lim);
     dmrg_config.load_parameter("solver::svd_truncation_init"                  , solver::svd_truncation_init);
     dmrg_config.load_parameter("solver::svd_switchsize_bdc"                   , solver::svd_switchsize_bdc);
+    dmrg_config.load_parameter("solver::svd_save_fail"                        , solver::svd_save_fail);
 
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_otf"    , precision::use_compressed_mpo_squared_otf);

@@ -16,8 +16,8 @@
     #include <openblas/lapacke.h>
     #include <openblas_config.h>
 #elif defined(MKL_AVAILABLE)
-    #include <mkl_lapacke.h>
     #include <mkl.h>
+    #include <mkl_lapacke.h>
 #else
     #include <lapacke.h>
 #endif
@@ -80,26 +80,10 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(rows <= 0) throw std::runtime_error("SVD error: rows() <= 0");
     if(cols <= 0) throw std::runtime_error("SVD error: cols() <= 0");
 
-    MatrixType<Scalar>                               A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
-    MatrixType<Scalar>                               A_original;
-    std::vector<std::pair<std::string, std::string>> details;
-    if(save_fail or save_result) {
-        A_original = A;
-#if defined(OPENBLAS_AVAILABLE)
-        details = {{"library", "OpenBLAS"},
-                   {"OPENBLAS_VERSION", OPENBLAS_VERSION},
-                   {"openblas_num_threads", std::to_string(openblas_get_num_threads())},
-                   {"openblas_parallel_mode", std::to_string(openblas_get_parallel())},
-                   {"openblas_corename", openblas_get_corename()},
-                   {"openblas_config", openblas_get_config()},
-                   {"OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", std::to_string(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD)}};
-#endif
-#if defined(MKL_AVAILABLE)
-        MKLVersion Version;
-        mkl_get_version(&Version);
-        details = {{"library", "Intel MKL"}, {"Intel-MKL-Version", fmt::format("{}.{}.{}", Version.MajorVersion, Version.MinorVersion, Version.UpdateVersion)}};
-#endif
-    }
+    MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
+    MatrixType<Scalar> A_original;
+    save_svd<Scalar>(A);
+
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<int>(sizeS, 5)) : "";
 
@@ -461,10 +445,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             print_vector(S.data(), rank, 16);
             throw std::runtime_error("S is not positive");
         }
-
     } catch(const std::exception &ex) {
         // #if !defined(NDEBUG)
-        if(save_fail) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
+        save_svd<Scalar>(U, S, VT, info);
         throw except::runtime_error("Lapacke SVD error \n"
                                     "  Singular values  = {::.5e}\n"
                                     "  Truncation Error = {:.4e}\n"
@@ -474,8 +457,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                     "  Error message    : {}\n",
                                     S, truncation_error, rank, rows, cols, info, ex.what());
     }
-    if(save_result) { save_svd<Scalar>(A_original, U, S, VT, "lapacke", details); }
-
+    save_svd<Scalar>(U, S, VT, info);
     svd::log->trace(
         "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
         truncation_lim, rank, rank_max, rows, cols, truncation_error, t_lpk->get_last_interval());
