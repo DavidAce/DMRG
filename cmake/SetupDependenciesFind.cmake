@@ -4,19 +4,18 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
     ##############################################################################
     ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
     ##############################################################################
-    if(DMRG_ENABLE_MKL)
-        find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED MODULE)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-    else()
-        find_package(OpenBLAS 0.3.20 REQUIRED)
-        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
-        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
-        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_double=std::complex<double>)
-        #For convenience, define these targes
-        add_library(BLAS::BLAS ALIAS OpenBLAS::OpenBLAS)
-        add_library(LAPACK::LAPACK ALIAS OpenBLAS::OpenBLAS)
-        add_library(lapacke::lapacke ALIAS OpenBLAS::OpenBLAS)
-    endif()
-
+#    if(DMRG_ENABLE_MKL)
+#        find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED MODULE)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
+#    else()
+#        find_package(OpenBLAS 0.3.20 REQUIRED)
+#        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
+#        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
+#        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_double=std::complex<double>)
+#        #For convenience, define these targes
+#        add_library(BLAS::BLAS ALIAS OpenBLAS::OpenBLAS)
+#        add_library(LAPACK::LAPACK ALIAS OpenBLAS::OpenBLAS)
+#        add_library(lapacke::lapacke ALIAS OpenBLAS::OpenBLAS)
+#    endif()
 
     find_package(Lapacke           REQUIRED)                                         # Lapacke needed by arpack++, included in MKL or OpenBLAS
     find_package(pcg-cpp           REQUIRED)
@@ -35,9 +34,6 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
     endif()
     find_package(arpack++ 2.3.0 REQUIRED)                                                 # C++ frontend for arpack-ng. Custom find module.
 
-#    set_target_properties(Backward::Backward
-#        PROPERTIES INTERFACE_COMPILE_DEFINITIONS "BACKWARD_HAS_LIBUNWIND=1;BACKWARD_HAS_UNWIND=0;BACKWARD_HAS_DWARF=1;BACKWARD_HAS_BACKTRACE=0;BACKWARD_HAS_BACKTRACE_SYMBOL=0"
-#   )
     target_link_libraries(dmrg-deps INTERFACE
             CLI11::CLI11
             pcg-cpp::pcg-cpp
@@ -45,7 +41,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
             arpack++::arpack++
             primme::primme
             Ceres::ceres
-            BLAS::BLAS
+            lapacke::lapacke
             Backward::Backward
             )
 

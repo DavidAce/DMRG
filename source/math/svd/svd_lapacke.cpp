@@ -17,6 +17,7 @@
     #include <openblas_config.h>
 #elif defined(MKL_AVAILABLE)
     #include <mkl_lapacke.h>
+    #include <mkl.h>
 #else
     #include <lapacke.h>
 #endif

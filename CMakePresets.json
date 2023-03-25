@@ -15,7 +15,7 @@
         "DMRG_ENABLE_MKL": "TRUE",
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "TRUE",
-        "DMRG_ENABLE_RSVD": "FALSE",
+        "DMRG_ENABLE_RSVD": "TRUE",
         "DMRG_ENABLE_TBLIS": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE",
         "DMRG_BENCH_CONTRACTION": "FALSE",
@@ -58,6 +58,10 @@
       "cacheVariables": {
         "DMRG_ENABLE_MKL": "FALSE",
         "BLA_VENDOR" : "OpenBLAS"
+      },
+      "environment": {
+        "BLA_VENDOR" : "OpenBLAS",
+        "CMAKE_PREFIX_PATH" : "$penv{OpenBLAS_ROOT};$penv{BLASROOT};$penv{EBROOTOPENBLAS};$penv{CMAKE_PREFIX_PATH}"
       }
     },
     {
@@ -87,9 +91,18 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_MAKEFILE_VERBOSE": "TRUE",
+        "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",
-        "COMPILER_ENABLE_USAN": "TRUE"
+        "COMPILER_ENABLE_USAN": "TRUE",
+        "COMPILER_ENABLE_MOLD": "FALSE",
+        "COMPILER_ENABLE_PCH": "FALSE",
+        "COMPILER_ENABLE_CCACHE": "FALSE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
+      },
+      "environment": {
+        "VERBOSE" : "1"
       }
     },
     {
@@ -110,22 +123,6 @@
         "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
         "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG -march=haswell -mtune=haswell",
         "CMAKE_CUDA_FLAGS_RELEASE": "-O3 -DNDEBUG -g -Xcompiler -march=haswell -Xcompiler -mtune=haswell"
-      }
-    },
-    {
-      "name": "gcc-10",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-10",
-        "CMAKE_CXX_COMPILER": "g++-10"
-      }
-    },
-    {
-      "name": "gcc-11",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "gcc-11",
-        "CMAKE_CXX_COMPILER": "g++-11"
       }
     },
     {
@@ -163,12 +160,11 @@
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "find",
-        "CMAKE_PREFIX_PATH": "${sourceDir}/build/${presetName}/conan",
         "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan1/conan_provider.cmake",
         "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
       },
       "environment": {
-        "PATH": "$env{HOME}/miniconda3/envs/dmrg/bin:$env{HOME}/miniconda3/bin:$penv{PATH}"
+        "PATH": "$env{HOME}/miniconda3/envs/dmrg/bin:$env{HOME}/anaconda3/envs/dmrg/bin:$env{HOME}/miniconda3/bin:$penv{PATH}"
       }
     },
     {
@@ -184,189 +180,121 @@
       }
     },
     {
-      "name": "release-conan",
-      "displayName": "Release|conan|mkl",
+      "name": "release-gcc-12",
+      "displayName": "Release|gcc-12",
+      "hidden": true,
       "inherits": [
-        "mkl",
+        "gcc-12",
         "release",
-        "pkg-conan",
         "default"
-      ]
-    },
-    {
-      "name": "release-gcc-11-conan",
-      "displayName": "Release|gcc-11|conan|mkl",
-      "inherits": [
-        "mkl",
-        "release",
-        "gcc-11",
-        "pkg-conan",
-        "default"
-      ]
-    },
-    {
-      "name": "release-gcc-11-native-conan",
-      "displayName": "Release|gcc-11|conan|mkl",
-      "inherits": [
-        "mkl",
-        "native",
-        "release-gcc-11-conan"
-      ]
-    },
-    {
-      "name": "release-gcc-11-native-conan-openblas",
-      "displayName": "Release|gcc-11|march=native|conan|openblas",
-      "inherits": [
-        "openblas",
-        "native",
-        "release-gcc-11-conan"
       ],
       "cacheVariables": {
-        "DMRG_ENABLE_RSVD": "TRUE",
-        "COMPILER_ENABLE_MOLD": "FALSE",
+        "COMPILER_ENABLE_MOLD": "TRUE",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
       }
     },
     {
-      "name": "release-gcc-12-conan",
-      "displayName": "Release|gcc-12|conan|mkl",
+      "name": "release-clang-14",
+      "displayName": "Release|clang-14",
+      "hidden": true,
       "inherits": [
-        "mkl",
-        "release",
-        "gcc-12",
-        "pkg-conan",
-        "default"
-      ]
-    },
-    {
-      "name": "release-gcc-12-native-conan",
-      "displayName": "Release|gcc-12|march=native|conan|mkl",
-      "inherits": [
-        "mkl",
-        "native",
-        "release-gcc-12-conan"
-      ],
-      "cacheVariables": {
-        "DMRG_ENABLE_RSVD": "TRUE",
-        "COMPILER_ENABLE_MOLD": "TRUE"
-      }
-    },
-    {
-      "name": "release-gcc-12-native-conan-openblas",
-      "displayName": "Release|gcc-12|march=native|conan|openblas",
-      "inherits": [
-        "openblas",
-        "native",
-        "release-gcc-12-conan"
-      ],
-      "cacheVariables": {
-        "DMRG_ENABLE_RSVD": "TRUE",
-        "COMPILER_ENABLE_MOLD": "TRUE"
-      }
-    },
-    {
-      "name": "release-clang-14-conan",
-      "displayName": "Release|clang-14|conan|mkl",
-      "inherits": [
-        "mkl",
-        "release",
         "clang-14",
-        "pkg-conan",
+        "release",
         "default"
-      ]
-    },
-    {
-      "name": "release-clang-14-native-conan",
-      "displayName": "Release|clang-14|march=native|conan|mkl",
-      "inherits": [
-        "mkl",
-        "native",
-        "release-clang-14-conan"
       ],
       "cacheVariables": {
         "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_VERBOSE_MAKEFILE": "TRUE"
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
       }
     },
     {
-      "name": "debug-conan",
-      "displayName": "Debug|shared|asan|conan",
+      "name": "debug-gcc-12",
+      "displayName": "Debug|gcc-12",
+      "hidden": true,
+      "inherits": [
+        "gcc-12",
+        "debug",
+        "default"
+      ]
+    },
+    {
+      "name": "debug-clang-14",
+      "displayName": "Debug|clang-14",
+      "hidden": true,
+      "inherits": [
+        "clang-14",
+        "debug",
+        "default"
+      ]
+    },
+    {
+      "name": "release-gcc-12-conan-mkl-native",
+      "displayName": "Release|gcc-12|conan|mkl|native",
+      "inherits": [
+        "native",
+        "mkl",
+        "pkg-conan",
+        "release-gcc-12"
+      ]
+    },
+    {
+      "name": "release-gcc-12-conan-openblas-native",
+      "displayName": "Release|gcc-12|conan|openblas|native",
+      "inherits": [
+        "native",
+        "openblas",
+        "pkg-conan",
+        "release-gcc-12"
+      ]
+    },
+    {
+      "name": "release-clang-14-conan-mkl-native",
+      "displayName": "Release|clang-14|conan|mkl|native",
+      "hidden": true,
+      "inherits": [
+        "native",
+        "mkl",
+        "pkg-conan",
+        "release-clang-14"
+      ]
+    },
+    {
+      "name": "release-clang-14-conan-openblas-native",
+      "displayName": "Release|clang-14|conan|openblas|native",
+      "hidden": true,
+      "inherits": [
+        "native",
+        "openblas",
+        "pkg-conan",
+        "release-clang-14"
+      ]
+    },
+
+    {
+      "name": "debug-gcc-12-conan-mkl",
+      "displayName": "Debug|gcc-12|conan|mkl|shared|asan",
       "inherits": [
         "mkl",
-        "debug",
         "pkg-conan",
-        "default"
+        "debug-gcc-12"
       ],
       "cacheVariables": {
         "BUILD_SHARED_LIBS": "TRUE"
       }
     },
     {
-      "name": "debug-gcc-10-conan",
-      "displayName": "Debug|gcc-10|shared|asan|conan",
+      "name": "debug-clang-14-conan-mkl",
+      "displayName": "Debug|clang-14|conan|mkl|shared|asan",
       "inherits": [
         "mkl",
-        "gcc-10",
-        "debug-conan"
-      ]
-    },
-    {
-      "name": "debug-gcc-11-conan",
-      "displayName": "Debug|gcc-11|shared|asan|conan",
-      "inherits": [
-        "mkl",
-        "gcc-11",
-        "debug-conan"
+        "pkg-conan",
+        "debug-clang-14"
       ],
       "cacheVariables": {
-        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
-        "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE"
+        "BUILD_SHARED_LIBS": "TRUE"
       }
     },
-    {
-      "name": "debug-gcc-11-conan-noasan",
-      "displayName": "Debug|gcc-11|shared|conan",
-      "inherits": [
-        "mkl",
-        "gcc-11",
-        "debug-conan"
-      ],
-      "cacheVariables": {
-        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
-        "COMPILER_ENABLE_ASAN": "FALSE",
-        "COMPILER_ENABLE_USAN": "FALSE"
-      }
-    },
-    {
-      "name": "debug-gcc-11-cmake",
-      "displayName": "Debug|gcc-11|shared|asan|cmake",
-      "inherits": [
-        "debug",
-        "pkg-cmake",
-        "gcc-11",
-        "default"
-      ]
-    },
-    {
-      "name": "debug-clang-14-conan",
-      "displayName": "Debug|clang-14|shared|asan|conan",
-      "inherits": [
-        "clang-14",
-        "debug-conan"
-      ]
-    },
-    {
-      "name": "debug-clang-14-conan-noasan",
-      "displayName": "Debug|clang-14|shared|conan",
-      "inherits": [
-        "clang-14",
-        "debug-conan"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_ASAN": "FALSE",
-        "COMPILER_ENABLE_USAN": "FALSE"
-      }
-    },
+
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
@@ -388,44 +316,50 @@
       "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
         "mkl",
-        "release",
         "haswell",
         "pkg-conan",
+        "release",
         "default"
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
         "CMAKE_PREFIX_PATH": "${sourceDir}/build/Release/conan",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Release/pkg-install",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-release-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE"
       }
     },
     {
       "name": "kraken-debug",
-      "displayName": "Debug|march=haswell|conan|mkl",
+      "displayName": "Release|march=haswell|conan|mkl|debug flags",
       "inherits": [
-        "mkl",
-        "debug",
-        "haswell",
-        "pkg-conan",
-        "default"
+        "kraken"
       ],
       "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
         "CMAKE_PREFIX_PATH": "${sourceDir}/build/Debug/conan",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-debug-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
-        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/Debug/pkg-install",
-        "DMRG_BUILD_TOOLS": "TRUE"
+        "CMAKE_MAKEFILE_VERBOSE": "TRUE",
+        "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
+        "DMRG_CMAKE_DEBUG": "TRUE",
+        "COMPILER_ENABLE_ASAN": "TRUE",
+        "COMPILER_ENABLE_USAN": "TRUE",
+        "COMPILER_ENABLE_MOLD": "FALSE",
+        "COMPILER_ENABLE_PCH": "FALSE",
+        "COMPILER_ENABLE_CCACHE": "FALSE"
+      },
+      "environment": {
+        "VERBOSE" : "1"
       }
     },
     {
       "name": "tetralith",
       "displayName": "Release|march=native|conan|mkl",
       "inherits": [
-        "release",
         "native",
         "pkg-conan",
+        "release",
         "default"
       ],
       "binaryDir": "${sourceDir}/build/Release",
@@ -439,88 +373,27 @@
   ],
   "buildPresets": [
     {
-      "name": "release-conan",
-      "displayName": "Release|march=native|conan|mkl",
-      "configurePreset": "release-conan"
+      "name": "release-gcc-12-conan-mkl-native",
+      "configurePreset": "release-gcc-12-conan-mkl-native"
     },
     {
-      "name": "release-gcc-11-conan",
-      "displayName": "Release|gcc-11|conan|mkl",
-      "configurePreset": "release-gcc-11-conan"
+      "name": "release-gcc-12-conan-openblas-native",
+      "configurePreset": "release-gcc-12-conan-openblas-native"
     },
     {
-      "name": "release-gcc-11-native-conan",
-      "displayName": "Release|gcc-11|march=native|conan|mkl",
-      "configurePreset": "release-gcc-11-native-conan"
+      "name": "release-clang-14-conan-mkl-native",
+      "configurePreset": "release-gcc-12-conan-mkl-native"
     },
     {
-      "name": "release-gcc-11-native-conan-openblas",
-      "displayName": "Release|gcc-11|march=native|conan|openblas",
-      "configurePreset": "release-gcc-11-native-conan-openblas"
-    },
-    {
-      "name": "release-gcc-12-conan",
-      "displayName": "Release|gcc-12|conan|mkl",
-      "configurePreset": "release-gcc-12-conan"
-    },
-    {
-      "name": "release-gcc-12-native-conan",
-      "displayName": "Release|gcc-12|march=native|conan|mkl",
-      "configurePreset": "release-gcc-12-native-conan"
-    },
-    {
-      "name": "release-gcc-12-native-conan-openblas",
-      "displayName": "Release|gcc-12|march=native|conan|openblas",
-      "configurePreset": "release-gcc-12-native-conan-openblas"
-    },
-    {
-      "name": "release-clang-14-native-conan",
-      "displayName": "Release|clang-14|march=native|conan|mkl",
-      "configurePreset": "release-clang-14-native-conan"
-    },
-    {
-      "name": "debug-conan",
-      "displayName": "debug|conan",
-      "configurePreset": "debug-conan"
-    },
-    {
-      "name": "debug-gcc-10-conan",
-      "displayName": "debug|gcc-10|conan",
-      "configurePreset": "debug-gcc-10-conan"
-    },
-    {
-      "name": "debug-gcc-11-conan",
-      "displayName": "debug|gcc-11|conan",
-      "configurePreset": "debug-gcc-11-conan"
-    },
-    {
-      "name": "debug-gcc-11-cmake",
-      "displayName": "debug|gcc-11|cmake",
-      "configurePreset": "debug-gcc-11-cmake"
-    },
-    {
-      "name": "debug-gcc-11-conan-noasan",
-      "displayName": "debug|gcc-11|conan",
-      "configurePreset": "debug-gcc-11-conan-noasan"
-    },
-    {
-      "name": "debug-clang-14-conan",
-      "displayName": "debug|clang-14|conan",
-      "configurePreset": "debug-clang-14-conan"
-    },
-    {
-      "name": "debug-clang-14-conan-noasan",
-      "displayName": "debug|clang-14|conan",
-      "configurePreset": "debug-clang-14-conan-noasan"
+      "name": "release-clang-14-conan-openblas-native",
+      "configurePreset": "release-gcc-12-conan-openblas-native"
     },
     {
       "name": "kraken",
-      "displayName": "Release|march=haswell|conan|openblas",
       "configurePreset": "kraken"
     },
     {
       "name": "kraken-debug",
-      "displayName": "Debug|march=haswell|conan|openblas",
       "configurePreset": "kraken-debug"
     },
     {
@@ -532,109 +405,6 @@
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
-      "configurePreset": "github-actions"
-    }
-  ],
-  "testPresets": [
-    {
-      "name": "default",
-      "hidden": true,
-      "configurePreset": "default",
-      "output": {
-        "outputOnFailure": true
-      },
-      "execution": {
-        "noTestsAction": "error",
-        "stopOnFailure": true
-      }
-    },
-    {
-      "name": "release-conan",
-      "displayName": "Release|march=native|conan|mkl",
-      "configurePreset": "release-conan"
-    },
-    {
-      "name": "release-gcc-11-conan",
-      "displayName": "Release|gcc-11|conan|mkl",
-      "configurePreset": "release-gcc-11-conan"
-    },
-    {
-      "name": "release-gcc-11-native-conan",
-      "displayName": "Release|gcc-11|march=native|conan|mkl",
-      "configurePreset": "release-gcc-11-native-conan"
-    },
-    {
-      "name": "release-gcc-12-conan",
-      "displayName": "Release|gcc-12|conan|mkl",
-      "configurePreset": "release-gcc-12-conan"
-    },
-    {
-      "name": "release-gcc-12-native-conan",
-      "displayName": "Release|gcc-12|march=native|conan|mkl",
-      "configurePreset": "release-gcc-12-native-conan"
-    },
-    {
-      "name": "release-gcc-12-native-conan-openblas",
-      "displayName": "Release|gcc-12|march=native|conan|openblas",
-      "configurePreset": "release-gcc-12-native-conan-openblas"
-    },
-    {
-      "name": "debug-conan",
-      "displayName": "debug|conan",
-      "configurePreset": "debug-conan"
-    },
-    {
-      "name": "debug-gcc-10-conan",
-      "displayName": "debug|gcc-10|conan",
-      "configurePreset": "debug-gcc-10-conan"
-    },
-    {
-      "name": "debug-gcc-11-conan",
-      "displayName": "debug|gcc-11|conan",
-      "configurePreset": "debug-gcc-11-conan"
-    },
-    {
-      "name": "debug-gcc-11-cmake",
-      "displayName": "debug|gcc-11|cmake",
-      "configurePreset": "debug-gcc-11-cmake"
-    },
-    {
-      "name": "debug-gcc-11-conan-noasan",
-      "displayName": "debug|gcc-11|conan",
-      "configurePreset": "debug-gcc-11-conan-noasan"
-    },
-    {
-      "name": "debug-clang-14-conan",
-      "displayName": "debug|clang-14|conan",
-      "configurePreset": "debug-clang-14-conan"
-    },
-    {
-      "name": "debug-clang-14-conan-noasan",
-      "displayName": "debug|clang-14|conan",
-      "configurePreset": "debug-clang-14-conan-noasan"
-    },
-    {
-      "name": "kraken",
-      "displayName": "Release|march=haswell|conan|openblas",
-      "configurePreset": "kraken"
-    },
-    {
-      "name": "kraken-debug",
-      "displayName": "Debug|march=haswell|conan|openblas",
-      "configurePreset": "kraken-debug"
-    },
-    {
-      "name": "tetralith",
-      "displayName": "Release|march=native|conan|mkl",
-      "configurePreset": "tetralith",
-      "execution": {
-        "jobs": 4
-      }
-    },
-    {
-      "name": "github-actions",
-      "inherits": "default",
-      "displayName": "Default tests for github-actions",
       "configurePreset": "github-actions"
     }
   ]

@@ -2,16 +2,13 @@
 ##############################################################################
 ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
 ##############################################################################
-if(DMRG_ENABLE_MKL)
-    list(APPEND CONAN_OPTIONS -o arpack-ng:bla_vendor=MKL)
-else()
-    list(APPEND CONAN_OPTIONS -o arpack-ng:bla_vendor=OpenBLAS)
-    if(OPENBLAS_DYNAMIC_ARCH)
-        list(APPEND CONAN_OPTIONS -o openblas:dynamic_arch=True)
-    else()
-        list(APPEND CONAN_OPTIONS -o openblas:dynamic_arch=False)
-    endif()
+if(NOT DEFINED BLA_VENDOR AND NOT DEFINED $ENV{BLA_VENDOR})
+    message(WARNING  "BLA_VENDOR is undefined" )
 endif()
+if(NOT DEFINED BLA_VENDOR AND DEFINED $ENV{BLA_VENDOR})
+    set(BLA_VENDOR $ENV{BLA_VENDOR} CACHE INTERNAL "BLAS backend")
+endif()
+#
 message(STATUS "CONAN_OPTIONS: ${CONAN_OPTIONS}")
 
 

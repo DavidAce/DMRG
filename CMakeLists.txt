@@ -102,23 +102,6 @@ if(DMRG_CMAKE_DEBUG)
     print_and_write_project_summary(DMRG++)
 endif()
 
-###################
-### INFORMATION ###
-###################
-
-message(STATUS "")
-message(STATUS "=============================================================================")
-message(STATUS "")
-if(OPENBLAS_DYNAMIC_ARCH AND NOT TARGET mkl::mkl)
-    # Using OpenBLAS
-    message(STATUS "   OpenBLAS DYNAMIC_ARCH: Remember to set architecture before launch:")
-    message(STATUS "          export OPENBLAS_CORETYPE=<microarch>\n")
-endif()
-message(STATUS "   To clean cmake files, run './build.sh -c'")
-message(STATUS "   To see more options,  run './build.sh -h'")
-message(STATUS "")
-message(STATUS "=============================================================================")
-message(STATUS "")
 if(DMRG_ENABLE_TESTS)
     enable_testing()
     add_subdirectory(tests) # Unit testing with ctest and catch2

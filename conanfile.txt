@@ -19,8 +19,6 @@ pcg-cpp/cci.20210406
 CMakeDeps
 
 [options]
-openblas:build_lapack=True
-openblas:dynamic_arch=True
 ceres-solver:use_glog=False
 ceres-solver:use_gflags=False
 
