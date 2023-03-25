@@ -3,6 +3,7 @@
 #include <Eigen/QR>
 
 long long svd::solver::count = 0;
+svd::internal::SaveMetaData svd::solver::saveMetaData = {};
 
 svd::solver::solver() { setLogLevel(2); }
 
@@ -112,6 +113,21 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             }
         }
         //        svd::log->info("sizeS = {} | {} {} {} | {} ", sizeS, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd, enum2sv(svd_rtn));
+    }
+    if(svd_save != svd::save::NONE) {
+        saveMetaData.rank_max         = rank_max;
+        saveMetaData.rank_min         = rank_min;
+        saveMetaData.truncation_lim   = truncation_lim;
+        saveMetaData.switchsize_gejsv = switchsize_gejsv;
+        saveMetaData.switchsize_gesvd = switchsize_gesvd;
+        saveMetaData.switchsize_gesdd = switchsize_gesdd;
+        saveMetaData.svd_lib          = svd_lib;
+        saveMetaData.svd_rtn          = svd_rtn;
+        saveMetaData.svd_save         = svd_save;
+        if(not saveMetaData.atexit) {
+            atexit(save_svd);
+            saveMetaData.atexit = true;
+        }
     }
 
 #pragma omp atomic

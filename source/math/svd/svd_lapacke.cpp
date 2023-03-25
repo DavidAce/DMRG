@@ -81,9 +81,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     if(cols <= 0) throw std::runtime_error("SVD error: cols() <= 0");
 
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
-    MatrixType<Scalar> A_original;
-    save_svd<Scalar>(A);
-
+    if(svd_save != svd::save::NONE) save_svd(A);
+    if(svd_save != svd::save::FAIL) saveMetaData.A = A;
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<int>(sizeS, 5)) : "";
 
@@ -426,8 +425,16 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         S  = S.head(rank).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
         VT = VT.topRows(rank).eval();
 
-        // Sanity checks
+        if(svd_save == svd::save::FAIL and info != 0) {
+            saveMetaData.U                = U;
+            saveMetaData.S                = S;
+            saveMetaData.VT               = VT;
+            saveMetaData.rank             = rank;
+            saveMetaData.truncation_error = truncation_error;
+            saveMetaData.info             = info;
+        }
 
+        // Sanity checks
         if(not U.allFinite()) {
             print_matrix(U.data(), U.rows(), U.cols());
             throw std::runtime_error("U has inf's or nan's");
@@ -447,7 +454,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         }
     } catch(const std::exception &ex) {
         // #if !defined(NDEBUG)
-        save_svd<Scalar>(U, S, VT, info);
         throw except::runtime_error("Lapacke SVD error \n"
                                     "  Singular values  = {::.5e}\n"
                                     "  Truncation Error = {:.4e}\n"

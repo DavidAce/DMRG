@@ -15,18 +15,44 @@ namespace svd {
         // LAPACK uses internal workspace arrays which can be reused for the duration of the program.
         // Call clear() to recover this memory space
         void clear_lapack();
+        struct SaveMetaData {
+            using real       = double;
+            using cplx       = std::complex<double>;
+            using VectorReal = Eigen::Matrix<real, Eigen::Dynamic, 1>;
+            using MatrixReal = Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic>;
+            using MatrixCplx = Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>;
+            std::variant<MatrixReal, MatrixCplx> A, U, VT;
+            VectorReal                           S;
+            int                                  info             = 0;
+            long                                 rank             = -1;
+            long                                 rank_max         = -1;
+            long                                 rank_min         = -1;
+            double                               truncation_lim   = -1.0;
+            double                               truncation_error = -1.0;
+            size_t                               switchsize_gejsv = -1ul;
+            size_t                               switchsize_gesvd = -1ul;
+            size_t                               switchsize_gesdd = -1ul;
+            svd::lib                             svd_lib;
+            svd::rtn                             svd_rtn;
+            svd::save                            svd_save;
+            bool                                 atexit = false;
+        };
+
     }
 
     class solver {
         private:
-        mutable double   truncation_error = 0; // Stores the last truncation error
-        mutable long     rank             = 0; // Stores the last rank
-        static long long count;                // Count the number of svd invocations for this execution
+        mutable double                truncation_error = 0; // Stores the last truncation error
+        mutable long                  rank             = 0; // Stores the last rank
+        static long long              count;                // Count the number of svd invocations for this execution
+        static internal::SaveMetaData saveMetaData;
 
         template<typename Scalar>
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
         template<typename Scalar>
         using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+
+        static void save_svd();
 
         template<typename Scalar>
         void save_svd(const MatrixType<Scalar> &A) const;

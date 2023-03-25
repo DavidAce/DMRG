@@ -42,7 +42,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
         if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
     }
-    save_svd<Scalar>(mat);
+    if(svd_save != svd::save::NONE) save_svd(MatrixType<Scalar>(mat));
+    if(svd_save != svd::save::FAIL) saveMetaData.A = MatrixType<Scalar>(mat);
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
@@ -80,6 +81,14 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     bool S_positive = (SVD.singularValues().head(max_size).array() >= 0).all();
 
     if(SVD.rank() <= 0 or rank == 0 or not U_finite or not S_finite or not S_positive or not V_finite) {
+        if(svd_save == svd::save::FAIL) {
+            saveMetaData.U                = SVD.matrixU();
+            saveMetaData.S                = SVD.singularValues();
+            saveMetaData.VT               = MatrixType<Scalar>(SVD.matrixV().adjoint());
+            saveMetaData.rank             = rank;
+            saveMetaData.truncation_error = truncation_error;
+            saveMetaData.info             = -1;
+        }
         if(not mat.allFinite()) {
             print_matrix(mat.data(), mat.rows(), mat.cols());
             svd::log->critical("Eigen SVD error: matrix has inf's or nan's");
@@ -110,7 +119,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
     // Truncation error needs normalized singular values
     std::tie(rank, truncation_error) = get_rank_from_truncation_error(SVD.singularValues().head(max_size).normalized());
-    if(svd_save == save::ALL or svd_save != save::LAST)
+    if(svd_save == save::ALL or svd_save == save::LAST)
         save_svd<Scalar>(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), 0);
 
     svd::log->trace("SVD with Eigen finished successfully");
