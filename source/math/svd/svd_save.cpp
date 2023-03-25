@@ -148,6 +148,7 @@ void svd::solver::save_svd(const MatrixType<Scalar> &U, const VectorType<Scalar>
     file.writeDataset(S, fmt::format("{}/S", group_name), H5D_layout_t::H5D_CHUNKED);
     file.writeDataset(VT, fmt::format("{}/VT", group_name), H5D_layout_t::H5D_CHUNKED);
     file.writeAttribute(S.size(), group_name, "rank");
+    file.writeAttribute(info, group_name, "info");
 }
 
 using cplx = std::complex<double>;
