@@ -124,9 +124,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         saveMetaData.svd_lib          = svd_lib;
         saveMetaData.svd_rtn          = svd_rtn;
         saveMetaData.svd_save         = svd_save;
-        if(not saveMetaData.atexit) {
-            atexit(save_svd);
-            saveMetaData.atexit = true;
+        if(not saveMetaData.at_quick_exit) {
+            std::at_quick_exit(save_svd);
+            saveMetaData.at_quick_exit = true;
         }
     }
 

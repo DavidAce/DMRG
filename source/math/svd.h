@@ -35,7 +35,7 @@ namespace svd {
             svd::lib                             svd_lib;
             svd::rtn                             svd_rtn;
             svd::save                            svd_save;
-            bool                                 atexit = false;
+            bool                                 at_quick_exit = false;
         };
 
     }

@@ -4,9 +4,9 @@
 #include <cstdlib>
 
 void debug::signal_callback_handler(int status) {
+    if(status != 0) debug::print_stack_trace();
     switch(status) {
         case SIGTERM: {
-            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGTERM: %d\n", status);
             break;
         }
@@ -35,32 +35,26 @@ void debug::signal_callback_handler(int status) {
             break;
         }
         case SIGABRT: {
-            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGABRT: %d\n", status);
             break;
         }
         case SIGILL: {
-            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGILL: %d\n", status);
             break;
         }
         case SIGFPE: {
-            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGFPE: %d\n", status);
-            break;
+            std::quick_exit(status);
         }
         case SIGSEGV: {
-            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit SIGSEGV: %d\n", status);
-            break;
+            std::quick_exit(status);
         }
         default: {
-            //            debug::print_stack_trace();
             std::fprintf(stderr, "Exit %d\n", status);
             break;
         }
     }
-    if(status != 0) debug::print_stack_trace();
     std::exit(status);
 }
 
