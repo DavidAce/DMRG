@@ -55,6 +55,8 @@ void svd::solver::save_svd() {
     file.writeAttribute(smd.switchsize_gejsv, group_name, "switchsize_gejsv");
     file.writeAttribute(smd.switchsize_gesvd, group_name, "switchsize_gesvd");
     file.writeAttribute(smd.switchsize_gesdd, group_name, "switchsize_gesdd");
+    file.writeAttribute(smd.info, group_name, "info");
+    file.writeAttribute(smd.truncation_error, group_name, "truncation_error");
 
     if(smd.svd_lib == svd::lib::lapacke) {
 #if defined(OPENBLAS_AVAILABLE)
