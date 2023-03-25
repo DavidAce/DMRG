@@ -323,9 +323,9 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "${sourceDir}/build/Release/conan",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-release-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
+        "COMPILER_ENABLE_MOLD": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE"
       }
     },
@@ -337,7 +337,6 @@
       ],
       "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "${sourceDir}/build/Debug/conan",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-debug-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_MAKEFILE_VERBOSE": "TRUE",
@@ -364,7 +363,6 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_PREFIX_PATH": "${sourceDir}/build/Release/conan",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE"
