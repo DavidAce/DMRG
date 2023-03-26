@@ -2,10 +2,21 @@
 // Created by david on 2021-11-12.
 //
 
-#if MKL_AVAILABLE || __has_include(<mkl.h>)
+#if defined(MKL_AVAILABLE)
+    #ifndef SVD_SAVE_OPENBLAS_ATTRIBUTES
+        #define SVD_SAVE_MKL_ATTRIBUTES
+    #endif
     #include <mkl.h>
-#elif OPENBLAS_AVAILABLE || __has_include(<openblas_config.h>)
-    #include <openblas_config.h>
+#elif defined(OPENBLAS_AVAILABLE)
+    #ifndef SVD_SAVE_OPENBLAS_ATTRIBUTES
+        #define SVD_SAVE_OPENBLAS_ATTRIBUTES
+    #endif
+    #include <openblas/cblas.h>
+#elif __has_include(<cblas-openblas.h>)
+    #ifndef SVD_SAVE_OPENBLAS_ATTRIBUTES
+        #define SVD_SAVE_OPENBLAS_ATTRIBUTES
+    #endif
+    #include <cblas-openblas.h>
 #endif
 
 #include "../svd.h"
@@ -16,10 +27,10 @@
 void svd::solver::save_svd() {
     auto &smd = saveMetaData;
     if(smd.svd_save != save::FAIL) return;
-
+    if(not smd.svd_is_running) return;
     auto directory = h5pp::fs::path(settings::storage::output_filepath).parent_path().string();
     auto filepath  = fmt::format("{}/svd-save-{}.h5", directory, settings::input::seed);
-    svd::log->debug("Saving A to file: {}", filepath);
+    svd::log->info("Saving SVD to file: {}", filepath);
     auto file       = h5pp::File(filepath, h5pp::FilePermission::READWRITE);
     auto group_num  = 0;
     auto group_name = fmt::format("svd_{}", group_num);
@@ -29,22 +40,24 @@ void svd::solver::save_svd() {
     if(smd.svd_save == save::FAIL) group_name = "svd-fail";
     using MatrixReal = svd::internal::SaveMetaData::MatrixReal;
     using MatrixCplx = svd::internal::SaveMetaData::MatrixCplx;
-    if(std::holds_alternative<MatrixReal>(smd.A)) {
-        file.writeDataset(std::get<MatrixReal>(smd.A), fmt::format("{}/A_real", group_name), H5D_layout_t::H5D_CHUNKED);
-    } else if(std::holds_alternative<MatrixCplx>(smd.A)) {
-        file.writeDataset(std::get<MatrixCplx>(smd.A), fmt::format("{}/A_cplx", group_name), H5D_layout_t::H5D_CHUNKED);
+    if(auto *A = std::get_if<MatrixReal>(&smd.A); A != nullptr and A->size() != 0) {
+        file.writeDataset(*A, fmt::format("{}/A_real", group_name), H5D_layout_t::H5D_CHUNKED);
     }
-    if(std::holds_alternative<MatrixReal>(smd.U)) {
-        file.writeDataset(std::get<MatrixReal>(smd.U), fmt::format("{}/U_real", group_name), H5D_layout_t::H5D_CHUNKED);
-    } else if(std::holds_alternative<MatrixCplx>(smd.U)) {
-        file.writeDataset(std::get<MatrixCplx>(smd.U), fmt::format("{}/U_cplx", group_name), H5D_layout_t::H5D_CHUNKED);
+    if(auto *A = std::get_if<MatrixCplx>(&smd.A); A != nullptr and A->size() != 0) {
+        file.writeDataset(*A, fmt::format("{}/A_cplx", group_name), H5D_layout_t::H5D_CHUNKED);
     }
-    file.writeDataset(smd.S, fmt::format("{}/S", group_name), H5D_layout_t::H5D_CHUNKED);
-
-    if(std::holds_alternative<MatrixReal>(smd.VT)) {
-        file.writeDataset(std::get<MatrixReal>(smd.VT), fmt::format("{}/VT_real", group_name), H5D_layout_t::H5D_CHUNKED);
-    } else if(std::holds_alternative<MatrixCplx>(smd.VT)) {
-        file.writeDataset(std::get<MatrixCplx>(smd.VT), fmt::format("{}/VT_cplx", group_name), H5D_layout_t::H5D_CHUNKED);
+    if(auto *U = std::get_if<MatrixReal>(&smd.U); U != nullptr and U->size() != 0) {
+        file.writeDataset(*U, fmt::format("{}/U_real", group_name), H5D_layout_t::H5D_CHUNKED);
+    }
+    if(auto *U = std::get_if<MatrixCplx>(&smd.U); U != nullptr and U->size() != 0) {
+        file.writeDataset(*U, fmt::format("{}/U_cplx", group_name), H5D_layout_t::H5D_CHUNKED);
+    }
+    if(smd.S.size() != 0) { file.writeDataset(smd.S, fmt::format("{}/S", group_name), H5D_layout_t::H5D_CHUNKED); }
+    if(auto *VT = std::get_if<MatrixReal>(&smd.VT); VT != nullptr and VT->size() != 0) {
+        file.writeDataset(*VT, fmt::format("{}/VT_real", group_name), H5D_layout_t::H5D_CHUNKED);
+    }
+    if(auto *VT = std::get_if<MatrixCplx>(&smd.VT); VT != nullptr and VT->size() != 0) {
+        file.writeDataset(*VT, fmt::format("{}/VT_cplx", group_name), H5D_layout_t::H5D_CHUNKED);
     }
 
     file.writeAttribute(settings::input::seed, group_name, "seed");
@@ -59,7 +72,7 @@ void svd::solver::save_svd() {
     file.writeAttribute(smd.truncation_error, group_name, "truncation_error");
 
     if(smd.svd_lib == svd::lib::lapacke) {
-#if defined(OPENBLAS_AVAILABLE)
+#if defined(SVD_SAVE_OPENBLAS_ATTRIBUTES)
         file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
         file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
         file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);
@@ -68,7 +81,7 @@ void svd::solver::save_svd() {
         file.writeAttribute(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, "OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", group_name);
 #endif
 
-#if defined(MKL_AVAILABLE)
+#if defined(SVD_SAVE_MKL_ATTRIBUTES)
         MKLVersion Version;
         mkl_get_version(&Version);
         file.writeAttribute(Version.MajorVersion, "Intel-MKL-MajorVersion", group_name);

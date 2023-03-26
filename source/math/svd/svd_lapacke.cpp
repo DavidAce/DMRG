@@ -2,6 +2,7 @@
 #include "debug/exceptions.h"
 #include "tid/tid.h"
 #include <complex>
+#include <csignal>
 
 #ifndef lapack_complex_float
     #define lapack_complex_float std::complex<float>
@@ -12,11 +13,8 @@
 
 // complex must be included before lapacke!
 #if defined(OPENBLAS_AVAILABLE)
-    #include <openblas/cblas.h>
     #include <openblas/lapacke.h>
-    #include <openblas_config.h>
 #elif defined(MKL_AVAILABLE)
-    #include <mkl.h>
     #include <mkl_lapacke.h>
 #else
     #include <lapacke.h>
@@ -65,8 +63,8 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
         A.adjointInPlace(); // Adjoint directly on a map seems to give a bug?
         // Sanity checks
-        if(A.rows() <= 0) throw std::runtime_error("SVD error: rows() == 0");
-        if(A.cols() <= 0) throw std::runtime_error("SVD error: cols() == 0");
+        if(A.rows() <= 0) throw std::logic_error("SVD error: rows() == 0");
+        if(A.cols() <= 0) throw std::logic_error("SVD error: cols() == 0");
 
         t_adj.toc();
         auto [U, S, VT] = do_svd_lapacke(A.data(), A.rows(), A.cols());
@@ -77,12 +75,12 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
     auto t_lpk = tid::tic_scope("lapacke", tid::highest);
 
     // Sanity checks
-    if(rows <= 0) throw std::runtime_error("SVD error: rows() <= 0");
-    if(cols <= 0) throw std::runtime_error("SVD error: cols() <= 0");
+    if(rows <= 0) throw std::logic_error("SVD error: rows() <= 0");
+    if(cols <= 0) throw std::logic_error("SVD error: cols() <= 0");
 
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
     if(svd_save != svd::save::NONE) save_svd(A);
-    if(svd_save != svd::save::FAIL) saveMetaData.A = A;
+    if(svd_save == svd::save::FAIL) saveMetaData.A = A;
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<int>(sizeS, 5)) : "";
 
@@ -272,7 +270,6 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     if(info != 0) break;
                     lcwork = static_cast<int>(std::real(cwork[0]));
                     cwork.resize(static_cast<size_t>(lcwork));
-
                     info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
                                                lcwork, rwork.data());
                     break;
@@ -425,7 +422,27 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         S  = S.head(rank).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
         VT = VT.topRows(rank).eval();
 
-        if(svd_save == svd::save::FAIL and info != 0) {
+        // Sanity checks
+        if(not U.allFinite()) {
+            print_matrix(U.data(), U.rows(), U.cols());
+            throw except::runtime_error("U has inf's or nan's");
+        }
+
+        if(not VT.allFinite()) {
+            print_matrix(VT.data(), VT.rows(), VT.cols());
+            throw except::runtime_error("VT has inf's or nan's");
+        }
+        if(not S.allFinite()) {
+            print_vector(S.data(), rank, 16);
+            throw except::runtime_error("S has inf's or nan's");
+        }
+        if(not(S.array() >= 0).all()) {
+            print_vector(S.data(), rank, 16);
+            throw except::runtime_error("S is not positive");
+        }
+    } catch(const except::runtime_error &ex) {
+        // #if !defined(NDEBUG)
+        if(svd_save == svd::save::FAIL) {
             saveMetaData.U                = U;
             saveMetaData.S                = S;
             saveMetaData.VT               = VT;
@@ -434,26 +451,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             saveMetaData.info             = info;
         }
 
-        // Sanity checks
-        if(not U.allFinite()) {
-            print_matrix(U.data(), U.rows(), U.cols());
-            throw std::runtime_error("U has inf's or nan's");
-        }
-
-        if(not VT.allFinite()) {
-            print_matrix(VT.data(), VT.rows(), VT.cols());
-            throw std::runtime_error("VT has inf's or nan's");
-        }
-        if(not S.allFinite()) {
-            print_vector(S.data(), rank, 16);
-            throw std::runtime_error("S has inf's or nan's");
-        }
-        if(not(S.array() >= 0).all()) {
-            print_vector(S.data(), rank, 16);
-            throw std::runtime_error("S is not positive");
-        }
-    } catch(const std::exception &ex) {
-        // #if !defined(NDEBUG)
+        save_svd(); // Used on failure only if svd_save == svd::save::FAIL
         throw except::runtime_error("Lapacke SVD error \n"
                                     "  Singular values  = {::.5e}\n"
                                     "  Truncation Error = {:.4e}\n"
@@ -464,6 +462,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                                     S, truncation_error, rank, rows, cols, info, ex.what());
     }
     save_svd<Scalar>(U, S, VT, info);
+    saveMetaData = svd::internal::SaveMetaData{}; // Clear
     svd::log->trace(
         "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
         truncation_lim, rank, rank_max, rows, cols, truncation_error, t_lpk->get_last_interval());

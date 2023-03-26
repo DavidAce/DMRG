@@ -88,6 +88,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             saveMetaData.rank             = rank;
             saveMetaData.truncation_error = truncation_error;
             saveMetaData.info             = -1;
+            save_svd();
         }
         if(not mat.allFinite()) {
             print_matrix(mat.data(), mat.rows(), mat.cols());
@@ -123,6 +124,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
         save_svd<Scalar>(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), 0);
 
     svd::log->trace("SVD with Eigen finished successfully");
+    saveMetaData = svd::internal::SaveMetaData{}; // Clear
     // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint());
 }

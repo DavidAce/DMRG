@@ -35,17 +35,18 @@ namespace svd {
             svd::lib                             svd_lib;
             svd::rtn                             svd_rtn;
             svd::save                            svd_save;
-            bool                                 at_quick_exit = false;
+            bool                                 svd_is_running = false;
+            bool                                 at_quick_exit  = false;
         };
 
     }
 
     class solver {
         private:
-        mutable double                truncation_error = 0; // Stores the last truncation error
-        mutable long                  rank             = 0; // Stores the last rank
-        static long long              count;                // Count the number of svd invocations for this execution
-        static internal::SaveMetaData saveMetaData;
+        mutable double                       truncation_error = 0; // Stores the last truncation error
+        mutable long                         rank             = 0; // Stores the last rank
+        inline static long long              count            = 0; // Count the number of svd invocations for this execution
+        inline static internal::SaveMetaData saveMetaData     = {};
 
         template<typename Scalar>
         using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;

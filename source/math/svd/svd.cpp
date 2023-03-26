@@ -2,9 +2,6 @@
 #include "tid/tid.h"
 #include <Eigen/QR>
 
-long long svd::solver::count = 0;
-svd::internal::SaveMetaData svd::solver::saveMetaData = {};
-
 svd::solver::solver() { setLogLevel(2); }
 
 svd::config::config(long rank_max_) : rank_max(rank_max_) {}
@@ -128,6 +125,7 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
             std::at_quick_exit(save_svd);
             saveMetaData.at_quick_exit = true;
         }
+        saveMetaData.svd_is_running = true;
     }
 
 #pragma omp atomic
