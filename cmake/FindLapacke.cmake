@@ -58,15 +58,23 @@ function(target_include_openblas_directories tgt)
       $ENV{BLASROOT} ${BLASROOT}
       $ENV{EBROOTOPENBLAS} ${EBROOTOPENBLAS}
     )
-    find_path(OpenBLAS_INCLUDE_DIR NAMES lapacke.h
+    find_path(OpenBLAS_INCLUDE_DIR NAMES openblas/lapacke.h
         HINTS ${OpenBLAS_ROOT_SEARCH_PATHS}
-        PATH_SUFFIXES openblas/include include
+        PATH_SUFFIXES include
+    )
+    find_path(LAPACKE_INCLUDE_DIR NAMES lapacke.h
+        HINTS ${OpenBLAS_ROOT_SEARCH_PATHS}
+        PATH_SUFFIXES include openblas include/openblas
     )
 
     if(OpenBLAS_INCLUDE_DIR)
         set(LAPACKE_INCLUDE_DIR "${OpenBLAS_INCLUDE_DIR}" PARENT_SCOPE)
         target_include_directories(${tgt} INTERFACE ${OpenBLAS_INCLUDE_DIR})
         target_compile_definitions(${tgt} INTERFACE OPENBLAS_AVAILABLE)
+    elseif(LAPACKE_INCLUDE_DIR)
+        set(LAPACKE_INCLUDE_DIR "${LAPACKE_INCLUDE_DIR}" PARENT_SCOPE)
+        target_include_directories(${tgt} INTERFACE ${LAPACKE_INCLUDE_DIR})
+        target_compile_definitions(${tgt} INTERFACE LAPACKE_AVAILABLE)
     endif()
 endfunction()
 

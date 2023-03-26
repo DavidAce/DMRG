@@ -7,9 +7,9 @@
     #define lapack_complex_double std::complex<double>
 #endif
 
-#if __has_include(<mkl_lapacke.h>)
+#if defined(MKL_AVAILABLE)
     #include <mkl_lapacke.h>
-#elif __has_include(<openblas/lapacke.h>)
+#elif defined(OPENBLAS_AVAILABLE)
     #include <openblas/lapacke.h>
 #else
     #include <lapacke.h>
