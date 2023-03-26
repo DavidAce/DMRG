@@ -7,7 +7,7 @@ function(target_include_mkl_directories tgt)
         $ENV{MKLROOT} ${MKLROOT}
         $ENV{MKL_ROOT} ${MKL_ROOT}
         $ENV{mkl_root} ${mkl_root}
-        $ENV{EBIMKLROOT} ${EBIMKLROOT}
+        $ENV{EBROOTIMKL} ${EBROOTIMKL}
         $ENV{HOME}
         /opt
         /opt/intel
@@ -29,7 +29,7 @@ function(target_include_mkl_directories tgt)
 
     find_path(MKL_ROOT_DIR
               include/mkl.h
-              PATHS ${MKL_ROOT_SEARCH_PATHS}
+              HINTS ${MKL_ROOT_SEARCH_PATHS}
               PATH_SUFFIXES ${MKL_PATH_SUFFIXES}
               )
     if(MKL_ROOT_DIR)
@@ -56,12 +56,12 @@ function(target_include_openblas_directories tgt)
       $ENV{OpenBLAS_HOME} ${OpenBLAS_HOME}
       $ENV{BLAS_ROOT} ${BLAS_ROOT}
       $ENV{BLASROOT} ${BLASROOT}
-      $ENV{EBOPENBLASROOT} ${EBOPENBLASROOT}
+      $ENV{EBROOTOPENBLAS} ${EBROOTOPENBLAS}
     )
-    find_path(OpenBLAS_INCLUDE_DIR NAMES openblas/lapacke.h
-        PATHS ${OpenBLAS_ROOT_SEARCH_PATHS}
-        PATH_SUFFIXES include
-        )
+    find_path(OpenBLAS_INCLUDE_DIR NAMES lapacke.h
+        HINTS ${OpenBLAS_ROOT_SEARCH_PATHS}
+        PATH_SUFFIXES openblas/include include
+    )
 
     if(OpenBLAS_INCLUDE_DIR)
         set(LAPACKE_INCLUDE_DIR "${OpenBLAS_INCLUDE_DIR}" PARENT_SCOPE)
