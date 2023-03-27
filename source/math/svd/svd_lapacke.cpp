@@ -260,6 +260,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     S.resize(sizeS);
                     VT.resize(rowsVT, colsVT);
 
+                    std::vector<double> superb(static_cast<size_t>(mn));
+                    info = LAPACKE_zgesvd(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, superb.data());
+                    break;
                     int lcwork = std::max(1, 2 * mn + mx);
                     int lrwork = std::max(1, 5 * mn);
                     cwork.resize(static_cast<size_t>(lcwork));
@@ -339,6 +342,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
                     U.resize(rowsU, colsU);
                     S.resize(sizeS);
                     VT.resize(rowsVT, colsVT);
+
+                    info = LAPACKE_zgesdd(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt);
+                    break;
 
                     int lcwork = std::max(1, mn * mn + 3 * mn);
                     int lrwork = std::max(1, mn * std::max(5 * mn + 7, 2 * mx + 2 * mn + 1));
