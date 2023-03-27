@@ -73,8 +73,8 @@
       },
       "environment": {
         "BLA_VENDOR" : "Intel10_64lp",
-        "MKLROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}",
-        "MKL_ROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}"
+        "MKLROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}\"",
+        "MKL_ROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}\""
       }
     },
     {

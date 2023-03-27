@@ -92,6 +92,7 @@ void svd::solver::save_svd() {
         auto eigen_version = fmt::format("{}.{}.{}", EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
         file.writeAttribute(eigen_version, group_name, "Eigen Version");
     }
+    smd = svd::internal::SaveMetaData{};
 }
 
 template<typename Scalar>

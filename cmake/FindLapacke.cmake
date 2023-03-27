@@ -92,11 +92,11 @@ endfunction()
 
 
 function(find_Lapacke)
-    if(NOT DEFINED BLA_VENDOR AND NOT DEFINED $ENV{BLA_VENDOR})
-        message(FATAL_ERROR "BLA_VENDOR is unset" )
-    endif()
-    if(NOT DEFINED BLA_VENDOR AND DEFINED $ENV{BLA_VENDOR})
+    if(DEFINED ENV{BLA_VENDOR} AND NOT DEFINED BLA_VENDOR )
         set(BLA_VENDOR $ENV{BLA_VENDOR})
+    endif()
+    if(NOT DEFINED BLA_VENDOR AND NOT DEFINED ENV{BLA_VENDOR})
+        message(FATAL_ERROR "BLA_VENDOR is unset" )
     endif()
 
     find_package(BLAS REQUIRED)
