@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <deque>
+#include <algorithm>
 namespace tid {
     namespace internal {
 

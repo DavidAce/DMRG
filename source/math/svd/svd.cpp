@@ -80,7 +80,7 @@ long long svd::solver::get_count() { return count; }
  *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
+std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>>
     svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, const svd::config &svd_cfg) {
 #if defined(DMRG_ENABLE_RSVD)
     constexpr bool has_rsvd = true;
@@ -166,12 +166,12 @@ using cplx = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<real>, svd::solver::VectorType<real>, svd::solver::MatrixType<real>>
+template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>>
     svd::solver::do_svd_ptr(const real *, long, long, const svd::config &);
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>>
+template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>>
     svd::solver::do_svd_ptr(const cplx *, long, long, const svd::config &);
 
 template<typename Scalar>

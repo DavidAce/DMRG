@@ -13,7 +13,7 @@
 /*! \brief Performs randomized SVD on a matrix
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
+std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>>
     svd::solver::do_svd_rsvd([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols) const {
 #if !defined(DMRG_ENABLE_RSVD)
     throw std::runtime_error("Define DMRG_ENABLE_RSVD to use rsvd");
@@ -73,10 +73,8 @@ using cplx = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<real>, svd::solver::VectorType<real>, svd::solver::MatrixType<real>> svd::solver::do_svd_rsvd(const real *, long,
-                                                                                                                                          long) const;
+template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>> svd::solver::do_svd_rsvd(const real *, long, long) const;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>> svd::solver::do_svd_rsvd(const cplx *, long,
-                                                                                                                                          long) const;
+template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_rsvd(const cplx *, long, long) const;

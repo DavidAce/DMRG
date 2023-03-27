@@ -26,8 +26,8 @@ namespace svd {
  *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
  */
 template<typename Scalar>
-std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd::solver::MatrixType<Scalar>>
-    svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows, long cols) const {
+std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows,
+                                                                                                                long cols) const {
     auto t_eigen = tid::tic_scope("eigen", tid::highest);
     svd::log->trace("Starting SVD with Eigen");
     auto                                 minRC = std::min(rows, cols);
@@ -131,11 +131,9 @@ std::tuple<svd::solver::MatrixType<Scalar>, svd::solver::VectorType<Scalar>, svd
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::solver::MatrixType<double>, svd::solver::VectorType<double>, svd::solver::MatrixType<double>>
-    svd::solver::do_svd_eigen(const double *, long, long) const;
+template std::tuple<svd::MatrixType<double>, svd::VectorType<double>, svd::MatrixType<double>> svd::solver::do_svd_eigen(const double *, long, long) const;
 
 using cplx = std::complex<double>;
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::solver::MatrixType<cplx>, svd::solver::VectorType<cplx>, svd::solver::MatrixType<cplx>> svd::solver::do_svd_eigen(const cplx *, long,
-                                                                                                                                           long) const;
+template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_eigen(const cplx *, long, long) const;

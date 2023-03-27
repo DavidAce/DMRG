@@ -10,6 +10,14 @@ namespace tid {
 }
 
 namespace svd {
+
+    using real = double;
+    using cplx = std::complex<double>;
+    template<typename Scalar>
+    using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+    template<typename Scalar>
+    using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
+
     inline std::shared_ptr<spdlog::logger> log;
     namespace internal {
         // LAPACK uses internal workspace arrays which can be reused for the duration of the program.
@@ -47,11 +55,6 @@ namespace svd {
         mutable long                         rank             = 0; // Stores the last rank
         inline static long long              count            = 0; // Count the number of svd invocations for this execution
         inline static internal::SaveMetaData saveMetaData     = {};
-
-        template<typename Scalar>
-        using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
-        template<typename Scalar>
-        using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
         static void save_svd();
 

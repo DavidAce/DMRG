@@ -52,16 +52,16 @@
         "NINJA_STATUS": "[run %r|beg %s|fin %f|tot %t|rate %o|time %e]:"
       }
     },
-        {
+    {
       "name": "openblas",
       "hidden": true,
       "cacheVariables": {
         "DMRG_ENABLE_MKL": "FALSE",
-        "BLA_VENDOR" : "OpenBLAS"
+        "BLA_VENDOR": "OpenBLAS"
       },
       "environment": {
-        "BLA_VENDOR" : "OpenBLAS",
-        "CMAKE_PREFIX_PATH" : "$penv{OpenBLAS_ROOT};$penv{BLASROOT};$penv{EBROOTOPENBLAS};$penv{CMAKE_PREFIX_PATH}"
+        "BLA_VENDOR": "OpenBLAS",
+        "CMAKE_PREFIX_PATH": "$penv{OpenBLAS_ROOT};$penv{BLASROOT};$penv{EBROOTOPENBLAS};$penv{CMAKE_PREFIX_PATH}"
       }
     },
     {
@@ -69,10 +69,10 @@
       "hidden": true,
       "cacheVariables": {
         "DMRG_ENABLE_MKL": "TRUE",
-        "BLA_VENDOR" : "Intel10_64lp"
+        "BLA_VENDOR": "Intel10_64lp"
       },
       "environment": {
-        "BLA_VENDOR" : "Intel10_64lp",
+        "BLA_VENDOR": "Intel10_64lp",
         "MKLROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}\"",
         "MKL_ROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}\""
       }
@@ -90,6 +90,7 @@
       "name": "debug",
       "hidden": true,
       "cacheVariables": {
+        "BUILD_SHARED_LIBS": "TRUE",
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_MAKEFILE_VERBOSE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
@@ -102,7 +103,7 @@
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
       },
       "environment": {
-        "VERBOSE" : "1"
+        "VERBOSE": "1"
       }
     },
     {
@@ -269,7 +270,6 @@
         "release-clang-14"
       ]
     },
-
     {
       "name": "debug-gcc-12-conan-mkl",
       "displayName": "Debug|gcc-12|conan|mkl|shared|asan",
@@ -277,10 +277,16 @@
         "mkl",
         "pkg-conan",
         "debug-gcc-12"
-      ],
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": "TRUE"
-      }
+      ]
+    },
+    {
+      "name": "debug-gcc-12-conan-openblas",
+      "displayName": "Debug|gcc-12|conan|openblas|shared|asan",
+      "inherits": [
+        "openblas",
+        "pkg-conan",
+        "debug-gcc-12"
+      ]
     },
     {
       "name": "debug-clang-14-conan-mkl",
@@ -289,12 +295,17 @@
         "mkl",
         "pkg-conan",
         "debug-clang-14"
-      ],
-      "cacheVariables": {
-        "BUILD_SHARED_LIBS": "TRUE"
-      }
+      ]
     },
-
+    {
+      "name": "debug-clang-14-conan-openblas",
+      "displayName": "Debug|clang-14|conan|openblas|shared|asan",
+      "inherits": [
+        "openblas",
+        "pkg-conan",
+        "debug-clang-14"
+      ]
+    },
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
@@ -349,7 +360,7 @@
         "COMPILER_ENABLE_CCACHE": "FALSE"
       },
       "environment": {
-        "VERBOSE" : "1"
+        "VERBOSE": "1"
       }
     },
     {
@@ -385,6 +396,22 @@
     {
       "name": "release-clang-14-conan-openblas-native",
       "configurePreset": "release-gcc-12-conan-openblas-native"
+    },
+    {
+      "name": "debug-gcc-12-conan-mkl",
+      "configurePreset": "debug-gcc-12-conan-mkl"
+    },
+    {
+      "name": "debug-gcc-12-conan-openblas",
+      "configurePreset": "debug-gcc-12-conan-openblas"
+    },
+    {
+      "name": "debug-clang-14-conan-mkl",
+      "configurePreset": "debug-clang-14-conan-mkl"
+    },
+    {
+      "name": "debug-clang-14-conan-openblas",
+      "configurePreset": "debug-clang-14-conan-openblas"
     },
     {
       "name": "kraken",
