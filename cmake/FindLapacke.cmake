@@ -103,7 +103,7 @@ function(find_Lapacke)
     find_package(LAPACK REQUIRED)
     include(cmake/CheckCompile.cmake)
 
-    set(lapacke_tgt_candidates LAPACK::LAPACK mkl::mkl OpenBLAS::OpenBLAS)
+    set(lapacke_tgt_candidates LAPACK::LAPACK BLAS::BLAS mkl::mkl OpenBLAS::OpenBLAS)
     foreach(tgt ${lapacke_tgt_candidates})
         if (TARGET ${tgt} AND NOT TARGET lapacke::lapacke)
             message(DEBUG "Looking for Lapacke in ${tgt}")
