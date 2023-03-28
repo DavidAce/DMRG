@@ -10,12 +10,12 @@ if(DEFINED CMAKE_INSTALL_PREFIX
 endif()
 
 # Setup build and install directories for dependencies
-if(NOT DMRG_DEPS_BUILD_DIR)
+if(NOT DEFINED DMRG_DEPS_BUILD_DIR)
     set(DMRG_DEPS_BUILD_DIR ${CMAKE_BINARY_DIR}/pkg-build)
 endif()
 
 # Install dependencies to the same location as the main project by default
-if(NOT DMRG_DEPS_INSTALL_DIR)
+if(NOT DEFINED DMRG_DEPS_INSTALL_DIR)
     set(DMRG_DEPS_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 endif()
 
@@ -25,29 +25,5 @@ set(PKG_BUILD_DIR_DEFAULT   ${DMRG_DEPS_BUILD_DIR}   CACHE STRING "" FORCE )
 list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};$ENV{CMAKE_PREFIX_PATH};${DMRG_DEPS_INSTALL_DIR}")
 list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
 set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE INTERNAL "Paths for find_package config lookup" FORCE)
-
-# Append search paths for find_package and find_library calls
-list(PREPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" CACHE INTERNAL "Paths for find_package module lookup" FORCE)
-
-
-if (DMRG_PACKAGE_MANAGER MATCHES "conan")
-    # Paths to search for conan installation.
-    list(APPEND DMRG_CONAN_HINTS
-            ${CONAN_PREFIX}
-            $ENV{CONAN_PREFIX}
-            ${CONDA_PREFIX}
-            $ENV{CONDA_PREFIX}
-            $ENV{HOME}/anaconda3
-            $ENV{HOME}/anaconda
-            $ENV{HOME}/miniconda3
-            $ENV{HOME}/miniconda
-            )
-    list(APPEND DMRG_CONAN_PATH_SUFFIXES
-            bin envs/dmrg/bin
-            )
-    mark_as_advanced(DMRG_CONAN_HINTS)
-    mark_as_advanced(DMRG_CONAN_PATH_SUFFIXES)
-endif ()
 
 

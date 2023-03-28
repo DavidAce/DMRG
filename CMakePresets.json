@@ -26,6 +26,7 @@
         "COMPILER_PROFILE_BUILD": "FALSE",
         "CMAKE_VERBOSE_MAKEFILE": "FALSE",
         "CMAKE_MESSAGE_LOG_LEVEL": "STATUS",
+        "CMAKE_MODULE_PATH": "${sourceDir}/cmake/modules",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/pkg-install",
         "CMAKE_C_STANDARD": "17",
         "CMAKE_CXX_STANDARD": "17",
@@ -61,7 +62,7 @@
       },
       "environment": {
         "BLA_VENDOR": "OpenBLAS",
-        "CMAKE_PREFIX_PATH": "${sourceDir}/cmake/modules;$penv{OpenBLAS_ROOT};$penv{BLASROOT};$penv{EBROOTOPENBLAS};$penv{CMAKE_PREFIX_PATH}"
+        "CMAKE_PREFIX_PATH": "$penv{OpenBLAS_ROOT}:$penv{BLASROOT}:$penv{EBROOTOPENBLAS}:$penv{CMAKE_PREFIX_PATH}"
       }
     },
     {
