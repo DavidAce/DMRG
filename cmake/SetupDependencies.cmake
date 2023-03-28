@@ -11,7 +11,6 @@ endif()
 #
 message(STATUS "CONAN_OPTIONS: ${CONAN_OPTIONS}")
 
-
 find_package(Threads REQUIRED)
 find_package(OpenMP COMPONENTS CXX REQUIRED)
 target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)

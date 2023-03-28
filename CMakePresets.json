@@ -61,7 +61,7 @@
       },
       "environment": {
         "BLA_VENDOR": "OpenBLAS",
-        "CMAKE_PREFIX_PATH": "$penv{OpenBLAS_ROOT};$penv{BLASROOT};$penv{EBROOTOPENBLAS};$penv{CMAKE_PREFIX_PATH}"
+        "CMAKE_PREFIX_PATH": "${sourceDir}/cmake/modules;$penv{OpenBLAS_ROOT};$penv{BLASROOT};$penv{EBROOTOPENBLAS};$penv{CMAKE_PREFIX_PATH}"
       }
     },
     {

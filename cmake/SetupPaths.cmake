@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-# Append search paths for find_package and find_library calls
-list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
-
-
 # Transform CMAKE_INSTALL_PREFIX to full path
 if(DEFINED CMAKE_INSTALL_PREFIX
     AND NOT IS_ABSOLUTE CMAKE_INSTALL_PREFIX
@@ -26,9 +22,14 @@ endif()
 set(PKG_INSTALL_DIR_DEFAULT ${DMRG_DEPS_INSTALL_DIR} CACHE STRING "" FORCE )
 set(PKG_BUILD_DIR_DEFAULT   ${DMRG_DEPS_BUILD_DIR}   CACHE STRING "" FORCE )
 
-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PKG_INSTALL_DIR_DEFAULT} ${CMAKE_INSTALL_PREFIX})
+list(PREPEND CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};$ENV{CMAKE_PREFIX_PATH};${DMRG_DEPS_INSTALL_DIR}")
 list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE INTERNAL "Paths for find_package lookup" FORCE)
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE INTERNAL "Paths for find_package config lookup" FORCE)
+
+# Append search paths for find_package and find_library calls
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" CACHE INTERNAL "Paths for find_package module lookup" FORCE)
+
 
 if (DMRG_PACKAGE_MANAGER MATCHES "conan")
     # Paths to search for conan installation.

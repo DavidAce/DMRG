@@ -60,6 +60,7 @@ def parse(project_name):
 
 
     args = parser.parse_args()
+
     if args.default_kraken:
         parser.set_defaults(partition='dedicated',qos='lowprio')
         args = parser.parse_args()

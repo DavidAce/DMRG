@@ -17,7 +17,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
 #        add_library(lapacke::lapacke ALIAS OpenBLAS::OpenBLAS)
 #    endif()
 
-    find_package(Lapacke           REQUIRED)                                         # Lapacke needed by arpack++, included in MKL or OpenBLAS
+    find_package(Lapacke           REQUIRED MODULE)                                  # Lapacke needed by arpack++, included in MKL or OpenBLAS
     find_package(pcg-cpp           REQUIRED)
     find_package(Eigen3     3.4.0  REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
     find_package(h5pp       1.11.0 REQUIRED)                                         # h5pp for writing to file binary in format
