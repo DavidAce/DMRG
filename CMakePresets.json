@@ -70,12 +70,13 @@
       "hidden": true,
       "cacheVariables": {
         "DMRG_ENABLE_MKL": "TRUE",
-        "BLA_VENDOR": "Intel10_64lp"
+        "BLA_VENDOR": "Intel10_64lp",
+        "MKLROOT": "/opt/intel/oneapi/mkl/latest;$penv{MKLROOT};$penv{EBROOTIMKL}"
       },
       "environment": {
         "BLA_VENDOR": "Intel10_64lp",
-        "MKLROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}\"",
-        "MKL_ROOT": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}\""
+        "MKLROOT": "/opt/intel/oneapi/mkl/latest;$penv{MKLROOT};$penv{EBROOTIMKL}",
+        "CMAKE_PREFIX_PATH": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}"
       }
     },
     {

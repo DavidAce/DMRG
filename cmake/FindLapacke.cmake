@@ -1,15 +1,10 @@
 
 function(target_include_mkl_directories tgt)
+    message(CHECK_START "Linking Intel MKL include paths")
     set(MKL_ROOT_SEARCH_PATHS
-        ${MKL_ROOT_DIR}
-        $ENV{MKL_DIR} ${MKL_DIR}
-        $ENV{MKLDIR} ${MKLDIR}
         $ENV{MKLROOT} ${MKLROOT}
-        $ENV{MKL_ROOT} ${MKL_ROOT}
-        $ENV{mkl_root} ${mkl_root}
         $ENV{EBROOTIMKL} ${EBROOTIMKL}
         $ENV{BLASROOT} ${BLASROOT}
-        $ENV{BLAS_ROOT} ${BLAS_ROOT}
         /opt
         /opt/intel
         /opt/intel/oneapi
@@ -26,7 +21,7 @@ function(target_include_mkl_directories tgt)
 
     find_path(MKL_ROOT_DIR
               include/mkl.h
-              HINTS ${MKL_ROOT_SEARCH_PATHS}
+              PATHS ${MKL_ROOT_SEARCH_PATHS}
               PATH_SUFFIXES ${MKL_PATH_SUFFIXES}
               )
     if(MKL_ROOT_DIR)
@@ -34,16 +29,29 @@ function(target_include_mkl_directories tgt)
                   mkl_lapacke.h
                   HINTS ${MKL_ROOT_DIR}/include
                   )
-
-        if(MKL_INCLUDE_DIR)
+    endif()
+    if(MKL_ROOT_DIR AND MKL_INCLUDE_DIR)
+            message(CHECK_PASS "found")
             target_include_directories(${tgt} INTERFACE ${MKL_INCLUDE_DIR})
             target_compile_definitions(${tgt} INTERFACE MKL_AVAILABLE)
             set(LAPACKE_INCLUDE_DIR "${MKL_INCLUDE_DIR}" PARENT_SCOPE)
-        else()
-            message(WARNING "Found MKL_ROOT_DIR but not MKL_INCLUDE_DIR:"
-                    "MKL_ROOT_DIR   : ${MKL_ROOT_DIR})"
-                    "MKL_INCLUDE_DIR: ${MKL_INCLUDE_DIR})")
-        endif()
+    else()
+            message(CHECK_FAIL "not found")
+            message(FATAL_ERROR "Could not find Intel MKL directories:\n"
+                    "MKLROOT                : ${MKLROOT}\n"
+                    "MKL_ROOT               : ${MKL_ROOT}\n"
+                    "EBROOTIMKL             : ${EBROOTIMKL}\n"
+                    "BLASROOT               : ${BLASROOT}\n"
+                    "BLAS_ROOT              : ${BLAS_ROOT}\n"
+                    "ENV MKLROOT            : $ENV{MKLROOT}\n"
+                    "ENV MKL_ROOT           : $ENV{MKL_ROOT}\n"
+                    "ENV EBROOTIMKL         : $ENV{EBROOTIMKL}\n"
+                    "ENV BLASROOT           : $ENV{BLASROOT}\n"
+                    "ENV BLAS_ROOT          : $ENV{BLAS_ROOT}\n"
+                    "MKL_ROOT_SEARCH_PATHS  : ${MKL_ROOT_SEARCH_PATHS}\n"
+                    "MKL_ROOT_DIR           : ${MKL_ROOT_DIR}\n"
+                    "MKL_INCLUDE_DIR        : ${MKL_INCLUDE_DIR}\n")
+
     endif()
 endfunction()
 
