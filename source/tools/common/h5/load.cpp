@@ -47,7 +47,20 @@ namespace tools::common::h5 {
                 t_ur.set_count(t.count);
             }
         } else {
-            tools::log->info("Could not load table [{}]", table_path);
+            tools::log->info("Could not load table: link does not exist: [{}]", table_path);
+        }
+    }
+
+    void load::pattern(const h5pp::File &h5file, std::string_view state_prefix, std::vector<size_t> &pattern) {
+        auto dset_path = fmt::format("{}/initial_pattern", state_prefix);
+        if(h5file.linkExists(dset_path)) {
+            pattern = h5file.readDataset<std::vector<size_t>>(dset_path);
+            tools::log->info("Loading initial pattern: [{}]", pattern);
+            if(pattern.size() != settings::model::model_size) {
+                throw except::runtime_error("Loaded pattern size {} != model size {}", pattern.size(), settings::model::model_size);
+            }
+        } else {
+            tools::log->info("Could not load pattern: link does not exist: [{}]", dset_path);
         }
     }
 }

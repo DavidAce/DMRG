@@ -135,35 +135,35 @@ namespace settings {
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the algorithms */
     namespace strategy {
-        inline bool          move_sites_when_stuck       = true;                                   /*!< Try moving sites around when stuck */
-        inline size_t        project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
-        inline size_t        project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
-        inline bool          project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_increase_when == true). */
-        inline bool          project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
-        inline bool          project_final_state         = false;                                  /*!< Project to target axis/parity sector before writing down the final state */
-        inline bool          randomize_on_bond_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing the bond dimension */
-        inline bool          randomize_early             = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
-        inline bool          use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
-        inline size_t        max_resets                  = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
-        inline size_t        max_stuck_iters             = 5;                                      /*!< If stuck for this many iterations -> stop. */
-        inline size_t        max_saturation_iters        = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
-        inline size_t        min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
-        inline size_t        min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
-        inline double        max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment expansion */
-        inline size_t        multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
-        inline size_t        multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
-        inline MultisiteMove multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
-        inline MultisiteWhen multisite_mps_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {OFF, STUCK, SATURATED, ALWAYS} */
-        inline std::string   target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
-        inline std::string   initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
-        inline StateInitType initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
-        inline StateInit     initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
-        inline StateInit     secondary_states            = StateInit::RANDOMIZE_PREVIOUS_STATE;    /*!< Spin configuration for subsequent states (only for finite systems)  */
-        inline double        fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
-        inline UpdateWhen    bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
-        inline double        bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
-        inline UpdateWhen    trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
-        inline double        trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
+        inline bool                move_sites_when_stuck       = true;                                   /*!< Try moving sites around when stuck */
+        inline size_t              project_on_saturation       = 10;                                     /*!< Project to target axis/parity sector every nth iteration when saturated. (0 = turn off) */
+        inline size_t              project_on_every_iter       = 5;                                      /*!< Project to target axis/parity sector at the end of every nth iteration. This implies doing it when stuck also. */
+        inline bool                project_on_bond_update      = true;                                   /*!< Project to target axis/parity sector before the bond dimension limit is increased (only works if bond_increase_when == true). */
+        inline bool                project_initial_state       = false;                                  /*!< Project to target axis/parity sector when initializing a state. */
+        inline bool                project_final_state         = false;                                  /*!< Project to target axis/parity sector before writing down the final state */
+        inline bool                randomize_on_bond_update    = true;                                   /*!< Randomize MPS by flipping random spins when growing the bond dimension */
+        inline bool                randomize_early             = true;                                   /*!< Randomize MPS by flipping random spins before fully converging the first attempt (because the first attempt is biased) */
+        inline bool                use_eigenspinors            = false;                                  /*!< Use random pauli-matrix eigenvectors when initializing each mps site along x,y or z  */
+        inline size_t              max_resets                  = 1;                                      /*!< Maximum number of resets to product state due to saturation. One must be allowed for initialization */
+        inline size_t              max_stuck_iters             = 5;                                      /*!< If stuck for this many iterations -> stop. */
+        inline size_t              max_saturation_iters        = 5;                                      /*!< If either variance or entanglement saturated this long -> algorithm saturated = true */
+        inline size_t              min_saturation_iters        = 1;                                      /*!< Saturated at least this many iterations before stopping */
+        inline size_t              min_converged_iters         = 2;                                      /*!< Converged at least this many iterations before success */
+        inline double              max_env_expansion_alpha     = 1e-4;                                   /*!< Maximum value of alpha used in environment expansion */
+        inline size_t              multisite_mps_site_def      = 2;                                      /*!< Default number of sites in a multisite mps. More than ~8 is very expensive */
+        inline size_t              multisite_mps_site_max      = 4;                                      /*!< Maximum number of sites in a multisite mps (used when stuck). More than ~8 is very expensive */
+        inline MultisiteMove       multisite_mps_move          = MultisiteMove::ONE;                     /*!< How many sites to move after a multi-site dmrg step, choose between {ONE, MID, MAX} */
+        inline MultisiteWhen       multisite_mps_when          = MultisiteWhen::NEVER;                   /*!< When to increase the number of sites in a DMRG step {OFF, STUCK, SATURATED, ALWAYS} */
+        inline std::string         target_axis                 = "none";                                 /*!< Find an eigenstate with global spin component along this axis. Choose between Choose {none, (+-) x,y or z}  */
+        inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
+        inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
+        inline StateInit           initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
+        inline std::vector<size_t> initial_pattern             = {};                                     /*!< The actual random spin configuration used for the initial product state (for internal use) */
+        inline double              fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
+        inline UpdateWhen          bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
+        inline double              bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */
+        inline UpdateWhen          trnc_decrease_when          = UpdateWhen::NEVER;                      /*!< If and when to decrease SVD truncation error limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION} */
+        inline double              trnc_decrease_rate          = 1e-1;                                   /*!< Decrease SVD truncation error limit by this factor. Valid if 0 < x < 1 */
     }
 
 

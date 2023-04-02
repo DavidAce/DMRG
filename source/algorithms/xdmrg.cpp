@@ -65,43 +65,6 @@ void xdmrg::resume() {
                          xdmrg_task::POST_DEFAULT}; // Probably a savepoint. Simply "continue" the algorithm until convergence
         run_task_list(task_list);
     }
-
-    // If we reached this point the current state has finished for one reason or another.
-    // We may still have some more things to do, e.g. the config may be asking for more states
-    // Example 1:
-    //      max_states = 4
-    //      excited_state_number = 1
-    //      excited_states = excited_state_number + 1 = 2  <-- Due to counting from 0
-    //      missing_states = max_states - excited_states  = 2
-    // Example 2:
-    //      max_states = 2
-    //      excited_state_number = 1
-    //      excited_states = excited_state_number + 1 = 2  <-- Due to counting from 0
-    //      missing_states = max_states - excited_states  = 0
-
-    // Initialize another custom task list
-    std::deque<xdmrg_task> task_list;
-    auto                   excited_states = excited_state_number + 1;
-    auto                   missing_states = std::max(0ul, settings::xdmrg::max_states - excited_states);
-    for(size_t new_state_num = 0; new_state_num < missing_states; new_state_num++) {
-        task_list.emplace_back(xdmrg_task::TIMER_RESET);
-        switch(settings::strategy::secondary_states) {
-            case StateInit::RANDOM_PRODUCT_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
-            case StateInit::RANDOM_ENTANGLED_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::RANDOMIZE_PREVIOUS_STATE: task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
-            case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
-            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED:
-                throw except::runtime_error("TODO! Random product state with zero magnetization initialization not implemented yet");
-        }
-        task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
-        task_list.emplace_back(xdmrg_task::POST_DEFAULT);
-    }
-
-    tools::log->info("Resuming task list:");
-    for(const auto &task : task_list) tools::log->info(" -- {}", enum2sv(task));
-
-    run_task_list(task_list);
 }
 
 void xdmrg::run_default_task_list() {
@@ -111,21 +74,6 @@ void xdmrg::run_default_task_list() {
         xdmrg_task::POST_DEFAULT,
     };
 
-    // Insert requested number of excited states
-    for(size_t num = 1; num < settings::xdmrg::max_states; num++) {
-        default_task_list.emplace_back(xdmrg_task::TIMER_RESET);
-        switch(settings::strategy::secondary_states) {
-            case StateInit::RANDOM_PRODUCT_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN); break;
-            case StateInit::RANDOM_ENTANGLED_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE); break;
-            case StateInit::RANDOMIZE_PREVIOUS_STATE: default_task_list.emplace_back(xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE); break;
-            case StateInit::PRODUCT_STATE_ALIGNED: throw except::runtime_error("TODO! Product state aligned initialization not implemented yet");
-            case StateInit::PRODUCT_STATE_NEEL: throw except::runtime_error("TODO! Product state neel initialization not implemented yet");
-            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED:
-                throw except::runtime_error("TODO! Random product state with zero magnetization initialization not implemented yet");
-        }
-        default_task_list.emplace_back(xdmrg_task::FIND_EXCITED_STATE);
-        default_task_list.emplace_back(xdmrg_task::POST_DEFAULT);
-    }
     run_task_list(default_task_list);
 }
 
@@ -149,11 +97,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_DEFAULT:
                 run_preprocessing();
                 break;
-                //            case xdmrg_task::NEXT_TRUNCATE_ALL_SITES: truncate_all_sites(); break;
-            case xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::NEW_STATE, StateInit::RANDOM_PRODUCT_STATE); break;
-            case xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::NEW_STATE, StateInit::RANDOM_ENTANGLED_STATE); break;
-            case xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE: randomize_state(ResetReason::NEW_STATE, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
-            case xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN: randomize_state(ResetReason::NEW_STATE, settings::strategy::initial_state); break;
+
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_EXCITED_STATE:
                 tensors.state->set_name(fmt::format("state_{}", excited_state_number));

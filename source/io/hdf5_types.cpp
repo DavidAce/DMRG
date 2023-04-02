@@ -153,7 +153,7 @@ void h5pp_table_measurements_infinite::register_table_type() {
         H5Tinsert(h5_type, "wall_time",                    HOFFSET(table, wall_time),                    H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "phys_time",                    HOFFSET(table, phys_time),                    H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "time_step", HOFFSET(table, time_step), h5pp::type::compound::H5T_COMPLEX<double>::h5type());
-        /* clang-format on */
+    /* clang-format on */
 }
 
 h5pp::hid::h5t h5pp_table_algorithm_status::get_h5t() {
@@ -240,7 +240,7 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "spin_parity_has_converged",   HOFFSET(table, spin_parity_has_converged),  H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "time_step_has_converged",     HOFFSET(table, time_step_has_converged),    H5T_NATIVE_UINT8);
         H5Tinsert(h5_type, "fes_is_running",              HOFFSET(table, fes_is_running),             H5T_NATIVE_UINT8);
-        /* clang-format on */
+    /* clang-format on */
 }
 
 h5pp::hid::h5t h5pp_table_memory_usage::get_h5t() {
@@ -264,19 +264,10 @@ void h5pp_table_memory_usage::register_table_type() {
     /* clang-format on */
 }
 
-h5pp_ur::item::item(const item &it) : time(it.time), sum(it.sum), pcnt(it.pcnt), avg(it.avg), level(it.level), count(it.count) { copy_name(it.name); }
+h5pp_ur::item::item(const item &it) : name(it.name), time(it.time), sum(it.sum), pcnt(it.pcnt), avg(it.avg), level(it.level), count(it.count) {}
 h5pp_ur::item::item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count)
-    : time(time), sum(sum), pcnt(pcnt), avg(avg), level(level), count(count) {
-    copy_name(name_);
-}
+    : name(name_), time(time), sum(sum), pcnt(pcnt), avg(avg), level(level), count(count) {}
 
-h5pp_ur::item::~item() noexcept { free(name); }
-void h5pp_ur::item::copy_name(std::string_view name_) {
-    // Note that we must use C-style malloc/free here rather than C++-style new/delete, since that is what HDF5 uses internally.
-    // This is particularly important when we read data from file, and let HDF5 allocate the vlen buffer
-    name = static_cast<char *>(malloc((name_.size() + 1) * sizeof(char))); // Add +1 for null terminator
-    strcpy(name, name_.data());
-}
 h5pp::hid::h5t h5pp_ur::get_h5t() {
     register_table_type();
     return h5_type;

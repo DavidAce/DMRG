@@ -502,7 +502,8 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     tensors.activate_sites(settings::solver::max_size_shift_invert, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
-    tensors.randomize_state(reason, state_init, state_type.value(), sector.value(), use_eigenspinors.value(), bitfield.value(), bond_lim.value());
+    tensors.randomize_state(reason, state_init, state_type.value(), sector.value(), use_eigenspinors.value(), bitfield.value(), bond_lim.value(),
+                            settings::strategy::initial_pattern);
 
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
@@ -539,6 +540,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
         tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
         tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     }
+    write_to_file(StorageEvent::INIT_STATE);
 }
 
 void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {

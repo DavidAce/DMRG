@@ -154,7 +154,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
-    dmrg_config.load_parameter("strategy::secondary_states"                   , strategy::secondary_states);
     dmrg_config.load_parameter("strategy::fes_rate"                           , strategy::fes_rate);
     dmrg_config.load_parameter("strategy::bond_increase_when"                 , strategy::bond_increase_when);
     dmrg_config.load_parameter("strategy::bond_increase_rate"                 , strategy::bond_increase_rate);

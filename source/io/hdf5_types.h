@@ -231,18 +231,17 @@ class h5pp_ur {
 
     public:
     struct item {
-        char  *name;
-        double time;
-        double sum;
-        double pcnt;
-        double avg;
-        int    level;
-        size_t count;
+        using vlen_type = h5pp::vstr_t;
+        h5pp::vstr_t name;
+        double       time;
+        double       sum;
+        double       pcnt;
+        double       avg;
+        int          level;
+        size_t       count;
         item() = default;
         item(const item &it);
         item(std::string_view name_, double time, double sum, double pcnt, double avg, int level, size_t count);
-        ~item() noexcept; // Automatically deallocate when no longer needed
-        void copy_name(std::string_view name_);
     };
 
     static h5pp::hid::h5t get_h5t();

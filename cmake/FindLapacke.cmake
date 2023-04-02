@@ -8,14 +8,11 @@ function(target_include_mkl_directories tgt)
         $ENV{MKL_ROOT} ${MKL_ROOT}
         $ENV{mkl_root} ${mkl_root}
         $ENV{EBROOTIMKL} ${EBROOTIMKL}
-        $ENV{HOME}
+        $ENV{BLASROOT} ${BLASROOT}
+        $ENV{BLAS_ROOT} ${BLAS_ROOT}
         /opt
         /opt/intel
         /opt/intel/oneapi
-        /usr/lib/x86_64-linux-gnu
-        /usr
-        /Library/Frameworks/Intel_MKL.framework/Versions/Current/lib/universal
-        "Program Files (x86)/Intel/ComposerXE-2011/mkl"
         )
 
     set(MKL_PATH_SUFFIXES
@@ -93,7 +90,7 @@ endfunction()
 
 function(find_Lapacke)
     if(DEFINED ENV{BLA_VENDOR} AND NOT DEFINED BLA_VENDOR )
-        set(BLA_VENDOR $ENV{BLA_VENDOR})
+        set(BLA_VENDOR $ENV{BLA_VENDOR} CACHE INTERNAL "")
     endif()
     if(NOT DEFINED BLA_VENDOR AND NOT DEFINED ENV{BLA_VENDOR})
         message(FATAL_ERROR "BLA_VENDOR is unset" )
@@ -108,16 +105,15 @@ function(find_Lapacke)
         if (TARGET ${tgt} AND NOT TARGET lapacke::lapacke)
             message(DEBUG "Looking for Lapacke in ${tgt}")
             if (EXISTS ${PROJECT_SOURCE_DIR}/cmake/compile/Lapacke.cpp)
-                unset(check_compile_Lapacke CACHE)
-                check_compile(Lapacke ${tgt} ${PROJECT_SOURCE_DIR}/cmake/compile/Lapacke.cpp)
-                if (check_compile_Lapacke)
+                if(NOT Lapacke_compiles)
+                    check_compile(Lapacke ${tgt} ${PROJECT_SOURCE_DIR}/cmake/compile/Lapacke.cpp)
+                endif()
+                if (Lapacke_compiles)
                     add_library(lapacke::lapacke INTERFACE IMPORTED)
                     target_link_libraries(lapacke::lapacke INTERFACE ${tgt})
                     target_include_lapacke_directories(lapacke::lapacke)
                     message(DEBUG "Looking for Lapacke in ${tgt} - found")
                     break()
-                else ()
-                    unset(check_compile_Lapacke CACHE)
                 endif()
             else()
                 add_library(lapacke::lapacke INTERFACE IMPORTED)
@@ -152,9 +148,10 @@ function(find_Lapacke)
                 target_link_libraries(lapacke::lib INTERFACE ${LAPACK_LIBRARY})
             endif()
             target_link_libraries(lapacke::lib INTERFACE BLAS::BLAS LAPACK::LAPACK)
-            unset(check_compile_Lapacke CACHE)
-            check_compile(Lapacke lapacke::lib ${PROJECT_SOURCE_DIR}/cmake/compile/Lapacke.cpp)
-            if (check_compile_Lapacke)
+            if(NOT Lapacke_compiles)
+                check_compile(Lapacke lapacke::lib ${PROJECT_SOURCE_DIR}/cmake/compile/Lapacke.cpp)
+            endif()
+            if (Lapacke_compiles)
                 add_library(lapacke::lapacke INTERFACE IMPORTED)
                 target_link_libraries(lapacke::lapacke INTERFACE lapacke::lib)
                 target_compile_definitions(lapacke::lapacke INTERFACE LAPACKE_AVAILABLE)

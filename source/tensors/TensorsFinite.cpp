@@ -73,7 +73,7 @@ void TensorsFinite::randomize_model() {
 }
 
 void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view sector, bool use_eigenspinors,
-                                    size_t bitfield, long bond_lim) {
+                                    size_t bitfield, long bond_lim, std::vector<size_t> & pattern) {
     state->clear_measurements();
     tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | bond_lim {} | eigspinors {} | bitfield {}", state->get_name(),
                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type), sector, bond_lim, use_eigenspinors, bitfield);
@@ -81,7 +81,7 @@ void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, St
     tools::log->debug("Randomizing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
 
-    tools::finite::mps::randomize_state(*state, state_init, state_type, sector, use_eigenspinors, bitfield, bond_lim);
+    tools::finite::mps::randomize_state(*state, state_init, state_type, sector, use_eigenspinors, bitfield, bond_lim, pattern);
 
     tools::log->debug("Randomizing state - After : norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));

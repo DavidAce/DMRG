@@ -144,21 +144,23 @@
       }
     },
     {
-      "name": "pkg-find",
+      "name": "find",
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "find"
       }
     },
     {
-      "name": "pkg-cmake",
+      "name": "pkg",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_PACKAGE_MANAGER": "cmake"
+        "DMRG_PACKAGE_MANAGER": "cmake",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/pkg/pkg-provider.cmake",
+        "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
       }
     },
     {
-      "name": "pkg-conan",
+      "name": "conan",
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "find",
@@ -170,7 +172,7 @@
       }
     },
     {
-      "name": "pkg-conan2",
+      "name": "conan2",
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "find",
@@ -235,7 +237,7 @@
       "inherits": [
         "native",
         "mkl",
-        "pkg-conan",
+        "conan",
         "release-gcc-12"
       ]
     },
@@ -245,7 +247,7 @@
       "inherits": [
         "native",
         "openblas",
-        "pkg-conan",
+        "conan",
         "release-gcc-12"
       ]
     },
@@ -256,7 +258,7 @@
       "inherits": [
         "native",
         "mkl",
-        "pkg-conan",
+        "conan",
         "release-clang-14"
       ]
     },
@@ -267,7 +269,7 @@
       "inherits": [
         "native",
         "openblas",
-        "pkg-conan",
+        "conan",
         "release-clang-14"
       ]
     },
@@ -276,7 +278,7 @@
       "displayName": "Debug|gcc-12|conan|mkl|shared|asan",
       "inherits": [
         "mkl",
-        "pkg-conan",
+        "conan",
         "debug-gcc-12"
       ]
     },
@@ -285,7 +287,7 @@
       "displayName": "Debug|gcc-12|conan|openblas|shared|asan",
       "inherits": [
         "openblas",
-        "pkg-conan",
+        "conan",
         "debug-gcc-12"
       ]
     },
@@ -294,7 +296,7 @@
       "displayName": "Debug|clang-14|conan|mkl|shared|asan",
       "inherits": [
         "mkl",
-        "pkg-conan",
+        "conan",
         "debug-clang-14"
       ]
     },
@@ -303,7 +305,7 @@
       "displayName": "Debug|clang-14|conan|openblas|shared|asan",
       "inherits": [
         "openblas",
-        "pkg-conan",
+        "conan",
         "debug-clang-14"
       ]
     },
@@ -329,7 +331,7 @@
       "inherits": [
         "mkl",
         "haswell",
-        "pkg-conan",
+        "conan",
         "release",
         "default"
       ],
@@ -343,8 +345,9 @@
     },
     {
       "name": "kraken-debug",
-      "displayName": "Release|march=haswell|conan|mkl|debug flags",
+      "displayName": "Release|march=haswell|conan|openblas|debug flags",
       "inherits": [
+        "openblas",
         "kraken"
       ],
       "binaryDir": "${sourceDir}/build/Debug",
@@ -369,7 +372,7 @@
       "displayName": "Release|march=native|conan|mkl",
       "inherits": [
         "native",
-        "pkg-conan",
+        "conan",
         "release",
         "default"
       ],

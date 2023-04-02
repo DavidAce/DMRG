@@ -8,8 +8,7 @@ endif()
 if(NOT DEFINED BLA_VENDOR AND DEFINED $ENV{BLA_VENDOR})
     set(BLA_VENDOR $ENV{BLA_VENDOR} CACHE INTERNAL "BLAS backend")
 endif()
-#
-message(STATUS "CONAN_OPTIONS: ${CONAN_OPTIONS}")
+
 
 find_package(Threads REQUIRED)
 find_package(OpenMP COMPONENTS CXX REQUIRED)

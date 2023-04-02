@@ -4,8 +4,8 @@ from matplotlib.ticker import LogLocator, \
 import numpy as np
 from pathlib import Path
 
-# mplstyle = '../common/stylesheets/prb.mplstyle'
-mplstyle = '../common/stylesheets/slack.mplstyle'
+mplstyle = '../common/stylesheets/prb.mplstyle'
+# mplstyle = '../common/stylesheets/slack.mplstyle'
 prb = 'prb' in mplstyle
 legendoutside = False
 legendcollect = False
@@ -32,7 +32,7 @@ def get_meta(plotdir):
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
             },
             'include_v3': {
-                # 'L': [36],
+                # 'L': [32],
                 # 'L': [12],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_12'],
@@ -51,7 +51,7 @@ def get_meta(plotdir):
                 'tgw8': ['ID'],
                 'cgw8': ['EX'],
                 # 'u': [8,16,24,32,40,48,56,64],
-                # 'u': [8, 16, 32, 64, 80],
+                # 'u': [8, 16, 32, 64],
                 # 'ubond': [256],
             },
         },
@@ -364,12 +364,17 @@ def get_meta(plotdir):
             'groupname': 'lbits',
             'dsetname': 'corravg',
             'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
+            'filter':{
+                'L' : [32],
+                'u' : [8,16,32,64],
+            },
+            
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             'box_aspect': 1,
             # 'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
             'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$|i-j|$",
-            'xticks': [0, 6, 12, 18] if prb else None,
+            'xticks': [0, 8, 16, 24, 32] if prb else None,
             # 'yticks': [1e0, 1e-4, 1e-9],
             'yticks': [0, -3, -6, -9, -12, -15],
             # 'yscale': 'log',
@@ -400,34 +405,34 @@ def get_meta(plotdir):
             },
 
         },
-        'lbit-typ': {
-            'groupname': 'lbits',
-            'dsetname': 'corrtyp',
-            'titlename': 'l-bit',
-            'box_aspect': 1,
-            'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'xlabel': "$|i-j|$",
-            'yscale': 'log',
-            'ynopos': 'mask',
-            'plotprefix': 'lbit',
-            'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'mplstyle': mplstyle,
-            # 'xmax': 16,
-            'ymin': 1e-14,
-            'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
-            'legendlocation': 'best',
-            'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
-            'inset-cls': {
-                # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
-                'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
-                'coords': [None, None, None, None],
-                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
-                'legendtitle': '$\\xi_\\tau$',
-            },
-        },
+        # 'lbit-typ': {
+        #     'groupname': 'lbits',
+        #     'dsetname': 'corrtyp',
+        #     'titlename': 'l-bit',
+        #     'box_aspect': 1,
+        #     'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
+        #     'xlabel': "$|i-j|$",
+        #     'yscale': 'log',
+        #     'ynopos': 'mask',
+        #     'plotprefix': 'lbit',
+        #     'plotdir': Path(plotdir, Path(mplstyle).stem),
+        #     'mplstyle': mplstyle,
+        #     # 'xmax': 16,
+        #     'ymin': 1e-14,
+        #     'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+        #     'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
+        #     'legendoutside': legendoutside,
+        #     'legendcollect': legendcollect,
+        #     'legendlocation': 'best',
+        #     'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+        #     'inset-cls': {
+        #         # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
+        #         'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
+        #         'coords': [None, None, None, None],
+        #         # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+        #         'legendtitle': '$\\xi_\\tau$',
+        #     },
+        # },
         # 'decay': {
         #     'groupname': 'lbits',
         #     'dsetname': 'corravg',

@@ -65,10 +65,11 @@ void flbit::resume() {
                 tools::log->warn("Expected initial_state: PRODUCT_STATE_NEEL|PRODUCT_STATE_NEEL_SHUFFLED,. Got {}", enum2sv(settings::strategy::initial_state));
         }
 
-        if(settings::strategy::initial_axis != "+z") tools::log->warn("Expected initial_axis == +z. Got {}", settings::strategy::initial_axis);
+        if(settings::strategy::initial_axis.find("z") == std::string::npos)
+            tools::log->warn("Expected initial_axis == z. Got {}", settings::strategy::initial_axis);
 
         tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_axis,
-                                settings::strategy::use_eigenspinors, settings::input::bitfield, bond_lim);
+                                settings::strategy::use_eigenspinors, settings::input::bitfield, bond_lim, settings::strategy::initial_pattern);
 
         tensors.move_center_point_to_inward_edge();
 
@@ -121,6 +122,7 @@ void flbit::resume() {
 }
 
 void flbit::run_task_list(std::deque<flbit_task> &task_list) {
+    using namespace settings::strategy;
     while(not task_list.empty()) {
         auto task = task_list.front();
         switch(task) {
@@ -738,6 +740,14 @@ void flbit::transform_to_lbit_basis() {
 
 void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     AlgorithmFinite::write_to_file(*tensors.state, *tensors.model, *tensors.edges, storage_event, copy_policy);
+
+    // Save the initial state pattern (rather than the MPS itself)
+    if(storage_event == StorageEvent::INIT_STATE) {
+        if(!settings::strategy::initial_pattern.empty()) {
+            h5file->writeDataset(settings::strategy::initial_pattern, fmt::format("/{}/{}/initial_pattern", status.algo_type_sv(), tensors.state->get_name()));
+        }
+    }
+
     // Save the unitaries once
     if(storage_event == StorageEvent::MODEL) {
         auto        t_h5      = tid::tic_scope("h5");
@@ -790,18 +800,34 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeDataset(lbitSA.cls_typ_fit, "/fLBIT/model/lbits/cls_typ_fit");
                 h5file->writeDataset(lbitSA.cls_typ_rms, "/fLBIT/model/lbits/cls_typ_rms");
                 h5file->writeDataset(lbitSA.cls_typ_rsq, "/fLBIT/model/lbits/cls_typ_rsq");
-                h5file->writeDataset(lbitSA.corravg, "/fLBIT/model/lbits/corravg", H5D_CHUNKED, shape_avgs);
-                h5file->writeDataset(lbitSA.corrtyp, "/fLBIT/model/lbits/corrtyp", H5D_CHUNKED, shape_avgs);
-                h5file->writeDataset(lbitSA.correrr, "/fLBIT/model/lbits/correrr", H5D_CHUNKED, shape_avgs);
-                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corrtyp", "dimensions");
-                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/correrr", "dimensions");
-                if(settings::storage::storage_level_model > StorageLevel::LIGHT) {
-                    auto label_data = std::vector<std::string>{"sample", "i", "j"};
-                    h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/corrmat", H5D_CHUNKED, shape_data);
-                    h5file->writeDataset(lbitSA.corroff, "/fLBIT/model/lbits/corroff", H5D_CHUNKED, shape_data);
-                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corrmat", "dimensions");
-                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corroff", "dimensions");
+
+                auto label_data = std::vector<std::string>{"sample", "i", "j"};
+                if(settings::storage::storage_level_model >= StorageLevel::LIGHT) {
+                    h5file->writeDataset(lbitSA.corravg, "/fLBIT/model/lbits/corravg", H5D_CHUNKED, shape_avgs);
+                    h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corravg", "dimensions");
+                    h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
+
+                    h5file->writeDataset(lbitSA.correrr, "/fLBIT/model/lbits/correrr", H5D_CHUNKED, shape_avgs);
+                    h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/correrr", "dimensions");
+                    h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/correrr", "description");
                 }
+
+                if(settings::storage::storage_level_model >= StorageLevel::NORMAL) {
+                    h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/corrmat", H5D_CHUNKED, shape_data);
+                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corrmat", "dimensions");
+                    h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
+                }
+                if(settings::storage::storage_level_model >= StorageLevel::FULL) {
+                    h5file->writeDataset(lbitSA.corroff, "/fLBIT/model/lbits/corroff", H5D_CHUNKED, shape_data);
+                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corroff", "dimensions");
+                    h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff",
+                                           "description");
+
+                    h5file->writeDataset(lbitSA.corrtyp, "/fLBIT/model/lbits/corrtyp", H5D_CHUNKED, shape_avgs);
+                    h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corrtyp", "dimensions");
+                    h5file->writeAttribute("Site geometric average <<O(|i-j|)>>_typ", "/fLBIT/model/lbits/corrtyp", "description");
+                }
+
                 h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
                 h5file->writeAttribute(utstds, "/fLBIT/model/lbits", "u_tstd");
@@ -813,11 +839,6 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute(settings::flbit::cls::mpo_circuit_svd_bondlim, "/fLBIT/model/lbits", "u_bond");
                 h5file->writeAttribute(settings::flbit::cls::mpo_circuit_svd_trnclim, "/fLBIT/model/lbits", "u_trnc");
                 h5file->writeAttribute(settings::flbit::cls::mpo_circuit_switchdepth, "/fLBIT/model/lbits", "mpo_switchdepth");
-                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
-                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff", "description");
-                h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
-                h5file->writeAttribute("Site geometric average <<O(|i-j|)>>_typ", "/fLBIT/model/lbits/corrtyp", "description");
-                h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/correrr", "description");
             }
         }
         if(settings::flbit::cls::exit_when_done) exit(0);

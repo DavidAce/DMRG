@@ -25,6 +25,7 @@ namespace tools::finite::h5 {
             if(algo_type == AlgorithmType::fLBIT) {
                 // To successfully load a simulation there has to be an MPS with StorageLevel::FULL.
                 tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
+                tools::common::h5::load::pattern(h5file, state_prefix, settings::strategy::initial_pattern);
                 tools::common::h5::load::status(h5file, state_prefix, status);
                 tools::finite::h5::load::model(h5file, algo_type, *tensors.model);
                 tools::common::h5::load::timer(h5file, state_prefix, status);

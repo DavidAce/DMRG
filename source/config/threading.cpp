@@ -5,14 +5,18 @@
 #include <cstdlib>
 #include <omp.h>
 #include <optional>
-#if defined(OPENBLAS_AVAILABLE)
-    #include <openblas/cblas.h>
-    #include <openblas/openblas_config.h>
-#endif
+
 
 #if defined(MKL_AVAILABLE)
-    #include <mkl.h>
     #include <mkl_service.h>
+#elif defined(OPENBLAS_AVAILABLE)
+    #include <openblas/cblas.h>
+    #include <openblas/openblas_config.h>
+#elif __has_include(<cblas.h>)
+    #include <cblas.h>
+#if defined(OPENBLAS_VERSION)
+    #define OPENBLAS_AVAILABLE
+    #endif
 #endif
 
 namespace settings {
@@ -76,8 +80,8 @@ namespace settings {
         if(openblas_parallel_mode == 1) openblas_parallel_str = "threads";
         if(openblas_parallel_mode == 2) openblas_parallel_str = "openmp";
         if(openblas_parallel_mode == 1) openblas_set_num_threads(num_threads); // Use this for blas-related threading
-        tools::log->info("{} NUM_THREADS={} | parallel_mode={} | corename={} | gemm_multithread_threshold={}", openblas_get_config(),
-                         openblas_get_num_threads(), openblas_parallel_str, openblas_get_corename(), OPENBLAS_GEMM_MULTITHREAD_THRESHOLD);
+        tools::log->info("{} NUM_THREADS={} | parallel_mode={} | corename={}", openblas_get_config(),
+                         openblas_get_num_threads(), openblas_parallel_str, openblas_get_corename());
 #endif
 #if defined(MKL_AVAILABLE)
         tools::log->info("Intel MKL | max_threads {}", mkl_get_max_threads());

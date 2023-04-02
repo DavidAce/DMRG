@@ -58,9 +58,9 @@ def get_uniform_palette_names(num):
     return palettes[0:num]
 
 
-def get_colored_lstyles(db, linspec, default_palette):
+def get_colored_lstyles(db, linspec, default_palette, filter = None):
     linprod = list(
-        product(*get_vals(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
+        product(*get_vals(db, linspec, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
     palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     lstyles = [None] * len(linprod)
     if len(linspec) == 2:
@@ -91,7 +91,7 @@ def match_datanodes(db, meta, specs, vals):
         if dname is not None:
             if isinstance(dname, Iterable) and not any([d in dsetpath for d in dname]):
                 continue
-            elif not dname in dsetpath:
+            elif not dname in dset['node']['data'].name and not dname in dset['node']['data']:
                 continue
         equal = True
         for s, v in zip(specs, vals):
@@ -457,10 +457,9 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin1 = 1.0 / J1max
     tmax1 = 1.0 / J1min
 
-    r2max = np.min([r, int((L - 1))])  # Maximum interaction range, max(|i-j|)
-    Jmin2 = w2 * np.exp(
-        - r2max / (2 * x))  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-    Jmax2 = w2 * np.exp(- 1 / x)  # Order of magnitude of the largest 2-body terms (nearest neighbor)
+    r2max = np.min([r, int((L))])  # Maximum interaction range, max(|i-j|)
+    Jmin2 = w2 * np.exp(- r2max / (4.0 * x))  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmax2 = w2 * np.exp(- 1.0 / x)  # Order of magnitude of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
 
@@ -527,30 +526,40 @@ def page_entropy(L):
         S = S + 1.0 / k
     return S
 
+def get_filtered_list(key,vals,filter):
+    if vals is None:
+        return None
+    if filter is None:
+        return vals
+    elif isinstance(filter, dict):
+        for fkey, fvals in filter.items():
+            if fkey in key:
+                return [v for v in fvals if v in vals]
+    return vals
 
-def get_prop(db, keyfmt, prop):
+def get_prop(db, keyfmt, prop, filter = None):
     if isinstance(keyfmt, list) or isinstance(keyfmt, tuple):
         keys = []
         for kf in keyfmt:
             k = kf.split(':')[0]
             if prop in db:
-                if k in db[prop]:
-                    keys.append(db[prop][k])
-                elif k in db[prop]['keys']:
-                    keys.append(db[prop]['keys'][k])
+                v = db[prop].get(k) if k in db[prop] else db[prop].get('keys').get(k)
+                v = get_filtered_list(k,v,filter)
+                if v is not None:
+                    keys.append(v)
         return keys
     else:
         if prop in db:
             k = keyfmt.split(':')[0]
-            if k in db[prop]:
-                return db[prop][k]
-            elif k in db[prop]['keys']:
-                return db[prop]['keys'][k]
+            v = db[prop].get(k) if k in db[prop] else db[prop].get('keys').get(k)
+            v = get_filtered_list(k, v, filter)
+            if v is not None:
+                return v
         return []
 
 
-def get_vals(db, keyfmt):
-    return get_prop(db, keyfmt, 'vals')
+def get_vals(db, keyfmt, filter=None):
+    return get_prop(db, keyfmt, 'vals', filter)
 
 
 def get_keys(db, keyfmt):

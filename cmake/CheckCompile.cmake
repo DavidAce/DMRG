@@ -1,9 +1,11 @@
+cmake_minimum_required(VERSION 3.17)
 
 function(check_compile pkg tgt file)
-    if(NOT check_compile_${pkg})
+    unset(${pkg}_compiles CACHE)
+    if(NOT ${pkg}_compiles)
         list(APPEND CMAKE_REQUIRED_LIBRARIES ${tgt})
-        message(STATUS "Performing Test check_compile_${pkg}")
-        try_compile(check_compile_${pkg}
+        message(CHECK_START "Test compile -- ${pkg} [${tgt}]")
+        try_compile(${pkg}_compiles
                 ${CMAKE_BINARY_DIR}
                 ${file}
                 OUTPUT_VARIABLE compile_out
@@ -11,14 +13,14 @@ function(check_compile pkg tgt file)
                 CXX_STANDARD 17
                 CXX_EXTENSIONS OFF
                 )
-        if(check_compile_${pkg})
+        if(${pkg}_compiles)
+            message(CHECK_PASS "Success")
             file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log "${compile_out}")
-            message(STATUS "Performing Test check_compile_${pkg} - Success")
-            set(check_compile_${pkg} ${check_compile_${pkg}} CACHE BOOL "")
-            mark_as_advanced(check_compile_${pkg})
+            set(${pkg}_compiles ${pkg}_compile CACHE BOOL "")
+            mark_as_advanced(${pkg}_compiles)
         else()
+            message(CHECK_FAIL "Failed")
             file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log "${compile_out}")
-            message(STATUS "Performing Test check_compile_${pkg} - Failed")
         endif()
     endif()
 endfunction()

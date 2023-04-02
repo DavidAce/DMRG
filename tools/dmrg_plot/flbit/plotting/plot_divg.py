@@ -74,6 +74,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
                                             vals=figvals + subvals + linvals)
                 logger.debug('Found {} datanodes'.format(len(datanodes)))
+                print('Found {} datanodes'.format(len(datanodes)))
                 for datanode in datanodes:
                     mmntnode = datanode.parent['measurements']
                     dbval = db['dsets'][datanode.name]

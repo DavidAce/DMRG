@@ -48,21 +48,22 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     state.clear_cache();
     auto axis_valid = qm::spin::half::is_valid_axis(axis);
     if(axis == "random") {
-        init::set_random_product_state_with_random_spinors(state, type); // a)
+        init::set_random_product_state_with_random_spinors(state, type);                    // a)
     } else if(init::bitfield_is_valid(bitfield) and axis_valid) {
         init::set_random_product_state_on_axis_using_bitfield(state, type, axis, bitfield); // b)
         init::used_bitfields.insert(bitfield);
     } else if(use_eigenspinors and axis_valid) {
         init::set_random_product_state_on_axis_using_eigenspinors(state, type, axis); // c)
     } else if(axis_valid) {
-        init::set_random_product_state_on_axis(state, type, axis); // d)
+        init::set_random_product_state_on_axis(state, type, axis);                    // d)
     } else {
         throw except::runtime_error("Expected initial axis string: \"random\"|{}. Got \"{}\"", qm::spin::half::valid_axis_str, axis);
     }
 }
 
-void tools::finite::mps::init::product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis) {
-    tools::log->info("Setting randomly shuffled Néel state of type {} on axis {}", enum2sv(type), axis);
+void tools::finite::mps::init::product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern) {
+    tools::log->info("Setting randomly shuffled Néel state of type {} on axis {} {}", enum2sv(type), axis,
+                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
@@ -71,15 +72,16 @@ void tools::finite::mps::init::product_state_neel_shuffled(StateFinite &state, S
                                                      tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
     std::array<std::string_view, 2>       arrows  = {"↓", "↑"};
     std::string                           str;
-    std::vector<size_t>                   seq(state.get_length(), 0);
-    for(auto &&[i, s] : iter::enumerate(seq)) s = num::mod<size_t>(i, 2); // Set Neel pattern 010101010101...
-    std::shuffle(seq.begin(), seq.end(), rnd::internal::rng);             // Shuffle the sequence randomly like 101011110100...
+    if(pattern.size() != state.get_length()) {
+        pattern.resize(state.get_length(), 0);
+        for(auto &&[i, s] : iter::enumerate(pattern)) s = num::mod<size_t>(i, 2); // Set Neel pattern 010101010101...
+        std::shuffle(pattern.begin(), pattern.end(), rnd::internal::rng);         // Shuffle the sequence randomly like 101011110100...
+    }
 
-    tools::log->debug("Setting random product state with zero magnetization using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axus, axus);
     std::string label = "A";
     for(const auto &mps_ptr : state.mps_sites) {
         auto &&mps = *mps_ptr;
-        auto   idx = seq.at(mps.get_position<size_t>());
+        auto   idx = pattern.at(mps.get_position<size_t>());
         mps.set_mps(spinors.at(idx), L, 0, label);
         str.append(arrows.at(idx));
         if(mps.isCenter()) {

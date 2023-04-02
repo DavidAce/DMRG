@@ -24,9 +24,9 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
             if not col in [l.split(':')[0] for l in subspec + linspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(product(*get_vals(db, figspec)))  # All combinations of figspecs values
-    subprod = list(product(*get_vals(db, subspec)))  # All combinations of subspecs values
-    linprod = list(product(*get_vals(db, linspec)))  # All combinations of linspecs values
+    figprod = list(product(*get_vals(db, figspec, meta.get('filter'))))  # All combinations of figspecs values
+    subprod = list(product(*get_vals(db, subspec, meta.get('filter'))))  # All combinations of subspecs values
+    linprod = list(product(*get_vals(db, linspec, meta.get('filter'))))  # All combinations of linspecs values
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:
@@ -37,7 +37,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         dbval = None
         for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             logger.debug('-- plotting subkeys: {}'.format(subvals))
-            palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
+            palette, lstyles = get_colored_lstyles(db, linspec, palette_name, meta.get('filter'))
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting linkeys: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
@@ -72,12 +72,13 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                         yless = ymask < meta.get('fit-ymin')
                         if np.any(yless):
                             idxN = np.argmax(yless)
-                        ax.scatter(xdata[0], np.log10(ymask[0]), marker='o', color=color,
-                                   path_effects=path_effects,
-                                   zorder=2)
-                        ax.scatter(xdata[idxN], np.log10(ymask[idxN]), marker='o', color=color,
-                                   path_effects=path_effects,
-                                   zorder=2)
+                        if meta.get('fit-marker'):
+                            ax.scatter(xdata[0], np.log10(ymask[0]), marker='o', color=color,
+                                       path_effects=path_effects,
+                                       zorder=2)
+                            ax.scatter(xdata[idxN], np.log10(ymask[idxN]), marker='o', color=color,
+                                       path_effects=path_effects,
+                                       zorder=2)
 
                         ax.plot(xdata, np.log10(fit.yfit), linewidth=0.75, marker=None,
                                 linestyle='dashed',

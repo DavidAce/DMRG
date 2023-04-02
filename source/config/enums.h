@@ -144,10 +144,6 @@ enum class xdmrg_task {
     INIT_CLEAR_STATUS,
     INIT_CLEAR_CONVERGENCE,
     INIT_DEFAULT,
-    NEXT_RANDOMIZE_INTO_PRODUCT_STATE,
-    NEXT_RANDOMIZE_INTO_ENTANGLED_STATE,
-    NEXT_RANDOMIZE_PREVIOUS_STATE,
-    NEXT_RANDOMIZE_INTO_STATE_IN_WIN,
     FIND_ENERGY_RANGE,
     FIND_EXCITED_STATE,
     POST_WRITE_RESULT,
@@ -381,10 +377,6 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == xdmrg_task::INIT_CLEAR_STATUS)                      return "INIT_CLEAR_STATUS";
         if(item == xdmrg_task::INIT_CLEAR_CONVERGENCE)                 return "INIT_CLEAR_CONVERGENCE";
         if(item == xdmrg_task::INIT_DEFAULT)                           return "INIT_DEFAULT";
-        if(item == xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE)      return "NEXT_RANDOMIZE_INTO_PRODUCT_STATE";
-        if(item == xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE)    return "NEXT_RANDOMIZE_INTO_ENTANGLED_STATE";
-        if(item == xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE)          return "NEXT_RANDOMIZE_PREVIOUS_STATE";
-        if(item == xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN)       return "NEXT_RANDOMIZE_INTO_STATE_IN_WIN";
         if(item == xdmrg_task::FIND_ENERGY_RANGE)                      return "FIND_ENERGY_RANGE";
         if(item == xdmrg_task::FIND_EXCITED_STATE)                     return "FIND_EXCITED_STATE";
         if(item == xdmrg_task::POST_WRITE_RESULT)                      return "POST_WRITE_RESULT";
@@ -726,10 +718,6 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_CLEAR_STATUS")                     return xdmrg_task::INIT_CLEAR_STATUS;
         if(item == "INIT_CLEAR_CONVERGENCE")                return xdmrg_task::INIT_CLEAR_CONVERGENCE;
         if(item == "INIT_DEFAULT")                          return xdmrg_task::INIT_DEFAULT;
-        if(item == "NEXT_RANDOMIZE_INTO_PRODUCT_STATE")     return xdmrg_task::NEXT_RANDOMIZE_INTO_PRODUCT_STATE;
-        if(item == "NEXT_RANDOMIZE_INTO_ENTANGLED_STATE")   return xdmrg_task::NEXT_RANDOMIZE_INTO_ENTANGLED_STATE;
-        if(item == "NEXT_RANDOMIZE_PREVIOUS_STATE")         return xdmrg_task::NEXT_RANDOMIZE_PREVIOUS_STATE;
-        if(item == "NEXT_RANDOMIZE_INTO_STATE_IN_WIN")      return xdmrg_task::NEXT_RANDOMIZE_INTO_STATE_IN_WIN;
         if(item == "FIND_ENERGY_RANGE")                     return xdmrg_task::FIND_ENERGY_RANGE;
         if(item == "FIND_EXCITED_STATE")                    return xdmrg_task::FIND_EXCITED_STATE;
         if(item == "POST_WRITE_RESULT")                     return xdmrg_task::POST_WRITE_RESULT;

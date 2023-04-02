@@ -33,13 +33,13 @@ input_prefix      = "input"
 output_prefix     = "output"
 
 
-sites               = [12,16,20,24,28,32]
+sites               = [8,12,16,20]
 J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [16]
-u_fmix              = [1.0]
+u_depth             = [8,16]
+u_fmix              = [0.5, 1.0]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']

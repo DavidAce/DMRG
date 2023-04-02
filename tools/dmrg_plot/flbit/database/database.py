@@ -209,6 +209,7 @@ def find_between(s, first, last):
     except ValueError:
         return ""
 
+
 def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state_filter=None, debug=False):
     # Gather data
 
@@ -322,6 +323,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                                                                   keypattern=descr['dsetname'],
                                                                   dep=4,
                                                                   nodeType=h5py.Group):
+                if datanode.name in db['dsets']:
+                    continue
                 print("Loading dset database version 3: {}".format(datapath))
 
                 num = np.max(datanode['num'][()])

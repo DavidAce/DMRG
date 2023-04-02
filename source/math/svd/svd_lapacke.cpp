@@ -301,9 +301,9 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     S.resize(sizeS);
                     U.resize(rowsU, colsU);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
-                    cwork.resize(2ul);
-                    rwork.resize(7ul);
-                    iwork.resize(4ul);
+                    cwork.resize(std::max(2ul, static_cast<size_t>(5*rowsA + 2 * rowsA*rowsA)));
+                    rwork.resize(std::max(7ul, static_cast<size_t>(2*colsA)));
+                    iwork.resize(std::max(4ul, static_cast<size_t>(2*rowsA + colsA)));
 
                     info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
@@ -316,7 +316,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     int liwork = static_cast<int>(iwork[0]);
                     cwork.resize(static_cast<size_t>(std::max(2, lcwork)));
                     rwork.resize(static_cast<size_t>(std::max(7, lrwork)));
-                    iwork.resize(static_cast<size_t>(std::max(4, liwork)));
+                    iwork.resize(static_cast<size_t>(std::max({4, 2*rowsA + colsA, liwork})));
 
                     info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
@@ -338,7 +338,6 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     cwork.resize(static_cast<size_t>(lcwork));
                     rwork.resize(static_cast<size_t>(lrwork));
                     iwork.resize(static_cast<size_t>(liwork));
-                    svd::log->info("Running zgesdd");
                     info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(), -1,
                                                rwork.data(), iwork.data());
                     if(info != 0) break;
