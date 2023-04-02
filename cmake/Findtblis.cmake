@@ -86,6 +86,7 @@ if(tblis_FOUND AND NOT TARGET tblis::tblis)
             # Force the linker to add rpath to hwloc, otherwise we need LD_LIBRARY_PATH to point to hwloc.
             # For some reason CMake is not able to detect that we need an rpath here, as it does for the MKL library
             get_filename_component(HWLOC_DIR "${HWLOC_LIBRARY}" DIRECTORY)
+            message(STATUS "Adding RPATH for hwloc::hwloc: -Wl,-rpath,${HWLOC_DIR}")
             target_link_options(hwloc::hwloc INTERFACE "-Wl,-rpath,${HWLOC_DIR}")
             target_link_libraries(tblis::tblis INTERFACE hwloc::hwloc)
         endif()

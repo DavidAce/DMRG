@@ -60,9 +60,9 @@ def parse(algo):
                                 # 'lbit69', # 300 realizations u[8,16...32], f=1.0, L=[8,...32] and mpo bond dim [64...256], checking if mpo bond dim affects xi
                                 # 'lbit70', # 1500 realizations u[8,16...64], f=1.0, L=[8,...32] and mpo bond dim [128], checking what u is needed to reach xi=1
                                 # 'lbit71', # 1500 realizations u[8,16...80], f=1.0, L=[8,...40] and mpo bond dim [16] (new faster method), checking what u is needed to reach xi=1
-                                # 'lbit72', # 100 realizations u[16] f=1.0, L=[12,...32] with dynamic max-time for each L, to check if it sets the correct maximum
+                                'lbit72', # 100 realizations u[16] f=1.0, L=[12,...32] with dynamic max-time for each L, to check if it sets the correct maximum
                                 # 'lbit73', # 3000 realizations u[16] f=1.0, L=[12,...32] with dynamic max-time for each L, serious run
-                                'lbit79', # 30000 realizations u[16] f=1.0, L=[12,...32] with dynamic max-time for each L, serious run
+                                # 'lbit79', # 30000 realizations u[16] f=1.0, L=[12,...32] with dynamic max-time for each L, serious run
 
                             ])
     elif algo == 'xDMRG':

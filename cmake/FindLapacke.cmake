@@ -1,6 +1,6 @@
 
 function(target_include_mkl_directories tgt)
-    message(CHECK_START "Linking Intel MKL include paths")
+    message(CHECK_START "Looking for Intel MKL include directory")
     set(MKL_ROOT_SEARCH_PATHS
         $ENV{MKLROOT} ${MKLROOT}
         $ENV{EBROOTIMKL} ${EBROOTIMKL}
@@ -31,13 +31,13 @@ function(target_include_mkl_directories tgt)
                   )
     endif()
     if(MKL_ROOT_DIR AND MKL_INCLUDE_DIR)
-            message(CHECK_PASS "found")
+            message(CHECK_PASS "found: ${MKL_INCLUDE_DIR}")
             target_include_directories(${tgt} INTERFACE ${MKL_INCLUDE_DIR})
             target_compile_definitions(${tgt} INTERFACE MKL_AVAILABLE)
             set(LAPACKE_INCLUDE_DIR "${MKL_INCLUDE_DIR}" PARENT_SCOPE)
     else()
             message(CHECK_FAIL "not found")
-            message(FATAL_ERROR "Could not find Intel MKL directories:\n"
+            message(FATAL_ERROR "Could not find Intel MKL directory:\n"
                     "MKLROOT                : ${MKLROOT}\n"
                     "MKL_ROOT               : ${MKL_ROOT}\n"
                     "EBROOTIMKL             : ${EBROOTIMKL}\n"
@@ -56,15 +56,16 @@ function(target_include_mkl_directories tgt)
 endfunction()
 
 function(target_include_openblas_directories tgt)
+    message(CHECK_START "Looking for OpenBLAS include directory")
     set(OpenBLAS_ROOT_SEARCH_PATHS
+      $ENV{OpenBLASROOT} ${OpenBLASROOT}
       $ENV{OpenBLAS_ROOT} ${OpenBLAS_ROOT}
       $ENV{OpenBLAS_HOME} ${OpenBLAS_HOME}
-      $ENV{BLAS_ROOT} ${BLAS_ROOT}
       $ENV{BLASROOT} ${BLASROOT}
       $ENV{EBROOTOPENBLAS} ${EBROOTOPENBLAS}
     )
     find_path(OpenBLAS_INCLUDE_DIR NAMES openblas/lapacke.h
-        HINTS ${OpenBLAS_ROOT_SEARCH_PATHS}
+        PATHS ${OpenBLAS_ROOT_SEARCH_PATHS}
         PATH_SUFFIXES include
     )
     find_path(LAPACKE_INCLUDE_DIR NAMES lapacke.h
@@ -73,13 +74,32 @@ function(target_include_openblas_directories tgt)
     )
 
     if(OpenBLAS_INCLUDE_DIR)
+        message(CHECK_PASS "found: ${OpenBLAS_INCLUDE_DIR}")
         set(LAPACKE_INCLUDE_DIR "${OpenBLAS_INCLUDE_DIR}" PARENT_SCOPE)
         target_include_directories(${tgt} INTERFACE ${OpenBLAS_INCLUDE_DIR})
         target_compile_definitions(${tgt} INTERFACE OPENBLAS_AVAILABLE)
     elseif(LAPACKE_INCLUDE_DIR)
+        message(CHECK_PASS "found: ${LAPACKE_INCLUDE_DIR}")
         set(LAPACKE_INCLUDE_DIR "${LAPACKE_INCLUDE_DIR}" PARENT_SCOPE)
         target_include_directories(${tgt} INTERFACE ${LAPACKE_INCLUDE_DIR})
         target_compile_definitions(${tgt} INTERFACE LAPACKE_AVAILABLE)
+    else()
+        message(CHECK_FAIL "not found")
+        message(FATAL_ERROR "Could not find OpenBLAS include directory:\n"
+                    "OpenBLASROOT               : ${OpenBLASROOT}\n"
+                    "OpenBLAS_ROOT              : ${OpenBLAS_ROOT}\n"
+                    "OpenBLAS_HOME              : ${OpenBLAS_HOME}\n"
+                    "BLASROOT                   : ${BLASROOT}\n"
+                    "EBROOTOPENBLAS             : ${EBROOTOPENBLAS}\n"
+                    "ENV OpenBLASROOT           : ${OpenBLASROOT}\n"
+                    "ENV OpenBLAS_ROOT          : ${OpenBLAS_ROOT}\n"
+                    "ENV OpenBLAS_HOME          : ${OpenBLAS_HOME}\n"
+                    "ENV BLASROOT               : ${BLASROOT}\n"
+                    "ENV EBROOTOPENBLAS         : ${EBROOTOPENBLAS}\n"
+                    "OpenBLAS_ROOT_SEARCH_PATHS : ${OpenBLAS_ROOT_SEARCH_PATHS}\n"
+                    "OpenBLAS_INCLUDE_DIR       : ${OpenBLAS_INCLUDE_DIR}\n"
+                    "LAPACKE_INCLUDE_DIR        : ${LAPACKE_INCLUDE_DIR}\n")
+
     endif()
 endfunction()
 
