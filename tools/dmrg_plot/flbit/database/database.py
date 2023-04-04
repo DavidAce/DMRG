@@ -218,15 +218,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         'max': {'all': None, 'avg': None, 'mid': None, 'mvg': None},
         'min': {'all': None, 'avg': None, 'mid': None, 'mvg': None},
         'num': {'min': None, 'max': None},
-        'keys': {
-            'L': set(), 'J': set(), 'w': set(), 'x': set(), 'r': set(),
-            'u': set(), 'f': set(), 'tstd': set(), 'cstd': set(), 'tgw8': set(), 'cgw8': set(),
-            'ubond': set(),
-            'algo': set(),
-            'state': set(),
-            'crono': set(),
-            'data': set(),
-        },
+
         'tex': {
             'L': '$L$',
             'J': '$J$', 'J1': '$J_1$', 'J2': '$J_2$', 'J3': '$J_3$',
@@ -263,8 +255,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         modelnode = algonode['model']
         hamiltonian = modelnode['hamiltonian']
         L = modelnode['model_size'][()]
-        J = hamiltonian['J1_mean', 'J2_mean', 'J3_mean'][0]
-        w = hamiltonian['J1_wdth', 'J2_wdth', 'J3_wdth'][0]
+        J = tuple([hamiltonian['J1_mean'][0], hamiltonian['J2_mean'][0], hamiltonian['J3_mean'][0]])
+        w = tuple([hamiltonian['J1_wdth'][0], hamiltonian['J2_wdth'][0], hamiltonian['J3_wdth'][0]])
         r = hamiltonian['J2_span'][0]
         x = hamiltonian['xi_Jcls'][0] if 'xi_Jcls' in hamiltonian.dtype.fields else hamiltonian['J2_xcls'][0]
         u = hamiltonian['u_depth'][0]
@@ -292,17 +284,20 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         if debug:
             print("Adding keys")
 
+        rval = 'L' if r == np.iinfo(np.uint64).max else r
+
+
         db['vals']['L'].add(L)
-        db['vals']['J'].add(tuple(J))
+        db['vals']['J'].add(J)
         db['vals']['J1'].add(J[0])
         db['vals']['J2'].add(J[1])
         db['vals']['J3'].add(J[2])
-        db['vals']['w'].add(tuple(w))
+        db['vals']['w'].add(w)
         db['vals']['w1'].add(w[0])
         db['vals']['w2'].add(w[1])
         db['vals']['w3'].add(w[2])
         db['vals']['x'].add(x)
-        db['vals']['r'].add(r)
+        db['vals']['r'].add(rval)
         db['vals']['u'].add(u)
         db['vals']['f'].add(f)
         db['vals']['tstd'].add(tstd)
@@ -311,7 +306,6 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         db['vals']['cgw8'].add(cgw8)
         db['vals']['ubond'].add(ubond)
 
-        db['keys']['algo'].add(algokey)
         for metakey, descr in meta.items():
             if 'include' in metakey or 'common' in metakey:
                 continue
@@ -331,7 +325,6 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 for dname in [datanode.name]:
                     db['dsets'][dname] = {}
                     db['dsets'][dname]['version'] = db['version']
-                    db['dsets'][dname]['keys'] = db['keys']
                     db['dsets'][dname]['vals'] = {}
                     db['dsets'][dname]['vals']['L'] = L
                     db['dsets'][dname]['vals']['J'] = J
@@ -343,7 +336,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                     db['dsets'][dname]['vals']['w2'] = w[1]
                     db['dsets'][dname]['vals']['w3'] = w[2]
                     db['dsets'][dname]['vals']['x'] = x
-                    db['dsets'][dname]['vals']['r'] = r
+                    db['dsets'][dname]['vals']['r'] = rval
                     db['dsets'][dname]['vals']['u'] = u
                     db['dsets'][dname]['vals']['f'] = f
                     db['dsets'][dname]['vals']['tstd'] = tstd
@@ -410,9 +403,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         },
                     }
         for statekey, statepath, statenode in h5py_group_iterator(node=algonode, keypattern=state_filter, dep=1):
-            db['keys']['state'].add(statekey)
             for cronokey, cronopath, crononode in h5py_group_iterator(node=statenode, keypattern='cronos', dep=1):
-                db['keys']['crono'].add(cronokey)
 
                 for metakey, descr in meta.items():
                     if metakey == 'include' or metakey == 'common':
@@ -450,7 +441,6 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         for dname in [datanode.name]:
                             db['dsets'][dname] = {}
                             db['dsets'][dname]['version'] = db['version']
-                            db['dsets'][dname]['keys'] = db['keys']
                             db['dsets'][dname]['vals'] = {}
                             db['dsets'][dname]['vals']['L'] = L
                             db['dsets'][dname]['vals']['J'] = J
@@ -462,7 +452,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                             db['dsets'][dname]['vals']['w2'] = w[1]
                             db['dsets'][dname]['vals']['w3'] = w[2]
                             db['dsets'][dname]['vals']['x'] = x
-                            db['dsets'][dname]['vals']['r'] = r
+                            db['dsets'][dname]['vals']['r'] = rval
                             db['dsets'][dname]['vals']['num'] = num
                             db['dsets'][dname]['vals']['u'] = u
                             db['dsets'][dname]['vals']['f'] = f

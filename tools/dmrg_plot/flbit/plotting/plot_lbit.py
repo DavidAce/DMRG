@@ -16,6 +16,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
     path_effects = [pe.SimpleLineShadow(offset=(-0.5, -0.5), alpha=0.3), pe.Normal()]
+    path_effects_dashed = [pe.SimpleLineShadow(offset=(-0.1, -0.1), alpha=0.1), pe.Normal()]
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
     legend_col_keys = linspec.copy()
@@ -33,7 +34,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
 
     for figvals, f in zip(figprod, figs):
-        logger.debug('- plotting figkeys: {}'.format(figvals))
+        logger.debug(f'-- plotting {figvals=}')
         dbval = None
         for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             logger.debug('-- plotting subkeys: {}'.format(subvals))
@@ -42,7 +43,12 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                 logger.debug('--- plotting linkeys: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
                                             vals=figvals + subvals + linvals)
-                logger.debug('Found {} datanodes'.format(len(datanodes)))
+                if len(datanodes) != 1:
+                    logger.warning(f"match: \n"
+                                   f"\tspec:{[figspec + subspec + linspec]}\n"
+                                   f"\tvals:{[figvals + subvals + linvals]}")
+                    logger.warning(f"found {len(datanodes)} datanodes: {datanodes=}")
+                    continue
                 for datanode in datanodes:
                     # datanode = datanode[0]
                     dbval = db['dsets'][datanode.name]
@@ -50,28 +56,31 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     ydata, _ = get_table_data(datanode['avg'])
                     edata, _ = get_table_data(datanode['ste'])
                     xdata = np.array(range(len(ydata)))
-                    yfold = get_lbit_avg(datanode.parent['corrmat'][()])
-                    fit = get_lbit_fit_data(x=xdata, y=yfold.full, e=yfold.stdv,
-                                            beta=meta.get('fit-beta', True),
-                                            ymin=meta.get('fit-ymin', 1e-8),
-                                            # skip = meta.get('fit-skip', 0),
-                                            )  # Fit to get characteristic length-scale
+                    yfold = get_lbit_avg(corrmat=datanode.parent['corrmat'][()], site=meta.get('fit-site'), mean=meta.get('fit-mean'))
+                    print(f"L{len(ydata)} | f{dbval['vals']['f']:.2f} | u{dbval['vals']['u']:2} | mean {meta.get('fit-mean')} |  topr {yfold.topr}")
+                    yfits = []
+                    for yfull,ystdv in zip(yfold.full.T, yfold.stdv.T):
+                        yfits.append(get_lbit_fit_data(x=xdata, y=np.atleast_2d(yfull).T, e=np.atleast_2d(ystdv).T,
+                                                beta=meta.get('fit-beta', True),
+                                                ymin=meta.get('fit-ymin', 1e-16),
+                                                ))  # Fit to get characteristic length-scale
 
                     # for i, (y, e) in enumerate(zip(ydata.T, edata.T)):
                     #     # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
                     #     ymask = np.ma.masked_invalid(np.ma.masked_equal(np.abs(y), 0))
                     #     line, = ax.plot(xdata, np.log10(ymask), linestyle='-.', linewidth=0.5,marker=None, color=color, path_effects=path_effects)
 
-                    for i, (y, e) in enumerate(zip(yfold.mean.T, edata.T)):
+                    for i, (y, e) in enumerate(zip(yfold.full.T, yfold.stdv.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
-                        ymask = np.ma.masked_invalid(np.ma.masked_equal(np.abs(y), 0))
-                        line, = ax.plot(xdata, np.log10(ymask), marker=None, color=color, path_effects=path_effects,
-                                        zorder=1)
+                        with np.errstate(divide='ignore'):
+                            ymask = np.ma.masked_invalid(np.log10(np.abs(y)))
+                            line, = ax.plot(xdata, ymask, marker=None, color=color, path_effects=path_effects, zorder=1)
                         # ax.scatter(xdata[0], np.log10(y[0]), marker='x', color=color, path_effects=path_effects)
                         idxN = len(y) - 1
-                        yless = ymask < meta.get('fit-ymin')
-                        if np.any(yless):
-                            idxN = np.argmax(yless)
+                        if fit_ymin := meta.get('fit-ymin'):
+                            yless = ymask < fit_ymin
+                            if np.any(yless):
+                                idxN = np.argmax(yless)
                         if meta.get('fit-marker'):
                             ax.scatter(xdata[0], np.log10(ymask[0]), marker='o', color=color,
                                        path_effects=path_effects,
@@ -79,33 +88,37 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                             ax.scatter(xdata[idxN], np.log10(ymask[idxN]), marker='o', color=color,
                                        path_effects=path_effects,
                                        zorder=2)
-
-                        ax.plot(xdata, np.log10(fit.yfit), linewidth=0.75, marker=None,
-                                linestyle='dashed',
-                                color=color, path_effects=path_effects, zorder=0)
-                        if i == 0:
-                            legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                                key, fmt = key.split(':') if ':' in key else [key, '']
-                                f['legends'][idx][icol]['handle'].append(line)
-                                f['legends'][idx][icol]['label'].append(col)
-                                f['legends'][idx][icol]['title'] = db['tex'][key]
-                            icol = len(legendrow)
-                            iuse = 0
-                            if 'C' in meta.get('legendfits'):
-                                f['legends'][idx][icol + iuse]['handle'].append(line)
-                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.C))
-                                f['legends'][idx][icol + iuse]['title'] = '$C$'
-                                iuse += 1
-                            if 'xi' in meta['legendfits']:
-                                f['legends'][idx][icol + iuse]['handle'].append(line)
-                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.xi))
-                                f['legends'][idx][icol + iuse]['title'] = '$\\xi_\\tau$'
-                                iuse += 1
-                            if 'beta' in meta['legendfits'] and np.isfinite(fit.beta):
-                                f['legends'][idx][icol + iuse]['handle'].append(line)
-                                f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.beta))
-                                f['legends'][idx][icol + iuse]['title'] = '$\\beta$'
+                        for fit in yfits:
+                            ax.plot(xdata, np.log10(fit.yfit), linewidth=0.4, marker=None,
+                                    linestyle='dashed', color=color, path_effects=path_effects_dashed, zorder=0)
+                            if i == 0:
+                                legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
+                                for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                                    key, fmt = key.split(':') if ':' in key else [key, '']
+                                    f['legends'][idx][icol]['handle'].append(line)
+                                    f['legends'][idx][icol]['label'].append(col)
+                                    f['legends'][idx][icol]['title'] = db['tex'][key]
+                                icol = len(legendrow)
+                                iuse = 0
+                                if 'pos' in meta.get('legendfits'):
+                                    f['legends'][idx][icol + iuse]['handle'].append(line)
+                                    f['legends'][idx][icol + iuse]['label'].append('{}'.format(fit.pos))
+                                    f['legends'][idx][icol + iuse]['title'] = '$i$'
+                                    iuse += 1
+                                if 'C' in meta.get('legendfits'):
+                                    f['legends'][idx][icol + iuse]['handle'].append(line)
+                                    f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.C))
+                                    f['legends'][idx][icol + iuse]['title'] = '$C$'
+                                    iuse += 1
+                                if 'xi' in meta['legendfits']:
+                                    f['legends'][idx][icol + iuse]['handle'].append(line)
+                                    f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.xi))
+                                    f['legends'][idx][icol + iuse]['title'] = '$\\xi_\\tau$'
+                                    iuse += 1
+                                if 'beta' in meta['legendfits'] and np.isfinite(fit.beta):
+                                    f['legends'][idx][icol + iuse]['handle'].append(line)
+                                    f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.beta))
+                                    f['legends'][idx][icol + iuse]['title'] = '$\\beta$'
 
                         # for yval in yvals:
                         #     ax.scatter(xdata, np.log10(yval), marker='.', color=color, s=0.4)
@@ -136,10 +149,9 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         if not prb_style and dbval:
             f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
-        f['filename'] = "{}/{}_lbit_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
-                                                            '-'.join(map(str, figvals)),
-                                                            '-'.join(map(str, get_keys(db, subspec))))
-
+        f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec))
     return figs
 
 

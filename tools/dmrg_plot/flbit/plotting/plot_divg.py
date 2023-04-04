@@ -73,8 +73,13 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 logger.debug('--- plotting lins: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
                                             vals=figvals + subvals + linvals)
-                logger.debug('Found {} datanodes'.format(len(datanodes)))
-                print('Found {} datanodes'.format(len(datanodes)))
+
+                if len(datanodes) != 1:
+                    logger.warning(f"match: \n"
+                                   f"\tspec:{[figspec + subspec + linspec]}\n"
+                                   f"\tvals:{[figvals + subvals + linvals]}")
+                    logger.warning(f"found {len(datanodes)} datanodes: {datanodes=}")
+                    continue
                 for datanode in datanodes:
                     mmntnode = datanode.parent['measurements']
                     dbval = db['dsets'][datanode.name]
@@ -119,7 +124,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             # ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
             #         transform=trans)
 
-            if 'number' in meta['dsetname'] and not idx in f['axes_used']:
+            if 'number' in meta['dsetname'] and not idx in f['axes_used'] and dbval is not None:
                 # Plot Luitz's data
                 with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
                     lenval = "{}".format(get_vals(db=dbval, keyfmt='L'))
@@ -157,11 +162,9 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}_divg_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                              '-'.join(map(str, figvals)),
-                                                              '-'.join(map(str, get_keys(db, subspec))),
-                                                              suffix)
+        f['filename'] = "{}/{}-divg_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec), suffix)
 
     return figs
 

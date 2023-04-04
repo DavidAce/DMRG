@@ -7,7 +7,7 @@ from dmrg_plot.common.io.parse import parse
 
 from database.database import *
 from lbit_avg import lbit_avg
-from plotting.meta79 import *
+from plotting.meta80 import *
 from plotting.multiplot import *
 
 
@@ -21,29 +21,34 @@ def lbit_plot(args):
     h5avgs = []
     dbs = []
     plotdir = None
-    metas = []
+    metas = None
     for batch in batches:
-        batchglob = glob.glob(f'{projdir}/{batch}*')
+        batchglob = glob.glob('{}/{}*'.format(projdir, batch))
         batchnum = int(''.join(i for i in batch if i.isdigit()))
         version2 = batchnum <= 59
         version3 = batchnum >= 60
         if batchglob:
-            print(f"globbed: {batchglob}")
+            print(batchglob)
             batchdir = batchglob[0]
-            avgfile = f'{batchdir}/analysis/data/averaged.h5'
-            plotdir = f'{batchdir}/analysis/plots'
-            if not os.path.exists(plotdir):
-                os.makedirs(plotdir)
-            metas.append(get_meta(plotdir))
-            h5avgs.append(h5py.File(avgfile, 'r'))
-            if version2:
-                dbs.append(load_time_database2(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                               state_filter=state_filter, debug=False))
-            if version3:
-                dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                               state_filter=state_filter, debug=False))
+            avgfile = '{}/analysis/data/averaged.h5'.format(batchdir)
+            plotdir = '{}/analysis/plots'.format(batchdir)
+            # if meta is None:
+            # metas = [get_meta(plotdir), get_meta(plotdir), get_meta(plotdir)]
+            # metas[1]['common']['include_vals']['tgw8'] = ['ID']
+            # metas[2]['common']['include_vals']['cgw8'] = ['ID']
+            metas = [get_meta(plotdir)]
 
+            for meta in metas:
+                h5avgs.append(h5py.File(avgfile, 'r'))
+                if version2:
+                    dbs.append(load_time_database2(h5avgs[-1], meta, algo_filter=algo_filter, model_filter=model_filter,
+                                                   state_filter=state_filter, debug=False))
+                if version3:
+                    dbs.append(load_time_database3(h5avgs[-1], meta, algo_filter=algo_filter, model_filter=model_filter,
+                                                   state_filter=state_filter, debug=False))
 
+    if not os.path.exists(plotdir):
+        os.makedirs(plotdir)
 
     palettes = [  # Distinguishable colors
         "tab10",
@@ -73,32 +78,23 @@ def lbit_plot(args):
     linspec_x = ['f']
     xaxspec_x = ['L']
     figspec = ['w', 'J', 'r', 'cgw8', 'tgw8', 'tstd', 'cstd']
-    subspec = ['f','u']
+    subspec = ['f', 'u']
     linspec = ['L']
 
-    figspec_lbit = ['L', 'w', 'J', 'r', 'cgw8', 'tgw8', 'tstd', 'cstd']
-    subspec_lbit = ['f']
-    linspec_lbit = ['u']
-
-
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
-                                   linspec=linspec_lbit, figs=f, palette_name=palette)
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette)
     save_figure(f)
-
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-typ'], figspec=figspec_lbit, subspec=subspec_lbit,
-                                   linspec=linspec_lbit, figs=f, palette_name=palette)
-    save_figure(f)
-
+    plt.show()
+    exit(0)
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
         f = plot_rise_fig_sub_line(db=db, meta=meta['rise-num2'], figspec=figspec_x, subspec=subspec_x,
                                    linspec=linspec_x, xaxspec=xaxspec_x, figs=f,
                                    palette_name=palette)
     save_figure(f)
+
 
 
     f = None
@@ -136,25 +132,25 @@ def lbit_plot(args):
 
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_slope_fig_sub_line(db=db, meta=meta['linearFit-num2'], figspec=figspec_x, subspec=subspec_x,
+                                    linspec=linspec_x, xaxspec=xaxspec_x, figs=f,
+                                    palette_name=palette)
+    save_figure(f)
+
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_slope_fig_sub_line(db=db, meta=meta['linearFit-num2'], figspec=['L', 'tstd', 'cstd', 'cgw8', 'tgw8'],
+                                    subspec=['J', 'w', 'r'],
+                                    linspec=['f'], xaxspec=['u'], figs=f,
+                                    palette_name=palette)
+    save_figure(f)
+
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
         f = plot_svnt_fig_sub_line(db=db, meta=meta['num-svnt'], figspec=figspec, subspec=subspec, linspec=linspec,
                                    figs=f,
                                    palette_name=palette)
     save_figure(f)
-
-    # f = None
-    # for db, meta, palette in zip(dbs, metas, palettes):
-    #     f = plot_slope_fig_sub_line(db=db, meta=meta['linearFit-num2'], figspec=figspec_x, subspec=subspec_x,
-    #                                 linspec=linspec_x, xaxspec=xaxspec_x, figs=f,
-    #                                 palette_name=palette)
-    # save_figure(f)
-
-    # f = None
-    # for db, meta, palette in zip(dbs, metas, palettes):
-    #     f = plot_slope_fig_sub_line(db=db, meta=meta['linearFit-num2'], figspec=['L', 'tstd', 'cstd', 'cgw8', 'tgw8'],
-    #                                 subspec=['J', 'w', 'r'],
-    #                                 linspec=['f'], xaxspec=['u'], figs=f,
-    #                                 palette_name=palette)
-    # save_figure(f)
 
 
     # f = None
@@ -302,6 +298,6 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit79'])
+    args = parse('fLBIT', ['lbit80'])
     lbit_avg(args)
     lbit_plot(args)

@@ -191,12 +191,9 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                            '-'.join(map(str, figvals)),
-                                                            '-'.join(map(str, get_keys(db, subspec))),
-                                                            suffix)
-
+        f['filename'] = "{}/{}-svnt_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec),suffix)
     return figs
 
 

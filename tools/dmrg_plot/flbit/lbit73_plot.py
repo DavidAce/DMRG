@@ -7,7 +7,7 @@ from dmrg_plot.common.io.parse import parse
 
 from database.database import *
 from lbit_avg import lbit_avg
-from plotting.meta79 import *
+from plotting.meta81 import *
 from plotting.multiplot import *
 
 
@@ -302,6 +302,6 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit79'])
+    args = parse('fLBIT', ['lbit81'])
     lbit_avg(args)
     lbit_plot(args)

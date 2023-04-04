@@ -16,10 +16,10 @@ def get_max_time(L, w, x, r):
     tmax1 = 1.0 / w1
 
     r2max = np.min([r, L])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmax3 = 1.0 / w3
-    tmax = np.max([tmax1, tmax2, tmax3])
+    tmax = 10*np.max([tmax1, tmax2, tmax3]) # Add an extra decade to make a good SN(t->inf) distribution
     return 10 ** np.ceil(np.log10(tmax))
 
 
@@ -33,19 +33,19 @@ input_prefix      = "input"
 output_prefix     = "output"
 
 
-sites               = [8,12,16,20]
+sites               = [12,16]
 J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [8,16]
-u_fmix              = [0.5, 1.0]
+u_depth             = [4,6,8,10,12,14,16]
+u_fmix              = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']
 u_cgw8              = ['EXPDECAY']
-u_bond              = [16]
-initial_state       = ["PRODUCT_STATE_NEEL_SHUFFLED"]
+u_bond              = [20]
+initial_state       = ["PRODUCT_STATE_NEEL"]
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
     tmp_storage = "/scratch/local"

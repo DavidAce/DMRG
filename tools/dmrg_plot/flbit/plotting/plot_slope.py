@@ -113,15 +113,16 @@ def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, alg
 
                         if legendrow is None:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                line = ax.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
-                for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                    key, fmt = key.split(':') if ':' in key else [key, '']
-                    f['legends'][idx][icol]['handle'].append(line)
-                    f['legends'][idx][icol]['label'].append(col)
-                    f['legends'][idx][icol]['title'] = db['tex'][key]
-                    f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
-                if not idx in f['axes_used']:
-                    f['axes_used'].append(idx)
+                if legendrow is not None:
+                    line = ax.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
+                    for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                        key, fmt = key.split(':') if ':' in key else [key, '']
+                        f['legends'][idx][icol]['handle'].append(line)
+                        f['legends'][idx][icol]['label'].append(col)
+                        f['legends'][idx][icol]['title'] = db['tex'][key]
+                        f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
+                    if not idx in f['axes_used']:
+                        f['axes_used'].append(idx)
             if dbval:
                 ax.set_title(get_title(dbval, subspec, width=16),
                              horizontalalignment='left', x=0.05,
@@ -137,12 +138,9 @@ def plot_v3_slope_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, alg
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                            '-'.join(map(str, figvals)),
-                                                            '-'.join(map(str, get_keys(db, subspec))),
-                                                            suffix)
-
+        f['filename'] = "{}/{}-slope_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec),suffix)
     return figs
 
 

@@ -58,9 +58,10 @@ def get_uniform_palette_names(num):
     return palettes[0:num]
 
 
-def get_colored_lstyles(db, linspec, default_palette, filter = None):
+def get_colored_lstyles(db, linspec, default_palette, filter=None):
     linprod = list(
-        product(*get_vals(db, linspec, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
+        product(
+            *get_vals(db, linspec, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
     palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     lstyles = [None] * len(linprod)
     if len(linspec) == 2:
@@ -96,10 +97,14 @@ def match_datanodes(db, meta, specs, vals):
         equal = True
         for s, v in zip(specs, vals):
             s_noformat = s.split(':')[0]
-            if isinstance(s, Iterable) and isinstance(v, Iterable):
-                equal = all([x == y for x, y in zip(dset['vals'][s_noformat], v)])
+            d = dset['vals'][s_noformat]
+            s_iterable = isinstance(s, Iterable) and not isinstance(s, str)
+            v_iterable = isinstance(v, Iterable) and not isinstance(v, str)
+            d_iterable = isinstance(d, Iterable) and not isinstance(d, str)
+            if d_iterable and v_iterable:
+                equal = all([x == y for x, y in zip(d, v)])
             else:
-                equal = dset['vals'][s_noformat] == v
+                equal = d == v
             if not equal:
                 break
         if not equal:
@@ -168,15 +173,26 @@ def find_saturation_idx(ydata, std_threshold):
 #     sdiff = -np.log(np.abs(np.diff(sdata)))
 #     return np.argmax(sdiff)
 
+class stretchedFit:
+    def __init__(self):
+        pass
+    pos : np.int = -1
+    # @njit(parallel=True, cache=True)
+    def stretched_exp(self, x, C, xi, beta):
+        return C * np.exp(-(np.abs(x-self.pos) / xi) ** beta)
+
+    # @njit(parallel=True, cache=True)
+    def stretched_log(self, x, C, xi, beta):
+        return np.log(C) - (np.abs(x-self.pos) / xi) ** beta
 
 @njit(parallel=True, cache=True)
-def stretched_exp(x, C, xi, beta):
-    return C * np.exp(-(x / xi) ** beta)
+def stretched_exp(x, C, xi, beta, pos):
+    return C * np.exp(-(np.abs(x-pos) / xi) ** beta)
 
 
 @njit(parallel=True, cache=True)
-def stretched_log(x, C, xi, beta):
-    return np.log(C) - (x / xi) ** beta
+def stretched_log(x, C, xi, beta, pos):
+    return np.log(C) - (np.abs(x-pos) / xi) ** beta
 
 
 @njit(parallel=True, cache=True)
@@ -219,6 +235,7 @@ class lbit_fit:
     C: np.float64 = np.nan
     xi: np.float64 = np.nan
     beta: np.float64 = np.nan
+    pos : np.int = -1
     yfit: np.ndarray = np.empty(shape=(0))
     xierr: np.float64 = np.nan
     idxN: np.int = -1
@@ -263,6 +280,8 @@ def get_lbit_fit(x, y, beta=None, ymin=None, skip=None):
             ylogs = np.log(np.abs(ydata))
             if beta:
                 p0 = 0.5, 1.0, 1.0
+                sfit = stretchedFit()
+                sfit.b = np.argmax(ylogs)
                 popt, pcov = curve_fit(stretched_log, xdata=xdata, ydata=ylogs, p0=p0)
                 pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
                 xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
@@ -282,29 +301,37 @@ def get_lbit_fit(x, y, beta=None, ymin=None, skip=None):
     return lbit_fit()
 
 
+
 # Returns C, xi, beta, yfit, LinregressResult instance or pstd
-def get_lbit_fit_data(x, y, e=None, ymin=1e-14, beta=None):
+def get_lbit_fit_data(x, y, e=None, ymin=None, beta=None):
+    if ymin is None:
+        if e is None:
+            ymin = 1e-8
+        else:
+            ymin = 0.0
     if beta is None:
         beta = False
     try:
         with np.errstate(invalid='ignore'):
-            ymask = np.ma.masked_where(np.abs(y) < ymin, np.abs(y))
+            ymask = np.ma.masked_where(np.abs(y) <= ymin, np.abs(y))
             emask = np.ma.masked_where(np.ma.getmask(ymask), e)
             ylogs = np.ndarray.flatten(np.log(ymask.compressed()))
             elogs = np.ndarray.flatten(np.abs(np.log(emask.compressed())))
-            xtile = np.tile(x, (np.shape(y)[0], 1))
+            xtile = np.atleast_2d(x).T if np.size(y) == np.shape(y)[0] else np.tile(x, (np.shape(y)[0], 1))
             xflat = np.ndarray.flatten(np.ma.masked_where(np.ma.getmask(ymask), xtile).compressed())
             if beta:
+                pos = np.argmax(y)
                 p0 = 0.5, 1.0, 1.0
                 bs = ([0, 0, 0], [np.inf, 5, 5])
                 # print('x {} \n{}'.format(np.shape(xflat),xflat))
                 # print('y {} \n{}'.format(np.shape(ylogs),ylogs))
                 # print('e {} \n{}'.format(np.shape(elogs),elogs))
-                popt, pcov = curve_fit(stretched_log, xdata=xflat, ydata=ylogs, sigma=elogs, absolute_sigma=False,
-                                       p0=p0, bounds=bs)
+                sfit  = stretchedFit()
+                sfit.pos = pos
+                popt, pcov = curve_fit(sfit.stretched_log, xdata=xflat, ydata=ylogs, sigma=elogs, p0=p0, bounds=bs)
                 pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
                 xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
-                return lbit_fit(popt[0], popt[1], popt[2], stretched_exp(x, *popt), xierr, -1)
+                return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr, -1)
             else:
                 result = linregress(x=xflat, y=ylogs, alternative='less')
                 C = np.exp(result.intercept)
@@ -313,22 +340,31 @@ def get_lbit_fit_data(x, y, e=None, ymin=1e-14, beta=None):
                 return lbit_fit(C, xi, np.nan, yfit, result.stderr, -1)
     except IndexError as e:
         print("Index error:", e)
-        pass
+        raise
     except ValueError as e:
         print("Fit failed:", e)
+        raise
 
     return lbit_fit()
 
 
 @njit(parallel=True, cache=True)
-def nb_mean_cmat(a):
+def nb_mean_cmat(a, mean=None):
+    if mean is None:
+        mean = 'arithmetic'
     shp = np.shape(a)
     avg = np.empty(shape=(shp[1], shp[2]))
     std = np.empty(shape=(shp[1], shp[2]))
     for i in prange(shp[1]):
         for j in prange(shp[2]):
-            avg[i, j] = np.nanmean(a[:, i, j])
-            std[i, j] = np.nanstd(a[:, i, j])
+            if mean == 'arithmetic':
+                avg[i, j] = np.nanmean(a[:, i, j])
+                std[i, j] = np.nanstd(a[:, i, j])
+            elif mean == 'geometric':
+                avg[i, j] = np.exp(np.nanmean(np.log(np.abs(a[:, i, j]))))
+                std[i, j] = np.nanstd(a[:, i, j])
+            else:
+                raise ValueError("invalid mean")
     return avg, std
 
 
@@ -354,10 +390,16 @@ class lbit_fold:
     mean: np.ndarray
     full: np.ndarray
     stdv: np.ndarray
+    fold: np.ndarray
+    fodv: np.ndarray
+    topr: np.float64
+
 
 
 @njit(parallel=True, cache=True)
-def get_folded_matrix(mat, rms=False):
+def get_folded_matrix(mat, rms=False, mean=None):
+    if mean is None:
+        mean = 'arithmetic'
     fold = np.empty(shape=np.shape(mat))
     rows = np.shape(mat)[0]
     for i in range(rows):
@@ -373,7 +415,11 @@ def get_folded_matrix(mat, rms=False):
             if rms:
                 yz[k] = (y1 ** 2 + y2 ** 2) ** 0.5
             else:
-                yz[k] = (y1 + y2) / (i1 + i2)
+                if mean == 'arithmetic':
+                    yz[k] = (y1 + y2) / (i1 + i2)
+                elif mean == 'geometric':
+                    tmp = (np.log(np.abs(y1)) + np.log(np.abs(y2))) / (i1 + i2)
+                    yz[k] = np.exp(tmp)
         fold[i, :] = 0.0
         fold[i, 0] = mat[i, i]
         fold[i, 1:len(yz) + 1] = yz
@@ -381,14 +427,51 @@ def get_folded_matrix(mat, rms=False):
 
 
 # @njit(parallel=True, cache=True)
-def get_lbit_avg(corrmat):
-    # ycavg = np.mean(corrmat, axis=0)
-    # ycavg = np.mean(np.abs(corrmat),axis=0)
-    full, stdv = nb_mean_cmat(np.abs(corrmat))
-    full = get_folded_matrix(full, rms=False)
-    stdv = get_folded_matrix(stdv, rms=True)
-    mean = nb_nnz_mean_axis0(full)
-    return lbit_fold(mean, full, stdv)
+def get_lbit_avg(corrmat, site=None, mean=None):
+    if site is None:
+        site = 0
+    if mean is None:
+        mean = 'arithmetic'
+
+    full, stdv = nb_mean_cmat(np.abs(corrmat), mean=mean)
+    fold = get_folded_matrix(full, rms=False, mean=mean)
+    fodv = get_folded_matrix(stdv, rms=True, mean=mean)
+
+    midr = int(np.shape(full)[0] / 2)
+    topr = np.mean([np.sum(full[midr:-1, 0:midr]), np.sum(full[0:midr, midr:-1])])
+    # with np.printoptions(edgeitems=30, linewidth=100000, formatter={'float': '{: 0.3e}'.format}):
+    #     print(full)
+    if site is not None:
+        if isinstance(site, list):
+            slice = []
+            for s in site:
+                if isinstance(s, str) and s == "mid":
+                    slice.append(int(np.shape(full)[0] / 2))
+                elif isinstance(s, str) and s == "last":
+                    slice.append(np.shape(full)[0]-1)
+                elif isinstance(s, int):
+                    slice.append(s)
+                else:
+                    raise TypeError("Unsupported site selection: {}".format(s))
+            full = np.atleast_2d(full[slice, :]).T
+            stdv = np.atleast_2d(stdv[slice, :]).T
+            fold = np.atleast_2d(fold[slice, :]).T
+            fodv = np.atleast_2d(fodv[slice, :]).T
+
+        elif isinstance(site, str) and site == "mid":
+            row = int(np.shape(full)[0] / 2)
+            full = np.atleast_2d(full[row, :]).T
+            stdv = np.atleast_2d(stdv[row, :]).T
+            fold = np.atleast_2d(fold[row, :]).T
+            fodv = np.atleast_2d(fodv[row, :]).T
+        elif isinstance(site, int):
+            full = np.atleast_2d(full[site, :]).T
+            stdv = np.atleast_2d(stdv[site, :]).T
+            fodv = np.atleast_2d(fodv[site, :]).T
+        else:
+            raise TypeError("Unsupported site selection: {}".format(site))
+    mean = nb_nnz_mean_axis0(fold)
+    return lbit_fold(mean, full, stdv, fold, fodv, topr)
 
 
 def find_saturation_idx2(ydata, threshold=1e-2):
@@ -444,7 +527,7 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
         1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
     w3 = wn[2]  # The width of distribution for three-body interactions.
 
-    if r == np.iinfo(np.uint64).max:
+    if r == np.iinfo(np.uint64).max or r == 'L':
         r = L
 
     # We multiply by np.sqrt(2 / np.pi) because we are interested in <|N(0,w)|>
@@ -458,7 +541,8 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmax1 = 1.0 / J1min
 
     r2max = np.min([r, int((L))])  # Maximum interaction range, max(|i-j|)
-    Jmin2 = w2 * np.exp(- r2max / (4.0 * x))  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmin2 = w2 * np.exp(
+        - r2max / (4.0 * x))  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     Jmax2 = w2 * np.exp(- 1.0 / x)  # Order of magnitude of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
@@ -496,16 +580,18 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
     wn = db['vals']['w']
 
     w1 = wn[0]  # The width of distribution for on-site field.
-    w2 = wn[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
+    w2 = wn[
+        1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
     w3 = wn[2]  # The width of distribution for three-body interactions.
 
-    if r == np.iinfo(np.uint64).max:
+    if r == np.iinfo(np.uint64).max or r == 'L':
         r = L
 
     tmax1 = 1.0 / w1
 
     r2max = np.min([r, L])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(
+        2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
 
@@ -522,11 +608,12 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
 def page_entropy(L):
     n = int(2 ** (L / 2))
     S = - float(n - 1) / (2 * n)
-    for k in range(1 + n, 1 + n ** 2):  # Include last
+    for k in prange(1 + n, 1 + n ** 2):  # Include last
         S = S + 1.0 / k
     return S
 
-def get_filtered_list(key,vals,filter):
+
+def get_filtered_list(key, vals, filter):
     if vals is None:
         return None
     if filter is None:
@@ -537,40 +624,69 @@ def get_filtered_list(key,vals,filter):
                 return [v for v in fvals if v in vals]
     return vals
 
-def get_prop(db, keyfmt, prop, filter = None):
-    if isinstance(keyfmt, list) or isinstance(keyfmt, tuple):
+
+def get_prop(db, keyfmt, prop, filter=None):
+    if isinstance(keyfmt, list) or isinstance(keyfmt, set) or isinstance(keyfmt, tuple):
         keys = []
+        fmts = []
         for kf in keyfmt:
-            k = kf.split(':')[0]
-            if prop in db:
+            if ':' in kf:
+                k, f = kf.split(':')
+            else:
+                k, f = kf.split(':')[0], ''
+            if prop == 'keys' and db.get('version') >= 3:
+                keys.append(k)
+                fmts.append(f)
+            elif prop in db:
                 v = db[prop].get(k) if k in db[prop] else db[prop].get('keys').get(k)
-                v = get_filtered_list(k,v,filter)
+                v = get_filtered_list(k, v, filter)
                 if v is not None:
                     keys.append(v)
-        return keys
+                    fmts.append(f)
+        return keys, fmts
     else:
         if prop in db:
-            k = keyfmt.split(':')[0]
+            if ':' in keyfmt:
+                k, f = keyfmt.split(':')
+            else:
+                k, f = keyfmt.split(':')[0], ''
             v = db[prop].get(k) if k in db[prop] else db[prop].get('keys').get(k)
             v = get_filtered_list(k, v, filter)
             if v is not None:
-                return v
-        return []
+                return v, f
+    return [], []
 
 
 def get_vals(db, keyfmt, filter=None):
-    return get_prop(db, keyfmt, 'vals', filter)
+    vals, _ = get_prop(db, keyfmt, 'vals', filter)
+    return vals
 
 
 def get_keys(db, keyfmt):
-    return get_prop(db, keyfmt, 'keys')
+    keys, _ = get_prop(db, keyfmt, 'keys')
+    return keys
 
 
 def get_tex(db, keyfmt):
-    keys = get_prop(db, keyfmt, 'tex')
+    keys, _ = get_prop(db, keyfmt, 'tex')
     if isinstance(keys, list):
         keys = '$' + ', '.join([k.strip('$') for k in keys]) + '$'
     return keys
+
+
+def get_specvals(db, keyfmt, vals=None, filter=None):
+    if vals is not None and len(keyfmt) != len(vals):
+        raise AssertionError("unequal lengths: keyfmt {} != vals {} ".format(len(keyfmt), len(vals)))
+    keys, fmts = get_prop(db, keyfmt, 'keys')
+    kv = []
+    if vals is None:
+        for key in keys:
+            kv.append("{}".format(key))
+        return ','.join(map(str, kv))
+    else:
+        for key, fmt, val in zip(keys, fmts, vals):
+            kv.append("{0}[{2:{1}}]".format(key, fmt, val))
+        return ','.join(map(str, kv))
 
 
 def get_title(db, keys, width=20):
@@ -848,11 +964,9 @@ def get_fig_meta(numplots: int, meta: dict):
             f['ax'][-1].tick_params(axis='y', which='both', labelleft=False, zorder=0)
             f['ax'][-1].yaxis.label.set_visible(False)
 
-
     # Set title
     if title := f.get('suptitle'):
         f['fig'].suptitle(title)
-
 
     legend = {'handle': [], 'label': [], 'title': None, 'header': None}  # One such per legend column
 
@@ -867,6 +981,7 @@ def get_fig_meta(numplots: int, meta: dict):
     #           'title': ["$t_{}$".format('{\ln\ln}')]},
 
     return f
+
 
 def get_formatted_columns(columns):
     # columns is a list of legend columns like
@@ -910,8 +1025,10 @@ def get_formatted_columns(columns):
             c = columns[icol][irow]  # An entry at irow,icol
             # Let n == len(str(c)) and m == phantom_length[i] be the number of characters in the longest column word
             # Then we need to print c padded with a phantom word of length m-n
-            zerolen_string = '\makebox[0pt][l]{{{}}}'.format(str(c))  # Put in text in left-aligned box that does not consume width
-            phantom_string = '\hphantom{{{}}}'.format(column_phantom[icol])  # Let the phantom string consume width instead
+            zerolen_string = '\makebox[0pt][l]{{{}}}'.format(
+                str(c))  # Put in text in left-aligned box that does not consume width
+            phantom_string = '\hphantom{{{}}}'.format(
+                column_phantom[icol])  # Let the phantom string consume width instead
             colsep_string = ' ' if icol + 1 < num_cols else ''
             fmt_label += '{}{}{}'.format(zerolen_string, phantom_string, colsep_string)
         fmt_rows.append(fmt_label)
@@ -956,6 +1073,7 @@ def columns_are_equal(fmeta):
             all(fmeta['legends'][0][icol]['label'] == fmeta['legends'][iax][icol]['label'] for iax in range(numaxes)))
 
     return columns_equal
+
 
 def add_legend5(fmeta):
     # meta should be a dict with keys 'ax' with the corresponding axes and 'legends' which names the extra legends
@@ -1019,7 +1137,8 @@ def add_legend5(fmeta):
         # the legend entry appears in the beginning for instance with tikzplotlib
         xmin, xmax = fmeta['ax'][iax].get_xlim()
         ymin, ymax = fmeta['ax'][iax].get_ylim()
-        titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0, zorder=0)
+        titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
+                                            zorder=0)
         formatted_labels = get_formatted_columns(columns)
         legendtitle = fmeta.get('legendtitle')
         if iax_tgt is not None:
@@ -1050,9 +1169,11 @@ def add_legend5(fmeta):
         # the legend entry appears in the beginning for instance with tikzplotlib
         xmin, xmax = fmeta['ax'][iax].get_xlim()
         ymin, ymax = fmeta['ax'][iax].get_ylim()
-        titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0, zorder=0)
+        titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
+                                            zorder=0)
         formatted_labels = get_formatted_columns(columns)
-        lg = fmeta[legend_nq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels, title=''.join(formatted_labels), loc=loc_nq,
+        lg = fmeta[legend_nq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                          title=''.join(formatted_labels), loc=loc_nq,
                                           prop=dict(stretch="ultra-condensed"))
         lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
 
@@ -1141,6 +1262,7 @@ def save_figure(figs):
     else:
         raise TypeError("Unexpected type: ", type(figs))
 
+
 def plt_scatter(x, y, xlabel, ylabel, ax, markerlist, label='', xscale='linear', yscale='linear', markersize=20):
     ax.scatter(x, y, marker=next(markerlist), label=label, alpha=.90, s=markersize)
     if xlabel != '':  ax.set_xlabel(xlabel)
@@ -1148,4 +1270,3 @@ def plt_scatter(x, y, xlabel, ylabel, ax, markerlist, label='', xscale='linear',
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
     if label != '': ax.legend()
-

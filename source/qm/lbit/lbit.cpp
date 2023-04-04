@@ -1002,7 +1002,7 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
      *                         = ⟨ψ| U σ^z_i U†
      *                         = ⟨state_i|
      */
-    auto svd_cfg           = svd::config();
+    auto svd_cfg             = svd::config();
     svd_cfg.truncation_limit = tol;
     svd_cfg.rank_max         = 8;
     svd_cfg.svd_lib          = svd::lib::lapacke;
@@ -1257,7 +1257,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
     auto rndh = settings::flbit::cls::randomize_hfields;
 
     auto lognoinf      = [](const auto &v) -> double {
-        auto res = std::log10(std::abs(v));
+        auto res = std::log10(std::abs(std::real(v)));
         if(std::isinf(res) or std::isinf((-res))) return -16.0;
         return res;
     };
@@ -1315,14 +1315,40 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
 
         extent7                              = {1, 1, 1, 1, 1, 1, static_cast<long>(ytyp.size())};
         lbitSA.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp.data(), extent7);
-        auto t_plot = tid::tic_scope("plot");
-        auto yavg_log   = num::cast<qm::real>(yavg, lognoinf);
-        auto ytyp_log   = num::cast<qm::real>(ytyp, lognoinf);
-        auto plt           = AsciiPlotter("lbit decay", 50, 20);
-        plt.addPlot(yavg_log, fmt::format("avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
-        plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
-        plt.enable_legend();
-        plt.show();
+
+        {
+            auto t_plot = tid::tic_scope("plot");
+            auto yavg_log   = num::cast<qm::real>(yavg, lognoinf);
+            auto ytyp_log   = num::cast<qm::real>(ytyp, lognoinf);
+            auto plt           = AsciiPlotter("lbit decay", 50, 20);
+            plt.addPlot(yavg_log, fmt::format("avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
+            plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
+            plt.enable_legend();
+            plt.show();
+        }
+        auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
+        auto mid = static_cast<long>(lbit_corrmap.rows()/2);
+        auto lbit_crossup = 0.5 * (lbit_corrmap.topRightCorner(mid,mid).cwiseAbs().sum() + lbit_corrmap.bottomLeftCorner(mid,mid).cwiseAbs().sum());
+        tools::log->info("lbit cross-support: {:.3e}", lbit_crossup);
+
+//        {
+//            auto t_plot = tid::tic_scope("plot");
+//            auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
+//            auto rows  = lbit_corrmap.rows();
+//            auto yrows = std::vector<long>{0, rows/2, rows-1};
+//            auto plt           = AsciiPlotter("lbit decay", 150, 20);
+//            std::array<char,3> marks = {'o', 'x', '.'};
+//            size_t i = 0;
+//            for (const auto & row : yrows){
+//                auto y_row   = Eigen::VectorXd(lbit_corrmap.row(row));
+//                auto y_log   = num::cast<qm::real>(y_row, lognoinf);
+//                auto mark = marks[i++];
+//                plt.addPlot(y_log, fmt::format("avg: {::+.4e}", y_row), mark);
+//                fmt::print("{} log: {::+.4}\n", mark, y_log);
+//            }
+//            plt.enable_legend();
+//            plt.show();
+//        }
     }
     /* clang-format on */
     return lbitSA;

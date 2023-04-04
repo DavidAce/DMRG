@@ -70,7 +70,11 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     logger.debug('--- plotting xaxs: {}'.format(xaxvals))
                     datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec + xaxspec,
                                                 vals=figvals + subvals + linvals + xaxvals)
-                    logger.debug('Found {} datanodes'.format(len(datanodes)))
+                    if len(datanodes) != 1:
+                        logger.warning(f"match: \n"
+                                       f"\tspec:{[figspec + subspec + linspec]}\n"
+                                       f"\tvals:{[figvals + subvals + linvals]}")
+                        logger.warning(f"found {len(datanodes)} datanodes: {datanodes=}")
                     for datanode in datanodes:
                         dbval = db['dsets'][datanode.name]
                         ydata = datanode['avg'][meta['colname']][()]
@@ -125,15 +129,16 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
 
                         if legendrow is None:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                line = ax.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
-                for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                    key, fmt = key.split(':') if ':' in key else [key, '']
-                    f['legends'][idx][icol]['handle'].append(line)
-                    f['legends'][idx][icol]['label'].append(col)
-                    f['legends'][idx][icol]['title'] = db['tex'][key]
-                    f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
-                if not idx in f['axes_used']:
-                    f['axes_used'].append(idx)
+                if legendrow is not None:
+                    line = ax.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
+                    for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                        key, fmt = key.split(':') if ':' in key else [key, '']
+                        f['legends'][idx][icol]['handle'].append(line)
+                        f['legends'][idx][icol]['label'].append(col)
+                        f['legends'][idx][icol]['title'] = db['tex'][key]
+                        f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
+                    if not idx in f['axes_used']:
+                        f['axes_used'].append(idx)
             if dbval:
                 ax.set_title(get_title(dbval, subspec, width=16),
                              horizontalalignment='left', x=0.05,
@@ -148,11 +153,9 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
         suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                            '-'.join(map(str, figvals)),
-                                                            '-'.join(map(str, get_keys(db, subspec))),
-                                                            suffix)
-
+        f['filename'] = "{}/{}-rise_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec), suffix)
     return figs
 
 
@@ -187,30 +190,27 @@ def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
             if not col in [l.split(':')[0] for l in subspec + linspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(
-        product(*get_keys(db, figspec)))  # All combinations of figspecs (names of parameters that iterate figures)
-    subprod = list(
-        product(*get_keys(db, subspec)))  # All combinations of subspecs (names of parameters that iterate subplots)
-    linprod = list(
-        product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
+    figprod = list(product(*get_keys(db, figspec)))  # All combinations of figspecs (names of parameters that iterate figures)
+    subprod = list(product(*get_keys(db, subspec)))  # All combinations of subspecs (names of parameters that iterate subplots)
+    linprod = list(product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
     dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
 
-    for figkeys, f in zip(figprod, figs):
-        logger.debug(f'-- plotting {figkeys=}')
+    for figvals, f in zip(figprod, figs):
+        logger.debug(f'-- plotting {figvals=}')
         dbval = None
-        for idx, (subkeys, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
+        for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             popt = None
             pcov = None
-            logger.debug(f'-- plotting {subkeys=}')
-            for dirkeys in dirprod:
+            logger.debug(f'-- plotting {subvals=}')
+            for dirvals in dirprod:
                 # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
                 palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
-                for linkeys, color, lstyle in zip(linprod, palette, lstyles):
-                    findlist = list(figkeys) + list(subkeys) + list(linkeys) + list(dirkeys) + [meta['groupname']]
+                for linvals, color, lstyle in zip(linprod, palette, lstyles):
+                    findlist = list(figvals) + list(subvals) + list(linvals) + list(dirvals) + [meta['groupname']]
                     datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                 all(k in key for k in findlist)]
                     if len(datanode) != 1:
@@ -219,10 +219,8 @@ def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
                         # raise LookupError("Found incorrect number of datanodes")
                     datanode = datanode[0]
                     dbval = db['dsets'][datanode.name]
-                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'],
-                                                     'f8')  # Supports multiple columns
-                    edata, colnames = get_table_data(datanode['ste'], meta['colname'],
-                                                     'f8')  # Supports multiple columns
+                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'],'f8')  # Supports multiple columns
+                    edata, colnames = get_table_data(datanode['ste'], meta['colname'],'f8')  # Supports multiple columns
                     tdata = datanode['avg']['physical_time'][()]
                     ndata = datanode['avg']['num'][()]
 
@@ -405,10 +403,10 @@ def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
         suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                            '-'.join(map(str, figkeys)),
-                                                            '-'.join(map(str, get_keys(db, subspec))),
-                                                            suffix)
+        f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec),suffix)
+
 
     return figs
 
