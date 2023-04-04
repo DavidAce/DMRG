@@ -16,6 +16,8 @@
     #include <mkl_lapacke.h>
 #elif defined(OPENBLAS_AVAILABLE)
     #include <openblas/lapacke.h>
+#elif defined(FLEXIBLAS_AVAILABLE)
+    #include <flexiblas/lapacke.h>
 #else
     #include <lapacke.h>
 #endif

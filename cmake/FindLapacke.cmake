@@ -113,21 +113,28 @@ function(target_include_openblas_directories lpk tgt)
 endfunction()
 
 function(target_include_lapacke_directories lpk src)
-    message(DEBUG "FindLapacke: Inspecting BLA_VENDOR: ${BLA_VENDOR}")
-    if(BLA_VENDOR MATCHES Intel OR $ENV{BLA_VENDOR} MATCHES Intel)
+    message(STATUS "FindLapacke: Inspecting BLA_VENDOR: ${BLA_VENDOR}")
+    if(BLA_VENDOR MATCHES FlexiBLAS OR ENV{BLA_VENDOR} MATCHES FlexiBLAS)
+        target_compile_definitions(${lpk} INTERFACE FLEXIBLAS_AVAILABLE)
+    elseif(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
         target_include_mkl_directories(${lpk} ${src})
-    elseif(BLA_VENDOR MATCHES OpenBLAS OR $ENV{BLA_VENDOR} MATCHES OpenBLAS)
+    elseif(BLA_VENDOR MATCHES OpenBLAS OR ENV{BLA_VENDOR} MATCHES OpenBLAS)
         target_include_openblas_directories(${lpk} ${src})
     endif()
     if(LAPACKE_INCLUDE_DIR)
-        message(DEBUG "Lapacke include directory: ${LAPACKE_INCLUDE_DIR}")
+        message(STATUS "Lapacke include directory: ${LAPACKE_INCLUDE_DIR}")
     endif()
 endfunction()
 
 
 function(find_Lapacke)
     if(BLA_VENDOR MATCHES FlexiBLAS OR ENV{BLA_VENDOR} MATCHES FlexiBLAS)
-        find_package(lapacke REQUIRED CONFIG)
+         # For this to work we install the lapack/lapacke reference implementation together
+         # with flexiblas. This solution is inspired by the flexiblas easybuild config
+         # We have to link link the manually installed lapacke with flexiblas (BLAS::BLAS)
+        find_package(BLAS REQUIRED)
+        find_package(lapacke REQUIRED) # From manual installation: gives a target "lapacke"
+        target_link_libraries(lapacke INTERFACE BLAS::BLAS) # Link togeher
     elseif(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
         set(ENABLE_BLAS95 ON)
         set(ENABLE_LAPACK95 ON)

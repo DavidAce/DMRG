@@ -156,7 +156,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
-    if constexpr(std::is_same_v<Scalar, real> or std::is_same_v<Scalar, cplx>){
+    if constexpr(std::is_same_v<Scalar, real>){
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
@@ -264,7 +264,7 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     if(mpsL.dimension(2) != mpsR.dimension(1)) throw except::runtime_error("Dimension mismatch mpsL {} (idx 2) and mpsR {} (idx 1)", mpsL.dimensions(), mpsR.dimensions());
 
 
-    if constexpr(std::is_same_v<Scalar, real> or std::is_same_v<Scalar, cplx>){
+    if constexpr(std::is_same_v<Scalar, real>){
         auto tmp = Eigen::Tensor<Scalar,4>(mpsL_dims[0], mpsL_dims[1], mpsR_dims[0], mpsR_dims[2]);
         contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd");
         res.device(tenx::threads::getDevice())  = tmp.shuffle(shuffle_idx).reshape(res_dims);

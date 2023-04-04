@@ -21,6 +21,7 @@
         "DMRG_BENCH_CONTRACTION": "FALSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "find",
+        "EIGEN_USE_THREADS": "FALSE",
         "TBLIS_THREAD_MODEL" : "openmp",
         "BUILD_SHARED_LIBS": "FALSE",
         "COMPILER_ENABLE_MOLD": "FALSE",
@@ -365,7 +366,7 @@
       "name": "kraken",
       "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
-        "mkl",
+        "flexiblas",
         "haswell",
         "conan",
         "release",
@@ -407,7 +408,7 @@
       "name": "tetralith",
       "displayName": "Release|march=native|conan|mkl",
       "inherits": [
-        "mkl",
+        "flexiblas",
         "native",
         "conan",
         "release",

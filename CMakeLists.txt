@@ -12,7 +12,7 @@ list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
 # Set options for this build
 option(DMRG_ENABLE_MKL "Enable Intel Math Kernel Library" FALSE)
 option(DMRG_ENABLE_RSVD "Enable Randomized SVD module" FALSE)
-option(DMRG_ENABLE_TBLIS "Use TBLIS for tensor contraction instead of Eigen3" FALSE)
+option(DMRG_ENABLE_TBLIS "Use TBLIS for real-valued tensor contractions instead of Eigen3" FALSE)
 option(DMRG_ENABLE_TESTS "Enable unit testing with ctest" FALSE)
 option(DMRG_ENABLE_COVERAGE "Enable test coverage" FALSE)
 option(DMRG_BUILD_EXAMPLES "Build examples" FALSE)
@@ -26,6 +26,7 @@ option(COMPILER_ENABLE_USAN "Enable undefined behavior sanitizer -fsanitize=unde
 option(COMPILER_ENABLE_LTO "Enable link time optimization" FALSE)
 option(COMPILER_ENABLE_PCH "Enable precompiled headers to speed up compilation" FALSE)
 option(COMPILER_ENABLE_CCACHE "Enable ccache to speed up compilation" FALSE)
+option(EIGEN_USE_THREADS "Use STL threads to parallelize Eigen::Tensor" TRUE)
 option(THREADS_PREFER_PTHREAD_FLAG "Prefer -pthread flag over -lpthread or similar" TRUE)
 option(CMAKE_INTERPROCEDURAL_OPTIMIZATION "Enable link-time-optimization" FALSE)
 

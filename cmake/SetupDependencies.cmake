@@ -36,7 +36,9 @@ endif()
 
 # Configure Eigen
 if(TARGET Eigen3::Eigen)
-    target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_THREADS)
+    if(EIGEN_USE_THREADS)
+        target_compile_definitions(Eigen3::Eigen INTERFACE EIGEN_USE_THREADS)
+    endif()
     if(TARGET MKL::MKL)
         message(STATUS "Eigen will use MKL")
         target_link_libraries(Eigen3::Eigen INTERFACE MKL::MKL)

@@ -13,8 +13,11 @@
 #elif defined(OPENBLAS_AVAILABLE)
     #include <openblas/cblas.h>
     #include <openblas/openblas_config.h>
-#elif __has_include(<cblas.h>)
+#elif defined(FLEXIBLAS_AVAILABLE)
+    #include <flexiblas/flexiblas_api.h>
+#elif __has_include(<cblas.h>) && __has_include(<openblas_config.h>)
     #include <cblas.h>
+    #include <openblas_config.h>
     #if defined(OPENBLAS_VERSION)
         #define OPENBLAS_AVAILABLE
     #endif
@@ -84,6 +87,16 @@ namespace settings {
 #if defined(MKL_AVAILABLE)
         tools::log->info("Intel MKL | max_threads {}", mkl_get_max_threads());
 #endif
+#if defined(FLEXIBLAS_AVAILABLE)
+        constexpr size_t bufsize = 512;
+        char buffer[bufsize];
+        auto n = flexiblas_list_loaded(nullptr, 0, 0);
+        for(auto pos = 0; pos < n; pos++) {
+            flexiblas_list_loaded(buffer, bufsize, pos);
+            tools::log->info("Flexiblas [{}]:{} | num_threads {}", pos, buffer, flexiblas_get_num_threads());
+        }
+#endif
+
         if(settings::threading::show_threads) exit(0);
     }
 }
