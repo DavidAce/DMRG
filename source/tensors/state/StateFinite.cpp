@@ -369,7 +369,7 @@ Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::
                                       multisite_mps.dimensions());
         multisite_mps = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
     } else if(sites.back() < get_length() - 1 and get_mps_site(sites.back()).get_label() == "A") {
-        // In this case all sites are "A" and we need to append the the "L" from the site on the right to make a normalized multisite mps
+        // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
         auto &mps_right = get_mps_site(sites.back() + 1);
         auto &L_right   = mps_right.get_L();
         if(L_right.dimension(0) != multisite_mps.dimension(2))

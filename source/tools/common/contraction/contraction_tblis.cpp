@@ -5,6 +5,7 @@
 #include <omp.h>
 #include <tblis/tblis.h>
 #include <tblis/util/thread.h>
+#include <tci/tci_config.h>
 
 #if defined(DMRG_SAVE_CONTRACTION)
     #include <h5pp/h5pp.h>
@@ -115,18 +116,20 @@ void contract_tblis(const TensorRead<ea_type> &ea, const TensorRead<eb_type> &eb
     db.assign(eb_ref.dimensions().begin(), eb_ref.dimensions().end());
     dc.assign(ec_ref.dimensions().begin(), ec_ref.dimensions().end());
 
-    auto   ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
-    auto   tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
-    auto   tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
-    double alpha = 1.0;
-    double beta  = 0.0;
+    auto                     ta    = tblis::varray_view<const typename ea_type::Scalar>(da, ea_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tb    = tblis::varray_view<const typename eb_type::Scalar>(db, eb_ref.data(), tblis::COLUMN_MAJOR);
+    auto                     tc    = tblis::varray_view<typename ec_type::Scalar>(dc, ec_ref.data(), tblis::COLUMN_MAJOR);
+    typename ea_type::Scalar alpha = 1.0;
+    typename ec_type::Scalar beta  = 0.0;
 
     tblis::tblis_tensor          A_s(alpha, ta);
     tblis::tblis_tensor          B_s(tb);
     tblis::tblis_tensor          C_s(beta, tc);
     const tblis::tblis_config_s *tblis_config = tblis::tblis_get_config("haswell");
+#if defined(TCI_USE_OPENMP_THREADS) && defined(_OPENMP)
+    tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+#endif
     tblis_tensor_mult(nullptr, tblis_config, &A_s, la.c_str(), &B_s, lb.c_str(), &C_s, lc.c_str());
-    //    tblis::mult(alpha, ta, la.c_str(), tb, lb.c_str(), beta, tc, lc.c_str());
 }
 
 /* clang-format off */
@@ -153,10 +156,7 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envL.dimension(2) != mpo.dimension(0)) throw except::runtime_error("Dimension mismatch envL {} and mpo {}", envL.dimensions(), mpo.dimensions());
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
-    if constexpr(std::is_same_v<Scalar, real>){
-    #if defined(TCI_USE_OMP_THREADS) && defined(_OPENMP)
-        tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
-    #endif
+    if constexpr(std::is_same_v<Scalar, real> or std::is_same_v<Scalar, cplx>){
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));
@@ -171,8 +171,6 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
             contract_tblis(mpsenvR, mpo, mpsenvRmpo, "qijk", "rkql", "ijrl");
             contract_tblis(mpsenvRmpo, envL, res, "qkri", "qjr", "ijk");
         }
-
-
     }else{
         if (mps.dimension(1) >= mps.dimension(2)){
             res.device(tenx::threads::getDevice()) = mps
@@ -207,12 +205,17 @@ void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      ,
                                                    const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                                    const Scalar * const bnd_ptr, std::array<long,1> bnd_dims){
     auto t_con = tid::tic_token("contract_mps_bnd", tid::level::highest);
-    auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
-    auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
-    auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
-    if(mps.dimension(2) != bnd.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} (idx 2) and bnd {} (idx 0)", mps.dimensions(), bnd.dimensions());
-    if(mps.dimensions() != res.dimensions()) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps.dimensions(), res.dimensions());
-    res.device(tenx::threads::getDevice()) = mps.contract(tenx::asDiagonal(bnd), tenx::idx({2}, {0}));
+//    auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
+//    auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
+//    auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
+    if(mps_dims[2] != bnd_dims[0]) throw except::runtime_error("Dimension mismatch mps {} (idx 2) and bnd {} (idx 0)", mps_dims, bnd_dims);
+    if(mps_dims != res_dims) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps_dims, res_dims);
+//    res.device(tenx::threads::getDevice()) = mps.contract(tenx::asDiagonal(bnd), tenx::idx({2}, {0}));
+
+    auto res_mat = Eigen::Map<Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic>>(res_ptr, res_dims[0] * res_dims[1], res_dims[2]);
+    auto mps_mat = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic, Eigen::Dynamic>>(mps_ptr, mps_dims[0] * mps_dims[1], mps_dims[2]);
+    auto bnd_mat = Eigen::Map<const Eigen::Matrix<Scalar,Eigen::Dynamic, 1>>(bnd_ptr, bnd_dims[0]);
+    res_mat.noalias() = mps_mat * bnd_mat.asDiagonal();
 }
 template void tools::common::contraction::contract_mps_bnd(      cplx *       res_ptr, std::array<long,3> res_dims,
                                                            const cplx * const mps_ptr, std::array<long,3> mps_dims,
@@ -232,8 +235,8 @@ void  tools::common::contraction::contract_bnd_mps(
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
-    if(mps.dimension(1) != bnd.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} (idx 1) and bnd {} (idx 0)", mps.dimensions(), bnd.dimensions());
-    if(mps.dimensions() != res.dimensions()) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps.dimensions(), res.dimensions());
+    if(mps_dims[1] != bnd_dims[0]) throw except::runtime_error("Dimension mismatch mps {} (idx 1) and bnd {} (idx 0)", mps_dims, bnd_dims);
+    if(mps_dims != res_dims) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps_dims, res_dims);
     res.device(tenx::threads::getDevice()) = tenx::asDiagonal(bnd).contract(mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
 }
 
@@ -259,7 +262,15 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     auto check_dims = std::array<long,3>{mpsL.dimension(0) * mpsR.dimension(0), mpsL.dimension(1), mpsR.dimension(2)};
     if(res_dims != check_dims) throw except::runtime_error("res dimension mismatch: dims {} | expected dims {}", res_dims, check_dims);
     if(mpsL.dimension(2) != mpsR.dimension(1)) throw except::runtime_error("Dimension mismatch mpsL {} (idx 2) and mpsR {} (idx 1)", mpsL.dimensions(), mpsR.dimensions());
-    res.device(tenx::threads::getDevice()) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
+
+
+    if constexpr(std::is_same_v<Scalar, real> or std::is_same_v<Scalar, cplx>){
+        auto tmp = Eigen::Tensor<Scalar,4>(mpsL_dims[0], mpsL_dims[1], mpsR_dims[0], mpsR_dims[2]);
+        contract_tblis(mpsL, mpsR, tmp, "abe", "ced", "abcd");
+        res.device(tenx::threads::getDevice())  = tmp.shuffle(shuffle_idx).reshape(res_dims);
+    }else{
+        res.device(tenx::threads::getDevice()) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
+    }
 }
 
 

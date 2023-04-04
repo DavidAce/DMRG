@@ -126,7 +126,9 @@ endfunction()
 
 
 function(find_Lapacke)
-    if(BLA_VENDOR MATCHES Intel OR $ENV{BLA_VENDOR} MATCHES Intel)
+    if(BLA_VENDOR MATCHES FlexiBLAS OR ENV{BLA_VENDOR} MATCHES FlexiBLAS)
+        find_package(lapacke REQUIRED CONFIG)
+    elseif(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
         set(ENABLE_BLAS95 ON)
         set(ENABLE_LAPACK95 ON)
         find_package(MKL REQUIRED BYPASS_PROVIDER)
@@ -137,7 +139,7 @@ function(find_Lapacke)
 
     include(cmake/CheckCompile.cmake)
 
-    set(lapacke_tgt_candidates MKL::MKL LAPACK::LAPACK BLAS::BLAS mkl::mkl OpenBLAS::OpenBLAS)
+    set(lapacke_tgt_candidates lapacke Lapacke::Lapacke MKL::MKL LAPACK::LAPACK BLAS::BLAS mkl::mkl OpenBLAS::OpenBLAS)
     foreach(tgt ${lapacke_tgt_candidates})
         if (TARGET ${tgt} AND NOT TARGET lapacke::lapacke)
             message(DEBUG "Looking for Lapacke in ${tgt}")
@@ -164,11 +166,10 @@ function(find_Lapacke)
         # Lapacke not found in the usual targets, perhaps OpenBLAS was built without lapacke, for instance
         message(DEBUG "Looking for lapacke directly")
         find_path(LAPACKE_INCLUDE_DIR NAMES lapacke.h
-        PATHS ${OpenBLAS_ROOT_SEARCH_PATHS}
-            PATH_SUFFIXES include
-        )
+                    PATHS ${OpenBLAS_ROOT_SEARCH_PATHS}
+                    PATH_SUFFIXES include
+                    )
 
-        find_library(LAPACK_LIBRARY NAMES lapack)
         find_library(LAPACKE_LIBRARY NAMES lapacke)
 
         if(LAPACKE_INCLUDE_DIR)
@@ -179,10 +180,6 @@ function(find_Lapacke)
                 message(DEBUG "Found LAPACKE_LIBRARY: ${LAPACKE_LIBRARY}")
                 target_link_libraries(lapacke::lib INTERFACE ${LAPACKE_LIBRARY})
                 set_target_properties(lapacke::lib PROPERTIES IMPORTED_LOCATION ${LAPACKE_LIBRARY})
-            endif()
-            if(LAPACKE_LIBRARY)
-                message(DEBUG "Found LAPACK_LIBRARY: ${LAPACK_LIBRARY}")
-                target_link_libraries(lapacke::lib INTERFACE ${LAPACK_LIBRARY})
             endif()
             target_link_libraries(lapacke::lib INTERFACE BLAS::BLAS LAPACK::LAPACK)
             if(NOT Lapacke_compiles)
