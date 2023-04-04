@@ -13,7 +13,9 @@ set(cflags "-std=c17 -fPIC ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_RELEASE}")
 set(cxxflags "-std=c++17 -fPIC ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
 set(ldflags "${CMAKE_EXE_LINKER_FLAGS}")
 set(libs "-lm -ldl")
-
+if(TBLIS_THREAD_MODEL)
+    set(thread_model "--enable-thread-model=${TBLIS_THREAD_MODEL}")
+endif()
 externalproject_add(external_tblis
                     GIT_REPOSITORY https://github.com/devinamatthews/tblis.git
                     GIT_TAG 7d979b6624071879383377611cb2fa483b6a3104 # master on Apr 22
@@ -42,7 +44,7 @@ externalproject_add(external_tblis
                     COMMAND export CFLAGS=${cflags}
                     COMMAND export CXXFLAGS=${cxxflags}
                     COMMAND export LDFLAGS=${ldflags}
-                    COMMAND ./configure --enable-config=haswell,skx,zen --prefix=<INSTALL_DIR>
+                    COMMAND ./configure --enable-config=haswell,skx,zen ${thread_model} --prefix=<INSTALL_DIR>
 
                     BUILD_COMMAND
                     COMMAND make -j${NUM_THREADS}

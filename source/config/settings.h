@@ -130,7 +130,7 @@ namespace settings {
         inline double   svd_truncation_lim              = 1e-16 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
         inline double   svd_truncation_init             = 1e-3  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
-        inline bool     svd_save_fail                   = false;                   /*!< Save failed SVD calculations to file */
+        inline bool     svd_save_fail                   = false ;                  /*!< Save failed SVD calculations to file */
     }
 
     /*! \namespace settings::strategy Settings affecting the convergence rate of the algorithms */

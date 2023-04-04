@@ -1,22 +1,4 @@
 if(DMRG_PACKAGE_MANAGER MATCHES "find")
-    find_package(OpenMP COMPONENTS CXX REQUIRED)
-    #    find_package(Fortran REQUIRED)
-    ##############################################################################
-    ###  Optional Intel MKL support. Uses OpenBLAS as fall-back                ###
-    ##############################################################################
-#    if(DMRG_ENABLE_MKL)
-#        find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED MODULE)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-#    else()
-#        find_package(OpenBLAS 0.3.20 REQUIRED)
-#        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE OPENBLAS_AVAILABLE)
-#        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_float=std::complex<float>)
-#        target_compile_definitions(OpenBLAS::OpenBLAS INTERFACE lapack_complex_double=std::complex<double>)
-#        #For convenience, define these targes
-#        add_library(BLAS::BLAS ALIAS OpenBLAS::OpenBLAS)
-#        add_library(LAPACK::LAPACK ALIAS OpenBLAS::OpenBLAS)
-#        add_library(lapacke::lapacke ALIAS OpenBLAS::OpenBLAS)
-#    endif()
-
     find_package(Lapacke           REQUIRED MODULE)                                  # Lapacke needed by arpack++, included in MKL or OpenBLAS
     find_package(pcg-cpp           REQUIRED)
     find_package(Eigen3     3.4.0  REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)

@@ -127,9 +127,10 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     // Set up the svd settings if not given explicitly
     if(not svd_cfg) svd_cfg = svd::config();
-    if(not svd_cfg->truncation_limit) svd_cfg->truncation_limit = settings::solver::svd_truncation_lim;
-    if(not svd_cfg->switchsize_gesdd) svd_cfg->switchsize_gesdd = settings::solver::svd_switchsize_bdc;
-    if(not svd_cfg->svd_save) svd_cfg->svd_save = settings::solver::svd_save_fail ? svd::save::FAIL : svd::save::NONE;
+    if(not svd_cfg->truncation_limit.has_value()) svd_cfg->truncation_limit = settings::solver::svd_truncation_lim;
+    if(not svd_cfg->switchsize_gesdd.has_value()) svd_cfg->switchsize_gesdd = settings::solver::svd_switchsize_bdc;
+    if(not svd_cfg->svd_save.has_value()) svd_cfg->svd_save = settings::solver::svd_save_fail ? svd::save::FAIL : svd::save::NONE;
+
     // Split the multisite tensor at the given center position.
     std::vector<size_t> positions_left, positions_right;
     std::vector<long>   spin_dims_left, spin_dims_right;

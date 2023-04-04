@@ -74,6 +74,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     auto cfg             = svd::config();
     cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
     cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
+    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     cfg.svd_lib          = svd::lib::lapacke;
     cfg.svd_rtn          = svd::rtn::geauto;
     auto svd             = svd::solver(cfg);
@@ -86,7 +87,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
         SV.setConstant(1.0);
         for(size_t idx = 0; idx < mpos.size(); ++idx) {
             {
-                auto           t_svmpos      = tid::tic_scope("svmpos");
+                auto           t_svmpos = tid::tic_scope("svmpos");
                 auto           dd       = mpos_dn[idx].dimensions();
                 auto           du       = mpos_up[idx].dimensions();
                 constexpr auto shf5     = std::array<long, 5>{0, 1, 3, 4, 2};
@@ -101,7 +102,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
             }
             if(idx + 1 < mpos.size()) {
                 auto t_split            = tid::tic_scope("split");
-                std::tie(mpos[idx], SV) = svd.split_mpo_l2r(mpo_du);
+                std::tie(mpos[idx], SV) = svd.split_mpo_l2r(mpo_du, cfg);
             } else {
                 mpos[idx] = mpo_du;
                 SV.resize(std::array<long, 2>{mpo_du.dimension(1), 1}); // So that the log message is nice
@@ -125,7 +126,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
             mpoUS.resize(rshUS);
             mpoUS.device(tenx::threads::getDevice()) = mpos[idx].contract(US, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             if(idx > 0) {
-                std::tie(US, mpos[idx]) = svd.split_mpo_r2l(mpoUS);
+                std::tie(US, mpos[idx]) = svd.split_mpo_r2l(mpoUS, cfg);
             } else {
                 mpos[idx] = mpoUS;
                 US.resize(std::array<long, 2>{1, mpoUS.dimension(0)}); // So that the log message is nice
@@ -191,6 +192,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     auto cfg             = svd::config();
     cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
     cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
+    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     cfg.svd_lib          = svd::lib::lapacke;
     cfg.svd_rtn          = svd::rtn::geauto;
     auto svd             = svd::solver(cfg);
@@ -221,7 +223,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
             }
             if(idx + 1 < mpos.size()) {
                 auto t_split            = tid::tic_scope("split");
-                std::tie(mpos[idx], SV) = svd.split_mpo_l2r(mpo_dmu);
+                std::tie(mpos[idx], SV) = svd.split_mpo_l2r(mpo_dmu, cfg);
             } else {
                 mpos[idx] = mpo_dmu;
                 SV.resize(std::array<long, 2>{mpo_dmu.dimension(1), 1}); // So that the log message is nice
@@ -245,7 +247,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
             mpoUS.resize(rshUS);
             mpoUS.device(tenx::threads::getDevice()) = mpos[idx].contract(US, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             if(idx > 0) {
-                std::tie(US, mpos[idx]) = svd.split_mpo_r2l(mpoUS);
+                std::tie(US, mpos[idx]) = svd.split_mpo_r2l(mpoUS, cfg);
             } else {
                 mpos[idx] = mpoUS;
                 US.resize(std::array<long, 2>{1, mpoUS.dimension(0)}); // So that the log message is nice

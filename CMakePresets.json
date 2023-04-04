@@ -21,6 +21,7 @@
         "DMRG_BENCH_CONTRACTION": "FALSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "find",
+        "TBLIS_THREAD_MODEL" : "openmp",
         "BUILD_SHARED_LIBS": "FALSE",
         "COMPILER_ENABLE_MOLD": "FALSE",
         "COMPILER_PROFILE_BUILD": "FALSE",
@@ -34,10 +35,10 @@
         "CMAKE_CXX_EXTENSIONS": "FALSE",
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always",
+        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
         "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2",
         "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2",
-        "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always",
+        "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb  -fstack-protector-strong -D_FORTIFY_SOURCE=2",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
@@ -72,13 +73,19 @@
       "cacheVariables": {
         "DMRG_ENABLE_MKL": "TRUE",
         "BLA_VENDOR": "Intel10_64lp",
-        "MKLROOT": "/opt/intel/oneapi/mkl/latest;$penv{MKLROOT};$penv{EBROOTIMKL}"
+        "MKL_ARCH": "intel64",
+        "MKL_LINK": "dynamic",
+        "MKL_THREADING": "gnu_thread",
+        "MKL_INTERFACE": "lp64",
+        "MKL_MPI": "openmpi",
+        "ENABLE_BLAS95": "ON",
+        "ENABLE_LAPACK95": "ON",
+        "MKL_ROOT": "/opt/intel/oneapi/mkl/latest;$penv{MKLROOT};$penv{EBROOTIMKL}"
       },
       "environment": {
         "BLA_VENDOR": "Intel10_64lp",
         "MKLROOT": "/opt/intel/oneapi/mkl/latest;$penv{MKLROOT};$penv{EBROOTIMKL}",
-        "CMAKE_PREFIX_PATH": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}"
-      }
+        "CMAKE_PREFIX_PATH": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}"}
     },
     {
       "name": "release",
@@ -95,7 +102,7 @@
       "cacheVariables": {
         "BUILD_SHARED_LIBS": "TRUE",
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_MAKEFILE_VERBOSE": "TRUE",
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",
@@ -356,7 +363,7 @@
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-debug-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
-        "CMAKE_MAKEFILE_VERBOSE": "TRUE",
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",

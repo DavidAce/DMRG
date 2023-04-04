@@ -154,7 +154,9 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     if constexpr(std::is_same_v<Scalar, real>){
+    #if defined(TCI_USE_OMP_THREADS) && defined(_OPENMP)
         tblis_set_num_threads(static_cast<unsigned int>(omp_get_max_threads()));
+    #endif
         if (mps.dimension(1) >= mps.dimension(2)){
             Eigen::Tensor<Scalar, 4> mpsenvL(mps.dimension(0), mps.dimension(2), envL.dimension(1), envL.dimension(2));
             Eigen::Tensor<Scalar, 4> mpsenvLmpo(mps.dimension(2), envL.dimension(1), mpo.dimension(1), mpo.dimension(3));

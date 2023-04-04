@@ -80,8 +80,8 @@ long long svd::solver::get_count() { return count; }
  *   \return The U, S, and V matrices (with S as a vector) extracted from the Eigen::BCDSVD SVD object.
  */
 template<typename Scalar>
-std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>>
-    svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols, const svd::config &svd_cfg) {
+std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
+                                                                                                              const svd::config &svd_cfg) {
 #if defined(DMRG_ENABLE_RSVD)
     constexpr bool has_rsvd = true;
 #else
@@ -102,14 +102,15 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         if(switchsize_gesdd != -1ul and num::cmp_greater_equal(sizeS, switchsize_gesdd)) svd_rtn = svd::rtn::gesdd;
 
         if(svd_rtn == rtn::gesdd) {
-            bool is_rank25 = num::cmp_greater_equal(sizeS, rank_lim * 4);  // Will keep at least 25% of the singular values
-            bool is_rank10 = num::cmp_greater_equal(sizeS, rank_lim * 10); // Will keep at least 10% of the singular values
-            if(is_rank25) { svd_rtn = svd::rtn::gesvdx; }
+            bool is_rank_low = num::cmp_greater_equal(sizeS, rank_lim * 8);  // Will keep at least 25% of the singular values
+            bool is_rank_lower = num::cmp_greater_equal(sizeS, rank_lim * 16); // Will keep at least 10% of the singular values
+            if(is_rank_low) { svd_rtn = svd::rtn::gesvdx; }
             if constexpr(has_rsvd) {
-                if(is_rank10) { svd_rtn = svd::rtn::gersvd; }
+                if(is_rank_lower) { svd_rtn = svd::rtn::gersvd; }
             }
         }
-        //        svd::log->info("sizeS = {} | {} {} {} | {} ", sizeS, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd, enum2sv(svd_rtn));
+//        svd::log->info("sizeS = {} | lim {} | {} {} {} | {} ", sizeS, rank_lim, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd, enum2sv(svd_rtn));
+        if(switchsize_gesdd > 32) throw;
     }
     if(svd_save != svd::save::NONE) {
         saveMetaData.rank_max         = rank_max;
@@ -166,13 +167,11 @@ using cplx = std::complex<double>;
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'double'
-template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>>
-    svd::solver::do_svd_ptr(const real *, long, long, const svd::config &);
+template std::tuple<svd::MatrixType<real>, svd::VectorType<real>, svd::MatrixType<real>> svd::solver::do_svd_ptr(const real *, long, long, const svd::config &);
 
 //! \relates svd::class_SVD
 //! \brief force instantiation of do_svd for type 'std::complex<double>'
-template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>>
-    svd::solver::do_svd_ptr(const cplx *, long, long, const svd::config &);
+template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixType<cplx>> svd::solver::do_svd_ptr(const cplx *, long, long, const svd::config &);
 
 template<typename Scalar>
 void svd::solver::print_matrix([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols,

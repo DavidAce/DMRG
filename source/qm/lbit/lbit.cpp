@@ -223,9 +223,16 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
 std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::vector<qm::Gate> &ulayer) {
     if(ulayer.empty()) return {};
     if(ulayer.size() <= 1) throw except::logic_error("Can't make MPO's with less than two gates");
-    auto t_mpolayer = tid::tic_scope("mpo-layer");
-    auto mpos       = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
-    auto svd        = svd::solver();
+    auto t_mpolayer      = tid::tic_scope("mpo-layer");
+    auto mpos            = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
+    auto cfg             = svd::config();
+    cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
+    cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
+    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
+    cfg.svd_lib          = svd::lib::lapacke;
+    cfg.svd_rtn          = svd::rtn::geauto;
+    auto svd             = svd::solver(cfg);
+
     // Start Step 1 with the first gate
     const auto &ugate0 = ulayer.front();                                                  // The left-most unitary gate
     auto        dims4  = ugate0.shape<4>();                                               // Original shape of the gate
@@ -237,7 +244,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::v
     // There are L-1 gates on a single layer of the unitary circuit
     for(size_t gidx = 0; gidx < ulayer.size() /* == L-1 */; ++gidx) {
         // Step 2
-        std::tie(mpos[gidx], gate3) = svd.split_mpo_gate(gate5);
+        std::tie(mpos[gidx], gate3) = svd.split_mpo_gate(gate5, cfg);
         if(gidx + 1 >= ulayer.size()) break; // We can't add more gates. Now gate 3 has the mpo corresponding to site L
         // Step 3
         const auto &ugate = ulayer[gidx + 1];
@@ -1004,9 +1011,10 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
      */
     auto svd_cfg             = svd::config();
     svd_cfg.truncation_limit = tol;
+    svd_cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     svd_cfg.rank_max         = 8;
     svd_cfg.svd_lib          = svd::lib::lapacke;
-    svd_cfg.svd_rtn          = svd::rtn::gejsv;
+    svd_cfg.svd_rtn          = svd::rtn::geauto;
 
     auto flipbit = [](size_t n, const size_t pos) -> size_t { return n ^= static_cast<size_t>(1) << pos; };
     auto flipall = [&flipbit](size_t n, const size_t len) -> size_t {
@@ -1296,8 +1304,8 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         auto [lbit_corrmat_avg,lbit_corrmat_typ, lbit_corrmat_err] = qm::lbit::get_lbit_correlation_statistics(lbit_corrmat_vec);
         auto [cls_avg, rms_avg, rsq_avg, yavg, cavg] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_avg, MeanType::ARITHMETIC);
         auto [cls_typ, rms_typ, rsq_typ, ytyp, ctyp] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_typ, MeanType::GEOMETRIC);
-        tools::log->info("Computed lbit decay reps {} | rand h {} | mpo {} | {} | threads {} | time {:8.3f} s | cls {:>8.6f} | rmsd {:.3e} | rsq {:.6f} | decay {:2} sites: {::8.2e}",
-                         reps, rndh, use_mpo, uprop.string(), omp_get_max_threads(), t_lbit_analysis->restart_lap(),cls_typ, rms_typ, rsq_typ, ctyp, ytyp);
+        tools::log->info("Computed lbit decay reps {} | rand h {} | mpo {} | {} | time {:8.3f} s | cls {:>8.6f} | rmsd {:.3e} | rsq {:.6f} | decay {:2} sites: {::8.2e}",
+                         reps, rndh, use_mpo, uprop.string(), t_lbit_analysis->restart_lap(),cls_typ, rms_typ, rsq_typ, ctyp, ytyp);
 
 
         lbitSA.cls_avg_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8) = cls_avg;
