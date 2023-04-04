@@ -373,6 +373,7 @@
       "name": "tetralith",
       "displayName": "Release|march=native|conan|mkl",
       "inherits": [
+        "mkl",
         "native",
         "conan",
         "release",
