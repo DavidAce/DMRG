@@ -2,34 +2,17 @@ from itertools import product
 from pathlib import Path
 import matplotlib.patheffects as pe
 import seaborn as sns
-import logging
 from scipy.optimize import curve_fit
+import logging
 from .tools import *
 
-logger = logging.getLogger('plot-time')
+logger = logging.getLogger('plot-rise')
 
 
-# def floglog(x, a, b,c):
-#     return a + b*np.log(np.log(x + c))
-def floglog_v2(x, a, b, c):
-    with np.errstate(invalid='ignore'):
-        return a + b * np.log(np.log(x - c))
-
-
-def flinear(x, a, b):
-    with np.errstate(invalid='ignore'):
-        return a + b * x
-
-
-def fpower(x, a, b):
-    with np.errstate(invalid='ignore'):
-        return a * x ** b
-
-
-def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None,
-                              point_filter=None, figs=None, palette_name=None, debug=False):
+def plot_v3_csup_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
+                              point_filter=None, figs=None, palette_name=None):
     if db['version'] != 3:
-        raise ValueError("plot_v3_svnt_fig3_sub3_line1 requires db version 3")
+        raise ValueError("plot_v3_csup_fig3_sub3_line1 requires db version 3")
 
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
@@ -55,13 +38,15 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
     legend_col_keys = linspec.copy()
     if legendcols := meta['legendcols']:
         for col in legendcols:
-            if not col in [l.split(':')[0] for l in figspec + subspec + linspec]:
+            if not col in [l.split(':')[0] for l in figspec + subspec + linspec + xaxspec]:
                 legend_col_keys.append(col)
 
     figprod = list(product(*get_vals(db=db, keyfmt=figspec, filter=meta.get('filter'))))  # All combinations of figspecs values
     subprod = list(product(*get_vals(db=db, keyfmt=subspec, filter=meta.get('filter'))))  # All combinations of subspecs values
     linprod = list(product(*get_vals(db=db, keyfmt=linspec, filter=meta.get('filter'))))  # All combinations of linspecs values
+    xaxprod = list(product(*get_vals(db=db, keyfmt=xaxspec, filter=meta.get('filter'))))  # All combinations of linspecs values
     # dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
+    # print(dirprod)
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:
@@ -71,106 +56,42 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         logger.debug('- plotting figs: {}'.format(figvals))
         dbval = None
         for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
-            popt = None
-            pcov = None
             logger.debug('-- plotting subs: {}'.format(subvals))
-            # for dirvals in dirprod:
-            # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting lins: {}'.format(linvals))
-                datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
-                                            vals=figvals + subvals + linvals)
-                logger.debug('Found {} datanodes'.format(len(datanodes)))
-                for datanode in datanodes:
-                    dbval = db['dsets'][datanode.name]
-                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'], 'f8')
-                    edata, colnames = get_table_data(datanode['ste'], meta['colname'], 'f8')
-                    tdata = datanode['avg']['physical_time'][()]
-                    sdata = datanode['avg']['entanglement_entropy'][()]
-                    ndata = datanode['avg']['num'][()]
-
-                    if np.min(ndata) < 10:
-                        continue
-                    if len(tdata) <= 1:
-                        logger.warning("tdata is too short: ", tdata)
-                        continue
-                        # raise AssertionError("tdata is too short");
-                    if meta.get('ydiff') == True:
-                        ydata = np.diff(ydata.T, n=1, prepend=0).T
-
-                    if meta.get('normpage') == True:
-                        L = dbval['vals']['L']
-                        p = L/2 * np.log(2) - 0.5 # page_entropy(dbval['vals']['L'])
-                        logger.debug(f"Normalizing by page entropy ({L}): {p}")
-                        for i, (s, e) in enumerate(zip(sdata, edata)):
-                            sdata[i] = s / p
-                            edata[i] = e / p
-                    else:
-                        logger.warning("plot_svnt: normpage is off, but SE (not SN) should be normalized by S_page for this to make sense")
-
-                    if normalize := meta.get('normalize'):
-                        for i, (y, e) in enumerate(zip(ydata, edata)):
-                            ydata[i] = y / normalize
-                            edata[i] = e / normalize
-
-                    for i, (y, e, colname) in enumerate(zip(ydata.T, edata.T, colnames)):
-                        linestyle = meta['linestyle'][i] if 'linestyle' in meta and len(
-                            meta['linestyle']) == len(ydata) else '-'
-
-                        if meta.get('fillerror'):
-                            ax.fill_between(x=sdata, y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
-
-                        line, = ax.plot(sdata, y, marker=None, linestyle=linestyle, label=None, color=color,
-                                        path_effects=path_effects)
-
-                        if i == 0:
+                xvals, yvals, evals = [], [], []
+                legendrow = None
+                for xaxvals in xaxprod:
+                    logger.debug('--- plotting xaxs: {}'.format(xaxvals))
+                    datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec + xaxspec,
+                                                vals=figvals + subvals + linvals + xaxvals)
+                    if len(datanodes) != 1:
+                        logger.warning(f"match: \n"
+                                       f"\tspec:{[figspec + subspec + linspec]}\n"
+                                       f"\tvals:{[figvals + subvals + linvals]}")
+                        logger.warning(f"found {len(datanodes)} datanodes: {datanodes=}")
+                    for datanode in datanodes:
+                        dbval = db['dsets'][datanode.name]
+                        ndata = dbval['vals']['num']
+                        Ldata = dbval['vals']['L']
+                        xdata = np.array(range(Ldata))
+                        lbavg = get_lbit_avg(corrmat=datanode[()], site=meta.get('lbit-site'),
+                                             mean=meta.get('lbit-mean'))
+                        print(f"L{Ldata} | f{dbval['vals']['f']:.2f} | u{dbval['vals']['u']:2} | mean {meta.get('lbit-mean')} |  csup {lbavg.csup}")
+                        xvals.append(xaxvals)
+                        yvals.append(lbavg.csup)
+                        evals.append(lbavg.csrr)
+                        if legendrow is None:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                                key, fmt = key.split(':') if ':' in key else [key, '']
-
-                                f['legends'][idx][icol]['handle'].append(line)
-                                f['legends'][idx][icol]['label'].append(col)
-                                f['legends'][idx][icol]['title'] = db['tex'][key]
-                                f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
-
-                        if meta.get('findloglogwindow'):
-                            idx1, idx2 = find_loglog_window2(tdata, sdata, dbval)
-                            f['ymax'] = np.max([f['ymax'], np.max(y)]) if f['ymax'] else np.max(y)
-                            f['ymin'] = np.min([f['ymin'], y[idx1]]) if f['ymin'] else y[idx1]
-                            if meta.get('markloglogwindow'):
-                                mark, = ax.plot([sdata[idx1], sdata[idx2]], [y[idx1], y[idx2]],
-                                                color=color,
-                                                marker='o', markersize=6, linestyle='None', markeredgecolor='w',
-                                                path_effects=path_effects)
-
-                            if meta.get('fitloglogwindow') and not meta.get('zoomloglogwindow'):
-                                # bounds = ([0., 0., 1.], [np.inf, np.inf, np.exp(1)])
-                                try:
-                                    # popt, pcov = curve_fit(f=floglog, xdata=tdata[idx1:idx2], ydata=y[idx1:idx2], bounds=bounds)
-                                    if idx2 <= idx1:
-                                        raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
-                                    if idx1 + 10 > idx2:
-                                        raise IndexError(
-                                            "Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
-
-                                    bounds_v2 = ([-np.inf, 0], [np.inf, np.inf])
-                                    with np.errstate(invalid='ignore'):
-                                        slog = np.log(sdata)
-                                        popt, pcov = curve_fit(f=flinear, xdata=slog[idx1:idx2], ydata=y[idx1:idx2],
-                                                               bounds=bounds_v2)
-                                        idx_min = int(idx1 * 0.75)
-                                        idx_max = int(np.min([len(tdata) - 1, idx2 * 1.25]))
-                                        tfit = sdata[idx_min:idx_max]
-                                        yfit = flinear(slog[idx_min:idx_max], *popt)
-                                        ax.plot(tfit, yfit, marker=None, linewidth=0.8, alpha=1.0, zorder=50,
-                                                linestyle='--', label='fit', color=color,
-                                                path_effects=path_effects)
-                                except IndexError as err:
-                                    pass
-                                except ValueError as err:
-                                    logger.error("Fit failed: {}".format(err))
-
+                if legendrow is not None:
+                    line = ax.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
+                    for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                        key, fmt = key.split(':') if ':' in key else [key, '']
+                        f['legends'][idx][icol]['handle'].append(line)
+                        f['legends'][idx][icol]['label'].append(col)
+                        f['legends'][idx][icol]['title'] = db['tex'][key]
+                        f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
             if dbval:
@@ -179,27 +100,20 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                              fontstretch="ultra-condensed",
                              # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
                              )
-
-            ax.set_xlabel("$\\langle \\langle  S_E(L/2) \\rangle  \\rangle/S_\mathrm{Page}$")
-
-        if f['ymin']:
-            f['ymin'] = 0.9 * f['ymin']
-        if f['ymax']:
-            f['ymax'] = 1.1 * f['ymax']
-
+                ax.set_xlabel(get_tex(dbval, xaxspec))
         if not prb_style and dbval:
-            f['fig'].suptitle('{} vs $S_E$\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+            f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
 
-        # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        f['filename'] = "{}/{}-svnt_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        f['filename'] = "{}/{}-csup_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
-                                                       get_specvals(db, subspec),suffix)
+                                                       get_specvals(db, subspec), suffix)
     return figs
 
 
-def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None,
+def plot_v2_csup_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
                                  point_filter=None, figs=None, palette_name=None):
     if len(figspec) + len(subspec) + len(linspec) != 7:
         raise AssertionError("Must add to 7 elems: \n figspec {}\n subspec {}\n linespec {}")
@@ -230,49 +144,44 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
             if not col in [l.split(':')[0] for l in subspec + linspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(
-        product(*get_keys(db, figspec)))  # All combinations of figspecs (names of parameters that iterate figures)
-    subprod = list(
-        product(*get_keys(db, subspec)))  # All combinations of subspecs (names of parameters that iterate subplots)
-    linprod = list(
-        product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
+    figprod = list(product(*get_keys(db, figspec)))  # All combinations of figspecs (names of parameters that iterate figures)
+    subprod = list(product(*get_keys(db, subspec)))  # All combinations of subspecs (names of parameters that iterate subplots)
+    linprod = list(product(*get_keys(db, linspec)))  # All combinations of linspecs (names of parameters that iterate lines)
     dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
 
-    for figkeys, f in zip(figprod, figs):
-        logger.debug('- plotting figkeys: {}'.format(figkeys))
+    for figvals, f in zip(figprod, figs):
+        logger.debug(f'-- plotting {figvals=}')
         dbval = None
-        for idx, (subkeys, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
+        for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
             popt = None
             pcov = None
-            logger.debug('-- plotting subkeys: {}'.format(subkeys))
-            for dirkeys in dirprod:
+            logger.debug(f'-- plotting {subvals=}')
+            for dirvals in dirprod:
                 # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
                 palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
-                for linkeys, color, lstyle in zip(linprod, palette, lstyles):
-                    findlist = list(figkeys) + list(subkeys) + list(linkeys) + list(dirkeys) + [meta['groupname']]
+                for linvals, color, lstyle in zip(linprod, palette, lstyles):
+                    findlist = list(figvals) + list(subvals) + list(linvals) + list(dirvals) + [meta['groupname']]
                     datanode = [value['node']['data'] for key, value in db['dsets'].items() if
                                 all(k in key for k in findlist)]
                     if len(datanode) != 1:
-                        logger.error("found", len(datanode), "datanodes: ", datanode, " | findlist: ", findlist)
+                        logger.warning(f"found {len(datanode)} datanodes: {datanode=} | {findlist=}")
                         continue
                         # raise LookupError("Found incorrect number of datanodes")
                     datanode = datanode[0]
                     dbval = db['dsets'][datanode.name]
-                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'],
-                                                     'f8')  # Supports multiple columns
-                    edata, colnames = get_table_data(datanode['ste'], meta['colname'],
-                                                     'f8')  # Supports multiple columns
+                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'],'f8')  # Supports multiple columns
+                    edata, colnames = get_table_data(datanode['ste'], meta['colname'],'f8')  # Supports multiple columns
                     tdata = datanode['avg']['physical_time'][()]
                     ndata = datanode['avg']['num'][()]
 
                     if np.min(ndata) < 10:
                         continue
                     if len(tdata) <= 1:
-                        logger.warning("tdata is too short: {}".format(tdata))
+                        logger.warning(f"too short: {tdata=}")
                         continue
                         # raise AssertionError("tdata is too short");
                     if meta.get('ydiff') == True:
@@ -288,15 +197,6 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                             ydata[i] = y / meta['normalize']
                             edata[i] = e / meta['normalize']
 
-                    if meta.get('timeloglevel') == 2:
-                        with np.errstate(invalid='ignore'):
-                            xdata = np.log(np.log(tdata))
-                            if not 'xmin' in meta:
-                                ax.set_xlim(xmin=-1)
-                            if not 'xmax' in meta:
-                                ax.set_xlim(xmax=1.05 * xdata[-1])
-                    else:
-                        xdata = tdata
                     for i, (y, e, colname) in enumerate(zip(ydata.T, edata.T, colnames)):
                         linestyle = meta['linestyle'][i] if 'linestyle' in meta and len(
                             meta['linestyle']) == len(ydata) else '-'
@@ -307,44 +207,9 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                         elif 'number' in colname:
                             label = '$S_\mathrm{N}$'
 
-                        if meta.get('plotsatapproach'):
-                            sdata = datanode['avg']['entanglement_entropy'][()]
-                            idx1, idx2 = find_loglog_window2(tdata, sdata, dbval)
-                            ysat = np.mean(ydata[idx2:])  # Saturation value
-                            y = np.abs(y - ysat)
-                            try:
-                                if idx2 <= idx1:
-                                    raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
-                                if idx1 + 10 > idx2:
-                                    raise IndexError(
-                                        "Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
-                                bounds = ([-np.inf, -np.inf], [np.inf, 0])
-                                with np.errstate(invalid='ignore'):
-                                    try:
-                                        ylog = np.log10(y)
-                                        tlog = np.log10(tdata)
-                                        popt, pcov = curve_fit(f=flinear, xdata=tlog[idx1:idx2],
-                                                               ydata=ylog[idx1:idx2], bounds=bounds)
-                                        yfit = 10 ** flinear(tlog, *popt)
-                                        ax.plot(xdata, yfit, marker=None, linewidth=0.8,
-                                                linestyle='--', label='fit', color=color,
-                                                path_effects=path_effects)
-                                        sep = 0.05 * len(f['legends'][idx][0]['handle'])
-                                        xmid = 10 ** ((0.4 + sep) * (np.log10(xdata[idx2]) + np.log10(xdata[idx1])))
-                                        ymid = 10 ** ((0.4 + sep) * (np.log10(yfit[idx2]) + np.log10(yfit[idx1])))
-                                        xtxt = 10 ** ((0.75 + sep) * (np.log10(xdata[idx2]) + np.log10(xdata[idx1])))
-                                        ytxt = 10 ** ((0.35 + sep) * (np.log10(yfit[idx2]) + np.log10(yfit[idx1])))
-                                        ax.annotate('$\sim t^{{{:.2f}}}$'.format(popt[1]), xy=(xmid, ymid),
-                                                    xytext=(xtxt, ytxt),
-                                                    arrowprops=dict(arrowstyle="->", color=color))
-                                    except:
-                                        pass
-
-                            except IndexError as e:
-                                pass
 
 
-                        elif meta.get('fillerror'):
+                        if meta.get('fillerror'):
                             ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
 
                         line, = ax.plot(xdata, y, marker=None, linestyle=linestyle, label=label, color=color,
@@ -492,28 +357,30 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
         suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
-                                                            '-'.join(map(str, figkeys)),
-                                                            '-'.join(map(str, get_keys(db, subspec))),
-                                                            suffix)
+        f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+                                                       get_specvals(db, figspec, figvals),
+                                                       get_specvals(db, subspec),suffix)
+
 
     return figs
 
 
-def plot_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None, point_filter=None,
-                           figs=None, palette_name=None):
+def plot_csup_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None,
+                           point_filter=None, figs=None, palette_name=None):
     if db['version'] == 2:
         specs = figspec + subspec + linspec
         nonv3spec = lambda x: x not in ['cstd', 'tstd', 'tgw8', 'cgw8']
         specs = list(filter(nonv3spec, specs))
         fig3 = specs[:3]
-        sub3 = specs[3:6]
-        lin1 = specs[6:7]
-        return plot_v2_svnt_fig3_sub3_line1(db=db, meta=meta, figspec=fig3, subspec=sub3, linspec=lin1,
+        sub2 = specs[3:5]
+        lin1 = specs[5:6]
+        xax1 = specs[6:7]
+        return plot_v2_csup_fig3_sub3_line1(db=db, meta=meta, figspec=fig3, subspec=sub2, linspec=lin1, xaxspec=xax1,
                                             algo_filter=algo_filter, state_filter=state_filter,
                                             point_filter=point_filter, figs=figs, palette_name=palette_name)
     elif db['version'] == 3:
-        return plot_v3_svnt_fig_sub_line(db=db, meta=meta, figspec=figspec, subspec=subspec, linspec=linspec,
+        return plot_v3_csup_fig_sub_line(db=db, meta=meta, figspec=figspec, subspec=subspec, linspec=linspec,
+                                         xaxspec=xaxspec,
                                          algo_filter=algo_filter, state_filter=state_filter, point_filter=point_filter,
                                          figs=figs, palette_name=palette_name)
     else:

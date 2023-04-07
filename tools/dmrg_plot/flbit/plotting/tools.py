@@ -386,13 +386,16 @@ def nb_nnz_mean_axis0(a):
 
 
 @dataclass
-class lbit_fold:
+class lbit_corr:
     mean: np.ndarray
     full: np.ndarray
     stdv: np.ndarray
     fold: np.ndarray
     fodv: np.ndarray
-    topr: np.float64
+    csup: np.ndarray
+    csrr: np.ndarray
+    sprd: np.ndarray
+    sprr: np.ndarray
 
 
 
@@ -437,8 +440,13 @@ def get_lbit_avg(corrmat, site=None, mean=None):
     fold = get_folded_matrix(full, rms=False, mean=mean)
     fodv = get_folded_matrix(stdv, rms=True, mean=mean)
 
+    size = np.shape(full)[0]
     midr = int(np.shape(full)[0] / 2)
-    topr = np.mean([np.sum(full[midr:-1, 0:midr]), np.sum(full[0:midr, midr:-1])])
+    num = np.shape(corrmat)[0]
+    csup = np.sum([np.sum(full[midr:-1, 0:midr]), np.sum(full[0:midr, midr:-1])])
+    csrr = np.sum([np.sum(stdv[midr:-1, 0:midr]/np.sqrt(num)), np.sum(stdv[0:midr, midr:-1]/np.sqrt(num))])
+    sprd = np.sum(np.abs((full - np.identity(n=size))))/size
+    sprr = np.sum(stdv/np.sqrt(num))/size
     # with np.printoptions(edgeitems=30, linewidth=100000, formatter={'float': '{: 0.3e}'.format}):
     #     print(full)
     if site is not None:
@@ -471,7 +479,7 @@ def get_lbit_avg(corrmat, site=None, mean=None):
         else:
             raise TypeError("Unsupported site selection: {}".format(site))
     mean = nb_nnz_mean_axis0(fold)
-    return lbit_fold(mean, full, stdv, fold, fodv, topr)
+    return lbit_corr(mean, full, stdv, fold, fodv, csup, csrr,sprd, sprr)
 
 
 def find_saturation_idx2(ydata, threshold=1e-2):
@@ -603,6 +611,9 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
     idx = np.max([idx, 0])  # Make sure its non-negative
     return idx
 
+
+def midchain_page_entropy(L):
+    return L/2 * np.log(2) - 0.5
 
 @njit(parallel=True, cache=True)
 def page_entropy(L):

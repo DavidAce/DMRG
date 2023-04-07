@@ -45,25 +45,24 @@ namespace tools::finite::mps {
         extern bool bitfield_is_valid (size_t bitfield);
         extern std::vector<long> get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_lim);
 
-        extern void product_state_neel_shuffled (StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> & pattern);
-        extern void random_product_state        (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, size_t bitfield);
+        extern void random_product_state        (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, size_t bitfield, std::vector<size_t> &pattern);
         extern void random_entangled_state      (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, long bond_lim);
 
         // Product states
         extern void set_random_product_state_with_random_spinors(StateFinite & state, StateInitType type);
-        extern void set_random_product_state_with_gaussian_spinors(StateFinite & state, StateInitType type);
-        extern void set_random_product_state_on_axis_using_bitfield(StateFinite & state, StateInitType type, std::string_view axis, size_t bitfield, LogPolicy logPolicy = LogPolicy::NORMAL);
-        extern void set_random_product_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, LogPolicy logPolicy = LogPolicy::NORMAL);
+        extern void set_random_product_state_on_axis_using_bitfield(StateFinite & state, StateInitType type, std::string_view axis, size_t bitfield);
+        extern void set_random_product_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern);
         extern void set_random_product_state_on_axis(StateFinite & state, StateInitType type, std::string_view axis);
         extern void set_product_state_aligned(StateFinite & state, StateInitType type, std::string_view axis);
-        extern void set_product_state_neel(StateFinite & state, StateInitType type, std::string_view axis);
+        extern void set_product_state_neel(StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern);
+        extern void set_product_state_neel_shuffled (StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> & pattern);
 
         // Entangled states
         extern void randomize_given_state (StateFinite & state, StateInitType type);
-        extern void set_random_entangled_state_on_axes_using_eigenspinors(StateFinite & state, StateInitType type, const std::vector<std::string> & axes, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
-        extern void set_random_entangled_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
-        extern void set_random_entangled_state_with_random_spinors(StateFinite & state, StateInitType type, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
-        extern void set_random_entangled_state_haar(StateFinite & state, StateInitType type, long bond_lim, LogPolicy logPolicy = LogPolicy::NORMAL);
+        extern void set_random_entangled_state_on_axes_using_eigenspinors(StateFinite & state, StateInitType type, const std::vector<std::string> & axes, long bond_lim);
+        extern void set_random_entangled_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, long bond_lim);
+        extern void set_random_entangled_state_with_random_spinors(StateFinite & state, StateInitType type, long bond_lim);
+        extern void set_random_entangled_state_haar(StateFinite & state, StateInitType type, long bond_lim);
     }
 }
 

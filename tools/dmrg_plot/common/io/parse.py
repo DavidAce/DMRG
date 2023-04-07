@@ -59,6 +59,7 @@ def parse(algo, batches=None):
         'lbit80', # 3000 realizations u[8,16] f=0.5,1.0, L=[8,12,16,20] with dynamic max-time for each L, investigate entropy inversion
         'lbit81', # 2400 realizations u[8,16] f=0.5,1.0, L=[8,12,16,20] with dynamic max-time for each L, investigate entropy inversion with more precise svd
         'lbit82', # 6000 realizations u[4,8,16] f=0.1,0.25,0.5, L=[12,16] with dynamic max-time for each L, investigate entropy inversion with more precise svd
+        'lbit83', # 1500 realizations u[4...16] f=[0.1...1.0], L=[12,16] with dynamic max-time for each L, investigate entropy inversion with more precise svd
     ]
     xdmrg_batches = ['data170',  #
                     ]

@@ -374,12 +374,13 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
 void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view sector, bool use_eigenspinors,
                                          size_t bitfield, long bond_lim, std::vector<size_t> & pattern) {
     switch(init) {
-        case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, sector, use_eigenspinors, bitfield);
-        case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: return init::product_state_neel_shuffled(state, type, sector, pattern);
+        case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, sector, use_eigenspinors, bitfield, pattern);
         case StateInit::RANDOM_ENTANGLED_STATE: return init::random_entangled_state(state, type, sector, bond_lim, use_eigenspinors);
         case StateInit::RANDOMIZE_PREVIOUS_STATE: return init::randomize_given_state(state, type);
         case StateInit::PRODUCT_STATE_ALIGNED: return init::set_product_state_aligned(state, type, sector);
-        case StateInit::PRODUCT_STATE_NEEL: return init::set_product_state_neel(state, type, sector);
+        case StateInit::PRODUCT_STATE_NEEL: return init::set_product_state_neel(state, type, sector, pattern);
+        case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: return init::set_product_state_neel_shuffled(state, type, sector, pattern);
+
     }
 }
 

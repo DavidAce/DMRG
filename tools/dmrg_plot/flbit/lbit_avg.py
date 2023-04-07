@@ -99,6 +99,6 @@ def lbit_avg(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit82'])
+    args = parse('fLBIT', ['lbit83'])
     args.clear = True
     lbit_avg(args)

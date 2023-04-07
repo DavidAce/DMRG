@@ -32,7 +32,7 @@ def get_meta(plotdir):
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
             },
             'include_v3': {
-                'L': [12,16,20],
+                # 'L': [36],
                 # 'L': [12],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
                 # 'L': ['L_12'],
@@ -65,6 +65,7 @@ def get_meta(plotdir):
             'xlabel': '$t$',
             # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
             # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
+            'ymax': 1e10,
             'xmafmt': LogFormatterMathtext(),
             'plotprefix': 'SE',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
@@ -111,6 +112,10 @@ def get_meta(plotdir):
             'colname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
+            'filter':{
+                'f': [0.3,0.5],
+                'u': [16],
+            },
             'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.3f',
             'plotprefix': 'SN',
@@ -132,8 +137,8 @@ def get_meta(plotdir):
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
-            # 'legendlocation': 'center left',
-            'legendlocation': (0.01, 0.65),
+            'legendlocation': 'lower right',
+            # 'legendlocation': (0.01, 0.65),
         },
         'numH1': {  # Hartley number entropy
             'groupname': 'measurements',
@@ -362,15 +367,16 @@ def get_meta(plotdir):
         },
         'lbit-avg': {
             'groupname': 'lbits',
-            'dsetname': 'corravg',
+            'dsetname': 'corrmat',
             'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
             'filter': {
-                'L': [8,12,16,20],
-                'u': [8, 16],
+                'L': [12,16],
+                'f': [0.3,0.5],
+                'u': [16],
             },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             'box_aspect': 1,
-            'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'ylabel': '$\log_{10} \langle \langle O_{ij}\\rangle\\rangle_\mathrm{arithmetic}$ ',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
             'xticks': [0, 6, 12, 18] if prb else None,
@@ -382,6 +388,7 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'ymin': -16,
+            'xnormalize': True,
             # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
@@ -392,11 +399,13 @@ def get_meta(plotdir):
             'legendlocation': (0.48, 0.58) if prb else 'lower left',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            'lbit-site': [0, 'mid', 'last'],
+            'lbit-mean': 'arithmetic',
             'fit-beta': True,
             'fit-ymin': None,
             'fit-skip': 0 if prb else 0,
-            'fit-site': [0, 'mid', 'last'],
-            'fit-mean': 'arithmetic',
+            'fit-mark': False,
+            'fit-plot': True,
             'inset-cls': {
                 # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
                 'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
@@ -408,18 +417,19 @@ def get_meta(plotdir):
         },
         'lbit-typ': {
             'groupname': 'lbits',
-            'dsetname': 'corravg',
+            'dsetname': 'corrmat',
             'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$ (geometric avg)',
 
             'filter': {
-                'L': [8,12,16,20],
-                'u': [8, 16],
+                'L': [12,16],
+                'f': [0.4],
+                'u': [16],
             },
             'mean': 'geometric',
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             'box_aspect': 1,
             # 'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'ylabel': '$\log_{10} \langle \langle O(|i-j|)\\rangle \\rangle_\mathrm{typ}$ ',
+            'ylabel': '$\log_{10} \langle \langle O_{ij}\\rangle \\rangle_\mathrm{geometric}$ ',
             'xlabel': "$j$",
             'xticks': [0, 6, 12, 18] if prb else None,
             # 'yticks': [1e0, 1e-4, 1e-9],
@@ -430,21 +440,24 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'ymin': -16,
+            'xnormalize' : True,
             # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
             'legendcols': [] if prb else ['num'],  # Choose 'num', 'bmax','tsim'
-            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
             'legendlocation': (0.48, 0.58) if prb else 'lower left',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            'lbit-site': [0, 'mid', 'last'],
+            'lbit-mean': 'geometric',
             'fit-beta': True,
             'fit-ymin': None,
             'fit-skip': 0 if prb else 0,
-            'fit-site': [0, 'mid', 'last'],
-            'fit-mean': 'geometric',
+            'fit-mark': False,
+            'fit-plot': True,
             'inset-cls': {
                 # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
                 'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
@@ -468,8 +481,13 @@ def get_meta(plotdir):
         # },
         'cls-avg': {
             'groupname': 'lbits',
-            'dsetname': 'corravg',
-            'titlename': 'Characteristic length scale of l-bits',
+            'dsetname': 'corrmat',
+            'titlename': '$\ell$-bit localization length (arithmetic avg.)',
+            'filter': {
+                # 'L': [8,12,16,20],
+                'f': [0.2, 0.3, 0.4, 0.6, 0.8, 1.0],
+                # 'u': [4, 8, 12, 16],
+            },
             'box_aspect': 1,
             'ylabel': '$\langle\langle \\xi_\\tau \\rangle\\rangle$',
             # 'yticks': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4] if prb else None,
@@ -478,11 +496,42 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'legendcols': [] if prb else ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
-            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
+            'legendoutside': True,
+            'legendcollect': True,
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
+            'lbit-site': ['mid'],
+            'lbit-mean': 'arithmetic',
             'fit-beta': True,
-            'fit-ymin': 1e-14,
+            'fit-ymin': None,
+            'fit-skip': 0 if prb else 0,
+            # 'legendlocation': 'best',
+            'legendlocation': 'best',  # "(0.52, 0.05),
+            'axestitle': False,
+        },
+        'cls-typ': {
+            'groupname': 'lbits',
+            'dsetname': 'corrmat',
+            'titlename': '$\ell$-bit localization length (geometric avg.)',
+            'filter': {
+                # 'L': [8,12,16,20],
+                'f': [0.2, 0.3, 0.4, 0.6, 0.8, 1.0],
+                #'u': [4, 8, 12, 16],
+            },
+            'box_aspect': 1,
+            'ylabel': '$\langle\langle \\xi_\\tau \\rangle\\rangle$',
+            # 'yticks': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4] if prb else None,
+            # 'xticks': [16,32,48,64,80],
+            'plotprefix': 'cls',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            'legendcols': [] if prb else ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendoutside': True,
+            'legendcollect': True,
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
+            'lbit-site': ['mid'],
+            'lbit-mean': 'geometric',
+            'fit-beta': True,
+            'fit-ymin': None,
             'fit-skip': 0 if prb else 0,
             # 'legendlocation': 'best',
             'legendlocation': 'best',  # "(0.52, 0.05),
@@ -557,14 +606,14 @@ def get_meta(plotdir):
             'legendcollect': False,
             'legendlocation': 'lower left',
         },
-          'divg-num': {  # Distribution of infinite time averaged entropy
+        'divg-num': {  # Distribution of infinite time averaged entropy
             'groupname': 'measurements',
             'dsetname': 'number_entropy',
             'normpage': False,
             'titlename': 'Number Entropy',
             'filter': {
                 'L': [12, 16],
-                'f': [0.2, 0.5, 0.8, 1.0],
+                'f': [0.2,0.3,0.4,0.5],
                 'u': [16],
             },
             # 'figsize': (3.375, 3.00),
@@ -791,8 +840,13 @@ def get_meta(plotdir):
         'num-svnt': {
             'groupname': 'measurements',
             'colname': 'number_entropy',
-            'normpage': False,
+            'normpage': True,
             'titlename': 'Number Entropy',
+            'filter': {
+                # 'L': [8,12,16,20],
+                'f': [0.3,0.5],
+                'u': [16],
+            },
             'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.3f',
             'plotprefix': 'SN',
@@ -812,9 +866,57 @@ def get_meta(plotdir):
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
             'legendoutside': legendoutside,
             'legendcollect': legendcollect,
-            # 'legendlocation': 'lower right',
-            'legendlocation': (0.01, 0.65),
+            'legendlocation': 'lower right',
+            # 'legendlocation': (0.01, 0.65),
         },
+        'crossup': {
+            'groupname': 'lbits',
+            'dsetname': 'corrmat',
+            'titlename': '$\ell$-bit half-chain crossover',
+            'filter': {
+                # 'L': [8,12,16,20],
+                'f': [0.2,0.3,0.4,0.5,1.0],
+                'u': [16],
+            },
+            # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
+            'box_aspect': 1,
+            'ylabel': '$X_\ell$',
+            # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
+            # 'xlabel': "$j$",
+            # 'xticks': [0, 6, 12, 18] if prb else None,
+            # 'yticks': [1e0, 1e-4, 1e-9],
+            # 'yticks': [0, -3, -6, -9, -12, -15],
+            # 'yscale': 'log',
+            # 'ynopos': 'mask',
+            'plotprefix': 'lbit',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'mplstyle': mplstyle,
+            # 'ymin': -16,
+            # 'xmax': 32 if prb else None,
+            # 'ymin': 1e-14,
+            # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [] if prb else ['num'],  # Choose 'num', 'bmax','tsim'
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
+            'legendoutside': legendoutside,
+            'legendcollect': legendcollect,
+            'legendlocation': 'lower right',
+            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
+            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            'lbit-mean': 'arithmetic',
+            'lbit-site': [0, 'mid', 'last'],
+
+            'fit-beta': True,
+            'fit-ymin': None,
+            'fit-skip': 0 if prb else 0,
+            'inset-cls': {
+                # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
+                'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
+                'coords': [None, None, None, None],
+                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+                'legendtitle': '$\\xi_\\tau$',
+            },
+        }
+
     }
 
     return meta

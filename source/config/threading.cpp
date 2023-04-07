@@ -88,15 +88,12 @@ namespace settings {
         tools::log->info("Intel MKL | max_threads {}", mkl_get_max_threads());
 #endif
 #if defined(FLEXIBLAS_AVAILABLE)
-        constexpr size_t bufsize = 512;
-        char buffer[bufsize];
-        auto n = flexiblas_list_loaded(nullptr, 0, 0);
-        for(auto pos = 0; pos < n; pos++) {
-            flexiblas_list_loaded(buffer, bufsize, pos);
-            tools::log->info("Flexiblas [{}]:{} | num_threads {}", pos, buffer, flexiblas_get_num_threads());
-        }
-#endif
 
+        std::string buffer;
+        buffer.resize(64);
+        flexiblas_current_backend(buffer.data(), buffer.size());
+        tools::log->info("Flexiblas backend [{}] | num_threads {}", buffer, flexiblas_get_num_threads());
+#endif
         if(settings::threading::show_threads) exit(0);
     }
 }

@@ -45,8 +45,8 @@ std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t siz
     return bond_dimensions;
 }
 
-void tools::finite::mps::init::set_random_entangled_state_haar(StateFinite &state, StateInitType type, long bond_lim, LogPolicy logPolicy) {
-    if(logPolicy == LogPolicy::NORMAL) tools::log->info("Setting random entangled state with Haar distribution | bond_lim {}", bond_lim);
+void tools::finite::mps::init::set_random_entangled_state_haar(StateFinite &state, StateInitType type, long bond_lim) {
+    tools::log->info("Setting random entangled state with Haar distribution | bond_lim {}", bond_lim);
     const auto  spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     bool        pastCenter      = false;
@@ -95,8 +95,8 @@ void tools::finite::mps::init::random_entangled_state(StateFinite &state, StateI
     set_random_entangled_state_with_random_spinors(state, type, bond_lim);
 }
 
-void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_lim, LogPolicy logPolicy) {
-    if(logPolicy == LogPolicy::NORMAL) tools::log->info("Setting random entangled state with random unit spinors");
+void tools::finite::mps::init::set_random_entangled_state_with_random_spinors(StateFinite &state, StateInitType type, long bond_lim) {
+    tools::log->info("Setting random entangled state with random unit spinors");
     const auto  spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto        bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     bool        pastCenter      = false;
@@ -167,11 +167,11 @@ Eigen::Tensor<std::complex<double>, 3> get_random_spinor_tensor(const std::array
 }
 
 void tools::finite::mps::init::set_random_entangled_state_on_axes_using_eigenspinors(StateFinite &state, StateInitType type,
-                                                                                     const std::vector<std::string> &axes, long bond_lim, LogPolicy logPolicy) {
+                                                                                     const std::vector<std::string> &axes, long bond_lim) {
     auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     auto eigenspinors    = std::vector<Eigen::VectorXcd>();
-    if(logPolicy == LogPolicy::NORMAL) tools::log->info("Setting random entangled state on axes {}: bond dims {}", axes, bond_dimensions);
+    tools::log->info("Setting random entangled state on axes {}: bond dims {}", axes, bond_dimensions);
 
     for(const auto &axis : axes) {
         auto axus = qm::spin::half::get_axis_unsigned(axis);
@@ -203,13 +203,12 @@ void tools::finite::mps::init::set_random_entangled_state_on_axes_using_eigenspi
 }
 
 void tools::finite::mps::init::set_random_entangled_state_on_axis_using_eigenspinors(StateFinite &state, StateInitType type, std::string_view axis,
-                                                                                     long bond_lim, LogPolicy logPolicy) {
+                                                                                     long bond_lim) {
     const auto spin_dim        = state.get_mps_site<size_t>(0).spin_dim();
     auto       bond_dimensions = init::get_valid_bond_dimensions(state.get_length() + 1, spin_dim, bond_lim);
     auto       axus            = qm::spin::half::get_axis_unsigned(axis);
     auto       sign            = qm::spin::half::get_sign(axis);
-    if(logPolicy == LogPolicy::NORMAL)
-        tools::log->info("Setting random entangled state on axis {} using eigenspinors of the pauli matrix σ{}: bond dims {}", axis, axus, bond_dimensions);
+    tools::log->info("Setting random entangled state on axis {} using eigenspinors of the pauli matrix σ{}: bond dims {}", axis, axus, bond_dimensions);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
     bool        past_center = false;
     std::string label       = "A";

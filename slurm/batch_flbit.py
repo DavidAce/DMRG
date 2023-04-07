@@ -38,14 +38,14 @@ J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
 r                   = [-1]
-u_depth             = [4,6,8,10,12,14,16]
-u_fmix              = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+u_depth             = [16]
+u_fmix              = [0.2, 0.3, 0.4, 0.5]
 u_tstd              = [1.0]
 u_cstd              = [1.0]
 u_tgw8              = ['IDENTITY']
 u_cgw8              = ['EXPDECAY']
 u_bond              = [20]
-initial_state       = ["PRODUCT_STATE_NEEL"]
+initial_state       = ["PRODUCT_STATE_NEEL_SHUFFLED"]
 tmp_storage = "/tmp"
 if "lith" in  platform.node():
     tmp_storage = "/scratch/local"
@@ -117,7 +117,7 @@ for val_L,val_J,val_w, val_x, val_r, val_u, val_f, val_tstd, val_cstd, val_tgw8,
         "flbit::time_start_imag"             : "0",
         "flbit::time_final_real"             : "{:.1e}".format(max_time),
         "flbit::time_final_imag"             : "0",
-        "flbit::time_num_steps"              : "100",
+        "flbit::time_num_steps"              : "200",
         "flbit::cls::mpo_circuit_svd_bondlim": str_bond,
     }
     os.makedirs(input_prefix, exist_ok=True)

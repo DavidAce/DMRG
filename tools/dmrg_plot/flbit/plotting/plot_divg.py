@@ -35,8 +35,8 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         # palette_name = "Spectral"
         if not palette_name:
             palette_name = "colorblind"
-        # path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-        path_effects = None
+        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
+        # path_effects = None
     else:
         if not palette_name:
             palette_name = "colorblind"
@@ -52,9 +52,9 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             if not col in [l.split(':')[0] for l in subspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(product(*get_vals(db, figspec)))  # All combinations of figspecs values
-    subprod = list(product(*get_vals(db, subspec)))  # All combinations of subspecs values
-    linprod = list(product(*get_vals(db, linspec)))  # All combinations of linspecs values
+    figprod = list(product(*get_vals(db=db, keyfmt=figspec, filter=meta.get('filter'))))  # All combinations of figspecs values
+    subprod = list(product(*get_vals(db=db, keyfmt=subspec, filter=meta.get('filter'))))  # All combinations of subspecs values
+    linprod = list(product(*get_vals(db=db, keyfmt=linspec, filter=meta.get('filter'))))  # All combinations of linspecs values
     numfigs = len(figprod)
     numsubs = len(subprod)
     if figs is None:
@@ -129,13 +129,13 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
                     lenval = "{}".format(get_vals(db=dbval, keyfmt='L'))
                     lenkey = f"L{lenval}"
-                    for W in [4.0, 6.0, 8.0]:
+                    for W,color in zip([10.0, 8.0, 6.0, 4.0], ['lightgray', 'darkgray', 'gray', 'dimgray']):
                         if h5ext.get(f'{lenkey}/W{W}') is None:
                             continue
                         hist = h5ext[f'{lenkey}/W{W}']['hist[NE1][100]'][()]
                         edges = h5ext[f'{lenkey}/W{W}']['binedges[NE1][100]'][()]
                         bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                        line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color='gray', alpha=1.0,
+                        line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color=color, alpha=1.0,
                                             zorder=0)
                         for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                             key, fmt = key.split(':') if ':' in key else [key, '']

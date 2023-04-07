@@ -87,7 +87,7 @@
       "environment": {
         "BLA_VENDOR": "Intel10_64lp",
         "MKLROOT": "/opt/intel/oneapi/mkl/latest;$penv{MKLROOT};$penv{EBROOTIMKL}",
-        "CMAKE_PREFIX_PATH": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}",
+        "CMAKE_PREFIX_PATH": "/opt/intel/oneapi/mkl/latest:$penv{MKLROOT}:$penv{EBROOTIMKL}:$penv{CMAKE_PREFIX_PATH}",
         "VERBOSE": "1"
       }
     },
@@ -101,7 +101,7 @@
       },
       "environment": {
         "BLA_VENDOR": "FlexiBLAS",
-        "CMAKE_PREFIX_PATH": "/opt/flexiblas:$penv{FlexiBLASROOT}:$penv{EBROOTFLEXIBLAS}",
+        "CMAKE_PREFIX_PATH": "/opt/flexiblas:$penv{FlexiBLASROOT}:$penv{EBROOTFLEXIBLAS}:$penv{CMAKE_PREFIX_PATH}",
         "VERBOSE": "1"
       }
     },
@@ -416,7 +416,7 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE"
       }

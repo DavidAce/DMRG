@@ -26,10 +26,10 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
             if not col in [l.split(':')[0] for l in figspec + subspec + linspec + xaxspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(product(*get_vals(db, figspec)))  # All combinations of figspecs values
-    subprod = list(product(*get_vals(db, subspec)))  # All combinations of subspecs values
-    linprod = list(product(*get_vals(db, linspec)))  # All combinations of linspecs values
-    xaxprod = list(product(*get_vals(db, xaxspec)))  # All combinations of linspecs values
+    figprod = list(product(*get_vals(db=db, keyfmt=figspec, filter=meta.get('filter'))))  # All combinations of figspecs values
+    subprod = list(product(*get_vals(db=db, keyfmt=subspec, filter=meta.get('filter'))))  # All combinations of subspecs values
+    linprod = list(product(*get_vals(db=db, keyfmt=linspec, filter=meta.get('filter'))))  # All combinations of linspecs values
+    xaxprod = list(product(*get_vals(db=db, keyfmt=xaxspec, filter=meta.get('filter'))))  # All combinations of linspecs values
     # dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
     # print(dirprod)
     numfigs = len(figprod)
@@ -41,73 +41,68 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
         logger.debug('- plotting figs {}: {}'.format(figspec, figvals))
         dbval = None
         for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
-            popt = None
-            pcov = None
             logger.debug('-- plotting subs {}: {}'.format(subspec, subvals))
-            # for dirvals in dirprod:
-            # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting lins {}: {}'.format(linspec, linvals))
-                xdata, ydata, edata, cdata, ndata = [], [], [], [], []
+                xvals, yvals, evals, cvals, nvals = [], [], [], [], []
                 legendrow = None
                 for xaxvals in xaxprod:
                     logger.debug('--- plotting xaxs {}: {}'.format(xaxspec, xaxvals))
                     datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec + xaxspec,
                                                 vals=figvals + subvals + linvals + xaxvals)
-                    logger.debug('Found {} datanodes: {}'.format(len(datanodes), datanodes))
+                    if len(datanodes) != 1:
+                        logger.warning(f"match: \n"
+                                       f"\tspec:{[figspec + subspec + linspec]}\n"
+                                       f"\tvals:{[figvals + subvals + linvals]}")
+                        logger.warning(f"found {len(datanodes)} datanodes: {datanodes=}")
+
                     for datanode in datanodes:
                         dbval = db['dsets'][datanode.name]
-                        xvals = get_vals(dbval, xaxspec)[0]  # There can an only be one!
-                        nvals, cvals = get_table_data(datanode['num'], meta.get('colname'), 'i8')
-                        yfold = get_lbit_avg(datanode.parent['corrmat'][()])
-                        ylens = np.arange(len(yfold.mean))
-                        fit = get_lbit_fit_data(ylens, yfold.full, e=yfold.stdv,
-                                                beta=meta.get('fit-beta', True),
-                                                ymin=meta.get('fit-ymin', 1e-8),
-                                                # skip=meta.get('fit-skip', 0),
-                                                )  # Fit to get characteristic length-scale
+                        ndata = dbval['vals']['num']
+                        Ldata = dbval['vals']['L']
+                        xdata = np.array(range(Ldata))
+                        lbavg = get_lbit_avg(corrmat=datanode[()], site=meta.get('lbit-site'),
+                                             mean=meta.get('lbit-mean'))
 
-                        # yavgs, cvals = get_table_data(datanode['avg'], meta.get('colname'), 'f8')
-                        # ylens = np.arange(np.shape(yvals)[1], dtype=np.float64)
-
-                        # C, xi, beta, yfit, stderr, idxN = get_lbit_cls_data(ylens, yvals,
-                        #                                             beta=meta.get('fit-beta', False),
-                        # ymin=meta.get('fit-ymin', 1e-6),
-                        # skip=meta.get('fit-skip', 0),
-                        # )
-                        if np.isfinite(fit.xi):
-                            ydata.append(fit.xi)
-                            edata.append(fit.xierr)
-                            xdata.append(xvals)
-                            cdata.extend(cvals)
-                            ndata.extend(nvals)
+                        yfits = []
+                        for yfull, ystdv in zip(lbavg.full.T, lbavg.stdv.T):
+                            yfits.append(get_lbit_fit_data(x=xdata, y=np.atleast_2d(yfull).T, e=np.atleast_2d(ystdv).T,
+                                                           beta=meta.get('fit-beta', True),
+                                                           ymin=meta.get('fit-ymin', 1e-16),
+                                                           ))  # Fit to get characteristic length-scale
+                        print(
+                            f"L{Ldata} | f{dbval['vals']['f']:.2f} | u{dbval['vals']['u']:2} | mean {meta.get('lbit-mean')} |  cls {[yfit.xi for yfit in yfits]}")
+                        xvals.append(xaxvals)
+                        yvals.append([yfit.xi for yfit in yfits])
+                        evals.append([yfit.xierr for yfit in yfits])
+                        nvals.append(ndata)
                         if legendrow is None:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                xdata = np.array(xdata, ndmin=1)
-                ydata = np.array(ydata, ndmin=2)
-                edata = np.array(edata, ndmin=2)
-                cdata = np.array(cdata, ndmin=2).T
+                xvals = np.array(xvals, ndmin=1)
+                yvals = np.array(yvals, ndmin=2)
+                evals = np.array(evals, ndmin=2)
+                # cvals = np.array(cvals, ndmin=2).T
+                if legendrow is not None:
+                    for y, e in zip(yvals.T, evals.T):
+                        if meta.get('fillerror'):
+                            ax.fill_between(x=xvals[None], y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
+                            line, = ax.plot(xvals, y, marker=None,
+                                            # linestyle=linestyle,
+                                            label=None, color=color, path_effects=path_effects)
+                        else:
+                            line = ax.errorbar(x=xvals, y=y, yerr=e, color=color, path_effects=path_effects)
+                            # line = ax.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
 
-                for y, e, c in zip(ydata, edata, cdata):
-                    if meta.get('fillerror'):
-                        ax.fill_between(x=xdata[None], y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
-                        line, = ax.plot(xdata, y, marker=None,
-                                        # linestyle=linestyle,
-                                        label=c, color=color, path_effects=path_effects)
+                        for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                            key, fmt = key.split(':') if ':' in key else [key, '']
+                            f['legends'][idx][icol]['handle'].append(line)
+                            f['legends'][idx][icol]['label'].append(col)
+                            f['legends'][idx][icol]['title'] = db['tex'][key]
+                            f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
 
-
-                    else:
-                        line = ax.errorbar(x=xdata, y=y, yerr=e, color=color, path_effects=path_effects)
-
-                    for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                        key, fmt = key.split(':') if ':' in key else [key, '']
-                        f['legends'][idx][icol]['handle'].append(line)
-                        f['legends'][idx][icol]['label'].append(col)
-                        f['legends'][idx][icol]['title'] = db['tex'][key]
-                        f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
-                    if not idx in f['axes_used']:
-                        f['axes_used'].append(idx)
+                        if not idx in f['axes_used']:
+                            f['axes_used'].append(idx)
             if dbval:
                 ax.set_xlabel(get_tex(dbval, xaxspec))
                 if meta.get('axestitle', True):

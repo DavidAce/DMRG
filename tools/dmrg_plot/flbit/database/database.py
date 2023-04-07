@@ -247,11 +247,13 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         },
         'dsets': {},
     }
+    if debug:
+        print('Looking for group "fLBIT" (depth:20) in {}'.format(h5_src.filename))
     for algokey, algopath, algonode in h5py_node_iterator(node=h5_src, keypattern='fLBIT', dep=20,
                                                           excludeKeys=['.db', 'fDMRG', 'xDMRG', 'iDMRG', 'iTEBD'],
                                                           nodeType=h5py.Group, godeeper=False):
         if debug:
-            print(algopath)
+            print(' Found algo {}'.format(algopath))
         modelnode = algonode['model']
         hamiltonian = modelnode['hamiltonian']
         L = modelnode['model_size'][()]
@@ -278,11 +280,9 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                     break
             if not val_requested:
                 continue
-            else:
-                print([L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8, ubond])
+            elif debug:
+                print(" Adding keys:", [L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8, ubond])
 
-        if debug:
-            print("Adding keys")
 
         rval = 'L' if r == np.iinfo(np.uint64).max else r
 
@@ -306,22 +306,34 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         db['vals']['cgw8'].add(cgw8)
         db['vals']['ubond'].add(ubond)
 
+        if debug:
+            print(' Looking for datasets in meta: {}'.format(meta.keys()))
         for metakey, descr in meta.items():
             if 'include' in metakey or 'common' in metakey:
                 continue
             if not 'dsetname' in descr:
                 continue
             if debug:
-                print('Looking for dataset {} in {}'.format(descr['dsetname'], modelnode.name))
+                print('  Looking for dataset {} (depth:4) in {}'.format(descr['dsetname'], modelnode.name))
             for datakey, datapath, datanode in h5py_node_iterator(node=modelnode,
                                                                   keypattern=descr['dsetname'],
-                                                                  dep=4,
-                                                                  nodeType=h5py.Group):
+                                                                  excludeKeys=db['dsets'].keys(),
+                                                                  dep=4):
+                # The dataset found could either be an actual dataset,
+                # or a group containing multiple datasets with statistics about a table column.
+                # The group would coontain datasets such as "num", "avg", "ste" etc.
+                #
                 if datanode.name in db['dsets']:
                     continue
-                print("Loading dset database version 3: {}".format(datapath))
+                print("   Loading dset database version 3: {}".format(datapath))
+                num = -1
+                avgnode = datanode
+                if isinstance(datanode, h5py.Group):
+                    num = np.max(datanode['num'][()])
+                    avgnode = datanode['avg']
+                if isinstance(datanode, h5py.Dataset):
+                    num = np.shape(datanode[()])[0] # We usually set sample number on axis 0
 
-                num = np.max(datanode['num'][()])
                 for dname in [datanode.name]:
                     db['dsets'][dname] = {}
                     db['dsets'][dname]['version'] = db['version']
@@ -360,7 +372,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                     db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
                     db['dsets'][dname]['node']['model'] = modelnode
                     db['dsets'][dname]['node']['data'] = datanode
-                    db['dsets'][dname]['node']['avg'] = datanode['avg']
+                    db['dsets'][dname]['node']['avg'] = avgnode
 
                     db['dsets'][dname]['tex'] = {
                         'keys': db['tex'],

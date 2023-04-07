@@ -13,7 +13,7 @@
     #endif
     #include <openblas/cblas.h>
 #elif defined(FLEXIBLAS_AVAILABLE)
-#include <flexiblas/flexiblas_config.h>
+    #include <flexiblas/flexiblas_config.h>
     #ifndef SVD_SAVE_FLEXIBLAS_ATTRIBUTES
         #define SVD_SAVE_FLEXIBLAS_ATTRIBUTES
     #endif
@@ -94,8 +94,8 @@ void svd::solver::save_svd() {
         file.writeAttribute(Version.UpdateVersion, "Intel-MKL-UpdateVersion", group_name);
 #endif
 #if defined(SVD_SAVE_FLEXIBLAS_ATTRIBUTES)
-        file.writeAttribute(FLEXIBLAS_DEFAULT_LIB_PATH, "FLEXIBLAS_DEFAULT_LIB_PATH", group_name);
-        file.writeAttribute(FLEXIBLAS_VERSION, "FLEXIBLAS_VERSION", group_name);
+        file.writeAttribute(FLEXIBLAS_DEFAULT_LIB_PATH, group_name, "FLEXIBLAS_DEFAULT_LIB_PATH");
+        file.writeAttribute(FLEXIBLAS_VERSION, group_name, "FLEXIBLAS_VERSION");
 #endif
 
     } else if(smd.svd_lib == svd::lib::eigen) {

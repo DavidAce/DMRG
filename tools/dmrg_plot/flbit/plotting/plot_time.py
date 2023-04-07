@@ -57,9 +57,9 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             if not col in [l.split(':')[0] for l in figspec + subspec + linspec]:
                 legend_col_keys.append(col)
 
-    figprod = list(product(*get_vals(db, figspec)))  # All combinations of figspecs values
-    subprod = list(product(*get_vals(db, subspec)))  # All combinations of subspecs values
-    linprod = list(product(*get_vals(db, linspec)))  # All combinations of linspecs values
+    figprod = list(product(*get_vals(db=db, keyfmt=figspec, filter=meta.get('filter'))))  # All combinations of figspecs values
+    subprod = list(product(*get_vals(db=db, keyfmt=subspec, filter=meta.get('filter'))))  # All combinations of subspecs values
+    linprod = list(product(*get_vals(db=db, keyfmt=linspec, filter=meta.get('filter'))))  # All combinations of linspecs values
     # dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
     numfigs = len(figprod)
     numsubs = len(subprod)
