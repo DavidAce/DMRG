@@ -81,11 +81,52 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
     }
 
     std::string label = "A";
-    for(const auto &mps_ptr : state.mps_sites) {
+    for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
         auto &&mps = *mps_ptr;
-        auto   idx = pattern.at(mps.get_position<size_t>());
+        auto   idx = pattern.at(pos);
         mps.set_mps(spinors.at(idx), L, 0, label);
         str.append(arrows.at(idx));
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->info("Initial state: {}", str);
+}
+
+void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern) {
+    tools::log->info("Setting domain-wall initial state of type {} on axis {} {}", enum2sv(type), axis,
+                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+
+    Eigen::Tensor<cplx, 1> L(1);
+    L.setConstant(1.0);
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
+    std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+                                                     tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
+    std::array<std::string_view, 2>       arrows  = {"↓", "↑"};
+    std::string                           str;
+    if(pattern.empty() or pattern.size() != state.get_length()) {
+        pattern.resize(state.get_length(), 0);
+        auto b = rnd::uniform_integer_box<size_t>(0, 1);
+        for(auto &&[i, p] : iter::enumerate(pattern))
+            // Set pattern 00001111 or 11110000 depending on a random bit b
+            if(i < (state.get_length() / 2))
+                p = num::mod<size_t>(b + 0, 2);
+            else
+                p = num::mod<size_t>(b + 1, 2);
+    }
+
+    std::string label = "A";
+    for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
+        auto &&mps = *mps_ptr;
+        auto   idx = pattern.at(pos);
+        mps.set_mps(spinors.at(idx), L, 0, label);
+        str.append(arrows.at(idx));
+
         if(mps.isCenter()) {
             mps.set_LC(L);
             label = "B";
@@ -139,9 +180,9 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
 
     tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axus, axus);
     std::string label = "A";
-    for(const auto &mps_ptr : state.mps_sites) {
+    for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
         auto &&mps = *mps_ptr;
-        auto   idx = num::mod<size_t>(mps.get_position(), 2);
+        auto   idx = pattern.at(pos);
         mps.set_mps(spinors.at(idx), L, 0, label);
         str.append(arrows.at(idx));
 

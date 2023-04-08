@@ -41,7 +41,7 @@ void AlgorithmLauncher::start_h5file() {
     // 2) The .h5 file does not exist yet -> start new simulation
 
     if(h5pp::fs::exists(settings::storage::output_filepath)) {
-        tools::log->info("Found existing HDF5 file: {}", settings::storage::output_filepath);
+        tools::log->info("Found an existing HDF5 file: [{}] | policy {}", settings::storage::output_filepath, enum2sv(settings::storage::file_collision_policy));
         switch(settings::storage::file_collision_policy) {
             case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
@@ -53,7 +53,7 @@ void AlgorithmLauncher::start_h5file() {
                 // and consult .cfg if there is anything more to be done.
                 try {
                     h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::READONLY);
-                    tools::log->debug("Checking if HDF5 file is valid: {}", settings::storage::output_filepath);
+                    tools::log->info("Checking if HDF5 file is valid: [{}]", settings::storage::output_filepath);
                     if(not h5file->fileIsValid()) throw except::runtime_error("HDF5 file is not valid: {}", settings::storage::output_filepath);
                     if(not h5file->linkExists("common/finished_all"))
                         throw except::runtime_error("Could not find link common/finished_all in file: {}", settings::storage::output_filepath);
@@ -91,6 +91,7 @@ void AlgorithmLauncher::start_h5file() {
             }
             case FileCollisionPolicy::REPLACE: {
                 h5file = std::make_shared<h5pp::File>(settings::storage::output_filepath, h5pp::FileAccess::REPLACE);
+                tools::log->info("Replaced the existing file: [{}]", settings::storage::output_filepath);
                 break;
             }
         }

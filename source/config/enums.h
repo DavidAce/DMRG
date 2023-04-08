@@ -83,6 +83,7 @@ enum class StateInit {
     RANDOM_ENTANGLED_STATE,
     RANDOMIZE_PREVIOUS_STATE,
     PRODUCT_STATE_ALIGNED,
+    PRODUCT_STATE_DOMAIN_WALL,
     PRODUCT_STATE_NEEL,
     PRODUCT_STATE_NEEL_SHUFFLED,
 };
@@ -304,6 +305,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
         if(item == StateInit::RANDOM_ENTANGLED_STATE)                   return "RANDOM_ENTANGLED_STATE";
         if(item == StateInit::RANDOMIZE_PREVIOUS_STATE)                 return "RANDOMIZE_PREVIOUS_STATE";
+        if(item == StateInit::PRODUCT_STATE_DOMAIN_WALL)                return "PRODUCT_STATE_DOMAIN_WALL";
         if(item == StateInit::PRODUCT_STATE_ALIGNED)                    return "PRODUCT_STATE_ALIGNED";
         if(item == StateInit::PRODUCT_STATE_NEEL)                       return "PRODUCT_STATE_NEEL";
         if(item == StateInit::PRODUCT_STATE_NEEL_SHUFFLED)              return "PRODUCT_STATE_NEEL_SHUFFLED";
@@ -643,6 +645,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "RANDOM_PRODUCT_STATE")                  return StateInit::RANDOM_PRODUCT_STATE;
         if(item == "RANDOM_ENTANGLED_STATE")                return StateInit::RANDOM_ENTANGLED_STATE;
         if(item == "RANDOMIZE_PREVIOUS_STATE")              return StateInit::RANDOMIZE_PREVIOUS_STATE;
+        if(item == "PRODUCT_STATE_DOMAIN_WALL")             return StateInit::PRODUCT_STATE_DOMAIN_WALL;
         if(item == "PRODUCT_STATE_ALIGNED")                 return StateInit::PRODUCT_STATE_ALIGNED;
         if(item == "PRODUCT_STATE_NEEL")                    return StateInit::PRODUCT_STATE_NEEL;
         if(item == "PRODUCT_STATE_NEEL_SHUFFLED")           return StateInit::PRODUCT_STATE_NEEL_SHUFFLED;

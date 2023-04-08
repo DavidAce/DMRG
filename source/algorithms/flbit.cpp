@@ -59,10 +59,12 @@ void flbit::resume() {
         // Create an initial state in the real basis
         auto bond_lim = settings::get_bond_init(status.algo_type);
         switch(settings::strategy::initial_state) {
+            case StateInit::PRODUCT_STATE_DOMAIN_WALL:
             case StateInit::PRODUCT_STATE_NEEL:
             case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: break;
             default:
-                tools::log->warn("Expected initial_state: PRODUCT_STATE_NEEL|PRODUCT_STATE_NEEL_SHUFFLED,. Got {}", enum2sv(settings::strategy::initial_state));
+                tools::log->warn("Expected initial_state: PRODUCT_STATE_DOMAIN_WALL|PRODUCT_STATE_NEEL|PRODUCT_STATE_NEEL_SHUFFLED,. Got {}",
+                                 enum2sv(settings::strategy::initial_state));
         }
 
         if(settings::strategy::initial_axis.find("z") == std::string::npos)
@@ -814,7 +816,6 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                     h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corravg", "dimensions");
                     h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
 
-
                     h5file->writeDataset(lbitSA.corrtyp, "/fLBIT/model/lbits/corrtyp", H5D_CHUNKED, shape_avgs);
                     h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corrtyp", "dimensions");
                     h5file->writeAttribute("Site geometric average <<O(|i-j|)>>_typ", "/fLBIT/model/lbits/corrtyp", "description");
@@ -827,7 +828,6 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                     h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corroff", "dimensions");
                     h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff",
                                            "description");
-
                 }
                 h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");

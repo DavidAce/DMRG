@@ -53,6 +53,7 @@ namespace tools::finite::mps {
         extern void set_random_product_state_on_axis_using_bitfield(StateFinite & state, StateInitType type, std::string_view axis, size_t bitfield);
         extern void set_random_product_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern);
         extern void set_random_product_state_on_axis(StateFinite & state, StateInitType type, std::string_view axis);
+        extern void set_product_state_domain_wall(StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> & pattern);
         extern void set_product_state_aligned(StateFinite & state, StateInitType type, std::string_view axis);
         extern void set_product_state_neel(StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern);
         extern void set_product_state_neel_shuffled (StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> & pattern);
