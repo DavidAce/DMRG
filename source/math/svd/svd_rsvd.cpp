@@ -1,23 +1,17 @@
 #include <math/svd.h>
-
-#if defined(DMRG_ENABLE_RSVD)
-    #include "debug/exceptions.h"
-    #include "math/rnd.h"
-    #include "rsvd/Constants.hpp"
-    #include "rsvd/ErrorEstimators.hpp"
-    #include "rsvd/RandomizedSvd.hpp"
-    #include "tid/tid.h"
-    #include <Eigen/Dense>
-#endif
+#include "debug/exceptions.h"
+#include "math/rnd.h"
+#include "rsvd/Constants.hpp"
+#include "rsvd/ErrorEstimators.hpp"
+#include "rsvd/RandomizedSvd.hpp"
+#include "tid/tid.h"
+#include <Eigen/Dense>
 
 /*! \brief Performs randomized SVD on a matrix
  */
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>>
     svd::solver::do_svd_rsvd([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols) const {
-#if !defined(DMRG_ENABLE_RSVD)
-    throw std::runtime_error("Define DMRG_ENABLE_RSVD to use rsvd");
-#else
     auto t_rsvd   = tid::tic_scope("rsvd");
     long rank_lim = rank_max > 0 ? std::min(std::min(rows, cols), rank_max) : std::min(rows, cols);
     if(rank_lim <= 0) throw std::logic_error("rank_lim <= 0");
@@ -65,7 +59,6 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     cols, truncation_error, t_rsvd->get_last_interval());
     // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().topRows(rank), SVD.matrixV().leftCols(rank).adjoint());
-#endif
 }
 
 using real = double;

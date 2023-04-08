@@ -20,12 +20,8 @@ if (DMRG_PACKAGE_MANAGER STREQUAL "cmake")
     find_package(OpenMP COMPONENTS CXX REQUIRED)
     find_package(Fortran REQUIRED)
 
-    if (DMRG_ENABLE_MKL)
-        find_package(MKL COMPONENTS blas lapack gf gnu_thread lp64 REQUIRED)  # MKL - Intel's math Kernel Library, use the BLAS implementation in Eigen and Arpack. Includes lapack.
-    endif ()
-
-    if (NOT MKL_FOUND)
-        # If MKL is not on openblas will be used instead. Includes blas, lapack and lapacke
+    find_package(BLAS)
+    if (NOT BLAS_FOUND)
         if(NOT DEFINED OPENBLAS_DYNAMIC_ARCH)
             set(OPENBLAS_DYNAMIC_ARCH OFF)
         endif()

@@ -11,6 +11,3 @@ add_source_target(dmrg-math-svd
         dmrg-tid
         )
 
-if (DMRG_ENABLE_RSVD)
-    target_compile_definitions(dmrg-math-svd-o PRIVATE DMRG_ENABLE_RSVD)
-endif ()

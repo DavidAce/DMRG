@@ -1,4 +1,4 @@
-[![Ubuntu 20.04](https://github.com/DavidAce/DMRG/workflows/Ubuntu%2020.04/badge.svg?branch=master)](https://github.com/DavidAce/DMRG/actions)
+[![Ubuntu 22.04](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml/badge.svg)](https://github.com/DavidAce/DMRG/actions/workflows/ubuntu-22.04.yml)
 [![codecov](https://codecov.io/gh/DavidAce/DMRG/branch/master/graph/badge.svg?token=9YE72CJ522)](https://codecov.io/gh/DavidAce/DMRG)
 # DMRG++
 
@@ -7,17 +7,22 @@
 # Introduction
 
 [Density matrix renormalization group](https://en.wikipedia.org/wiki/Density_matrix_renormalization_group) (DMRG) is a
-variational technique used to study 1D quantum systems. It works by iteratively optimizing a trial wave function in the
+variational technique used to study quantum systems. DMRG works by iteratively optimizing a trial wave function in the
 form of a [Matrix Product State](https://en.wikipedia.org/wiki/Matrix_product_states) (MPS), until obtaining an
-eigenstate of the system with high precision. DMRG++ includes 4 different algorithms:
+eigenstate of the system with high precision.
 
-- ***i*DMRG:** *infinite* DMRG. Finds the groundstate of infinite and translationally invariant systems.
-- ***f*DMRG:** *finite* DMRG. Finds the groundstate of finite systems, not necessarily translationally invariant.
-- ***x*DMRG:** *Excited state* DMRG. Finds highly excited (mid-spectrum) eigenstates of finite systems.
-- ***f*LBIT:** *Finite* l-BIT. Time evolution on a finite system in the basis of local integrals of motion (the l-bits)
-  of an MBL phase.
-- ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite and translationally
-  invariant systems using unitary operators that perform imaginary time evolution.
+DMRG++ includes 4 algorithms for finding eigenstates of 1D quantum spin chains:
+
+- ***x*DMRG:** *Excited state* DMRG. Finds highly excited eigenstates of finite systems.
+- ***f*DMRG:** *finite* DMRG. Finds the groundstate of finite systems.
+- ***i*DMRG:** *infinite* DMRG. Finds the groundstate of infinite translationally invariant systems.
+- ***i*TEBD:** *Imaginary Time Evolving Block Decimation*. Finds the ground state of infinite translationally
+  invariant systems from a quench in imaginary time.
+
+One additional algorithm is included to study the dynamics in the Many-body Localized phase:
+
+- ***f*LBIT:** *Finite* l-BIT. Time evolution on a finite system in the basis of local integrals of motion (l-bits).
+
 
 ## Documentation
 
@@ -39,16 +44,15 @@ theoretical background of this implementation.
 
 The default input configuration file `input/input.cfg` sets simulation properties, such as algorithm, system size and
 precision.
-`DMRG++` admits custom input files from command-line arguments, e.g. `./DMRG++ -c path/to/file.cfg`.  
-The full list of configurable settings can be found under [Settings](Settings).
+`DMRG++` takes a custom input file from command-line arguments, e.g. `./DMRG++ -c path/to/file.cfg`.  
 
 ## Output Data File
 
 After execution the results are stored a binary file in HDF5 format. Its location is specified in the configuration
-file `input/input.cfg`. By default this should be in `output/output.h5`. This file will contain values like the final
-energies, entanglement entropies, entanglement spectrums and optionally the final state in MPS form.
+file `input/input.cfg`. By default, the output file is `output/output.h5`, which will contain values like the final
+energies, entanglement entropies, and optionally the final state in MPS form.
 
-To view the data you can use any hdf5-viewer, such as HDFCompass.
+To view the data you can use any hdf5-viewer, such as HDFCompass or HDFViewer.
 
 ## Model Hamiltonians
 
@@ -69,105 +73,83 @@ models.
 
 # Installation
 
-## Quick start
 
-- Git clone and build with `./build.sh` (see options with `./build.sh --help`).
-- Modify `input/input.config` to configure a simulation.
-- Run with `./build/Release/DMRG++ -c input/input.cfg` after setting your options in `input/input.config`.
-- Find generated data in `output/output.h5`.
-
-## Minimum Requirements
+## Requirements
 
 The following software is required to build the project:
 
-- C++17 compiler. Tested with:
-  * *To build dependencies*: Fortran compiler
-- CMake version >= 3.18 (Use version >= 3.19 for CMake Presets)
+- C++17 compiler
+- CMake version >= 3.24 to use conan as a CMake Dependency Provider. Otherwise, 3.19 is sufficient.
 
-## Build
+In addition, conan version 1.59 or higher is recommended for dependency installation. 
 
-Git clone or copy & extract the project into a folder of your choosing.
-**Make sure there are no spaces in your path!**.
 
-The project can be built with a single command from a unix terminal by using the helper script `build.sh`
-found in the project root directory. This will launch a CMake build with default settinigs.
+## Quick start
 
-The script takes optional arguments, run `build.sh --help` to learn more.
+- `git clone git@github.com:DavidAce/DMRG.git` and `cd DMRG`
+- Configure `cmake --preset <preset>` (see available presets with `cmake --list-presets`)
+- Build with `cmake --build --preset <preset>`
+- Modify `input/input.config` to configure a simulation.
+- Run with `./build/<preset>/DMRG++ -c input/input.cfg`.
+- Find generated data in `output/output.h5`.
 
-**Ubuntu** 17 or higher will have the above versions in the default repositories. For older distributions, use the
-ppa `ubuntu-toolchain-r/test` to get newer versions.
+Some presets, with `conan` in their name, can use the 
+[CMake Dependency Provider](https://cmake.org/cmake/help/latest/guide/using-dependencies/index.html#dependency-providers)
+mechanism to let CMake call conan to install all the dependencies automatically.
 
-**Mac OSX** users are advised to use GNU GCC version 7 or 8 from homebrew. Install with `brew install gcc`. Clang from
-llvm 6.0 might work but you will have to link to GNU's `libstdc++.so` or `libstdc++.a` manually. The AppleClang compiler
-is not supported at all.
 
 ## Dependencies
 
-- **BLAS** and **LAPACK**. Choose either [Intel MKL](https://software.intel.com/en-us/mkl)
-  or [OpenBLAS](https://github.com/xianyi/OpenBLAS). OpenBLAS can be installed automatically but to use Intel MKL it
-  must be installed separately. Note that OpenBLAS requires Fortran to compile from source.
+- Some BLAS, LAPACK and Lapacke implementation. Choose either [FlexiBLAS](https://www.mpi-magdeburg.mpg.de/projects/flexiblas) with reference Lapacke,  [Intel MKL](https://software.intel.com/en-us/mkl)
+  or [OpenBLAS](https://github.com/xianyi/OpenBLAS). Use the [`BLA_VENDOR`](https://cmake.org/cmake/help/latest/module/FindBLAS.html) mechanism to guide CMake. to OpenBLAS can be built by conan. 
 - [**Eigen**](http://eigen.tuxfamily.org) for tensor and matrix and linear algebra (tested with version >= 3.3).
 - [**Arpack**](https://github.com/opencollab/arpack-ng) Eigenvalue solver based on Fortran. Note that this in turn
   requires LAPACK and BLAS libraries, both of which are included in OpenBLAS.
 - [**Arpackpp**](https://github.com/m-reuter/eigsolver_properties) C++ frontend for Arpack.
 - [**primme**](https://github.com/primme/primme) Eigenvalue solver. Complements Arpack.
-- [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5. Includes [spdlog](https://github.com/gabime/spdlog)
+- [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5. Includes [HDF5](https://www.hdfgroup.org/solutions/hdf5/), [spdlog](https://github.com/gabime/spdlog)
   and [fmt](https://github.com/fmtlib/fmt).
 - [**ceres**](http://ceres-solver.org/) Optimization library with L-BFGS routines for unconstrained minimization.
+- [**CLI11**](https://github.com/CLIUtils/CLI11) input argument parser
+- [**Backward-cpp**](https://github.com/bombela/backward-cpp) pretty stack trace printer.
+
 
 ## Automatic Dependency Installation
 
 The CMake flag `DMRG_PACKAGE_MANAGER` controls the automated behavior for finding or installing dependencies. It can
 take one of these strings:
 
-| Option | Description |
-| ---- | ---- |
-| `find` **(default)**              | Use CMake's `find_package`  to find dependencies  |
-| `cmake` **
-¹**                     | Use isolated CMake instances to download and install dependencies during configure. Disregards pre-installed dependencies on your system |
-| `conan` **
-²**                     | Use the [Conan package manager](https://conan.h5/) to download and install dependencies automatically. Disregards libraries elsewhere on your system  |
+| Option               | Description                                                                                         |
+|----------------------|-----------------------------------------------------------------------------------------------------|
+| `find` **(default)** | Use CMake's `find_package`  to find dependencies. (Use this with the CMake Presets labeled `conan`) |
+| `cmake¹`             | Use CMake to download and install dependencies during configure.                                    |
+|                      |                                                                                                     |
 
-There are several variables you can pass to CMake to guide `find_package` calls and install location,
-see [CMake options](#cmake-options) below.
-
-**¹** Dependencies are installed into `${DMRG_DEPS_INSTALL_DIR}[/<PackageName>]`, where `DMRG_DEPS_INSTALL_DIR` defaults
-to `CMAKE_INSTALL_PREFIX` and optionally `/<PackageName>` is added if `DMRG_PREFIX_ADD_PKGNAME=TRUE`
-
-**²** Conan is guided by `conanfile.txt` found in this project's root directory. This method requires conan to be
-installed prior (for instance through `pip`, `conda`, `apt`, etc). To let CMake find conan you have three options:
-
-* Add Conan install (or bin) directory to the environment variable `PATH`.
-* Export Conan install (or bin) directory in the environment variable `CONAN_PREFIX`, i.e. from command
-  line: `export CONAN_PREFIX=<path-to-conan>`
-* Give the variable `CONAN_PREFIX` directly to CMake, i.e. from command
-  line: `cmake -DCONAN_PREFIX:PATH=<path-to-conan> ...`
 
 ## CMake Options
 
-The `cmake` step above takes several options, `cmake [-DOPTIONS=var] ../ `:
+This project takes several flags in the form `cmake [-DOPTIONS=var] ../ `:
 
-| Var | Default | Description |
-| ---- | ---- | ---- |
-| `DMRG_PACKAGE_MANAGER`            | `find`                        | Handle dependencies, `find`, `cmake`, or `conan` |
-| `DMRG_ENABLE_THREADS`             | `OFF`                         | Use C++11 stl threads in Eigen::Tensor |
-| `DMRG_ENABLE_MKL`                 | `OFF`                         | Enable Intel Math Kernel Library (else OpenBLAS)  |
-| `DMRG_ENABLE_TESTS`               | `OFF`                         | Enable unit testing with ctest |
-| `DMRG_ENABLE_ASAN`                | `OFF`                         | Enable runtime address sanitizer -fsanitize=address |
-| `DMRG_ENABLE_USAN`                | `OFF`                         | Enable undefined behavior sanitizer -fsanitize=undefined |
-| `DMRG_ENABLE_LTO`                 | `OFF`                         | Enable link time optimization |
-| `DMRG_ENABLE_PCH`                 | `OFF`                         | Enable precompiled headers to speed up compilation |
-| `DMRG_ENABLE_CCACHE`              | `OFF`                         | Enable ccache to speed up compilation |
-| `DMRG_ENABLE_COVERAGE`            | `OFF`                         | Enable test coverage |
-| `DMRG_BUILD_EXAMPLES`             | `OFF`                         | Build examples |
-| `DMRG_PRINT_INFO`                 | `OFF`                         | Print information during cmake configure |
-| `DMRG_PRINT_CHECKS`               | `OFF`                         | Print more information during cmake configure |
-| `DMRG_DEPS_INSTALL_DIR`           | `CMAKE_INSTALL_PREFIX`        | Install directory for dependenciesx |
-| `DMRG_DEPS_BUILD_DIR`             | `CMAKE_BINARY_DIR/dmrg-build` | Build directory for dependencies|
-| `DMRG_PREFIX_ADD_PKGNAME`         | `OFF`                         | Install dependencies into CMAKE_INSTALL_PREFIX/<PackageName> |
-| `BUILD_SHARED_LIBS`               | `OFF`                         | Link dependencies with static or shared libraries    |
-| `CMAKE_INSTALL_PREFIX`            | None                          | Install directory for `h5pp` and dependencies  |
-| `CONAN_PREFIX`                    | None                          | conan install directory  |
+| Var                       | Default                       | Description                                                                         |
+|---------------------------|-------------------------------|-------------------------------------------------------------------------------------|
+| `DMRG_PACKAGE_MANAGER`    | `find`                        | Handle dependencies, `find` or `cmake`                                              |
+| `DMRG_ENABLE_TBLIS`       | `OFF`                         | Use faster [tblis](https://github.com/devinamatthews/tblis) for tensor contractions |
+| `DMRG_ENABLE_TESTS`       | `OFF`                         | Enable unit testing with ctest                                                      |
+| `DMRG_ENABLE_DOCS`        | `OFF`                         | Build documentation                                                                 |
+| `DMRG_ENABLE_COVERAGE`    | `OFF`                         | Enable test coverage                                                                |
+| `DMRG_BUILD_EXAMPLES`     | `OFF`                         | Build examples                                                                      |
+| `DMRG_BUILD_TOOLS`        | `OFF`                         | Build additional binaries under `./tools` for postprocessing (e.g. dmrg-meld)       |
+| `DMRG_DEPS_INSTALL_DIR`   | `CMAKE_INSTALL_PREFIX`        | Install directory for dependencies                                                  |
+| `DMRG_DEPS_BUILD_DIR`     | `CMAKE_BINARY_DIR/dmrg-build` | Build directory for dependencies                                                    |
+| `DMRG_PREFIX_ADD_PKGNAME` | `OFF`                         | Install dependencies into CMAKE_INSTALL_PREFIX/<PackageName>                        |
+| `DMRG_CMAKE_DEBUG`        | `OFF`                         | Extra information during CMake configuration                                        |
+| `EIGEN_USE_THREADS`       | `ON`                          | Use STL threads to parallelize Eigen::Tensor (honors OMP_NUM_THREADS at runtime)    |
+| `COMPILER_ENABLE_ASAN`    | `OFF`                         | Enable runtime address sanitizer -fsanitize=address                                 |
+| `COMPILER_ENABLE_USAN`    | `OFF`                         | Enable undefined behavior sanitizer -fsanitize=undefined                            |
+| `COMPILER_ENABLE_LTO`     | `OFF`                         | Enable link time optimization                                                       |
+| `COMPILER_ENABLE_PCH`     | `OFF`                         | Enable precompiled headers to speed up compilation                                  |
+| `COMPILER_ENABLE_CCACHE`  | `OFF`                         | Enable ccache to speed up compilation                                               |
+
 
 In addition, variables such
 as [`<PackageName>_ROOT`](https://cmake.org/cmake/help/latest/variable/PackageName_ROOT.html)
@@ -177,6 +159,5 @@ CMake's `find_package` calls:
 
 ---
 
-# Author
-
-David Aceituno
+# Contact Information
+For questions about DMRG++ email David Aceituno aceituno `<at>` kth.se, or create a new [issue](https://github.com/DavidAce/DMRG/issues) or [discussion](https://github.com/DavidAce/DMRG/discussion).

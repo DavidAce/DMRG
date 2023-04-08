@@ -12,13 +12,10 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "DMRG_ENABLE_MKL": "TRUE",
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "TRUE",
-        "DMRG_ENABLE_RSVD": "TRUE",
         "DMRG_ENABLE_TBLIS": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE",
-        "DMRG_BENCH_CONTRACTION": "FALSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "find",
         "EIGEN_USE_THREADS": "FALSE",
@@ -60,7 +57,6 @@
       "name": "openblas",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_ENABLE_MKL": "FALSE",
         "BLA_VENDOR": "OpenBLAS"
       },
       "environment": {
@@ -72,7 +68,6 @@
       "name": "mkl",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_ENABLE_MKL": "TRUE",
         "BLA_VENDOR": "Intel10_64lp",
         "MKL_ARCH": "intel64",
         "MKL_LINK": "dynamic",
@@ -351,7 +346,6 @@
       "displayName": "Default configuration for github-actions",
       "inherits": "default",
       "cacheVariables": {
-        "DMRG_ENABLE_MKL": "FALSE",
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "FALSE",
         "DMRG_ENABLE_TBLIS": "FALSE",

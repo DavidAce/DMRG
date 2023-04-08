@@ -82,12 +82,6 @@ long long svd::solver::get_count() { return count; }
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
                                                                                                               const svd::config &svd_cfg) {
-#if defined(DMRG_ENABLE_RSVD)
-    constexpr bool has_rsvd = true;
-#else
-    constexpr bool has_rsvd = false;
-#endif
-
     auto t_svd = tid::tic_scope("svd", tid::level::highest);
 
     copy_config(svd_cfg);
@@ -102,14 +96,13 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         if(switchsize_gesdd != -1ul and num::cmp_greater_equal(sizeS, switchsize_gesdd)) svd_rtn = svd::rtn::gesdd;
 
         if(svd_rtn == rtn::gesdd) {
-            bool is_rank_low = num::cmp_greater_equal(sizeS, rank_lim * 8);  // Will keep at least 25% of the singular values
+            bool is_rank_low   = num::cmp_greater_equal(sizeS, rank_lim * 8);  // Will keep at least 25% of the singular values
             bool is_rank_lower = num::cmp_greater_equal(sizeS, rank_lim * 16); // Will keep at least 10% of the singular values
             if(is_rank_low) { svd_rtn = svd::rtn::gesvdx; }
-            if constexpr(has_rsvd) {
-                if(is_rank_lower) { svd_rtn = svd::rtn::gersvd; }
-            }
+            if(is_rank_lower) { svd_rtn = svd::rtn::gersvd; }
         }
-//        svd::log->info("sizeS = {} | lim {} | {} {} {} | {} ", sizeS, rank_lim, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd, enum2sv(svd_rtn));
+        //        svd::log->info("sizeS = {} | lim {} | {} {} {} | {} ", sizeS, rank_lim, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd,
+        //        enum2sv(svd_rtn));
         if(switchsize_gesdd > 32) throw;
     }
     if(svd_save != svd::save::NONE) {
