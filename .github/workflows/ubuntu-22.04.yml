@@ -18,8 +18,8 @@ jobs:
       matrix:
         include:
           - { compiler: gcc,   manager: cmake}
-          - { compiler: gcc,   manager: find }
-          - { compiler: clang, manager: find }
+          - { compiler: gcc,   manager: conan }
+          - { compiler: clang, manager: conan }
 
 
     steps:
@@ -64,13 +64,8 @@ jobs:
       - name: Setup apt packages common
         run: sudo apt install  ninja-build mold -y
 
-      - name: Setup apt packages find
-        if: contains(matrix.manager,'find')
-        run: sudo apt install libhdf5-dev libspdlog-dev libeigen3-dev gcovr -y
-
-      - name: Setup coverage
-        if: contains(matrix.manager,'cmake')
-        run: sudo apt install libdw-dev libdwarf-dev libunwind-dev gcovr -y
+      - name: Setup apt packages
+        run: sudo apt install gcovr -y
 
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -89,7 +84,7 @@ jobs:
         run: |
           pip install conan
           conan user
-          conan remote add conan-dmrg https://thinkstation.duckdns.org/artifactory/api/conan/conan-dmrg --insert
+          conan remote add conan-dmrg https://neumann.theophys.kth.se.org/artifactory/api/conan/conan-dmrg --insert
 
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=NEHALEM" >> $GITHUB_ENV
@@ -97,15 +92,15 @@ jobs:
         # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
       - name: Build
         run: |
-          cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DDMRG_PACKAGE_MANAGER=${{ matrix.manager }} -DCMAKE_INSTALL_PREFIX=~/pkg-install --preset=github-actions
-          cmake --build --preset=github-actions-${{ matrix.linkage }}
+          cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DDMRG_PACKAGE_MANAGER=${{ matrix.manager }} -DCMAKE_INSTALL_PREFIX=~/pkg-install --preset=github-actions-${{ matrix.manager }}
+          cmake --build --preset=github-actions-${{ matrix.manager }}
 
       - name: Test
         run: |
           ctest --extra-verbose --preset=github-actions
 
       - name: Coverage
-        if: matrix.compiler == 'gcc' && matrix.linkage == 'static' && matrix.manager == 'cmake'
+        if: matrix.compiler == 'gcc' && matrix.manager == 'cmake'
         run: |
           # Create lcov report
           lcov --capture --directory build/Debug --output-file coverage.info

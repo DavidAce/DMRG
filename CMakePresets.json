@@ -173,11 +173,10 @@
       }
     },
     {
-      "name": "pkg",
+      "name": "cmake",
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "cmake",
-        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/pkg/pkg-provider.cmake",
         "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
       }
     },
