@@ -344,9 +344,9 @@
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
+      "hidden": true,
       "inherits": [
         "openblas",
-        "conan",
         "default"
       ],
       "cacheVariables": {
@@ -359,6 +359,22 @@
         "COMPILER_ENABLE_USAN": "FALSE",
         "COMPILER_ENABLE_CCACHE": "FALSE"
       }
+    },
+    {
+      "name": "github-actions-cmake",
+      "displayName": "CMake package manager configuration for github-actions",
+      "inherits": [
+        "cmake",
+        "github-actions"
+      ]
+    },
+    {
+      "name": "github-actions-conan",
+      "displayName": "Conan package manager configuration for github-actions",
+      "inherits": [
+        "conan",
+        "github-actions"
+      ]
     },
     {
       "name": "kraken",
@@ -472,9 +488,14 @@
       "jobs": 16
     },
     {
-      "name": "github-actions",
-      "displayName": "Default configuration for github-actions",
-      "configurePreset": "github-actions"
+      "name": "github-actions-cmake",
+      "displayName": "CMake package manager configuration for github-actions",
+      "configurePreset": "github-actions-cmake"
+    },
+    {
+      "name": "github-actions-conan",
+      "displayName": "Conan package manager configuration for github-actions",
+      "configurePreset": "github-actions-conan"
     }
   ]
 }
