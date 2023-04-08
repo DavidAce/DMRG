@@ -82,8 +82,7 @@ jobs:
       - name: Install conan
         if: matrix.manager == 'conan'
         run: |
-          pip install conan
-          conan user
+          pip install -v "conan==1.59"
           conan remote add conan-dmrg https://neumann.theophys.kth.se.org/artifactory/api/conan/conan-dmrg --insert
 
       - name: Setup OpenBLAS core type
