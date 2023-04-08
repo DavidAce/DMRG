@@ -344,7 +344,11 @@
     {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
-      "inherits": "default",
+      "inherits": [
+        "openblas",
+        "conan",
+        "default"
+      ],
       "cacheVariables": {
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "FALSE",
