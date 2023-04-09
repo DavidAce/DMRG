@@ -67,6 +67,9 @@ include(cmake/environment.cmake)
 add_executable(DMRG++)
 set_target_properties(DMRG++ PROPERTIES LINK_WHAT_YOU_USE TRUE)
 
+### Link precompiled headers. Requires DMRG_ENABLE_PCH=ON
+target_link_precompiled_headers(DMRG++)
+
 # Setup paths that find_package should search and
 # let cmake find our Find<package>.cmake modules
 include(cmake/SetupPaths.cmake)
@@ -80,8 +83,6 @@ add_subdirectory(source)
 ### Link all the things!
 target_link_libraries(DMRG++ PRIVATE dmrg-main)
 
-### Link precompiled headers. Requires DMRG_ENABLE_PCH=ON
-target_link_precompiled_headers(DMRG++)
 
 ### Enable mold linker (incompatible with lto). Requires COMPILER_ENABLE_MOLD=ON
 target_enable_mold(DMRG++)

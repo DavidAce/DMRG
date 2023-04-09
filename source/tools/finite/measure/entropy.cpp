@@ -391,10 +391,10 @@ size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, st
     };
 
     // The goal now is to find the next index aidx in abit which has nbit+1
-    size_t counter                 = 0;
-    size_t wcount                  = 0;
-    bool   found_all_nbit          = false;
-    std::tie(nbit, found_all_nbit) = next_nbit(nbit);
+    size_t                  counter        = 0;
+    [[maybe_unused]] size_t wcount         = 0;
+    bool                    found_all_nbit = false;
+    std::tie(nbit, found_all_nbit)         = next_nbit(nbit);
 
     while(not found_all_nbit) {
         wcount++;
@@ -452,7 +452,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     if(tgt_pos < state_pos)
         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
     else if(tgt_pos == state_pos)
-        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
+        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs();    // AC-site
     else {
         const auto &mps_left = state.get_mps_site(tgt_pos - 1);
         schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
@@ -544,7 +544,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     if(tgt_pos < state_pos)
         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
     else if(tgt_pos == state_pos)
-        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
+        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs();    // AC-site
     else {
         const auto &mps_left = state.get_mps_site(tgt_pos - 1);
         schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
@@ -760,9 +760,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
     auto state_llen      = state_copy.get_length<long>();
-    auto von_neumann_sum = [](double sum, const double p) {
-        return p > 0 ? sum + p * std::log(p) : sum;
-    };
+    auto von_neumann_sum = [](double sum, const double p) { return p > 0 ? sum + p * std::log(p) : sum; };
 
     std::vector<double>      number_entropies(state_len + 1, 0.0); // Collects the resulting number entropies
     [[maybe_unused]] size_t  cacheA_size;

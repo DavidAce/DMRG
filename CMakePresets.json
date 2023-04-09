@@ -158,11 +158,11 @@
       }
     },
     {
-      "name": "clang-14",
+      "name": "clang-15",
       "hidden": true,
       "cacheVariables": {
-        "CMAKE_C_COMPILER": "clang-14",
-        "CMAKE_CXX_COMPILER": "clang++-14"
+        "CMAKE_C_COMPILER": "clang-15",
+        "CMAKE_CXX_COMPILER": "clang++-15"
       }
     },
     {
@@ -219,11 +219,11 @@
       }
     },
     {
-      "name": "release-clang-14",
-      "displayName": "Release|clang-14",
+      "name": "release-clang-15",
+      "displayName": "Release|clang-15",
       "hidden": true,
       "inherits": [
-        "clang-14",
+        "clang-15",
         "release",
         "default"
       ],
@@ -243,11 +243,11 @@
       ]
     },
     {
-      "name": "debug-clang-14",
-      "displayName": "Debug|clang-14",
+      "name": "debug-clang-15",
+      "displayName": "Debug|clang-15",
       "hidden": true,
       "inherits": [
-        "clang-14",
+        "clang-15",
         "debug",
         "default"
       ]
@@ -283,34 +283,34 @@
       ]
     },
     {
-      "name": "release-clang-14-conan-mkl-native",
-      "displayName": "Release|clang-14|conan|mkl|native",
+      "name": "release-clang-15-conan-mkl-native",
+      "displayName": "Release|clang-15|conan|mkl|native",
       "hidden": true,
       "inherits": [
         "native",
         "mkl",
         "conan",
-        "release-clang-14"
+        "release-clang-15"
       ]
     },
     {
-      "name": "release-clang-14-conan-openblas-native",
-      "displayName": "Release|clang-14|conan|openblas|native",
+      "name": "release-clang-15-conan-openblas-native",
+      "displayName": "Release|clang-15|conan|openblas|native",
       "inherits": [
         "native",
         "openblas",
         "conan",
-        "release-clang-14"
+        "release-clang-15"
       ]
     },
     {
-      "name": "release-clang-14-conan-flexiblas-native",
-      "displayName": "Release|clang-14|conan|flexiblas|native",
+      "name": "release-clang-15-conan-flexiblas-native",
+      "displayName": "Release|clang-15|conan|flexiblas|native",
       "inherits": [
         "native",
         "flexiblas",
         "conan",
-        "release-clang-14"
+        "release-clang-15"
       ]
     },
     {
@@ -332,21 +332,21 @@
       ]
     },
     {
-      "name": "debug-clang-14-conan-mkl",
-      "displayName": "Debug|clang-14|conan|mkl|shared|asan",
+      "name": "debug-clang-15-conan-mkl",
+      "displayName": "Debug|clang-15|conan|mkl|shared|asan",
       "inherits": [
         "mkl",
         "conan",
-        "debug-clang-14"
+        "debug-clang-15"
       ]
     },
     {
-      "name": "debug-clang-14-conan-openblas",
-      "displayName": "Debug|clang-14|conan|openblas|shared|asan",
+      "name": "debug-clang-15-conan-openblas",
+      "displayName": "Debug|clang-15|conan|openblas|shared|asan",
       "inherits": [
         "openblas",
         "conan",
-        "debug-clang-14"
+        "debug-clang-15"
       ]
     },
     {
@@ -463,16 +463,16 @@
       "configurePreset": "release-gcc-12-conan-openblas-native"
     },
     {
-      "name": "release-clang-14-conan-mkl-native",
-      "configurePreset": "release-clang-14-conan-mkl-native"
+      "name": "release-clang-15-conan-mkl-native",
+      "configurePreset": "release-clang-15-conan-mkl-native"
     },
     {
-      "name": "release-clang-14-conan-openblas-native",
-      "configurePreset": "release-clang-14-conan-openblas-native"
+      "name": "release-clang-15-conan-openblas-native",
+      "configurePreset": "release-clang-15-conan-openblas-native"
     },
     {
-      "name": "release-clang-14-conan-flexiblas-native",
-      "configurePreset": "release-clang-14-conan-flexiblas-native"
+      "name": "release-clang-15-conan-flexiblas-native",
+      "configurePreset": "release-clang-15-conan-flexiblas-native"
     },
     {
       "name": "debug-gcc-12-conan-mkl",
@@ -483,12 +483,12 @@
       "configurePreset": "debug-gcc-12-conan-openblas"
     },
     {
-      "name": "debug-clang-14-conan-mkl",
-      "configurePreset": "debug-clang-14-conan-mkl"
+      "name": "debug-clang-15-conan-mkl",
+      "configurePreset": "debug-clang-15-conan-mkl"
     },
     {
-      "name": "debug-clang-14-conan-openblas",
-      "configurePreset": "debug-clang-14-conan-openblas"
+      "name": "debug-clang-15-conan-openblas",
+      "configurePreset": "debug-clang-15-conan-openblas"
     },
     {
       "name": "kraken",
