@@ -35,7 +35,7 @@ jobs:
             ~/.ccache
           key: ${{ env.cache-name }}
 
-      - run: apt update  # Only for Docker jobs
+#      - run: apt update  # Only for Docker jobs
 
       - name: Setup Python
         uses: actions/setup-python@v4
