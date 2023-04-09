@@ -1,5 +1,5 @@
 if(DMRG_PACKAGE_MANAGER MATCHES "find")
-    find_package(Lapacke           REQUIRED MODULE)                                  # Lapacke needed by arpack++, included in MKL or OpenBLAS
+    find_package(Lapacke           REQUIRED MODULE)
     find_package(pcg-cpp           REQUIRED)
     find_package(Eigen3     3.4.0  REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
     find_package(h5pp       1.11.0 REQUIRED)                                         # h5pp for writing to file binary in format
@@ -24,7 +24,7 @@ if(DMRG_PACKAGE_MANAGER MATCHES "find")
             primme::primme
             Ceres::ceres
             lapacke::lapacke
-            Backward::Backward
+            # We link Backward::Backward on dmrg-stacktrace object files directly
             )
 
     # Fix issue with Ceres linking to cuda

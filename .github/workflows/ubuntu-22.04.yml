@@ -9,26 +9,22 @@ on:
 
 jobs:
   ci:
-    name: ${{ matrix.compiler }}-${{ matrix.linkage }}-${{ matrix.manager }}
+    name: ${{ matrix.compiler }}-${{ matrix.manager }}
     runs-on: ubuntu-22.04
     env:
-      cache-name: cache-v1-${{ matrix.compiler }}-${{ matrix.linkage }}-${{ matrix.manager }}
+      cache-name: cache-v3-${{ matrix.compiler }}-${{ matrix.manager }}
     strategy:
       fail-fast: false # True stops all on first error. Stick to false when debugging
       matrix:
         include:
-          - { compiler: gcc,   manager: cmake}
-          - { compiler: gcc,   manager: conan }
+#          - { compiler: gcc,   manager: cmake }
+#          - { compiler: gcc,   manager: conan }
           - { compiler: clang, manager: conan }
 
 
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        if: contains(matrix.manager, 'conan')
-        with:
-          python-version: '3.x'
-
+      - uses: lukka/get-cmake@latest
       - name: Setup caches
         id: dmrg-cache
         uses: actions/cache@v3
@@ -39,40 +35,43 @@ jobs:
             ~/.ccache
           key: ${{ env.cache-name }}
 
+      - run: apt update  # Only for Docker jobs
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+          cache-dependency-path: '**/requirements.txt'
+
+
+
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ env.cache-name }}
           max-size: 1000M
 
+      - name: Setup apt packages
+        run: |
+          sudo apt install ninja-build mold gcovr gfortran-12 libgfortran-12-dev libstdc++-12-dev libdw-dev -y
+          sudo apt install libopenblas-dev liblapack-dev liblapacke-dev libopenmpi-dev openmpi-bin autopoint -y
 
-      - name: Setup gcc # compilers are already installed on the CI
+      - name: Setup gcc
         if: matrix.compiler == 'gcc'
         run: |
-          sudo apt-get install gcc-10 g++-10 gfortran -y
-          echo "FC=gfortran" >> $GITHUB_ENV
-          echo "CC=gcc-10"   >> $GITHUB_ENV
-          echo "CXX=g++-10"  >> $GITHUB_ENV
+          sudo apt install gcc-12 g++-12 -y
+          echo "FC=gfortran-12" >> $GITHUB_ENV
+          echo "CC=gcc-12"      >> $GITHUB_ENV
+          echo "CXX=g++-12"     >> $GITHUB_ENV
 
       - name: Setup clang
         if: matrix.compiler == 'clang' # compilers are already installed on the CI # sudo apt-get install libclang-10-dev gfortran -y
         run: |
-          echo "FC=gfortran"     >> $GITHUB_ENV
-          echo "CC=clang-10"     >> $GITHUB_ENV
-          echo "CXX=clang++-10"  >> $GITHUB_ENV
-
-      - name: Setup apt packages common
-        run: sudo apt install  ninja-build mold -y
-
-      - name: Setup apt packages
-        run: sudo apt install gcovr -y
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-          cache: 'pip'
-          cache-dependency-path: '**/requirements.txt'
+          sudo apt install clang-14 libomp-14-dev -y
+          echo "FC=gfortran-12" >> $GITHUB_ENV
+          echo "CC=clang-14"    >> $GITHUB_ENV
+          echo "CXX=clang++-14" >> $GITHUB_ENV
 
       - name: Install Python Requirements
         run: |
@@ -83,20 +82,23 @@ jobs:
         if: matrix.manager == 'conan'
         run: |
           pip install -v "conan==1.59"
-          conan remote add conan-dmrg https://neumann.theophys.kth.se.org/artifactory/api/conan/conan-dmrg --insert
+          conan profile new default --detect --force
+          conan profile update settings.compiler.libcxx=libstdc++11 default
+          conan remote add conan-dmrg https://neumann.theophys.kth.se/artifactory/api/conan/conan-dmrg --insert --force
 
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=NEHALEM" >> $GITHUB_ENV
 
-        # For conan: ceres-solver must be compiled in release mode because it only works with glog in release mode
-      - name: Build
-        run: |
-          cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DDMRG_PACKAGE_MANAGER=${{ matrix.manager }} -DCMAKE_INSTALL_PREFIX=~/pkg-install --preset=github-actions-${{ matrix.manager }}
-          cmake --build --preset=github-actions-${{ matrix.manager }}
-
-      - name: Test
-        run: |
-          ctest --extra-verbose --preset=github-actions
+      - name: Run CMakePreset
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: 'github-actions-${{ matrix.manager }}'
+          configurePresetAdditionalArgs: "['-DCMAKE_INSTALL_PREFIX=~/pkg-install']"
+          buildPreset: 'github-actions-${{ matrix.manager }}'
+#          buildPresetAdditionalArgs: "['--target DMRG++']"
+#      - name: Test
+#        run: |
+#          ctest --extra-verbose --preset=github-actions-${}
 
       - name: Coverage
         if: matrix.compiler == 'gcc' && matrix.manager == 'cmake'

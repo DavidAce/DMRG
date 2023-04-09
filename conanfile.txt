@@ -22,8 +22,10 @@ CMakeDeps
 ceres-solver:use_glog=False
 ceres-solver:use_gflags=False
 
-backward-cpp:stack_walking=unwind
-backward-cpp:stack_details=dw
+# Use backtrace because this doesn't invoke any further dependencies that break easily on CI.
+# We take care of linkinw with system libdw instead, if needed.
+backward-cpp:stack_walking=backtrace
+backward-cpp:stack_details=backtrace_symbol
 
 
 #gflags:shared=False

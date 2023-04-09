@@ -7,7 +7,7 @@ if(NOT DEFINED BLA_VENDOR AND NOT DEFINED $ENV{BLA_VENDOR})
 endif()
 
 if(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
-    find_package(MKL REQUIRED BYPASS_PROVIDER)
+    find_package(MKL REQUIRED BYPASS_PROVIDER) # Will try to find MKLconfig.cmake in the Intel MKL install dir
 endif()
 
 # Link all dependencies to dmrg-deps

@@ -1,14 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-# Transform CMAKE_INSTALL_PREFIX to full path
-if(DEFINED CMAKE_INSTALL_PREFIX
-    AND NOT IS_ABSOLUTE CMAKE_INSTALL_PREFIX
-    AND NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}
-            ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR} CACHE FORCE)
-    message(STATUS "Setting absolute path CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
-endif()
-
 # Setup build and install directories for dependencies
 if(NOT DEFINED DMRG_DEPS_BUILD_DIR)
     set(DMRG_DEPS_BUILD_DIR ${CMAKE_BINARY_DIR}/pkg-build)

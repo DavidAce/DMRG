@@ -15,6 +15,7 @@ target_link_libraries(dmrg-main INTERFACE
         dmrg-algorithms
         dmrg-config
         dmrg-debug
+        dmrg-stacktrace
         dmrg-io
         dmrg-math
         dmrg-qm

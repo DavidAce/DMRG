@@ -80,7 +80,7 @@ namespace settings {
         if(openblas_parallel_mode == 0) openblas_parallel_str = "sequential";
         if(openblas_parallel_mode == 1) openblas_parallel_str = "threads";
         if(openblas_parallel_mode == 2) openblas_parallel_str = "openmp";
-        if(openblas_parallel_mode == 1) openblas_set_num_threads(num_threads); // Use this for blas-related threading
+        if(openblas_parallel_mode == 1) openblas_set_num_threads(static_cast<int>(num_threads)); // Use this for blas-related threading
         tools::log->info("{} NUM_THREADS={} | parallel_mode={} | corename={}", openblas_get_config(), openblas_get_num_threads(), openblas_parallel_str,
                          openblas_get_corename());
 #endif

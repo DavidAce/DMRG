@@ -96,6 +96,10 @@ void debug::register_callbacks() {
 }
 
 #if __has_include(<backward.hpp>)
+    #if defined(BACKWARD_REDEFINE_DW)
+        #undef BACKWARD_HAS_DW
+        #define BACKWARD_HAS_DW 1
+    #endif
     #include <backward.hpp>
 void debug::print_stack_trace() {
     backward::StackTrace st;

@@ -176,7 +176,7 @@ def write_statistics(src, tgt, reqs):
 
     with h5open(tgt, 'a') as h5_tgt:
         # Find ED data
-        for dirName, subdirList, fileList in os.walk("ed_data"):
+        for dirName, subdirList, fileList in os.walk("~/GitProjects/xdmrg_ed_data/ed_data"):
             subdirList.sort()
             fileList.sort()
             print("Found fileList:", fileList)

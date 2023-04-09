@@ -296,10 +296,19 @@
     {
       "name": "release-clang-14-conan-openblas-native",
       "displayName": "Release|clang-14|conan|openblas|native",
-      "hidden": true,
       "inherits": [
         "native",
         "openblas",
+        "conan",
+        "release-clang-14"
+      ]
+    },
+    {
+      "name": "release-clang-14-conan-flexiblas-native",
+      "displayName": "Release|clang-14|conan|flexiblas|native",
+      "inherits": [
+        "native",
+        "flexiblas",
         "conan",
         "release-clang-14"
       ]
@@ -345,6 +354,7 @@
       "displayName": "Default configuration for github-actions",
       "hidden": true,
       "inherits": [
+        "release",
         "openblas",
         "default"
       ],
@@ -356,7 +366,11 @@
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "FALSE",
         "COMPILER_ENABLE_USAN": "FALSE",
-        "COMPILER_ENABLE_CCACHE": "FALSE"
+        "COMPILER_ENABLE_CCACHE": "TRUE",
+        "CMAKE_VERBOSE_MAKEFILE": "TRUE"
+      },
+      "environment": {
+        "VERBOSE": "1"
       }
     },
     {
@@ -450,11 +464,15 @@
     },
     {
       "name": "release-clang-14-conan-mkl-native",
-      "configurePreset": "release-gcc-12-conan-mkl-native"
+      "configurePreset": "release-clang-14-conan-mkl-native"
     },
     {
       "name": "release-clang-14-conan-openblas-native",
-      "configurePreset": "release-gcc-12-conan-openblas-native"
+      "configurePreset": "release-clang-14-conan-openblas-native"
+    },
+    {
+      "name": "release-clang-14-conan-flexiblas-native",
+      "configurePreset": "release-clang-14-conan-flexiblas-native"
     },
     {
       "name": "debug-gcc-12-conan-mkl",
