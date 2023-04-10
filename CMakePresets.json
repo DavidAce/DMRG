@@ -176,7 +176,8 @@
       "name": "cmake",
       "hidden": true,
       "cacheVariables": {
-        "DMRG_PACKAGE_MANAGER": "cmake",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/cmake_dependency_provider/cmake_provider.cmake",
+        "DMRG_PACKAGE_MANAGER": "find",
         "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
       }
     },
@@ -185,7 +186,7 @@
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "find",
-        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan1/conan_provider.cmake",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan1_dependency_provider/conan_provider.cmake",
         "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
       },
       "environment": {
@@ -279,6 +280,16 @@
         "native",
         "openblas",
         "conan",
+        "release-gcc-12"
+      ]
+    },
+    {
+      "name": "release-gcc-12-cmake-flexiblas-native",
+      "displayName": "Release|gcc-12|cmake|flexiblas|native",
+      "inherits": [
+        "native",
+        "flexiblas",
+        "cmake",
         "release-gcc-12"
       ]
     },
@@ -460,6 +471,10 @@
     },
     {
       "name": "release-gcc-12-conan-openblas-native",
+      "configurePreset": "release-gcc-12-conan-openblas-native"
+    },
+    {
+      "name": "release-gcc-12-cmake-flexiblas-native",
       "configurePreset": "release-gcc-12-conan-openblas-native"
     },
     {

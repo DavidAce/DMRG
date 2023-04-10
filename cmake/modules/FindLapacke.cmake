@@ -149,17 +149,17 @@ function(find_Lapacke_system)
 
         if(LAPACKE_INCLUDE_DIR)
             message(DEBUG "Found LAPACKE_INCLUDE_DIR: ${LAPACKE_INCLUDE_DIR}")
-            add_library(lapacke::system INTERFACE IMPORTED )
-            target_include_directories(lapacke::system SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
-            if(LAPACKE_LIBRARY)
+            if(LAPACKE_LIBRARY AND NOT TARGET lapacke::system)
                 message(DEBUG "Found LAPACKE_LIBRARY: ${LAPACKE_LIBRARY}")
-                target_link_libraries(lapacke::system INTERFACE ${LAPACKE_LIBRARY})
+                add_library(lapacke::system UNKNOWN IMPORTED)
                 set_target_properties(lapacke::system PROPERTIES IMPORTED_LOCATION ${LAPACKE_LIBRARY})
+            else()
+                add_library(lapacke::system INTERFACE IMPORTED)
             endif()
+            target_include_directories(lapacke::system SYSTEM INTERFACE ${LAPACKE_INCLUDE_DIR})
             if(LAPACK_LIBRARY)
                 message(DEBUG "Found LAPACK_LIBRARY: ${LAPACK_LIBRARY}")
-                target_link_libraries(lapacke::system INTERFACE ${LAPACK_LIBRARY})
-                set_target_properties(lapacke::system PROPERTIES IMPORTED_LOCATION ${LAPACK_LIBRARY})
+                target_link_libraries(lapacke::system INTERFACE "${LAPACK_LIBRARY}")
             endif()
             target_link_libraries(lapacke::system INTERFACE BLAS::BLAS LAPACK::LAPACK)
         endif()
@@ -167,20 +167,22 @@ function(find_Lapacke_system)
 endfunction()
 
 function(find_Lapacke)
+    message(CHECK_START "Looking for Lapacke")
     if(BLA_VENDOR MATCHES FlexiBLAS OR ENV{BLA_VENDOR} MATCHES FlexiBLAS)
          # For this to work we install the lapack/lapacke reference implementation together
          # with flexiblas. This solution is inspired by the flexiblas easybuild config
          # We have to link link the manually installed lapacke with flexiblas (BLAS::BLAS)
-        find_package(BLAS REQUIRED)
-        find_package(lapacke REQUIRED) # From manual installation: gives a target "lapacke"
-        target_link_libraries(lapacke INTERFACE BLAS::BLAS) # Link togeher
+        find_package(BLAS REQUIRED MODULE BYPASS_PROVIDER)
+        find_package(LAPACK REQUIRED MODULE BYPASS_PROVIDER)
+        find_package(lapacke REQUIRED BYPASS_PROVIDER) # From manual installation: gives a target "lapacke"
+        target_link_libraries(lapacke INTERFACE BLAS::BLAS LAPACK::LAPACK) # Link togeher
     elseif(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
         set(ENABLE_BLAS95 ON)
         set(ENABLE_LAPACK95 ON)
         find_package(MKL REQUIRED BYPASS_PROVIDER)
     else()
-        find_package(BLAS REQUIRED)
-        find_package(LAPACK REQUIRED)
+        find_package(BLAS REQUIRED BYPASS_PROVIDER)
+        find_package(LAPACK REQUIRED BYPASS_PROVIDER)
     endif()
 
     include(cmake/CheckCompile.cmake)
@@ -213,6 +215,11 @@ function(find_Lapacke)
         endif()
     endforeach()
 
+    if(TARGET lapacke::lapacke)
+        message(CHECK_PASS "found")
+    else()
+        message(CHECK_FAIL "not found")
+    endif()
 
 endfunction()
 
@@ -223,3 +230,7 @@ endif()
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(Lapacke DEFAULT_MSG LAPACKE_TARGET)
+
+if(Lapacke_FOUND)
+    get_target_property(LAPACKE_LIBRARIES lapacke::lapacke INTERFACE_LINK_LIBRARIES)
+endif()

@@ -103,7 +103,6 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         }
         //        svd::log->info("sizeS = {} | lim {} | {} {} {} | {} ", sizeS, rank_lim, switchsize_gejsv, switchsize_gesvd, switchsize_gesdd,
         //        enum2sv(svd_rtn));
-        if(switchsize_gesdd > 32) throw;
     }
     if(svd_save != svd::save::NONE) {
         saveMetaData.rank_max         = rank_max;

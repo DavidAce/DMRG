@@ -24,6 +24,27 @@ namespace linalg::tensor {
     }
 
     template<typename T>
+    std::string formatted_number(T number, int prec, int min_width, int min_width_real, int min_width_imag) {
+        if constexpr(linalg::is_std_complex_v<T>) {
+            if constexpr(std::is_floating_point_v<typename T::value_type>) {
+                std::string real = fmt::format("({0:.{1}f}", number.real(), prec);
+                std::string imag = fmt::format("{0:.{1}f})", number.imag(), prec);
+                std::string cplx = fmt::format("{:>},{:<}", real, imag);
+                return fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+
+            } else if constexpr(std::is_integral_v<typename T::value_type>) {
+                std::string real = fmt::format("({}", number.real());
+                std::string imag = fmt::format("{})", number.imag());
+                std::string cplx = fmt::format("{:>},{:<}", real, imag);
+                return fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
+            }
+        } else if constexpr(std::is_floating_point_v<T>)
+            return fmt::format("{0:>{1}.{2}f}", number, min_width, prec);
+        else if constexpr(std::is_integral_v<T>)
+            return fmt::format("{0:>{1}}", number, min_width);
+    }
+
+    template<typename T>
     std::string to_string(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, int prec = 1, int width = 2, std::string_view sep = ", ") {
         using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const T>, Eigen::DefaultDevice>;
         using Scalar    = typename Eigen::internal::remove_const<typename Evaluator::Scalar>::type;
@@ -33,7 +54,7 @@ namespace linalg::tensor {
         Evaluator                          tensor(eval, Eigen::DefaultDevice());
         tensor.evalSubExprsIfNeeded(nullptr);
         Eigen::Index total_size = Eigen::internal::array_prod(tensor.dimensions());
-
+        if(total_size == 1) { return fmt::format("[{}]", formatted_number(tensor.data()[0], prec, width, width, width)); }
         if(total_size > 0 and tensor.dimensions().size() > 0) {
             Eigen::Index first_dim = tensor.dimensions()[0];
             if constexpr(T::NumDimensions == 4) first_dim = tensor.dimensions()[0] * tensor.dimensions()[1];
@@ -73,23 +94,7 @@ namespace linalg::tensor {
             for(long i = 0; i < first_dim; i++) {
                 str += fmt::format("[");
                 for(long j = 0; j < other_dim; j++) {
-                    if constexpr(linalg::is_std_complex_v<Scalar>) {
-                        if constexpr(std::is_floating_point_v<typename Scalar::value_type>) {
-                            std::string real = fmt::format("({0:.{1}f}", matrix(i, j).real(), prec);
-                            std::string imag = fmt::format("{0:.{1}f})", matrix(i, j).imag(), prec);
-                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
-
-                        } else if constexpr(std::is_integral_v<typename Scalar::value_type>) {
-                            std::string real = fmt::format("({}", matrix(i, j).real());
-                            std::string imag = fmt::format("{})", matrix(i, j).imag());
-                            std::string cplx = fmt::format("{:>},{:<}", real, imag);
-                            str += fmt::format("{0:>{1}}", cplx, min_width_real + min_width_imag + 3); // Two doubles, comma, and parentheses
-                        }
-                    } else if constexpr(std::is_floating_point_v<Scalar>)
-                        str += fmt::format("{0:>{1}.{2}f}", matrix(i, j), min_width, prec);
-                    else if constexpr(std::is_integral_v<Scalar>)
-                        str += fmt::format("{0:>{1}}", matrix(i, j), min_width);
+                    str += formatted_number(matrix(i, j), prec, min_width, min_width_real, min_width_imag);
                     if(j < other_dim - 1) str += sep;
                 }
                 if(i < first_dim - 1)
@@ -224,61 +229,55 @@ namespace linalg::tensor {
         }
     }
 
+    //    template<typename Scalar, int rank, auto npair>
+    //    Eigen::Tensor<Scalar, rank - 2 * npair> trace(const Eigen::Tensor<Scalar, rank>                       &tensor,
+    //                                                  const std::array<Eigen::IndexPair<Eigen::Index>, npair> &idx_pairs) {
+    //        static_assert(npair <= 3, "trace supports npair <= 3");
+    //        if constexpr(npair == 0) {
+    //            return tensor;
+    //        } else if constexpr(npair == 1) {
+    //            Eigen::array<Eigen::Index, 2> idx_list = {idx_pairs[0].first, idx_pairs[0].second};
+    //            return tensor.trace(idx_list);
+    //        } else if constexpr(npair == 2) {
+    //            Eigen::Tensor<Scalar, rank - 2> temp1 = trace(tensor, tenx::idx({idx_pairs[1].first}, {idx_pairs[1].second}));
+    //            return trace(temp1, tenx::idx({idx_pairs[0].first}, {idx_pairs[0].second}));
+    //        } else if constexpr(npair == 3) {
+    //            Eigen::Tensor<Scalar, rank - 2> temp2 = trace(tensor, tenx::idx({idx_pairs[2].first}, {idx_pairs[2].second}));
+    //            Eigen::Tensor<Scalar, rank - 4> temp1 = trace(temp2, tenx::idx({idx_pairs[1].first}, {idx_pairs[1].second}));
+    //            return trace(temp1, tenx::idx({idx_pairs[0].first}, {idx_pairs[0].second}));
+    //        }
+    //    }
+
     template<typename Scalar, int rank, auto npair>
     Eigen::Tensor<Scalar, rank - 2 * npair> trace(const Eigen::Tensor<Scalar, rank>                       &tensor,
-                                                  const std::array<Eigen::IndexPair<Eigen::Index>, npair> &idx_pairs) {
-        auto idx_pairs_r = idx_pairs; // Make a copy for mirroring
-                                      //        if(mirror) {
-        //            using Evaluator     = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const Derived>, Eigen::DefaultDevice>;
-        //            using DimType       = typename Evaluator::Dimensions;
-        //            constexpr auto rank = Eigen::internal::array_size<DimType>::value;
-        //            for(auto &idx_pair_r : idx_pairs_r) {
-        //                idx_pair_r = mirror_idx_pair<rank>(idx_pair_r); // Find the corresponding indices if this tensor was mirrored
-        //            }
-        //        }
-        //        USE THE EVALUATOR HERE TO TAKE A GENERAL TENSORBASE OBJECT
-        // Flatten the index pairs to a list
-        Eigen::array<Eigen::Index, 2 * npair> idx_list;
-        for(size_t i = 0; i < idx_pairs_r.size(); i++) {
-            idx_list[2 * i]     = idx_pairs_r[i].first;
-            idx_list[2 * i + 1] = idx_pairs_r[i].second;
+                                                  const std::array<Eigen::IndexPair<Eigen::Index>, npair> &idx_pair) {
+        /*
+         * Returns the partial trace of a tensor
+         * Note that the tensor given here may be mirrored!
+         */
+        static_assert(rank >= 2 * npair, "Rank must be large enough");
+        static_assert(npair <= 3, "npair > 3 is not implemented");
+        if constexpr(npair == 0) {
+            return tensor;
+        } else if constexpr(npair == 1) {
+            // Collect indices and dimensions traced
+            return tensor.trace(std::array<Eigen::Index, 2>{idx_pair[0].first, idx_pair[0].second});
+        } else if constexpr(npair == 2) {
+            std::array<long, 2> pair1{idx_pair[1].first, idx_pair[1].second};
+            std::array<long, 2> pair0{idx_pair[0].first, idx_pair[0].second};
+            pair0[0] -= std::count_if(pair1.begin(), pair1.end(), [&pair0](auto i) { return i < pair0[0]; });
+            pair0[1] -= std::count_if(pair1.begin(), pair1.end(), [&pair0](auto i) { return i < pair0[1]; });
+            return tensor.trace(pair1).trace(pair0);
+        } else if constexpr(npair == 3) {
+            std::array<long, 2> pair2{idx_pair[2].first, idx_pair[2].second};
+            std::array<long, 2> pair1{idx_pair[1].first, idx_pair[1].second};
+            std::array<long, 2> pair0{idx_pair[0].first, idx_pair[0].second};
+            pair1[0] -= std::count_if(pair2.begin(), pair2.end(), [&pair1](auto i) { return i < pair1[0]; });
+            pair1[1] -= std::count_if(pair2.begin(), pair2.end(), [&pair1](auto i) { return i < pair1[1]; });
+            pair0[0] -= std::count_if(pair2.begin(), pair2.end(), [&pair0](auto i) { return i < pair0[0]; });
+            pair0[1] -= std::count_if(pair2.begin(), pair2.end(), [&pair0](auto i) { return i < pair0[1]; });
+            return tensor.trace(pair2).trace(pair1).trace(pair0);
         }
-        return tensor.trace(idx_list);
     }
-
-    //    template<typename Scalar, int rank, auto npair>
-    //    Eigen::Tensor<Scalar, rank - 2 * npair> trace(const Eigen::Tensor<Scalar, rank> &tensor, const std::array<Eigen::IndexPair<Eigen::Index>, npair>
-    //    &idx_pair,
-    //                                                  bool mirror = false) {
-    //        /*
-    //         * Returns the partial trace of a tensor
-    //         * Note that the tensor given here may be mirrored!
-    //         */
-    //        static_assert(rank >= 2 * npair, "Rank must be large enough");
-    //        if constexpr(npair == 1) {
-    //            auto idx_pair_r = idx_pair[0];
-    //            if(mirror) idx_pair_r = mirror_idx_pair<rank>(idx_pair[0]); // Find the corresponding indices if this tensor was mirrored
-    //
-    //            // Collect indices and dimensions traced
-    //            return tensor.trace(std::array<Eigen::Index, 2>{idx_pair_r.first, idx_pair_r.second});
-    //        } else if constexpr(npair == 2) {
-    //            std::array<long, 2> pair1{idx_pair[1].first, idx_pair[1].second};
-    //            std::array<long, 2> pair0{idx_pair[0].first, idx_pair[0].second};
-    //            pair0[0] -= std::count_if(pair1.begin(), pair1.end(), [&pair0](auto i) { return i < pair0[0]; });
-    //            pair0[1] -= std::count_if(pair1.begin(), pair1.end(), [&pair0](auto i) { return i < pair0[1]; });
-    //            //            return tensor.trace(idx_pair[0].first, idx_pair[0].second, idx_pair[1].first, idx_pair[1].second);
-    //            return tensor.trace(pair1).trace(pair0);
-    //        } else if constexpr(npair == 3) {
-    //            std::array<long, 2> pair2{idx_pair[2].first, idx_pair[2].second};
-    //            std::array<long, 2> pair1{idx_pair[1].first, idx_pair[1].second};
-    //            std::array<long, 2> pair0{idx_pair[0].first, idx_pair[0].second};
-    //            pair1[0] -= std::count_if(pair2.begin(), pair2.end(), [&pair1](auto i) { return i < pair1[0]; });
-    //            pair1[1] -= std::count_if(pair2.begin(), pair2.end(), [&pair1](auto i) { return i < pair1[1]; });
-    //            pair0[0] -= std::count_if(pair2.begin(), pair2.end(), [&pair0](auto i) { return i < pair0[0]; });
-    //            pair0[1] -= std::count_if(pair2.begin(), pair2.end(), [&pair0](auto i) { return i < pair0[1]; });
-    //            return linalg::tensor::trace(tensor, idx({pair0[0], pair1[0]}, {pair0[1], pair1[1]}));
-    //        } else
-    //            throw std::runtime_error("Trace not implemented");
-    //    }
 
 }

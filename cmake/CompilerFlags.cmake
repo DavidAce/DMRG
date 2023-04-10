@@ -122,8 +122,7 @@ function(target_enable_mold tgt)
             return()
         endif()
         include(CheckLinkerFlag)
-        include(cmake/GetNumThreads.cmake)
-        get_num_threads(num_threads)
+        cmake_host_system_information(RESULT num_threads QUERY NUMBER_OF_PHYSICAL_CORES)
         check_linker_flag(CXX "-fuse-ld=mold --thread-count=${num_threads}" LINK_MOLD)
 
 

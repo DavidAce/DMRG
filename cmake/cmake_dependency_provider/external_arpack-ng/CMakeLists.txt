@@ -15,8 +15,8 @@ include(FortranCInterface)
 fortrancinterface_verify()
 
 externalproject_add(external_arpack-ng
-                    URL https://github.com/davidace/arpack-ng/archive/master.tar.gz
-                    URL_MD5 5547d7bd81d671cddc462b41de667737
+                    URL https://github.com/opencollab/arpack-ng/archive/refs/tags/3.9.0.tar.gz
+                    URL_MD5 e28fdbe33ee44a16e2733c180ec2a2bd
                     BUILD_ALWAYS TRUE
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

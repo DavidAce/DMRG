@@ -23,6 +23,7 @@ target_include_directories(dmrg-meld PRIVATE source)
 
 target_link_libraries(dmrg-meld PRIVATE
                       dmrg-debug
+                      dmrg-stacktrace
                       dmrg-tensors-mpo-h5tb # To read the hamiltonian table
                       dmrg-tid)
 target_link_libraries(dmrg-meld PRIVATE dmrg-flags)

@@ -43,8 +43,9 @@ int main(int argc, char *argv[]) {
 
     for(const auto &iter_prefix : h5svd.findGroups("iter_10", "fLBIT")) {
         auto state_prefix = fmt::format("fLBIT/{}", iter_prefix);
+        tools::finite::h5::load::MpsInfo info;
         tools::common::h5::load::status(h5svd, state_prefix, status);
-        tools::finite::h5::load::state(h5svd, state_prefix, state, status);
+        tools::finite::h5::load::state(h5svd, state_prefix, state, info);
         auto gate_indices = h5svd.findGroups("gate_", state_prefix);
         gates.resize(gate_indices.size());
         for(const auto &gate_index : gate_indices) {
@@ -71,7 +72,6 @@ int main(int argc, char *argv[]) {
                     svdset.switchsize_gesdd = switchsize;
                     svdset.truncation_limit = truncation;
                     omp_set_num_threads(num_thread);
-                    mkl_set_num_threads(num_thread);
                     tenx::threads::setNumThreads(num_thread);
                     auto name =
                         fmt::format("threads {} | switchsize {} | truncation {:.1e} | bond_lim {}", num_thread, switchsize, truncation, status.bond_lim);

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.24)
 project(DMRG++
         VERSION 2.1.0
         DESCRIPTION "DMRG algorithms for 1D quantum spin chains"
@@ -7,7 +7,7 @@ project(DMRG++
 include(cmake/Deprecation.cmake) # Warn if user passes deprecated settings
 
 # Make sure we use DMRG's own find modules
-list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake)
+list(INSERT CMAKE_MODULE_PATH 0 ${PROJECT_SOURCE_DIR}/cmake/modules)
 
 # Set options for this build
 option(DMRG_ENABLE_TBLIS "Use TBLIS for real-valued tensor contractions instead of Eigen3" FALSE)

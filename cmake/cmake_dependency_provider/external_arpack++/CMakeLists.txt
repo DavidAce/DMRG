@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 project(external-arpack++)
-if(INIT_CACHE_FILE)
-    message(DEBUG "arpack++ build ignoring cache file")
-endif()
 include(ExternalProject)
 ExternalProject_Add(external_ARPACK++
         URL         https://github.com/m-reuter/arpackpp/archive/2.3.0.tar.gz

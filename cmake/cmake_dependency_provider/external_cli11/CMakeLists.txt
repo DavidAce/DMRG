@@ -6,8 +6,8 @@ endif()
 include(ExternalProject)
 ExternalProject_Add(external_cli11
                     URL https://github.com/CLIUtils/CLI11/archive/refs/tags/v2.3.2.tar.gz
-                    #        URL_MD5 86607d04f99045d8596be0376b27fc18 v2.1.1
-                    URL_MD5 b80cb645dee25982110b068b426363ff v2.3.2
+                    #        URL_MD5 86607d04f99045d8596be0376b27fc18 # v2.1.1
+                    URL_MD5 b80cb645dee25982110b068b426363ff # v2.3.2
                     PREFIX ${CMAKE_BINARY_DIR}
                     INSTALL_DIR ${CMAKE_INSTALL_PREFIX}
 

@@ -14,7 +14,6 @@ option(H5PP_ENABLE_FMT                 "Enables the {fmt} formatting library"   
 option(H5PP_ENABLE_SPDLOG              "Enables Spdlog for logging h5pp internal info to stdout"     ON)
 option(H5PP_ENABLE_MPI                 "Enables use of MPI (work in progress)"                       OFF)
 option(H5PP_ENABLE_ASAN                "Enable runtime address sanitizer -fsanitize=address"         OFF)
-option(CMAKE_POSITION_INDEPENDENT_CODE "Use -fPIC when compiling shared libraries"                   ON)
 
 
 include(ExternalProject)
@@ -44,6 +43,8 @@ ExternalProject_Add(external_h5pp
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
         -DCMAKE_INSTALL_MESSAGE=LAZY
         # h5pp flags
+        -DEigen3_ROOT:PATH=<INSTALL_DIR>
+        -DH5PP_PACKAGE_MANAGER:STRING=cmake
         -DH5PP_BUILD_EXAMPLES:BOOL=${H5PP_BUILD_EXAMPLES}
         -DH5PP_ENABLE_TESTS:BOOL=${H5PP_ENABLE_TESTS}
         -DH5PP_PREFIX_ADD_PKGNAME:BOOL=${H5PP_PREFIX_ADD_PKGNAME}
@@ -52,7 +53,4 @@ ExternalProject_Add(external_h5pp
         -DH5PP_ENABLE_SPDLOG:BOOL=${H5PP_ENABLE_SPDLOG}
         -DH5PP_ENABLE_MPI:BOOL=${H5PP_ENABLE_MPI}
         -DH5PP_ENABLE_ASAN:BOOL=${H5PP_ENABLE_ASAN}
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=${CMAKE_POSITION_INDEPENDENT_CODE}
-        -DH5PP_PACKAGE_MANAGER:STRING=${H5PP_PACKAGE_MANAGER}
-        -DEigen3_ROOT:PATH=${Eigen3_ROOT}
         )

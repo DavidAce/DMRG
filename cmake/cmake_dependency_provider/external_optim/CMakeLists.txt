@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(external-optim)
-include(../GetNumThreads.cmake)
-get_num_threads(NUM_THREADS)
+cmake_host_system_information(RESULT NUM_THREADS QUERY NUMBER_OF_PHYSICAL_CORES)
 if(INIT_CACHE_FILE)
     set(INIT_CACHE_ARG -C${INIT_CACHE_FILE})
 endif()

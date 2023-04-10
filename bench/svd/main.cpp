@@ -26,25 +26,25 @@
 
 void test() {
     svd::config svd_settings;
-    svd_settings.save_fail = false;
-    svd_settings.loglevel  = 2;
-    auto filename          = fmt::format("{}/svd-save.h5", BENCH_DATA_DIR);
+    svd_settings.svd_save = svd::save::NONE;
+    svd_settings.loglevel = 2;
+    auto filename         = fmt::format("{}/svd-save.h5", BENCH_DATA_DIR);
     if(h5pp::fs::exists(filename)) {
         h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
         for(const auto &svd_group : h5file.findGroups("svd_lapacke")) {
-            auto U_original             = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
-            auto S_original             = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
-            auto V_original             = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/VT", svd_group));
-            auto A                      = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
-            auto rows                   = A.rows();
-            auto cols                   = A.cols();
-            auto rank_max               = h5file.readAttribute<long>("rank_max", svd_group);
+            auto U_original               = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/U", svd_group));
+            auto S_original               = h5file.readDataset<Eigen::VectorXcd>(fmt::format("{}/S", svd_group));
+            auto V_original               = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/VT", svd_group));
+            auto A                        = h5file.readDataset<Eigen::MatrixXcd>(fmt::format("{}/A", svd_group));
+            auto rows                     = A.rows();
+            auto cols                     = A.cols();
+            auto rank_max                 = h5file.readAttribute<long>("rank_max", svd_group);
             svd_settings.truncation_limit = h5file.readAttribute<double>("threshold", svd_group);
             Eigen::MatrixXcd S_mat(rank_max, 4);
             S_mat.setZero();
             {
-                svd_settings.svd_lib        = svd::lib::eigen;
-                svd_settings.rank_max       = rank_max;
+                svd_settings.svd_lib  = svd::lib::eigen;
+                svd_settings.rank_max = rank_max;
                 svd::solver svd(svd_settings);
                 auto        t_eigen = tid::tic_scope("eigen");
                 auto [U, S, V]      = svd.do_svd(A);
@@ -90,9 +90,9 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
         svd_settings.truncation_limit = 1e-14;
         svd_settings.loglevel         = 0;
         svd_settings.svd_rtn          = svd::rtn::gejsv;
-        svd_settings.save_fail        = false;
-        svd_settings.svd_lib        = svd::lib::lapacke;
-        auto filename               = fmt::format("{}/svd-failed.h5", BENCH_DATA_DIR);
+        svd_settings.svd_save         = svd::save::NONE;
+        svd_settings.svd_lib          = svd::lib::lapacke;
+        auto filename                 = fmt::format("{}/svd-failed.h5", BENCH_DATA_DIR);
         if(h5pp::fs::exists(filename)) {
             h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
             for(const auto &svd_group : h5file.findGroups("svd_")) {

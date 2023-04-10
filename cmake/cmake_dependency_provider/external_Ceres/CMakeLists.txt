@@ -38,17 +38,20 @@ ExternalProject_Add(external_Ceres
         -DCMAKE_INSTALL_MESSAGE=LAZY
         -DCMAKE_CXX_FLAGS=${cxxflags}
         # Ceres flags
-        -DEigen3_ROOT:PATH=${Eigen3_ROOT}
-        -Dgflags_ROOT:PATH=${gflags_ROOT}
-        -Dglog_ROOT:PATH=${glog_ROOT}
-        -DCERES_THREADING_MODEL=NO_THREADS
+        -DMINIGLOG:BOOL=TRUE
         -DBUILD_TESTING:BOOL=OFF
         -DBUILD_EXAMPLES:BOOL=OFF
         -DLAPACK:BOOL=OFF
         -DEIGENSPARSE:BOOL=ON
-        -DGFLAGS:BOOL=ON
+        -DGFLAGS:BOOL=OFF
         -DSUITESPARSE:BOOL=OFF
         -DCXSPARSE:BOOL=OFF
         -DSCHUR_SPECIALIZATIONS:BOOL=OFF
         -DCUSTOM_BLAS:BOOL=ON
+        -DEigen3_ROOT:PATH=<INSTALL_DIR>
+
+        # These are only needed if we enable glog and gflags
+        -Dgflags_ROOT:PATH=<INSTALL_DIR>
+        -Dglog_ROOT:PATH=<INSTALL_DIR>
+        -DGLOG_FOUND:BOOL=TRUE # To fix a bug with Ceres looking checking GLOG_FOUND instead of Glog_FOUND
         )

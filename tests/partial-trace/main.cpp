@@ -75,10 +75,6 @@ TEST_CASE("Test partial trace of tensors", "[partial trace]") {
         // Do the tracing
         auto tensor2_m  = linalg::tensor::trace(tensor4_m_id, tenx::idx({1}, {3}));
         auto tensor2_id = linalg::tensor::trace(tensor4_m_id, tenx::idx({0}, {2}));
-        //        fmt::print("matrix_m\n{}\n", linalg::matrix::to_string(matrix_m));
-        //        fmt::print("matrix_id\n{}\n", linalg::matrix::to_string(matrix_id));
-        //        fmt::print("tensor2_m\n{}\n", linalg::tensor::to_string(tensor2_m));
-        //        fmt::print("tensor2_id\n{}\n", linalg::tensor::to_string(tensor2_id));
 
         REQUIRE(equal(matrix_m, tensor2_m));
         REQUIRE(equal(matrix_id, tensor2_id));
@@ -86,14 +82,12 @@ TEST_CASE("Test partial trace of tensors", "[partial trace]") {
         // Now do the trace once more to get a scalar
         auto trace_m_a  = linalg::tensor::trace(tensor2_m, tenx::idx({0}, {1}));
         auto trace_id_a = linalg::tensor::trace(tensor2_id, tenx::idx({0}, {1}));
-
         REQUIRE(trace_m_a(0) == tr_id * tr_m);
         REQUIRE(trace_id_a(0) == tr_id * tr_m);
 
         // Trace directly down to scalar
         auto trace_m_b  = linalg::tensor::trace(tensor4_m_id, tenx::idx({0, 1}, {2, 3}));
-        auto trace_id_b = linalg::tensor::trace(tensor4_m_id, tenx::idx({0, 1}, {2, 3}));
-
+        auto trace_id_b = linalg::tensor::trace(tensor4_id_m, tenx::idx({0, 1}, {2, 3}));
         REQUIRE(trace_m_b(0) == tr_id * tr_m);
         REQUIRE(trace_id_b(0) == tr_id * tr_m);
     }

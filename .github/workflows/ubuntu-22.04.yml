@@ -17,8 +17,8 @@ jobs:
       fail-fast: false # True stops all on first error. Stick to false when debugging
       matrix:
         include:
-#          - { compiler: gcc,   manager: cmake }
-#          - { compiler: gcc,   manager: conan }
+          - { compiler: gcc,   manager: cmake }
+          - { compiler: gcc,   manager: conan }
           - { compiler: clang, manager: conan }
 
 

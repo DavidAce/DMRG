@@ -197,7 +197,7 @@ function(find_filesystem)
             }
         ]] code @ONLY)
 
-        if(NOT can_link)
+        if (NOT can_link)
             # Try to compile a simple filesystem program without any linker flags
             check_cxx_source_compiles("${code}" CXX_FILESYSTEM_NO_LINK_NEEDED)
             set(can_link ${CXX_FILESYSTEM_NO_LINK_NEEDED})
@@ -205,7 +205,7 @@ function(find_filesystem)
 
         if(NOT can_link)
             # Try to compile a simple filesystem program with the libstdc++ flag
-            set(CMAKE_REQUIRED_LIBRARIES stdc++fs)
+            set(CMAKE_REQUIRED_LIBRARIES  stdc++fs)
             check_cxx_source_compiles("${code}" CXX_FILESYSTEM_STDCPPFS_NEEDED)
             set(can_link ${CXX_FILESYSTEM_STDCPPFS_NEEDED})
         endif()
@@ -240,14 +240,12 @@ function(find_filesystem)
     endif()
 
     cmake_pop_check_state()
-
-    set(Filesystem_FOUND ${_found} CACHE BOOL "TRUE if we can compile and link a program using std::filesystem" FORCE)
+    set(_found ${_found} PARENT_SCOPE)
     cmake_policy(POP)
 endfunction()
 
 find_filesystem()
 
-if(Filesystem_FIND_REQUIRED AND NOT Filesystem_FOUND)
-    message(FATAL_ERROR "Cannot Compile simple program using std::filesystem")
-endif()
 
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Filesystem DEFAULT_MSG _found)

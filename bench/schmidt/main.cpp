@@ -29,7 +29,7 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
         svd::config svd_settings;
         svd_settings.truncation_limit = 1e-16;
         svd_settings.loglevel         = 2;
-        auto filename               = fmt::format("{}/svd-benchmark.h5", BENCH_DATA_DIR);
+        auto filename                 = fmt::format("{}/svd-benchmark.h5", BENCH_DATA_DIR);
         if(h5pp::fs::exists(filename)) {
             h5pp::File h5file(filename, h5pp::FilePermission::READONLY, 2);
             double     t_split_sum = 0;
@@ -48,7 +48,8 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
                 svd_settings.rank_max = chi_limit;
                 t_split_sum += t_split;
                 {
-                    svd_settings.svd_lib = svd::lib::rsvd;
+                    svd_settings.svd_lib = svd::lib::eigen;
+                    svd_settings.svd_rtn = svd::rtn::gersvd;
                     auto t_eig           = tid::tic_scope("eig");
                     auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
@@ -61,7 +62,8 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
                 // Test what happens if center_position is now the same as positions.front()
                 center_position = static_cast<long>(positions.front());
                 {
-                    svd_settings.svd_lib = svd::lib::rsvd;
+                    svd_settings.svd_lib = svd::lib::eigen;
+                    svd_settings.svd_rtn = svd::rtn::gersvd;
                     auto t_eig           = tid::tic_scope("eigA");
                     auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
@@ -74,7 +76,8 @@ TEST_CASE("Singular value decomposition in Eigen and Lapacke", "[svd]") {
                 // Test what happens if center_position is now the same as positions.back()
                 center_position = static_cast<long>(positions.back());
                 {
-                    svd_settings.svd_lib = svd::lib::rsvd;
+                    svd_settings.svd_lib = svd::lib::eigen;
+                    svd_settings.svd_rtn = svd::rtn::gersvd;
                     auto t_eig           = tid::tic_scope("eigB");
                     auto mps_list_eig    = tools::common::split::split_mps(multisite_tensor, spin_dims, positions, center_position, svd_settings);
                 }
