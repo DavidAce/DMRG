@@ -83,7 +83,7 @@ namespace tools::h5xf {
                 auto tgtDims  = srcInfo.dsetDims.value();
                 if(tgtDims.empty()) tgtDims = {0}; // In case src is a scalar.
                 while(tgtDims.size() < srcKey.axis + 1) tgtDims.push_back(1);
-                tgtDims[srcKey.axis] = 0; // Create with 0 extent in the new axis direction, so that the dataset starts empty (zero volume)
+                tgtDims[srcKey.axis] = 0;          // Create with 0 extent in the new axis direction, so that the dataset starts empty (zero volume)
 
                 // Determine a good chunksize between 10 and 500 elements
                 auto tgtChunk         = tgtDims;
@@ -118,7 +118,8 @@ namespace tools::h5xf {
         auto                      t_scope = tid::tic_scope(__FUNCTION__);
         std::vector<StorageEvent> srcEvents; // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
         for(const auto &srcKey : srcTableKeys) {
-            if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw std::runtime_error(h5pp::format("Key [{}] was not found in source map", srcKey.key));
+            if(srcTableDb.find(srcKey.key) == srcTableDb.end())
+                throw except::range_error("{}: Key [{}] was not found in source map", __FUNCTION__, srcKey.key);
             auto &srcInfo = srcTableDb[srcKey.key];
             if(not srcInfo.tableExists or not srcInfo.tableExists.value()) continue;
             auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
@@ -169,11 +170,11 @@ namespace tools::h5xf {
                     auto indexfield = text::match(srcKey.index, srcInfo.fieldNames.value());
                     auto eventfield = text::match({"event"}, srcInfo.fieldNames.value());
                     if(not indexfield)
-                        throw std::runtime_error(fmt::format("Index field was not found in table [{}]\n Expected fields {}\n Existing fields {}",
-                                                             srcInfo.tablePath.value(), srcKey.index, srcInfo.fieldNames.value()));
+                        throw except::range_error("{}: Index field was not found in table [{}]\n Expected fields {}\n Existing fields {}", __FUNCTION__,
+                                                  srcInfo.tablePath.value(), srcKey.index, srcInfo.fieldNames.value());
                     if(not eventfield)
-                        throw std::runtime_error(
-                            fmt::format("Event field was not found in table [{}]\n Existing fields {}", srcInfo.tablePath.value(), srcInfo.fieldNames.value()));
+                        throw except::range_error("{}: Event field was not found in table [{}]\n Existing fields {}", __FUNCTION__, srcInfo.tablePath.value(),
+                                                  srcInfo.fieldNames.value());
                     h5pp::hdf5::readTableField(srcIndices, srcInfo, {indexfield.value()});
                     h5pp::hdf5::readTableField(srcEvents, srcInfo, {eventfield.value()});
                 }

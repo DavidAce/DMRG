@@ -416,8 +416,11 @@ namespace tools::h5io {
                 // Check that the tables are the same size before and after
                 if constexpr(strictTableSize == StrictTableSize::TRUE) {
                     if(srcKey.expected_size != -1ul and srcInfo.numRecords.value() != srcKey.expected_size)
-                        throw except::runtime_error("Table size mismatch: num records {} | expected {}: {}", srcInfo.numRecords.value(), srcKey.expected_size,
-                                                    key);
+                        throw except::range_error("Table size mismatch:\n"
+                                                  "file: {}\n"
+                                                  "dset: {}\n"
+                                                  " num records {} | expected {}",
+                                                  h5_src.getFilePath(), srcInfo.tablePath.value(), srcInfo.numRecords.value(), srcKey.expected_size);
                     //                    if(numRecords_old and numRecords_old.value() != srcInfo.numRecords.value())
                     //                        throw except::runtime_error("Table size mismatch: num records {} | expected {}: {}", srcInfo.numRecords.value(),
                     //                        numRecords_old.value(), key);
@@ -461,32 +464,62 @@ namespace tools::h5io {
             for(const auto &state : state_groups) {
                 auto pathid = PathId(tgt_base, algo, state);
                 // Try gathering all the tables
-                try {
-                    auto t_dsets  = tid::tic_scope("dsets");
-                    auto dsetKeys = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
-                    tools::h5xf::transferDatasets(h5_tgt, tgtdb.dset, h5_src, srcdb.dset, pathid, dsetKeys, fileId);
-                } catch(const std::runtime_error &ex) { tools::logger::log->warn("Dset transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
+                auto dsetKeys  = std::vector<DsetKey>();
+                auto tableKeys = std::vector<TableKey>();
+                auto fesupKeys = std::vector<FesUpKey>();
+                auto fesdnKeys = std::vector<FesDnKey>();
+                auto cronoKeys = std::vector<CronoKey>();
 
                 try {
-                    auto t_table   = tid::tic_scope("table");
-                    auto tableKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.table, pathid, keys.tables);
+                    auto t_gather = tid::tic_scope("gather");
+                    dsetKeys      = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
+                    tableKeys     = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.table, pathid, keys.tables);
+                    fesupKeys     = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.fesup, pathid, keys.fesups);
+                    fesdnKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.fesdn, pathid, keys.fesdns);
+                    cronoKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
+
+                } catch(const std::runtime_error &ex) {
+                    tools::logger::log->error("Gather failed in [{}]: {}", pathid.src_path, ex.what());
+                    continue; // File is broken. Do not transfer.
+                }
+
+                try {
+                    auto t_xfer = tid::tic_scope("xfer");
+                    tools::h5xf::transferDatasets(h5_tgt, tgtdb.dset, h5_src, srcdb.dset, pathid, dsetKeys, fileId);
                     tools::h5xf::transferTables(h5_tgt, tgtdb.table, srcdb.table, pathid, tableKeys, fileId);
-                } catch(const std::runtime_error &ex) { tools::logger::log->error("Table transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
-                try {
-                    auto t_fesup   = tid::tic_scope("fesup");
-                    auto fesupKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.fesup, pathid, keys.fesups);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesup, srcdb.fesup, pathid, fesupKeys, fileId);
-                } catch(const std::runtime_error &ex) { tools::logger::log->error("Fesup transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
-                try {
-                    auto t_fesdn   = tid::tic_scope("fesdn");
-                    auto fesdnKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.fesdn, pathid, keys.fesdns);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesdn, srcdb.fesdn, pathid, fesdnKeys, fileId);
-                } catch(const std::runtime_error &ex) { tools::logger::log->error("Fesdn transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
-                try {
-                    auto t_crono   = tid::tic_scope("crono");
-                    auto cronoKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
-                } catch(const std::runtime_error &ex) { tools::logger::log->error("Crono transfer failed in[{}]: {}", pathid.src_path, ex.what()); }
+                } catch(const std::runtime_error &ex) { tools::logger::log->warn("Transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
+
+                //                try {
+                //                    auto t_dsets  = tid::tic_scope("dsets");
+                //                    auto dsetKeys = tools::h5io::gatherDsetKeys(h5_src, srcdb.dset, pathid, keys.dsets);
+                //                    tools::h5xf::transferDatasets(h5_tgt, tgtdb.dset, h5_src, srcdb.dset, pathid, dsetKeys, fileId);
+                //                } catch(const std::runtime_error &ex) { tools::logger::log->warn("Dset transfer failed in [{}]: {}", pathid.src_path,
+                //                ex.what()); }
+                //
+                //                try {
+                //                    auto t_table   = tid::tic_scope("table");
+                //                    auto tableKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.table, pathid, keys.tables);
+                //                    tools::h5xf::transferTables(h5_tgt, tgtdb.table, srcdb.table, pathid, tableKeys, fileId);
+                //                } catch(const std::runtime_error &ex) { tools::logger::log->error("Table transfer failed in [{}]: {}", pathid.src_path,
+                //                ex.what()); } try {
+                //                    auto t_fesup   = tid::tic_scope("fesup");
+                //                    auto fesupKeys = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.fesup, pathid, keys.fesups);
+                //                    tools::h5xf::transferSeries(h5_tgt, tgtdb.fesup, srcdb.fesup, pathid, fesupKeys, fileId);
+                //                } catch(const std::runtime_error &ex) { tools::logger::log->error("Fesup transfer failed in [{}]: {}", pathid.src_path,
+                //                ex.what()); } try {
+                //                    auto t_fesdn   = tid::tic_scope("fesdn");
+                //                    auto fesdnKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.fesdn, pathid, keys.fesdns);
+                //                    tools::h5xf::transferSeries(h5_tgt, tgtdb.fesdn, srcdb.fesdn, pathid, fesdnKeys, fileId);
+                //                } catch(const std::runtime_error &ex) { tools::logger::log->error("Fesdn transfer failed in [{}]: {}", pathid.src_path,
+                //                ex.what()); } try {
+                //                    auto t_crono   = tid::tic_scope("crono");
+                //                    auto cronoKeys = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
+                //                    tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
+                //                } catch(const std::runtime_error &ex) { tools::logger::log->error("Crono transfer failed in[{}]: {}", pathid.src_path,
+                //                ex.what()); }
             }
         }
 

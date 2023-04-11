@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
     bool                        use_tmp        = false;
     size_t                      verbosity      = 2;
     size_t                      verbosity_h5pp = 2;
+    size_t                      time_steps     = -1ul;
     size_t                      max_files      = 0ul;
     size_t                      max_dirs       = 0ul;
     long                        seed_min       = 0l;
@@ -100,6 +101,7 @@ int main(int argc, char *argv[]) {
         app.add_flag  ("-l,--linkonly"    , link_only       , "Link only. Make the main file with external links to all the others");
         app.add_flag  ("-r,--replace"     , replace         , "Replace existing files");
         app.add_flag  ("-T,--usetemp"     , use_tmp         , "Use temp directory");
+        app.add_option("--time-steps"     , time_steps      , "Expected number of time steps (skip files on mismatch)" );
         app.add_option("--maxfiles"       , max_files       , "Maximum number of .h5 files to collect in each set");
         app.add_option("--maxdirs"        , max_dirs        , "Maximum number of simulation sets");
         app.add_option("--maxseed"        , seed_max        , "Maximum seed number to collect");
@@ -243,12 +245,12 @@ int main(int argc, char *argv[]) {
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "status"));
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "mem_usage"));
                 // A crono records data from each time step
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", -1ul));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", -1ul));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", -1ul));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", -1ul));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", -1ul));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", -1ul));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", time_steps));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", time_steps));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", time_steps));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", time_steps));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", time_steps));
+                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
 
                 // Last argument is the axis along which to build the time series
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
