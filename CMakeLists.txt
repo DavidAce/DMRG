@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project(DMRG++
-        VERSION 2.1.0
-        DESCRIPTION "DMRG algorithms for 1D quantum spin chains"
+        VERSION 3.0.0
+        DESCRIPTION "MPS algorithms for 1D quantum spin chains"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 
 include(cmake/Deprecation.cmake) # Warn if user passes deprecated settings

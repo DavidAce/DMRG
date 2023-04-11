@@ -633,6 +633,11 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         shape=(0, datasize),
                         chunkshape=(100, datasize),
                         expectedrows=itermax)
+                    if(datasize != np.shape(nodecache[statgroup][dataname])[1]):
+                        raise AssertionError("Unexpected data size when saving column for\n"
+                                             "statgroup: {}\n"
+                                             "dataname: {}\n"
+                                             ": {} != {}".format(statgroup, dataname, datasize, np.shape(nodecache[statgroup][dataname])[1]))
                     nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
                     # print('saving column {} from table {} to table {}... done'.format(col, tablename, dataname))
 
