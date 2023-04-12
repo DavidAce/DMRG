@@ -390,7 +390,10 @@
       "inherits": [
         "cmake",
         "github-actions"
-      ]
+      ],
+      "environment": {
+        "DMRG_ENABLE_COVERAGE": "TRUE"
+      }
     },
     {
       "name": "github-actions-conan",
