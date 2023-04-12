@@ -28,7 +28,7 @@ One additional algorithm is included to study the dynamics in the Many-body Loca
 
 For more information on using DMRG++, visit
 
-http://kth-dmrg.readthedocs.h5/
+https://kth-dmrg.readthedocs.io/en/latest/
 
 ### Working Notes (in construction)
 
