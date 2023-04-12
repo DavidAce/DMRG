@@ -102,7 +102,7 @@ jobs:
         if: matrix.compiler == 'gcc' && matrix.manager == 'cmake'
         run: |
           # Create lcov report
-          lcov --capture --directory build/Release --output-file coverage.info
+          lcov --capture --directory build/github-actions-${{ matrix.manager }} --output-file coverage.info
           lcov --remove coverage.info '*/pkg-install*' '*/test-*' '/usr/*' '*include/fmt/*' '*include/spdlog/*' '*/Eigen/*' '*/hdf5/*' '*catch.hpp' --output-file coverage.info # filter system-files
           lcov --list coverage.info # debug info
           # Upload report to CodeCov

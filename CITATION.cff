@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite it as below."
+message: "Please cite as below."
 authors:
   - family-names: Aceituno Chavez
     given-names: David
@@ -7,4 +7,5 @@ authors:
 title: "DMRG++"
 abstract: "MPS algorithms for 1D quantum spin chains"
 version: 3.0.0
+repository-code: "https://github.com/DavidAce/DMRG"
 date-released: 2018-02-09
