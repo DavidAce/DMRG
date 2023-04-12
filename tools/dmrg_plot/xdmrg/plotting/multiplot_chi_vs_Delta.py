@@ -1,4 +1,4 @@
-from src.plotting.tools import *
+from .tools import *
 from src.io.h5ops import *
 import numpy as np
 import matplotlib.pyplot as plt

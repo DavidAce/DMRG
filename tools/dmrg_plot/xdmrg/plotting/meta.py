@@ -1,8 +1,9 @@
 import numpy as np
 from matplotlib.ticker import NullFormatter, FormatStrFormatter, ScalarFormatter, LogLocator, LinearLocator
 
-# mplstyle = './src/plotting/stylesheets/prb.mplstyle'
-mplstyle = './src/plotting/stylesheets/slack.mplstyle'
+# mplstyle = '../common/stylesheets/prb.mplstyle'
+mplstyle = '../common/stylesheets/slack.mplstyle'
+
 legendoutside = False
 legendcollect = False
 
@@ -11,7 +12,7 @@ def get_meta(plotdir):
     meta = {
         'common': {
             'include': {
-                # 'L': ['L_16', 'L_18'],
+                # 'L': ['L_18'],
                 # 'g': ['g_0.0100','g_0.0150'],
                 # 'd': ('d_+0.0000'),
                 # 'l': ['g_0.0100', 'g_0.0200', 'g_0.0300','g_0.0400'],

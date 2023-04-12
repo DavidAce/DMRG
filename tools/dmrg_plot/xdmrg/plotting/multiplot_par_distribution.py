@@ -1,4 +1,4 @@
-from src.plotting.tools import *
+from .tools import *
 import matplotlib.pyplot as plt
 from src.measurement.compute_statistics import *
 

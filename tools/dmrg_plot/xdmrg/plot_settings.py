@@ -1,6 +1,6 @@
 # variance_threshold_upper = 5e-11
 # variance_threshold_lower = 5e-13
-from src.plotting.style import *
+from .plotting.style import *
 import numpy as np
 
 # variance_window_limits = [[1e-20, 10   ],

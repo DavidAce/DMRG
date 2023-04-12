@@ -1,7 +1,7 @@
-from src.plotting.tools import *
+from .tools import *
 from src.io.h5ops import *
 import matplotlib.pyplot as plt
-from src.plotting.filter import *
+from .filter import *
 
 
 def multiplot_S_distribution_diff(src, plotdir='', algo_filter='', state_filter='', key_comp='', normalized=True, bins=200):

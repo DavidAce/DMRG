@@ -1,7 +1,7 @@
-from src.plotting.tools import *
+from .tools import *
 import matplotlib.pyplot as plt
-from src.database.database import *
-from src.general.filter import *
+# from src.database.database import *
+from .filter import *
 from matplotlib.ticker import MaxNLocator
 import itertools
 

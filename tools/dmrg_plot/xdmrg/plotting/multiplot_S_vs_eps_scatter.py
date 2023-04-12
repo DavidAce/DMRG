@@ -1,6 +1,6 @@
-from src.plotting.tools import *
+from .tools import *
 from src.io.h5ops import *
-from src.plotting.filter import *
+from .filter import *
 import numpy as np
 import matplotlib.pyplot as plt
 

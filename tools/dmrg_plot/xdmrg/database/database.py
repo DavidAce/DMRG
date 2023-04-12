@@ -1,5 +1,5 @@
 from src.io.h5ops import *
-from src.plotting.filter import *
+from plotting.filter import *
 
 
 def load_database(h5_src, meta, debug=False):

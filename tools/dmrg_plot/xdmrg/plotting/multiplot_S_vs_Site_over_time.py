@@ -1,7 +1,7 @@
-from src.plotting.tools import *
+from .tools import *
 from src.io.h5ops import *
 import matplotlib.pyplot as plt
-from src.plotting.filter import *
+from .filter import *
 
 
 # import random

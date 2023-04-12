@@ -1,6 +1,7 @@
 from matplotlib.ticker import MaxNLocator
-from src.database.database import *
-from src.plotting.tools import *
+# from src.database.database import *
+from .tools import *
+from .style import *
 from src.general.filter import *
 from itertools import product
 from copy import deepcopy
@@ -47,12 +48,12 @@ def plot_histogram(h5, db, meta, sub1, l1):
     f = get_fig_meta(numplots, meta=meta)
     for idx, ((key0), ax) in enumerate(zip(get_keys(db, sub1[0]), f['ax'])):
         lstyles = get_linestyles()
-        for algokey in iterate(db['keys']['algo'], algoinc):
-            for statekey in iterate(db['keys']['state'], stateinc):
+        for algokey in db['keys']['algo'], algoinc:
+            for statekey in db['keys']['state'], stateinc:
                 lstyle = next(lstyles)
                 mstyles = get_markerstyles()
                 dbval = None
-                for pointkey in iterate(db['keys']['point'], pointinc):
+                for pointkey in db['keys']['point'], pointinc:
                     ed_palette = itertools.cycle(sns.color_palette("Set2"))
                     xd_palette = itertools.cycle(sns.color_palette(palette_name, len(get_keys(db, l1[0]))))
                     mstyle = next(mstyles)

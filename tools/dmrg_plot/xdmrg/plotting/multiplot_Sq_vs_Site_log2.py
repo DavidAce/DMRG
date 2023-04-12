@@ -1,7 +1,7 @@
-from src.plotting.tools import *
+from .tools import *
 from src.io.h5ops import *
 import matplotlib.pyplot as plt
-from src.plotting.filter import *
+from .filter import *
 
 
 def multiplot_Sq_vs_Site_log2(src, plotdir='', key_list='', type='average', Q=[3, 4]):

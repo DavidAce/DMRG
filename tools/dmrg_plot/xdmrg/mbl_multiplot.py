@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 import os.path
 import numpy as np
 import h5py
-from src.plotting.style import *
+from plotting.style import *
 from src.general.natural_sort import *
-from src.plotting.entanglement_entropy_chain import *
+from plotting.entanglement_entropy_chain import *
 from src.io.h5ops import *
-from src.plotting.multiplot import *
-from src.database.database import *
-from src.plotting.meta import *
+from plotting.multiplot import *
+from database.database import *
+from plotting.meta import *
 
 import glob
 import pickle
@@ -68,10 +68,10 @@ if db is None:
         pickle.dump(db, pk)
 
 # plot_table(h5_avg, db, meta['fes-ent'], sub1=['L:.0f'], l1=['l:.2f'])
-plot_table(h5_avg, db, meta['chain-ent'], sub1=['L:.0f'], l1=['l:.2f'])
+# plot_table(h5_avg, db, meta['chain-ent'], sub1=['L:.0f'], l1=['l:.2f'])
 # plot_table(h5_avg, db, meta['chain-bond'], sub1=['L:.0f'], l1=['l:.2f'])
 # plot_histogram(h5_avg, db, meta['hist-var'], sub1=['L:.0f'], l1=['l:.2f'])
-# plot_slice(h5_avg, db, meta['mid-ent'], sub1=['d'], l1=['l'], x1=['L'])
+plot_slice(h5_avg, db, meta['mid-ent'], sub1=['d'], l1=['l'], x1=['L'])
 
 
 # plot_midchain(h5_avg, db, meta['ent'], sub1=['l'], l1=['d'], x1=['L'])
