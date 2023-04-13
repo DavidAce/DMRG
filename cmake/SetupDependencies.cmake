@@ -37,7 +37,10 @@ check_compile(Ceres Ceres::ceres)
 if(NOT TARGET dmrg-deps)
     add_library(dmrg-deps INTERFACE)
 endif()
-
+if(NOT TARGET dmrg-flags)
+    add_library(dmrg-flags INTERFACE)
+endif()
+target_link_libraries(dmrg-flags INTERFACE OpenMP::OpenMP_CXX)
 target_link_libraries(dmrg-deps INTERFACE
             CLI11::CLI11
             pcg-cpp::pcg-cpp

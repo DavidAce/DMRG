@@ -18,8 +18,8 @@ jobs:
       matrix:
         include:
           - { compiler: gcc,   manager: cmake }
-#          - { compiler: gcc,   manager: conan }
-#          - { compiler: clang, manager: conan }
+          - { compiler: gcc,   manager: conan }
+          - { compiler: clang, manager: conan }
 
 
     steps:
@@ -93,10 +93,7 @@ jobs:
           configurePreset: 'github-actions-${{ matrix.manager }}'
           configurePresetAdditionalArgs: "['-DCMAKE_INSTALL_PREFIX=~/pkg-install']"
           buildPreset: 'github-actions-${{ matrix.manager }}'
-#          buildPresetAdditionalArgs: "['--target DMRG++']"
-#      - name: Test
-#        run: |
-#          ctest --extra-verbose --preset=github-actions-${}
+          testPreset: 'github-actions-${{ matrix.manager }}'
 
       - name: Coverage
         if: matrix.compiler == 'gcc' && matrix.manager == 'cmake'

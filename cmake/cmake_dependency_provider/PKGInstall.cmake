@@ -73,15 +73,6 @@ function(pkg_install pkg_name)
 
     pkg_message(STATUS "${pkg_name} will be installed into ${PKG_INSTALL_DIR}")
 
-    # Set policies for CMakeLists in packages that require older CMake versions
-    set(CMAKE_POLICY_DEFAULT_CMP0074 NEW CACHE STRING "Honor <PackageName>_ROOT")
-    set(CMAKE_POLICY_DEFAULT_CMP0091 NEW CACHE STRING "Use MSVC_RUNTIME_LIBRARY") # Fixes spdlog on MSVC
-    set(CMAKE_POLICY_DEFAULT_CMP0135 NEW CACHE STRING "Use DOWNLOAD_EXTRACT_TIMESTAMP")
-
-    if(CMAKE_GENERATOR MATCHES "Ninja")
-        set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE CACHE BOOL "Otherwise fails with -G Ninja" FORCE)
-    endif()
-
     # Generate an init cache to propagate the current configuration
     generate_init_cache()
 
@@ -94,6 +85,10 @@ function(pkg_install pkg_name)
             -C ${PKG_INIT_CACHE_FILE}                # For the subproject in external_<libname>
             -DINIT_CACHE_FILE=${PKG_INIT_CACHE_FILE} # For externalproject_add inside the subproject
             -DCMAKE_INSTALL_PREFIX:PATH=${PKG_INSTALL_DIR}
+            -DCMAKE_POLICY_DEFAULT_CMP0074:STRING=NEW # "Honor <PackageName>_ROOT"
+            -DCMAKE_POLICY_DEFAULT_CMP0091:STRING=NEW # "Use MSVC_RUNTIME_LIBRARY", fixes spdlog on MSVC
+            -DCMAKE_POLICY_DEFAULT_CMP0135:STRING=NEW # "Use DOWNLOAD_EXTRACT_TIMESTAMP"
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE # "Otherwise fails with -G Ninja"
             ${PKG_CMAKE_ARGS}
             ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/external_${pkg_name}
             WORKING_DIRECTORY ${PKG_BUILD_DIR}

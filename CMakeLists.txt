@@ -118,7 +118,7 @@ add_subdirectory(docs)  # Build documentation with doxygen
 #############################
 ## NINJA TRACING
 #############################
-if(CMAKE_GENERATOR MATCHES "Ninja")
+if(CMAKE_GENERATOR MATCHES Ninja)
     add_custom_command(
             TARGET DMRG++
             COMMAND ninja -C ${CMAKE_BINARY_DIR} -t recompact

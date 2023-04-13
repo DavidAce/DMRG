@@ -532,5 +532,25 @@
       "displayName": "Conan package manager configuration for github-actions",
       "configurePreset": "github-actions-conan"
     }
+  ],
+  "testPresets": [
+    {
+      "name": "github-actions-cmake",
+      "displayName": "CMake package manager configuration for github-actions",
+      "configurePreset": "github-actions-cmake",
+      "output": {
+        "verbosity": "extra",
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "github-actions-conan",
+      "displayName": "Conan package manager configuration for github-actions",
+      "configurePreset": "github-actions-conan",
+      "output": {
+        "verbosity": "extra",
+        "outputOnFailure": true
+      }
+    }
   ]
 }

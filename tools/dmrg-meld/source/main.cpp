@@ -60,8 +60,9 @@ int main(int argc, char *argv[]) {
 
     h5pp::fs::path              src_base = h5pp::fs::absolute("/mnt/WDB-AN1500/mbl_transition");
     std::vector<h5pp::fs::path> src_sims;
-    std::string                 src_out  = "output";
-    std::string                 tgt_file = "merged.h5";
+    std::string                 src_out   = "output";
+    std::string                 src_match = "mbl_";
+    std::string                 tgt_file  = "merged.h5";
     h5pp::fs::path              tgt_dir;
     h5pp::fs::path              tmp_dir        = h5pp::fs::absolute(fmt::format("/tmp/{}", tools::h5io::get_tmp_dirname(argv[0])));
     bool                        finished       = false;
@@ -360,8 +361,13 @@ int main(int argc, char *argv[]) {
             // Collect and sort all the files in h5dir
             using h5iter = h5pp::fs::directory_iterator;
             std::vector<h5pp::fs::path> h5files;
-            copy(h5iter(h5dir), h5iter(), back_inserter(h5files));
+            for(const auto &file : h5iter(h5dir)) {
+                if(not file.is_regular_file()) continue;
+                if(file.path().stem().string().find(src_match) == std::string::npos) continue;
+                h5files.emplace_back(file);
+            }
             std::sort(h5files.begin(), h5files.end());
+
             tools::logger::log->info("num h5files: {}", h5files.size());
             // No barriers from now on: There can be a different number of files in h5files!
             for(const auto &src_item : h5files) {
@@ -535,7 +541,7 @@ int main(int argc, char *argv[]) {
         auto h5_tgt   = h5pp::File(tgt_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
         auto tgt_stem = h5pp::fs::path(tgt_path).stem().string();
         auto failpath = tgt_dir / "failed.job";
-        auto failfile = std::ofstream (failpath.string(), std::ios::trunc | std::ios_base::out);
+        auto failfile = std::ofstream(failpath.string(), std::ios::trunc | std::ios_base::out);
 
         std::string tgt_algo;
         switch(model) {
