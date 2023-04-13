@@ -18,8 +18,10 @@ namespace tools::h5io {
     inline std::string h5_tgt_part_path;
     inline std::string h5_tmp_part_path;
 
+    void saveFailedJob(const h5pp::File &h5_src, const std::string & msg, const std::exception &ex);
 
     std::string get_tmp_dirname(std::string_view exename);
+
 
     template<typename T>
     std::string get_standardized_base(const ModelId<T> &H);

@@ -1,3 +1,4 @@
+#include "debug/exceptions.h"
 #include "debug/stacktrace.h"
 #include "env/environment.h"
 #include "general/enums.h"
@@ -60,6 +61,7 @@ int main(int argc, char *argv[]) {
 
     h5pp::fs::path              src_base = h5pp::fs::absolute("/mnt/WDB-AN1500/mbl_transition");
     std::vector<h5pp::fs::path> src_sims;
+    std::vector<std::string>    src_reqs  = {"measurements"}; // Required links in source file
     std::string                 src_out   = "output";
     std::string                 src_match = "mbl_";
     std::string                 tgt_file  = "merged.h5";
@@ -98,6 +100,7 @@ int main(int argc, char *argv[]) {
         app.add_option("-b,--srcbase"     , src_base        , "The base directory for MBL simulation results");
         app.add_option("-o,--srcout"      , src_out         , "The name of the source directory where simulation files are found");
         app.add_option("-s,--srcsims"     , src_sims        , "Patterns to simulation directories from where to collect simulation files, e.g. 'lbit19-,lbit20-'")->required();
+        app.add_option("-s,--srsreqs"     , src_reqs        , "Required dataset names in each source file");
         app.add_flag  ("-f,--finished"    , finished        , "Require that src file has finished");
         app.add_flag  ("-l,--linkonly"    , link_only       , "Link only. Make the main file with external links to all the others");
         app.add_flag  ("-r,--replace"     , replace         , "Replace existing files");
@@ -466,16 +469,18 @@ int main(int argc, char *argv[]) {
                     continue;
                 }
                 try {
-                    if(not h5_src.linkExists("common/finished_all")) {
-                        tools::logger::log->warn("Skipping broken file: {}\n\tReason: Could not find dataset [common/finished_all]", src_abs.string());
-                        continue;
+                    if(not h5_src.linkExists("common/finished_all")) { throw except::load_error("could not find dataset [common/finished_all]"); }
+                    if(finished and not h5_src.readDataset<bool>("common/finished_all")) { throw except::load_error("simulation has not finished"); }
+                    for(const auto &req : src_reqs) {
+                        auto path = h5pp::fs::path(req);
+                        auto name = h5pp::fs::path(req).filename().string();
+                        auto root = path.has_parent_path() ? path.parent_path().string() : "/";
+                        if(h5_src.findLinks(name, root).empty()) throw except::load_error("missing required dataset: [{}]", req);
                     }
-                    if(finished and not h5_src.readDataset<bool>("common/finished_all")) {
-                        tools::logger::log->warn("Skipping file: Simulation has not finished: {}", src_abs.string());
-                        continue;
-                    }
+
                 } catch(const std::exception &ex) {
-                    tools::logger::log->warn("Skipping file: {}: {}", ex.what(), src_abs.string());
+                    tools::logger::log->warn("skipped file: {}: [{}]", ex.what(), src_abs.string());
+                    tools::h5io::saveFailedJob(h5_src, "invalid source file", ex);
                     continue;
                 }
 

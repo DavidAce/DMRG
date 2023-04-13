@@ -41,6 +41,42 @@ namespace tools::h5io {
         };
     }
 
+    void saveFailedJob(const h5pp::File &h5_src, const std::string &msg, const std::exception &ex) {
+        auto failseed = -1l;
+        auto failconf = std::string("invalid_config_file");
+        auto failmore = std::string();
+        try {
+            failseed = tools::parse::extract_digits_from_h5_filename<long>(h5_src.getFileName());
+        } catch(const std::exception &exseed) { failmore += fmt::format(" | {}", exseed.what()); }
+        try {
+            failconf = h5_src.readDataset<std::string>("common/config_filename");
+        } catch(const std::exception &exconf) {
+            failmore += fmt::format(" | {}", exconf.what());
+            failconf += fmt::format(" | {}", h5_src.getFilePath());
+        }
+        auto pathjobs = fmt::format("{}", h5pp::fs::path(tools::h5io::h5_tgt_part_path).replace_extension(".job").string());
+        auto patherrs = fmt::format("{}", h5pp::fs::path(tools::h5io::h5_tgt_part_path).replace_extension(".err").string());
+
+        auto failskip = false;
+        auto linebuff = std::string();
+        auto filejobs = std::fstream(pathjobs, std::ios_base::app | std::ios_base::out);
+        auto fileerrs = std::fstream(patherrs, std::ios_base::app | std::ios_base::out);
+        auto failjobs = fmt::format("{} {}", failconf, failseed);
+        while(std::getline(filejobs, linebuff)) {
+            if(linebuff.find(failjobs) != std::string::npos) {
+                tools::logger::log->info("Found previous fail job line: {}", failjobs);
+                failskip = true;
+                break;
+            }
+        }
+        if(not failskip) {
+            filejobs.clear();
+            filejobs.seekg(0, std::ios::beg);
+            filejobs << failjobs << '\n';
+            fileerrs << failjobs << fmt::format("| {:<24}", msg) << ex.what() << failmore << '\n';
+        }
+    }
+
     std::string get_tmp_dirname(std::string_view exename) { return fmt::format("{}.{}", h5pp::fs::path(exename).filename(), getenv("USER")); }
 
     size_t get_num_decimals(double val) {
@@ -480,26 +516,8 @@ namespace tools::h5io {
                     cronoKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
 
                 } catch(const std::runtime_error &ex) {
-                    tools::logger::log->error("Gather failed in [{}]: {}", pathid.src_path, ex.what());
-                    auto failpath = fmt::format("{}", h5pp::fs::path(tools::h5io::h5_tgt_part_path).replace_extension(".job").string());
-                    auto failseed = tools::parse::extract_digits_from_h5_filename<long>(h5_src.getFileName());
-                    auto failconf = h5_src.readDataset<std::string>("common/config_filename");
-                    auto failline = fmt::format("{} {}", failconf, failseed);
-                    auto failfile = std::fstream(failpath, std::ios_base::app | std::ios_base::out);
-                    auto failskip = false;
-                    auto linebuff = std::string();
-                    while(std::getline(failfile, linebuff)) {
-                        if(linebuff.find(failline) != std::string::npos) {
-                            tools::logger::log->info("Found previous fail line: {}", failline);
-                            failskip = true;
-                            break;
-                        }
-                    }
-                    if(not failskip) {
-                        failfile.clear();
-                        failfile.seekg(0, std::ios::beg);
-                        failfile << failline << '\n';
-                    }
+                    tools::logger::log->error("key gather failed in [{}]: {}", pathid.src_path, ex.what());
+                    saveFailedJob(h5_src, "key gathering failed", ex);
                     continue; // File is broken. Do not transfer.
                 }
 
@@ -510,7 +528,10 @@ namespace tools::h5io {
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesup, srcdb.fesup, pathid, fesupKeys, fileId);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.fesdn, srcdb.fesdn, pathid, fesdnKeys, fileId);
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
-                } catch(const std::runtime_error &ex) { tools::logger::log->warn("Transfer failed in [{}]: {}", pathid.src_path, ex.what()); }
+                } catch(const std::runtime_error &ex) {
+                    tools::logger::log->warn("Transfer failed in [{}]: {}", pathid.src_path, ex.what());
+                    saveFailedJob(h5_src, "dset transfer failed", ex);
+                }
 
                 //                try {
                 //                    auto t_dsets  = tid::tic_scope("dsets");
