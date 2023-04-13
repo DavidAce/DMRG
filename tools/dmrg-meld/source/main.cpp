@@ -41,11 +41,11 @@ double compute_renyi(const std::vector<std::complex<double>> &S, double q) {
 }
 
 void clean_up() {
-    if(not tools::h5io::tmp_path.empty()) {
+    if(not tools::h5io::h5_tmp_part_path.empty()) {
         try {
-            tools::logger::log->info("Cleaning up temporary file: [{}]", tools::h5io::tmp_path);
-            h5pp::hdf5::moveFile(tools::h5io::tmp_path, tools::h5io::tgt_path, h5pp::FilePermission::REPLACE);
-            tools::h5io::tmp_path.clear();
+            tools::logger::log->info("Cleaning up temporary file: [{}]", tools::h5io::h5_tmp_part_path);
+            h5pp::hdf5::moveFile(tools::h5io::h5_tmp_part_path, tools::h5io::h5_tgt_part_path, h5pp::FilePermission::REPLACE);
+            tools::h5io::h5_tmp_part_path.clear();
         } catch(const std::exception &err) { tools::logger::log->info("Cleaning not needed: {}", err.what()); }
     }
     H5garbage_collect();
@@ -166,8 +166,13 @@ int main(int argc, char *argv[]) {
     auto perm = h5pp::FilePermission::READWRITE;
     if(replace) perm = h5pp::FilePermission::REPLACE;
 
-    h5pp::fs::path tgt_path = tgt_dir / tgt_file;
+    h5pp::fs::path tgt_path = tgt_dir / tgt_file; // File path for the main merge file
     tools::logger::log->info("Merge into target file {}", tgt_path.string());
+
+    if(use_tmp) {
+        std::atexit(clean_up);
+        std::at_quick_exit(clean_up);
+    }
 
     if(not link_only) {
         // Define which objects to consider for merging
@@ -278,7 +283,6 @@ int main(int argc, char *argv[]) {
             default: throw std::runtime_error("Invalid model");
         }
 
-        // Open the target file
         auto h5dirs = tools::io::find_h5_dirs(src_sims, src_out, max_dirs, incfilter, excfilter);
         tools::logger::log->info("num h5dirs: {}", h5dirs.size());
         for(const auto &h5dir : h5dirs) tools::logger::log->debug(" -- {}", h5dir.string());
@@ -286,30 +290,23 @@ int main(int argc, char *argv[]) {
         std::unordered_map<std::string, FileStats> file_stats;
         uintmax_t                                  srcBytes = 0; // Count the total size of scanned files
         for(const auto &h5dir : h5dirs) {
-            // Define a new target h5file for the files in this h5dir
-            auto h5dir_hash  = tools::hash::std_hash(h5dir.string());
-            auto h5_tgt_path = h5pp::format("{}/{}.{}{}", tgt_dir.string(), h5pp::fs::path(tgt_path).stem().string(), tools::hash::std_hash(h5dir.string()),
-                                            h5pp::fs::path(tgt_path).extension().string());
+            // Define a new partial hdf5 file to collect the source HDF5 files in this particular h5dir
+            tools::h5io::h5_tgt_part_hash = tools::hash::std_hash(h5dir.string());
+            tools::h5io::h5_tgt_part_path = h5pp::format("{}/{}.{}{}", tgt_dir.string(), h5pp::fs::path(tgt_path).stem().string(),
+                                                         tools::hash::std_hash(h5dir.string()), h5pp::fs::path(tgt_path).extension().string());
 
-            // Initialize file
-            //        auto plists = h5pp::defaultPlists;
-            //        plists.fileCreate = H5Pcreate(H5P_FILE_CREATE);
-            //        plists.fileAccess = H5Pcreate(H5P_FILE_ACCESS);
-
-            //        herr_t ers    = H5Pset_file_space_strategy(plists.fileCreate, H5F_FSPACE_STRATEGY_PAGE, true, 1);
-            //        herr_t erp =    H5Pset_file_space_page_size(plists.fileCreate,100 * 1024);
-            //        herr_t erb    = H5Pset_page_buffer_size(plists.fileAccess, 10 * 1024 * 1024, 1, 1);
-            auto h5_tgt = h5pp::File();
+            // Initialize the partial target file for this dir
+            auto h5_tgt_part = h5pp::File();
             try {
-                h5_tgt = h5pp::File(h5_tgt_path, perm, verbosity_h5pp);
+                h5_tgt_part = h5pp::File(tools::h5io::h5_tgt_part_path, perm, verbosity_h5pp);
             } catch(const std::exception &ex) {
                 H5Eprint(H5E_DEFAULT, stderr);
                 tools::logger::log->error("Error opening target file: {}", ex.what());
-                tools::logger::log->error("Replacing broken file: [{}]: {}", h5_tgt_path);
-                h5_tgt = h5pp::File(h5_tgt_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
+                tools::logger::log->error("Replacing broken file: [{}]: {}", tools::h5io::h5_tgt_part_path);
+                h5_tgt_part = h5pp::File(tools::h5io::h5_tgt_part_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
             }
             //            auto h5_tgt = h5pp::File(h5_tgt_path, perm, verbosity_h5pp);
-            tools::h5dbg::assert_no_dangling_ids(h5_tgt, __FUNCTION__, __LINE__); // Check that there are no open HDF5 handles
+            tools::h5dbg::assert_no_dangling_ids(h5_tgt_part, __FUNCTION__, __LINE__); // Check that there are no open HDF5 handles
             //        hsize_t fsp_size; size_t pbs_size;
             //        H5Pget_file_space_page_size(H5Fget_create_plist(h5_tgt.openFileHandle()), &fsp_size);
             //        H5Pget_page_buffer_size(H5Fget_access_plist(h5_tgt.openFileHandle()),&pbs_size,nullptr,nullptr);
@@ -317,7 +314,7 @@ int main(int argc, char *argv[]) {
 
             //            h5_tgt.setDriver_core();
             //    h5_tgt.setKeepFileOpened();
-            h5_tgt.setCompressionLevel(compression);
+            h5_tgt_part.setCompressionLevel(compression);
             //        size_t rdcc_nbytes = 4*1024*1024;
             //        size_t rdcc_nslots = rdcc_nbytes * 100 / (320 * 64);
             //        H5Pset_cache(h5_tgt.plists.fileAccess, 1000, rdcc_nslots,rdcc_nbytes, 0.20 );
@@ -328,28 +325,27 @@ int main(int argc, char *argv[]) {
             //        size_t rdcc_nslots = rdcc_nbytes * 100 / (tableInfo.recordBytes.value() * tableInfo.chunkSize.value());
             //        H5Pset_chunk_cache(dapl, rdcc_nslots, rdcc_nbytes, 0.5);
             //        tableInfo.h5Dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(tableInfo.getLocId(), tableInfo.tablePath.value(), true, dapl);
-            tools::h5dbg::print_dangling_ids(h5_tgt, __FUNCTION__, __LINE__);
-
+            tools::h5dbg::print_dangling_ids(h5_tgt_part, __FUNCTION__, __LINE__);
+            tools::h5io::h5_tgt_part_path = h5_tgt_part.getFilePath();
+            tools::h5io::h5_tmp_part_path = h5_tgt_part.getFilePath();
             if(use_tmp) {
-                tools::h5io::tmp_path = (tmp_dir / tgt_file).string();
-                tools::h5io::tgt_path = tgt_path.string();
-                tools::logger::log->info("Moving to {} -> {}", h5_tgt.getFilePath(), tools::h5io::tmp_path);
-                h5_tgt.moveFileTo(tools::h5io::tmp_path, h5pp::FilePermission::REPLACE);
-                std::atexit(clean_up);
-                std::at_quick_exit(clean_up);
+                tools::h5io::h5_tmp_part_path = (tmp_dir / tgt_file).string();
+                tools::logger::log->info("Moving to {} -> {}", h5_tgt_part.getFilePath(), tools::h5io::h5_tmp_part_path);
+                h5_tgt_part.moveFileTo(tools::h5io::h5_tmp_part_path, h5pp::FilePermission::REPLACE);
             }
+
             // Load database
             tools::h5db::TgtDb tgtdb;
             //    h5_tgt.setDriver_core();
             {
-                auto keepOpen = h5_tgt.getFileHandleToken();
-                tgtdb.file    = tools::h5db::loadFileDatabase(h5_tgt); // This database maps  src_name <--> FileId
-                tgtdb.dset    = tools::h5db::loadDatabase<h5pp::DsetInfo>(h5_tgt, keys.dsets);
-                tgtdb.table   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt, keys.tables);
-                tgtdb.crono   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.cronos);
-                tgtdb.fesup   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.fesups);
-                tgtdb.fesdn   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt, keys.fesdns);
-                tgtdb.model   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt, keys.models);
+                auto keepOpen = h5_tgt_part.getFileHandleToken();
+                tgtdb.file    = tools::h5db::loadFileDatabase(h5_tgt_part); // This database maps  src_name <--> FileId
+                tgtdb.dset    = tools::h5db::loadDatabase<h5pp::DsetInfo>(h5_tgt_part, keys.dsets);
+                tgtdb.table   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt_part, keys.tables);
+                tgtdb.crono   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.cronos);
+                tgtdb.fesup   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.fesups);
+                tgtdb.fesdn   = tools::h5db::loadDatabase<BufferedTableInfo>(h5_tgt_part, keys.fesdns);
+                tgtdb.model   = tools::h5db::loadDatabase<h5pp::TableInfo>(h5_tgt_part, keys.models);
             }
             {
                 for(const auto &[infoKey, infoId] : tgtdb.table) infoId.info.assertReadReady();
@@ -359,7 +355,7 @@ int main(int argc, char *argv[]) {
                 for(const auto &[infoKey, infoId] : tgtdb.fesup) infoId.info.assertReadReady();
                 for(const auto &[infoKey, infoId] : tgtdb.fesdn) infoId.info.assertReadReady();
             }
-            uintmax_t tgtBytes = h5pp::fs::file_size(h5_tgt.getFilePath());
+            uintmax_t tgtBytes = h5pp::fs::file_size(h5_tgt_part.getFilePath());
 
             // Collect and sort all the files in h5dir
             using h5iter = h5pp::fs::directory_iterator;
@@ -424,8 +420,7 @@ int main(int argc, char *argv[]) {
 
                 // Print file status
                 srcBytes += h5pp::fs::file_size(src_abs.string());
-                tgtBytes = h5pp::fs::file_size(h5_tgt.getFilePath());
-                tgtBytes = h5pp::fs::file_size(h5_tgt.getFilePath());
+                tgtBytes = h5pp::fs::file_size(h5_tgt_part.getFilePath());
 
                 auto fmt_grp_bytes = tools::fmtBytes(true, file_stats[src_par].bytes, 1024, 1);
                 auto fmt_src_bytes = tools::fmtBytes(true, srcBytes, 1024, 1);
@@ -481,20 +476,20 @@ int main(int argc, char *argv[]) {
                 t_open.toc();
                 {
                     // Start by copying the environment metadata like git version. This should be the same for all files, so we only do it once
-                    if(not h5_tgt.linkExists(".env")) { h5_tgt.copyLinkFromFile(".env", h5_src.getFilePath(), ".env"); }
-                    auto tgtKeepOpen = h5_tgt.getFileHandleToken();
+                    if(not h5_tgt_part.linkExists(".env")) { h5_tgt_part.copyLinkFromFile(".env", h5_src.getFilePath(), ".env"); }
+                    auto tgtKeepOpen = h5_tgt_part.getFileHandleToken();
                     auto srcKeepOpen = h5_src.getFileHandleToken();
                     switch(model) {
                         case Model::SDUAL: {
-                            tools::h5io::merge<sdual>(h5_tgt, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<sdual>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                         case Model::MAJORANA: {
-                            tools::h5io::merge<majorana>(h5_tgt, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<majorana>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                         case Model::LBIT: {
-                            tools::h5io::merge<lbit>(h5_tgt, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<lbit>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                     }
@@ -502,13 +497,13 @@ int main(int argc, char *argv[]) {
                 tools::logger::log->debug("mem[rss {:<.2f}|peak {:<.2f}|vm {:<.2f}]MB | file db size {}", tools::prof::mem_rss_in_mb(),
                                           tools::prof::mem_hwm_in_mb(), tools::prof::mem_vm_in_mb(), tgtdb.file.size());
             }
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.file);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.model);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.table);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.crono);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.fesup);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.fesdn);
-            tools::h5db::saveDatabase(h5_tgt, tgtdb.dset);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.file);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.model);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.table);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.crono);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.fesup);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.fesdn);
+            tools::h5db::saveDatabase(h5_tgt_part, tgtdb.dset);
 
             tgtdb.file.clear();
             tgtdb.model.clear();
@@ -519,16 +514,16 @@ int main(int argc, char *argv[]) {
             tgtdb.dset.clear();
 
             // TODO: Put the lines below in a "at quick exit" function
-            tools::h5io::writeProfiling(h5_tgt);
+            tools::h5io::writeProfiling(h5_tgt_part);
 
-            h5_tgt.flush();
+            h5_tgt_part.flush();
 
             if(use_tmp) {
-                tools::logger::log->info("Moving to {} -> {}", h5_tgt.getFilePath(), tools::h5io::tgt_path);
-                h5_tgt.moveFileTo(tools::h5io::tgt_path, h5pp::FilePermission::REPLACE);
+                tools::logger::log->info("Moving to {} -> {}", h5_tgt_part.getFilePath(), tools::h5io::h5_tgt_part_path);
+                h5_tgt_part.moveFileTo(tools::h5io::h5_tgt_part_path, h5pp::FilePermission::REPLACE);
             }
-            tools::logger::log->info("Results written to file {}", h5_tgt_path);
-            tools::h5dbg::assert_no_dangling_ids(h5_tgt, __FUNCTION__, __LINE__); // Check that there are no open HDF5 handles
+            tools::logger::log->info("Results written to file {}", tools::h5io::h5_tgt_part_path);
+            tools::h5dbg::assert_no_dangling_ids(h5_tgt_part, __FUNCTION__, __LINE__); // Check that there are no open HDF5 handles
         }
     }
 
@@ -537,8 +532,11 @@ int main(int argc, char *argv[]) {
     // Now id 1 can merge the files into one final file
     if(mpi::world.id == 0) {
         tools::logger::log->info("Creating main file for external links: {}", tgt_path);
-        auto        h5_tgt   = h5pp::File(tgt_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
-        auto        tgt_stem = h5pp::fs::path(tgt_file).stem().string();
+        auto h5_tgt   = h5pp::File(tgt_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
+        auto tgt_stem = h5pp::fs::path(tgt_path).stem().string();
+        auto failpath = tgt_dir / "failed.job";
+        auto failfile = std::ofstream (failpath.string(), std::ios::trunc | std::ios_base::out);
+
         std::string tgt_algo;
         switch(model) {
             case Model::LBIT: tgt_algo = "fLBIT"; break;
@@ -547,6 +545,7 @@ int main(int argc, char *argv[]) {
         }
 
         for(const auto &obj : h5pp::fs::directory_iterator(tgt_dir, h5pp::fs::directory_options::follow_directory_symlink)) {
+            // Take care hdf5 files
             if(obj.is_regular_file() and obj.path().extension() == ".h5") {
                 if(obj.path().filename() != tgt_file and obj.path().stem().string().find(tgt_stem) != std::string::npos) {
                     // Found a file that we can link!
@@ -564,6 +563,17 @@ int main(int argc, char *argv[]) {
                     auto tgt_link = h5pp::fs::proximate(obj.path(), tgt_dir);
                     tools::logger::log->info("Creating external link: {} -> {}", algo_group[0], tgt_link.string());
                     h5_tgt.createExternalLink(tgt_link.string(), algo_group[0], algo_group[0]);
+                }
+            }
+        }
+        for(const auto &obj : h5pp::fs::directory_iterator(tgt_dir, h5pp::fs::directory_options::follow_directory_symlink)) {
+            // Take care fail files
+            if(obj.is_regular_file() and obj.path().extension() == ".job") {
+                if(obj.path().filename() != failpath.filename() and obj.path().stem().string().find(tgt_stem) != std::string::npos) {
+                    // Found a file with failed jobs!
+                    tools::logger::log->info("Appending failed jobs {} -> {}", obj.path().string(), failpath.string());
+                    std::ifstream failpart(obj.path().string(), std::ios::in);
+                    failfile << failpart.rdbuf();
                 }
             }
         }

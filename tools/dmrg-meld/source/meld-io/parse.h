@@ -27,7 +27,7 @@ namespace tools::parse {
 
     template<typename T>
     [[nodiscard]] T extract_digits_from_h5_filename(const std::string &input) {
-        std::string stem = input.substr(0, input.find(".h5"));
+        std::string stem = h5pp::fs::path(input).stem().string();
         std::string seed_str;
         for(const auto &c : stem)
             if(std::isdigit(c)) seed_str.push_back(c);

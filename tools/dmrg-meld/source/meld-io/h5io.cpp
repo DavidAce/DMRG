@@ -12,6 +12,7 @@
 #include "mpi/mpi-tools.h"
 #include "tid/tid.h"
 #include <cstdlib>
+#include <fstream>
 #include <functional>
 #include <h5pp/h5pp.h>
 #include <h5tb.h>
@@ -480,6 +481,25 @@ namespace tools::h5io {
 
                 } catch(const std::runtime_error &ex) {
                     tools::logger::log->error("Gather failed in [{}]: {}", pathid.src_path, ex.what());
+                    auto failpath = fmt::format("{}", h5pp::fs::path(tools::h5io::h5_tgt_part_path).replace_extension(".job").string());
+                    auto failseed = tools::parse::extract_digits_from_h5_filename<long>(h5_src.getFileName());
+                    auto failconf = h5_src.readDataset<std::string>("common/config_filename");
+                    auto failline = fmt::format("{} {}", failconf, failseed);
+                    auto failfile = std::fstream(failpath, std::ios_base::app | std::ios_base::out);
+                    auto failskip = false;
+                    auto linebuff = std::string();
+                    while(std::getline(failfile, linebuff)) {
+                        if(linebuff.find(failline) != std::string::npos) {
+                            tools::logger::log->info("Found previous fail line: {}", failline);
+                            failskip = true;
+                            break;
+                        }
+                    }
+                    if(not failskip) {
+                        failfile.clear();
+                        failfile.seekg(0, std::ios::beg);
+                        failfile << failline << '\n';
+                    }
                     continue; // File is broken. Do not transfer.
                 }
 

@@ -14,8 +14,10 @@ namespace h5pp {
 
 namespace tools::h5io {
 
-    inline std::string tmp_path;
-    inline std::string tgt_path;
+    inline std::string h5_tgt_part_hash;
+    inline std::string h5_tgt_part_path;
+    inline std::string h5_tmp_part_path;
+
 
     std::string get_tmp_dirname(std::string_view exename);
 
