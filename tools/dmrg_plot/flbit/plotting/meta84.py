@@ -65,7 +65,7 @@ def get_meta(plotdir):
             'xlabel': '$t$',
             # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
             # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
-            'ymax': 1e10,
+            # 'ymax': 1e10,
             'xmafmt': LogFormatterMathtext(),
             'plotprefix': 'SE',
             'plotdir': Path(plotdir, Path(mplstyle).stem),

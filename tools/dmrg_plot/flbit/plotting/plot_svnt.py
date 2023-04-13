@@ -87,8 +87,13 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     ydata, colnames = get_table_data(datanode['avg'], meta['colname'], 'f8')
                     edata, colnames = get_table_data(datanode['ste'], meta['colname'], 'f8')
                     tdata = datanode['avg']['physical_time'][()]
-                    sdata = datanode['avg']['entanglement_entropy'][()]
+                    sdata, _ = get_table_data(datanode['avg'], 'entanglement_entropy', 'f8')
                     ndata = datanode['avg']['num'][()]
+
+                    if meta.get('use_configurational_entropy'):
+                        cfdata = sdata - ydata
+                        sdata = cfdata
+
 
                     if np.min(ndata) < 10:
                         continue
@@ -156,7 +161,7 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
                                     bounds_v2 = ([-np.inf, 0], [np.inf, np.inf])
                                     with np.errstate(invalid='ignore'):
-                                        slog = np.log(sdata)
+                                        slog = np.log(np.ravel(sdata))
                                         popt, pcov = curve_fit(f=flinear, xdata=slog[idx1:idx2], ydata=y[idx1:idx2],
                                                                bounds=bounds_v2)
                                         idx_min = int(idx1 * 0.75)

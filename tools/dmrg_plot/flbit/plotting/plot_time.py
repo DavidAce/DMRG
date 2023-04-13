@@ -83,10 +83,8 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 logger.debug('Found {} datanodes'.format(len(datanodes)))
                 for datanode in datanodes:
                     dbval = db['dsets'][datanode.name]
-                    ydata, colnames = get_table_data(datanode['avg'], meta.get('colname'),
-                                                     'f8')  # Supports multiple columns
-                    edata, colnames = get_table_data(datanode['ste'], meta.get('colname'),
-                                                     'f8')  # Supports multiple columns
+                    ydata, colnames = get_table_data(datanode['avg'], meta.get('colname'),'f8')  # Supports multiple columns
+                    edata, colnames = get_table_data(datanode['ste'], meta.get('colname'),'f8')  # Supports multiple columns
                     tdata = datanode['avg']['physical_time'][()]
                     ndata = datanode['avg']['num'][()]
 
@@ -379,12 +377,12 @@ def plot_v2_time_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                         # raise LookupError("Found incorrect number of datanodes")
                     datanode = datanode[0]
                     dbval = db['dsets'][datanode.name]
-                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'],
-                                                     'f8')  # Supports multiple columns
-                    edata, colnames = get_table_data(datanode['ste'], meta['colname'],
-                                                     'f8')  # Supports multiple columns
+                    ydata, colnames = get_table_data(datanode['avg'], meta['colname'],'f8')  # Supports multiple columns
+                    edata, colnames = get_table_data(datanode['ste'], meta['colname'],'f8')  # Supports multiple columns
                     tdata = datanode['avg']['physical_time'][()]
                     ndata = datanode['avg']['num'][()]
+
+
 
                     if np.min(ndata) < 10:
                         continue

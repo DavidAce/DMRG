@@ -90,6 +90,23 @@ def lbit_plot(args):
 
 
 
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_svnt_fig_sub_line(db=db, meta=meta['num-svnt'],
+                                   figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f, palette_name=palette)
+    save_figure(f)
+
+
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette)
+    save_figure(f)
+
+    plt.show()
+    exit(0)
+
 
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
@@ -126,13 +143,6 @@ def lbit_plot(args):
                                    linspec=linspec_lbit, figs=f, palette_name=palette)
     save_figure(f)
 
-
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_svnt_fig_sub_line(db=db, meta=meta['num-svnt'],
-                                   figspec=figspec, subspec=subspec, linspec=linspec,
-                                   figs=f, palette_name=palette)
-    save_figure(f)
 
 
     f = None
