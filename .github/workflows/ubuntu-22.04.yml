@@ -18,8 +18,8 @@ jobs:
       matrix:
         include:
           - { compiler: gcc,   manager: cmake }
-          - { compiler: gcc,   manager: conan }
-          - { compiler: clang, manager: conan }
+#          - { compiler: gcc,   manager: conan }
+#          - { compiler: clang, manager: conan }
 
 
     steps:

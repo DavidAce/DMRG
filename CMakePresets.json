@@ -365,7 +365,7 @@
       "displayName": "Default configuration for github-actions",
       "hidden": true,
       "inherits": [
-        "release",
+        "debug",
         "openblas",
         "default"
       ],
@@ -391,7 +391,7 @@
         "cmake",
         "github-actions"
       ],
-      "environment": {
+      "cacheVariables": {
         "DMRG_ENABLE_COVERAGE": "TRUE"
       }
     },
