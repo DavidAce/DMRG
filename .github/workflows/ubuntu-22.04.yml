@@ -50,11 +50,6 @@ jobs:
           key: ${{ env.cache-name }}
           max-size: 1000M
 
-      - name: Setup apt packages
-        run: |
-          sudo apt install ninja-build mold gcovr lcov gfortran-12 libgfortran-12-dev libstdc++-12-dev libdw-dev -y
-          sudo apt install libopenblas-dev liblapack-dev liblapacke-dev libopenmpi-dev openmpi-bin autopoint -y
-
       - name: Setup gcc
         if: matrix.compiler == 'gcc'
         run: |
@@ -70,6 +65,11 @@ jobs:
           echo "FC=gfortran-12" >> $GITHUB_ENV
           echo "CC=clang-15"    >> $GITHUB_ENV
           echo "CXX=clang++-15" >> $GITHUB_ENV
+
+      - name: Setup apt packages
+        run: |
+          sudo apt install ninja-build mold gcovr lcov gfortran-12 libgfortran-12-dev libstdc++-12-dev libdw-dev -y
+          sudo apt install libopenblas-dev liblapack-dev liblapacke-dev libopenmpi-dev openmpi-bin autopoint -y
 
       - name: Install Python Requirements
         run: |
@@ -99,9 +99,9 @@ jobs:
         if: matrix.compiler == 'gcc' && matrix.manager == 'cmake'
         run: |
           # Create lcov report
-          lcov --capture --directory build/github-actions-${{ matrix.manager }} --output-file coverage.info
-          lcov --remove coverage.info '*/pkg-install*' '*/test-*' '/usr/*' '*include/fmt/*' '*include/spdlog/*' '*/Eigen/*' '*/hdf5/*' '*catch.hpp' --output-file coverage.info # filter system-files
-          lcov --list coverage.info # debug info
+          lcov --gcov-tool=gcov-12 --capture --directory build/github-actions-${{ matrix.manager }} --output-file coverage.info
+          lcov --gcov-tool=gcov-12 --remove coverage.info '*/pkg-install*' '*/test-*' '/usr/*' '*include/fmt/*' '*include/spdlog/*' '*/Eigen/*' '*/hdf5/*' '*catch.hpp' --output-file coverage.info # filter system-files
+          lcov --gcov-tool=gcov-12 --list coverage.info # debug info
           # Upload report to CodeCov
           bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
 

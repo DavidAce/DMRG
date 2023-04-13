@@ -392,7 +392,7 @@
         "github-actions"
       ],
       "cacheVariables": {
-        "DMRG_ENABLE_COVERAGE": "TRUE"
+        "COMPILER_ENABLE_COVERAGE": "TRUE"
       }
     },
     {
@@ -459,7 +459,8 @@
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
-        "DMRG_BUILD_TOOLS": "FALSE"
+        "DMRG_BUILD_TOOLS": "FALSE",
+        "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
     }
   ],

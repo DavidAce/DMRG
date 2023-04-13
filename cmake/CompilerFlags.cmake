@@ -39,6 +39,11 @@ if(COMPILER_ENABLE_USAN)
     target_link_libraries(dmrg-flags INTERFACE -fsanitize=undefined,leak,pointer-compare,pointer-subtract,alignment,bounds -fsanitize-undefined-trap-on-error)
 endif()
 
+if(COMPILER_ENABLE_COVERAGE)
+    target_compile_options(dmrg-flags INTERFACE --coverage)
+    target_link_options(dmrg-flags INTERFACE --coverage)
+endif()
+
 ### Enable link time optimization
 if(CMAKE_INTERPROCEDURAL_OPTIMIZATION)
     include(CheckIPOSupported)

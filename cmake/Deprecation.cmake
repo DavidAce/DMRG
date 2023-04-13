@@ -72,3 +72,8 @@ endif()
 if(DMRG_ENABLE_RSVD)
     message(FATAL_ERROR "The option [DMRG_ENABLE_RSVD] has been deprecated.")
 endif()
+
+if(DMRG_ENABLE_COVERAGE)
+    message(FATAL_ERROR "The option [DMRG_ENABLE_COVERAGE] has been deprecated. Replace by: \n"
+            "Use COMPILER_ENABLE_COVERAGE:BOOL=[TRUE|FALSE]")
+endif()
