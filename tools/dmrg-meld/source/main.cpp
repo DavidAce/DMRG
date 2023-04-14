@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
         app.add_option("-b,--srcbase"     , src_base        , "The base directory for MBL simulation results");
         app.add_option("-o,--srcout"      , src_out         , "The name of the source directory where simulation files are found");
         app.add_option("-s,--srcsims"     , src_sims        , "Patterns to simulation directories from where to collect simulation files, e.g. 'lbit19-,lbit20-'")->required();
-        app.add_option("-s,--srsreqs"     , src_reqs        , "Required dataset names in each source file");
+        app.add_option("--srsreqs"        , src_reqs        , "Required dataset names in each source file");
         app.add_flag  ("-f,--finished"    , finished        , "Require that src file has finished");
         app.add_flag  ("-l,--linkonly"    , link_only       , "Link only. Make the main file with external links to all the others");
         app.add_flag  ("-r,--replace"     , replace         , "Replace existing files");
