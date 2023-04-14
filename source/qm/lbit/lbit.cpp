@@ -1324,7 +1324,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         extent7                              = {1, 1, 1, 1, 1, 1, static_cast<long>(ytyp.size())};
         lbitSA.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp.data(), extent7);
 
-        {
+        try{
             auto t_plot = tid::tic_scope("plot");
             auto yavg_log   = num::cast<qm::real>(yavg, lognoinf);
             auto ytyp_log   = num::cast<qm::real>(ytyp, lognoinf);
@@ -1333,6 +1333,8 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
             plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
             plt.enable_legend();
             plt.show();
+        }catch(const std::exception & ex){
+            tools::log->error("AsciiPlotter failed: {}", ex.what());
         }
         auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
         auto mid = static_cast<long>(lbit_corrmap.rows()/2);

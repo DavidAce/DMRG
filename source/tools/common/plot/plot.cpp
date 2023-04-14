@@ -48,18 +48,21 @@ std::vector<double> resample(const std::vector<double> &ydata, size_t newlength)
         auto factor  = static_cast<double>(oldlength) / static_cast<double>(newlength);
 
         for(size_t newindex = 0; newindex < newlength; newindex++) {
-            auto x  = static_cast<double>(newindex) * factor;
-            auto x1 = floor(x);
-            auto x2 = x1 + 1.0;
-            auto y1 = ydata[std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x1)), oldlength - 1)];
-            auto y2 = ydata[std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x2)), oldlength - 1)];
-            auto y  = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
-            newdata[std::min<size_t>(std::max<size_t>(0, newindex), newlength - 1)] = y;
+            auto x       = static_cast<double>(newindex) * factor;
+            auto x1      = floor(x);
+            auto x2      = x1 + 1.0;
+            auto y1      = ydata[std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x1)), oldlength - 1)];
+            auto y2      = ydata[std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x2)), oldlength - 1)];
+            auto y       = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+            auto safeidx = std::min<size_t>(std::max<size_t>(0, newindex), newlength - 1);
+            if(safeidx >= newdata.size())
+                throw std::runtime_error(
+                    fmt::format("safeidx out of bounds: {} >= {} | newlength {} | oldlength {}", safeidx, newdata.size(), newlength, oldlength));
+            newdata.at(safeidx) = y;
         }
 
-        newdata[0]             = ydata[0];
-        newdata[newlength - 1] = ydata[oldlength - 1];
-
+        newdata.front() = ydata.front();
+        newdata.back()  = ydata.back();
         return newdata;
     }
 }
@@ -99,6 +102,8 @@ void AsciiPlotter::addStaticPlot(const std::vector<double> &ydata_, std::string_
 }
 
 void AsciiPlotter::show() {
+    if(xdata.empty()) throw std::runtime_error("AsciiPlotter::show(): xdata is empty");
+
     auto xmin = xdata.front();
     auto xmax = xdata.back();
 
@@ -121,10 +126,6 @@ void AsciiPlotter::show() {
         return res;
     };
     for(const auto &y : ydata_s) {
-        //        auto max_it = std::max_element(y.begin(), y.end());
-        //        auto min_it = std::min_element(y.begin(), y.end());
-        //        if(max_it != y.end()) ymax = std::isnan(ymax) ? *max_it : std::max(ymax, *max_it);
-        //        if(min_it != y.end()) ymin = std::isnan(ymin) ? *min_it : std::min(ymin, *min_it);
         ymax = std::isnan(ymax) ? maxelem(y) : std::max(ymax, maxelem(y));
         ymin = std::isnan(ymin) ? minelem(y) : std::min(ymin, minelem(y));
     }
@@ -137,17 +138,17 @@ void AsciiPlotter::show() {
 
     std::vector<std::string> canvas(height, std::string(width, ' '));
     for(size_t curve = 0; curve < ydata_s.size(); curve++) {
-        auto resampled = resample(ydata_s[curve], width);
+        auto resampled = resample(ydata_s.at(curve), width);
         for(size_t col = 0; col < width; col++) {
-            size_t row       = map_to_idx(resampled[col], ymin, ymax, height);
-            canvas[row][col] = markers_s[curve];
+            size_t row             = map_to_idx(resampled.at(col), ymin, ymax, height);
+            canvas.at(row).at(col) = markers_s.at(curve);
         }
     }
     for(size_t curve = 0; curve < ydata.size(); curve++) {
         auto resampled = resample(ydata[curve], width);
         for(size_t col = 0; col < width; col++) {
-            size_t row       = map_to_idx(resampled[col], ymin, ymax, height);
-            canvas[row][col] = markers[curve];
+            size_t row             = map_to_idx(resampled.at(col), ymin, ymax, height);
+            canvas.at(row).at(col) = markers.at(curve);
         }
     }
 
