@@ -19,7 +19,7 @@
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "find",
         "EIGEN_USE_THREADS": "FALSE",
-        "TBLIS_THREAD_MODEL" : "openmp",
+        "TBLIS_THREAD_MODEL": "openmp",
         "BUILD_SHARED_LIBS": "FALSE",
         "COMPILER_ENABLE_MOLD": "FALSE",
         "COMPILER_PROFILE_BUILD": "FALSE",
@@ -86,7 +86,7 @@
         "VERBOSE": "1"
       }
     },
-        {
+    {
       "name": "flexiblas",
       "hidden": true,
       "cacheVariables": {
@@ -150,6 +150,14 @@
       }
     },
     {
+      "name": "gcc-11",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc-11",
+        "CMAKE_CXX_COMPILER": "g++-11"
+      }
+    },
+    {
       "name": "gcc-12",
       "hidden": true,
       "cacheVariables": {
@@ -206,6 +214,20 @@
       }
     },
     {
+      "name": "release-gcc-11",
+      "displayName": "Release|gcc-11",
+      "hidden": true,
+      "inherits": [
+        "gcc-11",
+        "release",
+        "default"
+      ],
+      "cacheVariables": {
+        "COMPILER_ENABLE_MOLD": "TRUE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
+      }
+    },
+    {
       "name": "release-gcc-12",
       "displayName": "Release|gcc-12",
       "hidden": true,
@@ -251,6 +273,16 @@
         "clang-15",
         "debug",
         "default"
+      ]
+    },
+    {
+      "name": "release-gcc-11-conan-flexiblas-native",
+      "displayName": "Release|gcc-11|conan|flexiblas|native",
+      "inherits": [
+        "native",
+        "flexiblas",
+        "conan",
+        "release-gcc-11"
       ]
     },
     {
@@ -466,6 +498,10 @@
   ],
   "buildPresets": [
     {
+      "name": "release-gcc-11-conan-flexiblas-native",
+      "configurePreset": "release-gcc-11-conan-flexiblas-native"
+    },
+    {
       "name": "release-gcc-12-conan-mkl-native",
       "configurePreset": "release-gcc-12-conan-mkl-native"
     },
@@ -542,6 +578,10 @@
       "output": {
         "verbosity": "extra",
         "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
       }
     },
     {
@@ -551,6 +591,10 @@
       "output": {
         "verbosity": "extra",
         "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
       }
     }
   ]
