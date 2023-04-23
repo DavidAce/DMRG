@@ -297,7 +297,7 @@ int main(int argc, char *argv[]) {
             // Define a new partial hdf5 file to collect the source HDF5 files in this particular h5dir
             tools::h5io::h5_tgt_part_hash = tools::hash::std_hash(h5dir.string());
             tools::h5io::h5_tgt_part_path = h5pp::format("{}/{}.{}{}", tgt_dir.string(), h5pp::fs::path(tgt_path).stem().string(),
-                                                         tools::hash::std_hash(h5dir.string()), h5pp::fs::path(tgt_path).extension().string());
+                                                         tools::h5io::h5_tgt_part_hash, h5pp::fs::path(tgt_path).extension().string());
 
             // Initialize the partial target file for this dir
             auto h5_tgt_part = h5pp::File();
@@ -366,6 +366,7 @@ int main(int argc, char *argv[]) {
             std::vector<h5pp::fs::path> h5files;
             for(const auto &file : h5iter(h5dir)) {
                 if(not file.is_regular_file()) continue;
+                if(file.path().extension() != ".h5") continue;
                 if(file.path().stem().string().find(src_match) == std::string::npos) continue;
                 h5files.emplace_back(file);
             }
@@ -376,10 +377,7 @@ int main(int argc, char *argv[]) {
             for(const auto &src_item : h5files) {
                 auto        t_src_item = tid::tic_scope("src_item");
                 const auto &src_abs    = src_item;
-                if(not h5pp::fs::is_regular_file(src_abs)) continue;
-                if(src_abs.extension() != ".h5") continue;
-
-                auto t_pre = tid::tic_scope("preamble");
+                auto        t_pre      = tid::tic_scope("preamble");
 
                 // Check which source root this belongs to
                 // TODO: What does this do? Expand comment

@@ -48,11 +48,11 @@ struct FileStats {
 };
 
 struct FileId {
-    long seed      = -1;
-    char path[256] = {};
-    char hash[32]  = {};
-    FileId()       = default;
-    FileId(long seed_, std::string_view path_, std::string_view hash_);
+    long   seed      = -1;
+    char   path[512] = {};
+    size_t hash      = {};
+    FileId()         = default;
+    FileId(long seed_, std::string_view path_, size_t hash_);
     [[nodiscard]] std::string string() const;
 };
 

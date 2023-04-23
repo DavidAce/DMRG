@@ -48,13 +48,9 @@ void BufferedTableInfo::flush() {
 
 hsize_t BufferedTableInfo::get_count() { return count; }
 
-FileId::FileId(long seed_, std::string_view path_, std::string_view hash_) : seed(seed_) {
+FileId::FileId(long seed_, std::string_view path_, size_t hash_) : seed(seed_), hash(hash_) {
     strncpy(path, path_.data(), sizeof(path) - 1);
-    strncpy(hash, hash_.data(), sizeof(hash) - 1);
-
-    /* Theses lines are extremely important to make sure we don't get UB */
-    path[sizeof(path) - 1] = '\0';
-    hash[sizeof(hash) - 1] = '\0';
+    path[sizeof(path) - 1] = '\0'; /* This line is important to make sure we don't get UB */
 }
 std::string FileId::string() const { return h5pp::format("path [{}] | seed {} | hash {}", path, seed, hash); }
 
@@ -157,16 +153,14 @@ H5T_FileId::H5T_FileId() { register_table_type(); }
 void H5T_FileId::register_table_type() {
     if(h5_type.valid()) return;
     auto           t_scope  = tid::tic_scope(__FUNCTION__);
-    h5pp::hid::h5t H5T_HASH = H5Tcopy(H5T_C_S1);
     h5pp::hid::h5t H5T_PATH = H5Tcopy(H5T_C_S1);
-    H5Tset_size(H5T_PATH, 256);
-    H5Tset_size(H5T_HASH, 32);
+    H5Tset_size(H5T_PATH, 512);
     // Optionally set the null terminator '\0'
-    H5Tset_strpad(H5T_HASH, H5T_STR_NULLTERM);
+    H5Tset_strpad(H5T_PATH, H5T_STR_NULLTERM);
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(FileId));
     H5Tinsert(h5_type, "seed", HOFFSET(FileId, seed), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "path", HOFFSET(FileId, path), H5T_PATH);
-    H5Tinsert(h5_type, "hash", HOFFSET(FileId, hash), H5T_HASH);
+    H5Tinsert(h5_type, "hash", HOFFSET(FileId, hash), H5T_NATIVE_ULONG);
 }
 
 H5T_SeedId::H5T_SeedId() { register_table_type(); }

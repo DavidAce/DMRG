@@ -224,7 +224,7 @@ namespace tools::h5db {
         auto &oldFileId = fileIdDb.at(filePath);
 
         bool seedMatch = oldFileId.seed == newFileId.seed;
-        bool hashMatch = std::string_view(oldFileId.hash, 32) == std::string_view(newFileId.hash, 32);
+        bool hashMatch = oldFileId.hash == newFileId.hash;
 
         if(seedMatch and hashMatch)
             return FileIdStatus::UPTODATE;
