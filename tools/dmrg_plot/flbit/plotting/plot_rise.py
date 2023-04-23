@@ -139,15 +139,16 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
+            if axtitle := get_default(meta, 'axtitle'):
+                if dbval and isinstance(axtitle, bool):
+                    axtitle = get_title(dbval, subspec, width=16)
+                ax.set_title(axtitle,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
+
+
             if dbval:
-                ax.set_title(get_title(dbval, subspec, width=16),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
                 ax.set_xlabel(get_tex(dbval, xaxspec))
-        if not prb_style and dbval:
-            f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+        if figspec_title := get_figspec_title(meta, dbval, figspec):
+            f['fig'].suptitle(figspec_title)
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''

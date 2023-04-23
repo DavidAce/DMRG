@@ -306,16 +306,23 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
         raise TypeError("write_statistics_table2: meta should point to a h5py.Dataset. Got: ", nodemeta)
     point_node = tablenode.parent
     point_path = point_node.name
+    statgroup = '{}/{}'.format(point_path, tablename)
+
+    if '__save_data__' in tablereqs and tablename in tablereqs['__save_data__']:
+        with h5py.File(tgt,'a') as h5f:
+            h5f.create_dataset(f'{statgroup}/data', data=tablenode,
+                               chunks=(1000,), compression='gzip', compression_opts=9)
+
     # open h5 file for appending
     with tb.File(tgt, 'a') as h5f:
         t_pre_start = timer()
         # We now have a source table. Let's get the final dtype
         dt = get_dtype(tablenode=tablenode, req_columns=tablereqs[tablename])
         t_pre = t_pre + timer() - t_pre_start
-        statgroup = '{}/{}'.format(point_path, tablename)
 
         statrows = {}
         num = len(tablenode)
+
         for statkey in stattables.keys():
             t_crt_start = timer()
             statpath = '{}/{}/{}'.format(point_path, tablename, statkey)
@@ -357,6 +364,7 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
 
             for stat_tgt, stat_src in zip(statrows.values(), stats):
                 stat_tgt['it'][col] = stat_src
+
 
         t_stat = t_stat + (timer() - t_stat_start)
         t_app_start = timer()
@@ -617,7 +625,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(100, datasize),
+                        chunkshape=(1000, datasize),
                         expectedrows=itermax)
                     nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
                     # print('saving column L_{} from table {}... done'.format(statemid, tablename))
@@ -631,7 +639,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(100, datasize),
+                        chunkshape=(1000, datasize),
                         expectedrows=itermax)
                     if(datasize != np.shape(nodecache[statgroup][dataname])[1]):
                         raise AssertionError("Unexpected data size when saving column for\n"

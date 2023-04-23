@@ -103,21 +103,23 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
 
                         if not idx in f['axes_used']:
                             f['axes_used'].append(idx)
+
             if dbval:
                 ax.set_xlabel(get_tex(dbval, xaxspec))
-                if meta.get('axestitle', True):
-                    ax.set_title(get_title(dbval, subspec, width=16),
-                                 horizontalalignment='left', x=0.05,
-                                 fontstretch="ultra-condensed",
-                                 )
-        if not prb_style and dbval:
-            f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+
+            if axtitle := get_default(meta, 'axtitle'):
+                if dbval and isinstance(axtitle, bool):
+                    axtitle = get_title(dbval, subspec)
+                ax.set_title(axtitle,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
+
+        if figspec_title := get_figspec_title(meta, dbval, figspec):
+            f['fig'].suptitle(figspec_title)
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
         suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
-        f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
+        f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                             '-'.join(map(str, figvals)),
                                                             '-'.join(map(str, get_keys(db, subspec))),
                                                             suffix)

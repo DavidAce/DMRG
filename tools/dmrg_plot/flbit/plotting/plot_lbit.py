@@ -64,7 +64,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                                 ))  # Fit to get characteristic length-scale
 
                     if meta.get('xnormalize') == True:
-                        xdata = xdata/Ldata
+                        xdata = xdata/(Ldata-1)
 
                     for i, (y, e) in enumerate(zip(lbavg.full.T, lbavg.stdv.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
@@ -123,15 +123,11 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
             if not idx in f['axes_used']:
                 f['axes_used'].append(idx)
 
-            if dbval:
-                ax.set_title(get_title(dbval, subspec),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
+            if subspec_title := get_subspec_title(meta,dbval,subspec):
+                ax.set_title(subspec_title,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
-        if not prb_style and dbval:
-            f['fig'].suptitle('{}\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+        if figspec_title := get_figspec_title(meta,dbval,figspec):
+            f['fig'].suptitle(figspec_title)
 
         f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),

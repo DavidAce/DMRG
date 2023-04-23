@@ -86,8 +86,8 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     dbval = db['dsets'][datanode.name]
                     ydata, colnames = get_table_data(datanode['avg'], meta['colname'], 'f8')
                     edata, colnames = get_table_data(datanode['ste'], meta['colname'], 'f8')
-                    tdata = datanode['avg']['physical_time'][()]
                     sdata, _ = get_table_data(datanode['avg'], 'entanglement_entropy', 'f8')
+                    tdata = datanode['avg']['physical_time'][()]
                     ndata = datanode['avg']['num'][()]
 
                     if meta.get('use_configurational_entropy'):
@@ -178,12 +178,10 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
-            if dbval:
-                ax.set_title(get_title(dbval, subspec, width=16),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
+            if axtitle := get_default(meta, 'axtitle'):
+                if dbval and isinstance(axtitle, bool):
+                    axtitle = get_title(dbval, subspec, width=16)
+                ax.set_title(axtitle,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
             ax.set_xlabel("$\\langle \\langle  S_E(L/2) \\rangle  \\rangle/S_\mathrm{Page}$")
 
@@ -192,8 +190,8 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         if f['ymax']:
             f['ymax'] = 1.1 * f['ymax']
 
-        if not prb_style and dbval:
-            f['fig'].suptitle('{} vs $S_E$\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+        if figspec_title := get_figspec_title(meta, dbval, figspec):
+            f['fig'].suptitle(figspec_title)
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''

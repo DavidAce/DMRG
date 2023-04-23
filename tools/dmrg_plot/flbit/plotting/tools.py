@@ -59,9 +59,24 @@ def get_uniform_palette_names(num):
 
 
 def get_colored_lstyles(db, linspec, default_palette, filter=None):
-    linprod = list(
-        product(
-            *get_vals(db, linspec, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
+    linprod = list(product(*get_vals(db, linspec, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
+    lstyles = [None] * len(linprod)
+
+    if isinstance(default_palette, list):
+        linlist = [get_vals(db=db, keyfmt=lval, filter=filter) for lval in linspec]
+        linlens = [len(llist) for llist in linlist]
+        if len(linspec) == 2 and all([ll > 1 for ll in linlens]):
+            # The number of palettes == size of the first linspec.
+            # The number of colors in each palette == the size of the second linspec
+            palette_prod = []
+            for pidx in range(linlens[0]):
+                # Skip the first color that is usually too dark or bright
+                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=linlens[1]+1)[1:] )
+            return palette_prod, lstyles
+        else:
+            default_palette = default_palette[0]
+
+
     palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     lstyles = [None] * len(linprod)
     if len(linspec) == 2:
@@ -77,6 +92,28 @@ def get_colored_lstyles(db, linspec, default_palette, filter=None):
 
     return palette, lstyles
 
+def get_default(d, key, defkey='default'):
+    val = d.get(key, d.get(defkey).get(key))
+    return None if val is False else val
+
+def get_subspec_title(meta, dbval, subspec):
+    if subspec_title := get_default(meta, 'subspec_title'):
+        if isinstance(subspec_title, bool) and dbval:
+            return get_title(dbval, subspec)
+        else:
+            return subspec_title
+    return None
+def get_figspec_title(meta, dbval, figspec):
+    titlename = get_default(meta,'titlename')
+    titlespec = get_default(meta, 'figspec_title')
+    if titlespec is True and dbval is not None:
+        titlespec = get_title(dbval, figspec)
+    title = '{}{}{}'.format(
+        titlename if isinstance(titlename, str) else '',
+        '\n' if isinstance(titlename, str) and isinstance(titlespec, str) else '',
+        titlespec if isinstance(titlespec, str) else ''
+        )
+    return title if title != '' else None
 
 def match_datanodes(db, meta, specs, vals):
     nodes = set()
@@ -548,10 +585,9 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin1 = 1.0 / J1max
     tmax1 = 1.0 / J1min
 
-    r2max = np.min([r, int((L))])  # Maximum interaction range, max(|i-j|)
-    Jmin2 = w2 * np.exp(
-        - r2max / (4.0 * x))  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-    Jmax2 = w2 * np.exp(- 1.0 / x)  # Order of magnitude of the largest 2-body terms (nearest neighbor)
+    r2max = np.min([r, int(L/2)])  # Maximum interaction range, max(|i-j|)
+    Jmin2 = w2 * np.exp(- r2max / (2.0 * x))  # Size of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmax2 = w2 * np.exp(- 1.0 / x)  # Size of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
 
@@ -783,7 +819,7 @@ def get_fig_meta(numplots: int, meta: dict):
         'nrows': None,
         'ncols': None,
         'figsize': meta.get('figsize'),
-        'box_aspect': meta.get('box_aspect'),
+        'box_aspect': meta.get('box_aspect', meta.get('default').get('box_aspect')),
         'crows': 1,  # Common row put at the bottom of all subplots
         'ccols': 1,  # Common col put at the right of all subplots
         'irows': 2,  # We make a 2x2 grid where 0,0 is the plot, and 0,1 and 1,0 are legends
@@ -831,10 +867,11 @@ def get_fig_meta(numplots: int, meta: dict):
         'ylabel': meta.get('ylabel'),
         'axes_used': [],
         'legends': [],
-        'legendoutside': meta.get('legendoutside'),
-        'legendcollect': meta.get('legendcollect'),
+        'legendoutside': get_default(meta, 'legendoutside'),
+        'legendcollect': get_default(meta, 'legendcollect'),
         'legendlocation': meta.get('legendlocation'),
         'legendtitle': meta.get('legendtitle'),
+        'figlegend': meta.get('figlegend'),
     }
     logger.info('Generated f dict: \n {}'.format(f))
     # Initialize a figure. The size is taken from the stylesheet
@@ -883,10 +920,9 @@ def get_fig_meta(numplots: int, meta: dict):
         go = f['go'][ir, ic]
         logger.info('Setting up outer gridspec: row {} col {}'.format(ir, ic))
         f['gi'].append(go.subgridspec(nrows=f['irows'], ncols=f['icols'], width_ratios=f['iwr'], height_ratios=f['ihr'],
-                                      wspace=0.02, hspace=0.02))
+                                      wspace=0.00, hspace=0.00))
 
         gi = f['gi'][-1]
-
         # Setup axis sharing
         sharex = None
         sharey = None
@@ -1102,12 +1138,14 @@ def add_legend5(fmeta):
     outside = fmeta.get('legendoutside')  # Put legend inside or outside each subplot
     collect = fmeta.get('legendcollect')  # Collect equal columns into a single legend outside
     location = fmeta.get('legendlocation')
+    figlegend = fmeta.get('figlegend')
     legend_ax = 'lr' if outside else 'ax'
     legend_eq = 'lc' if collect else legend_ax
     legend_nq = legend_ax
     legend_loc = rcParams['legend.loc'] if outside else (location if location is not None else 'best')
-    loc_nq = 'upper left' if outside else (location if location is not None else 'best')
-    loc_eq = 'center' if collect else loc_nq
+    loc_nq = 'center left' if outside else (location if location is not None else 'best')
+    loc_eq = 'center left' if collect else loc_nq
+    anchor = (0.0,0.5) if outside else None
 
     if legend_eq == legend_nq:
         # If legends all go together anyway, we may as well put them together again
@@ -1149,14 +1187,24 @@ def add_legend5(fmeta):
         xmin, xmax = fmeta['ax'][iax].get_xlim()
         ymin, ymax = fmeta['ax'][iax].get_ylim()
         titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
-                                            zorder=0)
+                                            zorder=0
+                                            )
         formatted_labels = get_formatted_columns(columns)
         legendtitle = fmeta.get('legendtitle')
         if iax_tgt is not None:
             iax = iax_tgt  # Put legends on common axis
-        lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
-                                          title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
-                                          loc=loc_eq, prop=dict(stretch="ultra-condensed"))
+        if figlegend:
+            lg = fmeta['fig'].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                              title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
+                                              loc=loc_eq,
+                                              prop=dict(stretch="ultra-condensed"))
+        else:
+            print(f'setting legend on {legend_eq=} {iax=}')
+            lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                              title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
+                                              loc=loc_eq,
+                                              bbox_to_anchor=anchor,
+                                              prop=dict(stretch="ultra-condensed"))
         # lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
         if collect:
             break
@@ -1261,7 +1309,7 @@ def save_figure(figs):
             print('Saving figure: {}'.format(f['filename']))
             f['fig'].savefig('{}.pdf'.format(f['filename']), format='pdf')
             f['fig'].savefig('{}.png'.format(f['filename']), format='png')
-            f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
+            # f['fig'].savefig('{}.svg'.format(f['filename']), format='svg')
             # f['fig'].savefig('{}.pgf'.format(f['filename']), format='pgf')
 
             with open('{}.git'.format(f['filename']), 'w') as gitfile:

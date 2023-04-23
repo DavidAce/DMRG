@@ -63,8 +63,13 @@ axes.titley             : 0.95    # position title (axes relative units).  None 
 axes.titlepad           : 0.00    # pad between axes and title in points
 
 
+# NOTE:
+# If using box_aspect=1 or aspect_equal to make square plots, then
+# matplotlib will introduce strange gaps between the subplot grids.
+# To avoid this, the figsize ratio should also be 1, in this case.
+
 #figure.figsize          : 7, 4 # Two subplots side by side
-figure.figsize           : 5, 4 # Single plot
+figure.figsize           : 4, 4 # Single plot
 #figure.figsize          : 7.5, 6 # Large single plot
 #figure.figsize          : 10, 8 # More plots
 #figure.figsize          : 2.53125, 3.00 # 75% width

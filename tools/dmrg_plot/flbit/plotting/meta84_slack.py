@@ -7,11 +7,19 @@ from pathlib import Path
 # mplstyle = '../common/stylesheets/prb.mplstyle'
 mplstyle = '../common/stylesheets/slack.mplstyle'
 prb = 'prb' in mplstyle
-legendoutside = False
-legendcollect = False
+
 
 
 def get_meta(plotdir):
+
+    default = {
+        'box_aspect': 1,
+        'subspec_title': False,
+        'figspec_title': False,
+        'legendoutside' : False,
+        'legendcollect' : False
+    }
+
     meta = {
         'common': {
             'include': {
@@ -57,6 +65,8 @@ def get_meta(plotdir):
         },
 
         'ent': {
+            'default' : default,
+            'axtitle': False,
             'groupname': 'measurements',
             'colname': 'entanglement_entropy',
             'normpage': False,
@@ -74,13 +84,15 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            
+            
             'legendlocation': 'lower right',
         },
         'num1': {
+            'default' : default,
+            'axtitle': False,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -101,13 +113,15 @@ def get_meta(plotdir):
             'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num','bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
         'num2': {
+            'default' : default,
+            'axtitle': False,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -134,13 +148,15 @@ def get_meta(plotdir):
             'timeloglevel': 2,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num','bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
         'numH1': {  # Hartley number entropy
+            'default' : default,
+            'axtitle': False,
             'groupname': 'measurements',
             'colname': 'hartley_number_entropy',
             'normpage': False,
@@ -156,12 +172,13 @@ def get_meta(plotdir):
             'fitloglogwindow': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
         },
         'numH2': {  # Hartley number entropy
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'hartley_number_entropy',
             'normpage': False,
@@ -177,12 +194,13 @@ def get_meta(plotdir):
             'fitloglogwindow': True,
             'timeloglevel': 2,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
         },
         'numa': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -199,12 +217,13 @@ def get_meta(plotdir):
             'plotsatapproach': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower left',
         },
         'numHa': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'hartley_number_entropy',
             'normpage': False,
@@ -221,12 +240,13 @@ def get_meta(plotdir):
             'plotsatapproach': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower left',
         },
         'nument1': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': ['number_entropy', 'entanglement_entropy'],
             'normpage': False,
@@ -251,11 +271,12 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            
+            
             'legendlocation': 'upper left',
         },
         'nument2': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': ['number_entropy', 'entanglement_entropy'],
             'normpage': False,
@@ -278,15 +299,16 @@ def get_meta(plotdir):
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
             'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            
+            
             'legendlocation': 'lower right',
         },
 
         'chi': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': ['bond_mid'],
-            'titlename': 'Bond Dimension',
+            'titlename': 'Midchain Bond Dimension',
             'ylabel': '$\langle\chi\\rangle$',
             'plotprefix': 'chi',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
@@ -294,12 +316,13 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['x', 'num', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'best',
         },
         'tsim': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'algorithm_time',
             'titlename': 'Simulation Time',
@@ -313,11 +336,12 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['num'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            
+            
         },
         'titr': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'algorithm_time',
             'titlename': 'Iteration Time',
@@ -332,11 +356,10 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['num'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
         },
         'trn': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'truncation_error',
             'normpage': False,
@@ -360,12 +383,11 @@ def get_meta(plotdir):
             'markloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['x', 'w', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['w', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'best',
         },
         'lbit-avg': {
+            'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
@@ -375,7 +397,6 @@ def get_meta(plotdir):
                 # 'u': [16],
             },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
-            'box_aspect': 1,
             'ylabel': '$\log_{10} \langle \langle O_{ij}\\rangle\\rangle_\mathrm{arithmetic}$ ',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
@@ -392,11 +413,11 @@ def get_meta(plotdir):
             # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [] if prb else ['num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [] if prb else [],  # Choose 'num', 'bmax','tsim'
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
-            'legendlocation': (0.48, 0.58) if prb else 'lower left',
+            'legendoutside': True,
+            'legendcollect': False,
+            'legendlocation': (0.48, 0.58) if prb else 'center left',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
             'lbit-site': [0, 'mid', 'last'],
@@ -413,9 +434,9 @@ def get_meta(plotdir):
                 # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
                 'legendtitle': '$\\xi_\\tau$',
             },
-
         },
         'lbit-typ': {
+            'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$ (geometric avg)',
@@ -425,7 +446,6 @@ def get_meta(plotdir):
                 # 'u': [16],
             },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
-            'box_aspect': 1,
             # 'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$ ',
             'ylabel': '$\log_{10} \langle \langle O_{ij}\\rangle \\rangle_\mathrm{geometric}$ ',
             'xlabel': "$j$",
@@ -442,13 +462,11 @@ def get_meta(plotdir):
             # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [] if prb else ['num'],  # Choose 'num', 'bmax','tsim'
-            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta'],
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
-            'legendlocation': (0.48, 0.58) if prb else 'lower left',
-            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
-            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
+            'legendcols': [] if prb else [],  # Choose 'num', 'bmax','tsim'
+            'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
+            'legendlocation': (0.48, 0.58) if prb else 'center left',
+            'legendoutside': True,
+            'legendcollect': False,
             'lbit-site': [0, 'mid', 'last'],
             'lbit-mean': 'geometric',
             'fit-beta': True,
@@ -464,20 +482,9 @@ def get_meta(plotdir):
                 'legendtitle': '$\\xi_\\tau$',
             },
         },
-        # 'decay': {
-        #     'groupname': 'lbits',
-        #     'dsetname': 'corravg',
-        #     'titlename': 'Characteristic length scale of l-bits',
-        #     'ylabel': '$\langle\langle \\xi \\rangle\\rangle$',
-        #     'plotprefix': 'lbit',
-        #     'plotdir': Path(plotdir, Path(mplstyle).stem),
-        #     'mplstyle': mplstyle,
-        #     'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
-        #     'legendoutside': legendoutside,
-        #     'legendcollect': legendcollect,
-        #     'legendlocation': 'best',
-        # },
+
         'cls-avg': {
+            'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             'titlename': '$\ell$-bit localization length (arithmetic avg.)',
@@ -486,14 +493,13 @@ def get_meta(plotdir):
                 # 'f': [0.2, 0.3, 0.4, 0.6, 0.8, 1.0],
                 # 'u': [4, 8, 12, 16],
             },
-            'box_aspect': 1,
             'ylabel': '$\langle\langle \\xi_\\tau \\rangle\\rangle$',
             # 'yticks': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4] if prb else None,
             # 'xticks': [16,32,48,64,80],
-            'plotprefix': 'cls',
+            'plotprefix': 'cls-avg',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'legendcols': [] if prb else ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [] if prb else ['f', 'x'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': True,
             'legendcollect': True,
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
@@ -504,9 +510,9 @@ def get_meta(plotdir):
             'fit-skip': 0 if prb else 0,
             # 'legendlocation': 'best',
             'legendlocation': 'best',  # "(0.52, 0.05),
-            'axestitle': False,
         },
         'cls-typ': {
+            'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             'titlename': '$\ell$-bit localization length (geometric avg.)',
@@ -515,14 +521,13 @@ def get_meta(plotdir):
                 # 'f': [0.2, 0.3, 0.4, 0.6, 0.8, 1.0],
                 #'u': [4, 8, 12, 16],
             },
-            'box_aspect': 1,
             'ylabel': '$\langle\langle \\xi_\\tau \\rangle\\rangle$',
             # 'yticks': [0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4] if prb else None,
             # 'xticks': [16,32,48,64,80],
-            'plotprefix': 'cls',
+            'plotprefix': 'cls-typ',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'legendcols': [] if prb else ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [] if prb else ['f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': True,
             'legendcollect': True,
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
@@ -533,9 +538,9 @@ def get_meta(plotdir):
             'fit-skip': 0 if prb else 0,
             # 'legendlocation': 'best',
             'legendlocation': 'best',  # "(0.52, 0.05),
-            'axestitle': False,
         },
         'dist-num': {
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'number_entropy',
             'normpage': False,
@@ -570,6 +575,7 @@ def get_meta(plotdir):
             'legendlocation': 'lower left',
         },
         'divg-ent': {  # Distribution of infinite time averaged entropy
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'entanglement_entropy',
             'normpage': False,
@@ -580,31 +586,27 @@ def get_meta(plotdir):
             # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
-            'xmin': 0.0,
-            'xmax': 1.5,
+            # 'xmin': 0.0,
+            # 'xmax': 1.5,
             'tidx': 'window',  # Time indices for which to plot the distribution
-            'bins': 40,
+            'bins': 60,
             'xlabel': '$S_E^\infty$',
             'density': True,
             'plotprefix': 'SE',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            # 'ymin': 0.41,
+            'ymin': 1e-3,
             # 'ymax': 0.45,
             # 'xmin': 1,
-            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'findloglogwindow': True,
-            'markloglogwindow': True,
-            'fitloglogwindow': True,
-            # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'x', 'w', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',
         },
         'divg-num': {  # Distribution of infinite time averaged entropy
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'number_entropy',
             'normpage': False,
@@ -620,33 +622,31 @@ def get_meta(plotdir):
             # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
-            # 'xmin': 0.0,
-            # 'xmax': 1.2,
+            'xmin': 0.0,
+            'xmax': 1.2,
             'ymin': 1e-3,
+            'ymax': 1e+1,
             'tidx': 'window',  # Time indices for which to plot the distribution
             'bins': 60,
             'xlabel': '$S_N^\infty$',
             'density': True,
+            'marklog2':True,
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
-            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'findloglogwindow': True,
-            'markloglogwindow': True,
-            'fitloglogwindow': True,
-            # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num','bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',
         },
         'dist-mem': {  # Distribution of infinite time averaged entropy
+            'default' : default,
             'groupname': 'mem_usage',
             'dsetname': 'data',
             'colname' : 'hwm',
@@ -682,13 +682,14 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'upper right',
         },
         'tavg-ent': {
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'entanglement_entropy',
             'normpage': False,
@@ -713,12 +714,13 @@ def get_meta(plotdir):
             # 'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',
         },
         'tavg-num': {
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'number_entropy',
             'normpage': False,
@@ -745,12 +747,13 @@ def get_meta(plotdir):
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['f', 'x'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower right',
         },
         'dist-tsim': {
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'algorithm_time',
             'normpage': False,
@@ -763,15 +766,15 @@ def get_meta(plotdir):
             'sharex': 'all',
             'sharey': 'all',
             'tidx': [-1],  # Time indices for which to plot the distribution
-            'bins': 50,
+            'bins': 60,
             'normalize': 60,
             'xlabel': '$t_\mathrm{sim}$',
             'density': True,
-            'plotprefix': 'SN',
+            'plotprefix': 'tsim',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            # 'ymin': 0.41,
-            # 'ymax': 0.45,
-            # 'xmin': 1,
+            'ymin': 1e-4,
+            'xmin': 5e-2,
+            'xmax': 1e+3,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
             'markloglogwindow': False,
@@ -787,14 +790,15 @@ def get_meta(plotdir):
             'legendlocation': 'upper right',
         },
         'dist-chi': {
+            'default' : default,
             'groupname': 'measurements',
             'dsetname': 'bond_mid',
             'normpage': False,
-            'titlename': 'Bond dimension',
+            'titlename': 'Midchain Bond dimension ($t\\rightarrow\infty)$',
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(\chi)$',
             # 'yscale': 'log',
-            # 'xscale': 'log',
+            'xscale': 'log',
             # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
@@ -802,7 +806,7 @@ def get_meta(plotdir):
             'bins': 20,
             'xlabel': '$\chi$',
             'density': True,
-            'plotprefix': 'SN',
+            'plotprefix': 'bond',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
             # 'ymax': 0.45,
@@ -822,6 +826,7 @@ def get_meta(plotdir):
             'legendlocation': 'upper right',
         },
         'linearFit-num2': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -842,13 +847,14 @@ def get_meta(plotdir):
             'timeloglevel': 2,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['L', 'f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'center left',
             # 'legendlocation': (0.01, 0.65),
         },
         'rise-num2': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
@@ -871,13 +877,14 @@ def get_meta(plotdir):
             'timeloglevel': 2,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'center right',
             # 'legendlocation': (0.01, 0.65),
         },
         'num-svnt': {
+            'default' : default,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': True,
@@ -904,13 +911,14 @@ def get_meta(plotdir):
             'timeloglevel': 0,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'num','bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
         'crossup': {
+            'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             'titlename': '$\ell$-bit half-chain crossover',
@@ -920,7 +928,6 @@ def get_meta(plotdir):
                 # 'u': [16],
             },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
-            'box_aspect': 1,
             'ylabel': '$X_\ell$',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             # 'xlabel': "$j$",
@@ -936,10 +943,10 @@ def get_meta(plotdir):
             # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [] if prb else ['num'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [] if prb else [],  # Choose 'num', 'bmax','tsim'
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
-            'legendoutside': legendoutside,
-            'legendcollect': legendcollect,
+            
+            
             'legendlocation': 'lower right',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
@@ -959,5 +966,7 @@ def get_meta(plotdir):
         }
 
     }
+
+
 
     return meta

@@ -1,3 +1,5 @@
+import h5py
+
 from dmrg_plot.common.io.h5ops import *
 from plotting.filter import *
 import itertools
@@ -8,186 +10,101 @@ def get_bond_info(statenode, datanode):
     bmax_key = None
     bavg = None
     bmax = None
-    try:
-        bavg_key = next(k for k in ['bond_mid'] if k in datanode['avg'].dtype.fields.keys())
-        bavg = np.max(datanode['avg'][bavg_key][()])
-    except:
-        pass
-    try:
-        bmax_key = next(k for k in ['bond_lim'] if k in statenode['tables']['status']['max'].dtype.fields.keys())
-        bmax = np.max(statenode['tables']['status']['max'][bmax_key][()])
-    except:
-        pass
+
+    if maxnode := statenode.get('tables').get('status').get('max'):
+        if 'bond_lim' in maxnode.dtype.fields.keys():
+            bmax_key = 'bond_lim'
+            bmax = np.max(maxnode[bmax_key][()])
+
+    if avgnode := datanode.get('avg'):
+        if 'bond_mid' in avgnode.dtype.fields.keys():
+            bavg_key = 'bond_mid'
+            bavg = np.max(avgnode[bavg_key][()])
+    if bavg_key is None:
+        if mmntnode := datanode.parent.get('measurements'):
+            return get_bond_info(statenode, mmntnode)
+        if mmntnode := statenode.get('cronos').get('measurements'):
+            return get_bond_info(statenode, mmntnode)
+
+
+    if bavg is None:
+        raise LookupError(f'Could not find bavg in\n{statenode=}\nor\n{datanode=}')
+    if bmax is None:
+        raise LookupError(f'Could not find bmax in\n{statenode=}\nor\n{datanode=}')
     return bavg_key, bavg, bmax_key, bmax
 
+def get_num_info(statenode, datanode):
+    if avgnode := statenode.get('tables').get('status').get('avg'):
+        return np.min(avgnode['num'][()])
+    if isinstance(datanode, h5py.Dataset):
+        if 'num' in datanode.dtype.fields:
+            num = datanode['num']
+            return np.min(num[()])
+        if 'num' in datanode.parent:
+            return get_num_info(statenode, datanode.parent)
 
-def load_time_database(h5_src, dsetname, algo_filter=None, state_filter=None, point_filter=None, debug=False):
-    # Gather data
-    print("Loading time database:", dsetname)
-    db = {
-        'max': {'all': None, 'avg': None, 'mid': None, 'mvg': None},
-        'min': {'all': None, 'avg': None, 'mid': None, 'mvg': None},
-        'num': {'min': None, 'max': None},
-        'keys': {
-            'L': [], 'J': [], 'w': [], 'b': [], 'f': [], 'u': [], 'r': [],
-            'algo': [],
-            'state': [],
-            'point': [],
-            'data': [],
-        },
-        'vals': {
-            'L': [], 'J': [], 'w': [], 'b': [], 'f': [], 'u': [], 'r': []
-        },
-        'dsets': {},
-    }
-    for Lkey, Lnode in sorted(h5_src.items(), key=natural_items):
-        for Jkey, Jnode in sorted(Lnode.items(), key=natural_items):
-            for wkey, wnode in sorted(Jnode.items(), key=natural_items):
-                for bkey, bnode in sorted(wnode.items(), key=natural_items):
-                    for fkey, fnode in sorted(bnode.items(), key=natural_items):
-                        for ukey, unode in sorted(fnode.items(), key=natural_items):
-                            for rkey, rnode in sorted(unode.items(), key=natural_items):
-                                for algokey, algopath, algonode in h5py_group_iterator(node=rnode, keypattern=algo_filter, dep=1):
-                                    for statekey, statepath, statenode in h5py_group_iterator(node=algonode, keypattern=state_filter, dep=1):
-                                        for pointkey, pointpath, pointnode in h5py_group_iterator(node=statenode,
-                                                                                                  keypattern=point_filter,
-                                                                                                  dep=1):
-                                            # if not Jkey == "J[+0.00_+0.00_+0.00]":
-                                            #     continue
-                                            # if not wkey == "w[+1.00_+1.00_+0.10]":
-                                            #     continue
-                                            # if not fkey == "f_0.30":
-                                            #     continue
-                                            # if not bkey == "b_5.00":
-                                            #     continue
-                                            # if not ukey == "u_3":
-                                            #     continue
-                                            # if not rkey in ["r_8"]:
-                                            #     continue
-                                            # if not Lkey in ["L_16", "L_18", "L_20", "L_22", "L_24"]:
-                                            #     continue
+    elif isinstance(datanode, h5py.Group):
+        if 'num' in datanode and isinstance(datanode['num'], h5py.Dataset):
+            num = datanode['num'][()]
+            if np.isscalar(num):
+                return num
+            else:
+                return np.min(num[()])
+        if avgnode := datanode.get('avg'):
+            if 'num' in avgnode.dtype.fields:
+                return np.min(avgnode['num'][()])
+        if maxnode := datanode.get('max'):
+            if 'num' in maxnode.dtype.fields:
+                return np.min(maxnode['num'][()])
+        if data := datanode.get('data'):
+            if len(np.shape(data)) == 1:
+                return np.shape(data)[0]
+            else:
+                return np.shape(data)[1]
+    raise LookupError(f'Failed to find num in {datanode=}')
 
-                                            if debug:
-                                                print("Starting gather: Finding ", dsetname)
-                                            for datakey, datapath, datanode in h5py_node_iterator(node=pointnode,
-                                                                                                  keypattern=dsetname,
-                                                                                                  dep=6,
-                                                                                                  nodeType=h5py.Group):
-                                                if datanode.name in db['dsets']:
-                                                    continue
-                                                if debug:
-                                                    print(Lkey, Jkey, wkey, bkey, fkey, ukey, algokey, statekey,
-                                                          pointkey, datakey)
+def get_algorithm_time(statenode, datanode):
+    if avgnode := statenode.get('tables').get('status').get('avg'):
+        return np.mean(avgnode['algo_time'][()])/ 60
+    if isinstance(datanode, h5py.Dataset):
+        print(f'Looking for algorithm time in dataset: {datanode.name}')
+        if 'algo_time' in datanode.dtype.fields:
+            return np.max(datanode['algo_time'][()]) / 60
+        elif 'algorithm_time' in datanode.dtype.fields:
+            return np.max(datanode['algorithm_time'][()]) / 60
+        elif 'status' in datanode.parent:
+            return get_algorithm_time(statenode,datanode.parent['status'])
+        elif 'status' in datanode.parent.parent:
+            return get_algorithm_time(statenode,datanode.parent.parent['status'])
+        elif 'measurements' in datanode.parent:
+            return get_algorithm_time(statenode,datanode.parent['measurements'])
+        elif 'measurements' in datanode.parent.parent:
+            return get_algorithm_time(statenode,datanode.parent.parent['measurements'])
+        elif 'avg' in datanode.parent:
+            return get_algorithm_time(statenode,datanode.parent['avg'])
 
-                                                L = rnode.attrs['model_size']
-                                                J = [rnode.attrs['J1_mean'], rnode.attrs['J2_mean'],
-                                                     rnode.attrs['J3_mean']]
-                                                w = [rnode.attrs['J1_wdth'], rnode.attrs['J2_wdth'],
-                                                     rnode.attrs['J3_wdth']]
-                                                b = rnode.attrs['J2_base']
-                                                f = rnode.attrs['u_fmix']
-                                                u = rnode.attrs['u_depth']
-                                                r = rnode.attrs['J2_span']
+    elif isinstance(datanode, h5py.Group):
+        # Check some typical datasets inside this group
+        print(f'Looking for algorithm time in group: {datanode.name}')
+        for link in ['avg', 'measurements', 'data', 'status']:
+            if link in datanode and isinstance(datanode[link], h5py.Dataset):
+                if 'algo_time' in datanode[link].dtype.fields:
+                    return get_algorithm_time(statenode,datanode[link])
+                elif 'algorithm_time' in datanode[link].dtype.fields:
+                    return get_algorithm_time(statenode,datanode[link])
+            elif link in datanode and isinstance(datanode[link], h5py.Group):
+                print(f' Looking for algorithm time in group ({link}): {datanode[link].name}')
+                if 'avg' in datanode[link] and isinstance(datanode[link]['avg'], h5py.Dataset):
+                    if 'algo_time' in datanode[link]['avg'].dtype.fields:
+                        return get_algorithm_time(statenode,datanode['avg'])
+                    if 'algorithm_time' in datanode[link]['avg'].dtype.fields:
+                        return get_algorithm_time(statenode,datanode[link]['avg'])
+            elif link in datanode.parent:
+                return get_algorithm_time(statenode,datanode.parent[link])
 
-                                                if debug:
-                                                    print("Adding keys")
-                                                db['keys']['L'].append(Lkey) if not Lkey in db['keys']['L'] else \
-                                                db['keys']['L']
-                                                db['keys']['J'].append(Jkey) if not Jkey in db['keys']['J'] else \
-                                                db['keys']['J']
-                                                db['keys']['w'].append(wkey) if not wkey in db['keys']['w'] else \
-                                                db['keys']['w']
-                                                db['keys']['b'].append(bkey) if not bkey in db['keys']['b'] else \
-                                                db['keys']['b']
-                                                db['keys']['f'].append(fkey) if not fkey in db['keys']['f'] else \
-                                                db['keys']['f']
-                                                db['keys']['u'].append(ukey) if not ukey in db['keys']['u'] else \
-                                                db['keys']['u']
-                                                db['keys']['r'].append(rkey) if not rkey in db['keys']['r'] else db['keys']['r']
-                                                db['keys']['algo'].append(algokey) if not algokey in db['keys']['algo'] else db['keys']['algo']
-                                                db['keys']['state'].append(statekey) if not statekey in db['keys']['state'] else db['keys']['state']
-                                                db['keys']['point'].append(pointkey) if not pointkey in db['keys']['point'] else db['keys']['point']
-                                                db['keys']['data'].append(datakey) if not datakey in db['keys']['data'] else db['keys']['data']
-                                                if debug:
-                                                    print("Adding vals")
-                                                db['vals']['L'].append(L) if not L in db['vals']['L'] else db['vals']['L']
-                                                db['vals']['J'].append(J) if not J in db['vals']['J'] else db['vals']['J']
-                                                db['vals']['w'].append(w) if not w in db['vals']['w'] else db['vals']['w']
-                                                db['vals']['b'].append(b) if not b in db['vals']['b'] else db['vals']['b']
-                                                db['vals']['f'].append(f) if not f in db['vals']['f'] else db['vals']['f']
-                                                db['vals']['u'].append(u) if not u in db['vals']['u'] else db['vals']['u']
-                                                db['vals']['r'].append(r) if not r in db['vals']['r'] else db['vals']['r']
+    raise LookupError(f'Failed to find algorithm time in {datanode.name=}')
 
-                                                if debug:
-                                                    print("Adding extrema")
-                                                # Iterate through all the time points to find extrema
-                                                timesteps = len(datanode.keys())
-                                                for tkey, tnode in itertools.islice(datanode.items(), 0, None, int(np.max([50, timesteps]) / 20)):
-                                                    max = tnode['max'][()]
-                                                    min = tnode['min'][()]
-                                                    avg = tnode['avg'][()]
-                                                    num = tnode['num'][()]
-                                                    avgshape = np.shape(avg)
-                                                    datashape = np.shape(tnode['data'][()])
-                                                    midx = int(avgshape[0] / 2) if avgshape or len(avgshape) > 1 else ()
-                                                    # db['max']['all'] = np.max([db['max']['all'], np.max(max)])   if db['max']['all'] else np.max(max)
-                                                    # db['max']['avg'] = np.max([db['max']['avg'], np.max(avg)])   if db['max']['avg'] else np.max(avg)
-                                                    # db['min']['all'] = np.min([db['min']['all'], np.min(min)])   if db['min']['all'] else np.min(min)
-                                                    # db['min']['avg'] = np.min([db['min']['avg'], np.min(avg)])   if db['min']['avg'] else np.min(avg)
-                                                    # db['max']['mid'] = np.max([db['max']['mid'], max[midx]])     if db['max']['mid'] else max[midx]
-                                                    # db['max']['mvg'] = np.max([db['max']['mvg'], avg[midx]])     if db['max']['mvg'] else avg[midx]
-                                                    # db['min']['mid'] = np.min([db['min']['all'], min[midx]])     if db['min']['all'] else min[midx]
-                                                    # db['min']['mvg'] = np.min([db['min']['mvg'], avg[midx]])     if db['min']['mvg'] else avg[midx]
-                                                    db['num']['min'] = np.min([db['num']['min'], num]) if db['num']['min'] else np.min(num)
-                                                    db['num']['max'] = np.max([db['num']['max'], num]) if db['num']['max'] else np.min(num)
 
-                                                if debug:
-                                                    print("Adding node specific data")
-                                                db['dsets'][datanode.name] = {}
-                                                db['dsets'][datanode.name]['keys'] = {'L': Lkey, 'J': Jkey,
-                                                                                      'w': wkey, 'b': bkey, 'f': fkey, 'u': ukey,
-                                                                                      'algo': algokey, 'state': statekey, 'point': pointkey,
-                                                                                      'data': datakey}
-
-                                                db['dsets'][datanode.name]['L'] = L
-                                                db['dsets'][datanode.name]['J'] = J
-                                                db['dsets'][datanode.name]['w'] = w
-                                                db['dsets'][datanode.name]['b'] = b
-                                                db['dsets'][datanode.name]['f'] = f
-                                                db['dsets'][datanode.name]['u'] = u
-                                                db['dsets'][datanode.name]['r'] = r
-                                                db['dsets'][datanode.name]['Lnode'] = Lnode
-                                                db['dsets'][datanode.name]['Jnode'] = Jnode
-                                                db['dsets'][datanode.name]['wnode'] = wnode
-                                                db['dsets'][datanode.name]['bnode'] = bnode
-                                                db['dsets'][datanode.name]['fnode'] = fnode
-                                                db['dsets'][datanode.name]['unode'] = unode
-                                                db['dsets'][datanode.name]['statenode'] = statenode
-                                                db['dsets'][datanode.name]['pointnode'] = pointnode
-                                                # db['dsets'][datanode.name]['mmntnode'] = pointnode['measurements']
-                                                db['dsets'][datanode.name]['datanode'] = datanode
-                                                db['dsets'][datanode.name]['avgshape'] = avgshape
-                                                db['dsets'][datanode.name]['datashape'] = datashape
-                                                db['dsets'][datanode.name]['midx'] = midx
-
-                                                if debug:
-                                                    print("Finished gather")
-
-    # Sort the keys so that we can iterate through them in order
-    # sortL = np.argsort(np.asarray(db['vals']['L']))
-    # sortb = np.argsort(np.asarray(db['vals']['b']))
-    # sortf = np.argsort(np.asarray(db['vals']['f']))
-    # sortu = np.argsort(np.asarray(db['vals']['u']))
-    #
-    # db['vals']['L']   = np.asarray(db['vals']['L'])[sortL]
-    # db['keys']['L']   = np.asarray(db['keys']['L'])[sortL]
-    # db['vals']['b']  = np.asarray(db['vals']['b'])[sortb]
-    # db['keys']['b']  = np.asarray(db['keys']['b'])[sortb]
-    # db['vals']['f']  = np.asarray(db['vals']['f'])[sortf]
-    # db['keys']['f']  = np.asarray(db['keys']['f'])[sortf]
-    # db['vals']['u']  = np.asarray(db['vals']['u'])[sortu]
-    # db['keys']['u']  = np.asarray(db['keys']['u'])[sortu]
-    return db
 
 
 def match_path(path, match):
@@ -247,6 +164,9 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         },
         'dsets': {},
     }
+    grouplist = list(set([metaval['groupname'] for metakey, metaval in meta.items() if 'groupname' in metaval]))
+    dsetlist = list(set([metaval['dsetname'] for metakey, metaval in meta.items() if 'dsetname' in metaval]))
+
     if debug:
         print('Looking for group "fLBIT" (depth:20) in {}'.format(h5_src.filename))
     for algokey, algopath, algonode in h5py_node_iterator(node=h5_src, keypattern='fLBIT', dep=20,
@@ -308,247 +228,346 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
 
         if debug:
             print(' Looking for datasets in meta: {}'.format(meta.keys()))
-        for metakey, descr in meta.items():
-            if 'include' in metakey or 'common' in metakey:
+
+        for datakey, datapath, datanode in h5py_node_iterator(node=modelnode,
+                                                              keypattern=dsetlist,
+                                                              excludeKeys=db['dsets'].keys(),
+                                                              dep=4):
+            # The dataset found could either be an actual dataset,
+            # or a group containing multiple datasets with statistics about a table column.
+            # The group would coontain datasets such as "num", "avg", "ste" etc.
+            #
+            if datanode.name in db['dsets']:
                 continue
-            if not 'dsetname' in descr:
-                continue
-            if debug:
-                print('  Looking for dataset {} (depth:4) in {}'.format(descr['dsetname'], modelnode.name))
-            for datakey, datapath, datanode in h5py_node_iterator(node=modelnode,
-                                                                  keypattern=descr['dsetname'],
-                                                                  excludeKeys=db['dsets'].keys(),
-                                                                  dep=4):
-                # The dataset found could either be an actual dataset,
-                # or a group containing multiple datasets with statistics about a table column.
-                # The group would coontain datasets such as "num", "avg", "ste" etc.
-                #
-                if datanode.name in db['dsets']:
-                    continue
-                print("   Loading dset database version 3: {}".format(datapath))
-                num = -1
-                avgnode = datanode
-                if isinstance(datanode, h5py.Group):
-                    num = np.max(datanode['num'][()])
-                    avgnode = datanode['avg']
-                if isinstance(datanode, h5py.Dataset):
-                    num = np.shape(datanode[()])[0] # We usually set sample number on axis 0
+            print(f'Loading database version 3: {datapath=}')
+            num = -1
+            avgnode = datanode
+            if isinstance(datanode, h5py.Group):
+                num = np.max(datanode['num'][()])
+                avgnode = datanode['avg']
+            if isinstance(datanode, h5py.Dataset):
+                num = np.shape(datanode[()])[0] # We usually set sample number on axis 0
 
-                for dname in [datanode.name]:
-                    db['dsets'][dname] = {}
-                    db['dsets'][dname]['version'] = db['version']
-                    db['dsets'][dname]['vals'] = {}
-                    db['dsets'][dname]['vals']['L'] = L
-                    db['dsets'][dname]['vals']['J'] = J
-                    db['dsets'][dname]['vals']['J1'] = J[0]
-                    db['dsets'][dname]['vals']['J2'] = J[1]
-                    db['dsets'][dname]['vals']['J3'] = J[2]
-                    db['dsets'][dname]['vals']['w'] = w
-                    db['dsets'][dname]['vals']['w1'] = w[0]
-                    db['dsets'][dname]['vals']['w2'] = w[1]
-                    db['dsets'][dname]['vals']['w3'] = w[2]
-                    db['dsets'][dname]['vals']['x'] = x
-                    db['dsets'][dname]['vals']['r'] = rval
-                    db['dsets'][dname]['vals']['u'] = u
-                    db['dsets'][dname]['vals']['f'] = f
-                    db['dsets'][dname]['vals']['tstd'] = tstd
-                    db['dsets'][dname]['vals']['cstd'] = cstd
-                    db['dsets'][dname]['vals']['tgw8'] = tgw8
-                    db['dsets'][dname]['vals']['cgw8'] = cgw8
-                    db['dsets'][dname]['vals']['ubond'] = ubond
-                    db['dsets'][dname]['vals']['num'] = num
+            for dname in [datanode.name]:
+                db['dsets'][dname] = {}
+                db['dsets'][dname]['version'] = db['version']
+                db['dsets'][dname]['vals'] = {}
+                db['dsets'][dname]['vals']['L'] = L
+                db['dsets'][dname]['vals']['J'] = J
+                db['dsets'][dname]['vals']['J1'] = J[0]
+                db['dsets'][dname]['vals']['J2'] = J[1]
+                db['dsets'][dname]['vals']['J3'] = J[2]
+                db['dsets'][dname]['vals']['w'] = w
+                db['dsets'][dname]['vals']['w1'] = w[0]
+                db['dsets'][dname]['vals']['w2'] = w[1]
+                db['dsets'][dname]['vals']['w3'] = w[2]
+                db['dsets'][dname]['vals']['x'] = x
+                db['dsets'][dname]['vals']['r'] = rval
+                db['dsets'][dname]['vals']['u'] = u
+                db['dsets'][dname]['vals']['f'] = f
+                db['dsets'][dname]['vals']['tstd'] = tstd
+                db['dsets'][dname]['vals']['cstd'] = cstd
+                db['dsets'][dname]['vals']['tgw8'] = tgw8
+                db['dsets'][dname]['vals']['cgw8'] = cgw8
+                db['dsets'][dname]['vals']['ubond'] = ubond
+                db['dsets'][dname]['vals']['num'] = num
 
-                    db['dsets'][dname]['node'] = {}
-                    db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
-                    db['dsets'][dname]['node']['J'] = h5_src[match_path(modelnode.name, 'J[')]
-                    db['dsets'][dname]['node']['x'] = h5_src[match_path(modelnode.name, 'x')]
-                    db['dsets'][dname]['node']['r'] = h5_src[match_path(modelnode.name, 'r')]
-                    db['dsets'][dname]['node']['f'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['u'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['tstd'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
-                    db['dsets'][dname]['node']['model'] = modelnode
-                    db['dsets'][dname]['node']['data'] = datanode
-                    db['dsets'][dname]['node']['avg'] = avgnode
+                db['dsets'][dname]['node'] = {}
+                db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
+                db['dsets'][dname]['node']['J'] = h5_src[match_path(modelnode.name, 'J[')]
+                db['dsets'][dname]['node']['x'] = h5_src[match_path(modelnode.name, 'x')]
+                db['dsets'][dname]['node']['r'] = h5_src[match_path(modelnode.name, 'r')]
+                db['dsets'][dname]['node']['f'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['u'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['tstd'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['model'] = modelnode
+                db['dsets'][dname]['node']['data'] = datanode
+                db['dsets'][dname]['node']['avg'] = avgnode
 
-                    db['dsets'][dname]['tex'] = {
-                        'keys': db['tex'],
-                        'vals': {
-                            'L': '{}'.format(L),
-                            'J': '{}'.format(J),
-                            'J1': '{}'.format(J[0]),
-                            'J2': '{}'.format(J[1]),
-                            'J3': '{}'.format(J[2]),
-                            'w': '{}'.format(w),
-                            'w1': '{}'.format(w[0]),
-                            'w2': '{}'.format(w[1]),
-                            'w3': '{}'.format(w[2]),
-                            'x': '{:.2f}'.format(x),
-                            'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
-                            'u': '{}'.format(u),
-                            'f': '{:.2f}'.format(f),
-                            'tstd': '{:.2f}'.format(tstd),
-                            'cstd': '{:.2f}'.format(cstd),
-                            'tgw8': '{}'.format(tgw8),
-                            'cgw8': '{}'.format(cgw8),
-                            'ubond': '{}'.format(ubond),
-                            'num': '{}'.format(num),
-                            'algo': algokey,
-                        },
-                        'eqs': {
-                            'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
-                            'J': '$J:{}$'.format(J),
-                            'J1': '$J_1:{}$'.format(J[0]),
-                            'J2': '$J_2:{}$'.format(J[1]),
-                            'J3': '$J_3:{}$'.format(J[2]),
-                            'w': '$w:{}$'.format(w),
-                            'w1': '$w_1:{}$'.format(w[0]),
-                            'w2': '$w_2:{}$'.format(w[1]),
-                            'w3': '$w_3:{}$'.format(w[2]),
-                            'x': '${}{}{:>.2f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
-                            'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
-                            'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
-                            'f': '${}{}{:>.2f}$'.format(db['tex']['f'].strip('$'), '{:}', f),
-                        },
-                    }
+                db['dsets'][dname]['tex'] = {
+                    'keys': db['tex'],
+                    'vals': {
+                        'L': '{}'.format(L),
+                        'J': '{}'.format(J),
+                        'J1': '{}'.format(J[0]),
+                        'J2': '{}'.format(J[1]),
+                        'J3': '{}'.format(J[2]),
+                        'w': '{}'.format(w),
+                        'w1': '{}'.format(w[0]),
+                        'w2': '{}'.format(w[1]),
+                        'w3': '{}'.format(w[2]),
+                        'x': '{:.2f}'.format(x),
+                        'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
+                        'u': '{}'.format(u),
+                        'f': '{:.2f}'.format(f),
+                        'tstd': '{:.2f}'.format(tstd),
+                        'cstd': '{:.2f}'.format(cstd),
+                        'tgw8': '{}'.format(tgw8),
+                        'cgw8': '{}'.format(cgw8),
+                        'ubond': '{}'.format(ubond),
+                        'num': '{}'.format(num),
+                        'algo': algokey,
+                    },
+                    'eqs': {
+                        'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
+                        'J': '$J:{}$'.format(J),
+                        'J1': '$J_1:{}$'.format(J[0]),
+                        'J2': '$J_2:{}$'.format(J[1]),
+                        'J3': '$J_3:{}$'.format(J[2]),
+                        'w': '$w:{}$'.format(w),
+                        'w1': '$w_1:{}$'.format(w[0]),
+                        'w2': '$w_2:{}$'.format(w[1]),
+                        'w3': '$w_3:{}$'.format(w[2]),
+                        'x': '${}{}{:>.2f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
+                        'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
+                        'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
+                        'f': '${}{}{:>.2f}$'.format(db['tex']['f'].strip('$'), '{:}', f),
+                    },
+                }
         for statekey, statepath, statenode in h5py_group_iterator(node=algonode, keypattern=state_filter, dep=1):
-            for cronokey, cronopath, crononode in h5py_group_iterator(node=statenode, keypattern='cronos', dep=1):
-
-                for metakey, descr in meta.items():
-                    if metakey == 'include' or metakey == 'common':
+            for groupkey, grouppath, groupnode in h5py_group_iterator(node=statenode, keypattern=['tables','cronos'], dep=1):
+                for datakey, datapath, datanode in h5py_group_iterator(node=groupnode, keypattern=grouplist, dep=6):
+                    if datanode.name in db['dsets']:
                         continue
-                    objname = None
-                    if 'colname' in descr:  # Consider only tables
-                        objname = descr['colname']
-                    elif 'dsetname' in descr:  # ... or datasets
-                        objname = descr['dsetname']
-                    else:
-                        continue
-                    print("Loading time database version 3: {}".format(cronopath))
+                    print(f'Loading database version 3: {datapath=}')
 
-                    for datakey, datapath, datanode in h5py_node_iterator(node=crononode,
-                                                                          keypattern=descr['groupname'],
-                                                                          dep=6,
-                                                                          nodeType=h5py.Group):
-                        if datanode.name in db['dsets']:
-                            continue
-                        num = 0
-                        tsim = 0.0
-                        bavg_key = 0.0
-                        if 'colname' in descr:  # We have a table!
-                            num = np.max(datanode['max']['num'][()])
-                            tsim = np.max(datanode['avg']['algorithm_time'][()]) / 60
-                            bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, datanode)
-                        else:
-                            mmntnode = datanode.parent['measurements']
-                            num = np.shape(datanode['data'])[1]
-                            tsim = np.max(mmntnode['avg']['algorithm_time'][()]) / 60
-                            bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, mmntnode)
+                    num = get_num_info(statenode,datanode)
+                    tsim = get_algorithm_time(statenode,datanode)
+                    bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, datanode)
 
-                        if debug:
-                            print("Adding node data")
-                        for dname in [datanode.name]:
-                            db['dsets'][dname] = {}
-                            db['dsets'][dname]['version'] = db['version']
-                            db['dsets'][dname]['vals'] = {}
-                            db['dsets'][dname]['vals']['L'] = L
-                            db['dsets'][dname]['vals']['J'] = J
-                            db['dsets'][dname]['vals']['J1'] = J[0]
-                            db['dsets'][dname]['vals']['J2'] = J[1]
-                            db['dsets'][dname]['vals']['J3'] = J[2]
-                            db['dsets'][dname]['vals']['w'] = w
-                            db['dsets'][dname]['vals']['w1'] = w[0]
-                            db['dsets'][dname]['vals']['w2'] = w[1]
-                            db['dsets'][dname]['vals']['w3'] = w[2]
-                            db['dsets'][dname]['vals']['x'] = x
-                            db['dsets'][dname]['vals']['r'] = rval
-                            db['dsets'][dname]['vals']['num'] = num
-                            db['dsets'][dname]['vals']['u'] = u
-                            db['dsets'][dname]['vals']['f'] = f
-                            db['dsets'][dname]['vals']['tstd'] = tstd
-                            db['dsets'][dname]['vals']['cstd'] = cstd
-                            db['dsets'][dname]['vals']['tgw8'] = tgw8
-                            db['dsets'][dname]['vals']['cgw8'] = cgw8
-                            db['dsets'][dname]['vals']['ubond'] = ubond
-                            db['dsets'][dname]['vals']['tsim'] = tsim
-                            db['dsets'][dname]['vals']['bavg'] = bavg
-                            db['dsets'][dname]['vals']['bmax'] = bmax
 
-                            db['dsets'][dname]['node'] = {}
-                            db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
-                            db['dsets'][dname]['node']['J'] = h5_src[match_path(modelnode.name, 'J[')]
-                            db['dsets'][dname]['node']['x'] = h5_src[match_path(modelnode.name, 'x')]
-                            db['dsets'][dname]['node']['r'] = h5_src[match_path(modelnode.name, 'r')]
-                            db['dsets'][dname]['node']['f'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['u'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['tstd'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
-                            db['dsets'][dname]['node']['model'] = modelnode
-                            db['dsets'][dname]['node']['data'] = datanode
-                            db['dsets'][dname]['node']['avg'] = datanode['avg']
-                            db['dsets'][dname]['node']['state'] = statenode
-                            db['dsets'][dname]['node']['table'] = statenode.get('tables')
-                            db['dsets'][dname]['node']['crono'] = crononode
+                    if debug:
+                        print("Adding node data")
+                    for dname in [datanode.name]:
+                        db['dsets'][dname] = {}
+                        db['dsets'][dname]['version'] = db['version']
+                        db['dsets'][dname]['vals'] = {}
+                        db['dsets'][dname]['vals']['L'] = L
+                        db['dsets'][dname]['vals']['J'] = J
+                        db['dsets'][dname]['vals']['J1'] = J[0]
+                        db['dsets'][dname]['vals']['J2'] = J[1]
+                        db['dsets'][dname]['vals']['J3'] = J[2]
+                        db['dsets'][dname]['vals']['w'] = w
+                        db['dsets'][dname]['vals']['w1'] = w[0]
+                        db['dsets'][dname]['vals']['w2'] = w[1]
+                        db['dsets'][dname]['vals']['w3'] = w[2]
+                        db['dsets'][dname]['vals']['x'] = x
+                        db['dsets'][dname]['vals']['r'] = rval
+                        db['dsets'][dname]['vals']['num'] = num
+                        db['dsets'][dname]['vals']['u'] = u
+                        db['dsets'][dname]['vals']['f'] = f
+                        db['dsets'][dname]['vals']['tstd'] = tstd
+                        db['dsets'][dname]['vals']['cstd'] = cstd
+                        db['dsets'][dname]['vals']['tgw8'] = tgw8
+                        db['dsets'][dname]['vals']['cgw8'] = cgw8
+                        db['dsets'][dname]['vals']['ubond'] = ubond
+                        db['dsets'][dname]['vals']['tsim'] = tsim
+                        db['dsets'][dname]['vals']['bavg'] = bavg
+                        db['dsets'][dname]['vals']['bmax'] = bmax
 
-                            db['dsets'][dname]['tex'] = {
-                                'keys': db['tex'],
-                                'vals': {
-                                    'L': '{}'.format(L),
-                                    'J': '{}'.format(J),
-                                    'J1': '{}'.format(J[0]),
-                                    'J2': '{}'.format(J[1]),
-                                    'J3': '{}'.format(J[2]),
-                                    'w': '{}'.format(w),
-                                    'w1': '{}'.format(w[0]),
-                                    'w2': '{}'.format(w[1]),
-                                    'w3': '{}'.format(w[2]),
-                                    'x': '{:.2f}'.format(x),
-                                    'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
-                                    'u': '{}'.format(u),
-                                    'f': '{:.2f}'.format(f),
-                                    'tstd': '{:.2f}'.format(tstd),
-                                    'cstd': '{:.2f}'.format(cstd),
-                                    'tgw8': '{}'.format(tgw8),
-                                    'cgw8': '{}'.format(cgw8),
-                                    'ubond': '{}'.format(ubond),
-                                    'num': '{}'.format(num),
-                                    'tsim': '{:>.1f}m'.format(tsim),
-                                    'bavg': '{}'.format(bavg),
-                                    'bmax': '{}'.format(bmax),
-                                    'algo': algokey,
-                                    'state': statekey,
-                                    'crono': cronokey,
-                                    'data': datakey,
-                                },
-                                'eqs': {
-                                    'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
-                                    'J': '$J:{}$'.format(J),
-                                    'J1': '$J:{}$'.format(J[0]),
-                                    'J2': '$J:{}$'.format(J[1]),
-                                    'J3': '$J:{}$'.format(J[2]),
-                                    'w': '$w:{}$'.format(w),
-                                    'w1': '$w:{}$'.format(w[0]),
-                                    'w2': '$w:{}$'.format(w[1]),
-                                    'w3': '$w:{}$'.format(w[2]),
-                                    'x': '${}{}{:>.4f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
-                                    'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
-                                    'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
-                                    'f': '${}{}{:>.4f}$'.format(db['tex']['f'].strip('$'), '{:}', f),
-                                    'tstd': '${}{}{:>.2f}$'.format(db['tex']['tstd'].strip('$'), '{:}', tstd),
-                                    'cstd': '${}{}{:>.2f}$'.format(db['tex']['cstd'].strip('$'), '{:}', cstd),
-                                    'tgw8': '{}{}{}'.format(db['tex']['tgw8'].strip('$'), '{:}', tgw8),
-                                    'cgw8': '{}{}{}'.format(db['tex']['cgw8'].strip('$'), '{:}', cgw8),
-                                    'ubond': '{}{}{}'.format(db['tex']['ubond'].strip('$'), '{:}', ubond),
-                                },
-                            }
-                        if debug:
-                            print("Finished gather")
+                        db['dsets'][dname]['node'] = {}
+                        db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
+                        db['dsets'][dname]['node']['J'] = h5_src[match_path(modelnode.name, 'J[')]
+                        db['dsets'][dname]['node']['x'] = h5_src[match_path(modelnode.name, 'x')]
+                        db['dsets'][dname]['node']['r'] = h5_src[match_path(modelnode.name, 'r')]
+                        db['dsets'][dname]['node']['f'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['u'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['tstd'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['model'] = modelnode
+                        db['dsets'][dname]['node']['data'] = datanode
+                        db['dsets'][dname]['node']['avg'] = datanode['avg']
+                        db['dsets'][dname]['node']['state'] = statenode
+                        db['dsets'][dname]['node']['table'] = statenode.get('tables')
+                        db['dsets'][dname]['node']['crono'] = statenode.get('cronos')
+
+                        db['dsets'][dname]['tex'] = {
+                            'keys': db['tex'],
+                            'vals': {
+                                'L': '{}'.format(L),
+                                'J': '{}'.format(J),
+                                'J1': '{}'.format(J[0]),
+                                'J2': '{}'.format(J[1]),
+                                'J3': '{}'.format(J[2]),
+                                'w': '{}'.format(w),
+                                'w1': '{}'.format(w[0]),
+                                'w2': '{}'.format(w[1]),
+                                'w3': '{}'.format(w[2]),
+                                'x': '{:.2f}'.format(x),
+                                'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
+                                'u': '{}'.format(u),
+                                'f': '{:.2f}'.format(f),
+                                'tstd': '{:.2f}'.format(tstd),
+                                'cstd': '{:.2f}'.format(cstd),
+                                'tgw8': '{}'.format(tgw8),
+                                'cgw8': '{}'.format(cgw8),
+                                'ubond': '{}'.format(ubond),
+                                'num': '{}'.format(num),
+                                'tsim': '{:>.1f}m'.format(tsim),
+                                'bavg': '{}'.format(bavg),
+                                'bmax': '{}'.format(bmax),
+                                'algo': algokey,
+                                'state': statekey,
+                                'table': groupkey if 'tables' in groupkey else None,
+                                'crono': groupkey if 'cronos' in groupkey else None,
+                                'data': datakey,
+                            },
+                            'eqs': {
+                                'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
+                                'J': '$J:{}$'.format(J),
+                                'J1': '$J:{}$'.format(J[0]),
+                                'J2': '$J:{}$'.format(J[1]),
+                                'J3': '$J:{}$'.format(J[2]),
+                                'w': '$w:{}$'.format(w),
+                                'w1': '$w:{}$'.format(w[0]),
+                                'w2': '$w:{}$'.format(w[1]),
+                                'w3': '$w:{}$'.format(w[2]),
+                                'x': '${}{}{:>.4f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
+                                'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
+                                'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
+                                'f': '${}{}{:>.4f}$'.format(db['tex']['f'].strip('$'), '{:}', f),
+                                'tstd': '${}{}{:>.2f}$'.format(db['tex']['tstd'].strip('$'), '{:}', tstd),
+                                'cstd': '${}{}{:>.2f}$'.format(db['tex']['cstd'].strip('$'), '{:}', cstd),
+                                'tgw8': '{}{}{}'.format(db['tex']['tgw8'].strip('$'), '{:}', tgw8),
+                                'cgw8': '{}{}{}'.format(db['tex']['cgw8'].strip('$'), '{:}', cgw8),
+                                'ubond': '{}{}{}'.format(db['tex']['ubond'].strip('$'), '{:}', ubond),
+                            },
+                        }
+                    if debug:
+                        print("Finished gather")
+
+            # for cronokey, cronopath, crononode in h5py_group_iterator(node=statenode, keypattern='cronos', dep=1):
+            #     # for metakey, descr in meta.items():
+            #     #     if metakey == 'include' or metakey == 'common':
+            #     #         continue
+            #     #     objname = None
+            #     #     if 'colname' in descr:  # Consider only tables
+            #     #         objname = descr['colname']
+            #     #     elif 'dsetname' in descr:  # ... or datasets
+            #     #         objname = descr['dsetname']
+            #     #     else:
+            #     #         continue
+            #     print("Loading crono database version 3: {}".format(cronopath))
+            #
+            #     for datakey, datapath, datanode in h5py_group_iterator(node=crononode,
+            #                                                           keypattern=grouplist,
+            #                                                           dep=6,
+            #                                                           # nodeType=h5py.Group
+            #                                                            ):
+            #         if datanode.name in db['dsets']:
+            #             continue
+            #         num = get_num_info(statenode, datanode)
+            #         tsim = get_algorithm_time(statenode, datanode)
+            #         bavg_key, bavg, bmax_key, bmax = get_bond_info(statenode, datanode)
+            #
+            #         if debug:
+            #             print("Adding node data")
+            #         for dname in [datanode.name]:
+            #             db['dsets'][dname] = {}
+            #             db['dsets'][dname]['version'] = db['version']
+            #             db['dsets'][dname]['vals'] = {}
+            #             db['dsets'][dname]['vals']['L'] = L
+            #             db['dsets'][dname]['vals']['J'] = J
+            #             db['dsets'][dname]['vals']['J1'] = J[0]
+            #             db['dsets'][dname]['vals']['J2'] = J[1]
+            #             db['dsets'][dname]['vals']['J3'] = J[2]
+            #             db['dsets'][dname]['vals']['w'] = w
+            #             db['dsets'][dname]['vals']['w1'] = w[0]
+            #             db['dsets'][dname]['vals']['w2'] = w[1]
+            #             db['dsets'][dname]['vals']['w3'] = w[2]
+            #             db['dsets'][dname]['vals']['x'] = x
+            #             db['dsets'][dname]['vals']['r'] = rval
+            #             db['dsets'][dname]['vals']['num'] = num
+            #             db['dsets'][dname]['vals']['u'] = u
+            #             db['dsets'][dname]['vals']['f'] = f
+            #             db['dsets'][dname]['vals']['tstd'] = tstd
+            #             db['dsets'][dname]['vals']['cstd'] = cstd
+            #             db['dsets'][dname]['vals']['tgw8'] = tgw8
+            #             db['dsets'][dname]['vals']['cgw8'] = cgw8
+            #             db['dsets'][dname]['vals']['ubond'] = ubond
+            #             db['dsets'][dname]['vals']['tsim'] = tsim
+            #             db['dsets'][dname]['vals']['bavg'] = bavg
+            #             db['dsets'][dname]['vals']['bmax'] = bmax
+            #
+            #             db['dsets'][dname]['node'] = {}
+            #             db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
+            #             db['dsets'][dname]['node']['J'] = h5_src[match_path(modelnode.name, 'J[')]
+            #             db['dsets'][dname]['node']['x'] = h5_src[match_path(modelnode.name, 'x')]
+            #             db['dsets'][dname]['node']['r'] = h5_src[match_path(modelnode.name, 'r')]
+            #             db['dsets'][dname]['node']['f'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['u'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['tstd'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
+            #             db['dsets'][dname]['node']['model'] = modelnode
+            #             db['dsets'][dname]['node']['data'] = datanode
+            #             db['dsets'][dname]['node']['avg'] = datanode['avg']
+            #             db['dsets'][dname]['node']['state'] = statenode
+            #             db['dsets'][dname]['node']['table'] = statenode.get('tables')
+            #             db['dsets'][dname]['node']['crono'] = statenode.get('cronos')
+            #
+            #             db['dsets'][dname]['tex'] = {
+            #                 'keys': db['tex'],
+            #                 'vals': {
+            #                     'L': '{}'.format(L),
+            #                     'J': '{}'.format(J),
+            #                     'J1': '{}'.format(J[0]),
+            #                     'J2': '{}'.format(J[1]),
+            #                     'J3': '{}'.format(J[2]),
+            #                     'w': '{}'.format(w),
+            #                     'w1': '{}'.format(w[0]),
+            #                     'w2': '{}'.format(w[1]),
+            #                     'w3': '{}'.format(w[2]),
+            #                     'x': '{:.2f}'.format(x),
+            #                     'r': '$L$' if r == np.iinfo(np.uint64).max else '{}'.format(r),
+            #                     'u': '{}'.format(u),
+            #                     'f': '{:.2f}'.format(f),
+            #                     'tstd': '{:.2f}'.format(tstd),
+            #                     'cstd': '{:.2f}'.format(cstd),
+            #                     'tgw8': '{}'.format(tgw8),
+            #                     'cgw8': '{}'.format(cgw8),
+            #                     'ubond': '{}'.format(ubond),
+            #                     'num': '{}'.format(num),
+            #                     'tsim': '{:>.1f}m'.format(tsim),
+            #                     'bavg': '{}'.format(bavg),
+            #                     'bmax': '{}'.format(bmax),
+            #                     'algo': algokey,
+            #                     'state': statekey,
+            #                     'crono': cronokey,
+            #                     'data': datakey,
+            #                 },
+            #                 'eqs': {
+            #                     'L': '${}{}{}$'.format(db['tex']['L'].strip('$'), '{:}', L),
+            #                     'J': '$J:{}$'.format(J),
+            #                     'J1': '$J:{}$'.format(J[0]),
+            #                     'J2': '$J:{}$'.format(J[1]),
+            #                     'J3': '$J:{}$'.format(J[2]),
+            #                     'w': '$w:{}$'.format(w),
+            #                     'w1': '$w:{}$'.format(w[0]),
+            #                     'w2': '$w:{}$'.format(w[1]),
+            #                     'w3': '$w:{}$'.format(w[2]),
+            #                     'x': '${}{}{:>.4f}$'.format(db['tex']['x'].strip('$'), '{:}', x),
+            #                     'r': '$r = L$' if r == np.iinfo(np.uint64).max else '$r = {}$'.format(r),
+            #                     'u': '${}{}{:>.0f}$'.format(db['tex']['u'].strip('$'), '{:}', u),
+            #                     'f': '${}{}{:>.4f}$'.format(db['tex']['f'].strip('$'), '{:}', f),
+            #                     'tstd': '${}{}{:>.2f}$'.format(db['tex']['tstd'].strip('$'), '{:}', tstd),
+            #                     'cstd': '${}{}{:>.2f}$'.format(db['tex']['cstd'].strip('$'), '{:}', cstd),
+            #                     'tgw8': '{}{}{}'.format(db['tex']['tgw8'].strip('$'), '{:}', tgw8),
+            #                     'cgw8': '{}{}{}'.format(db['tex']['cgw8'].strip('$'), '{:}', cgw8),
+            #                     'ubond': '{}{}{}'.format(db['tex']['ubond'].strip('$'), '{:}', ubond),
+            #                 },
+            #             }
+            #         if debug:
+            #             print("Finished gather")
 
     # Sort the keys so that we can iterate through them in order
     db['vals']['L'] = sorted(db['vals']['L'])
@@ -857,6 +876,173 @@ def load_time_database2(h5_src, meta, algo_filter=None, model_filter=None, state
     # db['keys']['u']  = np.asarray(db['keys']['u'])[sortu]
     return db
 
+def load_time_database(h5_src, dsetname, algo_filter=None, state_filter=None, point_filter=None, debug=False):
+    # Gather data
+    print("Loading time database:", dsetname)
+    db = {
+        'max': {'all': None, 'avg': None, 'mid': None, 'mvg': None},
+        'min': {'all': None, 'avg': None, 'mid': None, 'mvg': None},
+        'num': {'min': None, 'max': None},
+        'keys': {
+            'L': [], 'J': [], 'w': [], 'b': [], 'f': [], 'u': [], 'r': [],
+            'algo': [],
+            'state': [],
+            'point': [],
+            'data': [],
+        },
+        'vals': {
+            'L': [], 'J': [], 'w': [], 'b': [], 'f': [], 'u': [], 'r': []
+        },
+        'dsets': {},
+    }
+    for Lkey, Lnode in sorted(h5_src.items(), key=natural_items):
+        for Jkey, Jnode in sorted(Lnode.items(), key=natural_items):
+            for wkey, wnode in sorted(Jnode.items(), key=natural_items):
+                for bkey, bnode in sorted(wnode.items(), key=natural_items):
+                    for fkey, fnode in sorted(bnode.items(), key=natural_items):
+                        for ukey, unode in sorted(fnode.items(), key=natural_items):
+                            for rkey, rnode in sorted(unode.items(), key=natural_items):
+                                for algokey, algopath, algonode in h5py_group_iterator(node=rnode, keypattern=algo_filter, dep=1):
+                                    for statekey, statepath, statenode in h5py_group_iterator(node=algonode, keypattern=state_filter, dep=1):
+                                        for pointkey, pointpath, pointnode in h5py_group_iterator(node=statenode,
+                                                                                                  keypattern=point_filter,
+                                                                                                  dep=1):
+                                            # if not Jkey == "J[+0.00_+0.00_+0.00]":
+                                            #     continue
+                                            # if not wkey == "w[+1.00_+1.00_+0.10]":
+                                            #     continue
+                                            # if not fkey == "f_0.30":
+                                            #     continue
+                                            # if not bkey == "b_5.00":
+                                            #     continue
+                                            # if not ukey == "u_3":
+                                            #     continue
+                                            # if not rkey in ["r_8"]:
+                                            #     continue
+                                            # if not Lkey in ["L_16", "L_18", "L_20", "L_22", "L_24"]:
+                                            #     continue
+
+                                            if debug:
+                                                print("Starting gather: Finding ", dsetname)
+                                            for datakey, datapath, datanode in h5py_node_iterator(node=pointnode,
+                                                                                                  keypattern=dsetname,
+                                                                                                  dep=6,
+                                                                                                  nodeType=h5py.Group):
+                                                if datanode.name in db['dsets']:
+                                                    continue
+                                                if debug:
+                                                    print(Lkey, Jkey, wkey, bkey, fkey, ukey, algokey, statekey,
+                                                          pointkey, datakey)
+
+                                                L = rnode.attrs['model_size']
+                                                J = [rnode.attrs['J1_mean'], rnode.attrs['J2_mean'],
+                                                     rnode.attrs['J3_mean']]
+                                                w = [rnode.attrs['J1_wdth'], rnode.attrs['J2_wdth'],
+                                                     rnode.attrs['J3_wdth']]
+                                                b = rnode.attrs['J2_base']
+                                                f = rnode.attrs['u_fmix']
+                                                u = rnode.attrs['u_depth']
+                                                r = rnode.attrs['J2_span']
+
+                                                if debug:
+                                                    print("Adding keys")
+                                                db['keys']['L'].append(Lkey) if not Lkey in db['keys']['L'] else \
+                                                db['keys']['L']
+                                                db['keys']['J'].append(Jkey) if not Jkey in db['keys']['J'] else \
+                                                db['keys']['J']
+                                                db['keys']['w'].append(wkey) if not wkey in db['keys']['w'] else \
+                                                db['keys']['w']
+                                                db['keys']['b'].append(bkey) if not bkey in db['keys']['b'] else \
+                                                db['keys']['b']
+                                                db['keys']['f'].append(fkey) if not fkey in db['keys']['f'] else \
+                                                db['keys']['f']
+                                                db['keys']['u'].append(ukey) if not ukey in db['keys']['u'] else \
+                                                db['keys']['u']
+                                                db['keys']['r'].append(rkey) if not rkey in db['keys']['r'] else db['keys']['r']
+                                                db['keys']['algo'].append(algokey) if not algokey in db['keys']['algo'] else db['keys']['algo']
+                                                db['keys']['state'].append(statekey) if not statekey in db['keys']['state'] else db['keys']['state']
+                                                db['keys']['point'].append(pointkey) if not pointkey in db['keys']['point'] else db['keys']['point']
+                                                db['keys']['data'].append(datakey) if not datakey in db['keys']['data'] else db['keys']['data']
+                                                if debug:
+                                                    print("Adding vals")
+                                                db['vals']['L'].append(L) if not L in db['vals']['L'] else db['vals']['L']
+                                                db['vals']['J'].append(J) if not J in db['vals']['J'] else db['vals']['J']
+                                                db['vals']['w'].append(w) if not w in db['vals']['w'] else db['vals']['w']
+                                                db['vals']['b'].append(b) if not b in db['vals']['b'] else db['vals']['b']
+                                                db['vals']['f'].append(f) if not f in db['vals']['f'] else db['vals']['f']
+                                                db['vals']['u'].append(u) if not u in db['vals']['u'] else db['vals']['u']
+                                                db['vals']['r'].append(r) if not r in db['vals']['r'] else db['vals']['r']
+
+                                                if debug:
+                                                    print("Adding extrema")
+                                                # Iterate through all the time points to find extrema
+                                                timesteps = len(datanode.keys())
+                                                for tkey, tnode in itertools.islice(datanode.items(), 0, None, int(np.max([50, timesteps]) / 20)):
+                                                    max = tnode['max'][()]
+                                                    min = tnode['min'][()]
+                                                    avg = tnode['avg'][()]
+                                                    num = tnode['num'][()]
+                                                    avgshape = np.shape(avg)
+                                                    datashape = np.shape(tnode['data'][()])
+                                                    midx = int(avgshape[0] / 2) if avgshape or len(avgshape) > 1 else ()
+                                                    # db['max']['all'] = np.max([db['max']['all'], np.max(max)])   if db['max']['all'] else np.max(max)
+                                                    # db['max']['avg'] = np.max([db['max']['avg'], np.max(avg)])   if db['max']['avg'] else np.max(avg)
+                                                    # db['min']['all'] = np.min([db['min']['all'], np.min(min)])   if db['min']['all'] else np.min(min)
+                                                    # db['min']['avg'] = np.min([db['min']['avg'], np.min(avg)])   if db['min']['avg'] else np.min(avg)
+                                                    # db['max']['mid'] = np.max([db['max']['mid'], max[midx]])     if db['max']['mid'] else max[midx]
+                                                    # db['max']['mvg'] = np.max([db['max']['mvg'], avg[midx]])     if db['max']['mvg'] else avg[midx]
+                                                    # db['min']['mid'] = np.min([db['min']['all'], min[midx]])     if db['min']['all'] else min[midx]
+                                                    # db['min']['mvg'] = np.min([db['min']['mvg'], avg[midx]])     if db['min']['mvg'] else avg[midx]
+                                                    db['num']['min'] = np.min([db['num']['min'], num]) if db['num']['min'] else np.min(num)
+                                                    db['num']['max'] = np.max([db['num']['max'], num]) if db['num']['max'] else np.min(num)
+
+                                                if debug:
+                                                    print("Adding node specific data")
+                                                db['dsets'][datanode.name] = {}
+                                                db['dsets'][datanode.name]['keys'] = {'L': Lkey, 'J': Jkey,
+                                                                                      'w': wkey, 'b': bkey, 'f': fkey, 'u': ukey,
+                                                                                      'algo': algokey, 'state': statekey, 'point': pointkey,
+                                                                                      'data': datakey}
+
+                                                db['dsets'][datanode.name]['L'] = L
+                                                db['dsets'][datanode.name]['J'] = J
+                                                db['dsets'][datanode.name]['w'] = w
+                                                db['dsets'][datanode.name]['b'] = b
+                                                db['dsets'][datanode.name]['f'] = f
+                                                db['dsets'][datanode.name]['u'] = u
+                                                db['dsets'][datanode.name]['r'] = r
+                                                db['dsets'][datanode.name]['Lnode'] = Lnode
+                                                db['dsets'][datanode.name]['Jnode'] = Jnode
+                                                db['dsets'][datanode.name]['wnode'] = wnode
+                                                db['dsets'][datanode.name]['bnode'] = bnode
+                                                db['dsets'][datanode.name]['fnode'] = fnode
+                                                db['dsets'][datanode.name]['unode'] = unode
+                                                db['dsets'][datanode.name]['statenode'] = statenode
+                                                db['dsets'][datanode.name]['pointnode'] = pointnode
+                                                # db['dsets'][datanode.name]['mmntnode'] = pointnode['measurements']
+                                                db['dsets'][datanode.name]['datanode'] = datanode
+                                                db['dsets'][datanode.name]['avgshape'] = avgshape
+                                                db['dsets'][datanode.name]['datashape'] = datashape
+                                                db['dsets'][datanode.name]['midx'] = midx
+
+                                                if debug:
+                                                    print("Finished gather")
+
+    # Sort the keys so that we can iterate through them in order
+    # sortL = np.argsort(np.asarray(db['vals']['L']))
+    # sortb = np.argsort(np.asarray(db['vals']['b']))
+    # sortf = np.argsort(np.asarray(db['vals']['f']))
+    # sortu = np.argsort(np.asarray(db['vals']['u']))
+    #
+    # db['vals']['L']   = np.asarray(db['vals']['L'])[sortL]
+    # db['keys']['L']   = np.asarray(db['keys']['L'])[sortL]
+    # db['vals']['b']  = np.asarray(db['vals']['b'])[sortb]
+    # db['keys']['b']  = np.asarray(db['keys']['b'])[sortb]
+    # db['vals']['f']  = np.asarray(db['vals']['f'])[sortf]
+    # db['keys']['f']  = np.asarray(db['keys']['f'])[sortf]
+    # db['vals']['u']  = np.asarray(db['vals']['u'])[sortu]
+    # db['keys']['u']  = np.asarray(db['keys']['u'])[sortu]
+    return db
 
 def load_database(h5_src, dsetname='', algo_filter='', state_filter='', debug=False):
     # Gather data

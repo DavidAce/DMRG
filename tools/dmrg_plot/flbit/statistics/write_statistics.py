@@ -29,7 +29,7 @@ def write_stats_to_node(data, tgt_node, axis):
     tgt_node.create_dataset(name='q25', data=np.nanpercentile(data, 0.25, axis=axis))
     tgt_node.create_dataset(name='q75', data=np.nanpercentile(data, 0.75, axis=axis))
     tgt_node.create_dataset(name='num', data=num)
-    tgt_node.create_dataset(compression="gzip", compression_opts=9, name='data', data=data)
+    tgt_node.create_dataset(name='data', data=data, compression="gzip", compression_opts=9 )
 
 
 def get_renyi(data, alpha, pn_cutoff=-np.inf):
@@ -144,6 +144,7 @@ def write_statistics(src, tgt, reqs):
     write_statistics_crono4.number_probabilities_path = None
     write_statistics_crono4.hartley_number_entropy_data = None
 
+
     with h5py.File(tgt, 'w') as h5_tgt:
         print('Averaging dsets')
         for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
@@ -154,6 +155,7 @@ def write_statistics(src, tgt, reqs):
     for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20, excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                               nodeType=h5py.Dataset):
         write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
+
 
     with tb.File(tgt, 'a') as h5f:
         print('Averaging cronos v4')

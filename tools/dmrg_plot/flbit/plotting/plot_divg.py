@@ -63,6 +63,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
     for figvals, f in zip(figprod, figs):
         logger.debug('- plotting figs: {}'.format(figvals))
         dbval = None
+        luitz = []
         for idx, (subvals, ax) in enumerate(zip(subprod, f['ax'])):
             popt = None
             pcov = None
@@ -107,57 +108,68 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
                     line, = ax.step(x=bincentres, y=hist, where='mid', label=None, linewidth=1.25,
                                     color=color, path_effects=path_effects)
-                    # line = ax.scatter(x=bincentres, y=hist, label=None,
-                    #                    color=color, path_effects=path_effects)
+
                     for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                         key, fmt = key.split(':') if ':' in key else [key, '']
                         f['legends'][idx][icol]['handle'].append(line)
                         f['legends'][idx][icol]['title'] = db['tex'][key]
                         f['legends'][idx][icol]['label'].append(col)
+                    if 'number' in meta['dsetname'] and dbval is not None:
+                        # Plot Luitz's data
+                        # Let's only do this for the largest system size (16)
+                        # and only after the last plot, so that this legend entry is last
+                        if linvals != linprod[-1]:
+                            # This makes sure that we only do this once, at the last iteration
+                            continue
+                        lenval = 16 # Picks out the largest system size in Luitz's data
+                        lenkey = f"L{lenval}"
+                        with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
+                            graypalette = sns.color_palette('Greys', n_colors=5)[1:-1] # Skip edge colors (too bright and too dark)
+                            for W,color in zip([10.0, 6.0, 4.0], graypalette):
+                                lwpath = f'{lenkey}/W{W}'
+                                if h5ext.get(lwpath) is None:
+                                    continue
+                                if (idx,lwpath) in luitz: # Already plotted on this ax
+                                    continue
+                                luitz.append((idx, lwpath))
+                                hist = h5ext[lwpath]['hist[NE1][100]'][()]
+                                edges = h5ext[lwpath]['binedges[NE1][100]'][()]
+                                bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
+                                line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color=color, alpha=1.0,
+                                                    path_effects=path_effects, linewidth=1.25,
+                                                    zorder=0)
+                                for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                                    key, fmt = key.split(':') if ':' in key else [key, '']
+                                    f['legends'][idx][icol]['handle'].append(line_ext)
+                                    f['legends'][idx][icol]['title'] = db['tex'][key]
+                                    if icol == 0:
+                                        f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:' + f'$L$:${lenval}$,$W$:${W}$' + '}')
+                                        # f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 ' + f'L={lenval},W={W}' + '}')
+                                    else:
+                                        f['legends'][idx][icol]['label'].append('')
 
-            ax.axvline(x=np.log(2), color='black', alpha=0.75)
-            trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
-            ax.text(np.log(2), 0.35, '$\ln 2$', fontsize='small', color='black', alpha=0.75, ha='right',
-                    va='center', rotation='vertical',
-                    transform=trans)
+            if meta.get('marklog2'):
+                ax.axvline(x=np.log(2), color='black', alpha=0.75)
+                trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+                ax.text(np.log(2), 0.35, '$\ln 2$', fontsize='small', color='black', alpha=0.75, ha='right',
+                        va='center', rotation='vertical',
+                        transform=trans)
+
             # ax.axvline(x=np.log(3), color='darkseagreen')
             # ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
             #         transform=trans)
 
-            if 'number' in meta['dsetname'] and not idx in f['axes_used'] and dbval is not None:
-                # Plot Luitz's data
-                with h5py.File('external/raw_EE_NE_CE_distributions_random_XXX_chain.h5', 'r') as h5ext:
-                    lenval = "{}".format(get_vals(db=dbval, keyfmt='L'))
-                    lenkey = f"L{lenval}"
-                    for W,color in zip([10.0, 8.0, 6.0, 4.0], ['lightgray', 'darkgray', 'gray', 'dimgray']):
-                        if h5ext.get(f'{lenkey}/W{W}') is None:
-                            continue
-                        hist = h5ext[f'{lenkey}/W{W}']['hist[NE1][100]'][()]
-                        edges = h5ext[f'{lenkey}/W{W}']['binedges[NE1][100]'][()]
-                        bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
-                        line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color=color, alpha=1.0,
-                                            zorder=0)
-                        for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                            key, fmt = key.split(':') if ':' in key else [key, '']
-                            f['legends'][idx][icol]['handle'].append(line_ext)
-                            f['legends'][idx][icol]['title'] = db['tex'][key]
-                            if icol == 0:
-                                f['legends'][idx][icol]['label'].append(
-                                    '\makebox[3ex][l]{PRB:102.100202 ' + f'L={lenval},W={W}' + '}')
-                            else:
-                                f['legends'][idx][icol]['label'].append('')
+
             if not idx in f['axes_used']:
                 f['axes_used'].append(idx)
 
-            if dbval:
-                ax.set_title(get_title(dbval, subspec),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
+            if axtitle := get_default(meta, 'axtitle'):
+                if isinstance(axtitle, bool):
+                    axtitle = get_title(dbval, subspec)
+                ax.set_title(axtitle,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
-        if not prb_style and dbval:
-            f['fig'].suptitle('{} distribution\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+        if figspec_title := get_figspec_title(meta, dbval, figspec):
+            f['fig'].suptitle(figspec_title)
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''

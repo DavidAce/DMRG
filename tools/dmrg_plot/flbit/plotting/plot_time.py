@@ -60,6 +60,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
     figprod = list(product(*get_vals(db=db, keyfmt=figspec, filter=meta.get('filter'))))  # All combinations of figspecs values
     subprod = list(product(*get_vals(db=db, keyfmt=subspec, filter=meta.get('filter'))))  # All combinations of subspecs values
     linprod = list(product(*get_vals(db=db, keyfmt=linspec, filter=meta.get('filter'))))  # All combinations of linspecs values
+
     # dirprod = list(product(db['keys']['algo'], db['keys']['state'], db['keys']['crono']))
     numfigs = len(figprod)
     numsubs = len(subprod)
@@ -76,6 +77,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             # for dirvals in dirprod:
             # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
+            print(palette)
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting lins: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
@@ -253,12 +255,10 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
                     if not idx in f['axes_used']:
                         f['axes_used'].append(idx)
-            if dbval:
-                ax.set_title(get_title(dbval, subspec, width=16),
-                             horizontalalignment='left', x=0.05,
-                             fontstretch="ultra-condensed",
-                             # bbox=dict(boxstyle='square,pad=0.15', facecolor='white', alpha=0.6)
-                             )
+            if axtitle := get_default(meta, 'axtitle'):
+                if dbval and isinstance(axtitle, bool):
+                    axtitle = get_title(dbval, subspec, width=16)
+                ax.set_title(axtitle, horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
             ax.set_xlabel("$t$")
             if meta.get('timeloglevel'):
@@ -301,8 +301,8 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         if f['ymax']:
             f['ymax'] = 1.1 * f['ymax']
 
-        if not prb_style and dbval:
-            f['fig'].suptitle('{} vs Time\n{}'.format(meta['titlename'], get_title(dbval, figspec)))
+        if figspec_title := get_figspec_title(meta, dbval, figspec):
+            f['fig'].suptitle(figspec_title)
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''

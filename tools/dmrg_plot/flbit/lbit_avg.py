@@ -69,6 +69,8 @@ def lbit_avg(args):
                 'mem_usage': 'ALL',
                 'bond_dimensions': 'ALL',
                 'truncation_errors': 'ALL',
+                # If the following tables exist, save it under <tablename>/data
+                '__save_data__': ['mem_usage'],
             },
 
             'cronos':  # For data at each time step
