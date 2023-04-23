@@ -43,11 +43,22 @@ function(pkg_install pkg_name)
 
     # Set directories
     if(NOT PKG_BUILD_DIR)
-       set(PKG_BUILD_DIR ${CMAKE_BINARY_DIR}/pkg-build)
+        set(PKG_BUILD_DIR ${CMAKE_BINARY_DIR}/pkg-build)
     endif()
+
     if(NOT PKG_INSTALL_DIR)
-        set(PKG_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+        if(NOT CMAKE_INSTALL_PREFIX)
+            set(PKG_INSTALL_DIR ${CMAKE_BINARY_DIR}/pkg-install)
+        else()
+            set(PKG_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+        endif()
     endif()
+
+    # Append to CMAKE_PREFIX_PATH so we can find the packages later
+    pkg_message(DEBUG "Appending to CMAKE_PREFIX_PATH: ${PKG_INSTALL_DIR}")
+    list(APPEND CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${PKG_INSTALL_DIR})
+    list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE INTERNAL "Paths for find_package lookup" FORCE)
 
 
     if(PKG_INSTALL_SUCCESS_${pkg_name})
