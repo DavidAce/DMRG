@@ -130,15 +130,34 @@ namespace mpi {
     void sendrecv_replace(const T &data, int src, int dst, int tag) {
         // Start by sending the data size, so we can resize the receiving buffer accordingly
         int count = mpi::get_count(data);
-        MPI_Sendrecv_replace(&count, 1, MPI_INT, dst, tag, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        int err1  = MPI_Sendrecv_replace(&count, 1, MPI_INT, dst, tag, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        if(err1 != 0) throw std::runtime_error(fmt::format("MPI_Sendrecv_replace error 1: {}", err1));
 
         if constexpr(sfinae::has_resize_v<T>) {
             data.resize(count); // Should not modify the src container
         }
 
-        MPI_Sendrecv_replace(mpi::get_buffer(data), mpi::get_count(data), mpi::get_dtype<T>(), dst, tag, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        int err2 =
+            MPI_Sendrecv_replace(mpi::get_buffer(data), mpi::get_count(data), mpi::get_dtype<T>(), dst, tag, src, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        if(err2 != 0) throw std::runtime_error(fmt::format("MPI_Sendrecv_replace error 2: {}", err2));
+    }
+
+    template<typename T>
+    void bcast(const T &data, int src) {
+        // Start by sending the data size, so we can resize the receiving buffer accordingly
+        int count = mpi::get_count(data);
+        int err1  = MPI_Bcast(&count, 1, MPI_INT, src, MPI_COMM_WORLD);
+        if(err1 != 0) throw std::runtime_error(fmt::format("MPI_Bcast error: {}", err1));
+
+        if constexpr(sfinae::has_resize_v<T>) {
+            data.resize(count); // Should not modify the src container
+        }
+
+        int err2 = MPI_Bcast(mpi::get_buffer(data), mpi::get_count(data), mpi::get_dtype<T>(), src, MPI_COMM_WORLD);
+        if(err2 != 0) throw std::runtime_error(fmt::format("MPI_Bcast error: {}", err2));
     }
 
     void scatter(std::vector<h5pp::fs::path> &data, int srcId);
     void scatter_r(std::vector<h5pp::fs::path> &data, int srcId); // Roundrobin
+    void broadcast(std::vector<h5pp::fs::path> &data, int srcId);
 }

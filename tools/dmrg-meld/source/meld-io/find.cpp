@@ -80,6 +80,7 @@ namespace tools::io {
             tools::logger::log->info("Found {} directories with .h5 files. Splitting into {} groups", result.size(), mpi::world.size);
         }
         mpi::scatter_r(result, 0);
+        mpi::broacast_r();
         return result;
     }
 
