@@ -68,7 +68,7 @@ def write_statistics_dset(meta, props, h5_tgt):
 
     if dsetcopy:
         tgt_node = h5_tgt.require_group(dsetnode.parent.name)
-        zlvl = None if np.shape(dsetdata) == () else 9
+        zlvl = None if np.shape(dsetdata) == () else (1 if 'corrmat' in dsetname else 6)
         zlbl = None if np.shape(dsetdata) == () else "gzip"
         tgt_node.create_dataset(name=dsetname, data=dsetdata, compression=zlbl, compression_opts=zlvl)
     else:

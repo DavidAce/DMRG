@@ -7,7 +7,7 @@ from dmrg_plot.common.io.parse import parse
 
 from database.database import *
 from lbit_avg import lbit_avg
-from plotting.meta84_slack import *
+from plotting.meta86_slack import *
 from plotting.multiplot import *
 
 
@@ -96,13 +96,6 @@ def lbit_plot(args):
 
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
-        f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-                                   palette_name=palette)
-    save_figure(f)
-
-
-    f = None
-    for db, meta, palette in zip(dbs, metas, palettes):
         f = plot_time_fig_sub_line(db=db, meta=meta['num1'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
                                    palette_name=palette)
     save_figure(f)
@@ -123,8 +116,6 @@ def lbit_plot(args):
                                    palette_name=palette)
     save_figure(f)
 
-    plt.show()
-    exit(0)
 
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):
@@ -411,6 +402,8 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit84'])
+    args = parse('fLBIT', ['lbit86'])
     lbit_avg(args)
     lbit_plot(args)
+
+

@@ -517,6 +517,8 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
     # We should generate the statistics for each column in the table, averaging each time point over all realizations
     t_tot = timer()
     t_stat = 0
+    t_data = 0
+    t_cols = 0
     t_read = 0
     t_crt = 0
     t_pre = 0
@@ -532,17 +534,17 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         raise TypeError("write_statistics_crono3: meta should point to a h5py.Group. Got: ", nodemeta)
     point_node = iternode.parent
     point_path = point_node.name
-    # if 'number_probabilities' in crono_tables:
-    pn_node = point_node.parent['number_probabilities']
-    if write_statistics_crono4.hartley_number_entropy_data is None or \
-            write_statistics_crono4.number_probabilities_path is None or \
-            write_statistics_crono4.number_probabilities_path != pn_node.name:
-        pn_shape = np.shape(pn_node)
-        print("Found number_probabilities: {}: {}".format(pn_shape, pn_node.name))
-        pn_sites = [int(pn_shape[0] / 2)]
-        print("Calculating renyi on shape {}, sites {}".format(np.shape(pn_node), pn_sites))
-        write_statistics_crono4.hartley_number_entropy_data = np.squeeze(get_renyi(pn_node[:, pn_sites, :, :], alpha=1e-3, cutoff=1e-6))
-        write_statistics_crono4.number_probabilities_path = pn_node.name
+    if 'number_probabilities' in crono_tables:
+        pn_node = point_node.parent['number_probabilities']
+        if write_statistics_crono4.hartley_number_entropy_data is None or \
+                write_statistics_crono4.number_probabilities_path is None or \
+                write_statistics_crono4.number_probabilities_path != pn_node.name:
+            pn_shape = np.shape(pn_node)
+            print("Found number_probabilities: {}: {}".format(pn_shape, pn_node.name))
+            pn_sites = [int(pn_shape[0] / 2)]
+            print("Calculating renyi on shape {}, sites {}".format(np.shape(pn_node), pn_sites))
+            write_statistics_crono4.hartley_number_entropy_data = np.squeeze(get_renyi(pn_node[:, pn_sites, :, :], alpha=1e-3, cutoff=1e-6))
+            write_statistics_crono4.number_probabilities_path = pn_node.name
 
     fastforward = True
     tableiter = None
@@ -606,6 +608,8 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
             if col == 'num':
                 stats = np.full(6, len(tabledata))
             elif col == 'hartley_number_entropy':
+                if not write_statistics_crono4.hartley_number_entropy_data:
+                    continue
                 pn_itr = statrows[statkey]['tb'].nrows
                 stats = get_stats(data=write_statistics_crono4.hartley_number_entropy_data[pn_itr])
             elif col in constant_cols:
@@ -617,6 +621,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                 # Save midchain data for histograms
                 if '__save_mid__' in crono_tables and tablename in crono_tables['__save_mid__'] and 'L_{}'.format(statemid) in col:
                     # print('saving column L_{} from table {}...'.format(statemid, tablename))
+                    t_data_start = timer()
                     dataname = 'data'
                     datasize = len(tabledata[col])
                     nodecache[statgroup][dataname] = get_earray(
@@ -625,13 +630,16 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(1000, datasize),
+                        chunkshape=(100, datasize),
                         expectedrows=itermax)
                     nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
+                    t_data += (timer() - t_data_start)
                     # print('saving column L_{} from table {}... done'.format(statemid, tablename))
                 elif '__save_col__' in crono_tables and col in crono_tables['__save_col__']:
+                    t_cols_start = timer()
                     dataname = col
                     datasize = len(tabledata[col])
+                    # print(f'{dataname=} | {datasize=}')
                     # print('saving column {} from table {} to table {}...'.format(col, tablename, dataname))
                     nodecache[statgroup][dataname] = get_earray(
                         h5f=h5f,
@@ -639,7 +647,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(1000, datasize),
+                        chunkshape=(100, datasize),
                         expectedrows=itermax)
                     if(datasize != np.shape(nodecache[statgroup][dataname])[1]):
                         raise AssertionError("Unexpected data size when saving column for\n"
@@ -648,7 +656,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                                              ": {} != {}".format(statgroup, dataname, datasize, np.shape(nodecache[statgroup][dataname])[1]))
                     nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
                     # print('saving column {} from table {} to table {}... done'.format(col, tablename, dataname))
-
+                    t_cols += (timer() - t_cols_start)
             for stat_tgt, stat_src in zip(statrows.values(), stats):
                 stat_tgt['it'][col] = stat_src
 
@@ -692,6 +700,8 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
           'itr {:8.3e} {:.1f}% | '
           'read {:8.3e} {:.1f}% | '
           'stat {:8.3e} {:.1f}% | '
+          'data {:8.3e} {:.1f}% | '
+          'cols {:8.3e} {:.1f}% | '
           'app {:8.3e} {:.1f}% | '
           'mod {:8.3e} {:.1f}% | '
           .format(iterpath,
@@ -706,6 +716,10 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                   t_read / t_tot * 100,
                   t_stat,
                   t_stat / t_tot * 100,
+                  t_data,
+                  t_data / t_tot * 100,
+                  t_cols,
+                  t_cols / t_tot * 100,
                   t_app,
                   t_app / t_tot * 100,
                   t_mod,

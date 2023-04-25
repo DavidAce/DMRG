@@ -61,6 +61,8 @@ def parse(algo, batches=None):
         'lbit82', # 6000 realizations u[4,8,16] f=0.1,0.25,0.5, L=[12,16] with dynamic max-time for each L, investigate entropy inversion with more precise svd
         'lbit83', # 1500 realizations u[4...16] f=[0.1...1.0], L=[12,16] with dynamic max-time for each L, investigate entropy inversion with more precise svd
         'lbit84', # 50000 realizations u[16] f=[0.2...0.5], L=[12,16] dynamic max-time, serious run with trnc_err 1e-6 and init shuffled neel state
+        'lbit85', # 20000 realizations u[16] f=[0.2...0.5], L=[12,16] dynamic max-time, test to see if Neel initial state recovers L dependence. it did not
+        'lbit86', # 10000 realizations u[16] f=[0.4], L=[12,16] check if the poster hamiltonian recovers L dependence
     ]
     xdmrg_batches = ['data170',  #
                     ]

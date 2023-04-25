@@ -16,6 +16,7 @@ namespace tools::h5xf {
 
             // The axis parameter must be  < srcInfo.rank+1
             if(axis >= srcInfo.dsetDims->size()) {
+                // In this case we are collecting datasets onto a superdataset with dimension +1, enumerating them by that axis
                 dataInfo.dataByte = srcInfo.dsetByte;
                 dataInfo.dataSize = srcInfo.dsetSize;
                 dataInfo.dataRank = tgtInfo.dsetRank; // E.g. if stacking rank 2 matrices then axis == 2 and so data rank must be 3.
@@ -87,9 +88,10 @@ namespace tools::h5xf {
 
                 // Determine a good chunksize between 10 and 500 elements
                 auto tgtChunk         = tgtDims;
-                auto chunkSize        = std::clamp(5e5 / static_cast<double>(srcInfo.dsetByte.value()), 10., 1000.);
+                auto tgtMaxDims         = tgtDims;
+                auto chunkSize        = std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 10., 10000.);
                 tgtChunk[srcKey.axis] = static_cast<hsize_t>(chunkSize); // number of elements in the axis that we append into.
-
+                tgtMaxDims[srcKey.axis] = H5S_UNLIMITED;
                 if(srcKey.size == Size::VAR) {
                     auto        srcGroupPath    = h5pp::fs::path(srcInfo.dsetPath.value()).parent_path().string();
                     std::string statusTablePath = fmt::format("{}/status", srcGroupPath);
@@ -97,8 +99,8 @@ namespace tools::h5xf {
                     tgtDims[0]                  = static_cast<hsize_t>(bond_max);
                 }
 
-                tools::logger::log->debug("Adding target dset {} | dims {} | chnk {}", tgtPath, tgtDims, tgtChunk);
-                tgtDsetDb[tgtPath] = h5_tgt.createDataset(tgtPath, srcInfo.h5Type.value(), H5D_CHUNKED, tgtDims, tgtChunk);
+                tools::logger::log->info("Adding target dset {} | dims {} | chnk {}", tgtPath, tgtDims, tgtChunk);
+                tgtDsetDb[tgtPath] = h5_tgt.createDataset(tgtPath, srcInfo.h5Type.value(), H5D_CHUNKED, tgtDims, tgtChunk, tgtMaxDims, 3);
             }
             auto &tgtId   = tgtDsetDb[tgtPath];
             auto &tgtInfo = tgtId.info;
@@ -194,9 +196,13 @@ namespace tools::h5xf {
                     h5pp::TableInfo tableInfo = h5_tgt.getTableInfo(tgtPath);
                     // Disabling compression is supposed to give a nice speedup. Read here:
                     // https://support.hdfgroup.org/HDF5/doc1.8/Advanced/DirectChunkWrite/UsingDirectChunkWrite.pdf
-                    if(not tableInfo.tableExists.value())
-                        tableInfo = h5_tgt.createTable(srcInfo.h5Type.value(), tgtPath, srcInfo.tableTitle.value(), std::nullopt, true);
-
+                    if(not tableInfo.tableExists.value()) {
+                        auto recordBytes      = H5Tget_size(srcInfo.h5Type.value());
+                        auto targetBytes = 500 * 1024; // 500 kB
+                        auto chunkSize        = static_cast<hsize_t>(std::ceil(targetBytes / static_cast<double>(recordBytes)));
+//                        tools::logger::log->info("Chunk size: {} | {}", chunkSize, tgtPath);
+                        tableInfo = h5_tgt.createTable(srcInfo.h5Type.value(), tgtPath, srcInfo.tableTitle.value(), chunkSize, 6);
+                    }
                     tgtTableDb[tgtPath] = tableInfo;
                 }
                 auto &tgtId   = tgtTableDb[tgtPath];
@@ -214,7 +220,7 @@ namespace tools::h5xf {
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
                 auto t_buffer = tid::tic_scope(fmt::format("bufferRecords-{}", srcKey.classtag));
                 srcReadBuffer.resize(srcInfo.recordBytes.value());
-                h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, rec, 1);
+                h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, rec, 1, h5_tgt.plists);
                 tgtBuff.insert(srcReadBuffer, tgtIndex);
 
                 // Update the database

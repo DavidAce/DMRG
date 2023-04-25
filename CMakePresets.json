@@ -276,6 +276,15 @@
       ]
     },
     {
+      "name": "debug-gcc-12-conan-flexiblas",
+      "displayName": "Debug|gcc-12|conan|flexiblas",
+      "inherits": [
+        "flexiblas",
+        "conan",
+        "debug-gcc-12"
+      ]
+    },
+    {
       "name": "release-gcc-11-conan-flexiblas-native",
       "displayName": "Release|gcc-11|conan|flexiblas|native",
       "inherits": [
@@ -536,6 +545,10 @@
     {
       "name": "debug-gcc-12-conan-openblas",
       "configurePreset": "debug-gcc-12-conan-openblas"
+    },
+    {
+      "name": "debug-gcc-12-conan-flexiblas",
+      "configurePreset": "debug-gcc-12-conan-flexiblas"
     },
     {
       "name": "debug-clang-15-conan-mkl",

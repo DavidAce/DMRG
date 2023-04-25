@@ -88,7 +88,7 @@ def lbit_avg(args):
                     'entanglement_entropies': 'ALL',
                     'number_entropies': 'ALL',
                     'truncation_errors': 'ALL',
-                    'number_probabilities': 'ALL',
+                    # 'number_probabilities': 'ALL',
                     # If a table with this name exists, save its midchain column to a new dataset with the same name
                     '__save_mid__': ['entanglement_entropies', 'number_entropies'],
                     # If a table has this column, save all columns to a new dataset with the same name
@@ -101,6 +101,6 @@ def lbit_avg(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit84'])
+    args = parse('fLBIT', ['lbit86'])
     args.clear = True
     lbit_avg(args)

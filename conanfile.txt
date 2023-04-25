@@ -5,14 +5,14 @@
 [requires]
 ceres-solver/2.1.0
 #glog/0.6.0
-h5pp/1.11.0@davidace/dev
+h5pp/1.11.1@davidace/dev
 fmt/9.1.0
 spdlog/1.11.0
 eigen/3.4.0
 arpack++/2.3.0@davidace/dev
 cli11/2.3.1
 backward-cpp/1.6
-zlib/1.2.12
+zlib/1.2.13
 pcg-cpp/cci.20210406
 
 [generators]

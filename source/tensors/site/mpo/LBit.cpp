@@ -274,8 +274,8 @@ void LBit::build_mpo()
 
 void LBit::randomize_hamiltonian() {
     // J1(i)     = Random(J1_mean, J2_width)
-    // J2(i,j)   = exp(-|i-j|/xi_Jcls) * Random(J2_mean, J2_width), where |i-j| = 1,2,3... L-1 and i < j
-    // J3(i,j,k) = exp(-|i-k|/xi_Jcls) * Random(J3_mean, J3_width), where |i-k| = 2, and i < j < k
+    // J2(i,j)   = Random(J2_mean, J2_width) * exp(-|i-j|/xi_Jcls) , where |i-j| = 1,2,3... L-1 and i < j
+    // J3(i,j,k) = Random(J3_mean, J3_width) * exp(-|i-k|/xi_Jcls) , where |i-k| = 2, and i < j < k
     // Note 1:
     //    * xi_Jcls: characteristic length scale
     //    * Random(...) are drawn randomly for each i,j,k according to some distribution.
@@ -297,6 +297,7 @@ void LBit::randomize_hamiltonian() {
             expw.emplace_back(std::exp(-r / xi_Jcls));
         }
     }
+    tools::log->info("Randomizing MPO({:2}): J1=N({:.3e},{:.3e}) | J2=N({:.3e},{:.3e})exp(-r/{}) | J3=N({:.3e},{:.3e})*{:.3e}", get_position(),J1_mean, J1_wdth,  J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, (expw.size() > 2 ? expw[2] : 0.0) );
     h5tb.param.J1_rand               = rnd::random(distribution, J1_mean, J1_wdth);
     h5tb.param.J2_rand               = rnd::random(distribution, J2_mean, J2_wdth, expw);
     h5tb.param.J3_rand               = rnd::random(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);

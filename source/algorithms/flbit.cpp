@@ -298,7 +298,6 @@ void flbit::update_state() {
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2site, false, true, GateMove::AUTO, svd_cfg);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3site, false, true, GateMove::AUTO, svd_cfg);
     }
-    tools::log->debug("time evo {:.3e}", t_evo->get_last_interval());
     tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
     t_evo.toc();
@@ -612,16 +611,12 @@ void flbit::transform_to_real_basis() {
     } else {
         tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(),
                           unitary_gates_2site_layers.size());
-        for(const auto &layer : unitary_gates_2site_layers)
-            tools::finite::mps::apply_gates(*tensors.state, layer, false, true, GateMove::ON, svd_cfg); // L16: true 29 | false
-        for(const auto &layer : unitary_gates_2site_layers)
-            for(const auto &u : layer) u.unmark_as_used();
+        tools::finite::mps::apply_circuit(*tensors.state, unitary_gates_2site_layers, false, false, true, GateMove::ON, svd_cfg);
     }
 
     tools::finite::mps::normalize_state(*tensors.state, svd_cfg, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-    tools::log->debug("time l2r: {:.3e} s", t_map->get_last_interval());
 
     if constexpr(settings::debug) {
         auto t_dbg = tid::tic_scope("debug");
@@ -651,10 +646,7 @@ void flbit::transform_to_real_basis() {
         }
         {
             auto state_lbit_debug = *tensors.state;
-            for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-                tools::finite::mps::apply_gates(state_lbit_debug, layer, true, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
-            for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-                for(const auto &u : layer) u.unmark_as_used();
+            tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, true, false, true, GateMove::ON, svd_cfg);
             auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
             tools::log->info("Debug overlap: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
@@ -687,13 +679,7 @@ void flbit::transform_to_lbit_basis() {
         }
     } else {
         tools::log->info("Transforming {} to {} using {} unitary layers", tensors.state->get_name(), state_lbit->get_name(), unitary_gates_2site_layers.size());
-        for(const auto &[idx, layer] : iter::enumerate_reverse(unitary_gates_2site_layers)) {
-            tools::log->debug("applying layer {} of {} | bonds {}", idx, unitary_gates_2site_layers.size(),
-                              tools::finite::measure::bond_dimensions(*state_lbit));
-            tools::finite::mps::apply_gates(*state_lbit, layer, true, true, GateMove::AUTO, svd_cfg); // L16: true 28 | false 29 svds
-        }
-        for(const auto &layer : iter::reverse(unitary_gates_2site_layers))
-            for(const auto &u : layer) u.unmark_as_used();
+        tools::finite::mps::apply_circuit(*state_lbit, unitary_gates_2site_layers, true, false, true, GateMove::ON, svd_cfg);
     }
 
     //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
@@ -723,15 +709,9 @@ void flbit::transform_to_lbit_basis() {
             tools::log->info("Debug overlap: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
                 throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
-        }
-        {
+        } else {
             auto state_real_debug = *state_lbit;
-            for(auto &layer : unitary_gates_2site_layers)
-                for(auto &g : layer) g.unmark_as_used();
-            for(const auto &layer : unitary_gates_2site_layers)
-                tools::finite::mps::apply_gates(state_real_debug, layer, false, true, GateMove::AUTO, svd::config(status.bond_lim, status.trnc_lim));
-            for(const auto &layer : unitary_gates_2site_layers)
-                for(const auto &u : layer) u.unmark_as_used();
+            tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, false, false, true, GateMove::ON, svd_cfg);
             auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
             tools::log->info("Debug overlap: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
@@ -863,9 +843,9 @@ void flbit::print_status() {
         report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
     //    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_midchain());
-    report += fmt::format("Sₑ(L/2):{:<10.8f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
+    report += fmt::format("Sₑ(L/2):{:<18.16f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
     if(tensors.state->measurements.number_entropy_midchain) // This one is expensive
-        report += fmt::format("Sₙ(L/2):{:<10.8f} ", tensors.state->measurements.number_entropy_midchain.value());
+        report += fmt::format("Sₙ(L/2):{:<18.16f} ", tensors.state->measurements.number_entropy_midchain.value());
 
     if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
         report += fmt::format("Sₙ(L/2) lbit:{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
