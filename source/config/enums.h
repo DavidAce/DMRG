@@ -15,6 +15,8 @@ enum class MultisiteWhen { NEVER, STUCK, SATURATED, ALWAYS };
 enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
+enum class GateOp { NONE, CNJ, ADJ, TRN };
+enum class CircOp { NONE, ADJ, TRN };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class UnitaryGateWeight { IDENTITY, EXPDECAY };
 enum class EdgeStatus { STALE, FRESH };
@@ -37,11 +39,11 @@ enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy {
-    RESUME, /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
-    BACKUP, /*!< Backup the existing file by appending .bak, then start with a new file. */
-    RENAME, /*!< Rename the current file by appending .# to avoid collision with existing. */
-    REVIVE, /*!< Try RESUME, but do REPLACE on error instead of throwing */
-    REPLACE /*!< Just erase/truncate the existing file and start from the beginning. */
+    RESUME,                                 /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
+    BACKUP,                                 /*!< Backup the existing file by appending .bak, then start with a new file. */
+    RENAME,                                 /*!< Rename the current file by appending .# to avoid collision with existing. */
+    REVIVE,                                 /*!< Try RESUME, but do REPLACE on error instead of throwing */
+    REPLACE                                 /*!< Just erase/truncate the existing file and start from the beginning. */
 };
 enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
@@ -240,6 +242,17 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == GateMove::OFF)                                       return "OFF";
         if(item == GateMove::ON)                                        return "ON";
         if(item == GateMove::AUTO)                                      return "AUTO";
+    }
+    if constexpr(std::is_same_v<T, GateOp>) {
+        if(item == GateOp::NONE)                                       return "NONE";
+        if(item == GateOp::CNJ)                                        return "CNJ";
+        if(item == GateOp::ADJ)                                        return "ADJ";
+        if(item == GateOp::TRN)                                        return "TRN";
+    }
+    if constexpr(std::is_same_v<T, CircOp>) {
+        if(item == CircOp::NONE)                                       return "NONE";
+        if(item == CircOp::ADJ)                                        return "ADJ";
+        if(item == CircOp::TRN)                                        return "TRN";
     }
     if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
         if(item == UnitaryGateWeight::IDENTITY)                         return "IDENTITY";
@@ -510,6 +523,8 @@ constexpr auto sv2enum(std::string_view item) {
         SVDLibrary,
         UpdateWhen,
         GateMove,
+        GateOp,
+        CircOp,
         UnitaryGateWeight,
         ModelType,
         EdgeStatus,
@@ -579,6 +594,17 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "OFF")                                   return GateMove::OFF;
         if(item == "ON")                                    return GateMove::ON;
         if(item == "AUTO")                                  return GateMove::AUTO;
+    }
+    if constexpr(std::is_same_v<T, GateOp>) {
+        if(item == "NONE")                                  return GateOp::NONE;
+        if(item == "CNJ")                                   return GateOp::CNJ;
+        if(item == "ADJ")                                   return GateOp::ADJ;
+        if(item == "TRN")                                   return GateOp::TRN;
+    }
+    if constexpr(std::is_same_v<T, CircOp>) {
+        if(item == "NONE")                                  return CircOp::NONE;
+        if(item == "ADJ")                                   return CircOp::ADJ;
+        if(item == "TRN")                                   return CircOp::TRN;
     }
     if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
         if(item == "IDENTITY")                              return UnitaryGateWeight::IDENTITY;

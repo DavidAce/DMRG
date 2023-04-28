@@ -216,19 +216,22 @@ namespace num {
         return xs;
     }
 
-    [[nodiscard]] inline std::vector<double> LogSpaced(std::size_t N, double a, double b, double base = 10.0) {
+    template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
+    [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, T base = static_cast<T>(10)) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
-        double              loga   = std::log(a) / std::log(base);
-        double              logb   = std::log(b) / std::log(base);
-        double              h      = (logb - loga) / static_cast<double>(N - 1);
-        double              factor = std::pow(base, h);
-        double              val    = std::pow(base, loga);
-        std::vector<double> xs(N);
+        T              loga   = std::log(a) / std::log(base);
+        T              logb   = std::log(b) / std::log(base);
+        T              h      = (logb - loga) / static_cast<T>(N - 1);
+        T              factor = std::pow(base, h);
+        T              val    = std::pow(base, loga);
+        std::vector<T> xs(N);
         for(auto &x : xs) {
             x = val;
             val *= factor;
         }
+        xs.front() = a;
+        xs.back()  = b;
         return xs;
     }
 

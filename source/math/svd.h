@@ -335,25 +335,25 @@ namespace svd {
              * Splits an MPO out from a 2-site gate.
              *
              *
-             *         (1)dL    (3)dR                             (1)dL                                      (1)dR
+             *         (2)dL    (4)dR                             (2)dL                                      (2)dR
              *            |       |                                 |                                          |
              *   (0)mL---[  gate   ]          --->       (0)mL---[ mpoL ]---mC(3)  (0)---[S]---(1)  mC(0)---[ gate ]
              *            |       |                                 |                                          |
-             *         (2)dL    (4)dR                            (2)dL                                       (2)dR
+             *         (1)dL    (3)dR                            (1)dL                                       (1)dR
              *
              * On the left side, the index 0 is either a dummy or a trailing index of the gate -> mpo process.
              * The square root of S can then be multiplied both left and right, on the mC index.
              * The left mpo can be shuffled back to standard form with
-             *   mpoL: shuffle(0,3,1,2)
+             *   mpoL: shuffle(0,3,2,1)
              *
              */
             auto mL         = gate.dimension(0);
-            auto dLup       = gate.dimension(1);
-            auto dLdn       = gate.dimension(2);
-            auto dRup       = gate.dimension(3);
-            auto dRdn       = gate.dimension(4);
-            auto rows       = mL * dLup * dLdn;
-            auto cols       = dRup * dRdn;
+            auto dLdn       = gate.dimension(1);
+            auto dLup       = gate.dimension(2);
+            auto dRdn       = gate.dimension(3);
+            auto dRup       = gate.dimension(4);
+            auto rows       = mL * dLdn * dLup;
+            auto cols       = dRdn * dRup;
             auto [U, S, VT] = do_svd_ptr(gate.data(), rows, cols, svd_cfg);
             auto mC         = S.size();
 
@@ -361,7 +361,7 @@ namespace svd {
             U  = U * S.asDiagonal();
             VT = S.asDiagonal() * VT;
 
-            return std::make_pair(tenx::TensorMap(U).reshape(tenx::array4{mL, dLup, dLdn, mC}).shuffle(tenx::array4{0, 3, 1, 2}),
+            return std::make_pair(tenx::TensorMap(U).reshape(tenx::array4{mL, dLup, dLdn, mC}).shuffle(tenx::array4{0, 3, 2, 1}),
                                   tenx::TensorMap(VT).reshape(tenx::array3{mC, dRup, dRdn}));
         }
     };

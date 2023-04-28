@@ -118,7 +118,8 @@ namespace tenx {
 
     template<typename Scalar>
     Eigen::Tensor<Scalar, 2> asDiagonalSquared(const Eigen::Tensor<Scalar, 1> &tensor) {
-        return tensor.square().inflate(array1{tensor.size() + 1}).reshape(array2{tensor.size(), tensor.size()});
+        auto csquare = [](auto z) -> double { return std::abs(std::conj(z) * z); };
+        return tensor.unaryExpr(csquare).inflate(array1{tensor.size() + 1}).reshape(array2{tensor.size(), tensor.size()});
     }
     template<typename Scalar>
     Eigen::Tensor<Scalar, 2> asDiagonalSqrt(const Eigen::Tensor<Scalar, 1> &tensor) {
@@ -138,7 +139,8 @@ namespace tenx {
 
     template<typename T, typename Device = Eigen::DefaultDevice>
     double norm(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        return asEval(expr.square().sum().sqrt().abs(), device)->coeff(0);
+        auto csquare = [](auto z) -> double { return std::abs(std::conj(z) * z); };
+        return asEval(expr.unaryExpr(csquare).sum().sqrt(), device)->coeff(0);
     }
 
     inline Eigen::Tensor<std::complex<double>, 1> broadcast(Eigen::Tensor<std::complex<double>, 1> &tensor, const std::array<long, 1> &bcast) {
@@ -152,13 +154,13 @@ namespace tenx {
 
     template<typename T, typename Device = Eigen::DefaultDevice>
     auto asNormalized(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const Device &device = Device()) {
-        auto           tensor    = tenx::asEval(expr, device);
-        auto           tensorMap = tensor.map();
-        constexpr auto rank      = tensor.rank();
-        using Scalar             = typename decltype(tensorMap)::Scalar;
-        using TensorType         = typename Eigen::Tensor<Scalar, rank>;
-
-        Eigen::Tensor<double, 0> normInverse = tensorMap.square().sum().sqrt().abs().inverse();
+        auto           tensor                = tenx::asEval(expr, device);
+        auto           tensorMap             = tensor.map();
+        constexpr auto rank                  = tensor.rank();
+        using Scalar                         = typename decltype(tensorMap)::Scalar;
+        using TensorType                     = typename Eigen::Tensor<Scalar, rank>;
+        auto                     csquare     = [](auto z) -> double { return std::abs(std::conj(z) * z); };
+        Eigen::Tensor<double, 0> normInverse = tensorMap.unaryExpr(csquare).sum().sqrt().inverse();
         return static_cast<TensorType>(tensorMap * tensorMap.constant(normInverse.coeff(0)));
     }
 

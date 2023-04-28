@@ -13,6 +13,8 @@ add_source_target(dmrg-algorithms-base
         dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
         dmrg-config
+        dmrg-debug
+        dmrg-stacktrace
         dmrg-algorithms-status
         dmrg-tools-common-h5
         dmrg-tools-common-log
@@ -27,6 +29,7 @@ add_source_target(dmrg-algorithms-finite
         dmrg-tid
         dmrg-config
         dmrg-debug
+        dmrg-stacktrace
         dmrg-qm-spin
         dmrg-tensors-state-finite
         dmrg-tensors-model-finite
@@ -85,6 +88,8 @@ add_source_target(dmrg-algorithms-flbit
         dmrg-tools-finite-mps
         dmrg-tools-common-h5
         dmrg-tools-common-prof
+        dmrg-tools-common-plot
+
         )
 
 add_source_target(dmrg-algorithms-xdmrg

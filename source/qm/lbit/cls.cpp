@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace settings {
-    inline constexpr bool debug_cls = false;
+    inline constexpr bool debug_cls = true;
 }
 
 using cplx = qm::cplx;

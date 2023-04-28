@@ -118,7 +118,7 @@ void h5pp_table_measurements_finite::register_table_type() {
         H5Tinsert(h5_type, "structure_factors",             HOFFSET(table, structure_factors),             H5_ARRAY3_TYPE);
         H5Tinsert(h5_type, "total_time",                    HOFFSET(table, total_time),                    H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algorithm_time",                HOFFSET(table, algorithm_time),                H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "physical_time",                 HOFFSET(table, physical_time),                 H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "physical_time",                 HOFFSET(table, physical_time),                 H5T_NATIVE_LDOUBLE);
     /* clang-format on */
 }
 
@@ -151,7 +151,7 @@ void h5pp_table_measurements_infinite::register_table_type() {
         H5Tinsert(h5_type, "energy_variance_per_site_mom", HOFFSET(table, energy_variance_per_site_mom), H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "truncation_error",             HOFFSET(table, truncation_error),             H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "wall_time",                    HOFFSET(table, wall_time),                    H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "phys_time",                    HOFFSET(table, phys_time),                    H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "phys_time",                    HOFFSET(table, phys_time),                    H5T_NATIVE_LDOUBLE);
         H5Tinsert(h5_type, "time_step", HOFFSET(table, time_step), h5pp::type::compound::H5T_COMPLEX<double>::h5type());
     /* clang-format on */
 }
@@ -215,10 +215,10 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "env_expansion_alpha",         HOFFSET(table, env_expansion_alpha),        H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "env_expansion_variance",      HOFFSET(table, env_expansion_variance),     H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "env_expansion_step",          HOFFSET(table, env_expansion_step),         H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  H5T_NATIVE_DOUBLE);
+        H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  H5T_NATIVE_LDOUBLE);
         H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    h5pp::type::compound::H5T_COMPLEX<double>::h5type());
+        H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    h5pp::type::compound::H5T_COMPLEX<long double>::h5type());
         H5Tinsert(h5_type, "algo_type",                   HOFFSET(table, algo_type),                  h5_algo_type);
         H5Tinsert(h5_type, "algo_stop",                   HOFFSET(table, algo_stop),                  h5_algo_stop);
         H5Tinsert(h5_type, "algorithm_has_finished",      HOFFSET(table, algorithm_has_finished),     H5T_NATIVE_UINT8);

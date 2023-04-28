@@ -18,6 +18,8 @@
 namespace settings {
     inline constexpr bool debug_numen = false;
     inline constexpr bool debug_cache = false;
+    inline constexpr bool verbose_numen = false;
+    inline constexpr bool verbose_cache = false;
 }
 
 enum class From { A, B };
@@ -160,7 +162,7 @@ struct Amplitude {
                     pos       = c.pos;
                     ampl      = c.ampl;
                     cache_hit = true;
-                    if constexpr(settings::debug_numen or settings::debug_cache) {
+                    if constexpr(settings::verbose_numen or settings::verbose_cache) {
                         tools::log->trace("from A: cache hit: found [pos {:>2} | n {:>2} | bits {}] target [pos {:>2} | n {:>2} | bits {}]", c.pos,
                                           c.bits.count(), c.to_string(), tgt_pos, bits.count(), to_string(tgt_pos + 1));
                     }
@@ -170,7 +172,7 @@ struct Amplitude {
                     ampl.setConstant(1.0);
                     pos       = -1l;
                     cache_hit = false;
-                    if constexpr(settings::debug_numen or settings::debug_cache)
+                    if constexpr(settings::verbose_numen or settings::verbose_cache)
                         tools::log->trace("from A: cache miss: could not find bits to build target [pos {:>2} | n {:>2} | bits {}]", tgt_pos, bits.count(),
                                           to_string(tgt_pos + 1));
                 }
@@ -190,7 +192,7 @@ struct Amplitude {
                     std::array<long, 3> off  = {bits[static_cast<size_t>(mps_pos)], 0, 0}; // This selects which bit gets appended to ampl
                     std::array<long, 3> ext  = {1, mps->get_chiL(), mps->get_chiR()};
                     // ampl never has a trailing Lambda
-                    if constexpr(settings::debug_numen)
+                    if constexpr(settings::verbose_numen)
                         tools::log->trace("from A: contraction: pos {:>2} | tgt {:>2} | bits {} -> {}", mps_pos, tgt_pos, to_string(), to_string(mps_pos + 1));
 
                     temp.resize(size);
@@ -230,7 +232,7 @@ struct Amplitude {
                     pos       = c.pos;
                     ampl      = c.ampl;
                     cache_hit = true;
-                    if constexpr(settings::debug_numen or settings::debug_cache) {
+                    if constexpr(settings::verbose_numen or settings::verbose_cache) {
                         tools::log->trace("from B: cache hit: found [pos {:>2} | n {:>2} | bits {}] target [pos {:>2} | n {:>2} | bits {}]", c.pos,
                                           c.bits.count(), c.to_string(), tgt_pos, bits.count(), to_string(state_size - tgt_pos));
                     }
@@ -240,7 +242,7 @@ struct Amplitude {
                     ampl.setConstant(1.0);
                     pos       = state_size;
                     cache_hit = false;
-                    if constexpr(settings::debug_numen or settings::debug_cache) {
+                    if constexpr(settings::verbose_numen or settings::verbose_cache) {
                         tools::log->trace("from B: cache miss: could not find bits to build target [pos {:>2} | n {:>2} | bits {}]", tgt_pos, bits.count(),
                                           to_string(state_size - tgt_pos));
                         for(const auto &[i, c] : iter::enumerate(cache)) tools::log->trace("  {}: {}", i, c.to_string());
@@ -264,7 +266,7 @@ struct Amplitude {
                     std::array<long, 3> ext      = {1, mps->get_chiL(), mps->get_chiR()};
 
                     // ampl never has a trailing Lambda
-                    if constexpr(settings::debug_numen)
+                    if constexpr(settings::verbose_numen)
                         tools::log->trace("from B: contraction: pos  {:>2} | tgt {:>2} | bits {} <- {}", mps_pos, tgt_pos, to_string(state_size - mps_pos),
                                           to_string());
                     temp.resize(size);
@@ -498,7 +500,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
                 schmidt_taken(alpha) = 1;
                 if(schmidt_taken.isOnes()) break;
             }
-            if constexpr(settings::debug_numen) {
+            if constexpr(settings::verbose_numen) {
                 std::string_view accept_str = accept ? "accept" : "";
                 std::string_view cacheh_str = a.cache_hit ? "cache" : "";
                 tools::log->trace("pos {:>2} | n {:>2} | bits {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
@@ -602,7 +604,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
                 schmidt_taken(alpha) = 1;
                 if(schmidt_taken.isOnes()) break;
             }
-            if constexpr(settings::debug_numen) {
+            if constexpr(settings::verbose_numen) {
                 std::string_view accept_str = accept ? "accept" : "";
                 std::string_view cacheh_str = a.cache_hit ? "cache" : "";
                 tools::log->trace("pos {:>2} | n {:>2} | bits {} | idx {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
@@ -780,8 +782,6 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             auto probability      = compute_probability_rrp(state_copy, pos, amplitudes, cache);
             auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx] = std::abs(number_entropy);
-            //        cache                 = amplitudes; // Cache the amplitudes for the next step
-            //        if constexpr(settings::debug_numen)
             auto                psize           = static_cast<long>(probability.size());
             std::array<long, 2> offset          = {0, pos + 1};
             std::array<long, 2> extent          = {psize, 1};

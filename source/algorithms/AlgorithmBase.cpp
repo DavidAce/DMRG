@@ -8,17 +8,14 @@
 #include <complex>
 #include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
-using Scalar = AlgorithmBase::Scalar;
+using Scalar = AlgorithmBase::cplx;
 
-AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_) : h5file(std::move(h5ppFile_)) {
+AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5file_, AlgorithmType algo_type_) : h5file(std::move(h5file_)) {
     status.algo_type = algo_type_;
     tools::log->set_error_handler([](const std::string &msg) { throw except::runtime_error(msg); });
     tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::loglevel, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
-
-    if(settings::test_unwind)
-        throw std::runtime_error("Testing stack unwinding");
-
+    if(settings::test_unwind) throw std::runtime_error("Testing stack unwinding");
 }
 
 void AlgorithmBase::copy_from_tmp(StorageEvent storage_event, CopyPolicy copy_policy) {
@@ -53,9 +50,6 @@ void AlgorithmBase::init_truncation_error_limits() {
     if(status.trnc_lim == 0.0) throw except::runtime_error("Truncation error limit invalid: {}", status.trnc_lim);
     tools::log->info("Initialized truncation error limits: init {:8.2e} lim {:8.2e} min {:8.2e}", status.trnc_init, status.trnc_lim, status.trnc_min);
 }
-
-void AlgorithmBase::write_enable() { write_enabled = true; }
-void AlgorithmBase::write_disable() { write_enabled = false; }
 
 size_t AlgorithmBase::count_convergence(const std::vector<double> &Y_vec, double threshold, size_t start_idx) {
     size_t scount = 0; // Counts how many converged points there have been since saturation (start_idx)

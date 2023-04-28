@@ -11,7 +11,8 @@
 #include <h5pp/h5pp.h>
 
 namespace settings {
-    inline constexpr bool debug_lbit = false;
+    inline constexpr bool debug_lbit = true;
+    inline constexpr bool verbose_lbit = false;
 }
 
 std::string format_mpo(const Eigen::Tensor<std::complex<double>, 4> &mpo, double J1_rand, const std::vector<double> &J2_rand, double J3_rand) {
@@ -413,7 +414,7 @@ Eigen::Tensor<MpoSite::cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<s
         }
 
     MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * Z;
-    if constexpr(settings::debug_lbit)
+    if constexpr(settings::verbose_lbit)
         tools::log->info("Creating mpo | pos {} | nbody {} | skip {} \n{}", get_position(), nbody.value(), skip ? skip.value() : std::vector<size_t>{-1ul},
                          format_mpo(MPO_nbody, J1_rand, J2_rand, J3_rand));
     return MPO_nbody;

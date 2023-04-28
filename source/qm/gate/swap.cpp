@@ -9,7 +9,8 @@
 #include "tools/common/log.h"
 
 namespace settings {
-    inline constexpr bool debug_swap = false;
+    inline constexpr bool debug_swap = true;
+    inline constexpr bool verbose_swap = true;
 }
 
 qm::Swap::Swap(size_t posL, size_t posR) : posL(posL), posR(posR) {
@@ -24,6 +25,7 @@ bool qm::Swap::operator==(const Rwap &rwap) const { return posL == rwap.posL and
 bool qm::Rwap::operator==(const Swap &swap) const { return posL == swap.posL and posR == swap.posR; }
 
 qm::SwapGate qm::SwapGate::exp(cplx alpha) const { return {op, pos, dim, alpha}; }
+qm::SwapGate qm::SwapGate::exp(cpll alpha) const { return {op, pos, dim, alpha}; }
 
 void qm::SwapGate::generate_swap_sequences() {
     // Letting i < j, a swap sequence defines the swap operators S(i,i+1) necessary to move distant sites at i,j until they are neighbors at j-1, j,
@@ -52,7 +54,7 @@ size_t qm::SwapGate::cancel_swaps(std::deque<Rwap> &other_rwaps) {
         if(other_rwaps.empty()) return count;
         if(swaps.empty()) return count;
         if(other_rwaps.back() == swaps.front()) {
-            if constexpr(settings::debug_swap) tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
+            if constexpr(settings::verbose_swap) tools::log->trace("Cancel swap S({},{})", swaps.front().posL, swaps.front().posR);
             other_rwaps.pop_back();
             swaps.pop_front();
             count++;
@@ -68,7 +70,7 @@ size_t qm::SwapGate::cancel_rwaps(std::deque<Swap> &other_swaps) {
         if(other_swaps.empty()) return count;
         if(rwaps.empty()) return count;
         if(other_swaps.front() == rwaps.back()) {
-            if constexpr(settings::debug_swap) tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
+            if constexpr(settings::verbose_swap) tools::log->trace("Cancel rwap S({},{})", rwaps.back().posL, rwaps.back().posR);
             other_swaps.pop_front();
             rwaps.pop_back();
             count++;

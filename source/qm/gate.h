@@ -15,6 +15,7 @@ namespace Eigen {
     template<typename Idx>
     struct IndexPair;
 }
+enum class GateOp;
 
 namespace qm {
 
@@ -43,8 +44,11 @@ namespace qm {
     class Gate {
         protected:
         Eigen::Tensor<cplx,2> exp_internal(const Eigen::Tensor<cplx,2> & op_, cplx alpha) const;
+        Eigen::Tensor<cplx,2> exp_internal(const Eigen::Tensor<cplx,2> & op_, cpll alpha) const;
         mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
+        mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
         mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
+        mutable std::optional<Eigen::Tensor<cplx,2>> trn = std::nullopt;
         mutable bool used = false;
         public:
         Eigen::Tensor<cplx,2> op;
@@ -54,13 +58,19 @@ namespace qm {
         Gate(const Eigen::Matrix<cplx,Eigen::Dynamic,Eigen::Dynamic> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
         Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
         Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
+        Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cpll alpha);
         void exp_inplace(cplx alpha);
+        void exp_inplace(cpll alpha);
         void mark_as_used() const;
         void unmark_as_used() const;
         bool was_used() const;
         [[nodiscard]] Gate exp(cplx alpha) const;
+        [[nodiscard]] Gate exp(cpll alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;
-        [[nodiscard]] Eigen::Tensor<cplx,2>& adjoint() const;
+        [[nodiscard]] const Eigen::Tensor<cplx,2>& conjugate() const;
+        [[nodiscard]] const Eigen::Tensor<cplx,2>& transpose() const;
+        [[nodiscard]] const Eigen::Tensor<cplx,2>& adjoint() const;
+        [[nodiscard]] const Eigen::Tensor<cplx,2>& unaryOp(GateOp unop) const;
         [[nodiscard]] Gate insert(const Gate & other) const;
         [[nodiscard]] Gate connect_above(const Gate & other) const;
         [[nodiscard]] Gate connect_below(const Gate & other) const;
@@ -104,6 +114,7 @@ namespace qm {
         std::deque<Swap>       swaps;
         std::deque<Rwap>       rwaps; // swaps sequence and reverse swap sequence
         [[nodiscard]] SwapGate exp(cplx alpha) const;
+        [[nodiscard]] SwapGate exp(cpll alpha) const;
         void                   generate_swap_sequences();
         size_t                 cancel_swaps(std::deque<Rwap> &other_rwaps);
         size_t                 cancel_rwaps(std::deque<Swap> &other_swaps);

@@ -11,8 +11,10 @@
 #include <utility>
 
 namespace settings {
-    inline constexpr bool debug_merge     = false;
-    inline constexpr bool debug_apply_mpo = false;
+    inline constexpr bool debug_merge       = false;
+    inline constexpr bool debug_apply_mpo   = false;
+    inline constexpr bool verbose_merge     = false;
+    inline constexpr bool verbose_apply_mpo = false;
 }
 
 using cplx = MpsSite::cplx;
@@ -322,7 +324,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
     if(get_position() != other.get_position()) throw except::runtime_error("MpsSite({})::fuse_mps: position mismatch {}", tag, otag);
 
     if(not other.has_M()) throw except::runtime_error("MpsSite({})::fuse_mps: Got other mps {} with undefined M", tag, otag);
-    if constexpr(settings::debug_merge) {
+    if constexpr(settings::verbose_merge) {
         if(other.has_L())
             tools::log->trace("MpsSite({})::fuse_mps: Merging {} | M {} | L {}", tag, otag, other.dimensions(), other.get_L().dimensions());
         else
@@ -372,7 +374,7 @@ void MpsSite::fuse_mps(const MpsSite &other) {
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
     auto t_mpo = tid::tic_token("apply_mpo", tid::level::higher);
     tools::log->trace("MpsSite({})::apply_mpo: Applying mpo (dims {})", get_tag(), mpo.dimensions());
-    if constexpr(settings::debug_apply_mpo) {
+    if constexpr(settings::verbose_apply_mpo) {
         tools::log->trace("L({}):\n{}\n", get_position(), linalg::tensor::to_string(get_L(), 16, 18));
         tools::log->trace("M({}):\n{}\n", get_position(), linalg::tensor::to_string(get_M_bare(), 4, 6));
         tools::log->trace("mpo({}):\n{}\n", get_position(), linalg::tensor::to_string(mpo, 4, 6));
@@ -413,7 +415,7 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
 
     set_L(L_temp);
     set_M(M_bare_temp);
-    if constexpr(settings::debug_apply_mpo) {
+    if constexpr(settings::verbose_apply_mpo) {
         tools::log->trace("L({}) after:\n{}\n", get_position(), linalg::tensor::to_string(get_L(), 4, 6));
         tools::log->trace("M({}) after:\n{}\n", get_position(), linalg::tensor::to_string(get_M_bare(), 4, 6));
         tools::log->trace("mpo({}) after:\n{}\n", get_position(), linalg::tensor::to_string(mpo, 4, 6));
@@ -488,7 +490,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
-        if constexpr(settings::debug_merge)
+        if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking V stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.V_stash->data.dimensions());
 
@@ -523,7 +525,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  Here we simply set it as the new L of this site.
          */
 
-        if constexpr(settings::debug_merge)
+        if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking U stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.U_stash->data.dimensions());
 
@@ -553,7 +555,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
-        if constexpr(settings::debug_merge)
+        if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking S stash from {} | L dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(), other.get_tag(), L->size(),
                               other.S_stash->data.size(), get_truncation_error(), other.S_stash->error);
         set_L(other.S_stash->data, other.S_stash->error);
@@ -565,7 +567,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
-        if constexpr(settings::debug_merge) tools::log->trace("MpsSite({})::take_stash: Taking C stash from {}", get_tag(), other.get_tag());
+        if constexpr(settings::verbose_merge) tools::log->trace("MpsSite({})::take_stash: Taking C stash from {}", get_tag(), other.get_tag());
         if(label == "B")
             tools::log->warn("MpsSite({})::take_stash: Taking C_stash to set LC on B-site | LC dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(),
                              isCenter() ? LC->size() : -1l, other.C_stash->data.size(), isCenter() ? get_truncation_error_LC() : 0, other.C_stash->error);
@@ -577,7 +579,7 @@ void MpsSite::take_stash(const MpsSite &other) {
 void MpsSite::convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR) {
     if(label != "AL") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
     if(get_chiR() != LR.dimension(0)) throw except::runtime_error("MpsSite::convert_AL_to_A: chiR {} != LR.dim(0) {}", get_chiR() != LR.dimension(0));
-    if(settings::debug_merge) tools::log->trace("MpsSite({})::convert_AL_to_A: multipliying inverse L", get_tag());
+    if(settings::verbose_merge) tools::log->trace("MpsSite({})::convert_AL_to_A: multipliying inverse L", get_tag());
     Eigen::Tensor<cplx, 3> tmp = get_M_bare().contract(tenx::asDiagonalInversed(LR), tenx::idx({2}, {0}));
     set_label("A");
     set_M(tmp);
@@ -585,7 +587,7 @@ void MpsSite::convert_AL_to_A(const Eigen::Tensor<cplx, 1> &LR) {
 void MpsSite::convert_LB_to_B(const Eigen::Tensor<cplx, 1> &LL) {
     if(label != "LB") throw except::runtime_error("Label error: [{}] | expected [AL]", label);
     if(get_chiL() != LL.dimension(0)) throw except::runtime_error("MpsSite::convert_LB_to_B: chiL {} != LL.dim(0) {}", get_chiL() != LL.dimension(0));
-    if(settings::debug_merge) tools::log->trace("MpsSite({})::convert_LB_to_B: multipliying inverse L", get_tag());
+    if(settings::verbose_merge) tools::log->trace("MpsSite({})::convert_LB_to_B: multipliying inverse L", get_tag());
     Eigen::Tensor<cplx, 3> tmp = tenx::asDiagonalInversed(LL).contract(get_M_bare(), tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
     set_label("B");
     set_M(tmp);

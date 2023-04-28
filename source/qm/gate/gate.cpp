@@ -1,6 +1,7 @@
 
 
 #include "qm/gate.h"
+#include "config/enums.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/linalg/tensor.h"
@@ -14,7 +15,8 @@
 #include <utility>
 
 namespace settings {
-    inline constexpr bool debug_gates = false;
+    inline constexpr bool debug_gates   = true;
+    inline constexpr bool verbose_gates = false;
 }
 
 template<typename T>
@@ -111,30 +113,30 @@ Eigen::Tensor<qm::cplx, 2> contract_a(const Eigen::Tensor<qm::cplx, 2> &m, const
                                       const tenx::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
     auto res = Eigen::Tensor<qm::cplx, 2>(dim2);
     res.device(tenx::threads::getDevice()) =
-        ud.reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.conjugate().reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
+        ud.conjugate().reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
     return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> contract_b(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 2> &shp_udn2,
                                       const std::array<long, 4> &shp_udn4, const tenx::idxlistpair<1> &idx1, const tenx::idxlistpair<2> &idx2) {
     auto res                               = Eigen::Tensor<qm::cplx, 2>(shp_udn2);
-    res.device(tenx::threads::getDevice()) = ud.reshape(shp_udn4).contract(m, idx1).contract(ud.conjugate().reshape(shp_udn4), idx2).reshape(shp_udn2);
+    res.device(tenx::threads::getDevice()) = m.contract(ud.conjugate().reshape(shp_udn4), idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
     return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> contract_c(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 6> &shp_mid6,
-                                      const tenx::idxlistpair<1> &idx_up, const tenx::idxlistpair<1> &idx_dn, const std::array<long, 6> &shf6,
+                                      const tenx::idxlistpair<1> &idx_dn, const tenx::idxlistpair<1> &idx_up, const std::array<long, 6> &shf6,
                                       const std::array<long, 2> &dim2) {
     auto res                               = Eigen::Tensor<qm::cplx, 2>(dim2);
-    res.device(tenx::threads::getDevice()) = ud.contract(m.reshape(shp_mid6), idx_up).contract(ud.conjugate(), idx_dn).shuffle(shf6).reshape(dim2);
+    res.device(tenx::threads::getDevice()) = ud.conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
     return res;
 }
 
 Eigen::Tensor<qm::cplx, 2> contract_d(const Eigen::Tensor<qm::cplx, 2> &m, const Eigen::Tensor<qm::cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
-                                      const tenx::idxlistpair<1> &idx_up, const tenx::idxlistpair<1> &idx_dn, const std::array<long, 4> &shf4,
+                                      const tenx::idxlistpair<1> &idx_dn, const tenx::idxlistpair<1> &idx_up, const std::array<long, 4> &shf4,
                                       const std::array<long, 2> &dim2) {
     auto res                               = Eigen::Tensor<qm::cplx, 2>(dim2);
-    res.device(tenx::threads::getDevice()) = ud.contract(m.reshape(shp_mid4), idx_up).contract(ud.conjugate(), idx_dn).shuffle(shf4).reshape(dim2);
+    res.device(tenx::threads::getDevice()) = ud.conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
     return res;
 }
 
@@ -154,15 +156,64 @@ Eigen::Tensor<qm::cplx, 2> qm::Gate::exp_internal(const Eigen::Tensor<cplx, 2> &
      */
     auto op_map = tenx::MatrixMap(op_);
     if(op_map.isDiagonal() and op_map.imag().isZero() and std::real(alpha) == 0) {
-        auto minus_i = std::complex<double>(0, -1);
+        using namespace std::complex_literals;
+        auto diag = op_map.diagonal()
+                        .unaryViewExpr([&alpha](const cplx &h) {
+                            auto two_pi_64       = std::atan(1.0) * 8.0;
+                            auto alpha_h_64      = static_cast<double>(std::imag(-alpha)) * static_cast<double>(std::real(h));
+                            auto fmod_alpha_h_64 = std::fmod(alpha_h_64, two_pi_64);
+                            auto exp_ialpha_h_64 = std::exp(-1.0i * fmod_alpha_h_64);
 
-        auto diag =
-            op_map.diagonal()
-                .unaryViewExpr([&alpha, &minus_i](const cplx &h) { return std::exp(minus_i * std::fmod(std::imag(-alpha) * std::real(h), 2.0 * M_PI)); })
-                .asDiagonal();
+                            auto two_pi_128       = std::atan(1.0l) * 8.0l;
+                            auto alpha_h_128      = static_cast<long double>(std::imag(-alpha)) * static_cast<long double>(std::real(h));
+                            auto fmod_alpha_h_128 = static_cast<double>(std::fmod(alpha_h_128, two_pi_128));
+                            auto exp_ialpha_h_128 = std::exp(-1.0i * fmod_alpha_h_128);
+                            if(std::isnan(fmod_alpha_h_128)) { throw except::runtime_error("fmod gave nan"); }
+                            tools::log->info("fmod 64 : alpha {:.3e} | alpha_h {:<32.16f} | fmod {:<32.16f} | exp  {:<32.16f}", alpha.imag(), alpha_h_64,
+                                             fmod_alpha_h_64, exp_ialpha_h_64);
+                            tools::log->info("fmod 128: alpha {:.3e} | alpha_h {:<32.16f} | fmod {:<32.16f} | exp  {:<32.16f}", alpha.imag(), alpha_h_128,
+                                             fmod_alpha_h_128, exp_ialpha_h_128);
+                            return exp_ialpha_h_64;
+                        })
+                        .asDiagonal();
         return tenx::TensorMap(diag.toDenseMatrix());
     } else {
         return tenx::TensorMap((alpha * tenx::MatrixMap(op_)).exp().eval());
+    }
+}
+
+Eigen::Tensor<qm::cplx, 2> qm::Gate::exp_internal(const Eigen::Tensor<cplx, 2> &op_, cpll alpha) const {
+    /* Note for flbit:
+     *  Let h = op(i,i), i.e. h are the diagonal entries in op
+     *  Let alpha = -i * delta be purely imaginary (since delta is real). So delta = imag(-alpha)
+     *  Now notice that
+     *       exp( -i * delta * h )
+     *  can become imprecise when delta is large, since delta and h are real and h ~O(1)
+     *
+     *  Instead, in the flbit case, we can exploit that h is real to compute
+     *       exp(-i * mod(delta * real(h), 2*pi))
+     *  which is equivalent but with a much smaller exponent.
+     *
+     *  Remember to do the modulo separately on each diagonal entry h!
+     */
+    auto op_map = tenx::MatrixMap(op_);
+    if(op_map.isDiagonal() and op_map.imag().isZero() and std::real(alpha) == 0) {
+        using namespace std::complex_literals;
+        auto diag = op_map.diagonal()
+                        .unaryViewExpr([&alpha](const cplx &h) -> cplx {
+                            long double two_pi_128       = std::atan(1.0l) * 8.0l;
+                            long double alpha_h_128      = std::imag(-alpha) * static_cast<long double>(std::real(h));
+                            long double fmod_alpha_h_128 = std::fmod(alpha_h_128, two_pi_128);
+                            auto        exp_ialpha_h_128 = std::exp(-1.0i * static_cast<double>(fmod_alpha_h_128));
+                            if(std::isnan(fmod_alpha_h_128)) { throw except::runtime_error("fmod gave nan"); }
+                            tools::log->info("fmod 128: alpha {:.3e} | alpha_h {:<32.16f} | fmod {:<32.16f} | exp  {:<32.16f}", alpha.imag(), alpha_h_128,
+                                             static_cast<double>(fmod_alpha_h_128), exp_ialpha_h_128);
+                            return exp_ialpha_h_128;
+                        })
+                        .asDiagonal();
+        return tenx::TensorMap(diag.toDenseMatrix());
+    } else {
+        return tenx::TensorMap((static_cast<cplx>(alpha) * tenx::MatrixMap(op_)).exp().eval());
     }
 }
 
@@ -188,17 +239,43 @@ qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std:
     if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
     op = exp_internal(op_, alpha);
 }
-
-void                        qm::Gate::mark_as_used() const { used = true; }
-void                        qm::Gate::unmark_as_used() const { used = false; }
-bool                        qm::Gate::was_used() const { return used; }
-void                        qm::Gate::exp_inplace(cplx alpha) { op = exp_internal(op, alpha); }
-qm::Gate                    qm::Gate::exp(cplx alpha) const { return Gate(op, pos, dim, alpha); }
-bool                        qm::Gate::isUnitary(double prec) const { return tenx::MatrixMap(op).isUnitary(prec); }
-Eigen::Tensor<qm::cplx, 2> &qm::Gate::adjoint() const {
+qm::Gate::Gate(const Eigen::Tensor<cplx, 2> &op_, std::vector<size_t> pos_, std::vector<long> dim_, cpll alpha) : pos(std::move(pos_)), dim(std::move(dim_)) {
+    auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
+    if(dim_prod != op_.dimension(0) or dim_prod != op_.dimension(1))
+        throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, op_.dimension(0), op_.dimension(1));
+    if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
+    op = exp_internal(op_, alpha);
+}
+void                              qm::Gate::mark_as_used() const { used = true; }
+void                              qm::Gate::unmark_as_used() const { used = false; }
+bool                              qm::Gate::was_used() const { return used; }
+void                              qm::Gate::exp_inplace(cplx alpha) { op = exp_internal(op, alpha); }
+void                              qm::Gate::exp_inplace(cpll alpha) { op = exp_internal(op, alpha); }
+qm::Gate                          qm::Gate::exp(cplx alpha) const { return Gate(op, pos, dim, alpha); }
+qm::Gate                          qm::Gate::exp(cpll alpha) const { return Gate(op, pos, dim, alpha); }
+bool                              qm::Gate::isUnitary(double prec) const { return tenx::MatrixMap(op).isUnitary(prec); }
+const Eigen::Tensor<qm::cplx, 2> &qm::Gate::adjoint() const {
     if(adj) return adj.value();
     adj = op.conjugate().shuffle(tenx::array2{1, 0});
     return adj.value();
+}
+const Eigen::Tensor<qm::cplx, 2> &qm::Gate::conjugate() const {
+    if(cnj) return cnj.value();
+    cnj = op.conjugate();
+    return cnj.value();
+}
+const Eigen::Tensor<qm::cplx, 2> &qm::Gate::transpose() const {
+    if(trn) return trn.value();
+    trn = op.shuffle(tenx::array2{1, 0});
+    return trn.value();
+}
+const Eigen::Tensor<qm::cplx, 2> &qm::Gate::unaryOp(GateOp unop) const {
+    switch(unop) {
+        case GateOp::NONE: return op;
+        case GateOp::CNJ: return conjugate();
+        case GateOp::ADJ: return adjoint();
+        case GateOp::TRN: return transpose();
+    }
 }
 
 template<auto rank>
@@ -397,7 +474,7 @@ std::vector<std::vector<size_t>> qm::get_lightcone_intersection(const std::vecto
         std::set_intersection(tau_sublayer.begin(), tau_sublayer.end(), sig_sublayer.begin(), sig_sublayer.end(), back_inserter(pos_isect));
         int_cone.emplace_back(pos_isect);
     }
-    if constexpr(settings::debug_gates) {
+    if constexpr(settings::verbose_gates) {
         bool deb = tools::log->level() == spdlog::level::trace;
         if(deb) {
             fmt::print("Lightcones\n");
@@ -480,7 +557,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // In this case we stack gates vertically that are equally wide.
         // Should be the simplest case
-        if constexpr(settings::debug_gates)
+        if constexpr(settings::verbose_gates)
             tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {}", middle_gate.pos, updown_gate.pos, pos_isect,
                               pos_nsect, inc);
         auto op = Eigen::Tensor<cplx, 2>(middle_gate.op.dimensions());
@@ -495,49 +572,49 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         // Decide if this is connects on the left or right leg
         if(middle_gate.pos.front() == updown_gate.pos.front()) {
             /*  Left insert
-             *            0    1              0    1               0    1
+             *            2    3              1    2               2    3
              *            |    |              |    |               |    |
              *           [  up  ]            [  up  ]             [  up  ]
              *            |    |              |    |               |    |
-             *           (2)   3              |   <2>              |    |
-             *           (0)                  |                    |    |
+             *           (0)   1              |   <0>              |    |
+             *           (1)                  |                    |    |
              *            |                   |                    |    |
              *          [mid]       ===>    [mid]        ===>    [mid]  |
              *            |                   |                    |    |
-             *            1                  (3)                   |    |
-             *            0    1             (0)  <1>              |    |
+             *            0                  (3)                   |    |
+             *            2    3             (2)  <3>              |    |
              *            |    |              |    |               |    |
              *           [  dn  ]            [  dn  ]             [  dn  ]
              *            |    |              |    |               |    |
-             *            2    3              2    3               2    3
+             *            0    1              0    1               0    1
              *
              */
 
-            idx1 = tenx::idx({2}, {0});
-            idx2 = tenx::idx({3, 2}, {2, 3});
+            idx1 = tenx::idx({1}, {0});
+            idx2 = tenx::idx({0, 3}, {3, 2});
         } else {
             /*  Right insert
-             *            0    1              0    1               0    1
+             *            2    3              1    2               2    3
              *            |    |              |    |               |    |
              *           [  up  ]            [  up  ]             [  up  ]
              *            |    |              |    |               |    |
-             *            2   (3)            <2>   |               |    |
-             *                (0)                  |               |    |
+             *            0   (1)            <0>   |               |    |
+             *                (1)                  |               |    |
              *                 |                   |               |    |
              *               [mid]   ===>        [mid]     ===>    |  [mid]
              *                 |                   |               |    |
-             *                 1                  (3)              |    |
-             *            0    1             <0>  (1)              |    |
+             *                 0                  (3)              |    |
+             *            2    3             <2>  (3)              |    |
              *            |    |              |    |               |    |
              *           [  dn  ]            [  dn  ]             [  dn  ]
              *            |    |              |    |               |    |
-             *            2    3              2    3               2    3
+             *            0    1              0    1               0    1
              *
              */
-            idx1 = tenx::idx({3}, {0});
-            idx2 = tenx::idx({2, 3}, {2, 3});
+            idx1 = tenx::idx({1}, {1});
+            idx2 = tenx::idx({0, 3}, {2, 3});
         }
-        if constexpr(settings::debug_gates)
+        if constexpr(settings::verbose_gates)
             tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos,
                               updown_gate.pos, pos_isect, pos_nsect, inc);
         auto op = contract_b(middle_gate.op, updown_gate.op, shp_udn2, shp_udn4, idx1, idx2);
@@ -557,21 +634,21 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         if(middle_gate.pos.front() == updown_gate.pos.back()) {
             /*  Right insert (Free legs in mid are merged)
              *
-             *    0    1                      0    1                        0    1
+             *    2    3                      2    3                        4    5
              *    |    |                      |    |                        |    |
              *   [  up  ]                    [  up  ]                      [  up  ]
              *    |    |                      |    |                        |    |
-             *   2    (3)                     |    |                        |    |
-             *        (0)    1               <2>   |     3                  |    |     2                                       0   1   2              0
+             *    0    1                     <0>  (1)                       |    |
+             *         2     3                    (4)    5                  |    |     3                                       3   4   5              1
              *         |     |                     |     |                  |    |     |                                       |   |   |              |
              *        [  mid  ]       ===>        [  mid  ]     ===>        |   [  mid  ]       shuffle({0,1,2,4,5,3})  =    [   gate    ]  =   [   gate    ]
              *         |     |                     |     |                  |    |     |                                       |   |   |              |
-             *         2     3                    (4)    5                  |    |     3                                       3   4   5              1
-             *    0    1                     <0>  (1)                       |    |
+             *        (0)     1                    |     3                  |    |     2                                       0   1   2              0
+             *    2   (3)                    <2>   |                        |    |
              *    |    |                      |    |                        |    |
              *   [  dn  ]                    [  dn  ]                      [  dn  ]
              *    |    |                      |    |                        |    |
-             *    2    3                      2    3                        4    5
+             *    0    1                      0    1                        0    1
              *
              */
 
@@ -592,7 +669,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             if(pos_nsect.size() == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{1, merged, 1, merged});
             if(pos_nsect.size() == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{1, merged, 1, merged});
             idx1 = tenx::idx({3}, {0});
-            idx2 = tenx::idx({2, 4}, {2, 3});
+            idx2 = tenx::idx({2, 4}, {0, 1});
             shf6 = std::array<Eigen::Index, 6>{0, 1, 2, 4, 5, 3};
             pos  = concat(updown_gate.pos, subset(middle_gate.pos, 1, merged));
             dim  = concat(updown_gate.dim, subset(middle_gate.dim, 1, merged));
@@ -600,21 +677,21 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         } else {
             /*  Left insert (Free legs in mid are merged)
              *
-             *           0    1                      0    1                        0    1
+             *           2    3                      2    3                        4    5
              *           |    |                      |    |                        |    |
              *          [  up  ]                    [  up  ]                      [  up  ]
              *           |    |                      |    |                        |    |
-             *          (2)   3                      |   <2>                       |    |
-             *     0    (1)                    3     |                       2     |    |                                  0   1   2              0
+             *           0    1                     (0)  <1>                       |    |
+             *     2     3                     4    (5)                      3     |    |                                  3   4   5              0
              *     |     |                     |     |                       |     |    |                                  |   |   |              |
              *    [  mid  ]       ===>        [  mid  ]           ===>      [  mid  ]   |   shuffle({2,0,1,3,4,5})  =    [   gate    ]  =   [   gate    ]
              *     |     |                     |     |                       |     |    |                                  |   |   |              |
-             *     2     3                     4    (5)                      3     |    |                                  3   4   5              1
-             *           0    1                     (0)   <1>                      |    |
+             *     0    (1)                    3     |                       2     |    |                                  0   1   2              1
+             *          (2)   3                      |   <2>                       |    |
              *           |    |                      |    |                        |    |
              *          [  dn  ]                    [  dn  ]                      [  dn  ]
              *           |    |                      |    |                        |    |
-             *           2    3                      2    3                        4    5
+             *           0    1                      0    1                        0    1
              *
              */
             if(pos_nsect.size() == 1) shp_mid4 = group(middle_gate.shape<2>(), std::array<size_t, 4>{merged, 1, merged, 1});
@@ -634,13 +711,13 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             if(pos_nsect.size() == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{merged, 1, merged, 1});
             if(pos_nsect.size() == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{merged, 1, merged, 1});
             idx1 = tenx::idx({2}, {1});
-            idx2 = tenx::idx({5, 2}, {2, 3});
+            idx2 = tenx::idx({5, 2}, {0, 1});
             shf6 = std::array<Eigen::Index, 6>{2, 0, 1, 3, 4, 5};
             pos  = concat(subset(middle_gate.pos, 0, merged), updown_gate.pos);
             dim  = concat(subset(middle_gate.dim, 0, merged), updown_gate.dim);
             dim2 = repeat(std::array<long, 1>{shp_mid4[0] * shp_udn2[0]});
         }
-        if constexpr(settings::debug_gates)
+        if constexpr(settings::verbose_gates)
             tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_a", middle_gate.pos,
                               updown_gate.pos, pos_isect, pos_nsect, inc);
         auto op = contract_a(middle_gate.op, updown_gate.op, shp_mid4, shp_udn4, shf6, idx1, idx2, dim2);
@@ -666,21 +743,21 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         if(offset == offmin or offset == offmax) {
             if(offset == 0) {
                 /*  Insert at offset 0
-                 *            0                   0                 0
+                 *            1                   1                 3
                  *            |                   |                 |
                  *           [up]                [up]              [up]
                  *            |                   |                 |
-                 *           (1)                  |                 |
-                 *           (0)  1               |   1             |   1
+                 *            1                  (1)                |
+                 *            2   3              (2)  3             |   2
                  *            |   |               |   |             |   |
                  *          [  mid  ]   ===>    [  mid  ]         [  mid  ]     ===> shuffle({0,1,3,2})
                  *            |   |               |   |             |   |
-                 *            2   3              (2)   3            |   2
-                 *            0                  (0)                |
+                 *           (0)  1               |   1             |   1
+                 *           (1)                  |                 |
                  *            |                   |                 |
                  *           [dn]                [dn]              [dn]
                  *            |                   |                 |
-                 *            1                   1                 3
+                 *            0                   0                 0
                  *
                  */
                 if(msize == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t, 4>{usize, merged, usize, merged});
@@ -699,31 +776,31 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 if(msize == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{usize, merged, usize, merged});
                 if(msize == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{usize, merged, usize, merged});
                 dim2   = middle_gate.shape<2>();
-                idx_up = tenx::idx({1}, {0});
-                idx_dn = tenx::idx({2}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
+                idx_dn = tenx::idx({1}, {0});
+                idx_up = tenx::idx({2}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
 
                 shf4 = tenx::array4{0, 1, 3, 2};
-                if constexpr(settings::debug_gates)
+                if constexpr(settings::verbose_gates)
                     tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
                                       updown_gate.pos, pos_isect, pos_nsect, inc);
                 op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
             } else if(offset == offmax) {
                 /*  Insert at offmax
-                 *            0                   0                 0
+                 *            1                   1                 3
                  *            |                   |                 |
                  *           [up]                [up]              [up]
                  *            |                   |                 |
-                 *           (1)                  |                 |
+                 *            0                   0                 |
+                 *        2   3               2   3             2   |
+                 *        |   |               |   |             |   |
+                 *      [  mid  ]   ===>    [  mid  ]         [  mid  ]    ===> shuffle({1,0,2,3})
+                 *        |   |               |   |             |   |
                  *        0  (1)              1   |             1   |
-                 *        |   |               |   |             |   |
-                 *      [  mid  ]   ===>    [  mid  ]         [  mid  ]     ===> shuffle({1,0,2,3})
-                 *        |   |               |   |             |   |
-                 *        2   3               2  (3)            2   |
-                 *            0                  (0)                |
+                 *           (1)                  |                 |
                  *            |                   |                 |
                  *           [dn]                [dn]              [dn]
                  *            |                   |                 |
-                 *            1                   1                 3
+                 *            0                   0                 0
                  *
                  */
 
@@ -743,31 +820,31 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                 if(msize == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{merged, usize, merged, usize});
                 if(msize == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{merged, usize, merged, usize});
                 dim2   = middle_gate.shape<2>();
-                idx_up = tenx::idx({1}, {1});
-                idx_dn = tenx::idx({3}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
+                idx_dn = tenx::idx({1}, {1});
+                idx_up = tenx::idx({3}, {0}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
                 shf4   = tenx::array4{1, 0, 2, 3};
             }
-            if constexpr(settings::debug_gates)
+            if constexpr(settings::verbose_gates)
                 tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
                                   updown_gate.pos, pos_isect, pos_nsect, inc);
-            op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
+            op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_dn, idx_up, shf4, dim2);
         } else {
             /*  Insert at offmax
-             *           0                     0                      0
+             *           1                     0                      5
              *           |                     |                      |
              *          [up]                  [up]                   [up]
              *           |                     |                      |
-             *          (1)                    |                      |
-             *       0  (1)  2             1   |   2              1   |   2
+             *           0                    (0)                     |
+             *       3   4   5             3  (4)  5              3   |   4
              *       |   |   |             |   |   |              |   |   |
              *      [   mid   ]    ===>   [   mid   ]    ===>    [   mid   ]       ===> shuffle({1,0,2,3,5,4})
              *       |   |   |             |   |   |              |   |   |
-             *       3   4   5             3  (4)  5              3   |   4
-             *           0                    (0)                     |
+             *       0  (1)  2             1   |   2              1   |   2
+             *          (1)                    |                      |
              *           |                     |                      |
              *          [dn]                  [dn]                   [dn]
              *           |                     |                      |
-             *           1                     1                      5
+             *           0                     0                      0
              *
              */
 
@@ -785,13 +862,13 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
             if(msize == 15) shp_mid6 = group(middle_gate.shape<30>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
             if(msize == 16) shp_mid6 = group(middle_gate.shape<32>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
             dim2   = middle_gate.shape<2>();
-            idx_up = tenx::idx({1}, {1});
-            idx_dn = tenx::idx({4}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
+            idx_dn = tenx::idx({1}, {1});
+            idx_up = tenx::idx({4}, {0}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
             shf6   = tenx::array6{1, 0, 2, 3, 5, 4};
-            if constexpr(settings::debug_gates)
+            if constexpr(settings::verbose_gates)
                 tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos,
                                   updown_gate.pos, pos_isect, pos_nsect, inc);
-            op = contract_c(middle_gate.op, updown_gate.op, shp_mid6, idx_up, idx_dn, shf6, dim2);
+            op = contract_c(middle_gate.op, updown_gate.op, shp_mid6, idx_dn, idx_up, shf6, dim2);
         }
         if(op.size() == 0) throw std::logic_error("No op computed!");
         return qm::Gate{op, middle_gate.pos, middle_gate.dim};
@@ -809,11 +886,11 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
     bool inc = std::includes(dn_gate.pos.begin(), dn_gate.pos.end(), up_gate.pos.begin(), up_gate.pos.end());
     if(pos_isect.empty()) return dn_gate;
 
-    if constexpr(settings::debug_gates) tools::log->trace("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
+    if constexpr(settings::verbose_gates) tools::log->trace("Connecting dn {} | up {}", dn_gate.pos, up_gate.pos);
 
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // This case is a vertical stack. Should be the simplest case
-        Eigen::Tensor<cplx, 2> op = up_gate.op.contract(dn_gate.op, tenx::idx({1}, {0}));
+        Eigen::Tensor<cplx, 2> op = dn_gate.op.contract(up_gate.op, tenx::idx({1}, {0}));
         return qm::Gate{op, dn_gate.pos, dn_gate.dim};
     }
     if(not pos_isect.empty() and not pos_nsect.empty() and inc) {
@@ -845,7 +922,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
             if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
             auto                   dim2 = dn_gate.shape<2>();
-            Eigen::Tensor<cplx, 2> op   = up_gate.op.contract(dn_gate.op.reshape(dn_shp4), tenx::idx({1}, {1})).shuffle(tenx::array4{1, 0, 2, 3}).reshape(dim2);
+            Eigen::Tensor<cplx, 2> op   = dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({3}, {0})).reshape(dim2);
             return qm::Gate{op, dn_gate.pos, dn_gate.dim};
         } else if(dn_gate.pos.front() == pos_isect.front()) {
             /*  Left connection
@@ -864,7 +941,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
             if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
             auto                   dim2 = dn_gate.shape<2>();
-            Eigen::Tensor<cplx, 2> op   = up_gate.op.contract(dn_gate.op.reshape(dn_shp4), tenx::idx({1}, {0})).reshape(dim2);
+            Eigen::Tensor<cplx, 2> op   = dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({2}, {0})).shuffle(tenx::array4{0, 1, 3, 2}).reshape(dim2);
             return qm::Gate{op, dn_gate.pos, dn_gate.dim};
         } else {
             /*  Center connection
@@ -883,7 +960,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(dn_size == 8) dn_shp6 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
             auto                   dim2 = dn_gate.shape<2>();
             Eigen::Tensor<cplx, 2> op =
-                up_gate.op.contract(dn_gate.op.reshape(dn_shp6), tenx::idx({1}, {1})).shuffle(tenx::array6{1, 0, 2, 3, 4, 5}).reshape(dim2);
+                dn_gate.op.reshape(dn_shp6).contract(up_gate.op, tenx::idx({4}, {0})).shuffle(tenx::array6{0, 1, 2, 3, 5, 4}).reshape(dim2);
             return qm::Gate{op, dn_gate.pos, dn_gate.dim};
         }
     }
@@ -900,13 +977,13 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
         // Decide if this is connects on the right or right leg
         if(dn_gate.pos.front() == up_gate.pos.back()) {
             /*  Right connection
-             *
-             *      |    |     |           0   1   2              0
+             *      4    5     2
+             *      |    |     |           3   4   5              1
              *     [  up  ]    |           |   |   |              |
              *      |    |     |   =     [   gate    ]  =   [   gate    ]
              *      |   [  dn  ]           |   |   |              |
-             *      |    |     |           3   4   5              1
-             *
+             *      |    |     |           0   1   2              0
+             *      3    0     1
              */
             if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{1, dn_merge}));
             if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{1, dn_merge}));
@@ -924,18 +1001,19 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(up_size == 8) up_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{up_merge, 1}));
             auto                   dim2 = repeat(std::array<long, 1>{up_shp4[0] * up_shp4[1] * dn_shp4[1]});
             Eigen::Tensor<cplx, 2> op =
-                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({0}, {3})).shuffle(tenx::array6{3, 4, 0, 5, 1, 2}).reshape(dim2);
+                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({2}, {1})).shuffle(tenx::array6{3, 0, 1, 4, 5, 2}).reshape(dim2);
             pos = concat(up_gate.pos, subset(dn_gate.pos, 1, dn_merge));
             dim = concat(up_gate.dim, subset(dn_gate.dim, 1, dn_merge));
             return qm::Gate{op, pos, dim};
         } else {
             /*  Left connection
-             *
-             *     |     |    |             0   1   2              0
+             *     2     4    5
+             *     |     |    |             3   4   5              1
              *     |    [  up  ]            |   |   |              |
              *     |     |    |      =    [   gate    ]  =   [   gate    ]
              *    [  dn  ]    |             |   |   |              |
-             *     |     |    |             3   4   5              1
+             *     |     |    |             0   1   2              0
+             *     0     1    3
              */
             if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
             if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
@@ -953,7 +1031,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(up_size == 8) up_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{1, up_merge}));
             auto                   dim2 = repeat(std::array<long, 1>{dn_shp4[0] * up_shp4[0] * up_shp4[1]});
             Eigen::Tensor<cplx, 2> op =
-                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({1}, {2})).shuffle(tenx::array6{0, 3, 4, 1, 2, 5}).reshape(dim2);
+                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({3}, {0})).shuffle(tenx::array6{0, 1, 3, 2, 4, 5}).reshape(dim2);
             pos = concat(subset(dn_gate.pos, 0, dn_merge), up_gate.pos);
             dim = concat(subset(dn_gate.dim, 0, dn_merge), up_gate.dim);
             return qm::Gate{op, pos, dim};
@@ -997,7 +1075,7 @@ template<auto N>
 qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen::Index>, N> &idxpairs) {
     // Trace off pairs of indices on a gate
     // This is done one by one recursively until all pairs have been traced
-    if constexpr(settings::debug_gates) {
+    if constexpr(settings::verbose_gates) {
         if constexpr(N == 1) tools::log->trace("Tracing pos {} | dim {} | index pair [{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second);
         if constexpr(N == 2)
             tools::log->trace("Tracing gate pos {} | dim {} | index pairs [{},{}][{},{}]", gate.pos, gate.dim, idxpairs[0].first, idxpairs[0].second,

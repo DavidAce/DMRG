@@ -1,8 +1,10 @@
 #pragma once
 #include "gate.h"
+#include "math/svd/config.h"
 #include "math/tenx/fwd_decl.h"
 #include "qm.h"
 #include <complex>
+#include <optional>
 #include <vector>
 
 enum class UnitaryGateWeight;
@@ -79,21 +81,23 @@ namespace qm::lbit {
     };
 
     /* clang-format off */
-    extern Eigen::Tensor<cplx, 2>               get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<cplx, 2> &hamiltonian);
-    extern std::vector<qm::Gate>                get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
-    extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
+    extern Eigen::Tensor<cplx, 2>               get_unitary_layer_as_tensor(const std::vector<qm::Gate> &unitary_layer);
+    extern Eigen::Tensor<cplx, 2>               get_unitary_circuit_as_tensor(const std::vector<std::vector<qm::Gate>> &unitary_circuit);
+    extern Eigen::Tensor<cplx, 2>               get_time_evolution_operator(cpll delta_t, const Eigen::Tensor<cplx, 2> &hamiltonian);
+    extern std::vector<qm::Gate>                get_time_evolution_gates(cpll delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
+    extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cpll delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
 //    extern std::vector<qm::Gate>                get_unitary_2gate_layer(size_t sites, double fmix);
     extern std::vector<qm::Gate>                get_unitary_2gate_layer(const UnitaryGateProperties & u);
-    extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const std::vector<qm::Gate> & ulayer);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const std::vector<qm::Gate> & ulayer, std::optional<svd::config> cfg = std::nullopt);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const UnitaryGateProperties & u);
     extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn, const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up, bool adj_dn = false);
     extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn,
                                                                          const std::vector<Eigen::Tensor<cplx, 4>> & mpos_md,
                                                                          const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up);
     extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> & mpos);
-    extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_2site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &twosite_hams);
-    extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cplx delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
-    extern std::vector<Eigen::Tensor<cplx, 4>>  get_time_evolution_mpos(cplx delta_t, const std::vector<Eigen::Tensor<cplx, 4>> &mpos);
+    extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_2site(size_t sites, cpll delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &twosite_hams);
+    extern std::vector<Eigen::Tensor<cplx, 2>>  get_time_evolution_operators_3site(size_t sites, cpll delta_t, const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site);
+    extern std::vector<Eigen::Tensor<cplx, 4>>  get_time_evolution_mpos(cpll delta_t, const std::vector<Eigen::Tensor<cplx, 4>> &mpos);
     extern cplx                                 get_lbit_2point_correlator1(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &rho, size_t pos_rho, const Eigen::Matrix2cd &sig, size_t pos_sig);
     extern cplx                                 get_lbit_2point_correlator2(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_2point_correlator3(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);

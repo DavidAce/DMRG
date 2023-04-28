@@ -32,14 +32,14 @@ namespace tools::finite::mps {
     extern void truncate_all_sites                   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_active_sites                (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_next_sites                  (StateFinite & state, size_t num_sites = 4, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, Eigen::Tensor<cplx, 3> & temp, bool adjoint, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, bool adjoint, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates, bool adjoint, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_gates_old                      (StateFinite & state, const std::vector<qm::Gate> & gates, bool adjoint, bool moveback = true,  std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_circuit                        (StateFinite & state, const std::vector<std::vector<qm::Gate>> & gates, bool adjoint = false, bool mark_as_used = false, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, Eigen::Tensor<cplx, 3> & temp, GateOp gop, GateMove gmov, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, CircOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates,  CircOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_gates_old                      (StateFinite & state, const std::vector<qm::Gate> & gates,  CircOp cop, bool moveback = true,  std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_circuit                        (StateFinite & state, const std::vector<std::vector<qm::Gate>> & gates, CircOp gop, bool mark_as_used = false, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void swap_sites                           (StateFinite & state, size_t posL, size_t posR, std::vector<size_t> & sites, GateMove gm);
-    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, bool adjoint, std::vector<size_t> & sites, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
-    extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, bool adjoint, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_swap_gate                      (StateFinite & state, qm::SwapGate & gate, Eigen::Tensor<cplx, 3> & temp, GateOp gop, std::vector<size_t> & sites, GateMove gm, std::optional<svd::config> svd_cfg = std::nullopt);
+    extern void apply_swap_gates                     (StateFinite & state, std::vector<qm::SwapGate> & gates, CircOp cop, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     namespace init{
         inline std::set<size_t> used_bitfields;
         extern bool bitfield_is_valid (size_t bitfield);

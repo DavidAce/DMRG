@@ -92,7 +92,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         }
         norm = std::abs(tenx::MatrixMap(chain).trace());
     }
-    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("Norm far from unity: {:.16f}", norm);
+    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("norm: far from unity: {:.16f}", norm);
     state.measurements.norm = norm;
     return state.measurements.norm.value();
 }
@@ -335,10 +335,10 @@ std::vector<double> tools::finite::measure::truncation_errors_active(const State
 }
 
 template<typename Scalar>
-Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std::unique_ptr<MpsSite>> &mps_sites) {
+Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std::unique_ptr<MpsSite>> &mps_sites, std::string_view name) {
     if constexpr(std::is_same_v<Scalar, cplx>) {
         bool all_real = std::all_of(mps_sites.begin(), mps_sites.end(), [](const auto &mps) -> bool { return mps->is_real(); });
-        if(all_real) return mps2tensor<real>(mps_sites);
+        if(all_real) return mps2tensor<real>(mps_sites, name);
     }
 
     auto spindims = std::vector<long>();
@@ -362,9 +362,10 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         auto temp = Eigen::Tensor<Scalar, 2>(statev.slice(off1, ext1).reshape(ext2)); // Make a temporary copy of the state vector
         ext1      = {mps->spin_dim() * temp.dimension(0) * mps->get_chiR()};
         ext2      = {mps->spin_dim() * temp.dimension(0), mps->get_chiR()};
-        if(ext1[0] > memsize) throw except::logic_error("Size of ext1[0] > memsize");
-        tools::log->info("Contracting temp {} | M[{}]:{} | off1 {} | ext1 {} | ext2 {}", temp.dimensions(), mps->get_position(), mps->get_M().dimensions(),
-                         off1, ext1, ext2);
+        if(ext1[0] > memsize) throw except::logic_error("mps2tensor [{}]: size of ext1[0] > memsize", name);
+        //        tools::log->info("Contracting temp {} | M[{}]:{} | off1 {} | ext1 {} | ext2 {}", temp.dimensions(), mps->get_position(),
+        //        mps->get_M().dimensions(),
+        //                         off1, ext1, ext2);
         if constexpr(std::is_same_v<Scalar, cplx>) {
             statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
         } else {
@@ -373,11 +374,11 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         }
     }
     double norm = tenx::norm(statev);
-    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("Norm far from unity: {}", norm); }
-    return statev.slice(off1, ext1).template cast<cplx>();
+    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("mps2tensor [{}]: Norm far from unity: {:.16f}", name, norm); }
+    return statev.template cast<cplx>();
 }
 
-Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites); }
+Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const StateFinite &state) { return mps2tensor(state.mps_sites, state.get_name()); }
 
 template<typename state_or_mps_type>
 double tools::finite::measure::energy_minus_energy_shift(const state_or_mps_type &state, const ModelFinite &model, const EdgesFinite &edges,

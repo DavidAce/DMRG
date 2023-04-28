@@ -7,4 +7,6 @@ add_source_target(dmrg-qm-gate
         INTERFACE_LINK_LIBRARIES
         dmrg-math-tenx
         dmrg-tools-common-log
+#        COMPILE_OPTIONS
+#        -mlong-double-128
         )

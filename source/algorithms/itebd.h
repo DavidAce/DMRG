@@ -11,8 +11,8 @@ class itebd : public AlgorithmInfinite {
     using AlgorithmInfinite::AlgorithmInfinite;
     explicit itebd(std::shared_ptr<h5pp::File> h5ppFile_);
 
-    std::vector<Eigen::Tensor<Scalar, 2>> unitary_time_evolving_operators;
-    Eigen::Tensor<Scalar, 2>              h_evn, h_odd;
+    std::vector<Eigen::Tensor<cplx, 2>> unitary_time_evolving_operators;
+    Eigen::Tensor<cplx, 2>              h_evn, h_odd;
 
     void run_algorithm() final;
     void run_preprocessing() final;

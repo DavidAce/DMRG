@@ -19,6 +19,7 @@
 #include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
 
+
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
@@ -807,19 +808,19 @@ void AlgorithmFinite::clear_convergence_status() {
 }
 
 void AlgorithmFinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
-    if(not write_enabled) return;
+    if(not h5file) return;
     tools::finite::h5::save::simulation(*h5file, tensors, status, storage_event, copy_policy);
 }
 
 void AlgorithmFinite::write_to_file(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, StorageEvent storage_event,
                                     CopyPolicy copy_policy) {
-    if(not write_enabled) return;
+    if(not h5file) return;
     tools::finite::h5::save::simulation(*h5file, state, model, edges, status, storage_event, copy_policy);
 }
 
 template<typename T>
 void AlgorithmFinite::write_to_file(const T &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy) {
-    if(not write_enabled) return;
+    if(not h5file) return;
     auto sinfo = StorageInfo(status, tensors.state->get_name(), storage_event);
     tools::finite::h5::save::data(*h5file, sinfo, data, name, copy_policy);
 }

@@ -3,7 +3,7 @@
 #include "general/iter.h"
 #include "math/num.h"
 #include "meld-io/logger.h"
-#include <mpi/mpi.h>
+#include <mpi.h>
 void mpi::init() {
     // Initialize the MPI environment
     MPI_Init(nullptr, nullptr);

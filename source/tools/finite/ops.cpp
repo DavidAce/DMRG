@@ -18,7 +18,8 @@
 #include "tools/common/contraction.h"
 
 namespace settings {
-    inline constexpr bool debug_projection = false;
+    inline constexpr bool debug_projection   = false;
+    inline constexpr bool verbose_projection = false;
 }
 
 void tools::finite::ops::apply_mpo(StateFinite &state, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &Ledge,
@@ -70,15 +71,18 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     tools::log->trace("Applying MPO's");
     if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
 
-    if constexpr(settings::debug or settings::debug_projection) {
+    if constexpr(settings::verbose_projection) {
         state.clear_measurements();
         tools::log->debug("Num mpos             before applying mpos: {}", mpos.size());
         tools::log->debug("Norm                 before applying mpos: {:.16f}", tools::finite::measure::norm(state));
         tools::log->debug("Spin components      before applying mpos: {}", tools::finite::measure::spin_components(state));
         tools::log->debug("Bond dimensions      before applying mpos: {}", tools::finite::measure::bond_dimensions(state));
         tools::log->debug("Entanglement entropy before applying mpos: {}", tools::finite::measure::entanglement_entropies(state));
-        if(tenx::hasNaN(tools::finite::measure::entanglement_entropies(state)))
+    }
+    if constexpr(settings::debug or settings::debug_projection) {
+        if(tenx::hasNaN(tools::finite::measure::entanglement_entropies(state))) {
             throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
+        }
     }
     state.clear_measurements();
     for(const auto &[pos, mpo] : iter::enumerate(mpos)) state.get_mps_site<size_t>(pos).apply_mpo(mpo, adjoint); // Apply all mpo's
@@ -170,8 +174,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 
-    if constexpr(settings::debug or settings::debug_projection) {
-        state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    if constexpr(settings::verbose_projection) {
         tools::log->debug("Num mpos             after  applying mpos: {}", mpos.size());
         tools::log->debug("Norm                 after  applying mpos: {:.16f}", tools::finite::measure::norm(state));
         tools::log->debug("Spin components      after  applying mpos: {}", tools::finite::measure::spin_components(state));
@@ -181,6 +184,11 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
             throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
         state.clear_measurements();
         state.clear_cache();
+    }
+    if constexpr(settings::debug or settings::debug_projection) {
+        if(tenx::hasNaN(tools::finite::measure::entanglement_entropies(state))) {
+            throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
+        }
     }
 }
 

@@ -73,7 +73,7 @@ class h5pp_table_measurements_finite {
         std::array<double, 3> structure_factors      = {nan, nan, nan};
         double                total_time             = 0;
         double                algorithm_time         = 0;
-        double                physical_time          = 0;
+        long double           physical_time          = 0;
     };
     static h5pp::hid::h5t get_h5t();
 };
@@ -105,7 +105,7 @@ class h5pp_table_measurements_infinite {
         double               energy_variance_per_site_mom = 0;
         double               truncation_error             = 0;
         double               wall_time                    = 0;
-        double               phys_time                    = 0;
+        long double          phys_time                    = 0;
         std::complex<double> time_step;
     };
     static h5pp::hid::h5t get_h5t();

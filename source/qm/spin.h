@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace qm::spin {
-    extern Eigen::MatrixXcd              gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t site, bool reverse = false);
+    extern Eigen::MatrixXcd              gen_embedded_spin_operator(const Eigen::MatrixXcd &s, size_t at, size_t sites, bool reverse = false);
     extern std::vector<Eigen::MatrixXcd> gen_manybody_spins(const Eigen::MatrixXcd &s, size_t sites, bool reverse = false);
 
     namespace half {

@@ -15,11 +15,8 @@ namespace spdlog {
 }
 
 class AlgorithmBase {
-    protected:
-    bool write_enabled = true;
-
     public:
-    using Scalar    = std::complex<double>;
+    using cplx      = std::complex<double>;
     AlgorithmBase() = default;
     AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_);
     std::shared_ptr<h5pp::File> h5file;
@@ -45,8 +42,6 @@ class AlgorithmBase {
     void copy_from_tmp(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY);
     void init_bond_dimension_limits();
     void init_truncation_error_limits();
-    void write_disable();
-    void write_enable();
 
     protected:
     enum class SaturationScale { lin, log };

@@ -28,7 +28,8 @@
 #include <vector>
 
 namespace settings {
-    inline constexpr bool debug_circuit = false;
+    inline constexpr bool debug_circuit   = false;
+    inline constexpr bool verbose_circuit = false;
 }
 
 using cplx = qm::cplx;
@@ -85,7 +86,7 @@ auto get_permuted(const Eigen::Tensor<Scalar, 2> &in, MeanType meanType) {
             }
         }
     }
-    if constexpr(settings::debug_circuit) tools::log->debug("get_permuted {}: out:\n{}\n", enum2sv(meanType), linalg::tensor::to_string(out, 16));
+    if constexpr(settings::verbose_circuit) tools::log->debug("get_permuted {}: out:\n{}\n", enum2sv(meanType), linalg::tensor::to_string(out, 16));
     return out;
 }
 
@@ -96,11 +97,11 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
      *
      *
      @verbatim
-                   0      1                0
-                   |      |                |
+                   2      3               1
+                   |      |               |
                  [ exp(-ifM) ]  ---> [ exp(-ifM) ]
                    |      |               |
-                   2      3               1
+                   0      1               0
      @endverbatim
 
      Where M is defined as
@@ -152,11 +153,11 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
 
         // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
         // the kronecker product that generated two-site gates above has indexed right-to-left
-        //         0                   1      0              0      1                0
+        //         1                   3      2              2      3                1
         //         |                   |      |              |      |                |
         //   [ exp(-ifM) ]  --->    [ exp(-ifM) ]   --->  [ exp(-ifM) ]  --->  [ exp(-ifM) ]
         //         |                   |      |              |      |                |
-        //         1                   3      2              2      3                1
+        //         0                   1      0              0      1                0
         Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(M, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
         Eigen::MatrixXcd       expifM     = (imn * u.fmix * tenx::MatrixMap(M_shuffled)).exp();
         gates.emplace_back(tenx::TensorMap(expifM), std::vector<size_t>{idx, idx + 1}, spin_dims);
@@ -175,63 +176,77 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
  * Step 1: Reshape the first unitary gate, introducing a dummy 0 index.
  *         The numbers 01 denotes the site indices in the gate.
  * @verbatim
- *          0     1            1     2          1     3
- *          |     |            |     |          |     |
- *         [ g(01) ]   =   0--[ g(01) ]  =  0--[ g(01) ]
- *          |     |            |     |          |     |
  *          2     3            3     4          2     4
+ *          |     |            |     |          |     |
+ *         [ g(01) ]   =   0--[ g(01) ]  =  0--[ g(01) ] (shuffle: 0, 1, 3, 2, 4)
+ *          |     |            |     |          |     |
+ *          0     1            1     2          1     3
  * @endverbatim
  *
  * Step 2: Make a matrix merging indices (012,34) and split the gate using SVD into an MPO and a gate:
  * @verbatim
- *            1     3                                   2                1
+ *            2     4                                   2                2
  *            |     |   SVD                             |                |
  *        0--[ g(01) ]   =  US^0.5 S^0.5 V^T  =  0--[ mpo(0) ]--1   0--[g(1)]
  *            |     |                                   |                |
- *            2     4                                   3                2
+ *            1     3                                   3                1
  * @endverbatim
  *
- * Step 3: Connect g(1) to the next gate. Connect from under if g is odd, or from above if g is even:
+ * Step 3: Connect g(1) to the next gate. Connect from under if g is odd, or from above if g is even.
+ *         Remember that we apply a unitary operators from below onto a ket |psi>.
+ *         A sequence looks as follows:
  * @verbatim
- *                0     1
- *                |     |
- *               [ g(12) ]             2     3               1     3
- *                |     |              |     |               |     |
- *                2     3      =   0--[ g(12) ]     =    0--[ g(12) ]
- *                1                    |     |               |     |
- *                |                    1     4               2     4
- *          0--[g(1)]
- *                |
+ *   ---A0----A1----A2----A3--       ...
+ *      |     |     |     |
+ *      [g(01)]     [g(23)]
+ *      |     |     |     |
+ *            [g(12)]
+ *            |     |
+ * @endverbatim
+ *
+ * @verbatim
+ *
  *                2
- * or
- *                1
  *                |
  *          0--[g(1)]
- *                |                    1     2               1     3
- *                2                    |     |               |     |
- *                0     1      =   0--[ g(12) ]     =    0--[ g(12) ]
+ *                |                    1     4               2     4
+ *                1                    |     |               |     |
+ *                2     3      =   0--[ g(12) ]     =    0--[ g(12) ]  (shuffle: 02134)
  *                |     |              |     |               |     |
- *               [ g(12) ]             3     4               2     4
+ *               [ g(12) ]             2     3               1     3
  *                |     |
+ *                0     1
+ *
+ * or on odd sites
+ *
  *                2     3
+ *                |     |
+ *               [ g(23) ]             3     4             2     4
+ *                |     |              |     |             |     |
+ *                0     1      =   0--[ g(23) ]   =    0--[ g(23) ]    (shuffle: 01324)
+ *                2                    |     |             |     |
+ *                |                    1     2             1     3
+ *          0--[g(2)]
+ *                |
+ *                1
  * @endverbatim
  *
  * Repeat from step 2, replacing g(01) with g(12), and so on, until there are no more gates.
  *
  * Step 4: Add a dummy index with dimension 1 to the remaining right-most gate, to convert it to an mpo.
  */
-std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::vector<qm::Gate> &ulayer) {
+std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::vector<qm::Gate> &ulayer, std::optional<svd::config> cfg) {
     if(ulayer.empty()) return {};
     if(ulayer.size() <= 1) throw except::logic_error("Can't make MPO's with less than two gates");
-    auto t_mpolayer      = tid::tic_scope("mpo-layer");
-    auto mpos            = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
-    auto cfg             = svd::config();
-    cfg.rank_max         = settings::flbit::cls::mpo_circuit_svd_bondlim;
-    cfg.truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
-    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
-    cfg.svd_lib          = svd::lib::lapacke;
-    cfg.svd_rtn          = svd::rtn::geauto;
-    auto svd             = svd::solver(cfg);
+    auto t_mpolayer = tid::tic_scope("mpo-layer");
+    auto mpos       = std::vector<Eigen::Tensor<cplx, 4>>(ulayer.size() + 1); // L-1 gates in the unitary circuit
+    if(not cfg.has_value()) cfg = svd::config();
+    if(not cfg->svd_lib) cfg->svd_lib = svd::lib::lapacke;
+    if(not cfg->svd_rtn) cfg->svd_rtn = svd::rtn::geauto;
+    if(not cfg->rank_max) cfg->rank_max = settings::flbit::cls::mpo_circuit_svd_bondlim;
+    if(not cfg->truncation_limit) cfg->truncation_limit = settings::flbit::cls::mpo_circuit_svd_trnclim;
+    if(not cfg->switchsize_gesdd) cfg->switchsize_gesdd = settings::solver::svd_switchsize_bdc;
+    auto svd = svd::solver(cfg);
 
     // Start Step 1 with the first gate
     const auto &ugate0 = ulayer.front();                                                  // The left-most unitary gate
@@ -244,22 +259,36 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::v
     // There are L-1 gates on a single layer of the unitary circuit
     for(size_t gidx = 0; gidx < ulayer.size() /* == L-1 */; ++gidx) {
         // Step 2
-        std::tie(mpos[gidx], gate3) = svd.split_mpo_gate(gate5, cfg);
+        std::tie(mpos[gidx], gate3) = svd.split_mpo_gate(gate5, cfg.value());
+        tools::log->debug("split ugate[idx:{}]", gidx);
         if(gidx + 1 >= ulayer.size()) break; // We can't add more gates. Now gate 3 has the mpo corresponding to site L
         // Step 3
         const auto &ugate = ulayer[gidx + 1];
         dims4             = ugate.shape<4>(); // Original shape of the gate
+
+        if constexpr(settings::debug_circuit) {
+            if(not ugate.isUnitary()) throw except::runtime_error("get_unitary_mpo_layer: ugate[pos:{}] is not unitary", ugate.pos);
+        }
+
         if((gidx % 2) == 0 /* even */) {
+            // Contract from above
+            tools::log->debug("contr gate3[idx:{}] onto ugate[idx:{} pos:{}] from above", gidx, gidx + 1, ugate.pos);
             gate5 = gate3.contract(ugate.op.reshape(dims4), tenx::idx({1}, {2})).shuffle(std::array<long, 5>{0, 2, 1, 3, 4});
         } else {
+            tools::log->debug("contr gate3[idx:{}] onto ugate[idx:{} pos:{}] from below", gidx, gidx + 1, ugate.pos);
             gate5 = gate3.contract(ugate.op.reshape(dims4), tenx::idx({2}, {0})).shuffle(std::array<long, 5>{0, 1, 3, 2, 4});
         }
     }
     if(gate3.size() != 0) {
-        // Step 4:
-        mpos.back() = gate3.reshape(std::array<long, 4>{gate3.dimension(0), 1, gate3.dimension(1), gate3.dimension(2)});
+        /* Step 4:
+                2             3
+                |             |
+          0--[g(2)] =   0--[g(2)]-1
+                |             |
+                1             2
+        */
+        mpos.back() = gate3.reshape(std::array<long, 4>{gate3.dimension(0), 1, gate3.dimension(1), gate3.dimension(2)}).shuffle(tenx::array4{0, 1, 3, 2});
     }
-
     return mpos;
 }
 
@@ -276,18 +305,70 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     return mpo_merged;
 }
 
-Eigen::Tensor<cplx, 2> qm::lbit::get_time_evolution_operator(cplx delta_t, const Eigen::Tensor<cplx, 2> &H) {
-    // Given a matrix H, this returns exp(delta_t * H)
-    // For time evolution, just make sure delta_t = -i*d,  where d is a (small) real positive number.
-    return tenx::TensorCast((delta_t * tenx::MatrixMap(H)).exp());
+Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_layer_as_tensor(const std::vector<qm::Gate> &unitary_layer) {
+    auto cfg                 = svd::config();
+    cfg.svd_lib              = svd::lib::lapacke;
+    cfg.svd_rtn              = svd::rtn::geauto;
+    cfg.rank_max             = 256;
+    cfg.truncation_limit     = 1e-14;
+    cfg.switchsize_gesdd     = settings::solver::svd_switchsize_bdc;
+    auto           mpo_layer = Eigen::Tensor<cplx, 4>();
+    constexpr auto con2      = tenx::idx({1}, {0});
+    constexpr auto shf6      = tenx::array6{0, 3, 1, 4, 2, 5};
+    for(const auto &mpo : get_unitary_mpo_layer(unitary_layer, cfg)) {
+        if(mpo_layer.size() == 0) {
+            mpo_layer = mpo;
+            continue;
+        }
+        auto                   dimL = mpo_layer.dimensions();
+        auto                   dimR = mpo.dimensions();
+        auto                   shp4 = tenx::array4{dimL[0], dimR[1], dimL[2] * dimR[2], dimL[3] * dimR[3]};
+        Eigen::Tensor<cplx, 4> tmp  = mpo_layer.contract(mpo, con2).shuffle(shf6).reshape(shp4);
+        mpo_layer                   = tmp;
+    }
+    auto shf4         = tenx::array4{0, 3, 1, 2}; // cast to matrix assuming that the virtual bonds have dimension 1
+    auto shp2         = tenx::array2{mpo_layer.dimension(0) * mpo_layer.dimension(3), mpo_layer.dimension(2) * mpo_layer.dimension(1)};
+    auto tensor_layer = Eigen::Tensor<cplx, 2>(mpo_layer.shuffle(shf4).reshape(shp2));
+    if constexpr(settings::debug_circuit)
+        if(not tenx::MatrixMap(tensor_layer).isUnitary(1e-12)) throw except::logic_error("get_unitary_layer_as_tensor: tensor_layer is not unitary");
+    return tensor_layer;
 }
 
-std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold) {
+Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_circuit_as_tensor(const std::vector<std::vector<qm::Gate>> &unitary_circuit) {
+    auto cfg             = svd::config();
+    cfg.svd_lib          = svd::lib::lapacke;
+    cfg.svd_rtn          = svd::rtn::geauto;
+    cfg.rank_max         = 256;
+    cfg.truncation_limit = 1e-14;
+    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
+    Eigen::Tensor<cplx, 2> all_layers;
+    for(const auto &layer : unitary_circuit) {
+        auto one_layer = get_unitary_layer_as_tensor(layer);
+        if(all_layers.size() == 0) {
+            all_layers = one_layer;
+            continue;
+        }
+        // New layers appended from below (we apply a circuit top to bottom, with the MPS at the top, physical index pointing down)
+        Eigen::Tensor<cplx, 2> tmp_layers = all_layers.contract(one_layer, tenx::idx({1}, {0}));
+        all_layers                        = tmp_layers;
+    }
+    if constexpr(settings::debug_circuit)
+        if(not tenx::MatrixMap(all_layers).isUnitary(1e-12)) throw except::logic_error("get_unitary_circuit_as_tensor: all_layers is not unitary");
+    return all_layers;
+}
+
+Eigen::Tensor<cplx, 2> qm::lbit::get_time_evolution_operator(cpll delta_t, const Eigen::Tensor<cplx, 2> &H) {
+    // Given a matrix H, this returns exp(delta_t * H)
+    // For time evolution, just make sure delta_t = -i*d,  where d is a (small) real positive number.
+    return tenx::TensorCast((delta_t * tenx::MatrixMap(H).cast<cpll>()).exp().cast<cplx>());
+}
+
+std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cpll delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold) {
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
     for(auto &h : hams_nsite) {
-        time_evolution_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-        if(tenx::isIdentity(time_evolution_gates.back().op, id_threshold)) {
+        time_evolution_gates.emplace_back(h.exp(1.0il * delta_t)); // exp(-i * delta_t * h)
+        if(id_threshold > 0 and tenx::isIdentity(time_evolution_gates.back().op, id_threshold)) {
             tools::log->trace("get_time_evolution_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_gates.back().pos, id_threshold);
             time_evolution_gates.pop_back(); // Skip this gate if it is just an identity.
         }
@@ -302,13 +383,13 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx delta_t, const std
     return time_evolution_gates;
 }
 
-std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold) {
+std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cpll delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold) {
     std::vector<SwapGate> time_evolution_swap_gates;
     time_evolution_swap_gates.reserve(hams_nsite.size());
     size_t count_ignored = 0;
-    for(auto &h : hams_nsite) {
-        time_evolution_swap_gates.emplace_back(h.exp(imn * delta_t)); // exp(-i * delta_t * h)
-        if(tenx::isIdentity(time_evolution_swap_gates.back().op, id_threshold)) {
+    for(const auto &h : hams_nsite) {
+        time_evolution_swap_gates.emplace_back(h.exp(1.0il * delta_t)); // exp(-i * delta_t * h)
+        if(id_threshold > 0 and tenx::isIdentity(time_evolution_swap_gates.back().op, id_threshold)) {
             count_ignored++;
             tools::log->trace("get_time_evolution_swap_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_swap_gates.back().pos,
                               id_threshold);
@@ -324,11 +405,11 @@ std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx delta_t, 
             }
     }
     time_evolution_swap_gates.shrink_to_fit();
-    tools::log->debug("get_time_evolution_swap_gates: ignored {} time evolution swap gates: I +- {:.2e}", count_ignored, id_threshold);
+    if(count_ignored > 0) tools::log->debug("get_time_evolution_swap_gates: ignored {} time evolution swap gates: I +- {:.2e}", count_ignored, id_threshold);
     return time_evolution_swap_gates;
 }
 
-std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cplx delta_t,
+std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cpll delta_t,
                                                                                  const std::vector<Eigen::Tensor<cplx, 2>> &hams_2site) {
     // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
     //      exp(-i*dt *[h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}]) =  exp(-i*dt [h_{j,j+1}]) * exp(-i*dt*[h_{j+1,j+2}]) * ... * exp(-i*dt*[h_{L-2, L-1}])
@@ -343,7 +424,7 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site
     return time_evolution_operators;
 }
 
-std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site(size_t sites, cplx delta_t,
+std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site(size_t sites, cpll delta_t,
                                                                                  const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site) {
     // In l-bit systems we are aldready in a diagonal basis, so h_{i,j,k} and h_{l,m,n} commute. Therefore we can immediately use the relation
     // exp(A + B) = exp(A)exp(B)
@@ -366,7 +447,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm:
         See more about this here: https://link.aps.org/doi/10.1103/PhysRevB.91.085425
     */
     // Generate gates for the operators
-    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / 2^L", pos_szi, pos_szj, pos_szj);
+    if constexpr(settings::verbose_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / 2^L", pos_szi, pos_szj, pos_szj);
 
     auto result          = cplx(0, 0);
     auto szi_gate        = qm::Gate(szi, {pos_szi}, {2l}); //
@@ -375,7 +456,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm:
     auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_circuit, intersection); // Selected gates in each layer
     auto is_disconnected = std::any_of(intersection.begin(), intersection.end(), [](auto &layer) { return layer.empty(); });
     if(is_disconnected) {
-        if constexpr(settings::debug_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
+        if constexpr(settings::verbose_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
         return result;
     }
     // Setup debug printing of unitary circuits
@@ -389,7 +470,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm:
 
     // Start contracting selected unitary gates bottom to top.
     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
-    if constexpr(settings::debug_circuit) {
+    if constexpr(settings::verbose_circuit) {
         std::string layer_str = empty_str;
         szi_gate.draw_pos(layer_str, "szi  :");
         net.push_front(layer_str);
@@ -403,7 +484,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm:
             if(g.has_pos(sgate.pos)) {
                 g = g.insert(sgate);
 
-                if constexpr(settings::debug_circuit) {
+                if constexpr(settings::verbose_circuit) {
                     sgate.draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                     story_str.append(fmt::format("insert u{} ", sgate.pos));
                 }
@@ -412,11 +493,11 @@ qm::cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm:
                     // Trace positions outside the light cone intersection
                     g    = g.trace_pos(pos_out);
                     g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
-                    if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
+                    if constexpr(settings::verbose_circuit) story_str.append(fmt::format("trace{} ", pos_out));
                 }
             }
         }
-        if constexpr(settings::debug_circuit) {
+        if constexpr(settings::verbose_circuit) {
             story_str.append(fmt::format("now{}", g.pos));
             if(layer_str != empty_str or not story_str.empty()) {
                 log.emplace_back(story_str);
@@ -438,7 +519,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm:
     // In the last step we trace everything down to a cplx
     result = g.trace();
     result /= std::pow(2, g.pos.size()); // Normalize by dividing the trace of each 2x2 identity.
-    if constexpr(settings::debug_circuit) {
+    if constexpr(settings::verbose_circuit) {
         log.back().append(fmt::format("result = {:.6f}", result));
         for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | {}", layer, log[idx]);
     }
@@ -487,7 +568,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
     */
 
     // Generate gates for the operators
-    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
+    if constexpr(settings::verbose_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
     auto t_olap = tid::ur();
     t_olap.tic();
 
@@ -498,7 +579,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
     auto unitary_slayers = qm::get_lightcone_gate_selection(unitary_circuit, intersection, false); // Selected gates in each layer
     auto is_disconnected = std::any_of(intersection.begin(), intersection.end(), [](auto &layer) { return layer.empty(); });
     if(is_disconnected) {
-        if constexpr(settings::debug_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
+        if constexpr(settings::verbose_circuit) tools::log->trace("σzi:{} and σzj:{} are disconnected -> result = {:.6f}", pos_szi, pos_szj, result);
         return result;
     }
     // Setup debug printing of unitary circuits
@@ -600,7 +681,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
 
     // Start contracting selected unitary gates bottom to top.
     auto g = szi_gate; // The gate that accumulates everything. Starts at σzi position
-    if constexpr(settings::debug_circuit) {
+    if constexpr(settings::verbose_circuit) {
         szi_gate.draw_pos(net.front(), "szi  :");
         log.front().append(fmt::format("insert σzi{}", szi_gate.pos));
     }
@@ -618,7 +699,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
                 std::vector<size_t> pos_out;
                 if(go_right) {
                     //                    tools::log->trace("-> insert u[{}]:{}", idx_slayer, slayer.back().pos);
-                    if constexpr(settings::debug_circuit) {
+                    if constexpr(settings::verbose_circuit) {
                         slayer.back().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                         story_str.append(fmt::format("insert u{} ", slayer.back().pos));
                     }
@@ -627,7 +708,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
                     slayer.pop_back();
                 } else {
                     //                    tools::log->trace("<- insert u[{}]:{}", idx_slayer, slayer.front().pos);
-                    if constexpr(settings::debug_circuit) {
+                    if constexpr(settings::verbose_circuit) {
                         slayer.front().draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                         story_str.append(fmt::format("insert u{} ", slayer.front().pos));
                     }
@@ -642,11 +723,11 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
                     //                    tools::log->trace("trace[{}]:{}", idx_slayer, pos_out);
                     g    = g.trace_pos(pos_out);
                     g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
-                    if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
+                    if constexpr(settings::verbose_circuit) story_str.append(fmt::format("trace{} ", pos_out));
                 }
 
                 if((numR == 0 and go_right) or (numL == 0 and not go_right)) {
-                    if constexpr(settings::debug_circuit) story_str.append(fmt::format("break {} ", g.pos));
+                    if constexpr(settings::verbose_circuit) story_str.append(fmt::format("break {} ", g.pos));
                     break; // Start from the bottom of the circuit
                 }
             }
@@ -659,7 +740,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
                 if(g.has_pos(sgate.pos)) {
                     g = g.insert(sgate);
                     //                    tools::log->trace("insert u[{}]:{}", idx_slayer, sgate.pos);
-                    if constexpr(settings::debug_circuit) {
+                    if constexpr(settings::verbose_circuit) {
                         sgate.draw_pos(layer_str, fmt::format("u[{:^2}]:", idx_slayer));
                         story_str.append(fmt::format("insert u{} ", sgate.pos));
                     }
@@ -668,11 +749,11 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
                         // Trace positions outside the light cone intersection
                         g    = g.trace_pos(pos_out);
                         g.op = g.op / g.op.constant(std::pow(2, pos_out.size())); // Normalize by dividing the trace of each 2x2 identity.
-                        if constexpr(settings::debug_circuit) story_str.append(fmt::format("trace{} ", pos_out));
+                        if constexpr(settings::verbose_circuit) story_str.append(fmt::format("trace{} ", pos_out));
                     }
                 }
             }
-            if constexpr(settings::debug_circuit) story_str.append(fmt::format("now{} ", g.pos));
+            if constexpr(settings::verbose_circuit) story_str.append(fmt::format("now{} ", g.pos));
         }
     }
 
@@ -686,7 +767,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator3(const std::vector<std::vector<qm:
     result = g.trace();
     result /= std::pow(2, g.pos.size()); // Normalize by dividing the trace of each 2x2 identity.
     t_olap.toc();
-    if constexpr(settings::debug_circuit) {
+    if constexpr(settings::verbose_circuit) {
         log.back().append(fmt::format("result = {:.6f} | time {:.3e}", result, t_olap.get_time()));
         for(const auto &[idx, layer] : iter::enumerate_reverse(net)) tools::log->debug("{} | {}", layer, log[idx]);
     }
@@ -735,15 +816,16 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
 
 
         In this implementation we have contracted the unitary circuit into a series of MPOs.
+        The top index would connect to a ket: In matrix form 0-U-1 0-|psi>,
 
         Step 1: Contract the top operator (I or sigma_j) on top of the upper mpo
 
         @verbatim
-                          0
+                          1
                           |
                         [opj]
                           |                       3
-                          1                       |
+                          0                       |
                           2          =    0--[ mpo_up_opj ]--1
                           |                       |
                    0--[ mpo_up ]--1               2
@@ -754,11 +836,11 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
 
         Step 2: Similarly, contract the middle operator (I or sigma_i) on top of the bottom mpo^dagger
         @verbatim
-                           0                                      0
+                           1                                      1
                            |                                      |
                          [opi]                                  [opi]
                            |                                      |                            3                                   2
-                           1                   shuffle            1                            |              shuffle              |
+                           0                   shuffle            0                            |              shuffle              |
                   [        2         ]^dagger    =                3             =     0--[ mpo_dn_opi  ]--1     =         0--[ mpo_dn_opi  ]--1
                   [        |         ]                            |                            |                                   |
                   [ 0--[ mpo_dn ]--1 ]                     0--[ mpo_dn*]--1                    2                                   3
@@ -766,11 +848,11 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
                   [        3         ]                            2
 
         We can save two shuffles by contracting on the opposite spin index immediately instead
-                           0
+                           1
                            |
                          [opi]
                            |                                      2
-                           1 ------------                         |
+                           0 ------------                         |
                            2            |               [0--[ mpo_dn_opi  ]--1]^T
                            |            |       =                 |
                     0--[ mpo_dn* ]--1   |                         3
@@ -800,7 +882,7 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
     */
 
     // Generate gates for the operators
-    if constexpr(settings::debug_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
+    if constexpr(settings::verbose_circuit) tools::log->trace("Computing Tr (τ_{} σ_{}) / Tr(σ_{})", pos_szi, pos_szj, pos_szj);
     auto t_olap = tid::ur();
     t_olap.tic();
 
@@ -820,24 +902,13 @@ qm::cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<c
         {
             auto t_opj = tid::tic_token("opj");
             mpo_up_opj.resize(dim);
-            mpo_up_opj.device(tenx::threads::getDevice()) = mpo_layer[idx].contract(opj, tenx::idx({2}, {1}));
+            mpo_up_opj.device(tenx::threads::getDevice()) = mpo_layer[idx].contract(opj, tenx::idx({2}, {0}));
         }
         {
             auto t_opj = tid::tic_token("opi");
             mpo_dn_opi.resize(dim);
-            mpo_dn_opi.device(tenx::threads::getDevice()) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {1}));
+            mpo_dn_opi.device(tenx::threads::getDevice()) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {0}));
         }
-        //        {
-        //            auto t_updn = tid::tic_token("updn");
-        //            temp4.resize(mpo_up_opj.dimension(1), mpo_up_opj.dimension(3), mpo_dn_opi.dimension(1), mpo_dn_opi.dimension(3));
-        //            temp4.device(tenx::threads::getDevice()) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3}, {0,
-        //            2}));
-        //        }
-        //        {
-        //            auto t_trace = tid::tic_token("trace");
-        //            temp2        = temp4.trace(std::array<long, 2>{1, 3});
-        //            result       = temp2 / temp2.constant(2.0); // Divide by two for each trace
-        //        }
         {
             auto t_updntr = tid::tic_token("updntr");
             temp2.resize(mpo_dn_opi.dimension(1), mpo_up_opj.dimension(1));
@@ -1061,7 +1132,7 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
         auto lbit_corrmat = Eigen::Tensor<cplx, 2>(ssites, ssites);
         lbit_corrmat.setZero();
         StateFinite state_ud = state;
-        tools::finite::mps::apply_circuit(state_ud, unitary_circuit, true, false, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
+        tools::finite::mps::apply_circuit(state_ud, unitary_circuit, CircOp::ADJ, false, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
         bond_maxu = std::max<long>(bond_maxu, state_ud.find_largest_bond());
         t_r.toc();
 
@@ -1071,7 +1142,7 @@ Eigen::Tensor<qm::real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vect
             state_i.get_mps_site(i).apply_mpo(szi); // Apply σ^z_i on state_i
             t_i_u.tic();
 
-            tools::finite::mps::apply_circuit(state_i, unitary_circuit, false, false, false, GateMove::ON, svd_cfg); // Apply U on state_i
+            tools::finite::mps::apply_circuit(state_i, unitary_circuit, CircOp::NONE, false, false, GateMove::ON, svd_cfg); // Apply U on state_i
             bond_maxi = std::max<long>(bond_maxi, state_i.find_largest_bond());
             t_i_u.toc();
             t_i.toc();
