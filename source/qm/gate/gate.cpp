@@ -12,11 +12,13 @@
 #include "math/tenx.h"
 #include "tools/common/log.h"
 #include <Eigen/Core>
-#include <mpfr.h>
-#include <mpreal.h>
 #include <set>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <utility>
+
+//
+// #include <mpfr.h>
+// #include <mpreal.h>
 
 namespace settings {
     inline constexpr bool debug_gates   = true;
@@ -198,8 +200,9 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
                                 real_t alpha_h_128      = real_t(-alpha.imag()) * real_t(h.real());
                                 real_t fmod_alpha_h_128 = fmodq(alpha_h_128, two_pi_128);
                                 exp_ialpha_t            = std::exp(-1.0i * static_cast<real>(fmod_alpha_h_128));
-//                                tools::log->info("fmod: a {0} * h {1} = {2} | 2pi {3} | fmod {4} | exp {5}", -alpha.imag(), h.real(), alpha_h_128, two_pi_128,
-//                                                 fmod_alpha_h_128, exp_ialpha_t);
+                                //                                tools::log->info("fmod: a {0} * h {1} = {2} | 2pi {3} | fmod {4} | exp {5}", -alpha.imag(),
+                                //                                h.real(), alpha_h_128, two_pi_128,
+                                //                                                 fmod_alpha_h_128, exp_ialpha_t);
                             }
 #else
                             {
@@ -211,8 +214,10 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
                                 real_t fmod_alpha_h_ld = std::fmod(alpha_h_ld, two_pi_ld);
                                 exp_ialpha_t           = std::exp(-one_i * fmod_alpha_h_ld);
                                 if(std::isnan(fmod_alpha_h_ld)) { throw except::runtime_error("fmod gave nan"); }
-//                                tools::log->info("fmod: a {0} ({0:a}) * h {1} ({1:a}) = {2} ({2:a}) | 2pi {3} ({3:a}) | fmod {4}({4: a}) | exp{5}({4: 5})",
-//                                                 -alpha.imag(), h.real(), alpha_h_ld, two_pi_ld, fmod_alpha_h_ld, exp_ialpha_t);
+                                //                                tools::log->info("fmod: a {0} ({0:a}) * h {1} ({1:a}) = {2} ({2:a}) | 2pi {3} ({3:a}) | fmod
+                                //                                {4}({4: a}) | exp{5}({4: 5})",
+                                //                                                 -alpha.imag(), h.real(), alpha_h_ld, two_pi_ld, fmod_alpha_h_ld,
+                                //                                                 exp_ialpha_t);
                             }
 #endif
                             return exp_ialpha_t;

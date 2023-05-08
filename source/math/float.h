@@ -28,8 +28,8 @@ bool cmp_t(Lhs lhs, Rhs rhs) {
 
 template<typename T>
 auto abs_t(T val) {
-    if constexpr(std::is_arithmetic_v<T>)
-        return std::abs(val);
+    if constexpr(std::is_arithmetic_v<T>) return std::abs(val);
+    #if defined(USE_QUADMATH)
     else if constexpr(std::is_same_v<T, cplx_t>) {
         __complex128 x;
         __real__ x = val.real();
@@ -37,6 +37,9 @@ auto abs_t(T val) {
         return cabsq(x);
     } else if constexpr(std::is_same_v<T, real_t>)
         return fabsq(val);
+    #else
+    static_assert(std::is_arithmetic_v<T>);
+    #endif
 }
 
 #endif
