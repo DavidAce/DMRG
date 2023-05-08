@@ -157,8 +157,8 @@ void h5pp_table_measurements_infinite::register_table_type() {
     if(errr < 0) throw h5pp::runtime_error("Failed to insert real field to complex type");
     if(erri < 0) throw h5pp::runtime_error("Failed to insert imag field to complex type");
 #else
-    h5_real_t = H5Tcopy(H5T_NATIVE_LDOUBLE);
-    h5_cplx_t = h5pp::type::compound::H5T_COMPLEX<h5_real_t>::h5type()
+    h5_real_t = h5pp::type::getH5Type<real_t>();
+    h5_cplx_t = h5pp::type::compound::H5T_COMPLEX<real_t>::h5type();
 #endif
 
     /* clang-format off */

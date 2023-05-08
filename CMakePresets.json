@@ -462,7 +462,8 @@
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-release-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "COMPILER_ENABLE_MOLD": "TRUE",
-        "DMRG_BUILD_TOOLS": "TRUE"
+        "DMRG_BUILD_TOOLS": "TRUE",
+        "DMRG_USE_QUADMATH": "TRUE"
       }
     },
     {
@@ -479,6 +480,7 @@
         "CMAKE_VERBOSE_MAKEFILE": "TRUE",
         "CMAKE_MESSAGE_LOG_LEVEL": "VERBOSE",
         "DMRG_CMAKE_DEBUG": "TRUE",
+        "DMRG_USE_QUADMATH": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",
         "COMPILER_ENABLE_USAN": "TRUE",
         "COMPILER_ENABLE_MOLD": "FALSE",
@@ -504,6 +506,7 @@
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
+        "DMRG_USE_QUADMATH": "TRUE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
       }
     }
