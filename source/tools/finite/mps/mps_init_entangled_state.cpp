@@ -18,9 +18,9 @@ Eigen::Tensor<Scalar, 2> get_random_unitary_matrix(long rows, long cols) {
     using vec_t   = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
     auto gaussian = []() -> Scalar {
         if constexpr(std::is_same_v<Scalar, std::complex<double>>)
-            return Scalar(rnd::normal(0, 1), rnd::normal(0, 1)) / std::sqrt(2.0);
+            return Scalar(rnd::normal(0., 1.), rnd::normal(0., 1.)) / std::sqrt(2.0);
         else
-            return rnd::normal(0, 1);
+            return rnd::normal(0., 1.);
     };
     mat_t M = mat_t::NullaryExpr(rows, cols, gaussian);
 
@@ -59,15 +59,15 @@ void tools::finite::mps::init::set_random_entangled_state_haar(StateFinite &stat
         Eigen::Tensor<cplx, 2> U;
         Eigen::Tensor<cplx, 3> G(spin_dim, chiL, chiR);
         if(label == "A") {
-            if(type == StateInitType::REAL) U = get_random_unitary_matrix<qm::real>(spin_dim * chiL, chiR).cast<qm::cplx>();
-            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<qm::cplx>(spin_dim * chiL, chiR);
+            if(type == StateInitType::REAL) U = get_random_unitary_matrix<real>(spin_dim * chiL, chiR).cast<cplx>();
+            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<cplx>(spin_dim * chiL, chiR);
             chiR     = U.dimension(1);
             auto rsh = std::array<long, 3>{spin_dim, chiL, chiR};
             G        = U.reshape(rsh);
         }
         if(label == "B") {
-            if(type == StateInitType::REAL) U = get_random_unitary_matrix<qm::real>(spin_dim * chiR, chiL).cast<qm::cplx>();
-            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<qm::cplx>(spin_dim * chiR, chiL);
+            if(type == StateInitType::REAL) U = get_random_unitary_matrix<real>(spin_dim * chiR, chiL).cast<cplx>();
+            if(type == StateInitType::CPLX) U = get_random_unitary_matrix<cplx>(spin_dim * chiR, chiL);
             chiL     = U.dimension(1);
             auto rsh = std::array<long, 3>{spin_dim, chiR, chiL};
             auto shf = std::array<long, 3>{0, 2, 1};

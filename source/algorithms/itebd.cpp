@@ -19,7 +19,8 @@ void itebd::run_preprocessing() {
     init_truncation_error_limits();
     randomize_model(); // First use of random!
     auto t_init    = tid::tic_scope("init");
-    status.delta_t = std::complex<double>(settings::itebd::time_step_init_real, settings::itebd::time_step_init_imag);
+    status.delta_t = std::complex<long double>(static_cast<long double>(settings::itebd::time_step_init_real),
+                                               static_cast<long double>(settings::itebd::time_step_init_imag));
     h_evn          = tensors.model->get_2site_ham_AB();
     h_odd          = tensors.model->get_2site_ham_BA();
 
@@ -58,7 +59,7 @@ void itebd::update_state() {
         tensors.merge_twosite_tensor(twosite_tensor, svd::config(status.bond_lim, status.trnc_lim));
         if(&U != &unitary_time_evolving_operators.back()) { tensors.state->swap_AB(); }
     }
-    status.phys_time += std::abs(status.delta_t);
+    status.phys_time += abs_t(status.delta_t);
     tensors.clear_measurements();
 }
 
@@ -77,10 +78,11 @@ void itebd::check_convergence() {
 }
 
 void itebd::check_convergence_time_step() {
-    if(std::abs(status.delta_t) <= settings::itebd::time_step_min) {
+    if(abs_t(status.delta_t) <= settings::itebd::time_step_min) {
         status.time_step_has_converged = true;
     } else if(status.bond_limit_has_reached_max and status.entanglement_converged_for > 0) {
-        status.delta_t                  = std::max(settings::itebd::time_step_min, std::abs(status.delta_t) * 0.5);
+        // TODO : This step is not compatible with switching between real/imag time evolution... I think?
+        status.delta_t                  = std::max(real_t(settings::itebd::time_step_min), abs_t(status.delta_t) * 0.5);
         unitary_time_evolving_operators = qm::time::get_twosite_time_evolution_operators(status.delta_t, settings::itebd::suzuki_order, h_evn, h_odd);
         //        state->H->update_evolution_step_size(-status.delta_t, settings::itebd::suzuki_order);
         clear_convergence_status();

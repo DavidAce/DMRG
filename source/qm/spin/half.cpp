@@ -11,8 +11,8 @@ namespace qm::spin::half {
         0.0, 1.0,
         1.0, 0.0).finished();
     Eigen::Matrix2cd sy = (Eigen::Matrix2cd() <<
-        0.0, imn,
-        imp, 0.0).finished();
+        0.0, -1.0i,
+        1.0i, 0.0).finished();
     Eigen::Matrix2cd sz = (Eigen::Matrix2cd() <<
         1.0, 0.0,
         0.0, -1.0).finished();
@@ -35,8 +35,8 @@ namespace qm::spin::half {
     std::array<Eigen::Vector2cd,2> sx_spinors{(Eigen::Vector2cd() << 1.0, 1.0).finished()/std::sqrt(2),
                                        (Eigen::Vector2cd() << 1.0,-1.0).finished()/std::sqrt(2)};
 
-    std::array<Eigen::Vector2cd,2> sy_spinors{(Eigen::Vector2cd() << 1.0, imp).finished()/std::sqrt(2),
-                                       (Eigen::Vector2cd() << 1.0, imn).finished()/std::sqrt(2)};
+    std::array<Eigen::Vector2cd,2> sy_spinors{(Eigen::Vector2cd() << 1.0, 1.0i).finished()/std::sqrt(2),
+                                       (Eigen::Vector2cd() << 1.0, -1.0i).finished()/std::sqrt(2)};
 
     std::array<Eigen::Vector2cd,2> sz_spinors{(Eigen::Vector2cd() << 1.0, 0.0).finished()/std::sqrt(2),
                                        (Eigen::Vector2cd() << 0.0, 1.0).finished()/std::sqrt(2)};

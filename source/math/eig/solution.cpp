@@ -18,10 +18,10 @@ namespace eig {
         }
     }
 
-    template std::vector<eig::real> &solution::get_eigvecs<eig::real, Side::L>() const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx, Side::L>() const;
-    template std::vector<eig::real> &solution::get_eigvecs<eig::real, Side::R>() const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx, Side::R>() const;
+    template std::vector<real> &solution::get_eigvecs<real, Side::L>() const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx, Side::L>() const;
+    template std::vector<real> &solution::get_eigvecs<real, Side::R>() const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx, Side::R>() const;
 
     template<typename Scalar>
     std::vector<Scalar> &solution::get_eigvecs(Side side) const {
@@ -29,20 +29,20 @@ namespace eig {
         if(side == Side::L) return get_eigvecs<Scalar, Side::L>();
         throw std::runtime_error("Cannot return both L and R eigenvectors");
     }
-    template std::vector<eig::real> &solution::get_eigvecs<eig::real>(Side side) const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx>(Side side) const;
+    template std::vector<real> &solution::get_eigvecs<real>(Side side) const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx>(Side side) const;
 
     template<typename Scalar, Form form, Side side>
     std::vector<Scalar> &solution::get_eigvecs() const {
         if constexpr(std::is_same<real, Scalar>::value) return get_eigvecs<form, Type::REAL, side>();
         if constexpr(std::is_same<cplx, Scalar>::value) return get_eigvecs<form, Type::CPLX, side>();
     }
-    template std::vector<eig::real> &solution::get_eigvecs<eig::real, Form::SYMM, Side::L>() const;
-    template std::vector<eig::real> &solution::get_eigvecs<eig::real, Form::SYMM, Side::R>() const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx, Form::SYMM, Side::L>() const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx, Form::SYMM, Side::R>() const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx, Form::NSYM, Side::L>() const;
-    template std::vector<eig::cplx> &solution::get_eigvecs<eig::cplx, Form::NSYM, Side::R>() const;
+    template std::vector<real> &solution::get_eigvecs<real, Form::SYMM, Side::L>() const;
+    template std::vector<real> &solution::get_eigvecs<real, Form::SYMM, Side::R>() const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::SYMM, Side::L>() const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::SYMM, Side::R>() const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::NSYM, Side::L>() const;
+    template std::vector<cplx> &solution::get_eigvecs<cplx, Form::NSYM, Side::R>() const;
 
     template<typename Scalar>
     std::vector<Scalar> &solution::get_eigvals() const {
@@ -56,8 +56,8 @@ namespace eig {
         }
     }
 
-    template std::vector<eig::real> &solution::get_eigvals<eig::real>() const;
-    template std::vector<eig::cplx> &solution::get_eigvals<eig::cplx>() const;
+    template std::vector<real> &solution::get_eigvals<real>() const;
+    template std::vector<cplx> &solution::get_eigvals<cplx>() const;
 
     const std::vector<double> &solution::get_resnorms() const { return meta.residual_norms; }
 

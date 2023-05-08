@@ -125,7 +125,7 @@ void IsingRandomField::randomize_hamiltonian() {
     unique_id_sq                     = std::nullopt;
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingRandomField::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
+Eigen::Tensor<cplx, 4> IsingRandomField::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
                                                                  [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
@@ -141,10 +141,13 @@ Eigen::Tensor<MpoSite::cplx, 4> IsingRandomField::MPO_nbody_view(std::optional<s
     MPO_nbody.slice(std::array<long, 4>{2, 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(-J2 * get_coupling() * sz);
     return MPO_nbody;
 }
+Eigen::Tensor<cplx_t, 4> IsingRandomField::MPO_nbody_view_t([[maybe_unused]] std::optional<std::vector<size_t>> nbody,
+                                                                  [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+    throw except::runtime_error("IsingRandomField::MPO_nbody_view_t is not implemented");
+}
+Eigen::Tensor<cplx, 4> IsingRandomField::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingRandomField::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
-
-Eigen::Tensor<MpoSite::cplx, 4> IsingRandomField::MPO_shifted_view(double site_energy) const {
+Eigen::Tensor<cplx, 4> IsingRandomField::MPO_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<cplx, 4> temp                                           = MPO();

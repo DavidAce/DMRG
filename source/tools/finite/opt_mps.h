@@ -1,15 +1,13 @@
 #pragma once
+#include "config/enums.h"
+#include "math/float.h"
+#include "tensors/site/mps/MpsSite.h"
 #include <complex>
-#include <config/enums.h>
 #include <optional>
-#include <tensors/site/mps/MpsSite.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 namespace tools::finite::opt {
     class opt_mps {
-        using cplx = std::complex<double>;
-        using real = double;
-
         private:
         // All of these values are supposed to be for the full system size
         std::optional<std::string>            name        = std::nullopt;

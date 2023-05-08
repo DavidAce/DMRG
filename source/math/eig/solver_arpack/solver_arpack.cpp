@@ -22,10 +22,10 @@
 #include "../matvec/matvec_dense.h"
 #include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_sparse.h"
+#include "general/sfinae.h"
 #include "tid/tid.h"
 #include <algorithm>
 #include <arpack++/arrseig.h>
-#include <general/sfinae.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <variant>
 
@@ -63,8 +63,6 @@
 #else
     #error Could not include arpack headers correctly
 #endif
-
-
 
 namespace tc = sfinae;
 using namespace eig;
@@ -242,7 +240,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     else
         result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
 
-    result.meta.eigvals_found = solver.EigenvaluesFound(); // BOOL!
+    result.meta.eigvals_found = solver.EigenvaluesFound();       // BOOL!
     result.meta.num_mv        = matrix.num_mv;
     result.meta.num_op        = matrix.num_op;
     result.meta.iter          = solver.GetIter();

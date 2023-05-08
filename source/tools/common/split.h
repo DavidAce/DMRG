@@ -1,15 +1,15 @@
 #pragma once
+#include "math/float.h"
+#include "math/svd/config.h"
+#include "math/tenx/fwd_decl.h"
 #include <complex>
 #include <deque>
-#include <math/svd/config.h>
-#include <math/tenx/fwd_decl.h>
 #include <optional>
 #include <tuple>
 #include <vector>
+
 class MpsSite;
 namespace tools::common::split {
-    using real = double;
-    using cplx = std::complex<double>;
     /* clang-format off */
     template<typename Scalar>
     extern std::vector<MpsSite> split_mps (const Eigen::Tensor<Scalar,3> & multisite_mps,

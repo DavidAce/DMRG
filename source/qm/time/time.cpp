@@ -10,23 +10,27 @@
 
 namespace qm::time {
 
-    std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_1st_order(cplx delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd) {
+    std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_1st_order(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd) {
         auto h_evn_matrix = tenx::MatrixMap(h_evn);
         auto h_odd_matrix = tenx::MatrixMap(h_odd);
+        auto dt           = cplx(static_cast<real>(delta_t.real()), static_cast<real>(delta_t.imag()));
         return {
-            tenx::TensorCast((imn * delta_t * h_evn_matrix).exp()), // exp(-i dt H)
-            tenx::TensorCast((imn * delta_t * h_odd_matrix).exp())  // exp(-i dt H)
+            tenx::TensorCast((static_cast<cplx>(-1.0i * dt) * h_evn_matrix).exp()), // exp(-i dt H)
+            tenx::TensorCast((static_cast<cplx>(-1.0i * dt) * h_odd_matrix).exp())  // exp(-i dt H)
         };
     }
 
-    std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_2nd_order(cplx delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd) {
+    std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_2nd_order(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd) {
         auto h_evn_matrix = tenx::MatrixMap(h_evn);
         auto h_odd_matrix = tenx::MatrixMap(h_odd);
-        return {tenx::TensorCast((imn * delta_t * h_evn_matrix / 2.0).exp()), tenx::TensorCast((imn * delta_t * h_odd_matrix).exp()),
-                tenx::TensorCast((imn * delta_t * h_evn_matrix / 2.0).exp())};
+        auto dt           = cplx(static_cast<real>(delta_t.real()), static_cast<real>(delta_t.imag()));
+
+        return {tenx::TensorCast((static_cast<cplx>(-1.0i * dt) * h_evn_matrix / 2.0).exp()),
+                tenx::TensorCast((static_cast<cplx>(-1.0i * dt) * h_odd_matrix).exp()),
+                tenx::TensorCast((static_cast<cplx>(-1.0i * dt) * h_evn_matrix / 2.0).exp())};
     }
 
-    std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_4th_order(cplx delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd)
+    std::vector<Eigen::Tensor<cplx, 2>> Suzuki_Trotter_4th_order(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &h_evn, const Eigen::Tensor<cplx, 2> &h_odd)
     /*!
      * Implementation based on
      * Janke, W., & Sauer, T. (1992).
@@ -43,19 +47,20 @@ namespace qm::time {
         double beta2        = -cbrt2 * beta1;
         double alph1        = 0.5 * beta1;
         double alph2        = (1.0 - cbrt2) / 2.0 * beta1;
+        auto   dt           = cplx(static_cast<real>(delta_t.real()), static_cast<real>(delta_t.imag()));
 
         std::vector<Eigen::Tensor<cplx, 2>> temp;
-        temp.emplace_back(tenx::TensorCast((alph1 * imn * delta_t * h_evn_matrix).exp()));
-        temp.emplace_back(tenx::TensorCast((beta1 * imn * delta_t * h_odd_matrix).exp()));
-        temp.emplace_back(tenx::TensorCast((alph2 * imn * delta_t * h_evn_matrix).exp()));
-        temp.emplace_back(tenx::TensorCast((beta2 * imn * delta_t * h_odd_matrix).exp()));
-        temp.emplace_back(tenx::TensorCast((alph2 * imn * delta_t * h_evn_matrix).exp()));
-        temp.emplace_back(tenx::TensorCast((beta1 * imn * delta_t * h_odd_matrix).exp()));
-        temp.emplace_back(tenx::TensorCast((alph1 * imn * delta_t * h_evn_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((alph1 * static_cast<cplx>(-1.0i * dt) * h_evn_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((beta1 * static_cast<cplx>(-1.0i * dt) * h_odd_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((alph2 * static_cast<cplx>(-1.0i * dt) * h_evn_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((beta2 * static_cast<cplx>(-1.0i * dt) * h_odd_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((alph2 * static_cast<cplx>(-1.0i * dt) * h_evn_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((beta1 * static_cast<cplx>(-1.0i * dt) * h_odd_matrix).exp()));
+        temp.emplace_back(tenx::TensorCast((alph1 * static_cast<cplx>(-1.0i * dt) * h_evn_matrix).exp()));
         return temp;
     }
 
-    std::vector<Eigen::Tensor<cplx, 2>> get_twosite_time_evolution_operators(cplx delta_t, size_t susuki_trotter_order, const Eigen::Tensor<cplx, 2> &h_evn,
+    std::vector<Eigen::Tensor<cplx, 2>> get_twosite_time_evolution_operators(cplx_t delta_t, size_t susuki_trotter_order, const Eigen::Tensor<cplx, 2> &h_evn,
                                                                              const Eigen::Tensor<cplx, 2> &h_odd)
     /*! Returns a set of 2-site unitary gates, using Suzuki Trotter decomposition to order 1, 2 or 3.
      * These gates need to be applied to the MPS one at a time with a swap in between.
@@ -69,7 +74,7 @@ namespace qm::time {
         }
     }
 
-    std::vector<Eigen::Tensor<cplx, 2>> compute_G(const cplx a, size_t susuki_trotter_order, const Eigen::Tensor<cplx, 2> &h_evn,
+    std::vector<Eigen::Tensor<cplx, 2>> compute_G(const cplx_t a, size_t susuki_trotter_order, const Eigen::Tensor<cplx, 2> &h_evn,
                                                   const Eigen::Tensor<cplx, 2> &h_odd)
     /*! Returns the moment generating function, or characteristic function (if a is imaginary) for the Hamiltonian as a rank 2 tensor.
      *  The legs contain two physical spin indices each
@@ -90,7 +95,7 @@ namespace qm::time {
         return get_twosite_time_evolution_operators(a, susuki_trotter_order, h_evn, h_odd);
     }
 
-    std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> get_time_evolution_gates(cplx delta_t, const std::vector<qm::Gate> &hams_nsite) {
+    std::pair<std::vector<qm::Gate>, std::vector<qm::Gate>> get_time_evolution_gates(cplx_t delta_t, const std::vector<qm::Gate> &hams_nsite) {
         /* Here we do a second-order Suzuki-Trotter decomposition which holds for n-site hamiltonians as described
          * here https://tensornetwork.org/mps/algorithms/timeevo/tebd.html
          * For instance,
@@ -111,14 +116,15 @@ namespace qm::time {
         std::vector<Gate> time_evolution_gates_reverse;
         time_evolution_gates_forward.reserve(hams_nsite.size());
         time_evolution_gates_reverse.reserve(hams_nsite.size());
+        auto dt = cplx(static_cast<real>(delta_t.real()), static_cast<real>(delta_t.imag()));
 
         // Generate first forward layer
         for(auto &h : hams_nsite) {
-            time_evolution_gates_forward.emplace_back(h.exp(imn * delta_t * 0.5)); // exp(-i * delta_t * h)
+            time_evolution_gates_forward.emplace_back(h.exp(-1.0i * dt * 0.5)); // exp(-i * delta_t * h)
         }
         // Generate second reversed layer
         for(auto &h : iter::reverse(hams_nsite)) {
-            time_evolution_gates_reverse.emplace_back(h.exp(imn * delta_t * 0.5)); // exp(-i * delta_t * h)
+            time_evolution_gates_reverse.emplace_back(h.exp(-1.0i * dt * 0.5)); // exp(-i * delta_t * h)
         }
 
         if constexpr(settings::debug) {

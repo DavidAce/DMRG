@@ -1,6 +1,7 @@
 #pragma once
+#include "math/float.h"
 #include <complex>
-#include <config/enums.h>
+#include "config/enums.h"
 #include <memory>
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -8,10 +9,6 @@
 class MpoSite;
 
 class ModelInfinite {
-    public:
-    using real = double;
-    using cplx = std::complex<double>;
-
     private:
     struct Cache {
         std::optional<Eigen::Tensor<cplx, 4>> twosite_mpo_AB = std::nullopt;
@@ -33,11 +30,11 @@ class ModelInfinite {
     ModelInfinite(const ModelInfinite &other);            // copy ctor
     ModelInfinite &operator=(const ModelInfinite &other); // copy assign
 
-    void                                                 initialize(ModelType model_type_);
-    void                                                 randomize();
-    void                                                 reset_mpo_squared();
-    void                                                 rebuild_mpo_squared();
-    std::vector<Eigen::Tensor<ModelInfinite::cplx, 4>>   get_compressed_mpo_squared();
+    void                                               initialize(ModelType model_type_);
+    void                                               randomize();
+    void                                               reset_mpo_squared();
+    void                                               rebuild_mpo_squared();
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared();
 
     bool is_real() const;
     bool has_nan() const;

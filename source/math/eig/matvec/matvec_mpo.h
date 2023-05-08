@@ -1,5 +1,6 @@
 #pragma once
 #include "../enums.h"
+#include "math/float.h"
 #include <array>
 #include <complex>
 #include <Eigen/Cholesky>
@@ -16,7 +17,7 @@ struct primme_params;
 
 template<typename T>
 class MatVecMPO {
-    static_assert(std::is_same_v<T, eig::real> or std::is_same_v<T, eig::cplx>);
+    static_assert(std::is_same_v<T, real> or std::is_same_v<T, cplx>);
 
     public:
     using Scalar     = T;
@@ -44,9 +45,9 @@ class MatVecMPO {
     bool                 readyFactorOp = false; // Flag to make sure LU factorization has occurred
     bool                 readyCompress = false; // Flag to check if compression has occurred
 
-    Eigen::LDLT<MatrixType>         ldlt; // Stores the ldlt matrix factorization on shift-invert
-    Eigen::LLT<MatrixType>          llt;  // Stores the llt matrix factorization on shift-invert
-    Eigen::PartialPivLU<MatrixType> lu;   // Stores the lu matrix factorization on shift-invert
+    Eigen::LDLT<MatrixType>         ldlt;       // Stores the ldlt matrix factorization on shift-invert
+    Eigen::LLT<MatrixType>          llt;        // Stores the llt matrix factorization on shift-invert
+    Eigen::PartialPivLU<MatrixType> lu;         // Stores the lu matrix factorization on shift-invert
 
     public:
     MatVecMPO() = default;
@@ -56,13 +57,13 @@ class MatVecMPO {
               const Eigen::Tensor<S, 4> &mpo_   /*!< The Hamiltonian MPO's  */
     );
     // Functions used in Arpack++ solver
-    [[nodiscard]] int rows() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
-    [[nodiscard]] int cols() const; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int rows() const;              /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] int cols() const;              /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
-    void FactorOP();                      //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
-    void MultOPv(T *mps_in_, T *mps_out); //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
+    void FactorOP();                             //  Would normally factor (A-sigma*I) into PLU --> here it does nothing
+    void MultOPv(T *mps_in_, T *mps_out);        //  Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);
-    void MultAx(T *mps_in_, T *mps_out_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
+    void MultAx(T *mps_in_, T *mps_out_);        //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(T *mps_in, T *mps_out, T *mpo_ptr, T *envL_ptr, T *envR_ptr, std::array<long, 3> shape_mps_,
                 std::array<long, 4> shape_mpo_); //  Computes the matrix-vector multiplication x_out <- A*x_in.
     void MultAx(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);

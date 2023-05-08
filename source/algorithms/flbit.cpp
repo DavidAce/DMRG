@@ -4,6 +4,7 @@
 #include "debug/info.h"
 #include "general/iter.h"
 #include "io/fmt.h"
+#include "math/float.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/tenx.h"
@@ -217,7 +218,7 @@ void flbit::run_algorithm() {
     if(tensors.state->get_name().empty()) tensors.state->set_name("state_real");
     if(not state_lbit) transform_to_lbit_basis();
     if(time_points.empty()) create_time_points();
-    if(std::abs(status.delta_t) == 0) update_time_step();
+    if(cmp_t(status.delta_t, 0.0)) update_time_step();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     auto t_run = tid::tic_scope("run");
@@ -264,7 +265,7 @@ void flbit::update_state() {
 
     tensors.clear_measurements();
     tensors.clear_cache();
-    status.phys_time = std::abs(time_points[std::min(status.iter, time_points.size() - 1)]);
+    status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);
 
     status.iter += 1;
     status.step += settings::model::model_size;
@@ -282,7 +283,7 @@ void flbit::update_time_step() {
         return;
     }
     status.delta_t = time_points[status.iter];
-    if(std::abs(status.delta_t) == 0) throw except::logic_error("Expected nonzero delta_t after time step update");
+    if(cmp_t(status.delta_t, 0.0)) throw except::logic_error("Expected nonzero delta_t after time step update");
     tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t, status.phys_time);
 }
 
@@ -316,35 +317,28 @@ void flbit::check_convergence() {
 }
 
 void flbit::create_time_points() {
-    auto t_crt = tid::tic_scope("create_time_points");
-    auto time_start =
-        std::complex<long double>(static_cast<long double>(settings::flbit::time_start_real), static_cast<long double>(settings::flbit::time_start_imag));
-    auto time_final =
-        std::complex<long double>(static_cast<long double>(settings::flbit::time_final_real), static_cast<long double>(settings::flbit::time_final_imag));
+    auto   t_crt = tid::tic_scope("create_time_points");
+    cplx_t time_start(settings::flbit::time_start_real, settings::flbit::time_start_imag);
+    cplx_t time_final(settings::flbit::time_final_real, settings::flbit::time_final_imag);
     tools::log->info("Creating time points {} -> {}", time_start, time_final);
 
-    auto time_diff = time_start - time_final;
+    cplx_t time_diff = time_start - time_final;
     // Check that there will be some time evolution
-    if(std::abs(time_diff) == 0) throw except::logic_error("time_start - time_final == 0");
+    if(cmp_t(time_diff, 0.0)) throw except::logic_error("time_start - time_final == 0");
     // Check that the time limits are purely real or imaginary!
-    bool time_is_real = std::abs(time_diff.real()) > 0;
-    bool time_is_imag = std::abs(time_diff.imag()) > 0;
+    bool time_is_real = abs_t(time_diff.real()) > 0;
+    bool time_is_imag = abs_t(time_diff.imag()) > 0;
     if(time_is_real and time_is_imag)
         throw except::logic_error("time_start and time_final must both be either purely real or imaginary. Got:\n"
                                   "time_start = {:.8f}{:+.8f}\n"
                                   "time_final = {:.8f}{:+.8f}",
                                   time_start.real(), time_start.imag(), time_final.real(), time_final.imag());
     time_points.reserve(settings::flbit::time_num_steps);
-    if(time_is_real)
-        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) {
-            if(std::isinf(t) or std::isnan(t)) throw except::runtime_error("Invalid time point: {}", t);
-            time_points.emplace_back(t);
-        }
-    else
-        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) {
-            if(std::isinf(t) or std::isnan(t)) throw except::runtime_error("Invalid time point: {}", t);
-            time_points.emplace_back(std::complex<long double>(0, t));
-        }
+    if(time_is_real) {
+        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
+    } else {
+        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) { time_points.emplace_back(cplx_t(0.0, t)); }
+    }
 
     tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
     // Sanity check
@@ -400,7 +394,7 @@ void flbit::create_hamiltonian_gates() {
             auto nbody = std::vector<size_t>{1};                   // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
             auto spins = tensors.state->get_spin_dims(sites);      // A list of spin dimensions for each site (should all be 2 for two-level systems)
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
-            ham_swap_gates_1body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
+            ham_swap_gates_1body.emplace_back(tensors.model->get_multisite_ham_t({pos}, nbody), sites, spins);
         }
         auto J2_ctof = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
         for(auto posL : list_2body) {
@@ -414,10 +408,9 @@ void flbit::create_hamiltonian_gates() {
                 auto nbody = std::vector<size_t>{2};
                 auto spins = tensors.state->get_spin_dims(sites);
                 tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
-                auto ham_swap_gate = qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins);
                 // Accept all swap gates even if all elements are near zero on gates for remote sites,
                 // since at large times t these can become relevant again by exp(-itH)
-                ham_swap_gates_2body.emplace_back(ham_swap_gate);
+                ham_swap_gates_2body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
             }
         }
         // Ignore Hamiltonians with entries smaller than J2_zero: the timescale is too small to resolve them.
@@ -428,14 +421,14 @@ void flbit::create_hamiltonian_gates() {
             auto nbody = std::vector<size_t>{3};
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
-            ham_swap_gates_3body.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+            ham_swap_gates_3body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
         }
 
         if(L <= 6) { // Used for test/debug on small systems
             auto list_Lbody = num::range<size_t>(0, L - 0, 1);
             auto nbody      = std::vector<size_t>{1, 2, 3};
             auto spins      = tensors.state->get_spin_dims(list_Lbody);
-            ham_swap_gates_Lbody.emplace_back(qm::SwapGate(tensors.model->get_multisite_ham(list_Lbody, nbody), list_Lbody, spins));
+            ham_swap_gates_Lbody.emplace_back(tensors.model->get_multisite_ham_t(list_Lbody, nbody), list_Lbody, spins);
         }
 
         for(const auto &[idx, ham] : iter::enumerate(ham_swap_gates_1body)) {
@@ -454,7 +447,7 @@ void flbit::create_hamiltonian_gates() {
             auto nbody = std::vector<size_t>{1};              // A list of included nbody interaction terms (1: on-site terms, 2: pairwise, and so on)
             auto spins = tensors.state->get_spin_dims(sites); // A list of spin dimensions for each site (should all be 2 for two-level systems)
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
-            ham_gates_1body.emplace_back(qm::Gate(tensors.model->get_multisite_ham({pos}, nbody), sites, spins));
+            ham_gates_1body.emplace_back(tensors.model->get_multisite_ham_t({pos}, nbody), sites, spins);
         }
 
         auto J2_ctof = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
@@ -466,7 +459,7 @@ void flbit::create_hamiltonian_gates() {
             auto nbody = std::vector<size_t>{0, 2};          // zero is a flag to enable compensation for double-counting
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
-            ham_gates_2body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+            ham_gates_2body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
         }
 
         for(auto posL : list_3body) {
@@ -477,14 +470,14 @@ void flbit::create_hamiltonian_gates() {
             auto nbody = std::vector<size_t>{3};
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
-            ham_gates_3body.emplace_back(qm::Gate(tensors.model->get_multisite_ham(sites, nbody), sites, spins));
+            ham_gates_3body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
         }
 
         if(L <= 6) { // Used for test/debug on small systems
             auto list_Lbody = num::range<size_t>(0, L - 0, 1);
             auto nbody      = std::vector<size_t>{1, 2, 3};
             auto spins      = tensors.state->get_spin_dims(list_Lbody);
-            ham_gates_Lbody.emplace_back(qm::Gate(tensors.model->get_multisite_ham(list_Lbody, nbody), list_Lbody, spins));
+            ham_gates_Lbody.emplace_back(tensors.model->get_multisite_ham_t(list_Lbody, nbody), list_Lbody, spins);
         }
 
         for(const auto &[idx, ham] : iter::enumerate(ham_gates_1body))
@@ -533,7 +526,7 @@ void flbit::update_time_evolution_gates() {
 void flbit::create_unitary_circuit_gates() {
     if(unitary_gates_2site_layers.size() == settings::model::lbit::u_depth) return;
     std::vector<double> fields;
-    for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
+    for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
     unitary_gates_2site_layers.resize(settings::model::lbit::u_depth);
     auto uprop = qm::lbit::UnitaryGateProperties(fields);
     tools::log->info("Creating unitary circuit of 2-site gates {}", uprop.string());
@@ -787,7 +780,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto                ucstds = std::vector<double>{settings::model::lbit::u_cstd};
             auto                randhf = settings::flbit::cls::randomize_hfields;
             std::vector<double> fields;
-            for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(std::any_cast<double>(field));
+            for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
             auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
             uprop_default.ulayers = unitary_gates_2site_layers;
             auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);

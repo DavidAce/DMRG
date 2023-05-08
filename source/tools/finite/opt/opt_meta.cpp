@@ -1,6 +1,6 @@
 #include "../opt_meta.h"
 #include "debug/exceptions.h"
-#include <config/enums.h>
+#include "config/enums.h"
 
 namespace tools::finite::opt {
     OptMeta::OptMeta()

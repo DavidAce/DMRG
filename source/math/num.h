@@ -7,6 +7,9 @@
 #include <iterator>
 #include <numeric>
 #include <vector>
+#if defined(USE_QUADMATH)
+    #include <quadmath.h>
+#endif
 
 /*!
  *  \namespace num
@@ -216,24 +219,58 @@ namespace num {
         return xs;
     }
 
-    template<typename T, typename = std::enable_if_t<std::is_arithmetic_v<T>>>
-    [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, T base = static_cast<T>(10)) {
+    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+    [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, int base = 10, int keep_digits = -1) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
-        T              loga   = std::log(a) / std::log(base);
-        T              logb   = std::log(b) / std::log(base);
+        T              baseT  = static_cast<T>(base);
+        T              loga   = std::log(a) / std::log(baseT);
+        T              logb   = std::log(b) / std::log(baseT);
         T              h      = (logb - loga) / static_cast<T>(N - 1);
-        T              factor = std::pow(base, h);
-        T              val    = std::pow(base, loga);
+        T              factor = std::pow(baseT, h);
+        T              val    = std::pow(baseT, loga);
         std::vector<T> xs(N);
         for(auto &x : xs) {
-            x = val;
+            x   = val;
+            T s = std::ceil(std::log10(x));                          // Base 10 exponent of x
+            if(keep_digits > 0 and s > keep_digits) {
+                T t = std::pow(static_cast<T>(10), s - keep_digits); // Order of magnitude to truncate
+                x   = std::floor(x / t) * t;
+            }
+            if(std::isnan(x) or std::isinf(x)) throw std::logic_error("Invalid value in logspaced");
             val *= factor;
         }
         xs.front() = a;
         xs.back()  = b;
         return xs;
     }
+
+#if defined(USE_QUADMATH)
+    template<typename T, std::enable_if_t<std::is_same_v<T, __float128>, bool> = true>
+    [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, int base = 10, int keep_digits = -1) {
+        if(a <= 0) throw std::range_error("a must be positive");
+        if(b <= 0) throw std::range_error("b must be positive");
+        T              baseT  = static_cast<T>(base);
+        T              loga   = logq(a) / logq(baseT);
+        T              logb   = logq(b) / logq(baseT);
+        T              h      = (logb - loga) / static_cast<T>(N - 1);
+        T              factor = powq(baseT, h);
+        T              val    = powq(baseT, loga);
+        std::vector<T> xs(N);
+        for(auto &x : xs) {
+            x   = val;
+            T s = ceilq(log10q(x));                              // Base 10 exponent of x
+            if(keep_digits > 0 and s > keep_digits) {
+                T t = powq(static_cast<T>(10), s - keep_digits); // Order of magnitude to truncate
+                x   = floorq(x / t) * t;
+            }
+            val *= factor;
+        }
+        xs.front() = a;
+        xs.back()  = b;
+        return xs;
+    }
+#endif
 
     /*! \brief Sum operator for containers such as vector
      *   \param in a vector, array or any 1D container with "<code> .data() </code>" method.

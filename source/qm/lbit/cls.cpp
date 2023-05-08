@@ -23,7 +23,7 @@ namespace settings {
     inline constexpr bool debug_cls = true;
 }
 
-using cplx = qm::cplx;
+using cplx = cplx;
 
 /*! \brief Merge two MPO layers into a single one using SVD.
  *

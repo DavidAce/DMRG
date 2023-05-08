@@ -1,4 +1,5 @@
 #pragma once
+#include "math/float.h"
 #include "math/tenx/fwd_decl.h"
 #include "tools/common/log.h"
 #include "tools/finite/opt.h"
@@ -7,10 +8,6 @@
 
 /* clang-format off */
 namespace tools::finite::opt::internal{
-
-    using cplx = std::complex<double>;
-    using real = double;
-
     template<typename T>
     using MatrixType = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
     template<typename T, auto rank = 3>

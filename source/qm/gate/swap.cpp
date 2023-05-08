@@ -9,7 +9,7 @@
 #include "tools/common/log.h"
 
 namespace settings {
-    inline constexpr bool debug_swap = true;
+    inline constexpr bool debug_swap   = true;
     inline constexpr bool verbose_swap = true;
 }
 
@@ -24,8 +24,18 @@ bool qm::Swap::operator==(const Rwap &rwap) const { return posL == rwap.posL and
 
 bool qm::Rwap::operator==(const Swap &swap) const { return posL == swap.posL and posR == swap.posR; }
 
-qm::SwapGate qm::SwapGate::exp(cplx alpha) const { return {op, pos, dim, alpha}; }
-qm::SwapGate qm::SwapGate::exp(cpll alpha) const { return {op, pos, dim, alpha}; }
+qm::SwapGate qm::SwapGate::exp(cplx alpha) const {
+    if(op_t.size() != 0)
+        return qm::SwapGate(op_t, pos, dim, alpha);
+    else
+        return qm::SwapGate(op, pos, dim, alpha);
+}
+qm::SwapGate qm::SwapGate::exp(cplx_t alpha) const {
+    if(op_t.size() != 0)
+        return qm::SwapGate(op_t, pos, dim, alpha);
+    else
+        return qm::SwapGate(op, pos, dim, alpha);
+}
 
 void qm::SwapGate::generate_swap_sequences() {
     // Letting i < j, a swap sequence defines the swap operators S(i,i+1) necessary to move distant sites at i,j until they are neighbors at j-1, j,

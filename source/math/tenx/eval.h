@@ -32,6 +32,7 @@ namespace tenx {
         constexpr auto dimensions() { return m_eval.dimensions(); }
         constexpr auto size() { return m_eval.size(); }
         constexpr auto data() { return m_eval.data(); }
+        constexpr auto dimension(unsigned long n) { return m_eval.dimensions()[n]; }
 
         const Evaluator *operator->() const { return &m_eval; }
         Evaluator       *operator->() { return &m_eval; }

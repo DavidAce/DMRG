@@ -1,7 +1,7 @@
 #pragma once
 
 #include <complex>
-#include <config/enums.h>
+#include "config/enums.h"
 #include <measure/MeasurementsStateFinite.h>
 #include <memory>
 #include <optional>

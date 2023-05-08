@@ -1,6 +1,6 @@
 #pragma once
 #include "bfgs_base_functor.h"
-#include <math/tenx/fwd_decl.h>
+#include "math/tenx/fwd_decl.h"
 
 namespace tools::finite::opt::internal {
     template<typename Scalar>

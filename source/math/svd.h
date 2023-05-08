@@ -1,5 +1,6 @@
 #pragma once
 
+#include "math/float.h"
 #include "math/num.h"
 #include "math/tenx.h"
 #include "svd/config.h"
@@ -10,9 +11,6 @@ namespace tid {
 }
 
 namespace svd {
-
-    using real = double;
-    using cplx = std::complex<double>;
     template<typename Scalar>
     using MatrixType = Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
     template<typename Scalar>
@@ -24,8 +22,6 @@ namespace svd {
         // Call clear() to recover this memory space
         void clear_lapack();
         struct SaveMetaData {
-            using real       = double;
-            using cplx       = std::complex<double>;
             using VectorReal = Eigen::Matrix<real, Eigen::Dynamic, 1>;
             using MatrixReal = Eigen::Matrix<real, Eigen::Dynamic, Eigen::Dynamic>;
             using MatrixCplx = Eigen::Matrix<cplx, Eigen::Dynamic, Eigen::Dynamic>;

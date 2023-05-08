@@ -94,9 +94,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
             case xdmrg_task::INIT_CLEAR_STATUS: status.clear(); break;
             case xdmrg_task::INIT_CLEAR_CONVERGENCE: clear_convergence_status(); break;
-            case xdmrg_task::INIT_DEFAULT:
-                run_preprocessing();
-                break;
+            case xdmrg_task::INIT_DEFAULT: run_preprocessing(); break;
 
             case xdmrg_task::FIND_ENERGY_RANGE: find_energy_range(); break;
             case xdmrg_task::FIND_EXCITED_STATE:
@@ -193,7 +191,7 @@ void xdmrg::run_algorithm() {
         shift_mpo_energy();              // Subtracts the current energy per site E/L from each MPO.
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         try_residual_optimization();
-        move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
+        move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }
@@ -292,8 +290,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 16 : 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
                                                                       // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
-                           ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
-                           : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
+                           ? std::min(settings::solver::eigs_iter_max, 10000ul)          // Avoid running too many iterations when already converged
+                           : settings::solver::eigs_iter_max * iter_stuck_multiplier;    // Run as much as it takes before convergence
 
     m1.eigs_tol = std::clamp(status.energy_variance_lowest,                              // Increase precision as variance decreases
                              settings::solver::eigs_tol_min,                             // From min
@@ -694,7 +692,6 @@ void xdmrg::find_energy_range() {
     {
         auto  t_gs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_gs(h5file);
-        fdmrg_gs.write_disable();
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
         fdmrg_gs.tensors.state->set_name("state_emin");
         tools::log = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
@@ -707,7 +704,6 @@ void xdmrg::find_energy_range() {
     {
         auto  t_hs = tid::tic_scope("fDMRG");
         fdmrg fdmrg_hs(h5file);
-        fdmrg_hs.write_disable();
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
         fdmrg_hs.tensors.state->set_name("state_emax");
         tools::log = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
@@ -763,7 +759,7 @@ void xdmrg::create_hamiltonian_gates() {
 
 void xdmrg::create_time_evolution_gates() {
     // Create the time evolution operators
-    if(std::abs(status.delta_t) == 0) update_time_step();
+    if(abs_t(status.delta_t) == 0) update_time_step();
     tools::log->info("Creating time evolution gates");
     time_gates_1site = qm::time::get_time_evolution_gates(status.delta_t, ham_gates_1body);
     time_gates_2site = qm::time::get_time_evolution_gates(status.delta_t, ham_gates_2body);

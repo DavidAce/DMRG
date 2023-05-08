@@ -3,6 +3,7 @@
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "io/hdf5_types.h"
+#include "math/float.h"
 #include "math/num.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
@@ -234,7 +235,6 @@ namespace tools::finite::h5 {
         if(settings::storage::storage_level_tables <= StorageLevel::LIGHT) return; // Midchain is included in measurements table
         auto t_hdf = tid::tic_scope("bonds", tid::level::higher);
         // Transform from cplx to real to save space
-        using real              = MpsSite::real;
         auto        h5real      = h5pp::type::getH5Type<real>();
         auto        bonds_real  = std::vector<h5pp::varr_t<real>>();
         std::string column_name = "L_";

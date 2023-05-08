@@ -1,10 +1,10 @@
 #include "bfgs_base_functor.h"
-#include <algorithms/AlgorithmStatus.h>
-#include <config/settings.h>
-#include <tensors/model/ModelFinite.h>
-#include <tensors/state/StateFinite.h>
-#include <tensors/TensorsFinite.h>
-#include <tid/tid.h>
+#include "algorithms/AlgorithmStatus.h"
+#include "config/settings.h"
+#include "tensors/model/ModelFinite.h"
+#include "tensors/state/StateFinite.h"
+#include "tensors/TensorsFinite.h"
+#include "tid/tid.h"
 
 using namespace tools::finite::opt::internal;
 

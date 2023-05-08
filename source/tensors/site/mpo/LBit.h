@@ -1,8 +1,8 @@
 #pragma once
 
+#include "math/tenx/fwd_decl.h"
 #include "MpoSite.h"
 #include <h5pp/details/h5ppHid.h>
-#include <math/tenx/fwd_decl.h>
 
 class LBit : public MpoSite {
     private:
@@ -15,6 +15,8 @@ class LBit : public MpoSite {
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const final;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const final;
+    [[nodiscard]] Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
+                                                            std::optional<std::vector<size_t>> skip = std::nullopt) const final;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view() const final;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view(double site_energy) const final;
     [[nodiscard]] long                     get_spin_dimension() const final;
@@ -28,6 +30,7 @@ class LBit : public MpoSite {
     void print_parameter_values() const final;
     void set_parameters(TableMap &parameters) final;
     void build_mpo() final;
+    void build_mpo_t();
     void randomize_hamiltonian() final;
     void set_averages(std::vector<TableMap> all_parameters, bool infinite = false) final;
 

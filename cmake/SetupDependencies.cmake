@@ -14,7 +14,7 @@ endif()
 # Setup dependencies
 find_package(Threads           REQUIRED)
 find_package(OpenMP            REQUIRED COMPONENTS CXX )
-find_package(gfortran          REQUIRED)
+find_package(gfortran          REQUIRED COMPONENTS quadmath)
 find_package(Lapacke           REQUIRED MODULE)
 find_package(pcg-cpp           REQUIRED)
 find_package(Eigen3     3.4.0  REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)
@@ -29,9 +29,7 @@ find_package(arpack++   2.3.0  REQUIRED)                                        
 #find_package(mpfr       4.1.0  REQUIRED)
 
 include(cmake/CheckCompile.cmake)
-check_compile(Lapacke lapacke::lapacke)
-check_compile(arpack++ arpack++::arpack++)
-check_compile(Ceres Ceres::ceres)
+check_compile(Lapacke lapacke::lapacke REQUIRED)
 
 
 # Link all dependencies to dmrg-deps
@@ -105,4 +103,13 @@ if (CUDA_FOUND)
     target_link_libraries(dmrg-deps INTERFACE ${CUDA_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cusparse_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
 else ()
     target_compile_definitions(dmrg-deps INTERFACE CERES_NO_CUDA)
+endif ()
+
+
+### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
+### for accurate long time-scale evolution)
+if(DMRG_USE_QUADMATH)
+    find_package(quadmath REQUIRED)
+    target_compile_definitions(dmrg-flags INTERFACE USE_QUADMATH)
+    target_link_libraries(dmrg-flags INTERFACE quadmath::quadmath)
 endif ()

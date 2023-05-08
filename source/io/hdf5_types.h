@@ -3,6 +3,7 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "debug/exceptions.h"
 #include "io/fmt.h"
+#include "math/float.h"
 #include "tid/enums.h"
 #include <array>
 #include <cstdio>
@@ -73,7 +74,7 @@ class h5pp_table_measurements_finite {
         std::array<double, 3> structure_factors      = {nan, nan, nan};
         double                total_time             = 0;
         double                algorithm_time         = 0;
-        long double           physical_time          = 0;
+        real_t                physical_time          = 0;
     };
     static h5pp::hid::h5t get_h5t();
 };
@@ -85,28 +86,28 @@ class h5pp_table_measurements_infinite {
 
     public:
     struct table {
-        uint64_t             iter                         = 0;
-        uint64_t             step                         = 0;
-        long                 position                     = 0;
-        StorageEvent         event                        = StorageEvent::NONE;
-        uint64_t             length                       = 0;
-        long                 bond_dim                     = 0;
-        long                 bond_lim                     = 0;
-        long                 bond_max                     = 0;
-        double               entanglement_entropy         = 0;
-        double               norm                         = 0;
-        double               energy_mpo                   = 0;
-        double               energy_per_site_mpo          = 0;
-        double               energy_per_site_ham          = 0;
-        double               energy_per_site_mom          = 0;
-        double               energy_variance_mpo          = 0;
-        double               energy_variance_per_site_mpo = 0;
-        double               energy_variance_per_site_ham = 0;
-        double               energy_variance_per_site_mom = 0;
-        double               truncation_error             = 0;
-        double               wall_time                    = 0;
-        long double          phys_time                    = 0;
-        std::complex<double> time_step;
+        uint64_t     iter                         = 0;
+        uint64_t     step                         = 0;
+        long         position                     = 0;
+        StorageEvent event                        = StorageEvent::NONE;
+        uint64_t     length                       = 0;
+        long         bond_dim                     = 0;
+        long         bond_lim                     = 0;
+        long         bond_max                     = 0;
+        double       entanglement_entropy         = 0;
+        double       norm                         = 0;
+        double       energy_mpo                   = 0;
+        double       energy_per_site_mpo          = 0;
+        double       energy_per_site_ham          = 0;
+        double       energy_per_site_mom          = 0;
+        double       energy_variance_mpo          = 0;
+        double       energy_variance_per_site_mpo = 0;
+        double       energy_variance_per_site_ham = 0;
+        double       energy_variance_per_site_mom = 0;
+        double       truncation_error             = 0;
+        double       wall_time                    = 0;
+        real_t       phys_time                    = 0;
+        cplx_t       time_step;
     };
     static h5pp::hid::h5t get_h5t();
 };

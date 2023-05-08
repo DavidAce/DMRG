@@ -12,6 +12,7 @@
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
+        "DMRG_USE_QUADMATH": "FALSE",
         "DMRG_ENABLE_TESTS": "TRUE",
         "DMRG_ENABLE_BENCH": "TRUE",
         "DMRG_ENABLE_TBLIS": "TRUE",
@@ -153,6 +154,7 @@
       "name": "gcc-11",
       "hidden": true,
       "cacheVariables": {
+        "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-11",
         "CMAKE_CXX_COMPILER": "g++-11"
       }
@@ -161,6 +163,7 @@
       "name": "gcc-12",
       "hidden": true,
       "cacheVariables": {
+        "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-12",
         "CMAKE_CXX_COMPILER": "g++-12"
       }

@@ -1,4 +1,5 @@
 #pragma once
+#include "math/float.h"
 #include <complex>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
@@ -12,8 +13,6 @@ class MpsSite;
 class AlgorithmStatus;
 struct MeasurementsTensorsFinite;
 namespace tools::finite::measure {
-    using real = double;
-    using cplx = std::complex<double>;
     extern void do_all_measurements(const TensorsFinite &tensors);
     extern void do_all_measurements(const StateFinite &state);
 

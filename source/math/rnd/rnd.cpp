@@ -4,6 +4,7 @@
 #include <omp.h>
 #include <random>
 #include <stdexcept>
+#include "math/float.h"
 
 #if defined(NDEBUG)
 namespace rnd {
@@ -128,20 +129,56 @@ namespace rnd {
     std::complex<double> uniform_complex_slice(double radius_max, double angle_min, double angle_max) {
         return std::polar(uniform_double_box(0, radius_max), uniform_double_box(angle_min, angle_max));
     }
+    template<typename out_t>
+    out_t uniform(out_t a, out_t b) {
+        if constexpr(debug)
+            if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::uniform is not thread safe!");
+        if constexpr(std::is_arithmetic_v<out_t>) {
+            std::uniform_real_distribution<out_t> distribution(a, b);
+            return distribution(internal::rng);
+        } else if constexpr(std::is_same_v<out_t, __float128>) {
+            std::uniform_real_distribution<long double> distribution(static_cast<long double>(a), static_cast<long double>(b));
+            return static_cast<__float128>(distribution(internal::rng));
+        }
+    }
+    template float       uniform(float mean, float std);
+    template double      uniform(double mean, double std);
+    template long double uniform(long double mean, long double std);
+    template __float128  uniform(__float128 mean, __float128 std);
 
-    double normal(const double mean, const double std) {
+    template<typename out_t>
+    out_t normal(out_t mean, out_t std) {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::normal is not thread safe!");
-        std::normal_distribution<double> distribution(mean, std);
-        return distribution(internal::rng);
+        if constexpr(std::is_arithmetic_v<out_t>) {
+            std::normal_distribution<out_t> distribution(mean, std);
+            return distribution(internal::rng);
+        } else if constexpr(std::is_same_v<out_t, __float128>) {
+            std::normal_distribution<long double> distribution(static_cast<long double>(mean), static_cast<long double>(std));
+            return static_cast<__float128>(distribution(internal::rng));
+        }
     }
+    template float       normal(float mean, float std);
+    template double      normal(double mean, double std);
+    template long double normal(long double mean, long double std);
+    template __float128  normal(__float128 mean, __float128 std);
 
-    double log_normal(const double mean, const double std) {
+    template<typename out_t>
+    out_t log_normal(out_t mean, out_t std) {
         if constexpr(debug)
             if(omp_get_num_threads() > 1) throw std::runtime_error("rnd::log_normal is not thread safe!");
-        std::lognormal_distribution<double> distribution(mean, std);
-        return distribution(internal::rng);
+        if constexpr(std::is_arithmetic_v<out_t>) {
+            std::lognormal_distribution<out_t> distribution(mean, std);
+            return distribution(internal::rng);
+        } else if constexpr(std::is_same_v<out_t, __float128>) {
+            std::lognormal_distribution<long double> distribution(static_cast<long double>(mean), static_cast<long double>(std));
+            return static_cast<__float128>(distribution(internal::rng));
+        }
     }
+    template float       log_normal(float mean, float std);
+    template double      log_normal(double mean, double std);
+    template long double log_normal(long double mean, long double std);
+    template __float128  log_normal(__float128 mean, __float128 std);
 
     std::vector<int> random_with_replacement(const std::vector<int> &in) {
         std::vector<int> boot;
@@ -177,41 +214,88 @@ namespace rnd {
     template void shuffle(std::vector<long> &list);
     template void shuffle(std::vector<size_t> &list);
     template void shuffle(std::vector<double> &list);
+    template void shuffle(std::vector<long double> &list);
+    template void shuffle(std::vector<__float128> &list);
 
-    template<typename Distribution>
-    std::vector<double> random(Distribution &&d, size_t num) {
-        auto rndvec = std::vector<double>(num);
+    template<typename out_t, typename Distribution>
+    std::vector<out_t> random(Distribution &&d, size_t num) {
+        auto rndvec = std::vector<out_t>(num);
         for(size_t i = 0; i < num; ++i) rndvec[i] = d(internal::rng);
         return rndvec;
     }
+    //    template std::vetor<__float128>  random<__float128>(Distribution &&d, size_t num);
 
-    double random(dist d, double mean, double width) {
+    template<typename out_t>
+    out_t random(dist d, out_t mean, out_t width) {
         switch(d) {
-            case dist::uniform: return uniform_double_box(mean - width / 2, mean + width / 2);
-            case dist::normal: return normal(mean, width);
-            case dist::lognormal: return log_normal(mean, width);
+            case dist::uniform: return uniform<out_t>(mean - width / 2, mean + width / 2);
+            case dist::normal: return normal<out_t>(mean, width);
+            case dist::lognormal: return log_normal<out_t>(mean, width);
             default: throw std::runtime_error("Invalid distribution");
         }
     }
-    double random(std::string_view distribution, double mean, double width) { return random(sv2enum(distribution), mean, width); }
+    template float       random<float>(dist d, float mean, float width);
+    template double      random<double>(dist d, double mean, double width);
+    template long double random<long double>(dist d, long double mean, long double width);
+    template __float128  random<__float128>(dist d, __float128 mean, __float128 width);
 
-    std::vector<double> random(dist d, double mean, double width, size_t num) {
-        switch(d) {
-            case dist::uniform: return random(std::uniform_real_distribution<double>(mean - width / 2, mean + width / 2), num);
-            case dist::normal: return random(std::normal_distribution<double>(mean, width), num);
-            case dist::lognormal: return random(std::lognormal_distribution<double>(mean, width), num);
-            default: throw std::runtime_error("Invalid distribution");
-        }
+    template<typename out_t>
+    out_t random(std::string_view distribution, out_t mean, out_t width) {
+        return random<out_t>(sv2enum(distribution), mean, width);
     }
-    std::vector<double> random(dist d, double mean, double width, const std::vector<double> &weights) {
-        auto rndvec = random(d, mean, width, weights.size());
+    template float       random<float>(std::string_view d, float mean, float width);
+    template double      random<double>(std::string_view d, double mean, double width);
+    template long double random<long double>(std::string_view d, long double mean, long double width);
+    template __float128  random<__float128>(std::string_view d, __float128 mean, __float128 width);
+
+    template<typename out_t>
+    std::vector<out_t> random(dist d, out_t mean, out_t width, size_t num) {
+        if constexpr(std::is_arithmetic_v<out_t>) {
+            switch(d) {
+                case dist::uniform: return random<out_t>(std::uniform_real_distribution<out_t>(mean - width / 2, mean + width / 2), num);
+                case dist::normal: return random<out_t>(std::normal_distribution<out_t>(mean, width), num);
+                case dist::lognormal: return random<out_t>(std::lognormal_distribution<out_t>(mean, width), num);
+                default: throw std::runtime_error("Invalid distribution");
+            }
+        } else if(std::is_same_v<out_t, __float128>) {
+            std::vector<__float128> rndvec(num);
+            for(auto &r : rndvec) r = random<out_t>(d, mean, width);
+            return rndvec;
+        } else
+            throw std::runtime_error("rnd::random: unrecognized type");
+    }
+    template std::vector<float>       random<float>(dist d, float mean, float width, size_t num);
+    template std::vector<double>      random<double>(dist d, double mean, double width, size_t num);
+    template std::vector<long double> random<long double>(dist d, long double mean, long double width, size_t num);
+    template std::vector<__float128>  random<__float128>(dist d, __float128 mean, __float128 width, size_t num);
+
+    template<typename out_t>
+    std::vector<out_t> random(dist d, out_t mean, out_t width, const std::vector<out_t> &weights) {
+        auto rndvec = random<out_t>(d, mean, width, weights.size());
         for(size_t i = 0; i < weights.size(); ++i) rndvec[i] *= weights[i];
         return rndvec;
     }
+    template std::vector<float>       random<float>(dist d, float mean, float width, const std::vector<float> &weights);
+    template std::vector<double>      random<double>(dist d, double mean, double width, const std::vector<double> &weights);
+    template std::vector<long double> random<long double>(dist d, long double mean, long double width, const std::vector<long double> &weights);
+    template std::vector<__float128>  random<__float128>(dist d, __float128 mean, __float128 width, const std::vector<__float128> &weights);
 
-    std::vector<double> random(std::string_view distribution, double mean, double width, size_t num) { return random(sv2enum(distribution), mean, width, num); }
-    std::vector<double> random(std::string_view distribution, double mean, double width, const std::vector<double> &weights) {
-        return random(sv2enum(distribution), mean, width, weights);
+    template<typename out_t>
+    std::vector<out_t> random(std::string_view distribution, out_t mean, out_t width, size_t num) {
+        return random<out_t>(sv2enum(distribution), mean, width, num);
     }
+    template std::vector<float>       random<float>(std::string_view d, float mean, float width, size_t num);
+    template std::vector<double>      random<double>(std::string_view d, double mean, double width, size_t num);
+    template std::vector<long double> random<long double>(std::string_view d, long double mean, long double width, size_t num);
+    template std::vector<__float128>  random<__float128>(std::string_view d, __float128 mean, __float128 width, size_t num);
+
+    template<typename out_t>
+    std::vector<out_t> random(std::string_view distribution, out_t mean, out_t width, const std::vector<out_t> &weights) {
+        return random<out_t>(sv2enum(distribution), mean, width, weights);
+    }
+    template std::vector<float>       random<float>(std::string_view d, float mean, float width, const std::vector<float> &weights);
+    template std::vector<double>      random<double>(std::string_view d, double mean, double width, const std::vector<double> &weights);
+    template std::vector<long double> random<long double>(std::string_view d, long double mean, long double width, const std::vector<long double> &weights);
+    template std::vector<__float128>  random<__float128>(std::string_view d, __float128 mean, __float128 width, const std::vector<__float128> &weights);
 
 }

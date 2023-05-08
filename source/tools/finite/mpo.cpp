@@ -1,11 +1,10 @@
 #include "mpo.h"
 #include "debug/exceptions.h"
+#include "math/float.h"
 #include "math/svd.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tid/tid.h"
-
-using cplx = tools::finite::mpo::cplx;
 
 std::pair<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 4>> tools::finite::mpo::swap_mpo(const Eigen::Tensor<cplx, 4> &mpoL, const Eigen::Tensor<cplx, 4> &mpoR) {
     /* The swap operation takes two neighboring sites

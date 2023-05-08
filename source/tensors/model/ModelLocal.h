@@ -9,9 +9,6 @@ class TensorsFinite;
 
 class ModelLocal {
     public:
-    using cplx = std::complex<double>;
-    using real = double;
-
     std::vector<std::unique_ptr<MpoSite>> mpos; /*!< A subset of mpos */
 
     std::vector<size_t>              get_positions() const;

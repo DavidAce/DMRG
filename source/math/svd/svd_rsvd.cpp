@@ -1,4 +1,4 @@
-#include <math/svd.h>
+#include "math/svd.h"
 #include "debug/exceptions.h"
 #include "math/rnd.h"
 #include "rsvd/Constants.hpp"
@@ -20,12 +20,12 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
     if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
 
-    #if !defined(NDEBUG)
+#if !defined(NDEBUG)
     // These are more expensive debugging operations
     if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
     if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
     if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
-    #endif
+#endif
 
     // Randomized SVD
     //    std::mt19937_64 randomEngine{};

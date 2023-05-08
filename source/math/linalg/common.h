@@ -1,13 +1,13 @@
 #pragma once
-#include <math/tenx/fwd_decl.h>
+#include "math/tenx/fwd_decl.h"
+#include "math/float.h"
+
 namespace Eigen {
     template<typename Idx>
     struct IndexPair;
 }
 
 namespace linalg {
-    using cplx = std::complex<double>;
-    using real = double;
     template<typename T>
     using EigenMatrix = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic>;
 
@@ -23,5 +23,12 @@ namespace linalg {
     struct is_std_complex<std::complex<T>> : public std::true_type {};
     template<typename T>
     inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
+
+    template<typename T, typename = std::void_t<>>
+    struct has_value_type : public std::false_type {};
+    template<typename T>
+    struct has_value_type<T, std::void_t<typename T::value_type>> : public std::true_type {};
+    template<typename T>
+    inline constexpr bool has_value_type_v = has_value_type<T>::value;
 
 }

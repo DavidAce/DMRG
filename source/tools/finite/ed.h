@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math/tenx/fwd_decl.h>
+#include "math/tenx/fwd_decl.h"
 
 class StateFinite;
 class ModelFinite;

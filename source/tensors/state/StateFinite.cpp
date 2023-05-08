@@ -1,4 +1,4 @@
-#include <math/tenx.h>
+#include "math/tenx.h"
 
 // -- (textra first)
 #include "config/settings.h"
@@ -194,7 +194,7 @@ bool StateFinite::position_is_the_middle_any_direction() const { return get_posi
 
 bool StateFinite::position_is_outward_edge_left([[maybe_unused]] size_t nsite) const {
     if(nsite == 1) {
-        return get_position<long>() <= -1 and direction == -1; // i.e. all sites are B's
+        return get_position<long>() <= -1 and direction == -1;                              // i.e. all sites are B's
     } else
         return get_position<long>() == 0 and direction == -1 and get_mps_site().isCenter(); // left-most site is a an AC
 }

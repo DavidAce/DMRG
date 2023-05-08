@@ -1,9 +1,9 @@
 #include "../env.h"
-#include <tensors/edges/EdgesInfinite.h>
-#include <tensors/model/ModelInfinite.h>
-#include <tensors/site/env/EnvEne.h>
-#include <tensors/site/env/EnvVar.h>
-#include <tensors/state/StateInfinite.h>
+#include "tensors/edges/EdgesInfinite.h"
+#include "tensors/model/ModelInfinite.h"
+#include "tensors/site/env/EnvEne.h"
+#include "tensors/site/env/EnvVar.h"
+#include "tensors/state/StateInfinite.h"
 
 void tools::infinite::env::reset_edges(const StateInfinite &state, const ModelInfinite &model, EdgesInfinite &edges) {
     edges.get_ene().L.set_edge_dims(state.get_mps_siteA(), model.get_mpo_siteA());

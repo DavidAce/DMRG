@@ -1,26 +1,26 @@
 #pragma once
+#include "config/enums.h"
+#include "math/float.h"
+#include "math/svd/config.h"
 #include <any>
 #include <array>
 #include <complex>
-#include <config/enums.h>
-#include <math/svd/config.h>
 #include <memory>
 #include <unsupported/Eigen/CXX11/Tensor>
 class MpoSite;
 class TensorsFinite;
 class ModelLocal;
 class ModelFinite {
-    public:
-    using cplx = std::complex<double>;
-
     private:
     friend TensorsFinite;
     struct Cache {
-        std::optional<std::vector<size_t>>    cached_sites          = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>> multisite_mpo         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> multisite_ham         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>> multisite_mpo_squared = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>> multisite_ham_squared = std::nullopt;
+        std::optional<std::vector<size_t>>      cached_sites          = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 4>>   multisite_mpo         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>>   multisite_ham         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx_t, 4>> multisite_mpo_t       = std::nullopt;
+        std::optional<Eigen::Tensor<cplx_t, 2>> multisite_ham_t       = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 4>>   multisite_mpo_squared = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>>   multisite_ham_squared = std::nullopt;
     };
     mutable Cache                       cache;
     std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared();
@@ -69,11 +69,15 @@ class ModelFinite {
     ModelLocal get_local() const;
 
     // For multisite
-    std::array<long, 4>           active_dimensions() const;
-    Eigen::Tensor<cplx, 4>        get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    Eigen::Tensor<cplx, 2>        get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
-    const Eigen::Tensor<cplx, 4> &get_multisite_mpo() const;
-    const Eigen::Tensor<cplx, 2> &get_multisite_ham() const;
+    std::array<long, 4>             active_dimensions() const;
+    Eigen::Tensor<cplx, 4>          get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<cplx, 2>          get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<cplx_t, 4>        get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    Eigen::Tensor<cplx_t, 2>        get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;
+    const Eigen::Tensor<cplx, 4>   &get_multisite_mpo() const;
+    const Eigen::Tensor<cplx, 2>   &get_multisite_ham() const;
+    const Eigen::Tensor<cplx_t, 4> &get_multisite_mpo_t() const;
+    const Eigen::Tensor<cplx_t, 2> &get_multisite_ham_t() const;
 
     Eigen::Tensor<cplx, 4> get_multisite_mpo_shifted_view(double energy_per_site) const;
     Eigen::Tensor<cplx, 4> get_multisite_mpo_squared_shifted_view(double energy_per_site) const;

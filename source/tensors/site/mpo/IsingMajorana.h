@@ -2,7 +2,7 @@
 
 #include "MpoSite.h"
 #include <h5pp/details/h5ppHid.h>
-#include <math/tenx/fwd_decl.h>
+#include "math/tenx/fwd_decl.h"
 
 namespace h5pp::hid {
     class h5t;
@@ -23,6 +23,8 @@ class IsingMajorana : public MpoSite {
     [[nodiscard]] std::unique_ptr<MpoSite> clone() const override;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_nbody_view(std::optional<std::vector<size_t>> nbody,
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const final;
+    [[nodiscard]] Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
+                                                            std::optional<std::vector<size_t>> skip = std::nullopt) const final;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view() const final;
     [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const final;
     [[nodiscard]] long                     get_spin_dimension() const final;

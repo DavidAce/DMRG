@@ -96,11 +96,11 @@ void TensorsFinite::normalize_state(std::optional<svd::config> svd_cfg, NormPoli
     }
 }
 
-const Eigen::Tensor<TensorsFinite::cplx, 3> &TensorsFinite::get_multisite_mps() const { return state->get_multisite_mps(); }
+const Eigen::Tensor<cplx, 3> &TensorsFinite::get_multisite_mps() const { return state->get_multisite_mps(); }
 
-const Eigen::Tensor<TensorsFinite::cplx, 4> &TensorsFinite::get_multisite_mpo() const { return model->get_multisite_mpo(); }
+const Eigen::Tensor<cplx, 4> &TensorsFinite::get_multisite_mpo() const { return model->get_multisite_mpo(); }
 
-const Eigen::Tensor<TensorsFinite::cplx, 4> &TensorsFinite::get_multisite_mpo_squared() const { return model->get_multisite_mpo_squared(); }
+const Eigen::Tensor<cplx, 4> &TensorsFinite::get_multisite_mpo_squared() const { return model->get_multisite_mpo_squared(); }
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> contract_mpo_env(const Eigen::Tensor<Scalar, 4> &mpo, const Eigen::Tensor<Scalar, 3> &envL, const Eigen::Tensor<Scalar, 3> &envR) {
@@ -150,7 +150,7 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian() const
     }
 }
 template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian() const;
-template const Eigen::Tensor<TensorsFinite::cplx, 2> &TensorsFinite::get_effective_hamiltonian() const;
+template const Eigen::Tensor<cplx, 2> &TensorsFinite::get_effective_hamiltonian() const;
 
 template<typename Scalar>
 const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared() const {
@@ -173,12 +173,12 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
     }
 }
 template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
-template const Eigen::Tensor<TensorsFinite::cplx, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
+template const Eigen::Tensor<cplx, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
 
-env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisite_env_ene_blk() const {
+env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_ene_blk() const {
     return std::as_const(*edges).get_multisite_env_ene_blk();
 }
-env_pair<const Eigen::Tensor<TensorsFinite::cplx, 3>> TensorsFinite::get_multisite_env_var_blk() const {
+env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_var_blk() const {
     return std::as_const(*edges).get_multisite_env_var_blk();
 }
 

@@ -169,8 +169,8 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
         solver.eigs(hamiltonian);
         t_lu += *hamiltonian.t_factorOP;
 
-        eigvals = eig::view::get_eigvals<eig::real>(solver.result);
-        eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R);
+        eigvals = eig::view::get_eigvals<real>(solver.result);
+        eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R);
 
         // Check the quality of the subspace
         Eigen::VectorXd overlaps       = (multisite_vector.adjoint() * eigvecs).cwiseAbs().real();
@@ -274,8 +274,8 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_primme(cons
         }
         tools::log->trace("Running eigensolver | nev {} | ncv {}", solver.config.maxNev.value(), solver.config.maxNcv.value());
         solver.eigs(hamiltonian);
-        eigvals = eig::view::get_eigvals<eig::real>(solver.result, false);
-        eigvecs = eig::view::get_eigvecs<eig::cplx>(solver.result, eig::Side::R, false);
+        eigvals = eig::view::get_eigvals<real>(solver.result, false);
+        eigvecs = eig::view::get_eigvecs<cplx>(solver.result, eig::Side::R, false);
         // Check the quality of the subspace
         Eigen::VectorXd overlaps       = (initial_vec.adjoint() * eigvecs).cwiseAbs().real();
         double          max_overlap    = overlaps.maxCoeff();

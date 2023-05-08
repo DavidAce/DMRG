@@ -2,6 +2,7 @@
 #include "config/debug.h"
 #include "debug/exceptions.h"
 #include "io/fmt.h"
+#include "math/float.h"
 #include "math/num.h"
 
 using namespace tools::finite::opt;
@@ -32,7 +33,7 @@ std::string_view opt_mps::get_name() const {
         throw except::runtime_error("opt_mps: name not set");
 }
 
-const Eigen::Tensor<opt_mps::cplx, 3> &opt_mps::get_tensor() const {
+const Eigen::Tensor<cplx, 3> &opt_mps::get_tensor() const {
     if(tensor)
         return tensor.value();
     else
@@ -229,11 +230,11 @@ std::string_view opt_mps::get_eigs_ritz() const {
         return "--";
 }
 
-opt_mps::cplx opt_mps::get_eigs_shift() const {
+cplx opt_mps::get_eigs_shift() const {
     if(eigs_shift)
         return eigs_shift.value();
     else
-        return opt_mps::cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
+        return cplx(std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN());
 }
 
 double opt_mps::get_rnorm() const {

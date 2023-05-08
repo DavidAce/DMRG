@@ -25,14 +25,18 @@ namespace rnd {
     extern std::complex<double> uniform_complex_on_unit_circle();
     extern std::complex<double> uniform_complex_box(double real_min, double real_max, double imag_min, double imag_max);
     extern std::complex<double> uniform_complex_slice(double radius_max, double angle_min, double angle_max);
-    extern double               normal(double mean, double std);
-    extern double               log_normal(double mean, double std);
     extern std::vector<int>     random_with_replacement(const std::vector<int> &indata);
     extern std::vector<int>     random_with_replacement(const std::vector<int> &indata, size_t num_choose);
     extern double               gaussian_truncated(double lowerLimit, double upperLimit, double mean, double std);
-
     template<typename T>
     T uniform_integer_box(T min, T max);
+
+    template<typename out_t>
+    out_t uniform(out_t min, out_t max);
+    template<typename out_t>
+    out_t normal(out_t mean, out_t std);
+    template<typename out_t>
+    out_t log_normal(out_t mean, out_t std);
 
     template<typename T>
     std::vector<T> uniform_unit_n_sphere(size_t n);
@@ -40,9 +44,14 @@ namespace rnd {
     template<typename T>
     void shuffle(T &list);
 
-    extern double              random(dist d, double mean, double width);
-    extern double              random(std::string_view distribution, double mean, double width);
-    extern std::vector<double> random(std::string_view distribution, double mean, double width, size_t num);
-    extern std::vector<double> random(std::string_view distribution, double mean, double width, const std::vector<double> &weights);
+    template<typename out_t = double>
+    out_t random(dist d, out_t mean, out_t width);
+    template<typename out_t = double>
+    out_t random(std::string_view distribution, out_t mean, out_t width);
+    template<typename out_t = double>
+    std::vector<out_t> random(std::string_view distribution, out_t mean, out_t width, size_t num);
+
+    template<typename out_t = double>
+    std::vector<out_t> random(std::string_view distribution, out_t mean, out_t width, const std::vector<out_t> &weights);
 
 }

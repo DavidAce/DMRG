@@ -1,10 +1,11 @@
 
 #include "matvec_sparse.h"
 #include "../log.h"
+#include "math/float.h"
+#include "tid/tid.h"
 #include <Eigen/Core>
 #include <Eigen/LU>
 #include <Eigen/SparseLU>
-#include <tid/tid.h>
 #define profile_matrix_product_sparse 1
 
 template<typename T>
@@ -307,8 +308,8 @@ void MatVecSparse<Scalar, sparseLU>::set_shift(std::complex<double> shift) {
         A_ptr = A_stl.data();
     }
     Eigen::Map<MatrixType<Scalar>> A_matrix(A_stl.data(), L, L);
-    if constexpr(std::is_same_v<Scalar, eig::real>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
-    if constexpr(std::is_same_v<Scalar, eig::cplx>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * sigma;
+    if constexpr(std::is_same_v<Scalar, real>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * std::real(sigma);
+    if constexpr(std::is_same_v<Scalar, cplx>) A_matrix -= Eigen::MatrixXd::Identity(L, L) * sigma;
 
     if constexpr(sparseLU) {
         if constexpr(std::is_same_v<Scalar, double>) {
@@ -342,9 +343,9 @@ eig::Side MatVecSparse<Scalar, sparseLU>::get_side() const {
 }
 template<typename Scalar, bool sparseLU>
 eig::Type MatVecSparse<Scalar, sparseLU>::get_type() const {
-    if constexpr(std::is_same_v<Scalar, eig::real>)
+    if constexpr(std::is_same_v<Scalar, real>)
         return eig::Type::REAL;
-    else if constexpr(std::is_same_v<Scalar, eig::cplx>)
+    else if constexpr(std::is_same_v<Scalar, cplx>)
         return eig::Type::CPLX;
     else
         throw std::runtime_error("Unsupported type");

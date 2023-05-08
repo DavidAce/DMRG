@@ -3,6 +3,7 @@
 #include "config/settings.h"
 #include "io/fmt.h"
 #include "math/eig.h"
+#include "math/float.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/tenx.h"
@@ -18,9 +19,6 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/ops.h"
-
-using cplx = tools::finite::measure::cplx;
-using real = tools::finite::measure::real;
 
 void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
     tensors.measurements.length = measure::length(tensors);

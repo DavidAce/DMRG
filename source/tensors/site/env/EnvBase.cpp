@@ -57,8 +57,6 @@ EnvBase &EnvBase::operator=(const EnvBase &other) {
     return *this;
 }
 
-using cplx = EnvBase::cplx;
-
 void EnvBase::assert_block() const {
     if(side != "L" and side != "R") throw except::runtime_error("Expected side [L|R]. Got: [{}]", side);
     if(tag != "ene" and tag != "var") throw except::runtime_error("Expected tag [var|ene]. Got: [{}]", tag);

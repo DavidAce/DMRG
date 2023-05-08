@@ -1,6 +1,6 @@
 #pragma once
-#include <algorithms/AlgorithmBase.h>
-#include <tensors/TensorsInfinite.h>
+#include "algorithms/AlgorithmBase.h"
+#include "tensors/TensorsInfinite.h"
 class StateInfinite;
 class ModelInfinite;
 class EdgesInfinite;

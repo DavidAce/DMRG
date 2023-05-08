@@ -1,5 +1,5 @@
 #pragma once
-
+#include "math/float.h"
 #include "MpsStash.h"
 #include <complex>
 #include <optional>
@@ -7,8 +7,6 @@
 
 class MpsSite {
     public:
-    using cplx = std::complex<double>;
-    using real       = double;
     using value_type = cplx;
 
     private:

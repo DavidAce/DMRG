@@ -162,7 +162,7 @@ void IsingSelfDual::randomize_hamiltonian() {
     unique_id_sq                     = std::nullopt;
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingSelfDual::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
+Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
                                                               [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
@@ -183,10 +183,14 @@ Eigen::Tensor<MpoSite::cplx, 4> IsingSelfDual::MPO_nbody_view(std::optional<std:
     MPO_nbody.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J3 * h5tb.param.J_mean * h5tb.param.lambda * sx);
     return MPO_nbody;
 }
+Eigen::Tensor<cplx_t, 4> IsingSelfDual::MPO_nbody_view_t([[maybe_unused]] std::optional<std::vector<size_t>> nbody,
+                                                                  [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+    throw except::runtime_error("IsingSelfDual::MPO_nbody_view_t is not implemented");
+}
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingSelfDual::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
+Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
 
-Eigen::Tensor<MpoSite::cplx, 4> IsingSelfDual::MPO_shifted_view(double energy_shift_per_site) const {
+Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_shifted_view(double energy_shift_per_site) const {
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> temp                                           = MPO();
     temp.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - energy_shift_per_site * id);

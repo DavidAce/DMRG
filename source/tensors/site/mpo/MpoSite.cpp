@@ -12,7 +12,7 @@
 
 MpoSite::MpoSite(ModelType model_type_, size_t position_) : model_type(model_type_), position(position_) {}
 
-Eigen::Tensor<MpoSite::cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
+Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
     tools::log->trace("mpo({}): building mpo²", get_position());
     Eigen::Tensor<cplx, 4> mpo = MPO();
     Eigen::Tensor<cplx, 4> mpo2;
@@ -99,7 +99,7 @@ void MpoSite::clear_mpo_squared() {
 
 bool MpoSite::has_mpo_squared() const { return mpo_squared.has_value(); }
 
-const Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO() const {
+const Eigen::Tensor<cplx, 4> &MpoSite::MPO() const {
     if(all_mpo_parameters_have_been_set) {
         return mpo_internal;
     } else {
@@ -107,14 +107,22 @@ const Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO() const {
     }
 }
 
-const Eigen::Tensor<MpoSite::cplx, 4> &MpoSite::MPO2() const {
+const Eigen::Tensor<cplx_t, 4> &MpoSite::MPO_t() const {
+    if(all_mpo_parameters_have_been_set) {
+        return mpo_internal_t;
+    } else {
+        throw std::runtime_error("All MPO parameters haven't been set yet.");
+    }
+}
+
+const Eigen::Tensor<cplx, 4> &MpoSite::MPO2() const {
     if(mpo_squared and all_mpo_parameters_have_been_set)
         return mpo_squared.value();
     else
         throw std::runtime_error("MPO squared has not been set.");
 }
 
-Eigen::Tensor<MpoSite::cplx, 4> MpoSite::MPO2_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
+Eigen::Tensor<cplx, 4> MpoSite::MPO2_nbody_view(std::optional<std::vector<size_t>> nbody, std::optional<std::vector<size_t>> skip) const {
     if(not nbody) return MPO2();
     auto mpo1 = MPO_nbody_view(nbody, std::move(skip));
     auto dim0 = mpo1.dimension(0) * mpo1.dimension(0);
@@ -130,18 +138,29 @@ bool MpoSite::has_nan() const {
     for(auto &param : get_parameters()) {
         if(param.second.type() == typeid(double))
             if(std::isnan(std::any_cast<double>(param.second))) { return true; }
+        if(param.second.type() == typeid(long double))
+            if(std::isnan(std::any_cast<long double>(param.second))) { return true; }
     }
     return (tenx::hasNaN(mpo_internal));
 }
 
 void MpoSite::assert_validity() const {
-    for(auto &param : get_parameters())
-        if(param.second.type() == typeid(double))
+    for(auto &param : get_parameters()) {
+        if(param.second.type() == typeid(double)) {
             if(std::isnan(std::any_cast<double>(param.second))) {
                 print_parameter_names();
                 print_parameter_values();
                 throw except::runtime_error("Param [{}] = {}", param.first, std::any_cast<double>(param.second));
             }
+        }
+        if(param.second.type() == typeid(long double)) {
+            if(std::isnan(std::any_cast<long double>(param.second))) {
+                print_parameter_names();
+                print_parameter_values();
+                throw except::runtime_error("Param [{}] = {}", param.first, std::any_cast<long double>(param.second));
+            }
+        }
+    }
     if(tenx::hasNaN(mpo_internal)) throw except::runtime_error("MPO has NAN on position {}", get_position());
     if(not tenx::isReal(mpo_internal)) throw except::runtime_error("MPO has IMAG on position {}", get_position());
     if(mpo_squared) {
@@ -237,7 +256,7 @@ void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
 
 std::pair<int, std::string_view> MpoSite::get_parity_shift_mpo_squared() const { return {parity_shift_sign, parity_shift_axus}; }
 
-Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_left() const {
+Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_left() const {
     if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build left edge: mpo has not been built yet", get_position());
     auto                   ldim = mpo_internal.dimension(0);
     Eigen::Tensor<cplx, 1> ledge(ldim);
@@ -247,7 +266,7 @@ Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_left() const {
     return ledge;
 }
 
-Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_right() const {
+Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_right() const {
     if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build right edge: mpo has not been built yet", get_position());
     auto                   rdim = mpo_internal.dimension(1);
     Eigen::Tensor<cplx, 1> redge(rdim);
@@ -257,7 +276,7 @@ Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO_edge_right() const {
     return redge;
 }
 
-Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO2_edge_left() const {
+Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_left() const {
     auto edge  = get_MPO_edge_left();
     auto d0    = edge.dimension(0);
     auto edge2 = edge.contract(edge, tenx::idx()).reshape(tenx::array1{d0 * d0});
@@ -272,7 +291,7 @@ Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO2_edge_left() const {
     return edge2;
 }
 
-Eigen::Tensor<MpoSite::cplx, 1> MpoSite::get_MPO2_edge_right() const {
+Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_right() const {
     auto edge  = get_MPO_edge_right();
     auto d0    = edge.dimension(0);
     auto edge2 = edge.contract(edge.conjugate(), tenx::idx()).reshape(tenx::array1{d0 * d0});

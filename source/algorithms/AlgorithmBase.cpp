@@ -1,14 +1,13 @@
 #include "AlgorithmBase.h"
 #include "config/settings.h"
+#include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/num.h"
 #include "math/stat.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"
 #include <complex>
-#include <debug/exceptions.h>
 #include <h5pp/h5pp.h>
-using Scalar = AlgorithmBase::cplx;
 
 AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5file_, AlgorithmType algo_type_) : h5file(std::move(h5file_)) {
     status.algo_type = algo_type_;

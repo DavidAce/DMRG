@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../config/enums.h"
+#include "math/float.h"
 #include "math/tenx/fwd_decl.h"
 #include "qm.h"
 #include <vector>

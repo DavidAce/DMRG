@@ -1,5 +1,6 @@
 #include "h5tb.h"
 #include "debug/exceptions.h"
+#include "math/float.h"
 #include "tools/common/log.h"
 #include <hdf5.h>
 
@@ -173,13 +174,50 @@ void h5tb_lbit::commit_enum_w8(const h5pp::hid::h5f &file_id) {
     herr_t err = H5Tcommit(file_id, "UnitaryGateWeight", get_h5t_enum_w8(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
 }
-
 void h5tb_lbit::register_table_type() const {
     if(h5_type.valid()) return;
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-    H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), h5pp::varr_t<double>::get_h5type());
-    H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), H5T_NATIVE_DOUBLE);
+
+    h5pp::hid::h5t h5_real_t, h5_varr_t;
+#if defined(USE_QUADMATH)
+    static_assert(std::is_same_v<real_t, __float128>);
+    #if __BYTE_ORDER == LITTLE_ENDIAN
+    h5_real_t = H5Tcopy(H5T_IEEE_F64LE);
+    #else
+    h5_real_t  = H5Tcopy(H5T_IEEE_F64BE);
+    #endif
+    auto sserr = H5Tset_size(h5_real_t, 16);
+    auto sperr = H5Tset_precision(h5_real_t, 128);
+    auto soerr = H5Tset_offset(h5_real_t, 0);
+    #if __BYTE_ORDER == LITTLE_ENDIAN
+    auto sferr = H5Tset_fields(h5_real_t, 127, 112, 15, 0, 112);
+    #else
+    auto sferr = H5Tset_fields(h5_real_t, 0, 1, 15, 16, 112);
+    #endif
+    auto sberr = H5Tset_ebias(h5_real_t, 127);
+    auto snerr = H5Tset_norm(h5_real_t, H5T_norm_t::H5T_NORM_MSBSET);
+    auto sierr = H5Tset_inpad(h5_real_t, H5T_pad_t::H5T_PAD_ZERO);
+    auto sparr = H5Tset_pad(h5_real_t, H5T_pad_t::H5T_PAD_ZERO, H5T_pad_t::H5T_PAD_ZERO);
+    if(sserr < 0) throw except::runtime_error("H5Tset_size returned {}", sserr);
+    if(sperr < 0) throw except::runtime_error("H5Tset_precision returned {}", sperr);
+    if(soerr < 0) throw except::runtime_error("H5Tset_offset returned {}", soerr);
+    if(sferr < 0) throw except::runtime_error("H5Tset_fields returned {}", sferr);
+    if(sberr < 0) throw except::runtime_error("H5Tset_ebias returned {}", sberr);
+    if(snerr < 0) throw except::runtime_error("H5Tset_norm returned {}", snerr);
+    if(sierr < 0) throw except::runtime_error("H5Tset_inpad returned {}", sierr);
+    if(sparr < 0) throw except::runtime_error("H5Tset_pad returned {}", sparr);
+    //    H5Tset_pad(h5_real_t, H5T_PAD_ZERO, H5T_PAD_ZERO);
+    //        H5Tcommit(h5_real_t, "H5T_IEEE_F128LE", h5_real_t, H5P_DEFAULT, H5P_DEFAULT,  H5P_DEFAULT);
+
+    h5_varr_t = H5Tvlen_create(h5_real_t);
+#else
+    h5_real_t = H5Tcopy(H5T_NATIVE_LDOUBLE);
+    h5_varr_t = h5pp::varr_t<real_t>::get_h5type();
+#endif
+
+    H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), h5_real_t);
+    H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), h5_varr_t);
+    H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), h5_real_t);
     H5Tinsert(h5_type, "J1_mean", HOFFSET(table, J1_mean), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J2_mean", HOFFSET(table, J2_mean), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J3_mean", HOFFSET(table, J3_mean), H5T_NATIVE_DOUBLE);
@@ -202,14 +240,14 @@ void h5tb_lbit::register_table_type() const {
 std::string h5tb_lbit::fmt_value(std::string_view p) const {
     // J2_rand is special since it varies in length for each mpo. Let's just pad with nan to make it pretty
     if(p == "J2_rand") {
-        std::vector<double> J2_rand = param.J2_rand;
+        std::vector<real_t> J2_rand = param.J2_rand;
         J2_rand.reserve(param.J2_ctof + 1);
-        for(size_t i = J2_rand.size(); i < param.J2_ctof + 1; i++) J2_rand.emplace_back(std::numeric_limits<double>::quiet_NaN());
+        for(size_t i = J2_rand.size(); i < param.J2_ctof + 1; i++) J2_rand.emplace_back(std::numeric_limits<float_t>::quiet_NaN());
         return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(J2_rand, ","));
     }
 
     /* clang-format off */
-        if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"),param.J1_rand);
+        if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_rand);
         if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand);
         if(p == "J1_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_mean);
         if(p == "J2_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2_mean);
@@ -228,11 +266,11 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
         if(p == "u_cgw8")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_cgw8));
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
         if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.distribution);
-        /* clang-format on */
-        throw except::runtime_error("Unrecognized parameter: {}", p);
+    /* clang-format on */
+    throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
 std::vector<std::string_view> h5tb_lbit::get_parameter_names() const noexcept {
-        return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth",  "J2_wdth",
-                "J3_wdth", "J2_span", "J2_ctof", "xi_Jcls", "u_fmix",  "u_depth", "spin_dim", "distribution"};
+    return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth",  "J2_wdth",
+            "J3_wdth", "J2_span", "J2_ctof", "xi_Jcls", "u_fmix",  "u_depth", "spin_dim", "distribution"};
 }

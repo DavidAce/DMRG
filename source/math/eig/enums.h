@@ -2,8 +2,6 @@
 #include <complex>
 #include <optional>
 namespace eig {
-    using real      = double;
-    using cplx      = std::complex<double>;
     using size_type = long;
 
     // Enums

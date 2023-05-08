@@ -1,15 +1,14 @@
 #pragma once
 
-#include <math/tenx/fwd_decl.h>
+#include "math/tenx/fwd_decl.h"
 // Eigen goes first
+#include "debug/exceptions.h"
+#include "math/float.h"
+#include "math/tenx/eval.h"
+#include "math/tenx/threads.h"
 #include <complex>
-#include <debug/exceptions.h>
-#include <math/tenx/eval.h>
-#include <math/tenx/threads.h>
 
 namespace tools::common::contraction {
-    using cplx = std::complex<double>;
-    using real = double;
     template<typename T>
     using TensorWrite = Eigen::TensorBase<T, Eigen::WriteAccessors>;
     template<typename T>

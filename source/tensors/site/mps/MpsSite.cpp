@@ -1,6 +1,7 @@
-#include <math/tenx.h>
+#include "math/tenx.h"
 // tenx must appear first
 #include "config/debug.h"
+#include "math/float.h"
 #include "math/hash.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
@@ -16,8 +17,6 @@ namespace settings {
     inline constexpr bool verbose_merge     = false;
     inline constexpr bool verbose_apply_mpo = false;
 }
-
-using cplx = MpsSite::cplx;
 
 MpsSite::MpsSite() = default;
 MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_) {

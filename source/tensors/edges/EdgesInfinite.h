@@ -1,8 +1,8 @@
 #pragma once
 #pragma once
 #include <complex>
-#include <config/enums.h>
-#include <math/tenx/fwd_decl.h>
+#include "config/enums.h"
+#include "math/tenx/fwd_decl.h"
 #include <memory>
 #include <optional>
 

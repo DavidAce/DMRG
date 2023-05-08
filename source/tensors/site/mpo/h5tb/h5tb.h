@@ -1,5 +1,6 @@
 #pragma once
 #include "config/enums.h"
+#include "math/float.h"
 #include <h5pp/details/h5ppHid.h>
 #include <h5pp/details/h5ppVarr.h>
 #include <h5pp/details/h5ppVstr.h>
@@ -86,9 +87,9 @@ class h5tb_lbit : public h5tb_base {
     public:
     struct table {
         using vlen_type               = h5pp::vstr_t;
-        double               J1_rand  = 0;  /*!< On-site interaction */
-        h5pp::varr_t<double> J2_rand  = {}; /*!< Two-body interaction */
-        double               J3_rand  = 0;  /*!< Three-body interaction */
+        real_t               J1_rand  = 0;  /*!< On-site interaction */
+        h5pp::varr_t<real_t> J2_rand  = {}; /*!< Two-body interaction */
+        real_t               J3_rand  = 0;  /*!< Three-body interaction */
         double               J1_mean  = 0;  /*!< Constant offset for on-site */
         double               J2_mean  = 0;  /*!< Constant offset for two-body interaction */
         double               J3_mean  = 0;  /*!< Constant offset for three-body interaction */

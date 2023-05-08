@@ -7,9 +7,9 @@ namespace qm::spin::one {
     Eigen::Matrix3cd sx = (Eigen::Matrix3cd() <<  0.0, 1.0, 0.0,
         1.0, 0.0, 1.0,
         0.0, 1.0, 0.0).finished();
-    Eigen::Matrix3cd sy = (Eigen::Matrix3cd() <<  0.0 , imn, 0.0,
-        imp,  0.0 ,imn,
-        0.0 ,  imp, 0.0).finished();
+    Eigen::Matrix3cd sy = (Eigen::Matrix3cd() <<  0.0 , -1.0i, 0.0,
+        1.0i,  0.0 ,-1.0i,
+        0.0 ,  1.0i, 0.0).finished();
     Eigen::Matrix3cd sz = (Eigen::Matrix3cd() <<  1.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
         0.0, 0.0,-1.0).finished();

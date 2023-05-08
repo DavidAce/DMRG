@@ -3,7 +3,7 @@
 #include "io/filesystem.h"
 #include "tid/enums.h"
 #include "tools/common/log.h"
-#include <config/enums.h>
+#include "config/enums.h"
 #include <string>
 #include <unordered_map>
 

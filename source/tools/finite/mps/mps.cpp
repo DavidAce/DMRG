@@ -1,4 +1,4 @@
-#include <math/tenx.h>
+#include "math/tenx.h"
 // -- (textra first)
 #include "../mps.h"
 #include "config/enums.h"
@@ -21,12 +21,12 @@
 #include "tools/finite/ops.h"
 
 namespace settings {
-    inline constexpr bool debug_merge   = true;
-    inline constexpr bool debug_gates   = true;
-    inline constexpr bool debug_moves   = true;
-    inline constexpr bool verbose_merge = true;
-    inline constexpr bool verbose_gates = true;
-    inline constexpr bool verbose_moves = true;
+    inline constexpr bool debug_merge   = false;
+    inline constexpr bool debug_gates   = false;
+    inline constexpr bool debug_moves   = false;
+    inline constexpr bool verbose_merge = false;
+    inline constexpr bool verbose_gates = false;
+    inline constexpr bool verbose_moves = false;
 }
 
 bool tools::finite::mps::init::bitfield_is_valid(size_t bitfield) { return bitfield != -1ul and init::used_bitfields.count(bitfield) == 0; }
@@ -400,7 +400,8 @@ void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vect
 }
 
 template<typename GateType>
-std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<GateType> &gates, CircOp cop, bool range_long_to_short = false) {
+std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<GateType> &gates, CircOp cop,
+                                                               bool range_long_to_short) {
     // Generate a list of staggered indices, without assuming that gates are sorted in any way
     // Consider a sequence of short-range gates such as [0,1], [1,2], [2,3], then this function is used to generate a new sequence without overlaps:
     //
@@ -498,8 +499,10 @@ std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::
     return gate_sequence;
 }
 
-template std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, CircOp cop, bool range_long_to_short);
-template std::vector<size_t> generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, CircOp cop, bool range_long_to_short);
+template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, CircOp cop,
+                                                                        bool range_long_to_short);
+template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, CircOp cop,
+                                                                        bool range_long_to_short);
 
 void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, GateOp gop, GateMove gm,
                                     std::optional<svd::config> svd_cfg) {

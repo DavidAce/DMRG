@@ -13,8 +13,6 @@ namespace eig {
 }
 
 namespace tools::finite::opt {
-    using real = double;
-    using cplx = std::complex<double>;
     class opt_mps;
     struct OptMeta;
     extern opt_mps get_opt_initial_mps(const TensorsFinite &tensors);

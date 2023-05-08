@@ -1,5 +1,7 @@
 #pragma once
-#include "math/tenx/fwd_decl.h"
+#include "debug/exceptions.h"
+#include "math/float.h"
+#include "math/tenx.h"
 #include "qm.h"
 #include <array>
 #include <complex>
@@ -41,10 +43,13 @@ namespace qm {
     template<auto N>
     [[nodiscard]] qm::Gate trace(const qm::Gate & gate , const std::array<Eigen::IndexPair<Eigen::Index>, N>  & idxpair);
 
+
     class Gate {
+        public:
         protected:
-        Eigen::Tensor<cplx,2> exp_internal(const Eigen::Tensor<cplx,2> & op_, cplx alpha) const;
-        Eigen::Tensor<cplx,2> exp_internal(const Eigen::Tensor<cplx,2> & op_, cpll alpha) const;
+        template<typename scalar_t, typename alpha_t>
+        Eigen::Tensor<scalar_t, 2> exp_internal(const Eigen::Tensor<scalar_t,2> & op_, alpha_t alpha) const;
+
         mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
         mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
         mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
@@ -52,20 +57,38 @@ namespace qm {
         mutable bool used = false;
         public:
         Eigen::Tensor<cplx,2> op;
+        Eigen::Tensor<cplx_t,2> op_t;
         std::vector<size_t> pos;
         std::vector<long> dim;
         Gate() = default;
-        Gate(const Eigen::Matrix<cplx,Eigen::Dynamic,Eigen::Dynamic> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
-        Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_);
-        Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
-        Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cpll alpha);
-        void exp_inplace(cplx alpha);
-        void exp_inplace(cpll alpha);
+
+        template<typename T, typename Device = Eigen::DefaultDevice>
+        Gate(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &op_, std::vector<size_t> pos_, std::vector<long> dim_, const Device &device = Device())
+            : pos(std::move(pos_)), dim(std::move(dim_)) {
+            auto tensor   = tenx::asEval(op_, device);
+            auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
+            static_assert(tensor.rank() == 2);
+            if(dim_prod != tensor.dimension(0) or dim_prod != tensor.dimension(1))
+                throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, tensor.dimension(0), tensor.dimension(1));
+            if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
+            // We use a unary expression to cast from std::complex<__float128> to std::complex<double>
+            op = op_.unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
+            op_t = op_.template cast<cplx_t>();
+        }
+        template<typename T>
+        Gate(const Eigen::EigenBase<T> & op_, std::vector<size_t> pos_, std::vector<long> dim_)
+            : Gate(tenx::TensorCast(op_), std::move(pos_), std::move(dim_)) {}
+
+        explicit Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
+        explicit Gate(const Eigen::Tensor<cplx,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha);
+        explicit Gate(const Eigen::Tensor<cplx_t,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
+        explicit Gate(const Eigen::Tensor<cplx_t,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha);
+
         void mark_as_used() const;
         void unmark_as_used() const;
         bool was_used() const;
         [[nodiscard]] Gate exp(cplx alpha) const;
-        [[nodiscard]] Gate exp(cpll alpha) const;
+        [[nodiscard]] Gate exp(cplx_t alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;
         [[nodiscard]] const Eigen::Tensor<cplx,2>& conjugate() const;
         [[nodiscard]] const Eigen::Tensor<cplx,2>& transpose() const;
@@ -114,7 +137,7 @@ namespace qm {
         std::deque<Swap>       swaps;
         std::deque<Rwap>       rwaps; // swaps sequence and reverse swap sequence
         [[nodiscard]] SwapGate exp(cplx alpha) const;
-        [[nodiscard]] SwapGate exp(cpll alpha) const;
+        [[nodiscard]] SwapGate exp(cplx_t alpha) const;
         void                   generate_swap_sequences();
         size_t                 cancel_swaps(std::deque<Rwap> &other_rwaps);
         size_t                 cancel_rwaps(std::deque<Swap> &other_swaps);

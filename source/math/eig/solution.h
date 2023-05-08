@@ -1,5 +1,6 @@
 #pragma once
 #include "enums.h"
+#include "math/float.h"
 #include <typeindex>
 #include <vector>
 

@@ -32,6 +32,9 @@ namespace tools::finite::mps {
     extern void truncate_all_sites                   (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_active_sites                (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void truncate_next_sites                  (StateFinite & state, size_t num_sites = 4, std::optional<svd::config> svd_cfg = std::nullopt);
+    template<typename GateType>
+    extern std::vector<size_t>
+                generate_gate_sequence               (const StateFinite &state, const std::vector<GateType> &gates, CircOp cop, bool range_long_to_short = false);
     extern void apply_gate                           (StateFinite & state, const qm::Gate & gate, Eigen::Tensor<cplx, 3> & temp, GateOp gop, GateMove gmov, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<Eigen::Tensor<cplx,2>> & nsite_tensors, size_t gate_size, CircOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);
     extern void apply_gates                          (StateFinite & state, const std::vector<qm::Gate> & gates,  CircOp cop, bool moveback = true, GateMove gm = GateMove::AUTO, std::optional<svd::config> svd_cfg = std::nullopt);

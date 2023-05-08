@@ -9,25 +9,24 @@
 class StateFinite;
 class flbit : public AlgorithmFinite {
     public:
-    std::unique_ptr<StateFinite>                         state_lbit, state_lbit_init, state_real_init;
-    std::vector<qm::Gate>                                ham_gates_1body, time_gates_1body;
-    std::vector<qm::Gate>                                ham_gates_2body, time_gates_2body;
-    std::vector<qm::Gate>                                ham_gates_3body, time_gates_3body;
-    std::vector<qm::Gate>                                ham_gates_Lbody, time_gates_Lbody;
-    std::vector<qm::SwapGate>                            ham_swap_gates_1body, time_swap_gates_1body;
-    std::vector<qm::SwapGate>                            ham_swap_gates_2body, time_swap_gates_2body;
-    std::vector<qm::SwapGate>                            ham_swap_gates_3body, time_swap_gates_3body;
-    std::vector<qm::SwapGate>                            ham_swap_gates_Lbody, time_swap_gates_Lbody;
-    std::vector<std::vector<qm::Gate>>                   unitary_gates_2site_layers;
-    std::vector<Eigen::Tensor<qm::cplx, 4>>              unitary_gates_mpo_layer_full;
-    std::vector<std::vector<Eigen::Tensor<qm::cplx, 4>>> unitary_gates_mpo_layers;
-    Eigen::Tensor<std::complex<double>, 1>               ledge, redge;
-    std::vector<std::complex<long double>>               time_points;
-    Eigen::Tensor<cplx, 2>                               lbit_overlap; // The real-space support of the l-bits
+    std::unique_ptr<StateFinite>                     state_lbit, state_lbit_init, state_real_init;
+    std::vector<qm::Gate>                            ham_gates_1body, time_gates_1body;
+    std::vector<qm::Gate>                            ham_gates_2body, time_gates_2body;
+    std::vector<qm::Gate>                            ham_gates_3body, time_gates_3body;
+    std::vector<qm::Gate>                            ham_gates_Lbody, time_gates_Lbody;
+    std::vector<qm::SwapGate>                        ham_swap_gates_1body, time_swap_gates_1body;
+    std::vector<qm::SwapGate>                        ham_swap_gates_2body, time_swap_gates_2body;
+    std::vector<qm::SwapGate>                        ham_swap_gates_3body, time_swap_gates_3body;
+    std::vector<qm::SwapGate>                        ham_swap_gates_Lbody, time_swap_gates_Lbody;
+    std::vector<std::vector<qm::Gate>>               unitary_gates_2site_layers;
+    std::vector<Eigen::Tensor<cplx, 4>>              unitary_gates_mpo_layer_full;
+    std::vector<std::vector<Eigen::Tensor<cplx, 4>>> unitary_gates_mpo_layers;
+    Eigen::Tensor<std::complex<double>, 1>           ledge, redge;
+    std::vector<cplx_t>                              time_points;
+    Eigen::Tensor<cplx, 2>                           lbit_overlap; // The real-space support of the l-bits
 
     // Inherit the constructor of class_algorithm_base
     using AlgorithmFinite::AlgorithmFinite;
-    flbit();
     explicit flbit(std::shared_ptr<h5pp::File> h5file_);
     void update_time_step();
     void resume() final;

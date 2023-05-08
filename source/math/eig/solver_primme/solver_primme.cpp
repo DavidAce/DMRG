@@ -6,7 +6,7 @@
 #include "../solver.h"
 #include "debug/exceptions.h"
 #include <primme/primme.h>
-#include <tid/tid.h>
+#include "tid/tid.h"
 
 inline primme_target stringToTarget(std::string_view ritzstring) {
     if(ritzstring == "LA") return primme_target::primme_largest;
@@ -334,14 +334,14 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     /* Call primme  */
     /* clang-format off */
     int info = 0;
-    if constexpr(std::is_same_v<Scalar, eig::real>) {
+    if constexpr(std::is_same_v<Scalar, real>) {
         try {
             auto t_dprimme = tid::tic_scope("dprimme");
             info = dprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
         } catch(const std::exception &ex) { eig::log->error("dprimme has exited with error: info {} | msg: {}", info, ex.what()); } catch(...) {
             eig::log->error("dprimme has exited with error: info {}", info);
         }
-    } else if constexpr(std::is_same_v<typename MatrixProductType::Scalar, eig::cplx>) {
+    } else if constexpr(std::is_same_v<typename MatrixProductType::Scalar, cplx>) {
         try {
             auto t_zprimme = tid::tic_scope("zprimme");
             info = zprimme(eigvals.data(), eigvecs.data(), result.meta.residual_norms.data(), &primme);
@@ -401,9 +401,9 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
     return info;
 }
 
-template int eig::solver::eigs_primme(MatVecMPO<eig::real> &matrix);
-template int eig::solver::eigs_primme(MatVecMPO<eig::cplx> &matrix);
-template int eig::solver::eigs_primme(MatVecDense<eig::real> &matrix);
-template int eig::solver::eigs_primme(MatVecDense<eig::cplx> &matrix);
-template int eig::solver::eigs_primme(MatVecSparse<eig::real> &matrix);
-template int eig::solver::eigs_primme(MatVecSparse<eig::cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<real> &matrix);
+template int eig::solver::eigs_primme(MatVecMPO<cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecDense<real> &matrix);
+template int eig::solver::eigs_primme(MatVecDense<cplx> &matrix);
+template int eig::solver::eigs_primme(MatVecSparse<real> &matrix);
+template int eig::solver::eigs_primme(MatVecSparse<cplx> &matrix);

@@ -41,6 +41,6 @@ namespace tools::finite::measure {
         solver.eig(L.data(), L.dimension(0));
         solver.config.tag = "zheevd";
         solver.eig<eig::Form::SYMM>(L.data(), L.dimension(0));
-        tools::log->info("Half spin product eigenvalues: \n{}\n", linalg::matrix::to_string(eig::view::get_eigvals<eig::real>(solver.result), 16, 20));
+        tools::log->info("Half spin product eigenvalues: \n{}\n", linalg::matrix::to_string(eig::view::get_eigvals<real>(solver.result), 16, 20));
     }
 }
