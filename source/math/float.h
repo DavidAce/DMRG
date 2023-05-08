@@ -38,7 +38,8 @@ auto abs_t(T val) {
     } else if constexpr(std::is_same_v<T, real_t>)
         return fabsq(val);
     #else
-    static_assert(std::is_arithmetic_v<T>);
+    else
+        return std::abs(val);
     #endif
 }
 
