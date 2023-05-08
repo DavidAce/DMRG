@@ -25,7 +25,8 @@ find_package(Ceres      2.0    REQUIRED)                                        
 find_package(CLI11      2.1.1  REQUIRED)                                         # Command line argument parser
 find_package(arpack-ng  3.8.0  REQUIRED)                                         # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 find_package(Backward   1.6    REQUIRED)
-find_package(arpack++ 2.3.0    REQUIRED)                                          # C++ frontend for arpack-ng. Custom find module.
+find_package(arpack++   2.3.0  REQUIRED)                                          # C++ frontend for arpack-ng. Custom find module.
+#find_package(mpfr       4.1.0  REQUIRED)
 
 include(cmake/CheckCompile.cmake)
 check_compile(Lapacke lapacke::lapacke)
@@ -52,12 +53,17 @@ target_link_libraries(dmrg-deps INTERFACE
             primme::primme
             Ceres::ceres
             lapacke::lapacke
+#            mpfr::mpfr
             # We link Backward::Backward on the dmrg-stacktrace object directly
             )
 
 
 # Install dependencies that need manual installation
 include(cmake/cmake_dependency_provider/PKGInstall.cmake)
+
+
+#pkg_install(mpreal) # For MPFRC++ - c++ frontend for the mpfr multiprecision library
+#find_package(mpreal REQUIRED MODULE)
 pkg_install(primme)
 find_package(primme REQUIRED MODULE)
 target_link_libraries(dmrg-deps INTERFACE primme::primme)
