@@ -33,7 +33,7 @@ struct fmt::formatter<__float128, Char> : fmt::formatter<double, Char> {
 template<typename T, typename Char>
 struct fmt::formatter<std::complex<T>, Char> : fmt::formatter<T, Char> {
     typedef fmt::formatter<T, Char> base;
-    enum style { expr, star, pair } style_ = expr;
+    enum style { expr, pair } style_ = expr;
     fmt::detail::dynamic_format_specs<Char> specs_;
     FMT_CONSTEXPR auto                      parse(format_parse_context &ctx) -> decltype(ctx.begin()) {
         using handler_type                            = fmt::detail::dynamic_specs_handler<format_parse_context>;
@@ -44,10 +44,6 @@ struct fmt::formatter<std::complex<T>, Char> : fmt::formatter<T, Char> {
             switch(*it) {
                 case '$':
                     style_ = style::expr;
-                    ctx.advance_to(++it);
-                    break;
-                case '*':
-                    style_ = style::star;
                     ctx.advance_to(++it);
                     break;
                 case ',':
@@ -74,10 +70,7 @@ struct fmt::formatter<std::complex<T>, Char> : fmt::formatter<T, Char> {
         if(x.imag() != 0.0) {
             if(x.real() >= 0 && x.imag() >= 0 && specs_.sign != sign::plus) format_to(ctx.out(), "+");
             base::format(x.imag(), ctx);
-            if(style_ == style::star)
-                format_to(ctx.out(), "*i");
-            else
-                format_to(ctx.out(), "i");
+            format_to(ctx.out(), "i");
             if(std::is_same<typename std::decay<T>::type, float>::value) format_to(ctx.out(), "f");
             if(std::is_same<typename std::decay<T>::type, long double>::value) format_to(ctx.out(), "l");
         }
