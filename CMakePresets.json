@@ -266,7 +266,10 @@
         "gcc-12",
         "debug",
         "default"
-      ]
+      ],
+      "cacheVariables": {
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
+      }
     },
     {
       "name": "debug-clang-15",
