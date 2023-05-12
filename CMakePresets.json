@@ -197,18 +197,6 @@
       "hidden": true,
       "cacheVariables": {
         "DMRG_PACKAGE_MANAGER": "find",
-        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan1_dependency_provider/conan_provider.cmake",
-        "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
-      },
-      "environment": {
-        "PATH": "$env{HOME}/miniconda3/envs/dmrg/bin:$env{HOME}/anaconda3/envs/dmrg/bin:$env{HOME}/miniconda3/bin:$penv{PATH}"
-      }
-    },
-    {
-      "name": "conan2",
-      "hidden": true,
-      "cacheVariables": {
-        "DMRG_PACKAGE_MANAGER": "find",
         "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/cmake/conan2_dependency_provider/conan_provider.cmake",
         "CMAKE_FIND_PACKAGE_PREFER_CONFIG": "TRUE"
       },
@@ -286,7 +274,7 @@
       "displayName": "Debug|gcc-12|conan|flexiblas",
       "inherits": [
         "flexiblas",
-        "conan2",
+        "conan",
         "debug-gcc-12"
       ]
     },
