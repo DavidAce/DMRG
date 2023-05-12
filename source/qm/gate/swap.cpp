@@ -9,8 +9,8 @@
 #include "tools/common/log.h"
 
 namespace settings {
-    inline constexpr bool debug_swap   = true;
-    inline constexpr bool verbose_swap = true;
+    inline constexpr bool debug_swap   = false;
+    inline constexpr bool verbose_swap = false;
 }
 
 qm::Swap::Swap(size_t posL, size_t posR) : posL(posL), posR(posR) {

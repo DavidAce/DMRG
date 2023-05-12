@@ -368,20 +368,23 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_time_evolution_operator(cplx_t delta_t, con
 std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx_t delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold) {
     std::vector<Gate> time_evolution_gates;
     time_evolution_gates.reserve(hams_nsite.size());
+    size_t count_ignored = 0;
     for(auto &h : hams_nsite) {
         time_evolution_gates.emplace_back(h.exp(cplx_t(-1.0i) * delta_t)); // exp(-i * delta_t * h)
-        if(id_threshold > 0 and abs_t(delta_t) > 10.*id_threshold and tenx::isIdentity(time_evolution_gates.back().op, id_threshold)) {
+        if(id_threshold > 0 and abs_t(delta_t) > 10. * id_threshold and tenx::isIdentity(time_evolution_gates.back().op_t, id_threshold)) {
+            count_ignored++;
             tools::log->trace("get_time_evolution_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_gates.back().pos, id_threshold);
             time_evolution_gates.pop_back(); // Skip this gate if it is just an identity.
         }
     }
     if constexpr(settings::debug) {
         for(auto &t : time_evolution_gates)
-            if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op.dimension(0)))) {
+            if(not t.isUnitary(Eigen::NumTraits<double>::dummy_precision() * static_cast<double>(t.op_t.dimension(0)))) {
                 throw except::runtime_error("Time evolution operator at pos {} is not unitary:\n{}", t.pos, linalg::tensor::to_string(t.op));
             }
     }
     time_evolution_gates.shrink_to_fit();
+    if(count_ignored > 0) tools::log->debug("get_time_evolution_gates: ignored {} time evolution swap gates: I +- {:.2e}", count_ignored, id_threshold);
     return time_evolution_gates;
 }
 
@@ -391,7 +394,7 @@ std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx_t delta_t
     size_t count_ignored = 0;
     for(const auto &h : hams_nsite) {
         time_evolution_swap_gates.emplace_back(h.exp(cplx_t(-1.0i) * delta_t)); // exp(-i * delta_t * h)
-        if(id_threshold > 0 and abs_t(delta_t) > 10.*id_threshold and tenx::isIdentity(time_evolution_swap_gates.back().op, id_threshold)) {
+        if(id_threshold > 0 and abs_t(delta_t) > 10. * id_threshold and tenx::isIdentity(time_evolution_swap_gates.back().op_t, id_threshold)) {
             count_ignored++;
             tools::log->trace("get_time_evolution_swap_gates: ignoring time evolution swap gate {} == I +- {:.2e}", time_evolution_swap_gates.back().pos,
                               id_threshold);

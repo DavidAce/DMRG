@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace settings {
-    inline constexpr bool debug_cls = true;
+    inline constexpr bool debug_cls = false;
 }
 
 using cplx = cplx;

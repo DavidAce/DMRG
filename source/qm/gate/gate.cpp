@@ -21,8 +21,8 @@
 // #include <mpreal.h>
 
 namespace settings {
-    inline constexpr bool debug_gates   = true;
-    inline constexpr bool verbose_gates = true;
+    inline constexpr bool debug_gates   = false;
+    inline constexpr bool verbose_gates = false;
 }
 
 template<typename T>
@@ -161,6 +161,9 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
      *
      *  Remember to do the modulo separately on each diagonal entry h!
      */
+    if(!std::is_same_v<scalar_t, cplx_t>) { throw except::runtime_error("Expected scalar_t == cplx_t: got {}", sfinae::type_name<scalar_t>()); }
+    if(!std::is_same_v<alpha_t, cplx_t>) { throw except::runtime_error("Expected alpha_t == cplx_t: got {}", sfinae::type_name<alpha_t>()); }
+
     auto op_map       = tenx::MatrixMap(op_);
     bool exp_diagonal = false;
     if constexpr(std::is_arithmetic_v<scalar_t>) {

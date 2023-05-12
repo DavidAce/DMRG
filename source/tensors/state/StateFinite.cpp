@@ -13,7 +13,7 @@
 #include "tools/finite/multisite.h"
 
 namespace settings {
-    inline constexpr bool debug_state = true;
+    inline constexpr bool debug_state = false;
 }
 
 StateFinite::StateFinite() = default; // Can't initialize lists since we don't know the model size yet

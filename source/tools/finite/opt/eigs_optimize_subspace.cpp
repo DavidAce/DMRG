@@ -22,11 +22,7 @@ using namespace tools::finite::opt;
 using namespace tools::finite::opt::internal;
 
 namespace settings {
-#if defined(NDEBUG)
     static constexpr bool debug_subspace = false;
-#else
-    static constexpr bool debug_subspace = true;
-#endif
 }
 
 opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite &tensors, const opt_mps &initial_mps,

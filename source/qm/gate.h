@@ -1,5 +1,6 @@
 #pragma once
 #include "debug/exceptions.h"
+#include "general/sfinae.h"
 #include "math/float.h"
 #include "math/tenx.h"
 #include "qm.h"
@@ -7,7 +8,6 @@
 #include <complex>
 #include <deque>
 #include <optional>
-#include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 
 namespace iter {
@@ -72,8 +72,10 @@ namespace qm {
                 throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, tensor.dimension(0), tensor.dimension(1));
             if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
             // We use a unary expression to cast from std::complex<__float128> to std::complex<double>
-            op = op_.unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
-            op_t = op_.template cast<cplx_t>();
+//            if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx>)
+                op = op_.unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
+            if constexpr (std::is_same_v<std::decay_t<typename T::Scalar>, cplx_t>)
+                op_t = op_.unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
         }
         template<typename T>
         Gate(const Eigen::EigenBase<T> & op_, std::vector<size_t> pos_, std::vector<long> dim_)
