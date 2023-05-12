@@ -11,7 +11,7 @@
 #include <h5pp/h5pp.h>
 
 namespace settings {
-    inline constexpr bool debug_lbit   = true;
+    inline constexpr bool debug_lbit   = false;
     inline constexpr bool verbose_lbit = false;
 }
 
@@ -22,7 +22,7 @@ std::string format_mpo(const Eigen::Tensor<cplx_t, 4> &mpo, real_t J1_rand, cons
     auto sh2 = std::array<long, 2>{2, 2};
     for(long i = 0; i < mpo.dimension(0); i++) {
         for(long j = 0; j < mpo.dimension(1); j++) {
-            auto                           off = std::array<long, 4>{i, j, 0, 0};
+            auto                     off = std::array<long, 4>{i, j, 0, 0};
             Eigen::Tensor<cplx_t, 2> mat = mpo.slice(off, ext).reshape(sh2);
             if(tenx::MatrixMap(mat) == sz.cast<cplx_t>())
                 str.append("z   ");
@@ -75,9 +75,9 @@ void LBit::print_parameter_names() const { h5tb.print_parameter_names(); }
 void LBit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void LBit::set_parameters(TableMap &parameters) {
-    h5tb.param.J1_rand      = std::any_cast<real_t>(parameters["J1_rand"]);
-    h5tb.param.J2_rand      = std::any_cast<h5pp::varr_t<real_t>>(parameters["J2_rand"]);
-    h5tb.param.J3_rand      = std::any_cast<real_t>(parameters["J3_rand"]);
+    h5tb.param.J1_rand      = std::any_cast<h5pp::vstr_t>(parameters["J1_rand"]);
+    h5tb.param.J2_rand      = std::any_cast<h5pp::varr_t<h5pp::vstr_t>>(parameters["J2_rand"]);
+    h5tb.param.J3_rand      = std::any_cast<h5pp::vstr_t>(parameters["J3_rand"]);
     h5tb.param.J1_wdth      = std::any_cast<double>(parameters["J1_wdth"]);
     h5tb.param.J2_wdth      = std::any_cast<double>(parameters["J2_wdth"]);
     h5tb.param.J3_wdth      = std::any_cast<double>(parameters["J3_wdth"]);
@@ -122,9 +122,9 @@ LBit::TableMap LBit::get_parameters() const {
 
 std::any LBit::get_parameter(const std::string &name) const {
     /* clang-format off */
-    if     (name == "J1_rand")       return h5tb.param.J1_rand;
-    else if(name == "J2_rand")       return h5tb.param.J2_rand;
-    else if(name == "J3_rand")       return h5tb.param.J3_rand;
+    if     (name == "J1_rand")       return h5tb.param.J1_rand.to_floating_point<real_t>();
+    else if(name == "J2_rand")       return h5tb.param.J2_rand.to_floating_point<real_t>();
+    else if(name == "J3_rand")       return h5tb.param.J3_rand.to_floating_point<real_t>();
     else if(name == "J1_wdth")       return h5tb.param.J1_wdth;
     else if(name == "J2_wdth")       return h5tb.param.J2_wdth;
     else if(name == "J3_wdth")       return h5tb.param.J3_wdth;
@@ -257,13 +257,15 @@ void LBit::build_mpo()
         for(const auto &i : num::range<long>(2, R + 1)) { mpo_internal.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
 
     mpo_internal.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = Z;
-    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = static_cast<real>(h5tb.param.J1_rand) * Z - e_shift * I;
+    mpo_internal.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) =
+        static_cast<real>(h5tb.param.J1_rand.to_floating_point<real_t>()) * Z - e_shift * I;
 
     if(R >= 1)
         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.length())) {
-            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J2_rand[static_cast<size_t>(i)]) * Z;
+            mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
+                static_cast<real>(h5tb.param.J2_rand[static_cast<size_t>(i)].to_floating_point<real_t>()) * Z;
         }
-    mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J3_rand) * Z;
+    mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J3_rand.to_floating_point<real_t>()) * Z;
 
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
@@ -388,13 +390,14 @@ void LBit::build_mpo_t()
         for(const auto &i : num::range<long>(2, R + 1)) { mpo_internal_t.slice(tenx::array4{i, i - 1, 0, 0}, extent4).reshape(extent2) = I; }
 
     mpo_internal_t.slice(tenx::array4{F - 1, 1, 0, 0}, extent4).reshape(extent2) = Z;
-    mpo_internal_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand * Z - e_shift * I;
+    mpo_internal_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand.to_floating_point<real_t>() * Z - e_shift * I;
 
     if(R >= 1)
         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.length())) {
-            mpo_internal_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) = h5tb.param.J2_rand[static_cast<size_t>(i)] * Z;
+            mpo_internal_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
+                h5tb.param.J2_rand[static_cast<size_t>(i)].to_floating_point<real_t>() * Z;
         }
-    mpo_internal_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand * Z;
+    mpo_internal_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<real_t>() * Z;
 
     if(tenx::hasNaN(mpo_internal_t)) {
         print_parameter_names();
@@ -464,9 +467,9 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
     }
 
     // Decide whether to skip interactions. All the J2 values are taken later
-    real_t              J1_rand = h5tb.param.J1_rand;
-    std::vector<real_t> J2_rand = h5tb.param.J2_rand;
-    real_t              J3_rand = h5tb.param.J3_rand;
+    auto J1_rand = h5tb.param.J1_rand.to_floating_point<real_t>();
+    auto J2_rand = h5tb.param.J2_rand.to_floating_point<real_t>();
+    auto J3_rand = h5tb.param.J3_rand.to_floating_point<real_t>();
     if(skip) {
         auto skip_this_pos = std::find(skip->begin(), skip->end(), get_position()) != skip->end();
         if(skip_this_pos) {
@@ -578,9 +581,9 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     }
 
     // Decide whether to skip interactions. All the J2 values are taken later
-    real_t              J1_rand = h5tb.param.J1_rand;
-    std::vector<real_t> J2_rand = h5tb.param.J2_rand;
-    real_t              J3_rand = h5tb.param.J3_rand;
+    auto J1_rand = h5tb.param.J1_rand.to_floating_point<real_t>();
+    auto J2_rand = h5tb.param.J2_rand.to_floating_point<real_t>();
+    auto J3_rand = h5tb.param.J3_rand.to_floating_point<real_t>();
     if(skip) {
         auto skip_this_pos = std::find(skip->begin(), skip->end(), get_position()) != skip->end();
         if(skip_this_pos) {
@@ -677,7 +680,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_shifted_view(double site_energy) const {
     if(parity_sep) row = temp.dimension(0) - 2;
     Eigen::Tensor<cplx, 2> Z                                           = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I                                           = tenx::TensorMap(id);
-    temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = static_cast<double>(h5tb.param.J1_rand) * Z - site_energy * I;
+    temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J1_rand.to_floating_point<real>()) * Z - site_energy * I;
     return temp;
 }
 
@@ -688,9 +691,9 @@ long LBit::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite) {
     tools::log->debug("LBIT MPO ({}): Setting averages", get_position());
     if(not infinite) {
-        lattice_parameters.back()["J2_rand"]    = h5pp::varr_t<real_t>{0};
-        lattice_parameters.back()["J3_rand"]    = real_t{0.0};
-        lattice_parameters.end()[-2]["J3_rand"] = real_t{0.0};
+        lattice_parameters.back()["J2_rand"]    = h5pp::varr_t<h5pp::vstr_t>{0.0};
+        lattice_parameters.back()["J3_rand"]    = h5pp::vstr_t(0.0);
+        lattice_parameters.end()[-2]["J3_rand"] = h5pp::vstr_t(0.0);
     }
     if(parity_sep) throw std::runtime_error("Parity sector separation is not supported on LBIT MPO");
     set_parameters(lattice_parameters[get_position()]);

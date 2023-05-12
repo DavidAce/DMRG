@@ -1,6 +1,7 @@
 #include "MpoSite.h"
 #include "config/debug.h"
 #include "debug/exceptions.h"
+#include "math/float.h"
 #include "math/hash.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
@@ -140,6 +141,10 @@ bool MpoSite::has_nan() const {
             if(std::isnan(std::any_cast<double>(param.second))) { return true; }
         if(param.second.type() == typeid(long double))
             if(std::isnan(std::any_cast<long double>(param.second))) { return true; }
+#if defined(USE_QUADMATH)
+        if(param.second.type() == typeid(__float128))
+            if(isnanq(std::any_cast<__float128>(param.second))) { return true; }
+#endif
     }
     return (tenx::hasNaN(mpo_internal));
 }
@@ -160,6 +165,15 @@ void MpoSite::assert_validity() const {
                 throw except::runtime_error("Param [{}] = {}", param.first, std::any_cast<long double>(param.second));
             }
         }
+#if defined(USE_QUADMATH)
+        if(param.second.type() == typeid(__float128)) {
+            if(isnanq(std::any_cast<__float128>(param.second))) {
+                print_parameter_names();
+                print_parameter_values();
+                throw except::runtime_error("Param [{}] = {}", param.first, std::any_cast<__float128>(param.second));
+            }
+        }
+#endif
     }
     if(tenx::hasNaN(mpo_internal)) throw except::runtime_error("MPO has NAN on position {}", get_position());
     if(not tenx::isReal(mpo_internal)) throw except::runtime_error("MPO has IMAG on position {}", get_position());

@@ -23,11 +23,12 @@
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/mps.h"
+#include "tools/finite/ops.h"
 #include <fmt/format.h>
 #include <h5pp/h5pp.h>
 #include <unsupported/Eigen/MPRealSupport>
 
-auto get_hamiltonian(const flbit &f) {
+auto get_hamiltonian(const flbit &f) -> Eigen::Matrix<cplx_t, Eigen::Dynamic, Eigen::Dynamic> {
     //    for(const auto &field : f.tensors.model->get_parameter("J1_rand"))
     using matrix_t = Eigen::Matrix<cplx_t, Eigen::Dynamic, Eigen::Dynamic>;
     auto L         = f.tensors.get_length<size_t>();
@@ -51,170 +52,6 @@ auto get_hamiltonian(const flbit &f) {
     for(size_t i = 0; i < L - 2; ++i) H += std::any_cast<real_t>(J3[i]) * SZ[i + 0].cast<cplx_t>() * SZ[i + 1].cast<cplx_t>() * SZ[i + 2].cast<cplx_t>();
 
     return H;
-}
-
-Eigen::MatrixXcd get_time_evolution_from_nbody_ham_gates(const flbit &f) {
-    auto L = f.tensors.get_length<size_t>();
-    auto N = static_cast<long>(std::pow(2.0, L));
-    auto H = Eigen::MatrixXcd(N, N);
-    auto I = Eigen::MatrixXcd(N, N);
-
-    H.setZero();
-    I.setIdentity();
-    auto pos    = num::range<size_t>(0, L);
-    auto dim    = std::vector<long>(L, 2);
-    auto H_gate = qm::Gate(H, pos, dim);
-    auto I_gate = qm::Gate(I, pos, dim);
-
-    bool has_slow_gates = not f.ham_gates_1body.empty() or not f.ham_gates_2body.empty() or not f.ham_gates_3body.empty();
-    bool has_swap_gates = not f.ham_swap_gates_1body.empty() or not f.ham_swap_gates_2body.empty() or not f.ham_swap_gates_3body.empty();
-    if(has_slow_gates) {
-        auto sequence1 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.ham_gates_1body, CircOp::NONE);
-        auto sequence2 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.ham_gates_2body, CircOp::NONE);
-        auto sequence3 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.ham_gates_3body, CircOp::NONE);
-        for(const auto &idx : sequence1) {
-            auto &g = f.ham_gates_1body.at(idx);
-            tools::log->info("H_1body {} pos {}: {}", idx, g.pos, linalg::matrix::to_string(tenx::MatrixMap(g.op).diagonal().transpose(), 16));
-            H_gate = qm::Gate(H_gate.op + g.connect_above(I_gate).op, H_gate.pos, H_gate.dim);
-        }
-        for(const auto &idx : sequence2) {
-            auto &g = f.ham_gates_2body.at(idx);
-            //            H_gate  = f.ham_gates_2body.at(idx).connect_above(H_gate);
-        }
-        for(const auto &idx : sequence3) {
-            auto &g = f.ham_gates_3body.at(idx);
-            //            H_gate  = qm::Gate(H_gate.op + g.connect_above(I_gate).op, H_gate.pos, H_gate.dim);
-        }
-    } else if(has_swap_gates) {
-        auto sequence1 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.ham_swap_gates_1body, CircOp::NONE);
-        auto sequence2 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.ham_swap_gates_2body, CircOp::NONE);
-        auto sequence3 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.ham_swap_gates_3body, CircOp::NONE);
-        for(const auto &idx : sequence1) {
-            auto &g = f.ham_swap_gates_1body.at(idx);
-            tools::log->info("H_1body {} pos {}: {}", idx, g.pos, linalg::matrix::to_string(tenx::MatrixMap(g.op).diagonal().transpose(), 16));
-            H_gate = qm::Gate(H_gate.op + g.connect_above(I_gate).op, H_gate.pos, H_gate.dim);
-        }
-        for(const auto &idx : sequence2) {
-            auto &g = f.ham_swap_gates_2body.at(idx);
-            //            H_gate  = g.connect_above(H_gate);
-        }
-        for(const auto &idx : sequence3) {
-            auto &g = f.ham_swap_gates_3body.at(idx);
-            //            H_gate  = qm::Gate(g.op, g.pos, g.dim).connect_above(H_gate);
-            //            H_gate = qm::Gate(H_gate.op + g.connect_above(I_gate).op, H_gate.pos, H_gate.dim);
-        }
-    }
-    tools::log->info("H_hbody L: {}", linalg::matrix::to_string(tenx::MatrixMap(H_gate.op).diagonal().transpose(), 16));
-    using namespace std::complex_literals;
-    auto T_gate = H_gate.exp(cplx_t(-1.0i) * f.status.delta_t);
-    return tenx::MatrixMap(T_gate.op);
-}
-
-Eigen::MatrixXcd get_time_evolution_from_nbody_time_gates(const flbit &f) {
-    //    for(const auto &field : f.tensors.model->get_parameter("J1_rand"))
-    auto L = f.tensors.get_length<size_t>();
-    auto N = static_cast<long>(std::pow(2.0, L));
-    auto T = Eigen::MatrixXcd(N, N);
-    T.setIdentity();
-    auto pos    = num::range<size_t>(0, L);
-    auto dim    = std::vector<long>(L, 2);
-    auto T_gate = qm::Gate(tenx::TensorMap(T), pos, dim);
-
-    bool has_slow_gates = not f.time_gates_1body.empty() or not f.time_gates_2body.empty() or not f.time_gates_3body.empty();
-    bool has_swap_gates = not f.time_swap_gates_1body.empty() or not f.time_swap_gates_2body.empty() or not f.time_swap_gates_3body.empty();
-    if(has_slow_gates) {
-        auto sequence1 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_gates_1body, CircOp::NONE);
-        auto sequence2 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_gates_2body, CircOp::NONE);
-        auto sequence3 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_gates_3body, CircOp::NONE);
-        for(const auto &idx : sequence1) {
-            auto &g = f.time_gates_1body.at(idx);
-            tools::log->info("T_1body {} pos {}: {} | {}", idx, g.pos, linalg::matrix::to_string(tenx::MatrixMap(T_gate.op).diagonal().transpose(), 16),
-                             linalg::matrix::to_string(tenx::MatrixMap(g.op).diagonal().transpose(), 16));
-
-            //            T_gate    = g.connect_above(T_gate);
-            if(idx == 0)
-                T_gate = g;
-            else {
-                auto dim2 = tenx::array2{T_gate.op.dimension(0) * g.op.dimension(0), T_gate.op.dimension(1) * g.op.dimension(1)};
-                auto dim  = T_gate.dim;
-                auto pos  = T_gate.pos;
-                for(auto p : g.pos) pos.emplace_back(p);
-                for(auto d : g.dim) dim.emplace_back(d);
-                T_gate = qm::Gate(T_gate.op.contract(g.op, tenx::idx()).shuffle(tenx::array4{0, 2, 1, 3}).reshape(dim2), pos, dim);
-            }
-        }
-        //        for(const auto &idx : sequence2) T_gate = f.time_gates_2body.at(idx).connect_above(T_gate);
-        //        for(const auto &idx : sequence3) T_gate = f.time_gates_3body.at(idx).connect_above(T_gate);
-    } else if(has_swap_gates) {
-        auto sequence1 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_swap_gates_1body, CircOp::NONE);
-        auto sequence2 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_swap_gates_2body, CircOp::NONE);
-        auto sequence3 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_swap_gates_3body, CircOp::NONE);
-        for(const auto &idx : sequence1) {
-            auto &g = f.time_swap_gates_1body.at(idx);
-            T_gate  = qm::Gate(g.op, g.pos, g.dim).connect_above(T_gate);
-        }
-        //        for(const auto &idx : sequence2) {
-        //            auto &g = f.time_swap_gates_2body.at(idx);
-        //            T_gate  = g.connect_above(T_gate);
-        //        }
-        //        for(const auto &idx : sequence3) {
-        //            auto &g = f.time_swap_gates_3body.at(idx);
-        //            T_gate  = qm::Gate(g.op, g.pos, g.dim).connect_above(T_gate);
-        //        }
-    }
-    tools::log->info("T_1body L pos L: {}", linalg::matrix::to_string(tenx::MatrixMap(T_gate.op).diagonal().transpose(), 16));
-    return tenx::MatrixMap(T_gate.op);
-}
-
-Eigen::MatrixXcd get_time_evolution_from_nbody_time_matrix(const flbit &f) {
-    //    for(const auto &field : f.tensors.model->get_parameter("J1_rand"))
-    auto L = f.tensors.get_length<size_t>();
-    auto N = static_cast<long>(std::pow(2.0, L));
-    auto T = Eigen::MatrixXcd(N, N);
-    auto I = Eigen::MatrixXcd(N, N);
-    T.setIdentity();
-    I.setIdentity();
-    auto pos = num::range<size_t>(0, L);
-    auto dim = std::vector<long>(L, 2);
-
-    auto T_gate = qm::Gate(tenx::TensorMap(T), pos, dim);
-    auto I_gate = qm::Gate(tenx::TensorMap(I), pos, dim);
-
-    bool has_slow_gates = not f.time_gates_1body.empty() or not f.time_gates_2body.empty() or not f.time_gates_3body.empty();
-    bool has_swap_gates = not f.time_swap_gates_1body.empty() or not f.time_swap_gates_2body.empty() or not f.time_swap_gates_3body.empty();
-    if(has_slow_gates) {
-        auto sequence1 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_gates_1body, CircOp::NONE);
-        auto sequence2 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_gates_2body, CircOp::NONE);
-        auto sequence3 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_gates_3body, CircOp::NONE);
-        for(const auto &idx : sequence1) {
-            auto &g = f.time_gates_1body.at(idx);
-            T_gate  = qm::Gate(T_gate.op * g.connect_above(I_gate).op, T_gate.pos, T_gate.dim);
-            auto m  = tenx::MatrixMap(g.op);
-            tools::log->info("M_1body {} pos {}: {}", idx, g.pos, linalg::matrix::to_string(m.diagonal().transpose(), 16));
-        }
-        //        for(const auto &idx : sequence2) T_gate = f.time_gates_2body.at(idx).connect_above(T_gate);
-        //        for(const auto &idx : sequence3) T_gate = f.time_gates_3body.at(idx).connect_above(T_gate);
-    } else if(has_swap_gates) {
-        auto sequence1 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_swap_gates_1body, CircOp::NONE);
-        auto sequence2 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_swap_gates_2body, CircOp::NONE);
-        auto sequence3 = tools::finite::mps::generate_gate_sequence(*f.state_lbit, f.time_swap_gates_3body, CircOp::NONE);
-        for(const auto &idx : sequence1) {
-            auto &g = f.time_swap_gates_1body.at(idx);
-            T_gate  = qm::Gate(T_gate.op * g.connect_above(I_gate).op, T_gate.pos, T_gate.dim);
-            auto m  = tenx::MatrixMap(g.op);
-            tools::log->info("M_1body {} pos {}: {}", idx, g.pos, linalg::matrix::to_string(m.diagonal().transpose(), 16));
-        }
-        //        for(const auto &idx : sequence2) {
-        //            auto &g = f.time_swap_gates_2body.at(idx);
-        //            T_gate  = g.connect_above(T_gate);
-        //        }
-        //        for(const auto &idx : sequence3) {
-        //            auto &g = f.time_swap_gates_3body.at(idx);
-        //            T_gate  = qm::Gate(g.op, g.pos, g.dim).connect_above(T_gate);
-        //        }
-    }
-    tools::log->info("M_1body L pos L: {}", linalg::matrix::to_string(T.diagonal().transpose(), 16));
-    return tenx::MatrixMap(T_gate.op);
 }
 
 size_t assert_lbit_evolution(const flbit &f) {
@@ -247,46 +84,56 @@ size_t assert_lbit_evolution(const flbit &f) {
     if(not has_time_swap_gates and not has_time_slow_gates) return 0;
     if(not has_unitary_gates) return 0;
 
-    auto H_exact    = get_hamiltonian(f);
-    auto H_Lbody    = not f.ham_gates_Lbody.empty() ? tenx::MatrixMap(f.ham_gates_Lbody.front().op_t) : tenx::MatrixMap(f.ham_swap_gates_Lbody.front().op_t);
-    auto digits10_d = std::numeric_limits<real>::digits10;
-#if __has_include(<quadmath.h>)
+    auto H_exact = get_hamiltonian(f);
+    auto H_Lbody = not f.ham_gates_Lbody.empty() ? tenx::MatrixMap(f.ham_gates_Lbody.front().op_t) : tenx::MatrixMap(f.ham_swap_gates_Lbody.front().op_t);
+#if defined(USE_QUADMATH)
     auto digits10_t = FLT128_DIG;
+//    auto epsilon_t  = 1.926e-34; // FLT128_EPSILON;
 #else
     auto digits10_t = std::numeric_limits<real_t>::digits10;
+//    auto   epsilon_t      = std::numeric_limits<real_t>::epsilon();
 #endif
-    auto epsilon_d = std::numeric_limits<real>::epsilon();
-    //    auto epsilon_t  = std::numeric_limits<real_t>::epsilon();
-    if(not H_exact.isApprox(H_Lbody))
+    auto digits10_d  = std::numeric_limits<real>::digits10;
+    auto epsilon_d   = std::numeric_limits<real>::epsilon();
+    auto precision_d = std::max({
+        epsilon_d,
+        std::pow(f.status.trnc_lim, 2.0),
+    });
+
+#if defined(USE_QUADMATH)
+    double max_tevo_error = 10 * precision_d *
+                            std::max({
+                                1.0,
+                                static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cplx_t>().real())),
+                                static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cplx_t>().imag())),
+                            });
+
+#else
+    double max_tevo_error = 10 * precision_d * std::max({1.0, static_cast<double>(f.status.delta_t.abs())});
+#endif
+    double max_norm_error = settings::precision::max_norm_error;
+    double max_untary_err = 10 * epsilon_d;
+
+    tools::log->info("H_exact: {}", linalg::matrix::to_string(H_exact.diagonal().transpose().real(), digits10_t));
+    tools::log->info("H_Lbody: {}", linalg::matrix::to_string(H_Lbody.diagonal().transpose().real(), digits10_t));
+    if(not H_exact.isApprox(H_Lbody, epsilon_d))
         throw except::runtime_error("Hamiltonians do not match: \nH_exact: {}\nH_Lbody: {}",
                                     linalg::matrix::to_string(H_exact.diagonal().transpose().real(), digits10_t),
                                     linalg::matrix::to_string(H_Lbody.diagonal().transpose().real(), digits10_t));
-    tools::log->info("H_exact: {}", linalg::matrix::to_string(H_exact.diagonal().transpose().real(), digits10_t));
-    tools::log->info("H_Lbody: {}", linalg::matrix::to_string(H_Lbody.diagonal().transpose().real(), digits10_t));
-    auto T_Lbody = has_time_swap_gates ? tenx::MatrixMap(f.time_swap_gates_Lbody.front().op) : tenx::MatrixMap(f.time_gates_Lbody.front().op);
-    auto T_tbody = get_time_evolution_from_nbody_time_gates(f);
-    auto T_mbody = get_time_evolution_from_nbody_time_matrix(f);
-    auto T_hbody = get_time_evolution_from_nbody_ham_gates(f);
+
+    auto T_Lgate = has_time_swap_gates ? f.time_swap_gates_Lbody.front() : f.time_gates_Lbody.front();
+    auto T_Lbody = tenx::MatrixMap(T_Lgate.op_t);
+    auto T_Hgate = qm::lbit::get_time_evolution_gates(f.status.delta_t.to_floating_point<cplx_t>(), {qm::Gate(H_exact, T_Lgate.pos, T_Lgate.dim)},
+                                                      settings::flbit::time_gate_id_threshold);
+    auto T_exact = tenx::MatrixMap(T_Hgate.front().op_t);
 
     tools::log->info("T_Lbody: {}", linalg::matrix::to_string(T_Lbody.diagonal().transpose(), digits10_d));
-    tools::log->info("T_tbody: {}", linalg::matrix::to_string(T_tbody.diagonal().transpose(), digits10_d));
-    tools::log->info("T_mbody: {}", linalg::matrix::to_string(T_mbody.diagonal().transpose(), digits10_d));
-    tools::log->info("T_hbody: {}", linalg::matrix::to_string(T_hbody.diagonal().transpose(), digits10_d));
-    double max_iHdt_error = 10 * epsilon_d * std::max(1.0, static_cast<double>(f.status.delta_t.real()));
+    tools::log->info("T_exact: {}", linalg::matrix::to_string(T_exact.diagonal().transpose(), digits10_d));
 
-    if(not T_Lbody.isApprox(T_tbody, max_iHdt_error))
-        throw except::runtime_error("Time evolution operators do not match: \nT_Lbody: {}\nT_tbody: {}",
+    if(not T_Lbody.isApprox(T_exact, max_tevo_error))
+        throw except::runtime_error("Time evolution operators do not match: \nT_Lbody: {}\nT_exact: {}",
                                     linalg::matrix::to_string(T_Lbody.diagonal().transpose(), digits10_d),
-                                    linalg::matrix::to_string(T_tbody.diagonal().transpose(), digits10_d));
-
-    if(not T_Lbody.isApprox(T_hbody, max_iHdt_error))
-        throw except::runtime_error("Time evolution operators do not match: \nT_Lbody: {}\nT_hbody: {}",
-                                    linalg::matrix::to_string(T_Lbody.diagonal().transpose(), digits10_d),
-                                    linalg::matrix::to_string(T_hbody.diagonal().transpose(), digits10_d));
-
-    double max_time_error = 1e-2; // * f.tensors.get_length<double>() * settings::flbit::time_gate_id_threshold;
-    double max_norm_error = 1e-14;
-    double max_untary_err = 1e-14;
+                                    linalg::matrix::to_string(T_exact.diagonal().transpose(), digits10_d));
 
     auto unitarytensor = qm::lbit::get_unitary_circuit_as_tensor(f.unitary_gates_2site_layers);
     auto unitarymatrix = tenx::MatrixMap(unitarytensor);
@@ -339,16 +186,16 @@ size_t assert_lbit_evolution(const flbit &f) {
     auto norm_error_real_revo_tebd = std::abs(std::abs(overlap_real_revo_tebd) - 1.0);
     auto norm_error_real_back_init = std::abs(std::abs(overlap_real_back_init) - 1.0);
 
-    tools::log->info("vec_real_init          : {:.16f}", vec_real_init.norm());
-    tools::log->info("vec_lbit_init          : {:.16f}", vec_lbit_init.norm());
-    tools::log->info("vec_real_tebd          : {:.16f}", vec_real_tebd.norm());
-    tools::log->info("vec_lbit_tebd          : {:.16f}", vec_lbit_tebd.norm());
-    tools::log->info("vec_lbit_levo          : {:.16f}", vec_lbit_levo.norm());
-    tools::log->info("vec_lbit_revo          : {:.16f}", vec_lbit_revo.norm());
-    tools::log->info("vec_lbit_devo          : {:.16f}", vec_lbit_devo.norm());
-    tools::log->info("vec_real_levo          : {:.16f}", vec_real_levo.norm());
-    tools::log->info("vec_real_revo          : {:.16f}", vec_real_revo.norm());
-    tools::log->info("vec_real_back          : {:.16f}", vec_real_back.norm());
+    tools::log->info("vec_real_init.norm()   : {:.16f}", vec_real_init.norm());
+    tools::log->info("vec_lbit_init.norm()   : {:.16f}", vec_lbit_init.norm());
+    tools::log->info("vec_real_tebd.norm()   : {:.16f}", vec_real_tebd.norm());
+    tools::log->info("vec_lbit_tebd.norm()   : {:.16f}", vec_lbit_tebd.norm());
+    tools::log->info("vec_lbit_levo.norm()   : {:.16f}", vec_lbit_levo.norm());
+    tools::log->info("vec_lbit_revo.norm()   : {:.16f}", vec_lbit_revo.norm());
+    tools::log->info("vec_lbit_devo.norm()   : {:.16f}", vec_lbit_devo.norm());
+    tools::log->info("vec_real_levo.norm()   : {:.16f}", vec_real_levo.norm());
+    tools::log->info("vec_real_revo.norm()   : {:.16f}", vec_real_revo.norm());
+    tools::log->info("vec_real_back.norm()   : {:.16f}", vec_real_back.norm());
 
     tools::log->info("overlap_lbit_levo_tebd : {:.16f} | {:.16f} |", overlap_lbit_levo_tebd, std::abs(overlap_lbit_levo_tebd));
     tools::log->info("overlap_lbit_revo_tebd : {:.16f} | {:.16f} |", overlap_lbit_revo_tebd, std::abs(overlap_lbit_revo_tebd));
@@ -358,37 +205,93 @@ size_t assert_lbit_evolution(const flbit &f) {
     tools::log->info("overlap_real_lbit_init : {:.16f} | {:.16f} |", overlap_real_back_init, std::abs(overlap_real_back_init));
 
     /* clang-format off */
-    if(std::abs(vec_real_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_init.norm() > {:.3e}: {:.16f}", vec_real_init.norm(), max_norm_error);
-    if(std::abs(vec_lbit_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_init.norm() > {:.3e}: {:.16f}", vec_lbit_init.norm(), max_norm_error);
-    if(std::abs(vec_real_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_tebd.norm() > {:.3e}: {:.16f}", vec_real_tebd.norm(), max_norm_error);
-    if(std::abs(vec_lbit_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_tebd.norm() > {:.3e}: {:.16f}", vec_lbit_tebd.norm(), max_norm_error);
-    if(std::abs(vec_lbit_levo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_levo.norm() > {:.3e}: {:.16f}", vec_lbit_levo.norm(), max_norm_error);
-    if(std::abs(vec_lbit_revo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_revo.norm() > {:.3e}: {:.16f}", vec_lbit_revo.norm(), max_norm_error);
-    if(std::abs(vec_lbit_devo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_devo.norm() > {:.3e}: {:.16f}", vec_lbit_devo.norm(), max_norm_error);
-    if(std::abs(vec_real_levo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_levo.norm() > {:.3e}: {:.16f}", vec_real_levo.norm(), max_norm_error);
-    if(std::abs(vec_real_revo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_revo.norm() > {:.3e}: {:.16f}", vec_real_revo.norm(), max_norm_error);
-    if(std::abs(vec_real_back.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_back.norm() > {:.3e}: {:.16f}", vec_real_back.norm(), max_norm_error);
+    if(std::abs(vec_real_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_init.norm() {0:.{2}f} > {1:.{2}f}", vec_real_init.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_lbit_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_init.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_init.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_real_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_tebd.norm() {0:.{2}f} > {1:.{2}f}", vec_real_tebd.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_lbit_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_tebd.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_tebd.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_lbit_levo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_levo.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_levo.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_lbit_revo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_revo.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_revo.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_lbit_devo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_devo.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_devo.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_real_levo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_levo.norm() {0:.{2}f} > {1:.{2}f}", vec_real_levo.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_real_revo.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_revo.norm() {0:.{2}f} > {1:.{2}f}", vec_real_revo.norm(), max_norm_error, digits10_d);
+    if(std::abs(vec_real_back.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_back.norm() {0:.{2}f} > {1:.{2}f}", vec_real_back.norm(), max_norm_error, digits10_d);
 
-    if(real_error_lbit_levo_tebd > max_time_error) throw except::logic_error("real_error_lbit_levo_tebd > {:.3e}: {:.16f}", real_error_lbit_levo_tebd, max_time_error);
-    if(real_error_lbit_revo_tebd > max_time_error) throw except::logic_error("real_error_lbit_revo_tebd > {:.3e}: {:.16f}", real_error_lbit_revo_tebd, max_time_error);
-    if(real_error_lbit_devo_init > max_time_error) throw except::logic_error("real_error_lbit_devo_init > {:.3e}: {:.16f}", real_error_lbit_devo_init, max_time_error);
-    if(real_error_real_levo_tebd > max_time_error) throw except::logic_error("real_error_real_levo_tebd > {:.3e}: {:.16f}", real_error_real_levo_tebd, max_time_error);
-    if(real_error_real_revo_tebd > max_time_error) throw except::logic_error("real_error_real_revo_tebd > {:.3e}: {:.16f}", real_error_real_revo_tebd, max_time_error);
-    if(real_error_real_back_init > max_time_error) throw except::logic_error("real_error_real_back_init > {:.3e}: {:.16f}", real_error_real_back_init, max_time_error);
-    if(imag_error_lbit_levo_tebd > max_time_error) throw except::logic_error("imag_error_lbit_levo_tebd > {:.3e}: {:.16f}", imag_error_lbit_levo_tebd, max_time_error);
-    if(imag_error_lbit_revo_tebd > max_time_error) throw except::logic_error("imag_error_lbit_revo_tebd > {:.3e}: {:.16f}", imag_error_lbit_revo_tebd, max_time_error);
-    if(imag_error_lbit_devo_init > max_time_error) throw except::logic_error("imag_error_lbit_devo_init > {:.3e}: {:.16f}", imag_error_lbit_devo_init, max_time_error);
-    if(imag_error_real_levo_tebd > max_time_error) throw except::logic_error("imag_error_real_levo_tebd > {:.3e}: {:.16f}", imag_error_real_levo_tebd, max_time_error);
-    if(imag_error_real_revo_tebd > max_time_error) throw except::logic_error("imag_error_real_revo_tebd > {:.3e}: {:.16f}", imag_error_real_revo_tebd, max_time_error);
-    if(imag_error_real_back_init > max_time_error) throw except::logic_error("imag_error_real_back_init > {:.3e}: {:.16f}", imag_error_real_back_init, max_time_error);
-    if(norm_error_lbit_levo_tebd > max_time_error) throw except::logic_error("norm_error_lbit_levo_tebd > {:.3e}: {:.16f}", norm_error_lbit_levo_tebd, max_time_error);
-    if(norm_error_lbit_revo_tebd > max_time_error) throw except::logic_error("norm_error_lbit_revo_tebd > {:.3e}: {:.16f}", norm_error_lbit_revo_tebd, max_time_error);
-    if(norm_error_lbit_devo_init > max_time_error) throw except::logic_error("norm_error_lbit_devo_init > {:.3e}: {:.16f}", norm_error_lbit_devo_init, max_time_error);
-    if(norm_error_real_levo_tebd > max_time_error) throw except::logic_error("norm_error_real_levo_tebd > {:.3e}: {:.16f}", norm_error_real_levo_tebd, max_time_error);
-    if(norm_error_real_revo_tebd > max_time_error) throw except::logic_error("norm_error_real_revo_tebd > {:.3e}: {:.16f}", norm_error_real_revo_tebd, max_time_error);
-    if(norm_error_real_back_init > max_untary_err) throw except::logic_error("norm_error_real_back_init > {:.3e}: {:.16f}", norm_error_real_back_init, max_untary_err);
+    if(real_error_lbit_levo_tebd > max_tevo_error) throw except::logic_error("real_error_lbit_levo_tebd {0:.{2}f} > {1:.{2}f}", real_error_lbit_levo_tebd, max_tevo_error, digits10_d);
+    if(real_error_lbit_revo_tebd > max_tevo_error) throw except::logic_error("real_error_lbit_revo_tebd {0:.{2}f} > {1:.{2}f}", real_error_lbit_revo_tebd, max_tevo_error, digits10_d);
+    if(real_error_lbit_devo_init > max_tevo_error) throw except::logic_error("real_error_lbit_devo_init {0:.{2}f} > {1:.{2}f}", real_error_lbit_devo_init, max_tevo_error, digits10_d);
+    if(real_error_real_levo_tebd > max_tevo_error) throw except::logic_error("real_error_real_levo_tebd {0:.{2}f} > {1:.{2}f}", real_error_real_levo_tebd, max_tevo_error, digits10_d);
+    if(real_error_real_revo_tebd > max_tevo_error) throw except::logic_error("real_error_real_revo_tebd {0:.{2}f} > {1:.{2}f}", real_error_real_revo_tebd, max_tevo_error, digits10_d);
+    if(real_error_real_back_init > max_tevo_error) throw except::logic_error("real_error_real_back_init {0:.{2}f} > {1:.{2}f}", real_error_real_back_init, max_tevo_error, digits10_d);
+    if(imag_error_lbit_levo_tebd > max_tevo_error) throw except::logic_error("imag_error_lbit_levo_tebd {0:.{2}f} > {1:.{2}f}", imag_error_lbit_levo_tebd, max_tevo_error, digits10_d);
+    if(imag_error_lbit_revo_tebd > max_tevo_error) throw except::logic_error("imag_error_lbit_revo_tebd {0:.{2}f} > {1:.{2}f}", imag_error_lbit_revo_tebd, max_tevo_error, digits10_d);
+    if(imag_error_lbit_devo_init > max_tevo_error) throw except::logic_error("imag_error_lbit_devo_init {0:.{2}f} > {1:.{2}f}", imag_error_lbit_devo_init, max_tevo_error, digits10_d);
+    if(imag_error_real_levo_tebd > max_tevo_error) throw except::logic_error("imag_error_real_levo_tebd {0:.{2}f} > {1:.{2}f}", imag_error_real_levo_tebd, max_tevo_error, digits10_d);
+    if(imag_error_real_revo_tebd > max_tevo_error) throw except::logic_error("imag_error_real_revo_tebd {0:.{2}f} > {1:.{2}f}", imag_error_real_revo_tebd, max_tevo_error, digits10_d);
+    if(imag_error_real_back_init > max_tevo_error) throw except::logic_error("imag_error_real_back_init {0:.{2}f} > {1:.{2}f}", imag_error_real_back_init, max_tevo_error, digits10_d);
+    if(norm_error_lbit_levo_tebd > max_tevo_error) throw except::logic_error("norm_error_lbit_levo_tebd {0:.{2}f} > {1:.{2}f}", norm_error_lbit_levo_tebd, max_tevo_error, digits10_d);
+    if(norm_error_lbit_revo_tebd > max_tevo_error) throw except::logic_error("norm_error_lbit_revo_tebd {0:.{2}f} > {1:.{2}f}", norm_error_lbit_revo_tebd, max_tevo_error, digits10_d);
+    if(norm_error_lbit_devo_init > max_tevo_error) throw except::logic_error("norm_error_lbit_devo_init {0:.{2}f} > {1:.{2}f}", norm_error_lbit_devo_init, max_tevo_error, digits10_d);
+    if(norm_error_real_levo_tebd > max_tevo_error) throw except::logic_error("norm_error_real_levo_tebd {0:.{2}f} > {1:.{2}f}", norm_error_real_levo_tebd, max_tevo_error, digits10_d);
+    if(norm_error_real_revo_tebd > max_tevo_error) throw except::logic_error("norm_error_real_revo_tebd {0:.{2}f} > {1:.{2}f}", norm_error_real_revo_tebd, max_tevo_error, digits10_d);
+    if(norm_error_real_back_init > max_untary_err) throw except::logic_error("norm_error_real_back_init {0:.{2}f} > {1:.{2}f}", norm_error_real_back_init, max_untary_err, digits10_d);
     /* clang-format on */
 
+    return 1;
+}
+
+size_t assert_lbit_evolution(const flbit &f1, const flbit &f2) {
+    auto overlap_real_init = tools::finite::ops::overlap(*f1.state_real_init, *f2.state_real_init);
+    auto overlap_lbit_init = tools::finite::ops::overlap(*f1.state_lbit_init, *f2.state_lbit_init);
+    auto overlap_real_tevo = tools::finite::ops::overlap(*f1.tensors.state, *f2.tensors.state);
+    auto overlap_lbit_tevo = tools::finite::ops::overlap(*f1.state_lbit, *f2.state_lbit);
+    tools::log->info("overlap_real_init : {:.16f} | {:.16f} |", overlap_real_init, std::abs(overlap_real_init));
+    tools::log->info("overlap_lbit_init : {:.16f} | {:.16f} |", overlap_lbit_init, std::abs(overlap_lbit_init));
+    tools::log->info("overlap_real_tevo : {:.16f} | {:.16f} |", overlap_real_tevo, std::abs(overlap_real_tevo));
+    tools::log->info("overlap_lbit_tevo : {:.16f} | {:.16f} |", overlap_lbit_tevo, std::abs(overlap_lbit_tevo));
+    auto real_error_real_init = std::abs(std::real(overlap_real_init) - 1.0);
+    auto real_error_lbit_init = std::abs(std::real(overlap_lbit_init) - 1.0);
+    auto real_error_real_tevo = std::abs(std::real(overlap_real_tevo) - 1.0);
+    auto real_error_lbit_tevo = std::abs(std::real(overlap_lbit_tevo) - 1.0);
+    auto imag_error_real_init = std::abs(std::imag(overlap_real_init) - 0.0);
+    auto imag_error_lbit_init = std::abs(std::imag(overlap_lbit_init) - 0.0);
+    auto imag_error_real_tevo = std::abs(std::imag(overlap_real_tevo) - 0.0);
+    auto imag_error_lbit_tevo = std::abs(std::imag(overlap_lbit_tevo) - 0.0);
+
+    auto digits10_d  = std::numeric_limits<real>::digits10;
+    auto epsilon_d   = std::numeric_limits<real>::epsilon();
+    auto precision_d = std::max({
+        epsilon_d,
+        std::pow(f1.status.trnc_lim, 2.0),
+        std::pow(f2.status.trnc_lim, 2.0),
+    });
+#if defined(USE_QUADMATH)
+    double max_tevo_error = 10 * precision_d *
+                            std::max({
+                                1.0,
+                                static_cast<real>(fabsq(f1.status.delta_t.to_floating_point<cplx_t>().real())),
+                                static_cast<real>(fabsq(f1.status.delta_t.to_floating_point<cplx_t>().imag())),
+                                static_cast<real>(fabsq(f2.status.delta_t.to_floating_point<cplx_t>().real())),
+                                static_cast<real>(fabsq(f2.status.delta_t.to_floating_point<cplx_t>().imag())),
+                            });
+
+#else
+    double max_tevo_error = 10 * precision_d * std::max({1.0, static_cast<double>(f1.status.delta_t.abs()), static_cast<double>(f2.status.delta_t.abs())});
+#endif
+    /* clang-format off */
+    if(real_error_real_init > max_tevo_error) throw except::logic_error("real_error_real_init {0:.{2}f} > {1:.{2}f}", real_error_real_init, max_tevo_error,digits10_d);
+    if(real_error_lbit_init > max_tevo_error) throw except::logic_error("real_error_lbit_init {0:.{2}f} > {1:.{2}f}", real_error_lbit_init, max_tevo_error,digits10_d);
+    if(real_error_real_tevo > max_tevo_error) throw except::logic_error("real_error_real_tevo {0:.{2}f} > {1:.{2}f}", real_error_real_tevo, max_tevo_error,digits10_d);
+    if(real_error_lbit_tevo > max_tevo_error) throw except::logic_error("real_error_lbit_tevo {0:.{2}f} > {1:.{2}f}", real_error_lbit_tevo, max_tevo_error,digits10_d);
+    if(imag_error_real_init > max_tevo_error) throw except::logic_error("imag_error_real_init {0:.{2}f} > {1:.{2}f}", imag_error_real_init, max_tevo_error,digits10_d);
+    if(imag_error_lbit_init > max_tevo_error) throw except::logic_error("imag_error_lbit_init {0:.{2}f} > {1:.{2}f}", imag_error_lbit_init, max_tevo_error,digits10_d);
+    if(imag_error_real_tevo > max_tevo_error) throw except::logic_error("imag_error_real_tevo {0:.{2}f} > {1:.{2}f}", imag_error_real_tevo, max_tevo_error,digits10_d);
+    if(imag_error_lbit_tevo > max_tevo_error) throw except::logic_error("imag_error_lbit_tevo {0:.{2}f} > {1:.{2}f}", imag_error_lbit_tevo, max_tevo_error,digits10_d);
+    /* clang-format on */
+
+    tools::log->info("f1: Sₑ(L/2) {0:.{2}f} | Sₙ {1:.{2}f}", tools::finite::measure::entanglement_entropy_midchain(*f1.tensors.state),
+                     tools::finite::measure::number_entropy_midchain(*f1.tensors.state), digits10_d);
+    tools::log->info("f2: Sₑ(L/2) {0:.{2}f} | Sₙ {1:.{2}f}", tools::finite::measure::entanglement_entropy_midchain(*f2.tensors.state),
+                     tools::finite::measure::number_entropy_midchain(*f2.tensors.state), digits10_d);
     return 1;
 }
 
@@ -408,7 +311,7 @@ int main(int argc, char *argv[]) {
 
     // Register termination codes and what to do in those cases
     debug::register_callbacks();
-
+    tools::log->info("cplx: {:.4f}", std::complex<double>(1.0, -1.0));
     tools::log->info("real   epsilon: {:.4e}", std::numeric_limits<double>::epsilon());
     tools::log->info("real   max_dig: {}", std::numeric_limits<double>::max_digits10);
     tools::log->info("real_t epsilon: {:.4e}", std::numeric_limits<long double>::epsilon());
@@ -429,8 +332,17 @@ int main(int argc, char *argv[]) {
     set_log("slow");
     flbit_slow.run_preprocessing();
 
+    // Copy the model, unitaries and initial states
+    flbit_slow.tensors                    = flbit_swap.tensors;
+    *flbit_slow.state_real_init           = *flbit_swap.state_real_init;
+    flbit_slow.unitary_gates_2site_layers = flbit_swap.unitary_gates_2site_layers;
+    flbit_slow.create_hamiltonian_gates();
+    flbit_slow.update_time_evolution_gates();
+    flbit_slow.transform_to_lbit_basis();
+
     size_t test_swap_count = 0;
     size_t test_slow_count = 0;
+    size_t test_both_count = 0;
 
     while(flbit_swap.status.algo_stop == AlgorithmStop::NONE and flbit_slow.status.algo_stop == AlgorithmStop::NONE) {
         set_log("swap");
@@ -448,6 +360,9 @@ int main(int argc, char *argv[]) {
 
         set_log("swap");
         test_swap_count += assert_lbit_evolution(flbit_swap);
+
+        set_log("both");
+        test_both_count += assert_lbit_evolution(flbit_slow, flbit_swap);
 
         set_log("swap");
         flbit_swap.update_time_evolution_gates();

@@ -3,6 +3,7 @@
 #include "math/float.h"
 #include <complex>
 #include <cstddef>
+#include <h5pp/details/h5ppVstr.h>
 
 class AlgorithmStatus {
     public:
@@ -34,10 +35,10 @@ class AlgorithmStatus {
     double               env_expansion_alpha        = 0; /*!< subspace expansion factor alpha */
     double               env_expansion_variance     = 0; /*!< lowest variance when alpha was last updated */
     size_t               env_expansion_step         = 0; /*!< step when alpha was last updated */
-    real_t               phys_time                  = 0;
+    h5pp::vstr_t         phys_time                  = 0;
     double               wall_time                  = 0;
     double               algo_time                  = 0;
-    cplx_t               delta_t                    = 0; // Note this is complex!! Make sure this one gets initialized to delta_t0!
+    h5pp::vstr_t         delta_t                    = 0; // Note this is complex!! Make sure this one gets initialized to delta_t0!
     AlgorithmType        algo_type                  = AlgorithmType::ANY;
     AlgorithmStop        algo_stop                  = AlgorithmStop::NONE;
     bool                 algorithm_has_finished     = false;

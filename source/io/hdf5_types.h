@@ -42,6 +42,26 @@ class h5_enum_algo_type {
     static void            commit(const h5pp::hid::h5f &file_id);
 };
 
+class h5_real_t {
+    private:
+    static inline h5pp::hid::h5t h5_type;
+
+    public:
+    static h5pp::hid::h5t &get_h5t();
+    static void            create();
+    static void            commit(const h5pp::hid::h5f &file_id);
+};
+
+class h5_cplx_t {
+    private:
+    static inline h5pp::hid::h5t h5_type;
+
+    public:
+    static h5pp::hid::h5t &get_h5t();
+    static void            create();
+    static void            commit(const h5pp::hid::h5f &file_id);
+};
+
 class h5pp_table_measurements_finite {
     private:
     static inline h5pp::hid::h5t h5_type;
@@ -74,7 +94,7 @@ class h5pp_table_measurements_finite {
         std::array<double, 3> structure_factors      = {nan, nan, nan};
         double                total_time             = 0;
         double                algorithm_time         = 0;
-        real_t                physical_time          = 0;
+        h5pp::vstr_t          physical_time          = 0;
     };
     static h5pp::hid::h5t get_h5t();
 };
@@ -106,8 +126,8 @@ class h5pp_table_measurements_infinite {
         double       energy_variance_per_site_mom = 0;
         double       truncation_error             = 0;
         double       wall_time                    = 0;
-        real_t       phys_time                    = 0;
-        cplx_t       time_step;
+        h5pp::vstr_t phys_time                    = 0;
+        h5pp::vstr_t time_step;
     };
     static h5pp::hid::h5t get_h5t();
 };

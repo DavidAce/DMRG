@@ -1,7 +1,7 @@
 #pragma once
 #include "common.h"
-#include <Eigen/Core>
 #include "math/float.h"
+#include <Eigen/Core>
 
 namespace linalg::matrix {
     template<auto N, auto M>
@@ -27,8 +27,8 @@ namespace linalg::matrix {
         else { return kronecker(A.derived().eval(), B.derived().eval(), mirror); }
     }
 
-    template<typename T>
-    std::string to_string(const Eigen::EigenBase<T> &m, const Eigen::IOFormat &f = Eigen::IOFormat(4, 0, ", ", "\n", "  [", "]")) {
+    template<typename T, typename IOFormat_t, typename = std::enable_if_t<std::is_same_v<IOFormat_t, Eigen::IOFormat>>>
+    std::string to_string(const Eigen::EigenBase<T> &m, const IOFormat_t &f) {
         using Scalar = typename T::Scalar;
         if constexpr(std::is_floating_point_v<Scalar>) {
             std::stringstream ss;
@@ -43,7 +43,7 @@ namespace linalg::matrix {
             }
 #if defined(USE_QUADMATH)
             else if constexpr(std::is_same_v<Inner, __float128>) {
-                std::string s = "[";
+                std::string s;
                 std::string rbuf;
                 std::string ibuf;
                 auto        bufsize = std::max<size_t>(64, static_cast<size_t>(f.precision) + 34);
@@ -51,17 +51,20 @@ namespace linalg::matrix {
                 ibuf.resize(bufsize);
                 s.reserve(bufsize * m.derived().size());
                 std::string fmt = "%." + std::to_string(f.precision) + "Qg";
+                s += f.matPrefix;
                 for(long i = 0; i < m.derived().rows(); ++i) {
-                    s += "[";
+                    s += f.rowPrefix;
                     for(long j = 0; j < m.derived().cols(); ++j) {
                         quadmath_snprintf(rbuf.data(), bufsize, fmt.data(), m.derived()(i, j).real());
                         quadmath_snprintf(ibuf.data(), bufsize, fmt.data(), m.derived()(i, j).imag());
-                        s += "(" + rbuf + "," + ibuf + "i)" + f.coeffSeparator;
+                        s += "(" + rbuf + "," + ibuf + "i)";
+                        if(j + 1 != m.derived().cols()) s += f.coeffSeparator;
+
                     }
-                    s += "]";
-                    if(i + 1 != m.derived().rows()) s += '\n';
+                    s += f.rowSuffix;
+                    if(i + 1 != m.derived().rows()) s += f.rowSeparator;
                 }
-                s += "]";
+                s += f.matSuffix;
                 return s;
             }
 #endif
@@ -72,31 +75,34 @@ namespace linalg::matrix {
         }
 #if defined(USE_QUADMATH)
         else if constexpr(std::is_same_v<Scalar, __float128>) {
-            std::string s = "[";
+            std::string s;
             std::string buf;
             auto        bufsize = std::max<size_t>(64, static_cast<size_t>(f.precision) + 34);
             buf.resize(bufsize);
             s.reserve(bufsize * m.derived().size());
             std::string fmt = "%." + std::to_string(f.precision) + "Qf";
+            s += f.matPrefix;
             for(long i = 0; i < m.derived().rows(); ++i) {
-                s += "[";
+                s += f.rowPrefix;
                 for(long j = 0; j < m.derived().cols(); ++j) {
                     quadmath_snprintf(buf.data(), bufsize, fmt.data(), m.derived()(i, j));
-                    s += buf + f.coeffSeparator;
+                    s += buf;
+                    if(j + 1 != m.derived().cols()) s += f.coeffSeparator;
                 }
-                s += "]";
-                if(i + 1 != m.derived().rows()) s += '\n';
+                s += f.rowSuffix;
+                if(i + 1 != m.derived().rows()) s += f.rowSeparator;
             }
-            s += "]";
+            s += f.matSuffix;
             return s;
         }
 #endif
         else
             throw std::runtime_error("to_string: type is not implemented");
     }
+
     template<typename T>
-    std::string to_string(const Eigen::EigenBase<T> &m, int prec, int flags, const std::string &sep = ", ") {
-        Eigen::IOFormat f(prec, flags, sep, "\n", "  [", "]");
+    std::string to_string(const Eigen::EigenBase<T> &m, int prec, int flags = 0, const std::string &sep = ", ") {
+        Eigen::IOFormat f(prec, flags, sep, "\n", "[", "]", "[", "]");
         return to_string(m, f);
     }
 }

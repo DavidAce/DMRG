@@ -86,27 +86,29 @@ class h5tb_ising_tf_rf : public h5tb_base {
 class h5tb_lbit : public h5tb_base {
     public:
     struct table {
-        using vlen_type               = h5pp::vstr_t;
-        real_t               J1_rand  = 0;  /*!< On-site interaction */
-        h5pp::varr_t<real_t> J2_rand  = {}; /*!< Two-body interaction */
-        real_t               J3_rand  = 0;  /*!< Three-body interaction */
-        double               J1_mean  = 0;  /*!< Constant offset for on-site */
-        double               J2_mean  = 0;  /*!< Constant offset for two-body interaction */
-        double               J3_mean  = 0;  /*!< Constant offset for three-body interaction */
-        double               J1_wdth  = 0;  /*!< Width of the distribution J1 */
-        double               J2_wdth  = 0;  /*!< Width of the distribution J2 */
-        double               J3_wdth  = 0;  /*!< Width of the distribution J3 */
-        size_t               J2_span  = 0;  /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
-        size_t               J2_ctof  = 0;  /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
-        double               xi_Jcls  = 0;  /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/xi_Jcls) * J2_rand */
-        uint64_t             u_depth  = 0;  /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
-        double               u_fmix   = 0;  /*!< Mixing factor for unitary transformation to real-space */
-        double               u_tstd   = 0;  /*!< Standard deviation for theta-factors in the unitary gates */
-        double               u_cstd   = 0;  /*!< Standard deviation for c-factors in the unitary gates */
-        UnitaryGateWeight    u_tgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of thetas in unitary gates */
-        UnitaryGateWeight    u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
-        long                 spin_dim = 2;                           /*!< Spin dimension */
-        h5pp::vstr_t         distribution;                           /*!< The random number distribution. Choose between lognormal, normal or uniform */
+        using vlen_type                     = h5pp::vstr_t;
+        h5pp::vstr_t               J1_rand  = 0;  /*!< On-site interaction */
+        h5pp::varr_t<h5pp::vstr_t> J2_rand  = {}; /*!< Two-body interaction */
+        h5pp::vstr_t               J3_rand  = 0;  /*!< Three-body interaction */
+        double                     J1_mean  = 0;  /*!< Constant offset for on-site */
+        double                     J2_mean  = 0;  /*!< Constant offset for two-body interaction */
+        double                     J3_mean  = 0;  /*!< Constant offset for three-body interaction */
+        double                     J1_wdth  = 0;  /*!< Width of the distribution J1 */
+        double                     J2_wdth  = 0;  /*!< Width of the distribution J2 */
+        double                     J3_wdth  = 0;  /*!< Width of the distribution J3 */
+        size_t                     J2_span  = 0;  /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
+        size_t                     J2_ctof  = 0;  /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
+        double                     xi_Jcls  = 0;  /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/xi_Jcls) * J2_rand */
+        uint64_t                   u_depth  = 0;  /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
+        double                     u_fmix   = 0;  /*!< Mixing factor for unitary transformation to real-space */
+        double                     u_tstd   = 0;  /*!< Standard deviation for theta-factors in the unitary gates */
+        double                     u_cstd   = 0;  /*!< Standard deviation for c-factors in the unitary gates */
+        UnitaryGateWeight          u_tgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of thetas in unitary gates */
+        UnitaryGateWeight          u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
+        long                       spin_dim = 2;                           /*!< Spin dimension */
+        h5pp::vstr_t               distribution;                           /*!< The random number distribution. Choose between lognormal, normal or uniform */
+                                                                           //        table_str                  get_table_str() const;
+                                                                           //        table                      operator=(const table_str &ts);
     };
 
     table                                       param;

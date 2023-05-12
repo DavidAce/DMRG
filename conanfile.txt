@@ -20,13 +20,15 @@ pcg-cpp/cci.20210406
 CMakeDeps
 
 [options]
-ceres-solver:use_glog=False
-ceres-solver:use_gflags=False
+# Quadmath only works on gnu compilers!
+h5pp/*:with_quadmath=True
+ceres-solver/2.1.0:use_glog=False
+ceres-solver/2.1.0:use_gflags=False
 
 # Use backtrace because this doesn't invoke any further dependencies that break easily on CI.
 # We take care of linkinw with system libdw instead, if needed.
-backward-cpp:stack_walking=backtrace
-backward-cpp:stack_details=backtrace_symbol
+backward-cpp/1.6:stack_walking=backtrace
+backward-cpp/1.6:stack_details=backtrace_symbol
 
 
 #gflags:shared=False

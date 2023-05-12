@@ -156,6 +156,44 @@ std::vector<std::string_view> h5tb_ising_tf_rf::get_parameter_names() const noex
  *
  */
 
+//h5tb_lbit::table_str h5tb_lbit::table::get_table_str() const {
+//    table_str ts;
+//#if defined(USE_QUADMATH)
+//    static_assert(std::is_same_v<real_t, __float128>);
+//    ts.J1_rand = fmt::format("{:.36f}", this->J1_rand);
+//    ts.J3_rand = fmt::format("{:.36f}", this->J3_rand);
+//    std::vector<h5pp::vstr_t> J2_rand_str;
+//    for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.36f}", j2)); }
+//    ts.J2_rand = J2_rand_str;
+//#else
+//    static_assert(std::is_same_v<real_t, long double>);
+//    ts.J1_rand = fmt::format("{:.21f}", this->J1_rand);
+//    ts.J3_rand = fmt::format("{:.21f}", this->J3_rand);
+//    std::vector<h5pp::vstr_t> J2_rand_str;
+//    for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.21f}", j2)); }
+//    ts.J2_rand = J2_rand_str;
+//#endif
+//    return ts;
+//}
+
+//h5tb_lbit::table h5tb_lbit::table::operator=(const h5tb_lbit::table_str &ts) {
+//    table t;
+//#if defined(USE_QUADMATH)
+//    static_assert(std::is_same_v<real_t, __float128>);
+//    this->J1_rand = strtoflt128(ts.J1_rand.c_str(), nullptr);
+//    this->J3_rand = strtoflt128(ts.J3_rand.c_str(), nullptr);
+//    std::vector<real_t> J2_rand_str;
+//    for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtoflt128(j2.c_str(), nullptr)); }
+//#else
+//    static_assert(std::is_same_v<real_t, long double>);
+//    this->J1_rand = strtold(ts.J1_rand.c_str(), nullptr);
+//    this->J3_rand = strtold(ts.J3_rand.c_str(), nullptr);
+//    std::vector<real_t> J2_rand_str;
+//    for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtold(j2.c_str(), nullptr)); }
+//#endif
+//    return t;
+//}
+
 h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_w8() {
     create_enum_w8();
     return enum_w8;
@@ -177,47 +215,11 @@ void h5tb_lbit::commit_enum_w8(const h5pp::hid::h5f &file_id) {
 void h5tb_lbit::register_table_type() const {
     if(h5_type.valid()) return;
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
+    h5pp::hid::h5t h5_varr_vstr_t = h5pp::varr_t<h5pp::vstr_t>::get_h5type();
 
-    h5pp::hid::h5t h5_real_t, h5_varr_t;
-#if defined(USE_QUADMATH)
-    static_assert(std::is_same_v<real_t, __float128>);
-    #if __BYTE_ORDER == LITTLE_ENDIAN
-    h5_real_t = H5Tcopy(H5T_IEEE_F64LE);
-    #else
-    h5_real_t  = H5Tcopy(H5T_IEEE_F64BE);
-    #endif
-    auto sserr = H5Tset_size(h5_real_t, 16);
-    auto sperr = H5Tset_precision(h5_real_t, 128);
-    auto soerr = H5Tset_offset(h5_real_t, 0);
-    #if __BYTE_ORDER == LITTLE_ENDIAN
-    auto sferr = H5Tset_fields(h5_real_t, 127, 112, 15, 0, 112);
-    #else
-    auto sferr = H5Tset_fields(h5_real_t, 0, 1, 15, 16, 112);
-    #endif
-    auto sberr = H5Tset_ebias(h5_real_t, 127);
-    auto snerr = H5Tset_norm(h5_real_t, H5T_norm_t::H5T_NORM_MSBSET);
-    auto sierr = H5Tset_inpad(h5_real_t, H5T_pad_t::H5T_PAD_ZERO);
-    auto sparr = H5Tset_pad(h5_real_t, H5T_pad_t::H5T_PAD_ZERO, H5T_pad_t::H5T_PAD_ZERO);
-    if(sserr < 0) throw except::runtime_error("H5Tset_size returned {}", sserr);
-    if(sperr < 0) throw except::runtime_error("H5Tset_precision returned {}", sperr);
-    if(soerr < 0) throw except::runtime_error("H5Tset_offset returned {}", soerr);
-    if(sferr < 0) throw except::runtime_error("H5Tset_fields returned {}", sferr);
-    if(sberr < 0) throw except::runtime_error("H5Tset_ebias returned {}", sberr);
-    if(snerr < 0) throw except::runtime_error("H5Tset_norm returned {}", snerr);
-    if(sierr < 0) throw except::runtime_error("H5Tset_inpad returned {}", sierr);
-    if(sparr < 0) throw except::runtime_error("H5Tset_pad returned {}", sparr);
-    //    H5Tset_pad(h5_real_t, H5T_PAD_ZERO, H5T_PAD_ZERO);
-    //        H5Tcommit(h5_real_t, "H5T_IEEE_F128LE", h5_real_t, H5P_DEFAULT, H5P_DEFAULT,  H5P_DEFAULT);
-
-    h5_varr_t = H5Tvlen_create(h5_real_t);
-#else
-    h5_real_t = H5Tcopy(H5T_NATIVE_LDOUBLE);
-    h5_varr_t = h5pp::varr_t<real_t>::get_h5type();
-#endif
-
-    H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), h5_real_t);
-    H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), h5_varr_t);
-    H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), h5_real_t);
+    H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), h5_varr_vstr_t);
+    H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), h5pp::vstr_t::get_h5type());
     H5Tinsert(h5_type, "J1_mean", HOFFSET(table, J1_mean), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J2_mean", HOFFSET(table, J2_mean), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J3_mean", HOFFSET(table, J3_mean), H5T_NATIVE_DOUBLE);
@@ -240,15 +242,16 @@ void h5tb_lbit::register_table_type() const {
 std::string h5tb_lbit::fmt_value(std::string_view p) const {
     // J2_rand is special since it varies in length for each mpo. Let's just pad with nan to make it pretty
     if(p == "J2_rand") {
-        std::vector<real_t> J2_rand = param.J2_rand;
+        std::vector<real> J2_rand;
+        for(const auto &J2 : param.J2_rand) J2_rand.emplace_back(J2.to_floating_point<real>());
         J2_rand.reserve(param.J2_ctof + 1);
-        for(size_t i = J2_rand.size(); i < param.J2_ctof + 1; i++) J2_rand.emplace_back(std::numeric_limits<float_t>::quiet_NaN());
+        for(size_t i = J2_rand.size(); i < param.J2_ctof + 1; i++) J2_rand.emplace_back(std::numeric_limits<real>::quiet_NaN());
         return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(J2_rand, ","));
     }
 
     /* clang-format off */
-        if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_rand);
-        if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand);
+        if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_rand.to_floating_point<real>());
+        if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand.to_floating_point<real>());
         if(p == "J1_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_mean);
         if(p == "J2_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2_mean);
         if(p == "J3_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_mean);

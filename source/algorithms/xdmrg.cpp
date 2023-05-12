@@ -759,9 +759,10 @@ void xdmrg::create_hamiltonian_gates() {
 
 void xdmrg::create_time_evolution_gates() {
     // Create the time evolution operators
-    if(abs_t(status.delta_t) == 0) update_time_step();
+    auto delta_t = status.delta_t.to_floating_point<cplx_t>();
+    if(abs_t(delta_t) == 0) update_time_step();
     tools::log->info("Creating time evolution gates");
-    time_gates_1site = qm::time::get_time_evolution_gates(status.delta_t, ham_gates_1body);
-    time_gates_2site = qm::time::get_time_evolution_gates(status.delta_t, ham_gates_2body);
-    time_gates_3site = qm::time::get_time_evolution_gates(status.delta_t, ham_gates_3body);
+    time_gates_1site = qm::time::get_time_evolution_gates(delta_t, ham_gates_1body);
+    time_gates_2site = qm::time::get_time_evolution_gates(delta_t, ham_gates_2body);
+    time_gates_3site = qm::time::get_time_evolution_gates(delta_t, ham_gates_3body);
 }
