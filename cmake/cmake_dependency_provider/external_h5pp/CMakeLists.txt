@@ -14,7 +14,11 @@ option(H5PP_ENABLE_FMT                 "Enables the {fmt} formatting library"   
 option(H5PP_ENABLE_SPDLOG              "Enables Spdlog for logging h5pp internal info to stdout"     ON)
 option(H5PP_ENABLE_MPI                 "Enables use of MPI (work in progress)"                       OFF)
 option(H5PP_ENABLE_ASAN                "Enable runtime address sanitizer -fsanitize=address"         OFF)
-
+if(DMRG_USE_QUADMATH)
+    option(H5PP_USE_QUADMATH               "Enable support for quadmath and __float128"                  ON)
+else()
+    option(H5PP_USE_QUADMATH               "Enable support for quadmath and __float128"                  OFF)
+endif()
 
 include(ExternalProject)
 ExternalProject_Add(external_h5pp
@@ -53,4 +57,5 @@ ExternalProject_Add(external_h5pp
         -DH5PP_ENABLE_SPDLOG:BOOL=${H5PP_ENABLE_SPDLOG}
         -DH5PP_ENABLE_MPI:BOOL=${H5PP_ENABLE_MPI}
         -DH5PP_ENABLE_ASAN:BOOL=${H5PP_ENABLE_ASAN}
+        -DH5PP_USE_QUADMATH:BOOL=${H5PP_USE_QUADMATH}
         )
