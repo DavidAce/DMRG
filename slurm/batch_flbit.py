@@ -33,7 +33,7 @@ input_prefix      = "input"
 output_prefix     = "output"
 
 
-sites               = [12,16,20,24]
+sites               = [12,16]
 J                   = [[0.00, 0.00, 0.00]]
 w                   = [[1.00, 1.00, 1.00]] # for w2, nearest neighbors have this order of magnitude
 x                   = [1.0]
