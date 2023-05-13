@@ -87,9 +87,9 @@ class h5tb_lbit : public h5tb_base {
     public:
     struct table {
         using vlen_type                     = h5pp::vstr_t;
-        h5pp::vstr_t               J1_rand  = 0;  /*!< On-site interaction */
+        h5pp::vstr_t               J1_rand  = {};  /*!< On-site interaction */
         h5pp::varr_t<h5pp::vstr_t> J2_rand  = {}; /*!< Two-body interaction */
-        h5pp::vstr_t               J3_rand  = 0;  /*!< Three-body interaction */
+        h5pp::vstr_t               J3_rand  = {};  /*!< Three-body interaction */
         double                     J1_mean  = 0;  /*!< Constant offset for on-site */
         double                     J2_mean  = 0;  /*!< Constant offset for two-body interaction */
         double                     J3_mean  = 0;  /*!< Constant offset for three-body interaction */
@@ -107,8 +107,6 @@ class h5tb_lbit : public h5tb_base {
         UnitaryGateWeight          u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
         long                       spin_dim = 2;                           /*!< Spin dimension */
         h5pp::vstr_t               distribution;                           /*!< The random number distribution. Choose between lognormal, normal or uniform */
-                                                                           //        table_str                  get_table_str() const;
-                                                                           //        table                      operator=(const table_str &ts);
     };
 
     table                                       param;

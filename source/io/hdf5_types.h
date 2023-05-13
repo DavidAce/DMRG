@@ -70,6 +70,7 @@ class h5pp_table_measurements_finite {
 
     public:
     struct table {
+        using vlen_type = h5pp::vstr_t;
         uint64_t              iter                   = 0;
         uint64_t              step                   = 0;
         long                  position               = -1;
@@ -94,7 +95,7 @@ class h5pp_table_measurements_finite {
         std::array<double, 3> structure_factors      = {nan, nan, nan};
         double                total_time             = 0;
         double                algorithm_time         = 0;
-        h5pp::vstr_t          physical_time          = 0;
+        h5pp::vstr_t          physical_time          = {};
     };
     static h5pp::hid::h5t get_h5t();
 };
@@ -106,6 +107,7 @@ class h5pp_table_measurements_infinite {
 
     public:
     struct table {
+        using vlen_type = h5pp::vstr_t;
         uint64_t     iter                         = 0;
         uint64_t     step                         = 0;
         long         position                     = 0;
@@ -126,7 +128,7 @@ class h5pp_table_measurements_infinite {
         double       energy_variance_per_site_mom = 0;
         double       truncation_error             = 0;
         double       wall_time                    = 0;
-        h5pp::vstr_t phys_time                    = 0;
+        h5pp::vstr_t phys_time;
         h5pp::vstr_t time_step;
     };
     static h5pp::hid::h5t get_h5t();

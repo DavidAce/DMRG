@@ -8,6 +8,7 @@
 class AlgorithmStatus {
     public:
     // common variables
+    using vlen_type                                 = h5pp::vstr_t;
     size_t               iter                       = 0; // In idmrg and itebd: iterations, in fdmrg and xdmrg: sweeps along the chain.
     size_t               step                       = 0; // How many dmrg steps have been taken (each step may cover multiple sites)
     long                 position                   = 0;
@@ -35,10 +36,10 @@ class AlgorithmStatus {
     double               env_expansion_alpha        = 0; /*!< subspace expansion factor alpha */
     double               env_expansion_variance     = 0; /*!< lowest variance when alpha was last updated */
     size_t               env_expansion_step         = 0; /*!< step when alpha was last updated */
-    h5pp::vstr_t         phys_time                  = 0;
+    h5pp::vstr_t         phys_time                  = {};
     double               wall_time                  = 0;
     double               algo_time                  = 0;
-    h5pp::vstr_t         delta_t                    = 0; // Note this is complex!! Make sure this one gets initialized to delta_t0!
+    h5pp::vstr_t         delta_t                    = {}; // Note this is complex!! Make sure this one gets initialized to delta_t0!
     AlgorithmType        algo_type                  = AlgorithmType::ANY;
     AlgorithmStop        algo_stop                  = AlgorithmStop::NONE;
     bool                 algorithm_has_finished     = false;
