@@ -83,76 +83,6 @@ void h5_enum_algo_type::commit(const h5pp::hid::h5f &file_id) {
     if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
 }
 
-h5pp::hid::h5t &h5_real_t::get_h5t() {
-    create();
-    return h5_type;
-}
-
-void h5_real_t::create() {
-    if(h5_type.valid()) return;
-#if defined(USE_QUADMATH)
-    static_assert(std::is_same_v<real_t, __float128>);
-    #if __BYTE_ORDER == LITTLE_ENDIAN
-    h5_type = H5Tcopy(H5T_IEEE_F64LE);
-    #else
-    h5_type  = H5Tcopy(H5T_IEEE_F64BE);
-    #endif
-    auto sserr = H5Tset_size(h5_type, 16);
-    auto sperr = H5Tset_precision(h5_type, 128);
-    auto soerr = H5Tset_offset(h5_type, 0);
-    #if __BYTE_ORDER == LITTLE_ENDIAN
-    auto sferr = H5Tset_fields(h5_type, 127, 112, 15, 0, 112);
-    #else
-    auto sferr = H5Tset_fields(h5_real_t, 0, 1, 15, 16, 112);
-    #endif
-    auto sberr = H5Tset_ebias(h5_type, 127);
-    auto snerr = H5Tset_norm(h5_type, H5T_norm_t::H5T_NORM_MSBSET);
-    auto sierr = H5Tset_inpad(h5_type, H5T_pad_t::H5T_PAD_ZERO);
-    auto sparr = H5Tset_pad(h5_type, H5T_pad_t::H5T_PAD_ZERO, H5T_pad_t::H5T_PAD_ZERO);
-    if(sserr < 0) throw except::runtime_error("H5Tset_size returned {}", sserr);
-    if(sperr < 0) throw except::runtime_error("H5Tset_precision returned {}", sperr);
-    if(soerr < 0) throw except::runtime_error("H5Tset_offset returned {}", soerr);
-    if(sferr < 0) throw except::runtime_error("H5Tset_fields returned {}", sferr);
-    if(sberr < 0) throw except::runtime_error("H5Tset_ebias returned {}", sberr);
-    if(snerr < 0) throw except::runtime_error("H5Tset_norm returned {}", snerr);
-    if(sierr < 0) throw except::runtime_error("H5Tset_inpad returned {}", sierr);
-    if(sparr < 0) throw except::runtime_error("H5Tset_pad returned {}", sparr);
-#else
-    h5_type     = h5pp::type::getH5Type<real_t>();
-#endif
-}
-
-void h5_real_t::commit(const h5pp::hid::h5f &file_id) {
-    if(H5Tcommitted(get_h5t()) > 0) return;
-    herr_t err = H5Tcommit(file_id, "real_t", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
-}
-
-h5pp::hid::h5t &h5_cplx_t::get_h5t() {
-    create();
-    return h5_type;
-}
-
-void h5_cplx_t::create() {
-    if(h5_type.valid()) return;
-#if defined(USE_QUADMATH)
-    using ComplexT = h5pp::type::compound::Complex<real_t>;
-    h5_type        = H5Tcreate(H5T_COMPOUND, sizeof(ComplexT));
-    herr_t errr    = H5Tinsert(h5_type, "real", HOFFSET(ComplexT, real), h5_real_t::get_h5t());
-    herr_t erri    = H5Tinsert(h5_type, "imag", HOFFSET(ComplexT, imag), h5_real_t::get_h5t());
-    if(errr < 0) throw h5pp::runtime_error("Failed to insert real field to complex type");
-    if(erri < 0) throw h5pp::runtime_error("Failed to insert imag field to complex type");
-#else
-        h5_type = h5pp::type::compound::H5T_COMPLEX<real_t>::h5type());
-#endif
-}
-
-void h5_cplx_t::commit(const h5pp::hid::h5f &file_id) {
-    if(H5Tcommitted(get_h5t()) > 0) return;
-    herr_t err = H5Tcommit(file_id, "cplx_t", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
-}
-
 h5pp::hid::h5t h5pp_table_measurements_finite::get_h5t() {
     register_table_type();
     return h5_type;
@@ -189,7 +119,7 @@ void h5pp_table_measurements_finite::register_table_type() {
         H5Tinsert(h5_type, "structure_factors",             HOFFSET(table, structure_factors),             H5_ARRAY3_TYPE);
         H5Tinsert(h5_type, "total_time",                    HOFFSET(table, total_time),                    H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algorithm_time",                HOFFSET(table, algorithm_time),                H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "physical_time",                 HOFFSET(table, physical_time),                 h5pp::vstr_t::get_h5type());
+        H5Tinsert(h5_type, "physical_time",                 HOFFSET(table, physical_time),                 decltype(table::physical_time)::get_h5type());
     /* clang-format on */
 }
 
@@ -224,8 +154,8 @@ void h5pp_table_measurements_infinite::register_table_type() {
     H5Tinsert(h5_type, "energy_variance_per_site_mom", HOFFSET(table, energy_variance_per_site_mom), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "truncation_error",             HOFFSET(table, truncation_error),             H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "wall_time",                    HOFFSET(table, wall_time),                    H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "phys_time",                    HOFFSET(table, phys_time),                    h5pp::vstr_t::get_h5type());
-    H5Tinsert(h5_type, "time_step",                    HOFFSET(table, time_step),                    h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "phys_time",                    HOFFSET(table, phys_time),                    decltype(table::phys_time)::get_h5type());
+    H5Tinsert(h5_type, "time_step",                    HOFFSET(table, time_step),                    decltype(table::time_step)::get_h5type());
     /* clang-format on */
 }
 
@@ -288,10 +218,10 @@ void h5pp_table_algorithm_status::register_table_type() {
         H5Tinsert(h5_type, "env_expansion_alpha",         HOFFSET(table, env_expansion_alpha),        H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "env_expansion_variance",      HOFFSET(table, env_expansion_variance),     H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "env_expansion_step",          HOFFSET(table, env_expansion_step),         H5T_NATIVE_ULONG);
-        H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  h5pp::vstr_t::get_h5type());
+        H5Tinsert(h5_type, "phys_time",                   HOFFSET(table, phys_time),                  decltype(table::phys_time)::get_h5type());
         H5Tinsert(h5_type, "wall_time",                   HOFFSET(table, wall_time),                  H5T_NATIVE_DOUBLE);
         H5Tinsert(h5_type, "algo_time",                   HOFFSET(table, algo_time),                  H5T_NATIVE_DOUBLE);
-        H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    h5pp::vstr_t::get_h5type());
+        H5Tinsert(h5_type, "delta_t",                     HOFFSET(table, delta_t),                    decltype(table::delta_t)::get_h5type());
         H5Tinsert(h5_type, "algo_type",                   HOFFSET(table, algo_type),                  h5_algo_type);
         H5Tinsert(h5_type, "algo_stop",                   HOFFSET(table, algo_stop),                  h5_algo_stop);
         H5Tinsert(h5_type, "algorithm_has_finished",      HOFFSET(table, algorithm_has_finished),     H5T_NATIVE_UINT8);

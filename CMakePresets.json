@@ -396,6 +396,15 @@
       ]
     },
     {
+      "name": "debug-clang-15-conan-flexiblas",
+      "displayName": "Debug|clang-15|conan|flexiblas|shared|asan",
+      "inherits": [
+        "flexiblas",
+        "conan",
+        "debug-clang-15"
+      ]
+    },
+    {
       "name": "github-actions",
       "displayName": "Default configuration for github-actions",
       "hidden": true,
@@ -554,6 +563,10 @@
     {
       "name": "debug-clang-15-conan-openblas",
       "configurePreset": "debug-clang-15-conan-openblas"
+    },
+    {
+      "name": "debug-clang-15-conan-flexiblas",
+      "configurePreset": "debug-clang-15-conan-flexiblas"
     },
     {
       "name": "kraken",

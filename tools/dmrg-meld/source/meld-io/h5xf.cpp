@@ -87,10 +87,10 @@ namespace tools::h5xf {
                 tgtDims[srcKey.axis] = 0;          // Create with 0 extent in the new axis direction, so that the dataset starts empty (zero volume)
 
                 // Determine a good chunksize between 10 and 500 elements
-                auto tgtChunk         = tgtDims;
+                auto tgtChunk           = tgtDims;
                 auto tgtMaxDims         = tgtDims;
-                auto chunkSize        = std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 10., 10000.);
-                tgtChunk[srcKey.axis] = static_cast<hsize_t>(chunkSize); // number of elements in the axis that we append into.
+                auto chunkSize          = std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 10., 10000.);
+                tgtChunk[srcKey.axis]   = static_cast<hsize_t>(chunkSize); // number of elements in the axis that we append into.
                 tgtMaxDims[srcKey.axis] = H5S_UNLIMITED;
                 if(srcKey.size == Size::VAR) {
                     auto        srcGroupPath    = h5pp::fs::path(srcInfo.dsetPath.value()).parent_path().string();
@@ -120,8 +120,7 @@ namespace tools::h5xf {
         auto                      t_scope = tid::tic_scope(__FUNCTION__);
         std::vector<StorageEvent> srcEvents; // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
         for(const auto &srcKey : srcTableKeys) {
-            if(srcTableDb.find(srcKey.key) == srcTableDb.end())
-                throw except::range_error("{}: Key [{}] was not found in source map", __FUNCTION__, srcKey.key);
+            if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::range_error("{}: Key [{}] was not found in source map", __FUNCTION__, srcKey.key);
             auto &srcInfo = srcTableDb[srcKey.key];
             if(not srcInfo.tableExists or not srcInfo.tableExists.value()) continue;
             auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
@@ -154,9 +153,9 @@ namespace tools::h5xf {
         // In this function we take series data from each srcTable and create multiple tables tgtTable, one for each
         // index (e.g. iter, bond dim, etc). Each entry in tgtTable corresponds to the same index point on different realizations.
         auto                      t_scope = tid::tic_scope(__FUNCTION__);
-        std::vector<std::byte>    srcReadBuffer;
         std::vector<size_t>       srcIndices; // We can assume all tables have the same indexing numbers. Only update on mismatch
         std::vector<StorageEvent> srcEvents;  // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
+        std::vector<std::byte>    srcReadBuffer;
         for(const auto &srcKey : srcKeys) {
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::logic_error("Key [{}] was not found in source map", srcKey.key);
             auto &srcInfo = srcTableDb[srcKey.key];
@@ -197,10 +196,10 @@ namespace tools::h5xf {
                     // Disabling compression is supposed to give a nice speedup. Read here:
                     // https://support.hdfgroup.org/HDF5/doc1.8/Advanced/DirectChunkWrite/UsingDirectChunkWrite.pdf
                     if(not tableInfo.tableExists.value()) {
-                        auto recordBytes      = H5Tget_size(srcInfo.h5Type.value());
+                        auto recordBytes = H5Tget_size(srcInfo.h5Type.value());
                         auto targetBytes = 500 * 1024; // 500 kB
-                        auto chunkSize        = static_cast<hsize_t>(std::ceil(targetBytes / static_cast<double>(recordBytes)));
-//                        tools::logger::log->info("Chunk size: {} | {}", chunkSize, tgtPath);
+                        auto chunkSize   = static_cast<hsize_t>(std::ceil(targetBytes / static_cast<double>(recordBytes)));
+                        //                        tools::logger::log->info("Chunk size: {} | {}", chunkSize, tgtPath);
                         tableInfo = h5_tgt.createTable(srcInfo.h5Type.value(), tgtPath, srcInfo.tableTitle.value(), chunkSize, 6);
                     }
                     tgtTableDb[tgtPath] = tableInfo;
@@ -218,11 +217,20 @@ namespace tools::h5xf {
                                           srcInfo.numRecords.value(), srcKey.index, srcIndex, rec, tgtIndex);
 
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
-                auto t_buffer = tid::tic_scope(fmt::format("bufferRecords-{}", srcKey.classtag));
-                srcReadBuffer.resize(srcInfo.recordBytes.value());
+                auto t_buffer  = tid::tic_scope(fmt::format("bufferRecords-{}", srcKey.classtag));
+                srcInfo.h5Type = H5Dget_type(srcInfo.h5Dset.value());
                 h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, rec, 1, h5_tgt.plists);
                 tgtBuff.insert(srcReadBuffer, tgtIndex);
-
+                if(srcInfo.reclaimInfo.has_value()) {
+                    // One or more table fields are vlen arrays.
+                    // This means that HDF5 has allocated memory for those vlen arrays on a pointer somewhere in srcReadBuffer.
+                    // This memory needs to be de-allocated to avoid a memory leak, which unfortunately means that we have to flush
+                    // the buffer immediately before srcReadBuffer is overwritten in the next round.
+                    // When calling tgtBuff.insert we copy the pointer to the data, but not the data itself.
+                    // If we then overwrite srcReadBuffer, we lose track of the vlen memory pointed to previously.
+                    tgtBuff.flush();
+                    srcInfo.reclaim();
+                }
                 // Update the database
                 tgtId.insert(fileId.seed, tgtIndex);
             }

@@ -42,26 +42,6 @@ class h5_enum_algo_type {
     static void            commit(const h5pp::hid::h5f &file_id);
 };
 
-class h5_real_t {
-    private:
-    static inline h5pp::hid::h5t h5_type;
-
-    public:
-    static h5pp::hid::h5t &get_h5t();
-    static void            create();
-    static void            commit(const h5pp::hid::h5f &file_id);
-};
-
-class h5_cplx_t {
-    private:
-    static inline h5pp::hid::h5t h5_type;
-
-    public:
-    static h5pp::hid::h5t &get_h5t();
-    static void            create();
-    static void            commit(const h5pp::hid::h5f &file_id);
-};
-
 class h5pp_table_measurements_finite {
     private:
     static inline h5pp::hid::h5t h5_type;
@@ -70,7 +50,7 @@ class h5pp_table_measurements_finite {
 
     public:
     struct table {
-        using vlen_type = h5pp::vstr_t;
+        //        using vlen_type = h5pp::vstr_t;
         uint64_t              iter                   = 0;
         uint64_t              step                   = 0;
         long                  position               = -1;
@@ -95,7 +75,7 @@ class h5pp_table_measurements_finite {
         std::array<double, 3> structure_factors      = {nan, nan, nan};
         double                total_time             = 0;
         double                algorithm_time         = 0;
-        h5pp::vstr_t          physical_time          = {};
+        h5pp::fstr_t<64>      physical_time          = {};
     };
     static h5pp::hid::h5t get_h5t();
 };
@@ -107,29 +87,29 @@ class h5pp_table_measurements_infinite {
 
     public:
     struct table {
-        using vlen_type = h5pp::vstr_t;
-        uint64_t     iter                         = 0;
-        uint64_t     step                         = 0;
-        long         position                     = 0;
-        StorageEvent event                        = StorageEvent::NONE;
-        uint64_t     length                       = 0;
-        long         bond_dim                     = 0;
-        long         bond_lim                     = 0;
-        long         bond_max                     = 0;
-        double       entanglement_entropy         = 0;
-        double       norm                         = 0;
-        double       energy_mpo                   = 0;
-        double       energy_per_site_mpo          = 0;
-        double       energy_per_site_ham          = 0;
-        double       energy_per_site_mom          = 0;
-        double       energy_variance_mpo          = 0;
-        double       energy_variance_per_site_mpo = 0;
-        double       energy_variance_per_site_ham = 0;
-        double       energy_variance_per_site_mom = 0;
-        double       truncation_error             = 0;
-        double       wall_time                    = 0;
-        h5pp::vstr_t phys_time;
-        h5pp::vstr_t time_step;
+        //        using vlen_type = h5pp::vstr_t;
+        uint64_t         iter                         = 0;
+        uint64_t         step                         = 0;
+        long             position                     = 0;
+        StorageEvent     event                        = StorageEvent::NONE;
+        uint64_t         length                       = 0;
+        long             bond_dim                     = 0;
+        long             bond_lim                     = 0;
+        long             bond_max                     = 0;
+        double           entanglement_entropy         = 0;
+        double           norm                         = 0;
+        double           energy_mpo                   = 0;
+        double           energy_per_site_mpo          = 0;
+        double           energy_per_site_ham          = 0;
+        double           energy_per_site_mom          = 0;
+        double           energy_variance_mpo          = 0;
+        double           energy_variance_per_site_mpo = 0;
+        double           energy_variance_per_site_ham = 0;
+        double           energy_variance_per_site_mom = 0;
+        double           truncation_error             = 0;
+        double           wall_time                    = 0;
+        h5pp::fstr_t<64> phys_time;
+        h5pp::fstr_t<64> time_step;
     };
     static h5pp::hid::h5t get_h5t();
 };

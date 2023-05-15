@@ -41,7 +41,7 @@ void h5tb_ising_selfdual::register_table_type() const {
     H5Tinsert(h5_type, "lambda", HOFFSET(table, lambda), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "delta", HOFFSET(table, delta), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_ising_selfdual::fmt_value(std::string_view p) const {
@@ -85,7 +85,7 @@ void h5tb_ising_majorana::register_table_type() const {
     H5Tinsert(h5_type, "g", HOFFSET(table, g), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "delta", HOFFSET(table, delta), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution),  decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
@@ -127,7 +127,7 @@ void h5tb_ising_tf_rf::register_table_type() const {
     H5Tinsert(h5_type, "h_wdth", HOFFSET(table, h_wdth), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "h_rand", HOFFSET(table, h_rand), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution),  decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_ising_tf_rf::fmt_value(std::string_view p) const {
@@ -217,9 +217,9 @@ void h5tb_lbit::register_table_type() const {
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
     h5pp::hid::h5t h5_varr_vstr_t = h5pp::varr_t<h5pp::vstr_t>::get_h5type();
 
-    H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), h5pp::vstr_t::get_h5type());
-    H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), h5_varr_vstr_t);
-    H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), decltype(table::J1_rand)::get_h5type());
+    H5Tinsert(h5_type, "J2_rand", HOFFSET(table, J2_rand), decltype(table::J2_rand)::get_h5type());
+    H5Tinsert(h5_type, "J3_rand", HOFFSET(table, J3_rand), decltype(table::J3_rand)::get_h5type());
     H5Tinsert(h5_type, "J1_mean", HOFFSET(table, J1_mean), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J2_mean", HOFFSET(table, J2_mean), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "J3_mean", HOFFSET(table, J3_mean), H5T_NATIVE_DOUBLE);
@@ -236,7 +236,7 @@ void h5tb_lbit::register_table_type() const {
     H5Tinsert(h5_type, "u_tgw8", HOFFSET(table, u_tgw8), get_h5t_enum_w8());
     H5Tinsert(h5_type, "u_cgw8", HOFFSET(table, u_cgw8), get_h5t_enum_w8());
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), h5pp::vstr_t::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution),  decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_lbit::fmt_value(std::string_view p) const {

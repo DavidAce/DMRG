@@ -75,22 +75,22 @@ void LBit::print_parameter_names() const { h5tb.print_parameter_names(); }
 void LBit::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void LBit::set_parameters(TableMap &parameters) {
-    h5tb.param.J1_rand      = std::any_cast<h5pp::vstr_t>(parameters["J1_rand"]);
-    h5tb.param.J2_rand      = std::any_cast<h5pp::varr_t<h5pp::vstr_t>>(parameters["J2_rand"]);
-    h5tb.param.J3_rand      = std::any_cast<h5pp::vstr_t>(parameters["J3_rand"]);
-    h5tb.param.J1_wdth      = std::any_cast<double>(parameters["J1_wdth"]);
-    h5tb.param.J2_wdth      = std::any_cast<double>(parameters["J2_wdth"]);
-    h5tb.param.J3_wdth      = std::any_cast<double>(parameters["J3_wdth"]);
-    h5tb.param.J2_span      = std::any_cast<size_t>(parameters["J2_span"]);
-    h5tb.param.xi_Jcls      = std::any_cast<double>(parameters["xi_Jcls"]);
-    h5tb.param.u_depth      = std::any_cast<size_t>(parameters["u_depth"]);
-    h5tb.param.u_fmix       = std::any_cast<double>(parameters["u_fmix"]);
-    h5tb.param.u_tstd       = std::any_cast<double>(parameters["u_tstd"]);
-    h5tb.param.u_cstd       = std::any_cast<double>(parameters["u_cstd"]);
-    h5tb.param.u_tgw8       = std::any_cast<UnitaryGateWeight>(parameters["u_tgw8"]);
-    h5tb.param.u_cgw8       = std::any_cast<UnitaryGateWeight>(parameters["u_cgw8"]);
-    h5tb.param.spin_dim     = std::any_cast<long>(parameters["spin_dim"]);
-    h5tb.param.distribution = std::any_cast<h5pp::vstr_t>(parameters["distribution"]);
+    h5tb.param.J1_rand      = std::any_cast<decltype(h5tb.param.J1_rand)>(parameters["J1_rand"]);
+    h5tb.param.J2_rand      = std::any_cast<decltype(h5tb.param.J2_rand)>(parameters["J2_rand"]);
+    h5tb.param.J3_rand      = std::any_cast<decltype(h5tb.param.J3_rand)>(parameters["J3_rand"]);
+    h5tb.param.J1_wdth      = std::any_cast<decltype(h5tb.param.J1_wdth)>(parameters["J1_wdth"]);
+    h5tb.param.J2_wdth      = std::any_cast<decltype(h5tb.param.J2_wdth)>(parameters["J2_wdth"]);
+    h5tb.param.J3_wdth      = std::any_cast<decltype(h5tb.param.J3_wdth)>(parameters["J3_wdth"]);
+    h5tb.param.J2_span      = std::any_cast<decltype(h5tb.param.J2_span)>(parameters["J2_span"]);
+    h5tb.param.xi_Jcls      = std::any_cast<decltype(h5tb.param.xi_Jcls)>(parameters["xi_Jcls"]);
+    h5tb.param.u_depth      = std::any_cast<decltype(h5tb.param.u_depth)>(parameters["u_depth"]);
+    h5tb.param.u_fmix       = std::any_cast<decltype(h5tb.param.u_fmix)>(parameters["u_fmix"]);
+    h5tb.param.u_tstd       = std::any_cast<decltype(h5tb.param.u_tstd)>(parameters["u_tstd"]);
+    h5tb.param.u_cstd       = std::any_cast<decltype(h5tb.param.u_cstd)>(parameters["u_cstd"]);
+    h5tb.param.u_tgw8       = std::any_cast<decltype(h5tb.param.u_tgw8)>(parameters["u_tgw8"]);
+    h5tb.param.u_cgw8       = std::any_cast<decltype(h5tb.param.u_cgw8)>(parameters["u_cgw8"]);
+    h5tb.param.spin_dim     = std::any_cast<decltype(h5tb.param.spin_dim)>(parameters["spin_dim"]);
+    h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(parameters["distribution"]);
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
     h5tb.param.J2_ctof               = std::min(h5tb.param.J2_span, settings::model::model_size - 1); // Range unsigned long
     all_mpo_parameters_have_been_set = true;
@@ -691,9 +691,9 @@ long LBit::get_spin_dimension() const { return h5tb.param.spin_dim; }
 void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameters, bool infinite) {
     tools::log->debug("LBIT MPO ({}): Setting averages", get_position());
     if(not infinite) {
-        lattice_parameters.back()["J2_rand"]    = h5pp::varr_t<h5pp::vstr_t>{0.0};
-        lattice_parameters.back()["J3_rand"]    = h5pp::vstr_t(0.0);
-        lattice_parameters.end()[-2]["J3_rand"] = h5pp::vstr_t(0.0);
+        lattice_parameters.back()["J2_rand"]    = decltype(h5tb.param.J2_rand){0.0};
+        lattice_parameters.back()["J3_rand"]    = decltype(h5tb.param.J3_rand)(0.0);
+        lattice_parameters.end()[-2]["J3_rand"] = decltype(h5tb.param.J3_rand)(0.0);
     }
     if(parity_sep) throw std::runtime_error("Parity sector separation is not supported on LBIT MPO");
     set_parameters(lattice_parameters[get_position()]);
