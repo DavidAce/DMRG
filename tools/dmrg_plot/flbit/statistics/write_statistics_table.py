@@ -7,7 +7,7 @@ import tables as tb
 import tables.parameters
 from numba import njit
 from tables import NaturalNameWarning
-
+from decimal import Decimal
 from dmrg_plot.common.io.h5ops import *
 
 warnings.filterwarnings('ignore', category=NaturalNameWarning)
@@ -272,6 +272,7 @@ def get_dtype(tablenode, req_columns, num=True):
     if num:
         names = ['num']
         formats = ['i8']
+    print(f'{tablenode.dtype.fields=}')
     for col, (dtype, offset) in tablenode.dtype.fields.items():
         if req_columns == 'ALL' or col in req_columns:
             names.append(col)
@@ -279,12 +280,15 @@ def get_dtype(tablenode, req_columns, num=True):
                 formats.append(('{}={}{}'.format(dtype.shape, dtype.base.kind, dtype.alignment)))
             elif dtype.base.kind == 'V' and dtype.alignment == 1 and dtype.name == 'void128':  # Check if complex. These show up as "V1"
                 formats.append('complex128')
+            elif dtype.base.kind == 'S' and dtype.alignment == 1:
+                formats.append(f'{dtype.kind}{dtype.itemsize}')
             else:
                 formats.append(('{}=f{}'.format(dtype.shape, dtype.alignment)))
             if num and col == 'number_entropy' and 'hartley_number_entropy' in req_columns:
                 names.append('hartley_number_entropy')
                 formats.append(('<f8'))
-
+            print(f'{col=} | {dtype=}  | {dtype.name=} | {dtype.base=} | {dtype.itemsize=} | {dtype.shape=} {dtype.base.kind=} {dtype.alignment=}')
+    print(f'{names=}\n{formats=}')
     return np.dtype({"names": names, "formats": formats})
 
 
@@ -355,8 +359,16 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
                 stats = np.full(6, num)
             elif col in constant_cols:
                 stats = np.full(6, tablenode.fields(col)[0])
-            elif col == 'delta_t' or np.issubdtype(np.complex128, dtype):  # For constant complex values
+            elif col == 'delta_t' and np.issubdtype(np.complex128, dtype):  # For constant complex values
                 stats = np.full(6, tablenode.fields(col)[0].view(dtype=np.complex128))
+            elif col == 'delta_t' and np.issubdtype('S128', dtype):  # For constant complex values as str
+                stats = np.full(6, tablenode.fields(col)[0].astype(str))
+            elif col == 'physical_time' and np.issubdtype('S64', dtype):
+                t_gets_start = timer()
+                vals = tablenode.fields(col)[()]
+                print('physical_time', vals.astype(np.float64))
+                stats = get_stats(data=vals.astype(np.float64))
+                t_gets = t_gets + (timer() - t_gets_start)
             else:
                 t_gets_start = timer()
                 stats = get_stats(data=tablenode.fields(col)[()])
@@ -614,8 +626,12 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                 stats = get_stats(data=write_statistics_crono4.hartley_number_entropy_data[pn_itr])
             elif col in constant_cols:
                 stats = np.full(6, tabledata[col][0])
-            elif col == 'delta_t' or np.issubdtype(np.complex128, dtype):  # For constant complex values
+            elif col == 'delta_t' and np.issubdtype(np.complex128, dtype):  # For constant complex values
                 stats = np.full(6, tabledata[col][0].view(dtype=np.complex128))
+            elif col == 'physical_time' and np.issubdtype('S64', dtype):
+                vals = tablenode.fields(col)[()]
+                print('physical_time', vals.astype(np.float64))
+                stats = get_stats(data=vals.astype(np.float64))
             else:
                 stats = get_stats(data=tabledata[col])
                 # Save midchain data for histograms
