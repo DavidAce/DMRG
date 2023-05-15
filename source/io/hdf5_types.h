@@ -50,7 +50,6 @@ class h5pp_table_measurements_finite {
 
     public:
     struct table {
-        //        using vlen_type = h5pp::vstr_t;
         uint64_t              iter                   = 0;
         uint64_t              step                   = 0;
         long                  position               = -1;
