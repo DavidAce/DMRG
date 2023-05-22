@@ -476,7 +476,6 @@ void MpsSite::drop_stashed_errors() const {
 }
 
 void MpsSite::take_stash(const MpsSite &other) {
-    auto t_stash = tid::tic_token("take_stash", tid::level::highest);
     if(other.V_stash and other.V_stash->pos_dst == get_position()) {
         /* Left-to-right move.
          * In this case there is a "V" in "other" that should be absorbed into this site from the left.
@@ -489,6 +488,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
+        auto t_stash = tid::tic_token("take_stash_V", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking V stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.V_stash->data.dimensions());
@@ -524,6 +524,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  Here we simply set it as the new L of this site.
          */
 
+        auto t_stash = tid::tic_token("take_stash_U", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking U stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.U_stash->data.dimensions());
@@ -554,6 +555,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
+        auto t_stash = tid::tic_token("take_stash_S", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking S stash from {} | L dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(), other.get_tag(), L->size(),
                               other.S_stash->data.size(), get_truncation_error(), other.S_stash->error);
@@ -566,6 +568,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
+        auto t_stash = tid::tic_token("take_stash_C", tid::level::highest);
         if constexpr(settings::verbose_merge) tools::log->trace("MpsSite({})::take_stash: Taking C stash from {}", get_tag(), other.get_tag());
         if(label == "B")
             tools::log->warn("MpsSite({})::take_stash: Taking C_stash to set LC on B-site | LC dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(),
