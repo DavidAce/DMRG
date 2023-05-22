@@ -14,13 +14,10 @@
 template<typename Char>
 struct fmt::formatter<__float128, Char> : fmt::formatter<double, Char> {
     auto format(__float128 c, format_context &ctx) const {
-        std::string hex;
         std::string dec;
-        hex.resize(64);
         dec.resize(64);
-        quadmath_snprintf(hex.data(), 64, "%Qa", c);
         quadmath_snprintf(dec.data(), 64, "%.36Qg", c);
-        return fmt::format_to(ctx.out(), "{} ({})", dec, hex);
+        return fmt::format_to(ctx.out(), "{}", dec);
     }
 };
 
