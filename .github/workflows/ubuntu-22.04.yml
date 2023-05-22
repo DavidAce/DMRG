@@ -79,10 +79,9 @@ jobs:
       - name: Install conan
         if: matrix.manager == 'conan'
         run: |
-          pip install -v "conan==1.59"
-          conan profile new default --detect --force
-          conan profile update settings.compiler.libcxx=libstdc++11 default
-          conan remote add conan-dmrg https://neumann.theophys.kth.se/artifactory/api/conan/conan-dmrg --insert --force
+          pip install conan
+          conan profile detect --force
+          conan remote add conan-dmrg https://neumann.theophys.kth.se/artifactory/api/conan/conan-dmrg --force
 
       - name: Setup OpenBLAS core type
         run: echo "OPENBLAS_CORETYPE=NEHALEM" >> $GITHUB_ENV
