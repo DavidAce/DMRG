@@ -88,7 +88,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     if np.min(ndata) < 10:
                         logger.warning("ndata < 10: in {}\n\t continuing".format(datanode))
                         continue
-                    t = mmntnode['avg']['physical_time'][()]
+                    t = mmntnode['avg']['physical_time'][()].astype(float)
                     s = mmntnode['avg']['entanglement_entropy'][()]
                     y = datanode[meta['dsetname']][()]
                     n = datanode['avg']['num'][()][0]

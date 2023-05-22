@@ -64,6 +64,9 @@ def parse(algo, batches=None):
         'lbit85', # 20000 realizations u[16] f=[0.2...0.5], L=[12,16] dynamic max-time, test to see if Neel initial state recovers L dependence. it did not
         'lbit86', # 10000 realizations u[16] f=[0.4], L=[12,16] check if the poster hamiltonian recovers L dependence
         'lbit90',  # 500 realizations u[16] f=[0.4], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
+        'lbit91', # 20000 realizations u[16] f=[0.3], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
+        'lbit92', # 20000 realizations u[16] f=[0.2-0.5], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time FAILED
+        'lbit93', # 20000 realizations u[16] f=[0.2-0.5], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
 
     ]
     xdmrg_batches = ['data170',  #

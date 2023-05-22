@@ -87,7 +87,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     dbval = db['dsets'][datanode.name]
                     ydata, colnames = get_table_data(datanode['avg'], meta.get('colname'),'f8')  # Supports multiple columns
                     edata, colnames = get_table_data(datanode['ste'], meta.get('colname'),'f8')  # Supports multiple columns
-                    tdata = datanode['avg']['physical_time'][()]
+                    tdata = datanode['avg']['physical_time'][()].astype(float)
                     ndata = datanode['avg']['num'][()]
 
                     if np.min(ndata) < 10:

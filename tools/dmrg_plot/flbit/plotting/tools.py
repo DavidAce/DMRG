@@ -602,8 +602,8 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin = np.min([tmin, tmax])
     tmax = np.max([tmin, tmax])
 
-    idx1 = np.argmax(tdata >= tmin) - 1
-    idx2 = np.argmax(tdata >= tmax) - 1
+    idx1 = np.argmax(tdata.astype(float) >= tmin) - 1
+    idx2 = np.argmax(tdata.astype(float) >= tmax) - 1
 
     # idx1 = np.where(tdata >= tmin)[0][0]
     # idx2 = np.where(tdata <= tmax)[0][-1]
