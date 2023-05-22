@@ -19,7 +19,7 @@ def get_max_time(L, w, x, r):
     Jmin2 = np.exp(-(r2max - 1) / x) * w2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmax3 = 1.0 / w3
-    tmax = 10*np.max([tmax1, tmax2, tmax3]) # Add an extra decade to make a good SN(t->inf) distribution
+    tmax = np.max([tmax1, tmax2, tmax3])
     return 10 ** np.ceil(np.log10(tmax))
 
 
