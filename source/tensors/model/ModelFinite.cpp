@@ -406,7 +406,8 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
     constexpr auto         contract_idx = tenx::idx({1}, {0});
     auto                   positions    = num::range<size_t>(sites.front(), sites.back() + 1);
     auto                   skip         = std::optional<std::vector<size_t>>();
-    Eigen::Tensor<cplx, 4> multisite_mpo, temp;
+    Eigen::Tensor<cplx, 4> multisite_mpo, mpoL, mpoR;
+    Eigen::Tensor<cplx, 2> mpoR_traced;
 
     if(sites != positions) {
         skip = std::vector<size_t>{};
@@ -421,97 +422,124 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
         // the physical dimension doesn't grow.
         if(multisite_mpo.size() == 0) {
+            auto t_pre = tid::tic_scope("prepending", tid::level::highest);
             if(nbody or skip)
                 multisite_mpo = get_mpo(pos).MPO_nbody_view(nbody, skip);
             else
                 multisite_mpo = get_mpo(pos).MPO();
             continue;
         }
-        const auto         &mpo      = get_mpo(pos);
-        long                dim0     = multisite_mpo.dimension(0);
-        long                dim1     = mpo.MPO().dimension(1);
-        long                dim2     = multisite_mpo.dimension(2) * mpo.MPO().dimension(2);
-        long                dim3     = multisite_mpo.dimension(3) * mpo.MPO().dimension(3);
-        std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
 
-        temp.resize(new_dims);
-        if(nbody or skip)
-            temp.device(tenx::threads::getDevice()) =
-                multisite_mpo.contract(mpo.MPO_nbody_view(nbody, skip), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        else { // Avoids creating a temporary
-            temp.device(tenx::threads::getDevice()) = multisite_mpo.contract(mpo.MPO(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        if(nbody or skip) {
+            mpoL = multisite_mpo;
+            mpoR = get_mpo(pos).MPO_nbody_view(nbody, skip);
+        } else {
+            mpoL = multisite_mpo;
+            mpoR = get_mpo(pos).MPO();
         }
 
+        // Determine if this position adds to the physical dimension or if it will get traced over
         bool do_trace = skip.has_value() and std::find(skip->begin(), skip->end(), pos) != skip->end();
+        long dim0     = mpoL.dimension(0);
+        long dim1     = mpoR.dimension(1);
+        long dim2     = mpoL.dimension(2) * (do_trace ? 1l : mpoR.dimension(2));
+        long dim3     = mpoL.dimension(3) * (do_trace ? 1l : mpoR.dimension(3));
+        auto new_dims = std::array<long, 4>{dim0, dim1, dim2, dim3};
+        multisite_mpo.resize(new_dims);
 
         if(do_trace) {
-            /*! We just got handed a multisite-mpo created as
-             *
-             *       2   3                      2
-             *       |   |                      |
-             *  0 --[ mpo ]-- 1  --->    0 --[ mpo ]-- 1
-             *       |   |                      |
-             *       4   5                      3
-             *
-             *
-             * In this step, a reshape brings back the 6 indices, and index 3 and 5 should be traced over.
-             *
-             * Clarification:
-             *
-             * Let's say L == 4, and we want to build an operator for sites {0,2}.
-             *
-             * To skip it site 1, we set the interactions in mpo[1] to zero by setting nbody = {} (empty set disables all J(i,j,k..) in the mpo )
-             *
-             * Note that we still multiply mpos for sites {0,1,2}, but mpo[1] will only contribute an identity when generating
-             * the terms of the hamiltonian.
-             *
-             * For example,  if the Hamiltonian is H = Σ J[i,j] o[i] * o[j]
-             * then the term describing the interaction betwen sites {0,2} is
-             *
-             *  H[0,2] = J[0,2] o[0] * o[2] = J[0,2] * o ⊗ I ⊗ o
-             *
-             *  where I is a 2x2 identity matrix and o is typically some pauli matrix.
-             *  Since sites.size() == 2 we actually want a 2-site operator, not 3-site,
-             *  so therefore we must eliminate the middle I.
-             *
-             *  Multiplying mpos for sites {0,1,2} would give
-             *
-             *  H[0,1] + H[0,2] + H[1,2] = J[0,1] * o ⊗ o ⊗ I + J[0,2] * o ⊗ I ⊗ o + J[1,2] * I ⊗ o ⊗ o
-             *
-             * so we see that to eliminate the first and last term we have to
-             *
-             * 1) Set J[0,1] = J[1,2] = 0
-             *      - J[0,1] is contributed by mpo[0]
-             *      - J[1,2] is contributed by mpo[1]
-             * 2) Remove the middle I by tracing over it.
-             * 3) Divide by tr(I) = 2
-             *
-             */
-
-            long d0 = dim0;
-            long d1 = dim1;
-            long d2 = multisite_mpo.dimension(2);
-            long d3 = mpo.MPO().dimension(2);
-            long d4 = multisite_mpo.dimension(3);
-            long d5 = mpo.MPO().dimension(3);
-
-            Eigen::Tensor<cplx, 4> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5}).trace(tenx::array2{3, 5});
-            multisite_mpo                = temp2 * temp2.constant(0.5);
+            auto t_skip = tid::tic_scope("skipping", tid::level::highest);
+            // Trace the physical indices of this skipped mpo (this should trace an identity)
+            mpoR_traced = mpoR.trace(tenx::array2{2, 3});
+            mpoR_traced *= mpoR_traced.constant(0.5); // divide by 2 (after tracing identity)
+            // Append it to the multisite mpo
+            multisite_mpo.device(tenx::threads::getDevice()) =
+                mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
         } else {
-            multisite_mpo = temp;
+            auto t_app                                       = tid::tic_scope("appending", tid::level::highest);
+            multisite_mpo.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         }
     }
-
-    // Print the lower left corner
-    //    auto                d      = multisite_mpo.dimensions();
-    //    std::array<long, 4> offset = {d[0] - 1, 0, 0, 0};
-    //    std::array<long, 4> extent = {1, 1, d[2], d[3]};
-    //    std::array<long, 2> shape2 = {d[2], d[3]};
-    //    tools::log->info("mpo sites {}\n{}", sites, linalg::tensor::to_string(multisite_mpo.real().slice(offset, extent).reshape(shape2), 6, 8));
     return multisite_mpo;
 }
 
 Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
+    // Observe that nbody empty/nullopt have very different meanings
+    //      - empty means that no interactions should be taken into account, effectively setting all J(i,j...) = 0
+    //      - nullopt means that we want the default mpo with (everything on)
+    //      - otherwise nbody with values like {1,2} would imply we want 1 and 2-body interactions turned on
+    //      - if nbody has a 0 value in it, it means we want to make an attempt to account for double-counting in multisite mpos.
+
+    if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
+    if(sites == active_sites and cache.multisite_mpo_t and not nbody) return cache.multisite_mpo_t.value();
+    if(not nbody)
+        tools::log->trace("Contracting multisite mpo tensor with sites {}", sites);
+    else
+        tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody.value());
+
+    auto                     t_mpo        = tid::tic_scope("get_multisite_mpo_t", tid::level::highest);
+    constexpr auto           shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
+    constexpr auto           contract_idx = tenx::idx({1}, {0});
+    auto                     positions    = num::range<size_t>(sites.front(), sites.back() + 1);
+    auto                     skip         = std::optional<std::vector<size_t>>();
+    Eigen::Tensor<cplx_t, 4> multisite_mpo_t, mpoL, mpoR;
+    Eigen::Tensor<cplx_t, 2> mpoR_traced;
+
+    if(sites != positions) {
+        skip = std::vector<size_t>{};
+        for(const auto &pos : positions) {
+            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip->emplace_back(pos);
+        }
+    }
+
+    for(const auto &pos : positions) {
+        // sites needs to be sorted, but may skip sites.
+        // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
+        // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
+        // the physical dimension doesn't grow.
+        if(multisite_mpo_t.size() == 0) {
+            auto t_pre = tid::tic_scope("prepending", tid::level::highest);
+            if(nbody or skip)
+                multisite_mpo_t = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
+            else
+                multisite_mpo_t = get_mpo(pos).MPO_t();
+            continue;
+        }
+
+        if(nbody or skip) {
+            mpoL = multisite_mpo_t;
+            mpoR = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
+        } else {
+            mpoL = multisite_mpo_t;
+            mpoR = get_mpo(pos).MPO_t();
+        }
+
+        // Determine if this position adds to the physical dimension or if it will get traced over
+        bool do_trace = skip.has_value() and std::find(skip->begin(), skip->end(), pos) != skip->end();
+        long dim0     = mpoL.dimension(0);
+        long dim1     = mpoR.dimension(1);
+        long dim2     = mpoL.dimension(2) * (do_trace ? 1l : mpoR.dimension(2));
+        long dim3     = mpoL.dimension(3) * (do_trace ? 1l : mpoR.dimension(3));
+        auto new_dims = std::array<long, 4>{dim0, dim1, dim2, dim3};
+        multisite_mpo_t.resize(new_dims);
+
+        if(do_trace) {
+            auto t_skip = tid::tic_scope("skipping", tid::level::highest);
+            // Trace the physical indices of this skipped mpo (this should trace an identity)
+            mpoR_traced = mpoR.trace(tenx::array2{2, 3});
+            mpoR_traced *= mpoR_traced.constant(0.5); // divide by 2 (after tracing identity)
+            // Append it to the multisite mpo
+            multisite_mpo_t.device(tenx::threads::getDevice()) =
+                mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
+        } else {
+            auto t_app                                         = tid::tic_scope("appending", tid::level::highest);
+            multisite_mpo_t.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        }
+    }
+    return multisite_mpo_t;
+}
+
+Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t_old(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     // Observe that nbody empty/nullopt have very different meanings
     //      - empty means that no interactions should be taken into account, effectively setting all J(i,j...) = 0
     //      - nullopt means that we want the default mpo with (everything on)
@@ -590,7 +618,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
              * the terms of the hamiltonian.
              *
              * For example,  if the Hamiltonian is H = Σ J[i,j] o[i] * o[j]
-             * then the term describing the interaction betwen sites {0,2} is
+             * then the term describing the interaction between sites {0,2} is
              *
              *  H[0,2] = J[0,2] o[0] * o[2] = J[0,2] * o ⊗ I ⊗ o
              *
