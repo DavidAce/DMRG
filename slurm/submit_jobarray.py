@@ -7,7 +7,7 @@ from itertools import zip_longest
 from itertools import chain, islice
 from datetime import datetime
 import socket
-
+from random import shuffle
 
 def chunks(iterable, n):
    "chunks(ABCDE,2) => AB CD E"
@@ -29,9 +29,9 @@ def parse(project_name):
     parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task', default=1)
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
     parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
-    parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=1)
-    parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', default="sockets", choices=['threads', 'cores', 'sockets'])
-    parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', default="master", choices=['true', 'false', 'close', 'spread','master'])
+    parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=None)
+    parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', choices=['threads', 'cores', 'sockets'],default=None )
+    parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', choices=['true', 'false', 'close', 'spread','master'],default=None)
     parser.add_argument('--openblas-coretype', type=str, help='Sets OPENBLAS_CORETYPE', default=None)
     parser.add_argument('--ntasks-per-core', type=int, help='Number of tasks (sims) on each core', default=1)
     parser.add_argument('--dryrun', action='store_true', help='Dry run')
@@ -207,16 +207,14 @@ def generate_sbatch_commands(project_name, args):
         # shuffling, which would take too long for lists of this size.
         superlist = []
         seedcount = args.start_seed
-        if args.shuffle:
+        for cfg in cfgfiles:
             for sim in range(args.sims_per_cfg):
-                for cfg in cfgfiles:
-                    superlist.append(['{} {}\n'.format(cfg,seedcount)])
-                    seedcount = seedcount + 1
-        else:
-            for cfg in cfgfiles:
-                for sim in range(args.sims_per_cfg):
-                    superlist.append(['{} {}\n'.format(cfg,seedcount)])
-                    seedcount = seedcount + 1
+                superlist.append(['{} {}\n'.format(cfg,seedcount)])
+                seedcount = seedcount + 1
+
+        if args.shuffle:
+            print(f'Shuffling list with {len(superlist)} jobs')
+            shuffle(superlist)
 
         # Generate job files
         print("Generating {} seeds per .cfg file ({} files in total) split into job arrays of size {}".format(args.sims_per_cfg, len(cfgfiles), args.sims_per_array))
