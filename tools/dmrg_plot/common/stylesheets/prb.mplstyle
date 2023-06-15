@@ -21,8 +21,12 @@ figure.facecolor        : 'white'
 # Use these sizes with ax.set_box_aspect(True) to get square axes
 
 #figure.figsize       : 3.404,3.404 # 100% column width
-figure.figsize       : 2.553,2.553 # 75% column width
+#figure.figsize       : 3.404,3.404 # 100% column width + legend
+#figure.figsize        : 2.553,2.553 # 75% column width
+#figure.figsize        : 9.361,2.553 # 75% column width, 3 subplots wide + legend
+figure.figsize        : 6.800,2.269 # 66% column width, 3 subplots wide
 #figure.figsize       : 1.702,1.702 # 50% column width
+
 
 
 grid.alpha              : 0.5
@@ -34,13 +38,13 @@ legend.fontsize         : small
 legend.title_fontsize   : small
 legend.frameon          : False     # if True, draw the legend on a background patch
 legend.loc              : center left
-legend.borderpad        : 0.01      # border whitespace
+legend.borderpad        : 0.5       # border whitespace
 legend.labelspacing     : 0.15      # the vertical space between the legend entries
 legend.handlelength     : 1.0       # the length of the legend lines
 legend.handletextpad    : 0.5       # the space between the legend line and legend text
 legend.borderaxespad    : 1.0       # the border between the axes and legend edge
 legend.columnspacing    : 0.5       # column separation
-legend.framealpha       : 0.6       # legend patch transparency
+legend.framealpha       : 0.85      # legend patch transparency
 legend.facecolor        : inherit   # inherit from axes.facecolor; or color spec
 legend.edgecolor        : k         # background patch boundary color
 legend.fancybox         : False     # if True, use a rounded box for the
@@ -82,7 +86,7 @@ axes.titlesize          : small   # font size of the axes title
 axes.titleweight        : normal  # font weight of title
 axes.titlecolor         : auto    # color of the axes title, auto falls back to
                                   # text.color as default value
-axes.titley             : 0.05    # position title (axes relative units).  None implies auto
+axes.titley             : 0.90    # position title (axes relative units).  None implies auto
 axes.titlepad           : 2.00    # pad between axes and title in points
 
 axes.labelsize          : small

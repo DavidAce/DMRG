@@ -80,6 +80,7 @@ def get_meta(plotdir):
             'plotprefix': 'SE',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
             'timeloglevel': 1,

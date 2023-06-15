@@ -1,5 +1,3 @@
-#define FMT_USE_FLOAT128 1
-
 #include "algorithms/flbit.h"
 #include "config/parse.h"
 #include "config/settings.h"
@@ -26,7 +24,6 @@
 #include "tools/finite/ops.h"
 #include <fmt/format.h>
 #include <h5pp/h5pp.h>
-#include <unsupported/Eigen/MPRealSupport>
 
 auto get_hamiltonian(const flbit &f) -> Eigen::Matrix<cplx_t, Eigen::Dynamic, Eigen::Dynamic> {
     //    for(const auto &field : f.tensors.model->get_parameter("J1_rand"))

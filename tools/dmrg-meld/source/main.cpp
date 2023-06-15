@@ -272,8 +272,12 @@ int main(int argc, char *argv[]) {
 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrtyp", Size::FIX, 0));
 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corravg", Size::FIX, 0));
 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "correrr", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrmat", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrmat", Size::FIX, 0));
 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corroff", Size::FIX, 0));
+
+
+
+
 
 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
@@ -368,6 +372,9 @@ int main(int argc, char *argv[]) {
                 if(not file.is_regular_file()) continue;
                 if(file.path().extension() != ".h5") continue;
                 if(file.path().stem().string().find(src_match) == std::string::npos) continue;
+                bool include = incfilter.empty() or std::all_of(incfilter.begin(), incfilter.end(), [&file](const auto &s) { return file.path().string().find(s) != std::string::npos; });
+                bool exclude = excfilter.empty() or std::any_of(excfilter.begin(), excfilter.end(), [&file](const auto &s) { return file.path().string().find(s) != std::string::npos; });
+                if(exclude or not include) continue;
                 h5files.emplace_back(file);
             }
             std::sort(h5files.begin(), h5files.end());

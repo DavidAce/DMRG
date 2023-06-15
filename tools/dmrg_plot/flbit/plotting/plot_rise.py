@@ -79,7 +79,7 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         dbval = db['dsets'][datanode.name]
                         ydata = datanode['avg'][meta['colname']][()]
                         edata = datanode['ste'][meta['colname']][()]  # Use standard deviation for curve_fit
-                        tdata = datanode['avg']['physical_time'][()]
+                        tdata = datanode['avg']['physical_time'][()].astype(float)
                         ndata = datanode['avg']['num'][()]
 
                         if np.min(ndata) < 10:

@@ -58,30 +58,31 @@ def get_uniform_palette_names(num):
     return palettes[0:num]
 
 
-def get_colored_lstyles(db, linspec, default_palette, filter=None):
-    linprod = list(product(*get_vals(db, linspec, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
+def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
+    linprod = list(product(*get_vals(db, specs, filter)))  # All combinations of linspecs (names of parameters that iterate lines)
     lstyles = [None] * len(linprod)
-
+    if idx is None:
+        idx = 0
     if isinstance(default_palette, list):
-        linlist = [get_vals(db=db, keyfmt=lval, filter=filter) for lval in linspec]
-        linlens = [len(llist) for llist in linlist]
-        if len(linspec) == 2 and all([ll > 1 for ll in linlens]):
+        slist = [get_vals(db=db, keyfmt=spec, filter=filter) for spec in specs]
+        slens = [len(llist) for llist in slist]
+        if len(specs) == 2 and all([sl > 1 for sl in slens]):
             # The number of palettes == size of the first linspec.
             # The number of colors in each palette == the size of the second linspec
             palette_prod = []
-            for pidx in range(linlens[0]):
+            for pidx in range(slens[0]):
                 # Skip the first color that is usually too dark or bright
-                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=linlens[1]+1)[1:] )
+                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
             return palette_prod, lstyles
         else:
-            default_palette = default_palette[0]
+            default_palette = default_palette[idx]
 
-
-    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
+    # Skip the first color that is usually too dark or bright
+    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
     lstyles = [None] * len(linprod)
-    if len(linspec) == 2:
-        linkey0 = get_keys(db, linspec[0])  # Sets number of colors
-        linkey1 = get_keys(db, linspec[1])  # Sets number of linestyles
+    if len(specs) == 2:
+        linkey0 = get_keys(db, specs[0])  # Sets number of colors
+        linkey1 = get_keys(db, specs[1])  # Sets number of linestyles
         if len(linkey0) == 2:
             palette = reversed(sns.color_palette(palette='tab20', n_colors=len(linprod)))
         if len(linkey0) == 3:
@@ -158,6 +159,8 @@ def write_attributes(*args, **kwargs):
 
 
 def get_optimal_subplot_num(numplots):
+    if numplots == 3:
+        return 1, 3
     r = np.sqrt(numplots)
     cols = int(np.ceil(r))
     rows = int(np.floor(r))
@@ -585,7 +588,7 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin1 = 1.0 / J1max
     tmax1 = 1.0 / J1min
 
-    r2max = np.min([r, int(L/2)])  # Maximum interaction range, max(|i-j|)
+    r2max = np.float64(np.min([r, L//2]))  # Maximum interaction range, max(|i-j|)
     Jmin2 = w2 * np.exp(- r2max / (2.0 * x))  # Size of the smallest 2-body terms (furthest neighbor, up to L/2)
     Jmax2 = w2 * np.exp(- 1.0 / x)  # Size of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
@@ -624,8 +627,7 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
     wn = db['vals']['w']
 
     w1 = wn[0]  # The width of distribution for on-site field.
-    w2 = wn[
-        1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
+    w2 = wn[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
     w3 = wn[2]  # The width of distribution for three-body interactions.
 
     if r == np.iinfo(np.uint64).max or r == 'L':
@@ -633,10 +635,9 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
 
     tmax1 = 1.0 / w1
 
-    r2max = np.min([r, L])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * 2 * np.sqrt(
-        2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-    Jmax2 = np.exp(-(1 - 1) / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
+    r2max = np.float64(np.min([r, L]))  # Number of sites from the center site to the edge site, max(|i-j|)/2
+    Jmin2 = np.exp(-(r2max * 4.0/5.0) / x) * w2 * np.sqrt(2.0 / np.pi)  # order of magnitude of
+    Jmax2 = np.exp(-1.0 / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
 
     tmax3 = 1.0 / w3
@@ -865,8 +866,11 @@ def get_fig_meta(numplots: int, meta: dict):
         'yticks': meta.get('yticks'),
         'xlabel': meta.get('xlabel'),
         'ylabel': meta.get('ylabel'),
+        'ylabel_inner_visible' : meta.get('ylabel_inner_visible'),
+        'ymarkoffset': [],
         'axes_used': [],
         'legends': [],
+        'legendshow': meta.get('legendshow'),
         'legendoutside': get_default(meta, 'legendoutside'),
         'legendcollect': get_default(meta, 'legendcollect'),
         'legendlocation': meta.get('legendlocation'),
@@ -1010,6 +1014,10 @@ def get_fig_meta(numplots: int, meta: dict):
         if not is_first_col and f.get('sharey') in ['row', 'all', True]:
             f['ax'][-1].tick_params(axis='y', which='both', labelleft=False, zorder=0)
             f['ax'][-1].yaxis.label.set_visible(False)
+        if not is_first_col and f.get('ylabel_inner_visible') is False:
+            f['ax'][-1].yaxis.label.set_visible(False)
+
+
 
     # Set title
     if title := f.get('suptitle'):
@@ -1123,6 +1131,8 @@ def columns_are_equal(fmeta):
 
 
 def add_legend5(fmeta):
+    if fmeta.get('legendshow') is False:
+        return fmeta
     # meta should be a dict with keys 'ax' with the corresponding axes and 'legends' which names the extra legends
     # for (oidx,gso),(nrow,ncol) in zip(enumerate(fmeta['gso']), np.ndindex((fmeta['nrows'], fmeta['ncols']))):
     n = len(fmeta['ax'])
@@ -1191,6 +1201,9 @@ def add_legend5(fmeta):
                                             )
         formatted_labels = get_formatted_columns(columns)
         legendtitle = fmeta.get('legendtitle')
+        if legendtitle is None:
+            legendtitle = fmeta['legends'][iax][0]['header']
+
         if iax_tgt is not None:
             iax = iax_tgt  # Put legends on common axis
         if figlegend:
@@ -1199,13 +1212,12 @@ def add_legend5(fmeta):
                                               loc=loc_eq,
                                               prop=dict(stretch="ultra-condensed"))
         else:
-            print(f'setting legend on {legend_eq=} {iax=}')
             lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
                                               title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
                                               loc=loc_eq,
                                               bbox_to_anchor=anchor,
                                               prop=dict(stretch="ultra-condensed"))
-        # lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
+        lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
         if collect:
             break
 
@@ -1234,7 +1246,7 @@ def add_legend5(fmeta):
         lg = fmeta[legend_nq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
                                           title=''.join(formatted_labels), loc=loc_nq,
                                           prop=dict(stretch="ultra-condensed"))
-        lg._legend_box.align = "right"  # Align the legend title right (i.e. the title row)
+        lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
 
     return fmeta
 

@@ -19,7 +19,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
     path_effects_dashed = [pe.SimpleLineShadow(offset=(-0.1, -0.1), alpha=0.1), pe.Normal()]
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
-    legend_col_keys = linspec.copy()
+    legend_col_keys = [l for l in linspec if l in meta['legendcols']]
     if legendcols := meta['legendcols']:
         for col in legendcols:
             if not col in [l.split(':')[0] for l in subspec + linspec]:
@@ -52,6 +52,11 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                 for datanode in datanodes:
                     # datanode = datanode[0]
                     dbval = db['dsets'][datanode.name]
+                    if dbval['vals']['f'] == 0.3:
+                        continue
+                    if dbval['vals']['L'] != 20:
+                        continue
+
                     ndata = dbval['vals']['num']
                     Ldata = dbval['vals']['L']
                     xdata = np.array(range(Ldata))

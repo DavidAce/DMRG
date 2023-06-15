@@ -19,7 +19,7 @@
         "DMRG_BUILD_TOOLS": "TRUE",
         "DMRG_CMAKE_DEBUG": "TRUE",
         "DMRG_PACKAGE_MANAGER": "find",
-        "EIGEN_USE_THREADS": "FALSE",
+        "EIGEN_USE_THREADS": "TRUE",
         "TBLIS_THREAD_MODEL": "openmp",
         "BUILD_SHARED_LIBS": "FALSE",
         "COMPILER_ENABLE_MOLD": "FALSE",
@@ -493,7 +493,7 @@
     },
     {
       "name": "tetralith",
-      "displayName": "Release|march=native|conan|mkl",
+      "displayName": "Release|march=native|conan|flexiblas",
       "inherits": [
         "flexiblas",
         "native",
@@ -505,6 +505,25 @@
       "cacheVariables": {
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
+        "DMRG_BUILD_TOOLS": "FALSE",
+        "DMRG_USE_QUADMATH": "TRUE",
+        "CONAN_OPTIONS": "-o hdf5:shared=True"
+      }
+    },
+    {
+      "name": "pdc",
+      "displayName": "Release|march=native|conan|mkl",
+      "inherits": [
+        "mkl",
+        "native",
+        "conan",
+        "release",
+        "default"
+      ],
+      "binaryDir": "${sourceDir}/build/Release",
+      "cacheVariables": {
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/fLBIT/build/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
         "DMRG_USE_QUADMATH": "TRUE",
         "CONAN_OPTIONS": "-o hdf5:shared=True"
@@ -580,6 +599,12 @@
       "name": "tetralith",
       "displayName": "Release|march=native|conan|mkl",
       "configurePreset": "tetralith",
+      "jobs": 16
+    },
+    {
+      "name": "pdc",
+      "displayName": "Release|march=native|conan|openblas",
+      "configurePreset": "pdc",
       "jobs": 16
     },
     {

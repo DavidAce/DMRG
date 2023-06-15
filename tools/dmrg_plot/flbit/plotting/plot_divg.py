@@ -45,12 +45,12 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
-    # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
-    legend_col_keys = []
-    if legendcols := meta['legendcols']:
-        for col in legendcols:
-            if not col in [l.split(':')[0] for l in subspec]:
-                legend_col_keys.append(col)
+    legend_col_keys = meta.get('legendcols')
+    # if legendcols := meta.get('legendcols'):
+    #     for col in legendcols:
+    #         speclist = [l.split(':')[0] for l in figspec + subspec + linspec]
+    #         if not col in speclist and not col in legend_col_keys:
+    #             legend_col_keys.append(col)
 
     figprod = list(product(*get_vals(db=db, keyfmt=figspec, filter=meta.get('filter'))))  # All combinations of figspecs values
     subprod = list(product(*get_vals(db=db, keyfmt=subspec, filter=meta.get('filter'))))  # All combinations of subspecs values
@@ -69,7 +69,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             pcov = None
             dbval = None
             logger.debug('-- plotting subs: {}'.format(subvals))
-            palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
+            palette, lstyles = get_colored_lstyles(db, linspec, palette_name, filter=None, idx=idx)
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting lins: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
@@ -138,14 +138,26 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                 line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color=color, alpha=1.0,
                                                     path_effects=path_effects, linewidth=1.25,
                                                     zorder=0)
-                                for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
-                                    key, fmt = key.split(':') if ':' in key else [key, '']
-                                    f['legends'][idx][icol]['handle'].append(line_ext)
-                                    f['legends'][idx][icol]['title'] = db['tex'][key]
-                                    if icol == 0:
-                                        f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:' + f'$L$:${lenval}$,$W$:${W}$' + '}')
-                                        # f['legends'][idx][icol]['label'].append('\makebox[3ex][l]{PRB:102.100202 ' + f'L={lenval},W={W}' + '}')
-                                    else:
+                                if idx == 0:
+                                    # key, fmt = key.split(':') if ':' in key else [key, '']
+                                    f['legends'][idx][0]['handle'].append(line_ext)
+                                    f['legends'][idx][0]['label'] .append(f'{lenval}')
+                                    if f['legends'][idx][0]['title'] is None:
+                                        f['legends'][idx][0]['header'] = 'PRB\n102.100202'
+                                        # f['legends'][idx][0]['header'] = 'Luitz et al.'
+                                        f['legends'][idx][0]['title'] = '$L$'
+
+                                    f['legends'][idx][1]['handle'].append(line_ext)
+                                    f['legends'][idx][1]['label'].append(f'{W}')
+                                    if f['legends'][idx][1]['title'] is None:
+                                        f['legends'][idx][1]['title'] = '$W$'
+
+
+                                    # f['legends'][idx][0]['label'].append('\makebox[3ex][l]{' + f'$L$=${lenval}$,$W$=${W}$' + '}')
+                                    for icol, (col, key) in enumerate(zip(legendrow[2:], legend_col_keys[2:])):
+                                        key, fmt = key.split(':') if ':' in key else [key, '']
+                                        f['legends'][idx][icol]['handle'].append(line_ext)
+                                        f['legends'][idx][icol]['title'] = db['tex'][key]
                                         f['legends'][idx][icol]['label'].append('')
 
             if meta.get('marklog2'):
@@ -203,7 +215,7 @@ def plot_divg_v2_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
 
     # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
     legend_col_keys = []
-    if legendcols := meta['legendcols']:
+    if legendcols := meta.get('legendcols'):
         for col in legendcols:
             if not col in [l.split(':')[0] for l in subspec]:
                 legend_col_keys.append(col)

@@ -4,8 +4,8 @@ from matplotlib.ticker import LogLocator, \
 import numpy as np
 from pathlib import Path
 
-# mplstyle = '../common/stylesheets/prb.mplstyle'
-mplstyle = '../common/stylesheets/slack.mplstyle'
+mplstyle = '../common/stylesheets/prb.mplstyle'
+# mplstyle = '../common/stylesheets/slack.mplstyle'
 prb = 'prb' in mplstyle
 
 
@@ -43,11 +43,13 @@ def get_meta(plotdir):
                 # 'L': [36],
                 # 'L': [12],
                 # 'L': ['L_8', 'L_12', 'L_16', 'L_20'],
-                # 'L': ['L_12'],
+                # 'L': [24],
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
+                # 'f': [0.4],
                 'f': [0.2,0.3,0.4],
+                'L': [16,20,24],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
                 # 'f': ['f_0.4000', 'f_0.5000', 'f_0.6000'],
                 # 'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
@@ -66,12 +68,12 @@ def get_meta(plotdir):
 
         'ent': {
             'default' : default,
-            'axtitle': False,
+            'axtitle': True,
             'groupname': 'measurements',
             'colname': 'entanglement_entropy',
             'normpage': False,
-            'titlename': 'Entanglement Entropy',
-            'ylabel': '$\langle \langle S(L/2)\\rangle \\rangle$',
+            #'titlename': 'Entanglement Entropy',
+            'ylabel': '$\langle \langle S_E\\rangle \\rangle$',
             'xlabel': '$t$',
             # 'yscale': 'log',
             # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
@@ -84,22 +86,22 @@ def get_meta(plotdir):
             'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
+            'markloglogoffset' : 0.1,
+            'fillerror': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f','num'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            
-            
             'legendlocation': 'lower right',
         },
         'num1': {
             'default' : default,
-            'axtitle': False,
+            'axtitle': True,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
-            'titlename': 'Number Entropy',
-            'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
+            # 'titlename': 'Number Entropy',
+            'ylabel': '$\langle \langle S_N\\rangle \\rangle$',
             'yformat': '%.3f',
             # 'yscale': 'log',
             'plotprefix': 'SN',
@@ -112,24 +114,25 @@ def get_meta(plotdir):
             'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
+            'markloglogoffset': 0.005,
             'fitloglogwindow': True,
-            'shadederror': False,
+            'fillerror': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
+            'legendshow': True,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
-
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
         'num1-med': {
             'default': default,
-            'axtitle': False,
+            'axtitle': True,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
-            'titlename': 'Number Entropy',
-            'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
+            # 'titlename': 'Number Entropy',
+            'ylabel': '$\langle \langle S_N\\rangle \\rangle$',
             'yformat': '%.3f',
             'ystat': 'med',
             # 'yscale': 'log',
@@ -144,12 +147,14 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            'shadederror': False,
+            'fillerror': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
+            'legendshow': False,
+            'legendoutside': False,
+            'legendcollect': False,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
-
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
@@ -159,32 +164,38 @@ def get_meta(plotdir):
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
-            'titlename': 'Number Entropy',
+            # 'titlename': 'Number Entropy',
             'filter':{
                 # 'f': [0.3,0.5],
                 # 'u': [16],
             },
-            'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
+            'ylabel': '$\langle\langle S_N\\rangle \\rangle$',
             'yformat': '%.3f',
             # 'yscale': 'log',
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',
-            # 'ymin': 0.120,
-            # 'ymax': 0.325,
+            'xticks': [-1,0,1,2,3],
+            'ylabel_inner_visible': False,
+            # 'ymin': 0.31,
+            # 'ymax': 0.36,
             # 'xmin': 0.0,
             # 'xmax': 2.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
+            'markloglogoffset': 0.008,
             'fitloglogwindow': True,
-            'fillerror': False,
+            'fillerror': True,
             'timeloglevel': 2,
             'mplstyle': mplstyle,
+            'legendshow': False,
+            'legendoutside': False,
+            'legendcollect': False,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f','num','tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             
             
             'legendlocation': 'lower right',
@@ -196,12 +207,12 @@ def get_meta(plotdir):
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
-            'titlename': 'Number Entropy',
+            # 'titlename': 'Number Entropy',
             'filter': {
                 # 'f': [0.3,0.5],
                 # 'u': [16],
             },
-            'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
+            'ylabel': '$\langle\langle S_N\\rangle \\rangle$',
             'yformat': '%.3f',
             'ystat' : 'med',
             # 'yscale': 'log',
@@ -217,14 +228,46 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            'fillerror': False,
+            'fillerror': True,
             'timeloglevel': 2,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
-
+            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
+        },
+        'num1num1': {
+            'default': default,
+            'axtitle': True,
+            'groupname': 'measurements',
+            'colname': ['number_entropy'],
+            'normpage': False,
+            # 'titlename': 'Number Entropy',
+            'ylabel': '$\langle\langle S_N\\rangle \\rangle$',
+            'plotprefix': 'SNSN',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'marksaturation': True,
+            'findloglogwindow': True,
+            'markloglogwindow': True,
+            'markloglogoffset': 0.008,
+            'fitloglogwindow': True,
+            'fillerror': True,
+            'timeloglevel': 1,
+            'mplstyle': mplstyle,
+            'legendshow': True,
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendlocation': 'lower right',
+
+            'zoomloglogwindow': {
+                'colnum': [0],  # Which columns (colname) to zoom in on
+                'pos': [0.125, 0.10, 0.42, 0.42],
+                # 'pos': [0.03, 0.6, 0.32, 0.32],  # Positon of the inset, x0 y0 width height
+                'coords': [None, None, None, None],
+                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
+                # 'legendtitle': '$S_N$'
+            },
+            'linestyle': ['solid', 'dashed'],
         },
         'numH1': {  # Hartley number entropy
             'default' : default,
@@ -341,6 +384,9 @@ def get_meta(plotdir):
             'timeloglevel': 1,
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
+            'legendoutside': False,
+            'legendcollect': False,
+
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
             
@@ -370,9 +416,9 @@ def get_meta(plotdir):
             'timeloglevel': 1,
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
+            'legendoutside': False,
+            'legendcollect': False,
             'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            
-            
             'legendlocation': 'lower right',
         },
 
@@ -388,9 +434,9 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
+            'legendoutside': False,
+            'legendcollect': False,
             'legendcols': ['bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            
-            
             'legendlocation': 'best',
         },
         'tsim': {
@@ -408,6 +454,8 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
+            'legendoutside': False,
+            'legendcollect': False,
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
             
             
@@ -455,6 +503,8 @@ def get_meta(plotdir):
             'markloglogwindow': False,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
+            'legendoutside': False,
+            'legendcollect': False,
             'legendcols': ['w', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'best',
         },
@@ -648,48 +698,52 @@ def get_meta(plotdir):
         },
         'divg-ent': {  # Distribution of infinite time averaged entropy
             'default' : default,
+            'axtitle' : False,
             'groupname': 'measurements',
             'dsetname': 'entanglement_entropy',
             'normpage': False,
-            'titlename': 'Entanglement Entropy',
+            # 'titlename': 'Entanglement Entropy',
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_E^\infty(L/2))$',
-            'yscale': 'log',
+            # 'yscale': 'log',
             # 'yformat': '%.2f',
             'sharex': 'all',
             'sharey': 'all',
-            # 'xmin': 0.0,
-            # 'xmax': 1.5,
+            'xmin': 0.0,
+            'xmax': 4.5,
+            'ymax': 1.15,
+            'ymin': 1e-3,
+            # 'ymax': 0.45,
+            # 'xmin': 1,
             'tidx': 'window',  # Time indices for which to plot the distribution
             'bins': 60,
             'xlabel': '$S_E^\infty$',
             'density': True,
             'plotprefix': 'SE',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'ymin': 1e-3,
-            # 'ymax': 0.45,
-            # 'xmin': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
+            'legendshow': False,
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             'legendlocation': 'lower left',
         },
         'divg-num': {  # Distribution of infinite time averaged entropy
             'default' : default,
+            'axtitle' : False,
             'groupname': 'measurements',
             'dsetname': 'number_entropy',
             'normpage': False,
-            'titlename': 'Number Entropy',
+            # 'titlename': 'Number Entropy',
             'filter': {
                 #'L': [12, 16, 20],
                 #'f': [0.2,0.3,0.4,0.5],
                 #'u': [16],
             },
             # 'figsize': (3.375, 3.00),
-            'ylabel': '$p(S_N^\infty(L/2))$',
+            'ylabel': '$p(S_N^\infty)$',
             'yscale': 'log',
             # 'yformat': '%.2f',
             'sharex': 'all',
@@ -711,7 +765,8 @@ def get_meta(plotdir):
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
+            'legendshow' : True,
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,

@@ -17,10 +17,6 @@
     #include <flexiblas/flexiblas_api.h>
 #elif __has_include(<cblas.h>) && __has_include(<openblas_config.h>)
     #include <cblas.h>
-    #include <openblas_config.h>
-    #if defined(OPENBLAS_VERSION)
-        #define OPENBLAS_AVAILABLE
-    #endif
 #endif
 
 namespace settings {

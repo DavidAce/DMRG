@@ -23,7 +23,9 @@ def chunks(iterable, n):
 def parse(project_name):
     parser = argparse.ArgumentParser(description='SLURM batch submission for {}'.format(project_name))
     parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release', choices=['None', 'Debug', 'Release', 'RelWithDebInfo', 'Profile'])
-    parser.add_argument('-c', '--cluster', type=str, help='Comma separated list of Slurm clusters', default=None, choices=['kraken', 'draken', 'kthulu', 'tetralith'])
+    parser.add_argument('-M', '--clusters', type=str, help='Comma separated list of Slurm clusters', default=None, choices=['kraken', 'draken', 'kthulu', 'tetralith'])
+    parser.add_argument('-w', '--nodelist', type=str, help='Comma separated list of node names', default=None)
+    parser.add_argument('--reservation', type=str, help='Name of reservation to run under', default=None)
     parser.add_argument('--config', type=str, help='File or path to files containing simulation config files (suffixed .cfg)', default='input')
     parser.add_argument('--pattern', type=str, help='Only consider simulation config files containing this substring', default=None)
     parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task', default=1)
@@ -139,8 +141,12 @@ def generate_sbatch_commands(project_name, args):
 
 
 
-    if args.cluster:
-        sbatch_arg.extend(['--cluster={}'.format(args.cluster)])
+    if args.clusters:
+        sbatch_arg.extend([f'--clusters={args.clusters}'])
+    if args.nodelist:
+        sbatch_arg.extend([f'--nodelist={args.nodelist}'])
+    if args.reservation:
+       sbatch_arg.extend([f'--reservation={args.reservation}'])
     if args.cpus_per_task:
         sbatch_arg.extend(['--cpus-per-task={}'.format(args.cpus_per_task)])
     if args.ntasks_per_core:

@@ -311,8 +311,9 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
 
     if '__save_data__' in tablereqs and tablename in tablereqs['__save_data__']:
         with h5py.File(tgt,'a') as h5f:
+            chunks = np.min([len(tablenode[()]), 100])
             h5f.create_dataset(f'{statgroup}/data', data=tablenode,
-                               chunks=(100,), compression='gzip', compression_opts=9)
+                               chunks=(chunks,), compression='gzip', compression_opts=9)
 
     # open h5 file for appending
     with tb.File(tgt, 'a') as h5f:

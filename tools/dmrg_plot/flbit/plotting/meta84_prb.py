@@ -4,8 +4,8 @@ from matplotlib.ticker import LogLocator, \
 import numpy as np
 from pathlib import Path
 
-# mplstyle = '../common/stylesheets/prb.mplstyle'
-mplstyle = '../common/stylesheets/slack.mplstyle'
+mplstyle = '../common/stylesheets/prb.mplstyle'
+# mplstyle = '../common/stylesheets/slack.mplstyle'
 prb = 'prb' in mplstyle
 
 
@@ -47,7 +47,7 @@ def get_meta(plotdir):
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
-                'f': [0.2,0.3,0.4],
+                # 'f': ['f_0.5000'],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
                 # 'f': ['f_0.4000', 'f_0.5000', 'f_0.6000'],
                 # 'f': ['f_0.5000', 'f_1.0000', 'f_2.0000', 'f_3.0000', 'f_4.0000', 'f_5.0000'],
@@ -56,8 +56,10 @@ def get_meta(plotdir):
                 # 'u': ['u_5', 'u_6'],
                 # 'u': [32],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
-                # 'tgw8': ['ID'],
-                # 'cgw8': ['EX'],
+                # 'L': [24],
+                'f': [0.2, 0.3, 0.4],
+                'tgw8': ['ID'],
+                'cgw8': ['EX'],
                 # 'u': [8,16,24,32,40,48,56,64],
                 # 'u': [8, 16, 32, 64, 80],
                 # 'ubond': [256],
@@ -73,7 +75,6 @@ def get_meta(plotdir):
             'titlename': 'Entanglement Entropy',
             'ylabel': '$\langle \langle S(L/2)\\rangle \\rangle$',
             'xlabel': '$t$',
-            # 'yscale': 'log',
             # 'xmaloc': LogLocator(base=10, numticks=10, numdecs=32),
             # 'xmiloc': LogLocator(base=10, numticks=10, subs=(.1, .2, .3, .4, .5, .6, .7, .8, .9)),
             # 'ymax': 1e10,
@@ -81,12 +82,11 @@ def get_meta(plotdir):
             'plotprefix': 'SE',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
             'timeloglevel': 1,
             'mplstyle': mplstyle,
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
             
@@ -101,15 +101,13 @@ def get_meta(plotdir):
             'titlename': 'Number Entropy',
             'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.3f',
-            # 'yscale': 'log',
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            # 'ymin': 0.120,
-            # 'ymax': 0.325,
-            # 'xmin': 5e-1,
-            # 'xmax': 5e+3,
+            'ymin': 0.120,
+            'ymax': 0.325,
+            'xmin': 5e-1,
+            'xmax': 5e+3,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
@@ -117,39 +115,9 @@ def get_meta(plotdir):
             'timeloglevel': 1,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
-
-            'legendlocation': 'lower right',
-            # 'legendlocation': (0.01, 0.65),
-        },
-        'num1-med': {
-            'default': default,
-            'axtitle': False,
-            'groupname': 'measurements',
-            'colname': 'number_entropy',
-            'normpage': False,
-            'titlename': 'Number Entropy',
-            'ylabel': '$\langle \langle S_N(L/2)\\rangle \\rangle$',
-            'yformat': '%.3f',
-            'ystat': 'med',
-            # 'yscale': 'log',
-            'plotprefix': 'SN',
-            'plotdir': Path(plotdir, Path(mplstyle).stem),
-            # 'ymin': 0.120,
-            # 'ymax': 0.325,
-            # 'xmin': 5e-1,
-            # 'xmax': 5e+3,
-            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'marksaturation': True,
-            'findloglogwindow': True,
-            'markloglogwindow': True,
-            'fitloglogwindow': True,
-            'shadederror': False,
-            'timeloglevel': 1,
-            'mplstyle': mplstyle,
-            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
-
+            'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
@@ -166,53 +134,14 @@ def get_meta(plotdir):
             },
             'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
             'yformat': '%.3f',
-            # 'yscale': 'log',
             'plotprefix': 'SN',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'sharex': 'all',
             'sharey': 'none',
-            # 'ymin': 0.120,
-            # 'ymax': 0.325,
-            # 'xmin': 0.0,
-            # 'xmax': 2.5,
-            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
-            'marksaturation': True,
-            'findloglogwindow': True,
-            'markloglogwindow': True,
-            'fitloglogwindow': True,
-            'fillerror': False,
-            'timeloglevel': 2,
-            'mplstyle': mplstyle,
-            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f','num','tsim'],  # Choose 'num', 'bmax','tsim'
-            
-            
-            'legendlocation': 'lower right',
-            # 'legendlocation': (0.01, 0.65),
-        },
-        'num2-med': {
-            'default': default,
-            'axtitle': False,
-            'groupname': 'measurements',
-            'colname': 'number_entropy',
-            'normpage': False,
-            'titlename': 'Number Entropy',
-            'filter': {
-                # 'f': [0.3,0.5],
-                # 'u': [16],
-            },
-            'ylabel': '$\langle\langle S_N(L/2)\\rangle \\rangle$',
-            'yformat': '%.3f',
-            'ystat' : 'med',
-            # 'yscale': 'log',
-            'plotprefix': 'SN',
-            'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'sharex': 'all',
-            'sharey': 'none',
-            # 'ymin': 0.120,
-            # 'ymax': 0.325,
-            # 'xmin': 0.0,
-            # 'xmax': 2.5,
+            'ymin': 0.120,
+            'ymax': 0.325,
+            'xmin': 0.0,
+            'xmax': 2.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
@@ -221,8 +150,9 @@ def get_meta(plotdir):
             'timeloglevel': 2,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f', 'bavg:.0f', 'num', 'tsim'],  # Choose 'num', 'bmax','tsim'
-
+            'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
+            
+            
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
@@ -462,17 +392,18 @@ def get_meta(plotdir):
             'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
-            'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
-            'filter': {
-                'L': [12,20],
-                'f': [0.2,0.5],
+            #'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
+            # 'filter': {
+                # 'L': [24],
+                # 'f': [0.2,0.4],
                 # 'u': [16],
-            },
+            # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
-            'ylabel': '$\log_{10} \langle \langle O_{ij}\\rangle\\rangle_\mathrm{arithmetic}$ ',
+            'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
-            'xticks': [0, 6, 12, 18] if prb else None,
+            # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prb else None,
+            'xticks': [0, 5, 10, 15, 20] if prb else None,
             # 'yticks': [1e0, 1e-4, 1e-9],
             'yticks': [0, -3, -6, -9, -12, -15],
             # 'yscale': 'log',
@@ -481,15 +412,17 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
             'ymin': -16,
-            'xnormalize': True,
+            'xmax': 20,
+            'xmin': -1,
+            'xnormalize': False,
             # 'xmax': 32 if prb else None,
             # 'ymin': 1e-14,
             # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [] if prb else [],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['f'] if prb else [],  # Choose 'num', 'bmax','tsim'
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
-            'legendoutside': True,
+            'legendoutside': False,
             'legendcollect': False,
-            'legendlocation': (0.48, 0.58) if prb else 'center left',
+            'legendlocation': (0.40, 0.50) if prb else 'center left',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
             'lbit-site': [0, 'mid', 'last'],

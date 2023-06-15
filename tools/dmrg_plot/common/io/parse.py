@@ -66,7 +66,7 @@ def parse(algo, batches=None):
         'lbit90',  # 500 realizations u[16] f=[0.4], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
         'lbit91', # 20000 realizations u[16] f=[0.3], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
         'lbit92', # 20000 realizations u[16] f=[0.2-0.5], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time FAILED
-        'lbit93', # 20000 realizations u[16] f=[0.2-0.5], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
+        'lbit93', # 50000 realizations u[16] f=[0.2-0.4], L=[12-24] fixed many bugs and increased precision with __float128:
 
     ]
     xdmrg_batches = ['data170',  #
