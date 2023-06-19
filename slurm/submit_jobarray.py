@@ -56,6 +56,7 @@ def parse(project_name):
     parser.add_argument('--requeue', action='store_true', help='Requeue job in case of failure')
     parser.add_argument('--start-seed', type=int, help='Starting seed for random number generator', default=0)
     parser.add_argument('--shuffle', action='store_true', help='Shuffle all seeeds and config files')
+    parser.add_argument('--parallel', action='store_true', help='Use GNU parallel to run the job array step in parallel')
     parser.add_argument('-t', '--time', type=str, help='Time limit for each job', default='0-01:00:00' )
     parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose sbatch')
     parser.add_argument('--default-kraken', action='store_true', help='Set defaults for kraken cluster')
@@ -241,8 +242,9 @@ def generate_sbatch_commands(project_name, args):
         numseeds = sum(1 for line in open(jobfile))
         rclone_prefix = f' -p {args.rclone_prefix}' if args.rclone_prefix else ''
         rclone_remove =  ' -r' if args.rclone_remove else ''
-        sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -f {}{}{}'
-                          .format(' '.join(sbatch_arg),numseeds, args.sims_per_task, exec, jobfile, rclone_prefix, rclone_remove))
+        parallel      = ' -P' if args.parallel else ''
+        sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -f {}{}{}{}'
+                          .format(' '.join(sbatch_arg),numseeds, args.sims_per_task, exec, jobfile,parallel, rclone_prefix, rclone_remove))
 
     Path("logs").mkdir(parents=True, exist_ok=True)
 
