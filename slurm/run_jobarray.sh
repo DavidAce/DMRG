@@ -39,12 +39,12 @@ rclone_file () {
     return
   fi
   if [ -f $1 ] ; then
-    echo "RCLONE FILE              : $rclone_prefix $1"
-    rclone copy "." neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix" -L --progress --update --include="$1"
-    echo "rclone exit code: $?"
-    if [ -n "$2" ] && [ "$2" == "true" ] && [ "$?" == "0" ]; then
-      echo "RCLONE REMOVE            : rm -f $1"
-      rm -f $1
+    if [ -n "$rclone_remove" ] && [ "$rclone_remove" == "true" ]; then
+      echo "RCLONE MOVE FILE         : $rclone_prefix $1"
+      rclone moveto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --verbose --update
+    else
+      echo "RCLONE COPY FILE         : $rclone_prefix $1"
+      rclone copyto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --verbose --update
     fi
   fi
 }
