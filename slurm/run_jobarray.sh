@@ -34,6 +34,23 @@ while getopts c:hde:f:m:o:p:r o; do
 done
 
 
+rclone_file () {
+  if [ -z "$rclone_prefix" ]; then
+    return
+  fi
+  if [ -f $1 ] ; then
+    echo "RCLONE FILE              : $rclone_prefix $1"
+    ./rclone_results.sh -L -t $rclone_prefix -i $1
+    if [ -n "$2" ] && [ "$2" == "true" ] && [ "$?" == "0" ]; then
+      echo "RCLONE REMOVE            : rm -f $1"
+      rm -f $1
+    fi
+  fi
+}
+
+
+
+
 if [ ! -f $jobfile ]; then
     echo "job file is not a valid file: $jobfile"
     exit 1
@@ -110,7 +127,7 @@ for id in $(seq $start_id $end_id); do
       $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
       exit_code_dmrg=$?
       echo "EXIT CODE                : $exit_code_dmrg"
-      if [ "$exit_code" != "0" ]; then
+      if [ "$exit_code_dmrg" != "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
         exit_code_save=$exit_code_dmrg
         continue
@@ -119,27 +136,10 @@ for id in $(seq $start_id $end_id); do
         echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
         #logtext='$logdir/$model_seed.txt'
         #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
-        if [ -n "$rclone_prefix" ]; then
-          if [ -f $outfile ]; then
-            echo "RCLONE OUTFILE           : ./rclone_results.sh -L -t lbit93-precision -i $outfile"
-            ./rclone_results.sh -L -t $rclone_prefix -i $outfile
-            if [ -n "$rclone_remove" ] && [ "$?" == "0" ]; then
-              echo "RCLONE REMOVE            : rm -f $outfile"
-              rm -f $outfile
-            fi
-          fi
-          if [ -f $logtext ]; then
-            echo "RCLONE LOGTEXT           : ./rclone_results.sh -L -t lbit93-precision -i $logtext"
-            ./rclone_results.sh -L -t $rclone_prefix -i $logtext
-            if [ -n "$rclone_remove" ] && [ "$?" == "0" ]; then
-              echo "RCLONE REMOVE            : rm -f $logtext"
-              rm -f $outfile
-            fi
-          fi
-          if [ -f $loginfo ]; then
-            echo "RCLONE LOGINFO           : ./rclone_results.sh -L -t lbit93-precision -i $loginfo"
-            ./rclone_results.sh -L -t $rclone_prefix -i $loginfo
-          fi
+        rclone_file $loginfo "false"
+        rclone_file $logtext $rclone_remove
+        rclone_file $outfile $rclone_remove
+        if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
           echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
         fi
       fi
@@ -150,10 +150,10 @@ for id in $(seq $start_id $end_id); do
     echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
     if [ -z  "$dryrun" ];then
       $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
-      exit_code=$?
-      echo "EXIT CODE         : $exit_code"
-      if [ "$exit_code" != "0" ]; then
-        exit_code_save=$exit_code
+      exit_code_dmrg=$?
+      echo "EXIT CODE         : $exit_code_dmrg"
+      if [ "$exit_code_dmrg" != "0" ]; then
+        exit_code_save=$exit_code_dmrg
         continue
       fi
     fi
