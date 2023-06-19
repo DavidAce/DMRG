@@ -21,18 +21,18 @@ EOF
   exit 1
 }
 
-rclone_remove="false"
-parallel="false"
+export rclone_remove="false"
+export parallel="false"
 
 while getopts c:hde:f:m:o:p:Pr o; do
     case $o in
         (h) usage ;;
-        (d) dryrun="ON";;
-        (e) exec=$OPTARG;;
-        (f) jobfile=$OPTARG;;
-        (p) rclone_prefix=$OPTARG;;
-        (r) rclone_remove="true";;
-        (P) parallel="true";;
+        (d) export dryrun="ON";;
+        (e) export exec=$OPTARG;;
+        (f) export jobfile=$OPTARG;;
+        (p) export rclone_prefix=$OPTARG;;
+        (r) export rclone_remove="true";;
+        (P) export parallel="true";;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -55,6 +55,7 @@ rclone_file () {
 }
 
 run_sim_id() {
+  num_cols=$(awk '{print NF}' $jobfile | head -n 1)
   arg_line=$(tail -n+$1 $jobfile | head -1)
   if [ -z "$arg_line" ]; then
     return 0
@@ -96,12 +97,12 @@ run_sim_id() {
     if [ -z  "$dryrun" ]; then
       echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
       $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-      echo "EXIT CODE                : $exit_code_dmrg"
+      echo "EXIT CODE                : $?"
       if [ "$?" != "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
         return $?
       fi
-      if [ "$exit_code_dmrg" == "0" ] ; then
+      if [ "$?" == "0" ] ; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
         #logtext='$logdir/$model_seed.txt'
         #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
@@ -154,9 +155,8 @@ echo "SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
 ssh-agent -k
 eval "$(ssh-agent -s)"
 
-num_cols=$(awk '{print NF}' $jobfile | head -n 1)
-start_id=$SLURM_ARRAY_TASK_ID
-end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
+export start_id=$SLURM_ARRAY_TASK_ID
+export end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
 ulimit -c unlimited
 
@@ -164,6 +164,7 @@ echo "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
   module load parallel
+  export -f run_sim_id
   export JOBS_PER_NODE=$SLURM_CPUS_ON_NODE
   if [ -n "$OMP_NUM_THREADS" ]; then
     export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
@@ -171,13 +172,11 @@ if [ "$parallel" == "true" ]; then
 
   parallel --memsuspend=1G --memfree=$SLURM_MEM_PER_CPU \
            --jobs=$JOBS_PER_NODE \
-           --resume --progress  --delay=.2 \
-           --joblog=logs/parallel-$SLURM_ARRAY_JOB_ID_$SLURM_ARRAY_TASK_ID.log \
-           --colsep=' ' run_sim_id {} \
-           ::: {$start_id..$end_id}
+           --resume --delay=.2 \
+           --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
+           --colsep=' ' run_sim_id \
+           ::: $(seq $start_id..$end_id)
   exit_code_save=$?
-  #$exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-
 else
     for id in $(seq $start_id $end_id); do
       echo "TIME                     : $(date +'%Y-%m-%dT%T')"
