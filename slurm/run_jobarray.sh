@@ -53,6 +53,8 @@ echo "SLURM_ARRAY_TASK_STEP    : $SLURM_ARRAY_TASK_STEP"
 echo "SLURM_ARRAY_TASK_MIN     : $SLURM_ARRAY_TASK_MIN"
 echo "SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
 
+ssh-agent -k
+eval "$(ssh-agent -s)"
 
 num_cols=$(awk '{print NF}' $jobfile | head -n 1)
 start_id=$SLURM_ARRAY_TASK_ID
