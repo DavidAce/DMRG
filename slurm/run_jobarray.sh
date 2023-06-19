@@ -106,9 +106,14 @@ for id in $(seq $start_id $end_id); do
     if [ -z  "$dryrun" ]; then
       echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
       $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-      exit_code=$?
-      echo "EXIT CODE                : $exit_code"
-      if [ "$exit_code" == "0" ] ; then
+      exit_code_dmrg=$?
+      echo "EXIT CODE                : $exit_code_dmrg"
+      if [ "$exit_code" != "0" ]; then
+        echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
+        exit_code_save=$exit_code_dmrg
+        continue
+      fi
+      if [ "$exit_code_dmrg" == "0" ] ; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
         #logtext='$logdir/$model_seed.txt'
         #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
@@ -116,7 +121,7 @@ for id in $(seq $start_id $end_id); do
           if [ -f $outfile ]; then
             echo "RCLONE OUTFILE           : ./rclone_results.sh -L -t lbit93-precision -i $outfile"
             ./rclone_results.sh -L -t $rclone_prefix -i $outfile
-            if [ -n "$rclone_remove" ]; then
+            if [ -n "$rclone_remove" ] && [ "$?" == "0" ]; then
               echo "RCLONE REMOVE            : rm -f $outfile"
               rm -f $outfile
             fi
@@ -124,7 +129,7 @@ for id in $(seq $start_id $end_id); do
           if [ -f $logtext ]; then
             echo "RCLONE LOGTEXT           : ./rclone_results.sh -L -t lbit93-precision -i $logtext"
             ./rclone_results.sh -L -t $rclone_prefix -i $logtext
-            if [ -n "$rclone_remove" ]; then
+            if [ -n "$rclone_remove" ] && [ "$?" == "0" ]; then
               echo "RCLONE REMOVE            : rm -f $logtext"
               rm -f $outfile
             fi
@@ -135,10 +140,6 @@ for id in $(seq $start_id $end_id); do
           fi
           echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
         fi
-      elif [ "$exit_code" != "0" ]; then
-       echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
-        exit_code_save=$exit_code
-        continue
       fi
     fi
   elif [ "$num_cols" -eq 3 ]; then
