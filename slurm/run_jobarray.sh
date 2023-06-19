@@ -41,15 +41,13 @@ rclone_file () {
   if [ -f $1 ] ; then
     echo "RCLONE FILE              : $rclone_prefix $1"
     rclone copy "." neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix" -L --progress --update --include="$1"
+    echo "rclone exit code: $?"
     if [ -n "$2" ] && [ "$2" == "true" ] && [ "$?" == "0" ]; then
       echo "RCLONE REMOVE            : rm -f $1"
       rm -f $1
     fi
   fi
 }
-
-
-
 
 if [ ! -f $jobfile ]; then
     echo "job file is not a valid file: $jobfile"
@@ -104,7 +102,7 @@ for id in $(seq $start_id $end_id); do
     if [ -f $loginfo ] ; then
       echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
       status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
-      if [ $status == "FINISHED" ] ; then
+      if [[ $status =~ FINISHED|RCLONED ]] ; then
         continue # Go to next id
       fi
       if [ $status == "RUNNING" ] ; then
