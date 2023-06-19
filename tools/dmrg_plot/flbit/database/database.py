@@ -238,6 +238,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             # The group would coontain datasets such as "num", "avg", "ste" etc.
             #
             if datanode.name in db['dsets']:
+                print(f'found duplicate: {datanode.name}')
                 continue
             print(f'Loading database version 3: {datapath=}')
             num = -1
@@ -332,6 +333,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             for groupkey, grouppath, groupnode in h5py_group_iterator(node=statenode, keypattern=['tables','cronos'], dep=1):
                 for datakey, datapath, datanode in h5py_group_iterator(node=groupnode, keypattern=grouplist, dep=6):
                     if datanode.name in db['dsets']:
+                        print(f'found duplicate: {datanode.name}')
                         continue
                     print(f'Loading database version 3: {datapath=}')
 

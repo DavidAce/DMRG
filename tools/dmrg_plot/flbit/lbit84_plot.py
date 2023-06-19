@@ -99,6 +99,13 @@ def lbit_plot(args):
         f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
                                    linspec=linspec_lbit, figs=f, palette_name=palette)
     save_figure(f)
+
+
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-typ'], figspec=figspec_lbit, subspec=subspec_lbit,
+                                   linspec=linspec_lbit, figs=f, palette_name=palette)
+    save_figure(f)
     plt.show()
     exit(0)
 
@@ -414,5 +421,5 @@ def lbit_plot(args):
 
 if __name__ == '__main__':
     args = parse('fLBIT', ['lbit84'])
-    lbit_avg(args)
+    # lbit_avg(args)
     lbit_plot(args)

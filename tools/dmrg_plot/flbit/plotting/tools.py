@@ -868,6 +868,7 @@ def get_fig_meta(numplots: int, meta: dict):
         'ylabel': meta.get('ylabel'),
         'ylabel_inner_visible' : meta.get('ylabel_inner_visible'),
         'ymarkoffset': [],
+        'ytickparams': meta.get('ytickparams'),
         'axes_used': [],
         'legends': [],
         'legendshow': meta.get('legendshow'),
@@ -1017,6 +1018,13 @@ def get_fig_meta(numplots: int, meta: dict):
         if not is_first_col and f.get('ylabel_inner_visible') is False:
             f['ax'][-1].yaxis.label.set_visible(False)
 
+
+        if ytp := f.get('ytickparams'):
+            if not is_first_col:
+                f['ax'][-1].tick_params(axis=ytp.get('axis'),direction=ytp.get('direction'), pad=ytp.get('pad'))
+        if xtp := f.get('xtickparams'):
+            if not is_last_row:
+                f['ax'][-1].tick_params(axis=xtp.get('axis'),direction=xtp.get('direction'), pad=xtp.get('pad'))
 
 
     # Set title

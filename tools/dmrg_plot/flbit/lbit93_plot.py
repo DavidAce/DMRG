@@ -31,21 +31,24 @@ def lbit_plot(args):
         if batchglob:
             print(f"globbed: {batchglob}")
             batchdir = batchglob[0]
-            avgfile = f'{batchdir}/analysis/data/averaged.h5'
+            # avgfile = f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
             plotdir = f'{batchdir}/analysis/plots'
-            if not os.path.exists(plotdir):
-                os.makedirs(plotdir)
-            print(f'found {avgfile=}')
-            metas.append(get_meta(plotdir))
-            h5avgs.append(h5py.File(avgfile, 'r'))
-            if version2:
-                print('loading v2')
-                dbs.append(load_time_database2(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                               state_filter=state_filter, debug=False))
-            if version3:
-                print('loading v3')
-                dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                               state_filter=state_filter, debug=False))
+            for avgfile in [f'{batchdir}/analysis/data/averaged.h5',
+                            f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
+                            ]:
+                if not os.path.exists(plotdir):
+                    os.makedirs(plotdir)
+                print(f'found {avgfile=}')
+                metas.append(get_meta(plotdir))
+                h5avgs.append(h5py.File(avgfile, 'r'))
+                if version2:
+                    print('loading v2')
+                    dbs.append(load_time_database2(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
+                                                   state_filter=state_filter, debug=False))
+                if version3:
+                    print('loading v3')
+                    dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
+                                                   state_filter=state_filter, debug=False))
 
 
 
@@ -74,7 +77,8 @@ def lbit_plot(args):
     palettes = [  # Palette group for up to 4 categories
         # ["summer_r", "autumn_r", "winter_r", "spring_r"]
         # ["winter_r",  "summer_r", "autumn_r", "spring_r"]
-        ["Blues", "Greens", "Oranges", "Purples"]
+        ["Blues", "Greens", "Oranges", "Purples"],
+        ["Greys", "Greys", "Greys", "Greys"] # for epstest
         # ["Oranges"]
     ]
 
@@ -98,12 +102,12 @@ def lbit_plot(args):
     linspec_lbit = ['f','L']
 
 
-
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
         f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
                                    palette_name=palette)
     save_figure(f)
+
 
     f = None
     for db, meta, palette in zip(dbs, metas, palettes):

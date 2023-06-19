@@ -357,7 +357,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     for lidx,(x1, y1, c1, x2,y2, c2, x3,y3,c3) in enumerate(zip(xm1, ym1, cm1, xm2,ym2,cm2, xm3,ym3,cm3)):
                         if meta['colname'] == 'entanglement_entropy':
                             # yl = y3
-                            yl = ymmax + (lidx) / 10 * yrange,
+                            yl = ymmax + (lidx) / 15 * yrange,
                         else:
                             yl = ymmax + (lidx) / 20 * yrange,
                         axs.plot([x1,x2], [yl,yl], color=c1, marker=None, linestyle='dotted', path_effects=None, zorder=9)

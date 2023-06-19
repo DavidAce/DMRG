@@ -22,10 +22,11 @@ figure.facecolor        : 'white'
 
 #figure.figsize       : 3.404,3.404 # 100% column width
 #figure.figsize       : 3.404,3.404 # 100% column width + legend
-#figure.figsize        : 2.553,2.553 # 75% column width
-#figure.figsize        : 9.361,2.553 # 75% column width, 3 subplots wide + legend
-figure.figsize        : 6.800,2.269 # 66% column width, 3 subplots wide
+#figure.figsize       : 2.553,2.553 # 75% column width
+#figure.figsize       : 9.361,2.553 # 75% column width, 3 subplots wide + legend
+figure.figsize       : 6.800,2.269 # 66% column width, 3 subplots wide (200% total)
 #figure.figsize       : 1.702,1.702 # 50% column width
+#figure.figsize        : 2.269,2.269 # 66% column width, for 2 subplots wide (133% total)
 
 
 
@@ -36,7 +37,7 @@ grid.linestyle          : -
 ## Dimensions as fraction of font size:
 legend.fontsize         : small
 legend.title_fontsize   : small
-legend.frameon          : False     # if True, draw the legend on a background patch
+legend.frameon          : False      # if True, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.5       # border whitespace
 legend.labelspacing     : 0.15      # the vertical space between the legend entries
@@ -147,7 +148,7 @@ savefig.dpi            : figure   # figure dots per inch or 'figure'
 savefig.facecolor      : auto     # figure face color when saving
 savefig.edgecolor      : auto     # figure edge color when saving
 savefig.format         : pdf      # {png, ps, pdf, svg}
-savefig.bbox           : standard # {tight, standard}
+savefig.bbox           : tight    # {tight, standard}
                                   # 'tight' is incompatible with pipe-based animation
                                   # backends (e.g. 'ffmpeg') but will work with those
                                   # based on temporary files (e.g. 'ffmpeg_file')

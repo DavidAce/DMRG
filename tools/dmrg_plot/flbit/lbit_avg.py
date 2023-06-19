@@ -15,10 +15,10 @@ def lbit_avg(args):
     for batchdir in batchdirs:
         analysisdir = batchdir + '/analysis'
         plotdir = analysisdir + '/plots'
-        datadir = analysisdir + '/data'
+        datadir = analysisdir + '/data-epstest'
 
-        src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged.h5'
+        src = datadir + '/merged-epstest.h5'
+        tgt = datadir + '/averaged-epstest.h5'
         if path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
