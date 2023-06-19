@@ -71,7 +71,7 @@ for id in $(seq $start_id $end_id); do
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
   model_seed=$(echo "$arg_line" | cut -d " " -f2)
-  outdir=$(awk '$1 ~ /^storage::output_filepath/' '$config_file' | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
+  outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
   outfile=$outdir/mbl_$model_seed.h5
   logdir=logs/$config_dir/$config_base
   logtext=$logdir/$model_seed.txt
@@ -83,6 +83,7 @@ for id in $(seq $start_id $end_id); do
   echo "CONFIG LINE              : $arg_line"
   if [ "$num_cols" -eq 2 ] ; then
     if [ -f $loginfo ] ; then
+      echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
       status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
       if [ $status == "FINISHED" ] ; then
         continue # Go to next id
@@ -92,12 +93,10 @@ for id in $(seq $start_id $end_id); do
         # We can find out because we can check if the slurm job id is still running using sacct
         old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}')
         old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}')
-        old_job_id=$old_array_job_id_$old_array_task_id
+        old_job_id=${old_array_job_id}_${old_array_task_id}
         slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
         if [ "$slurm_state" == "RUNNING" ] ; then
           continue # Go to next id
-        else
-          echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
         fi
       fi
       # We go a head and run the simulation if it's not running, or if it failed
@@ -116,7 +115,7 @@ for id in $(seq $start_id $end_id); do
         if [ -n "$rclone_prefix" ]; then
           if [ -f $outfile ]; then
             echo "RCLONE OUTFILE           : ./rclone_results.sh -L -t lbit93-precision -i $outfile"
-            ./rclone_results.sh -L -t $rclone_copy -i $outfile
+            ./rclone_results.sh -L -t $rclone_prefix -i $outfile
             if [ -n "$rclone_remove" ]; then
               echo "RCLONE REMOVE            : rm -f $outfile"
               rm -f $outfile
@@ -124,7 +123,7 @@ for id in $(seq $start_id $end_id); do
           fi
           if [ -f $logtext ]; then
             echo "RCLONE LOGTEXT           : ./rclone_results.sh -L -t lbit93-precision -i $logtext"
-            ./rclone_results.sh -L -t $rclone_copy -i $logtext
+            ./rclone_results.sh -L -t $rclone_prefix -i $logtext
             if [ -n "$rclone_remove" ]; then
               echo "RCLONE REMOVE            : rm -f $logtext"
               rm -f $outfile
@@ -132,8 +131,9 @@ for id in $(seq $start_id $end_id); do
           fi
           if [ -f $loginfo ]; then
             echo "RCLONE LOGINFO           : ./rclone_results.sh -L -t lbit93-precision -i $loginfo"
-            ./rclone_results.sh -L -t $rclone_copy -i $loginfo
+            ./rclone_results.sh -L -t $rclone_prefix -i $loginfo
           fi
+          echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
         fi
       elif [ "$exit_code" != "0" ]; then
        echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
