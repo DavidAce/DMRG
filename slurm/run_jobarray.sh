@@ -14,17 +14,20 @@ Usage                               : $PROGNAME [-options] with the following op
 -e <executable>                     : Path to executable (default = "")
 -f <jobfile>                        : Path to simulation file, two columns formatted as [configfile seed] (default = "")
 -o <output logfile>                 : Path to output logfile (default = "")
+-p <remote prefix>                  : Rclone copy to this remote dir prefix (default "")
+-r                                  : Remove the file after rclone
 EOF
   exit 1
 }
 
-while getopts hde:f:o: o; do
+while getopts c:hde:f:m:o:p:r o; do
     case $o in
         (h) usage ;;
         (d) dryrun="ON";;
         (e) exec=$OPTARG;;
         (f) jobfile=$OPTARG;;
-        (o) outfile=$OPTARG;;
+        (p) rclone_prefix=$OPTARG;;
+        (r) rclone_remove="true";;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -68,38 +71,92 @@ for id in $(seq $start_id $end_id); do
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
   model_seed=$(echo "$arg_line" | cut -d " " -f2)
+  outdir=$(awk '$1 ~ /^storage::output_filepath/' '$config_file' | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
+  outfile=$outdir/mbl_$model_seed.h5
   logdir=logs/$config_dir/$config_base
+  logtext=$logdir/$model_seed.txt
+  loginfo=$logdir/$model_seed.info
+  infoline="SEED:$modelseed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
   mkdir -p $logdir
   echo "JOB ID                   : $id"
-  echo "TIME                     : $(/bin/date)"
+  echo "TIME                     : $(date +'%Y-%m-%dT%T')"
   echo "CONFIG LINE              : $arg_line"
   if [ "$num_cols" -eq 2 ]; then
-      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.txt"
+
+      if [ -f $loginfo ]; then
+        status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
+        if [ $status == "FINISHED" ]; then
+          continue # Go to next id
+        fi
+        if [ $status == "RUNNING" ]; then
+          # This could be a simulation that terminated abruptly, or it is actually running right now.
+          # We can find out because we can check if the slurm job id is still running using sacct
+          old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}')
+          old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}')
+          old_job_id=$old_array_job_id_$old_array_task_id
+          slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
+          if [ "$slurm_state" == "RUNNING" ]; then
+            continue # Go to next id
+          fi
+        fi
+        # We go a head and run the simulation if it's not running, or if it failed
+      fi
+
+      echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
       if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed &>> $logdir/$model_seed.txt
+        echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
+        $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
         exit_code=$?
         echo "EXIT CODE                : $exit_code"
+        if [ "$exit_code" == "0" ]; then
+          echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
+          #logtext='$logdir/$model_seed.txt'
+          #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
+          if [ -n "$rclone_prefix" ] ; then
+            if [ -f $outfile ]; then
+              echo "RCLONE OUTFILE           : ./rclone_results.sh -L -t lbit93-precision -i $outfile"
+              ./rclone_results.sh -L -t $rclone_copy -i $outfile
+              if [ -n "$rclone_remove"]; then
+                echo "RCLONE REMOVE            : rm -f $outfile"
+                rm -f $outfile
+              fi
+            if [ -f $logtext ]; then
+              echo "RCLONE LOGTEXT           : ./rclone_results.sh -L -t lbit93-precision -i $logtext"
+              ./rclone_results.sh -L -t $rclone_copy -i $logtext
+              if [ -n "$rclone_remove"]; then
+                echo "RCLONE REMOVE            : rm -f $logtext"
+                rm -f $outfile
+              fi
+            fi
+            if [ -f $loginfo ]; then
+              echo "RCLONE LOGINFO           : ./rclone_results.sh -L -t lbit93-precision -i $loginfo"
+              ./rclone_results.sh -L -t $rclone_copy -i $loginfo
+            fi
+          fi
+        fi
+
         if [ "$exit_code" != "0" ]; then
+          echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
           exit_code_save=$exit_code
           continue
         fi
       fi
   elif [ "$num_cols" -eq 3 ]; then
-      bit_field=$(echo $arg_line | cut -d " " -f3)
-      echo "BITFIELD                 : $bit_field"
-      echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
-      if [ -z  "$dryrun" ];then
-        $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
-        exit_code=$?
-        echo "EXIT CODE         : $exit_code"
-        if [ "$exit_code" != "0" ]; then
-          exit_code_save=$exit_code
-          continue
-        fi
+    bit_field=$(echo $arg_line | cut -d " " -f3)
+    echo "BITFIELD                 : $bit_field"
+    echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
+    if [ -z  "$dryrun" ];then
+      $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
+      exit_code=$?
+      echo "EXIT CODE         : $exit_code"
+      if [ "$exit_code" != "0" ]; then
+        exit_code_save=$exit_code
+        continue
       fi
+    fi
   else
-      echo "Case not implemented"
-      exit 1
+    echo "Case not implemented"
+    exit 1
   fi
 done
 

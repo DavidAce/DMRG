@@ -13,6 +13,7 @@ Usage              : $PROGNAME [-f <input_file>] [-h] [-m <mode>] [-t <target>]
 -s <source dir>    : Source relative to current dir (default = .)
 -t <target dir>    : Target directory (default = tmp)
 -u <user>          : User at target machine (default = david)
+-i <include>       : Include this pattern
 -L                 : Follow symbolic links
 EOF
   exit 1
@@ -25,11 +26,15 @@ default_usr="david"
 max_threads=8
 dry_run=""
 follow_sym=""
-while getopts a:dhn:p:s:t:u:L o; do
+include=""
+
+
+while getopts a:d:hi:n:p:s:t:u:L o; do
       case $o in
         (a) default_adr=$OPTARG;;
         (d) dry_run="--dry-run";;
         (h) usage ;;
+        (i) include="--include '$OPTARG'";;
         (n) max_threads=$OPTARG;;
         (p) default_pfx=$OPTARG;;
         (s) default_src=$OPTARG;;
@@ -45,4 +50,4 @@ done
 #if [ $OPTIND -eq 1 ]; then echo "No flags were passed"; usage ;exit 1; fi
 
 
-rclone copy $default_src neumann:${default_pfx}/${default_tgt} $follow_sym $dry_run --progress --update --multi-thread-streams=$max_threads --transfers=$max_threads
+rclone copy $default_src neumann:${default_pfx}/${default_tgt} $follow_sym $dry_run $include --progress --update --multi-thread-streams=$max_threads --transfers=$max_threads
