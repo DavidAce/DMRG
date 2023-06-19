@@ -61,7 +61,7 @@ def parse(project_name):
     parser.add_argument('--default-kraken', action='store_true', help='Set defaults for kraken cluster')
     parser.add_argument('--default-tetralith', action='store_true', help='Set defaults for tetralith cluster')
     parser.add_argument('--rclone-prefix', type=str, help='Use rclone to copy results to this remote directory', default=None)
-    parser.add_argument('--rclone-delete', action='store_true', help='Delete local file after rclone', default=None)
+    parser.add_argument('--rclone-remove', action='store_true', help='Remove local file after rclone', default=None)
 
 
     args = parser.parse_args()
@@ -240,9 +240,9 @@ def generate_sbatch_commands(project_name, args):
     for jobfile in jobfiles:
         numseeds = sum(1 for line in open(jobfile))
         rclone_prefix = f' -p {args.rclone_prefix}' if args.rclone_prefix else ''
-        rclone_delete =  ' -r' if args.rclone_delete else ''
+        rclone_remove =  ' -r' if args.rclone_remove else ''
         sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -f {}{}{}'
-                          .format(' '.join(sbatch_arg),numseeds, args.sims_per_task, exec, jobfile, rclone_prefix, rclone_delete))
+                          .format(' '.join(sbatch_arg),numseeds, args.sims_per_task, exec, jobfile, rclone_prefix, rclone_remove))
 
     Path("logs").mkdir(parents=True, exist_ok=True)
 
