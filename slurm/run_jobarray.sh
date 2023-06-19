@@ -108,8 +108,8 @@ for id in $(seq $start_id $end_id); do
       if [ $status == "RUNNING" ] ; then
         # This could be a simulation that terminated abruptly, or it is actually running right now.
         # We can find out because we can check if the slurm job id is still running using sacct
-        old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}')
-        old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}')
+        old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
+        old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
         old_job_id=${old_array_job_id}_${old_array_task_id}
         slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
         if [ "$slurm_state" == "RUNNING" ] ; then
