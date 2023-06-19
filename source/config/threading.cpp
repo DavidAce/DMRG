@@ -30,7 +30,6 @@ namespace settings {
 
     void configure_threads() {
         // Set the number of threads to be used
-        using namespace settings::threading;
         unsigned int omp_threads = 1;
 #if defined(_OPENMP)
         std::string omp_proc_bind;
@@ -49,8 +48,6 @@ namespace settings {
 
         omp_threads = static_cast<unsigned int>(omp_get_max_threads());
 #endif
-
-        num_threads = std::clamp(num_threads, omp_threads, max_threads);
         std::string eigen_msg;
 #if defined(EIGEN_USE_MKL_ALL)
         eigen_msg.append(" | EIGEN_USE_MKL_ALL");
@@ -60,14 +57,18 @@ namespace settings {
 #endif
 #if defined(EIGEN_USE_THREADS)
         eigen_msg.append(" | EIGEN_USE_THREADS");
-        tenx::threads::setNumThreads(num_threads);
+        unsigned int stl_threads = 1;
+        if (settings::threading::num_threads > omp_threads){
+            stl_threads = settings::threading::num_threads - omp_threads;
+        }
+        tenx::threads::setNumThreads(stl_threads);
 #else
         if(settings::threading::num_threads > 1)
             tools::log->warn("EIGEN_USE_THREADS is not defined: "
                              "Failed to enable threading in Eigen::Tensor with stl_threads = {}",
                              settings::threading::num_threads);
 #endif
-        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::num_threads, max_threads, eigen_msg);
+        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::num_threads, settings::threading::max_threads, eigen_msg);
 #if defined(OPENBLAS_AVAILABLE)
         auto envcoretype = get_env("OPENBLAS_CORETYPE");
         if(envcoretype) tools::log->info("Detected environment variable: OPENBLAS_CORETYPE={}", envcoretype.value());

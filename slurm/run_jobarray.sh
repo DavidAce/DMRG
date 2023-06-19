@@ -46,10 +46,10 @@ rclone_file () {
   if [ -f $1 ] ; then
     if [ -n "$rclone_remove" ] && [ "$rclone_remove" == "true" ]; then
       echo "RCLONE MOVE FILE         : $rclone_prefix $1"
-      rclone moveto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --verbose --update
+      rclone moveto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --update
     else
       echo "RCLONE COPY FILE         : $rclone_prefix $1"
-      rclone copyto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --verbose --update
+      rclone copyto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --update
     fi
   fi
 }
@@ -117,7 +117,7 @@ run_sim_id() {
   elif [ "$num_cols" -eq 3 ]; then
     bit_field=$(echo $arg_line | cut -d " " -f3)
     echo "BITFIELD                 : $bit_field"
-    echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
+    echo "EXEC LINE                : $exec -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
     if [ -z  "$dryrun" ];then
       $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
       exit_code_dmrg=$?
@@ -165,6 +165,7 @@ if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
   module load parallel
   export -f run_sim_id
+  export -f rclone_file
   export JOBS_PER_NODE=$SLURM_CPUS_ON_NODE
   if [ -n "$OMP_NUM_THREADS" ]; then
     export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
@@ -172,7 +173,7 @@ if [ "$parallel" == "true" ]; then
 
   parallel --memsuspend=1G --memfree=$SLURM_MEM_PER_CPU \
            --jobs=$JOBS_PER_NODE \
-           --resume --delay=.2 \
+           --ungroup --resume --delay=1s \
            --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
            --colsep=' ' run_sim_id \
            ::: $(seq $start_id $end_id)
