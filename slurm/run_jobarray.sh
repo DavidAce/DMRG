@@ -81,66 +81,66 @@ for id in $(seq $start_id $end_id); do
   echo "JOB ID                   : $id"
   echo "TIME                     : $(date +'%Y-%m-%dT%T')"
   echo "CONFIG LINE              : $arg_line"
-  if [ "$num_cols" -eq 2 ]; then
-
-      if [ -f $loginfo ]; then
-        status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
-        if [ $status == "FINISHED" ]; then
+  if [ "$num_cols" -eq 2 ] ; then
+    if [ -f $loginfo ] ; then
+      status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
+      if [ $status == "FINISHED" ] ; then
+        continue # Go to next id
+      fi
+      if [ $status == "RUNNING" ] ; then
+        # This could be a simulation that terminated abruptly, or it is actually running right now.
+        # We can find out because we can check if the slurm job id is still running using sacct
+        old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}')
+        old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}')
+        old_job_id=$old_array_job_id_$old_array_task_id
+        slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
+        if [ "$slurm_state" == "RUNNING" ] ; then
           continue # Go to next id
-        fi
-        if [ $status == "RUNNING" ]; then
-          # This could be a simulation that terminated abruptly, or it is actually running right now.
-          # We can find out because we can check if the slurm job id is still running using sacct
-          old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}')
-          old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}')
-          old_job_id=$old_array_job_id_$old_array_task_id
-          slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
-          if [ "$slurm_state" == "RUNNING" ]; then
-            continue # Go to next id
-          fi
-        fi
-        # We go a head and run the simulation if it's not running, or if it failed
-      fi
-
-      echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
-      if [ -z  "$dryrun" ];then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
-        $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-        exit_code=$?
-        echo "EXIT CODE                : $exit_code"
-        if [ "$exit_code" == "0" ]; then
-          echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
-          #logtext='$logdir/$model_seed.txt'
-          #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
-          if [ -n "$rclone_prefix" ] ; then
-            if [ -f $outfile ]; then
-              echo "RCLONE OUTFILE           : ./rclone_results.sh -L -t lbit93-precision -i $outfile"
-              ./rclone_results.sh -L -t $rclone_copy -i $outfile
-              if [ -n "$rclone_remove"]; then
-                echo "RCLONE REMOVE            : rm -f $outfile"
-                rm -f $outfile
-              fi
-            if [ -f $logtext ]; then
-              echo "RCLONE LOGTEXT           : ./rclone_results.sh -L -t lbit93-precision -i $logtext"
-              ./rclone_results.sh -L -t $rclone_copy -i $logtext
-              if [ -n "$rclone_remove"]; then
-                echo "RCLONE REMOVE            : rm -f $logtext"
-                rm -f $outfile
-              fi
-            fi
-            if [ -f $loginfo ]; then
-              echo "RCLONE LOGINFO           : ./rclone_results.sh -L -t lbit93-precision -i $loginfo"
-              ./rclone_results.sh -L -t $rclone_copy -i $loginfo
-            fi
-          fi
-        fi
-
-        if [ "$exit_code" != "0" ]; then
-          echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
-          exit_code_save=$exit_code
-          continue
+        else
+          echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
         fi
       fi
+      # We go a head and run the simulation if it's not running, or if it failed
+    fi
+
+    echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
+    if [ -z  "$dryrun" ]; then
+      echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
+      $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
+      exit_code=$?
+      echo "EXIT CODE                : $exit_code"
+      if [ "$exit_code" == "0" ] ; then
+        echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
+        #logtext='$logdir/$model_seed.txt'
+        #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
+        if [ -n "$rclone_prefix" ]; then
+          if [ -f $outfile ]; then
+            echo "RCLONE OUTFILE           : ./rclone_results.sh -L -t lbit93-precision -i $outfile"
+            ./rclone_results.sh -L -t $rclone_copy -i $outfile
+            if [ -n "$rclone_remove" ]; then
+              echo "RCLONE REMOVE            : rm -f $outfile"
+              rm -f $outfile
+            fi
+          fi
+          if [ -f $logtext ]; then
+            echo "RCLONE LOGTEXT           : ./rclone_results.sh -L -t lbit93-precision -i $logtext"
+            ./rclone_results.sh -L -t $rclone_copy -i $logtext
+            if [ -n "$rclone_remove" ]; then
+              echo "RCLONE REMOVE            : rm -f $logtext"
+              rm -f $outfile
+            fi
+          fi
+          if [ -f $loginfo ]; then
+            echo "RCLONE LOGINFO           : ./rclone_results.sh -L -t lbit93-precision -i $loginfo"
+            ./rclone_results.sh -L -t $rclone_copy -i $loginfo
+          fi
+        fi
+      elif [ "$exit_code" != "0" ]; then
+       echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
+        exit_code_save=$exit_code
+        continue
+      fi
+    fi
   elif [ "$num_cols" -eq 3 ]; then
     bit_field=$(echo $arg_line | cut -d " " -f3)
     echo "BITFIELD                 : $bit_field"
