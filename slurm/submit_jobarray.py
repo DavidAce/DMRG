@@ -34,7 +34,10 @@ def parse(project_name):
     parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', choices=['threads', 'cores', 'sockets'],default="sockets" )
     parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', choices=['true', 'false', 'close', 'spread','master'],default="spread")
     parser.add_argument('--cpus-per-task', type=int, help='Number of cores per task', default=1)
+    parser.add_argument('--nodes', type=int, help='Number of nodes to allocate for each job', default=1)
+    parser.add_argument('--ntasks', type=int, help='Number of tasks per job (e.g. mpi threads or gnu parallel threads)', default=1)
     parser.add_argument('--ntasks-per-core', type=int, help='Number of tasks (sims) on each core', default=1)
+    parser.add_argument('--ntasks-per-node', type=int, help='Number of tasks per node', default=None)
     parser.add_argument('--threads-per-core', type=int, help='Number of threads to allocate on each core (1 disables hyperthreading)', default=1)
     parser.add_argument('--openblas-coretype', type=str, help='Sets OPENBLAS_CORETYPE', default=None)
     parser.add_argument('--dryrun', action='store_true', help='Dry run')
@@ -48,7 +51,6 @@ def parse(project_name):
     parser.add_argument('-N', '--sims-per-cfg', type=int, help='Number of simulations per config file. Can be split up into chunks with -n', default=10)
     parser.add_argument('-n', '--sims-per-array', type=int, help='Number of simulations in each job-array (splits -N into -N/-n chunks)', default=1000)
     parser.add_argument('--sims-per-task', type=int, help='Number of simulations per job-array task. This is equivalent to the step, or stride in the array', default=10)
-    parser.add_argument('--ntasks', type=int, help='Number of tasks per simulation (e.g. mpi threads)', default=1)
     parser.add_argument('-o', '--other', type=str, help='Other options for sbatch (verbatim)', default=None)
     parser.add_argument('--open-mode', type=str, help='Access mode for logs', default='append', choices=['append','truncate'])
     parser.add_argument('-p','--partition', type=str, help='Partition name', default=None)
@@ -153,8 +155,12 @@ def generate_sbatch_commands(project_name, args):
        sbatch_arg.extend([f'--reservation={args.reservation}'])
     if args.cpus_per_task:
         sbatch_arg.extend(['--cpus-per-task={}'.format(args.cpus_per_task)])
+    if args.nodes:
+        sbatch_arg.extend(['--nodes={}'.format(args.nodes)])
     if args.ntasks_per_core:
         sbatch_arg.extend(['--ntasks-per-core={}'.format(args.ntasks_per_core)])
+    if args.ntasks_per_node:
+        sbatch_arg.extend(['--ntasks-per-node={}'.format(args.ntasks_per_node)])
     if args.job_name:
         sbatch_arg.extend(['--job-name={}'.format(args.job_name)])
     if args.mem_per_cpu:
