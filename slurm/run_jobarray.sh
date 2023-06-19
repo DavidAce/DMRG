@@ -40,7 +40,7 @@ rclone_file () {
   fi
   if [ -f $1 ] ; then
     echo "RCLONE FILE              : $rclone_prefix $1"
-    ./rclone_results.sh -L -t $rclone_prefix -i $1
+    rclone copy "." neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix" -L --progress --update --include="$1"
     if [ -n "$2" ] && [ "$2" == "true" ] && [ "$?" == "0" ]; then
       echo "RCLONE REMOVE            : rm -f $1"
       rm -f $1
