@@ -175,97 +175,19 @@ if [ "$parallel" == "true" ]; then
            --joblog=logs/parallel-$SLURM_ARRAY_JOB_ID_$SLURM_ARRAY_TASK_ID.log \
            --colsep=' ' run_sim_id {} \
            ::: {$start_id..$end_id}
-
+  exit_code_save=$?
   #$exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
 
 else
-    echo "TIME                     : $(date +'%Y-%m-%dT%T')"
-    echo "CONFIG LINE              : $arg_line"
-
+    for id in $(seq $start_id $end_id); do
+      echo "TIME                     : $(date +'%Y-%m-%dT%T')"
+      echo "CONFIG LINE              : $arg_line"
+      run_sim_id $id
+      if [ $? != "0" ]; then
+        exit_code_save=$?
+      fi
+    done
 fi
-
-
-for id in $(seq $start_id $end_id); do
-  arg_line=$(tail -n+$id $jobfile | head -1)
-  if [ -z "$arg_line" ]; then
-    continue
-  fi
-  config_file=$(echo "$arg_line" | cut -d " " -f1)
-  config_base=$(echo "$config_file" | xargs -l basename)
-  config_dir=$(echo "$config_file" | xargs -l dirname)
-  model_seed=$(echo "$arg_line" | cut -d " " -f2)
-  outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
-  outfile=$outdir/mbl_$model_seed.h5
-  logdir=logs/$config_dir/$config_base
-  logtext=$logdir/$model_seed.txt
-  loginfo=$logdir/$model_seed.info
-  infoline="SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
-  mkdir -p $logdir
-  echo "JOB ID                   : $id"
-  echo "TIME                     : $(date +'%Y-%m-%dT%T')"
-  echo "CONFIG LINE              : $arg_line"
-  if [ "$num_cols" -eq 2 ] ; then
-    if [ -f $loginfo ] ; then
-      echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
-      status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
-      if [[ $status =~ FINISHED|RCLONED ]] ; then
-        continue # Go to next id
-      fi
-      if [ $status == "RUNNING" ] ; then
-        # This could be a simulation that terminated abruptly, or it is actually running right now.
-        # We can find out because we can check if the slurm job id is still running using sacct
-        old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
-        old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
-        old_job_id=${old_array_job_id}_${old_array_task_id}
-        slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
-        if [ "$slurm_state" == "RUNNING" ] ; then
-          continue # Go to next id
-        fi
-      fi
-      # We go a head and run the simulation if it's not running, or if it failed
-    fi
-
-    echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
-    if [ -z  "$dryrun" ]; then
-      echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
-      $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-      exit_code_dmrg=$?
-      echo "EXIT CODE                : $exit_code_dmrg"
-      if [ "$exit_code_dmrg" != "0" ]; then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
-        exit_code_save=$exit_code_dmrg
-        continue
-      fi
-      if [ "$exit_code_dmrg" == "0" ] ; then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
-        #logtext='$logdir/$model_seed.txt'
-        #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
-        rclone_file $loginfo "false"
-        rclone_file $logtext $rclone_remove
-        rclone_file $outfile $rclone_remove
-        if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
-          echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
-        fi
-      fi
-    fi
-  elif [ "$num_cols" -eq 3 ]; then
-    bit_field=$(echo $arg_line | cut -d " " -f3)
-    echo "BITFIELD                 : $bit_field"
-    echo "EXEC LINE                : $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
-    if [ -z  "$dryrun" ];then
-      $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
-      exit_code_dmrg=$?
-      echo "EXIT CODE         : $exit_code_dmrg"
-      if [ "$exit_code_dmrg" != "0" ]; then
-        exit_code_save=$exit_code_dmrg
-        continue
-      fi
-    fi
-  else
-    echo "Case not implemented"
-    exit 1
-  fi
-done
 
 exit $exit_code_save
 
