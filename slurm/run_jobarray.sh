@@ -175,7 +175,7 @@ if [ "$parallel" == "true" ]; then
            --resume --delay=.2 \
            --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
            --colsep=' ' run_sim_id \
-           ::: $(seq $start_id..$end_id)
+           ::: $(seq $start_id $end_id)
   exit_code_save=$?
 else
     for id in $(seq $start_id $end_id); do
