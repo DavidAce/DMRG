@@ -25,7 +25,7 @@ def chunks(iterable, n):
 def parse(project_name):
     parser = argparse.ArgumentParser(description='SLURM batch submission for {}'.format(project_name))
     parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release')
-    parser.add_argument('-M', '--clusters', type=str, help='Comma separated list of Slurm clusters', default=None, choices=['kraken', 'draken', 'kthulu', 'tetralith'])
+    parser.add_argument('-M', '--clusters', type=str, help='Comma separated list of Slurm clusters', default=None)
     parser.add_argument('-w', '--nodelist', type=str, help='Comma separated list of node names', default=None)
     parser.add_argument('--reservation', type=str, help='Name of reservation to run under', default=None)
     parser.add_argument('--cfgpath', type=str, help='Path to simulation config files (suffixed .cfg)', default='config')
