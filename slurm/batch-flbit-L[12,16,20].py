@@ -1,28 +1,27 @@
 from utils.generators import get_config_product, write_config_file, write_seed_files
 from utils.flbit import get_max_time, get_output_filepath, get_config_filename
+from seed_setup import get_seed_setup
 import platform
-
 
 config_paths = {
     'project_prefix'    : 'mbl',
     'config_template'   : 'template_configs/flbit.cfg',
-    'config_dir'        : "config",
+    'config_dir'        : "config-L[12,16,20]",
     'output_dir'        : "output",
-    'seed_dir'          : "seeds", # Output one .json file per .cfg, describing the seed values to run
+    'seed_dir'          : "config-L[12,16,20]", # Output one .json file per .cfg, describing the seed values to run
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else "/tmp"
 }
-
 
 config_ranges = {
     "storage::output_filepath": [get_output_filepath],
     "storage::temp_dir": [config_paths['temp_dir']],
     "console::loglevel": ['2'],
-    "solver::svd_truncation_lim": '1e-4',
-    "solver::svd_truncation_init": '1e-4',
-    "solver::svd_switchsize_bdc": '16',
-    "solver::svd_save_fail": 'false',
+    "solver::svd_truncation_lim": ['1e-5'],
+    "solver::svd_truncation_init": ['1e-5'],
+    "solver::svd_switchsize_bdc": ['16'],
+    "solver::svd_save_fail": ['false'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
-    "model::model_size": ['24'],
+    "model::model_size": ['12','16','20'],
     "model::lbit::J1_mean": ['0.0'],
     "model::lbit::J2_mean": ['0.0'],
     "model::lbit::J3_mean": ['0.0'],
@@ -42,15 +41,8 @@ config_ranges = {
     "flbit::time_start_imag": ['0.0'],
     "flbit::time_final_real": [get_max_time], #"{:.1e}".format(max_time),
     "flbit::time_final_imag": ['0.0'],
-    "flbit::time_num_steps": ['100'],
+    "flbit::time_num_steps": ['200'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
-}
-
-seed_setup = {
-    'projectname': 'lbit93-precision',
-    'seed_extent': [10000],      # Number of seeds to run
-    'seed_offset': [200000000],  # Start the seed count here
-    'seed_stride': 100000000,    # Leave this much room between configs
 }
 
 configs = get_config_product(config_ranges, config_paths)
@@ -60,4 +52,5 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config_filename)
 
+seed_setup = get_seed_setup('lbit93-precision')
 write_seed_files(seed_setup, config_paths)

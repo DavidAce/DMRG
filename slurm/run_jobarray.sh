@@ -11,9 +11,10 @@ usage() {
 Usage                               : $PROGNAME [-options] with the following options:
 -h                                  : Help. Shows this text.
 -d                                  : Dry run
+-c <config file>                    : Path to a config file (.cfg)
 -e <executable>                     : Path to executable (default = "")
 -f <jobfile>                        : Path to simulation file, two columns formatted as [configfile seed] (default = "")
--o <output logfile>                 : Path to output logfile (default = "")
+-o <seed offset>                    : Start seed count from this offset
 -p <remote prefix>                  : Rclone copy to this remote dir prefix (default "")
 -r                                  : Remove the file after rclone
 -P                                  : Run seeds in parallel
@@ -23,13 +24,14 @@ EOF
 
 export rclone_remove="false"
 export parallel="false"
-
+export seed_offset=0
 while getopts c:hde:f:m:o:p:Pr o; do
     case $o in
         (h) usage ;;
         (d) export dryrun="ON";;
+        (c) export config_file=$OPTARG;;
         (e) export exec=$OPTARG;;
-        (f) export jobfile=$OPTARG;;
+        (o) export seed_offset=$OPTARG;;
         (p) export rclone_prefix=$OPTARG;;
         (r) export rclone_remove="true";;
         (P) export parallel="true";;
@@ -55,15 +57,15 @@ rclone_file () {
 }
 
 run_sim_id() {
-  num_cols=$(awk '{print NF}' $jobfile | head -n 1)
-  arg_line=$(tail -n+$1 $jobfile | head -1)
-  if [ -z "$arg_line" ]; then
-    return 0
-  fi
-  config_file=$(echo "$arg_line" | cut -d " " -f1)
+#  num_cols=$(awk '{print NF}' $jobfile | head -n 1)
+#  arg_line=$(tail -n+$1 $jobfile | head -1)
+#  if [ -z "$arg_line" ]; then
+#    return 0
+#  fi
+  array_task_plus_step_id=$1
+  model_seed=$(( seed_offset + array_task_plus_step_id ))
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
-  model_seed=$(echo "$arg_line" | cut -d " " -f2)
   outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
   outfile=$outdir/mbl_$model_seed.h5
   logdir=logs/$config_dir/$config_base
@@ -72,8 +74,7 @@ run_sim_id() {
   infoline="SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
   mkdir -p $logdir
 
-  if [ "$num_cols" -eq 2 ] ; then
-    if [ -f $loginfo ] ; then
+  if [ -f $loginfo ] ; then
       echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
       status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
       if [[ $status =~ FINISHED|RCLONED ]] ; then
@@ -114,30 +115,16 @@ run_sim_id() {
         fi
       fi
     fi
-  elif [ "$num_cols" -eq 3 ]; then
-    bit_field=$(echo $arg_line | cut -d " " -f3)
-    echo "BITFIELD                 : $bit_field"
-    echo "EXEC LINE                : $exec -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt"
-    if [ -z  "$dryrun" ];then
-      $exec -t $SLURM_CPUS_PER_TASK -c $config_file -s $model_seed -b $bit_field &>> $logdir/$model_seed_$bit_field.txt
-      exit_code_dmrg=$?
-      echo "EXIT CODE         : $exit_code_dmrg"
-      return $?
-    fi
-  else
-    echo "Case not implemented"
-    exit 1
-  fi
 }
 
 
-if [ ! -f $jobfile ]; then
-    echo "job file is not a valid file: $jobfile"
+if [ ! -f $config_file ]; then
+    echo "config file is not valid: $config_file"
     exit 1
 fi
 
 echo "HOSTNAME                 : $HOSTNAME"
-echo "JOB FILE                 : $jobfile"
+echo "CONFIG FILE              : $config_file"
 echo "SLURM_CLUSTER_NAME       : $SLURM_CLUSTER_NAME"
 echo "SLURM_NTASKS             : $SLURM_NTASKS"
 echo "SLURM_CPUS_ON_NODE       : $SLURM_CPUS_ON_NODE"
@@ -156,7 +143,7 @@ ssh-agent -k
 eval "$(ssh-agent -s)"
 
 export start_id=$SLURM_ARRAY_TASK_ID
-export end_id=$((SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
+export end_id=$(( SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
 ulimit -c unlimited
 
@@ -173,7 +160,7 @@ if [ "$parallel" == "true" ]; then
 
   parallel --memsuspend=1G --memfree=$SLURM_MEM_PER_CPU \
            --jobs=$JOBS_PER_NODE \
-           --ungroup --resume --delay=1s \
+           --ungroup --resume --delay=.2s \
            --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
            --colsep=' ' run_sim_id \
            ::: $(seq $start_id $end_id)
@@ -181,7 +168,6 @@ if [ "$parallel" == "true" ]; then
 else
     for id in $(seq $start_id $end_id); do
       echo "TIME                     : $(date +'%Y-%m-%dT%T')"
-      echo "CONFIG LINE              : $arg_line"
       run_sim_id $id
       if [ $? != "0" ]; then
         exit_code_save=$?
