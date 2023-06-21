@@ -63,7 +63,7 @@ run_sim_id() {
 #    return 0
 #  fi
   array_task_plus_step_id=$1
-  model_seed=$(( seed_offset + array_task_plus_step_id ))
+  model_seed=$(( seed_offset + array_task_plus_step_id - 1))
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
   outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
