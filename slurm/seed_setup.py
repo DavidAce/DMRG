@@ -3,6 +3,18 @@ def get_seed_setup(projectname):
         'lbit93-precision' : {
             'projectname': 'lbit93-precision',
             'seeds': {  # Number of seeds to run
+                'L8|f0.2': {
+                    'extent': [100],
+                    'offset': [20000],
+                },
+                'L8|f0.3': {
+                    'extent': [100],
+                    'offset': [30000],
+                },
+                'L8|f0.4': {
+                    'extent': [100],
+                    'offset': [40000],
+                },
                 'L12|f0.2': {
                     'extent': [10000, 15000, 25000, 7500, 10000, 2500, 5000],
                     'offset': [10030000, 15045000, 16050000, 20022500, 25030000, 30007500, 35015000],
