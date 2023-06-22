@@ -28,8 +28,8 @@ def parse(project_name):
     parser.add_argument('-M', '--clusters', type=str, help='Comma separated list of Slurm clusters', default=None)
     parser.add_argument('-w', '--nodelist', type=str, help='Comma separated list of node names', default=None)
     parser.add_argument('--reservation', type=str, help='Name of reservation to run under', default=None)
-    parser.add_argument('--cfgpath', type=str, help='Path to simulation config files (suffixed .cfg)', default='config')
-    parser.add_argument('--seedpath', type=str, help='Path to simulation seed files (suffixed .json)', default=None)
+    parser.add_argument('--config', type=str, help='Path to simulation config files (suffixed .cfg)', default='config')
+    parser.add_argument('--seedpath', type=str, help='Path to simulation seed files (suffixed .json). Default to --config.', default=None)
     parser.add_argument('--pattern', type=str, help='Only consider simulation config files containing this substring', default=None)
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
     parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
@@ -102,17 +102,6 @@ def run(cmd,env,args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STD
                 print(line, end='')  # process line here
         if p.returncode:
             raise subprocess.CalledProcessError(p.returncode, ' '.join(p.args))
-
-def write_joblists(superlist, sims_per_array, jobdir):
-    # Write the super job list to job files in chunks of size sims_per_array
-    for i,joblist in enumerate(chunks(superlist, sims_per_array)):
-        bgn = i * sims_per_array
-        end = i * sims_per_array + sims_per_array - 1
-        end = min(end, len(superlist)-1)
-        jobfile = '{}/part.{:0>4}.[{}-{}].job'.format(jobdir, i, bgn,end)
-        with open(jobfile,'w+') as f:
-            for job in joblist:
-                f.writelines(job)
 
 def split_range(extent, offset, chunksize):
     extents = [min(extent,chunksize)]
@@ -219,11 +208,13 @@ def generate_sbatch_commands(project_name, args):
                     sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -c {} -o {}{}{}{}'
                                       .format(' '.join(sbatch_arg), ext, args.sims_per_task, exec, cfg, off,
                                               parallel, rclone_prefix, rclone_remove))
+    Path("logs").mkdir(parents=True, exist_ok=True)
+    Path("jobs").mkdir(parents=True, exist_ok=True)
+
     # Save the sbatch command
     with open("jobs/sbatch-{}-{}.txt".format(socket.gethostname(), datetime.now().strftime("%Y-%m-%dT%H.%M.%S")),
               mode='wt', encoding='utf-8') as file:
         file.write('\n'.join(sbatch_cmd))
-    Path("logs").mkdir(parents=True, exist_ok=True)
 
     if args.debug:
         print('sbatch args:', ' '.join(sbatch_arg))
