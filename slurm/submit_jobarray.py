@@ -209,8 +209,6 @@ def generate_sbatch_commands(project_name, args):
     if not cfgs:
         raise FileNotFoundError(errno.ENOENT, f'{os.strerror(errno.ENOENT)}: no .cfg files found in {args.cfgspath}')
 
-    # jobdir = "jobs-{}-{}".format(socket.gethostname(), datetime.now().strftime("%Y-%m-%dT%H.%M.%S"))
-    # os.makedirs(jobdir, exist_ok=True)
     for cfg in cfgs:
         seedfile = '{}/{}.json'.format(Path(args.seedpath), Path(cfg).stem)
         with open(seedfile, 'r') as fp:
@@ -221,8 +219,10 @@ def generate_sbatch_commands(project_name, args):
                     sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -c {} -o {}{}{}{}'
                                       .format(' '.join(sbatch_arg), ext, args.sims_per_task, exec, cfg, off,
                                               parallel, rclone_prefix, rclone_remove))
-    print(sbatch_cmd)
-
+    # Save the sbatch command
+    with open("jobs/sbatch-{}-{}.txt".format(socket.gethostname(), datetime.now().strftime("%Y-%m-%dT%H.%M.%S")),
+              mode='wt', encoding='utf-8') as file:
+        file.write('\n'.join(sbatch_cmd))
     Path("logs").mkdir(parents=True, exist_ok=True)
 
     if args.debug:
