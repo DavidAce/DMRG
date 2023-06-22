@@ -62,12 +62,11 @@ rclone_copy_from_remote() {
   fi
   file_remote="$rclone_remote/$rclone_prefix/$1"
   file_remote_lsf=$(rclone lsf $file_remote)
-  echo "check remote file: $file_remote"
-  echo "-- expected: $2"
-  echo "-- found   : $file_remote_lsf"
+  echo "RCLONE CHECK REMOTE      : $file_remote"
+  echo "-- expected              : $2"
+  echo "-- found                 : $file_remote_lsf"
   if [ "$file_remote_lsf" == "$2" ]; then
-    echo "Found remote file: $file_remote"
-    echo "Copying from remote to $1"
+    echo "-- copy remote -> local  : $1"
     rclone copyto $file_remote $1 -L --update
   fi
 }
