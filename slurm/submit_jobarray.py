@@ -72,7 +72,7 @@ def parse(project_name):
 
     args = parser.parse_args()
     if args.seedpath is None:
-        args.seedpath = args.cfgpath
+        args.seedpath = args.config
 
     if args.default_kraken:
         parser.set_defaults(partition='dedicated',qos='lowprio')
@@ -192,9 +192,9 @@ def generate_sbatch_commands(project_name, args):
 
     # Load the seed configurations
     if args.pattern:
-        cfgs = sorted(list(Path(args.cfgpath).glob('*{}*.cfg'.format(args.pattern))))
+        cfgs = sorted(list(Path(args.config).glob('*{}*.cfg'.format(args.pattern))))
     else:
-        cfgs = sorted(list(Path(args.cfgpath).glob('*.cfg')))
+        cfgs = sorted(list(Path(args.config).glob('*.cfg')))
     if not cfgs:
         raise FileNotFoundError(errno.ENOENT, f'{os.strerror(errno.ENOENT)}: no .cfg files found in {args.cfgspath}')
 
