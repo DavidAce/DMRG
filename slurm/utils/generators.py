@@ -1,6 +1,7 @@
 from itertools import product
 from pathlib import Path
 import json
+import yaml
 import os
 import numpy as np
 
@@ -11,7 +12,6 @@ def get_config_product(dictoflists : dict, p: dict):
         for key,val in d.items():
             if callable(val):
                 d[key] = val(d, dictoflists, p)
-        print(d)
         c.append(d)
     return c
 
@@ -25,6 +25,9 @@ def replace_value(line,pos,val):
 
 def write_config_file(config, config_template, config_filename):
     Path(config_filename).parent.mkdir(parents=True, exist_ok=True)
+    print(config_filename)
+    print(yaml.dump(config, allow_unicode=True))
+
     with open(config_template, 'r') as template:
         with open(config_filename, 'w') as file:
             for line in template:
@@ -48,6 +51,7 @@ def write_seed_files(seed_setup, config_paths):
         else:
             seedjson = {
                 "config_index": idx,
+                "config_file" : str(config_filepath),
                 'projectname': seed_setup['projectname'],
                 'seed_extent': [],
                 'seed_offset': [],
@@ -84,6 +88,7 @@ def write_seed_files(seed_setup, config_paths):
                                  f"The new extent {extent} is incompatible")
 
         seedjson['seed_counts'] = int(np.sum(seedjson['seed_extent']))
-        print(seedjson)
+        print(json.dumps(seedjson, sort_keys=True, indent=4))
+
         with open(seed_filename, 'w') as fp:
             json.dump(seedjson, fp, sort_keys=True, indent=4)
