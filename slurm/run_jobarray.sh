@@ -56,6 +56,11 @@ rclone_file () {
   fi
 }
 
+#rclone_get_status() {
+#  status=$(rclone cat neumann:/mnt/WDB-AN1500/mbl_transition/lbit93-precision/$1 | tail -n 1 | awk -F'|' '{print $NF}'rclone cat)
+#  return status
+#}
+
 run_sim_id() {
 #  num_cols=$(awk '{print NF}' $jobfile | head -n 1)
 #  arg_line=$(tail -n+$1 $jobfile | head -1)
@@ -75,46 +80,69 @@ run_sim_id() {
   mkdir -p $logdir
 
   if [ -f $loginfo ] ; then
-      echo "Found earlier loginfo: $(tail -n 1 $loginfo)"
-      status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
-      if [[ $status =~ FINISHED|RCLONED ]] ; then
+    echo "Found local loginfo: $(tail -n 1 $loginfo)"
+    status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
+    if [[ $status =~ FINISHED|RCLONED ]] ; then
+      return 0 # Go to next id
+    fi
+    if [ $status == "RUNNING" ] ; then
+      # This could be a simulation that terminated abruptly, or it is actually running right now.
+      # We can find out because we can check if the slurm job id is still running using sacct
+      old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
+      old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
+      old_job_id=${old_array_job_id}_${old_array_task_id}
+      slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
+      if [ "$slurm_state" == "RUNNING" ] ; then
         return 0 # Go to next id
       fi
-      if [ $status == "RUNNING" ] ; then
-        # This could be a simulation that terminated abruptly, or it is actually running right now.
-        # We can find out because we can check if the slurm job id is still running using sacct
-        old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
-        old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
-        old_job_id=${old_array_job_id}_${old_array_task_id}
-        slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
-        if [ "$slurm_state" == "RUNNING" ] ; then
-          return 0 # Go to next id
-        fi
-      fi
-      # We go a head and run the simulation if it's not running, or if it failed
     fi
+    # We go a head and run the simulation if it's not running, or if it failed
+  fi
 
-    echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
-    if [ -z  "$dryrun" ]; then
-      echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
-      $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-      echo "EXIT CODE                : $?"
-      if [ "$?" != "0" ]; then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
-        return $?
-      fi
-      if [ "$?" == "0" ] ; then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
-        #logtext='$logdir/$model_seed.txt'
-        #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
-        rclone_file $loginfo "false"
-        rclone_file $logtext $rclone_remove
-        rclone_file $outfile $rclone_remove
-        if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
-          echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
-        fi
+  # Check if the file exists in the remote
+  loginfo_remote="neumann:/mnt/WDB-AN1500/mbl_transition/$loginfo"
+  loginfo_remote_lsf=$(rclone lsf $loginfo_remote)
+  if [ "$loginfo_remote_lsf" == "$model_seed.info" ]; then
+    echo "Found remote loginfo: $loginfo_remote"
+    status=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $NF}')
+    if [[ $status =~ FINISHED|RCLONED ]] ; then
+      return 0 # Go to next id
+    fi
+    if [ $status == "RUNNING" ] ; then
+      # This could be a simulation that terminated abruptly, or it is actually running right now.
+      # We can find out because we can check if the slurm job id is still running using sacct
+      old_array_job_id=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
+      old_array_task_id=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
+      old_job_id=${old_array_job_id}_${old_array_task_id}
+      slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
+      if [ "$slurm_state" == "RUNNING" ] ; then
+        return 0 # Go to next id
       fi
     fi
+    # We go a head and run the simulation if it's not running, or if it failed
+  fi
+
+  echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
+  if [ -z  "$dryrun" ]; then
+    echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
+    $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
+    echo "EXIT CODE                : $?"
+    if [ "$?" != "0" ]; then
+      echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
+      return $?
+    fi
+    if [ "$?" == "0" ] ; then
+      echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
+      #logtext='$logdir/$model_seed.txt'
+      #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
+      rclone_file $loginfo "false"
+      rclone_file $logtext $rclone_remove
+      rclone_file $outfile $rclone_remove
+      if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
+        echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
+      fi
+    fi
+  fi
 }
 
 
