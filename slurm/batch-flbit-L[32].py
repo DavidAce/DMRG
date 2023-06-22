@@ -6,9 +6,9 @@ import platform
 config_paths = {
     'project_prefix'    : 'mbl',
     'config_template'   : 'template_configs/flbit.cfg',
-    'config_dir'        : "config-L[24]",
+    'config_dir'        : "config-L[32]",
     'output_dir'        : "output",
-    'seed_dir'          : "config-L[24]", # Output one .json file per .cfg, describing the seed values to run
+    'seed_dir'          : "config-L[32]", # Output one .json file per .cfg, describing the seed values to run
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else "/tmp"
 }
 

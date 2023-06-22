@@ -8,7 +8,7 @@ config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
     'config_dir'        : "config-L[28]",
     'output_dir'        : "output",
-    'seed_dir'          : "config-L[24]", # Output one .json file per .cfg, describing the seed values to run
+    'seed_dir'          : "config-L[28]", # Output one .json file per .cfg, describing the seed values to run
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else "/tmp"
 }
 
