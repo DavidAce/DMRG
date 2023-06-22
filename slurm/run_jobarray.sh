@@ -21,7 +21,7 @@ Usage                               : $PROGNAME [-options] with the following op
 EOF
   exit 1
 }
-
+export rclone_remote="neumann:/mnt/WDB-AN1500/mbl_transition"
 export rclone_remove="false"
 export parallel="false"
 export seed_offset=0
@@ -56,10 +56,21 @@ rclone_file () {
   fi
 }
 
-#rclone_get_status() {
-#  status=$(rclone cat neumann:/mnt/WDB-AN1500/mbl_transition/lbit93-precision/$1 | tail -n 1 | awk -F'|' '{print $NF}'rclone cat)
-#  return status
-#}
+rclone_copy_from_remote() {
+  if [ -z "$rclone_prefix" ]; then
+    return
+  fi
+  file_remote="$rclone_remote/$rclone_prefix/$1"
+  file_remote_lsf=$(rclone lsf $file_remote)
+  echo "check remote file: $file_remote"
+  echo "-- expected: $2"
+  echo "-- found   : $file_remote_lsf"
+  if [ "$file_remote_lsf" == "$2" ]; then
+    echo "Found remote file: $file_remote"
+    echo "Copying from remote to $1"
+    rclone copyto $file_remote $1 -L --update
+  fi
+}
 
 run_sim_id() {
 #  num_cols=$(awk '{print NF}' $jobfile | head -n 1)
@@ -78,6 +89,13 @@ run_sim_id() {
   loginfo=$logdir/$model_seed.info
   infoline="SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
   mkdir -p $logdir
+
+  # Start by checking if the results already exist in the remote
+  # If they do, use rclone copyto to copy the remote file to local
+  # This command will only copy if the remote file is newer.
+  rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
+  rclone_copy_from_remote "$logtext" "$model_seed.txt"
+  rclone_copy_from_remote "$loginfo" "$model_seed.info"
 
   if [ -f $loginfo ] ; then
     echo "Found local loginfo: $(tail -n 1 $loginfo)"
@@ -100,8 +118,11 @@ run_sim_id() {
   fi
 
   # Check if the file exists in the remote
-  loginfo_remote="neumann:/mnt/WDB-AN1500/mbl_transition/$loginfo"
+  loginfo_remote="$rclone_remote/$loginfo"
   loginfo_remote_lsf=$(rclone lsf $loginfo_remote)
+  echo "check loginfo_remote: $loginfo_remote"
+  echo "-- expected: $model_seed.info"
+  echo "-- found   : $loginfo_remote_lsf"
   if [ "$loginfo_remote_lsf" == "$model_seed.info" ]; then
     echo "Found remote loginfo: $loginfo_remote"
     status=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $NF}')
@@ -122,23 +143,10 @@ run_sim_id() {
     # We go a head and run the simulation if it's not running, or if it failed
   fi
 
-  outfile_remote="neumann:/mnt/WDB-AN1500/mbl_transition/$outfile"
-  outfile_remote_lsf=$(rclone lsf $outfile_remote)
-  if [ "$outfile_remote_lsf" == "mbl_$model_seed.h5" ] && [ ! -f "$outfile" ]; then
-    echo "Found remote h5file: $outfile_remote"
-    echo "Copying from remote to $outfile"
-    rclone copyto $outfile_remote $outfile -L --update
-  fi
-  logtext_remote="neumann:/mnt/WDB-AN1500/mbl_transition/$logtext"
-  logtext_remote_lsf=$(rclone lsf $logtext)
-  if [ "$logtext_remote_lsf" == "$model_seed.txt" ] && [ ! -f "$logtext" ]; then
-    echo "Found remote logtext: $logtext_remote"
-    echo "Copying from remote to $logtext"
-    rclone copyto $logtext_remote $logtext -L --update
-  fi
 
   echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
   if [ -z  "$dryrun" ]; then
+    trap '$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo' SIGINT SIGTERM
     echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
     $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
     echo "EXIT CODE                : $?"
