@@ -122,6 +122,21 @@ run_sim_id() {
     # We go a head and run the simulation if it's not running, or if it failed
   fi
 
+  outfile_remote="neumann:/mnt/WDB-AN1500/mbl_transition/$outfile"
+  outfile_remote_lsf=$(rclone lsf $outfile_remote)
+  if [ "$outfile_remote_lsf" == "mbl_$model_seed.h5" ] && [ ! -f "$outfile" ]; then
+    echo "Found remote h5file: $outfile_remote"
+    echo "Copying from remote to $outfile"
+    rclone copyto $outfile_remote $outfile -L --update
+  fi
+  logtext_remote="neumann:/mnt/WDB-AN1500/mbl_transition/$logtext"
+  logtext_remote_lsf=$(rclone lsf $logtext)
+  if [ "$logtext_remote_lsf" == "$model_seed.txt" ] && [ ! -f "$logtext" ]; then
+    echo "Found remote logtext: $logtext_remote"
+    echo "Copying from remote to $logtext"
+    rclone copyto $logtext_remote $logtext -L --update
+  fi
+
   echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
   if [ -z  "$dryrun" ]; then
     echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
