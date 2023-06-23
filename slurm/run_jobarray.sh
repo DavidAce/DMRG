@@ -100,7 +100,7 @@ run_sim_id() {
       # Copy results back to remote
       rclone_copy_to_remote $logtext $rclone_remove
       rclone_copy_to_remote $outfile $rclone_remove
-      if [ -n "$rclone_prefix" ] && [ "$1" == "0" ]; then
+      if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
       fi
       rclone_copy_to_remote $loginfo "false"
@@ -144,7 +144,7 @@ run_sim_id() {
       echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
       rclone_copy_to_remote $logtext $rclone_remove
       rclone_copy_to_remote $outfile $rclone_remove
-      if [ -n "$rclone_prefix" ] && [ "$1" == "0" ]; then
+      if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
       fi
       rclone_copy_to_remote $loginfo "false"
