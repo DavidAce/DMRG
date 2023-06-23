@@ -41,7 +41,7 @@ while getopts c:hde:f:m:o:p:Pr o; do
 done
 
 
-rclone_file () {
+rclone_copy_to_remote () {
   if [ -z "$rclone_prefix" ]; then
     return
   fi
@@ -86,7 +86,7 @@ run_sim_id() {
   logdir=logs/$config_dir/$config_base
   logtext=$logdir/$model_seed.txt
   loginfo=$logdir/$model_seed.info
-  infoline="SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
+  infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
   mkdir -p $logdir
 
   # Start by checking if the results already exist in the remote
@@ -97,46 +97,35 @@ run_sim_id() {
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
 
   if [ -f $loginfo ] ; then
-    echo "Found local loginfo: $(tail -n 1 $loginfo)"
-    status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED or FAILED
-    if [[ $status =~ FINISHED|RCLONED ]] ; then
-      return 0 # Go to next id
-    fi
-    if [ $status == "RUNNING" ] ; then
-      # This could be a simulation that terminated abruptly, or it is actually running right now.
-      # We can find out because we can check if the slurm job id is still running using sacct
-      old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
-      old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
-      old_job_id=${old_array_job_id}_${old_array_task_id}
-      slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
-      if [ "$slurm_state" == "RUNNING" ] ; then
-        return 0 # Go to next id
+    echo "LOCAL LOGINFO            : $(tail -n 1 $loginfo)"
+    status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
+    if [[ $status =~ FINISHED ]]; then
+      # Copy results back to remote
+      rclone_copy_to_remote $logtext $rclone_remove
+      rclone_copy_to_remote $outfile $rclone_remove
+      if [ -n "$rclone_prefix" ] && [ "$1" == "0" ]; then
+        echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
       fi
+      rclone_copy_to_remote $loginfo "false"
     fi
-    # We go a head and run the simulation if it's not running, or if it failed
-  fi
-
-  # Check if the file exists in the remote
-  loginfo_remote="$rclone_remote/$loginfo"
-  loginfo_remote_lsf=$(rclone lsf $loginfo_remote)
-  echo "check loginfo_remote: $loginfo_remote"
-  echo "-- expected: $model_seed.info"
-  echo "-- found   : $loginfo_remote_lsf"
-  if [ "$loginfo_remote_lsf" == "$model_seed.info" ]; then
-    echo "Found remote loginfo: $loginfo_remote"
-    status=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $NF}')
     if [[ $status =~ FINISHED|RCLONED ]] ; then
       return 0 # Go to next id
     fi
-    if [ $status == "RUNNING" ] ; then
+    if [ "$status" == "RUNNING" ] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
-      old_array_job_id=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
-      old_array_task_id=$(rclone cat $loginfo_remote | tail -n 1 | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
-      old_job_id=${old_array_job_id}_${old_array_task_id}
-      slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
-      if [ "$slurm_state" == "RUNNING" ] ; then
-        return 0 # Go to next id
+      cluster=$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')
+      if [ "$cluster" == "$SLURM_CLUSTER_NAME" ];then
+        old_array_job_id=$(tail -n 1 $loginfo | awk -F'|' '{print $3}' | awk -F':' '{print $2}')
+        old_array_task_id=$(tail -n 1 $loginfo | awk -F'|' '{print $4}' | awk -F':' '{print $2}')
+        old_job_id=${old_array_job_id}_${old_array_task_id}
+        slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
+        if [ "$slurm_state" == "RUNNING" ] ; then
+          return 0 # Go to next id
+        fi
+      elif [ ! -z "$cluster" ]; then
+        echo "WARNING: Job $config_file with seed $model_seed is handled by cluster $cluster"
+        return 0 # Go to next id because this job is handled by another cluster
       fi
     fi
     # We go a head and run the simulation if it's not running, or if it failed
@@ -148,21 +137,20 @@ run_sim_id() {
     trap '$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo' SIGINT SIGTERM
     echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
     $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
-    echo "EXIT CODE                : $?"
-    if [ "$?" != "0" ]; then
+    exit_code=$?
+    echo "EXIT CODE                : $exit_code"
+    if [ "$exit_code" != "0" ]; then
       echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
       return $?
     fi
-    if [ "$?" == "0" ] ; then
+    if [ "$exit_code" == "0" ] ; then
       echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
-      #logtext='$logdir/$model_seed.txt'
-      #outfile=$(awk '/Simulation data written to file/' '$logdir/$model_seed.txt' | awk -F ": " '{print $2}')
-      rclone_file $loginfo "false"
-      rclone_file $logtext $rclone_remove
-      rclone_file $outfile $rclone_remove
-      if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
+      rclone_copy_to_remote $logtext $rclone_remove
+      rclone_copy_to_remote $outfile $rclone_remove
+      if [ -n "$rclone_prefix" ] && [ "$1" == "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
       fi
+      rclone_copy_to_remote $loginfo "false"
     fi
   fi
 }
@@ -202,7 +190,8 @@ if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
   module load parallel
   export -f run_sim_id
-  export -f rclone_file
+  export -f rclone_copy_to_remote
+  export -f rclone_copy_from_remote
   export JOBS_PER_NODE=$SLURM_CPUS_ON_NODE
   if [ -n "$OMP_NUM_THREADS" ]; then
     export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
