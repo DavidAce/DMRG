@@ -46,12 +46,12 @@ rclone_copy_to_remote () {
     return
   fi
   if [ -f $1 ] ; then
-    if [ -n "$rclone_remove" ] && [ "$rclone_remove" == "true" ]; then
-      echo "RCLONE MOVE FILE         : $rclone_prefix $1"
-      rclone moveto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --update
+    if [ "$2" == "true" ]; then
+      echo "RCLONE MOVE LOCAL->REMOTE: $1"
+      rclone moveto "$1" neumann:"$rclone_remote/$rclone_prefix/$1" -L --update
     else
-      echo "RCLONE COPY FILE         : $rclone_prefix $1"
-      rclone copyto "$1" neumann:"/mnt/WDB-AN1500/mbl_transition/$rclone_prefix/$1" -L --update
+      echo "RCLONE COPY LOCAL->REMOTE: $1"
+      rclone copyto "$1" neumann:"$rclone_remote/$rclone_prefix/$1" -L --update
     fi
   fi
 }
@@ -62,9 +62,6 @@ rclone_copy_from_remote() {
   fi
   file_remote="$rclone_remote/$rclone_prefix/$1"
   file_remote_lsf=$(rclone lsf $file_remote)
-  #echo "RCLONE CHECK REMOTE      : $file_remote"
-  #echo "-- expected              : $2"
-  #echo "-- found                 : $file_remote_lsf"
   if [ "$file_remote_lsf" == "$2" ]; then
     echo "RCLONE COPY REMOTE->LOCAL: $1"
     rclone copyto $file_remote $1 -L --update
