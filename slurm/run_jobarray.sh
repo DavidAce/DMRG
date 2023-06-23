@@ -89,10 +89,7 @@ run_sim_id() {
   # Start by checking if the results already exist in the remote
   # If they do, use rclone copyto to copy the remote file to local
   # This command will only copy if the remote file is newer.
-  rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
-  rclone_copy_from_remote "$logtext" "$model_seed.txt"
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
-
   if [ -f $loginfo ] ; then
     echo "LOCAL LOGINFO            : $(tail -n 1 $loginfo)"
     status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
@@ -127,8 +124,9 @@ run_sim_id() {
     fi
     # We go a head and run the simulation if it's not running, or if it failed
   fi
-
-
+  # Get  the latest data to continue from
+  rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
+  rclone_copy_from_remote "$logtext" "$model_seed.txt"
   echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
   if [ -z  "$dryrun" ]; then
     trap '$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo' SIGINT SIGTERM
