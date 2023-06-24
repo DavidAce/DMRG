@@ -48,10 +48,10 @@ rclone_copy_to_remote () {
   if [ -f $1 ] ; then
     if [ "$2" == "true" ]; then
       echo "RCLONE MOVE LOCAL->REMOTE: $1"
-      rclone moveto "$1" neumann:"$rclone_remote/$rclone_prefix/$1" -L --update
+      rclone moveto "$1" "$rclone_remote/$rclone_prefix/$1" -L --update
     else
       echo "RCLONE COPY LOCAL->REMOTE: $1"
-      rclone copyto "$1" neumann:"$rclone_remote/$rclone_prefix/$1" -L --update
+      rclone copyto "$1" "$rclone_remote/$rclone_prefix/$1" -L --update
     fi
   fi
 }
