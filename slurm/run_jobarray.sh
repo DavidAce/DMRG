@@ -58,7 +58,7 @@ rclone_copy_to_remote () {
 
 rclone_copy_from_remote() {
   if [ -z "$rclone_prefix" ]; then
-    return
+    return 0
   fi
   file_remote="$rclone_remote/$rclone_prefix/$1"
   file_remote_lsf=$(rclone lsf $file_remote)
@@ -90,21 +90,24 @@ run_sim_id() {
   # If they do, use rclone copyto to copy the remote file to local
   # This command will only copy if the remote file is newer.
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
+  rclone_copy_exit_code=$?
+  if [ "$rclone_copy_exit_code" != "0" ] ; then
+    return $rclone_copy_exit_code
+  fi
   if [ -f $loginfo ] ; then
     echo "LOCAL LOGINFO            : $(tail -n 1 $loginfo)"
     status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
-    if [[ $status =~ FINISHED ]]; then
+    if [[ $status =~ FINISHED|RCLONED ]]; then
       # Copy results back to remote
       rclone_copy_to_remote $logtext $rclone_remove
       rclone_copy_to_remote $outfile $rclone_remove
       if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
+        rclone_copy_to_remote $loginfo $rclone_remove
       fi
-      rclone_copy_to_remote $loginfo "false"
+      return 0
     fi
-    if [[ $status =~ FINISHED|RCLONED ]] ; then
-      return 0 # Go to next id
-    fi
+
     if [ "$status" == "RUNNING" ] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
@@ -144,8 +147,8 @@ run_sim_id() {
       rclone_copy_to_remote $outfile $rclone_remove
       if [ -n "$rclone_prefix" ] && [ "$?" == "0" ]; then
         echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
+        rclone_copy_to_remote $loginfo $rclone_remove
       fi
-      rclone_copy_to_remote $loginfo "false"
     fi
   fi
 }
