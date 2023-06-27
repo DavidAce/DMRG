@@ -207,14 +207,14 @@ if [ -f "$status_file" ]; then
     if [ -d "/scratch/local" ];then
       tempdir="/scratch/local"
     fi
-    status_temp="/$tempdir/DMRG.$USER/$SLURM_ARRAY_JOB_ID/status"
+    status_temp="/$tempdir/DMRG.$USER/status/$SLURM_ARRAY_JOB_ID"
     status_name="$config_base.status"
     if [ ! -f "$status_temp/$status_name" ]; then
       mkdir -p $status_temp
       cp $status_file $status_temp/
     fi
     export status_file=$status_temp/$status_name
-    trap 'rm -f "$status_file"' EXIT
+    trap 'rm -rf "$status_temp"' EXIT
 fi
 
 echo "$(date +'%Y-%m-%dT%T'): TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
