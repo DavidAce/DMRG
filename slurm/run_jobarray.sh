@@ -88,7 +88,7 @@ run_sim_id() {
   # Check if there is a status file (which was copied to tmp earlier. Return if finished
   if [ -f "$status_file" ]; then
     status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
-    echo "$(date +'%Y-%m-%dT%T'): STATUS $model_seed       : $status"
+    echo "$(date +'%Y-%m-%dT%T'): STATUS                   : $status $model_seed $id"
     if [ "$status" == "FINISHED" ]; then
       return 0
     fi
@@ -207,7 +207,7 @@ if [ -f "$status_file" ]; then
     if [ -d "/scratch/local" ];then
       tempdir="/scratch/local"
     fi
-    status_temp="/$tempdir/DMRG.$USER/status/$SLURM_ARRAY_JOB_ID"
+    status_temp="/$tempdir/DMRG.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
     status_name="$config_base.status"
     if [ ! -f "$status_temp/$status_name" ]; then
       mkdir -p $status_temp
