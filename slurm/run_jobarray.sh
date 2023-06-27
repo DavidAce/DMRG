@@ -207,7 +207,7 @@ if [ -f "$status_file" ]; then
     if [ -d "/scratch/local" ];then
       tempdir="/scratch/local"
     fi
-    status_temp="/$tempdir/DMRG.$USER/status"
+    status_temp="/$tempdir/DMRG.$USER/$SLURM_ARRAY_JOB_ID/status"
     status_name="$config_base.status"
     if [ ! -f "$status_temp/$status_name" ]; then
       mkdir -p $status_temp
