@@ -100,8 +100,8 @@ int settings::parse(int argc, char **argv) {
     app.add_option("-z,--compression"                  , storage::compression_level     , "Compression level of h5pp")->check(CLI::Range(0,9));
     app.add_option("--resume-iter"                     , storage::file_resume_iter      , "Resume from iteration");
     app.add_option("--resume-name"                     , storage::file_resume_name      , "Resume from state matching this name");
-    app.add_flag  ("-r,--resume"                                                        , "Resume simulation from last iteration")->excludes("--replace", "--revive");
-    app.add_flag  ("--replace"                                                          , "Replace the output file and start from the beginning")->excludes("--resume", "--resume-iter", "--resume-name", "--revive");
+    app.add_flag  ("-r,--resume"                                                        , "Resume simulation from last iteration");
+    app.add_flag  ("--replace"                                                          , "Replace the output file and start from the beginning")->excludes("--resume", "--resume-iter", "--resume-name");
     app.add_flag  ("--revive"                                                           , "Replace the output file and start from the beginning")->excludes("--resume", "--resume-iter", "--resume-name", "--replace");
     app.add_option("-v,--log,--verbosity,--loglevel"   , console::loglevel              , "Log level of DMRG++")->transform(CLI::CheckedTransformer(s2e_log, CLI::ignore_case))->type_name("ENUM");
     app.add_option("-V,--logh5pp"                      , console::logh5pp               , "Log level of h5pp")->transform(CLI::CheckedTransformer(s2e_logh5pp, CLI::ignore_case))->type_name("ENUM");
