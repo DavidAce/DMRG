@@ -65,10 +65,12 @@ rclone_copy_from_remote() {
   fi
   file_remote="$rclone_remote/$rclone_prefix/$1"
   file_remote_lsf=$(rclone lsf $file_remote)
-  if [ "$file_remote_lsf" == "$2" ]; then
+  rclone_lsf_exit_code=$?
+  if [ "$rclone_lsf_exit_code" == "0" ] && [ "$file_remote_lsf" == "$2" ]; then
     echo "RCLONE COPY REMOTE->LOCAL: $1"
     rclone copyto $file_remote $1 -L --update
   fi
+  return 0 # It's fine if this function fails
 }
 
 run_sim_id() {
@@ -76,40 +78,33 @@ run_sim_id() {
   model_seed=$(( seed_offset + array_task_plus_step_id - 1))
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
-
-  # Check if there is a status file. Return if finished
-  status_file=$status_dir/$config_base.status
-  if [ -f "$status_file" ]; then
-    status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
-  fi
-
-  if [ "$status" == "FINISHED" ]; then
-    return 0
-  elif [ "$status" == "TIMEOUT" ]; then
-    extra_args="--"
-  fi
-
-
   outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
   outfile=$outdir/mbl_$model_seed.h5
   logdir=logs/$config_dir/$config_base
   logtext=$logdir/$model_seed.txt
   loginfo=$logdir/$model_seed.info
   infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
+
+  # Check if there is a status file. Return if finished
+  status_file=$status_dir/$config_base.status
+  if [ -f "$status_file" ]; then
+    status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
+    echo "STATUS                   : $status"
+    if [ "$status" == "FINISHED" ]; then
+      return 0
+    fi
+  fi
+
   mkdir -p $logdir
 
-  # Start by checking if the results already exist in the remote
+  # Next, check if the results already exist in the remote
   # If they do, use rclone copyto to copy the remote file to local
   # This command will only copy if the remote file is newer.
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
-  rclone_copy_exit_code=$?
-  if [ "$rclone_copy_exit_code" != "0" ] ; then
-    return $rclone_copy_exit_code
-  fi
   if [ -f $loginfo ] ; then
-    echo "LOCAL LOGINFO            : $(tail -n 1 $loginfo)"
-    status=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
-    if [[ $status =~ FINISHED|RCLONED ]]; then
+    echo "LOGINFO                  : $(tail -n 1 $loginfo)"
+    infostatus=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
+    if [[ $infostatus =~ FINISHED|RCLONED ]]; then
       # Copy results back to remote
       rclone_copy_to_remote $logtext $rclone_remove
       rclone_copy_to_remote $outfile $rclone_remove
@@ -121,7 +116,7 @@ run_sim_id() {
       return 0
     fi
 
-    if [ "$status" == "RUNNING" ] ; then
+    if [ "$infostatus" == "RUNNING" ] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
       cluster=$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')
@@ -138,16 +133,23 @@ run_sim_id() {
         return 0 # Go to next id because this job is handled by another cluster
       fi
     fi
-    # We go a head and run the simulation if it's not running, or if it failed
+    # We go ahead and run the simulation if it's not running, or if it failed
   fi
-  # Get  the latest data to continue from
-  rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
-  rclone_copy_from_remote "$logtext" "$model_seed.txt"
-  echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext"
+
+  # Get the latest data to continue from
+  if [ "$status" == "TIMEOUT" ] || [ "$infostatus" == "FAILED" ]; then
+    rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
+    rclone_copy_from_remote "$logtext" "$model_seed.txt"
+    extra_args="--revive"
+  elif [ "$status" == "FAILED" ];then
+    extra_args="--replace"
+  fi
+
+  echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
     trap '$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo' SIGINT SIGTERM
     echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
-    $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK &>> $logtext
+    $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext
     exit_code=$?
     echo "EXIT CODE                : $exit_code"
     if [ "$exit_code" != "0" ]; then
