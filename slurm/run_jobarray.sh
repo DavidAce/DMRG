@@ -37,7 +37,7 @@ while getopts c:hde:f:m:o:p:Prs: o; do
         (p) export rclone_prefix=$OPTARG;;
         (r) export rclone_remove="true";;
         (P) export parallel="true";;
-        (P) export status_dir=$OPTARG;;
+        (s) export status_dir=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
