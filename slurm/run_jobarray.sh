@@ -50,10 +50,10 @@ rclone_copy_to_remote () {
   fi
   if [ -f $1 ] ; then
     if [ "$2" == "true" ]; then
-      echo "RCLONE MOVE LOCAL->REMOTE: $1"
+      echo "$(date +'%Y-%m-%dT%T'): RCLONE MOVE LOCAL->REMOTE: $1"
       rclone moveto "$1" "$rclone_remote/$rclone_prefix/$1" -L --update
     else
-      echo "RCLONE COPY LOCAL->REMOTE: $1"
+      echo "$(date +'%Y-%m-%dT%T'): RCLONE COPY LOCAL->REMOTE: $1"
       rclone copyto "$1" "$rclone_remote/$rclone_prefix/$1" -L --update
     fi
   fi
@@ -67,7 +67,7 @@ rclone_copy_from_remote() {
   file_remote_lsf=$(rclone lsf $file_remote)
   rclone_lsf_exit_code=$?
   if [ "$rclone_lsf_exit_code" == "0" ] && [ "$file_remote_lsf" == "$2" ]; then
-    echo "RCLONE COPY REMOTE->LOCAL: $1"
+    echo "$(date +'%Y-%m-%dT%T'): RCLONE COPY REMOTE->LOCAL: $1"
     rclone copyto $file_remote $1 -L --update
   fi
   return 0 # It's fine if this function fails
@@ -88,7 +88,7 @@ run_sim_id() {
   # Check if there is a status file (which was copied to tmp earlier. Return if finished
   if [ -f "$status_file" ]; then
     status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
-    echo "STATUS                   : $status"
+    echo "$(date +'%Y-%m-%dT%T'): STATUS                   : $status"
     if [ "$status" == "FINISHED" ]; then
       return 0
     fi
@@ -101,7 +101,7 @@ run_sim_id() {
   # This command will only copy if the remote file is newer.
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
   if [ -f $loginfo ] ; then
-    echo "LOGINFO                  : $(tail -n 1 $loginfo)"
+    echo "$(date +'%Y-%m-%dT%T'): LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
     if [[ $infostatus =~ FINISHED|RCLONED ]]; then
       # Copy results back to remote
@@ -128,7 +128,7 @@ run_sim_id() {
           return 0 # Go to next id
         fi
       elif [ ! -z "$cluster" ]; then
-        echo "WARNING: Job $config_file with seed $model_seed is handled by cluster $cluster"
+        echo "$(date +'%Y-%m-%dT%T') :WARNING: Job $config_file with seed $model_seed is handled by cluster $cluster"
         return 0 # Go to next id because this job is handled by another cluster
       fi
     fi
@@ -144,13 +144,13 @@ run_sim_id() {
     extra_args="--replace"
   fi
 
-  echo "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
+  echo "$(date +'%Y-%m-%dT%T'): EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
     trap '$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo' SIGINT SIGTERM
     echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
     $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext
     exit_code=$?
-    echo "EXIT CODE                : $exit_code"
+    echo "$(date +'%Y-%m-%dT%T'): EXIT CODE                : $exit_code"
     if [ "$exit_code" != "0" ]; then
       echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
       return $?
@@ -174,22 +174,22 @@ if [ ! -f $config_file ]; then
     exit 1
 fi
 
-echo "HOSTNAME                 : $HOSTNAME"
-echo "USER                     : $USER"
-echo "CONFIG FILE              : $config_file"
-echo "SLURM_CLUSTER_NAME       : $SLURM_CLUSTER_NAME"
-echo "SLURM_NTASKS             : $SLURM_NTASKS"
-echo "SLURM_CPUS_ON_NODE       : $SLURM_CPUS_ON_NODE"
-echo "SLURM_JOB_CPUS_PER_NODE  : $SLURM_JOB_CPUS_PER_NODE"
-echo "SLURM_CPUS_PER_TASK      : $SLURM_CPUS_PER_TASK" # Task is the same as simulation
-echo "SLURM_MEM_PER_CPU        : $SLURM_MEM_PER_CPU"
-echo "SLURM_MEM_PER_NODE       : $SLURM_MEM_PER_NODE"
-echo "SLURM_JOBID              : $SLURM_JOBID"
-echo "SLURM_ARRAY_JOB_ID       : $SLURM_ARRAY_JOB_ID"
-echo "SLURM_ARRAY_TASK_ID      : $SLURM_ARRAY_TASK_ID"
-echo "SLURM_ARRAY_TASK_STEP    : $SLURM_ARRAY_TASK_STEP"
-echo "SLURM_ARRAY_TASK_MIN     : $SLURM_ARRAY_TASK_MIN"
-echo "SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
+echo "$(date +'%Y-%m-%dT%T'): HOSTNAME                 : $HOSTNAME"
+echo "$(date +'%Y-%m-%dT%T'): USER                     : $USER"
+echo "$(date +'%Y-%m-%dT%T'): CONFIG FILE              : $config_file"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_CLUSTER_NAME       : $SLURM_CLUSTER_NAME"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_NTASKS             : $SLURM_NTASKS"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_CPUS_ON_NODE       : $SLURM_CPUS_ON_NODE"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_JOB_CPUS_PER_NODE  : $SLURM_JOB_CPUS_PER_NODE"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_CPUS_PER_TASK      : $SLURM_CPUS_PER_TASK" # Task is the same as simulation
+echo "$(date +'%Y-%m-%dT%T'): SLURM_MEM_PER_CPU        : $SLURM_MEM_PER_CPU"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_MEM_PER_NODE       : $SLURM_MEM_PER_NODE"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_JOBID              : $SLURM_JOBID"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_ARRAY_JOB_ID       : $SLURM_ARRAY_JOB_ID"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_ARRAY_TASK_ID      : $SLURM_ARRAY_TASK_ID"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_ARRAY_TASK_STEP    : $SLURM_ARRAY_TASK_STEP"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_ARRAY_TASK_MIN     : $SLURM_ARRAY_TASK_MIN"
+echo "$(date +'%Y-%m-%dT%T'): SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
 
 ssh-agent -k
 eval "$(ssh-agent -s)"
@@ -217,7 +217,7 @@ if [ -f "$status_file" ]; then
     trap 'rm -f "$status_file"' EXIT
 fi
 
-echo "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
+echo "$(date +'%Y-%m-%dT%T'): TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
   module load parallel
@@ -238,7 +238,6 @@ if [ "$parallel" == "true" ]; then
   exit_code_save=$?
 else
     for id in $(seq $start_id $end_id); do
-      echo "TIME                     : $(date +'%Y-%m-%dT%T')"
       run_sim_id $id
       if [ $? != "0" ]; then
         exit_code_save=$?
