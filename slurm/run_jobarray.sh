@@ -76,7 +76,7 @@ rclone_copy_from_remote() {
 run_sim_id() {
   array_task_plus_step_id=$1
   model_seed=$(( seed_offset + array_task_plus_step_id - 1))
-  config_base=$(echo "$config_file" | xargs -l basename)
+  config_base=$(echo "$config_file" | xargs -l basename -s .cfg)
   config_dir=$(echo "$config_file" | xargs -l dirname)
   outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
   outfile=$outdir/mbl_$model_seed.h5
