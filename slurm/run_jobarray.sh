@@ -85,8 +85,7 @@ run_sim_id() {
   loginfo=$logdir/$model_seed.info
   infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
 
-  # Check if there is a status file. Return if finished
-  status_file=$status_dir/$config_base.status
+  # Check if there is a status file (which was copied to tmp earlier. Return if finished
   if [ -f "$status_file" ]; then
     status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
     echo "STATUS                   : $status"
@@ -176,6 +175,7 @@ if [ ! -f $config_file ]; then
 fi
 
 echo "HOSTNAME                 : $HOSTNAME"
+echo "USER                     : $USER"
 echo "CONFIG FILE              : $config_file"
 echo "SLURM_CLUSTER_NAME       : $SLURM_CLUSTER_NAME"
 echo "SLURM_NTASKS             : $SLURM_NTASKS"
@@ -198,6 +198,24 @@ export start_id=$SLURM_ARRAY_TASK_ID
 export end_id=$(( SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
 ulimit -c unlimited
+
+# Find and copy the status file to tmp
+config_base=$(echo "$config_file" | xargs -l basename -s .cfg)
+export status_file="$status_dir/$config_base.status"
+if [ -f "$status_file" ]; then
+    tempdir="/tmp"
+    if [ -d "/scratch/local" ];then
+      tempdir="/scratch/local"
+    fi
+    status_temp="/$tempdir/DMRG.$USER/status"
+    status_name="$config_base.status"
+    if [ ! -f "$status_temp/$status_name" ]; then
+      mkdir -p $status_temp
+      cp $status_file $status_temp/
+    fi
+    export status_file=$status_temp/$status_name
+    trap 'rm -f "$status_file"' EXIT
+fi
 
 echo "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 if [ "$parallel" == "true" ]; then
