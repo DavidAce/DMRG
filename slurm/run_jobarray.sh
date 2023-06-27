@@ -88,7 +88,7 @@ run_sim_id() {
   # Check if there is a status file (which was copied to tmp earlier. Return if finished
   if [ -f "$status_file" ]; then
     status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
-    echo "$(date +'%Y-%m-%dT%T'): STATUS                   : $status"
+    echo "$(date +'%Y-%m-%dT%T'): STATUS $model_seed       : $status"
     if [ "$status" == "FINISHED" ]; then
       return 0
     fi
