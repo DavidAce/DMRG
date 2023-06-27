@@ -5,13 +5,13 @@ import yaml
 import os
 import numpy as np
 
-def get_config_product(dictoflists : dict, p: dict):
+def get_config_product(config_ranges : dict, p: dict):
     c = []
-    for vals in product(*dictoflists.values()):
-        d = dict(zip(dictoflists.keys(),vals))
+    for vals in product(*config_ranges.values()):
+        d = dict(zip(config_ranges.keys(),vals))
         for key,val in d.items():
             if callable(val):
-                d[key] = val(d, dictoflists, p)
+                d[key] = val(d, config_ranges, p)
         c.append(d)
     return c
 
@@ -38,29 +38,28 @@ def write_config_file(config, config_template, config_filename):
 
 
 
-def write_seed_files(seed_setup, config_paths):
-    for idx, config_filepath in enumerate(sorted(Path(config_paths['config_dir']).glob('*.cfg'))):
-        seed_filename = '{}/{}.json'.format(config_paths['seed_dir'], config_filepath.stem)
-        Path(seed_filename).parent.mkdir(parents=True, exist_ok=True)
-        if os.path.isfile(seed_filename):
-            with open(seed_filename, 'r') as fp:
-                seedjson = json.load(fp)
-                if seedjson['config_index'] != idx:
-                    raise ValueError(f"seed file {seed_filename} has {seedjson['config_index']=} "
-                                     f"which does not match the current index {idx}")
+def write_batch_files(batch_setup, configs, config_paths):
+    for config in configs:
+        config_filepath = Path(config['filename'])
+        batch_filename = '{}/{}.json'.format(config_paths['config_dir'], config_filepath.stem)
+        Path(batch_filename).parent.mkdir(parents=True, exist_ok=True)
+        if os.path.isfile(batch_filename):
+            with open(batch_filename, 'r') as fp:
+                batchjson = json.load(fp)
         else:
-            seedjson = {
-                "config_index": idx,
-                "config_file" : str(config_filepath),
-                'projectname': seed_setup['projectname'],
+            batchjson = {
+                'config_file' : str(config_filepath),
+                'output_path' : str(Path(config["storage::output_filepath"]).parent),
+                'output_stem' : config_paths['output_stem'],
+                'projectname': batch_setup['projectname'],
                 'seed_extent': [],
                 'seed_offset': [],
             }
 
         # Now we need to now which seed set corresponds to this config file
         seed_keys = []
-        for key in seed_setup['seeds'].keys():
-            if all(x in seed_filename for x in key.split('|')):
+        for key in batch_setup['batch'].keys():
+            if all(x in batch_filename for x in key.split('|')):
                 seed_keys.append(key)
         if len(seed_keys) == 0:
             print(f'No seed keys found for config: {config_filepath.name}')
@@ -68,27 +67,28 @@ def write_seed_files(seed_setup, config_paths):
         elif len(seed_keys) > 1:
             raise AssertionError(f'Found multiple seed keys matching config: {config_filepath.name}\n'
                                  f'\n{seed_keys=}')
-        seeds = seed_setup['seeds'][seed_keys[0]]
-        for offset, extent in zip(seeds['offset'], seeds['extent']):
+        batch = batch_setup['batch'][seed_keys[0]]
+        batchjson['time_steps'] = batch['time_steps']
 
-            extent_size = len(seedjson['seed_extent'])
-            offset_size = len(seedjson['seed_offset'])
+        for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
+            extent_size = len(batchjson['seed_extent'])
+            offset_size = len(batchjson['seed_offset'])
             if offset_size != extent_size:
                 raise ValueError(
                     f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
 
             # Check if this offset is already in jobdict for this config
-            offset_index = seedjson['seed_offset'].index(offset) if offset in seedjson['seed_offset'] else -1
+            offset_index = batchjson['seed_offset'].index(offset) if offset in batchjson['seed_offset'] else -1
             if offset_index < 0:
-                seedjson['seed_extent'].append(extent)
-                seedjson['seed_offset'].append(offset)
-            elif seedjson['seed_extent'][offset_index] != extent:
-                raise ValueError(f"{seed_filename} has {offset=} at index {offset_index} with "
-                                 f"extent {seedjson['seed_extent'][offset_index]}.\n"
+                batchjson['seed_extent'].append(extent)
+                batchjson['seed_offset'].append(offset)
+            elif batchjson['seed_extent'][offset_index] != extent:
+                raise ValueError(f"{batch_filename} has {offset=} at index {offset_index} with "
+                                 f"extent {batchjson['seed_extent'][offset_index]}.\n"
                                  f"The new extent {extent} is incompatible")
 
-        seedjson['seed_counts'] = int(np.sum(seedjson['seed_extent']))
-        print(json.dumps(seedjson, sort_keys=True, indent=4))
+        batchjson['seed_counts'] = int(np.sum(batchjson['seed_extent']))
+        print(json.dumps(batchjson, sort_keys=True, indent=4))
 
-        with open(seed_filename, 'w') as fp:
-            json.dump(seedjson, fp, sort_keys=True, indent=4)
+        with open(batch_filename, 'w') as fp:
+            json.dump(batchjson, fp, sort_keys=True, indent=4)

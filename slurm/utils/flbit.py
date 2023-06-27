@@ -27,13 +27,13 @@ def get_unique_config_string(d: dict, dl: dict, delim: str):
 def get_config_filename(d: dict, dl: dict, p: dict):
     unique_path = get_unique_config_string(d,dl, '_')
     # config_filename += f"_u[{str_circuit}].cfg"
-    return f"{p['config_dir']}/{p['project_prefix']}_{unique_path}.cfg"
+    return f"{p['config_dir']}/{p['output_stem']}_{unique_path}.cfg"
 
 
 def get_output_filepath(d: dict, dl: dict, p: dict):
     unique_path = get_unique_config_string(d,dl, '/')
     # config_filename += f"_u[{str_circuit}].cfg"
-    return f"{p['output_dir']}/{unique_path}/{p['project_prefix']}.h5"
+    return f"{p['output_dir']}/{unique_path}/{p['output_stem']}.h5"
 
 def get_max_time(d: dict, dl: dict, p: dict):
     L  = float(d['model::model_size'])

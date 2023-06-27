@@ -29,6 +29,7 @@ def parse(project_name):
     parser.add_argument('-w', '--nodelist', type=str, help='Comma separated list of node names', default=None)
     parser.add_argument('--reservation', type=str, help='Name of reservation to run under', default=None)
     parser.add_argument('--config', type=str, help='Path to simulation config files (suffixed .cfg)', default='config')
+    parser.add_argument('--status', type=str, help='Path to simulation status files (suffixed .status)', default='status')
     parser.add_argument('--seedpath', type=str, help='Path to simulation seed files (suffixed .json). Default to --config.', default=None)
     parser.add_argument('--pattern', type=str, help='Only consider simulation config files containing this substring', default=None)
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
@@ -205,8 +206,8 @@ def generate_sbatch_commands(project_name, args):
             for extent,offset in zip(seedjson['seed_extent'],seedjson['seed_offset']):
                 extents, offsets = split_range(extent,offset,args.sims_per_array)
                 for ext,off in zip(extents,offsets):
-                    sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -c {} -o {}{}{}{}'
-                                      .format(' '.join(sbatch_arg), ext, args.sims_per_task, exec, cfg, off,
+                    sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}'
+                                      .format(' '.join(sbatch_arg), ext, args.sims_per_task, exec, cfg, args.status, off,
                                               parallel, rclone_prefix, rclone_remove))
     Path("logs").mkdir(parents=True, exist_ok=True)
     Path("jobs").mkdir(parents=True, exist_ok=True)

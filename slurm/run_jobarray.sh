@@ -18,6 +18,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -p <remote prefix>                  : Rclone copy to this remote dir prefix (default "")
 -r                                  : Remove the file after rclone
 -P                                  : Run seeds in parallel
+-s                                  : Status file directory
 EOF
   exit 1
 }
@@ -25,7 +26,8 @@ export rclone_remote="neumann:/mnt/WDB-AN1500/mbl_transition"
 export rclone_remove="false"
 export parallel="false"
 export seed_offset=0
-while getopts c:hde:f:m:o:p:Pr o; do
+export status_dir="status"
+while getopts c:hde:f:m:o:p:Prs: o; do
     case $o in
         (h) usage ;;
         (d) export dryrun="ON";;
@@ -35,6 +37,7 @@ while getopts c:hde:f:m:o:p:Pr o; do
         (p) export rclone_prefix=$OPTARG;;
         (r) export rclone_remove="true";;
         (P) export parallel="true";;
+        (P) export status_dir=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
   esac
@@ -69,15 +72,24 @@ rclone_copy_from_remote() {
 }
 
 run_sim_id() {
-#  num_cols=$(awk '{print NF}' $jobfile | head -n 1)
-#  arg_line=$(tail -n+$1 $jobfile | head -1)
-#  if [ -z "$arg_line" ]; then
-#    return 0
-#  fi
   array_task_plus_step_id=$1
   model_seed=$(( seed_offset + array_task_plus_step_id - 1))
   config_base=$(echo "$config_file" | xargs -l basename)
   config_dir=$(echo "$config_file" | xargs -l dirname)
+
+  # Check if there is a status file. Return if finished
+  status_file=$status_dir/$config_base.status
+  if [ -f "$status_file" ]; then
+    status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
+  fi
+
+  if [ "$status" == "FINISHED" ]; then
+    return 0
+  elif [ "$status" == "TIMEOUT" ]; then
+    extra_args="--"
+  fi
+
+
   outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
   outfile=$outdir/mbl_$model_seed.h5
   logdir=logs/$config_dir/$config_base

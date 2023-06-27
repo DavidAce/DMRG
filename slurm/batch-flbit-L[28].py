@@ -1,18 +1,18 @@
-from utils.generators import get_config_product, write_config_file, write_seed_files
+from utils.generators import get_config_product, write_config_file, write_batch_files
 from utils.flbit import get_max_time, get_output_filepath, get_config_filename
-from seed_setup import get_seed_setup
+from batch_setup import get_batch_setup
 import platform
 
 config_paths = {
-    'project_prefix'    : 'mbl',
     'config_template'   : 'template_configs/flbit.cfg',
     'config_dir'        : "config-L[28]",
+    'output_stem': 'mbl',
     'output_dir'        : "output",
-    'seed_dir'          : "config-L[28]", # Output one .json file per .cfg, describing the seed values to run
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else "/tmp"
 }
 
 config_ranges = {
+    "filename" : [''],
     "storage::output_filepath": [get_output_filepath],
     "storage::temp_dir": [config_paths['temp_dir']],
     "console::loglevel": ['2'],
@@ -48,9 +48,9 @@ config_ranges = {
 configs = get_config_product(config_ranges, config_paths)
 for config in configs:
     # Write the config file
-    config_filename = get_config_filename(config, config_ranges, config_paths)
+    config['filename'] = get_config_filename(config, config_ranges, config_paths)
     config_template = config_paths['config_template']
-    write_config_file(config, config_template, config_filename)
+    write_config_file(config, config_template, config['filename'])
 
-seed_setup = get_seed_setup('lbit93-precision')
-write_seed_files(seed_setup, config_paths)
+batch_setup = get_batch_setup('lbit93-precision')
+write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)

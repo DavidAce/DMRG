@@ -4,16 +4,16 @@ import platform
 
 
 config_paths = {
-    'project_prefix'    : 'mbl',
     'config_template'   : 'template_configs/flbit.cfg',
     'config_dir'        : "config",
+    'output_stem'       : 'mbl',
     'output_dir'        : "output",
-    'seed_dir'          : "seeds", # Output one .json file per .cfg, describing the seed values to run
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else "/tmp"
 }
 
 
 config_ranges = {
+    "filename" : [''],
     "storage::output_filepath": [get_output_filepath],
     "storage::temp_dir": [config_paths['temp_dir']],
     "console::loglevel": ['2'],
@@ -46,7 +46,7 @@ config_ranges = {
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
 }
 
-seed_setup = {
+batch_setup = {
     'projectname': 'lbit93-precision',
     'seed_extent': [10000],      # Number of seeds to run
     'seed_offset': [200000000],  # Start the seed count here
@@ -60,4 +60,4 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config_filename)
 
-write_seed_files(seed_setup, config_paths)
+write_seed_files(batch_setup, config_paths)
