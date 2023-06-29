@@ -203,11 +203,14 @@ def generate_sbatch_commands(project_name, args):
         seedfile = '{}/{}.json'.format(Path(args.seedpath), Path(cfg).stem)
         with open(seedfile, 'r') as fp:
             seedjson = json.load(fp)
-            for extent,offset in zip(seedjson['seed_extent'],seedjson['seed_offset']):
+            for extent, offset, status in zip(seedjson['seed_extent'],seedjson['seed_offset'], seedjson['seed_status']):
+                if status == "FINISHED":
+                    continue
                 extents, offsets = split_range(extent,offset,args.sims_per_array)
                 for ext,off in zip(extents,offsets):
-                    sbatch_cmd.append('sbatch {} --array=1-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}'
-                                      .format(' '.join(sbatch_arg), ext, args.sims_per_task, exec, cfg, args.status, off,
+                    step = min(ext, args.sims_per_task)
+                    sbatch_cmd.append('sbatch {} --array=0-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}'
+                                      .format(' '.join(sbatch_arg), ext-1, step, exec, cfg, args.status, off,
                                               parallel, rclone_prefix, rclone_remove))
     Path("logs").mkdir(parents=True, exist_ok=True)
     Path("jobs").mkdir(parents=True, exist_ok=True)
