@@ -54,3 +54,5 @@ def get_max_time(d: dict, dl: dict, p: dict):
     tmax3 = 1.0 / w3
     tmax = np.max([tmax1, tmax2, tmax3])
     return '{:.1e}'.format(10 ** np.ceil(np.log10(tmax)))
+
+

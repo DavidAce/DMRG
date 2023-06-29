@@ -1,14 +1,16 @@
-from utils.generators import get_config_product, write_config_file, write_batch_files
+from utils.generators import get_config_product, write_config_file, write_batch_files, get_batch_status
 from utils.flbit import get_max_time, get_output_filepath, get_config_filename
 from batch_setup import get_batch_setup
+import os
 import platform
 
 config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
     'config_dir'        : "config-L[32]",
-    'output_stem': 'mbl',
+    'output_stem'       : 'mbl',
     'output_dir'        : "output",
-    'temp_dir'          : "/scratch/local" if "lith" in platform.node() else "/tmp"
+    'status_dir'        : "status",
+    'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 
 config_ranges = {
@@ -53,4 +55,5 @@ for config in configs:
     write_config_file(config, config_template, config['filename'])
 
 batch_setup = get_batch_setup('lbit93-precision')
+batch_setup = get_batch_status(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)

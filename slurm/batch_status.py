@@ -94,20 +94,23 @@ def write_batch_status(batch, output_base):
 
     return batch
 
-
-output_base = '/mnt/WDB-AN1500/mbl_transition'
-config_dirs = [
-    'config-L[12,16,20]',
-    'config-L[24]',
-    'config-L[28]',
-    'config-L[32]',
+def main():
+    output_base = '/mnt/WDB-AN1500/mbl_transition'
+    config_dirs = [
+        # 'config-L[12,16,20]',
+        # 'config-L[24]',
+        # 'config-L[28]',
+        # 'config-L[32]',
     ]
 
+    for config_dir in config_dirs:
+        for batch_filename in sorted(Path(config_dir).rglob('*.json')):
+            with open(batch_filename, 'r') as fp:
+                batchjson = write_batch_status(json.load(fp), output_base)
 
-for config_dir in config_dirs:
-    for batch_filename in sorted(Path(config_dir).rglob('*.json')):
-        with open(batch_filename, 'r') as fp:
-            batchjson = write_batch_status(json.load(fp), output_base)
+            with open(batch_filename, 'w') as fp:
+                json.dump(batchjson, fp, sort_keys=True, indent=4)
 
-        with open(batch_filename, 'w') as fp:
-            json.dump(batchjson, fp, sort_keys=True, indent=4)
+if __name__ == "__main__":
+    main()
+
