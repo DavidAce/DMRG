@@ -84,7 +84,7 @@ rclone_copy_from_remote() {
 
 run_sim_id() {
   array_task_plus_step_id=$1
-  model_seed="$(( seed_offset + array_task_plus_step_id - 1))"
+  model_seed="$(( seed_offset + array_task_plus_step_id ))" # zero-indexed id's
 
   # Check if there is a status file (which was copied to tmp earlier. Return if finished
   if [ -f "$status_path" ]; then
