@@ -25,53 +25,51 @@ def replace_value(line,pos,val):
 
 
 
-
-
-def get_batch_status(batch_setup, configs, config_paths):
-    for config in configs:
-        config_filepath = Path(config['filename'])
-
-        # Now we need to now which seed set corresponds to this config file
-        batch_keys = []
-        for key in batch_setup['batch'].keys():
-            if all(x in config_filepath.name for x in key.split('|')):
-                batch_keys.append(key)
-        if len(batch_keys) == 0:
-            print(f'No batch keys found for config: {config_filepath.name}')
-            continue
-        elif len(batch_keys) > 1:
-            raise AssertionError(f'Found multiple seed keys matching config: {config_filepath.name}\n'
-                                 f'\n{batch_keys=}')
-        batch = batch_setup['batch'][batch_keys[0]]
-        # batch['seed_status'] = []
-        # Now we add the status
-        status_file = f'{config_paths["status_dir"]}/{config_filepath.stem}.status'
-        status_count = 0
-        for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
-            extent_size = len(batch['seed_extent'])
-            offset_size = len(batch['seed_offset'])
-            if offset_size != extent_size:
-                raise ValueError(
-                    f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
-
-            is_finished = True
-            for idx,seed in enumerate(range(offset, offset + extent)):
-                sfline = linecache.getline(status_file, idx+status_count+1).rstrip()
-                print(idx,seed,sfline)
-                sfseed, sfstatus = sfline.split('|',maxsplit=1)
-                if seed != int(sfseed):
-                    raise ValueError(f'seed mismatch [{seed=}] != [{sfseed=}]')
-                if sfstatus != "FINISHED":
-                    is_finished = False
-                    break
-                # print(linecache.getline(status_file, idx+status_count))
-            status_count += extent
-            if is_finished:
-                batch['seed_status'].append('FINISHED')
-            else:
-                batch['seed_status'].append('PENDING')
-        batch_setup['batch'][batch_keys[0]] = batch
-    return batch_setup
+# def get_batch_status(batch_setup, configs, config_paths):
+#     for config in configs:
+#         config_filepath = Path(config['filename'])
+#
+#         # Now we need to now which seed set corresponds to this config file
+#         batch_keys = []
+#         for key in batch_setup['batch'].keys():
+#             if all(x in config_filepath.name for x in key.split('|')):
+#                 batch_keys.append(key)
+#         if len(batch_keys) == 0:
+#             print(f'No batch keys found for config: {config_filepath.name}')
+#             continue
+#         elif len(batch_keys) > 1:
+#             raise AssertionError(f'Found multiple seed keys matching config: {config_filepath.name}\n'
+#                                  f'\n{batch_keys=}')
+#         batch = batch_setup['batch'][batch_keys[0]]
+#         # batch['seed_status'] = []
+#         # Now we add the status
+#         status_file = f'{config_paths["status_dir"]}/{config_filepath.stem}.status'
+#         status_count = 0
+#         for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
+#             extent_size = len(batch['seed_extent'])
+#             offset_size = len(batch['seed_offset'])
+#             if offset_size != extent_size:
+#                 raise ValueError(
+#                     f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
+#
+#             is_finished = True
+#             for idx,seed in enumerate(range(offset, offset + extent)):
+#                 sfline = linecache.getline(status_file, idx+status_count+1).rstrip()
+#                 print(idx,seed,sfline)
+#                 sfseed, sfstatus = sfline.split('|',maxsplit=1)
+#                 if seed != int(sfseed):
+#                     raise ValueError(f'seed mismatch [{seed=}] != [{sfseed=}]')
+#                 if sfstatus != "FINISHED":
+#                     is_finished = False
+#                     break
+#                 # print(linecache.getline(status_file, idx+status_count))
+#             status_count += extent
+#             if is_finished:
+#                 batch['seed_status'].append('FINISHED')
+#             else:
+#                 batch['seed_status'].append('PENDING')
+#         batch_setup['batch'][batch_keys[0]] = batch
+#     return batch_setup
 
 def write_config_file(config, config_template, config_filename):
     Path(config_filename).parent.mkdir(parents=True, exist_ok=True)

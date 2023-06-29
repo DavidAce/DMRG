@@ -7,6 +7,8 @@ import h5py
 import argparse
 from pathlib import Path
 from itertools import groupby
+import linecache
+
 def get_unique_config_string(d: dict, dl: dict, delim: str):
     str_L = str(d['model::model_size'])
     str_J = "[{}±{}_{}±{}_{}±{}]".format(d['model::lbit::J1_mean'], d['model::lbit::J1_wdth'],
@@ -105,49 +107,104 @@ def get_h5_status(filename, batch):
 
 
 def write_batch_status(batch, output_base):
+    parser = argparse.ArgumentParser(description='SLURM batch generator')
+    parser.add_argument('--update-status', action='store_true', help='Update status files', default=False)
+    args = parser.parse_args()
+
     config_file = f'{batch["config_file"]}'
     output_path = f'{output_base}/{batch["projectname"]}/{batch["output_path"]}'
     status_file = f'status/{Path(config_file).stem}.status'
     Path(status_file).parent.mkdir(parents=True, exist_ok=True)
     batch['seed_status'] = []
-    with open(status_file, 'w') as sf:
+    if platform.node() != "neumann" and args.update_status:
+        raise AssertionError("--update-status is only valid on neumann")
+
+    if platform.node() == "neumann" and args.update_status:
+        with open(status_file, 'w') as sf:
+            status_count = 0
+            for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
+                extent_size = len(batch['seed_extent'])
+                offset_size = len(batch['seed_offset'])
+                if offset_size != extent_size:
+                    raise ValueError(
+                        f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
+
+                if platform.node() == "neumann" and args.update_status:
+                    ## Start checking the h5 files
+                    is_finished = True
+                    for seed in range(offset, offset + extent):
+                        filename = f'{output_path}/{batch["output_stem"]}_{seed}.h5'
+                        h5status = get_h5_status(filename=filename, batch=batch)
+                        if not "FINISHED" in h5status:
+                            print(f'{config_file}: {seed}|{h5status}')
+                            is_finished = False
+                        sf.write(f'{seed}|{h5status}\n')
+                    if is_finished:
+                        batch['seed_status'].append("FINISHED")
+                    else:
+                        batch['seed_status'].append("PENDING")
+                else:
+                    is_finished = True
+                    for idx, seed in enumerate(range(offset, offset + extent)):
+                        sfline = linecache.getline(status_file, idx + status_count + 1).rstrip()
+                        # print(idx, seed, sfline)
+                        sfseed, sfstatus = sfline.split('|', maxsplit=1)
+                        if seed != int(sfseed):
+                            raise ValueError(f'seed mismatch [{seed=}] != [{sfseed=}]')
+                        if sfstatus != "FINISHED":
+                            is_finished = False
+                            break
+                        # print(linecache.getline(status_file, idx+status_count))
+                    status_count += extent
+                    if is_finished:
+                        batch['seed_status'].append('FINISHED')
+                    else:
+                        batch['seed_status'].append('PENDING')
+    else:
+
+        if not os.path.isfile(status_file):
+            raise FileNotFoundError(f"{status_file}")
+        status_count = 0
         for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
             extent_size = len(batch['seed_extent'])
             offset_size = len(batch['seed_offset'])
             if offset_size != extent_size:
                 raise ValueError(
                     f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
-
-            ## Start checking the files
-            is_finished=True
-            for seed in range(offset, offset+extent):
-                filename = f'{output_path}/{batch["output_stem"]}_{seed}.h5'
-                h5status = get_h5_status(filename=filename,batch=batch)
-                if not "FINISHED" in h5status:
-                    print(f'{config_file}: {seed}|{h5status}')
-                    is_finished= False
-                sf.write(f'{seed}|{h5status}\n')
+            is_finished = True
+            for idx, seed in enumerate(range(offset, offset + extent)):
+                sfline = linecache.getline(status_file, idx + status_count + 1).rstrip()
+                # print(idx, seed, sfline)
+                sfseed, sfstatus = sfline.split('|', maxsplit=1)
+                if seed != int(sfseed):
+                    raise ValueError(f'seed mismatch [{seed=}] != [{sfseed=}]')
+                if sfstatus != "FINISHED":
+                    is_finished = False
+                    break
+                # print(linecache.getline(status_file, idx+status_count))
+            status_count += extent
             if is_finished:
-                batch['seed_status'].append("FINISHED")
+                batch['seed_status'].append('FINISHED')
             else:
-                batch['seed_status'].append("PENDING")
+                batch['seed_status'].append('PENDING')
 
 
-    # We can now check if there are stray simulations
-    strays_file = f'strays/{Path(config_file).stem}.strays'
-    Path(strays_file).parent.mkdir(parents=True, exist_ok=True)
-    with open(status_file, 'r') as sf, open(strays_file, 'w') as st:
-        for h5file in sorted(Path(output_path).rglob('*.h5')):
-            if 'save' in h5file.name:
-                continue
-            seed_found = int(re.split('_|\.', h5file.name)[1])
-            seed_stray = True
-            for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
-                if offset <= seed_found < offset + extent:
-                    seed_stray = False
-            if seed_stray:
-                print(f"Stray seed found for {batch['config_file']}: {seed_found}")
-                st.write(f'{h5file}\n')
+    if platform.node() == "neumann":
+        # We can now check if there are stray simulations
+        strays_file = f'strays/{Path(config_file).stem}.strays'
+        Path(strays_file).parent.mkdir(parents=True, exist_ok=True)
+        with open(status_file, 'r') as sf, open(strays_file, 'w') as st:
+            for h5file in sorted(Path(output_path).rglob('*.h5')):
+                if 'save' in h5file.name:
+                    continue
+                seed_found = int(re.split('_|\.', h5file.name)[1])
+                seed_stray = True
+                for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
+                    if offset <= seed_found < offset + extent:
+                        seed_stray = False
+                if seed_stray is True:
+                    print(f"Stray seed found for {batch['config_file']}: {seed_found}")
+                    st.write(f'{h5file}\n')
 
     return batch
 
@@ -168,21 +225,4 @@ def update_batch_status(config_paths):
                     json.dump(batchjson, fp, sort_keys=True, indent=4)
 
 
-def main():
-    output_base = '/mnt/WDB-AN1500/mbl_transition'
-    config_dirs = [
-        # 'config-L[12,16,20]',
-        # 'config-L[24]',
-        # 'config-L[28]',
-        'config-L[32]',
-    ]
-    if platform.node() != "neumann":
-        raise AssertionError("This script should only run on neumann")
-    for config_dir in config_dirs:
-        for batch_filename in sorted(Path(config_dir).rglob('*.json')):
-            with open(batch_filename, 'r') as fp:
-                batchjson = write_batch_status(json.load(fp), output_base)
-
-            with open(batch_filename, 'w') as fp:
-                json.dump(batchjson, fp, sort_keys=True, indent=4)
 
