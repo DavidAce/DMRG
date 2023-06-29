@@ -31,7 +31,7 @@ while getopts c:hde:f:m:o:p:Prs: o; do
     case $o in
         (h) usage ;;
         (d) export dryrun="ON";;
-        (c) export config_file=$(printf $OPTARG);; # Use printf to expand unicode characters
+        (c) printf -v config_path $OPTARG;; # Use printf to expand unicode characters
         (e) export exec=$OPTARG;;
         (o) export seed_offset=$OPTARG;;
         (p) export rclone_prefix=$OPTARG;;
@@ -42,9 +42,15 @@ while getopts c:hde:f:m:o:p:Prs: o; do
         (*) usage ;;
   esac
 done
+export config_path=$config_path
 
 echodate(){
-    echo "$(date +'%Y-%m-%dT%T'): $*"
+    printf "%(%Y-%m-%dT%H:%M:%S)T:$*\n"
+}
+
+log(){
+  printf -v statusline "%(%Y-%m-%dT%H:%M:%S)T|$1\n"
+  echo "$statusline" >> $2
 }
 
 rclone_copy_to_remote () {
@@ -81,8 +87,8 @@ run_sim_id() {
   model_seed="$(( seed_offset + array_task_plus_step_id - 1))"
 
   # Check if there is a status file (which was copied to tmp earlier. Return if finished
-  if [ -f "$status_file" ]; then
-    status="$(fgrep -e "$model_seed" $status_file | cut -d '|' -f2)" # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
+  if [ -f "$status_path" ]; then
+    status="$(fgrep -e "$model_seed" "$status_path" | cut -d '|' -f2)" # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
     if [ -z "$status" ]; then
           echodate "STATUS                   : NULL $model_seed $id"
           return 0
@@ -93,13 +99,14 @@ run_sim_id() {
     fi
   fi
 
-  config_base="$(basename -s ".cfg" "$config_file")"
-  config_dir="$(dirname "$config_file")"
-  outdir=$(dirname "$(fgrep -e "storage::output_filepath" "$config_file" | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}')")
-  outfile=$outdir/mbl_$model_seed.h5
-  logdir=logs/$config_dir/$config_base
-  logtext=$logdir/$model_seed.txt
-  loginfo=$logdir/$model_seed.info
+  config_file="${config_path##*/}"
+  config_base="${config_file%.*}"
+  config_dir="${config_path%/*}"
+  outdir="${output_path%/*}"
+  outfile="$outdir/mbl_$model_seed.h5"
+  logdir="logs/$config_dir/$config_base"
+  logtext="$logdir/$model_seed.txt"
+  loginfo="$logdir/$model_seed.info"
   infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
 
   mkdir -p $logdir
@@ -117,7 +124,7 @@ run_sim_id() {
       rclone_copy_to_remote $outfile $rclone_remove
       rclone_exit_code=$?
       if [ -n "$rclone_prefix" ] && [ "$rclone_exit_code" == "0" ]; then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
+        log "$infoline|RCLONED" "$loginfo"
         rclone_copy_to_remote $loginfo $rclone_remove
       fi
       return 0
@@ -136,7 +143,7 @@ run_sim_id() {
           return 0 # Go to next id
         fi
       elif [ ! -z "$cluster" ]; then
-        echodate "WARNING: Job $config_file with seed $model_seed is handled by cluster $cluster"
+        echodate "WARNING: Job $config_path with seed $model_seed is handled by cluster $cluster"
         return 0 # Go to next id because this job is handled by another cluster
       fi
     fi
@@ -152,24 +159,24 @@ run_sim_id() {
     extra_args="--replace"
   fi
 
-  echodate "EXEC LINE                : $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
+  echodate "EXEC LINE                : $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
     trap '$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo' SIGINT SIGTERM
-    echo "$(date +'%Y-%m-%dT%T')|$infoline|RUNNING" >> $loginfo
-    $exec --config=$config_file --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext
+    log "$infoline|RUNNING" "$loginfo"
+    $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext
     exit_code=$?
     echodate "EXIT CODE                : $exit_code"
     if [ "$exit_code" != "0" ]; then
-      echo "$(date +'%Y-%m-%dT%T')|$infoline|FAILED" >> $loginfo
+      log "$infoline|FAILED" "$loginfo"
       return $?
     fi
     if [ "$exit_code" == "0" ] ; then
-      echo "$(date +'%Y-%m-%dT%T')|$infoline|FINISHED" >> $loginfo
+      log "$infoline|FINISHED" "$loginfo"
       rclone_copy_to_remote $logtext $rclone_remove
       rclone_copy_to_remote $outfile $rclone_remove
       rclone_exit_code=$?
       if [ -n "$rclone_prefix" ] && [ "$rclone_exit_code" == "0" ]; then
-        echo "$(date +'%Y-%m-%dT%T')|$infoline|RCLONED" >> $loginfo
+        log "$infoline|RCLONED" "$loginfo"
         rclone_copy_to_remote $loginfo $rclone_remove
       fi
     fi
@@ -177,14 +184,14 @@ run_sim_id() {
 }
 
 
-if [ ! -f $config_file ]; then
-    echodate "config file is not valid: $config_file"
+if [ ! -f $config_path ]; then
+    echodate "config file is not valid: $config_path"
     exit 1
 fi
 
 echodate "HOSTNAME                 : $HOSTNAME"
 echodate "USER                     : $USER"
-echodate "CONFIG FILE              : $config_file"
+echodate "CONFIG PATH              : $config_path"
 echodate "SLURM_CLUSTER_NAME       : $SLURM_CLUSTER_NAME"
 echodate "SLURM_NTASKS             : $SLURM_NTASKS"
 echodate "SLURM_CPUS_ON_NODE       : $SLURM_CPUS_ON_NODE"
@@ -213,10 +220,15 @@ export end_id=$(( SLURM_ARRAY_TASK_ID + SLURM_ARRAY_TASK_STEP - 1))
 exit_code_save=0
 ulimit -c unlimited
 
+
+# Determine the output path from the config file
+output_path="$(fgrep -e "storage::output_filepath" "$config_path" | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}')"
+export output_path="$output_path"
+
 # Find and copy the status file to tmp
-config_base="$(basename -s ".cfg" "$config_file")"
-export status_file="$status_dir/$config_base.status"
-if [ -f "$status_file" ]; then
+config_base="$(basename -s ".cfg" "$config_path")"
+export status_path="$status_dir/$config_base.status"
+if [ -f "$status_path" ]; then
     tempdir="/tmp"
     if [ -d "/scratch/local" ];then
       tempdir="/scratch/local"
@@ -227,9 +239,9 @@ if [ -f "$status_file" ]; then
     status_name="$config_base.status"
     if [ ! -f "$status_temp/$status_name" ]; then
       mkdir -p $status_temp
-      cp $status_file $status_temp/
+      cp $status_path $status_temp/
     fi
-    export status_file=$status_temp/$status_name
+    export status_path=$status_temp/$status_name
     trap 'rm -rf "$status_temp"' EXIT
 fi
 
@@ -237,9 +249,11 @@ echodate "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
   module load parallel
+  export -f echodate
   export -f run_sim_id
   export -f rclone_copy_to_remote
   export -f rclone_copy_from_remote
+
   export JOBS_PER_NODE=$SLURM_CPUS_ON_NODE
   if [ -n "$OMP_NUM_THREADS" ]; then
     export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
