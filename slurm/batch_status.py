@@ -1,4 +1,5 @@
 import os
+import platform
 from pathlib import Path
 import re
 import numpy as np
@@ -100,9 +101,10 @@ def main():
         # 'config-L[12,16,20]',
         # 'config-L[24]',
         # 'config-L[28]',
-        # 'config-L[32]',
+        'config-L[32]',
     ]
-
+    if platform.node() != "neumann":
+        raise AssertionError("This script should only run on neumann")
     for config_dir in config_dirs:
         for batch_filename in sorted(Path(config_dir).rglob('*.json')):
             with open(batch_filename, 'r') as fp:

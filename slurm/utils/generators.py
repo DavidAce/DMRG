@@ -23,6 +23,10 @@ def replace_value(line,pos,val):
     len_diff = len(old_val) - len(val)
     return line[:index_start] + val + ' '*len_diff + line[index_end:]
 
+
+
+
+
 def get_batch_status(batch_setup, configs, config_paths):
     for config in configs:
         config_filepath = Path(config['filename'])
@@ -39,7 +43,7 @@ def get_batch_status(batch_setup, configs, config_paths):
             raise AssertionError(f'Found multiple seed keys matching config: {config_filepath.name}\n'
                                  f'\n{batch_keys=}')
         batch = batch_setup['batch'][batch_keys[0]]
-        batch['seed_status'] = []
+        # batch['seed_status'] = []
         # Now we add the status
         status_file = f'{config_paths["status_dir"]}/{config_filepath.stem}.status'
         status_count = 0
@@ -53,7 +57,7 @@ def get_batch_status(batch_setup, configs, config_paths):
             is_finished = True
             for idx,seed in enumerate(range(offset, offset + extent)):
                 sfline = linecache.getline(status_file, idx+status_count+1).rstrip()
-                # print(idx,seed,sfline)
+                print(idx,seed,sfline)
                 sfseed, sfstatus = sfline.split('|',maxsplit=1)
                 if seed != int(sfseed):
                     raise ValueError(f'seed mismatch [{seed=}] != [{sfseed=}]')
@@ -100,7 +104,7 @@ def write_batch_files(batch_setup, configs, config_paths):
                 'projectname': batch_setup['projectname'],
                 'seed_extent': [],
                 'seed_offset': [],
-                'seed_status': [],
+                # 'seed_status': [],
             }
 
         # Now we need to now which seed set corresponds to this config file
@@ -117,30 +121,33 @@ def write_batch_files(batch_setup, configs, config_paths):
         batch = batch_setup['batch'][seed_keys[0]]
         batchjson['time_steps'] = batch['time_steps']
 
-        for offset, extent,status in zip(batch['seed_offset'], batch['seed_extent'], batch['seed_status']):
+        for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
             extent_size = len(batchjson['seed_extent'])
             offset_size = len(batchjson['seed_offset'])
-            status_size = len(batchjson['seed_status'])
+            # status_size = len(batchjson['seed_status'])
             if offset_size != extent_size:
                 raise ValueError(
                     f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
-            if status_size != extent_size:
-                raise ValueError(
-                    f"status:{status_size} and extent:{extent_size} are not equal lengths")
+            # if status_size != extent_size:
+            #     raise ValueError(
+            #         f"status:{status_size} and extent:{extent_size} are not equal lengths")
 
             # Check if this offset is already in jobdict for this config
             offset_index = batchjson['seed_offset'].index(offset) if offset in batchjson['seed_offset'] else -1
             if offset_index < 0:
                 batchjson['seed_extent'].append(extent)
                 batchjson['seed_offset'].append(offset)
-                batchjson['seed_status'].append(status)
+                # batchjson['seed_status'].append(status)
             elif batchjson['seed_extent'][offset_index] != extent:
                 raise ValueError(f"{batch_filename} has {offset=} at index {offset_index} with "
                                  f"extent {batchjson['seed_extent'][offset_index]}.\n"
                                  f"The new extent {extent} is incompatible")
 
         batchjson['seed_counts'] = int(np.sum(batchjson['seed_extent']))
-        print(json.dumps(batchjson, sort_keys=True, indent=4))
+        # print(json.dumps(batchjson, sort_keys=True, indent=4))
 
         with open(batch_filename, 'w') as fp:
             json.dump(batchjson, fp, sort_keys=True, indent=4)
+
+
+

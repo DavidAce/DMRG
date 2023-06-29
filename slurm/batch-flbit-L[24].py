@@ -1,8 +1,8 @@
-from utils.generators import get_config_product, write_config_file, write_batch_files, get_batch_status
-from utils.flbit import get_max_time, get_output_filepath, get_config_filename
+from utils.generators import get_config_product, write_config_file, write_batch_files
+from utils.flbit import get_max_time, get_output_filepath, get_config_filename, update_batch_status
 from batch_setup import get_batch_setup
-import platform
 import os
+import platform
 
 config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
@@ -55,5 +55,5 @@ for config in configs:
     write_config_file(config, config_template, config['filename'])
 
 batch_setup = get_batch_setup('lbit93-precision')
-batch_setup = get_batch_status(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
+update_batch_status(config_paths=config_paths)
