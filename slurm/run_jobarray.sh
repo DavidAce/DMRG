@@ -45,7 +45,7 @@ done
 export config_path=$config_path
 
 echodate(){
-    printf "%(%Y-%m-%dT%H:%M:%S)T:$*\n"
+    printf "%(%Y-%m-%dT%H:%M:%S)T:$*\n" -1
 }
 
 log(){
