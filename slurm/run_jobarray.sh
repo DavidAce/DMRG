@@ -117,7 +117,7 @@ run_sim_id() {
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
   if [ -f $loginfo ] ; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
-    infostatus=$(tail -n 1 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED
+    infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
     if [[ $infostatus =~ FINISHED|RCLONED ]]; then
       # Copy results back to remote
       rclone_copy_to_remote $logtext $rclone_remove
