@@ -120,6 +120,7 @@ def write_batch_status(batch, output_base):
         raise AssertionError("--update-status is only valid on neumann")
 
     if platform.node() == "neumann" and args.update_status:
+        print("Updating status")
         with open(status_file, 'w') as sf:
             status_count = 0
             for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
@@ -211,18 +212,13 @@ def write_batch_status(batch, output_base):
 
 def update_batch_status(config_paths):
     if platform.node() == "neumann":
-        parser = argparse.ArgumentParser(description='SLURM batch generator')
-        parser.add_argument('--update-status', action='store_true', help='Update status files', default=None)
-        args = parser.parse_args()
         output_base = '/mnt/WDB-AN1500/mbl_transition'
-        if args.update_status:
-            print("Updating status")
-            for batch_filename in sorted(Path(config_paths['config_dir']).rglob('*.json')):
-                with open(batch_filename, 'r') as fp:
-                    batchjson = write_batch_status(json.load(fp), output_base)
+        for batch_filename in sorted(Path(config_paths['config_dir']).rglob('*.json')):
+            with open(batch_filename, 'r') as fp:
+                batchjson = write_batch_status(json.load(fp), output_base)
 
-                with open(batch_filename, 'w') as fp:
-                    json.dump(batchjson, fp, sort_keys=True, indent=4)
+            with open(batch_filename, 'w') as fp:
+                json.dump(batchjson, fp, sort_keys=True, indent=4)
 
 
 

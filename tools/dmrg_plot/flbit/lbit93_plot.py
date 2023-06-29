@@ -34,7 +34,7 @@ def lbit_plot(args):
             # avgfile = f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
             plotdir = f'{batchdir}/analysis/plots'
             for avgfile in [f'{batchdir}/analysis/data/averaged.h5',
-                            f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
+                            # f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
                             ]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
