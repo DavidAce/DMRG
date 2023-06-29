@@ -31,7 +31,7 @@ while getopts c:hde:f:m:o:p:Prs: o; do
     case $o in
         (h) usage ;;
         (d) export dryrun="ON";;
-        (c) export config_file=$OPTARG;;
+        (c) export config_file=$(printf $OPTARG);; # Use printf to expand unicode characters
         (e) export exec=$OPTARG;;
         (o) export seed_offset=$OPTARG;;
         (p) export rclone_prefix=$OPTARG;;
@@ -78,19 +78,11 @@ rclone_copy_from_remote() {
 
 run_sim_id() {
   array_task_plus_step_id=$1
-  model_seed=$(( seed_offset + array_task_plus_step_id - 1))
-  config_base=$(echo "$config_file" | xargs -l basename -s .cfg)
-  config_dir=$(echo "$config_file" | xargs -l dirname)
-  outdir=$(awk '$1 ~ /^storage::output_filepath/' $config_file | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}' | xargs -l dirname)
-  outfile=$outdir/mbl_$model_seed.h5
-  logdir=logs/$config_dir/$config_base
-  logtext=$logdir/$model_seed.txt
-  loginfo=$logdir/$model_seed.info
-  infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
+  model_seed="$(( seed_offset + array_task_plus_step_id - 1))"
 
   # Check if there is a status file (which was copied to tmp earlier. Return if finished
   if [ -f "$status_file" ]; then
-    status=$(cat $status_file | grep "$model_seed" | cut -d '|' -f2) # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
+    status="$(fgrep -e "$model_seed" $status_file | cut -d '|' -f2)" # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
     if [ -z "$status" ]; then
           echodate "STATUS                   : NULL $model_seed $id"
           return 0
@@ -100,6 +92,15 @@ run_sim_id() {
       return 0
     fi
   fi
+
+  config_base="$(basename -s ".cfg" "$config_file")"
+  config_dir="$(dirname "$config_file")"
+  outdir=$(dirname "$(fgrep -e "storage::output_filepath" "$config_file" | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}')")
+  outfile=$outdir/mbl_$model_seed.h5
+  logdir=logs/$config_dir/$config_base
+  logtext=$logdir/$model_seed.txt
+  loginfo=$logdir/$model_seed.info
+  infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
 
   mkdir -p $logdir
 
@@ -125,17 +126,17 @@ run_sim_id() {
     if [ "$infostatus" == "RUNNING" ] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
-      cluster=$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')
+      cluster="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')"
       if [ "$cluster" == "$SLURM_CLUSTER_NAME" ];then
-        old_array_job_id=$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_JOB_ID | awk -F ':' '{print $2}')
-        old_array_task_id=$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_TASK_ID | awk -F ':' '{print $2}')
+        old_array_job_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_JOB_ID | awk -F ':' '{print $2}')"
+        old_array_task_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_TASK_ID | awk -F ':' '{print $2}')"
         old_job_id=${old_array_job_id}_${old_array_task_id}
         slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
         if [ "$slurm_state" == "RUNNING" ] ; then
           return 0 # Go to next id
         fi
       elif [ ! -z "$cluster" ]; then
-        echo "$(date +'%Y-%m-%dT%T') :WARNING: Job $config_file with seed $model_seed is handled by cluster $cluster"
+        echodate "WARNING: Job $config_file with seed $model_seed is handled by cluster $cluster"
         return 0 # Go to next id because this job is handled by another cluster
       fi
     fi
@@ -177,7 +178,7 @@ run_sim_id() {
 
 
 if [ ! -f $config_file ]; then
-    echo "config file is not valid: $config_file"
+    echodate "config file is not valid: $config_file"
     exit 1
 fi
 
@@ -213,14 +214,16 @@ exit_code_save=0
 ulimit -c unlimited
 
 # Find and copy the status file to tmp
-config_base=$(echo "$config_file" | xargs -l basename -s .cfg)
+config_base="$(basename -s ".cfg" "$config_file")"
 export status_file="$status_dir/$config_base.status"
 if [ -f "$status_file" ]; then
     tempdir="/tmp"
     if [ -d "/scratch/local" ];then
       tempdir="/scratch/local"
+    elif [ -n "$PDC_TMP" ]; then
+       tempdir="$PDC_TMP"
     fi
-    status_temp="/$tempdir/DMRG.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+    status_temp="$tempdir/DMRG.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
     status_name="$config_base.status"
     if [ ! -f "$status_temp/$status_name" ]; then
       mkdir -p $status_temp

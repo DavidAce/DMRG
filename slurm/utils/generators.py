@@ -53,7 +53,7 @@ def get_batch_status(batch_setup, configs, config_paths):
             is_finished = True
             for idx,seed in enumerate(range(offset, offset + extent)):
                 sfline = linecache.getline(status_file, idx+status_count+1).rstrip()
-                print(idx,seed,sfline)
+                # print(idx,seed,sfline)
                 sfseed, sfstatus = sfline.split('|',maxsplit=1)
                 if seed != int(sfseed):
                     raise ValueError(f'seed mismatch [{seed=}] != [{sfseed=}]')
