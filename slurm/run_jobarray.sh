@@ -49,7 +49,7 @@ echodate(){
 }
 
 log(){
-  printf -v statusline "%(%Y-%m-%dT%H:%M:%S)T|$1\n"
+  printf -v statusline "%(%Y-%m-%dT%H:%M:%S)T|$1"
   echo "$statusline" >> $2
 }
 
