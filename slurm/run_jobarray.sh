@@ -250,6 +250,7 @@ if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
   module load parallel
   export -f echodate
+  export -f log
   export -f run_sim_id
   export -f rclone_copy_to_remote
   export -f rclone_copy_from_remote
