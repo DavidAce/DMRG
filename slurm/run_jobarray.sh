@@ -158,6 +158,7 @@ run_sim_id() {
   elif [ "$status" == "FAILED" ];then
     extra_args="--replace"
   fi
+  extra_args="--revive"
 
   echodate "EXEC LINE                : $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
@@ -248,7 +249,16 @@ fi
 echodate "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
-  module load parallel
+  if [[ "$HOSTNAME" =~ tetralith ]] ; then
+    module load parallel/20181122-nsc1
+  else
+    module load parallel
+  fi
+  if "$?" != "0"; then
+    echo "Failed to module load parallel"
+    exit 1
+  fi
+
   export -f echodate
   export -f log
   export -f run_sim_id
