@@ -269,10 +269,13 @@ if [ "$parallel" == "true" ]; then
   if [ -n "$OMP_NUM_THREADS" ]; then
     export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
   fi
+  echodate "OMP_NUM_THREADS          : $OMP_NUM_THREADS"
+  echodate "JOBS_PER_NODE            : $JOBS_PER_NODE"
+  echodate "parallel --memfree=$SLURM_MEM_PER_CPU --jobs=$JOBS_PER_NODE --ungroup --delay=.2s --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log --colsep=' ' run_sim_id ::: seq $start_id $end_id"
 
   parallel --memfree=$SLURM_MEM_PER_CPU \
            --jobs=$JOBS_PER_NODE \
-           --ungroup --resume --delay=.2s \
+           --ungroup --delay=.2s \
            --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
            --colsep=' ' run_sim_id \
            ::: $(seq $start_id $end_id)
