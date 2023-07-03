@@ -206,6 +206,7 @@ echodate "SLURM_ARRAY_TASK_ID      : $SLURM_ARRAY_TASK_ID"
 echodate "SLURM_ARRAY_TASK_STEP    : $SLURM_ARRAY_TASK_STEP"
 echodate "SLURM_ARRAY_TASK_MIN     : $SLURM_ARRAY_TASK_MIN"
 echodate "SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
+echodate "OMP_NUM_THREADS          : $OMP_NUM_THREADS"
 
 if [ -z $SLURM_CLUSTER_NAME ]; then
   echodate "This is not a valid slurm job environment. Use this script with sbatch or srun"
@@ -265,16 +266,9 @@ if [ "$parallel" == "true" ]; then
   export -f rclone_copy_to_remote
   export -f rclone_copy_from_remote
 
-  export JOBS_PER_NODE=$SLURM_CPUS_ON_NODE
-  if [ -n "$OMP_NUM_THREADS" ]; then
-    export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
-  fi
-  echodate "OMP_NUM_THREADS          : $OMP_NUM_THREADS"
-  echodate "JOBS_PER_NODE            : $JOBS_PER_NODE"
-  echodate "parallel --memfree=$SLURM_MEM_PER_CPU --jobs=$JOBS_PER_NODE --ungroup --delay=.2s --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log --colsep=' ' run_sim_id ::: seq $start_id $end_id"
-
+  echodate "parallel --memfree=$SLURM_MEM_PER_CPU --jobs=$SLURM_NTASKS --ungroup --delay=.2s --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log --colsep=' ' run_sim_id ::: seq $start_id $end_id"
   parallel --memfree=$SLURM_MEM_PER_CPU \
-           --jobs=$JOBS_PER_NODE \
+           --jobs=$SLURM_NTASKS \
            --ungroup --delay=.2s \
            --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
            --colsep=' ' run_sim_id \
