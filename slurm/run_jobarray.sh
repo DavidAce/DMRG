@@ -249,7 +249,7 @@ fi
 echodate "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"
 if [ "$parallel" == "true" ]; then
   # Load GNU Parallel from modules
-  if [[ "$HOSTNAME" =~ tetralith ]] ; then
+  if [[ "$SLURM_CLUSTER_NAME" =~ tetralith ]] ; then
     module load parallel/20181122-nsc1
   else
     module load parallel
