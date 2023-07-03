@@ -8,6 +8,7 @@ import argparse
 from pathlib import Path
 from itertools import groupby
 import linecache
+from copy import copy
 
 def get_unique_config_string(d: dict, dl: dict, delim: str):
     str_L = str(d['model::model_size'])
@@ -114,6 +115,7 @@ def write_batch_status(batch):
     config_file = f'{batch["config_file"]}'
     status_file = f'status/{Path(config_file).stem}.status'
     Path(status_file).parent.mkdir(parents=True, exist_ok=True)
+    seed_status = copy(batch.get('seed_status')) # Old one
     batch['seed_status'] = []
     if platform.node() != "neumann" and args.update_status:
         raise AssertionError("--update-status is only valid on neumann")
@@ -121,15 +123,20 @@ def write_batch_status(batch):
     if platform.node() == "neumann" and args.update_status:
         output_base = '/mnt/WDB-AN1500/mbl_transition'
         output_path = f'{output_base}/{batch["projectname"]}/{batch["output_path"]}'
-        print("Updating status")
+        print(f"Updating status: {status_file}")
         with open(status_file, 'w') as sf:
             status_count = 0
-            for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
+            for sidx, (offset, extent) in enumerate(zip(batch['seed_offset'], batch['seed_extent'])):
                 extent_size = len(batch['seed_extent'])
                 offset_size = len(batch['seed_offset'])
                 if offset_size != extent_size:
                     raise ValueError(
                         f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
+                if seed_status is not None:
+                    if seed_status[sidx] == "FINISHED":
+                        batch['seed_status'].append("FINISHED")
+                        continue
+
 
                 ## Start checking the h5 files
                 is_finished = True
