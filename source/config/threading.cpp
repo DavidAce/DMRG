@@ -30,7 +30,7 @@ namespace settings {
 
     void configure_threads() {
         // Set the number of threads to be used
-        unsigned int omp_threads = 1;
+//        unsigned int omp_threads = 1;
 #if defined(_OPENMP)
         std::string omp_proc_bind;
         switch(omp_get_proc_bind()) {
@@ -46,7 +46,7 @@ namespace settings {
         tools::log->info("OpenMP | omp_max_threads {} | omp_max_active_levels {} | omp_dynamic {} | omp_proc_bind [{}] | omp_num_procs {}",
                          omp_get_max_threads(), omp_get_max_active_levels(), omp_get_dynamic(), omp_proc_bind, omp_get_num_procs());
 
-        omp_threads = static_cast<unsigned int>(omp_get_max_threads());
+//        omp_threads = static_cast<unsigned int>(omp_get_max_threads());
 #endif
         std::string eigen_msg;
 #if defined(EIGEN_USE_MKL_ALL)
