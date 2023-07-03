@@ -270,7 +270,7 @@ if [ "$parallel" == "true" ]; then
     export JOBS_PER_NODE=$(( $SLURM_CPUS_ON_NODE / $OMP_NUM_THREADS ))
   fi
 
-  parallel --memsuspend=1G --memfree=$SLURM_MEM_PER_CPU \
+  parallel --memfree=$SLURM_MEM_PER_CPU \
            --jobs=$JOBS_PER_NODE \
            --ungroup --resume --delay=.2s \
            --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
