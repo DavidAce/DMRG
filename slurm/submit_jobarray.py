@@ -33,7 +33,7 @@ def parse(project_name):
     parser.add_argument('--seedpath', type=str, help='Path to simulation seed files (suffixed .json). Default to --config.', default=None)
     parser.add_argument('--pattern', type=str, help='Only consider simulation config files containing this substring', default=None)
     parser.add_argument('--omp-num-threads', type=int, help='Number of openmp threads', default=None)
-    parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true', default=None)
+    parser.add_argument('--omp-dynamic', action='store_true', help='Sets OMP_DYNAMIC=true|false. Lets each process use cores that available', default="true")
     parser.add_argument('--omp-max-active-levels', type=int, help='Sets OMP_MAX_ACTIVE_LEVELS=n', default=None)
     parser.add_argument('--omp-places', type=str, help='Sets OMP_PLACES', choices=['threads', 'cores', 'sockets'],default="sockets" )
     parser.add_argument('--omp-proc-bind', type=str, help='Sets OMP_PROC_BIND', choices=['true', 'false', 'close', 'spread','master'],default="spread")

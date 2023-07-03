@@ -208,7 +208,7 @@ echodate "SLURM_ARRAY_TASK_MIN     : $SLURM_ARRAY_TASK_MIN"
 echodate "SLURM_ARRAY_TASK_MAX     : $SLURM_ARRAY_TASK_MAX"
 echodate "OMP_NUM_THREADS          : $OMP_NUM_THREADS"
 
-if [ -z $SLURM_CLUSTER_NAME ]; then
+if [ -z "$SLURM_CLUSTER_NAME" ]; then
   echodate "This is not a valid slurm job environment. Use this script with sbatch or srun"
   exit 1
 fi
@@ -258,6 +258,16 @@ if [ "$parallel" == "true" ]; then
   if [ "$?" != "0" ] ; then
     echo "Failed to module load parallel"
     exit 1
+  fi
+  if [ -z "$OMP_NUM_THREADS" ]; then
+    export OMP_NUM_THREADS=$SLURM_CPUS_ON_NODE
+  fi
+  if [ -z "$OMP_DYNAMIC" ]; then
+    # This will reduce the number of threads used in parallel regions
+    # if threads from different jobs are colliding.
+    # If all jobs except one have finished, this job will be able to use
+    # all cores.
+    export OMP_DYNAMIC="true"
   fi
 
   export -f echodate
