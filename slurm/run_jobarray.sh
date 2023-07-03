@@ -259,28 +259,18 @@ if [ "$parallel" == "true" ]; then
     echo "Failed to module load parallel"
     exit 1
   fi
-  if [ -z "$OMP_NUM_THREADS" ]; then
-    export OMP_NUM_THREADS=$SLURM_CPUS_ON_NODE
-  fi
-  if [ -z "$OMP_DYNAMIC" ]; then
-    # This will reduce the number of threads used in parallel regions
-    # if threads from different jobs are colliding.
-    # If all jobs except one have finished, this job will be able to use
-    # all cores.
-    export OMP_DYNAMIC="true"
-  fi
 
   export -f echodate
   export -f log
   export -f run_sim_id
   export -f rclone_copy_to_remote
   export -f rclone_copy_from_remote
-
-  echodate "parallel --memfree=$SLURM_MEM_PER_CPU --jobs=$SLURM_NTASKS --ungroup --delay=.2s --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log --colsep=' ' run_sim_id ::: seq $start_id $end_id"
+  joblog="logs/parallel-$(( seed_offset + start_id ))_$(( seed_offset + end_id )).log" # zero-indexed id's
+  echodate "parallel --memfree=$SLURM_MEM_PER_CPU --jobs=$SLURM_NTASKS --ungroup --delay=.2s --joblog=$joblog --colsep=' ' run_sim_id ::: seq $start_id $end_id"
   parallel --memfree=$SLURM_MEM_PER_CPU \
            --jobs=$SLURM_NTASKS \
-           --ungroup --delay=.2s \
-           --joblog=logs/parallel-${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log \
+           --ungroup --delay=.2s --resume \
+           --joblog=$joblog \
            --colsep=' ' run_sim_id \
            ::: $(seq $start_id $end_id)
   exit_code_save=$?

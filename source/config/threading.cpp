@@ -57,11 +57,11 @@ namespace settings {
 #endif
 #if defined(EIGEN_USE_THREADS)
         eigen_msg.append(" | EIGEN_USE_THREADS");
-        unsigned int stl_threads = 1;
-        if (omp_threads <= 1) stl_threads = std::clamp(settings::threading::num_threads, stl_threads, settings::threading::max_threads);
-        else if(settings::threading::num_threads > omp_threads){
-            stl_threads = std::clamp(settings::threading::num_threads - omp_threads, stl_threads, settings::threading::max_threads);
-        }
+        unsigned int stl_threads = settings::threading::num_threads;
+//        if (omp_threads <= 1) stl_threads = std::clamp(settings::threading::num_threads, stl_threads, settings::threading::max_threads);
+//        else if(settings::threading::num_threads > omp_threads){
+//            stl_threads = std::clamp(settings::threading::num_threads - omp_threads, stl_threads, settings::threading::max_threads);
+//        }
         tenx::threads::setNumThreads(stl_threads);
 #else
         if(settings::threading::num_threads > 1)
