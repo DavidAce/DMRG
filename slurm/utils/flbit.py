@@ -132,17 +132,17 @@ def write_batch_status(batch):
                 if offset_size != extent_size:
                     raise ValueError(
                         f"offset:{offset_size} and extent:{extent_size} are not equal lengths")
-                if seed_status is not None:
-                    if seed_status[sidx] == "FINISHED":
-                        batch['seed_status'].append("FINISHED")
-                        continue
-
 
                 ## Start checking the h5 files
                 is_finished = True
                 for seed in range(offset, offset + extent):
-                    filename = f'{output_path}/{batch["output_stem"]}_{seed}.h5'
-                    h5status = get_h5_status(filename=filename, batch=batch)
+                    h5status = None
+                    if seed_status is not None:
+                        if seed_status[sidx] == "FINISHED":
+                            h5status = seed_status[sidx] #Short circuit
+                    if h5status is None:
+                        filename = f'{output_path}/{batch["output_stem"]}_{seed}.h5'
+                        h5status = get_h5_status(filename=filename, batch=batch)
                     if not "FINISHED" in h5status:
                         print(f'{config_file}: {seed}|{h5status}')
                         is_finished = False
