@@ -254,7 +254,7 @@ if [ "$parallel" == "true" ]; then
   else
     module load parallel
   fi
-  if "$?" != "0"; then
+  if [ "$?" != "0" ] ; then
     echo "Failed to module load parallel"
     exit 1
   fi
