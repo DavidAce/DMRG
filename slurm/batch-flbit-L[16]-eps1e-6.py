@@ -6,9 +6,9 @@ import platform
 
 config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
-    'config_dir'        : "config-L[16]-eps1e-8",
+    'config_dir'        : "config-L[16]-eps1e-6",
     'output_stem'       : 'mbl',
-    'output_dir'        : "output-eps1e-8",
+    'output_dir'        : "output-eps1e-6",
     'status_dir'        : "status",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
@@ -33,7 +33,7 @@ config_ranges = {
     "model::lbit::J2_span": ['-1'],
     "model::lbit::xi_Jcls": ['1.00'],
     "model::lbit::u_depth": ['16'],
-    "model::lbit::u_fmix": ['0.20','0.30','0.40'],
+    "model::lbit::u_fmix": ['0.20'],
     "model::lbit::u_tstd": ['1.0'],
     "model::lbit::u_cstd": ['1.0'],
     "model::lbit::u_tgw8": ['IDENTITY'],
@@ -54,6 +54,6 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config['filename'])
 
-batch_setup = get_batch_setup('lbit94-eps1e-8')
+batch_setup = get_batch_setup('lbit94-eps1e-6')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
