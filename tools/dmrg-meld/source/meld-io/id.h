@@ -112,8 +112,6 @@ struct PathId {
     template<typename KeyT>
     [[nodiscard]] std::string create_path(std::string_view tablename, size_t idx) const;
 
-    private:
-    static bool match_pattern(std::string_view comp, std::string_view pattern);
 };
 
 template<typename InfoType>

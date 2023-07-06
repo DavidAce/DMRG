@@ -26,31 +26,40 @@ namespace tools::h5db {
 
     template<typename InfoType, typename KeyType>
     std::unordered_map<std::string, InfoId<InfoType>> loadDatabase(const h5pp::File &h5_tgt, const std::vector<KeyType> &keys) {
-        auto                                              t_scope = tid::tic_scope(__FUNCTION__);
-        std::unordered_map<std::string, InfoId<InfoType>> infoDataBase;
-        auto                                              dbGroups = h5_tgt.findGroups(".db");
-        auto                                              keyword  = [&keys]() {
-            if(keys.empty()) return std::string{};
-            //            return std::string(KeyType::classtag);
-            if constexpr(std::is_same_v<KeyType, ModelKey>) return keys.front().model;
-            //            else if constexpr(std::is_same_v<KeyType, CronoKey>)
-            //                return std::string("cronos");
-            //            else if constexpr(std::is_same_v<KeyType, FesUpKey>)
-            //                return std::string("fes"); // Or fes?
-            //            else if constexpr(std::is_same_v<KeyType, FesUpKey>)
-            //                return std::string("fes"); // Or fes?
+        auto t_scope = tid::tic_scope(__FUNCTION__);
+        tools::logger::log->debug("Loading database for <{}>", sfinae::type_name<KeyType>());
+        for(const auto &key : keys) {
+            if constexpr(std::is_same_v<KeyType, ModelKey>)
+                tools::logger::log->debug("-- {} {} {} {}", key.algo, key.model, key.name, key.key);
             else
-                return keys.front().state;
+                tools::logger::log->debug("-- {} {} {} {}", key.algo, key.state, key.name, key.key);
+        }
+        std::unordered_map<std::string, InfoId<InfoType>> infoDataBase;
+        auto                                              dbGroups = h5_tgt.findGroups(".db", "/", -1, -1, true);
+        auto                                              keywords = [](const KeyType &key) -> std::vector<std::string_view> {
+            if constexpr(std::is_same_v<KeyType, ModelKey>)
+                return {key.algo, key.model, KeyType::classtag};
+            else if constexpr(std::is_same_v<KeyType, DsetKey>)
+                return {key.algo, key.state};
+            else
+                return {key.algo, key.state, KeyType::classtag};
         };
 
-        auto missing = [keyword](const std::string &group) {
-            if(keyword().empty()) return true;
-            return group.find(keyword()) == std::string::npos;
+        auto missing = [keys, keywords](const std::string &group) {
+            // All keywords must be present in the current group for some key, otherwise it's missing
+            for(const auto &key : keys) {
+                if(text::match_patterns(group, keywords(key))) {
+                    // All keywords were matched --> this key is not missing
+//                    tools::logger::log->trace("Matched {} to {}", keywords(key), group);
+                    return false;
+                }
+            }
+            return true;
         };
 
         dbGroups.erase(std::remove_if(dbGroups.begin(), dbGroups.end(), missing), dbGroups.end());
 
-        tools::logger::log->info("Found {} databases for {}", dbGroups.size(), keyword());
+        tools::logger::log->info("Found {} databases for <{}>", dbGroups.size(), sfinae::type_name<KeyType>());
 
         for(auto &dbGroup : dbGroups) {
             // Find table databases
@@ -104,9 +113,7 @@ namespace tools::h5db {
         }
         std::vector<FileId> fileIdVec;
         for(auto &fileId : fileIdDb) { fileIdVec.emplace_back(fileId.second); }
-        auto sorter = [](auto &lhs, auto &rhs) {
-            return lhs.seed < rhs.seed;
-        };
+        auto sorter = [](auto &lhs, auto &rhs) { return lhs.seed < rhs.seed; };
         std::sort(fileIdVec.begin(), fileIdVec.end(), sorter);
         h5_tgt.writeTableRecords(fileIdVec, ".db/files");
     }
@@ -157,9 +164,7 @@ namespace tools::h5db {
             if(not infoId.db_modified()) continue;
             std::vector<SeedId> seedIdxVec;
             for(const auto &[seed, index] : infoId.get_db()) { seedIdxVec.emplace_back(SeedId{seed, index}); }
-            auto sorter = [](auto &lhs, auto &rhs) {
-                return lhs.seed < rhs.seed;
-            };
+            auto sorter = [](auto &lhs, auto &rhs) { return lhs.seed < rhs.seed; };
             std::sort(seedIdxVec.begin(), seedIdxVec.end(), sorter);
             h5pp::fs::path tgtPath;
             if constexpr(std::is_same_v<InfoType, h5pp::DsetInfo>)

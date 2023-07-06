@@ -62,4 +62,8 @@ namespace text {
                 if(s1 == s2) return std::string(s1);
         return std::nullopt;
     }
+
+
+    bool match_pattern(std::string_view comp, std::string_view pattern);
+    bool match_patterns(std::string_view comp, const std::vector<std::string_view> &patterns);
 }

@@ -138,7 +138,7 @@ namespace tools::h5xf {
 
             // Determine the target index where to copy this record
             hsize_t index = tgtId.get_index(fileId.seed); // Positive if it has been read already, numeric_limits::max if it's new
-            tools::logger::log->debug("Transferring table {} | src idx {} -> tgt idx {}", tgtPath, srcInfo.numRecords.value(), index);
+            tools::logger::log->trace("Transferring table {} | src idx {} -> tgt idx {}", tgtPath, srcInfo.numRecords.value(), index);
             auto t_copy = tid::tic_scope("copyTableRecords");
             h5_tgt.copyTableRecords(srcInfo, tgtInfo, h5pp::TableSelection::LAST, index);
             // Update the database
@@ -204,7 +204,7 @@ namespace tools::h5xf {
                     }
                     tgtTableDb[tgtPath] = tableInfo;
                 }
-                auto &tgtId   = tgtTableDb[tgtPath];
+                auto &tgtId   = tgtTableDb.at(tgtPath);
                 auto &tgtBuff = tgtId.buff;
 
                 // Determine the target index where to copy this record

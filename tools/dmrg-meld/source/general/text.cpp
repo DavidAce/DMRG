@@ -1,4 +1,5 @@
 #include "text.h"
+#include "tid/tid.h"
 bool text::endsWith(std::string_view str, std::string_view suffix) {
     return str.size() >= suffix.size() and 0 == str.compare(str.size() - suffix.size(), suffix.size(), suffix);
 }
@@ -41,3 +42,28 @@ std::vector<std::string_view> text::split(std::string_view str, std::string_view
 }
 
 bool text::natcomp(std::string_view sa, std::string_view sb) { return extract_value<long>(sa) < extract_value<long>(sb); }
+
+bool text::match_pattern(std::string_view comp, std::string_view pattern) {
+    auto t_scope   = tid::tic_scope(__FUNCTION__);
+    auto fuzz_pos  = pattern.find_first_of('*', 0);
+    auto slash_pos = pattern.find_first_of('/', 0);
+    auto has_fuzz  = fuzz_pos != std::string_view::npos;
+    auto has_slash = slash_pos != std::string_view::npos;
+    if(has_slash) {
+        for(const auto &part : text::split(pattern, "/")) {
+            if (not match_pattern(comp, part)) return false;
+        }
+        return true;
+    } else if(has_fuzz) {
+        return match_pattern(comp, pattern.substr(0,fuzz_pos));
+    } else {
+        return comp.find(pattern) != std::string_view::npos;
+    }
+}
+
+bool text::match_patterns(std::string_view comp, const std::vector<std::string_view> &patterns) {
+    for (const auto pattern : patterns){
+        if(not match_pattern(comp, pattern)) return false;
+    }
+    return true;
+}

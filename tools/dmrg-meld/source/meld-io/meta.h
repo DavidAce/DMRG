@@ -16,7 +16,7 @@ struct Key {
     std::string algo, state;
     std::string name;
     std::string key;
-    size_t      expected_size = -1ul;
+    mutable size_t      expected_size = -1ul;
     Key()                     = default;
     Key(std::string_view algo_, std::string_view state_, std::string_view name_, size_t expected_size_ = -1ul)
         : algo(algo_), state(state_), name(name_), expected_size(expected_size_) {}

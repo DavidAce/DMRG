@@ -418,7 +418,7 @@ int main(int argc, char *argv[]) {
                 auto src_hash = tools::hash::hash_file_meta(src_abs);
                 auto src_seed = tools::parse::extract_digits_from_h5_filename<long>(src_rel.filename());
                 if(src_seed != std::clamp<long>(src_seed, seed_min, seed_max)) {
-                    tools::logger::log->warn("Skipping seed {}: Valid are [{}-{}]", src_seed, seed_min, seed_max);
+//                    tools::logger::log->warn("Skipping seed {}: Valid are [{}-{}]", src_seed, seed_min, seed_max);
                     continue;
                 }
 
@@ -447,7 +447,7 @@ int main(int argc, char *argv[]) {
                     static size_t lastcount = 0;
                     if(file_stats[src_par].count < lastcount) lastcount = 0;
                     size_t filecounter = file_stats[src_par].count - lastcount;
-                    if(t_h5mbl->get_lap() > 1.0 or file_stats[src_par].count % 1000 == 0 or file_stats[src_par].count == 1 or
+                    if(t_h5mbl->get_lap() > 5.0 or file_stats[src_par].count % 1000 == 0 or file_stats[src_par].count == 1 or
                        file_stats[src_par].count == file_stats[src_par].files) {
                         tools::logger::log->info(FMT_STRING("Directory {} ({}) | count {} | src {} ({}) | tgt {} | {:.2f}/s"), h5dir.string(),
                                                  file_stats[src_par].files, file_stats[src_par].count, fmt_grp_bytes, fmt_src_bytes, fmt_tgt_bytes,
@@ -482,7 +482,6 @@ int main(int argc, char *argv[]) {
                         auto root = path.has_parent_path() ? path.parent_path().string() : "/";
                         if(h5_src.findLinks(name, root).empty()) throw except::load_error("missing required dataset: [{}]", req);
                     }
-
                 } catch(const std::exception &ex) {
                     tools::logger::log->warn("skipped file: {}: [{}]", ex.what(), src_abs.string());
                     tools::h5io::saveFailedJob(h5_src, "invalid source file", ex);

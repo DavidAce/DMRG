@@ -246,7 +246,7 @@ namespace tools::h5io {
                     hamiltonian.u_tgw8    = h5tb_hamiltonian.u_tgw8;
                     hamiltonian.u_cgw8    = h5tb_hamiltonian.u_cgw8;
                     auto path_lbits       = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
-                    if (h5_src.linkExists(path_lbits)) {
+                    if(h5_src.linkExists(path_lbits)) {
                         auto u_bond = h5_src.readAttribute<std::optional<long>>(path_lbits, "u_bond");
                         if(not u_bond.has_value()) u_bond = text::extract_value_between<long>(key, "_bond", "]");
                         if(not u_bond.has_value()) throw except::logic_error("Failed to get u_bond value from string: {}", key);
@@ -454,15 +454,15 @@ namespace tools::h5io {
             if(srcInfo.tableExists and srcInfo.tableExists.value()) {
                 // Check that the tables are the same size before and after
                 if constexpr(strictTableSize == StrictTableSize::TRUE) {
-                    if(srcKey.expected_size != -1ul and srcInfo.numRecords.value() != srcKey.expected_size)
+                    if(srcKey.expected_size == -1ul){
+                        srcKey.expected_size = srcInfo.numRecords.value();
+                    }
+                    if(srcInfo.numRecords.value() != srcKey.expected_size)
                         throw except::range_error("Table size mismatch:\n"
                                                   "file: {}\n"
                                                   "dset: {}\n"
-                                                  " num records {} | expected {}",
+                                                  "records {} | expected {}",
                                                   h5_src.getFilePath(), srcInfo.tablePath.value(), srcInfo.numRecords.value(), srcKey.expected_size);
-                    //                    if(numRecords_old and numRecords_old.value() != srcInfo.numRecords.value())
-                    //                        throw except::runtime_error("Table size mismatch: num records {} | expected {}: {}", srcInfo.numRecords.value(),
-                    //                        numRecords_old.value(), key);
                 }
 
                 keys.emplace_back(srcKey);
@@ -470,6 +470,19 @@ namespace tools::h5io {
             } else {
                 srcInfo.h5File = std::nullopt;
                 tools::logger::log->debug("Missing {} [{}] in file [{}]", srcKey.classtag, path, h5_src.getFilePath());
+            }
+        }
+        if constexpr(strictTableSize == StrictTableSize::TRUE) {
+            if(keys.size() > 1) {
+                // Check that all tables have the same number of records in them
+                std::vector<hsize_t> numRecords;
+                for(const auto &table : keys) {
+                    auto &srcInfo = srcTableDb.at(table.key);
+                    numRecords.emplace_back(srcInfo.numRecords.value());
+                }
+                //            tools::logger::log->info("<{}> : numRecords: {}", sfinae::type_name<KeyT>(), numRecords);
+                if(not std::all_of(numRecords.begin(), numRecords.end(), [numRecords](hsize_t n) { return n == numRecords[0]; }))
+                    throw except::runtime_error("unequal number of records in {}: {}", keys.front().classtag, numRecords);
             }
         }
         return keys;
@@ -516,7 +529,6 @@ namespace tools::h5io {
                     fesupKeys     = tools::h5io::gatherTableKeys<StrictTableSize::FALSE>(h5_src, srcdb.fesup, pathid, keys.fesups);
                     fesdnKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.fesdn, pathid, keys.fesdns);
                     cronoKeys     = tools::h5io::gatherTableKeys<StrictTableSize::TRUE>(h5_src, srcdb.crono, pathid, keys.cronos);
-
                 } catch(const std::runtime_error &ex) {
                     tools::logger::log->error("key gather failed in [{}]: {}", pathid.src_path, ex.what());
                     saveFailedJob(h5_src, "key gathering failed", ex);

@@ -80,28 +80,9 @@ PathId::PathId(std::string_view base_, std::string_view algo_, std::string_view 
     tgt_path = fmt::format("{}/{}/{}", base, algo, state);
 }
 
-bool PathId::match_pattern(std::string_view comp, std::string_view pattern) {
-    auto t_scope   = tid::tic_scope(__FUNCTION__);
-    auto fuzz_pos  = pattern.find_first_of('*', 0);
-    auto slash_pos = pattern.find_first_of('/', 0);
-    auto has_fuzz  = fuzz_pos != std::string_view::npos;
-    auto has_slash = slash_pos != std::string_view::npos;
-    if(has_slash) {
-        for(const auto &part : text::split(pattern, "/")) {
-            fuzz_pos           = part.find_first_of('*', 0);
-            auto partial_match = comp.find(part.substr(0, fuzz_pos), 0) != std::string_view::npos;
-            if(not partial_match) return false;
-        }
-        return true;
-
-    } else if(has_fuzz)
-        return text::startsWith(comp, pattern.substr(0, fuzz_pos));
-    else
-        return comp == pattern;
-}
 
 bool PathId::match(std::string_view algo_pattern, std::string_view state_pattern) const {
-    return match_pattern(algo, algo_pattern) and match_pattern(state, state_pattern);
+    return text::match_pattern(algo, algo_pattern) and text::match_pattern(state, state_pattern);
 }
 
 [[nodiscard]] std::string PathId::dset_path(std::string_view dsetname) const { return h5pp::format("{}/{}/{}/dsets/{}", base, algo, state, dsetname); }
