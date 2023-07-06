@@ -454,15 +454,15 @@ namespace tools::h5io {
             if(srcInfo.tableExists and srcInfo.tableExists.value()) {
                 // Check that the tables are the same size before and after
                 if constexpr(strictTableSize == StrictTableSize::TRUE) {
-                    if(srcKey.expected_size == -1ul){
-                        srcKey.expected_size = srcInfo.numRecords.value();
+                    if(srcKey.expected_size == -1ul) { srcKey.expected_size = srcInfo.numRecords.value(); }
+                    if(srcInfo.numRecords.value() != srcKey.expected_size) {
+                        if(srcInfo.numRecords.value() < srcKey.expected_size)
+                            throw except::range_error("Table size mismatch:\n"
+                                                      "file: {}\n"
+                                                      "dset: {}\n"
+                                                      "records {} | expected {}",
+                                                      h5_src.getFilePath(), srcInfo.tablePath.value(), srcInfo.numRecords.value(), srcKey.expected_size);
                     }
-                    if(srcInfo.numRecords.value() != srcKey.expected_size)
-                        throw except::range_error("Table size mismatch:\n"
-                                                  "file: {}\n"
-                                                  "dset: {}\n"
-                                                  "records {} | expected {}",
-                                                  h5_src.getFilePath(), srcInfo.tablePath.value(), srcInfo.numRecords.value(), srcKey.expected_size);
                 }
 
                 keys.emplace_back(srcKey);
@@ -544,7 +544,7 @@ namespace tools::h5io {
                     tools::h5xf::transferSeries(h5_tgt, tgtdb.crono, srcdb.crono, pathid, cronoKeys, fileId);
                 } catch(const std::runtime_error &ex) {
                     tools::logger::log->warn("Transfer failed in [{}]: {}", pathid.src_path, ex.what());
-                    saveFailedJob(h5_src, "dset transfer failed", ex);
+                    saveFailedJob(h5_src, "transfer failed", ex);
                 }
 
                 //                try {
