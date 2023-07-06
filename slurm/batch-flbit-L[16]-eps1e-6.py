@@ -9,7 +9,7 @@ config_paths = {
     'config_dir'        : "config-L[16]-eps1e-6",
     'output_stem'       : 'mbl',
     'output_dir'        : "output-eps1e-6",
-    'status_dir'        : "status",
+    'status_dir'        : "status-eps1e-6",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 

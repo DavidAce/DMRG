@@ -113,7 +113,7 @@ def write_batch_status(batch):
     args = parser.parse_args()
 
     config_file = f'{batch["config_file"]}'
-    status_file = f'status/{Path(config_file).stem}.status'
+    status_file = f'{batch["status_dir"]}/{Path(config_file).stem}.status'
     Path(status_file).parent.mkdir(parents=True, exist_ok=True)
     seed_status = copy(batch.get('seed_status')) # Old one
     batch['seed_status'] = []

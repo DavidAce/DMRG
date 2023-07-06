@@ -114,7 +114,7 @@ def get_batch_setup(projectname):
             },
         },
         'lbit94-eps1e-6': {
-            'projectname': 'lbit94-eps1e-8',
+            'projectname': 'lbit94-eps1e-6',
             'batch': {  # Number of seeds to run
                 'L16|f0.2': {
                     'seed_extent': [10000],

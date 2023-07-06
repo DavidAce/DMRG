@@ -100,6 +100,7 @@ def write_batch_files(batch_setup, configs, config_paths):
                 'output_path' : str(Path(config["storage::output_filepath"]).parent),
                 'output_stem' : config_paths['output_stem'],
                 'projectname': batch_setup['projectname'],
+                'status_dir': config_paths['status_dir'],
                 'seed_extent': [],
                 'seed_offset': [],
                 # 'seed_status': [],
