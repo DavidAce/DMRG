@@ -1,3 +1,4 @@
+import platform
 from itertools import product
 from pathlib import Path
 import json
@@ -5,6 +6,7 @@ import yaml
 import os
 import numpy as np
 import linecache
+import shutil
 def get_config_product(config_ranges : dict, p: dict):
     c = []
     for vals in product(*config_ranges.values()):
@@ -85,20 +87,21 @@ def write_config_file(config, config_template, config_filename):
                 file.write(line)
 
 
-
 def write_batch_files(batch_setup, configs, config_paths):
     for config in configs:
         config_filepath = Path(config['filename'])
         batch_filename = '{}/{}.json'.format(config_paths['config_dir'], config_filepath.stem)
         Path(batch_filename).parent.mkdir(parents=True, exist_ok=True)
+        batchjson = None
         if os.path.isfile(batch_filename):
             with open(batch_filename, 'r') as fp:
                 batchjson = json.load(fp)
-        else:
+        if batchjson is None:
             batchjson = {
                 'config_file' : str(config_filepath),
                 'output_path' : str(Path(config["storage::output_filepath"]).parent),
                 'output_stem' : config_paths['output_stem'],
+                'output_prfx' : config_paths['output_prfx'],
                 'projectname': batch_setup['projectname'],
                 'status_dir': config_paths['status_dir'],
                 'seed_extent': [],
@@ -118,6 +121,8 @@ def write_batch_files(batch_setup, configs, config_paths):
             raise AssertionError(f'Found multiple seed keys matching config: {config_filepath.name}\n'
                                  f'\n{seed_keys=}')
         batch = batch_setup['batch'][seed_keys[0]]
+        print(batch)
+        print(batchjson)
         batchjson['time_steps'] = batch['time_steps']
 
         for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
@@ -150,3 +155,19 @@ def write_batch_files(batch_setup, configs, config_paths):
 
 
 
+def move_directories(batch_setup, config_paths):
+    if platform.node() != "neumann":
+        return
+
+    src_dirs = [
+        config_paths['config_dir'],
+        config_paths['status_dir']
+    ]
+
+    for src_dir in src_dirs:
+        if os.path.isdir(src_dir):
+            for file in os.listdir(src_dir):
+                src_file = os.path.join(src_dir, file)
+                tgt_file = os.path.join(config_paths['output_prfx'], batch_setup['projectname'], src_file)
+                print(f'moving {src_file} -> {tgt_file}')
+                shutil.move(src_file,tgt_file)

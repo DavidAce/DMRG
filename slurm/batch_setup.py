@@ -113,8 +113,8 @@ def get_batch_setup(projectname):
                 },
             },
         },
-        'lbit94-eps1e-6': {
-            'projectname': 'lbit94-eps1e-6',
+        'lbit94-eps1e-8': {
+            'projectname': 'lbit94-eps1e-8',
             'batch': {  # Number of seeds to run
                 'L16|f0.2': {
                     'seed_extent': [80000],
@@ -123,7 +123,16 @@ def get_batch_setup(projectname):
                 },
             },
         },
-
+        'lbit95-eps1e-5': {
+            'projectname': 'lbit95-eps1e-5',
+            'batch': {  # Number of seeds to run
+                'L16|f0.2': {
+                    'seed_extent': [80000],
+                    'seed_offset': [10000000],
+                    'time_steps': 100,
+                },
+            },
+        },
     }
 
     return batch_setup[projectname]

@@ -36,7 +36,6 @@ def get_unique_config_string(d: dict, dl: dict, delim: str):
 
 def get_config_filename(d: dict, dl: dict, p: dict):
     unique_path = get_unique_config_string(d,dl, '_')
-    # config_filename += f"_u[{str_circuit}].cfg"
     return f"{p['config_dir']}/{p['output_stem']}_{unique_path}.cfg"
 
 
@@ -114,13 +113,13 @@ def write_batch_status(batch):
 
     config_file = f'{batch["config_file"]}'
     status_file = f'{batch["status_dir"]}/{Path(config_file).stem}.status'
-    Path(status_file).parent.mkdir(parents=True, exist_ok=True)
     seed_status = copy(batch.get('seed_status')) # Old one
     batch['seed_status'] = []
     if platform.node() != "neumann" and args.update_status:
         raise AssertionError("--update-status is only valid on neumann")
 
     if platform.node() == "neumann" and args.update_status:
+        Path(status_file).parent.mkdir(parents=True, exist_ok=True)
         output_base = '/mnt/WDB-AN1500/mbl_transition'
         output_path = f'{output_base}/{batch["projectname"]}/{batch["output_path"]}'
         print(f"Updating status: {status_file}")
@@ -168,7 +167,13 @@ def write_batch_status(batch):
                     st.write(f'{h5file}\n')
     else:
         if not os.path.isfile(status_file):
-            raise FileNotFoundError(f"{status_file}")
+            if platform.node() == "neumann":
+                status_file="{}/{}/{}".format(batch['output_prfx'], batch['projectname'], status_file)
+                if not os.path.isfile(status_file):
+                    raise FileNotFoundError(f"{status_file}")
+            else:
+                raise FileNotFoundError(f"{status_file}")
+
         status_count = 0
         for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
             extent_size = len(batch['seed_extent'])
