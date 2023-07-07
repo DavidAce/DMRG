@@ -226,28 +226,24 @@ ulimit -c unlimited
 output_path="$(fgrep -e "storage::output_filepath" "$config_path" | awk '{sub(/.*=/,""); sub(/ \/!*<.*/,""); print $1;}')"
 export output_path="$output_path"
 
-
-# Copy the status file from remote to tmp
 # Find and copy the status file to tmp
 config_base="$(basename -s ".cfg" "$config_path")"
-export status_name="$config_base.status"
-tempdir="/tmp"
-if [ -d "/scratch/local" ];then
-  tempdir="/scratch/local"
-elif [ -n "$PDC_TMP" ]; then
-   tempdir="$PDC_TMP"
-fi
-status_temp="$tempdir/DMRG.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
-export status_path=$status_temp/$status_name
-if [ ! -f "$status_temp/$status_name" ]; then
-  mkdir -p $status_temp
-  rclone_copy_from_remote "$status_dir/$status_name" "$status_temp/$status_name"
-  if [ ! -f "$status_temp/$status_name" ]; then
-    echo "Failed to copy from remote: $status_path"
-    exit 2
-  fi
-  export status_path=$status_temp/$status_name
-  trap 'rm -rf "$status_temp"' EXIT
+export status_path="$status_dir/$config_base.status"
+if [ -f "$status_path" ]; then
+    tempdir="/tmp"
+    if [ -d "/scratch/local" ];then
+      tempdir="/scratch/local"
+    elif [ -n "$PDC_TMP" ]; then
+       tempdir="$PDC_TMP"
+    fi
+    status_temp="$tempdir/DMRG.$USER/status/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}"
+    status_name="$config_base.status"
+    if [ ! -f "$status_temp/$status_name" ]; then
+      mkdir -p $status_temp
+      cp $status_path $status_temp/
+    fi
+    export status_path=$status_temp/$status_name
+    trap 'rm -rf "$status_temp"' EXIT
 fi
 
 echodate "TASK ID SEQUENCE         : $(seq -s ' ' $start_id $end_id)"

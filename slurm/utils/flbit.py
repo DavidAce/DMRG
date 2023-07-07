@@ -9,6 +9,8 @@ from pathlib import Path
 from itertools import groupby
 import linecache
 from copy import copy
+from rclone_python import rclone
+
 
 def get_unique_config_string(d: dict, dl: dict, delim: str):
     str_L = str(d['model::model_size'])
@@ -166,13 +168,14 @@ def write_batch_status(batch):
                     print(f"Stray seed found for {batch['config_file']}: {seed_found}")
                     st.write(f'{h5file}\n')
     else:
+        if platform.node() == "neumann":
+            status_file = "{}/{}/{}".format(batch['output_prfx'], batch['projectname'], status_file)
+        else:
+            rclone.copy(f'neumann:{batch["output_prfx"]}/{batch["projectname"]}/{status_file}',
+                        f'{status_file}',
+                        args=['-L', '--update'])
         if not os.path.isfile(status_file):
-            if platform.node() == "neumann":
-                status_file="{}/{}/{}".format(batch['output_prfx'], batch['projectname'], status_file)
-                if not os.path.isfile(status_file):
-                    raise FileNotFoundError(f"{status_file}")
-            else:
-                raise FileNotFoundError(f"{status_file}")
+            raise FileNotFoundError(f"{status_file}")
 
         status_count = 0
         for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
