@@ -1,4 +1,4 @@
-from utils.generators import get_config_product, write_config_file, write_batch_files
+from utils.generators import get_config_product, write_config_file, write_batch_files, move_directories
 from utils.flbit import get_max_time, get_output_filepath, get_config_filename, update_batch_status
 from batch_setup import get_batch_setup
 import os
@@ -7,6 +7,7 @@ import platform
 config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
     'config_dir'        : "config-L[12,16,20]",
+    'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
     'output_stem'       : 'mbl',
     'output_dir'        : "output",
     'status_dir'        : "status",
@@ -57,3 +58,4 @@ for config in configs:
 batch_setup = get_batch_setup('lbit93-precision')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
+move_directories(batch_setup=batch_setup, config_paths=config_paths)
