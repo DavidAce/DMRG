@@ -94,9 +94,12 @@ def get_h5_status(filename, batch):
 
                 has_finished_all   = expected_dsets[0][()]
                 has_expected_iters = len(expected_dsets[1]) == batch['time_steps']
-
+                has_chi_max_2048   = expected_dsets[2]['bond_lim'][0] == 2048
+                sfx = ''
+                if has_chi_max_2048:
+                    sfx = '|bond_lim_2048'
                 if has_expected_iters and has_finished_all:
-                    return "FINISHED"
+                    return f"FINISHED{sfx}"
                 if has_expected_iters and not has_finished_all:
                     return "TIMEOUT"
                 if not has_expected_iters and has_finished_all:

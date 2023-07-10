@@ -169,5 +169,6 @@ def move_directories(batch_setup, config_paths):
             for file in os.listdir(src_dir):
                 src_file = os.path.join(src_dir, file)
                 tgt_file = os.path.join(config_paths['output_prfx'], batch_setup['projectname'], src_file)
+                Path(tgt_file).parent.mkdir(parents=True, exist_ok=True)
                 print(f'moving {src_file} -> {tgt_file}')
                 shutil.move(src_file,tgt_file)
