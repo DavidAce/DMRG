@@ -9,8 +9,8 @@ config_paths = {
     'config_dir'        : "config-L[16]-u8",
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
     'output_stem'       : 'mbl',
-    'output_dir'        : "output",
-    'status_dir'        : "status",
+    'output_dir'        : "output-L[16]-u8",
+    'status_dir'        : "status-L[16]-u8",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 
