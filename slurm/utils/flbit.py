@@ -61,12 +61,25 @@ def get_max_time(d: dict, dl: dict, p: dict):
     tmax1 = 1.0 / w1
 
     r2max = np.min([r, L])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max - 1) / x) * w2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmin2 = np.exp(-r2max / x) * w2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmax3 = 1.0 / w3
     tmax = np.max([tmax1, tmax2, tmax3])
-    return '{:.1e}'.format(10 ** np.ceil(np.log10(tmax)))
-
+    tmax = 10 ** np.ceil(np.log10(tmax))
+    print(f"{L=} {tmax=}")
+    if L == 12 and tmax != 1e6:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e6. Got {tmax=:.1e}")
+    if L == 16 and tmax != 1e8:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e8. Got {tmax=:.1e}")
+    if L == 20 and tmax != 1e9:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e9. Got {tmax=:.1e}")
+    if L == 24 and tmax != 1e11:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e11. Got {tmax=:.1e}")
+    if L == 28 and tmax != 1e12:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e12. Got {tmax=:.1e}")
+    if L == 32 and tmax != 1e14:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e14. Got {tmax=:.1e}")
+    return '{:.1e}'.format(tmax)
 
 def all_equal(iterable):
     g = groupby(iterable)
@@ -92,22 +105,32 @@ def get_h5_status(filename, batch):
                 has_equal_iters = all_equal(len_of_dsets)
                 if not has_equal_iters:
                     return f"FAILED|(unequal iters:{len_of_dsets})"
-
+                time_steps=len(expected_dsets[1])
                 has_finished_all   = expected_dsets[0][()]
-                has_expected_iters = len(expected_dsets[1]) == batch['time_steps']
-                has_chi_max_2048   = expected_dsets[2]['bond_lim'][0] == 2048
-                sfx = ''
-                if has_chi_max_2048:
-                    sfx = '|bond_lim_2048'
+                r2max=float(expected_dsets[1]['length'][0])
+                Jmin2 = np.exp(-r2max / 1) * 1 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+                tmax2 = 1.0 / Jmin2
+                tmax = 10 ** np.ceil(np.log10(tmax2))
+                found_tmax = expected_dsets[1]['physical_time'][-1].astype(float)
+                has_expected_tmax  = found_tmax == tmax
+                has_expected_iters = time_steps >= batch['time_steps']
+                has_exceeded_iters = time_steps > batch['time_steps']
+                if not has_expected_tmax:
+                    return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
                 if has_expected_iters and has_finished_all:
-                    return f"FINISHED{sfx}"
+                    if has_exceeded_iters:
+                        return f"FINISHED|{time_steps=}"
+                    else:
+                        return f"FINISHED"
                 if has_expected_iters and not has_finished_all:
-                    return "TIMEOUT"
+                    return f"TIMEOUT|{time_steps=}"
                 if not has_expected_iters and has_finished_all:
-                    return "TIMEOUT"
-                return "FAILED"
-        except:
-            return "FAILED"
+                    return f"FAILED|{time_steps=}"
+                if not has_expected_iters and not has_finished_all:
+                    return f"TIMEOUT|{time_steps=}"
+                return "FAILED|unknown reason"
+        except Exception as e:
+            return f"FAILED|{e}"
     else:
         return "MISSING"
 

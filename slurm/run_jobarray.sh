@@ -157,7 +157,10 @@ run_sim_id() {
     extra_args="--revive"
   elif [ "$status" == "FAILED" ];then
     extra_args="--replace"
+  elif [ "$status" == "MISSING" ];then
+    extra_args="--replace"
   fi
+
 
   echodate "EXEC LINE                : $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
