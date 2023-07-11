@@ -155,9 +155,14 @@ run_sim_id() {
     rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
     rclone_copy_from_remote "$logtext" "$model_seed.txt"
     extra_args="--revive"
-  elif [ "$status" == "FAILED" ];then
+  fi
+  if [ "$status" == "FAILED" ];then
+    extra_args="--replace";
+  fi
+  if [ "$status" == "MISSING" ];then
     extra_args="--replace"
-  elif [ "$status" == "MISSING" ];then
+  fi
+  if [ "$status" == "REPLACE" ];then
     extra_args="--replace"
   fi
 
