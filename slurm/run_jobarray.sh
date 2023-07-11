@@ -118,18 +118,6 @@ run_sim_id() {
   if [ -f $loginfo ] ; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
-    if [[ $infostatus =~ FINISHED|RCLONED ]]; then
-      # Copy results back to remote
-      rclone_copy_to_remote $logtext $rclone_remove
-      rclone_copy_to_remote $outfile $rclone_remove
-      rclone_exit_code=$?
-      if [ -n "$rclone_prefix" ] && [ "$rclone_exit_code" == "0" ]; then
-        log "$infoline|RCLONED" "$loginfo"
-        rclone_copy_to_remote $loginfo $rclone_remove
-      fi
-      return 0
-    fi
-
     if [ "$infostatus" == "RUNNING" ] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
@@ -149,7 +137,17 @@ run_sim_id() {
     fi
     # We go ahead and run the simulation if it's not running, or if it failed
   fi
-
+  if [[ "$status" =~ FINISHED ]] && [[ "$infostatus" =~ FINISHED|RCLONED ]]; then
+    # Copy results back to remote
+    rclone_copy_to_remote $logtext $rclone_remove
+    rclone_copy_to_remote $outfile $rclone_remove
+    rclone_exit_code=$?
+    if [ -n "$rclone_prefix" ] && [ "$rclone_exit_code" == "0" ]; then
+      log "$infoline|RCLONED" "$loginfo"
+      rclone_copy_to_remote $loginfo $rclone_remove
+    fi
+    return 0
+  fi
   # Get the latest data to continue from
   if [ "$status" == "TIMEOUT" ] || [ "$infostatus" == "FAILED" ]; then
     rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
