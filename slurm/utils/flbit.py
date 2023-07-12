@@ -75,8 +75,8 @@ def get_max_time(d: dict, dl: dict, p: dict):
         raise AssertionError(f"{L=} is supposed to have tmax=1e9. Got {tmax=:.1e}")
     if L == 24 and tmax != 1e11:
         raise AssertionError(f"{L=} is supposed to have tmax=1e11. Got {tmax=:.1e}")
-    if L == 28 and tmax != 1e12:
-        raise AssertionError(f"{L=} is supposed to have tmax=1e12. Got {tmax=:.1e}")
+    if L == 28 and tmax != 1e13:
+        raise AssertionError(f"{L=} is supposed to have tmax=1e13. Got {tmax=:.1e}")
     if L == 32 and tmax != 1e14:
         raise AssertionError(f"{L=} is supposed to have tmax=1e14. Got {tmax=:.1e}")
     return '{:.1e}'.format(tmax)

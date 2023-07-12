@@ -82,35 +82,40 @@ def get_batch_setup(projectname):
                     'time_steps': 100,
                 },
                 'L28|f0.2': {
-                    'seed_extent': [1000, 4000, 45000],
-                    'seed_offset': [47000000, 47100000, 62000000],
+                    'seed_extent': [1000],
+                    'seed_offset': [47000000],
                     'time_steps': 100,
                 },
-                'L28|f0.3': {
-                    'seed_extent': [1000, 4000, 45000],
-                    'seed_offset': [47002000, 47108000, 62100000],
-                    'time_steps': 100,
-                },
-                'L28|f0.4': {
-                    'seed_extent': [1000, 4000, 45000],
-                    'seed_offset': [47001000, 47104000, 62200000],
-                    'time_steps': 100,
-                },
-                'L32|f0.2': {
-                    'seed_extent': [1000, 24000],
-                    'seed_offset': [48000000, 63000000],
-                    'time_steps': 100,
-                },
-                'L32|f0.3': {
-                    'seed_extent': [1000, 24000],
-                    'seed_offset': [48001000, 63100000],
-                    'time_steps': 100,
-                },
-                'L32|f0.4': {
-                    'seed_extent': [1000, 24000],
-                    'seed_offset': [48002000, 63200000],
-                    'time_steps': 100,
-                },
+                # 'L28|f0.2': {
+                #     'seed_extent': [1000, 4000, 45000],
+                #     'seed_offset': [47000000, 47100000, 62000000],
+                #     'time_steps': 100,
+                # },
+                # 'L28|f0.3': {
+                #     'seed_extent': [1000, 4000, 45000],
+                #     'seed_offset': [47002000, 47108000, 62100000],
+                #     'time_steps': 100,
+                # },
+                # 'L28|f0.4': {
+                #     'seed_extent': [1000, 4000, 45000],
+                #     'seed_offset': [47001000, 47104000, 62200000],
+                #     'time_steps': 100,
+                # },
+                # 'L32|f0.2': {
+                #     'seed_extent': [1000, 24000],
+                #     'seed_offset': [48000000, 63000000],
+                #     'time_steps': 100,
+                # },
+                # 'L32|f0.3': {
+                #     'seed_extent': [1000, 24000],
+                #     'seed_offset': [48001000, 63100000],
+                #     'time_steps': 100,
+                # },
+                # 'L32|f0.4': {
+                #     'seed_extent': [1000, 24000],
+                #     'seed_offset': [48002000, 63200000],
+                #     'time_steps': 100,
+                # },
             },
         },
         'lbit94-eps1e-8': {
