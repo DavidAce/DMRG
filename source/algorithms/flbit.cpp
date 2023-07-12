@@ -554,15 +554,15 @@ void flbit::time_evolve_lbit_state() {
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
     if(has_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", std::real(delta_t), std::imag(delta_t));
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircOp::NONE, GateMove::AUTO, svd_cfg);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2body, CircOp::NONE, GateMove::AUTO, svd_cfg);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3body, CircOp::NONE, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircOp::NONE, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2body, CircOp::NONE, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3body, CircOp::NONE, GateMove::ON, svd_cfg);
     }
     if(has_slow_gates) {
         tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", std::real(delta_t), std::imag(delta_t));
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_1body, CircOp::NONE, true, GateMove::AUTO, svd_cfg);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_2body, CircOp::NONE, true, GateMove::AUTO, svd_cfg);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_3body, CircOp::NONE, true, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_1body, CircOp::NONE, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_2body, CircOp::NONE, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_3body, CircOp::NONE, true, GateMove::ON, svd_cfg);
     }
     tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
@@ -610,7 +610,6 @@ void flbit::transform_to_real_basis() {
     auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
     svd_cfg.svd_lib = svd::lib::lapacke;
     svd_cfg.svd_rtn = svd::rtn::geauto;
-
     if(settings::flbit::use_mpo_circuit) {
         svd_cfg.rank_max = static_cast<long>(static_cast<double>(tensors.state->find_largest_bond()) * 4);
         tools::log->debug("Transforming {} to {} using {} unitary mpo layers", state_lbit->get_name(), tensors.state->get_name(),
