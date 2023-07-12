@@ -384,7 +384,8 @@ std::vector<qm::Gate> qm::lbit::get_time_evolution_gates(cplx_t delta_t, const s
             }
     }
     time_evolution_gates.shrink_to_fit();
-    if(count_ignored > 0) tools::log->debug("get_time_evolution_gates: ignored {} time evolution swap gates: I +- {:.2e}", count_ignored, id_threshold);
+    if(count_ignored > 0)
+        tools::log->debug("get_time_evolution_gates: ignored {}/{} time evolution swap gates: I +- {:.2e}", count_ignored, hams_nsite.size(), id_threshold);
     return time_evolution_gates;
 }
 
@@ -410,7 +411,9 @@ std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx_t delta_t
             }
     }
     time_evolution_swap_gates.shrink_to_fit();
-    if(count_ignored > 0) tools::log->debug("get_time_evolution_swap_gates: ignored {} time evolution swap gates: I +- {:.2e}", count_ignored, id_threshold);
+    if(count_ignored > 0)
+        tools::log->debug("get_time_evolution_swap_gates: ignored {}/{} time evolution swap gates: I +- {:.2e}", count_ignored, hams_nsite.size(),
+                          id_threshold);
     return time_evolution_swap_gates;
 }
 
