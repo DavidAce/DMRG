@@ -205,20 +205,22 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     S.resize(sizeS);
                     VT.resize(rowsVT, colsVT);
 
-                    double vl    = std::min(1e10, truncation_lim / 5.0);
-                    double vu    = std::max(1e10, truncation_lim / 5.0);
+                    double vl    = std::min(1e-10, truncation_lim / 5.0);
+                    double vu    = std::max(1e+10, truncation_lim / 5.0);
                     int    il    = 1;
                     int    iu    = std::min<int>(sizeS, static_cast<int>(rank_max));
                     char   range = rank_max < sizeS ? 'I' : 'V';
 
                     if(svdx_select.has_value()) {
-                        if(std::holds_alternative<size_t>(svdx_select.value())) {
-                            int rank_svdx = static_cast<int>(std::get<size_t>(svdx_select.value()));
-                            iu            = std::min<int>(rank_svdx, static_cast<int>(rank_max));
-                            range         = 'I';
-                        } else if(std::holds_alternative<double>(svdx_select.value())) {
-                            double value_svdx = std::get<double>(svdx_select.value());
-                            if(std::isfinite(value_svdx)) vl = value_svdx;
+                        if(std::holds_alternative<svdx_indices_t>(svdx_select.value())) {
+                            auto sel = std::get<svdx_indices_t>(svdx_select.value());
+                            iu       = std::min<int>(static_cast<int>(sel.iu), static_cast<int>(rank_max));
+                            il       = std::min<int>(static_cast<int>(sel.il), static_cast<int>(rank_max));
+                            range    = 'I';
+                        } else if(std::holds_alternative<svdx_values_t>(svdx_select.value())) {
+                            auto sel = std::get<svdx_values_t>(svdx_select.value());
+                            if(std::isfinite(sel.vl)) vl = sel.vl;
+                            if(std::isfinite(sel.vu)) vu = sel.vu;
                             range = 'V';
                         }
                     }
@@ -303,9 +305,9 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     S.resize(sizeS);
                     U.resize(rowsU, colsU);
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
-                    cwork.resize(std::max(2ul, static_cast<size_t>(5*rowsA + 2 * rowsA*rowsA)));
-                    rwork.resize(std::max(7ul, static_cast<size_t>(2*colsA)));
-                    iwork.resize(std::max(4ul, static_cast<size_t>(2*rowsA + colsA)));
+                    cwork.resize(std::max(2ul, static_cast<size_t>(5 * rowsA + 2 * rowsA * rowsA)));
+                    rwork.resize(std::max(7ul, static_cast<size_t>(2 * colsA)));
+                    iwork.resize(std::max(4ul, static_cast<size_t>(2 * rowsA + colsA)));
 
                     info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
@@ -318,7 +320,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     int liwork = static_cast<int>(iwork[0]);
                     cwork.resize(static_cast<size_t>(std::max(2, lcwork)));
                     rwork.resize(static_cast<size_t>(std::max(7, lrwork)));
-                    iwork.resize(static_cast<size_t>(std::max({4, 2*rowsA + colsA, liwork})));
+                    iwork.resize(static_cast<size_t>(std::max({4, 2 * rowsA + colsA, liwork})));
 
                     info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
@@ -363,17 +365,18 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     char   range = rank_max < sizeS ? 'I' : 'V';
 
                     if(svdx_select.has_value()) {
-                        if(std::holds_alternative<size_t>(svdx_select.value())) {
-                            int rank_svdx = static_cast<int>(std::get<size_t>(svdx_select.value()));
-                            iu            = std::min<int>(rank_svdx, static_cast<int>(rank_max));
-                            range         = 'I';
-                        } else if(std::holds_alternative<double>(svdx_select.value())) {
-                            double value_svdx = std::get<double>(svdx_select.value());
-                            if(std::isfinite(value_svdx)) vl = value_svdx;
+                        if(std::holds_alternative<svdx_indices_t>(svdx_select.value())) {
+                            auto sel = std::get<svdx_indices_t>(svdx_select.value());
+                            iu       = std::min<int>(static_cast<int>(sel.iu), static_cast<int>(rank_max));
+                            il       = std::min<int>(static_cast<int>(sel.il), static_cast<int>(rank_max));
+                            range    = 'I';
+                        } else if(std::holds_alternative<svdx_values_t>(svdx_select.value())) {
+                            auto sel = std::get<svdx_values_t>(svdx_select.value());
+                            if(std::isfinite(sel.vl)) vl = sel.vl;
+                            if(std::isfinite(sel.vu)) vu = sel.vu;
                             range = 'V';
                         }
                     }
-
                     int ns     = 0;
                     int lcwork = std::max(1, mn * 2 + mx);
                     int lrwork = mn * (mn * 2 + 15 * mn);

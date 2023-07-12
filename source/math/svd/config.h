@@ -31,7 +31,15 @@ namespace svd {
         FAIL,  /*!< Only save on failure  */
     };
 
-    using svdx_select_t = std::variant<size_t, double>;
+    struct svdx_values_t {
+        double vl=1e-10;
+        double vu=1e+10;
+    };
+    struct svdx_indices_t {
+        size_t il=1;
+        size_t iu=10000;
+    };
+    using svdx_select_t = std::variant<svdx_indices_t, svdx_values_t>;
 
     constexpr inline std::string_view enum2sv(svd::lib lib) {
         switch(lib) {

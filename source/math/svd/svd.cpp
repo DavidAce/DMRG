@@ -20,7 +20,14 @@ std::string svd::config::to_string() {
     if(switchsize_gejsv) msg.append(fmt::format(" | switchsize_gejsv {}", switchsize_gejsv.value()));
     if(switchsize_gesvd) msg.append(fmt::format(" | switchsize_gesvd {}", switchsize_gesvd.value()));
     if(switchsize_gesdd) msg.append(fmt::format(" | switchsize_gesdd {}", switchsize_gesdd.value()));
-    if(svdx_select     ) msg.append(fmt::format(" | svdx_select {}", svdx_select.value()));
+    if(svdx_select and std::holds_alternative<svdx_indices_t>(svdx_select.value())){
+       auto sel = std::get<svdx_indices_t>(svdx_select.value());
+       msg.append(fmt::format(" | svdx_select {}-{}", sel.il, sel.iu));
+    }
+    if(svdx_select and std::holds_alternative<svdx_values_t>(svdx_select.value())){
+       auto sel = std::get<svdx_values_t>(svdx_select.value());
+       msg.append(fmt::format(" | svdx_select {}-{}", sel.vl, sel.vu));
+    }
     if(loglevel        ) msg.append(fmt::format(" | loglevel {}", loglevel.value()));
     if(svd_lib         ) msg.append(fmt::format(" | svd_lib {}", enum2sv(svd_lib.value())));
     if(svd_rtn         ) msg.append(fmt::format(" | svd_rtn {}", enum2sv(svd_rtn.value())));
