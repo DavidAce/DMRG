@@ -27,6 +27,7 @@ def parse(project_name):
     parser.add_argument('-b', '--build-type', type=str, help='Build type', default='Release')
     parser.add_argument('-M', '--clusters', type=str, help='Comma separated list of Slurm clusters', default=None)
     parser.add_argument('-w', '--nodelist', type=str, help='Comma separated list of node names', default=None)
+    parser.add_argument('--account', type=str, help='Name of account to run under', default=None)
     parser.add_argument('--reservation', type=str, help='Name of reservation to run under', default=None)
     parser.add_argument('--config', type=str, help='Path to simulation config files (suffixed .cfg)', default='config')
     parser.add_argument('--status', type=str, help='Path to simulation status files (suffixed .status)', default='status')
@@ -157,6 +158,8 @@ def generate_sbatch_commands(project_name, args):
         sbatch_arg.extend([f'--clusters={args.clusters}'])
     if args.nodelist:
         sbatch_arg.extend([f'--nodelist={args.nodelist}'])
+    if args.account:
+       sbatch_arg.extend([f'--account={args.account}'])
     if args.reservation:
        sbatch_arg.extend([f'--reservation={args.reservation}'])
     if args.cpus_per_task:

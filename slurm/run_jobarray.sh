@@ -158,7 +158,7 @@ run_sim_id() {
     extra_args="--replace";
   fi
   if [ "$status" == "MISSING" ];then
-    extra_args="--replace"
+    extra_args="--revive"
   fi
   if [ "$status" == "REPLACE" ];then
     extra_args="--replace"
