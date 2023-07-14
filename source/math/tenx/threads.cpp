@@ -1,9 +1,9 @@
 #include "threads.h"
 #include <thread>
 #include <unsupported/Eigen/CXX11/Tensor>
-#if defined(_OPENMP)
-    #include <omp.h>
-#endif
+//#if defined(_OPENMP)
+//    #include <omp.h>
+//#endif
 
 namespace tenx::threads {
 #if defined(EIGEN_USE_THREADS)

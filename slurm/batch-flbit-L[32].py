@@ -19,6 +19,7 @@ config_ranges = {
     "filename" : [''],
     "storage::output_filepath": [get_output_filepath],
     "storage::temp_dir": [config_paths['temp_dir']],
+    "storage::copy_from_temp_freq": ['5'],
     "console::loglevel": ['2'],
     "solver::svd_truncation_lim": ['1e-3'],
     "solver::svd_truncation_init": ['1e-3'],
