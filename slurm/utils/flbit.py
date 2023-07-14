@@ -115,9 +115,9 @@ def get_h5_status(filename, batch):
                 has_expected_tmax  = found_tmax == tmax
                 has_expected_iters = time_steps >= batch['time_steps']
                 has_exceeded_iters = time_steps > batch['time_steps']
-                if not has_expected_tmax:
-                    return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
                 if has_expected_iters and has_finished_all:
+                    if not has_expected_tmax:
+                        return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
                     if has_exceeded_iters:
                         return f"FINISHED|{time_steps=}"
                     else:
