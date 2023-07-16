@@ -10,6 +10,7 @@ import socket
 import json
 from random import shuffle
 import numpy as np
+import linecache
 
 def chunks(iterable, n):
    "chunks(ABCDE,2) => AB CD E"
@@ -21,6 +22,20 @@ def chunks(iterable, n):
            yield chain([next(iterable)], islice(iterable, n-1))
        except StopIteration:
            return
+
+def get_line_number(fname, text):
+    with open(fname) as f:
+        for i, line in enumerate(f):
+            if text in line:
+                return i
+
+def get_lines(fname, off, ext):
+    line_off = get_line_number(fname, off)
+    lines = []
+    for idx in range(line_off, line_off + ext):
+        lines.append(linecache.getline(fname, idx + 1).rstrip())
+    return lines
+
 
 def parse(project_name):
     parser = argparse.ArgumentParser(description='SLURM batch submission for {}'.format(project_name))
@@ -204,6 +219,7 @@ def generate_sbatch_commands(project_name, args):
 
     for cfg in cfgs:
         seedfile = '{}/{}.json'.format(Path(args.seedpath), Path(cfg).stem)
+        statfile = '{}/{}.status'.format(Path(args.status), Path(cfg).stem)
         with open(seedfile, 'r') as fp:
             seedjson = json.load(fp)
             for extent, offset, status in zip(seedjson['seed_extent'],seedjson['seed_offset'], seedjson['seed_status']):
@@ -212,6 +228,11 @@ def generate_sbatch_commands(project_name, args):
                 extents, offsets = split_range(extent,offset,args.sims_per_array)
                 for ext,off in zip(extents,offsets):
                     step = min(ext, args.sims_per_task)
+                    # We can now check in the statusfile if this sub-portion has actually finished
+                    all_finished = all([l.split('|')[1] == "FINISHED" for l in get_lines(statfile, off, ext) ])
+                    if all_finished:
+                        continue
+
                     sbatch_cmd.append('sbatch {} --array=0-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}'
                                       .format(' '.join(sbatch_arg), ext-1, step, exec, cfg, args.status, off,
                                               parallel, rclone_prefix, rclone_remove))
