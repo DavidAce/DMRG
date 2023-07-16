@@ -131,6 +131,17 @@
       }
     },
     {
+      "name": "profiling",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS": "-g -ggdb -fdiagnostics-color=always -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS": "-g -ggdb -fdiagnostics-color=always -fno-omit-frame-pointer",
+        "COMPILER_ENABLE_PCH": "TRUE",
+        "COMPILER_ENABLE_CCACHE": "TRUE"
+      }
+    },
+    {
       "name": "native",
       "inherits": "release",
       "hidden": true,
@@ -305,6 +316,17 @@
         "native",
         "flexiblas",
         "conan",
+        "release-gcc-12"
+      ]
+    },
+    {
+      "name": "profiling-gcc-12-conan-flexiblas-native",
+      "displayName": "Release|gcc-12|conan|flexiblas|native",
+      "inherits": [
+        "native",
+        "flexiblas",
+        "conan",
+        "profiling",
         "release-gcc-12"
       ]
     },
@@ -542,6 +564,10 @@
     {
       "name": "release-gcc-12-conan-flexiblas-native",
       "configurePreset": "release-gcc-12-conan-flexiblas-native"
+    },
+    {
+      "name": "profiling-gcc-12-conan-flexiblas-native",
+      "configurePreset": "profiling-gcc-12-conan-flexiblas-native"
     },
     {
       "name": "release-gcc-12-conan-openblas-native",
