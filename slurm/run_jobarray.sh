@@ -83,6 +83,7 @@ rclone_copy_from_remote() {
 }
 
 run_sim_id() {
+  id=$1 # Shorthand
   array_task_plus_step_id=$1
   model_seed="$(( seed_offset + array_task_plus_step_id ))" # zero-indexed id's
 
@@ -90,10 +91,10 @@ run_sim_id() {
   if [ -f "$status_path" ]; then
     status="$(fgrep -e "$model_seed" "$status_path" | cut -d '|' -f2)" # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
     if [ -z "$status" ]; then
-          echodate "STATUS                   : NULL $model_seed $id"
+          echodate "STATUS                   : $model_seed $id NULL "
           return 0
     fi
-    echodate "STATUS                   : $status $model_seed $id"
+    echodate "STATUS                   : $model_seed $id $status "
     if [ "$status" == "FINISHED" ]; then
       return 0
     fi
