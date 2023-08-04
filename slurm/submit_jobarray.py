@@ -26,7 +26,7 @@ def chunks(iterable, n):
 def get_line_number(fname, text):
     with open(fname) as f:
         for i, line in enumerate(f):
-            if text in line:
+            if str(text) in line:
                 return i
 
 def get_lines(fname, off, ext):
