@@ -158,6 +158,16 @@ def get_batch_setup(projectname):
                 },
             },
         },
+        'lbit100-rps': {
+            'projectname': 'lbit100-rps',
+            'batch': {  # Number of seeds to run
+                'L16|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [10000000],
+                    'time_steps': 100,
+                },
+            },
+        },
     }
 
     return batch_setup[projectname]
