@@ -6,11 +6,11 @@ import platform
 
 config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
-    'config_dir'        : "config-L[16]-rps",
-    'output_stem'       : 'mbl',
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
-    'output_dir'        : "output-rps",
-    'status_dir'        : "status-rps",
+    'output_stem'       : 'mbl',
+    'config_dir'        : "config-L20",
+    'output_dir'        : "output",
+    'status_dir'        : "status",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 
@@ -24,7 +24,7 @@ config_ranges = {
     "solver::svd_switchsize_bdc": ['16'],
     "solver::svd_save_fail": ['false'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL_SHUFFLED"],
-    "model::model_size": ['16'],
+    "model::model_size": ['20'],
     "model::lbit::J1_mean": ['+0.00'],
     "model::lbit::J2_mean": ['+0.00'],
     "model::lbit::J3_mean": ['+0.00'],
@@ -34,7 +34,7 @@ config_ranges = {
     "model::lbit::J2_span": ['-1'],
     "model::lbit::xi_Jcls": ['1.00'],
     "model::lbit::u_depth": ['16'],
-    "model::lbit::u_fmix": ['0.20'],
+    "model::lbit::u_fmix": ['0.20','0.40'],
     "model::lbit::u_tstd": ['1.0'],
     "model::lbit::u_cstd": ['1.0'],
     "model::lbit::u_tgw8": ['EXPDECAY'],
@@ -44,7 +44,7 @@ config_ranges = {
     "flbit::time_start_imag": ['0.0'],
     "flbit::time_final_real": [get_max_time], #"{:.1e}".format(max_time),
     "flbit::time_final_imag": ['0.0'],
-    "flbit::time_num_steps": ['100'],
+    "flbit::time_num_steps": ['200'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
 }
 
@@ -55,7 +55,7 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config['filename'])
 
-batch_setup = get_batch_setup('lbit100-rps')
+batch_setup = get_batch_setup('lbit101-rps')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
 move_directories(batch_setup=batch_setup, config_paths=config_paths)
