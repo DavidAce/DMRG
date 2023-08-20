@@ -169,7 +169,7 @@ def get_batch_setup(projectname):
             },
         },
         'lbit101-rps': {
-            'projectname': 'lbit100-rps',
+            'projectname': 'lbit101-rps',
             'batch': {  # Number of seeds to run
                 'L12|f0.2': {
                     'seed_extent': [80000],
