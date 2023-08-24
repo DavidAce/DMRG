@@ -115,7 +115,9 @@ run_sim_id() {
   # Next, check if the results already exist in the remote
   # If they do, use rclone copyto to copy the remote file to local
   # This command will only copy if the remote file is newer.
-  rclone_copy_from_remote "$loginfo" "$model_seed.info"
+  if [ "$status" == "FAILED" ];then
+    rclone_copy_from_remote "$loginfo" "$model_seed.info"
+  fi
   if [ -f $loginfo ] ; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
