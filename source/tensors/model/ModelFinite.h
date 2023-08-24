@@ -6,7 +6,9 @@
 #include <array>
 #include <complex>
 #include <memory>
+#include <unordered_map>
 #include <unsupported/Eigen/CXX11/Tensor>
+
 class MpoSite;
 class TensorsFinite;
 class ModelLocal;
@@ -14,13 +16,15 @@ class ModelFinite {
     private:
     friend TensorsFinite;
     struct Cache {
-        std::optional<std::vector<size_t>>      cached_sites          = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>>   multisite_mpo         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>>   multisite_ham         = std::nullopt;
-        std::optional<Eigen::Tensor<cplx_t, 4>> multisite_mpo_t       = std::nullopt;
-        std::optional<Eigen::Tensor<cplx_t, 2>> multisite_ham_t       = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 4>>   multisite_mpo_squared = std::nullopt;
-        std::optional<Eigen::Tensor<cplx, 2>>   multisite_ham_squared = std::nullopt;
+        std::optional<std::vector<size_t>>                        cached_sites          = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 4>>                     multisite_mpo         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>>                     multisite_ham         = std::nullopt;
+        std::optional<Eigen::Tensor<cplx_t, 4>>                   multisite_mpo_t       = std::nullopt;
+        std::optional<Eigen::Tensor<cplx_t, 2>>                   multisite_ham_t       = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 4>>                     multisite_mpo_squared = std::nullopt;
+        std::optional<Eigen::Tensor<cplx, 2>>                     multisite_ham_squared = std::nullopt;
+        std::unordered_map<std::string, Eigen::Tensor<cplx, 4>>   multisite_mpo_temps;   // Keeps previous results for reuse
+        std::unordered_map<std::string, Eigen::Tensor<cplx_t, 4>> multisite_mpo_t_temps; // Keeps previous results for reuse
     };
     mutable Cache                       cache;
     std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpo_squared();

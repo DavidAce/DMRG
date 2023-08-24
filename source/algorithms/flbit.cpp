@@ -285,7 +285,8 @@ void flbit::update_time_step() {
     }
     status.delta_t = time_points[status.iter];
     if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) throw except::logic_error("Expected nonzero delta_t after time step update");
-    tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t.to_floating_point<cplx>(), status.phys_time.to_floating_point<real>());
+    tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t.to_floating_point<cplx>(),
+                      status.phys_time.to_floating_point<real>());
 }
 
 void flbit::check_convergence() {
@@ -413,6 +414,7 @@ void flbit::create_hamiltonian_gates() {
                 // since at large times t these can become relevant again by exp(-itH)
                 ham_swap_gates_2body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
             }
+            tensors.model->clear_cache();
         }
         // Ignore Hamiltonians with entries smaller than J2_zero: the timescale is too small to resolve them.
 
@@ -424,6 +426,7 @@ void flbit::create_hamiltonian_gates() {
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
             ham_swap_gates_3body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
         }
+        tensors.model->clear_cache();
 
         if(L <= 6) { // Used for test/debug on small systems
             auto list_Lbody = num::range<size_t>(0, L - 0, 1);
@@ -462,6 +465,7 @@ void flbit::create_hamiltonian_gates() {
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
             ham_gates_2body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
         }
+        tensors.model->clear_cache();
 
         for(auto posL : list_3body) {
             auto range = 2ul; // Distance to next-nearest neighbor when 3 sites interact
@@ -473,6 +477,7 @@ void flbit::create_hamiltonian_gates() {
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
             ham_gates_3body.emplace_back(tensors.model->get_multisite_ham_t(sites, nbody), sites, spins);
         }
+        tensors.model->clear_cache();
 
         if(L <= 6) { // Used for test/debug on small systems
             auto list_Lbody = num::range<size_t>(0, L - 0, 1);
@@ -480,7 +485,7 @@ void flbit::create_hamiltonian_gates() {
             auto spins      = tensors.state->get_spin_dims(list_Lbody);
             ham_gates_Lbody.emplace_back(tensors.model->get_multisite_ham_t(list_Lbody, nbody), list_Lbody, spins);
         }
-
+        tensors.model->clear_cache();
         for(const auto &[idx, ham] : iter::enumerate(ham_gates_1body))
             if(tenx::isZero(ham.op_t)) tools::log->warn("ham1[{}] is all zeros", idx);
 
