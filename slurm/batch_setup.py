@@ -242,7 +242,7 @@ def get_batch_setup(projectname):
                     'time_steps': 100,
                 },
                 'L32|f0.2': {
-                    'seed_extent': [1000],
+                    'seed_extent': [10000],
                     'seed_offset': [32200000],
                     'time_steps': 100,
                 },
