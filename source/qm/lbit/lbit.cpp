@@ -139,16 +139,20 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
         // EXPDECAY correspond to squared exponential decay with adjacent field differences
         auto tw = u.tgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
         auto cw = u.cgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
-
+        // TODO: put the tw factors back!
         auto             th0 = tw * rnd::normal(0.0, u.tstd);
         auto             th1 = tw * rnd::normal(0.0, u.tstd);
         auto             th2 = tw * rnd::normal(0.0, u.tstd);
         auto             th3 = tw * rnd::normal(0.0, u.tstd);
         auto             rec = cw * rnd::normal(0.0, u.cstd);
         auto             imc = cw * rnd::normal(0.0, u.cstd);
-        auto             c   = std::complex<double>(rec, imc); // complex normal random variable
-        Eigen::Matrix4cd M   = th3 * N[0] * N[1] + th2 * N[1] * (ID[0] - N[0]) + th1 * N[0] * (ID[1] - N[1]) + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) +
-                             c * SP[0] * SM[1] + std::conj(c) * SP[1] * SM[0];
+        auto             c   = std::complex<double>(rec, imc);       // complex normal random variable
+        Eigen::Matrix4cd M   = th3 * N[0] * N[1]                     //
+                             + th2 * (ID[0] - N[0]) * N[1]           //
+                             + th1 * N[0] * (ID[1] - N[1])           //
+                             + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) //
+                             + c * SP[0] * SM[1]                     //
+                             + std::conj(c) * SP[1] * SM[0];
 
         // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
         // the kronecker product that generated two-site gates above has indexed right-to-left
