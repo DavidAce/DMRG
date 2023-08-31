@@ -85,7 +85,8 @@ def parse(project_name):
     parser.add_argument('--default-tetralith', action='store_true', help='Set defaults for tetralith cluster')
     parser.add_argument('--rclone-prefix', type=str, help='Use rclone to copy results to this remote directory', default=None)
     parser.add_argument('--rclone-remove', action='store_true', help='Remove local file after rclone', default=None)
-
+    parser.add_argument('--minseed', type=int, help='Minimum seed value to consider',default=None)
+    parser.add_argument('--maxseed', type=int, help='Maximum seed value to consider',default=None)
 
     args = parser.parse_args()
     if args.seedpath is None:
@@ -232,9 +233,23 @@ def generate_sbatch_commands(project_name, args):
                     all_finished = all([l.split('|')[1] == "FINISHED" for l in get_lines(statfile, off, ext) ])
                     if all_finished:
                         continue
+                    off_final = off
+                    ext_final = ext
+
+                    if args.minseed:
+                        if off+ext <= args.minseed:
+                            continue
+                        if off < args.minseed and off+ext >= args.minseed:
+                            off_final = args.minseed
+                            ext_final = ext - (args.minseed - off)
+                    if args.maxseed:
+                        if off_final >= args.maxseed:
+                            continue
+                        if off_final < args.maxseed and off_final+ext_final >= args.maxseed:
+                            ext_final = args.maxseed-off_final
 
                     sbatch_cmd.append('sbatch {} --array=0-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}'
-                                      .format(' '.join(sbatch_arg), ext-1, step, exec, cfg, args.status, off,
+                                      .format(' '.join(sbatch_arg), ext_final-1, step, exec, cfg, args.status, off_final,
                                               parallel, rclone_prefix, rclone_remove))
     Path("logs").mkdir(parents=True, exist_ok=True)
     Path("jobs").mkdir(parents=True, exist_ok=True)
