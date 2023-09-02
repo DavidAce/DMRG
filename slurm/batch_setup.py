@@ -172,13 +172,13 @@ def get_batch_setup(projectname):
             'projectname': 'lbit101-rps',
             'batch': {  # Number of seeds to run
                 'L12|f0.2': {
-                    'seed_extent': [80000],
-                    'seed_offset': [12200000],
+                    'seed_extent': [80000, 20000],
+                    'seed_offset': [12200000, 12280000],
                     'time_steps': 200,
                 },
                 'L12|f0.4': {
-                    'seed_extent': [80000],
-                    'seed_offset': [12400000],
+                    'seed_extent': [80000, 20000],
+                    'seed_offset': [12400000, 12480000],
                     'time_steps': 200,
                 },
                 'L14|f0.2': {
@@ -192,13 +192,13 @@ def get_batch_setup(projectname):
                     'time_steps': 200,
                 },
                 'L16|f0.2': {
-                    'seed_extent': [80000],
-                    'seed_offset': [16200000],
+                    'seed_extent': [80000, 20000],
+                    'seed_offset': [16200000,16280000],
                     'time_steps': 200,
                 },
                 'L16|f0.4': {
-                    'seed_extent': [80000],
-                    'seed_offset': [16400000],
+                    'seed_extent': [80000, 20000],
+                    'seed_offset': [16400000,16480000],
                     'time_steps': 200,
                 },
                 'L18|f0.2': {
@@ -212,13 +212,13 @@ def get_batch_setup(projectname):
                     'time_steps': 200,
                 },
                 'L20|f0.2': {
-                    'seed_extent': [80000],
-                    'seed_offset': [20200000],
+                    'seed_extent': [80000, 20000],
+                    'seed_offset': [20200000, 20280000],
                     'time_steps': 200,
                 },
                 'L20|f0.4': {
-                    'seed_extent': [80000],
-                    'seed_offset': [20400000],
+                    'seed_extent': [80000, 20000],
+                    'seed_offset': [20400000, 20480000],
                     'time_steps': 200,
                 },
                 'L24|f0.2': {
