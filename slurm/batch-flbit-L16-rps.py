@@ -46,6 +46,7 @@ config_ranges = {
     "flbit::time_final_imag": ['0.0'],
     "flbit::time_num_steps": ['200'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
+    "flbit::cls::num_rnd_circuits": ['1']  # Enables l-bit correlation matrix O(i,j) calculation
 }
 
 configs = get_config_product(config_ranges, config_paths)
