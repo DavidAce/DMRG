@@ -17,8 +17,8 @@ struct f128_t {
     using format_type = long double;
     using value_type  = __float128;
     f128_t()          = default;
-    f128_t(std::string_view s) : val(strtof128(s.data(), nullptr)) {}
-    f128_t(const char *c) : val(strtof128(c, nullptr)) {}
+    f128_t(std::string_view s) : val(strtoflt128(s.data(), nullptr)) {}
+    f128_t(const char *c) : val(strtoflt128(c, nullptr)) {}
     template<typename T>
     f128_t(const T &v) : val(v) {}
     operator __float128() const { return val; }
