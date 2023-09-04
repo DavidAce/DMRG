@@ -10,7 +10,7 @@ config_paths = {
     'output_stem'       : 'mbl',
     'config_dir'        : "config-L12-rps",
     'output_dir'        : "output",
-    'status_dir'        : "status",
+    'status_dir'        : "status-rps",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 
