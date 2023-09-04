@@ -251,7 +251,7 @@ void flbit::update_state() {
      * \fn void update_state()
      */
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
-    tools::log->debug("Starting fLBIT: iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(delta_t), std::imag(delta_t));
+    tools::log->debug("Starting fLBIT: iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
     if(not state_lbit) throw except::logic_error("state_lbit == nullptr: Set the state in lbit basis before running an flbit step");
     if(not state_lbit_init) {
         state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
@@ -322,7 +322,8 @@ void flbit::create_time_points() {
     auto   t_crt = tid::tic_scope("create_time_points");
     cplx_t time_start(settings::flbit::time_start_real, settings::flbit::time_start_imag);
     cplx_t time_final(settings::flbit::time_final_real, settings::flbit::time_final_imag);
-    tools::log->info("Creating time points {} -> {}", time_start, time_final);
+    tools::log->info("Creating time points ({},{}) -> ({},{})", settings::flbit::time_start_real, settings::flbit::time_start_imag,
+                     settings::flbit::time_final_real, settings::flbit::time_final_imag);
 
     cplx_t time_diff = time_start - time_final;
     // Check that there will be some time evolution
@@ -334,7 +335,7 @@ void flbit::create_time_points() {
         throw except::logic_error("time_start and time_final must both be either purely real or imaginary. Got:\n"
                                   "time_start = {:.8f}{:+.8f}\n"
                                   "time_final = {:.8f}{:+.8f}",
-                                  time_start.real(), time_start.imag(), time_final.real(), time_final.imag());
+                                  f128_t(time_start.real()), f128_t(time_start.imag()), f128_t(time_final.real()), f128_t(time_final.imag()));
     time_points.reserve(settings::flbit::time_num_steps);
     if(time_is_real) {
         for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
@@ -342,7 +343,7 @@ void flbit::create_time_points() {
         for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) { time_points.emplace_back(cplx_t(0.0, t)); }
     }
 
-    tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
+//    tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
     // Sanity check
     if(time_points.front().real() != settings::flbit::time_start_real) throw except::logic_error("Time start real mismatch");
     if(time_points.front().imag() != settings::flbit::time_start_imag) throw except::logic_error("Time start imag mismatch");
@@ -509,7 +510,7 @@ void flbit::update_time_evolution_gates() {
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
     if(has_swap_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_swap_gates");
-        tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(delta_t), std::imag(delta_t));
+        tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
         time_swap_gates_1body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_1body, settings::flbit::time_gate_id_threshold);
         time_swap_gates_2body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_2body, settings::flbit::time_gate_id_threshold);
         time_swap_gates_3body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_3body, settings::flbit::time_gate_id_threshold);
@@ -518,7 +519,7 @@ void flbit::update_time_evolution_gates() {
     }
     if(has_slow_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_gates");
-        tools::log->debug("Updating time evolution gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, std::real(delta_t), std::imag(delta_t));
+        tools::log->debug("Updating time evolution gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
         time_gates_1body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_1body, settings::flbit::time_gate_id_threshold);
         time_gates_2body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_2body, settings::flbit::time_gate_id_threshold);
         time_gates_3body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_3body, settings::flbit::time_gate_id_threshold);
@@ -558,13 +559,13 @@ void flbit::time_evolve_lbit_state() {
     if(not has_swap_gates and not has_slow_gates) throw except::logic_error("None of swap or non-swap time evolution gates found");
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
     if(has_swap_gates) {
-        tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", std::real(delta_t), std::imag(delta_t));
+        tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)),f128_t(std::imag(delta_t)));
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircOp::NONE, GateMove::ON, svd_cfg);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2body, CircOp::NONE, GateMove::ON, svd_cfg);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3body, CircOp::NONE, GateMove::ON, svd_cfg);
     }
     if(has_slow_gates) {
-        tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", std::real(delta_t), std::imag(delta_t));
+        tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
         tools::finite::mps::apply_gates(*state_lbit, time_gates_1body, CircOp::NONE, true, GateMove::ON, svd_cfg);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_2body, CircOp::NONE, true, GateMove::ON, svd_cfg);
         tools::finite::mps::apply_gates(*state_lbit, time_gates_3body, CircOp::NONE, true, GateMove::ON, svd_cfg);
@@ -577,7 +578,7 @@ void flbit::time_evolve_lbit_state() {
         // Check that we would get back the original state if we time evolved backwards
         auto state_lbit_debug = *state_lbit;
         if(has_swap_gates) {
-            tools::log->debug("Applying time evolution swap gates backward Δt = ({:.2e}, {:.2e})", std::real(delta_t), std::imag(delta_t));
+            tools::log->debug("Applying time evolution swap gates backward Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
             for(auto &g : time_swap_gates_1body) g.unmark_as_used();
             for(auto &g : time_swap_gates_2body) g.unmark_as_used();
             for(auto &g : time_swap_gates_3body) g.unmark_as_used();
@@ -586,7 +587,7 @@ void flbit::time_evolve_lbit_state() {
             tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_1body, CircOp::ADJ, GateMove::AUTO, svd_cfg);
         }
         if(has_slow_gates) {
-            tools::log->debug("Applying time evolution gates backward Δt = ({:.2e}, {:.2e})", std::real(delta_t), std::imag(delta_t));
+            tools::log->debug("Applying time evolution gates backward Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
             for(auto &g : time_gates_1body) g.unmark_as_used();
             for(auto &g : time_gates_2body) g.unmark_as_used();
             for(auto &g : time_gates_3body) g.unmark_as_used();

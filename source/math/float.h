@@ -2,6 +2,7 @@
 #ifndef DMRG_FLOAT_H
     #define DMRG_FLOAT_H
     #include <complex>
+    #include "f128.h"
 // This header defines the floating point types used throughout this program
 
 using real = double;
@@ -27,7 +28,7 @@ bool cmp_t(Lhs lhs, Rhs rhs) {
 }
 
 template<typename T>
-auto abs_t(T val) {
+auto abs_t(T val) -> real_t {
     if constexpr(std::is_arithmetic_v<T>) return std::abs(val);
     #if defined(USE_QUADMATH)
     else if constexpr(std::is_same_v<T, cplx_t>) {

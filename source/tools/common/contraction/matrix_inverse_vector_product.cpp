@@ -153,8 +153,9 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, 
             solver.setTolerance(tolerance);
             solver.compute(matRepl);
             res = solver.solveWithGuess(mps, guess_mr);
-            tools::log->info("MR Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(), solver.info(),
-                             solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter, t_mativec->get_last_interval());
+            tools::log->info("MR Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(),
+                             static_cast<int>(solver.info()), solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter,
+                             t_mativec->get_last_interval());
             guess_mr = res;
         }
     } else {
@@ -167,7 +168,7 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, 
         solver.setTolerance(tolerance);
         solver.compute(matRepl);
         res = solver.solveWithGuess(mps, guess_cbs);
-        tools::log->info("CG Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(), solver.info(),
+        tools::log->info("CG Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(), static_cast<int>(solver.info()),
                          solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter, t_mativec->get_last_interval());
         guess_cbs = res;
     }

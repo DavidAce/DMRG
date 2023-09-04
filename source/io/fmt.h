@@ -5,23 +5,11 @@
 #include <fmt/format.h>
 #include <fmt/ranges.h>
 #include <fmt/std.h>
+#include "fmt_f128_t.h"
 #if defined(FMT_HEADER_ONLY)
     #pragma message "{fmt} has been included as header-only library. This causes large compile-time overhead"
 #endif
 
-#if defined(USE_QUADMATH)
-    #include <quadmath.h>
-template<>
-struct fmt::formatter<__float128> : fmt::formatter<double> {
-    auto format(__float128 c, format_context &ctx) const -> decltype(ctx.out()) {
-        std::string dec;
-        dec.resize(64);
-        quadmath_snprintf(dec.data(), 64, "%.36Qg", c);
-        return fmt::format_to(ctx.out(), "{}", dec);
-    }
-};
-
-#endif
 #if defined(FMT_FORMAT_H_) && !defined(FMT_USE_COMPLEX)
     #define FMT_USE_COMPLEX 1
     #include <complex>

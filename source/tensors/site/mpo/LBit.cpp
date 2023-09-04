@@ -433,7 +433,7 @@ void LBit::randomize_hamiltonian() {
         }
     }
     tools::log->info("Randomizing MPO({:2}): J1=N({:.3e},{:.3e}) | J2=N({:.3e},{:.3e})exp(-r/{}) | J3=N({:.3e},{:.3e})*{:.3e}", get_position(), J1_mean,
-                     J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, (expw.size() > 2 ? expw[2] : 0.0));
+                     J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, f128_t(expw.size() > 2 ? expw[2] : 0.0));
     h5tb.param.J1_rand               = rnd::random<real_t>(distribution, J1_mean, J1_wdth);
     h5tb.param.J2_rand               = rnd::random<real_t>(distribution, J2_mean, J2_wdth, expw);
     h5tb.param.J3_rand               = rnd::random<real_t>(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);
@@ -651,7 +651,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
             }
             J2_count = std::max(J2_count, static_cast<real_t>(1.0)); // Avoid dividing by zero!
         }
-        if(J2_count > 1.0) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", J2_count, get_position());
+        if(J2_count > 1.0) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", f128_t(J2_count), get_position());
         J2_rand[r] /= J2_count;
     }
     MPO_nbody.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2) = J1_on * (J1_rand * Z - e_shift * I);

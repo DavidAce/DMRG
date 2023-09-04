@@ -219,7 +219,7 @@ namespace num {
         return xs;
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>, bool> = true>
+    template<typename T, std::enable_if_t<std::is_floating_point_v<T>>>
     [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, int base = 10, int keep_digits = -1) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");

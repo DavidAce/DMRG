@@ -170,7 +170,7 @@ void MpoSite::assert_validity() const {
             if(isnanq(std::any_cast<__float128>(param.second))) {
                 print_parameter_names();
                 print_parameter_values();
-                throw except::runtime_error("Param [{}] = {}", param.first, std::any_cast<__float128>(param.second));
+                throw except::runtime_error("Param [{}] = {}", param.first, f128_t(std::any_cast<__float128>(param.second)));
             }
         }
 #endif

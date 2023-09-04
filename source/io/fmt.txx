@@ -1,8 +1,8 @@
-FMT_EXTERN template void fmt::detail::vformat_to(
-    buffer<char>& buf,
-    basic_string_view<char> fmt,
-    basic_format_args<FMT_BUFFER_CONTEXT(type_identity_t<char>)> args,
-    locale_ref loc = {});
+// FMT_EXTERN template void fmt::detail::vformat_to(
+//     buffer<char>& buf,
+//     basic_string_view<char> fmt,
+//     basic_format_args<FMT_BUFFER_CONTEXT(type_identity_t<char>)> args,
+//     locale_ref loc = {});
 
 FMT_EXTERN template std::string fmt::format(format_string<std::string_view>, std::string_view &&);
 
