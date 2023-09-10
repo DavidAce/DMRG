@@ -249,6 +249,67 @@ def get_batch_setup(projectname):
 
             },
         },
+        'lbit103-nil': {
+            'projectname': 'lbit103-nil',
+            'batch': {  # Number of seeds to run
+                'L12|f0.2': {
+                    'seed_extent': [200000],
+                    'seed_offset': [12200000],
+                    'time_steps': 200,
+                },
+                'L12|f0.4': {
+                    'seed_extent': [200000],
+                    'seed_offset': [12400000],
+                    'time_steps': 200,
+                },
+                'L16|f0.2': {
+                    'seed_extent': [200000],
+                    'seed_offset': [16200000],
+                    'time_steps': 200,
+                },
+                'L16|f0.4': {
+                    'seed_extent': [200000],
+                    'seed_offset': [16400000],
+                    'time_steps': 200,
+                },
+                'L20|f0.2': {
+                    'seed_extent': [200000],
+                    'seed_offset': [20200000],
+                    'time_steps': 200,
+                },
+                'L20|f0.4': {
+                    'seed_extent': [200000],
+                    'seed_offset': [20400000],
+                    'time_steps': 200,
+                },
+                'L24|f0.2': {
+                    'seed_extent': [50000],
+                    'seed_offset': [24200000],
+                    'time_steps': 100,
+                },
+                'L24|f0.4': {
+                    'seed_extent': [50000],
+                    'seed_offset': [24400000],
+                    'time_steps': 100,
+                },
+                'L28|f0.2': {
+                    'seed_extent': [30000],
+                    'seed_offset': [28200000],
+                    'time_steps': 100,
+                },
+                'L28|f0.4': {
+                    'seed_extent': [30000],
+                    'seed_offset': [28400000],
+                    'time_steps': 100,
+                },
+                'L32|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [32200000],
+                    'time_steps': 100,
+                },
+
+            },
+        },
     }
 
     return batch_setup[projectname]

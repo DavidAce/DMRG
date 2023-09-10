@@ -58,12 +58,12 @@ def get_max_time(d: dict, dl: dict, p: dict):
     if r == -1:
         r = L
 
-    tmax1 = 1.0 / w1
+    tmax1 = 1.0 / w1 if w1 != 0 else 0.0
 
     r2max = np.min([r, L])  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-r2max / x) * w2 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmin2 = np.exp(-r2max / x) * (w2 if w2 != 0 else 1.0) * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
-    tmax3 = 1.0 / w3
+    tmax3 = 1.0 / w3 if w3 != 0 else 0.0
     tmax = np.max([tmax1, tmax2, tmax3])
     tmax = 10 ** np.ceil(np.log10(tmax))
     print(f"{L=} {tmax=}")
