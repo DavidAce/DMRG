@@ -103,11 +103,14 @@ namespace qm::lbit {
     extern cplx                                 get_lbit_2point_correlator3(const std::vector<std::vector<qm::Gate>> &unitary_circuit, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj, long len);
     extern cplx                                 get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj, size_t pos_szj);
     extern Eigen::Tensor<cplx, 1>               get_lbit_2point_correlator5(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj);
+    extern Eigen::Tensor<cplx, 1>               get_lbit_2point_correlator6(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers, const Eigen::Matrix2cd &szi, size_t pos_szi, const Eigen::Matrix2cd &szj);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers);
+    extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix2(const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &mpo_layers);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites);
     extern Eigen::Tensor<real, 2>               get_lbit_correlation_matrix(const std::vector<std::vector<qm::Gate>> &unitary_circuit, size_t sites, size_t max_num_states, double tol);
     extern std::vector<Eigen::Tensor<real, 2>>  get_lbit_correlation_matrices(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool use_mpo);
+    extern std::vector<Eigen::Tensor<real, 2>>  get_lbit_correlation_matrices2(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields, bool use_mpo);
     extern std::tuple<Eigen::Tensor<real, 2>, Eigen::Tensor<real, 2>, Eigen::Tensor<real, 2>>
                                                 get_lbit_correlation_statistics(const std::vector<Eigen::Tensor<real, 2>> &lbit_corrmats);
     extern std::tuple<double,

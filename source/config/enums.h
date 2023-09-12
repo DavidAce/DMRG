@@ -88,6 +88,7 @@ enum class StateInit {
     PRODUCT_STATE_DOMAIN_WALL,
     PRODUCT_STATE_NEEL,
     PRODUCT_STATE_NEEL_SHUFFLED,
+    PRODUCT_STATE_TWO_DOWN,
 };
 
 enum class fdmrg_task {
@@ -115,6 +116,7 @@ enum class flbit_task {
     INIT_RANDOMIZE_INTO_PRODUCT_STATE,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED,
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
+    INIT_RANDOMIZE_INTO_PRODUCT_STATE_TWO_DOWN,
     INIT_BOND_LIMITS,
     INIT_TRNC_LIMITS,
     INIT_WRITE_MODEL,
@@ -322,6 +324,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StateInit::PRODUCT_STATE_ALIGNED)                    return "PRODUCT_STATE_ALIGNED";
         if(item == StateInit::PRODUCT_STATE_NEEL)                       return "PRODUCT_STATE_NEEL";
         if(item == StateInit::PRODUCT_STATE_NEEL_SHUFFLED)              return "PRODUCT_STATE_NEEL_SHUFFLED";
+        if(item == StateInit::PRODUCT_STATE_TWO_DOWN)                   return "PRODUCT_STATE_TWO_DOWN";
     }
     if constexpr(std::is_same_v<T, StateInitType>) {
         if(item == StateInitType::REAL)   return "REAL";
@@ -675,6 +678,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "PRODUCT_STATE_ALIGNED")                 return StateInit::PRODUCT_STATE_ALIGNED;
         if(item == "PRODUCT_STATE_NEEL")                    return StateInit::PRODUCT_STATE_NEEL;
         if(item == "PRODUCT_STATE_NEEL_SHUFFLED")           return StateInit::PRODUCT_STATE_NEEL_SHUFFLED;
+        if(item == "PRODUCT_STATE_TWO_DOWN")                return StateInit::PRODUCT_STATE_TWO_DOWN;
     }
     if constexpr(std::is_same_v<T, StateInitType>) {
         if(item ==  "REAL")                                 return StateInitType::REAL;
@@ -716,6 +720,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE")               return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE;
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED") return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED;
         if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")             return flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
+        if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE_TWO_DOWN")      return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_TWO_DOWN;
         if(item == "INIT_BOND_LIMITS")                                return flbit_task::INIT_BOND_LIMITS;
         if(item == "INIT_TRNC_LIMITS")                                return flbit_task::INIT_TRNC_LIMITS;
         if(item == "INIT_WRITE_MODEL")                                return flbit_task::INIT_WRITE_MODEL;

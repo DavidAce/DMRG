@@ -49,14 +49,14 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
     state.clear_cache();
     auto axis_valid = qm::spin::half::is_valid_axis(axis);
     if(axis == "random") {
-        init::set_random_product_state_with_random_spinors(state, type);                    // a)
+        init::set_random_product_state_with_random_spinors(state, type); // a)
     } else if(init::bitfield_is_valid(bitfield) and axis_valid) {
         init::set_random_product_state_on_axis_using_bitfield(state, type, axis, bitfield); // b)
         init::used_bitfields.insert(bitfield);
     } else if(use_eigenspinors and axis_valid) {
         init::set_random_product_state_on_axis_using_eigenspinors(state, type, axis, pattern); // c)
     } else if(axis_valid) {
-        init::set_random_product_state_on_axis(state, type, axis);                             // d)
+        init::set_random_product_state_on_axis(state, type, axis); // d)
     } else {
         throw except::runtime_error("Expected initial axis string: \"random\"|{}. Got \"{}\"", qm::spin::half::valid_axis_str, axis);
     }
@@ -185,6 +185,49 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
         auto   idx = pattern.at(pos);
         mps.set_mps(spinors.at(idx), L, 0, label);
         str.append(arrows.at(idx));
+
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
+    }
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->info("Initial state: {}", str);
+}
+
+void tools::finite::mps::init::set_product_state_two_down(StateFinite &state, StateInitType type, std::string_view axis, size_t distance_from_middle) {
+    Eigen::Tensor<cplx, 1> L(1);
+    L.setConstant(1.0);
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    int  sign = qm::spin::half::get_sign(axis);
+    if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
+    Eigen::Tensor<cplx, 3> spinor      = tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1);
+    Eigen::Tensor<cplx, 3> spinor_flip = tenx::TensorCast(qm::spin::half::get_spinor(axus, -sign).normalized(), 2, 1, 1);
+    tools::log->debug(
+        "Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites except two flipped, at distance {} from the midchain",
+        sign, axis, distance_from_middle);
+    std::string label = "A";
+    std::string str;
+    long        len = state.get_length<long>();
+    long        mid = state.get_length<long>() / 2;
+    long        dis = static_cast<long>(distance_from_middle);
+    if(static_cast<long>(distance_from_middle) >= mid)
+        throw except::state_error("Cannot initialize PRODUCT_STATE_TWO_DOWN with distance_from_the_middle {} >= {} on a system with {} sites",
+                                  distance_from_middle, mid, len);
+
+    for(const auto &mps_ptr : state.mps_sites) {
+        auto &mps  = *mps_ptr;
+        long  pos  = mps.get_position<long>();
+        bool  flip = (pos + dis == mid - 1) or (pos - dis == mid);
+        if(flip) {
+            mps.set_mps(spinor_flip, L, 0, label);
+            str.append("↓");
+        } else {
+            mps.set_mps(spinor, L, 0, label);
+            str.append("↑");
+        }
 
         if(mps.isCenter()) {
             mps.set_LC(L);

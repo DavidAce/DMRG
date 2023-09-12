@@ -62,6 +62,7 @@ void flbit::resume() {
         auto bond_lim = settings::get_bond_init(status.algo_type);
         switch(settings::strategy::initial_state) {
             case StateInit::PRODUCT_STATE_DOMAIN_WALL:
+            case StateInit::PRODUCT_STATE_TWO_DOWN:
             case StateInit::PRODUCT_STATE_NEEL:
             case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: break;
             default:

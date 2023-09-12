@@ -60,6 +60,7 @@ namespace tools::finite::mps {
         extern void set_product_state_aligned(StateFinite & state, StateInitType type, std::string_view axis);
         extern void set_product_state_neel(StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> &pattern);
         extern void set_product_state_neel_shuffled (StateFinite & state, StateInitType type, std::string_view axis, std::vector<size_t> & pattern);
+        extern void set_product_state_two_down (StateFinite & state, StateInitType type, std::string_view axis, size_t distance_from_middle);
 
         // Entangled states
         extern void randomize_given_state (StateFinite & state, StateInitType type);

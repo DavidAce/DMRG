@@ -385,6 +385,7 @@ void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, Sta
         case StateInit::PRODUCT_STATE_ALIGNED: return init::set_product_state_aligned(state, type, sector);
         case StateInit::PRODUCT_STATE_NEEL: return init::set_product_state_neel(state, type, sector, pattern);
         case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: return init::set_product_state_neel_shuffled(state, type, sector, pattern);
+        case StateInit::PRODUCT_STATE_TWO_DOWN: return init::set_product_state_two_down(state, type, sector, bitfield);
     }
 }
 
