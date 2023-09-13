@@ -249,7 +249,7 @@ def get_batch_setup(projectname):
 
             },
         },
-        'lbit104-2d1': {
+        'lbit103-nil': {
             'projectname': 'lbit103-nil',
             'batch': {  # Number of seeds to run
                 'L12|f0.2': {
@@ -312,6 +312,21 @@ def get_batch_setup(projectname):
         },
         'lbit104-2d1': {
             'projectname': 'lbit104-2d1',
+            'batch': {  # Number of seeds to run
+                'L16|f0.2': {
+                    'seed_extent': [50000],
+                    'seed_offset': [16200000],
+                    'time_steps': 200,
+                },
+                'L16|f0.4': {
+                    'seed_extent': [50000],
+                    'seed_offset': [16400000],
+                    'time_steps': 200,
+                },
+            },
+        },
+        'lbit105-2d2': {
+            'projectname': 'lbit105-2d2',
             'batch': {  # Number of seeds to run
                 'L16|f0.2': {
                     'seed_extent': [50000],
