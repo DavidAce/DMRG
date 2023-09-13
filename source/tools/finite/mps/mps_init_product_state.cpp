@@ -202,6 +202,7 @@ void tools::finite::mps::init::set_product_state_two_down(StateFinite &state, St
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
     int  sign = qm::spin::half::get_sign(axis);
+    if(sign == 0) sign = 1;
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
     Eigen::Tensor<cplx, 3> spinor      = tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1);
     Eigen::Tensor<cplx, 3> spinor_flip = tenx::TensorCast(qm::spin::half::get_spinor(axus, -sign).normalized(), 2, 1, 1);

@@ -23,6 +23,7 @@ config_ranges = {
     "solver::svd_truncation_init": ['1e-5'],
     "solver::svd_switchsize_bdc": ['16'],
     "solver::svd_save_fail": ['false'],
+    "strategy::initial_axis": ["+z"],
     "strategy::initial_state": ["PRODUCT_STATE_TWO_DOWN"],
     "model::model_size": ['16'],
     "input::bitfield": ['1'],
