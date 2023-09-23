@@ -232,13 +232,13 @@ def get_batch_setup(projectname):
                     'time_steps': 100,
                 },
                 'L28|f0.2': {
-                    'seed_extent': [30000],
-                    'seed_offset': [28200000],
+                    'seed_extent': [30000, 20000],
+                    'seed_offset': [28200000,28230000],
                     'time_steps': 100,
                 },
                 'L28|f0.4': {
-                    'seed_extent': [30000],
-                    'seed_offset': [28400000],
+                    'seed_extent': [30000, 20000],
+                    'seed_offset': [28400000, 28430000],
                     'time_steps': 100,
                 },
                 'L32|f0.2': {
