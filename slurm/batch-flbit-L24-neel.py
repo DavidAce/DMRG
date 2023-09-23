@@ -6,11 +6,11 @@ import platform
 
 config_paths = {
     'config_template'   : 'template_configs/flbit.cfg',
-    'config_dir'        : "config-L[28]",
-    'output_stem'       : 'mbl',
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
+    'output_stem'       : 'mbl',
+    'config_dir'        : "config-L24-neel",
     'output_dir'        : "output",
-    'status_dir'        : "status",
+    'status_dir'        : "status-neel",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 
@@ -25,7 +25,7 @@ config_ranges = {
     "solver::svd_switchsize_bdc": ['16'],
     "solver::svd_save_fail": ['false'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
-    "model::model_size": ['28'],
+    "model::model_size": ['24'],
     "model::lbit::J1_mean": ['+0.00'],
     "model::lbit::J2_mean": ['+0.00'],
     "model::lbit::J3_mean": ['+0.00'],
@@ -35,7 +35,7 @@ config_ranges = {
     "model::lbit::J2_span": ['-1'],
     "model::lbit::xi_Jcls": ['1.00'],
     "model::lbit::u_depth": ['16'],
-    "model::lbit::u_fmix": ['0.20'],
+    "model::lbit::u_fmix": ['0.20','0.40'],
     "model::lbit::u_tstd": ['1.0'],
     "model::lbit::u_cstd": ['1.0'],
     "model::lbit::u_tgw8": ['IDENTITY'],
