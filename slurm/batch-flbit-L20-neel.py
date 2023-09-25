@@ -9,7 +9,7 @@ config_paths = {
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
     'output_stem'       : 'mbl',
     'config_dir'        : "config-L20-neel",
-    'output_dir'        : "output",
+    'output_dir'        : "output-neel",
     'status_dir'        : "status-neel",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
