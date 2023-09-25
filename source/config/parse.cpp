@@ -11,17 +11,75 @@
 #include <h5pp/h5pp.h>
 
 template<typename T>
-std::string filename_append_number(const std::string &filename, const T number) {
+std::string filename_append_seed(const std::string &filename, const T number) {
     if constexpr(std::is_signed_v<T>)
         if(number < 0) return filename;
     if constexpr(std::is_unsigned_v<T>)
         if(number == std::numeric_limits<T>::max()) return filename;
     // Append the seed_model to the output filename
-    h5pp::fs::path oldFileName = filename;
-    h5pp::fs::path newFileName = filename;
-    if(oldFileName.stem().string().find(std::to_string(number)) != std::string::npos) return filename;
-    newFileName.replace_filename(fmt::format("{}_{}{}", oldFileName.stem().string(), number, oldFileName.extension().string()));
-    tools::log->info("Appended number [{}] to filename: [{}]", number, newFileName.string());
+    h5pp::fs::path         oldFileName  = filename;
+    h5pp::fs::path         newFileName  = filename;
+    auto                   oldstem      = oldFileName.stem().string();
+    std::string::size_type old_seed_pos = oldstem.find_first_of('_');
+    std::string::size_type old_bitf_pos = std::string::npos;
+    if(old_seed_pos != std::string::npos) { old_bitf_pos = oldstem.find_first_of('_', old_seed_pos + 1); }
+    std::string old_prfx_str = oldstem.substr(0, oldstem.find_first_of("_."));
+    std::string old_seed_str = "";
+    std::string old_bitf_str = "";
+    if(old_seed_pos != std::string::npos) { old_seed_str = oldstem.substr(old_seed_pos + 1, old_bitf_pos); }
+    if(old_bitf_pos != std::string::npos) { old_bitf_str = oldstem.substr(old_bitf_pos + 1, std::string::npos); }
+    if(old_seed_str == std::to_string(number)) return oldFileName.string();
+    if(not old_seed_str.empty()) {
+        throw except::file_error("Tried to append seed {} to filename, but another seed is already present: {}", number, oldFileName.string());
+    }
+    // The seed number is not present!
+    std::string newName;
+    if(old_bitf_str.empty()) {
+        newName = fmt::format("{}_{}{}", old_prfx_str, number, oldFileName.extension().string());
+    } else {
+        newName = fmt::format("{}_{}_{}{}", old_prfx_str, number, old_bitf_str, oldFileName.extension().string());
+    }
+    newFileName.replace_filename(newName);
+    tools::log->info("Appended seed [{}] to filename: [{}]", number, newFileName.string());
+    return newFileName.string();
+}
+template<typename T>
+std::string filename_append_bitfield(const std::string &filename, const T number) {
+    if constexpr(std::is_signed_v<T>)
+        if(number < 0) return filename;
+    if constexpr(std::is_unsigned_v<T>)
+        if(number == std::numeric_limits<T>::max()) return filename;
+    // Append the seed_model to the output filename
+    h5pp::fs::path         oldFileName  = filename;
+    h5pp::fs::path         newFileName  = filename;
+    auto                   oldstem      = oldFileName.stem().string();
+    std::string::size_type old_seed_pos = oldstem.find_first_of('_');
+    std::string::size_type old_bitf_pos = std::string::npos;
+    if(old_seed_pos != std::string::npos) { old_bitf_pos = oldstem.find_first_of('_', old_seed_pos + 1); }
+    std::string old_prfx_str = oldstem.substr(0, oldstem.find_first_of("_."));
+    std::string old_seed_str = "";
+    std::string old_bitf_str = "";
+    if(old_seed_pos != std::string::npos) { old_seed_str = oldstem.substr(old_seed_pos + 1, old_bitf_pos); }
+    if(old_bitf_pos != std::string::npos) { old_bitf_str = oldstem.substr(old_bitf_pos + 1, std::string::npos); }
+    if(old_bitf_str == std::to_string(number)) return oldFileName.string();
+    //    tools::log->info("old_seed_pos {}\n"
+    //                     "old_seed_str {}\n"
+    //                     "old_bitf_pos {}\n"
+    //                     "old_bitf_str {}",
+    //                     old_seed_pos, old_seed_str, old_bitf_pos, old_bitf_str);
+
+    if(not old_bitf_str.empty()) {
+        throw except::file_error("Tried to append bitfield {} to filename, but another bitfield is already present: {}", number, oldFileName.string());
+    }
+    // The bitfield number is not present!
+    std::string newName;
+    if(old_seed_str.empty()) {
+        newName = fmt::format("{}_{}{}", old_prfx_str, number, oldFileName.extension().string());
+    } else {
+        newName = fmt::format("{}_{}_{}{}", old_prfx_str, old_seed_str, number, oldFileName.extension().string());
+    }
+    newFileName.replace_filename(newName);
+    tools::log->info("Appended bitfield [{}] to filename: [{}]", number, newFileName.string());
     return newFileName.string();
 }
 
@@ -117,18 +175,18 @@ int settings::parse(int argc, char **argv) {
         tools::log->info("Resuming from iter {}", storage::file_resume_iter);
         settings::storage::file_collision_policy = FileCollisionPolicy::RESUME;
     }
-    if(app.count("--replace") > 0){
+    if(app.count("--replace") > 0) {
         tools::log->info("Replacing file");
         settings::storage::file_collision_policy = FileCollisionPolicy::REPLACE;
     }
-    if(app.count("--revive") > 0){
+    if(app.count("--revive") > 0) {
         tools::log->info("Reviving file");
         settings::storage::file_collision_policy = FileCollisionPolicy::REVIVE;
     }
     // Generate the correct output filename based on given seeds
     if(storage::output_append_seed) {
-        settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::seed);
-        settings::storage::output_filepath = filename_append_number(settings::storage::output_filepath, settings::input::bitfield);
+        settings::storage::output_filepath = filename_append_seed(settings::storage::output_filepath, settings::input::seed);
+        settings::storage::output_filepath = filename_append_bitfield(settings::storage::output_filepath, settings::input::bitfield);
     }
     return 0;
 }
