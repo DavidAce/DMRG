@@ -346,7 +346,7 @@ def get_batch_setup(projectname):
                 'L16|f0.2': {
                     'seed_extent': [1000],
                     'seed_offset': [16200000],
-                    'time_steps': 4000,
+                    'time_steps': 4001,
                 },
             }
         }

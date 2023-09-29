@@ -41,11 +41,11 @@ config_ranges = {
     "model::lbit::u_cgw8": ['EXPDECAY'],
     "flbit::bond_max": ['8192'],
     "flbit::time_scale": ['LINSPACED'],
-    "flbit::time_start_real": ['0.0'],
+    "flbit::time_start_real": ['0.25'],
     "flbit::time_start_imag": ['0.0'],
     "flbit::time_final_real": ['1000'], #"{:.1e}".format(max_time),
     "flbit::time_final_imag": ['0.0'],
-    "flbit::time_num_steps": ['4000'],
+    "flbit::time_num_steps": ['4001'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
     "flbit::cls::num_rnd_circuits": ['1']  # Enables l-bit correlation matrix O(i,j) calculation
 }
