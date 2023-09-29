@@ -108,7 +108,7 @@ def get_h5_status(filename, batch):
                     return f"FAILED|(unequal iters:{len_of_dsets})"
                 length = expected_dsets[1]['length'][0]
                 has_neel_init_pattern = np.all(expected_dsets[5][()] == np.resize([1, 0], int(length))) or np.all(expected_dsets[5][()] == np.resize([0, 1], int(length)))
-                should_be_neel = 'neel' in filename or 'lbit93-precision' in filename
+                should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename
                 if should_be_neel and not has_neel_init_pattern:
                     return f"FAILED|initial state is not neel"
                 if not should_be_neel and has_neel_init_pattern:

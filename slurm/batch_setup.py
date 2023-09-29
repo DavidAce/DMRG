@@ -344,7 +344,7 @@ def get_batch_setup(projectname):
             'projectname' : 'lbit106-lin',
             'batch': {
                 'L16|f0.2': {
-                    'seed_extent': [1000],
+                    'seed_extent': [10000],
                     'seed_offset': [16200000],
                     'time_steps': 4001,
                 },

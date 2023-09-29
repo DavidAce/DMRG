@@ -40,6 +40,7 @@ config_ranges = {
     "model::lbit::u_tgw8": ['EXPDECAY'],
     "model::lbit::u_cgw8": ['EXPDECAY'],
     "flbit::bond_max": ['8192'],
+    "flbit::max_iters": ['5000'],
     "flbit::time_scale": ['LINSPACED'],
     "flbit::time_start_real": ['0.25'],
     "flbit::time_start_imag": ['0.0'],

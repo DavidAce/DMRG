@@ -35,8 +35,9 @@ def lbit_plot(args):
             # avgfile = f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
             plotdir = f'{batchdir}/analysis/plots'
             for avgfile in [
-                            f'{batchdir}/analysis/data/averaged.h5',
-                            f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',
+                            # f'{batchdir}/analysis/data/averaged.h5',
+                            # f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',
+                            f'/mnt/WDB-AN1500/mbl_transition/lbit106-lin/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit103-nil/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit100-rps/analysis/data/averaged.h5'
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit104-2d1/analysis/data/averaged.h5',
@@ -123,11 +124,11 @@ def lbit_plot(args):
     linspec_lbit = ['f','L']
 
 
-    f = None
-    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-        f = plot_tavg_fig_sub_line(db=db, meta=meta['tavg-num'], figspec=figspec_Lf, subspec=subspec_Lf,
-                                   linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    save_figure(f)
+    # f = None
+    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+    #     f = plot_tavg_fig_sub_line(db=db, meta=meta['tavg-num'], figspec=figspec_Lf, subspec=subspec_Lf,
+    #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    # save_figure(f)
     # f = None
     # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
     #     f = plot_tavg_fig_sub_line(db=db, meta=meta['pavg-num'], figspec=figspec_Lf, subspec=subspec_Lf,
@@ -137,9 +138,9 @@ def lbit_plot(args):
     # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
     #     f = plot_tavg_fig_sub_line(db=db, meta=meta['pavg-num'], figspec=figspec_L, subspec=subspec_L,
     #                                linspec=linspec_L, xaxspec=xaxspec_L, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    save_figure(f)
-    plt.show()
-    exit(0)
+    # save_figure(f)
+    # plt.show()
+    # exit(0)
 
 
     f = None
@@ -165,7 +166,8 @@ def lbit_plot(args):
         f = plot_time_fig_sub_line(db=db, meta=meta['numa-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
                                    palette_name=palette,dbidx=idx,dbnum=len(dbs))
     save_figure(f)
-
+    plt.show()
+    exit(0)
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
         f = plot_divg_fig_sub_line(db=db, meta=meta['pivg-num'], figspec=figspec, subspec=subspec, linspec=linspec,

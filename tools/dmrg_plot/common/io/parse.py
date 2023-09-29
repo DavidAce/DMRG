@@ -77,6 +77,7 @@ def parse(algo, batches=None):
         'lbit101',  # L16 u16 tgw8 expdecay with random product state init to check entanglement entropy distribution FINAL FULL SET OF SIMS
         'lbit103',  # L16 u16 tgw8 expdecay with neel init in the non-interacting limit
         'lbit104',  # L16 u16 tgw8 expdecay with two down one site from the middle (2d1)
+        'lbit106',  # L16 u16 tgw8 expdecay to check linspaced sampling
 
     ]
     xdmrg_batches = ['data170',  #
