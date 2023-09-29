@@ -275,21 +275,22 @@ namespace settings {
 
     /*! \namespace settings::flbit Settings for the finite l-bit algorithm */
     namespace flbit {
-        inline bool     on                      = false;                           /*!< Turns flbit simulation on/off. */
-        inline size_t   max_iters               = 10000;                           /*!< Max number of iterations. One iterations moves L steps. */
-        inline size_t   min_iters               = 4;                               /*!< Min number of iterations. One iterations moves L steps. */
-        inline bool     use_swap_gates          = true;                            /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
-        inline bool     use_mpo_circuit         = false;                           /*!< Cast the unitary circuit to compressed mpo form (this is not generally faster or more accurate, but good for testing) */
-        inline long     bond_max                = 1024;                            /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
-        inline long     bond_init               = 8;                               /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
-        inline double   time_start_real         = 1e-1;                            /*!< Starting time point (real) */
-        inline double   time_start_imag         = 0;                               /*!< Starting time point (imag) */
-        inline double   time_final_real         = 1e6;                             /*!< Finishing time point (real) */
-        inline double   time_final_imag         = 0;                               /*!< Finishing time point (imag) */
-        inline size_t   time_num_steps          = 500;                             /*!< Number of steps from start to finish. Start and final times are included */
-        inline double   time_gate_id_threshold  = 1e-8;                            /*!< Skip time evo. gates if exp(-iHt) is ~ 1 within this threshold */
-        inline size_t   print_freq              = 1;                               /*!< Print frequency for console output. In units of iterations. (0 = off). */
-        inline bool     store_wavefn            = false;                           /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
+        inline bool     on                     = false;                            /*!< Turns flbit simulation on/off. */
+        inline size_t   max_iters              = 10000;                            /*!< Max number of iterations. One iterations moves L steps. */
+        inline size_t   min_iters              = 4;                                /*!< Min number of iterations. One iterations moves L steps. */
+        inline bool     use_swap_gates         = true;                             /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
+        inline bool     use_mpo_circuit        = false;                            /*!< Cast the unitary circuit to compressed mpo form (this is not generally faster or more accurate, but good for testing) */
+        inline long     bond_max               = 1024;                             /*!< Bond dimension of the current position (maximum number of singular values to keep in SVD). */
+        inline long     bond_init              = 8;                                /*!< Initial bond dimension limit. Used during iter <= 1 or when bond_increase_when == true, or starting from an entangled state */
+        inline auto     time_scale             = TimeScale::LOGSPACED;             /*!< Choose linear or logarithmically spaced time points (LINEAR|LOG) */
+        inline double   time_start_real        = 1e-1;                             /*!< Starting time point (real) */
+        inline double   time_start_imag        = 0;                                /*!< Starting time point (imag) */
+        inline double   time_final_real        = 1e6;                              /*!< Finishing time point (real) */
+        inline double   time_final_imag        = 0;                                /*!< Finishing time point (imag) */
+        inline size_t   time_num_steps         = 500;                              /*!< Number of steps from start to finish. Start and final times are included */
+        inline double   time_gate_id_threshold = 1e-8;                             /*!< Skip time evo. gates if exp(-iHt) is ~ 1 within this threshold */
+        inline size_t   print_freq             = 1;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
+        inline bool     store_wavefn           = false;                            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
 
         /*! \namespace settings::flbit::cls Settings for calculating the characteristic length-scale of lbits */
         namespace  cls {

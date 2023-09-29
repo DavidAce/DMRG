@@ -206,6 +206,7 @@ void tools::finite::mps::init::set_product_state_two_down(StateFinite &state, St
     if(type == StateInitType::REAL and axis == "y") throw std::runtime_error("StateInitType REAL incompatible with state in axis [y] which impliex CPLX");
     Eigen::Tensor<cplx, 3> spinor      = tenx::TensorCast(qm::spin::half::get_spinor(axus, sign).normalized(), 2, 1, 1);
     Eigen::Tensor<cplx, 3> spinor_flip = tenx::TensorCast(qm::spin::half::get_spinor(axus, -sign).normalized(), 2, 1, 1);
+    Eigen::Tensor<cplx, 3> spinorX     = tenx::TensorCast(qm::spin::half::get_spinor("x", sign).normalized(), 2, 1, 1);
     tools::log->debug(
         "Setting product state aligned using the |{}> eigenspinor of the pauli matrix σ{} on all sites except two flipped, at distance {} from the midchain",
         sign, axis, distance_from_middle);
@@ -214,20 +215,47 @@ void tools::finite::mps::init::set_product_state_two_down(StateFinite &state, St
     long        len = state.get_length<long>();
     long        mid = state.get_length<long>() / 2;
     long        dis = static_cast<long>(distance_from_middle);
-    if(static_cast<long>(distance_from_middle) >= mid)
-        throw except::state_error("Cannot initialize PRODUCT_STATE_TWO_DOWN with distance_from_the_middle {} >= {} on a system with {} sites",
-                                  distance_from_middle, mid, len);
+//    if(static_cast<long>(distance_from_middle) >= mid)
+//        throw except::state_error("Cannot initialize PRODUCT_STATE_TWO_DOWN with distance_from_the_middle {} >= {} on a system with {} sites",
+//                                  distance_from_middle, mid, len);
 
     for(const auto &mps_ptr : state.mps_sites) {
         auto &mps  = *mps_ptr;
         long  pos  = mps.get_position<long>();
-        bool  flip = (pos + dis == mid - 1) or (pos - dis == mid);
+        bool  flip = true;
+        if(pos == mid) str.append("|");
+
+        if(pos % 2 == 1) flip = false;
+//        if(pos == mid - 1) flip = false;
+//        if(pos == mid - 3) flip = false;
+//        if(pos == mid - 5) flip = true;
+
+//        if(pos == mid + 1) flip = false;
+//        if(pos == mid + 3) flip = false;
+//        if(pos == mid + 5) flip = false;
+
+        //        if(pos == mid - 3) flip = false;
+        //                if (pos == mid - 3) flip = true;
+        //                if (pos == mid - 5) flip = true;
+        //                if (pos == mid - 7) fslip = true;
+        //                if (pos == mid + 0) flip = true;
+        //                if (pos == mid + 2) flip = true;
+        //                if (pos == mid + 4) flip = true;
+        //                if (pos == mid + 6) flip = true;
+        //        bool  flip =
+        //            (pos + dis == mid - 1) or
+        //            (pos + dis == mid - 3) or
+        //            (pos - dis == mid + 0) or
+        //            (pos - dis == mid + 2) ;
+        //        bool  flip =
+        //            (pos + dis == mid - 1) or
+        //            (pos - dis == mid + 0) ;
         if(flip) {
             mps.set_mps(spinor_flip, L, 0, label);
-            str.append("↓");
+            str.append("0");
         } else {
             mps.set_mps(spinor, L, 0, label);
-            str.append("↑");
+            str.append("1");
         }
 
         if(mps.isCenter()) {

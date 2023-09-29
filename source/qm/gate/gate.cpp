@@ -610,7 +610,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         // One common location, one uncommon. Then this connects a 1-site gate with 2-site gates up and down
         tenx::idxlistpair<1> idx1;
         tenx::idxlistpair<2> idx2;
-        // Decide if this is connects on the left or right leg
+        // Decide if this connects on the left or right leg
         if(middle_gate.pos.front() == updown_gate.pos.front()) {
             /*  Left insert
              *            2    3              1    2               2    3
@@ -671,7 +671,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         std::vector<size_t>         pos;
         std::vector<long>           dim;
         size_t                      merged = pos_nsect.size() - pos_isect.size();
-        // Decide if this is connects on the right or left leg
+        // Decide if this connects on the right or left leg
         if(middle_gate.pos.front() == updown_gate.pos.back()) {
             /*  Right insert (Free legs in mid are merged)
              *
@@ -780,7 +780,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         size_t offmin = 0;
         size_t offmax = middle_gate.pos.size() - updown_gate.pos.size();
         size_t merged = offmax;
-        // Decide if this is connects on the left, right or somewhere in the center
+        // Decide if this connects on the left, right or somewhere in the center
         if(offset == offmin or offset == offmax) {
             if(offset == 0) {
                 /*  Insert at offset 0
@@ -944,7 +944,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
         size_t              dn_merge = dn_size - pos_isect.size();
         size_t              up_merge = up_size;
         size_t              offset   = up_gate.pos.front() - dn_gate.pos.front();
-        // Decide if this is connects on the right or right leg
+        // Decide if this connects on the right or right leg
         if(dn_gate.pos.back() == pos_isect.back()) {
             /*  Right connection
              *
@@ -1015,7 +1015,7 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
         auto                up_size  = up_gate.pos.size();
         size_t              dn_merge = dn_size - pos_isect.size();
         size_t              up_merge = up_size - pos_isect.size();
-        // Decide if this is connects on the right or right leg
+        // Decide if this connects on the right or right leg
         if(dn_gate.pos.front() == up_gate.pos.back()) {
             /*  Right connection
              *      4    5     2

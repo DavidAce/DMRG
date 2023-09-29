@@ -204,6 +204,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::use_mpo_circuit"              , flbit::use_mpo_circuit);
     dmrg_config.load_parameter("flbit::bond_max"                     , flbit::bond_max);
     dmrg_config.load_parameter("flbit::bond_init"                    , flbit::bond_init);
+    dmrg_config.load_parameter("flbit::time_scale"                   , flbit::time_scale);
     dmrg_config.load_parameter("flbit::time_start_real"              , flbit::time_start_real);
     dmrg_config.load_parameter("flbit::time_start_imag"              , flbit::time_start_imag);
     dmrg_config.load_parameter("flbit::time_final_real"              , flbit::time_final_real);

@@ -20,6 +20,7 @@ enum class CircOp { NONE, ADJ, TRN };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class UnitaryGateWeight { IDENTITY, EXPDECAY };
 enum class EdgeStatus { STALE, FRESH };
+enum class TimeScale { LINSPACED, LOGSPACED };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
 enum class StorageEvent : int {
     NONE          = 0,
@@ -39,11 +40,11 @@ enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
 enum class NormPolicy { ALWAYS, IFNEEDED }; // Rules of engagement
 enum class FileCollisionPolicy {
-    RESUME,                                 /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
-    BACKUP,                                 /*!< Backup the existing file by appending .bak, then start with a new file. */
-    RENAME,                                 /*!< Rename the current file by appending .# to avoid collision with existing. */
-    REVIVE,                                 /*!< Try RESUME, but do REPLACE on error instead of throwing */
-    REPLACE                                 /*!< Just erase/truncate the existing file and start from the beginning. */
+    RESUME, /*!< If finished -> exit, else resume simulation from the latest "FULL" storage state. Throw if none is found. */
+    BACKUP, /*!< Backup the existing file by appending .bak, then start with a new file. */
+    RENAME, /*!< Rename the current file by appending .# to avoid collision with existing. */
+    REVIVE, /*!< Try RESUME, but do REPLACE on error instead of throwing */
+    REPLACE /*!< Just erase/truncate the existing file and start from the beginning. */
 };
 enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
@@ -269,6 +270,10 @@ constexpr std::string_view enum2sv(const T &item) {
     if constexpr(std::is_same_v<T, EdgeStatus>) {
         if(item == EdgeStatus::STALE)                                   return "STALE";
         if(item == EdgeStatus::FRESH)                                   return "FRESH";
+    }
+    if constexpr(std::is_same_v<T, TimeScale>) {
+        if(item == TimeScale::LINSPACED)                                return "LINSPACED";
+        if(item == TimeScale::LOGSPACED)                                return "LOGSPACED";
     }
     if constexpr(std::is_same_v<T, AlgorithmStop>) {
         if(item == AlgorithmStop::SUCCESS)                              return "SUCCESS";
@@ -531,6 +536,7 @@ constexpr auto sv2enum(std::string_view item) {
         UnitaryGateWeight,
         ModelType,
         EdgeStatus,
+        TimeScale,
         StorageLevel,
         StorageEvent,
         CopyPolicy,
@@ -622,6 +628,10 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, EdgeStatus>) {
         if(item == "STALE")                                 return EdgeStatus::STALE ;
         if(item == "FRESH")                                 return EdgeStatus::FRESH ;
+    }
+    if constexpr(std::is_same_v<T, TimeScale>) {
+        if(item == "LINSPACED")                             return TimeScale::LINSPACED ;
+        if(item == "LOGSPACED")                             return TimeScale::LOGSPACED ;
     }
     if constexpr(std::is_same_v<T, AlgorithmStop>) {
         if(item == "SUCCESS")                               return AlgorithmStop::SUCCESS;

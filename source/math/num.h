@@ -208,14 +208,17 @@ namespace num {
      *   \param b last value in range
      *   \return std::vector<T2>. Example,  <code> Linspaced(5,1,5) </code> gives a std::vector<int>: <code> [1,2,3,4,5] </code>
      */
-    [[nodiscard]] inline std::vector<double> LinSpaced(std::size_t N, double a, double b) {
-        double              h = (b - a) / static_cast<double>(N - 1);
-        std::vector<double> xs(N);
-        double              val = a;
+    template<typename T, std::enable_if_t<std::is_floating_point_v<T>>>
+    [[nodiscard]] inline std::vector<T> LinSpaced(std::size_t N, T a, T b) {
+        T              h   = (b - a) / static_cast<T>(N - 1);
+        T              val = a;
+        std::vector<T> xs(N);
         for(auto &x : xs) {
             x = val;
             val += h;
         }
+        xs.front() = a;
+        xs.back()  = b;
         return xs;
     }
 
@@ -232,7 +235,7 @@ namespace num {
         std::vector<T> xs(N);
         for(auto &x : xs) {
             x   = val;
-            T s = std::ceil(std::log10(x));                          // Base 10 exponent of x
+            T s = std::ceil(std::log10(x)); // Base 10 exponent of x
             if(keep_digits > 0 and s > keep_digits) {
                 T t = std::pow(static_cast<T>(10), s - keep_digits); // Order of magnitude to truncate
                 x   = std::floor(x / t) * t;
@@ -247,6 +250,20 @@ namespace num {
 
 #if defined(USE_QUADMATH)
     template<typename T, std::enable_if_t<std::is_same_v<T, __float128>, bool> = true>
+    [[nodiscard]] inline std::vector<T> LinSpaced(std::size_t N, T a, T b) {
+        T              h   = (b - a) / static_cast<T>(N - 1);
+        T              val = a;
+        std::vector<T> xs(N);
+        for(auto &x : xs) {
+            x = val;
+            val += h;
+        }
+        xs.front() = a;
+        xs.back()  = b;
+        return xs;
+    }
+
+    template<typename T, std::enable_if_t<std::is_same_v<T, __float128>, bool> = true>
     [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, int base = 10, int keep_digits = -1) {
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
@@ -259,7 +276,7 @@ namespace num {
         std::vector<T> xs(N);
         for(auto &x : xs) {
             x   = val;
-            T s = ceilq(log10q(x));                              // Base 10 exponent of x
+            T s = ceilq(log10q(x)); // Base 10 exponent of x
             if(keep_digits > 0 and s > keep_digits) {
                 T t = powq(static_cast<T>(10), s - keep_digits); // Order of magnitude to truncate
                 x   = floorq(x / t) * t;

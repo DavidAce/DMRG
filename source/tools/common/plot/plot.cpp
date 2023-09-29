@@ -51,8 +51,8 @@ std::vector<double> resample(const std::vector<double> &ydata, size_t newlength)
             auto x       = static_cast<double>(newindex) * factor;
             auto x1      = floor(x);
             auto x2      = x1 + 1.0;
-            auto y1      = ydata[std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x1)), oldlength - 1)];
-            auto y2      = ydata[std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x2)), oldlength - 1)];
+            auto y1      = ydata.at(std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x1)), oldlength - 1));
+            auto y2      = ydata.at(std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x2)), oldlength - 1));
             auto y       = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
             auto safeidx = std::min<size_t>(std::max<size_t>(0, newindex), newlength - 1);
             if(safeidx >= newdata.size())
@@ -135,7 +135,6 @@ void AsciiPlotter::show() {
         if(max_it != y.end()) ymax = std::isnan(ymax) ? *max_it : std::max(ymax, *max_it);
         if(min_it != y.end()) ymin = std::isnan(ymin) ? *min_it : std::min(ymin, *min_it);
     }
-
     std::vector<std::string> canvas(height, std::string(width, ' '));
     for(size_t curve = 0; curve < ydata_s.size(); curve++) {
         auto resampled = resample(ydata_s.at(curve), width);
@@ -145,10 +144,11 @@ void AsciiPlotter::show() {
         }
     }
     for(size_t curve = 0; curve < ydata.size(); curve++) {
-        auto resampled = resample(ydata[curve], width);
+        auto resampled = resample(ydata.at(curve), width);
         for(size_t col = 0; col < width; col++) {
             size_t row             = map_to_idx(resampled.at(col), ymin, ymax, height);
-            canvas.at(row).at(col) = markers.at(curve);
+            if (row < height)
+                canvas.at(row).at(col) = markers.at(curve);
         }
     }
 
@@ -170,9 +170,9 @@ void AsciiPlotter::show() {
     if(legend) {
         fmt::print("{0}┌{1:─^{2}}┐\n", lmargin, "", width);
         for(size_t curve = 0; curve < labels_s.size(); curve++)
-            fmt::print("{0}│{1:<{2}}│\n", lmargin, fmt::format("    {} {}", markers_s[curve], labels_s[curve]), width);
+            fmt::print("{0}│{1:<{2}}│\n", lmargin, fmt::format("    {} {}", markers_s.at(curve), labels_s.at(curve)), width);
         for(size_t curve = 0; curve < labels.size(); curve++)
-            fmt::print("{0}│{1:<{2}}│\n", lmargin, fmt::format("    {} {}", markers[curve], labels[curve]), width);
+            fmt::print("{0}│{1:<{2}}│\n", lmargin, fmt::format("    {} {}", markers.at(curve), labels.at(curve)), width);
         fmt::print("{0}└{1:─^{2}}┘\n", lmargin, "", width);
     }
 }

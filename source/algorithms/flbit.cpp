@@ -135,6 +135,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_SHUFFLED); break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_TWO_DOWN: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_TWO_DOWN); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
@@ -338,13 +339,25 @@ void flbit::create_time_points() {
                                   "time_final = {:.8f}{:+.8f}",
                                   f128_t(time_start.real()), f128_t(time_start.imag()), f128_t(time_final.real()), f128_t(time_final.imag()));
     time_points.reserve(settings::flbit::time_num_steps);
-    if(time_is_real) {
-        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
-    } else {
-        for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) { time_points.emplace_back(cplx_t(0.0, t)); }
+    if(settings::flbit::time_scale == TimeScale::LOGSPACED) {
+        if(time_is_real) {
+            for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
+        } else {
+            for(const auto &t : num::LogSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) {
+                time_points.emplace_back(cplx_t(0.0, t));
+            }
+        }
+    } else if(settings::flbit::time_scale == TimeScale::LINSPACED) {
+        if(time_is_real) {
+            for(const auto &t : num::LinSpaced(settings::flbit::time_num_steps, time_start.real(), time_final.real())) { time_points.emplace_back(t); }
+        } else {
+            for(const auto &t : num::LinSpaced(settings::flbit::time_num_steps, time_start.imag(), time_final.imag())) {
+                time_points.emplace_back(cplx_t(0.0, t));
+            }
+        }
     }
 
-//    tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
+    //    tools::log->debug("Created {} time points:\n{}", time_points.size(), time_points);
     // Sanity check
     if(time_points.front().real() != settings::flbit::time_start_real) throw except::logic_error("Time start real mismatch");
     if(time_points.front().imag() != settings::flbit::time_start_imag) throw except::logic_error("Time start imag mismatch");
@@ -511,7 +524,8 @@ void flbit::update_time_evolution_gates() {
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
     if(has_swap_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_swap_gates");
-        tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
+        tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)),
+                          f128_t(std::imag(delta_t)));
         time_swap_gates_1body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_1body, settings::flbit::time_gate_id_threshold);
         time_swap_gates_2body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_2body, settings::flbit::time_gate_id_threshold);
         time_swap_gates_3body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_3body, settings::flbit::time_gate_id_threshold);
@@ -520,7 +534,8 @@ void flbit::update_time_evolution_gates() {
     }
     if(has_slow_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_gates");
-        tools::log->debug("Updating time evolution gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
+        tools::log->debug("Updating time evolution gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)),
+                          f128_t(std::imag(delta_t)));
         time_gates_1body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_1body, settings::flbit::time_gate_id_threshold);
         time_gates_2body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_2body, settings::flbit::time_gate_id_threshold);
         time_gates_3body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_3body, settings::flbit::time_gate_id_threshold);
@@ -560,7 +575,7 @@ void flbit::time_evolve_lbit_state() {
     if(not has_swap_gates and not has_slow_gates) throw except::logic_error("None of swap or non-swap time evolution gates found");
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
     if(has_swap_gates) {
-        tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)),f128_t(std::imag(delta_t)));
+        tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircOp::NONE, GateMove::ON, svd_cfg);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2body, CircOp::NONE, GateMove::ON, svd_cfg);
         tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3body, CircOp::NONE, GateMove::ON, svd_cfg);
@@ -794,7 +809,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
                 auto shape_avgs = std::vector<long>{1, lbitSA.corravg.size()};
-                auto shape_data = std::vector<long>{1, static_cast<long>(settings::model::model_size), static_cast<long>(settings::model::model_size)};
+                auto shape_data = std::vector<long>{static_cast<long>(nsamps), static_cast<long>(settings::model::model_size),
+                                                    static_cast<long>(settings::model::model_size)};
 
                 auto label_data = std::vector<std::string>{"sample", "i", "j"};
                 if(settings::storage::storage_level_model >= StorageLevel::LIGHT) {}

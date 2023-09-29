@@ -1506,20 +1506,20 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         lbitSA.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp.data(), extent7);
 //        lbitSA2.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp2.data(), extent7);
 
-        try{
+//        try{
             auto t_plot = tid::tic_scope("plot");
             auto yavg_log   = num::cast<real>(yavg, lognoinf);
 //            auto yavg_log2   = num::cast<real>(yavg2, lognoinf);
             auto ytyp_log   = num::cast<real>(ytyp, lognoinf);
-            auto plt           = AsciiPlotter("lbit decay", 50, 20);
+            auto plt           = AsciiPlotter("lbit decay", 64, 20);
             plt.addPlot(yavg_log, fmt::format("avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
             plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
 //            plt.addPlot(yavg_log2, fmt::format("avg2 cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg2, rms_avg2, rsq_avg2, yavg2), '+');
             plt.enable_legend();
             plt.show();
-        }catch(const std::exception & ex){
-            tools::log->error("AsciiPlotter failed: {}", ex.what());
-        }
+//        }catch(const std::exception & ex){
+//            tools::log->error("AsciiPlotter failed: {}", ex.what());
+//        }
         auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
         auto mid = static_cast<long>(lbit_corrmap.rows()/2);
         auto lbit_crossup = 0.5 * (lbit_corrmap.topRightCorner(mid,mid).cwiseAbs().sum() + lbit_corrmap.bottomLeftCorner(mid,mid).cwiseAbs().sum());
