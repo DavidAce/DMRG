@@ -138,7 +138,7 @@ def plot_S_vs_Time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, s
 
                             if meta['normpage']:
                                 ydata = ydata / page_entropy(db_vals['L'])
-                            if meta['timeloglevel'] == 2:
+                            if meta.get('timeselection') == 'lnlnt':
                                 xdata = tdata
                                 xdata = np.log(xdata + np.exp(1))
                                 xdata = np.log(xdata)
@@ -175,9 +175,9 @@ def plot_S_vs_Time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, s
                     ax.set_ylabel("$S(L/2)$")
                     ax.xaxis.set_tick_params(labelbottom=True)
                     ax.yaxis.set_tick_params(labelleft=True)
-                    if meta['timeloglevel'] == 1:
+                    if meta.get('timeselection') == 'lnt':
                         ax.set_xscale('log')
-                    if meta['timeloglevel'] == 2:
+                    if meta.get('timeselection') == 'lnlnt':
                         ax.set_xlabel("$\ln\ln(t+e)$")
                         if ymin:
                             ax.set_ylim(0.9 * ymin)
@@ -190,7 +190,7 @@ def plot_S_vs_Time_fig3_sub3_line1(db, meta, fig3, sub3, l1, algo_filter=None, s
                 prettify_plot2(fig=fig, axes=axes, cols=figcols, rows=figrows, axes_used=axes_used, extra_legend=[l1_legend, m1_legend])
                 suffix = ''
                 suffix = suffix + '_normpage' if meta['normpage'] else suffix
-                suffix = suffix + '_loglog' if meta['timeloglevel'] >= 2 else suffix
+                suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
                 plt.savefig(
                     "{}/{}(t)_fig({}_{}_{})_sub({}_{}_{}){}.pdf".format(meta['plotdir'], meta['plotprefix'], str(key0), str(key1), str(key2), sub3[0], sub3[1],
                                                                         sub3[2], suffix), format='pdf')
@@ -237,7 +237,7 @@ def plot_S_vs_Time_fig2_sub2_line2(db, meta, fig2, sub2, l2, algo_filter=None, s
                             if meta['normpage']:
                                 ydata = ydata / page_entropy(db_vals['L'])
 
-                            if meta['timeloglevel'] >= 2:
+                            if meta.get('timeselection') == 'lnlnt':
                                 xdata = np.log10(xdata)
 
                             ax.fill_between(x=xdata, y1=ydata - edata, y2=ydata + edata, alpha=0.2, label=None,
@@ -256,7 +256,7 @@ def plot_S_vs_Time_fig2_sub2_line2(db, meta, fig2, sub2, l2, algo_filter=None, s
                 ax.set_ylabel("$S(L/2)$")
                 ax.xaxis.set_tick_params(labelbottom=True)
                 ax.yaxis.set_tick_params(labelleft=True)
-                if meta['timeloglevel'] >= 1:
+                if meta.get('timeselection') == 'lnt':
                     ax.set_xscale('log')
 
             fig.suptitle('{} entropy vs Time: ${}={}$, ${}={}$, {} realizations'.format(
@@ -266,7 +266,7 @@ def plot_S_vs_Time_fig2_sub2_line2(db, meta, fig2, sub2, l2, algo_filter=None, s
             prettify_plot2(fig=fig, axes=axes, cols=figcols, rows=figrows, axes_used=axes_used, extra_legend=[l1_legend, l2_legend])
             suffix = ''
             suffix = suffix + '_normpage' if meta['normpage'] else suffix
-            suffix = suffix + '_loglog' if meta['timeloglevel'] >= 2 else suffix
+            suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
             plt.savefig("{}/{}(t)_fig({}_{})_sub({}_{}){}.pdf".format(meta['plotdir'], meta['plotprefix'], str(key0), str(key1), sub2[0], sub2[1], suffix),
                         format='pdf')
 

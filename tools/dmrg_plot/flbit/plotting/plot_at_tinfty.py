@@ -147,7 +147,7 @@ def plot_v2_at_tinfty_fig3_sub2_line1(db, meta, fig3, sub2, l1, x1, algo_filter=
 
                 suffix = ''
                 suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-                suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+                suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
                 f['fig'].savefig(
                     "{}/{}_tinfty({})_fig({}_{}_{})_sub({}_{}){}.pdf"
                     .format(meta['plotdir'], meta['plotprefix'],
@@ -261,7 +261,7 @@ def plot_v2_at_tinfty_fig2_sub2_line2(db, meta, fig2, sub2, l2, x1, algo_filter=
             prettify_plot5(fmeta=f)
             suffix = ''
             suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-            # suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+            # suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
             plt.savefig(
                 "{}/{}_tinfty({})_fig({}_{})_sub({}_{}){}.pdf".format(meta['plotdir'], meta['plotprefix'], x1[0], str(key0),
                                                                       str(key1), sub2[0], sub2[1], suffix),
@@ -381,7 +381,7 @@ def plot_v2_at_tinfty_fig2_sub1_line3(db, meta, fig2, sub1, l3, x1, algo_filter=
 
             suffix = ''
             suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-            # suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+            # suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
             plt.savefig(
                 "{}/{}_tinfty({})_fig({}_{})_sub({}){}.pdf".format(meta['plotdir'], meta['plotprefix'], x1[0], str(key0),
                                                                    str(key1), sub1[0], suffix), format='pdf')

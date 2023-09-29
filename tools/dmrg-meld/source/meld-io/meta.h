@@ -1,5 +1,6 @@
 #pragma once
 #include "config/enums.h"
+#include "general/enums.h"
 #include <string>
 
 // Define the allowed items
@@ -13,11 +14,11 @@ enum class Size { FIX, VAR };
 // };
 
 struct Key {
-    std::string algo, state;
-    std::string name;
-    std::string key;
-    mutable size_t      expected_size = -1ul;
-    Key()                     = default;
+    std::string    algo, state;
+    std::string    name;
+    std::string    key;
+    mutable size_t expected_size = -1ul;
+    Key()                        = default;
     Key(std::string_view algo_, std::string_view state_, std::string_view name_, size_t expected_size_ = -1ul)
         : algo(algo_), state(state_), name(name_), expected_size(expected_size_) {}
 };
@@ -26,8 +27,9 @@ struct DsetKey : public Key {
     static constexpr std::string_view classtag = "dset";
     Size                              size     = Size::FIX;
     size_t                            axis;
-    DsetKey(std::string_view algo_, std::string_view state_, std::string_view name_, Size size_, size_t axis_)
-        : Key(algo_, state_, name_), size(size_), axis(axis_) {}
+    SlabSelect                        ssel = SlabSelect::FULL;
+    DsetKey(std::string_view algo_, std::string_view state_, std::string_view name_, Size size_, size_t axis_, SlabSelect ssel_ = SlabSelect::FULL)
+        : Key(algo_, state_, name_), size(size_), axis(axis_), ssel(ssel_) {}
 };
 
 struct TableKey : public Key {

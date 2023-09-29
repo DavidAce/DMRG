@@ -83,7 +83,7 @@ def get_meta(plotdir):
             'marksaturation': True,
             'findloglogwindow': True,
             'markloglogwindow': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -111,7 +111,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'shadederror': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
@@ -146,7 +146,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'fillerror': False,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
@@ -171,7 +171,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -193,7 +193,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -216,7 +216,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': False,
             'plotsatapproach': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -239,7 +239,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': False,
             'plotsatapproach': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -267,7 +267,7 @@ def get_meta(plotdir):
                 # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
                 'legendtitle': '$S_N$'
             },
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -296,7 +296,7 @@ def get_meta(plotdir):
                 # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
                 'legendtitle': '$S_N$'
             },
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
             'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -315,7 +315,7 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -335,7 +335,7 @@ def get_meta(plotdir):
             'realizations': 600,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
             
@@ -355,7 +355,7 @@ def get_meta(plotdir):
             'realizations': 600,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
         },
@@ -382,7 +382,7 @@ def get_meta(plotdir):
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
             'markloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['w', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'best',
@@ -565,7 +565,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
@@ -679,7 +679,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
@@ -712,7 +712,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
@@ -743,7 +743,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
@@ -780,7 +780,7 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'markloglogwindow': False,
             'fitloglogwindow': False,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
@@ -816,7 +816,7 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'markloglogwindow': False,
             'fitloglogwindow': False,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
@@ -845,7 +845,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'fillerror': False,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
@@ -875,7 +875,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'fillerror': False,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
@@ -909,7 +909,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'shadederror': False,
-            'timeloglevel': 0,
+            'timeselection': 't',,
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'

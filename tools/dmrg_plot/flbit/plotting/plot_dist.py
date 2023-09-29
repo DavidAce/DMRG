@@ -136,7 +136,7 @@ def plot_dist_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         if not f['filename']:
             suffix = ''
             suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-            suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+            suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
             f['filename'] = "{}/{}_dist_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                                   '-'.join(map(str, figvals)),
                                                                   '-'.join(map(str, get_keys(db, subspec))),

@@ -49,12 +49,20 @@ namespace tools::io {
         std::vector<h5pp::fs::path> result;
         if(mpi::world.id == 0) {
             for(const auto &src_dir : base) {
+                tools::logger::log->info("Checking for .h5 files in {}", src_dir.string());
                 for(const auto &dir : h5pp::fs::recursive_directory_iterator(src_dir / sub, h5pp::fs::directory_options::follow_directory_symlink)) {
                     if(dir.is_directory()) {
+                        tools::logger::log->info("Checking for .h5 files in {}", dir.path().string());
                         // Check that the keys in inc are present in dir
-                        bool include = inc.empty() or std::all_of(inc.begin(), inc.end(), [&dir](const auto &s) { return dir.path().string().find(s) != std::string::npos; });
-                        bool exclude = exc.empty() or std::any_of(exc.begin(), exc.end(), [&dir](const auto &s) { return dir.path().string().find(s) != std::string::npos; });
-                        if(exclude or not include) continue;
+                        bool include = inc.empty() or
+                                       std::all_of(inc.begin(), inc.end(), [&dir](const auto &s) { return dir.path().string().find(s) != std::string::npos; });
+                        bool exclude = std::any_of(exc.begin(), exc.end(), [&dir](const auto &s) { return dir.path().string().find(s) != std::string::npos; });
+                        tools::logger::log->info("inc {} {}", inc, include);
+                        tools::logger::log->info("exc {} {}", exc, exclude);
+                        if(exclude or not include) {
+                            logger::log->info("excluding: {}", dir.path().string());
+                            continue;
+                        }
                         logger::log->info("including: {}", dir.path().string());
 
                         // Check if this directory has any .h5 files

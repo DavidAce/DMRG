@@ -426,10 +426,17 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
                   ))
 
 
+# @profile
 def getmaxiter(iternode):
-    statuspath = '{}/tables/status'.format(iternode.name.split('cronos/', 1)[0])
-    statusnode = iternode.file[statuspath]
-    return statusnode['iter'][0]
+    numkeys = len(iternode.parent.keys())
+    if 100 < numkeys < 105:
+        numkeys=100
+    if 200 < numkeys < 205:
+        numkeys=200
+    return numkeys
+    # statuspath = '{}/tables/status'.format(iternode.name.split('cronos/', 1)[0])
+    # statusnode = iternode.file[statuspath]
+    # return statusnode['iter'][0]
 
 
 @njit(cache=True)
@@ -521,11 +528,13 @@ def get_table(h5f,
                                 track_times=False)
 
 
+# @profile
 def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
     # Props contains the names of the tables as keys, and each value contains either "ALL" or a list of desired columns
     # We should generate the statistics for each column in the table, averaging each time point over all realizations
     t_tot = timer()
     t_stat = 0
+    t_gets = 0
     t_data = 0
     t_cols = 0
     t_read = 0
@@ -614,7 +623,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         for col, (dtype, offset) in dt_num.fields.items():
             if col == 'iter' and not tableiter:
                 tableiter = tabledata[col][0]
-            if col == 'num':
+            elif col == 'num':
                 stats = np.full(6, len(tabledata))
             elif col == 'hartley_number_entropy':
                 if not write_statistics_crono4.hartley_number_entropy_data:
@@ -630,12 +639,19 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                 vals = np.array(['{}+{}j'.format(*cplx.lstrip('(').rstrip(')').split(',')) for cplx in arr]).astype(
                     np.complex128)
             elif col == 'physical_time' and np.issubdtype('S64', dtype):
-                vals = tablenode.fields(col)[()]
-                stats = get_stats(data=vals.astype(np.float64))
+                t_gets_start = timer()
+                vals = tablenode.fields(col)[0].astype(np.float64)
+                stats = np.full(6, vals)
+                # if not np.all(np.isclose(vals, vals)):
+                #     raise ValueError(f"Mismatching time values:\n {vals}")
+                # stats = get_stats(data=vals)
+                t_gets += (timer() - t_gets_start)
             else:
+                t_gets_start = timer()
                 stats = get_stats(data=tabledata[col])
+                t_gets += (timer() - t_gets_start)
                 # Save midchain data for histograms
-                if '__save_mid__' in crono_tables and tablename in crono_tables['__save_mid__'] and 'L_{}'.format(statemid) in col:
+                if '__save_mid__' in crono_tables and tablename in crono_tables['__save_mid__'] and f'L_{statemid}' in col:
                     # print('saving column L_{} from table {}...'.format(statemid, tablename))
                     t_data_start = timer()
                     dataname = 'data'
@@ -646,7 +662,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(100, datasize),
+                        chunkshape=(25, datasize),
                         expectedrows=itermax)
                     nodecache[statgroup][dataname].append(np.asmatrix(tabledata[col]))
                     t_data += (timer() - t_data_start)
@@ -663,7 +679,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
                         name=dataname,
                         dtype=dtype,
                         shape=(0, datasize),
-                        chunkshape=(100, datasize),
+                        chunkshape=(10, datasize),
                         expectedrows=itermax)
                     if(datasize != np.shape(nodecache[statgroup][dataname])[1]):
                         raise AssertionError("Unexpected data size when saving column for\n"
@@ -709,36 +725,16 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         raise LookupError("Could not find [" + model_path + "] in ", iternode.file)
     t_mod = timer() - t_model_start
     t_tot = timer() - t_tot
-    print('crono4: {} | '
-          'tot {:8.3e} | '
-          'pre {:8.3e} {:.1f}% | '
-          'crt {:8.3e} {:.1f}% | '
-          'itr {:8.3e} {:.1f}% | '
-          'read {:8.3e} {:.1f}% | '
-          'stat {:8.3e} {:.1f}% | '
-          'data {:8.3e} {:.1f}% | '
-          'cols {:8.3e} {:.1f}% | '
-          'app {:8.3e} {:.1f}% | '
-          'mod {:8.3e} {:.1f}% | '
-          .format(iterpath,
-                  t_tot,
-                  t_pre,
-                  t_pre / t_tot * 100,
-                  t_crt,
-                  t_crt / t_tot * 100,
-                  t_itr,
-                  t_itr / t_tot * 100,
-                  t_read,
-                  t_read / t_tot * 100,
-                  t_stat,
-                  t_stat / t_tot * 100,
-                  t_data,
-                  t_data / t_tot * 100,
-                  t_cols,
-                  t_cols / t_tot * 100,
-                  t_app,
-                  t_app / t_tot * 100,
-                  t_mod,
-                  t_mod / t_tot * 100,
-                  ))
+    print(f'crono4: {iterpath} | '
+          f'tot {t_tot:8.3e} | '
+          f'pre {t_pre:8.3e} {t_pre / t_tot * 100:.1f}% | '
+          f'crt {t_crt:8.3e} {t_crt / t_tot * 100:.1f}% | '
+          f'itr {t_itr:8.3e} {t_itr / t_tot * 100:.1f}% | '
+          f'read {t_read:8.3e} {t_read / t_tot * 100:.1f}% | '
+          f'stat {t_stat:8.3e} {t_stat / t_tot * 100:.1f}% | '
+          f'gets {t_gets:8.3e} {t_gets / t_tot * 100:.1f}% | '
+          f'data {t_data:8.3e} {t_data / t_tot * 100:.1f}% | '
+          f'cols {t_cols:8.3e} {t_cols / t_tot * 100:.1f}% | '
+          f'app {t_app:8.3e} {t_app / t_tot * 100:.1f}% | '
+          f'mod {t_mod:8.3e} {t_mod / t_tot * 100:.1f}% | ')
     return itermax == tableiter

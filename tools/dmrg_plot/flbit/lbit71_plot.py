@@ -204,18 +204,18 @@ def lbit_plot(args):
                                    linspec=['u'], figs=f,
                                    palette_name=palette)
     save_figure(f)
-    # f = None
-    # for db, meta, palette in zip(dbs, metas, palettes):
-    #     f = plot_cls_fig_sub_line(db=db, meta=meta['cls-avg'], figspec=figspec_x, subspec=subspec_x, linspec=linspec_x,
-    #                               xaxspec=xaxspec_x, figs=f,
-    #                               palette_name=palette)
-    # save_figure(f)
-    # f = None
-    # for db, meta, palette in zip(dbs, metas, palettes):
-    #     f = plot_cls_fig_sub_line(db=db, meta=meta['cls-avg'], figspec=figspec_x, subspec=subspec_x, linspec=['L'],
-    #                               xaxspec=['u'], figs=f,
-    #                               palette_name=palette)
-    # save_figure(f)
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_cls_fig_sub_line(db=db, meta=meta['cls-avg'], figspec=figspec_x, subspec=subspec_x, linspec=linspec_x,
+                                  xaxspec=xaxspec_x, figs=f,
+                                  palette_name=palette)
+    save_figure(f)
+    f = None
+    for db, meta, palette in zip(dbs, metas, palettes):
+        f = plot_cls_fig_sub_line(db=db, meta=meta['cls-avg'], figspec=figspec_x, subspec=subspec_x, linspec=['L'],
+                                  xaxspec=['u'], figs=f,
+                                  palette_name=palette)
+    save_figure(f)
 
     plt.show()
     exit(0)

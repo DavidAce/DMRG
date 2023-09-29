@@ -118,7 +118,7 @@ def plot_v3_cls_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, al
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
         f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                             '-'.join(map(str, figvals)),
                                                             '-'.join(map(str, get_keys(db, subspec))),

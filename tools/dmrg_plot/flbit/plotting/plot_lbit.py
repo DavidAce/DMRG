@@ -10,14 +10,16 @@ logger = logging.getLogger('plot-lbit')
 
 
 def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None, figs=None,
-                                 palette_name=None):
+                                 palette_name=None,dbidx=0,dbnum=1):
     if db['version'] != 3:
         raise ValueError("plot_v3_lbit_fig3_sub3_line1 requires db version 3")
+    path_effects = [pe.SimpleLineShadow(offset=(-0.35, -0.35), alpha=0.4), pe.Normal()]
+    path_effects_dashed = [pe.SimpleLineShadow(offset=(-0.1, -0.1), alpha=0.1), pe.Normal()]
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
-    path_effects = [pe.SimpleLineShadow(offset=(-0.5, -0.5), alpha=0.3), pe.Normal()]
-    path_effects_dashed = [pe.SimpleLineShadow(offset=(-0.1, -0.1), alpha=0.1), pe.Normal()]
-    prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
+        if 'slack' in meta['mplstyle']:
+            path_effects = [pe.SimpleLineShadow(offset=(-0.5, -0.5), alpha=0.3), pe.Normal()]
+            path_effects_dashed = [pe.SimpleLineShadow(offset=(-0.1, -0.1), alpha=0.1), pe.Normal()]
 
     legend_col_keys = [l for l in linspec if l in meta['legendcols']]
     if legendcols := meta['legendcols']:
@@ -41,6 +43,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name, meta.get('filter'))
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting linkeys: {}'.format(linvals))
+                print('--- plotting linkeys: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
                                             vals=figvals + subvals + linvals)
                 if len(datanodes) != 1:
@@ -54,8 +57,8 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     dbval = db['dsets'][datanode.name]
                     if dbval['vals']['f'] == 0.3:
                         continue
-                    if dbval['vals']['L'] != 20:
-                        continue
+                    # if dbval['vals']['L'] != 20:
+                    #     continue
 
                     ndata = dbval['vals']['num']
                     Ldata = dbval['vals']['L']
@@ -74,8 +77,13 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                     for i, (y, e) in enumerate(zip(lbavg.full.T, lbavg.stdv.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
                         with np.errstate(divide='ignore'):
-                            ymask = np.ma.masked_invalid(np.log10(np.abs(y)))
-                            line, = ax.plot(xdata, ymask, marker=None, color=color, path_effects=path_effects, zorder=1)
+                            if 'lbit-axis' in meta and meta.get('lbit-axis') == 'log10':
+                                ymask = np.ma.masked_invalid(np.log10(np.abs(y)))
+                            else:
+                                ymask = np.ma.masked_invalid((np.abs(y)))
+
+                        line, = ax.plot(xdata, ymask, marker=None, color=color, path_effects=path_effects, zorder=1)
+
                         # ax.scatter(xdata[0], np.log10(y[0]), marker='x', color=color, path_effects=path_effects)
                         if meta.get('fit-mark') == True:
                             idxN = len(y) - 1
@@ -83,15 +91,19 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                 yless = ymask < fit_ymin
                                 if np.any(yless):
                                     idxN = np.argmax(yless)
-                            ax.scatter(xdata[0], np.log10(ymask[0]), marker='o', color=color,
+                            ax.scatter(xdata[0], ymask[0], marker='o', color=color,
                                        path_effects=path_effects,
                                        zorder=2)
-                            ax.scatter(xdata[idxN], np.log10(ymask[idxN]), marker='o', color=color,
+                            ax.scatter(xdata[idxN], ymask[idxN], marker='o', color=color,
                                        path_effects=path_effects,
                                        zorder=2)
                         for ifit, fit in enumerate(yfits):
                             if meta.get('fit-plot') == True:
-                                ax.plot(xdata, np.log10(fit.yfit), linewidth=0.4, marker=None,
+                                if meta['lbit-axis'] == 'log10':
+                                    yfitmask = np.ma.masked_invalid(np.log10(np.abs(fit.yfit)))
+                                else:
+                                    yfitmask = np.ma.masked_invalid((np.abs(fit.yfit)))
+                                ax.plot(xdata, yfitmask, linewidth=0.4, marker=None,
                                         linestyle='dashed', color=color, path_effects=path_effects_dashed, zorder=0)
                             if i == 0:
                                 if 'legendfits' in meta and not 'pos' in meta['legendfits'] and ifit > 0:
@@ -262,7 +274,7 @@ def plot_v2_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
 
 
 def plot_lbit_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None, figs=None,
-                           palette_name=None):
+                           palette_name=None,dbidx=0,dbnum=1):
     if db['version'] == 2:
         specs = figspec + subspec + linspec
         is_v3spec = lambda x: x in ['cstd', 'tstd', 'tgw8', 'cgw8']

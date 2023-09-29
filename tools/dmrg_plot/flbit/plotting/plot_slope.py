@@ -381,16 +381,15 @@ def plot_v2_slope_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, 
                              )
 
             ax.set_xlabel("$t$")
-            if meta.get('timeloglevel'):
-                if meta['timeloglevel'] == 1:
-                    ax.set_xscale('log')
-                    ymin = None
-                    ymax = None
-                    if ix is not None:
-                        ix.set_xscale('log')
+            if meta.get('timeselection') == 'lnt':
+                ax.set_xscale('log')
+                ymin = None
+                ymax = None
+                if ix is not None:
+                    ix.set_xscale('log')
 
-                if meta['timeloglevel'] == 2:
-                    ax.set_xlabel("$\ln\ln t$")
+            elif meta.get('timeselection') == 'lnlnt':
+                ax.set_xlabel("$\ln\ln t$")
 
             if meta.get('zoomloglogwindow') and ix is not None:
                 x1, x2, y1, y2 = meta['zoomloglogwindow']['coords']  # sub region of the original image
@@ -401,7 +400,7 @@ def plot_v2_slope_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, 
                 ix.tick_params(axis='both', which='both', labelsize='x-small')
                 # ix.xaxis.set_major_locator(plt.MaxNLocator(5))
                 ix.xaxis.set_major_locator(plt.LogLocator(base=10, numticks=6))
-                if 'timeloglevel' in meta and meta['timeloglevel'] == 2:
+                if meta.get('timeselection') == 'lnlnt':
                     ix.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
                     ix.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
@@ -427,7 +426,7 @@ def plot_v2_slope_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
         f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                             '-'.join(map(str, figkeys)),
                                                             '-'.join(map(str, get_keys(db, subspec))),

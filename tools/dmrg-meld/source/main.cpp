@@ -144,6 +144,8 @@ int main(int argc, char *argv[]) {
     // Now generate the target dir if none was given
     if(tgt_dir.empty() and src_sims.size() == 1) {
         tgt_dir = h5pp::fs::absolute(src_sims.front() / "analysis/data");
+    } else if(tgt_dir.is_relative() and src_sims.size() == 1) {
+        tgt_dir = h5pp::fs::absolute(src_sims.front() / tgt_dir);
     } else if(src_sims.size() > 1)
         throw std::runtime_error("src_sims > 1 and no tgt_dir was given. Can't deduce where to put the target file.");
     if(tgt_dir.empty()) throw std::runtime_error("A target directory is required. Pass --tgtdir=<dir>");
@@ -262,27 +264,23 @@ int main(int argc, char *argv[]) {
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
 
                 // Last argument is the axis along which to build the time series
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_fit", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_rms", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_rsq", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_typ_fit", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_typ_rms", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_typ_rsq", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrtyp", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corravg", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "correrr", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3, SlabSelect::MIDCOL));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_fit", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_rms", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_rsq", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_typ_fit", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_typ_rms", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_typ_rsq", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrtyp", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corravg", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "correrr", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrmat", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corroff", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corroff", Size::FIX, 0));
 
-
-
-
-
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 0));
-//                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data_shifted", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data", Size::FIX, 0));
+                //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "data_shifted", Size::FIX, 0));
 
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished", "schmidt_midchain", Size::VAR, Type::COMPLEX));
                 //            keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "finished/profiling", "fLBIT.run", Size::FIX, Type::TID));
@@ -372,8 +370,10 @@ int main(int argc, char *argv[]) {
                 if(not file.is_regular_file()) continue;
                 if(file.path().extension() != ".h5") continue;
                 if(file.path().stem().string().find(src_match) == std::string::npos) continue;
-                bool include = incfilter.empty() or std::all_of(incfilter.begin(), incfilter.end(), [&file](const auto &s) { return file.path().string().find(s) != std::string::npos; });
-                bool exclude = excfilter.empty() or std::any_of(excfilter.begin(), excfilter.end(), [&file](const auto &s) { return file.path().string().find(s) != std::string::npos; });
+                bool include = incfilter.empty() or std::all_of(incfilter.begin(), incfilter.end(),
+                                                                [&file](const auto &s) { return file.path().string().find(s) != std::string::npos; });
+                bool exclude =
+                    std::any_of(excfilter.begin(), excfilter.end(), [&file](const auto &s) { return file.path().string().find(s) != std::string::npos; });
                 if(exclude or not include) continue;
                 h5files.emplace_back(file);
             }
@@ -403,7 +403,7 @@ int main(int argc, char *argv[]) {
 
                 bool stats_exists = file_stats.find(src_par) != file_stats.end();
                 if(not stats_exists) {
-                    // Creeate new entry
+                    // Create new entry
                     file_stats[src_par].count = 0;
                     file_stats[src_par].files = h5files.size();
                 } else if(max_files > 0 and file_stats[src_par].count >= max_files) {
@@ -418,7 +418,7 @@ int main(int argc, char *argv[]) {
                 auto src_hash = tools::hash::hash_file_meta(src_abs);
                 auto src_seed = tools::parse::extract_digits_from_h5_filename<long>(src_rel.filename());
                 if(src_seed != std::clamp<long>(src_seed, seed_min, seed_max)) {
-//                    tools::logger::log->warn("Skipping seed {}: Valid are [{}-{}]", src_seed, seed_min, seed_max);
+                    //                    tools::logger::log->warn("Skipping seed {}: Valid are [{}-{}]", src_seed, seed_min, seed_max);
                     continue;
                 }
 
@@ -482,6 +482,10 @@ int main(int argc, char *argv[]) {
                         auto root = path.has_parent_path() ? path.parent_path().string() : "/";
                         if(h5_src.findLinks(name, root).empty()) throw except::load_error("missing required dataset: [{}]", req);
                     }
+                    // TODO: REMOVE THIS CHECK
+                    //                    auto model_size = h5_src.readAttribute<size_t>("/fLBIT/model/hamiltonian", "model_size");
+                    //                    auto bond_lim   = h5_src.readAttribute<long>("/fLBIT/state_real/status", "bond_max");
+                    //                    if(model_size >= 28 and bond_lim != 2048) { throw except::load_error("bond_max != 2048"); }
                 } catch(const std::exception &ex) {
                     tools::logger::log->warn("skipped file: {}: [{}]", ex.what(), src_abs.string());
                     tools::h5io::saveFailedJob(h5_src, "invalid source file", ex);

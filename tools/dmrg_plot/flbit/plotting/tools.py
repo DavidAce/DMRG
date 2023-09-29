@@ -1,5 +1,4 @@
 import os
-
 import matplotlib.pyplot
 import numpy as np
 from numba import njit
@@ -216,7 +215,7 @@ def find_saturation_idx(ydata, std_threshold):
 class stretchedFit:
     def __init__(self):
         pass
-    pos : np.int = -1
+    pos : int = -1
     # @njit(parallel=True, cache=True)
     def stretched_exp(self, x, C, xi, beta):
         return C * np.exp(-(np.abs(x-self.pos) / xi) ** beta)
@@ -275,10 +274,10 @@ class lbit_fit:
     C: np.float64 = np.nan
     xi: np.float64 = np.nan
     beta: np.float64 = np.nan
-    pos : np.int = -1
+    pos : int = -1
     yfit: np.ndarray = np.empty(shape=(0))
     xierr: np.float64 = np.nan
-    idxN: np.int = -1
+    idxN: int = -1
 
 
 def get_lbit_fit(x, y, beta=None, ymin=None, skip=None):
@@ -290,7 +289,7 @@ def get_lbit_fit(x, y, beta=None, ymin=None, skip=None):
         skip = 2
 
     if np.size(y) <= skip + 2:
-        print('get_lbit_cls: y is too short (skip={}):{}'.format(skip, y))
+        print('get_lbit_fit: y is too short (skip={}):{}'.format(skip, y))
         return lbit_fit()
     ydata = np.ndarray.flatten(y)
     xdata = np.ndarray.flatten(x)
@@ -354,9 +353,12 @@ def get_lbit_fit_data(x, y, e=None, ymin=None, beta=None):
     try:
         with np.errstate(invalid='ignore'):
             ymask = np.ma.masked_where(np.abs(y) <= ymin, np.abs(y))
-            emask = np.ma.masked_where(np.ma.getmask(ymask), e)
+            emask = None
+            elogs = None
+            if e is not None:
+                emask = np.ma.masked_where(np.ma.getmask(ymask), e)
+                elogs = np.ndarray.flatten(np.abs(np.log(emask.compressed())))
             ylogs = np.ndarray.flatten(np.log(ymask.compressed()))
-            elogs = np.ndarray.flatten(np.abs(np.log(emask.compressed())))
             xtile = np.atleast_2d(x).T if np.size(y) == np.shape(y)[0] else np.tile(x, (np.shape(y)[0], 1))
             xflat = np.ndarray.flatten(np.ma.masked_where(np.ma.getmask(ymask), xtile).compressed())
             if beta:
@@ -538,6 +540,25 @@ def find_saturation_idx2(ydata, threshold=1e-2):
     return idx
 
 
+def find_saturation_idx4(ydata,idx_sat):
+    # sdata has to be a numpy array of dimension 2
+    # the result will be a 1d array with the saturation index of each column
+    if len(np.shape(ydata)) != 2:
+        raise "sdata must be 2d matrix (time, realization), eg (200 x 80000)"
+    idx = []
+    avgs = np.mean(ydata[idx_sat:,:], axis=0)
+    for col, avg in zip(ydata.T, avgs):
+        # for i in range(len(col)):
+        #     if np.mean(col[i:]) >= avg:
+        #         idx.append(i)
+        #         break
+        idx.append(np.argwhere(np.asarray(col) > avg)[0, 0])
+
+
+    return idx, avgs
+
+
+
 def find_loglog_window(tdata, ydata, J2_width, J2_ctof, threshold1=0.6, threshold2=1e-2):
     if len(ydata) <= 2:
         return
@@ -588,9 +609,9 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     tmin1 = 1.0 / J1max
     tmax1 = 1.0 / J1min
 
-    r2max = np.float64(np.min([r, L//2]))  # Maximum interaction range, max(|i-j|)
-    Jmin2 = w2 * np.exp(- r2max / (2.0 * x))  # Size of the smallest 2-body terms (furthest neighbor, up to L/2)
-    Jmax2 = w2 * np.exp(- 1.0 / x)  # Size of the largest 2-body terms (nearest neighbor)
+    r2max = np.float64(np.min([r, L]))  # Maximum interaction range, max(|i-j|)
+    Jmin2 = w2 * np.exp(- r2max / (4.0 * x)) * np.sqrt(2.0 / np.pi)  # Size of the smallest 2-body terms (furthest neighbor, up to L/2)
+    Jmax2 = w2 * np.exp(- 1.0 / x)           * np.sqrt(2.0 / np.pi)  # Size of the largest 2-body terms (nearest neighbor)
     tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
     tmin2 = 1.0 / Jmax2  # Time that it takes for neighbors to interact
 
@@ -615,10 +636,81 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
     # print(tdata[idx1], tdata[idx2])
     if idx2 == len(tdata) - 1:
         idx2 = np.max([idx1, idx2 - 1])
+
     return idx1, idx2
 
+# def find_saturation_idx3(tdata, db):
+#     if len(tdata) == 1:
+#         return 0, 0
+#     L = db['vals']['L']
+#     r = db['vals']['r']
+#     x = db['vals']['x']
+#     wn = db['vals']['w']
+#
+#     w1 = wn[0]  # The width of distribution for on-site field.
+#     w2 = wn[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
+#     w3 = wn[2]  # The width of distribution for three-body interactions.
+#
+#     if r == np.iinfo(np.uint64).max or r == 'L':
+#         r = L
+#
+#     r2max = np.float64(np.min([r, L]))  # Number of sites from the center site to the edge site, max(|i-j|)/2
+#     N = np.sqrt(2.0 / np.pi) # Factor coming from folded normal distribution
+#
+#
+#
+#     # We can subtract one here because max (|i-j|) = L-1
+#     Jmin2_ent = np.exp(- (r2max) / x) * w2 * N  # order of magnitude of
+#     # We should not subtract 1 from r2max here, because we are counting sites from the edge to one passed the central bond
+#     Jmax2_ent = np.exp(-1.0 / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
+#
+#     tmin1_ent = 1.0 / w1
+#     tmax1_ent = 1.0 / w1
+#     tmin2_ent = 1.0 / Jmax2_ent
+#     tmax2_ent = 1.0 / Jmin2_ent  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
+#     tmin3_ent = 1.0 / w3
+#     tmax3_ent = 1.0 / w3
+#
+#     tmin_ent = np.min([tmin1_ent, tmin2_ent, tmin3_ent])
+#     tmax_ent = np.max([tmax1_ent, tmax2_ent, tmax3_ent])
+#     idx_ent_sat = np.where(tdata <= tmax_ent)[0][-1]
+#     idx_ent_sat = np.max([idx_ent_sat, 0])  # Make sure its non-negative
+#
+#
+#     # Now for the number entropy
+#     tmin1_num = 1.0 / w1
+#     tmax1_num = 1.0 / w1
+#     tmax2_num = 1.0/(np.exp(-(r2max/2.0) / x) * w2 * N) # Time before an exchange happens between the edge and one past the center from the central bond hits the edge
+#     tmid2_num = 1.0/(np.exp(-(r2max/4.0) / x) * w2 * N) # Time before entanglement from the central bond hits the edge
+#     tmin2_num = 1.0/(np.exp(-(1.0/2.0) / x) * w2 * N) # Time before entanglement from the central bond hits the edge
+#     tmin3_num = 1.0 / w3
+#     tmax3_num = 1.0 / w3
+#
+#     tmin_num = np.min([tmin1_num, tmin2_num, tmin3_num])
+#     tmid_num = tmid2_num
+#     tmax_num = np.max([tmax1_num, tmax2_num, tmax3_num])
+#     idx_num_sat = np.where(tdata <= tmax_num)[0][-1]
+#     idx_num_sat = np.max([idx_num_sat, 0])  # Make sure its non-negative
+#
+#     return idx_num_sat,idx_ent_sat
 
-def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
+@dataclass
+class timepoints:
+    time_ent_lnt_begin: np.float64 = np.nan
+    time_ent_lnt_cease: np.float64 = np.nan
+    time_ent_saturated: np.float64 = np.nan
+    time_num_lnlnt_begin: np.float64 = np.nan
+    time_num_lnlnt_cease: np.float64 = np.nan
+    time_num_saturated: np.float64 = np.nan
+    idx_ent_lnt_begin: int = 0
+    idx_ent_lnt_cease: int = 0
+    idx_ent_saturated: int = 0
+    idx_num_lnlnt_begin: int = 0
+    idx_num_lnlnt_cease: int = 0
+    idx_num_saturated: int = 0
+
+
+def get_timepoints(tdata, db):
     if len(tdata) == 1:
         return 0, 0
     L = db['vals']['L']
@@ -633,32 +725,76 @@ def find_saturation_idx3(tdata, ydata, db, threshold2=1e-2):
     if r == np.iinfo(np.uint64).max or r == 'L':
         r = L
 
-    tmax1 = 1.0 / w1
-
     r2max = np.float64(np.min([r, L]))  # Number of sites from the center site to the edge site, max(|i-j|)/2
-    Jmin2 = np.exp(-(r2max * 4.0/5.0) / x) * w2 * np.sqrt(2.0 / np.pi)  # order of magnitude of
-    Jmax2 = np.exp(-1.0 / x) * w2  # Order of magnitude of the largest 2-body terms (nearest neighbor)
-    tmax2 = 1.0 / Jmin2  # (0.5 to improve fits) Time that it takes for the most remote site to interact with the middle
+    N = np.sqrt(2.0 / np.pi) # Factor coming from folded normal distribution
 
-    tmax3 = 1.0 / w3
+    t = timepoints()
+    w1 = 1.0 if w1 == 0.0 else w1
+    w2 = 1.0 if w2 == 0.0 else w2
+    w3 = 1.0 if w3 == 0.0 else w3
 
-    tmax = np.max([tmax1, tmax2, tmax3])
-    idx = np.where(tdata <= tmax)[0][-1]
-    idx = np.min([idx, len(tdata) - 10])  # Retain at least 10 points
-    idx = np.max([idx, 0])  # Make sure its non-negative
-    return idx
+    tmin1_ent = 1.0 / (w1*np.exp(0 / x))
+    tmax1_ent = 1.0 / (w1*np.exp(0 / x))
+    tmin2_ent = 1.0 / (w2*np.exp(-1.0 / x))
+    tmid2_ent = 1.0 / (w2*np.exp(- (r2max / 2)  / x) * N)
+    tmax2_ent = 1.0 / (w2*np.exp(- (r2max - 1 ) / x) * N)
+    tmin3_ent = 1.0 / (w3*np.exp(-2.0 / x))
+    tmax3_ent = 1.0 / (w3*np.exp(-2.0 / x))
+
+    t.time_ent_lnt_begin = np.max([tmin1_ent, tmin2_ent, tmin3_ent])
+    t.time_ent_lnt_cease = tmid2_ent
+    t.time_ent_saturated = np.max([tmax1_ent, tmax2_ent, tmax3_ent])
+
+    t.idx_ent_lnt_begin = np.argmax(tdata.astype(float) >= t.time_ent_lnt_begin) -1
+    t.idx_ent_lnt_cease = np.argmax(tdata.astype(float) >= t.time_ent_lnt_cease) -1
+    t.idx_ent_saturated = np.argmax(tdata.astype(float) >= t.time_ent_saturated) -1
+
+    t.idx_ent_lnt_begin = np.max([t.idx_ent_lnt_begin, 0])  # Make sure its non-negative
+    t.idx_ent_lnt_cease = np.max([t.idx_ent_lnt_cease, 0])  # Make sure its non-negative
+    t.idx_ent_saturated = np.max([t.idx_ent_saturated, 0])  # Make sure its non-negative
+
+    # Now for the number entropy
+    tmin1_num = 1.0 / (w1*np.exp(0 / x))
+    tmax1_num = 1.0 / (w1*np.exp(0 / x))
+    tmin2_num = 1.0 / (w2*np.exp(- (1.0   / 2) / x) * N)
+    tmid2_num = 1.0 / (w2*np.exp(- (r2max / 4) / x) * N)
+    tmax2_num = 1.0 / (w2*np.exp(- (r2max / 2) / x) * N)
+    tmin3_num = 1.0 / (w3*np.exp(- (2.0   / 1) / x))
+    tmax3_num = 1.0 / (w3*np.exp(- (2.0   / 1) / x))
+
+    # tmin1_num = 1.0 / w1
+    # tmax1_num = 1.0 / w1
+    # tmax2_num = 1.0/(np.exp(-(r2max/2.0) / x) * w2 * N) # Time before an exchange happens between the edge and one past the center from the central bond hits the edge
+    # tmid2_num = 1.0/(np.exp(-(r2max/4.0) / x) * w2 * N) # Time before entanglement from the central bond hits the edge
+    # tmin2_num = 1.0/(np.exp(-(1.0  /2.0) / x) * w2 * N) # Time before entanglement from the central bond hits the edge
+    # tmin3_num = 1.0 / w3
+    # tmax3_num = 1.0 / w3
+
+    t.time_num_lnlnt_begin = np.max([tmin1_num, tmin2_num, tmin3_num])
+    t.time_num_lnlnt_cease = tmid2_num
+    t.time_num_saturated = np.max([tmax1_num, tmax2_num, tmax3_num])
+    t.idx_num_lnlnt_begin = np.argmax(tdata.astype(float) >= t.time_num_lnlnt_begin) - 1
+    t.idx_num_lnlnt_cease = np.argmax(tdata.astype(float) >= t.time_num_lnlnt_cease) - 1
+    t.idx_num_saturated = np.argmax(tdata.astype(float) >= t.time_num_saturated) - 1
+    # t.idx_num_lnlnt_begin = np.max([t.idx_num_lnlnt_begin, 0])  # Make sure its non-negative
+    # t.idx_num_lnlnt_cease = np.max([t.idx_num_lnlnt_cease, 0])  # Make sure its non-negative
+    # t.idx_num_saturated   = np.max([t.idx_num_saturated, 0])  # Make sure its non-negative
+
+    return t
 
 
 def midchain_page_entropy(L):
     return L/2 * np.log(2) - 0.5
 
-@njit(parallel=True, cache=True)
+# @njit(parallel=True, cache=True)
 def page_entropy(L):
-    n = int(2 ** (L / 2))
-    S = - float(n - 1) / (2 * n)
-    for k in prange(1 + n, 1 + n ** 2):  # Include last
-        S = S + 1.0 / k
-    return S
+    return L / 2 * np.log(2) - 0.5
+#
+#    n = int(2 ** (L / 2))
+#    S = - float(n - 1) / (2 * n)
+#    for k in prange(1 + n, 1 + n ** 2):  # Include last
+#        S = S + 1.0 / k
+#    return S
 
 
 def get_filtered_list(key, vals, filter):
@@ -797,6 +933,8 @@ def get_legend_row(db, datanode, legend_col_keys):
     for idx, key in enumerate(legend_col_keys):
         key, fmt = key.split(':') if ':' in key else [key, '']
         sfx = 'm' if 'time' in key or 'tsim' in key else ''
+        if '?' in fmt:
+            continue
         if key in dbval['vals'] and fmt:
             legendrow[idx] = '{0:{1}}{2}'.format(dbval['vals'][key], fmt, sfx)
         elif key in dbval['tex']['vals']:
@@ -807,6 +945,7 @@ def get_legend_row(db, datanode, legend_col_keys):
             print(legendrow)
             print(dbval['tex'])
             raise
+    legendrow = [key for key in legendrow if key is not None]
     return legendrow
 
 
@@ -820,6 +959,8 @@ def get_fig_meta(numplots: int, meta: dict):
         'nrows': None,
         'ncols': None,
         'figsize': meta.get('figsize'),
+        'figcount': 0, # How many times we have used this fig to plot something
+        'frameon' : meta.get('frameon'),
         'box_aspect': meta.get('box_aspect', meta.get('default').get('box_aspect')),
         'crows': 1,  # Common row put at the bottom of all subplots
         'ccols': 1,  # Common col put at the right of all subplots
@@ -830,8 +971,8 @@ def get_fig_meta(numplots: int, meta: dict):
         'ohr': None,
         'iwr': [10000, 1],  # Width ratio between plot and right legend
         'ihr': [10000, 1],  # Height ratio between plot and bottom legend
-        'owr_pad': meta.get('owr_pad') if 'owr_pad' in meta else 1.00,
-        'ohr_pad': meta.get('ohr_pad') if 'ohr_pad' in meta else 1.00,
+        'owr_pad': meta.get('owr_pad') if 'owr_pad' in meta else 1.00,#1.00,
+        'ohr_pad': meta.get('ohr_pad') if 'ohr_pad' in meta else 1.00,#1.00,
 
         'go': None,  # Outer gridspec
         'gi': [],  # Inner gridspec
@@ -864,6 +1005,8 @@ def get_fig_meta(numplots: int, meta: dict):
         'yformat': meta.get('yformat'),
         'xticks': meta.get('xticks'),
         'yticks': meta.get('yticks'),
+        'xticklabels': meta.get('xticklabels'),
+        'yticklabels': meta.get('yticklabels'),
         'xlabel': meta.get('xlabel'),
         'ylabel': meta.get('ylabel'),
         'ylabel_inner_visible' : meta.get('ylabel_inner_visible'),
@@ -872,16 +1015,30 @@ def get_fig_meta(numplots: int, meta: dict):
         'axes_used': [],
         'legends': [],
         'legendshow': meta.get('legendshow'),
+        'legendshow2': meta.get('legendshow2'),
         'legendoutside': get_default(meta, 'legendoutside'),
         'legendcollect': get_default(meta, 'legendcollect'),
         'legendlocation': meta.get('legendlocation'),
+        'legend2location': meta.get('legend2location'),
         'legendtitle': meta.get('legendtitle'),
+        'legendtitle2': meta.get('legendtitle2'),
+        'bbox_to_anchor': meta.get('bbox_to_anchor'),
+        'bbox_to_anchor2': meta.get('bbox_to_anchor2'),
         'figlegend': meta.get('figlegend'),
     }
     logger.info('Generated f dict: \n {}'.format(f))
     # Initialize a figure. The size is taken from the stylesheet
     # constrained_layout will make sure to add objects to fill the area
     f['fig'] = plt.figure(constrained_layout=f.get('constrained_layout'), figsize=f.get('figsize'))
+    if s := meta.get('subplots'):
+        plt.subplots_adjust(
+            left=s.get('left'),
+            bottom=s.get('bottom'),
+            right=s.get('right'),
+            top=s.get('top'),
+            wspace=s.get('wspace'),
+            hspace=s.get('hspace')
+        )
     # Set padding between subplots
     # w_pad: Width padding in inches.
     #        This is the pad around Axes and is meant to make sure there is enough room for fonts to look good.
@@ -975,36 +1132,39 @@ def get_fig_meta(numplots: int, meta: dict):
         if f['xmin'] is not None:
             f['ax'][-1].set_xlim(xmin=f['xmin'])
 
-        if xticks := f.get('xticks'):
-            f['ax'][-1].set_xticks(xticks)
-        if yticks := f.get('yticks'):
-            f['ax'][-1].set_yticks(yticks)
-        if xlabel := f.get('xlabel'):
-            f['ax'][-1].set_xlabel(xlabel)
-        if ylabel := f.get('ylabel'):
-            f['ax'][-1].set_ylabel(ylabel)
+        if f.get('xticks') is not None:
+            f['ax'][-1].set_xticks(f.get('xticks'))
+        if f.get('xticklabels') is not None:
+            f['ax'][-1].set_xticklabels(f.get('xticklabels'))
+        if f.get('yticks') is not None:
+            f['ax'][-1].set_yticks(f.get('yticks'))
+        if f.get('yticklabels') is not None:
+            f['ax'][-1].set_yticklabels(f.get('yticklabels'))
+        if f.get('xlabel') is not None:
+            f['ax'][-1].set_xlabel(f.get('xlabel'))
+        if f.get('ylabel') is not None:
+            f['ax'][-1].set_ylabel(f.get('ylabel'))
+        if yformat := f.get('yformat'):
+            f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(yformat))
+        if xformat := f.get('xformat'):
+            f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(xformat))
+        if ymafmt := f.get('ymafmt'):
+            f['ax'][-1].yaxis.set_major_formatter(ymafmt)
+        if xmafmt := f.get('xmafmt'):
+            f['ax'][-1].xaxis.set_major_formatter(xmafmt)
+        if ymifmt := f.get('ymifmt'):
+            f['ax'][-1].yaxis.set_minor_formatter(ymifmt)
+        if xmifmt := f.get('xmifmt'):
+            f['ax'][-1].xaxis.set_minor_formatter(xmifmt)
 
-        # if yformat := f.get('yformat'):
-        #     f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(yformat))
-        # if xformat := f.get('xformat'):
-        #     f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(xformat))
-        # if ymafmt := f.get('ymafmt'):
-        #     f['ax'][-1].yaxis.set_major_formatter(ymafmt)
-        # if xmafmt := f.get('xmafmt'):
-        #     f['ax'][-1].xaxis.set_major_formatter(xmafmt)
-        # if ymifmt := f.get('ymifmt'):
-        #     f['ax'][-1].yaxis.set_minor_formatter(ymifmt)
-        # if xmifmt := f.get('xmifmt'):
-        #     f['ax'][-1].xaxis.set_minor_formatter(xmifmt)
-        #
-        # if ymaloc := f.get('ymaloc'):
-        #     f['ax'][-1].yaxis.set_major_locator(ymaloc)
-        # if xmaloc := f.get('xmaloc'):
-        #     f['ax'][-1].xaxis.set_major_locator(xmaloc)
-        # if ymiloc := f.get('ymiloc'):
-        #     f['ax'][-1].yaxis.set_minor_locator(ymiloc)
-        # if xmiloc := f.get('xmiloc'):
-        #     f['ax'][-1].xaxis.set_minor_locator(xmiloc)
+        if ymaloc := f.get('ymaloc'):
+            f['ax'][-1].yaxis.set_major_locator(ymaloc)
+        if xmaloc := f.get('xmaloc'):
+            f['ax'][-1].xaxis.set_major_locator(xmaloc)
+        if ymiloc := f.get('ymiloc'):
+            f['ax'][-1].yaxis.set_minor_locator(ymiloc)
+        if xmiloc := f.get('xmiloc'):
+            f['ax'][-1].xaxis.set_minor_locator(xmiloc)
 
         is_last_row = ir + 1 == f['nrows']
         is_first_col = ic == 0
@@ -1021,10 +1181,15 @@ def get_fig_meta(numplots: int, meta: dict):
 
         if ytp := f.get('ytickparams'):
             if not is_first_col:
-                f['ax'][-1].tick_params(axis=ytp.get('axis'),direction=ytp.get('direction'), pad=ytp.get('pad'))
+                f['ax'][-1].set_ylabel('')
+                f['ax'][-1].tick_params(axis='y',direction=ytp.get('direction'), pad=ytp.get('pad'))
+                if ytp.get('tick_right'):
+                    f['ax'][-1].yaxis.tick_right()
+                    f['ax'][-1].yaxis.set_ticks_position('both')
         if xtp := f.get('xtickparams'):
             if not is_last_row:
-                f['ax'][-1].tick_params(axis=xtp.get('axis'),direction=xtp.get('direction'), pad=xtp.get('pad'))
+                f['ax'][-1].set_xlabel('')
+                f['ax'][-1].tick_params(axis='x',direction=xtp.get('direction'), pad=xtp.get('pad'))
 
 
     # Set title
@@ -1039,6 +1204,13 @@ def get_fig_meta(numplots: int, meta: dict):
         f['legends'][i] = {}
         for j in range(10):
             f['legends'][i][j] = deepcopy(legend)  # i  for ax, j for legend column
+    f['legends2'] = {}
+    for i, ax in enumerate(f['ax']):
+        # We should probably never need more than 10 legend columns per ax
+        f['legends2'][i] = {}
+        for j in range(10):
+            f['legends2'][i][j] = deepcopy(legend)  # i  for ax, j for legend column
+
 
     # m1_legend: {'handle': [], 'label': [], 'ncol': 1, 'unique': True, 'loc': 'upper left', 'insubfig': False,
     #           'title': ["$t_{}$".format('{\ln\ln}')]},
@@ -1136,10 +1308,24 @@ def columns_are_equal(fmeta):
             all(fmeta['legends'][0][icol]['label'] == fmeta['legends'][iax][icol]['label'] for iax in range(numaxes)))
 
     return columns_equal
+def columns_are_equal2(fmeta):
+    # Gather all the labels for the different kinds of legend keys (e.g. "l", "m" type legends)
+    # This will contain True, True, False, True... etc for each column,
+    # where True/False tells whether this column is equal on all axes
+    numaxes = len(fmeta['legends2'].keys())
+    numcols = len(fmeta['legends2'][0].keys())
+    columns_equal = []
+    for icol in range(numcols):
+        l0 = fmeta['legends2'][0][icol]['label']
+        columns_equal.append(
+            all(fmeta['legends2'][0][icol]['label'] == fmeta['legends2'][iax][icol]['label'] for iax in range(numaxes)))
+
+    return columns_equal
+
 
 
 def add_legend5(fmeta):
-    if fmeta.get('legendshow') is False:
+    if fmeta.get('legendshow') is False and fmeta.get('legendshow2') is False:
         return fmeta
     # meta should be a dict with keys 'ax' with the corresponding axes and 'legends' which names the extra legends
     # for (oidx,gso),(nrow,ncol) in zip(enumerate(fmeta['gso']), np.ndindex((fmeta['nrows'], fmeta['ncols']))):
@@ -1149,26 +1335,39 @@ def add_legend5(fmeta):
     numaxes = len(fmeta['legends'].keys())
     numcols = len(fmeta['legends'][0].keys())
     columns_equal = columns_are_equal(fmeta)
+    columns_equal2 = columns_are_equal(fmeta)
     eqidx = [i for i, x in enumerate(columns_equal) if x is True]  # The indices of columns that are equal
     nqidx = [i for i, x in enumerate(columns_equal) if x is False]  # The indices of columns that are not equal
+    eqidx2 = [i for i, x in enumerate(columns_equal2) if x is True]  # The indices of columns that are equal
+    nqidx2 = [i for i, x in enumerate(columns_equal2) if x is False]  # The indices of columns that are not equal
+
     # Let's first treat the common columns that can be factored out
 
     outside = fmeta.get('legendoutside')  # Put legend inside or outside each subplot
     collect = fmeta.get('legendcollect')  # Collect equal columns into a single legend outside
     location = fmeta.get('legendlocation')
+    location2 = fmeta.get('legend2location')
     figlegend = fmeta.get('figlegend')
+    bbox_to_anchor=fmeta.get('bbox_to_anchor')
+    bbox_to_anchor2=fmeta.get('bbox_to_anchor2')
     legend_ax = 'lr' if outside else 'ax'
     legend_eq = 'lc' if collect else legend_ax
     legend_nq = legend_ax
-    legend_loc = rcParams['legend.loc'] if outside else (location if location is not None else 'best')
     loc_nq = 'center left' if outside else (location if location is not None else 'best')
+    loc2_nq = 'center left' if outside else (location2 if location2 is not None else 'best')
     loc_eq = 'center left' if collect else loc_nq
-    anchor = (0.0,0.5) if outside else None
+    loc2_eq = 'center left' if collect else loc2_nq
+    anchor = (0.0,0.5) if outside else bbox_to_anchor
+    anchor2 = (0.0,0.5) if outside else bbox_to_anchor2
 
     if legend_eq == legend_nq:
         # If legends all go together anyway, we may as well put them together again
         eqidx.extend(nqidx)
+        eqidx2.extend(nqidx2)
         nqidx = []
+        nqidx2 = []
+        eqidx.sort()
+        eqidx2.sort()
 
     iax_tgt = None
     if collect:
@@ -1184,50 +1383,119 @@ def add_legend5(fmeta):
                 ax.axis('off')
                 break
 
-    for iax in range(numaxes):
-        # Collect the columns
-        columns = []
-        handles = []
-        for icol in eqidx:
-            title = fmeta['legends'][iax][icol]['title']
-            label = fmeta['legends'][iax][icol]['label']
-            handle = fmeta['legends'][iax][icol]['handle']
-            if not title or not label or not handle:
+    lg = None
+    if not fmeta.get('legendshow') is False:
+        for iax in range(numaxes):
+            # Collect the columns
+            columns = []
+            handles = []
+            for icol in eqidx:
+                title = fmeta['legends'][iax][icol]['title']
+                label = fmeta['legends'][iax][icol]['label']
+                handle = fmeta['legends'][iax][icol]['handle']
+                if not title or not label or not handle:
+                    continue
+                columns.append([title] + label)
+                handles.extend(handle)
+
+                # Decide where to put it. ax, lr, lg or lc[0]/lc[1]
+            if not columns or not handles:
                 continue
-            columns.append([title] + label)
-            handles.extend(handle)
-            # Decide where to put it. ax, lr, lg or lc[0]/lc[1]
-        if not columns or not handles:
-            continue
 
-        # pick a point in the middle, make it invisible with alpha = 0, and move to back with zorder so that
-        # the legend entry appears in the beginning for instance with tikzplotlib
-        xmin, xmax = fmeta['ax'][iax].get_xlim()
-        ymin, ymax = fmeta['ax'][iax].get_ylim()
-        titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
-                                            zorder=0
-                                            )
-        formatted_labels = get_formatted_columns(columns)
-        legendtitle = fmeta.get('legendtitle')
-        if legendtitle is None:
-            legendtitle = fmeta['legends'][iax][0]['header']
+            # pick a point in the middle, make it invisible with alpha = 0, and move to back with zorder so that
+            # the legend entry appears in the beginning for instance with tikzplotlib
+            xmin, xmax = fmeta['ax'][iax].get_xlim()
+            ymin, ymax = fmeta['ax'][iax].get_ylim()
+            titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
+                                                zorder=0
+                                                )
+            formatted_labels = get_formatted_columns(columns)
+            legendtitle = fmeta.get('legendtitle')
+            if legendtitle is None:
+                legendtitle = fmeta['legends'][iax][0]['header']
+            if iax < len(loc_eq):
+                loc_eq_iax = loc_eq[iax] if isinstance(loc_eq, list) else loc_eq
+                anchor_iax = anchor[iax] if isinstance(anchor, list) else anchor
+            else:
+                loc_eq_iax = loc_eq[-1] if isinstance(loc_eq, list) else loc_eq
+                anchor_iax = anchor[-1] if isinstance(anchor, list) else anchor
 
-        if iax_tgt is not None:
-            iax = iax_tgt  # Put legends on common axis
-        if figlegend:
-            lg = fmeta['fig'].legend(handles=[titlepatch] + handles, labels=formatted_labels,
-                                              title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
-                                              loc=loc_eq,
-                                              prop=dict(stretch="ultra-condensed"))
-        else:
-            lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
-                                              title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
-                                              loc=loc_eq,
-                                              bbox_to_anchor=anchor,
-                                              prop=dict(stretch="ultra-condensed"))
-        lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
-        if collect:
-            break
+            if iax_tgt is not None:
+                iax = iax_tgt  # Put legends on common axis
+            if figlegend:
+                lg = fmeta['fig'].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                                  title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
+                                                  loc=loc_eq_iax,
+                                                  frameon=fmeta.get('frameon'),
+                                                  prop=dict(stretch="ultra-condensed"))
+            else:
+                lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                                  title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
+                                                  loc=loc_eq_iax,
+                                                  frameon=fmeta.get('frameon'),
+                                                  bbox_to_anchor=anchor_iax,
+                                                  prop=dict(stretch="ultra-condensed"))
+                numlegend2 = len(fmeta['legends2'][iax][0]['handle'])
+                if numlegend2 > 0:
+                    fmeta[legend_eq][iax].add_artist(lg)
+            lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
+            if collect:
+                break
+
+    # Legend2
+    if not fmeta.get('legendshow2') is False:
+        for iax in range(numaxes):
+            # Collect the columns
+            columns = []
+            handles = []
+            for icol in eqidx2:
+                title = fmeta['legends2'][iax][icol]['title']
+                label = fmeta['legends2'][iax][icol]['label']
+                handle = fmeta['legends2'][iax][icol]['handle']
+                if not title or not label or not handle:
+                    continue
+                columns.append([title] + label)
+                handles.extend(handle)
+
+                # Decide where to put it. ax, lr, lg or lc[0]/lc[1]
+            if not columns or not handles:
+                continue
+
+            # pick a point in the middle, make it invisible with alpha = 0, and move to back with zorder so that
+            # the legend entry appears in the beginning for instance with tikzplotlib
+            xmin, xmax = fmeta['ax'][iax].get_xlim()
+            ymin, ymax = fmeta['ax'][iax].get_ylim()
+            titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
+                                                zorder=0
+                                                )
+            formatted_labels = get_formatted_columns(columns)
+            legendtitle = fmeta.get('legend2title')
+            if legendtitle is None:
+                legendtitle = fmeta['legends2'][iax][0]['header']
+            loc_eq_iax = loc2_eq[iax] if isinstance(loc2_eq, list) else loc2_eq
+            anchor_iax = anchor2[iax] if isinstance(anchor2, list) else anchor2
+
+            if iax_tgt is not None:
+                iax = iax_tgt  # Put legends on common axis
+            if figlegend:
+                lg = fmeta['fig'].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                                  title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
+                                                  loc=loc_eq_iax,
+                                                  frameon=fmeta.get('frameon'),
+                                                  prop=dict(stretch="ultra-condensed"))
+            else:
+                lg = fmeta[legend_eq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
+                                                  title=legendtitle,  # title=fmeta['legends'][iax][0]['header'],
+                                                  loc=loc_eq_iax,
+                                                  frameon=fmeta.get('frameon'),
+                                                  bbox_to_anchor=anchor_iax,
+                                                  prop=dict(stretch="ultra-condensed"))
+
+                # fmeta[legend_eq][iax].add_artist(lg2)
+            lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
+            if collect:
+                break
+
 
     # Now treat the unequal columns. These should go into each subplot
     for iax in range(numaxes):
@@ -1251,8 +1519,9 @@ def add_legend5(fmeta):
         titlepatch, = fmeta['ax'][iax].plot([0.5 * (xmin + xmax)], [0.5 * (ymin + ymax)], label=None, alpha=0.0,
                                             zorder=0)
         formatted_labels = get_formatted_columns(columns)
+        loc_nq_iax = loc_nq[iax] if isinstance(loc_nq, list) else loc_nq
         lg = fmeta[legend_nq][iax].legend(handles=[titlepatch] + handles, labels=formatted_labels,
-                                          title=''.join(formatted_labels), loc=loc_nq,
+                                          title=''.join(formatted_labels), loc=loc_nq_iax,
                                           prop=dict(stretch="ultra-condensed"))
         lg._legend_box.align = "left"  # Align the legend title right (i.e. the title row)
 

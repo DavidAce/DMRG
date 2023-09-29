@@ -46,7 +46,7 @@
         "CMAKE_BUILD_WITH_INSTALL_RPATH": "FALSE",
         "CMAKE_INSTALL_RPATH_USE_LINK_PATH": "TRUE",
         "CMAKE_CUDA_FLAGS": "-Xcompiler -fdiagnostics-color=always --expt-relaxed-constexpr -Xcudafe --diag_suppress=esa_on_defaulted_function_ignored",
-        "CMAKE_CUDA_ARCHITECTURES": "75;80;86",
+        "CMAKE_CUDA_ARCHITECTURES": "70;75;80;86",
         "CMAKE_CUDA_SEPARABLE_COMPILATION": "TRUE",
         "CMAKE_CUDA_HOST_COMPILER": "g++-10"
       },

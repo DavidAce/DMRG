@@ -4,6 +4,7 @@
 enum class FileIdStatus { UPTODATE, STALE, MISSING };
 enum class Model { SDUAL, MAJORANA, LBIT };
 enum class StrictTableSize { TRUE, FALSE };
+enum class SlabSelect { FULL, MIDCOL };
 template<typename T>
 constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, FileIdStatus>) {
@@ -18,6 +19,10 @@ constexpr std::string_view enum2str(const T &item) {
     if constexpr(std::is_same_v<T, StrictTableSize>) {
         if(item == StrictTableSize::TRUE) return "TRUE";
         if(item == StrictTableSize::FALSE) return "FALSE";
+    }
+    if constexpr(std::is_same_v<T, SlabSelect>) {
+        if(item == SlabSelect::FULL) return "FULL";
+        if(item == SlabSelect::MIDCOL) return "MIDCOL";
     }
     throw std::runtime_error("Given invalid enum item");
 }
@@ -47,6 +52,10 @@ constexpr auto str2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, StrictTableSize>) {
         if(item == "TRUE") return StrictTableSize::TRUE;
         if(item == "FALSE") return StrictTableSize::FALSE;
+    }
+    if constexpr(std::is_same_v<T, SlabSelect>) {
+        if(item == "FULL") return SlabSelect::FULL;
+        if(item == "MIDCOL") return SlabSelect::MIDCOL;
     }
     throw std::runtime_error("str2enum given invalid string item: " + std::string(item));
 }

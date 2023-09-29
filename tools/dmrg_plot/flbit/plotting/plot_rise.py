@@ -13,26 +13,11 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                               point_filter=None, figs=None, palette_name=None):
     if db['version'] != 3:
         raise ValueError("plot_v3_time_fig3_sub3_line1 requires db version 3")
-
+    path_effects = [pe.SimpleLineShadow(offset=(0.35, -0.35), alpha=0.4), pe.Normal()]
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
-    if 'plotdir' in meta and 'mplstyle' in meta:
-        if Path(meta['plotdir']).stem != Path(meta['mplstyle']).stem:
-            meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
-            Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
-    if 'mplstyle' in meta and 'slack' in meta['mplstyle']:
-        # palette_name = "Spectral"
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-        path_effects = None
-    else:
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = None
-        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-
-    prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
+        if 'slack' in meta['mplstyle']:
+            path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
 
     # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
     legend_col_keys = linspec.copy()
@@ -153,7 +138,7 @@ def plot_v3_rise_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
         f['filename'] = "{}/{}-rise_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec), suffix)
@@ -357,16 +342,15 @@ def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
                              )
 
             ax.set_xlabel("$t$")
-            if meta.get('timeloglevel'):
-                if meta['timeloglevel'] == 1:
-                    ax.set_xscale('log')
-                    ymin = None
-                    ymax = None
-                    if ix is not None:
-                        ix.set_xscale('log')
+            if meta.get('timeselection') == 'lnt':
+                ax.set_xscale('log')
+                ymin = None
+                ymax = None
+                if ix is not None:
+                    ix.set_xscale('log')
 
-                if meta['timeloglevel'] == 2:
-                    ax.set_xlabel("$\ln\ln t$")
+            elif meta.get('timeselection') == 'lnlnt':
+                ax.set_xlabel("$\ln\ln t$")
 
             if meta.get('zoomloglogwindow') and ix is not None:
                 x1, x2, y1, y2 = meta['zoomloglogwindow']['coords']  # sub region of the original image
@@ -377,7 +361,7 @@ def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
                 ix.tick_params(axis='both', which='both', labelsize='x-small')
                 # ix.xaxis.set_major_locator(plt.MaxNLocator(5))
                 ix.xaxis.set_major_locator(plt.LogLocator(base=10, numticks=6))
-                if 'timeloglevel' in meta and meta['timeloglevel'] == 2:
+                if meta.get('timeselection') == 'lnlnt':
                     ix.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
                     ix.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
@@ -403,7 +387,7 @@ def plot_v2_rise_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
         f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec),suffix)

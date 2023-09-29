@@ -1,10 +1,13 @@
 from glob import glob
-from os import remove
-from os import path
+import os
+import sys
+here = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(here, '..'))
+sys.path.insert(0, os.path.join(here, '../..'))
+sys.path.insert(0, os.path.join(here, ''))
 from dmrg_plot.common.io.h5ops import *
 from dmrg_plot.common.io.parse import parse
 from statistics.write_statistics import *
-
 
 def lbit_avg(args):
     projdir = args.basedir
@@ -13,16 +16,20 @@ def lbit_avg(args):
         batchdirs.extend(glob('{}/{}*'.format(projdir, batch)))
 
     for batchdir in batchdirs:
+        if 'test' in batchdir:
+            print(f'Skipping: {batchdir}')
+            continue
+        print(f'Averaging: {batchdir}')
         analysisdir = batchdir + '/analysis'
         plotdir = analysisdir + '/plots'
         datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
         tgt = datadir + '/averaged.h5'
-        if path.isfile(tgt):
+        if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
-                remove(tgt)
+                os.remove(tgt)
             else:
                 continue
         h5_tgt = h5open(tgt, 'a')
@@ -56,10 +63,12 @@ def lbit_avg(args):
                 'model/lbits/data_shifted': {
                     'copy': True,
                 },
-                # 'number_probabilities': {
-                #     'copy': False,  # Copy the dataset as is, without averaging
-                #     'hartley': True,  # Compute the hartley number entropy
-                # },
+                'number_probabilities': {
+                    'copy': True,  # Copy the dataset as is, without averaging
+                    'hartley': True,  # Compute the hartley number entropy
+                    'renyi2': True, # Compute the second renyi entropy of the number probabilities
+                    'pinfty': True, # Compute the shannon entropy of the saturation value of the number probabilities
+                },
             },
 
             'tables': {  # For data at the last time step
@@ -78,7 +87,7 @@ def lbit_avg(args):
                     'measurements': ['iter',
                                      'entanglement_entropy',
                                      'number_entropy',
-                                     'hartley_number_entropy',
+                                     'renyi_entropy_2',
                                      'bond_mid', 'bond_lim',
                                      'truncation_error',
                                      'algorithm_time',

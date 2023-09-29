@@ -19,7 +19,29 @@ def get_meta(plotdir):
         'legendoutside' : False,
         'legendcollect' : False
     }
+    figsize1x1_fullcol = 3.404 * 0.55, 3.404,  # Half-size compared to 2x1, plus some extra
+    figsize1x1_halfcol = 3.404 * 0.50, 3.404,  # Half-size compared to 2x1, plus some extra
+    subplots1x1 = {
+        'top': 1.0,
+        'bottom': 0,
+        'left': 0.22,
+        'right': 0.99,
+    }
 
+    figsize2x1 = 3.404, 3.404,
+    subplots2x1 = {
+        'top': 1.0,
+        'bottom': 0,
+        'left': 0.13,
+        'right': 0.99,
+    }
+    figsize3x1 = 6.808, 3, 404,
+    subplots3x1 = {
+        'top': 1.0,
+        'bottom': 0,
+        'left': 0.11,
+        'right': 0.99,
+    }
     meta = {
         'common': {
             'include': {
@@ -84,7 +106,7 @@ def get_meta(plotdir):
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': True,
             'markloglogwindow': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -112,7 +134,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'shadederror': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
@@ -147,7 +169,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'fillerror': False,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'
@@ -172,7 +194,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -194,7 +216,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -217,7 +239,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': False,
             'plotsatapproach': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -240,7 +262,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': False,
             'plotsatapproach': True,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['f', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -268,7 +290,7 @@ def get_meta(plotdir):
                 # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
                 'legendtitle': '$S_N$'
             },
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -297,7 +319,7 @@ def get_meta(plotdir):
                 # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
                 'legendtitle': '$S_N$'
             },
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'linestyle': ['solid', 'dashed'],
             'mplstyle': mplstyle,
             'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
@@ -316,7 +338,7 @@ def get_meta(plotdir):
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             
@@ -336,7 +358,7 @@ def get_meta(plotdir):
             'realizations': 600,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
             
@@ -356,7 +378,7 @@ def get_meta(plotdir):
             'realizations': 600,
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': [],  # Choose 'num', 'bmax','tsim'
         },
@@ -383,13 +405,17 @@ def get_meta(plotdir):
             'findsaturation': False,  # Instead of taking the last value, take the average of the plateau
             'findloglogwindow': False,
             'markloglogwindow': False,
-            'timeloglevel': 1,
+            'timeselection': 'lnt',
             'mplstyle': mplstyle,
             'legendcols': ['w', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'best',
         },
         'lbit-avg': {
             'default' : default,
+            # 'figsize': (1.702, 1.702),
+            'figsize': figsize1x1_fullcol,
+            'subplots': subplots1x1,
+            'frameon': True,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             #'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
@@ -399,19 +425,21 @@ def get_meta(plotdir):
                 # 'u': [16],
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
-            'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
+            'ylabel': '$\\bar O(|i-j|)$',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
             # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prb else None,
             'xticks': [0, 5, 10, 15, 20] if prb else None,
-            # 'yticks': [1e0, 1e-4, 1e-9],
-            'yticks': [0, -3, -6, -9, -12, -15],
-            # 'yscale': 'log',
-            # 'ynopos': 'mask',
+            'yticks': None, #[1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15],
+            # 'yticks': [0, -3, -6, -9, -12, -15],
+            'yscale': 'log',
+            'ynopos': 'mask',
             'plotprefix': 'lbit-arithmetic',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'ymin': -16,
+            # 'ymin': -16,
+            'ymin': 1e-16,
             'xmax': 20,
             'xmin': -1,
             'xnormalize': False,
@@ -422,11 +450,13 @@ def get_meta(plotdir):
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
             'legendoutside': False,
             'legendcollect': False,
-            'legendlocation': (0.40, 0.50) if prb else 'center left',
+            'legendlocation': (0.14, 1.025) if prb else 'center left',
+            'legendtitle': 'Arithmetic average',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
             'lbit-site': [0, 'mid', 'last'],
             'lbit-mean': 'arithmetic',
+            'lbit-axis': '',
             'fit-beta': True,
             'fit-ymin': None,
             'fit-skip': 0 if prb else 0,
@@ -442,6 +472,10 @@ def get_meta(plotdir):
         },
         'lbit-typ': {
             'default' : default,
+            # 'figsize': (1.702, 1.702),
+            'figsize': figsize1x1_fullcol,
+            'subplots': subplots1x1,
+            'frameon': True,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
             #'titlename': 'l-bit decay fit $C e^{-(|i-j|/\\xi)^\\beta}$',
@@ -451,19 +485,22 @@ def get_meta(plotdir):
                 # 'u': [16],
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
-            'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle_\mathrm{typ}$',
+            # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle_\mathrm{geom.}$',
+            # 'ylabel': '$\langle \langle O(|i-j|) \\rangle\\rangle$',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
             # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prb else None,
             'xticks': [0, 5, 10, 15, 20] if prb else None,
             # 'yticks': [1e0, 1e-4, 1e-9],
-            'yticks': [0, -3, -6, -9, -12, -15],
-            # 'yscale': 'log',
-            # 'ynopos': 'mask',
+            'yticks': None, #[0, -3, -6, -9, -12, -15],
+            'yticklabels': [],
+            'yscale': 'log',
+            'ynopos': 'mask',
             'plotprefix': 'lbit-geometric',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             'mplstyle': mplstyle,
-            'ymin': -16,
+            # 'ymin': -16,
+            'ymin': 1e-16,
             'xmax': 20,
             'xmin': -1,
             'xnormalize': False,
@@ -474,11 +511,13 @@ def get_meta(plotdir):
             'legendfits': ['xi', 'beta'] if prb else ['C', 'xi', 'beta', 'pos'],
             'legendoutside': False,
             'legendcollect': False,
-            'legendlocation': (0.40, 0.50) if prb else 'center left',
+            'legendlocation': (0.14, 1.025) if prb else 'center left',
+            'legendtitle': 'Geometric average',
             # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
             # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
             'lbit-site': [0, 'mid', 'last'],
             'lbit-mean': 'geometric',
+            'lbit-axis': '',
             'fit-beta': True,
             'fit-ymin': None,
             'fit-skip': 0 if prb else 0,
@@ -497,6 +536,7 @@ def get_meta(plotdir):
             'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
+            'figsize': (1.702, 1.702),
             'titlename': '$\ell$-bit localization length (arithmetic avg.)',
             'filter': {
                 # 'L': [8,12,16,20],
@@ -525,7 +565,8 @@ def get_meta(plotdir):
             'default' : default,
             'groupname': 'lbits',
             'dsetname': 'corrmat',
-            'titlename': '$\ell$-bit localization length (geometric avg.)',
+            'figsize': (1.702, 1.702),
+            # 'titlename': '$\ell$-bit localization length (geometric avg.)',
             'filter': {
                 # 'L': [8,12,16,20],
                 # 'f': [0.2, 0.3, 0.4, 0.6, 0.8, 1.0],
@@ -574,7 +615,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
@@ -688,7 +729,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
@@ -721,7 +762,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
@@ -752,7 +793,7 @@ def get_meta(plotdir):
             'findloglogwindow': True,
             'markloglogwindow': True,
             'fitloglogwindow': True,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'u', 'f', 'x', 'num'],  # Choose 'num', 'bmax','tsim'
@@ -789,7 +830,7 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'markloglogwindow': False,
             'fitloglogwindow': False,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
@@ -825,7 +866,7 @@ def get_meta(plotdir):
             'findloglogwindow': False,
             'markloglogwindow': False,
             'fitloglogwindow': False,
-            # 'timeloglevel': 1,
+            # 'timeselection': 'lnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f', 'w', 't:<8.1e'],  # Choose 'num', 'bmax','tsim'
@@ -854,7 +895,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'fillerror': False,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'tstd', 'tgw8', 'cstd', 'cgw8'],  # Choose 'num', 'bmax','tsim'
@@ -884,7 +925,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'fillerror': False,
-            'timeloglevel': 2,
+            'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
@@ -918,7 +959,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'shadederror': False,
-            'timeloglevel': 0,
+            'timeselection': 't',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'

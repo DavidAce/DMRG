@@ -1,10 +1,11 @@
 import numpy as np
 import scipy.stats as sc
-
+from plotting.tools import get_timepoints
 from .write_statistics_table import *
 
 
 def write_stats_to_node(data, tgt_node, axis):
+    print(f'writing stat to node: {tgt_node.name}')
     std = np.nanstd(data, axis=axis)
     num = np.shape(data)[axis]
     dama = np.ma.masked_invalid(np.ma.masked_equal(np.abs(data), 0))
@@ -32,13 +33,48 @@ def write_stats_to_node(data, tgt_node, axis):
     tgt_node.create_dataset(name='data', data=data, compression="gzip", compression_opts=9 )
 
 
-def get_renyi(data, alpha, pn_cutoff=-np.inf):
+def get_renyi(numprobs, alpha, pn_cutoff=0.0):
+    print(f'get_renyi({alpha=}, {pn_cutoff=})')
     # Assume indices are n, site, time
-    data[data < pn_cutoff] = 0.0
-    r = 1.0 / (1 - alpha) * np.log(np.sum(data ** alpha, axis=0))
+    data = np.copy(numprobs)
+    if pn_cutoff > 0:
+        data[data < pn_cutoff] = 0.0
+        # Renormalize
+        norm = np.linalg.norm(data, axis=0, keepdims=True)
+        data = data/norm
+
+    with np.errstate(divide='ignore'):
+        r = 1.0 / (1 - alpha) * np.log(np.nansum(data ** alpha, axis=0))
     r[np.isinf(r)] = 0.0
     print(np.shape(data), '-->', np.shape(r))
     return r
+
+def get_tdata(crononode):
+    tdata = []
+    for key, node in crononode.items():
+        tdata.append(
+            node['measurements']['physical_time'][0].astype(float)
+        )
+    tdata = np.sort(np.asarray(tdata))
+    return tdata
+
+def get_pinfty(numprobs, dsetnode):
+    print('get_pinfty()')
+    modelnode = dsetnode.parent.parent['model']
+    hamiltonian = modelnode['hamiltonian']
+    db = {'vals': {}}
+    db['vals']['L'] = modelnode['model_size'][()]
+    db['vals']['r'] = hamiltonian['J2_span'][()]
+    db['vals']['x'] = modelnode['xi_Jcls'][()]
+    db['vals']['w'] = (modelnode['J1_wdth'][()], modelnode['J2_wdth'][()], modelnode['J3_wdth'][()])
+    tdata = get_tdata(dsetnode.parent['cronos'])
+    # idx_num, idx_ent = find_saturation_idx3(tdata, db)
+    t = get_timepoints(tdata,db)
+    idx_num = t.idx_num_saturated
+    ptavg = np.mean(numprobs[:, idx_num:, :], axis=1)
+    with np.errstate(divide='ignore'):
+        return -np.nansum(ptavg * np.log(ptavg), axis=0)
+
 
 def get_matching_prop(props, dsetpath):
     for prop in props.keys():
@@ -47,35 +83,61 @@ def get_matching_prop(props, dsetpath):
     return None
 
 def write_statistics_dset(meta, props, h5_tgt):
+    print(f'writing dset stats: {meta[0]}')
     # Props contains the names of the datasets
     dsetname = meta[0]
     dsetpath = meta[1]
     dsetnode = meta[2]
-    dsetdata = dsetnode[()]
     dsetprop = get_matching_prop(props, dsetpath)
     dsetaxis = props.get(dsetprop).get('axis')
     dsetcopy = props.get(dsetprop).get('copy')
     if not dsetaxis:
         dsetaxis = 0
     if (dsetname == 'schmidt_midchain'):
-        dsetdata = np.array(dsetdata.view(dtype=np.complex128).real)
+        dsetdata = np.array(dsetnode.view(dtype=np.complex128).real)
     if (dsetname == 'number_probabilities'):
-        hartley_number_entropy_data = get_renyi(dsetdata, alpha=1e-3, pn_cutoff=1e-6)
-        hartley_number_entropy_path = dsetnode.parent.name + '/hartley_number_entropies'
-        print('writing dset hartley_number_entropies along axis {}'.format(dsetname, dsetaxis))
-        tgt_node = h5_tgt.require_group(hartley_number_entropy_path)
-        write_stats_to_node(data=hartley_number_entropy_data, tgt_node=tgt_node, axis=2)
+        Lhalf = np.shape(dsetnode)[1]//2
+        print('reading number probabilities ...')
+        numprobs = dsetnode[:,Lhalf,:,:]
+        if props.get(dsetprop).get('hartley'):
+            hartley_number_entropy_data = get_renyi(numprobs, alpha=1e-3, pn_cutoff=1e-8)
+            hartley_number_entropy_path = dsetnode.parent.name + '/hartley_number_entropies'
+            tgt_node = h5_tgt.require_group(hartley_number_entropy_path)
+            print(f'writing dset hartley_number_entropies along axis {dsetaxis}')
+            write_stats_to_node(data=hartley_number_entropy_data, tgt_node=tgt_node, axis=1)
+        if props.get(dsetprop).get('renyi2'):
+            print(f'writing dset renyi2_number_entropies along axis {dsetaxis}')
+            renyi2_number_entropy_data = get_renyi(numprobs, alpha=2, pn_cutoff=0)
+            renyi2_number_entropy_path = dsetnode.parent.name + '/renyi2_number_entropies'
+            tgt_node = h5_tgt.require_group(renyi2_number_entropy_path)
+            write_stats_to_node(data=renyi2_number_entropy_data, tgt_node=tgt_node, axis=1)
+        if props.get(dsetprop).get('pinfty'):
+            print(f'writing dset pinfty_number_entropies along axis {dsetaxis}')
+            pinfty_number_entropy_data = get_pinfty(numprobs, dsetnode)
+            pinfty_number_entropy_path = dsetnode.parent.name + '/pinfty_number_entropies'
+            tgt_node = h5_tgt.require_group(pinfty_number_entropy_path)
+            write_stats_to_node(data=pinfty_number_entropy_data, tgt_node=tgt_node, axis=0)
 
-    if dsetcopy:
-        tgt_node = h5_tgt.require_group(dsetnode.parent.name)
-        zlvl = None if np.shape(dsetdata) == () else (1 if 'corrmat' in dsetname else 6)
-        zlbl = None if np.shape(dsetdata) == () else "gzip"
-        tgt_node.create_dataset(name=dsetname, data=dsetdata, compression=zlbl, compression_opts=zlvl)
+        if dsetcopy:
+            print(f'deep copying dset: {dsetname} {np.shape(numprobs)}')
+            tgt_node = h5_tgt.require_group(dsetnode.parent.name)
+            zlvl = 2
+            zlbl = "gzip"
+            tgt_node.create_dataset(name=dsetname, data=numprobs, compression=zlbl, compression_opts=zlvl)
+        else:
+            tgt_node = h5_tgt.require_group(dsetpath)
+            write_stats_to_node(data=numprobs, tgt_node=tgt_node, axis=dsetaxis)
     else:
-        tgt_node = h5_tgt.require_group(dsetpath)
-        # print('writing dset "{}" along axis {}'.format(dsetname, dsetaxis))
-        write_stats_to_node(data=dsetdata, tgt_node=tgt_node, axis=dsetaxis)
-
+        if dsetcopy:
+            print(f'deep copying dset: {dsetname} {np.shape(dsetnode)}')
+            tgt_node = h5_tgt.require_group(dsetnode.parent.name)
+            zlvl = None if np.shape(dsetnode) == () else (1 if 'corrmat' in dsetname else 6)
+            zlbl = None if np.shape(dsetnode) == () else "gzip"
+            tgt_node.create_dataset(name=dsetname, data=dsetnode, compression=zlbl, compression_opts=zlvl)
+        else:
+            tgt_node = h5_tgt.require_group(dsetpath)
+            # print('writing dset "{}" along axis {}'.format(dsetname, dsetaxis))
+            write_stats_to_node(data=dsetnode[()], tgt_node=tgt_node, axis=dsetaxis)
 
 def write_statistics_ed(h5_ed_src, tgt_node, L):
     measurements_node = tgt_node.require_group(tgt_node.name + "/measurements")
@@ -151,6 +213,7 @@ def write_statistics(src, tgt, reqs):
                                                                nodeType=h5py.Dataset):
             print('Found dset: {}'.format(dsetpath))
             write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
+
     print('Averaging tables')
     for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20, excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                               nodeType=h5py.Dataset):

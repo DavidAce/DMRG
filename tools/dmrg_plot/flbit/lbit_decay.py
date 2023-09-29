@@ -257,7 +257,12 @@ def plot_lbits(meta, figs=None, color=None):
             x = np.array(range(cols))
             xmid = int(rows / 2)
             maxreps = np.min([reps, 50])
-            C, xi, beta, yfit, _, _ = get_lbit_cls(x, decay[fidx, uidx], stretched=True, ymin=1e-10)
+            # C, xi, beta, yfit, _, _ = get_lbit_fit(x, decay[fidx, uidx], beta=True, ymin=1e-10)
+            # fit = get_lbit_fit(x, decay[fidx, uidx], beta=True, ymin=1e-10)
+            fit = get_lbit_fit_data(x=x, y=np.atleast_2d(decay[fidx, uidx]).T, e=None,
+                              beta=meta.get('fit-beta', True),
+                              ymin=meta.get('fit-ymin', 1e-16),
+                              )
             # print(np.shape(decay))
             # print(popt, pstd)
             #
@@ -286,11 +291,11 @@ def plot_lbits(meta, figs=None, color=None):
                     f['legends'][idx][2]['title'] = '$d_u$'
                 if 'xi' in meta['legendcols']:
                     f['legends'][idx][3]['handle'].append(line)
-                    f['legends'][idx][3]['label'].append('$\quad{:.2f}$'.format(xi))
+                    f['legends'][idx][3]['label'].append('$\quad{:.2f}$'.format(fit.xi))
                     f['legends'][idx][3]['title'] = '$\quad\\xi_\\tau$'
                 if 'xi' in meta['legendcols']:
                     f['legends'][idx][4]['handle'].append(line)
-                    f['legends'][idx][4]['label'].append('${:.2f}$'.format(beta))
+                    f['legends'][idx][4]['label'].append('${:.2f}$'.format(fit.beta))
                     f['legends'][idx][4]['title'] = '$\\beta$'
 
                 for ridx in range(maxreps):
@@ -323,7 +328,16 @@ def plot_lbits(meta, figs=None, color=None):
 
 
 if __name__ == '__main__':
+    default = {
+        'box_aspect': 1,
+        'subspec_title': False,
+        'figspec_title': False,
+        'legendoutside' : False,
+        'legendcollect' : False
+    }
     meta_lbit_log_fit_identity_bigc = {
+        'default': default,
+        'figsize': (1.702, 1.702),
         'filename': "{}/lbit-log-fit".format(plotdir),
         'datafile': 'data/mbl_10004-constricted50-random-bigC-L16-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -346,6 +360,8 @@ if __name__ == '__main__':
     }
 
     meta_lbit_log_fit_expdecay = {
+        'default': default,
+        'figsize': (1.702, 1.702),
         'filename': "{}/lbit-log-fit".format(plotdir),
         'datafile': 'data/mbl_10004-constricted50-random-L16-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -368,6 +384,8 @@ if __name__ == '__main__':
     }
 
     meta_lbit_exp_fit_blocked = {
+        'default': default,
+        'figsize': (1.702, 1.702),
         'filename': "{}/lbit-exp-fit".format(plotdir),
         'datafile': 'data/mbl_10004-constricted500-random-L32-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -389,6 +407,8 @@ if __name__ == '__main__':
         # 'legend_in_subfig': False
     }
     meta_lbit_exp_fit_uniform = {
+        'default': default,
+        'figsize': (1.702, 1.702),
         'filename': "{}/lbit-exp-fit".format(plotdir),
         'datafile': 'data/mbl_10004-uniform50-L24-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
@@ -411,11 +431,14 @@ if __name__ == '__main__':
     }
 
     meta_lbits_expdecay = {
+        'default': default,
+        'figsize': (1.702, 1.702),
         'filename': "{}/lbits-expedecay".format(plotdir),
         'datafile': 'data/mbl_10004-constricted50-L24-u8-f0.5.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',
-        'ylabel': '$O(L/2,j)$',
+        #'ylabel': '$O(L/2,j)$',
         'xlabel': '$j$',
+        'yticklabels': [], #[1e-0, 1e-4, 1e-8, 1e-12],
         'yticks': [1e-0, 1e-4, 1e-8, 1e-12],
         'xticks': [0, 8, 16, 24],
         # 'xticks': [0, 6, 12, 18, 24],
@@ -443,6 +466,8 @@ if __name__ == '__main__':
         # 'legend_in_subfig': False
     }
     meta_lbits_identity = {
+        'default': default,
+        'figsize': (1.702, 1.702),
         'filename': "{}/lbits-identity".format(plotdir),
         'datafile': 'data/mbl_10004-uniform50-L24-u6-f0.3.h5',
         'suptitle': None,  # 'l-bit fit $y=y_0 \exp[-(x/\\xi)^\\beta]$',

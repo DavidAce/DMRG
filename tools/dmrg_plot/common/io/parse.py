@@ -66,7 +66,17 @@ def parse(algo, batches=None):
         'lbit90',  # 500 realizations u[16] f=[0.4], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
         'lbit91', # 20000 realizations u[16] f=[0.3], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
         'lbit92', # 20000 realizations u[16] f=[0.2-0.5], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time FAILED
-        'lbit93', # 50000 realizations u[16] f=[0.2-0.4], L=[12-24] fixed many bugs and increased precision with __float128:
+        'lbit93', # 80000 realizations u[16] f=[0.2-0.4], L=[12-24] fixed many bugs and increased precision with __float128:
+        'lbit94', # 80000 realizations u[16] f=[0.2], L=[16] to test eps1e-8
+        'lbit95',  # 80000 realizations u[16] f=[0.2], L=[16] to test eps1e-5 with the same seeds as lbit94
+        'lbit96',  # filter bond_lim_2048 from lbit93
+        'lbit97',  # filter bond_lim_8192 from lbit93
+        'lbit98',  # L16 u8 to test weird time scales
+        'lbit99',  # L16 u16 tgw8 expdecay to check entanglement entropy distribution
+        'lbit100',  # L16 u16 tgw8 expdecay with random product state init to check entanglement entropy distribution SUCCESS!!!
+        'lbit101',  # L16 u16 tgw8 expdecay with random product state init to check entanglement entropy distribution FINAL FULL SET OF SIMS
+        'lbit103',  # L16 u16 tgw8 expdecay with neel init in the non-interacting limit
+        'lbit104',  # L16 u16 tgw8 expdecay with two down one site from the middle (2d1)
 
     ]
     xdmrg_batches = ['data170',  #

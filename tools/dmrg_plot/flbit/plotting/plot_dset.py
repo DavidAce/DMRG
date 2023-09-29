@@ -16,24 +16,12 @@ def plot_v3_dset_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
                                  point_filter=None, figs=None, palette_name=None):
     if db['version'] != 3:
         raise ValueError("plot_v3_dset_fig3_sub3_line1 requires db version 3")
-
+    path_effects = [pe.SimpleLineShadow(offset=(0.35, -0.35), alpha=0.4), pe.Normal()]
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
-    if 'plotdir' in meta and 'mplstyle' in meta:
-        if Path(meta['plotdir']).stem != Path(meta['mplstyle']).stem:
-            meta['plotdir'] = Path(meta['plotdir'], Path(meta['mplstyle']).stem)
-            Path(meta['plotdir']).mkdir(parents=True, exist_ok=True)
-    if 'mplstyle' in meta and 'slack' in meta['mplstyle']:
-        # palette_name = "Spectral"
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
-        path_effects = None
-    else:
-        if not palette_name:
-            palette_name = "colorblind"
-        # path_effects = None
-        path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
+        if 'slack' in meta['mplstyle']:
+            path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
+
 
     prb_style = 'prb' in meta['mplstyle'] if 'mplstyle' in meta else False
 
@@ -124,7 +112,7 @@ def plot_v3_dset_fig3_sub3_line1(db, meta, figspec, subspec, linspec, xaxspec, a
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
         f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                             '-'.join(map(str, figvals)),
                                                             '-'.join(map(str, get_keys(db, subspec))),

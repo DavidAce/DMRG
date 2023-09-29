@@ -76,7 +76,7 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             logger.debug('-- plotting subs: {}'.format(subvals))
             # for dirvals in dirprod:
             # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
-            palette, lstyles = get_colored_lstyles(db, linspec, palette_name)
+            palette, lstyles = get_colored_lstyles(db, linspec, palette_name, filter=None, idx=idx)
             for linvals, color, lstyle in zip(linprod, palette, lstyles):
                 logger.debug('--- plotting lins: {}'.format(linvals))
                 datanodes = match_datanodes(db=db, meta=meta, specs=figspec + subspec + linspec,
@@ -84,10 +84,12 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 logger.debug('Found {} datanodes'.format(len(datanodes)))
                 for datanode in datanodes:
                     dbval = db['dsets'][datanode.name]
+                    ddata           = datanode[meta['dsetname']][()]
+                    vdata           = datanode['entanglement_entropy'][()]
                     ydata, colnames = get_table_data(datanode['avg'], meta['colname'], 'f8')
                     edata, colnames = get_table_data(datanode['ste'], meta['colname'], 'f8')
                     sdata, _ = get_table_data(datanode['avg'], 'entanglement_entropy', 'f8')
-                    tdata = datanode['avg']['physical_time'][()]
+                    tdata = datanode['avg']['physical_time'][()].astype(float)
                     ndata = datanode['avg']['num'][()]
 
                     if meta.get('use_configurational_entropy'):
@@ -119,15 +121,60 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             ydata[i] = y / normalize
                             edata[i] = e / normalize
 
+                    # for i in range(5):
+                    #     linestyle = meta['linestyle'][i] if 'linestyle' in meta and len(
+                    #         meta['linestyle']) == len(ydata) else '-'
+                    #     r = np.random.randint(low=0, high=np.shape(ddata)[1])  # Pick a random time series
+                    #
+                    #     d = ddata[:, r]
+                    #     v = vdata[:, r]
+                    #     s = [np.std(d[j:]) for j in range(len(d))]
+                    #     line, = ax.plot(sdata, d, marker=None, linestyle=linestyle, label=None, color=color,
+                    #                     path_effects=path_effects)
+                        # line, = ax.plot(tdata, s, marker=None, linestyle=linestyle, label=None, color=color,
+                        #                 path_effects=path_effects)
+                        # ax.set_xscale('log')
+                        # line, = ax.plot(tdata, d, marker=None, linestyle=linestyle, label=None, color=color,
+                        #                 path_effects=path_effects)
+
+                    idx_num, idx_ent = find_saturation_idx3(tdata, dbval)
+                    idx_sat = idx_num if 'number' in meta['dsetname'] else idx_ent
+                    # ytavg = np.mean(vdata[idx_ent:, :], axis=0)
+                    dtavg = np.mean(ddata[idx_num:, :], axis=0)
+                    vtavg = np.mean(vdata[idx_ent:, :], axis=0)
+                    dtmean = np.mean(dtavg)
+                    vtmean = np.mean(vtavg)
+                    xdata = np.log(np.log(tdata/vtmean))
+                    # ax.set_xscale('log')
+                    # line, = ax.plot(tdata/ytmean, ydata/ytmean, marker=None,  label=None, color=color,
+                    #                 path_effects=path_effects)
+
+
                     for i, (y, e, colname) in enumerate(zip(ydata.T, edata.T, colnames)):
                         linestyle = meta['linestyle'][i] if 'linestyle' in meta and len(
                             meta['linestyle']) == len(ydata) else '-'
 
-                        if meta.get('fillerror'):
-                            ax.fill_between(x=sdata, y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
+                        # if meta.get('fillerror'):
+                        #     ax.fill_between(x=sdata, y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
 
-                        line, = ax.plot(sdata, y, marker=None, linestyle=linestyle, label=None, color=color,
+                        line, = ax.plot(sdata*vtmean, y/dtmean, marker=None, linestyle=linestyle, label=None, color=color,
                                         path_effects=path_effects)
+
+
+
+
+                        # Calculate the infinite time average (1/T) integral_0^T y(t) dt in the saturated interval
+                        # We want to know the time at which time each of the 80000 sims arrived at their saturation value.
+                        # idx_num, idx_ent = find_saturation_idx3(tdata, dbval)
+                        # idx_sat, avgs = find_saturation_idx4(ddata, idx_ent)
+                        # ax.set_yscale('log')
+                        # # ax.set_xscale('log')
+                        # hist, edges = np.histogram(np.log10(tdata[idx_sat]), bins=30, density=True)
+                        # bincentres = [(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)]
+                        # line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
+                        #                 color=color, path_effects=path_effects)
+                        # for row in ddata:
+                        #     line = ax.scatter(sdata, ddata, path_effects=path_effects)
 
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
@@ -183,7 +230,7 @@ def plot_v3_svnt_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     axtitle = get_title(dbval, subspec, width=16)
                 ax.set_title(axtitle,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
-            ax.set_xlabel("$\\langle \\langle  S_E(L/2) \\rangle  \\rangle/S_\mathrm{Page}$")
+            ax.set_xlabel("$\\langle \\langle S_E(L/2) \\rangle \\rangle/S_\mathrm{Page}$")
 
         if f['ymin']:
             f['ymin'] = 0.9 * f['ymin']
@@ -291,7 +338,7 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                             ydata[i] = y / meta['normalize']
                             edata[i] = e / meta['normalize']
 
-                    if meta.get('timeloglevel') == 2:
+                    if meta.get('timeselection') == 'lnlnt':
                         with np.errstate(invalid='ignore'):
                             xdata = np.log(np.log(tdata))
                             if not 'xmin' in meta:
@@ -448,15 +495,14 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                              )
 
             ax.set_xlabel("$t$")
-            if meta.get('timeloglevel'):
-                if meta['timeloglevel'] == 1:
-                    ax.set_xscale('log')
-                    ymin = None
-                    ymax = None
-                    if ix is not None:
-                        ix.set_xscale('log')
+            if meta.get('timeselection') == 'lnt':
+                ax.set_xscale('log')
+                ymin = None
+                ymax = None
+                if ix is not None:
+                    ix.set_xscale('log')
 
-                if meta['timeloglevel'] == 2:
+            elif meta.get('timeselection') == 'lnlnt':
                     ax.set_xlabel("$\ln\ln t$")
 
             if meta.get('zoomloglogwindow') and ix is not None:
@@ -468,7 +514,7 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                 ix.tick_params(axis='both', which='both', labelsize='x-small')
                 # ix.xaxis.set_major_locator(plt.MaxNLocator(5))
                 ix.xaxis.set_major_locator(plt.LogLocator(base=10, numticks=6))
-                if 'timeloglevel' in meta and meta['timeloglevel'] == 2:
+                if meta.get('timeselection') == 'lnlnt':
                     ix.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
                     ix.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
@@ -494,7 +540,7 @@ def plot_v2_svnt_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''
         suffix = suffix + '_normpage' if 'normpage' in meta and meta['normpage'] else suffix
-        suffix = suffix + '_loglog' if 'timeloglevel' in meta and meta['timeloglevel'] >= 2 else suffix
+        suffix = suffix + '_loglog' if meta.get('timeselection') == 'lnlnt' else suffix
         f['filename'] = "{}/{}(t)_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                             '-'.join(map(str, figkeys)),
                                                             '-'.join(map(str, get_keys(db, subspec))),

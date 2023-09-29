@@ -1,19 +1,19 @@
 #include "h5xf.h"
 #include "config/enums.h"
 #include "debug/exceptions.h"
+#include "general/enums.h"
 #include "general/seq.h"
 #include "meld-io/logger.h"
 #include "tid/tid.h"
 #include <h5pp/h5pp.h>
 
 namespace tools::h5xf {
-
     namespace internal {
-        void copy_dset(h5pp::File &h5_tgt, const h5pp::File &h5_src, h5pp::DsetInfo &tgtInfo, h5pp::DsetInfo &srcInfo, hsize_t index, size_t axis) {
+        void copy_dset(h5pp::File &h5_tgt, const h5pp::File &h5_src, h5pp::DsetInfo &tgtInfo, h5pp::DsetInfo &srcInfo, hsize_t index, size_t axis,
+                       SlabSelect ssel = SlabSelect::FULL) {
             auto           t_scope = tid::tic_scope(__FUNCTION__);
             auto           data    = h5_src.readDataset<std::vector<std::byte>>(srcInfo); // Read the data into a generic buffer.
             h5pp::DataInfo dataInfo;
-
             // The axis parameter must be  < srcInfo.rank+1
             if(axis >= srcInfo.dsetDims->size()) {
                 // In this case we are collecting datasets onto a superdataset with dimension +1, enumerating them by that axis
@@ -30,11 +30,62 @@ namespace tools::h5xf {
                 dataInfo.dataRank = srcInfo.dsetRank;
                 dataInfo.h5Space  = srcInfo.h5Space;
             }
-            tgtInfo.resizePolicy                   = h5pp::ResizePolicy::GROW;
-            tgtInfo.dsetSlab                       = h5pp::Hyperslab();
-            tgtInfo.dsetSlab->extent               = dataInfo.dataDims;
-            tgtInfo.dsetSlab->offset               = std::vector<hsize_t>(tgtInfo.dsetDims->size(), 0);
-            tgtInfo.dsetSlab->offset.value()[axis] = index;
+            tgtInfo.resizePolicy               = h5pp::ResizePolicy::GROW;
+            tgtInfo.dsetSlab                   = h5pp::Hyperslab();
+            tgtInfo.dsetSlab->extent           = dataInfo.dataDims;
+            tgtInfo.dsetSlab->offset           = std::vector<hsize_t>(tgtInfo.dsetDims->size(), 0);
+            tgtInfo.dsetSlab->offset->at(axis) = index;
+
+            // Sometimes there is an extra entry at the end in the source data. We should ignore it.
+            tgtInfo.dsetSlab->extent->at(2) = tgtInfo.dsetDims->at(2); // Copy the time dimension to ignore extra entries
+
+            // Select the hyperslab to copy from the source
+            switch(ssel) {
+                case SlabSelect::FULL: {
+                    break;
+                }
+                case SlabSelect::MIDCOL: {
+                    auto rows                           = dataInfo.dataDims.value().at(0);
+                    auto cols                           = dataInfo.dataDims.value().at(1);
+                    auto mcol                           = static_cast<decltype(cols)>(cols / 2);
+                    dataInfo.dataSlab                   = tgtInfo.dsetSlab;
+                    dataInfo.dataSlab->offset->at(0)    = 0;
+                    dataInfo.dataSlab->offset->at(1)    = mcol;
+                    dataInfo.dataSlab->offset->at(axis) = 0;
+                    dataInfo.dataSlab->extent->at(0)    = rows;
+                    dataInfo.dataSlab->extent->at(1)    = 1;
+
+                    tgtInfo.dsetSlab->offset->at(0)    = 0;
+                    tgtInfo.dsetSlab->offset->at(1)    = 0;
+                    tgtInfo.dsetSlab->offset->at(axis) = index;
+                    tgtInfo.dsetSlab->extent->at(0)    = rows;
+                    tgtInfo.dsetSlab->extent->at(1)    = 1;
+//                    tools::logger::log->info("Copying midcol \ndata dims: {}\ndata slab: {}\ndset dims: {}\ndset slab: {}",
+//                                             dataInfo.dataDims.value(),
+//                                             dataInfo.dataSlab->string(),
+//                                             tgtInfo.dsetDims.value(),
+//                                             tgtInfo.dsetSlab->string());
+                    break;
+                }
+                    //                case SlabSelect::MIDCOL: {
+                    //                    auto rows                           = dataInfo.dataDims.value().at(0);
+                    //                    auto cols                           = dataInfo.dataDims.value().at(1);
+                    //                    auto mcol                           = static_cast<decltype(cols)>(cols / 2);
+                    //                    dataInfo.dataSlab                   = tgtInfo.dsetSlab;
+                    //                    dataInfo.dataSlab->offset->at(0)    = 0;
+                    //                    dataInfo.dataSlab->offset->at(1)    = mcol;
+                    //                    dataInfo.dataSlab->offset->at(axis) = 0;
+                    //                    dataInfo.dataSlab->extent->at(0)    = rows;
+                    //                    dataInfo.dataSlab->extent->at(1)    = 1;
+                    //
+                    //                    tgtInfo.dsetSlab->offset->at(0)    = 0;
+                    //                    tgtInfo.dsetSlab->offset->at(1)    = mcol;
+                    //                    tgtInfo.dsetSlab->offset->at(axis) = index;
+                    //                    tgtInfo.dsetSlab->extent->at(0)    = rows;
+                    //                    tgtInfo.dsetSlab->extent->at(1)    = 1;
+                    //                    break;
+                    //                }
+            }
 
             if(tgtInfo.dsetSlab->extent->size() != tgtInfo.dsetSlab->offset->size()) {
                 throw except::logic_error("dsetSlab has mismatching ranks: \n "
@@ -47,7 +98,6 @@ namespace tools::h5xf {
 
                 );
             }
-
             h5_tgt.appendToDataset(data, dataInfo, tgtInfo, static_cast<size_t>(axis));
             // Restore previous settings
             tgtInfo.dsetSlab = std::nullopt;
@@ -82,16 +132,22 @@ namespace tools::h5xf {
             if(tgtDsetDb.find(tgtPath) == tgtDsetDb.end()) {
                 auto t_create = tid::tic_scope("createDataset");
                 auto tgtDims  = srcInfo.dsetDims.value();
-                if(tgtDims.empty()) tgtDims = {0}; // In case src is a scalar.
-                while(tgtDims.size() < srcKey.axis + 1) tgtDims.push_back(1);
-                tgtDims[srcKey.axis] = 0;          // Create with 0 extent in the new axis direction, so that the dataset starts empty (zero volume)
-
-                // Determine a good chunksize between 10 and 500 elements
-                auto tgtChunk           = tgtDims;
-                auto tgtMaxDims         = tgtDims;
-                auto chunkSize          = std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 10., 10000.);
-                tgtChunk[srcKey.axis]   = static_cast<hsize_t>(chunkSize); // number of elements in the axis that we append into.
+                if(tgtDims.empty()) tgtDims = {0};                            // In case src is a scalar.
+                while(tgtDims.size() < srcKey.axis + 1) tgtDims.push_back(1); // Initialize any new dimensions with ones
+                tgtDims[srcKey.axis] = 0; // Create with 0 extent in the new axis direction, so that the dataset starts empty (zero volume)
+                auto tgtChunk        = tgtDims;
+                auto tgtMaxDims      = tgtDims;
+                auto chunkSize =
+                    std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 10., 10000.); // Determine a good chunksize between 10 and 500 elements
+                tgtChunk[srcKey.axis]   = static_cast<hsize_t>(chunkSize);                        // number of elements in the axis that we append into.
                 tgtMaxDims[srcKey.axis] = H5S_UNLIMITED;
+                if(srcKey.ssel == SlabSelect::MIDCOL) {
+                    // When we only copy the middle column, the target dimension should have tgtDims[1] == 1 (i.e. a single column)
+                    tgtDims[1]    = 1;
+                    tgtChunk[1]   = 1;
+                    tgtMaxDims[1] = 1;
+                }
+
                 if(srcKey.size == Size::VAR) {
                     auto        srcGroupPath    = h5pp::fs::path(srcInfo.dsetPath.value()).parent_path().string();
                     std::string statusTablePath = fmt::format("{}/status", srcGroupPath);
@@ -100,14 +156,14 @@ namespace tools::h5xf {
                 }
 
                 tools::logger::log->info("Adding target dset {} | dims {} | chnk {}", tgtPath, tgtDims, tgtChunk);
-                tgtDsetDb[tgtPath] = h5_tgt.createDataset(tgtPath, srcInfo.h5Type.value(), H5D_CHUNKED, tgtDims, tgtChunk, tgtMaxDims, 3);
+                tgtDsetDb[tgtPath] = h5_tgt.createDataset(tgtPath, srcInfo.h5Type.value(), H5D_CHUNKED, tgtDims, tgtChunk, tgtMaxDims);
             }
             auto &tgtId   = tgtDsetDb[tgtPath];
             auto &tgtInfo = tgtId.info;
             // Determine the target index where to copy this record
             hsize_t index = tgtId.get_index(fileId.seed); // Positive if it has been read already
             index         = index != std::numeric_limits<hsize_t>::max() ? index : tgtInfo.dsetDims.value().at(srcKey.axis);
-            internal::copy_dset(h5_tgt, h5_src, tgtInfo, srcInfo, index, srcKey.axis);
+            internal::copy_dset(h5_tgt, h5_src, tgtInfo, srcInfo, index, srcKey.axis, srcKey.ssel);
 
             // Update the database
             tgtId.insert(fileId.seed, index);
