@@ -19,7 +19,6 @@
 #include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
 
-
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
@@ -477,8 +476,8 @@ void AlgorithmFinite::randomize_model() {
     clear_convergence_status();
 }
 
-void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> sector,
-                                      std::optional<bool> use_eigenspinors, std::optional<size_t> bitfield, std::optional<long> bond_lim,
+void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> axis,
+                                      std::optional<bool> use_eigenspinors, std::optional<std::string> pattern, std::optional<long> bond_lim,
                                       std::optional<double> trnc_lim) {
     auto t_rnd = tid::tic_scope("rnd_state", tid::level::higher);
     if(reason == ResetReason::SATURATED) {
@@ -488,9 +487,9 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
             status.num_resets++; // Only increment if doing it for saturation reasons
     }
     if(not state_type) state_type = tensors.state->is_real() ? StateInitType::REAL : StateInitType::CPLX;
-    if(not sector) sector = settings::strategy::initial_axis;
+    if(not axis) axis = settings::strategy::initial_axis;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
-    if(not bitfield) bitfield = settings::input::bitfield;
+    if(not pattern) pattern = settings::strategy::initial_pattern;
     if(not bond_lim) {
         bond_lim = settings::get_bond_init(status.algo_type);
         if(settings::strategy::bond_increase_when == UpdateWhen::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
@@ -503,13 +502,12 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     tensors.activate_sites(settings::solver::max_size_shift_invert, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
-    tensors.randomize_state(reason, state_init, state_type.value(), sector.value(), use_eigenspinors.value(), bitfield.value(), bond_lim.value(),
-                            settings::strategy::initial_pattern);
+    tensors.randomize_state(reason, state_init, state_type.value(), axis.value(), use_eigenspinors.value(), bond_lim.value(), pattern.value());
 
-    if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(sector.value())) {
-        tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {:+.16f}", sector.value(),
-                         tools::finite::measure::norm(*tensors.state), fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
-        tensors.project_to_nearest_axis(sector.value(), svd::config(bond_lim, trnc_lim));
+    if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(axis.value())) {
+        tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {::+.16f}", axis.value(),
+                         tools::finite::measure::norm(*tensors.state), tools::finite::measure::spin_components(*tensors.state));
+        tensors.project_to_nearest_axis(axis.value(), svd::config(bond_lim, trnc_lim));
         tensors.rebuild_edges();
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
@@ -533,7 +531,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
     tools::log->info("Randomization successful:");
     tools::log->info("-- State labels             : {}", tensors.state->get_labels());
     tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
-    tools::log->info("-- Spin components (X,Y,Z)  : {:.16f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("-- Spin components (X,Y,Z)  : {::.16f}", tools::finite::measure::spin_components(*tensors.state));
     tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
 
     if(status.algo_type != AlgorithmType::fLBIT) {
@@ -695,13 +693,13 @@ void AlgorithmFinite::check_convergence_variance(std::optional<double> threshold
             tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
             tools::log->trace(" -- converged count    = {} ", status.variance_mpo_converged_for);
             tools::log->trace(" -- sat history        = {}", report.Y_sat);
-            tools::log->trace(" -- var history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-            tools::log->trace(" -- min history        = {:7.4e}", fmt::join(report.Y_min, ", "));
-            tools::log->trace(" -- max history        = {:7.4e}", fmt::join(report.Y_max, ", "));
-            tools::log->trace(" -- std var history    = {:7.4e}", fmt::join(report.Y_vec_std, ", "));
-            tools::log->trace(" -- std min history    = {:7.4e}", fmt::join(report.Y_min_std, ", "));
-            tools::log->trace(" -- std max history    = {:7.4e}", fmt::join(report.Y_max_std, ", "));
-            tools::log->trace(" -- ste mov history    = {:7.4e}", fmt::join(report.Y_mov_ste, ", "));
+            tools::log->trace(" -- var history        = {::7.4e}", report.Y_vec);
+            tools::log->trace(" -- min history        = {::7.4e}", report.Y_min);
+            tools::log->trace(" -- max history        = {::7.4e}", report.Y_max);
+            tools::log->trace(" -- std var history    = {::7.4e}", report.Y_vec_std);
+            tools::log->trace(" -- std min history    = {::7.4e}", report.Y_min_std);
+            tools::log->trace(" -- std max history    = {::7.4e}", report.Y_max_std);
+            tools::log->trace(" -- ste mov history    = {::7.4e}", report.Y_mov_ste);
         }
     }
 }
@@ -752,13 +750,13 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
                 tools::log->trace(" -- saturated point    = {} ", report.saturated_point);
                 tools::log->trace(" -- saturated count    = {} ", report.saturated_count);
                 tools::log->trace(" -- sat history        = {}", report.Y_sat);
-                tools::log->trace(" -- ent history        = {:7.4e}", fmt::join(report.Y_vec, ", "));
-                tools::log->trace(" -- min history        = {:7.4e}", fmt::join(report.Y_min, ", "));
-                tools::log->trace(" -- max history        = {:7.4e}", fmt::join(report.Y_max, ", "));
-                tools::log->trace(" -- std ent history    = {:7.4e}", fmt::join(report.Y_vec_std, ", "));
-                tools::log->trace(" -- std min history    = {:7.4e}", fmt::join(report.Y_min_std, ", "));
-                tools::log->trace(" -- std max history    = {:7.4e}", fmt::join(report.Y_max_std, ", "));
-                tools::log->trace(" -- ste mov history    = {:7.4e}", fmt::join(report.Y_mov_ste, ", "));
+                tools::log->trace(" -- ent history        = {::7.4e}", report.Y_vec);
+                tools::log->trace(" -- min history        = {::7.4e}", report.Y_min);
+                tools::log->trace(" -- max history        = {::7.4e}", report.Y_max);
+                tools::log->trace(" -- std ent history    = {::7.4e}", report.Y_vec_std);
+                tools::log->trace(" -- std min history    = {::7.4e}", report.Y_min_std);
+                tools::log->trace(" -- std max history    = {::7.4e}", report.Y_max_std);
+                tools::log->trace(" -- ste mov history    = {::7.4e}", report.Y_mov_ste);
             }
         }
     }
@@ -778,11 +776,11 @@ void AlgorithmFinite::check_convergence_spin_parity_sector(std::string_view targ
         auto spin_component_along_axis   = tools::finite::measure::spin_component(*tensors.state, settings::strategy::target_axis);
         status.spin_parity_has_converged = std::abs(std::abs(spin_component_along_axis) - 1) <= threshold;
         if(status.spin_parity_has_converged and spin_component_along_axis * sign < 0)
-            tools::log->warn("Spin component {} has converged: {:.16f} but requested sector was {}", axis, fmt::join(spin_components, ", "), target_sector);
+            tools::log->warn("Spin component {} has converged: {::.16f} but requested sector was {}", axis, spin_components, target_sector);
         if(not status.spin_parity_has_converged) {
-            tools::log->info("Spin component {} not converged: {:.16f} | threshold {:8.2e}", target_sector, fmt::join(spin_components, ", "), threshold);
+            tools::log->info("Spin component {} not converged: {::.16f} | threshold {:8.2e}", target_sector, spin_components, threshold);
         } else {
-            tools::log->debug("Spin component {} has converged: {:.16f} | threshold {:8.2e}", target_sector, fmt::join(spin_components, ", "), threshold);
+            tools::log->debug("Spin component {} has converged: {::.16f} | threshold {:8.2e}", target_sector, spin_components, threshold);
         }
     } else
         status.spin_parity_has_converged = true; // Probably no sector was specified
@@ -870,8 +868,8 @@ void AlgorithmFinite::print_status() {
     report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_lim);
     auto bonds_maxims = std::vector<long>(std::max<size_t>(1, settings::strategy::multisite_mps_site_def - 1), settings::get_bond_max(status.algo_type));
     auto bonds_merged = tools::finite::measure::bond_dimensions_active(*tensors.state);
-    auto bonds_padlen = fmt::format(FMT_STRING("{}"), fmt::join(bonds_maxims, ",")).size();
-    auto bonds_string = fmt::format(FMT_STRING("{}"), fmt::join(bonds_merged, ","));
+    auto bonds_padlen = fmt::format(FMT_STRING("{}"), bonds_maxims).size();
+    auto bonds_string = fmt::format(FMT_STRING("{}"), bonds_merged);
     report += fmt::format(FMT_STRING("{0:<{1}} "), bonds_string, bonds_padlen);
 
     if(last_optmode and last_optspace)
@@ -913,21 +911,21 @@ void AlgorithmFinite::print_status_full() {
     tools::log->info("Bond dimension maximum χmax        = {}", settings::get_bond_max(status.algo_type));
     tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(*tensors.state));
     tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(*tensors.state));
-    tools::log->info("Entanglement entropies Sₑ          = {:8.2e}", fmt::join(tools::finite::measure::entanglement_entropies(*tensors.state), ", "));
-    tools::log->info("Entanglement entropy   Sₑ (mid)    = {:8.2e}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state), ", ");
+    tools::log->info("Entanglement entropies Sₑ          = {::8.2e}", tools::finite::measure::entanglement_entropies(*tensors.state));
+    tools::log->info("Entanglement entropy   Sₑ (mid)    = {:8.2e}", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
     if(status.algo_type == AlgorithmType::fLBIT) {
-        tools::log->info("Number entropies Sₙ                = {:8.2e}", fmt::join(tools::finite::measure::number_entropies(*tensors.state), ", "));
-        tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(*tensors.state), ", ");
+        tools::log->info("Number entropies Sₙ                = {::8.2e}", tools::finite::measure::number_entropies(*tensors.state));
+        tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(*tensors.state));
     }
-    tools::log->info("Spin components (global X,Y,Z)     = {:.16f}", fmt::join(tools::finite::measure::spin_components(*tensors.state), ", "));
+    tools::log->info("Spin components (global X,Y,Z)     = {::.16f}", tools::finite::measure::spin_components(*tensors.state));
 
     if(status.algo_type == AlgorithmType::xDMRG) {
         auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(*tensors.state);
         auto structure_factor_xyz   = tools::finite::measure::structure_factor_xyz(*tensors.state);
         auto kvornings_marker       = tools::finite::measure::kvornings_marker(*tensors.state);
-        tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[0]), ", "));
-        tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[1]), ", "));
-        tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[2]), ", "));
+        tools::log->info("Expectation values ⟨σx⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[0]));
+        tools::log->info("Expectation values ⟨σy⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[1]));
+        tools::log->info("Expectation values ⟨σz⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[2]));
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", structure_factor_xyz[0]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", structure_factor_xyz[1]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", structure_factor_xyz[2]);
@@ -935,7 +933,7 @@ void AlgorithmFinite::print_status_full() {
     }
 
     tools::log->info("Truncation Error limit             = {:8.2e}", status.trnc_lim);
-    tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(tensors.state->get_truncation_errors(), ", "));
+    tools::log->info("Truncation Errors ε                = {::8.2e}", tensors.state->get_truncation_errors());
     tools::log->info("Algorithm has succeeded            = {:<}", status.algorithm_has_succeeded);
     tools::log->info("Algorithm has saturated for        = {:<}", status.algorithm_saturated_for);
     tools::log->info("Algorithm has got stuck for        = {:<}", status.algorithm_has_stuck_for);

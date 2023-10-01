@@ -216,6 +216,7 @@ namespace rnd {
     template void shuffle(std::vector<double> &list);
     template void shuffle(std::vector<long double> &list);
     template void shuffle(std::vector<__float128> &list);
+    template void shuffle(std::string &list);
 
     template<typename out_t, typename Distribution>
     std::vector<out_t> random(Distribution &&d, size_t num) {

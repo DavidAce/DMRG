@@ -555,7 +555,7 @@ void xdmrg::update_state() {
         tensors.merge_multisite_mps(winner.get_tensor(), svd::config(winner.get_bond_lim(), winner.get_trnc_lim()));
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
         if(tools::log->level() <= spdlog::level::trace)
-            tools::log->trace("Truncation errors: {:8.2e}", fmt::join(tensors.state->get_truncation_errors_active(), ", "));
+            tools::log->trace("Truncation errors: {::8.2e}", tensors.state->get_truncation_errors_active());
 
         if constexpr(settings::debug) {
             auto variance_before_svd = winner.get_variance();
@@ -656,7 +656,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
     tensors.activate_sites(settings::solver::max_size_full_eigs, 2);
     tensors.rebuild_edges();
     while(true) {
-        randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, -1); // Do not use the bitfield: set to -1
+        randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, ""); // Do not use the pattern: set to empty string
         status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);

@@ -43,12 +43,9 @@ std::string filename_append_seed(const std::string &filename, const T number) {
     tools::log->info("Appended seed [{}] to filename: [{}]", number, newFileName.string());
     return newFileName.string();
 }
-template<typename T>
-std::string filename_append_bitfield(const std::string &filename, const T number) {
-    if constexpr(std::is_signed_v<T>)
-        if(number < 0) return filename;
-    if constexpr(std::is_unsigned_v<T>)
-        if(number == std::numeric_limits<T>::max()) return filename;
+
+std::string filename_append_pattern(const std::string &filename, const std::string &pattern) {
+    if(pattern.empty()) return filename;
     // Append the seed_model to the output filename
     h5pp::fs::path         oldFileName  = filename;
     h5pp::fs::path         newFileName  = filename;
@@ -61,7 +58,7 @@ std::string filename_append_bitfield(const std::string &filename, const T number
     std::string old_bitf_str = "";
     if(old_seed_pos != std::string::npos) { old_seed_str = oldstem.substr(old_seed_pos + 1, old_bitf_pos); }
     if(old_bitf_pos != std::string::npos) { old_bitf_str = oldstem.substr(old_bitf_pos + 1, std::string::npos); }
-    if(old_bitf_str == std::to_string(number)) return oldFileName.string();
+    if(old_bitf_str == pattern) return oldFileName.string();
     //    tools::log->info("old_seed_pos {}\n"
     //                     "old_seed_str {}\n"
     //                     "old_bitf_pos {}\n"
@@ -69,17 +66,17 @@ std::string filename_append_bitfield(const std::string &filename, const T number
     //                     old_seed_pos, old_seed_str, old_bitf_pos, old_bitf_str);
 
     if(not old_bitf_str.empty()) {
-        throw except::file_error("Tried to append bitfield {} to filename, but another bitfield is already present: {}", number, oldFileName.string());
+        throw except::file_error("Tried to append pattern {} to filename, but another pattern is already present: {}", pattern, oldFileName.string());
     }
-    // The bitfield number is not present!
+    // The pattern is not present!
     std::string newName;
     if(old_seed_str.empty()) {
-        newName = fmt::format("{}_{}{}", old_prfx_str, number, oldFileName.extension().string());
+        newName = fmt::format("{}_{}{}", old_prfx_str, pattern, oldFileName.extension().string());
     } else {
-        newName = fmt::format("{}_{}_{}{}", old_prfx_str, old_seed_str, number, oldFileName.extension().string());
+        newName = fmt::format("{}_{}_{}{}", old_prfx_str, old_seed_str, pattern, oldFileName.extension().string());
     }
     newFileName.replace_filename(newName);
-    tools::log->info("Appended bitfield [{}] to filename: [{}]", number, newFileName.string());
+    tools::log->info("Appended pattern [{}] to filename: [{}]", pattern, newFileName.string());
     return newFileName.string();
 }
 
@@ -149,7 +146,7 @@ int settings::parse(int argc, char **argv) {
     app.add_flag("--help-preload"                      , "Print help related to preloading configuration");
     app.add_option("-c,--config"                       , input::config_filename         , "Path to a .cfg or .h5 file from a previous simulation");
     app.add_option("-m,--model"                        , model::model_type              , "Select the Hamiltonian")->transform(CLI::CheckedTransformer(s2e_model, CLI::ignore_case));
-    app.add_option("-b,--bitfield"                     , input::bitfield                , "Integer whose bitfield sets the initial product state. Negative is unused");
+    app.add_option("-b,--bitfield,--pattern"           , strategy::initial_pattern      , "Integer whose bitfield sets the initial product state. Negative is unused");
     app.add_option("-o,--outfile"                      , storage::output_filepath       , "Path to the output file. The seed number gets appended by default (see -x)");
     app.add_option("-s,--seed"                         , input::seed                    , "Positive number seeds the random number generator");
     app.add_option("-t,--threads"                      , threading::num_threads         , "Total number of threads (omp + std threads). Use env OMP_NUM_THREADS to control omp.");
@@ -186,7 +183,7 @@ int settings::parse(int argc, char **argv) {
     // Generate the correct output filename based on given seeds
     if(storage::output_append_seed) {
         settings::storage::output_filepath = filename_append_seed(settings::storage::output_filepath, settings::input::seed);
-        settings::storage::output_filepath = filename_append_bitfield(settings::storage::output_filepath, settings::input::bitfield);
+        settings::storage::output_filepath = filename_append_pattern(settings::storage::output_filepath, settings::strategy::initial_pattern);
     }
     return 0;
 }

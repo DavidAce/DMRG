@@ -171,7 +171,7 @@ void AlgorithmInfinite::update_truncation_error_limit() {
 }
 
 void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
-                                        std::optional<size_t> bitfield) {
+                                        std::optional<std::string> pattern) {
     tools::log->trace("Resetting to random product state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -181,11 +181,11 @@ void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::s
     }
 
     if(not sector) sector = settings::strategy::initial_axis;
-    if(not bitfield) bitfield = settings::input::bitfield;
+    if(not pattern) pattern = settings::strategy::initial_pattern;
     if(not use_eigenspinors) use_eigenspinors = settings::strategy::use_eigenspinors;
 
     status.iter = 0;
-    tensors.reset_to_random_product_state(sector.value(), bitfield.value(), use_eigenspinors.value());
+    tensors.reset_to_random_product_state(sector.value(), use_eigenspinors.value(), pattern.value());
     // Randomize state
     clear_convergence_status();
 }

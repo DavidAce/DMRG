@@ -24,7 +24,7 @@ class AlgorithmInfinite : public AlgorithmBase {
     void randomize_model();
     void randomize_state(ResetReason reason,
                          std::optional<std::string> sector = std::nullopt,
-                         std::optional<bool> use_eigenspinors = std::nullopt, std::optional<size_t> bitfield = std::nullopt);
+                         std::optional<bool> use_eigenspinors = std::nullopt, std::optional<std::string> pattern = std::nullopt);
 
 
     void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) final;

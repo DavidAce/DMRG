@@ -1,7 +1,7 @@
 #pragma once
 
-#include <complex>
 #include "config/enums.h"
+#include <complex>
 #include <measure/MeasurementsStateFinite.h>
 #include <memory>
 #include <optional>
@@ -46,6 +46,7 @@ class StateFinite {
     std::vector<std::unique_ptr<MpsSite>> mps_sites;
     std::vector<size_t>                   active_sites;
     mutable MeasurementsStateFinite       measurements;
+    size_t popcount = -1ul; /*!< Number of 1's or particles in the product state pattern. Used in the fLBIT algorithm, which conserves the particle number. */
 
     public:
     StateFinite();
@@ -146,6 +147,5 @@ class StateFinite {
     bool                     is_normalized_on_any_sites() const;
     bool                     is_normalized_on_active_sites() const;
     bool                     is_normalized_on_non_active_sites() const;
-
-    std::vector<size_t> get_active_ids() const;
+    std::vector<size_t>      get_active_ids() const;
 };

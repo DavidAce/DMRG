@@ -16,8 +16,8 @@
 #include <utility>
 
 namespace settings {
-    inline constexpr bool debug_numen = false;
-    inline constexpr bool debug_cache = false;
+    inline constexpr bool debug_numen   = false;
+    inline constexpr bool debug_cache   = false;
     inline constexpr bool verbose_numen = false;
     inline constexpr bool verbose_cache = false;
 }
@@ -445,7 +445,8 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     auto                state_pos = state.get_position<long>();
     auto                state_len = state.get_length<long>();
     auto                tgt_rpos  = state_len - 1 - tgt_pos;
-    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
+//    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
+    auto                prob_size = tgt_pos + 2;
     std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
     double              probability_sum = 0.0;
     // Figure out which schmidt values to use
@@ -454,7 +455,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     if(tgt_pos < state_pos)
         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
     else if(tgt_pos == state_pos)
-        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs();    // AC-site
+        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
     else {
         const auto &mps_left = state.get_mps_site(tgt_pos - 1);
         schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
@@ -495,37 +496,45 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
             bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
             if(accept) {
-                probability[n] += ssq;
-                probability_sum += ssq;
+                if(tgt_pos > state_pos) {
+                    // The convention for probabilities is for having n particles to the left of tgt_pos.
+                    // Since we calculate from the right side whenever tgt_pos > state_pos, we can take the complementary number of particles
+                    auto nc = state.popcount - n;
+                    probability.at(nc) += ssq;
+                    probability_sum += ssq;
+                } else {
+                    probability[n] += ssq;
+                    probability_sum += ssq;
+                }
+
                 schmidt_taken(alpha) = 1;
                 if(schmidt_taken.isOnes()) break;
             }
             if constexpr(settings::verbose_numen) {
                 std::string_view accept_str = accept ? "accept" : "";
                 std::string_view cacheh_str = a.cache_hit ? "cache" : "";
-                tools::log->trace("pos {:>2} | n {:>2} | bits {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
-                                  "{:9.3e} [{:6}|{:5}]",
-                                  tgt_pos, n, a.to_string(), 1 - probability_sum, alpha, asq, amplitude_cutoff, alpha, ssq, accept_str, cacheh_str);
+                tools::log->info("pos {:>2} | n {:>2} | bits {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
+                                 "{:9.3e} [{:6}|{:5}]",
+                                 tgt_pos, n, a.to_string(), 1 - probability_sum, alpha, asq, amplitude_cutoff, alpha, ssq, accept_str, cacheh_str);
             }
         }
         if(schmidt_taken.isOnes()) break;                                                    // All schmidt values squared have been added to probability
         while(schmidt_taken(min_alpha) == 1) min_alpha++;                                    // Advance min_alpha to skip first taken schmidt values
         while(schmidt_taken(max_alpha - 1) == 1 and max_alpha >= min_alpha + 1) max_alpha--; // Decrease max_alpha to skip the last taken schmidt values
     }
-
     // Sanity check on probabilities
     auto p_sum = std::accumulate(probability.begin(), probability.end(), 0.0);
+    tools::log->trace("p(n)[{:2}] = {::18.16f} = {:18.16f}", tgt_pos, probability, p_sum);
     if(std::abs(p_sum - 1.0) > 1e-4) {
         tools::log->dump_backtrace();
-        tools::log->info("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        tools::log->info("p(n)[{:>2}] = {::18.16f} = {:18.16f}", tgt_pos, probability, p_sum);
         throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
     if(std::abs(p_sum - 1.0) > 1e-8) {
         tools::log->dump_backtrace();
-        tools::log->warn("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        tools::log->info("p(n)[{:>2}] = {::18.16f} = {:18.16f}", tgt_pos, probability, p_sum);
         tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
-    //    tools::log->trace("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
     return probability;
 }
 
@@ -546,7 +555,7 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     if(tgt_pos < state_pos)
         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
     else if(tgt_pos == state_pos)
-        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs();    // AC-site
+        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
     else {
         const auto &mps_left = state.get_mps_site(tgt_pos - 1);
         schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
@@ -621,15 +630,15 @@ std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, 
     auto p_sum = std::accumulate(probability.begin(), probability.end(), 0.0);
     if(std::abs(p_sum - 1.0) > 1e-4) {
         tools::log->dump_backtrace();
-        tools::log->info("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        tools::log->info("p(n) = {::18.16f} = {:18.16f}", probability, p_sum);
         throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
     if(std::abs(p_sum - 1.0) > 1e-8) {
         tools::log->dump_backtrace();
-        tools::log->warn("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+        tools::log->warn("p(n) = {::18.16f} = {:18.16f}", probability, p_sum);
         tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
     }
-    //    tools::log->trace("p(n) = {:22.20f} = {:22.20f}", fmt::join(probability, ", "), p_sum);
+    //    tools::log->trace("p(n) = {:18.16f} = {:18.16f}", fmt::join(probability, ", "), p_sum);
     return probability;
 }
 
@@ -758,7 +767,6 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     auto t_num      = tid::tic_scope("number_entropy", tid::level::highest);
     auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy);
-
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
     auto state_llen      = state_copy.get_length<long>();
@@ -769,7 +777,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     [[maybe_unused]] size_t  cacheB_size;
     Eigen::Tensor<double, 2> probabilities(state_llen + 1, state_llen + 1);
     probabilities.setZero();
-
+    // The first and last probabilities [0] and [L+1]
     tools::log->enable_backtrace(200);
     {
         std::vector<Amplitude<From::A>> cache;
@@ -778,10 +786,10 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
             if(pos > state_pos) break;               // Only compute up to and including AC
             if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
-            auto amplitudes       = generate_amplitude_list_rrp<From::A>(state_copy, pos);
-            auto probability      = compute_probability_rrp(state_copy, pos, amplitudes, cache);
-            auto number_entropy   = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
-            number_entropies[idx] = std::abs(number_entropy);
+            auto amplitudes                     = generate_amplitude_list_rrp<From::A>(state_copy, pos);
+            auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
+            auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
+            number_entropies[idx]               = std::abs(number_entropy);
             auto                psize           = static_cast<long>(probability.size());
             std::array<long, 2> offset          = {0, pos + 1};
             std::array<long, 2> extent          = {psize, 1};
@@ -791,10 +799,10 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     }
     {
         std::vector<Amplitude<From::B>> cache;
-        for(const auto &mps : iter::reverse(state_copy.mps_sites)) {
+        for(const auto &mps : iter::reverse(state_copy.mps_sites)) { // Now compute from the right edge until the middle
             auto pos = mps->get_position<long>();
             auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
-            if(pos <= state_pos + 1) break;      // No need to compute at AC again so add +1
+            if(pos <= state_pos + 1) break;      // +1 because we don't need to compute AC again
             if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
             auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_copy, pos);
             auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
@@ -807,7 +815,6 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         }
         cacheB_size = cache.size();
     }
-
     tools::log->disable_backtrace();
     state.measurements.number_entropies        = number_entropies;
     state.measurements.number_entropy_midchain = number_entropies.at(state.get_length<size_t>() / 2);

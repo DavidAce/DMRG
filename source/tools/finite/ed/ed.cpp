@@ -70,26 +70,26 @@ namespace tools::finite::ed {
 
         tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(state_ed));
         tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(state_ed));
-        tools::log->info("Entanglement entropies Sₑ          = {:8.2e}", fmt::join(tools::finite::measure::entanglement_entropies(state_ed), ", "));
-        tools::log->info("Entanglement entropy   Sₑ (mid)    = {:8.2e}", tools::finite::measure::entanglement_entropy_midchain(state_ed), ", ");
+        tools::log->info("Entanglement entropies Sₑ          = {::8.2e}", tools::finite::measure::entanglement_entropies(state_ed));
+        tools::log->info("Entanglement entropy   Sₑ (mid)    = {:8.2e}", tools::finite::measure::entanglement_entropy_midchain(state_ed));
         if(status.algo_type == AlgorithmType::fLBIT) {
-            tools::log->info("Number entropies Sₙ                = {:8.2e}", fmt::join(tools::finite::measure::number_entropies(state_ed), ", "));
-            tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(state_ed), ", ");
+            tools::log->info("Number entropies Sₙ                = {::8.2e}", tools::finite::measure::number_entropies(state_ed));
+            tools::log->info("Number entropy   Sₙ (mid)          = {:8.2e}", tools::finite::measure::number_entropy_midchain(state_ed));
         }
-        tools::log->info("Spin components (global X,Y,Z)     = {:8.2e}", fmt::join(tools::finite::measure::spin_components(state_ed), ", "));
+        tools::log->info("Spin components (global X,Y,Z)     = {::8.2e}", tools::finite::measure::spin_components(state_ed));
 
         auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(state_ed);
         auto structure_factor_xyz   = tools::finite::measure::structure_factor_xyz(state_ed);
         auto kvornings_marker       = tools::finite::measure::kvornings_marker(state_ed);
 
-        tools::log->info("Expectation values ⟨σx⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[0]), ", "));
-        tools::log->info("Expectation values ⟨σy⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[1]), ", "));
-        tools::log->info("Expectation values ⟨σz⟩            = {:+9.6f}", fmt::join(tenx::span(expectation_values_xyz[2]), ", "));
+        tools::log->info("Expectation values ⟨σx⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[0]));
+        tools::log->info("Expectation values ⟨σy⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[1]));
+        tools::log->info("Expectation values ⟨σz⟩            = {::+9.6f}", tenx::span(expectation_values_xyz[2]));
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σx_i σx_j⟩² = {:+.16f}", structure_factor_xyz[0]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σy_i σy_j⟩² = {:+.16f}", structure_factor_xyz[1]);
         tools::log->info("Structure f. L⁻¹ ∑_ij ⟨σz_i σz_j⟩² = {:+.16f}", structure_factor_xyz[2]);
-        tools::log->info("Kvornings marker                   = {:+9.6f}", fmt::join(tenx::span(kvornings_marker), ", "));
-        tools::log->info("Truncation Errors ε                = {:8.2e}", fmt::join(state_ed.get_truncation_errors(), ", "));
+        tools::log->info("Kvornings marker                   = {::+9.6f}", tenx::span(kvornings_marker));
+        tools::log->info("Truncation Errors ε                = {::8.2e}", state_ed.get_truncation_errors());
 
         return state_ed;
     }

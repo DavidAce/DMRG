@@ -1188,7 +1188,8 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
     size_t num_caches = 0;
     for(const auto &[idx, b] : iter::enumerate(bitseqs)) {
         t_r.tic();
-        tools::finite::mps::init::set_random_product_state_on_axis_using_bitfield(state, StateInitType::REAL, "x", b);
+        auto bstr =  std::to_string(b);
+        tools::finite::mps::init::set_product_state_on_axis_using_pattern(state, StateInitType::REAL, "x", bstr);
         auto lbit_corrmat = Eigen::Tensor<cplx, 2>(ssites, ssites);
         lbit_corrmat.setZero();
         StateFinite state_ud = state;

@@ -39,7 +39,8 @@ StateFinite::StateFinite(const StateFinite &other):
     name(other.name),
     algo(other.algo),
     active_sites(other.active_sites),
-    measurements(other.measurements)
+    measurements(other.measurements),
+    popcount(other.popcount)
 {
     mps_sites.clear();
     mps_sites.reserve(other.mps_sites.size());
@@ -57,6 +58,7 @@ StateFinite &StateFinite::operator=(const StateFinite &other) {
         algo                 = other.algo;
         active_sites         = other.active_sites;
         measurements         = other.measurements;
+        popcount             = other.popcount;
         mps_sites.clear();
         mps_sites.reserve(other.mps_sites.size());
         for(const auto &mps : other.mps_sites) mps_sites.emplace_back(std::make_unique<MpsSite>(*mps));
@@ -194,7 +196,7 @@ bool StateFinite::position_is_the_middle_any_direction() const { return get_posi
 
 bool StateFinite::position_is_outward_edge_left([[maybe_unused]] size_t nsite) const {
     if(nsite == 1) {
-        return get_position<long>() <= -1 and direction == -1;                              // i.e. all sites are B's
+        return get_position<long>() <= -1 and direction == -1; // i.e. all sites are B's
     } else
         return get_position<long>() == 0 and direction == -1 and get_mps_site().isCenter(); // left-most site is a an AC
 }

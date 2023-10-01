@@ -56,10 +56,10 @@ void TensorsInfinite::randomize_model() {
     reset_edges();
 }
 
-void TensorsInfinite::reset_to_random_product_state(std::string_view sector, bool use_eigenspinors, size_t bitfield) {
+void TensorsInfinite::reset_to_random_product_state(std::string_view sector, bool use_eigenspinors, std::string & pattern) {
     eject_edges();
     state->clear_cache(); // Other caches can remain intact
-    tools::infinite::mps::random_product_state(*state, sector, use_eigenspinors, bitfield);
+    tools::infinite::mps::random_product_state(*state, sector, use_eigenspinors, pattern);
     reset_edges();
 }
 

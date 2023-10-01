@@ -49,7 +49,6 @@ namespace settings {
     /*!  \namespace settings::input Settings for initialization */
     namespace input{
         inline long        seed                                 = 1;                            /*!< Main seed for the random number generator. */
-        inline size_t      bitfield                             = -1ul;                         /*!< Number whose bitfield represents the initial product state in the basis given by initial_parity_sector. Disable with -1ul */
         inline std::string config_filename                      = "input/input.cfg";            /*!< Default config filename. Can either be a .cfg file or a .h5 file with a config stored as a string in /common/config_file_contents */
         inline std::string config_file_contents;
     }
@@ -158,7 +157,7 @@ namespace settings {
         inline std::string         initial_axis                = "none";                                 /*!< Initialize state with global spin component along this axis. Choose {none, (+-) x,y or z}  */
         inline StateInitType       initial_type                = StateInitType::REAL;                    /*!< Initial state can be REAL/CPLX */
         inline StateInit           initial_state               = StateInit::RANDOM_ENTANGLED_STATE;      /*!< Initial configuration for the spin chain (only for finite systems)  */
-        inline std::vector<size_t> initial_pattern             = {};                                     /*!< The actual random spin configuration used for the initial product state (for internal use) */
+        inline std::string         initial_pattern             = {};                                     /*!< The actual random spin configuration used for the initial product state (for internal use) */
         inline double              fes_rate                    = 2;                                      /*!< If |fes_rate| > 0, runs a finite entanglement scaling (fes) analysis with this step size in bond dimension, after finishing the main algorithm */
         inline UpdateWhen          bond_increase_when          = UpdateWhen::NEVER;                      /*!< If and when to increase the bond dimension limit {NEVER, TRUNCATED, STUCK, SATURATED, ITERATION}. */
         inline double              bond_increase_rate          = 8;                                      /*!< Bond dimension growth rate. Factor if 1<x<=2, constant shift if x > 2, otherwise invalid. */

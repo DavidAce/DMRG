@@ -68,7 +68,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("threading::num_threads"                       , threading::num_threads);
 
     dmrg_config.load_parameter("input::seed"                                  , input::seed);
-    dmrg_config.load_parameter("input::bitfield"                              , input::bitfield);
 
     dmrg_config.load_parameter("storage::output_filepath"                     , storage::output_filepath);
     dmrg_config.load_parameter("storage::output_append_seed"                  , storage::output_append_seed);
@@ -154,6 +153,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::initial_axis"                       , strategy::initial_axis);
     dmrg_config.load_parameter("strategy::initial_type"                       , strategy::initial_type);
     dmrg_config.load_parameter("strategy::initial_state"                      , strategy::initial_state);
+    dmrg_config.load_parameter("strategy::initial_pattern"                    , strategy::initial_pattern);
     dmrg_config.load_parameter("strategy::fes_rate"                           , strategy::fes_rate);
     dmrg_config.load_parameter("strategy::bond_increase_when"                 , strategy::bond_increase_when);
     dmrg_config.load_parameter("strategy::bond_increase_rate"                 , strategy::bond_increase_rate);

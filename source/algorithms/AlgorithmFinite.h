@@ -46,8 +46,8 @@ class AlgorithmFinite : public AlgorithmBase {
     void         run_postprocessing() override;
     void         clear_convergence_status() override;
     void         randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
-                                 std::optional<std::string> sector = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
-                                 std::optional<size_t> bitfield = std::nullopt, std::optional<long> bond_lim = std::nullopt,
+                                 std::optional<std::string> axis = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
+                                 std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
                                  std::optional<double> trnc_lim = std::nullopt);
 
     void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) override;

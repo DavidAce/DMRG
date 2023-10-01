@@ -280,13 +280,6 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator5(const std::vector<s
         auto mpo_layer_dn = mpo_layer;
         // Contract the Pauli operators to get the sandwhich szj mpo[n] ... mpo[0] szi mpo[0]^adj ... mpo[n]^adj, where the indices in [] are the layers
         if(idx_layer == 0) { mpo_layer_up[pos_szi] = Eigen::Tensor<cplx, 4>(mpo_layer_up[pos_szi].contract(opi, tenx::idx({3}, {0}))); }
-////        TODO: REMOVE the extra site!! below
-//        auto d = settings::input::bitfield;
-//        if (d != -1ul and d != 0){
-//            if(idx_layer == 0 and pos_szi + d < mpo_layer_up.size()) {mpo_layer_up[pos_szi+d] = Eigen::Tensor<cplx, 4>(mpo_layer_up[pos_szi + d].contract(opi, tenx::idx({3}, {0}))); }
-//            tools::log->warn("Adding an extra tau_i+1");
-//        }
-
         mpo_layer_md = merge_unitary_mpo_layers(mpo_layer_dn, mpo_layer_md, mpo_layer_up);
     }
 
