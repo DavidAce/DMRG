@@ -97,7 +97,6 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
         for(auto &&[i, b] : iter::enumerate(bitfield)) b = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010 or 10101010..
         rnd::shuffle(bitfield);                                                                     // Shuffle the sequence randomly like 101011110100...
     }
-
     std::string label = "A";
     for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
         auto &&mps = *mps_ptr;
@@ -191,7 +190,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     auto                                  bitfield = get_bitfield(state, pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length(), 0);
-        for(auto &&[i, p] : iter::enumerate(pattern)) p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010
+        for(auto &&[i, p] : iter::enumerate(bitfield)) p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010
     }
     if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
         // Reverse with 50% probability

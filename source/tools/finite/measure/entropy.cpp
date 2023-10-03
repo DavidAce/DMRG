@@ -496,7 +496,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
             bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
             if(accept) {
-                if(tgt_pos > state_pos) {
+                if(tgt_pos > state_pos and state.popcount > n) {
                     // The convention for probabilities is for having n particles to the left of tgt_pos.
                     // Since we calculate from the right side whenever tgt_pos > state_pos, we can take the complementary number of particles
                     auto nc = state.popcount - n;
