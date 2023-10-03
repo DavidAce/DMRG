@@ -714,6 +714,14 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
     else
         algorithm_history.back() = log_entry(status, tensors);
 
+    if(status.algo_type == AlgorithmType::fLBIT) {
+        status.entanglement_saturated_for                          = 0;
+        status.entanglement_converged_for                          = 0;
+        algorithm_history.back().status.entanglement_converged_for = 0;
+        algorithm_history.back().status.entanglement_saturated_for = 0;
+        return;
+    }
+
     // Gather the entropy history
     size_t                           entropies_size = tensors.get_length() + 1;
     std::vector<SaturationReport>    reports(entropies_size);
@@ -760,8 +768,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
             }
         }
     }
-    status.entanglement_converged_for = status.entanglement_saturated_for;
-
+    status.entanglement_converged_for                          = status.entanglement_saturated_for;
     algorithm_history.back().status.entanglement_converged_for = status.entanglement_converged_for;
     algorithm_history.back().status.entanglement_saturated_for = status.entanglement_saturated_for;
 }
