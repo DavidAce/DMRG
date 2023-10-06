@@ -93,7 +93,7 @@ def get_h5_status(filename, batch):
             'fLBIT/state_real/status',
             'fLBIT/state_real/mem_usage',
             'fLBIT/state_real/number_probabilities',
-            'fLBIT/state_real/initial_pattern'
+            # 'fLBIT/state_real/initial_pattern'
         ]
 
         try:
@@ -107,12 +107,13 @@ def get_h5_status(filename, batch):
                 if not has_equal_iters:
                     return f"FAILED|(unequal iters:{len_of_dsets})"
                 length = expected_dsets[1]['length'][0]
-                has_neel_init_pattern = np.all(expected_dsets[5][()] == np.resize([1, 0], int(length))) or np.all(expected_dsets[5][()] == np.resize([0, 1], int(length)))
-                should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename
-                if should_be_neel and not has_neel_init_pattern:
-                    return f"FAILED|initial state is not neel"
-                if not should_be_neel and has_neel_init_pattern:
-                    return f"FAILED|initial state is neel:{filename}"
+                if len(expected_dsets) >= 6:
+                    has_neel_init_pattern = np.all(expected_dsets[5][()] == np.resize([1, 0], int(length))) or np.all(expected_dsets[5][()] == np.resize([0, 1], int(length)))
+                    should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename
+                    if should_be_neel and not has_neel_init_pattern:
+                        return f"FAILED|initial state is not neel"
+                    if not should_be_neel and has_neel_init_pattern:
+                        return f"FAILED|initial state is neel:{filename}"
                 time_steps=len(expected_dsets[1])
                 has_finished_all   = expected_dsets[0][()]
                 r2max=float(length)
@@ -120,7 +121,7 @@ def get_h5_status(filename, batch):
                 tmax2 = 1.0 / Jmin2
                 tmax = 10 ** np.ceil(np.log10(tmax2))
                 found_tmax = expected_dsets[1]['physical_time'][-1].astype(float)
-                has_expected_tmax  = found_tmax == tmax
+                has_expected_tmax  = found_tmax == tmax or '-lin' in filename
                 has_expected_iters = time_steps >= batch['time_steps']
                 has_exceeded_iters = time_steps > batch['time_steps']
                 if has_expected_iters and has_finished_all:

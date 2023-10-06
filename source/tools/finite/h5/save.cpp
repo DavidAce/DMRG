@@ -5,6 +5,7 @@
 #include "io/hdf5_types.h"
 #include "math/float.h"
 #include "math/num.h"
+#include "qm/spin.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
@@ -93,16 +94,40 @@ namespace tools::finite::h5 {
     }
 
     void save::expectations(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(sinfo.algo_type != AlgorithmType::xDMRG) return;
-        if(sinfo.storage_level <= StorageLevel::LIGHT) return;
-        if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
-        if(settings::storage::storage_level_tables <= StorageLevel::LIGHT) return; // Midchain is included in measurements table
-        auto t_hdf = tid::tic_scope("spin_local", tid::level::higher);
-        tools::log->trace("Saving spin local expectation values to {}", sinfo.get_state_prefix());
-        auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(state);
-        save::data_as_table(h5file, sinfo, expectation_values_xyz[0], "expectation_values_sx", "<sigma x>", "L_");
-        save::data_as_table(h5file, sinfo, expectation_values_xyz[1], "expectation_values_sy", "<sigma y>", "L_");
-        save::data_as_table(h5file, sinfo, expectation_values_xyz[2], "expectation_values_sz", "<sigma z>", "L_");
+        if(sinfo.algo_type == AlgorithmType::xDMRG) {
+            if(settings::storage::storage_level_tables <= StorageLevel::LIGHT) return; // Midchain is included in measurements table
+            if(sinfo.storage_level <= StorageLevel::LIGHT) return;
+            if(sinfo.storage_event != StorageEvent::LAST_STATE) return;
+            auto t_hdf = tid::tic_scope("spin_local", tid::level::higher);
+            tools::log->trace("Saving spin expectation values to {}", sinfo.get_state_prefix());
+            auto expectation_values_xyz = tools::finite::measure::expectation_values_xyz(state);
+            save::data_as_table(h5file, sinfo, expectation_values_xyz[0], "expectation_values_sx", "<sigma x>", "L_");
+            save::data_as_table(h5file, sinfo, expectation_values_xyz[1], "expectation_values_sy", "<sigma y>", "L_");
+            save::data_as_table(h5file, sinfo, expectation_values_xyz[2], "expectation_values_sz", "<sigma z>", "L_");
+        }
+        if(sinfo.algo_type == AlgorithmType::fLBIT) {
+            if(settings::storage::storage_level_tables == StorageLevel::NONE) return; // Midchain is included in measurements table
+            if(sinfo.storage_level == StorageLevel::NONE) return;
+            if(sinfo.storage_event != StorageEvent::ITER_STATE) return;
+            auto t_hdf = tid::tic_scope("spin_local", tid::level::higher);
+//            tools::log->trace("Saving spin expectation values to {}", sinfo.get_state_prefix());
+            if(not state.measurements.expectation_values_sz.has_value())
+                state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz);
+//            save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
+            auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "expectation_values_sz");
+            tools::log->trace("Appending to table: {}", table_path);
+            // Check if the current entry has already been appended
+            auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+            if(attrs == sinfo) return;
+            if(not attrs.link_exists) {
+                auto                 rows = static_cast<hsize_t>(state.measurements.expectation_values_sz->dimension(0));
+                std::vector<hsize_t> dims = {rows, 0};
+                std::vector<hsize_t> chnk = {rows, 50};
+                h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
+            }
+            h5file.appendToDataset(state.measurements.expectation_values_sz.value(), table_path, 1);
+            tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
+        }
     }
 
     void save::kvornings_marker(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {

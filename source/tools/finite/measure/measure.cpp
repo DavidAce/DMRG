@@ -49,6 +49,7 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
         state.measurements.number_entropy_current  = measure::number_entropy_current(state);
         state.measurements.number_entropy_midchain = measure::number_entropy_midchain(state);
         state.measurements.number_entropies        = measure::number_entropies(state);
+        state.measurements.expectation_values_sz   = measure::expectation_values(state, qm::spin::half::sz);
     }
 
     state.measurements.renyi_2         = measure::renyi_entropies(state, 2);
@@ -777,6 +778,10 @@ Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateF
     }
     return expvals;
 }
+Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Matrix2cd &op) {
+            Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
+            return expectation_values(state, tensor_op);
+}
 
 double tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1,
                                            long pos2) {
@@ -948,12 +953,9 @@ double tools::finite::measure::structure_factor(const StateFinite &state, const 
 }
 
 std::array<Eigen::Tensor<double, 1>, 3> tools::finite::measure::expectation_values_xyz(const StateFinite &state) {
-    Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
-    Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
-    Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
-    if(not state.measurements.expectation_values_sx) state.measurements.expectation_values_sx = measure::expectation_values(state, sx);
-    if(not state.measurements.expectation_values_sy) state.measurements.expectation_values_sy = measure::expectation_values(state, sy);
-    if(not state.measurements.expectation_values_sz) state.measurements.expectation_values_sz = measure::expectation_values(state, sz);
+    if(not state.measurements.expectation_values_sx) state.measurements.expectation_values_sx = measure::expectation_values(state, qm::spin::half::sx);
+    if(not state.measurements.expectation_values_sy) state.measurements.expectation_values_sy = measure::expectation_values(state, qm::spin::half::sy);
+    if(not state.measurements.expectation_values_sz) state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz);
     return {state.measurements.expectation_values_sx.value(), state.measurements.expectation_values_sy.value(),
             state.measurements.expectation_values_sz.value()};
 }

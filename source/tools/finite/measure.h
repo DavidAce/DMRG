@@ -114,6 +114,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double                   expectation_value      (const StateFinite & state, const std::vector<LocalObservableMpo> & mpos);
     [[nodiscard]] extern Eigen::Tensor<double, 1> expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op);
     [[nodiscard]] extern Eigen::Tensor<double, 1> expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,4> &mpo);
+    [[nodiscard]] extern Eigen::Tensor<double, 1> expectation_values     (const StateFinite & state, const Eigen::Matrix2cd &op);
     [[nodiscard]] extern double                   correlation            (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2, long pos1, long pos2);
     [[nodiscard]] extern Eigen::Tensor<double, 2> correlation_matrix     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op1, const Eigen::Tensor<cplx,2> &op2);
     [[nodiscard]] extern Eigen::Tensor<double, 2> kvornings_matrix       (const StateFinite & state);

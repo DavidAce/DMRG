@@ -27,7 +27,6 @@ enum class From { A, B };
 template<From from, auto N, bool on = settings::debug_numen>
 [[nodiscard]] inline std::string bits_to_string(const std::bitset<N> &b, [[maybe_unused]] long state_size, long num_bits) {
     if constexpr(on) {
-        if(tools::log->level() > spdlog::level::trace) return {};
         if(num_bits < 0l or num::cmp_greater_equal(num_bits, N)) {
             tools::log->warn("num_bits should be in range [0,{}]. Got {} | bits {}", N, num_bits, b.to_string());
             return "SEE WARNING";
@@ -71,11 +70,13 @@ template<From from, auto N = 64>
 struct Amplitude {
     long                                  state_size;        // System size
     std::bitset<N>                        bits;              // Bits that select spins on each MPS site
-    long                                  pos = -1l;         // MPS site (not Schmidt site!)
+    long                                  pos = -1l;         // Keeps track of the latest mps pos that has been contracted into ampl
     Eigen::Tensor<StateFinite::Scalar, 1> ampl;              // Accumulates the MPS tensors
     bool                                  cache_hit = false; // True if eval was avoided due to cache hit
-    Amplitude(long state_size_, long pos_, const std::bitset<64> &bits_, const Eigen::Tensor<StateFinite::Scalar, 1> &ampl_)
-        : state_size(state_size_), bits(bits_), pos(pos_), ampl(ampl_) {
+    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<StateFinite::Scalar, 1> &ampl_)
+        : state_size(state_size_), bits(bits_), ampl(ampl_) {
+        // In the beginning, no mps site has been contracted into ampl, so pos must be outside the chain 0...L
+        if constexpr(from == From::A) pos = -1l;
         if constexpr(from == From::B) pos = state_size;
     }
 
@@ -444,10 +445,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     auto                t_prob    = tid::tic_scope("probability");
     auto                state_pos = state.get_position<long>();
     auto                state_len = state.get_length<long>();
-    auto                tgt_rpos  = state_len - 1 - tgt_pos;
-//    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
-    auto                prob_size = tgt_pos + 2;
-    std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
+    std::vector<double> probability(static_cast<size_t>(state_len + 1), 0.0);
     double              probability_sum = 0.0;
     // Figure out which schmidt values to use
     auto                     t_figout = tid::tic_scope("figout");
@@ -464,19 +462,18 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
 
     // Create optional slots for each schmidt value
     auto   t_slots          = tid::tic_scope("slots");
-    double amplitude_cutoff = 1e-12;
+    double amplitude_cutoff = 1e-4;
 
-    Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), tgt_pos + 2);
+    Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), state_len + 1);
     Eigen::VectorXi schmidt_taken    = Eigen::VectorXi::Zero(schmidt_values.size());
     Eigen::VectorXd schmidt_squared  = tenx::VectorMap(schmidt_values).cwiseAbs2();
     auto            min_alpha        = 0l;
     auto            max_alpha        = schmidt_values.size();
 
-    for(auto &a : amplitudes) {
+    for(auto &&[a_idx, a] : iter::enumerate(amplitudes)) {
         auto n  = a.bits.count();
         long nl = static_cast<long>(n); // Number of bits in amplitude a, as <long>
-
-        // Evaluate the amplitude vector
+        // Evaluate the amplitude vector (this updates its internal position)
         a.eval(state, tgt_pos, cache);
         if(a.ampl.size() != schmidt_values.size()) {
             tools::log->dump_backtrace();
@@ -496,8 +493,11 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
             bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
             if(accept) {
-                if(tgt_pos > state_pos and state.popcount > n) {
-                    // The convention for probabilities is for having n particles to the left of tgt_pos.
+                if(state_pos < tgt_pos) {
+                    // The convention is that p_i(n) is the probability of having n particles to the LEFT of tgt_pos i.
+                    // If we are calculating from the right (using B's) we have to convert to the left convention.
+                    // In that case, ssq is a probability for having n particles to the right of tgt_pos.
+                    // If we have N particles in total, this is the same as the probability of having N-n particles to the left.
                     // Since we calculate from the right side whenever tgt_pos > state_pos, we can take the complementary number of particles
                     auto nc = state.popcount - n;
                     probability.at(nc) += ssq;
@@ -506,7 +506,8 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
                     probability[n] += ssq;
                     probability_sum += ssq;
                 }
-
+                //                probability[n] += ssq;
+                //                probability_sum += ssq;
                 schmidt_taken(alpha) = 1;
                 if(schmidt_taken.isOnes()) break;
             }
@@ -538,112 +539,8 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     return probability;
 }
 
-template<typename AmplitudesT, typename CacheT>
-std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
-    // Here we compute the probability of finding
-
-    auto                t_prob    = tid::tic_scope("probability");
-    auto                state_pos = state.get_position<long>();
-    auto                state_len = state.get_length<long>();
-    auto                tgt_rpos  = state_len - 1 - tgt_pos;
-    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
-    std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
-    double              probability_sum = 0.0;
-    // Figure out which schmidt values to use
-    auto                     t_figout = tid::tic_scope("figout");
-    Eigen::Tensor<double, 1> schmidt_values;
-    if(tgt_pos < state_pos)
-        schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
-    else if(tgt_pos == state_pos)
-        schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
-    else {
-        const auto &mps_left = state.get_mps_site(tgt_pos - 1);
-        schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
-    }
-    t_figout.toc();
-
-    // Create optional slots for each schmidt value
-    auto                t_slots          = tid::tic_scope("slots");
-    double              amplitude_cutoff = 1e-12;
-    std::vector<size_t> namp; // Number of bits in each amplitude
-    namp.reserve(amplitudes.size());
-    for(const auto &a : amplitudes) namp.emplace_back(a.bits.count());
-
-    auto              nmax = static_cast<size_t>(tgt_pos) + 1ul; // Maximum number of n
-    std::vector<bool> nflg(nmax + 1, false);                     // Flags for each n to tell if they have all been found in amplitudes
-
-    Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), tgt_pos + 2);
-    Eigen::VectorXi schmidt_taken    = Eigen::VectorXi::Zero(schmidt_values.size());
-    Eigen::VectorXd schmidt_squared  = tenx::VectorMap(schmidt_values).cwiseAbs2();
-    auto            idx              = 0ul; // Start amplitude index
-    auto            n                = 0ul; // Number of bits in the current amplitude
-    auto            min_alpha        = 0l;
-    auto            max_alpha        = schmidt_values.size();
-
-    while(true) {
-        idx = amplitude_next_idx_round_robin(idx, n, nmax, nflg, namp, amplitudes);
-        if(idx == -1ul) // Could not find next idx. Probably all have been checked.
-            break;
-        auto &a  = amplitudes[idx];
-        long  nl = static_cast<long>(a.bits.count()); // Number of bits in amplitude a, as <long>
-        if constexpr(settings::debug_numen)
-            if(static_cast<long>(n) != nl) throw except::logic_error("Wrong bit number!");
-        // Evaluate the amplitude vector
-        a.eval(state, tgt_pos, cache);
-        if(a.ampl.size() != schmidt_values.size()) {
-            tools::log->dump_backtrace();
-            throw except::logic_error("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_values.size());
-        }
-        // Add amplitudes to the nth column
-        auto avec = tenx::VectorMap(a.ampl);
-        ampacc_sq_matrix.col(nl) += avec.conjugate().cwiseProduct(avec).cwiseAbs();
-        //        tools::log->info("ampacc_sq: \n{}\n", linalg::matrix::to_string(ampacc_sq_matrix,8));
-
-        // Check if any amplitude element gives the signal to add probability
-        for(long alpha = min_alpha; alpha < max_alpha; alpha++) {
-            if(schmidt_taken(alpha) == 1) continue;
-            auto asq = ampacc_sq_matrix(alpha, nl); // The a²[alpha] value tells us to pick the corresponding λ²[alpha] when nonzero.
-            auto ssq = schmidt_squared[alpha];      // The value λ² is added to probability if the amplitude is greater than cutoff.
-            // Check that the probability would not grow too large, in case we are erroneously considering an amplitude
-            // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
-            bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
-            if(accept) {
-                probability[n] += ssq;
-                probability_sum += ssq;
-                schmidt_taken(alpha) = 1;
-                if(schmidt_taken.isOnes()) break;
-            }
-            if constexpr(settings::verbose_numen) {
-                std::string_view accept_str = accept ? "accept" : "";
-                std::string_view cacheh_str = a.cache_hit ? "cache" : "";
-                tools::log->trace("pos {:>2} | n {:>2} | bits {} | idx {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
-                                  "{:9.3e} [{:6}|{:5}]",
-                                  tgt_pos, n, a.to_string(), idx, 1 - probability_sum, alpha, asq, amplitude_cutoff, alpha, ssq, accept_str, cacheh_str);
-            }
-        }
-        if(schmidt_taken.isOnes()) break;                                                    // All schmidt values squared have been added to probability
-        while(schmidt_taken(min_alpha) == 1) min_alpha++;                                    // Advance min_alpha to skip first taken schmidt values
-        while(schmidt_taken(max_alpha - 1) == 1 and max_alpha >= min_alpha + 1) max_alpha--; // Decrease max_alpha to skip the last taken schmidt values
-    }
-
-    // Sanity check on probabilities
-    auto p_sum = std::accumulate(probability.begin(), probability.end(), 0.0);
-    if(std::abs(p_sum - 1.0) > 1e-4) {
-        tools::log->dump_backtrace();
-        tools::log->info("p(n) = {::18.16f} = {:18.16f}", probability, p_sum);
-        throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
-    }
-    if(std::abs(p_sum - 1.0) > 1e-8) {
-        tools::log->dump_backtrace();
-        tools::log->warn("p(n) = {::18.16f} = {:18.16f}", probability, p_sum);
-        tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
-    }
-    //    tools::log->trace("p(n) = {:18.16f} = {:18.16f}", fmt::join(probability, ", "), p_sum);
-    return probability;
-}
-
 template<From from>
-std::vector<Amplitude<from>> generate_amplitude_list_rrp(const StateFinite &state, long mps_pos) {
+std::vector<Amplitude<from>> generate_amplitude_list_rrp(long state_len, long mps_pos) {
     // Generate a list of bit sequences of size prod_{i=0}^pos spin_dim_i.
     // For spin-half this is just 2^pos elements, where pos is the mps position
     // counting from the left.
@@ -660,57 +557,18 @@ std::vector<Amplitude<from>> generate_amplitude_list_rrp(const StateFinite &stat
     // so in the example above we could get
     //    000, 001, 011, 111, 010, 101, 100, 110
     // notice how the bits with 1 or 2 bits end up in random order
-
-    auto t_amp     = tid::tic_scope("amplitude");
-    auto state_len = state.get_length<long>();
-    auto num_bits  = -1ul;
-    if constexpr(from == From::A) { num_bits = static_cast<size_t>(mps_pos) + 1ul; }
-    if constexpr(from == From::B) { num_bits = state.get_length<size_t>() - static_cast<size_t>(mps_pos); }
+    if(state_len < 0) throw except::logic_error("Expected a non-negative state_len. Got: {}", state_len);
+    if(mps_pos < 0) throw except::logic_error("Expected a non-negative mps_pos. Got: {}", mps_pos);
+    if(state_len <= mps_pos) throw except::logic_error("Expected a state_len <= mps_pos. Got: state_len={}, mps_pos={}", state_len, mps_pos);
+    auto t_amp    = tid::tic_scope("amplitude");
+    auto num_bits = -1ul;
+    if constexpr(from == From::A) { num_bits = static_cast<size_t>(mps_pos + 1l); }
+    if constexpr(from == From::B) { num_bits = static_cast<size_t>(state_len - mps_pos); }
     auto                         rrp = get_random_roundrobin_popcount_vector(num_bits);
     std::vector<Amplitude<from>> amplitudes;
     amplitudes.reserve(rrp.size());
-    long start_pos = from == From::A ? -1l : state_len;
-    for(const auto &num : rrp) amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(num)), {}});
-
-    return amplitudes;
-}
-
-template<From from>
-std::vector<Amplitude<from>> generate_amplitude_list(const StateFinite &state, long mps_pos) {
-    // Generate a list of bit sequences of size prod_{i=0}^pos spin_dim_i.
-    // For spin-half this is just 2^pos elements, where pos is the mps position
-    // counting from the left.
-    // Example: Let state_pos == 4 and state_len == 8. Then
-    // num_bitseqs = prod_{i=0}^{mpo_pos} = spin_dim_0 * spin_dim_1 * spin_dim_2 = 2³ = 8,
-    //      if mpo_pos == 2, "from A",  we generate
-    //          000, 001, 010, 011, 100, 101, 110, 111
-    //      if mpo_pos == 6 "from B" we also generate
-    //          000, 001, 010, 011, 100, 101, 110, 111
-    // So we generate the same regardless, but in the first case the numbers are interpreted
-    // in "in reverse" so that 001 becomes 100.
-
-    auto t_amp     = tid::tic_scope("amplitude");
-    auto state_pos = state.get_position<long>();
-    auto state_len = state.get_length<long>();
-    auto spinprod  = [](long &acc, const auto &mps) {
-        if(mps->spin_dim() != 2) throw std::runtime_error("number_entropies: spin_dim() != 2 is not supported");
-        return acc * mps->spin_dim();
-    };
-
-    long num_bitseqs;
-    if(mps_pos <= state_pos) {
-        num_bitseqs = std::accumulate(state.mps_sites.begin(), state.mps_sites.begin() + mps_pos + 1, 1l, spinprod);
-    } else {
-        auto mps_rpos = state_len - 1 - mps_pos;
-        num_bitseqs   = std::accumulate(state.mps_sites.rbegin(), state.mps_sites.rbegin() + mps_rpos + 1, 1l, spinprod);
-    }
-
-    std::vector<Amplitude<from>> amplitudes;
-    amplitudes.reserve(static_cast<size_t>(num_bitseqs));
-    long start_pos = from == From::A ? -1l : state_len;
-    for(long count = 0; count < num_bitseqs; count++)
-        amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(count)), {}});
-
+    //    long start_pos = from == From::A ? -1l : state_len;
+    for(const auto &num : rrp) amplitudes.emplace_back(Amplitude<from>{state_len, std::bitset<64>(static_cast<unsigned long long int>(num)), {}});
     return amplitudes;
 }
 
@@ -767,6 +625,8 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     auto t_num      = tid::tic_scope("number_entropy", tid::level::highest);
     auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy);
+    //    tools::finite::mps::move_center_point_to_pos(state_copy,state_copy.get_length<long>()-1);
+    //    tools::finite::mps::move_center_point_to_pos(state_copy,state_copy.get_length<long>()-1);
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
     auto state_llen      = state_copy.get_length<long>();
@@ -786,7 +646,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
             if(pos > state_pos) break;               // Only compute up to and including AC
             if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
-            auto amplitudes                     = generate_amplitude_list_rrp<From::A>(state_copy, pos);
+            auto amplitudes                     = generate_amplitude_list_rrp<From::A>(state_llen, pos);
             auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
@@ -804,7 +664,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
             if(pos <= state_pos + 1) break;      // +1 because we don't need to compute AC again
             if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
-            auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_copy, pos);
+            auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_llen, pos);
             auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
@@ -864,3 +724,157 @@ double tools::finite::measure::number_entropy_midchain(const StateFinite &state)
     } else
         return 0;
 }
+
+// template<typename AmplitudesT, typename CacheT>
+// std::vector<double> compute_probability(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
+//     // Here we compute the probability of finding
+//
+//     auto t_prob    = tid::tic_scope("probability");
+//     auto state_pos = state.get_position<long>();
+//     auto state_len = state.get_length<long>();
+//     //    auto                tgt_rpos  = state_len - 1 - tgt_pos;
+//     //    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
+//     auto                prob_size = tgt_pos + 2;
+//     std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
+//     double              probability_sum = 0.0;
+//     // Figure out which schmidt values to use
+//     auto                     t_figout = tid::tic_scope("figout");
+//     Eigen::Tensor<double, 1> schmidt_values;
+//     if(tgt_pos < state_pos)
+//         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
+//     else if(tgt_pos == state_pos)
+//         schmidt_values = state.get_mps_site(tgt_pos).get_LC().abs(); // AC-site
+//     else {
+//         const auto &mps_left = state.get_mps_site(tgt_pos - 1);
+//         schmidt_values       = mps_left.isCenter() ? mps_left.get_LC().abs() : mps_left.get_L().abs(); // B-site
+//     }
+//     t_figout.toc();
+//
+//     // Create optional slots for each schmidt value
+//     auto                t_slots          = tid::tic_scope("slots");
+//     double              amplitude_cutoff = 1e-12;
+//     std::vector<size_t> namp; // Number of bits in each amplitude
+//     namp.reserve(amplitudes.size());
+//     for(const auto &a : amplitudes) namp.emplace_back(a.bits.count());
+//
+//     auto              nmax = static_cast<size_t>(tgt_pos) + 1ul; // Maximum number of n
+//     std::vector<bool> nflg(nmax + 1, false);                     // Flags for each n to tell if they have all been found in amplitudes
+//
+//     Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), tgt_pos + 2);
+//     Eigen::VectorXi schmidt_taken    = Eigen::VectorXi::Zero(schmidt_values.size());
+//     Eigen::VectorXd schmidt_squared  = tenx::VectorMap(schmidt_values).cwiseAbs2();
+//     auto            idx              = 0ul; // Start amplitude index
+//     auto            n                = 0ul; // Number of bits in the current amplitude
+//     auto            min_alpha        = 0l;
+//     auto            max_alpha        = schmidt_values.size();
+//
+//     while(true) {
+//         idx = amplitude_next_idx_round_robin(idx, n, nmax, nflg, namp, amplitudes);
+//         if(idx == -1ul) // Could not find next idx. Probably all have been checked.
+//             break;
+//         auto &a  = amplitudes[idx];
+//         long  nl = static_cast<long>(a.bits.count()); // Number of bits in amplitude a, as <long>
+//         if constexpr(settings::debug_numen)
+//             if(static_cast<long>(n) != nl) throw except::logic_error("Wrong bit number!");
+//         // Evaluate the amplitude vector
+//         a.eval(state, tgt_pos, cache);
+//         if(a.ampl.size() != schmidt_values.size()) {
+//             tools::log->dump_backtrace();
+//             throw except::logic_error("Mismatching size ampl {} != {}", a.ampl.size(), schmidt_values.size());
+//         }
+//         // Add amplitudes to the nth column
+//         auto avec = tenx::VectorMap(a.ampl);
+//         ampacc_sq_matrix.col(nl) += avec.conjugate().cwiseProduct(avec).cwiseAbs();
+//         //        tools::log->info("ampacc_sq: \n{}\n", linalg::matrix::to_string(ampacc_sq_matrix,8));
+//
+//         // Check if any amplitude element gives the signal to add probability
+//         for(long alpha = min_alpha; alpha < max_alpha; alpha++) {
+//             if(schmidt_taken(alpha) == 1) continue;
+//             auto asq = ampacc_sq_matrix(alpha, nl); // The a²[alpha] value tells us to pick the corresponding λ²[alpha] when nonzero.
+//             auto ssq = schmidt_squared[alpha];      // The value λ² is added to probability if the amplitude is greater than cutoff.
+//             // Check that the probability would not grow too large, in case we are erroneously considering an amplitude
+//             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
+//             bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
+//             if(accept) {
+//                 if(state_pos < tgt_pos) {
+//                     // The convention for probabilities is for having n particles to the left of tgt_pos.
+//                     // Since we calculate from the right side whenever tgt_pos > state_pos, we can take the complementary number of particles
+//                     auto nc = state.popcount - n;
+//                     probability.at(nc) += ssq;
+//                     probability_sum += ssq;
+//                 } else {
+//                     probability[n] += ssq;
+//                     probability_sum += ssq;
+//                 }
+//                 //                probability[n] += ssq;
+//                 //                probability_sum += ssq;
+//                 schmidt_taken(alpha) = 1;
+//                 if(schmidt_taken.isOnes()) break;
+//             }
+//             if constexpr(settings::verbose_numen) {
+//                 std::string_view accept_str = accept ? "accept" : "";
+//                 std::string_view cacheh_str = a.cache_hit ? "cache" : "";
+//                 tools::log->trace("pos {:>2} | n {:>2} | bits {} | idx {} | 1-P {:10.3e} | a({:>4})² {:9.3e} (cut {:8.2e}) | λ({:>4})² "
+//                                   "{:9.3e} [{:6}|{:5}]",
+//                                   tgt_pos, n, a.to_string(), idx, 1 - probability_sum, alpha, asq, amplitude_cutoff, alpha, ssq, accept_str, cacheh_str);
+//             }
+//         }
+//         if(schmidt_taken.isOnes()) break;                                                    // All schmidt values squared have been added to probability
+//         while(schmidt_taken(min_alpha) == 1) min_alpha++;                                    // Advance min_alpha to skip first taken schmidt values
+//         while(schmidt_taken(max_alpha - 1) == 1 and max_alpha >= min_alpha + 1) max_alpha--; // Decrease max_alpha to skip the last taken schmidt values
+//     }
+//
+//     // Sanity check on probabilities
+//     auto p_sum = std::accumulate(probability.begin(), probability.end(), 0.0);
+//     if(std::abs(p_sum - 1.0) > 1e-4) {
+//         tools::log->dump_backtrace();
+//         tools::log->info("p(n) = {::18.16f} = {:18.16f}", probability, p_sum);
+//         throw except::runtime_error("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
+//     }
+//     if(std::abs(p_sum - 1.0) > 1e-8) {
+//         tools::log->dump_backtrace();
+//         tools::log->warn("p(n) = {::18.16f} = {:18.16f}", probability, p_sum);
+//         tools::log->warn("p_sum - 1.0 = {:.8e}", p_sum - 1.0);
+//     }
+//     //    tools::log->trace("p(n) = {:18.16f} = {:18.16f}", fmt::join(probability, ", "), p_sum);
+//     return probability;
+// }
+
+// template<From from>
+// std::vector<Amplitude<from>> generate_amplitude_list(const StateFinite &state, long mps_pos) {
+//     // Generate a list of bit sequences of size prod_{i=0}^pos spin_dim_i.
+//     // For spin-half this is just 2^pos elements, where pos is the mps position
+//     // counting from the left.
+//     // Example: Let state_pos == 4 and state_len == 8. Then
+//     // num_bitseqs = prod_{i=0}^{mpo_pos} = spin_dim_0 * spin_dim_1 * spin_dim_2 = 2³ = 8,
+//     //      if mpo_pos == 2, "from A",  we generate
+//     //          000, 001, 010, 011, 100, 101, 110, 111
+//     //      if mpo_pos == 6 "from B" we also generate
+//     //          000, 001, 010, 011, 100, 101, 110, 111
+//     // So we generate the same regardless, but in the first case the numbers are interpreted
+//     // in "in reverse" so that 001 becomes 100.
+//
+//     auto t_amp     = tid::tic_scope("amplitude");
+//     auto state_pos = state.get_position<long>();
+//     auto state_len = state.get_length<long>();
+//     auto spinprod  = [](long &acc, const auto &mps) {
+//         if(mps->spin_dim() != 2) throw std::runtime_error("number_entropies: spin_dim() != 2 is not supported");
+//         return acc * mps->spin_dim();
+//     };
+//
+//     long num_bitseqs;
+//     if(mps_pos <= state_pos) {
+//         num_bitseqs = std::accumulate(state.mps_sites.begin(), state.mps_sites.begin() + mps_pos + 1, 1l, spinprod);
+//     } else {
+//         auto mps_rpos = state_len - 1 - mps_pos;
+//         num_bitseqs   = std::accumulate(state.mps_sites.rbegin(), state.mps_sites.rbegin() + mps_rpos + 1, 1l, spinprod);
+//     }
+//
+//     std::vector<Amplitude<from>> amplitudes;
+//     amplitudes.reserve(static_cast<size_t>(num_bitseqs));
+//     long start_pos = from == From::A ? -1l : state_len;
+//     for(long count = 0; count < num_bitseqs; count++)
+//         amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(count)), {}});
+//
+//     return amplitudes;
+// }

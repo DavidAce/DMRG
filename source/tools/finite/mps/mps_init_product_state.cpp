@@ -115,6 +115,52 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
 }
 
+void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
+      tools::log->info("Setting a dislocated Néel state of type {} on axis {} {}", enum2sv(type), axis,
+                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+
+    Eigen::Tensor<cplx, 1> L(1);
+    L.setConstant(1.0);
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
+    std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+                                                      tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
+    auto                                  bitfield = get_bitfield(state, pattern);
+    if(bitfield.empty() or bitfield.size() != state.get_length()) {
+        bitfield.resize(state.get_length(), 0);
+        // Sets pattern 010101101010
+        for(auto &&[i, p] : iter::enumerate(bitfield)) {
+            if (i < state.get_length()/2)
+                p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 010101
+            else
+                p = num::mod<size_t>(i, 2) == 0 ? '1' : '0'; // Set Neel pattern 101010
+        }
+    }
+    if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
+        // Reverse with 50% probability
+        std::reverse(bitfield.begin(), bitfield.end());
+    }
+
+    std::string label = "A";
+    for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
+        auto &&mps = *mps_ptr;
+        size_t idx = bitfield.at(pos) == '0' ? 0 : 1;
+        mps.set_mps(spinors.at(idx), L, 0, label);
+
+        if(mps.isCenter()) {
+            mps.set_LC(L);
+            label = "B";
+        }
+    }
+    pattern        = fmt::format("b{}", bitfield);
+    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->info("Initial state: {}", bitfield);
+}
+
+
 void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
     tools::log->info("Setting domain-wall initial state of type {} on axis {} {}", enum2sv(type), axis,
                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
@@ -178,7 +224,7 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
 }
 
 void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-    tools::log->info("Setting randomly shuffled Néel state of type {} on axis {} {}", enum2sv(type), axis,
+    tools::log->info("Setting Néel state of type {} on axis {} {}", enum2sv(type), axis,
                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
@@ -197,7 +243,6 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
         std::reverse(bitfield.begin(), bitfield.end());
     }
 
-    tools::log->debug("Setting product state neel using the |+-{}> eigenspinors of the pauli matrix σ{} on all sites", axus, axus);
     std::string label = "A";
     for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
         auto &&mps = *mps_ptr;

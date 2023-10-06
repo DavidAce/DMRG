@@ -354,8 +354,22 @@ def get_batch_setup(projectname):
                     'time_steps': 4001,
                 },
             }
+        },
+        'lbit107-lind': {
+            'projectname': 'lbit107-lind',
+            'batch': {
+                'L12|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [12200000],
+                    'time_steps': 4001,
+                },
+                # 'L16|f0.2': {
+                #     'seed_extent': [10000],
+                #     'seed_offset': [16200000],
+                #     'time_steps': 4001,
+                # },
+            }
         }
-
     }
 
     return batch_setup[projectname]

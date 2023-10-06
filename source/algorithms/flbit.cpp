@@ -64,9 +64,16 @@ void flbit::resume() {
             case StateInit::PRODUCT_STATE_DOMAIN_WALL:
             case StateInit::PRODUCT_STATE_PATTERN:
             case StateInit::PRODUCT_STATE_NEEL:
-            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED: break;
+            case StateInit::PRODUCT_STATE_NEEL_SHUFFLED:
+            case StateInit::PRODUCT_STATE_NEEL_DISLOCATED: break;
             default:
-                tools::log->warn("Expected initial_state: PRODUCT_STATE_DOMAIN_WALL|PRODUCT_STATE_PATTERN|PRODUCT_STATE_NEEL|PRODUCT_STATE_NEEL_SHUFFLED. Got {}",
+                tools::log->warn("Expected initial_state: "
+                                 "PRODUCT_STATE_DOMAIN_WALL|"
+                                 "PRODUCT_STATE_PATTERN|"
+                                 "PRODUCT_STATE_NEEL|"
+                                 "PRODUCT_STATE_NEEL_SHUFFLED|"
+                                 "PRODUCT_STATE_NEEL_DISLOCATED"
+                                 ". Got {}",
                                  enum2sv(settings::strategy::initial_state));
         }
 
@@ -134,6 +141,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             case flbit_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_SHUFFLED); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_DISLOCATED: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_DISLOCATED); break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_PATTERN); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
