@@ -87,6 +87,7 @@ def parse(project_name):
     parser.add_argument('--rclone-remove', action='store_true', help='Remove local file after rclone', default=None)
     parser.add_argument('--minseed', type=int, help='Minimum seed value to consider',default=None)
     parser.add_argument('--maxseed', type=int, help='Maximum seed value to consider',default=None)
+    parser.add_argument('--force-run', action='store_true', help='Force run of failed/missing seeds')
 
     args = parser.parse_args()
     if args.seedpath is None:
@@ -208,6 +209,7 @@ def generate_sbatch_commands(project_name, args):
         sbatch_arg.extend(['-v'])
     rclone_prefix = f' -p {args.rclone_prefix}' if args.rclone_prefix else ''
     rclone_remove = ' -r' if args.rclone_remove else ''
+    force_run = ' -F' if args.force_run else ''
     parallel = ' -P' if args.parallel else ''
 
     # Load the seed configurations
@@ -248,9 +250,9 @@ def generate_sbatch_commands(project_name, args):
                         if off_final < args.maxseed and off_final+ext_final >= args.maxseed:
                             ext_final = args.maxseed-off_final
 
-                    sbatch_cmd.append('sbatch {} --array=0-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}'
+                    sbatch_cmd.append('sbatch {} --array=0-{}:{} run_jobarray.sh -e {} -c {} -s {} -o {}{}{}{}{}'
                                       .format(' '.join(sbatch_arg), ext_final-1, step, exec, cfg, args.status, off_final,
-                                              parallel, rclone_prefix, rclone_remove))
+                                              parallel, rclone_prefix, rclone_remove, force_run))
     Path("logs").mkdir(parents=True, exist_ok=True)
     Path("jobs").mkdir(parents=True, exist_ok=True)
 

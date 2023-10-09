@@ -18,6 +18,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -p <remote prefix>                  : Rclone copy to this remote dir prefix (default "")
 -r                                  : Remove the file after rclone
 -P                                  : Run seeds in parallel
+-F                                  : Forced run of failed/missing seeds
 -s                                  : Status file directory
 EOF
   exit 1
@@ -27,6 +28,7 @@ export rclone_remove="false"
 export parallel="false"
 export seed_offset=0
 export status_dir="status"
+export force_run="false"
 while getopts c:hde:f:m:o:p:Prs: o; do
     case $o in
         (h) usage ;;
@@ -37,6 +39,7 @@ while getopts c:hde:f:m:o:p:Prs: o; do
         (p) export rclone_prefix=$OPTARG;;
         (r) export rclone_remove="true";;
         (P) export parallel="true";;
+        (f) export force_run="true";;
         (s) export status_dir=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
@@ -166,7 +169,9 @@ run_sim_id() {
   if [ "$status" == "REPLACE" ];then
     extra_args="--replace"
   fi
-
+  if [ "$force_run" == "true" ]; then
+    extra_args="--replace"
+  fi
 
   echodate "EXEC LINE                : $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
