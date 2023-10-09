@@ -81,12 +81,12 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
     while(not task_list.empty()) {
         auto task = task_list.front();
         switch(task) {
-            case xdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_MODEL: initialize_model(); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
+            case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN:
-                randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
+                initialize_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
                 break;
             case xdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case xdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
@@ -147,16 +147,16 @@ void xdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     status.clear();
-    randomize_model(); // First use of random!
+    initialize_model(); // First use of random!
     tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
     init_truncation_error_limits();
     find_energy_range();
     init_energy_limits();
     if(settings::xdmrg::energy_density_window != 0.5)
-        randomize_into_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
+        initialize_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
     else
-        randomize_state(ResetReason::INIT, settings::strategy::initial_state);
+        initialize_state(ResetReason::INIT, settings::strategy::initial_state);
     write_to_file(StorageEvent::MODEL);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
@@ -641,7 +641,7 @@ void xdmrg::check_convergence() {
     }
 }
 
-void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit state_type, const std::optional<std::string> &sector) {
+void xdmrg::initialize_state_in_energy_window(ResetReason reason, StateInit state_type, const std::optional<std::string> &sector) {
     tools::log->info("Resetting to state in energy window -- reason: {}", enum2sv(reason));
     tools::log->info("Searching for state in normalized energy range: {} +- {}", status.energy_dens_target, status.energy_dens_window);
 
@@ -656,7 +656,7 @@ void xdmrg::randomize_into_state_in_energy_window(ResetReason reason, StateInit 
     tensors.activate_sites(settings::solver::max_size_full_eigs, 2);
     tensors.rebuild_edges();
     while(true) {
-        randomize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, ""); // Do not use the pattern: set to empty string
+        initialize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, ""); // Do not use the pattern: set to empty string
         status.energy_dens = tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max);
         outside_of_window  = std::abs(status.energy_dens - status.energy_dens_target) >= status.energy_dens_window;
         tools::log->info("New energy density: {:.16f} | window {} | outside of window: {}", status.energy_dens, status.energy_dens_window, outside_of_window);

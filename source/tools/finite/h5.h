@@ -91,7 +91,7 @@ namespace tools::finite::h5 {
         extern void simulation (const h5pp::File & h5file, std::string_view  state_prefix, TensorsFinite & tensors, AlgorithmStatus & status, AlgorithmType algo_type);
         extern void state   (const h5pp::File & h5file, std::string_view  state_prefix, StateFinite & state, MpsInfo & mpsinfo);
         extern void model   (const h5pp::File & h5file, AlgorithmType algo_type, ModelFinite & model);
-        extern void validate (const h5pp::File & h5file, std::string_view  state_prefix, TensorsFinite & tensors, AlgorithmType algo_type);
+        extern void validate (const h5pp::File & h5file, std::string_view  state_prefix, TensorsFinite & tensors, AlgorithmStatus & status, AlgorithmType algo_type);
     }
 
     namespace tmp{

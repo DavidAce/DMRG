@@ -35,24 +35,21 @@ namespace tools::common::h5 {
     namespace save{
 //        extern void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
 //        extern void bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
-        extern void bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
-        extern StorageAttrs get_save_attrs(const h5pp::File &h5file, std::string_view link_path);
-        extern void         set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageAttrs & info);
-        extern void         set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
-//        extern long         has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
-        extern hsize_t      get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo & sinfo);
-        template<typename AttrType>
-        extern void attr     (h5pp::File & h5file, const AttrType &attrData, std::string_view linkPath, std::string_view attrName, std::string_view linkText, std::optional<h5pp::hid::h5t> h5type = std::nullopt);
-        extern void status   (h5pp::File & h5file, const StorageInfo & sinfo, const AlgorithmStatus &status);
-        extern void mem      (h5pp::File & h5file, const StorageInfo & sinfo);
-        extern void timer    (h5pp::File & h5file, const StorageInfo & sinfo);
-        extern void meta     (h5pp::File & h5file, const StorageInfo & sinfo);
-
+        extern void         bootstrap_meta_log  (std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
+        extern StorageAttrs get_save_attrs      (const h5pp::File &h5file, std::string_view link_path);
+        extern void         set_save_attrs      (h5pp::File &h5file, std::string_view link_path, const StorageAttrs & info);
+        extern void         set_save_attrs      (h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
+        extern hsize_t      get_table_offset    (const h5pp::File &h5file, std::string_view table_path, const StorageInfo & sinfo, const StorageAttrs & attrs);
+        extern void         status              (h5pp::File & h5file, const StorageInfo & sinfo, const AlgorithmStatus &status);
+        extern void         mem                 (h5pp::File & h5file, const StorageInfo & sinfo);
+        extern void         timer               (h5pp::File & h5file, const StorageInfo & sinfo);
+        extern void         meta                (h5pp::File & h5file, const StorageInfo & sinfo);
+        extern void         initial_state_attrs (h5pp::File & h5file, const StorageInfo & sinfo);
     }
     namespace load {
-        extern void status   (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status, const MpsInfo & info = MpsInfo());
-        extern void timer    (const h5pp::File & h5file, std::string_view state_prefix, const AlgorithmStatus & status);
-        extern void pattern  (const h5pp::File & h5file, std::string_view state_prefix, std::string & pattern);
+        extern void status               (const h5pp::File & h5file, std::string_view state_prefix, AlgorithmStatus & status, const MpsInfo & info = MpsInfo());
+        extern void timer                (const h5pp::File & h5file, std::string_view state_prefix, const AlgorithmStatus & status);
+        extern void initial_state_attrs  (const h5pp::File & h5file, std::string_view state_prefix, std::string & pattern);
     }
 
     namespace tmp{

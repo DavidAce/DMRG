@@ -35,7 +35,7 @@ namespace tools::common::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
         tools::log->trace("Writing to table: {} | event {} | level {} | offset {}", table_path, enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
                           offset);
         h5file.writeTableRecords(status, table_path, offset);
@@ -55,7 +55,7 @@ namespace tools::common::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5pp_table_memory_usage::get_h5t(), table_path, "Memory usage");
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         // Define the table entry
         tools::log->trace("Appending to table: {}", table_path);
@@ -135,9 +135,8 @@ namespace tools::common::h5 {
     }
 
     StorageAttrs save::get_save_attrs(const h5pp::File &h5file, std::string_view link_path) {
-        auto         link_info = h5file.getLinkInfo(link_path);
         StorageAttrs attrs;
-        attrs.link_exists = link_info.linkExists.value();
+        attrs.link_exists = h5file.linkExists(link_path);
         if(attrs.link_exists) {
             auto iter = h5file.readAttribute<std::optional<uint64_t>>(link_path, "iter");
             auto step = h5file.readAttribute<std::optional<uint64_t>>(link_path, "step");
@@ -180,18 +179,28 @@ namespace tools::common::h5 {
             h5file.writeAttribute(sinfo.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
         }
     }
+    void save::initial_state_attrs(h5pp::File &h5file, const StorageInfo &sinfo) {
+        if(sinfo.storage_event != StorageEvent::INIT_STATE) return;
+        if(settings::strategy::initial_pattern.empty()) {
+            tools::log->warn("Could not save the initial state pattern: the pattern is empty");
+            return;
+        }
+        auto state_prefix = sinfo.get_state_prefix();
+        h5file.createGroup(state_prefix);
+        // Save the initial state pattern (rather than the MPS itself) and the initial state type
+        h5file.writeAttribute(enum2sv(settings::strategy::initial_state), state_prefix, "initial_state");
+        h5file.writeAttribute(settings::strategy::initial_pattern, state_prefix, "initial_pattern");
+        h5file.writeAttribute(enum2sv(settings::strategy::initial_type), state_prefix, "initial_type");
+        h5file.writeAttribute(settings::strategy::initial_axis, state_prefix, "initial_axis");
+        h5file.writeAttribute(settings::strategy::target_axis, state_prefix, "target_state_axis");
+    }
 
-    //    long save::has_same_attrs(const h5pp::File &h5file, std::string_view link_path, const StorageInfo &info) {
-    //        auto attrs = get_save_attrs(h5file, link_path);
-    //        if(not attrs.has_value()) return -1;
-    //        return static_cast<long>(attrs.value() == info);
-    //    }
-    hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo) {
-        // Get the number of records in this table to append
+    hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
+        // Get the table index where we should write the current entry
         if(sinfo.storage_level == StorageLevel::LIGHT) {
-            // find the last occurrence of this event type to replace it.
+            // Try to find the last occurrence of this event type, to replace it
             auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
-            auto offset = events.size();
+            auto offset = events.size(); // This should point one past the latest table entry, so that we append
             for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
                 if(evn == sinfo.storage_event) {
                     offset = off;
@@ -200,9 +209,27 @@ namespace tools::common::h5 {
             }
             return offset;
         } else {
-            auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
-            auto dims = h5pp::hdf5::getDimensions(dset);
-            return dims.front(); // Append by default
+            // In this case we are saving everything, unless it is a duplicate
+            if(sinfo.iter > attrs.iter) {
+                // The current iter is later than any of the entries in the table, so we just append
+                auto dset = h5pp::hdf5::openLink<h5pp::hid::h5d>(h5file.openFileHandle(), table_path, std::nullopt, h5file.plists.dsetAccess);
+                auto dims = h5pp::hdf5::getDimensions(dset);
+                return dims.front();
+            } else {
+                // The current iter may already have been written, so we should compare with existing
+                auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
+                auto iters  = h5file.readTableField<std::vector<uint64_t>>(table_path, "iter", h5pp::TableSelection::ALL);
+                auto offset = events.size(); // This should point one past the latest table entry, so that we append
+                for(const auto &[off, evn] : iter::enumerate_reverse(events)) {
+                    auto iter = iters.at(off);
+                    if(evn == sinfo.storage_event and iter == sinfo.iter) {
+                        // We have a match. We can overwrite this entry!
+                        offset = off;
+                        break;
+                    }
+                }
+                return offset;
+            }
         }
     }
 }

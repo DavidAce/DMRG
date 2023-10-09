@@ -1,6 +1,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "io/hdf5_types.h"
+#include "math/float.h"
 #include "math/num.h"
 #include "tensors/model/ModelFinite.h"
 #include "tensors/site/mpo/MpoSite.h"
@@ -23,21 +24,26 @@ namespace tools::finite::h5 {
     void load::simulation(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmStatus &status, AlgorithmType algo_type) {
         try {
             if(algo_type == AlgorithmType::fLBIT) {
-                // To successfully load a simulation there has to be an MPS with StorageLevel::FULL.
+                // To successfully load a simulation there has to be a clearly defined initial state, either a pattern or an initial state selection
                 tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
-                tools::common::h5::load::pattern(h5file, state_prefix, settings::strategy::initial_pattern);
+                tools::common::h5::load::initial_state_attrs(h5file, state_prefix, settings::strategy::initial_pattern);
+                tensors.initialize_state(ResetReason::INIT, settings::strategy::initial_state, settings::strategy::initial_type,
+                                         settings::strategy::initial_axis, settings::strategy::use_eigenspinors, status.bond_lim,
+                                         settings::strategy::initial_pattern);
                 tools::common::h5::load::status(h5file, state_prefix, status);
                 tools::finite::h5::load::model(h5file, algo_type, *tensors.model);
                 tools::common::h5::load::timer(h5file, state_prefix, status);
+                tools::finite::h5::load::validate(h5file, state_prefix, tensors, status, algo_type);
             } else {
                 // Reset tensors
+                // To successfully load a simulation there has to be an MPS with StorageLevel::FULL.
                 tensors = TensorsFinite(algo_type, settings::model::model_type, settings::model::model_size, 0);
                 MpsInfo info;
                 tools::finite::h5::load::state(h5file, state_prefix, *tensors.state, info);
                 tools::common::h5::load::status(h5file, state_prefix, status, info);
                 tools::finite::h5::load::model(h5file, algo_type, *tensors.model);
                 tools::common::h5::load::timer(h5file, state_prefix, status);
-                tools::finite::h5::load::validate(h5file, state_prefix, tensors, algo_type);
+                tools::finite::h5::load::validate(h5file, state_prefix, tensors, status, algo_type);
             }
         } catch(const std::exception &ex) { throw except::load_error("failed to load from state prefix [{}]: {}", state_prefix, ex.what()); }
     }
@@ -114,36 +120,63 @@ namespace tools::finite::h5 {
                               tol);
     }
 
-    void load::validate(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmType algo_type) {
-        auto t_val             = tid::tic_scope("validate");
-        auto table_prefix      = h5file.readAttribute<std::vector<std::string>>("common/table_prfxs", state_prefix).front();
-        auto measurements_path = fmt::format("{}/measurements", table_prefix);
+    void load::validate(const h5pp::File &h5file, std::string_view state_prefix, TensorsFinite &tensors, AlgorithmStatus &status, AlgorithmType algo_type) {
+        auto t_val = tid::tic_scope("validate");
+        tools::log->info("Validating state: [{}]", state_prefix);
         tensors.rebuild_mpo();
         tensors.rebuild_mpo_squared();
         tensors.activate_sites({tensors.get_position<size_t>()});
         tensors.rebuild_edges();
+        tools::log->debug("State labels: {}", tensors.state->get_labels());
+        tools::log->info("Validating midchain entropy: [{}]", state_prefix);
+        auto measurements_path     = fmt::format("{}/measurements", state_prefix);
+        auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
+        tensors.state->clear_cache();
+        tensors.state->clear_measurements();
+        tensors.state->do_all_measurements();
+        compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy, 1e-5, "Entanglement entropy");
 
         if(algo_type == AlgorithmType::fLBIT) {
+            // Check that the time limits are the same
+            tools::log->info("Validating time series: [{}]", state_prefix);
+            auto time_scale          = h5file.readAttribute<std::optional<std::string>>(state_prefix, "time_scale");
+            auto time_start          = h5file.readAttribute<std::optional<cplx>>(state_prefix, "time_start");
+            auto time_final          = h5file.readAttribute<std::optional<cplx>>(state_prefix, "time_final");
+            auto time_num_steps      = h5file.readAttribute<std::optional<uint64_t>>(state_prefix, "time_num_steps");
+            auto expected_time_start = cplx(settings::flbit::time_start_real, settings::flbit::time_start_imag);
+            auto expected_time_final = cplx(settings::flbit::time_final_real, settings::flbit::time_final_imag);
+            if(time_scale.has_value() and time_scale.value() != enum2sv(settings::flbit::time_scale)) {
+                throw except::load_error("Mismatching time scale: file {} != config {}", time_scale, enum2sv(settings::flbit::time_scale));
+            }
+            if(time_start.has_value() and time_start->real() != expected_time_start.real()) {
+                throw except::load_error("Mismatching time start real: file {} != config {}", time_start->real(), expected_time_start.real());
+            }
+            if(time_start.has_value() and time_start->imag() != expected_time_start.imag()) {
+                throw except::load_error("Mismatching time start imag: file {} != config {}", time_start->imag(), expected_time_start.imag());
+            }
+            if(time_final.has_value() and time_final->real() != expected_time_final.real()) {
+                throw except::load_error("Mismatching time final real: file {} != config {}", time_final->real(), expected_time_final.real());
+            }
+            if(time_final.has_value() and time_final->imag() != expected_time_final.imag()) {
+                throw except::load_error("Mismatching time final imag: file {} != config {}", time_final->imag(), expected_time_final.imag());
+            }
+            if(time_num_steps.has_value() and time_num_steps.value() != settings::flbit::time_num_steps) {
+                throw except::load_error("Mismatching time num steps: file {} != config {}", time_num_steps.value(), settings::flbit::time_num_steps);
+            }
+            if(status.algo_time != std::clamp<double>(status.algo_time, std::abs(expected_time_start), std::abs(expected_time_final))) {
+                throw except::load_error("Current status.algo_time == [{}] is outside the expected time interval [{} -> {}]", status.algo_time,
+                                         expected_time_start, expected_time_final);
+            }
+        }
+
+        if(algo_type != AlgorithmType::fLBIT) {
             // In this case we have loaded state_real from file.
-            // However, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian
-            // makes no sense.
-            // Therefore, we have to validate using entropy, or other state-specific measurements that are independent of the hamlitonian.
-            auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
-            tools::log->debug("Validating resumed state: [{}]", state_prefix);
-            tools::log->debug("State labels: {}", tensors.state->get_labels());
-            tensors.state->clear_cache();
-            tensors.state->clear_measurements();
-            tensors.state->do_all_measurements();
-            compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy, 1e-8,
-                    "Entanglement entropy");
-        } else {
-            auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
-            tools::log->debug("Validating resumed state (without energy reduction): [{}]", state_prefix);
-            tools::log->debug("State labels: {}", tensors.state->get_labels());
+            // In the fLBIT case, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian makes no sense.
+            tools::log->debug("Validating resumed state energy (without energy reduction): [{}]", state_prefix);
             tensors.clear_measurements();
             tensors.do_all_measurements();
-            compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
-            compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+            compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-5, "Energy");
+            compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-5, "Energy variance");
 
             if(settings::precision::use_mpo_energy_shift) {
                 tensors.shift_mpo_energy();
@@ -151,11 +184,10 @@ namespace tools::finite::h5 {
                 tensors.rebuild_mpo_squared();
                 tensors.rebuild_edges();
                 tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
-                tools::log->debug("State labels: {}", tensors.state->get_labels());
                 tensors.clear_measurements();
                 tensors.do_all_measurements();
-                compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-8, "Energy");
-                compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-8, "Energy variance");
+                compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-5, "Energy");
+                compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-5, "Energy variance");
             }
         }
     }

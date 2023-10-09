@@ -65,24 +65,24 @@ void TensorsFinite::initialize(AlgorithmType algo_type, ModelType model_type, si
     edges->initialize(model_size);
 }
 
-void TensorsFinite::randomize_model() {
-    auto tic = tid::tic_scope("rnd_model");
+void TensorsFinite::initialize_model() {
+    auto tic = tid::tic_scope("init_model");
     model->randomize();
     rebuild_mpo();
     rebuild_mpo_squared();
 }
 
-void TensorsFinite::randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors, long bond_lim, std::string & pattern) {
+void TensorsFinite::initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors, long bond_lim, std::string & pattern) {
     state->clear_measurements();
-    tools::log->info("Randomizing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | bond_lim {} | eigspinors {} | pattern {}", state->get_name(),
+    tools::log->debug("Initializing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | bond_lim {} | eigspinors {} | pattern {}", state->get_name(),
                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type), axis, bond_lim, use_eigenspinors, pattern);
 
-    tools::log->debug("Randomizing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
+    tools::log->debug("Initializing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
 
-    tools::finite::mps::randomize_state(*state, state_init, state_type, axis, use_eigenspinors, bond_lim, pattern);
+    tools::finite::mps::initialize_state(*state, state_init, state_type, axis, use_eigenspinors, bond_lim, pattern);
 
-    tools::log->debug("Randomizing state - After : norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
+    tools::log->debug("Initializing state - After : norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
 }
 

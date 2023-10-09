@@ -51,8 +51,8 @@ class TensorsFinite {
     TensorsFinite(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
 
     void initialize(AlgorithmType algo_type, ModelType model_type, size_t model_size, long position);
-    void randomize_model();
-    void randomize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors,
+    void initialize_model();
+    void initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors,
                          long bond_lim, std::string & pattern);
     void normalize_state(std::optional<svd::config> svd_cfg = std::nullopt, NormPolicy policy = NormPolicy::IFNEEDED);
 

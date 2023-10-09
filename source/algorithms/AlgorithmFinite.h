@@ -41,11 +41,11 @@ class AlgorithmFinite : public AlgorithmBase {
     void         reduce_bond_dimension_limit(double rate, UpdateWhen when, StorageEvent storage_event);
     void         update_truncation_error_limit() final;
     void         update_expansion_factor_alpha();
-    void         randomize_model();
+    void         initialize_model();
     void         run() final;
     void         run_postprocessing() override;
     void         clear_convergence_status() override;
-    void         randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
+    void         initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type = std::nullopt,
                                  std::optional<std::string> axis = std::nullopt, std::optional<bool> use_eigenspinors = std::nullopt,
                                  std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
                                  std::optional<double> trnc_lim = std::nullopt);

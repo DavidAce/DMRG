@@ -113,6 +113,7 @@ void AlgorithmLauncher::start_h5file() {
     h5file->writeDataset(env::git::branch, ".env/DMRG++/git/branch");
     h5file->writeDataset(env::git::commit_hash, ".env/DMRG++/git/commit");
     h5file->writeDataset(env::git::revision, ".env/DMRG++/git/revision");
+    h5file->writeDataset(settings::input::seed, "common/seed");
     h5file->writeDataset(settings::input::config_filename, "common/config_filename");
 }
 

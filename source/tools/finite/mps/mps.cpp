@@ -375,7 +375,7 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
     return true;
 }
 
-void tools::finite::mps::randomize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view axis, bool use_eigenspinors,
+void tools::finite::mps::initialize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view axis, bool use_eigenspinors,
                                          long bond_lim, std::string &pattern) {
     switch(init) {
         case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, axis, use_eigenspinors, pattern);

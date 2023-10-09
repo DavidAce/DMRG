@@ -65,7 +65,7 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
  * Note: we "use" the bitfield only once. Subsequent calls do not keep resetting the seed.
 */
 {
-    tools::log->info("Setting random product state of type {} on axis {}", enum2sv(type), axis);
+    tools::log->debug("Setting random product state of type {} on axis {}", enum2sv(type), axis);
     state.clear_measurements();
     state.clear_cache();
     auto axis_valid = qm::spin::half::is_valid_axis(axis);
@@ -83,7 +83,7 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
 }
 
 void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-    tools::log->info("Setting randomly shuffled Néel state of type {} on axis {} {}", enum2sv(type), axis,
+    tools::log->debug("Setting randomly shuffled Néel state of type {} on axis {} {}", enum2sv(type), axis,
                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
@@ -107,7 +107,7 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
             label = "B";
         }
     }
-    tools::log->info("Initial state: {}", bitfield);
+    tools::log->debug("Initial state: {}", bitfield);
     pattern        = fmt::format("b{}", bitfield);
     state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
@@ -116,7 +116,7 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
 }
 
 void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-      tools::log->info("Setting a dislocated Néel state of type {} on axis {} {}", enum2sv(type), axis,
+      tools::log->debug("Setting a dislocated Néel state of type {} on axis {} {}", enum2sv(type), axis,
                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
@@ -157,12 +157,12 @@ void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &st
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->info("Initial state: {}", bitfield);
+    tools::log->debug("Initial state: {}", bitfield);
 }
 
 
 void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-    tools::log->info("Setting domain-wall initial state of type {} on axis {} {}", enum2sv(type), axis,
+    tools::log->debug("Setting domain-wall initial state of type {} on axis {} {}", enum2sv(type), axis,
                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
@@ -189,7 +189,7 @@ void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state,
             label = "B";
         }
     }
-    tools::log->info("Initial state: {}", bitfield);
+    tools::log->debug("Initial state: {}", bitfield);
     pattern        = fmt::format("b{}", bitfield);
     state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
@@ -220,11 +220,11 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->info("Initial state: {}", bitfield);
+    tools::log->debug("Initial state: {}", bitfield);
 }
 
 void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-    tools::log->info("Setting Néel state of type {} on axis {} {}", enum2sv(type), axis,
+    tools::log->debug("Setting Néel state of type {} on axis {} {}", enum2sv(type), axis,
                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
@@ -259,11 +259,11 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
-    tools::log->info("Initial state: {}", bitfield);
+    tools::log->debug("Initial state: {}", bitfield);
 }
 
 void tools::finite::mps::init::set_random_product_state_with_random_spinors(StateFinite &state, StateInitType type, std::string &pattern) {
-    tools::log->info("Setting random product state with spinors in C²");
+    tools::log->debug("Setting random product state with spinors in C²");
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     std::string label = "A";
@@ -312,7 +312,7 @@ void tools::finite::mps::init::set_product_state_on_axis_using_pattern(StateFini
             label = "B";
         }
     }
-    tools::log->info("Initial state on axis {}: {}", axis, bitfield);
+    tools::log->debug("Initial state on axis {}: {}", axis, bitfield);
     pattern        = fmt::format("b{}", bitfield);
     state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
@@ -357,7 +357,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_eigenspino
         }
     }
 
-    tools::log->info("Set random product state on axis {} using eigenspinors of the pauli matrix σ{}: {}", axis, axus, bitfield);
+    tools::log->debug("Set random product state on axis {} using eigenspinors of the pauli matrix σ{}: {}", axis, axus, bitfield);
     pattern        = fmt::format("b{}", bitfield);
     state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
@@ -370,7 +370,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis(StateFinite &sta
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
-    tools::log->info("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}", axus, axus);
+    tools::log->debug("Setting random product state on axis {} using linear combinations of eigenspinors a|+> + b|-> of the pauli matrix σ{}", axus, axus);
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
     auto        spinor_up = qm::spin::half::get_spinor(axus, -1);
     auto        spinor_dn = qm::spin::half::get_spinor(axus, 1);

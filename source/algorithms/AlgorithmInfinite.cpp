@@ -27,7 +27,7 @@ void AlgorithmInfinite::run() {
 
 void AlgorithmInfinite::run_preprocessing() {
     status.clear();
-    randomize_model(); // First use of random!
+    initialize_model(); // First use of random!
     init_bond_dimension_limits();
     write_to_file(StorageEvent::MODEL);
 }
@@ -39,9 +39,9 @@ void AlgorithmInfinite::run_postprocessing() {
     print_status_full();
 }
 
-void AlgorithmInfinite::randomize_model() {
-    tools::log->info("Randomizing model");
-    tensors.randomize_model();
+void AlgorithmInfinite::initialize_model() {
+    tools::log->info("Initializing model");
+    tensors.initialize_model();
     clear_convergence_status();
 }
 
@@ -170,9 +170,9 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     if(status.trnc_lim < status.trnc_min) throw except::logic_error("trnc_lim is smaller than trnc_min ! {:8.2e} > {:8.2e}", status.trnc_lim, status.trnc_min);
 }
 
-void AlgorithmInfinite::randomize_state(ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
+void AlgorithmInfinite::initialize_state(ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
                                         std::optional<std::string> pattern) {
-    tools::log->trace("Resetting to random product state");
+    tools::log->trace("Initializing state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
             return tools::log->warn("Skipped reset: num resets {} >= max resets {}", status.num_resets, settings::strategy::max_resets);
@@ -265,11 +265,7 @@ void AlgorithmInfinite::write_to_file(StorageEvent storage_event, CopyPolicy cop
     tools::infinite::h5::save::bonds(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::state(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::edges(*h5file, sinfo, *tensors.edges);
-    //    tools::common::h5::save::meta(*h5file, storage_level, storage_event, settings::model::model_type, settings::model::model_size,
-    //    tensors.state->get_name(),
-    //                                  state_prefix, model_prefix, table_prefxs, status);
-    // Some storage reasons should not go further. Like projection.
-    if(storage_event == StorageEvent::PROJ_STATE) return;
+    if(storage_event == StorageEvent::PROJ_STATE) return; // Some storage reasons should not go further. Like projection.
 
     // The main results have now been written. Next we append data to tables
     tools::infinite::h5::save::measurements(*h5file, sinfo, tensors, status);

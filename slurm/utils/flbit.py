@@ -11,7 +11,7 @@ from itertools import groupby
 import linecache
 from copy import copy
 from rclone_python import rclone
-
+import traceback
 
 def get_unique_config_string(d: dict, dl: dict, delim: str):
     str_L = str(d['model::model_size'])
@@ -85,60 +85,98 @@ def all_equal(iterable):
     g = groupby(iterable)
     return next(g, True) and not next(g, False)
 
+def get_num_entries(dsets, kind = 256): # 256 is the enum value for ITER_STATE
+    indices = {}
+    skip = ['/common/finished_all', '/fLBIT/state_real/initial_pattern']
+    for dset in dsets:
+        # Check if there is an 'iter' field
+        if dset is not None:
+            if dset.name in skip:
+                indices[dset.name] = None
+            elif dset.dtype.fields is not None and 'event' in dset.dtype.fields.keys():
+                indices[dset.name] = len(np.where(dset['event'] == kind)[0])
+            else:
+                indices[dset.name] = np.shape(dset)[-1]
+    return indices
 def get_h5_status(filename, batch):
     if os.path.isfile(filename):
         expected_dset_paths = [
-            'common/finished_all',
-            'fLBIT/state_real/measurements',
-            'fLBIT/state_real/status',
-            'fLBIT/state_real/mem_usage',
-            'fLBIT/state_real/number_probabilities',
-            # 'fLBIT/state_real/initial_pattern'
+            '/common/finished_all',
+            '/fLBIT/state_real/measurements',
+            '/fLBIT/state_real/status',
+            '/fLBIT/state_real/mem_usage',
+            '/fLBIT/state_real/number_probabilities',
         ]
+        optional_dset_paths = [
+            '/fLBIT/state_real/initial_pattern'
+        ]
+        optional_link_attrs = {
+            'initial_state': '/fLBIT/state_real',
+            'time_scale': '/fLBIT/state_real',
+        }
 
         try:
             with h5py.File(filename, 'r') as h5file:
                 expected_dsets = [h5file.get(path) for path in expected_dset_paths]
+                optional_dsets = [h5file.get(path) for path in optional_dset_paths]
+                optional_attrs = [h5file.get(path).attrs.get(attr) for attr,path in optional_link_attrs.items() if path in h5file]
                 missing_dsets = [path for dset,path in zip(expected_dsets,expected_dset_paths) if dset is None]
                 if len(missing_dsets) > 0:
                     return f"FAILED|missing datasets:{missing_dsets}"
-                len_of_dsets = [len(expected_dsets[1]), len(expected_dsets[2]), len(expected_dsets[3]), np.shape(expected_dsets[4])[-1]]
-                has_equal_iters = all_equal(len_of_dsets)
-                if not has_equal_iters:
-                    return f"FAILED|(unequal iters:{len_of_dsets})"
+
                 length = expected_dsets[1]['length'][0]
-                if len(expected_dsets) >= 6:
-                    has_neel_init_pattern = np.all(expected_dsets[5][()] == np.resize([1, 0], int(length))) or np.all(expected_dsets[5][()] == np.resize([0, 1], int(length)))
+                if optional_dsets[0] is not None:
+                    evn_neel = np.resize([0,1], int(length))
+                    odd_neel = np.resize([1,0], int(length))
+                    has_neel_init_pattern = np.all(optional_dsets[0][()] == evn_neel) or np.all(optional_dsets[0][()] == odd_neel)
                     should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename
                     if should_be_neel and not has_neel_init_pattern:
                         return f"FAILED|initial state is not neel"
                     if not should_be_neel and has_neel_init_pattern:
                         return f"FAILED|initial state is neel:{filename}"
-                time_steps=len(expected_dsets[1])
-                has_finished_all   = expected_dsets[0][()]
+                if optional_attrs[0] is not None:
+                    evn_neel = 'b'+''.join(np.resize(['0','1'], int(length)))
+                    odd_neel = 'b'+''.join(np.resize(['1','0'], int(length)))
+                    has_neel_init_pattern = np.all(optional_attrs[0][()] == evn_neel) or np.all(optional_attrs[0][()] == odd_neel)
+                    should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename
+                    if should_be_neel and not has_neel_init_pattern:
+                        return f"FAILED|initial state is not neel"
+                    if not should_be_neel and has_neel_init_pattern:
+                        return f"FAILED|initial state is neel:{filename}"
+                if optional_attrs[1] is not None:
+                    expected_timescale = "LINSPACED" if '-lin' in filename else "LOGSPACED"
+                    if optional_attrs[1][()] != expected_timescale:
+                        return f"FAILED|unexpected time scale {optional_attrs[1][()]}. Expected {expected_timescale}"
+                time_steps = batch['time_steps']
+                num_entries = get_num_entries(expected_dsets, kind=256)
+                num_are_equal = all_equal([x for x in num_entries.values() if x is not None])
+                if not num_are_equal:
+                    return  f"FAILED|unequal iters: {num_are_equal}: expected: {time_steps})"
+
+                for dset, num in num_entries.items():
+                    if num is not None and num < time_steps:
+                        return f"TIMEOUT|found too few iters: {dset}: found {num}, expected: {time_steps})"
+                    if num is not None and num > time_steps:
+                        return f"FAILED|found too many iters: {dset}: found {num}, expected: {time_steps})"
+
+
                 r2max=float(length)
                 Jmin2 = np.exp(-r2max / 1) * 1 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
                 tmax2 = 1.0 / Jmin2
                 tmax = 10 ** np.ceil(np.log10(tmax2))
                 found_tmax = expected_dsets[1]['physical_time'][-1].astype(float)
                 has_expected_tmax  = found_tmax == tmax or '-lin' in filename
-                has_expected_iters = time_steps >= batch['time_steps']
-                has_exceeded_iters = time_steps > batch['time_steps']
-                if has_expected_iters and has_finished_all:
-                    if not has_expected_tmax:
-                        return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
-                    if has_exceeded_iters:
-                        return f"FINISHED|{time_steps=}"
-                    else:
-                        return f"FINISHED"
-                if has_expected_iters and not has_finished_all:
+                if not has_expected_tmax:
+                    return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
+                # has_expected_iters = time_steps >= batch['time_steps']
+                # has_exceeded_iters = time_steps > batch['time_steps']
+                has_finished_all   = expected_dsets[0][()]
+                if has_finished_all:
+                    return f"FINISHED"
+                else:
                     return f"TIMEOUT|{time_steps=}"
-                if not has_expected_iters and has_finished_all:
-                    return f"FAILED|{time_steps=}"
-                if not has_expected_iters and not has_finished_all:
-                    return f"TIMEOUT|{time_steps=}"
-                return "FAILED|unknown reason"
         except Exception as e:
+            print(traceback.format_exc())
             return f"FAILED|{e}"
     else:
         return "MISSING"

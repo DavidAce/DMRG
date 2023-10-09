@@ -62,9 +62,9 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
     while(not task_list.empty()) {
         auto task = task_list.front();
         switch(task) {
-            case fdmrg_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
-            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_MODEL: initialize_model(); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case fdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case fdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case fdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case fdmrg_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
@@ -110,10 +110,10 @@ void fdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     status.clear();
-    randomize_model(); // First use of random!
+    initialize_model(); // First use of random!
     init_bond_dimension_limits();
     init_truncation_error_limits();
-    randomize_state(ResetReason::INIT, settings::strategy::initial_state);
+    initialize_state(ResetReason::INIT, settings::strategy::initial_state);
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 

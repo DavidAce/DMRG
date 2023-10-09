@@ -313,7 +313,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     // Write current results before updating bond dimension
     write_to_file(StorageEvent::BOND_INCREASE);
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
-        randomize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
+        initialize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
 
     // If we got to this point we will update the bond dimension by a factor
     auto rate = settings::strategy::bond_increase_rate;
@@ -470,13 +470,13 @@ void AlgorithmFinite::update_expansion_factor_alpha() {
     }
 }
 
-void AlgorithmFinite::randomize_model() {
-    tools::log->info("Randomizing model");
-    tensors.randomize_model();
+void AlgorithmFinite::initialize_model() {
+    tools::log->info("Initializing model");
+    tensors.initialize_model();
     clear_convergence_status();
 }
 
-void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> axis,
+void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> axis,
                                       std::optional<bool> use_eigenspinors, std::optional<std::string> pattern, std::optional<long> bond_lim,
                                       std::optional<double> trnc_lim) {
     auto t_rnd = tid::tic_scope("rnd_state", tid::level::higher);
@@ -502,8 +502,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
 
     tensors.activate_sites(settings::solver::max_size_shift_invert, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
-    tensors.randomize_state(reason, state_init, state_type.value(), axis.value(), use_eigenspinors.value(), bond_lim.value(), pattern.value());
-
+    tensors.initialize_state(reason, state_init, state_type.value(), axis.value(), use_eigenspinors.value(), bond_lim.value(), pattern.value());
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(axis.value())) {
         tools::log->info("Projecting state | target sector {} | norm {:.16f} | spin components: {::+.16f}", axis.value(),
                          tools::finite::measure::norm(*tensors.state), tools::finite::measure::spin_components(*tensors.state));
@@ -511,7 +510,7 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
         tensors.rebuild_edges();
         // Note! After running this function we should rebuild edges! However, there are usually no sites active at this point, so we do it further down.
     }
-
+    settings::strategy::initial_pattern = pattern.value();
     clear_convergence_status();
     status.reset();
     status.iter      = 0;
@@ -528,16 +527,21 @@ void AlgorithmFinite::randomize_state(ResetReason reason, StateInit state_init, 
                                     tensors.state->find_largest_bond(), bond_lim.value());
 
     tensors.rebuild_edges();
-    tools::log->info("Randomization successful:");
-    tools::log->info("-- State labels             : {}", tensors.state->get_labels());
-    tools::log->info("-- Normalization            : {:.16f}", tools::finite::measure::norm(*tensors.state));
-    tools::log->info("-- Spin components (X,Y,Z)  : {::.16f}", tools::finite::measure::spin_components(*tensors.state));
-    tools::log->info("-- Bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
+    tools::log->info("State initialization successful:");
+    tools::log->info("-- name          : {}", tensors.state->get_name());
+    tools::log->info("-- type          : {}", enum2sv(state_init));
+    tools::log->info("-- value         : {}", enum2sv(state_type.value()));
+    tools::log->info("-- axis          : {}", axis.value());
+    tools::log->info("-- pattern       : {}", settings::strategy::initial_pattern);
+    tools::log->info("-- labels        : {}", tensors.state->get_labels());
+    tools::log->info("-- norm          : {:.16f}", tools::finite::measure::norm(*tensors.state));
+    tools::log->info("-- spin (X,Y,Z)  : {::.16f}", tools::finite::measure::spin_components(*tensors.state));
+    tools::log->info("-- bond dimensions          : {}", tools::finite::measure::bond_dimensions(*tensors.state));
 
     if(status.algo_type != AlgorithmType::fLBIT) {
-        tools::log->info("-- Energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
-        tools::log->info("-- Energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
-        tools::log->info("-- Energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
+        tools::log->info("-- energy per site          : {}", tools::finite::measure::energy_per_site(tensors));
+        tools::log->info("-- energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
+        tools::log->info("-- energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     }
     write_to_file(StorageEvent::INIT_STATE);
 }

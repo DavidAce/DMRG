@@ -33,7 +33,7 @@ class TensorsInfinite {
     TensorsInfinite &operator=(const TensorsInfinite &other); // copy assign
 
     void initialize(ModelType model_type);
-    void randomize_model();
+    void initialize_model();
     void assert_validity() const;
 
     [[nodiscard]] size_t get_length() const;

@@ -40,7 +40,7 @@ namespace tools::finite::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5pp_table_measurements_finite::get_h5t(), table_path, "measurements");
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         // Define the table entry
         tools::log->trace("Appending to table: {}", table_path);
@@ -110,10 +110,10 @@ namespace tools::finite::h5 {
             if(sinfo.storage_level == StorageLevel::NONE) return;
             if(sinfo.storage_event != StorageEvent::ITER_STATE) return;
             auto t_hdf = tid::tic_scope("spin_local", tid::level::higher);
-//            tools::log->trace("Saving spin expectation values to {}", sinfo.get_state_prefix());
+            //            tools::log->trace("Saving spin expectation values to {}", sinfo.get_state_prefix());
             if(not state.measurements.expectation_values_sz.has_value())
                 state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz);
-//            save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
+            //            save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
             auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "expectation_values_sz");
             tools::log->trace("Appending to table: {}", table_path);
             // Check if the current entry has already been appended
@@ -153,7 +153,7 @@ namespace tools::finite::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5_type, table_path, table_title);
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
@@ -177,7 +177,7 @@ namespace tools::finite::h5 {
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
         if(not attrs.link_exists) h5file.createTable(h5_type, table_path, table_title);
         if(attrs == sinfo) return;
-        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo);
+        auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         tools::log->trace("Appending to table: {}", table_path);
 
@@ -229,8 +229,12 @@ namespace tools::finite::h5 {
             std::vector<hsize_t> chnk = {rows, cols, 10};
             h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
         }
-        h5file.appendToDataset(state.measurements.number_probabilities.value(), table_path, 2);
-        tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
+        // Do not append if the iteration number is smaller than the dataset iter dimension
+        auto num_entries = h5file.getDatasetDimensions(table_path).back();
+        if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
+            h5file.appendToDataset(state.measurements.number_probabilities.value(), table_path, 2);
+            tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
+        }
     }
 
     void save::entropies_renyi(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
@@ -409,6 +413,7 @@ namespace tools::finite::h5 {
         // The main results have now been written. Next we append data to tables
         tools::finite::h5::save::model(h5file, sinfo, model);
         tools::finite::h5::save::state(h5file, sinfo, state);
+        tools::common::h5::save::initial_state_attrs(h5file, sinfo); // Save the initial state type and pattern (rather than the MPS itself)
         tools::common::h5::save::status(h5file, sinfo, status);
         tools::common::h5::save::mem(h5file, sinfo);
         tools::common::h5::save::timer(h5file, sinfo);
@@ -423,6 +428,7 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::expectations(h5file, sinfo, state);
         tools::finite::h5::save::correlations(h5file, sinfo, state);
         tools::finite::h5::save::kvornings_marker(h5file, sinfo, state);
+
         // The file can now be closed
         h5file.setKeepFileClosed();
 

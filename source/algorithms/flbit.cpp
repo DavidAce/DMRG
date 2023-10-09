@@ -80,8 +80,8 @@ void flbit::resume() {
         if(settings::strategy::initial_axis.find("z") == std::string::npos)
             tools::log->warn("Expected initial_axis == z. Got {}", settings::strategy::initial_axis);
 
-        tensors.randomize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_axis,
-                                settings::strategy::use_eigenspinors, bond_lim, settings::strategy::initial_pattern);
+        tensors.initialize_state(ResetReason::INIT, settings::strategy::initial_state, StateInitType::REAL, settings::strategy::initial_axis,
+                                 settings::strategy::use_eigenspinors, bond_lim, settings::strategy::initial_pattern);
 
         tensors.move_center_point_to_inward_edge();
 
@@ -138,12 +138,16 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
     while(not task_list.empty()) {
         auto task = task_list.front();
         switch(task) {
-            case flbit_task::INIT_RANDOMIZE_MODEL: randomize_model(); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_SHUFFLED); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_DISLOCATED: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_DISLOCATED); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: randomize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN: randomize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_PATTERN); break;
+            case flbit_task::INIT_RANDOMIZE_MODEL: initialize_model(); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_SHUFFLED:
+                initialize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_SHUFFLED);
+                break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_DISLOCATED:
+                initialize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_NEEL_DISLOCATED);
+                break;
+            case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN: initialize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_PATTERN); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
@@ -196,12 +200,12 @@ void flbit::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     status.clear();
-    randomize_model(); // First use of random!
+    initialize_model(); // First use of random!
     init_bond_dimension_limits();
     init_truncation_error_limits();
 
     // Create an initial state in the real basis
-    randomize_state(ResetReason::INIT, settings::strategy::initial_state);
+    initialize_state(ResetReason::INIT, settings::strategy::initial_state);
     tensors.move_center_point_to_inward_edge();
     tensors.state->set_name("state_real");
     state_real_init = std::make_unique<StateFinite>(*tensors.state);
@@ -302,7 +306,7 @@ void flbit::update_time_step() {
 void flbit::check_convergence() {
     if(not tensors.position_is_inward_edge()) return;
     auto t_con = tid::tic_scope("check_conv");
-//    check_convergence_entg_entropy();
+    //    check_convergence_entg_entropy();
     if(status.entanglement_saturated_for > 0)
         status.algorithm_saturated_for++;
     else
@@ -765,11 +769,13 @@ void flbit::transform_to_lbit_basis() {
 void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     AlgorithmFinite::write_to_file(*tensors.state, *tensors.model, *tensors.edges, storage_event, copy_policy);
 
-    // Save the initial state pattern (rather than the MPS itself)
-    if(storage_event == StorageEvent::INIT_STATE) {
-        if(h5file and !settings::strategy::initial_pattern.empty()) {
-            h5file->writeDataset(settings::strategy::initial_pattern, fmt::format("/{}/{}/initial_pattern", status.algo_type_sv(), tensors.state->get_name()));
-        }
+    if(h5file and storage_event == StorageEvent::INIT_STATE) {
+        using namespace settings::flbit;
+        auto state_prefix = fmt::format("/fLBIT/{}", tensors.state->get_name());
+        h5file->writeAttribute(enum2sv(time_scale),state_prefix, "time_scale");
+        h5file->writeAttribute(time_num_steps, state_prefix, "time_num_steps");
+        h5file->writeAttribute(std::complex(time_start_real, time_start_imag), state_prefix, "time_start");
+        h5file->writeAttribute(std::complex(time_final_real, time_final_imag), state_prefix, "time_final");
     }
 
     // Save the unitaries once
@@ -794,7 +800,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     }
 
     // Save the lbit analysis once
-    if(storage_event == StorageEvent::MODEL) {
+    if(h5file and storage_event == StorageEvent::MODEL) {
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(storage_event), tid::highest);
         if(h5file and h5file->linkExists("/fLBIT/model/lbits")) return;

@@ -21,8 +21,8 @@ class AlgorithmInfinite : public AlgorithmBase {
     void update_bond_dimension_limit()                                                                       final;
     void update_truncation_error_limit()                                                                     final;
 
-    void randomize_model();
-    void randomize_state(ResetReason reason,
+    void initialize_model();
+    void initialize_state(ResetReason reason,
                          std::optional<std::string> sector = std::nullopt,
                          std::optional<bool> use_eigenspinors = std::nullopt, std::optional<std::string> pattern = std::nullopt);
 

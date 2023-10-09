@@ -17,7 +17,7 @@ void itebd::run_preprocessing() {
     auto t_pre = tid::tic_scope("pre");
     init_bond_dimension_limits();
     init_truncation_error_limits();
-    randomize_model(); // First use of random!
+    initialize_model(); // First use of random!
     auto t_init    = tid::tic_scope("init");
     status.delta_t = cplx_t(settings::itebd::time_step_init_real, settings::itebd::time_step_init_imag);
     h_evn          = tensors.model->get_2site_ham_AB();

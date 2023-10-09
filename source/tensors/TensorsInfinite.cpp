@@ -49,7 +49,7 @@ void TensorsInfinite::initialize(ModelType model_type_) {
     edges->initialize();
 }
 
-void TensorsInfinite::randomize_model() {
+void TensorsInfinite::initialize_model() {
     auto t_rnd = tid::tic_scope("rnd_model", tid::level::higher);
     model->randomize();
     model->rebuild_mpo_squared();
