@@ -177,7 +177,7 @@ void LBit::build_mpo()
 
        where
         *   F is the linear size of the MPO
-        *   R is the the max range of interactions, i.e site i can interact with i+8
+        *   R is the the max range of interactions, i.e site i can interact with i+R
         *	i,j are site indices
         *   n = 0.5 * (1 + σ^z),
         *   σ^z is the diagonal 2x2 pauli matrix
@@ -237,14 +237,9 @@ void LBit::build_mpo()
     tools::log->debug("mpo({}): building lbit mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
-    if(h5tb.param.J2_rand.empty()) throw except::logic_error("expected non-empty J2_rand");
-    if(h5tb.param.J2_rand.length() > h5tb.param.J2_ctof + 1)
-        throw except::logic_error("expected J2_rand.length()({}) <= 1+J2_ctof ({})", h5tb.param.J2_rand.length(), h5tb.param.J2_ctof);
-
-    //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<cplx, 2> Z = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);
-    long                   R = static_cast<long>(h5tb.param.J2_ctof);
+    long                   R = static_cast<long>(settings::model::model_size - 1);
     long                   F = R + 2l;
     mpo_internal.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
@@ -261,9 +256,9 @@ void LBit::build_mpo()
         static_cast<real>(h5tb.param.J1_rand.to_floating_point<real_t>()) * Z - e_shift * I;
 
     if(R >= 1)
-        for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.length())) {
+        for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.size())) {
             mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
-                static_cast<real>(h5tb.param.J2_rand[static_cast<size_t>(i)].to_floating_point<real_t>()) * Z;
+                static_cast<real>(h5tb.param.J2_rand.at(static_cast<size_t>(i)).to_floating_point<real_t>()) * Z;
         }
     mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J3_rand.to_floating_point<real_t>()) * Z;
 
@@ -370,14 +365,11 @@ void LBit::build_mpo_t()
     tools::log->debug("mpo({}): building lbit mpo", get_position());
     if(not all_mpo_parameters_have_been_set)
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
-    if(h5tb.param.J2_rand.empty()) throw except::logic_error("expected non-empty J2_rand");
-    if(h5tb.param.J2_rand.length() > h5tb.param.J2_ctof + 1)
-        throw except::logic_error("expected J2_rand.length()({}) <= 1+J2_ctof ({})", h5tb.param.J2_rand.length(), h5tb.param.J2_ctof);
 
     //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<cplx_t, 2> Z = tenx::TensorMap(sz).cast<cplx_t>();
     Eigen::Tensor<cplx_t, 2> I = tenx::TensorMap(id).cast<cplx_t>();
-    long                     R = static_cast<long>(h5tb.param.J2_ctof);
+    long                     R = static_cast<long>(settings::model::model_size - 1);
     long                     F = R + 2l;
     mpo_internal_t.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal_t.setZero();
@@ -393,9 +385,9 @@ void LBit::build_mpo_t()
     mpo_internal_t.slice(tenx::array4{F, 0, 0, 0}, extent4).reshape(extent2)     = h5tb.param.J1_rand.to_floating_point<real_t>() * Z - e_shift * I;
 
     if(R >= 1)
-        for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.length())) {
+        for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.size())) {
             mpo_internal_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
-                h5tb.param.J2_rand[static_cast<size_t>(i)].to_floating_point<real_t>() * Z;
+                h5tb.param.J2_rand.at(static_cast<size_t>(i)).to_floating_point<real_t>() * Z;
         }
     mpo_internal_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<real_t>() * Z;
 
@@ -418,8 +410,9 @@ void LBit::randomize_hamiltonian() {
     //
     // Note 2: the saturation time is predictable. The smallest interaction sets the longest time scale.
     //      tmax ~ [J2_wdth * exp(-(L/2)/xi_Jcls)]^-1
-    // where 2/pi comes from using the half-normal distribution |N(...)| (see wiki).
     // We take the absolute value here to get the order of magnitude of the interactions.
+    // Note 3: We take the full range of J2 so that we use the random number generator a fixed number of times,
+    // even if J2_span is shorter than full range.
 
     using namespace settings::model::lbit;
     auto expw  = std::vector<real_t>(); // The exponentially decaying weights
@@ -432,11 +425,17 @@ void LBit::randomize_hamiltonian() {
             expw.emplace_back(std::exp(-r / xi_Jcls));
         }
     }
-    tools::log->info("Randomizing MPO({:2}): J1=N({:.3e},{:.3e}) | J2=N({:.3e},{:.3e})exp(-r/{}) | J3=N({:.3e},{:.3e})*{:.3e}", get_position(), J1_mean,
+    tools::log->debug("Randomizing MPO({:2}): J1=N({:.3e},{:.3e}) | J2=N({:.3e},{:.3e})exp(-r/{}) | J3=N({:.3e},{:.3e})*{:.3e}", get_position(), J1_mean,
                      J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, f128_t(expw.size() > 2 ? expw[2] : 0.0));
-    h5tb.param.J1_rand               = rnd::random<real_t>(distribution, J1_mean, J1_wdth);
-    h5tb.param.J2_rand               = rnd::random<real_t>(distribution, J2_mean, J2_wdth, expw);
-    h5tb.param.J3_rand               = rnd::random<real_t>(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);
+    h5tb.param.J1_rand = rnd::random<real_t>(distribution, J1_mean, J1_wdth);
+    h5tb.param.J2_rand = rnd::random<real_t>(distribution, J2_mean, J2_wdth, expw);
+    h5tb.param.J3_rand = rnd::random<real_t>(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);
+
+    // Now we set J2_rand elements beyond J2_ctof to zero
+    for(size_t r = 0; r < h5tb.param.J2_rand.size(); ++r) {
+        if(r > h5tb.param.J2_ctof) h5tb.param.J2_rand[r] = 0;
+    }
+
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
 }
@@ -449,11 +448,11 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO();
-    auto   Rul                        = h5tb.param.J2_ctof;                    // Range unsigned long (with "full range": R = L-1)
-    long   R                          = static_cast<long>(h5tb.param.J2_ctof); // Range
-    long   F                          = R + 2l;                                // Last index of mpo
+    auto   Rul                        = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
+    long   R                          = static_cast<long>(Rul);          // Range
+    long   F                          = R + 2l;                          // Last index of mpo
     size_t pos                        = get_position();
-    auto   J2_range                   = num::range<size_t>(1, R + 1);          // +1 so that R itself is included
+    auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
     double J1_on                      = 0.0;
     double J2_on                      = 0.0;
     double J3_on                      = 0.0;
@@ -491,7 +490,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
         }
     }
     using namespace qm::spin::half;
-    Eigen::Tensor<cplx, 4> MPO_nbody = MPO();               // Start with the full mpo
+    Eigen::Tensor<cplx, 4> MPO_nbody = MPO(); // Start with the full mpo
     Eigen::Tensor<cplx, 2> Z         = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I         = tenx::TensorMap(id); // identity
 
@@ -535,7 +534,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
                 if(posR >= settings::model::model_size) break;
                 if(posI >= posL and posJ <= posR) J2_count += 1.0; // Count if the interaction is in the multisite mpo
             }
-            J2_count = std::max(J2_count, 1.0);                    // Avoid dividing by zero!
+            J2_count = std::max(J2_count, 1.0); // Avoid dividing by zero!
         }
         if(J2_count > 1.0) tools::log->trace("Adjusting for double counting: J2_count {} | pos {}", J2_count, get_position());
         J2_rand[r] /= J2_count;
@@ -563,11 +562,11 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO_t();
-    auto   Rul                        = h5tb.param.J2_ctof;                    // Range unsigned long (with "full range": R = L-1)
-    long   R                          = static_cast<long>(h5tb.param.J2_ctof); // Range
+    auto   Rul                        = settings::model::model_size-1;                    // Range unsigned long (with "full range": R = L-1)
+    long   R                          = static_cast<long>(Rul); // Range
     long   F                          = R + 2l;                                // Last index of mpo
     size_t pos                        = get_position();
-    auto   J2_range                   = num::range<size_t>(1, R + 1);          // +1 so that R itself is included
+    auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
     real_t J1_on                      = 0.0;
     real_t J2_on                      = 0.0;
     real_t J3_on                      = 0.0;
@@ -605,7 +604,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
         }
     }
     using namespace qm::spin::half;
-    Eigen::Tensor<cplx_t, 4> MPO_nbody = MPO_t();                            // Start with the full mpo
+    Eigen::Tensor<cplx_t, 4> MPO_nbody = MPO_t(); // Start with the full mpo
     Eigen::Tensor<cplx_t, 2> Z         = tenx::TensorMap(sz).cast<cplx_t>();
     Eigen::Tensor<cplx_t, 2> I         = tenx::TensorMap(id).cast<cplx_t>(); // identity
 
@@ -647,7 +646,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
                 // posL and posR are the left and right edges of the multisite mpo
                 size_t posR = posL + Rul;
                 if(posR >= settings::model::model_size) break;
-                if(posI >= posL and posJ <= posR) J2_count += 1.0;   // Count if the interaction is in the multisite mpo
+                if(posI >= posL and posJ <= posR) J2_count += 1.0; // Count if the interaction is in the multisite mpo
             }
             J2_count = std::max(J2_count, static_cast<real_t>(1.0)); // Avoid dividing by zero!
         }

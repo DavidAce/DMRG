@@ -85,7 +85,7 @@ void h5tb_ising_majorana::register_table_type() const {
     H5Tinsert(h5_type, "g", HOFFSET(table, g), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "delta", HOFFSET(table, delta), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution),  decltype(table::distribution)::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
@@ -127,7 +127,7 @@ void h5tb_ising_tf_rf::register_table_type() const {
     H5Tinsert(h5_type, "h_wdth", HOFFSET(table, h_wdth), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "h_rand", HOFFSET(table, h_rand), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution),  decltype(table::distribution)::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_ising_tf_rf::fmt_value(std::string_view p) const {
@@ -156,43 +156,43 @@ std::vector<std::string_view> h5tb_ising_tf_rf::get_parameter_names() const noex
  *
  */
 
-//h5tb_lbit::table_str h5tb_lbit::table::get_table_str() const {
-//    table_str ts;
-//#if defined(USE_QUADMATH)
-//    static_assert(std::is_same_v<real_t, __float128>);
-//    ts.J1_rand = fmt::format("{:.36f}", this->J1_rand);
-//    ts.J3_rand = fmt::format("{:.36f}", this->J3_rand);
-//    std::vector<h5pp::vstr_t> J2_rand_str;
-//    for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.36f}", j2)); }
-//    ts.J2_rand = J2_rand_str;
-//#else
-//    static_assert(std::is_same_v<real_t, long double>);
-//    ts.J1_rand = fmt::format("{:.21f}", this->J1_rand);
-//    ts.J3_rand = fmt::format("{:.21f}", this->J3_rand);
-//    std::vector<h5pp::vstr_t> J2_rand_str;
-//    for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.21f}", j2)); }
-//    ts.J2_rand = J2_rand_str;
-//#endif
-//    return ts;
-//}
+// h5tb_lbit::table_str h5tb_lbit::table::get_table_str() const {
+//     table_str ts;
+// #if defined(USE_QUADMATH)
+//     static_assert(std::is_same_v<real_t, __float128>);
+//     ts.J1_rand = fmt::format("{:.36f}", this->J1_rand);
+//     ts.J3_rand = fmt::format("{:.36f}", this->J3_rand);
+//     std::vector<h5pp::vstr_t> J2_rand_str;
+//     for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.36f}", j2)); }
+//     ts.J2_rand = J2_rand_str;
+// #else
+//     static_assert(std::is_same_v<real_t, long double>);
+//     ts.J1_rand = fmt::format("{:.21f}", this->J1_rand);
+//     ts.J3_rand = fmt::format("{:.21f}", this->J3_rand);
+//     std::vector<h5pp::vstr_t> J2_rand_str;
+//     for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.21f}", j2)); }
+//     ts.J2_rand = J2_rand_str;
+// #endif
+//     return ts;
+// }
 
-//h5tb_lbit::table h5tb_lbit::table::operator=(const h5tb_lbit::table_str &ts) {
-//    table t;
-//#if defined(USE_QUADMATH)
-//    static_assert(std::is_same_v<real_t, __float128>);
-//    this->J1_rand = strtoflt128(ts.J1_rand.c_str(), nullptr);
-//    this->J3_rand = strtoflt128(ts.J3_rand.c_str(), nullptr);
-//    std::vector<real_t> J2_rand_str;
-//    for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtoflt128(j2.c_str(), nullptr)); }
-//#else
-//    static_assert(std::is_same_v<real_t, long double>);
-//    this->J1_rand = strtold(ts.J1_rand.c_str(), nullptr);
-//    this->J3_rand = strtold(ts.J3_rand.c_str(), nullptr);
-//    std::vector<real_t> J2_rand_str;
-//    for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtold(j2.c_str(), nullptr)); }
-//#endif
-//    return t;
-//}
+// h5tb_lbit::table h5tb_lbit::table::operator=(const h5tb_lbit::table_str &ts) {
+//     table t;
+// #if defined(USE_QUADMATH)
+//     static_assert(std::is_same_v<real_t, __float128>);
+//     this->J1_rand = strtoflt128(ts.J1_rand.c_str(), nullptr);
+//     this->J3_rand = strtoflt128(ts.J3_rand.c_str(), nullptr);
+//     std::vector<real_t> J2_rand_str;
+//     for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtoflt128(j2.c_str(), nullptr)); }
+// #else
+//     static_assert(std::is_same_v<real_t, long double>);
+//     this->J1_rand = strtold(ts.J1_rand.c_str(), nullptr);
+//     this->J3_rand = strtold(ts.J3_rand.c_str(), nullptr);
+//     std::vector<real_t> J2_rand_str;
+//     for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtold(j2.c_str(), nullptr)); }
+// #endif
+//     return t;
+// }
 
 h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_w8() {
     create_enum_w8();
@@ -214,7 +214,7 @@ void h5tb_lbit::commit_enum_w8(const h5pp::hid::h5f &file_id) {
 }
 void h5tb_lbit::register_table_type() const {
     if(h5_type.valid()) return;
-    h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
+    h5_type                       = H5Tcreate(H5T_COMPOUND, sizeof(table));
     h5pp::hid::h5t h5_varr_vstr_t = h5pp::varr_t<h5pp::vstr_t>::get_h5type();
 
     H5Tinsert(h5_type, "J1_rand", HOFFSET(table, J1_rand), decltype(table::J1_rand)::get_h5type());
@@ -236,17 +236,20 @@ void h5tb_lbit::register_table_type() const {
     H5Tinsert(h5_type, "u_tgw8", HOFFSET(table, u_tgw8), get_h5t_enum_w8());
     H5Tinsert(h5_type, "u_cgw8", HOFFSET(table, u_cgw8), get_h5t_enum_w8());
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
-    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution),  decltype(table::distribution)::get_h5type());
+    H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_lbit::fmt_value(std::string_view p) const {
     // J2_rand is special since it varies in length for each mpo. Let's just pad with nan to make it pretty
     if(p == "J2_rand") {
         std::vector<real> J2_rand;
-        for(const auto &J2 : param.J2_rand) J2_rand.emplace_back(J2.to_floating_point<real>());
-        J2_rand.reserve(param.J2_ctof + 1);
-        for(size_t i = J2_rand.size(); i < param.J2_ctof + 1; i++) J2_rand.emplace_back(std::numeric_limits<real>::quiet_NaN());
-        return fmt::format(FMT_STRING("[{:<+9.2e}]"), fmt::join(J2_rand, ","));
+        for(size_t i = 0; i < param.J2_ctof + 1; ++i) {
+            if(i < param.J2_rand.size())
+                J2_rand.emplace_back(param.J2_rand[i].to_floating_point<real>());
+            else
+                J2_rand.emplace_back(std::numeric_limits<real>::quiet_NaN());
+        }
+        return fmt::format(FMT_STRING("{::<+9.2e}"), J2_rand);
     }
 
     /* clang-format off */

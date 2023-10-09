@@ -12,6 +12,8 @@ import linecache
 from copy import copy
 from rclone_python import rclone
 import traceback
+import linecache
+from functools import cache
 
 def get_unique_config_string(d: dict, dl: dict, delim: str):
     str_L = str(d['model::model_size'])
@@ -46,6 +48,17 @@ def get_output_filepath(d: dict, dl: dict, p: dict):
     unique_path = get_unique_config_string(d,dl, '/')
     # config_filename += f"_u[{str_circuit}].cfg"
     return f"{p['output_dir']}/{unique_path}/{p['output_stem']}.h5"
+
+@cache
+def get_config_linenumber(config,key):
+    with open(config, "r") as file:
+        for idx, line in enumerate(file):
+            if line.startswith(key):
+                return idx
+def get_config_value(config, key):
+    lineno = get_config_linenumber(config,key)
+    sfline = linecache.getline(config, lineno=lineno).split()[2]
+
 
 def get_max_time(d: dict, dl: dict, p: dict):
     L  = float(d['model::model_size'])
@@ -100,6 +113,7 @@ def get_num_entries(dsets, kind = 256): # 256 is the enum value for ITER_STATE
     return indices
 def get_h5_status(filename, batch):
     if os.path.isfile(filename):
+        config = f'{batch["config_file"]}'
         expected_dset_paths = [
             '/common/finished_all',
             '/fLBIT/state_real/measurements',
@@ -125,6 +139,7 @@ def get_h5_status(filename, batch):
                     return f"FAILED|missing datasets:{missing_dsets}"
 
                 length = expected_dsets[1]['length'][0]
+
                 if optional_dsets[0] is not None:
                     evn_neel = np.resize([0,1], int(length))
                     odd_neel = np.resize([1,0], int(length))
@@ -147,6 +162,7 @@ def get_h5_status(filename, batch):
                     expected_timescale = "LINSPACED" if '-lin' in filename else "LOGSPACED"
                     if optional_attrs[1][()] != expected_timescale:
                         return f"FAILED|unexpected time scale {optional_attrs[1][()]}. Expected {expected_timescale}"
+
                 time_steps = batch['time_steps']
                 num_entries = get_num_entries(expected_dsets, kind=256)
                 num_are_equal = all_equal([x for x in num_entries.values() if x is not None])
@@ -160,16 +176,26 @@ def get_h5_status(filename, batch):
                         return f"FAILED|found too many iters: {dset}: found {num}, expected: {time_steps})"
 
 
-                r2max=float(length)
-                Jmin2 = np.exp(-r2max / 1) * 1 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-                tmax2 = 1.0 / Jmin2
-                tmax = 10 ** np.ceil(np.log10(tmax2))
-                found_tmax = expected_dsets[1]['physical_time'][-1].astype(float)
+                times = expected_dsets[1].get('physical_time').astype(float)
+                expected_tmin = complex(float(get_config_value(config, "settings::flbit::time_start_real")),
+                                        float(get_config_value(config, "settings::flbit::time_start_imag")))
+                expected_tmax = complex(float(get_config_value(config, "settings::flbit::time_final_real")),
+                                        float(get_config_value(config, "settings::flbit::time_final_imag")))
+
+                expected
+                # r2max=float(length)
+                # Jmin2 = np.exp(-r2max / 1) * 1 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
+                # tmax2 = 1.0 / Jmin2
+                # tmax = 10 ** np.ceil(np.log10(tmax2))
+                found_tmax = times[-1]
                 has_expected_tmax  = found_tmax == tmax or '-lin' in filename
                 if not has_expected_tmax:
                     return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
                 # has_expected_iters = time_steps >= batch['time_steps']
                 # has_exceeded_iters = time_steps > batch['time_steps']
+                expected_times = np.linspaced(tmin,tmax, time_steps) if '-lin' in filename else  np.logspaced(np.log10(tmin),np.log10(tmax), time_steps)
+
+
                 has_finished_all   = expected_dsets[0][()]
                 if has_finished_all:
                     return f"FINISHED"
@@ -386,7 +412,7 @@ def update_batch_status_single_thread(config_paths):
 
 
 
-def update_batch_status(config_paths):
+def update_batch_status(configs, config_paths):
     batch_filenames = sorted(Path(config_paths['config_dir']).rglob('*.json'))
     with Pool() as pool:
         batch_jsons = pool.map(write_batch_status, batch_filenames)
