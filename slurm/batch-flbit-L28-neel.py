@@ -41,6 +41,7 @@ config_ranges = {
     "model::lbit::u_tgw8": ['IDENTITY'],
     "model::lbit::u_cgw8": ['EXPDECAY'],
     "flbit::bond_max": ['8192'],
+    "flbit::time_scale": ['LOGSPACED'],
     "flbit::time_start_real": ['1e-1'],
     "flbit::time_start_imag": ['0.0'],
     "flbit::time_final_real": [get_max_time], #"{:.1e}".format(max_time),

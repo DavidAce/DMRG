@@ -59,5 +59,5 @@ for config in configs:
 
 batch_setup = get_batch_setup('lbit101-rps')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
-update_batch_status(configs=configs, config_paths=config_paths)
+update_batch_status(config_paths=config_paths)
 move_directories(batch_setup=batch_setup, config_paths=config_paths)

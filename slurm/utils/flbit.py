@@ -54,10 +54,12 @@ def get_config_linenumber(config,key):
     with open(config, "r") as file:
         for idx, line in enumerate(file):
             if line.startswith(key):
-                return idx
+                return idx+1
 def get_config_value(config, key):
     lineno = get_config_linenumber(config,key)
-    sfline = linecache.getline(config, lineno=lineno).split()[2]
+    if lineno is None:
+        raise LookupError(f"Could not find [{key=}] in  [{config=}]")
+    return linecache.getline(config, lineno=lineno).split()[2]
 
 
 def get_max_time(d: dict, dl: dict, p: dict):
@@ -98,16 +100,18 @@ def all_equal(iterable):
     g = groupby(iterable)
     return next(g, True) and not next(g, False)
 
+def get_entry_indices(dset, kind = 256):
+    return np.where(dset['event'] == kind)[0]
 def get_num_entries(dsets, kind = 256): # 256 is the enum value for ITER_STATE
     indices = {}
-    skip = ['/common/finished_all', '/fLBIT/state_real/initial_pattern']
+    skip = ['/common/finished_all', '/fLBIT/state_real/initial_pattern','/fLBIT/state_real/number_probabilities']
     for dset in dsets:
         # Check if there is an 'iter' field
         if dset is not None:
             if dset.name in skip:
                 indices[dset.name] = None
             elif dset.dtype.fields is not None and 'event' in dset.dtype.fields.keys():
-                indices[dset.name] = len(np.where(dset['event'] == kind)[0])
+                indices[dset.name] = len(get_entry_indices(dset))
             else:
                 indices[dset.name] = np.shape(dset)[-1]
     return indices
@@ -175,27 +179,23 @@ def get_h5_status(filename, batch):
                     if num is not None and num > time_steps:
                         return f"FAILED|found too many iters: {dset}: found {num}, expected: {time_steps})"
 
+                t_idx = get_entry_indices(expected_dsets[1])
+                times = expected_dsets[1]['physical_time'][t_idx].astype(float)
+                expected_tmin = abs(complex(float(get_config_value(config, "flbit::time_start_real")),
+                                            float(get_config_value(config, "flbit::time_start_imag"))))
+                expected_tmax = abs(complex(float(get_config_value(config, "flbit::time_final_real")),
+                                            float(get_config_value(config, "flbit::time_final_imag"))))
 
-                times = expected_dsets[1].get('physical_time').astype(float)
-                expected_tmin = complex(float(get_config_value(config, "settings::flbit::time_start_real")),
-                                        float(get_config_value(config, "settings::flbit::time_start_imag")))
-                expected_tmax = complex(float(get_config_value(config, "settings::flbit::time_final_real")),
-                                        float(get_config_value(config, "settings::flbit::time_final_imag")))
+                expected_times = np.linspace(expected_tmin,expected_tmax, time_steps,
+                                             endpoint=True) if '-lin' in filename else np.logspace(
+                                 np.log10(expected_tmin),np.log10(expected_tmax), time_steps, endpoint=True)
+                if not np.allclose(times, expected_times, atol=1):
+                    return f"FAILED|mismatching times"
 
-                expected
-                # r2max=float(length)
-                # Jmin2 = np.exp(-r2max / 1) * 1 * np.sqrt(2 / np.pi)  # Order of magnitude of the smallest 2-body terms (furthest neighbor, up to L/2)
-                # tmax2 = 1.0 / Jmin2
-                # tmax = 10 ** np.ceil(np.log10(tmax2))
                 found_tmax = times[-1]
-                has_expected_tmax  = found_tmax == tmax or '-lin' in filename
+                has_expected_tmax  = found_tmax == expected_tmax
                 if not has_expected_tmax:
-                    return f"FAILED|found {found_tmax=:.1e}!={tmax=:.1e}"
-                # has_expected_iters = time_steps >= batch['time_steps']
-                # has_exceeded_iters = time_steps > batch['time_steps']
-                expected_times = np.linspaced(tmin,tmax, time_steps) if '-lin' in filename else  np.logspaced(np.log10(tmin),np.log10(tmax), time_steps)
-
-
+                    return f"FAILED|found {found_tmax=:.1e}!={expected_tmax=:.1e}"
                 has_finished_all   = expected_dsets[0][()]
                 if has_finished_all:
                     return f"FINISHED"
@@ -412,7 +412,7 @@ def update_batch_status_single_thread(config_paths):
 
 
 
-def update_batch_status(configs, config_paths):
+def update_batch_status(config_paths):
     batch_filenames = sorted(Path(config_paths['config_dir']).rglob('*.json'))
     with Pool() as pool:
         batch_jsons = pool.map(write_batch_status, batch_filenames)

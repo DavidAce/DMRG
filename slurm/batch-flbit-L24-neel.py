@@ -40,6 +40,7 @@ config_ranges = {
     "model::lbit::u_cstd": ['1.0'],
     "model::lbit::u_tgw8": ['IDENTITY'],
     "model::lbit::u_cgw8": ['EXPDECAY'],
+    "flbit::time_scale": ['LOGSPACED'],
     "flbit::bond_max": ['8192'],
     "flbit::time_start_real": ['1e-1'],
     "flbit::time_start_imag": ['0.0'],
