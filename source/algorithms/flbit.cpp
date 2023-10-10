@@ -772,7 +772,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     if(h5file and storage_event == StorageEvent::INIT_STATE) {
         using namespace settings::flbit;
         auto state_prefix = fmt::format("/fLBIT/{}", tensors.state->get_name());
-        h5file->writeAttribute(enum2sv(time_scale),state_prefix, "time_scale");
+        h5file->createGroup(state_prefix);
+        h5file->writeAttribute(enum2sv(time_scale), state_prefix, "time_scale");
         h5file->writeAttribute(time_num_steps, state_prefix, "time_num_steps");
         h5file->writeAttribute(std::complex(time_start_real, time_start_imag), state_prefix, "time_start");
         h5file->writeAttribute(std::complex(time_final_real, time_final_imag), state_prefix, "time_final");
