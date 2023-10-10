@@ -164,7 +164,7 @@ def get_h5_status(filename, batch):
                         return f"FAILED|initial state is neel:{filename}"
                 if optional_attrs[1] is not None:
                     expected_timescale = "LINSPACED" if '-lin' in filename else "LOGSPACED"
-                    if optional_attrs[1][()] != expected_timescale:
+                    if optional_attrs[1] != expected_timescale:
                         return f"FAILED|unexpected time scale {optional_attrs[1][()]}. Expected {expected_timescale}"
 
                 time_steps = batch['time_steps']
@@ -271,7 +271,7 @@ def write_batch_status_single_thread(batch):
         if platform.node() == "neumann":
             status_file = "{}/{}/{}".format(batch['output_prfx'], batch['projectname'], status_file)
         else:
-            rclone.copy(f'neumann:{batch["output_prfx"]}/{batch["projectname"]}/{status_file}',
+            rclone.copyto(f'neumann:{batch["output_prfx"]}/{batch["projectname"]}/{status_file}',
                         f'{status_file}',
                         args=['-L', '--update'])
         if not os.path.isfile(status_file):
@@ -368,7 +368,7 @@ def write_batch_status(batch_filename):
             if platform.node() == "neumann":
                 status_file = "{}/{}/{}".format(batch['output_prfx'], batch['projectname'], status_file)
             else:
-                rclone.copy(f'neumann:{batch["output_prfx"]}/{batch["projectname"]}/{status_file}',
+                rclone.copyto(f'neumann:{batch["output_prfx"]}/{batch["projectname"]}/{status_file}',
                             f'{status_file}',
                             args=['-L', '--update'])
             if not os.path.isfile(status_file):
