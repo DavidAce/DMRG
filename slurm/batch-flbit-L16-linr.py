@@ -30,8 +30,8 @@ config_ranges = {
     "model::lbit::J3_mean": ['+0.00'],
     "model::lbit::J1_wdth": ['1.00'],
     "model::lbit::J2_wdth": ['1.00'],
-    "model::lbit::J3_wdth": ['1.00'],
-    "model::lbit::J2_span": ['1','2','3'],
+    "model::lbit::J3_wdth": ['0.00'],
+    "model::lbit::J2_span": ['1','2','3','4'],
     "model::lbit::xi_Jcls": ['1.00'],
     "model::lbit::u_depth": ['16'],
     "model::lbit::u_fmix": ['0.20'],
@@ -58,7 +58,7 @@ for config in configs:
     config_template = config_paths['config_template']
     write_config_file(config, config_template, config['filename'])
 
-batch_setup = get_batch_setup('lbit108-linr')
+batch_setup = get_batch_setup('lbit109-linr')
 write_batch_files(batch_setup=batch_setup, configs=configs, config_paths=config_paths)
 update_batch_status(config_paths=config_paths)
 move_directories(batch_setup=batch_setup, config_paths=config_paths)
