@@ -382,7 +382,7 @@ def get_batch_setup(projectname):
         },
         'lbit109-linr': {
             # Disabled J3 for this one.. otherwise it's the same as lbit108
-            'projectname': 'lbit108-linr',
+            'projectname': 'lbit109-linr',
             'batch': {
                 'L16|f0.2': {
                     'seed_extent': [10000],
