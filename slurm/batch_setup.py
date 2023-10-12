@@ -392,8 +392,19 @@ def get_batch_setup(projectname):
             }
         },
         'lbit110-tsmall': {
-            # Disabled J3 for this one.. otherwise it's the same as lbit108
+            # Investigate at what timescale different J2_span diverge (answer, at around 1 second in disorder average)
             'projectname': 'lbit110-tsmall',
+            'batch': {
+                'L16|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16200000],
+                    'time_steps': 100,
+                },
+            }
+        },
+        'lbit111-lowprec': {
+            # Investigate at what timescale different J2_span diverge when using svd_threshold=1e-5
+            'projectname': 'lbit111-lowprec',
             'batch': {
                 'L16|f0.2': {
                     'seed_extent': [10000],
