@@ -390,6 +390,17 @@ def get_batch_setup(projectname):
                     'time_steps': 4001,
                 },
             }
+        },
+        'lbit110-tsmall': {
+            # Disabled J3 for this one.. otherwise it's the same as lbit108
+            'projectname': 'lbit110-tsmall',
+            'batch': {
+                'L16|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16200000],
+                    'time_steps': 100,
+                },
+            }
         }
     }
 
