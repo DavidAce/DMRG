@@ -85,6 +85,7 @@ enum class StateInit {
     RANDOM_PRODUCT_STATE,
     RANDOM_ENTANGLED_STATE,
     RANDOMIZE_PREVIOUS_STATE,
+    MIDCHAIN_SINGLET_NEEL_STATE,
     PRODUCT_STATE_ALIGNED,
     PRODUCT_STATE_DOMAIN_WALL,
     PRODUCT_STATE_NEEL,
@@ -120,6 +121,7 @@ enum class flbit_task {
     INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_DISLOCATED,
     INIT_RANDOMIZE_INTO_ENTANGLED_STATE,
     INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN,
+    INIT_RANDOMIZE_INTO_MIDCHAIN_SINGLET_NEEL_STATE,
     INIT_BOND_LIMITS,
     INIT_TRNC_LIMITS,
     INIT_WRITE_MODEL,
@@ -327,6 +329,7 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
         if(item == StateInit::RANDOM_ENTANGLED_STATE)                   return "RANDOM_ENTANGLED_STATE";
         if(item == StateInit::RANDOMIZE_PREVIOUS_STATE)                 return "RANDOMIZE_PREVIOUS_STATE";
+        if(item == StateInit::MIDCHAIN_SINGLET_NEEL_STATE)              return "MIDCHAIN_SINGLET_NEEL_STATE";
         if(item == StateInit::PRODUCT_STATE_DOMAIN_WALL)                return "PRODUCT_STATE_DOMAIN_WALL";
         if(item == StateInit::PRODUCT_STATE_ALIGNED)                    return "PRODUCT_STATE_ALIGNED";
         if(item == StateInit::PRODUCT_STATE_NEEL)                       return "PRODUCT_STATE_NEEL";
@@ -688,6 +691,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "RANDOM_PRODUCT_STATE")                  return StateInit::RANDOM_PRODUCT_STATE;
         if(item == "RANDOM_ENTANGLED_STATE")                return StateInit::RANDOM_ENTANGLED_STATE;
         if(item == "RANDOMIZE_PREVIOUS_STATE")              return StateInit::RANDOMIZE_PREVIOUS_STATE;
+        if(item == "MIDCHAIN_SINGLET_NEEL_STATE")           return StateInit::MIDCHAIN_SINGLET_NEEL_STATE;
         if(item == "PRODUCT_STATE_DOMAIN_WALL")             return StateInit::PRODUCT_STATE_DOMAIN_WALL;
         if(item == "PRODUCT_STATE_ALIGNED")                 return StateInit::PRODUCT_STATE_ALIGNED;
         if(item == "PRODUCT_STATE_NEEL")                    return StateInit::PRODUCT_STATE_NEEL;
@@ -737,6 +741,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_DISLOCATED") return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_NEEL_DISLOCATED;
         if(item == "INIT_RANDOMIZE_INTO_ENTANGLED_STATE")               return flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE;
         if(item == "INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN")         return flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN;
+        if(item == "INIT_RANDOMIZE_INTO_MIDCHAIN_SINGLET_NEEL_STATE")   return flbit_task::INIT_RANDOMIZE_INTO_MIDCHAIN_SINGLET_NEEL_STATE;
         if(item == "INIT_BOND_LIMITS")                                  return flbit_task::INIT_BOND_LIMITS;
         if(item == "INIT_TRNC_LIMITS")                                  return flbit_task::INIT_TRNC_LIMITS;
         if(item == "INIT_WRITE_MODEL")                                  return flbit_task::INIT_WRITE_MODEL;

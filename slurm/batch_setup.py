@@ -412,6 +412,17 @@ def get_batch_setup(projectname):
                     'time_steps': 100,
                 },
             }
+        },
+        'lbit112-singlet': {
+            # Investigate at what timescale different J2_span diverge when using svd_threshold=1e-5
+            'projectname': 'lbit112-singlet',
+            'batch': {
+                'L16|f0.2': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16200000],
+                    'time_steps': 4001,
+                },
+            }
         }
     }
 

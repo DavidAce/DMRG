@@ -12,7 +12,7 @@
 #include "tools/finite/measure.h"
 #include <bitset>
 
-std::string get_bitfield(const StateFinite &state, const std::string &pattern) {
+std::string tools::finite::mps::init::get_bitfield(const StateFinite &state, const std::string &pattern) {
     if(pattern.empty()) return {};
     std::string bitfield;
     if(pattern.front() == 'b') {
@@ -84,7 +84,7 @@ void tools::finite::mps::init::random_product_state(StateFinite &state, StateIni
 
 void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
     tools::log->debug("Setting randomly shuffled Néel state of type {} on axis {} {}", enum2sv(type), axis,
-                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
@@ -116,8 +116,8 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
 }
 
 void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-      tools::log->debug("Setting a dislocated Néel state of type {} on axis {} {}", enum2sv(type), axis,
-                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+    tools::log->debug("Setting a dislocated Néel state of type {} on axis {} {}", enum2sv(type), axis,
+                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
@@ -130,15 +130,15 @@ void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &st
         bitfield.resize(state.get_length(), 0);
         // Sets pattern 010101101010
         for(auto &&[i, p] : iter::enumerate(bitfield)) {
-            if (i < state.get_length()/2)
+            if(i < state.get_length() / 2)
                 p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 010101
             else
                 p = num::mod<size_t>(i, 2) == 0 ? '1' : '0'; // Set Neel pattern 101010
         }
-    }
-    if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
-        // Reverse with 50% probability
-        std::reverse(bitfield.begin(), bitfield.end());
+        if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
+            // Reverse with 50% probability
+            std::reverse(bitfield.begin(), bitfield.end());
+        }
     }
 
     std::string label = "A";
@@ -160,10 +160,9 @@ void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &st
     tools::log->debug("Initial state: {}", bitfield);
 }
 
-
 void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
     tools::log->debug("Setting domain-wall initial state of type {} on axis {} {}", enum2sv(type), axis,
-                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
@@ -224,8 +223,7 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
 }
 
 void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
-    tools::log->debug("Setting Néel state of type {} on axis {} {}", enum2sv(type), axis,
-                     pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+    tools::log->debug("Setting Néel state of type {} on axis {} {}", enum2sv(type), axis, pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
 
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
@@ -237,10 +235,10 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length(), 0);
         for(auto &&[i, p] : iter::enumerate(bitfield)) p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010
-    }
-    if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
-        // Reverse with 50% probability
-        std::reverse(bitfield.begin(), bitfield.end());
+        if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
+            // Reverse with 50% probability
+            std::reverse(bitfield.begin(), bitfield.end());
+        }
     }
 
     std::string label = "A";

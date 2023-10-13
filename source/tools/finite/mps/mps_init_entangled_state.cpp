@@ -1,7 +1,9 @@
 #include "../mps.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "general/iter.h"
 #include "math/linalg/matrix.h"
+#include "math/num.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
 #include "qm/spin.h"
@@ -43,6 +45,71 @@ std::vector<long> tools::finite::mps::init::get_valid_bond_dimensions(size_t siz
         bond_dimensions.at(i) = std::min(spin_dim * bond_dimensions.at(i + 1), bond_lim);
     }
     return bond_dimensions;
+}
+
+void tools::finite::mps::init::set_midchain_singlet_neel_state(StateFinite &state, StateInitType type, std::string_view axis, std::string &pattern) {
+    tools::log->debug("Setting Néel state of type {} on axis {} with a midchain singlet {}", enum2sv(type), axis,
+                      pattern.empty() ? "" : fmt::format(" | from pattern: {}", pattern));
+    move_center_point_to_middle(state);
+    Eigen::Tensor<cplx, 1> L(1);
+    L.setConstant(1.0);
+    Eigen::Tensor<cplx, 1> LC(2); // L for the singlet
+    LC.setConstant(1.0 / std::sqrt(2));
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
+    std::array<Eigen::Tensor<cplx, 3>, 2> spinors = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
+                                                     tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
+    Eigen::Tensor<cplx, 3>                singlet_a(2, 1, 2);
+    Eigen::Tensor<cplx, 3>                singlet_b(2, 2, 1);
+    singlet_a.slice(std::array<long, 3>{0, 0, 0}, std::array<long, 3>{2, 1, 1}) = spinors[0];  // a_up
+    singlet_a.slice(std::array<long, 3>{0, 0, 1}, std::array<long, 3>{2, 1, 1}) = spinors[1];  // a_down
+    singlet_b.slice(std::array<long, 3>{0, 0, 0}, std::array<long, 3>{2, 1, 1}) = spinors[1];  // b_down
+    singlet_b.slice(std::array<long, 3>{0, 1, 0}, std::array<long, 3>{2, 1, 1}) = -spinors[0]; // b_up // Minus sign for singlet instead of triplet state
+    auto bitfield                                                               = get_bitfield(state, pattern);
+    if(bitfield.empty() or bitfield.size() != state.get_length()) {
+        bitfield.resize(state.get_length(), 0);
+        for(auto &&[i, p] : iter::enumerate(bitfield)) {
+            if(i == state.get_length() / 2 - 1) {
+                p = 'a';
+            } else if(i == state.get_length() / 2) {
+                p = 'b';
+            } else {
+                p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010}
+            }
+        }
+        if(rnd::uniform_integer_box<size_t>(0, 1) == 1) {
+            // Reverse with 50% probability
+            std::reverse(bitfield.begin(), bitfield.end());
+            bitfield.at(state.get_length() / 2 - 1) = 'a';
+            bitfield.at(state.get_length() / 2)     = 'b';
+        }
+    }
+
+    std::string label = "A";
+    for(const auto &[pos, mps_ptr] : iter::enumerate(state.mps_sites)) {
+        auto &&mps = *mps_ptr;
+        auto   bit = bitfield.at(pos);
+        if(bit == '0') {
+            mps.set_mps(spinors.at(0), L, 0, label);
+        } else if(bit == '1') {
+            mps.set_mps(spinors.at(1), L, 0, label);
+        } else if(bit == 'a') {
+            mps.set_mps(singlet_a, L, 0, label); // This is an "AC" site, so LC goes on the right of this matrix
+        } else if(bit == 'b') {
+            mps.set_mps(singlet_b, L, 0, label); // This is a "B" site
+        }
+        if(mps.isCenter()) {
+            label = "B";
+            mps.set_LC(LC);
+        }
+    }
+    pattern        = fmt::format("b{}", bitfield);
+    state.popcount = 1 + static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1')); // Add one because of the singlet
+    move_center_point_to_pos_dir(state, 0, 1);
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+    tools::log->debug("Initial state: {}", bitfield);
 }
 
 void tools::finite::mps::init::set_random_entangled_state_haar(StateFinite &state, StateInitType type, long bond_lim) {

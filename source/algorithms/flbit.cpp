@@ -148,6 +148,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
                 break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN: initialize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_PATTERN); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_MIDCHAIN_SINGLET_NEEL_STATE: initialize_state(ResetReason::INIT, StateInit::MIDCHAIN_SINGLET_NEEL_STATE); break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;

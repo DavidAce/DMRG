@@ -47,6 +47,7 @@ namespace tools::finite::mps {
         inline std::set<size_t> used_bitfields;
         extern bool bitfield_is_valid (size_t bitfield);
         extern std::vector<long> get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_lim);
+        extern std::string get_bitfield(const StateFinite &state, const std::string &pattern);
 
         extern void random_product_state        (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, std::string &pattern);
         extern void random_entangled_state      (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, long bond_lim);
@@ -64,6 +65,7 @@ namespace tools::finite::mps {
 
         // Entangled states
         extern void randomize_given_state (StateFinite & state, StateInitType type);
+        extern void set_midchain_singlet_neel_state(StateFinite & state, StateInitType type, std::string_view axis, std::string &pattern);
         extern void set_random_entangled_state_on_axes_using_eigenspinors(StateFinite & state, StateInitType type, const std::vector<std::string> & axes, long bond_lim);
         extern void set_random_entangled_state_on_axis_using_eigenspinors(StateFinite & state, StateInitType type, std::string_view axis, long bond_lim);
         extern void set_random_entangled_state_with_random_spinors(StateFinite & state, StateInitType type, long bond_lim);

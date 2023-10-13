@@ -381,6 +381,7 @@ void tools::finite::mps::initialize_state(StateFinite &state, StateInit init, St
         case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, axis, use_eigenspinors, pattern);
         case StateInit::RANDOM_ENTANGLED_STATE: return init::random_entangled_state(state, type, axis, bond_lim, use_eigenspinors);
         case StateInit::RANDOMIZE_PREVIOUS_STATE: return init::randomize_given_state(state, type);
+        case StateInit::MIDCHAIN_SINGLET_NEEL_STATE: return init::set_midchain_singlet_neel_state(state, type, axis, pattern);
         case StateInit::PRODUCT_STATE_DOMAIN_WALL: return init::set_product_state_domain_wall(state, type, axis, pattern);
         case StateInit::PRODUCT_STATE_ALIGNED: return init::set_product_state_aligned(state, type, axis, pattern);
         case StateInit::PRODUCT_STATE_NEEL: return init::set_product_state_neel(state, type, axis, pattern);
