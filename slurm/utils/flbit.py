@@ -14,6 +14,7 @@ from rclone_python import rclone
 import traceback
 import linecache
 from functools import cache
+from numba import njit,prange
 
 def get_unique_config_string(d: dict, dl: dict, delim: str):
     str_L = str(d['model::model_size'])
@@ -100,9 +101,20 @@ def all_equal(iterable):
     g = groupby(iterable)
     return next(g, True) and not next(g, False)
 
-def get_entry_indices(dset, kind = 256):
-    return np.where(dset['event'] == kind)[0]
-def get_num_entries(dsets, kind = 256): # 256 is the enum value for ITER_STATE
+@njit(cache=True)
+def arrays_equal(a, b):
+    if a.shape != b.shape:
+        return False
+    for i in prange(a.size):
+        if a[i] != b[i]:
+            return False
+    return True
+def get_entry_indices(dset, expected_num, kind = 256):
+    return np.where(dset['event'] == kind)[0][:expected_num]
+
+
+    # return np.where(dset['event'] == kind)[0]
+def get_num_entries(dsets, expected_num, kind = 256): # 256 is the enum value for ITER_STATE
     indices = {}
     skip = ['/common/finished_all', '/fLBIT/state_real/initial_pattern','/fLBIT/state_real/number_probabilities']
     for dset in dsets:
@@ -111,7 +123,9 @@ def get_num_entries(dsets, kind = 256): # 256 is the enum value for ITER_STATE
             if dset.name in skip:
                 indices[dset.name] = None
             elif dset.dtype.fields is not None and 'event' in dset.dtype.fields.keys():
-                indices[dset.name] = len(get_entry_indices(dset))
+                # idx = get_entry_indices(dset)
+                # It can happen that some entries are repeated (due to the old way of resuming simulations)
+                indices[dset.name] = len(get_entry_indices(dset,expected_num, kind))
             else:
                 indices[dset.name] = np.shape(dset)[-1]
     return indices
@@ -162,13 +176,14 @@ def get_h5_status(filename, batch):
                         return f"FAILED|initial state is not neel"
                     if not should_be_neel and has_neel_init_pattern:
                         return f"FAILED|initial state is neel:{filename}"
+                should_have_linspace = '-lin' in filename or 'singlet' in filename
                 if optional_attrs[1] is not None:
-                    expected_timescale = "LINSPACED" if '-lin' in filename else "LOGSPACED"
+                    expected_timescale = "LINSPACED" if should_have_linspace else "LOGSPACED"
                     if optional_attrs[1] != expected_timescale:
-                        return f"FAILED|unexpected time scale {optional_attrs[1][()]}. Expected {expected_timescale}"
+                        return f"FAILED|unexpected time scale {optional_attrs[1]}. Expected {expected_timescale}"
 
                 time_steps = batch['time_steps']
-                num_entries = get_num_entries(expected_dsets, kind=256)
+                num_entries = get_num_entries(expected_dsets, expected_num=time_steps, kind=256)
                 num_are_equal = all_equal([x for x in num_entries.values() if x is not None])
                 if not num_are_equal:
                     return  f"FAILED|unequal iters: {num_are_equal}: expected: {time_steps})"
@@ -179,7 +194,10 @@ def get_h5_status(filename, batch):
                     if num is not None and num > time_steps:
                         return f"FAILED|found too many iters: {dset}: found {num}, expected: {time_steps})"
 
-                t_idx = get_entry_indices(expected_dsets[1])
+                t_idx = get_entry_indices(expected_dsets[1], expected_num=time_steps)
+                if not arrays_equal(t_idx, np.arange(time_steps)):
+                    return f"FAILED|iter entries are not a contiguous range: {dset}: found {num}, expected: {t_idx})"
+
                 times = expected_dsets[1]['physical_time'][t_idx].astype(float)
                 expected_tmin = abs(complex(float(get_config_value(config, "flbit::time_start_real")),
                                             float(get_config_value(config, "flbit::time_start_imag"))))
@@ -187,7 +205,7 @@ def get_h5_status(filename, batch):
                                             float(get_config_value(config, "flbit::time_final_imag"))))
 
                 expected_times = np.linspace(expected_tmin,expected_tmax, time_steps,
-                                             endpoint=True) if '-lin' in filename else np.logspace(
+                                             endpoint=True) if should_have_linspace else np.logspace(
                                  np.log10(expected_tmin),np.log10(expected_tmax), time_steps, endpoint=True)
                 if not np.allclose(times, expected_times, atol=1):
                     return f"FAILED|mismatching times"
