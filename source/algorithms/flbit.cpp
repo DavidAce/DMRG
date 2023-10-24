@@ -148,7 +148,9 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
                 break;
             case flbit_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case flbit_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE_PATTERN: initialize_state(ResetReason::INIT, StateInit::PRODUCT_STATE_PATTERN); break;
-            case flbit_task::INIT_RANDOMIZE_INTO_MIDCHAIN_SINGLET_NEEL_STATE: initialize_state(ResetReason::INIT, StateInit::MIDCHAIN_SINGLET_NEEL_STATE); break;
+            case flbit_task::INIT_RANDOMIZE_INTO_MIDCHAIN_SINGLET_NEEL_STATE:
+                initialize_state(ResetReason::INIT, StateInit::MIDCHAIN_SINGLET_NEEL_STATE);
+                break;
             case flbit_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case flbit_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case flbit_task::INIT_WRITE_MODEL: write_to_file(StorageEvent::MODEL); break;
@@ -903,9 +905,9 @@ void flbit::print_status() {
 
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
                           tools::finite::measure::bond_dimension_midchain(*tensors.state));
-    report += fmt::format("wtime:{:<} ", fmt::format("{:>6.2f}s", tid::get_unscoped("t_tot").get_time()));
-    report += fmt::format("ptime:{:<} ", fmt::format("{:+>8.2e}s", status.phys_time.to_floating_point<real>()));
-    report += fmt::format("itime:{:<} ", fmt::format("{:>4.2f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
+    report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<real>()));
+    report += fmt::format("wtime:{:<}(+{:<}) ", fmt::format("{:>.1f}s", tid::get_unscoped("t_tot").get_time()),
+                          fmt::format("{:>.1f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }

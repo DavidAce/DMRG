@@ -426,7 +426,7 @@ void LBit::randomize_hamiltonian() {
         }
     }
     tools::log->debug("Randomizing MPO({:2}): J1=N({:.3e},{:.3e}) | J2=N({:.3e},{:.3e})exp(-r/{}) | J3=N({:.3e},{:.3e})*{:.3e}", get_position(), J1_mean,
-                     J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, f128_t(expw.size() > 2 ? expw[2] : 0.0));
+                      J1_wdth, J2_mean, J2_wdth, xi_Jcls, J3_mean, J3_wdth, f128_t(expw.size() > 2 ? expw[2] : 0.0));
     h5tb.param.J1_rand = rnd::random<real_t>(distribution, J1_mean, J1_wdth);
     h5tb.param.J2_rand = rnd::random<real_t>(distribution, J2_mean, J2_wdth, expw);
     h5tb.param.J3_rand = rnd::random<real_t>(distribution, J3_mean, J3_wdth) * (expw.size() > 2 ? expw[2] : 0.0);
@@ -562,9 +562,9 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO_t();
-    auto   Rul                        = settings::model::model_size-1;                    // Range unsigned long (with "full range": R = L-1)
-    long   R                          = static_cast<long>(Rul); // Range
-    long   F                          = R + 2l;                                // Last index of mpo
+    auto   Rul                        = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
+    long   R                          = static_cast<long>(Rul);          // Range
+    long   F                          = R + 2l;                          // Last index of mpo
     size_t pos                        = get_position();
     auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
     real_t J1_on                      = 0.0;

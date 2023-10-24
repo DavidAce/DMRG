@@ -139,7 +139,6 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
         // EXPDECAY correspond to squared exponential decay with adjacent field differences
         auto tw = u.tgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
         auto cw = u.cgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
-        // TODO: put the tw factors back!
         auto             th0 = tw * rnd::normal(0.0, u.tstd);
         auto             th1 = tw * rnd::normal(0.0, u.tstd);
         auto             th2 = tw * rnd::normal(0.0, u.tstd);
@@ -1188,7 +1187,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
     size_t num_caches = 0;
     for(const auto &[idx, b] : iter::enumerate(bitseqs)) {
         t_r.tic();
-        auto bstr =  std::to_string(b);
+        auto bstr = std::to_string(b);
         tools::finite::mps::init::set_product_state_on_axis_using_pattern(state, StateInitType::REAL, "x", bstr);
         auto lbit_corrmat = Eigen::Tensor<cplx, 2>(ssites, ssites);
         lbit_corrmat.setZero();
@@ -1377,7 +1376,7 @@ std::vector<Eigen::Tensor<real, 2>> qm::lbit::get_lbit_correlation_matrices(cons
     return lbit_supp_vec;
 }
 std::vector<Eigen::Tensor<real, 2>> qm::lbit::get_lbit_correlation_matrices2(const UnitaryGateProperties &uprop, size_t reps, bool randomize_fields,
-                                                                            bool use_mpo) {
+                                                                             bool use_mpo) {
     auto t_reps        = tid::tic_scope(fmt::format("reps", reps));
     auto lbit_supp_vec = std::vector<Eigen::Tensor<real, 2>>();
     for(size_t rep = 0; rep < reps; ++rep) {

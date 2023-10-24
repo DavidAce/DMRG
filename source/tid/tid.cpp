@@ -1,9 +1,9 @@
 #include "tid.h"
+#include <algorithm>
+#include <deque>
 #include <fmt/format.h>
 #include <string>
 #include <string_view>
-#include <deque>
-#include <algorithm>
 namespace tid {
     namespace internal {
 
@@ -88,7 +88,6 @@ namespace tid {
 
     token tic_token(std::string_view key, level l) {
         if(internal::ur_prefix.size() >= 200) printf("ur prefix: %s\n", internal::ur_prefix.c_str());
-
         return tid::get(key, l).tic_token();
     }
 

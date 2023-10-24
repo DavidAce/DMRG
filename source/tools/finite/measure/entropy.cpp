@@ -438,7 +438,9 @@ size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, st
     return -1ul;
 }
 
-template<typename AmplitudesT, typename CacheT>
+enum class Side { LEFT, RIGHT };
+
+template<Side side, typename AmplitudesT, typename CacheT>
 std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
     // Here we compute the probability of finding
 
@@ -493,19 +495,36 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
             // This is important when we work with a small cutoff, where sometimes numerical noise is mistaken for a signal.
             bool accept = asq > amplitude_cutoff and probability_sum + ssq <= 1.0 + 1e-8;
             if(accept) {
-                if(state_pos < tgt_pos) {
-                    // The convention is that p_i(n) is the probability of having n particles to the LEFT of tgt_pos i.
-                    // If we are calculating from the right (using B's) we have to convert to the left convention.
-                    // In that case, ssq is a probability for having n particles to the right of tgt_pos.
-                    // If we have N particles in total, this is the same as the probability of having N-n particles to the left.
-                    // Since we calculate from the right side whenever tgt_pos > state_pos, we can take the complementary number of particles
-                    auto nc = state.popcount - n;
-                    probability.at(nc) += ssq;
-                    probability_sum += ssq;
-                } else {
-                    probability[n] += ssq;
-                    probability_sum += ssq;
+                if constexpr(side == Side::LEFT) {
+                    if(state_pos < tgt_pos) {
+                        // The convention is that p_i(n) is the probability of having n particles to the LEFT of tgt_pos i.
+                        // If we are calculating from the right (using B's) we have to convert to the left convention.
+                        // In that case, ssq is a probability for having n particles to the right of tgt_pos.
+                        // If we have N particles in total, this is the same as the probability of having N-n particles to the left.
+                        // Since we calculate from the right side whenever tgt_pos > state_pos, we can take the complementary number of particles
+                        auto nc = state.popcount - n;
+                        probability.at(nc) += ssq;
+                        probability_sum += ssq;
+                    } else {
+                        probability[n] += ssq;
+                        probability_sum += ssq;
+                    }
+                } else if constexpr(side == Side::RIGHT) {
+                    if(tgt_pos < state_pos) {
+                        // The convention is that p_i(n) is the probability of having n particles to the RIGHT of tgt_pos i.
+                        // If we are calculating from the left (using A's) we have to convert to the right convention.
+                        // In that case, ssq is a probability for having n particles to the left of tgt_pos.
+                        // If we have N particles in total, this is the same as the probability of having N-n particles to the right.
+                        // Since we calculate from the left side whenever tgt_pos < state_pos, we can take the complementary number of particles
+                        auto nc = state.popcount - n;
+                        probability.at(nc) += ssq;
+                        probability_sum += ssq;
+                    } else {
+                        probability[n] += ssq;
+                        probability_sum += ssq;
+                    }
                 }
+
                 //                probability[n] += ssq;
                 //                probability_sum += ssq;
                 schmidt_taken(alpha) = 1;
@@ -625,7 +644,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     auto t_num      = tid::tic_scope("number_entropy", tid::level::highest);
     auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy);
-    //    tools::finite::mps::move_center_point_to_pos(state_copy,state_copy.get_length<long>()-1);
+    //    tools::finite::mps::move_center_point_to_pos(state_copy, state_copy.get_length<long>() - 1);
     //    tools::finite::mps::move_center_point_to_pos(state_copy,state_copy.get_length<long>()-1);
     auto state_pos       = state_copy.get_position<long>();
     auto state_len       = state_copy.get_length();
@@ -647,7 +666,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             if(pos > state_pos) break;               // Only compute up to and including AC
             if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
             auto amplitudes                     = generate_amplitude_list_rrp<From::A>(state_llen, pos);
-            auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
+            auto probability                    = compute_probability_rrp<Side::LEFT>(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
             auto                psize           = static_cast<long>(probability.size());
@@ -665,7 +684,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
             if(pos <= state_pos + 1) break;      // +1 because we don't need to compute AC again
             if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
             auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_llen, pos);
-            auto probability                    = compute_probability_rrp(state_copy, pos, amplitudes, cache);
+            auto probability                    = compute_probability_rrp<Side::LEFT>(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
             auto                psize           = static_cast<long>(probability.size());

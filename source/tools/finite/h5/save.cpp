@@ -226,8 +226,8 @@ namespace tools::finite::h5 {
             auto                 rows = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(0));
             auto                 cols = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(1));
             std::vector<hsize_t> dims = {rows, cols, 0};
-            std::vector<hsize_t> chnk = {rows, cols, 10};
-            h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
+            std::vector<hsize_t> chnk = {rows, cols, 50};
+            h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
         }
         // Do not append if the iteration number is smaller than the dataset iter dimension
         auto num_entries = h5file.getDatasetDimensions(table_path).back();
