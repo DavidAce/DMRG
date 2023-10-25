@@ -228,6 +228,8 @@ namespace tools::finite::h5 {
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, 50};
             h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
+            h5file.writeAttribute("n_count, site, time", table_path,  "index");
+            h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", table_path,  "description");
         }
         // Do not append if the iteration number is smaller than the dataset iter dimension
         auto num_entries = h5file.getDatasetDimensions(table_path).back();

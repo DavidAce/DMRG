@@ -9,7 +9,7 @@ config_paths = {
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
     'output_stem'       : 'mbl',
     'config_dir'        : "config-L28-neel",
-    'output_dir'        : "output",
+    'output_dir'        : "output-neel",
     'status_dir'        : "status-neel",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
@@ -40,11 +40,11 @@ config_ranges = {
     "model::lbit::u_cstd": ['1.0'],
     "model::lbit::u_tgw8": ['IDENTITY'],
     "model::lbit::u_cgw8": ['EXPDECAY'],
-    "flbit::bond_max": ['8192'],
     "flbit::time_scale": ['LOGSPACED'],
+    "flbit::bond_max": ['8192'],
     "flbit::time_start_real": ['1e-1'],
     "flbit::time_start_imag": ['0.0'],
-    "flbit::time_final_real": [get_max_time], #"{:.1e}".format(max_time),
+    "flbit::time_final_real": [get_max_time],  # "{:.1e}".format(max_time),
     "flbit::time_final_imag": ['0.0'],
     "flbit::time_num_steps": ['100'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
