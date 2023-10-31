@@ -146,9 +146,20 @@ def get_h5_status(filename, batch):
             'initial_state': '/fLBIT/state_real',
             'time_scale': '/fLBIT/state_real',
         }
+        expected_lbit_paths = [
+            '/fLBIT/model/lbits/corrmat',
+        ]
 
         try:
             with h5py.File(filename, 'r') as h5file:
+                if 'lbit113-lbit' in filename:
+                    expected_lbits = [h5file.get(path) for path in expected_lbit_paths]
+                    missing_dsets = [path for dset, path in zip(expected_lbits, expected_lbit_paths) if dset is None]
+                    if len(missing_dsets) > 0:
+                        return f"FAILED|missing datasets:{missing_dsets}"
+                    else:
+                        return f"FINISHED"
+
                 expected_dsets = [h5file.get(path) for path in expected_dset_paths]
                 optional_dsets = [h5file.get(path) for path in optional_dset_paths]
                 optional_attrs = [h5file.get(path).attrs.get(attr) for attr,path in optional_link_attrs.items() if path in h5file]
