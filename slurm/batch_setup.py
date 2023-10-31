@@ -423,6 +423,38 @@ def get_batch_setup(projectname):
                     'time_steps': 4001,
                 },
             }
+        },
+        'lbit113-lbit': {
+            # Calculate the lbit supports for many system sizes
+            'projectname': 'lbit113-lbit',
+            'batch': {
+                'L12|f0.2': {
+                    'seed_extent': [1000],
+                    'seed_offset': [12200000],
+                    'time_steps': 0,
+                },
+                'L16|f0.2': {
+                    'seed_extent': [1000],
+                    'seed_offset': [16200000],
+                    'time_steps': 0,
+                },
+                'L20|f0.2': {
+                    'seed_extent': [1000],
+                    'seed_offset': [20200000],
+                    'time_steps': 0,
+                },
+                'L24|f0.2': {
+                    'seed_extent': [1000],
+                    'seed_offset': [24200000],
+                    'time_steps': 0,
+                },
+                'L28|f0.2': {
+                    'seed_extent': [1000],
+                    'seed_offset': [28200000],
+                    'time_steps': 0,
+                },
+
+            }
         }
     }
 

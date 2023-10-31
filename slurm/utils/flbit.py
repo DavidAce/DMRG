@@ -390,7 +390,7 @@ def write_batch_status(batch_filename):
                             f'{status_file}',
                             args=['-L', '--update'])
             if not os.path.isfile(status_file):
-                raise FileNotFoundError(f"{status_file}")
+                raise FileNotFoundError(f"{status_file}\n Hint: Perhaps you need to add --update on the first run")
 
             status_count = 0
             for offset, extent in zip(batch['seed_offset'], batch['seed_extent']):
