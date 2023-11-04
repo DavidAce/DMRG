@@ -13,7 +13,6 @@ Usage                               : $PROGNAME [-options] with the following op
 -d                                  : Dry run
 -c <config file>                    : Path to a config file (.cfg)
 -e <executable>                     : Path to executable (default = "")
--f <jobfile>                        : Path to simulation file, two columns formatted as [configfile seed] (default = "")
 -o <seed offset>                    : Start seed count from this offset
 -p <remote prefix>                  : Rclone copy to this remote dir prefix (default "")
 -r                                  : Remove the file after rclone
@@ -29,7 +28,7 @@ export parallel="false"
 export seed_offset=0
 export status_dir="status"
 export force_run="false"
-while getopts c:hde:f:m:o:p:Prs: o; do
+while getopts c:hde:Ff:m:o:p:Prs: o; do
     case $o in
         (h) usage ;;
         (d) export dryrun="ON";;
@@ -39,7 +38,7 @@ while getopts c:hde:f:m:o:p:Prs: o; do
         (p) export rclone_prefix=$OPTARG;;
         (r) export rclone_remove="true";;
         (P) export parallel="true";;
-        (f) export force_run="true";;
+        (F) export force_run="true";;
         (s) export status_dir=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
