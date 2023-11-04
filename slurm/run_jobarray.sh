@@ -155,9 +155,13 @@ run_sim_id() {
   fi
   # Get the latest data to continue from
   if [ "$status" == "TIMEOUT" ] || [ "$infostatus" == "FAILED" ]; then
-    rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
-    rclone_copy_from_remote "$logtext" "$model_seed.txt"
-    extra_args="--revive"
+    if [ "$force_run" == "true" ]; then
+      extra_args="--replace"
+    else
+      rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
+      rclone_copy_from_remote "$logtext" "$model_seed.txt"
+      extra_args="--revive"
+    fi
   fi
   if [ "$status" == "FAILED" ];then
     extra_args="--replace";
@@ -166,9 +170,6 @@ run_sim_id() {
     extra_args="--revive"
   fi
   if [ "$status" == "REPLACE" ];then
-    extra_args="--replace"
-  fi
-  if [ "$force_run" == "true" ]; then
     extra_args="--replace"
   fi
 
