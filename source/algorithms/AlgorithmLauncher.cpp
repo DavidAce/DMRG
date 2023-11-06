@@ -59,6 +59,15 @@ void AlgorithmLauncher::start_h5file() {
                         throw except::runtime_error("Could not find link common/finished_all in file: {}", settings::storage::output_filepath);
                     auto finished_all = h5file->readDataset<bool>("common/finished_all");
 
+                    // For fLBIT simulations we can check if we actually got the expected number of iterations
+                    auto time_num_steps = h5file->readAttribute<std::optional<size_t>>("fLBIT/state_real", "time_num_steps");
+                    auto measurements_iter = h5file->readAttribute<std::optional<size_t>>("fLBIT/state_real/measurements", "iter");
+                    if (time_num_steps.has_value() and measurements_iter.has_value()){
+                        if  (measurements_iter.value() < time_num_steps.value()){
+                            tools::log->info("Detected missing iterations in 'fLBIT/state_real'");
+                            finished_all = false;
+                        }
+                    }
                     if(settings::storage::file_resume_policy == FileResumePolicy::FAST and finished_all) {
                         tools::log->info("Detected file_resume_policy == FileResumePolicy::FAST");
                         tools::log->info("Detected [common/finished_all] = true");

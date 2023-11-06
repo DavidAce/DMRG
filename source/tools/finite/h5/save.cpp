@@ -228,8 +228,8 @@ namespace tools::finite::h5 {
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, 50};
             h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
-            h5file.writeAttribute("n_count, site, time", table_path,  "index");
-            h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", table_path,  "description");
+            h5file.writeAttribute("n_count, site, time", table_path, "index");
+            h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", table_path, "description");
         }
         // Do not append if the iteration number is smaller than the dataset iter dimension
         auto num_entries = h5file.getDatasetDimensions(table_path).back();
@@ -399,10 +399,7 @@ namespace tools::finite::h5 {
     void save::simulation(h5pp::File &h5file, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status,
                           StorageEvent event, CopyPolicy copy_policy) {
         if(not state.position_is_inward_edge()) return;
-        auto sinfo = StorageInfo(status, state.get_name(), event);
-        if(sinfo.storage_event == StorageEvent::NONE) return;
-        if(sinfo.storage_level == StorageLevel::NONE) return;
-
+        auto sinfo   = StorageInfo(status, state.get_name(), event);
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(status.event), tid::level::highest);
 

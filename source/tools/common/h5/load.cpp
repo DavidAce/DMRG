@@ -64,24 +64,24 @@ namespace tools::common::h5 {
         if(h5file.attributeExists(state_prefix, "initial_pattern")) {
             pattern = h5file.readAttribute<std::string>(state_prefix, "initial_pattern");
         } else {
-            tools::log->warn("Could not load pattern: dset or attribute [initial_pattern] does not exist in: [{}]", state_prefix);
+            throw except::load_error("Could not load pattern: dset or attribute [initial_pattern] does not exist in: [{}]", state_prefix);
         }
         if(h5file.attributeExists(state_prefix, "initial_type")) {
             auto initial_type = h5file.readAttribute<std::string>(state_prefix, "initial_type");
             if(initial_type != enum2sv(settings::strategy::initial_type)) {
-                tools::log->warn("Mismatching initial_type: file {} != config {}", initial_type, enum2sv(settings::strategy::initial_type));
+                throw except::load_error("Mismatching initial_type: file {} != config {}", initial_type, enum2sv(settings::strategy::initial_type));
             }
         }
         if(h5file.attributeExists(state_prefix, "initial_axis")) {
             auto initial_axis = h5file.readAttribute<std::string>(state_prefix, "initial_axis");
             if(initial_axis != settings::strategy::initial_axis) {
-                tools::log->warn("Mismatching initial_axis: file {} != config {}", initial_axis, settings::strategy::initial_axis);
+                throw except::load_error("Mismatching initial_axis: file {} != config {}", initial_axis, settings::strategy::initial_axis);
             }
         }
         if(h5file.attributeExists(state_prefix, "initial_state")) {
             auto initial_state = h5file.readAttribute<std::string>(state_prefix, "initial_state");
             if(initial_state != enum2sv(settings::strategy::initial_state)) {
-                tools::log->warn("Mismatching initial_axis: file {} != config {}", initial_state, enum2sv(settings::strategy::initial_state));
+                throw except::load_error("Mismatching initial_axis: file {} != config {}", initial_state, enum2sv(settings::strategy::initial_state));
             }
         }
     }

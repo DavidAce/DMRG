@@ -59,7 +59,7 @@ void AlgorithmFinite::run()
 
  */
 {
-    tools::log->info("Starting {}", status.algo_type_sv());
+    tools::log->info("Starting {} simulation", status.algo_type_sv());
     auto t_tot  = tid::get_unscoped("t_tot").tic_token();
     auto t_algo = tid::tic_scope(status.algo_type_sv());
     // We may want to resume this simulation.

@@ -137,8 +137,8 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
     for(size_t idx = 0; idx < u.sites - 1; idx++) {
         // This 2-site gate connects sites idx and idx+1
         // EXPDECAY correspond to squared exponential decay with adjacent field differences
-        auto tw = u.tgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
-        auto cw = u.cgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
+        auto             tw  = u.tgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
+        auto             cw  = u.cgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
         auto             th0 = tw * rnd::normal(0.0, u.tstd);
         auto             th1 = tw * rnd::normal(0.0, u.tstd);
         auto             th2 = tw * rnd::normal(0.0, u.tstd);
@@ -1509,6 +1509,11 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
 //        try{
             auto t_plot = tid::tic_scope("plot");
             auto yavg_log   = num::cast<real>(yavg, lognoinf);
+            {
+                auto off9 = std::array<long,9>{0,0,0,0,0,0,0,i_width/2,0};
+                auto ext9 = std::array<long,9>{1, 1, 1, 1, 1, 1, 1, 1, i_width};
+                yavg_log = num::cast<real>(tenx::VectorCast(lbitSA.corrmat.slice(off9, ext9)), lognoinf);
+            }
 //            auto yavg_log2   = num::cast<real>(yavg2, lognoinf);
             auto ytyp_log   = num::cast<real>(ytyp, lognoinf);
             auto plt           = AsciiPlotter("lbit decay", 64, 20);

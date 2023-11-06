@@ -48,9 +48,7 @@ void flbit::resume() {
     if(state_prefixes.empty()) throw except::state_error("no resumable states were found");
     for(const auto &state_prefix : state_prefixes) {
         tools::log->info("Resuming state [{}]", state_prefix);
-        try {
-            tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
-        } catch(const except::load_error &le) { continue; }
+        tools::finite::h5::load::simulation(*h5file, state_prefix, tensors, status, status.algo_type);
 
         // Our first task is to decide on a state name for the newly loaded state
         // The simplest is to inferr it from the state prefix itself
@@ -208,9 +206,9 @@ void flbit::run_preprocessing() {
     init_truncation_error_limits();
 
     // Create an initial state in the real basis
+    tensors.state->set_name("state_real");
     initialize_state(ResetReason::INIT, settings::strategy::initial_state);
     tensors.move_center_point_to_inward_edge();
-    tensors.state->set_name("state_real");
     state_real_init = std::make_unique<StateFinite>(*tensors.state);
     tools::finite::print::model(*tensors.model);
 

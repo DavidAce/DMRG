@@ -128,13 +128,11 @@ namespace tools::finite::h5 {
         tensors.activate_sites({tensors.get_position<size_t>()});
         tensors.rebuild_edges();
         tools::log->debug("State labels: {}", tensors.state->get_labels());
-        tools::log->info("Validating midchain entropy: [{}]", state_prefix);
         auto measurements_path     = fmt::format("{}/measurements", state_prefix);
         auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
         tensors.state->clear_cache();
         tensors.state->clear_measurements();
         tensors.state->do_all_measurements();
-        compare(tensors.state->measurements.entanglement_entropy_midchain.value(), expected_measurements.entanglement_entropy, 1e-5, "Entanglement entropy");
 
         if(algo_type == AlgorithmType::fLBIT) {
             // Check that the time limits are the same
