@@ -148,8 +148,8 @@ run_sim_id() {
   if [ -f $loginfo ] ; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
+    echodate "STATUS                   : $model_seed $id $infostatus (found on remote)"
     if [[ "$infostatus" =~ FINISHED|RCLONED ]]; then
-      echodate "STATUS                   : $model_seed $id $infostatus (found on remote)"
       # Copy results back to remote
       # We do this in case there are remnant files on disk that need to be moved.
       # The rclone command has --update, so only newer files get moved.
@@ -160,7 +160,7 @@ run_sim_id() {
       # The RCLONED field should still be looked for above, for backwards compatibility.
       return 0
     fi
-    if [ "$infostatus" == "RUNNING" ] ; then
+    if [[ "$infostatus" =~ RUNNING ]] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
       cluster="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')"
