@@ -106,9 +106,15 @@ run_sim_id() {
   #   -- Append a "RUNNING" line to the info file, and send it to remote.
   #   -- Launch the simulation
 
-
-
-
+  config_file="${config_path##*/}"
+  config_base="${config_file%.*}"
+  config_dir="${config_path%/*}"
+  outdir="${output_path%/*}"
+  outfile="$outdir/mbl_$model_seed.h5"
+  logdir="logs/$config_dir/$config_base"
+  logtext="$logdir/$model_seed.txt"
+  loginfo="$logdir/$model_seed.info"
+  infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
 
   # Step 1)
   # Check if there is a status file. Return if this seed has finished
@@ -125,25 +131,12 @@ run_sim_id() {
       # The rclone command has --update, so only newer files get moved.
       rclone_copy_to_remote $logtext $rclone_remove
       rclone_copy_to_remote $outfile $rclone_remove
-      rclone_exit_code=$?
-      if [ -n "$rclone_prefix" ] && [ "$rclone_exit_code" == "0" ]; then
-        log "$infoline|RCLONED" "$loginfo"
-        rclone_copy_to_remote $loginfo $rclone_remove
-      fi
-      return 0
+      rclone_copy_to_remote $loginfo $rclone_remove
+       # We do not add an RCLONED line anymore.
       return 0
     fi
   fi
 
-  config_file="${config_path##*/}"
-  config_base="${config_file%.*}"
-  config_dir="${config_path%/*}"
-  outdir="${output_path%/*}"
-  outfile="$outdir/mbl_$model_seed.h5"
-  logdir="logs/$config_dir/$config_base"
-  logtext="$logdir/$model_seed.txt"
-  loginfo="$logdir/$model_seed.info"
-  infoline="SLURM_CLUSTER_NAME:$SLURM_CLUSTER_NAME|HOSTNAME:$HOSTNAME|SEED:$model_seed|SLURM_ARRAY_JOB_ID:$SLURM_ARRAY_JOB_ID|SLURM_ARRAY_TASK_ID:$SLURM_ARRAY_TASK_ID|SLURM_ARRAY_TASK_STEP:$SLURM_ARRAY_TASK_STEP"
 
   mkdir -p $logdir
 
