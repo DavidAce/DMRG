@@ -164,7 +164,7 @@ run_sim_id() {
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
       cluster="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')"
-      if [ "$cluster" == "$SLURM_CLUSTER_NAME" ];then
+      if [[ "$cluster" =~ $SLURM_CLUSTER_NAME ]];then
         old_array_job_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_JOB_ID | awk -F ':' '{print $2}')"
         old_array_task_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_TASK_ID | awk -F ':' '{print $2}')"
         old_job_id=${old_array_job_id}_${old_array_task_id}
