@@ -143,8 +143,9 @@ def get_h5_status(filename, batch):
             '/fLBIT/state_real/initial_pattern'
         ]
         optional_link_attrs = {
-            'initial_state': '/fLBIT/state_real',
+            'initial_pattern': '/fLBIT/state_real',
             'time_scale': '/fLBIT/state_real',
+            'initial_state': '/fLBIT/state_real',
         }
         expected_lbit_paths = [
             '/fLBIT/model/lbits/corrmat',
@@ -178,15 +179,20 @@ def get_h5_status(filename, batch):
                         return f"FAILED|initial state is not neel"
                     if not should_be_neel and has_neel_init_pattern:
                         return f"FAILED|initial state is neel:{filename}"
-                if optional_attrs[0] is not None:
+                if optional_attrs[0] is not None: # Check the initial pattern
                     evn_neel = 'b'+''.join(np.resize(['0','1'], int(length)))
                     odd_neel = 'b'+''.join(np.resize(['1','0'], int(length)))
-                    has_neel_init_pattern = np.all(optional_attrs[0][()] == evn_neel) or np.all(optional_attrs[0][()] == odd_neel)
+                    has_neel_init_pattern = np.all(optional_attrs[0] == evn_neel) or np.all(optional_attrs[0] == odd_neel)
                     should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename
                     if should_be_neel and not has_neel_init_pattern:
-                        return f"FAILED|initial state is not neel"
+                        return f"FAILED|initial state pattern is not neel: {optional_attrs[0]}"
                     if not should_be_neel and has_neel_init_pattern:
-                        return f"FAILED|initial state is neel:{filename}"
+                        return f"FAILED|initial state pattern is neel: {optional_attrs[0]}"
+
+                    if optional_attrs[2] is not None:  # Check the initial state type
+                        if should_be_neel and optional_attrs[2] != "PRODUCT_STATE_NEEL":
+                            return f"FAILED|initial state type is not neel: {optional_attrs[2]}"
+
                 should_have_linspace = '-lin' in filename or 'singlet' in filename
                 if optional_attrs[1] is not None:
                     expected_timescale = "LINSPACED" if should_have_linspace else "LOGSPACED"
