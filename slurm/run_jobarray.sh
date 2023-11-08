@@ -149,7 +149,7 @@ run_sim_id() {
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
     echodate "STATUS                   : $model_seed $id $infostatus (found on remote)"
-    if [[ "$infostatus" =~ FINISHED|RCLONED ]]; then
+    if [[ "$infostatus" =~ FINISHED ]]; then
       # Copy results back to remote
       # We do this in case there are remnant files on disk that need to be moved.
       # The rclone command has --update, so only newer files get moved.
@@ -157,7 +157,6 @@ run_sim_id() {
       rclone_copy_to_remote $outfile $rclone_remove
       rclone_copy_to_remote $loginfo $rclone_remove
       # We do not add an RCLONED line anymore.
-      # The RCLONED field should still be looked for above, for backwards compatibility.
       return 0
     fi
     if [[ "$infostatus" =~ RUNNING ]] ; then
@@ -222,7 +221,6 @@ run_sim_id() {
       rclone_copy_to_remote $outfile $rclone_remove
       rclone_copy_to_remote $loginfo $rclone_remove
       # We do not add an RCLONED line anymore.
-      # The RCLONED field should still be looked for above, for backwards compatibility.
     fi
   fi
 }
