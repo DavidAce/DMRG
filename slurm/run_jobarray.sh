@@ -18,6 +18,7 @@ Usage                               : $PROGNAME [-options] with the following op
 -r                                  : Remove the file after rclone
 -P                                  : Run seeds in parallel
 -F                                  : Forced run of failed/missing seeds
+-R                                  : Set --replace instead of --revive
 -s                                  : Status file directory
 EOF
   exit 1
@@ -28,7 +29,8 @@ export parallel="false"
 export seed_offset=0
 export status_dir="status"
 export force_run="false"
-while getopts c:hde:Ff:m:o:p:Prs: o; do
+export replace="false"
+while getopts c:hde:Ff:m:o:p:PrRs: o; do
     case $o in
         (h) usage ;;
         (d) export dryrun="ON";;
@@ -39,6 +41,7 @@ while getopts c:hde:Ff:m:o:p:Prs: o; do
         (r) export rclone_remove="true";;
         (P) export parallel="true";;
         (F) export force_run="true";;
+        (R) export replace="true";;
         (s) export status_dir=$OPTARG;;
         (:) echo "Option -$OPTARG requires an argument." >&2 ; exit 1 ;;
         (*) usage ;;
@@ -100,8 +103,8 @@ run_sim_id() {
   # 3) If we make it this far, fetch the .h5 and .txt files from remote if they is newer than the local ones.
   #   -- We only need to do this if either status or infostatus is TIMEOUT|FAILED|MISSING
   # 4) Set the resume policy:
-  #   -- If either status or infostatus is TIMEOUT|FAILED|MISSING: set --revive
-  #   -- If -F (force_run) was passed: set --replace
+  #   -- Set --revive by default
+  #   -- If -F (force_run) was passed: ignore the "FINISHED" status in the loginfo and run anyway (because the $status_path says FAILED/TIMEOUT/MISSING)
   # 5) Prepare to launch the simulation
   #   -- Append a "RUNNING" line to the info file, and send it to remote.
   #   -- Launch the simulation
@@ -145,11 +148,12 @@ run_sim_id() {
   # If they do, use copy the remote file to local
   # This command will only copy if the remote file is newer.
   rclone_copy_from_remote "$loginfo" "$model_seed.info"
-  if [ -f $loginfo ] ; then
+  if [[ -f $loginfo ]]; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
-    echodate "STATUS                   : $model_seed $id $infostatus (found on remote)"
-    if [[ "$infostatus" =~ FINISHED ]]; then
+    echodate "STATUS (loginfo)         : $model_seed $id $infostatus"
+
+    if [[ "$infostatus" =~ FINISHED ]] && [[ "$force_run" == "false" ]]; then
       # Copy results back to remote
       # We do this in case there are remnant files on disk that need to be moved.
       # The rclone command has --update, so only newer files get moved.
@@ -158,8 +162,7 @@ run_sim_id() {
       rclone_copy_to_remote $loginfo $rclone_remove
       # We do not add an RCLONED line anymore.
       return 0
-    fi
-    if [[ "$infostatus" =~ RUNNING ]] ; then
+    elif [[ "$infostatus" =~ RUNNING ]] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
       cluster="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')"
@@ -199,7 +202,7 @@ run_sim_id() {
   # Step 4)
   # Set the resume policy
   extra_args="--revive"
-  if [ "$force_run" == "true" ]; then
+  if [ "$replace" == "true" ]; then
       extra_args="--replace"
   fi
 
