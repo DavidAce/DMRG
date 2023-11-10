@@ -170,12 +170,17 @@ run_sim_id() {
         slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
         echodate "STATUS                   : $model_seed $id jobid [$old_array_job_id] has state [$slurm_state] on this cluster ($cluster)"
         if [ "$slurm_state" == "RUNNING" ] ; then
-          echodate "STATUS                 : already running on this cluster, aborting"
+          echodate "STATUS                 : already running on this cluster, with jobid [$old_job_id], aborting"
           return 0 # Go to next id
         fi
       elif [ ! -z "$cluster" ]; then
-        echodate "STATUS                   : $model_seed $id RUNNING detected on another cluster: $cluster, aborting"
-        return 0 # Go to next id because this job is handled by another cluster
+        if [[ "$status" =~ MISSING|TIMEOUT|FAILED ]]; then
+          # We should assume that it timed out on the other cluster
+          echodate "STATUS                   : $model_seed $id may have timed out on another cluster: $cluster, running job"
+        else
+          echodate "STATUS                   : $model_seed $id RUNNING detected on another cluster: $cluster, aborting"
+          return 0 # Go to next id because this job is handled by another cluster
+        fi
       else
         echodate "STATUS                   : $model_seed $id RUNNING on unknown cluster, aborting"
         return 0 # Go to next id because this job is handled somehow...
