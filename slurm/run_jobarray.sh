@@ -163,18 +163,18 @@ run_sim_id() {
       # This could be a simulation that terminated abruptly, or it is actually running right now.
       # We can find out because we can check if the slurm job id is still running using sacct
       cluster="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_CLUSTER_NAME | awk -F ':' '{print $2}')"
-      if [[ "$cluster" =~ $SLURM_CLUSTER_NAME ]];then
+      if [[ "$cluster" == "$SLURM_CLUSTER_NAME" ]];then
         old_array_job_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_JOB_ID | awk -F ':' '{print $2}')"
         old_array_task_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_TASK_ID | awk -F ':' '{print $2}')"
         old_job_id=${old_array_job_id}_${old_array_task_id}
         slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
+        echodate "STATUS                   : $model_seed $id jobid [$old_array_job_id] has state [$slurm_state] on this cluster ($cluster)"
         if [ "$slurm_state" == "RUNNING" ] ; then
-          echodate "STATUS                   : $model_seed $id RUNNING detected on this cluster: $cluster"
+          echodate "STATUS                 : already running on this cluster, aborting"
           return 0 # Go to next id
         fi
-      fi
-      if [ ! -z "$cluster" ]; then
-        echodate "STATUS                   : $model_seed $id RUNNING detected on another cluster: $cluster"
+      elif [ ! -z "$cluster" ]; then
+        echodate "STATUS                   : $model_seed $id RUNNING detected on another cluster: $cluster, aborting"
         return 0 # Go to next id because this job is handled by another cluster
       else
         echodate "STATUS                   : $model_seed $id RUNNING on unknown cluster, aborting"
