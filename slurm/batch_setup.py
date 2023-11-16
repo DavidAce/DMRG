@@ -86,6 +86,11 @@ def get_batch_setup(projectname):
                     'seed_offset': [47000000, 47001000, 47005000, 47010000, 47015000, 47020000, 47025000, 28200000],
                     'time_steps': 100,
                 },
+                'L32|f0.2': {
+                    'seed_extent': [25000],
+                    'seed_offset': [32200000],
+                    'time_steps': 100,
+                },
                 # 'L28|f0.2': {
                 #     'seed_extent': [1000, 4000, 45000],
                 #     'seed_offset': [47000000, 47100000, 62000000],
