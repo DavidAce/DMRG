@@ -177,7 +177,7 @@ run_sim_id() {
           return 0 # Go to next id
         fi
       elif [ ! -z "$cluster" ]; then
-        if [[ "$status" =~ MISSING|TIMEOUT|FAILED ]]; then
+        if [[ "$status" =~ TIMEOUT|FAILED ]]; then
           # We should assume that it timed out on the other cluster
           echodate "STATUS                   : $model_seed $id may have timed out on another cluster: $cluster, running job"
         else
