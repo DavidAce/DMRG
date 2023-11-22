@@ -433,29 +433,34 @@ def get_batch_setup(projectname):
             # Calculate the lbit supports for many system sizes
             'projectname': 'lbit113-lbit',
             'batch': {
-                'L12|f0.2': {
+                'L12': {
                     'seed_extent': [10000],
                     'seed_offset': [12200000],
                     'time_steps': 0,
                 },
-                'L16|f0.2': {
+                'L16': {
                     'seed_extent': [10000],
                     'seed_offset': [16200000],
                     'time_steps': 0,
                 },
-                'L20|f0.2': {
+                'L20': {
                     'seed_extent': [10000],
                     'seed_offset': [20200000],
                     'time_steps': 0,
                 },
-                'L24|f0.2': {
+                'L24': {
                     'seed_extent': [10000],
                     'seed_offset': [24200000],
                     'time_steps': 0,
                 },
-                'L28|f0.2': {
+                'L28': {
                     'seed_extent': [10000],
                     'seed_offset': [28200000],
+                    'time_steps': 0,
+                },
+                'L32': {
+                    'seed_extent': [10000],
+                    'seed_offset': [32200000],
                     'time_steps': 0,
                 },
 
