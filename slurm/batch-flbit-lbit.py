@@ -35,7 +35,7 @@ config_ranges = {
     "model::lbit::J2_span": ['-1'],
     "model::lbit::xi_Jcls": ['1.00'],
     "model::lbit::u_depth": ['16'],
-    "model::lbit::u_fmix": ['0.20','0.40'],
+    "model::lbit::u_fmix": ['0.05', '0.10', '0.20','0.40'],
     "model::lbit::u_tstd": ['1.0'],
     "model::lbit::u_cstd": ['1.0'],
     "model::lbit::u_tgw8": ['IDENTITY'],
