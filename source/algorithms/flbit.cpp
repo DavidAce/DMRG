@@ -572,8 +572,8 @@ void flbit::create_unitary_circuit_gates() {
         //        unitary_gates_mpo_layer_full = qm::lbit::merge_unitary_mpo_layers(mpo_layers);
         ledge.resize(1);
         redge.resize(1);
-        ledge.setConstant(1.0);
-        redge.setConstant(1.0);
+        ledge.setConstant(cplx(1.0,0.0));
+        redge.setConstant(cplx(1.0,0.0));
     }
 }
 
