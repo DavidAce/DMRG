@@ -463,7 +463,17 @@ def get_batch_setup(projectname):
                     'seed_offset': [32200000],
                     'time_steps': 0,
                 },
-
+            }
+        },
+        'lbit114-now8': {
+            # Calculate the lbit supports for many system sizes
+            'projectname': 'lbit114-now8',
+            'batch': {
+                'L16': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16200000],
+                    'time_steps': 0,
+                },
             }
         }
     }
