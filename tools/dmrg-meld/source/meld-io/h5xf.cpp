@@ -12,7 +12,6 @@ namespace tools::h5xf {
         void copy_dset(h5pp::File &h5_tgt, const h5pp::File &h5_src, h5pp::DsetInfo &tgtInfo, h5pp::DsetInfo &srcInfo, hsize_t index, size_t axis,
                        SlabSelect ssel = SlabSelect::FULL) {
             auto           t_scope = tid::tic_scope(__FUNCTION__);
-            auto           data    = h5_src.readDataset<std::vector<std::byte>>(srcInfo); // Read the data into a generic buffer.
             h5pp::DataInfo dataInfo;
             // The axis parameter must be  < srcInfo.rank+1
             if(axis >= srcInfo.dsetDims->size()) {
@@ -39,9 +38,11 @@ namespace tools::h5xf {
             // Sometimes there is an extra entry at the end in the source data. We should ignore it.
             tgtInfo.dsetSlab->extent->at(2) = tgtInfo.dsetDims->at(2); // Copy the time dimension to ignore extra entries
 
-            // Select the hyperslab to copy from the source
             switch(ssel) {
                 case SlabSelect::FULL: {
+                    // Select the hyperslab to copy from the source
+                    dataInfo.dataSlab                   = tgtInfo.dsetSlab;
+                    dataInfo.dataSlab->offset->at(axis) = 0;
                     break;
                 }
                 case SlabSelect::MIDCOL: {
@@ -60,11 +61,11 @@ namespace tools::h5xf {
                     tgtInfo.dsetSlab->offset->at(axis) = index;
                     tgtInfo.dsetSlab->extent->at(0)    = rows;
                     tgtInfo.dsetSlab->extent->at(1)    = 1;
-//                    tools::logger::log->info("Copying midcol \ndata dims: {}\ndata slab: {}\ndset dims: {}\ndset slab: {}",
-//                                             dataInfo.dataDims.value(),
-//                                             dataInfo.dataSlab->string(),
-//                                             tgtInfo.dsetDims.value(),
-//                                             tgtInfo.dsetSlab->string());
+                    //                    tools::logger::log->info("Copying midcol \ndata dims: {}\ndata slab: {}\ndset dims: {}\ndset slab: {}",
+                    //                                             dataInfo.dataDims.value(),
+                    //                                             dataInfo.dataSlab->string(),
+                    //                                             tgtInfo.dsetDims.value(),
+                    //                                             tgtInfo.dsetSlab->string());
                     break;
                 }
                     //                case SlabSelect::MIDCOL: {
@@ -98,7 +99,13 @@ namespace tools::h5xf {
 
                 );
             }
-            h5_tgt.appendToDataset(data, dataInfo, tgtInfo, static_cast<size_t>(axis));
+            {
+                auto t_read = tid::tic_token("readDataset");
+                auto data   = h5_src.readDataset<std::vector<std::byte>>(srcInfo); // Read the data into a generic buffer.
+                t_read.toc();
+                auto t_app = tid::tic_token("appendToDataset");
+                h5_tgt.appendToDataset(data, dataInfo, tgtInfo, static_cast<size_t>(axis));
+            }
             // Restore previous settings
             tgtInfo.dsetSlab = std::nullopt;
         }
@@ -138,8 +145,8 @@ namespace tools::h5xf {
                 auto tgtChunk        = tgtDims;
                 auto tgtMaxDims      = tgtDims;
                 auto chunkSize =
-                    std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 10., 10000.); // Determine a good chunksize between 10 and 500 elements
-                tgtChunk[srcKey.axis]   = static_cast<hsize_t>(chunkSize);                        // number of elements in the axis that we append into.
+                    std::clamp(5e4 / static_cast<double>(srcInfo.dsetByte.value()), 1., 10000.); // Determine a good chunksize between 1 and 10000 elements
+                tgtChunk[srcKey.axis]   = static_cast<hsize_t>(chunkSize);                       // number of elements in the axis that we append into.
                 tgtMaxDims[srcKey.axis] = H5S_UNLIMITED;
                 if(srcKey.ssel == SlabSelect::MIDCOL) {
                     // When we only copy the middle column, the target dimension should have tgtDims[1] == 1 (i.e. a single column)
@@ -209,21 +216,29 @@ namespace tools::h5xf {
         // In this function we take series data from each srcTable and create multiple tables tgtTable, one for each
         // index (e.g. iter, bond dim, etc). Each entry in tgtTable corresponds to the same index point on different realizations.
         auto                      t_scope = tid::tic_scope(__FUNCTION__);
-        std::vector<size_t>       srcIndices; // We can assume all tables have the same indexing numbers. Only update on mismatch
-        std::vector<StorageEvent> srcEvents;  // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
-        std::vector<std::byte>    srcReadBuffer;
+        std::vector<size_t>       srcIndices;    // We can assume all tables have the same indexing numbers. Only update on mismatch
+        std::vector<StorageEvent> srcEvents;     // This stores the "event" row in the table. We need to make sure to only transfer StorageEvent::ITER_STATE
+        std::vector<std::byte>    srcReadBuffer; //  This holds the source table in memory while we distribute it to the different tables in the target file
+
+        auto t_createTable  = tid::ur("createTable");
+        auto t_readTableFld = tid::ur("readTableField");
+        auto t_readTableRec = tid::ur("readTableRecords");
+        auto t_copyTableRec = tid::ur("copyTableRecords");
+        auto t_seedIndex    = tid::ur("seed-index");
+        auto t_reclaim      = tid::ur("reclaim");
+
         for(const auto &srcKey : srcKeys) {
             if(srcTableDb.find(srcKey.key) == srcTableDb.end()) throw except::logic_error("Key [{}] was not found in source map", srcKey.key);
-            auto &srcInfo = srcTableDb[srcKey.key];
-
+            auto  t_buffer = tid::ur(fmt::format("bufferRecords-{}", srcKey.classtag));
+            auto &srcInfo  = srcTableDb[srcKey.key];
+            if(not srcInfo.h5Type) { srcInfo.h5Type = H5Dget_type(srcInfo.h5Dset.value()); }
+            auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
             // Iterate over all table elements. These should be a time series measured at every iteration
             // Note that there could in principle exist duplicate entries, which is why we can't trust the
             // "rec" iterator but have to get the iteration number from the table directly.
-            // Try getting the iteration number, which is more accurate.
-
             try {
-                if(srcIndices.size() != srcInfo.numRecords.value()) { // Update iteration numbers if it's not the same that we have already.
-                    auto t_read     = tid::tic_scope("readTableField");
+                if(srcIndices.size() != srcInfo.numRecords.value()) {
+                    // Update iteration numbers if it's not the same that we have already.
                     auto indexfield = text::match(srcKey.index, srcInfo.fieldNames.value());
                     auto eventfield = text::match({"event"}, srcInfo.fieldNames.value());
                     if(not indexfield)
@@ -232,21 +247,27 @@ namespace tools::h5xf {
                     if(not eventfield)
                         throw except::range_error("{}: Event field was not found in table [{}]\n Existing fields {}", __FUNCTION__, srcInfo.tablePath.value(),
                                                   srcInfo.fieldNames.value());
+                    t_readTableFld.tic();
                     h5pp::hdf5::readTableField(srcIndices, srcInfo, {indexfield.value()});
                     h5pp::hdf5::readTableField(srcEvents, srcInfo, {eventfield.value()});
+                    t_readTableFld.toc();
                 }
             } catch(const std::exception &ex) { throw std::logic_error(fmt::format("Failed to get iteration numbers: {}", ex.what())); }
+
+            t_readTableRec.tic();
+            h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, 0, srcInfo.numRecords.value(), h5_tgt.plists);
+            t_readTableRec.toc();
+            //            srcReadBuffer.resize(srcInfo.recordBytes.value());
             for(size_t rec = 0; rec < srcInfo.numRecords.value(); rec++) {
                 size_t srcIndex = rec;
                 if(not srcIndices.empty()) srcIndex = srcIndices[rec]; // Get the actual index number from the table
                 if(not srcEvents.empty()) {
-                    if(not seq::has(srcKey.event, srcEvents[rec])) continue;
+                    if(not seq::has(srcKey.event, srcEvents[rec])) continue; // Ignore this entry if it is not the desired event type
                 }
-                auto tgtName = h5pp::fs::path(srcInfo.tablePath.value()).filename().string();
                 auto tgtPath = pathid.create_path<KeyT>(tgtName, srcIndex);
 
                 if(tgtTableDb.find(tgtPath) == tgtTableDb.end()) {
-                    auto t_create = tid::tic_scope("createTable");
+                    t_createTable.tic();
                     tools::logger::log->debug("Adding target {} {}", srcKey.classtag, tgtPath);
                     h5pp::TableInfo tableInfo = h5_tgt.getTableInfo(tgtPath);
                     // Disabling compression is supposed to give a nice speedup. Read here:
@@ -259,25 +280,26 @@ namespace tools::h5xf {
                         tableInfo = h5_tgt.createTable(srcInfo.h5Type.value(), tgtPath, srcInfo.tableTitle.value(), chunkSize, 6);
                     }
                     tgtTableDb[tgtPath] = tableInfo;
+                    t_createTable.toc();
                 }
                 auto &tgtId   = tgtTableDb.at(tgtPath);
                 auto &tgtBuff = tgtId.buff;
-
                 // Determine the target index where to copy this record
                 // tgtInfo.numRecords is the total number of realizations registered until now
                 // tgtId.get_index(fileId.seed) Gets the index number if it already exists, else
                 // the size of the table (so we can append)
                 hsize_t tgtIndex = tgtId.get_index(fileId.seed);
-
                 tools::logger::log->trace("Transferring {} table {} ({} records) | {} {} @ idx {} -> tgt {}", srcKey.classtag, srcInfo.tablePath.value(),
                                           srcInfo.numRecords.value(), srcKey.index, srcIndex, rec, tgtIndex);
 
                 // read a source record at "srcIndex" into the "tgtIndex" position in the buffer
-                auto t_buffer  = tid::tic_scope(fmt::format("bufferRecords-{}", srcKey.classtag));
-                srcInfo.h5Type = H5Dget_type(srcInfo.h5Dset.value());
-                h5pp::hdf5::readTableRecords(srcReadBuffer, srcInfo, rec, 1, h5_tgt.plists);
-                tgtBuff.insert(srcReadBuffer, tgtIndex);
+                t_buffer.tic();
+                tgtBuff.insert(srcReadBuffer.begin() + static_cast<long>(rec * srcInfo.recordBytes.value()),
+                               srcReadBuffer.begin() + static_cast<long>((rec + 1) * srcInfo.recordBytes.value()), tgtIndex);
+                t_buffer.toc();
+
                 if(srcInfo.reclaimInfo.has_value()) {
+                    t_reclaim.tic();
                     // One or more table fields are vlen arrays.
                     // This means that HDF5 has allocated memory for those vlen arrays on a pointer somewhere in srcReadBuffer.
                     // This memory needs to be de-allocated to avoid a memory leak, which unfortunately means that we have to flush
@@ -286,11 +308,21 @@ namespace tools::h5xf {
                     // If we then overwrite srcReadBuffer, we lose track of the vlen memory pointed to previously.
                     tgtBuff.flush();
                     srcInfo.reclaim();
+                    t_reclaim.toc();
                 }
                 // Update the database
+                t_seedIndex.tic();
                 tgtId.insert(fileId.seed, tgtIndex);
+                t_seedIndex.toc();
             }
+            tid::get(fmt::format("bufferRecords-{}", srcKey.classtag)) += t_buffer;
         }
+        tid::get("createTable") += t_createTable;
+        tid::get("readTableField") += t_readTableFld;
+        tid::get("readTableRecords") += t_readTableRec;
+        tid::get("copyTableRecords") += t_copyTableRec;
+        tid::get("seed-index") += t_seedIndex;
+        tid::get("reclaim") += t_reclaim;
     }
     template void transferSeries(h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<BufferedTableInfo>> &tgtTableDb,
                                  std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid, const std::vector<CronoKey> &srcKeys,

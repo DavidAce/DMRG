@@ -23,13 +23,15 @@ struct BufferedTableInfo {
     public:
     h5pp::TableInfo              *info = nullptr;
     std::vector<ContiguousBuffer> recordBuffer;
-    size_t                        maxRecords = 1000;
+    size_t                        maxRecords = 10000;
     BufferedTableInfo();
     BufferedTableInfo(h5pp::TableInfo *info_);
     BufferedTableInfo &operator=(h5pp::TableInfo *info_);
     ~BufferedTableInfo();
 
-    void    insert(const std::vector<std::byte> &entry, hsize_t index /* In units of table entries */);
+    void insert(const std::vector<std::byte> &entry, hsize_t index /* index in units of table entries */);
+    void insert(const std::vector<std::byte>::const_iterator begin, const std::vector<std::byte>::const_iterator end, hsize_t index);
+
     hsize_t get_count(); /* Number of inserts */
     void    flush();
 };
@@ -111,7 +113,6 @@ struct PathId {
     [[nodiscard]] std::string fesle_path(std::string_view tablename, size_t bond) const;
     template<typename KeyT>
     [[nodiscard]] std::string create_path(std::string_view tablename, size_t idx) const;
-
 };
 
 template<typename InfoType>

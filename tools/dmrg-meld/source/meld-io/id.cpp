@@ -16,6 +16,28 @@ BufferedTableInfo &BufferedTableInfo::operator=(h5pp::TableInfo *info_) {
 }
 BufferedTableInfo::~BufferedTableInfo() { flush(); }
 
+void BufferedTableInfo::insert(const std::vector<std::byte>::const_iterator begin, const std::vector<std::byte>::const_iterator end, hsize_t index) {
+    if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
+    if(std::distance(begin, end) != static_cast<long>(info->recordBytes.value())) throw std::runtime_error("insert: record and entry size mismatch");
+    if(recordBuffer.size() >= maxRecords) flush();
+
+    // We need to find out if there is already a contigous buffer where we can append this entry. If not, we start a new contiguous buffer
+    for(auto &r : recordBuffer) {
+        if(r.offset + r.extent == index) {
+            r.rawdata.insert(r.rawdata.end(), begin, end);
+            r.extent += 1;
+            //            h5pp::print("Inserting 1 records at index {} into offset {} extent {}\n", index, r.offset, r.extent );
+            count++;
+            return;
+        }
+    }
+    // None was found, so we make a new one
+    recordBuffer.emplace_back(ContiguousBuffer{index, 1ul, std::vector<std::byte>(begin, end)});
+    count++;
+    //    auto & r = recordBuffer.back();
+    //    h5pp::print("Inserting 1 records at index {} into offset {} extent {}\n",  index, r.offset, r.extent );
+}
+
 void BufferedTableInfo::insert(const std::vector<std::byte> &entry, hsize_t index) {
     if(info == nullptr) throw std::runtime_error("insert: info is nullptr");
     if(entry.size() != info->recordBytes.value()) throw std::runtime_error("insert: record and entry size mismatch");
@@ -79,7 +101,6 @@ PathId::PathId(std::string_view base_, std::string_view algo_, std::string_view 
     src_path = fmt::format("{}/{}", algo, state);
     tgt_path = fmt::format("{}/{}/{}", base, algo, state);
 }
-
 
 bool PathId::match(std::string_view algo_pattern, std::string_view state_pattern) const {
     return text::match_pattern(algo, algo_pattern) and text::match_pattern(state, state_pattern);

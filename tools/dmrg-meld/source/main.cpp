@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
     h5pp::fs::path              tmp_dir        = h5pp::fs::absolute(fmt::format("/tmp/{}", tools::h5io::get_tmp_dirname(argv[0])));
     bool                        finished       = false;
     bool                        link_only      = false;
+    bool                        lbit_only      = false;
     bool                        use_tmp        = false;
     size_t                      verbosity      = 2;
     size_t                      verbosity_h5pp = 2;
@@ -79,7 +80,7 @@ int main(int argc, char *argv[]) {
     long                        seed_max       = std::numeric_limits<long>::max();
     Model                       model          = Model::SDUAL;
     bool                        replace        = false;
-    unsigned int                compression    = 4;
+    unsigned int                compression    = 3;
     std::vector<std::string>    incfilter      = {};
     std::vector<std::string>    excfilter      = {};
     {
@@ -100,7 +101,7 @@ int main(int argc, char *argv[]) {
         app.add_option("-b,--srcbase"     , src_base        , "The base directory for MBL simulation results");
         app.add_option("-o,--srcout"      , src_out         , "The name of the source directory where simulation files are found");
         app.add_option("-s,--srcsims"     , src_sims        , "Patterns to simulation directories from where to collect simulation files, e.g. 'lbit19-,lbit20-'")->required();
-        app.add_option("--srsreqs"        , src_reqs        , "Required dataset names in each source file");
+        app.add_option("--srcreqs"        , src_reqs        , "Required dataset names in each source file");
         app.add_flag  ("-f,--finished"    , finished        , "Require that src file has finished");
         app.add_flag  ("-l,--linkonly"    , link_only       , "Link only. Make the main file with external links to all the others");
         app.add_flag  ("-r,--replace"     , replace         , "Replace existing files");
@@ -264,7 +265,7 @@ int main(int argc, char *argv[]) {
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
 
                 // Last argument is the axis along which to build the time series
-                keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3, SlabSelect::MIDCOL));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3, SlabSelect::FULL));
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_fit", Size::FIX, 0));
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_rms", Size::FIX, 0));
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "cls_avg_rsq", Size::FIX, 0));
