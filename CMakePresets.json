@@ -34,12 +34,12 @@
         "CMAKE_CXX_EXTENSIONS": "FALSE",
         "CMAKE_POSITION_INDEPENDENT_CODE": "TRUE",
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
-        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always",
         "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always",
         "CMAKE_C_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb  -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
         "CMAKE_EXE_LINKER_FLAGS": "-Wl,--enable-new-dtags",
         "CMAKE_SKIP_BUILD_RPATH": "FALSE",
@@ -591,26 +591,32 @@
     },
     {
       "name": "debug-gcc-12-conan-mkl",
+      "jobs": 2,
       "configurePreset": "debug-gcc-12-conan-mkl"
     },
     {
       "name": "debug-gcc-12-conan-openblas",
+      "jobs": 2,
       "configurePreset": "debug-gcc-12-conan-openblas"
     },
     {
       "name": "debug-gcc-12-conan-flexiblas",
+      "jobs": 2,
       "configurePreset": "debug-gcc-12-conan-flexiblas"
     },
     {
       "name": "debug-clang-15-conan-mkl",
+      "jobs": 2,
       "configurePreset": "debug-clang-15-conan-mkl"
     },
     {
       "name": "debug-clang-15-conan-openblas",
+      "jobs": 2,
       "configurePreset": "debug-clang-15-conan-openblas"
     },
     {
       "name": "debug-clang-15-conan-flexiblas",
+      "jobs": 2,
       "configurePreset": "debug-clang-15-conan-flexiblas"
     },
     {
