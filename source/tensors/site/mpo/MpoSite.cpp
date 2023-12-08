@@ -38,9 +38,9 @@ Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
         //          i.e. the smallest eigenvalue of H² is actually the eigenstate |ψ⟩ with energy E with the smallest variance.
         //          Now, let |ψ+⟩ and |ψ-⟩ be degenerate eigenstates with energy E in each sector of a Z2 symmetry of
         //          the Hamiltonian H, along some axis X,Y or Z. It turns out that our eigenvalue solvers for H² have a
-        //          very hard time resolving the degeneracy and will usually converge to some a superposition
+        //          very hard time resolving the degeneracy and will usually converge to some superposition
         //                  |ψ⟩ = a|ψ+⟩ + b|ψ-⟩
-        //          with indefinite parity (i.e. global spin component in the relevant axis is near 0).
+        //          with indefinite parity (i.e. the global spin component in the relevant axis will likely be near 0).
         //          By adding Q(σ) we lift this degeneracy, since:
         //
         //              (H² + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (Var(H) + 0) |ψ+⟩

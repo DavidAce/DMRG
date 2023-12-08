@@ -118,6 +118,7 @@ class StateFinite {
     std::vector<std::array<long, 3>> get_mps_dims_active() const;
     Eigen::Tensor<Scalar, 3>         get_multisite_mps(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3>  &get_multisite_mps() const;
+    const Eigen::Tensor<Scalar, 2>  &get_multisite_density_matrix(const std::vector<size_t> & sites) const;
 
     public:
     void                set_truncation_error(size_t pos, double error);
@@ -131,6 +132,7 @@ class StateFinite {
     std::vector<double> get_truncation_errors() const;
     std::vector<double> get_truncation_errors_active() const;
     double              get_truncation_error_active_max() const;
+
     size_t              num_sites_truncated(double truncation_threshold) const;
     size_t              num_bonds_at_limit(long bond_lim) const;
     bool                is_limited_by_bond(long bond_lim) const;

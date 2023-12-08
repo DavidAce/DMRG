@@ -4,6 +4,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/num.h"
 #include "StateFinite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tid/tid.h"
@@ -397,6 +398,47 @@ const Eigen::Tensor<StateFinite::Scalar, 3> &StateFinite::get_multisite_mps() co
     if(cache.multisite_mps) return cache.multisite_mps.value();
     cache.multisite_mps = get_multisite_mps(active_sites);
     return cache.multisite_mps.value();
+}
+
+const Eigen::Tensor<StateFinite::Scalar, 2> &StateFinite::get_multisite_density_matrix(const std::vector<size_t> &sites) const {
+    if(sites.empty()) throw except::runtime_error("No sites on which to build a multisite density matrix");
+    auto                     t_mps = tid::tic_scope("gen_rho", tid::level::highest);
+    Eigen::Tensor<Scalar, 3> multisite_mps;
+    Eigen::Tensor<Scalar, 4> multisite_rho;
+    Eigen::Tensor<Scalar, 4> temp;
+    auto                     csites = num::range(sites.front(), sites.back() + 1); // Contiguous list of sites
+
+    /*
+     *  -----|-----0
+     *  |    |
+     *  |    2
+     *  |    3
+     *  |    |
+     *  -----|-----1
+     */
+    for(auto &site : csites) {
+        const auto &M    = get_mps_site(site).get_M();
+        auto        dR   = M.dimension(0);
+        auto        chiR = M.dimension(2);
+
+        bool contract_site = std::find(sites.begin(), sites.end(), site) == sites.end();
+        if(contract_site) {
+            if(&site == &csites.front()) { // First site
+                auto newdims = std::array<long, 4>{chiR, chiR, 1, 1};
+                temp         = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(newdims);
+            } else {
+                auto dL = multisite_rho.dimension(2);
+                auto newdims = std::array<long, 4>{chiR, chiR, dL, dL};
+                temp         = multisite_rho.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {0, 1})).reshape(newdims);
+            }
+            multisite_rho = temp;
+            //            temp = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
+        } else {
+            // The current site should be kept open
+            auto newdims = std::array<long, 4>{chiR, chiR, d0, d0};
+            temp         = multisite_rho.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {0, 1}));
+        }
+    }
 }
 
 void StateFinite::set_truncation_error(size_t pos, double error) { get_mps_site(pos).set_truncation_error(error); }

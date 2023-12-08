@@ -39,16 +39,16 @@ void   IsingMajorana::print_parameter_names() const { h5tb.print_parameter_names
 void   IsingMajorana::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void IsingMajorana::set_parameters(TableMap &parameters) {
-    h5tb.param.J_mean                = std::any_cast<double>(parameters["J_mean"]);
-    h5tb.param.J_wdth                = std::any_cast<double>(parameters["J_wdth"]);
-    h5tb.param.J_rand                = std::any_cast<double>(parameters["J_rand"]);
-    h5tb.param.h_mean                = std::any_cast<double>(parameters["h_mean"]);
-    h5tb.param.h_wdth                = std::any_cast<double>(parameters["h_wdth"]);
-    h5tb.param.h_rand                = std::any_cast<double>(parameters["h_rand"]);
-    h5tb.param.g                     = std::any_cast<double>(parameters["g"]);
-    h5tb.param.delta                 = std::any_cast<double>(parameters["delta"]);
-    h5tb.param.spin_dim              = std::any_cast<long>(parameters["spin_dim"]);
-    h5tb.param.distribution          = std::any_cast<h5pp::vstr_t>(parameters["distribution"]);
+    h5tb.param.J_mean                = std::any_cast<decltype(h5tb.param.J_mean)>(parameters["J_mean"]);
+    h5tb.param.J_wdth                = std::any_cast<decltype(h5tb.param.J_wdth)>(parameters["J_wdth"]);
+    h5tb.param.J_rand                = std::any_cast<decltype(h5tb.param.J_rand)>(parameters["J_rand"]);
+    h5tb.param.h_mean                = std::any_cast<decltype(h5tb.param.h_mean)>(parameters["h_mean"]);
+    h5tb.param.h_wdth                = std::any_cast<decltype(h5tb.param.h_wdth)>(parameters["h_wdth"]);
+    h5tb.param.h_rand                = std::any_cast<decltype(h5tb.param.h_rand)>(parameters["h_rand"]);
+    h5tb.param.g                     = std::any_cast<decltype(h5tb.param.g)>(parameters["g"]);
+    h5tb.param.delta                 = std::any_cast<decltype(h5tb.param.delta)>(parameters["delta"]);
+    h5tb.param.spin_dim              = std::any_cast<decltype(h5tb.param.spin_dim)>(parameters["spin_dim"]);
+    h5tb.param.distribution          = std::any_cast<decltype(h5tb.param.distribution)>(parameters["distribution"]);
     all_mpo_parameters_have_been_set = true;
 }
 
