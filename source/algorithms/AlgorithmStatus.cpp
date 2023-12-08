@@ -27,9 +27,7 @@ void AlgorithmStatus::reset() {
     algo_type          = status.algo_type;
 }
 std::string_view AlgorithmStatus::algo_type_sv() const { return enum2sv(algo_type); }
-std::string      AlgorithmStatus::algo_type_str() const { return std::string(algo_type_sv()); }
 std::string_view AlgorithmStatus::algo_stop_sv() const { return enum2sv(algo_stop); }
-std::string      AlgorithmStatus::algo_stop_str() const { return std::string(algo_stop_sv()); }
 
 bool AlgorithmStatus::operator==(const AlgorithmStatus &s) const {
     return

@@ -29,13 +29,13 @@ namespace tid {
 }
 
 template<typename T>
-extern constexpr std::string_view enum2sv(const T &item);
+extern constexpr std::string_view enum2sv(const T item) noexcept;
 
 template<typename T>
 extern constexpr auto sv2enum(std::string_view item);
 
 template<>
-constexpr std::string_view enum2sv(const tid::level &l) {
+constexpr std::string_view enum2sv(const tid::level l) noexcept {
     return tid::level2sv(l);
 }
 

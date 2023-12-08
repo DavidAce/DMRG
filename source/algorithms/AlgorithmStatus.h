@@ -65,8 +65,6 @@ class AlgorithmStatus {
     void                           clear();
     void                           reset();
     [[nodiscard]] std::string_view algo_type_sv() const;
-    [[nodiscard]] std::string      algo_type_str() const;
     [[nodiscard]] std::string_view algo_stop_sv() const;
-    [[nodiscard]] std::string      algo_stop_str() const;
     [[nodiscard]] bool             operator==(const AlgorithmStatus &s) const;
 };

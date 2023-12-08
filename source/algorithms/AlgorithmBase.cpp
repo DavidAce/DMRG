@@ -12,7 +12,7 @@
 AlgorithmBase::AlgorithmBase(std::shared_ptr<h5pp::File> h5file_, AlgorithmType algo_type_) : h5file(std::move(h5file_)) {
     status.algo_type = algo_type_;
     tools::log->set_error_handler([](const std::string &msg) { throw except::runtime_error(msg); });
-    tools::log = tools::Logger::setLogger(status.algo_type_str(), settings::console::loglevel, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger(fmt::format("{}", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->trace("Constructing class_algorithm_base");
     if(settings::test_unwind) throw std::runtime_error("Testing stack unwinding");
 }

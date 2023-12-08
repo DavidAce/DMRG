@@ -206,7 +206,7 @@ inline bool have_common(E1 lhs, E2 rhs) {
 }
 
 template<typename T>
-constexpr std::string_view enum2sv(const T &item) {
+constexpr std::string_view enum2sv(const T item) noexcept {
     static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
     /* clang-format off */
     if constexpr(std::is_same_v<T, AlgorithmType>) switch(item) {
@@ -216,17 +216,20 @@ constexpr std::string_view enum2sv(const T &item) {
         case AlgorithmType::xDMRG:                                      return "xDMRG";
         case AlgorithmType::iTEBD:                                      return "iTEBD";
         case AlgorithmType::ANY:                                        return "ANY";
+        default: return "AlgorithmType::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) switch(item){
         case MultisiteMove::ONE :                                       return "ONE";
         case MultisiteMove::MID :                                       return "MID";
         case MultisiteMove::MAX :                                       return "MAX";
+        default: return "MultisiteMove::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, MultisiteWhen>) switch(item){
         case MultisiteWhen::NEVER :                                     return "NEVER";
         case MultisiteWhen::STUCK :                                     return "STUCK";
         case MultisiteWhen::SATURATED :                                 return "SATURATED";
         case MultisiteWhen::ALWAYS :                                    return "ALWAYS";
+        default: return "MultisiteWhen::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, OptRitz>) {
         if(item == OptRitz::SR)                                         return "SR";
@@ -475,7 +478,6 @@ constexpr std::string_view enum2sv(const T &item) {
         if(item == OptExit::FAIL_ERROR)                                return "FAIL_ERROR";
         if(item == OptExit::NONE)                                      return "NONE";
     }
-    throw std::runtime_error("Given invalid enum item");
 }
 
 template<typename T>
@@ -577,6 +579,7 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "xDMRG")                                 return AlgorithmType::xDMRG;
         if(item == "iTEBD")                                 return AlgorithmType::iTEBD;
         if(item == "ANY")                                   return AlgorithmType::ANY;
+        return "AlgorithmType::UNDEFINED";
     }
     if constexpr(std::is_same_v<T, MultisiteMove>) {
         if(item == "ONE")                                   return MultisiteMove::ONE;
@@ -862,4 +865,4 @@ constexpr auto mapEnum2Str(Args... enums) {
     return enumarray_t<T, num>{pairgen(enums)...};
 }
 
-inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::ising_majorana, ModelType::lbit);
+// inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::ising_majorana, ModelType::lbit);

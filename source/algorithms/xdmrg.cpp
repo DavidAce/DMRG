@@ -85,9 +85,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
             case xdmrg_task::INIT_RANDOMIZE_INTO_PRODUCT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_PRODUCT_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_INTO_ENTANGLED_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOM_ENTANGLED_STATE); break;
             case xdmrg_task::INIT_RANDOMIZE_FROM_CURRENT_STATE: initialize_state(ResetReason::INIT, StateInit::RANDOMIZE_PREVIOUS_STATE); break;
-            case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN:
-                initialize_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state);
-                break;
+            case xdmrg_task::INIT_RANDOMIZE_INTO_STATE_IN_WIN: initialize_state_in_energy_window(ResetReason::INIT, settings::strategy::initial_state); break;
             case xdmrg_task::INIT_BOND_LIMITS: init_bond_dimension_limits(); break;
             case xdmrg_task::INIT_TRNC_LIMITS: init_truncation_error_limits(); break;
             case xdmrg_task::INIT_ENERGY_LIMITS: init_energy_limits(); break;
@@ -191,7 +189,7 @@ void xdmrg::run_algorithm() {
         shift_mpo_energy();              // Subtracts the current energy per site E/L from each MPO.
         try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         try_residual_optimization();
-        move_center_point();             // Moves the center point AC to the next site and increments status.iter and status.step
+        move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
         status.algo_time = t_run->get_time();
     }
@@ -217,7 +215,7 @@ void xdmrg::try_residual_optimization() {
 
 void xdmrg::run_fes_analysis() {
     if(settings::strategy::fes_rate == 0) return;
-    tools::log = tools::Logger::setLogger(status.algo_type_str() + "-fes", settings::console::loglevel, settings::console::timestamp);
+    tools::log = tools::Logger::setLogger(fmt::format("{}-fes", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
     tools::log->info("Starting {} finite entanglement scaling analysis with bond size step {} of model [{}] for state [{}]", status.algo_type_sv(),
                      settings::strategy::fes_rate, enum2sv(settings::model::model_type), tensors.state->get_name());
     auto t_fes = tid::tic_scope("fes");
@@ -290,8 +288,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 16 : 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
                                                                       // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
-                           ? std::min(settings::solver::eigs_iter_max, 10000ul)          // Avoid running too many iterations when already converged
-                           : settings::solver::eigs_iter_max * iter_stuck_multiplier;    // Run as much as it takes before convergence
+                           ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
+                           : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
 
     m1.eigs_tol = std::clamp(status.energy_variance_lowest,                              // Increase precision as variance decreases
                              settings::solver::eigs_tol_min,                             // From min
@@ -554,8 +552,7 @@ void xdmrg::update_state() {
         // Do the truncation with SVD
         tensors.merge_multisite_mps(winner.get_tensor(), svd::config(winner.get_bond_lim(), winner.get_trnc_lim()));
         tensors.rebuild_edges(); // This will only do work if edges were modified, which is the case in 1-site dmrg.
-        if(tools::log->level() <= spdlog::level::trace)
-            tools::log->trace("Truncation errors: {::8.2e}", tensors.state->get_truncation_errors_active());
+        if(tools::log->level() <= spdlog::level::trace) tools::log->trace("Truncation errors: {::8.2e}", tensors.state->get_truncation_errors_active());
 
         if constexpr(settings::debug) {
             auto variance_before_svd = winner.get_variance();
@@ -694,7 +691,7 @@ void xdmrg::find_energy_range() {
         fdmrg fdmrg_gs(h5file);
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
         fdmrg_gs.tensors.state->set_name("state_emin");
-        tools::log = tools::Logger::setLogger(status.algo_type_str() + "-gs", settings::console::loglevel, settings::console::timestamp);
+        tools::log = tools::Logger::setLogger(fmt::format("{}-gs", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
         status.energy_min = tools::finite::measure::energy(fdmrg_gs.tensors);
         write_to_file(*fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges, StorageEvent::EMIN_STATE, CopyPolicy::OFF);
@@ -706,14 +703,14 @@ void xdmrg::find_energy_range() {
         fdmrg fdmrg_hs(h5file);
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
         fdmrg_hs.tensors.state->set_name("state_emax");
-        tools::log = tools::Logger::setLogger(status.algo_type_str() + "-hs", settings::console::loglevel, settings::console::timestamp);
+        tools::log = tools::Logger::setLogger(fmt::format("{}-hs", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
         status.energy_max = tools::finite::measure::energy(fdmrg_hs.tensors);
         write_to_file(*fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges, StorageEvent::EMAX_STATE, CopyPolicy::OFF);
     }
 
     // Reset our logger
-    tools::log = tools::Logger::getLogger(status.algo_type_str());
+    tools::log = tools::Logger::getLogger(fmt::format("{}", status.algo_type_sv()));
 }
 
 void xdmrg::update_time_step() {

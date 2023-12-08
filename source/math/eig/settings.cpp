@@ -5,8 +5,8 @@
 void eig::settings::clear() { *this = settings(); }
 
 std::string eig::settings::get_ritz_string() const {
-    if(not ritz) throw except::runtime_error("Ritz has not been set");
-    return std::string(eig::RitzToString(ritz.value()));
+    if(ritz) { return std::string(RitzToString(ritz.value())); }
+    return "RITZ NOT SET";
 }
 
 void eig::settings::checkRitz()

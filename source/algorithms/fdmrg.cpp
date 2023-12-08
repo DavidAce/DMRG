@@ -110,6 +110,7 @@ void fdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     status.clear();
+    tensors.state->set_name("state_init");
     initialize_model(); // First use of random!
     init_bond_dimension_limits();
     init_truncation_error_limits();
@@ -219,10 +220,10 @@ void fdmrg::check_convergence() {
     status.algorithm_has_to_stop = status.bond_limit_has_reached_max and status.algorithm_has_stuck_for >= settings::strategy::max_stuck_iters;
 
     tools::log->info(
-        "Algorithm report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded {} | has to stop {} | var prec limit {:8.2e}",
+        "Sweep report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded: {} | has to stop: {} | σ²H target {:8.2e}",
         status.algorithm_converged_for, status.variance_mpo_converged_for, status.entanglement_converged_for, status.spin_parity_has_converged,
         status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for, status.algorithm_has_stuck_for,
-        status.algorithm_has_succeeded, status.algorithm_has_to_stop, status.energy_variance_prec_limit);
+        status.algorithm_has_succeeded, status.algorithm_has_to_stop, std::max({settings::precision::variance_convergence_threshold, status.energy_variance_prec_limit}));
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;
