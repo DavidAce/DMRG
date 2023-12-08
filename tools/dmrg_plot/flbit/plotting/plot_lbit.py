@@ -70,10 +70,10 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                                 beta=meta.get('fit-beta', True),
                                                 ymin=meta.get('fit-ymin', 1e-16),
                                                 ))  # Fit to get characteristic length-scale
-
                     if meta.get('xnormalize') == True:
                         xdata = xdata/(Ldata-1)
-
+                    if meta.get('xshift2mid') == True:
+                        xdata = xdata - (Ldata-1)/2
                     for i, (y, e) in enumerate(zip(lbavg.full.T, lbavg.stdv.T)):
                         # ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, color=color)
                         with np.errstate(divide='ignore'):

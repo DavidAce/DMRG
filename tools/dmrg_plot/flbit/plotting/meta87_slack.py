@@ -911,7 +911,7 @@ def get_meta(plotdir):
             'markloglogwindow': True,
             'fitloglogwindow': True,
             'shadederror': False,
-            'timeselection': 't',,
+            'timeselection': 't',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             'legendcols': ['L', 'f', 'bavg:.0f','tsim'],  # Choose 'num', 'bmax','tsim'

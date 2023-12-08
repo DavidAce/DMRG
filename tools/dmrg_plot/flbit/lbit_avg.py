@@ -25,7 +25,7 @@ def lbit_avg(args):
         datadir = analysisdir + '/data'
 
         src = datadir + '/merged.h5'
-        tgt = datadir + '/averaged.h5'
+        tgt = datadir + '/averaged3.h5'
         if os.path.isfile(tgt):
             if args.clear:
                 print("Removing file: {}".format(tgt))
@@ -64,7 +64,14 @@ def lbit_avg(args):
                     'copy': True,
                 },
                 'number_probabilities': {
+                    'maxrealizations': None, # None is infinite
+                    'maxbatchsize': 5000, # None is infinite
                     'copy': True,  # Copy the dataset as is, without averaging
+                    'qin_probability' : True, # Compute (and store) q_i(n), the nth particle probability at each site
+                    'pos_expvalue' : True, # Compute the position expectation value of each particle
+                    'pos_expvalue_davg' : True, # Compute also the disorder average of pos_expvals
+                    'pos_variance' : True, # Compute the position standard deviation of each particle
+                    'pos_variance_davg' : True, # Compute also the disorder average of pos_stddevs
                     'hartley': True,  # Compute the hartley number entropy
                     'renyi2': True, # Compute the second renyi entropy of the number probabilities
                     'pinfty': True, # Compute the shannon entropy of the saturation value of the number probabilities
@@ -110,6 +117,10 @@ def lbit_avg(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit106'])
+    # args = parse('fLBIT', ['lbit113'],)# basedir='/mnt/wdpool/backup/lbit')
+    # args = parse('fLBIT', ['lbit114'],)# basedir='/mnt/wdpool/backup/lbit')
+    args = parse('fLBIT', ['lbit93'])
+    # args = parse('fLBIT', ['lbit106'], )#basedir='/mnt/wdpool/backup/lbit')
+    # args = parse('fLBIT', ['lbit106'], basedir='/mnt/wdpool/backup/lbit')
     args.clear = True
     lbit_avg(args)

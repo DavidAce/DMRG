@@ -1,8 +1,8 @@
 import os
 import matplotlib.pyplot
+import numba
 import numpy as np
-from numba import njit
-from numba import prange
+from numba import njit, prange, float64,int64,boolean,optional
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.ticker import FormatStrFormatter
@@ -19,7 +19,8 @@ from itertools import product
 from scipy.optimize import curve_fit
 from scipy.stats import linregress
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from random import choices
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -71,13 +72,15 @@ def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
             palette_prod = []
             for pidx in range(slens[0]):
                 # Skip the first color that is usually too dark or bright
-                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
+                # palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
+                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]))
             return palette_prod, lstyles
         else:
             default_palette = default_palette[idx]
 
     # Skip the first color that is usually too dark or bright
-    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
+    # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
+    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     lstyles = [None] * len(linprod)
     if len(specs) == 2:
         linkey0 = get_keys(db, specs[0])  # Sets number of colors
@@ -188,29 +191,7 @@ def remove_empty_subplots(fig, axes, axes_used):
             fig.delaxes(ax)
 
 
-@njit(parallel=True, cache=True)
-def find_saturation_idx(ydata, std_threshold):
-    # Consider Y vs X: a noisy signal decaying in the shape of a hockey-club, say.
-    # We want to identify the point at which the signal stabilizes. We use the fact that the
-    # standard deviation is high if it includes parts of the non-stable signal, and low if
-    # it includes only the stable part.
-    # Here we monitor the standard deviation of the signal between [start_point, end_point],
-    # and move "start_point" towards the end. If the standard deviation goes below a certain
-    # threshold, i.e. threshold < max_std, then we have found the stabilization point.
-    sdata = np.empty_like(ydata)
-    for i in range(len(ydata)):
-        sdata[i] = np.std(ydata[i:])
-    sdiff = -np.log(np.abs(np.diff(sdata)))
-    return np.argmax(sdiff)
 
-
-#
-# def find_saturation_idx(ydata, std_threshold):
-#     sdata = []
-#     for i in range(len(ydata)):
-#         sdata.append(np.std(ydata[i:]))
-#     sdiff = -np.log(np.abs(np.diff(sdata)))
-#     return np.argmax(sdiff)
 
 class stretchedFit:
     def __init__(self):
@@ -223,6 +204,20 @@ class stretchedFit:
     # @njit(parallel=True, cache=True)
     def stretched_log(self, x, C, xi, beta):
         return np.log(C) - (np.abs(x-self.pos) / xi) ** beta
+
+class unstretchedFit:
+    def __init__(self):
+        pass
+    pos : int = -1
+    # @njit(parallel=True, cache=True)
+    def unstretched_exp(self, x, C, xi):
+        return C * np.exp(-(np.abs(x-self.pos) / xi))
+
+    # @njit(parallel=True, cache=True)
+    def unstretched_log(self, x, C, xi):
+        return np.log(C) - (np.abs(x-self.pos) / xi)
+
+
 
 @njit(parallel=True, cache=True)
 def stretched_exp(x, C, xi, beta, pos):
@@ -275,7 +270,7 @@ class lbit_fit:
     xi: np.float64 = np.nan
     beta: np.float64 = np.nan
     pos : int = -1
-    yfit: np.ndarray = np.empty(shape=(0))
+    yfit: np.ndarray = field(default_factory=np.ndarray)
     xierr: np.float64 = np.nan
     idxN: int = -1
 
@@ -375,11 +370,18 @@ def get_lbit_fit_data(x, y, e=None, ymin=None, beta=None):
                 xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
                 return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr, -1)
             else:
-                result = linregress(x=xflat, y=ylogs, alternative='less')
-                C = np.exp(result.intercept)
-                xi = 1.0 / abs(result.slope)
-                yfit = C * np.exp(-x / xi)
-                return lbit_fit(C, xi, np.nan, yfit, result.stderr, -1)
+                pos = np.argmax(y)
+                p0 = 0.5, 1.0, 1.0
+                bs = ([0, 0, 1.0-1e-10], [np.inf, 5, 1.0+1e-10])
+                # print('x {} \n{}'.format(np.shape(xflat),xflat))
+                # print('y {} \n{}'.format(np.shape(ylogs),ylogs))
+                # print('e {} \n{}'.format(np.shape(elogs),elogs))
+                sfit  = stretchedFit()
+                sfit.pos = pos
+                popt, pcov = curve_fit(sfit.stretched_log, xdata=xflat, ydata=ylogs, sigma=elogs, p0=p0, bounds=bs)
+                pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
+                xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
+                return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr, -1)
     except IndexError as e:
         print("Index error:", e)
         raise
@@ -523,21 +525,422 @@ def get_lbit_avg(corrmat, site=None, mean=None):
     mean = nb_nnz_mean_axis0(fold)
     return lbit_corr(mean, full, stdv, fold, fodv, csup, csrr,sprd, sprr)
 
+#
+# def find_saturation_idx(ydata, std_threshold):
+#     sdata = []
+#     for i in range(len(ydata)):
+#         sdata.append(np.std(ydata[i:]))
+#     sdiff = -np.log(np.abs(np.diff(sdata)))
+#     return np.argmax(sdiff)
+
+
+@njit(parallel=True, cache=True)
+def find_saturation_idx(ydata):
+    # Consider Y vs X: a noisy signal decaying in the shape of a hockey-club, say.
+    # We want to identify the point at which the signal stabilizes. We use the fact that the
+    # standard deviation is high if it includes parts of the non-stationary signal, and low if
+    # it includes only the stationary part.
+    # Here we monitor the standard deviation of the signal between [start_point, end_point],
+    # and move "start_point" towards the end. If the standard deviation goes below a certain
+    # threshold, i.e. threshold < max_std, then we have found the stabilization point.
+    sdata = np.empty_like(ydata)
+    for i in range(len(ydata)):
+        sdata[i] = np.std(ydata[i:])
+    sdiff = -np.log(np.abs(np.diff(sdata)))
+    return np.argmax(sdiff)
+
 
 def find_saturation_idx2(ydata, threshold=1e-2):
-    if len(ydata) <= 2:
-        return
+    if len(np.shape(ydata)) != 2:
+        raise "sdata must be 2d matrix (time, realization), eg (200 x 80000)"
     ylog = -np.log10(ydata)
     ylog = ylog / ylog[-1]
-    sdata = []
     w = 2
+    sdata = []
     for i, yl in enumerate(ylog):
         min_idx = np.min([len(ylog) - w, i])
         min_idx = np.max([min_idx, 0])
         s = np.std(ylog[min_idx:])
         sdata.append(s)
+    fig,ax = plt.subplots()
+    ax.plot(sdata)
+    plt.show()
     idx = np.argwhere(np.asarray(sdata) < threshold)[0, 0]
     return idx
+
+@njit(float64[:,:](float64[:,:]), cache=True, parallel=True)
+def running_avg(ydata):
+    tdim ,rdim = np.shape(ydata)
+    ymean = np.empty_like(ydata)
+    for i in prange(tdim): # Iterate rows
+        idx = int(np.min(np.asarray([i, tdim-1])))
+        for j in prange(rdim):
+            ymean[i, j] = np.mean(ydata[idx:,j])
+    return ymean
+@njit(float64[:,:](float64[:,:]), cache=True, parallel=True)
+def running_std(ydata):
+    tdim ,rdim = np.shape(ydata)
+    ystds = np.empty_like(ydata)
+    for i in prange(tdim): # Iterate rows
+        idx = int(np.min(np.asarray([i, tdim-1])))
+        for j in prange(rdim):
+            ystds[i, j] = np.std(ydata[idx:, j])
+    return ystds
+
+@njit(cache=True, parallel=True)
+def running_stats(ydata):
+    tdim ,rdim = np.shape(ydata)
+    ystds = np.empty_like(ydata)
+    ymean = np.empty_like(ydata)
+    ymaxs = np.empty_like(ydata)
+    for i in prange(tdim): # Iterate rows
+        idx = int(np.min(np.asarray([i, tdim-1])))
+        for j in prange(rdim):
+            ystds[i, j] = np.std(ydata[idx:, j])
+            ymean[i, j] = np.mean(ydata[idx:,j])
+            ymaxs[i, j] = np.max(ydata[idx:,j])
+            # ycmsm[i, j] = np.sum(ydata[:i, j]) / (i)
+    return ystds,ymean,ymaxs
+
+@njit(numba.types.Tuple((int64[:],float64[:]))
+          (float64[:,:],float64, int64,boolean, int64), cache=True,parallel=True)
+def get_saturation_from_diff_old(ydata, wsize=0.05, count=1, require_beyond=False, setsign = 0):
+    tdim,rdim = np.shape(ydata)
+    sign = np.ones(shape=(rdim), dtype=np.int64) * setsign
+    tidx = np.ones(shape=rdim, dtype=np.int64) * (tdim-1)
+    yval = np.zeros(shape=rdim, dtype=np.float64) * np.nan
+    nhit = np.zeros(shape=rdim, dtype=np.int64) # Counts the number of times the signal switches directio
+    whalf = np.max(np.asarray([1, int(tdim*wsize/2)]))
+    for j in prange(rdim):
+        for i in prange(whalf , tdim - whalf):
+            ychnk = np.ascontiguousarray(ydata[i-whalf:i+whalf, j])
+            diffsum = np.sum(np.diff(ychnk))
+            if sign[j] == 0 and diffsum != 0:
+                sign[j] = 1 if diffsum > 0 else -1
+                continue
+            # A hit means that the signal is changing direction!
+            hit = (sign[j] == 1 and diffsum < 0) or (sign[j] == -1 and diffsum > 0)
+            # We also require that this point is beyond the mean of the remaning time series
+
+            beyond_ymean = False
+            if require_beyond:
+                ymean = np.mean(np.ascontiguousarray(ydata[i:, j]))
+                if sign[j] == 1 and ydata[i,j] >= ymean:
+                    beyond_ymean = True
+                if sign[j] == -1 and ydata[i,j] <= ymean:
+                    beyond_ymean = False
+            else:
+                beyond_ymean = True
+            if hit and beyond_ymean:
+                nhit[j] += 1
+                if nhit[j] >= count:
+                    tidx[j] = i
+                    yval[j] = ydata[i, j]
+                    break
+        # if np.isnan(yval[j]):
+        #     yval[j] = ydata[-1, j]
+    return tidx, yval
+@njit(numba.types.Tuple((int64[:],float64[:]))
+          (float64[:,:], float64, int64), cache=True,parallel=True)
+def get_saturation_from_diff(ydata, wsize=0.01, setsign = 0):
+    tdim,rdim = np.shape(ydata)
+    sign = np.ones(shape=(rdim), dtype=np.int64) * setsign
+    tidx = np.ones(shape=rdim, dtype=np.int64) * (tdim-1)
+    yval = np.zeros(shape=rdim, dtype=np.float64) * np.nan
+    # nhit = np.zeros(shape=rdim, dtype=np.int64) # Counts the number of times the signal switches directio
+    # whalf = np.max(np.asarray([1, int(tdim*wsize/2)]))
+    wstep = np.max(np.asarray([2, int(tdim*wsize)]))
+    for j in prange(rdim):
+        for i in prange(0 , tdim - wstep):
+            ychnk = np.ascontiguousarray(ydata[i:i+wstep, j])
+            diffsum = np.sum(np.diff(ychnk))
+            if sign[j] == 0 and diffsum != 0:
+                sign[j] = 1 if diffsum > 0 else -1
+                continue
+            # A hit means that the signal is changing direction!
+            hit = (sign[j] == 1 and diffsum < 0) or (sign[j] == -1 and diffsum > 0)
+            # We also require that this point is beyond the mean of the remaning time series
+
+            if hit:
+                tidx[j] = i
+                yval[j] = ydata[i, j]
+                break
+        # if np.isnan(yval[j]):
+        #     yval[j] = ydata[-1, j]
+    return tidx, yval
+
+
+@dataclass
+class entropy_saturation_time_bootstrap:
+    tsat_full_avg : np.float64 = np.nan
+    tsat_full_err : np.float64 = np.nan
+    tsat_full_avg_idx : np.float64 = np.nan
+    tsat_full_err_idx : np.float64 = np.nan
+    ysat_full_avg : np.float64 = np.nan
+    tsat_boot_avg : np.float64 = np.nan
+    tsat_boot_err : np.float64 = np.nan
+    tsat_boot_avg_idx : np.float64 = np.nan
+    tsat_boot_err_idx : np.float64 = np.nan
+    ysat_boot_avg : np.float64 = np.nan
+
+@dataclass
+class entropy_saturation_bootstrap:
+    sdavg : np.ndarray = field(default_factory=lambda: np.empty(shape=(0,)))# Disorder average
+    sravg : np.ndarray = field(default_factory=lambda: np.empty(shape=(0,)))# Running disorder average
+
+    sinf_full_avg : np.float64 = np.nan
+    sinf_full_err : np.float64 = np.nan
+
+    sinf_boot_avg : np.float64 = np.nan
+    sinf_boot_med : np.float64 = np.nan
+    sinf_boot_err : np.float64 = np.nan
+
+    ssat_full_avg: np.float64 = np.nan
+    ssat_full_err: np.float64 = np.nan
+
+    ssat_boot_avg : np.float64 = np.nan
+    ssat_boot_med : np.float64 = np.nan
+    ssat_boot_max : np.float64 = np.nan
+    ssat_boot_err : np.float64 = np.nan
+
+    tsat_full_avg : np.float64 = np.nan
+    tsat_full_err : np.float64 = np.nan
+    tsat_full_avg_idx : np.float64 = np.nan
+    tsat_full_err_idx : np.float64 = np.nan
+
+    tsat_boot_avg : np.float64 = np.nan
+    tsat_boot_med : np.float64 = np.nan
+    tsat_boot_max : np.float64 = np.nan
+    tsat_boot_err : tuple[np.float64,np.float64] = field(default_factory=tuple)
+    tsat_boot_avg_idx : np.float64 = np.nan
+    tsat_boot_med_idx : np.float64 = np.nan
+    tsat_boot_max_idx : np.float64 = np.nan
+    tsat_boot_err_idx : np.float64 = np.nan
+
+
+
+# @njit(numba.types.Tuple((float64,float64,float64,float64[:],float64,float64)) (float64[:,:], float64[:], int64), cache=True,parallel=True)
+def get_entropy_saturation_from_bootstrap(sdata,
+                                          tdata,
+                        nbs = 100 # Number of bootstraps
+                        ):
+    if len(np.shape(sdata)) != 2:
+        raise AssertionError("sdata must be 2d matrix (time, realization), eg (200 x 80000)")
+    tdim,rdim = np.shape(sdata)
+    # ytran = np.ascontiguousarray(ydata.T)
+    ridx = np.arange(rdim) # realization indices
+    tidx = np.empty(shape=nbs, dtype=np.float64) # Bootstrapped saturation time index
+    tsat = np.empty(shape=nbs, dtype=np.float64) # Bootstrapped saturation time value
+    ssat = np.empty(shape=nbs, dtype=np.float64) # Bootstrapped saturation entropy value
+    sinf = np.empty(shape=nbs, dtype=np.float64) # Bootstrapped saturation entropy value
+    # sboots = np.empty(shape=(tdim, nbs))
+    for n in range(nbs):
+        # rrnd = choices(ridx, k=rdim) # Randomly selected realizations
+        rrnd = np.sort(np.random.choice(ridx, size=rdim, replace=True))
+        sboot = np.mean(sdata[:, rrnd], keepdims=True, axis=1)
+        # sboots[:, n] = sboot[:,0]
+        sbravg = running_avg(sboot)
+        sbidx, sbsat = get_saturation_from_diff(sbravg, wsize=0.01, setsign=1)
+        if not np.any(np.isnan(sbsat)):
+            tidx[n] = np.mean(sbidx)
+            ssat[n] = np.interp(tidx[n], range(tdim), sboot[:,0])
+            tsat[n] = np.interp(tidx[n], range(tdim), tdata)
+            sinf[n] = np.interp(tidx[n], range(tdim), sbravg[:,0])
+        else:
+            # We did not detect a convergence point, try detecting it from the standard deviation instead
+            sbrstd = running_std(sboot)
+            sbidx, _ = get_saturation_from_diff(sbrstd, wsize=0.01, setsign=-1)
+            print("used stds to get", sbidx)
+            tidx[n] = np.mean(sbidx)
+            ssat[n] = np.interp(tidx[n], range(tdim), sboot[:,0])
+            tsat[n] = np.interp(tidx[n], range(tdim), tdata)
+            sinf[n] = np.interp(tidx[n], range(tdim), sbravg[:,0])
+            # ax[0].scatter(x=[tidx[n]], y=[yval[n]], s=20, color='red')
+            # ax[1].scatter(x=[tidx[n]], y=[np.mean(stds[round(tidx[n])])], s=20, color='red')
+
+            if np.isnan(ssat[n]):
+                raise ValueError('yval is nan')
+        # print(f'n: {n} | t {tval[n]:.3e}')
+
+    # We now have nbs estimations of the saturation time index and corresponding values.
+    # The standard error is given by the standard deviation of these mean estimations.
+
+    esb = entropy_saturation_bootstrap()
+
+    print(tidx)
+    print(tsat)
+    esb.sinf_boot_avg = np.mean(sinf)
+    esb.sinf_boot_med = np.median(sinf)
+    esb.sinf_boot_err = np.std(sinf, ddof=1)
+
+    esb.tsat_boot_avg_idx = np.mean(tidx) # This is a floating point index such as 83.45. Time is interpolated between 83 and 84.
+    esb.tsat_boot_med_idx = np.median(tidx) # This is a floating point index such as 83.45. Time is interpolated between 83 and 84.
+    esb.tsat_boot_max_idx = np.max(tidx) # This is a floating point index such as 83.45. Time is interpolated between 83 and 84.
+    esb.tsat_boot_err_idx = np.std(tidx, ddof=1)
+    # Interpolate the time index average
+    esb.tsat_boot_avg = np.interp(esb.tsat_boot_avg_idx, range(tdim), tdata)
+    esb.tsat_boot_med = np.interp(esb.tsat_boot_med_idx, range(tdim), tdata)
+    esb.tsat_boot_max = np.interp(esb.tsat_boot_max_idx, range(tdim), tdata)
+    # We need to get the time error asymmetrically down and up
+    esb.tsat_boot_err = (np.abs(esb.tsat_boot_avg - np.interp(esb.tsat_boot_avg_idx-esb.tsat_boot_err_idx, range(tdim), tdata)),
+                         np.abs(esb.tsat_boot_avg - np.interp(esb.tsat_boot_avg_idx+esb.tsat_boot_err_idx, range(tdim), tdata)))
+
+
+    esb.ssat_boot_avg = np.mean(ssat)
+    esb.ssat_boot_err = np.std(ssat, ddof=1)
+    esb.ssat_boot_med = np.median(ssat)
+    esb.ssat_boot_max = np.max(ssat)
+    # esb.ssat_boot_avg = np.mean(sboots[round(esb.tsat_boot_avg_idx), :])
+    # esb.ssat_boot_err = np.std(sboots[round(esb.tsat_boot_avg_idx), :])
+    # esb.ssat_boot_med = np.mean(sboots[round(esb.tsat_boot_med_idx), :])
+    # esb.ssat_boot_max = np.mean(sboots[round(esb.tsat_boot_max_idx), :])
+
+    # Calculate the full (non-bootstrapped) infinite-time values,
+    # assuming that they all saturate at the same time index  np.max(tsat)
+    sinfs = np.mean(sdata[round(esb.tsat_boot_max_idx):, :], keepdims=True, axis=0) # Time point of certain convergence
+    esb.sinf_full_avg = np.mean(sinfs)
+    esb.sinf_full_med = np.median(sinfs)
+    esb.sinf_full_err = np.std(sinfs)/np.sqrt(rdim)
+
+    esb.sdavg = np.mean(sdata, keepdims=True, axis=1)
+    esb.sravg = running_avg(esb.sdavg)
+    tsat_full_idx, ssat_full_avg = get_saturation_from_diff(esb.sravg, wsize=0.01, setsign=1)
+    tsat_full_idx = round(np.mean(tsat_full_idx))
+    ssat_full_avg = np.mean(ssat_full_avg)
+
+    esb.ssat_full_avg = ssat_full_avg
+    esb.ssat_full_med = np.median(sdata[tsat_full_idx, :])
+    esb.ssat_full_err = np.std(sdata[tsat_full_idx, :]) / np.sqrt(rdim)
+
+    esb.tsat_full_avg_idx = tsat_full_idx
+    esb.tsat_full_err_idx = np.nan
+    esb.tsat_full_avg = tdata[tsat_full_idx]
+    esb.tsat_full_med = tdata[tsat_full_idx]
+    esb.tsat_full_err = np.nan
+
+    # print('tsat_boot_avg_idx:',tsat_boot_avg_idx)
+    # print('tsat_boot_err_idx:',tsat_boot_err_idx)
+    # print('tsat_boot_avg    :',tsat_boot_avg)
+    # print('tsat_boot_err    :',tsat_boot_err)
+    return esb
+
+
+def get_entropy_inftime_saturation_value_from_bootstrap(ydata,
+                                          tdata,
+                        nbs = 100 # Number of bootstraps
+                        ):
+    if len(np.shape(ydata)) != 2:
+        raise AssertionError("sdata must be 2d matrix (time, realization), eg (200 x 80000)")
+    tdim,rdim = np.shape(ydata)
+    ridx = np.arange(rdim) # realization indices
+    boot_yval = np.empty(shape=nbs, dtype=np.float64) # Bootstrapped saturation entropy value
+
+    yavgs = np.mean(ydata, keepdims=True, axis=1)
+    yravg = running_avg(yavgs)
+    full_tidx, full_yval = get_saturation_from_diff(yravg, wsize=0.01, setsign=1)
+
+
+    for n in range(nbs):
+        rrnd = np.sort(np.random.choice(ridx, size=rdim, replace=True))
+        boot = np.mean(ydata[:, rrnd], keepdims=True, axis=1)
+        bravg = running_avg(boot)
+        bsatidx, _ = get_saturation_from_diff(bravg, wsize=0.01, setsign=1)
+        # Now we have the average saturation time for this bootstrapped set.
+        # We calculate the infinite-time from the mean of saturated values
+        if not np.any(np.isnan(boot_yval)):
+            boot_yval[n] = bravg[bsatidx]
+        else:
+            # We did not detect a convergence point, try detecting it from the standard deviation instead
+            brstd = running_std(boot)
+            stds_tidx, _ = get_saturation_from_diff(brstd, wsize=0.01, setsign=-1)
+
+            boot_yval[n] = bravg[stds_tidx]
+            print("used stds to get", stds_tidx, boot_yval[n])
+            # ax[0].scatter(x=[tidx[n]], y=[yval[n]], s=20, color='red')
+            # ax[1].scatter(x=[tidx[n]], y=[np.mean(stds[round(tidx[n])])], s=20, color='red')
+
+            if np.isnan(boot_yval[n]):
+                raise ValueError('boot_yval is nan')
+        # print(f'n: {n} | t {tval[n]:.3e}')
+    # The standard error is given by the standard deviation of the mean estimations.
+
+    # Interpolate the time index average
+    ysat_full_avg = np.mean(full_yval)
+    ysat_full_med = np.median(full_yval)
+    ysat_full_err = np.std(full_yval, ddof=1)
+
+    ysat_boot_avg = np.mean(boot_yval)
+    ysat_boot_med = np.median(boot_yval)
+    ysat_boot_err = np.std(boot_yval, ddof=1)
+
+    print(f'{ysat_full_avg=}')
+    print(f'{ysat_full_med=}')
+    print(f'{ysat_full_err=}')
+    print(f'{ysat_boot_avg=}')
+    print(f'{ysat_boot_med=}')
+    print(f'{ysat_boot_err=}')
+    return ysat_boot_avg,ysat_boot_med, ysat_boot_err
+
+
+def find_davg_entropy_saturation_time_from_bootstrap(ydata, tp, nbs=100, dsetname='entanglement_entropy'):
+    if len(np.shape(ydata)) != 2:
+        raise "sdata must be 2d matrix (time, realization), eg (200 x 80000)"
+    tsb = get_entropy_saturation_from_bootstrap(ydata, tp.time, nbs=nbs)
+    # yavgs = np.mean(ydata, axis=1, keepdims=True)
+    # yravg = running_avg(yavgs)
+    # yrstd = running_std(yavgs)
+    # tsats_ravg_avg_idx, ysats_ravg_avg = get_saturation_from_diff(yravg, wsize=0.01, setsign=1)
+    # tsats_rstd_avg_idx, ysats_rstd_avg = get_saturation_from_diff(yrstd, wsize=0.01, setsign=-1)
+    # # Take the average of these temporary values
+    # tsb.tsat_full_avg_idx = np.mean(tsats_ravg_avg_idx)
+    # tsb.tsat_full_avg = tp.time[round(tsb.tsat_full_avg_idx)]
+    # tsb.ysat_full_avg = np.mean(ysats_ravg_avg)
+
+
+    ridx = range(150,160)
+    fig, ax = plt.subplots()
+    # ax.plot(ydata[:,ridx])
+    # ax.plot(yavgs, linewidth=1.0, color='red', linestyle=':')
+    # ax.plot(yravg, linewidth=1.0, color='black', linestyle='--')
+    # ax.scatter(x=tsb.tsat_full_avg_idx, y=tsb.ysat_full_avg, marker='o',s=40, linestyle='None', color='red', label='ravg')
+    # ax.scatter(x=tsats_rstd_avg_idx, y=yravg[tsats_rstd_avg_idx], marker='o',s=30, linestyle='None', color='orange', label='rstd')
+    # tsat_phys_idx = tp.idx_ent_saturated if 'entanglement' in dsetname else tp.idx_num_saturated
+    # ax.scatter(x=tsat_phys_idx, y=yavgs[tsat_phys_idx,0], marker='o',s=40, linestyle='None', color='green', label='phys')
+    # ax.errorbar(x=[tsb.tsat_boot_avg_idx], y=[tsb.ysat_boot_avg], xerr=[tsb.tsat_boot_err_idx], yerr=[tsb.ysat_boot_err], color='blue', label='boot')
+    # ax.legend()
+    # plt.show()
+    return tsb
+
+def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tp, nbs=100, dsetname='entanglement_entropy'):
+    # For each bootstrap set of realizations from ydata, this calculates the saturation time
+    # and saturation value of individual realizations before averaging.
+    if len(np.shape(sdata)) != 2:
+        raise "sdata must be 2d matrix (time, realization), eg (200 x 80000)"
+    esb = get_entropy_saturation_from_bootstrap(sdata=sdata, tdata=tp.time, nbs=nbs)
+
+
+    # tsats_rstd_avg_idx = np.mean(tsats_rstd_avg_idx)
+
+
+
+    fig, ax = plt.subplots()
+    ridx = range(150,160)
+    ax.plot(esb.sdavg, linewidth=1.0, color='red', linestyle=':')
+    with sns.color_palette(palette='tab10', n_colors=len(ridx)):
+        ax.plot(sdata[:,ridx])
+        ax.plot(esb.sravg, linewidth=1.0, linestyle='--')
+    tsat_phys_idx = tp.idx_ent_saturated if 'entanglement' in dsetname else tp.idx_num_saturated
+    ax.scatter(x=tsat_phys_idx, y=esb.sdavg[tsat_phys_idx,0], marker='o',s=40, linestyle='None', color='green', label='phys')
+    ax.scatter(x=esb.tsat_full_avg_idx, y=esb.ssat_full_avg, marker='o', s=40, linestyle='None', color='red', label='ravg')
+    ax.scatter(x=esb.tsat_boot_med_idx, y=esb.ssat_boot_med, marker='o', s=40, linestyle='None', color='blue', label='boot-median')
+    ax.scatter(x=esb.tsat_boot_max_idx, y=esb.ssat_boot_max, marker='o', s=40, linestyle='None', color='purple', label='boot-max')
+    ax.errorbar(x=[esb.tsat_boot_avg_idx], y=[esb.ssat_boot_avg], xerr=[esb.tsat_boot_err_idx], yerr=[esb.ssat_boot_err], color='blue', label='boot-avg')
+    ax.legend()
+
+
+    # plt.show()
+    return esb
+
 
 
 def find_saturation_idx4(ydata,idx_sat):
@@ -696,6 +1099,7 @@ def find_loglog_window2(tdata, ydata, db, threshold2=1e-2):
 
 @dataclass
 class timepoints:
+    time: np.ndarray = field(default_factory=np.ndarray)
     time_ent_lnt_begin: np.float64 = np.nan
     time_ent_lnt_cease: np.float64 = np.nan
     time_ent_saturated: np.float64 = np.nan
@@ -714,7 +1118,7 @@ def get_timepoints(tdata, db):
     if len(tdata) == 1:
         return 0, 0
     L = db['vals']['L']
-    r = db['vals']['r']
+    # r = np.max(db['vals']['r'])
     x = db['vals']['x']
     wn = db['vals']['w']
 
@@ -722,13 +1126,14 @@ def get_timepoints(tdata, db):
     w2 = wn[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
     w3 = wn[2]  # The width of distribution for three-body interactions.
 
-    if r == np.iinfo(np.uint64).max or r == 'L':
-        r = L
-
+    # if r == np.iinfo(np.uint64).max or r == 'L':
+    #     r = L
+    r = L # We get the correct times if we use r == L,
     r2max = np.float64(np.min([r, L]))  # Number of sites from the center site to the edge site, max(|i-j|)/2
     N = np.sqrt(2.0 / np.pi) # Factor coming from folded normal distribution
 
-    t = timepoints()
+    t = timepoints(time=tdata)
+    # t.time = tdata
     w1 = 1.0 if w1 == 0.0 else w1
     w2 = 1.0 if w2 == 0.0 else w2
     w3 = 1.0 if w3 == 0.0 else w3
@@ -738,6 +1143,7 @@ def get_timepoints(tdata, db):
     tmin2_ent = 1.0 / (w2*np.exp(-1.0 / x))
     tmid2_ent = 1.0 / (w2*np.exp(- (r2max / 2)  / x) * N)
     tmax2_ent = 1.0 / (w2*np.exp(- (r2max - 1 ) / x) * N)
+    # print('RETURN THE SHIFT-VALUE OF TMAX2_ENT')
     tmin3_ent = 1.0 / (w3*np.exp(-2.0 / x))
     tmax3_ent = 1.0 / (w3*np.exp(-2.0 / x))
 
@@ -749,16 +1155,30 @@ def get_timepoints(tdata, db):
     t.idx_ent_lnt_cease = np.argmax(tdata.astype(float) >= t.time_ent_lnt_cease) -1
     t.idx_ent_saturated = np.argmax(tdata.astype(float) >= t.time_ent_saturated) -1
 
-    t.idx_ent_lnt_begin = np.max([t.idx_ent_lnt_begin, 0])  # Make sure its non-negative
-    t.idx_ent_lnt_cease = np.max([t.idx_ent_lnt_cease, 0])  # Make sure its non-negative
-    t.idx_ent_saturated = np.max([t.idx_ent_saturated, 0])  # Make sure its non-negative
+    t.idx_ent_lnt_begin = np.max([t.idx_ent_lnt_begin, 0])  # Make sure it is non-negative
+    t.idx_ent_lnt_cease = np.max([t.idx_ent_lnt_cease, 0])  # Make sure it is non-negative
+    t.idx_ent_saturated = np.max([t.idx_ent_saturated, 0])  # Make sure it is non-negative
 
     # Now for the number entropy
     tmin1_num = 1.0 / (w1*np.exp(0 / x))
     tmax1_num = 1.0 / (w1*np.exp(0 / x))
     tmin2_num = 1.0 / (w2*np.exp(- (1.0   / 2) / x) * N)
-    tmid2_num = 1.0 / (w2*np.exp(- (r2max / 4) / x) * N)
-    tmax2_num = 1.0 / (w2*np.exp(- (r2max / 2) / x) * N)
+    tmid2_num = 1.0 / (w2 * np.exp(- ((r2max / 4)) / x) * N)
+    # Subtract two:
+    #   In 010101|010101 the particle.
+    #   (OLD) The half-chain particle is a distance |i-j| = |(L/2-1) - 1| away from the furthest particle on the same side.
+    #   Excluding the particle at the edge, the most remote pair of particles are at |i-j| = |(L-1) - 2 - 1| = |L-4|
+    #   away from the furthest particle on the same side.
+    #   We exclude the particle at the edge because it is too restricted.
+    # tmax2_num = 1.0 / (w2 * np.exp(-((r2max / 2)-2.5) / x) * N)
+    tmax2_num = 1.0 / (w2 * np.exp(-((r2max-4) / 2) / x) * N)
+    # tmid2_num = tmid2_ent ** 0.5
+    # tmax2_num = tmax2_ent ** 0.5
+
+
+    # tmid2_num = 1.0 / (w2*np.exp(- ((r2max / 4)) / x) * N)
+    # Subtract two: In 01010|10101 excluding the edge particle, the most distant "1"'s are L/2-2=4 sites way
+    # tmax2_num = 1.0 / (w2*np.exp(- ((r2max / 2)-2) / x) * N)
     tmin3_num = 1.0 / (w3*np.exp(- (2.0   / 1) / x))
     tmax3_num = 1.0 / (w3*np.exp(- (2.0   / 1) / x))
 
@@ -954,19 +1374,19 @@ def get_fig_meta(numplots: int, meta: dict):
         'fig': None,
         'filename': meta.get('filename'),
         'lstyles': get_linestyles(),
-        'constrained_layout': meta.get('constrained_layout'),
+        'constrained_layout': get_default(meta,'constrained_layout'),
         'numplots': numplots,
         'nrows': None,
         'ncols': None,
-        'figsize': meta.get('figsize'),
+        'font.size': get_default(meta,'font.size'),
+        'figsize':  get_default(meta,'figsize'),
         'figcount': 0, # How many times we have used this fig to plot something
         'frameon' : meta.get('frameon'),
-        'box_aspect': meta.get('box_aspect', meta.get('default').get('box_aspect')),
+        'box_aspect': get_default(meta,'box_aspect'),
         'crows': 1,  # Common row put at the bottom of all subplots
         'ccols': 1,  # Common col put at the right of all subplots
         'irows': 2,  # We make a 2x2 grid where 0,0 is the plot, and 0,1 and 1,0 are legends
         'icols': 2,  # We make a 2x2 grid where 0,0 is the plot, and 0,1 and 1,0 are legends
-
         'owr': None,
         'ohr': None,
         'iwr': [10000, 1],  # Width ratio between plot and right legend
@@ -1009,9 +1429,16 @@ def get_fig_meta(numplots: int, meta: dict):
         'yticklabels': meta.get('yticklabels'),
         'xlabel': meta.get('xlabel'),
         'ylabel': meta.get('ylabel'),
+        'xlabelpad': meta.get('xlabelpad'),
+        'ylabelpad': meta.get('ylabelpad'),
+        'xcoords': meta.get('xcoords'),
+        'ycoords': meta.get('ycoords'),
         'ylabel_inner_visible' : meta.get('ylabel_inner_visible'),
         'ymarkoffset': [],
+        'yticklength': meta.get('yticklength'),
+        'xticklength': meta.get('xticklength'),
         'ytickparams': meta.get('ytickparams'),
+        'xtickparams': meta.get('xtickparams'),
         'axes_used': [],
         'legends': [],
         'legendshow': meta.get('legendshow'),
@@ -1029,8 +1456,13 @@ def get_fig_meta(numplots: int, meta: dict):
     logger.info('Generated f dict: \n {}'.format(f))
     # Initialize a figure. The size is taken from the stylesheet
     # constrained_layout will make sure to add objects to fill the area
-    f['fig'] = plt.figure(constrained_layout=f.get('constrained_layout'), figsize=f.get('figsize'))
-    if s := meta.get('subplots'):
+    f['fig'] = plt.figure(figsize=f.get('figsize'), constrained_layout=f.get('constrained_layout'),
+                          #tight_layout = {'pad': 0}
+                          )
+    if fontsize := f.get('font.size'):
+        plt.rcParams.update({'font.size': fontsize})
+
+    if s := get_default(meta,'subplots'):
         plt.subplots_adjust(
             left=s.get('left'),
             bottom=s.get('bottom'),
@@ -1132,6 +1564,15 @@ def get_fig_meta(numplots: int, meta: dict):
         if f['xmin'] is not None:
             f['ax'][-1].set_xlim(xmin=f['xmin'])
 
+        if ymaloc := f.get('ymaloc'):
+            f['ax'][-1].yaxis.set_major_locator(ymaloc)
+        if xmaloc := f.get('xmaloc'):
+            f['ax'][-1].xaxis.set_major_locator(xmaloc)
+        if ymiloc := f.get('ymiloc'):
+            f['ax'][-1].yaxis.set_minor_locator(ymiloc)
+        if xmiloc := f.get('xmiloc'):
+            f['ax'][-1].xaxis.set_minor_locator(xmiloc)
+
         if f.get('xticks') is not None:
             f['ax'][-1].set_xticks(f.get('xticks'))
         if f.get('xticklabels') is not None:
@@ -1141,9 +1582,9 @@ def get_fig_meta(numplots: int, meta: dict):
         if f.get('yticklabels') is not None:
             f['ax'][-1].set_yticklabels(f.get('yticklabels'))
         if f.get('xlabel') is not None:
-            f['ax'][-1].set_xlabel(f.get('xlabel'))
+            f['ax'][-1].set_xlabel(f.get('xlabel'), labelpad=f.get('xlabelpad'))
         if f.get('ylabel') is not None:
-            f['ax'][-1].set_ylabel(f.get('ylabel'))
+            f['ax'][-1].set_ylabel(f.get('ylabel'), labelpad=f.get('ylabelpad'))
         if yformat := f.get('yformat'):
             f['ax'][-1].yaxis.set_major_formatter(FormatStrFormatter(yformat))
         if xformat := f.get('xformat'):
@@ -1156,15 +1597,14 @@ def get_fig_meta(numplots: int, meta: dict):
             f['ax'][-1].yaxis.set_minor_formatter(ymifmt)
         if xmifmt := f.get('xmifmt'):
             f['ax'][-1].xaxis.set_minor_formatter(xmifmt)
-
-        if ymaloc := f.get('ymaloc'):
-            f['ax'][-1].yaxis.set_major_locator(ymaloc)
-        if xmaloc := f.get('xmaloc'):
-            f['ax'][-1].xaxis.set_major_locator(xmaloc)
-        if ymiloc := f.get('ymiloc'):
-            f['ax'][-1].yaxis.set_minor_locator(ymiloc)
-        if xmiloc := f.get('xmiloc'):
-            f['ax'][-1].xaxis.set_minor_locator(xmiloc)
+        if ycoords := f.get('ycoords'):
+            f['ax'][-1].yaxis.set_label_coords(x=ycoords[0], y=ycoords[1])
+        if xcoords := f.get('xcoords'):
+            f['ax'][-1].xaxis.set_label_coords(x=xcoords[0], y=xcoords[1])
+        if f.get('xticklength') is not None:
+            f['ax'][-1].tick_params(axis='x', which='both', length=f.get('xticklength'))
+        if f.get('yticklength') is not None:
+            f['ax'][-1].tick_params(axis='y', which='both', length=f.get('yticklength'))
 
         is_last_row = ir + 1 == f['nrows']
         is_first_col = ic == 0

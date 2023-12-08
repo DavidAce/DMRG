@@ -55,12 +55,13 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
-    for figvals, f in zip(figprod, figs):
+    for fidx, (figvals, f) in enumerate(zip(figprod, figs)):
         logger.debug('- plotting figs: {}'.format(figvals))
+        idx_palette = fidx % len(palette_name)
         dbval = None
         luitz = []
         for idx, (subvals, ax) in enumerate(zip(subprod, f['ax'])):
-            idx_palette = idx % len(palette_name)
+            idx_palette = idx % len(palette_name) if numsubs > 1 else idx_palette # Iterate the palette if there are more than one subplots
             if dbidx != int(idx/dbnum):
                 continue
             popt = None
@@ -118,6 +119,52 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                 ytavg = -np.sum(ptavg * np.log(ptavg), axis=0)
                         else:
                             raise LookupError('Could not find data to generate pinfty entropies')
+                    elif meta.get('plotPosX_neel0'):
+                        L = dbval['vals']['L']
+                        var0 = datanode.parent.parent['nth_particle_position/pos_expvalue_neel0'][int(L // 4) - 1, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        # var1 = datanode.parent.parent['nth_particle_position/pos_variance_neel1'][int(L // 4) - 0, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        # y = np.concatenate([var0, var1], axis=1)
+                        idx_sat = idx_num # Saturates later than num?
+                        ytavg = np.mean(var0[idx_sat:, :], axis=0)
+                    elif meta.get('plotPosX_neel1'):
+                        L = dbval['vals']['L']
+                        # var0 = datanode.parent.parent['nth_particle_position/pos_expvalue_neel0'][int(L // 4) - 1, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        var1 = datanode.parent.parent['nth_particle_position/pos_expvalue_neel1'][int(L // 4) - 0, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        # y = np.concatenate([var0, var1], axis=1)
+                        idx_sat = idx_num # Saturates later than num?
+                        ytavg = np.mean(var1[idx_sat:, :], axis=0)
+                    elif meta.get('plotVarX'):
+                        L = dbval['vals']['L']
+                        idx_sat = idx_ent
+                        posnode = datanode.parent.parent['nth_particle_position']
+                        N = int(L // 4) # Number of particles
+                        r2 = range(N - 1, N + 1)  # Two central particles
+                        y0 = np.atleast_2d(np.mean(posnode['pos_variance_neel0'][r2, idx_sat:, :],axis=1))  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        y1 = np.atleast_2d(np.mean(posnode['pos_variance_neel1'][r2, idx_sat:, :],axis=1))  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        ytavg = np.ravel(np.concatenate([y0,y1], axis=1)) # Do not average over particles
+                        print(f'shape ytavg: {np.shape(ytavg)}')
+
+                        # L = dbval['vals']['L']
+                        # var0 = datanode.parent.parent['nth_particle_position/pos_variance_neel0'][int(L // 4) - 1, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        # var1 = datanode.parent.parent['nth_particle_position/pos_variance_neel1'][int(L // 4) - 0, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        # var_davg_evn = datanode.parent.parent['pos_variance_davg_evn'][int(L // 4), :]   # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                        # var_davg_odd = datanode.parent.parent['pos_variance_davg_odd'][int(L // 4)-1, :] # 0101|0101 index L//4 -1 = is nearest the midchain boundary
+                        # var_dste_evn = np.std(var_evn, axis=2)/np.sqrt(np.shape(var_evn)[2])
+                        # var_dste_odd = np.std(var_odd, axis=2)/np.sqrt(np.shape(var_odd)[2])
+                        # y = np.concatenate([var0, var1], axis=1)
+                        # idx_sat = idx_num # Saturates later than num?
+                        # ytavg = np.mean(var0[idx_sat:, :], axis=0)
+                    # elif meta.get('plotVarX_neel1'):
+                    #     L = dbval['vals']['L']
+                    #     # var0 = datanode.parent.parent['nth_particle_position/pos_variance_neel0'][int(L // 4) - 1, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                    #     var1 = datanode.parent.parent['nth_particle_position/pos_variance_neel1'][int(L // 4) - 0, :,:]  # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                    #     # var_davg_evn = datanode.parent.parent['pos_variance_davg_evn'][int(L // 4), :]   # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                    #     # var_davg_odd = datanode.parent.parent['pos_variance_davg_odd'][int(L // 4)-1, :] # 0101|0101 index L//4 -1 = is nearest the midchain boundary
+                    #     # var_dste_evn = np.std(var_evn, axis=2)/np.sqrt(np.shape(var_evn)[2])
+                    #     # var_dste_odd = np.std(var_odd, axis=2)/np.sqrt(np.shape(var_odd)[2])
+                    #     # y = np.concatenate([var0, var1], axis=1)
+                    #     idx_sat = idx_num # Saturates later than num?
+                    #     ytavg = np.mean(var1[idx_sat:, :], axis=0)
                     else:
                         # Calculate the infinite time average (1/T) integral_0^T y(t) dt in the saturated interval
                         ytavg = np.mean(y[idx_sat:, :], axis=0)
@@ -135,13 +182,21 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     #
                     #                 linestyle='--',
                     #                 color=color, path_effects=path_effects)
-
+                    if meta.get('markL/2'):
+                        L = dbval['vals']['L']
+                        ax.axvline(x=L // 2 - 0.5, color='black', alpha=0.85)
+                        trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
+                        ax.text(L // 2 - 0.5, 0.90, 'halfchain', fontsize='small', color='black', alpha=0.75, ha='right',
+                                va='center', rotation='vertical', transform=trans)
                     for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
                         key, fmt = key.split(':') if ':' in key else [key, '']
                         f['legends'][idx][icol]['handle'].append(line)
                         f['legends'][idx][icol]['title'] = db['tex'][key]
                         f['legends'][idx][icol]['label'].append(col)
-            if 'number' in meta['dsetname'] and legendrow is not None:
+            if ('number' in meta['dsetname'] and legendrow is not None
+                    and not meta.get('plotPosX_neel0')
+                    and not meta.get('plotPosX_neel1')
+                    and not meta.get('plotVarX')):
                 # Plot Luitz's data
                 # Let's only do this for the largest system size (16)
                 # and only after the last plot, so that this legend entry is last
@@ -240,14 +295,13 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 ax.axvline(x=np.log(2), color='black', alpha=0.85)
                 trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
                 ax.text(np.log(2), 0.90, '$\ln 2$', fontsize='small', color='black', alpha=0.75, ha='right',
-                        va='center', rotation='vertical',
-                        transform=trans)
+                        va='center', rotation='vertical', transform=trans)
             if meta.get('marklog3'):
                 ax.axvline(x=np.log(3), color='black', alpha=0.85)
                 trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
                 ax.text(np.log(3), 0.90, '$\ln 3$', fontsize='small', color='black', alpha=0.75, ha='right',
-                        va='center', rotation='vertical',
-                        transform=trans)
+                        va='center', rotation='vertical', transform=trans)
+
             # ax.axvline(x=np.log(3), color='darkseagreen')
             # ax.text(np.log(3), 0.8, '$\ln 3$', fontsize='small', color='darkseagreen', ha='right', va='center', rotation='vertical',
             #         transform=trans)

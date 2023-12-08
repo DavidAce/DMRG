@@ -58,16 +58,20 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                               point_filter=None, figs=None, palette_name=None, debug=False,dbidx=0, dbnum=1):
     if db['version'] != 3:
         raise ValueError("plot_v3_time_fig3_sub3_line1 requires db version 3")
-    path_effects = [pe.SimpleLineShadow(offset=(0.35, -0.35), alpha=0.3), pe.Normal()]
+    path_effects = [pe.SimpleLineShadow(offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.3), pe.Normal()]
     # path_effects = [pe.Stroke(linewidth=1.4, foreground='black'), pe.Normal()]
     # yfit_effects = [pe.SimpleLineShadow(offset=(-0.35, -0.35), alpha=0.5, shadow_color='gray'), pe.Normal()]
     # yfit_effects = [pe.Stroke(linewidth=1.2, foreground='white'), pe.Normal()]
     # yfit_effects = [pe.Stroke(linewidth=1.2, foreground='white'), pe.Normal()]
-    yfit_effects = [pe.Stroke(linewidth=0.50, foreground='gray'), pe.Normal()]
+    yfit_effects = [pe.Stroke(linewidth=0.60, foreground='black',alpha=0.60),
+                    #pe.Stroke(linewidth=0.50,
+                    #          foreground='darkgray',
+                    #          offset=meta.get('shadowoffset', (0.35,-0.35))),
+                    pe.Normal()]
     # mark_effects = [pe.Stroke(linewidth=0.90, foreground='black'), pe.Normal()]
-    mark_effects = [pe.SimpleLineShadow(offset=(0.35, -0.35), alpha=0.4), pe.Normal()]
+    mark_effects = [pe.SimpleLineShadow(offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.4), pe.Normal()]
 
-    patch_effects = [pe.SimplePatchShadow(offset=(0.35, -0.35), alpha=0.3), pe.Normal()]
+    patch_effects = [pe.SimplePatchShadow(offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.3), pe.Normal()]
     if 'mplstyle' in meta:
         plt.style.use(meta['mplstyle'])
         if 'slack' in meta['mplstyle']:
@@ -75,7 +79,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
 
     # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
-    legend_col_keys = linspec.copy()
+    legend_col_keys = [spec for spec in linspec if spec in meta.get('legendcols')] #linspec.copy()
     if legendcols := meta.get('legendcols'):
         for col in legendcols:
             if not col in [l.split(':')[0] for l in figspec + subspec + linspec]:
@@ -95,21 +99,23 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
 
-    for figvals, f in zip(figprod, figs):
+    for fidx, (figvals, f) in enumerate(zip(figprod, figs)):
         logger.debug('- plotting figs: {}'.format(figvals))
+        idx_palette = fidx % len(palette_name)
         dbval = None
         for idx, (subvals, ax, ix) in enumerate(zip(subprod, f['ax'], f['ix'])):
-            idx_palette = idx % len(palette_name)
+            idx_palette = idx % len(palette_name) if numsubs > 1 else idx_palette # Iterate the palette if there are more than one subplots
             if dbidx != int(idx/dbnum):
                 continue
-
             popt = None
             pcov = None
             logger.debug('-- plotting subs: {}'.format(subvals))
             # for dirvals in dirprod:
             # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name, filter=None, idx=idx_palette)
-            xm1,ym1,cm1,xm2,ym2,cm2,xm3,ym3,cm3,xm4,ym4,cm4 = [],[],[],[],[],[],[],[],[],[],[],[]
+            graypalette, _ = get_colored_lstyles(db, linspec, ["Greys"], filter=None, idx=idx_palette)
+
+            xm1,ym1,cm1,xm2,ym2,cm2,xm3,ym3,cm3,xm4,ym4,cm4, xm5,ym5,cm5 = [],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
 
             for lidx, (linvals, color, lstyle) in enumerate(zip(linprod, palette, lstyles)):
                 logger.debug('--- plotting lins: {}'.format(linvals))
@@ -143,6 +149,61 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                         n_var = get_particle_number_fluctuation(p)
                         vdata = np.atleast_2d(np.mean(n_var, axis=1)).T
                         ydata = 0.5*np.log(2*np.pi * np.e *(vdata + 1.0/12))
+                    if meta.get('plotVarX'):
+                        # Plot the variance of the midchain particle position
+                        # 0101|0101 index L//4 - 1 = 1 is nearest the midchain boundary
+                        # 1010|1010 index L//4 - 0 = 2 is nearest the midchain boundary
+                        L = dbval['vals']['L']
+                        posnode = datanode.parent.parent['nth_particle_position']
+                        neelselect = meta.get('neelselection')
+                        mean = 'mean' in neelselect
+                        neel0 = 'neel0' in neelselect or mean
+                        neel1 = 'neel1' in neelselect or mean
+                        n0 = np.shape(posnode['pos_variance_neel0'])[2] # Number of realizations with neel0
+                        n1 = np.shape(posnode['pos_variance_neel1'])[2] # Number of realizations with neel1
+                        print("reading...")
+                        r0 = range(int(L//4)-1, int(L//4)+0) # Two central particles
+                        r1 = range(int(L//4)-0, int(L//4)+1) # Two central particles
+                        r2 = range(int(L//4)-1, int(L//4)+1) # Two central particles
+                        yneel0 = np.atleast_3d(posnode['pos_variance_neel0'][r0, :, :]) if neel0 else None
+                        yneel1 = np.atleast_3d(posnode['pos_variance_neel1'][r1, :, :]) if neel1 else None
+                        eneel0 = np.atleast_3d(np.sqrt(np.sum(n0 * posnode['pos_variance_dste_neel0'][r0, :]**2, axis=0))/np.sqrt(n0)) if neel0 else None
+                        eneel1 = np.atleast_3d(np.sqrt(np.sum(n1 * posnode['pos_variance_dste_neel1'][r1, :]**2, axis=0))/np.sqrt(n1)) if neel1 else None
+                        # pos_var_davg_mean = np.mean(np.concatenate([y0, y1], axis=2),axis=2)
+                        # Now interpret each particle is just more realizations at the midchain
+                        y4 = np.concatenate([yneel0[0, :, :],
+                                             # yneel0[1, :, :],
+                                             yneel1[0, :, :],
+                                             # yneel1[1, :, :]
+                                             ], axis=1) # four particles
+                        # y4 = np.concatenate([yneel0[0, :, :], yneel1[1, :, :]], axis=1) # four particles
+                        pos_var_davg_mean = np.atleast_2d(np.mean(y4, axis=1)) # Take the disorder average of all 4 particles
+                        pos_var_dste_mean = np.atleast_2d(np.std(y4, axis=1))/np.sqrt(np.shape(y4)[1]) # Take the disorder average of all 4 particles
+
+                        print(f'shape {np.shape(pos_var_davg_mean)}')
+
+                        # pos_var_davg_mean = np.atleast_2d(np.mean(np.concatenate([pos_var_davg_neel0, pos_var_davg_neel1], axis=0), axis=0)) if mean else None
+                        # pos_var_dste_mean = np.atleast_2d(np.sqrt(np.sum(np.concatenate([n0*pos_var_dste_neel0**2, n1*pos_var_dste_neel1**2], axis=0), axis=0))/np.sqrt(n0+n1)) if mean else None
+                        # We have three options for neelselection: neel0, neel1 or mean.
+                        # The idea is to have them as columndata
+                        ydata = None
+                        edata = None
+                        colnames = []
+                        for colname, y,e in zip(['neel0', 'neel1', 'mean'],
+                                       [yneel0, yneel1, pos_var_davg_mean],
+                                       [eneel0, eneel1, pos_var_dste_mean]):
+                            if not colname in neelselect:
+                                continue
+                            if ydata is None:
+                                ydata = y
+                                edata = e
+                            else:
+                                ydata = np.concatenate([ydata, y], axis=0)
+                                edata = np.concatenate([edata, e], axis=0)
+                            colnames.append(colname)
+                        ydata = ydata.T
+                        edata = edata.T
+                        print(f'shape ydata {np.shape(ydata)}')
 
                     if np.min(ndata) < 10:
                         continue
@@ -178,7 +239,6 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                         xdata = tdata
                     elif meta.get('timeselection') == "lnt":
                         xdata = tdata
-                        ax.set_xscale('log')
                     elif meta.get('timeselection') == "lnlnt":
                         with np.errstate(divide='ignore'):
                             xdata = np.log(np.log(tdata))
@@ -219,12 +279,12 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             label = '$S_\mathrm{vN}$'
                         elif 'number' in colname:
                             label = '$S_\mathrm{N}$'
+                        gamma = None # Localization length obtained from fit SE ~ gamma ln(t)
                         kappa = None # Slope of loglog fit of approach
                         alpha = None # Exponent to power fit of approach
 
 
                         if meta.get('plotsatapproach'):
-                            sdata = datanode['avg']['entanglement_entropy'][()]
                             # idx1, idx2 = find_loglog_window2(tdata, sdata, dbval)
                             t = get_timepoints(tdata, dbval)
                             idx_sat = t.idx_num_saturated if 'number' in meta['colname'] else t.idx_ent_saturated
@@ -232,45 +292,121 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             y = np.abs(y - ytavg)
 
                             if meta.get('marksatapproach'):
-                                x1 = xdata[t.idx_num_lnlnt_begin]
-                                x2 = xdata[t.idx_num_lnlnt_cease]
-                                x3 = xdata[t.idx_num_saturated]
-                                x4 = xdata[t.idx_ent_saturated]
-                                y1 = y[t.idx_num_lnlnt_begin]
+                                x1 = t.time_num_lnlnt_begin # xdata[t.idx_num_lnlnt_begin]
+                                x2 = t.time_num_lnlnt_cease #xdata[t.idx_num_lnlnt_cease]
+                                x3 = t.time_num_saturated #xdata[t.idx_num_saturated]
+                                x4 = t.time_ent_lnt_cease #xdata[t.idx_ent_saturated]
+                                x5 = t.time_ent_saturated #xdata[t.idx_ent_saturated]
+                                if meta.get('timeselection') == "lnlnt":
+                                    with np.errstate(divide='ignore'):
+                                        x1 = np.log(np.log(x1))
+                                        x2 = np.log(np.log(x2))
+                                        x3 = np.log(np.log(x3))
+                                        x4 = np.log(np.log(x4))
+                                        x5 = np.log(np.log(x5))
+
+                                sn1 = y[t.idx_num_lnlnt_begin]
+                                se1 = y[t.idx_ent_lnt_begin]
                                 y2 = y[t.idx_num_lnlnt_cease]
                                 y3 = y[t.idx_num_saturated]
-                                y4 = y[t.idx_ent_saturated]
-                                ax.plot([x1], [y1], color=color, marker='>',
-                                        markersize=5.0,
-                                        linestyle='None',
-                                        markeredgecolor=color,
-                                        # markeredgewidth=0.1,
-                                        markerfacecolor='none',
-                                        markeredgewidth=0.6,
-                                        path_effects=mark_effects,
-                                        zorder=10,
-                                        )
-                                ax.plot([x2], [y2], color=color, marker='s',
-                                        markersize=5.0,
-                                        linestyle='None',
-                                        markeredgecolor=color,
-                                        markerfacecolor='none',
-                                        markeredgewidth=0.6,
-                                        path_effects=mark_effects,
-                                        zorder=10,
-                                        )
-                                # ax.plot([x3], [y3], color=color, marker='<',
-                                #         markersize=4.0,
+                                y4 = y[t.idx_ent_lnt_cease]
+                                y5 = y[t.idx_ent_saturated]
+                                # ax.plot([x1], [sn1], color=color, marker='>',
+                                #         markersize=6.0,
                                 #         linestyle='None',
-                                #         markeredgecolor='black',
-                                #         markeredgewidth=0.1, path_effects=patch_effects, zorder=10,
+                                #         markeredgecolor=color,
+                                #         markerfacecolor='none',
+                                #         markeredgewidth=0.6,
+                                #         path_effects=mark_effects,
+                                #         zorder=10,
                                 #         )
-                                # ax.plot([x4], [y4], color=color, marker='o',
-                                #         markersize=4.0,
-                                #         linestyle='None',
-                                #         markeredgecolor='black',
-                                #         markeredgewidth=0.1, path_effects=patch_effects, zorder=10,
-                                #         )
+                                fx_begin = [
+                                         pe.Stroke(linewidth=1.5, foreground='black',offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.425),
+                                         pe.Stroke(linewidth=1.5, foreground=color),
+                                         pe.Normal()]
+                                if 'growth-begin' in meta.get('markerlist', []):
+                                    ax.plot([x1], [sn1], color=color, marker='>',
+                                            markersize=3.0,
+                                            linestyle='None',
+                                            markerfacecolor=color,
+                                            markeredgecolor='white',
+                                            markeredgewidth=0.5,
+                                            path_effects=fx_begin,
+                                            alpha=1.0,
+                                            zorder=10,
+                                            )
+                                if 'num-lnlnt-cease' in meta.get('markerlist', []):
+                                    ax.plot([x2], [y2], color=color, marker='s',
+                                            markersize=4.0,
+                                            linestyle='None',
+                                            markeredgecolor=color,
+                                            markerfacecolor='none',
+                                            markeredgewidth=0.6,
+                                            path_effects=mark_effects,
+                                            zorder=10,
+                                            )
+                                if 'num-saturated' in meta.get('markerlist', []):
+                                    ax.plot([x3], [y3], color=color, marker='<',
+                                            markersize=4.0,
+                                            linestyle='None',
+                                            markeredgecolor=color,
+                                            markerfacecolor='none',
+                                            markeredgewidth=0.6,
+                                            path_effects=mark_effects,
+                                            zorder=10,
+                                            )
+                                if 'ent-lnt-cease' in meta.get('markerlist', []):
+                                    ax.plot([x4], [y4], color=color, marker='s',
+                                            markersize=4.0,
+                                            linestyle='None',
+                                            markerfacecolor=color,
+                                            markeredgecolor='none',
+                                            markeredgewidth=0.6,
+                                            path_effects=patch_effects,
+                                            zorder=10,
+                                            )
+                                if 'ent-saturated' in meta.get('markerlist', []):
+                                    ax.plot([x5], [y5], color=color, marker='<',
+                                            markersize=4.0,
+                                            linestyle='None',
+                                            markerfacecolor=color,
+                                            markeredgecolor='none',
+                                            markeredgewidth=0.6,
+                                            path_effects=patch_effects,
+                                            zorder=10,
+                                            )
+                            if meta.get('fitsatapproachlnt'):
+                                try:
+                                    idx1 = t.idx_ent_lnt_begin
+                                    idx2 = t.idx_ent_lnt_cease
+                                    if idx2 <= idx1:
+                                        raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
+                                    if idx1 + 10 > idx2:
+                                        raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
+                                    try:
+                                        with np.errstate(divide='ignore', invalid='ignore'):
+                                            tlog = np.log(tdata)
+                                        popt, pcov = curve_fit(f=flinear, xdata=tlog[idx1:idx2],
+                                                                          ydata=y[idx1:idx2])
+                                        idx_min = int(idx1 * 0.5)
+                                        idx_max = int(np.min([len(tdata) - 1, idx2 * 1.3]))
+                                        tfit = xdata[idx_min:idx_max]
+                                        yfit = flinear(tlog[idx_min:idx_max], *popt)
+                                        ax.plot(tfit, yfit, marker=None,
+                                                linewidth=0.4,
+                                                linestyle=(0,(4,4)), label='fit', color=color,
+                                                path_effects=yfit_effects,
+                                                zorder=9,)
+
+                                        gamma = popt[1]
+                                    except IndexError as err:
+                                        print(f'failed to plot approach: {e}')
+                                        pass
+                                    except ValueError as err:
+                                        logger.error("Fit to loglog approach failed: {}".format(err))
+
+                                except IndexError as e:
+                                    pass
                             if meta.get('fitsatapproachlnlnt'):
                                 try:
                                     idx1 = t.idx_num_lnlnt_begin
@@ -282,15 +418,16 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                     try:
                                         with np.errstate(divide='ignore', invalid='ignore'):
                                             tloglog = np.log(np.log(tdata))
-                                        idx_min = int(idx1 * 0.5)
-                                        idx_max = int(np.min([len(tdata) - 1, idx2 * 2.0]))
                                         popt, pcov = curve_fit(f=flinear, xdata=tloglog[idx1:idx2],
                                                                           ydata=y[idx1:idx2])
+                                        idx_min = int(idx1 * 0.5)
+                                        idx_max = int(np.min([len(tdata) - 1, idx2 * 2.0]))
                                         tfit = xdata[idx_min:idx_max]
                                         yfit = flinear(tloglog[idx_min:idx_max], *popt)
                                         ax.plot(tfit, yfit, marker=None,
                                                 linewidth=0.4,
-                                                linestyle=(0, (4.1, 1.5)), label='fit', color=color,
+                                                linestyle=(0,(6,5)),
+                                                label='fit', color=color,
                                                 path_effects=yfit_effects,
                                                 zorder=9,)
 
@@ -324,8 +461,8 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                                                    ydata=ylog[idx1:idx2], bounds=bounds)
                                             yfit_linear = 10 ** flinear(tlog, *popt_linear)
                                             ax.plot(xdata[idx_min:idx_max], yfit_linear[idx_min:idx_max], marker=None,
-                                                    linewidth=0.4,
-                                                    linestyle=(0, (1, 1.5)), label='fit', color=color,
+                                                    linewidth=0.5,
+                                                    linestyle=(1, (1.5, 2)), label='fit', color=color,
                                                     path_effects=yfit_effects,
                                                     zorder=9,)
                                             alpha = popt_linear[1]
@@ -338,9 +475,30 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
 
                         if meta.get('fillerror'):
-                            line = ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.10, label=None, color=color)
+                            line = ax.fill_between(x=xdata, y1=y - e, y2=y + e, alpha=0.50, label=None, color=color,
+                                                   linestyle='None',
+                                                   linewidth=0,
+                                                   # path_effects=path_effects
+                                                   zorder=7,
+                                                   )
 
+                        if meta.get('markerror'): # Adds one errorbar after each line
+                            trans = transforms.blended_transform_factory(ax.transAxes, ax.transData)
+                            t = get_timepoints(tdata, dbval)
+                            idx_sat = t.idx_num_saturated if 'number' in meta['colname'] else t.idx_ent_saturated
+                            yavg = np.mean(y[idx_sat:], keepdims = True)
+                            yerr = np.mean(e[idx_sat:], keepdims = True)
 
+                            line = ax.errorbar(x=[0.96], y=yavg, yerr=yerr, alpha=1.0, label=None, color=color,
+                                                   # linestyle='None',
+                                                   linewidth=0.6,
+                                                   elinewidth = 0.6,
+                                                   capsize=1.0,
+                                                   capthick=0.6,
+                                                   transform=trans,
+                                                   path_effects=mark_effects,
+                                                   zorder=7,
+                                                   )
                         if meta.get('usescatterplot'):
                             line = ax.scatter(xdata, y, marker='o', s=7.0, edgecolors='gray', linewidths=0.2,
                                             # linestyle=linestyle,
@@ -351,36 +509,52 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                         else:
                             line, = ax.plot(xdata, y, marker=None, linestyle=linestyle, label=label, color=color,
                                             # linewidth=1.2,
-                                            path_effects=path_effects,zorder=8)
+                                            path_effects=path_effects,
+                                            zorder=8,
+                                            )
 
 
                         if i == 0:
                             legendrow = get_legend_row(db=db, datanode=datanode, legend_col_keys=legend_col_keys)
-                            for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                            icol = 0
+                            for col, key in zip(legendrow, legend_col_keys):
                                 key, fmt = key.split(':') if ':' in key else [key, '']
-
                                 f['legends'][idx][icol]['handle'].append(line)
                                 f['legends'][idx][icol]['label'].append(col)
                                 f['legends'][idx][icol]['title'] = db['tex'][key]
-                            if alpha is not None:
-                                f['legends'][idx][icol+1]['handle'].append(line)
-                                f['legends'][idx][icol+1]['label'].append(f'{alpha:.2f}')
-                                f['legends'][idx][icol+1]['title'] = '$\\alpha$'
+                                icol += 1
                                 # f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
                             if kappa is not None:
-                                f['legends'][idx][icol+1]['handle'].append(line)
-                                f['legends'][idx][icol+1]['label'].append(f'{100*abs(kappa):.2f}')
-                                f['legends'][idx][icol+1]['title'] = '$100\kappa$'
+                                f['legends'][idx][icol]['handle'].append(line)
+                                f['legends'][idx][icol]['label'].append(f'{100*abs(kappa):.2f}')
+                                f['legends'][idx][icol]['title'] = '$100\kappa$'
+                                icol += 1
                                 # f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
+                            if gamma is not None:
+                                f['legends'][idx][icol]['handle'].append(line)
+                                f['legends'][idx][icol]['label'].append(f'{100*abs(gamma):.2f}')
+                                f['legends'][idx][icol]['title'] = '$100\gamma$'
+                                icol += 1
+                                # f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
+                            if alpha is not None:
+                                f['legends'][idx][icol]['handle'].append(line)
+                                f['legends'][idx][icol]['label'].append(f'{abs(alpha):.2f}')
+                                f['legends'][idx][icol]['title'] = '$\hphantom{i}\\alpha$'
+                                icol += 1
                         if meta.get('marksaturation') is True:
                             t = get_timepoints(tdata,dbval)
-                            idx3, idx4 = t.idx_num_saturated, t.idx_ent_saturated
-                            xm3.append(xdata[idx3])
-                            ym3.append(y[idx3])
+                            x3 = t.time_num_saturated
+                            x5 = t.time_ent_saturated
+                            if meta.get('timeselection') == "lnlnt":
+                                    with np.errstate(divide='ignore'):
+                                        x3 = np.log(np.log(x3))
+                                        x5 = np.log(np.log(x5))
+                            xm3.append(x3)
+                            ym3.append(y[t.idx_num_saturated])
                             cm3.append(color)
-                            xm4.append(xdata[idx4])
-                            ym4.append(y[idx4])
-                            cm4.append(color)
+                            xm5.append(x5)
+                            ym5.append(y[t.idx_ent_saturated])
+                            cm5.append(color)
 
                         if meta.get('findloglogwindow') and 'entanglement_entropy' in datanode['avg'].dtype.fields:
                             sdata = datanode['avg']['entanglement_entropy'][()]
@@ -389,9 +563,10 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             idx1, idx2 = t.idx_num_lnlnt_begin, t.idx_num_lnlnt_cease
                             print(f'L={dbval["vals"]["L"]:2} '
                                   f't▶={t.time_num_lnlnt_begin:.3e} '
-                                  f't◼={t.time_num_lnlnt_cease:.3e} '
-                                  f't◀={t.time_num_saturated:.3e} '
-                                  f't●{t.time_ent_saturated:.3e} '
+                                  f't◀={t.time_num_lnlnt_cease:.3e} '
+                                  f't◼={t.time_num_saturated:.3e} '
+                                  f't●{t.time_ent_lnt_cease:.3e} '
+                                  f't🗙{t.time_ent_saturated:.3e} '
                                   f'num{len(tdata[idx_sat:])}')
                             f['ymax'] = np.max([f['ymax'], np.max(y)]) if f['ymax'] else np.max(y)
                             f['ymin'] = np.min([f['ymin'], y[idx1]]) if f['ymin'] else y[idx1]
@@ -406,14 +581,27 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                     yreloffset = 0.02 * yrange
                                     f['ymarkoffset'].append(y[idx2] + yreloffset)
                                 if meta.get('colname') == 'entanglement_entropy':
-                                    idx3, idx4 = t.idx_num_saturated, t.idx_ent_saturated
-                                    f['ymarkoffset'][idx] = y[idx4]
-                                xm1.append(xdata[idx1])
-                                ym1.append(y[idx1]),
+                                    idx3, idx5 = t.idx_num_saturated, t.idx_ent_saturated
+                                    f['ymarkoffset'][idx] = y[idx5]
+
+                                x1 = t.time_num_lnlnt_begin
+                                x2 = t.time_num_lnlnt_cease
+                                x4 = t.time_ent_lnt_cease
+                                if meta.get('timeselection') == "lnlnt":
+                                    with np.errstate(divide='ignore'):
+                                        x1= np.log(np.log(x1))
+                                        x2= np.log(np.log(x2))
+                                        x4 = np.log(np.log(x4))
+                                xm1.append(x1)
+                                ym1.append(y[t.idx_num_lnlnt_begin]),
                                 cm1.append(color)
-                                xm2.append(xdata[idx2])
-                                ym2.append(y[idx2]),
+                                xm2.append(x2)
+                                ym2.append(y[t.idx_num_lnlnt_cease]),
                                 cm2.append(color)
+                                xm4.append(x4)
+                                ym4.append(y[t.idx_ent_lnt_cease]),
+                                cm4.append(color)
+                                # xm4.append()
                                 #
                                 # ax.plot([xm1], [ym1], color=color, marker='>', markersize=4.5,
                                 #         linestyle='None', markeredgecolor='w',
@@ -444,7 +632,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                                 #linewidth=0.4,
                                                 alpha=0.85,
                                                 zorder=0,
-                                                linestyle='--', label='fit', color=color,
+                                                linestyle=(0,(5,5)), label='fit', color=color,
                                                 path_effects=path_effects)
                                 except IndexError as err:
                                     pass
@@ -553,43 +741,83 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 yrange = np.abs(axs.get_ylim()[1] - axs.get_ylim()[0])
                 ymmax = np.max(ym1 + ym2)
                 ymmin = np.min(ym1 + ym2)
-                for lidx,(x1, y1, c1, x2, y2, c2, x3, y3, c3, x4, y4, c4) in enumerate(zip(xm1, ym1, cm1, xm2,ym2,cm2, xm3,ym3,cm3, xm4,ym4,cm4)):
-                    yl = np.max([y4, ]) if meta['colname'] == 'entanglement_entropy' else ymmin - (lidx) / 30 * yrange
+                for lidx,(x1, y1, c1, x2, y2, c2, x3, y3, c3, x4, y4, c4,x5,y5,c5) in enumerate(zip(xm1, ym1, cm1, xm2,ym2,cm2, xm3,ym3,cm3, xm4,ym4,cm4,xm5,ym5,cm5, )):
+                    ridx = len(xm1) - lidx - 1# Reversed
+                    yl = np.max([y5, ]) if meta['colname'] == 'entanglement_entropy' else ymmin - (ridx+1.5) / 24 * yrange
+                    if meta.get('markloglogwindow') is True and meta.get('marklogwindow') is True and meta.get('marksaturation') is True:
+                        axs.plot([x1, x5], [yl, yl], color=c5, marker=None, linestyle='dotted', path_effects=None, zorder=0) # Between rtriangle and square
+                    else:
+                        if meta.get('markloglogwindow'):
+                            axs.plot([x1, x2], [yl, yl], color=c2, marker=None, linestyle='dotted', path_effects=None, zorder=0) # Between rtriangle and square
+                        if meta.get('marklogwindow'):
+                            axs.plot([x2, x3], [yl, yl], color=c3, marker=None, linestyle='dotted', path_effects=None,zorder=0)  # Between square and rtriangle
+                        if meta.get('marksaturation') is True:
+                            axs.plot([x3, x4], [yl, yl], color=c4, marker=None, linestyle='dotted', path_effects=None, zorder=0)  # Between rtriangle and circle
+                            axs.plot([x4, x5], [yl, yl], color=c5, marker=None, linestyle='dotted', path_effects=None, zorder=0)  # Between rtriangle and circle
+
                     if meta.get('markloglogwindow') is True:
-                        axs.plot([x1, x2], [yl, yl], color=c1, marker=None, linestyle='dotted', path_effects=None, zorder=8) # Between rtriangle and square
                         # axs.plot([x1, x1], [y1, yl], color=c1, marker=None, linestyle='dotted', path_effects=None, zorder=8) # From rtriangle to line
                         # axs.plot([x2, x2], [y2, yl], color=c1, marker=None, linestyle='dotted', path_effects=None, zorder=8) # From square to line
-
-                        axs.plot([x1], [yl], color=c1, marker='>',
-                                # markersize=4.5,
-                                linestyle='None',
-                                markeredgecolor='lightgrey',
-                                markeredgewidth=0.0, path_effects=patch_effects, zorder=10,
+                        sn_fx = [pe.Stroke(linewidth=1.5, foreground='black', offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.425),
+                                 pe.Stroke(linewidth=1.5, foreground=c1),
+                                 # pe.Stroke(linewidth=1.0, foreground='white'),
+                            pe.Normal()]
+                        if 'growth-begin' in meta.get('markerlist', []):
+                            axs.plot([x1], [yl], color=c1, marker='>',
+                                     markersize=3.0,
+                                     linestyle='None',
+                                     # markeredgewidth=0.1,
+                                     markerfacecolor=c1,
+                                     markeredgecolor='white',
+                                     markeredgewidth=0.5,
+                                     path_effects=sn_fx,
+                                     alpha=1.0,
+                                     zorder=10,
                                 )
-                        axs.plot([x2], [yl], color=c2, marker='s',
-                                # markersize=4.5,
+                        if 'num-lnlnt-cease' in meta.get('markerlist', []):
+                            axs.plot([x2], [yl], color=c2, marker='s',
+                                markersize=4.0,
                                 linestyle='None',
-                                markeredgecolor='lightgrey',
-                                markeredgewidth=0.0, path_effects=patch_effects, zorder=9,
+                                markeredgecolor=c2,
+                                markerfacecolor='none',
+                                markeredgewidth=0.6,
+                                path_effects=mark_effects,
+                                zorder=10,
                                 )
                     if meta.get('marklogwindow') is True:
-                        axs.plot([x2, x3], [yl, yl], color=c1, marker=None, linestyle='dotted', path_effects=None,
-                                 zorder=8)  # Between square and rtriangle
-                        # axs.plot([x3, x3], [y3, yl], color=c1, marker=None, linestyle='dotted', path_effects=None,
-                        #          zorder=8)  # From rtriangle to line
-                        axs.plot([x3], [yl], color=c3, marker='<',
-                                # markersize=5,
-                                linestyle='None',
-                                markeredgecolor='lightgrey',
-                                markeredgewidth=0.0, path_effects=patch_effects, zorder=10)
+                        if 'num-saturated' in meta.get('markerlist', []):
+                            axs.plot([x3], [yl], color=c3, marker='<',
+                                     markersize=4.0,
+                                     linestyle='None',
+                                     markeredgecolor=c3,
+                                     markerfacecolor='none',
+                                     markeredgewidth=0.6,
+                                     path_effects=mark_effects,
+                                     zorder=10,)
                     if meta.get('marksaturation') is True:
-                        ax.plot([x4], [yl], color=c4, marker='o',
+                        if 'ent-lnt-cease' in meta.get('markerlist', []):
+                            axs.plot([x4], [yl], color=c4, marker='s',
+                                     markersize=4.0,
+                                     linestyle='None',
+                                     markeredgecolor='none',
+                                     markerfacecolor=c4,
+                                     markeredgewidth=0.6,
+                                     path_effects=patch_effects,
+                                     zorder=1,)
+                        if 'ent-saturated' in meta.get('markerlist', []):
+                            axs.plot([x5], [yl], color=c5, marker='<',
+                                     markersize=4.0,
+                                     linestyle='None',
+                                     markeredgecolor='none',
+                                     markerfacecolor=c5,
+                                     markeredgewidth=0.6,
+                                     path_effects=patch_effects,
+                                     zorder=10,)
+                        # ax.plot([x5], [yl], color=c5, marker='X',
                                 # markersize=5,
-                                linestyle='None',
-                                markeredgecolor='lightgrey',
-                                markeredgewidth=0.0, path_effects=patch_effects, zorder=10)
-                        ax.plot([x3, x4], [yl, yl], color=c4, marker=None, linestyle='dotted', path_effects=None,
-                                 zorder=8)  # Between rtriangle and circle
+                                # linestyle='None',
+                                # markeredgecolor='lightgrey',
+                                # markeredgewidth=0.0, path_effects=patch_effects, zorder=10)
 
             # if meta.get('marklogwindow') is True:
             #     for x3, y3, c3, x4, y4, c4 in zip(xm3,ym3,cm3, xm4,ym4,cm4):

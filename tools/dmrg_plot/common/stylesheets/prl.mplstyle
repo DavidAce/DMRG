@@ -54,9 +54,10 @@ legend.title_fontsize   : small
 legend.frameon          : False      # if True, draw the legend on a background patch
 legend.loc              : center left
 legend.borderpad        : 0.35      # border whitespace
+#legend.labelspacing     : 0.030      # the vertical space between the legend entries
 legend.labelspacing     : 0.15      # the vertical space between the legend entries
-legend.handlelength     : 1.0       # the length of the legend lines
-legend.handletextpad    : 0.5       # the space between the legend line and legend text
+legend.handlelength     : 0.5       # the length of the legend lines
+legend.handletextpad    : 0.25       # the space between the legend line and legend text
 legend.borderaxespad    : 1.0       # the border between the axes and legend edge
 legend.columnspacing    : 0.5       # column separation
 legend.framealpha       : 1.0       # legend patch transparency
@@ -73,6 +74,7 @@ xtick.major.size        : 3
 xtick.minor.size        : 2
 xtick.major.width       : 1.0
 xtick.minor.width       : 0.5
+xtick.major.pad         : 2.5
 
 ytick.direction         : in
 ytick.left              : True
@@ -81,7 +83,7 @@ ytick.major.size        : 3
 ytick.minor.size        : 2
 ytick.major.width       : 1.0
 ytick.minor.width       : 0.5
-
+ytick.major.pad         : 1.0
 # Special sauce
 # Read more about the stix font here https://tex.stackexchange.com/questions/452133/font-used-by-revtex
 
@@ -165,11 +167,11 @@ savefig.dpi            : figure   # figure dots per inch or 'figure'
 savefig.facecolor      : auto     # figure face color when saving
 savefig.edgecolor      : auto     # figure edge color when saving
 savefig.format         : pdf      # {png, ps, pdf, svg}
-savefig.bbox           : tight    # {tight, standard}
+savefig.bbox           : standard # {tight, standard}
                                   # 'tight' is incompatible with pipe-based animation
                                   # backends (e.g. 'ffmpeg') but will work with those
                                   # based on temporary files (e.g. 'ffmpeg_file')
-savefig.pad_inches     : 0.025     # Padding to be used when bbox is set to 'tight'
+savefig.pad_inches     : 0.0      # Padding to be used when bbox is set to 'tight'
 
 #savefig.directory      : ~       # default directory in savefig dialog box,
 #                                # leave empty to always use current working directory

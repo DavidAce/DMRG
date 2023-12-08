@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from sympy.utilities.iterables import multiset_permutations
 from scipy.optimize import curve_fit
 
+
 def flinear(x, a, b):
     with np.errstate(invalid='ignore'):
         return a + b * x
@@ -45,29 +46,34 @@ def get_qdistribution(L):
 if __name__ == '__main__':
     # ax.set_yscale('log')
     # ax.set_xlim(xmin=1,xmax=10)
+    plt.style.use('/home/david/GitProjects/DMRG++/tools/dmrg_plot/common/stylesheets/prb.mplstyle')
     Ls = np.arange(2,32,2)
     qdists = np.zeros((len(Ls),20))
+    figsize = (3.404, 3.404)
     for l, L in enumerate(Ls):
         qbinc = get_qdistribution(L)
         qdist = qbinc/np.sum(qbinc)
         qdists[l,:] = qdist
         # ax.scatter(x=[L], y=[qdist[1]], color='blue')
         # if len(qdist) > 2:
-    fig = plt.figure(figsize=(6,6))
-    ax1 = fig.add_subplot(2, 2, 1)
+    fig1,axes = plt.subplots(figsize=figsize,nrows=1, ncols=2, layout='constrained', sharey='all')
+    ax1 = axes[0]
+    ax1.set_box_aspect(1)
     # ax1.set_yscale('log')
     # ax1.set_xscale('log')
-    ax1.scatter(x=Ls, y=qdists[:, 1], color='blue', label="$q_1$")
-    ax1.scatter(x=Ls, y=qdists[:, 2], color='red', label="$q_2$")
-    ax1.scatter(x=Ls, y=qdists[:, 3], color='orange', label="$q_3$")
+    ax1.scatter(x=Ls, y=qdists[:, 1], color='royalblue', label="$Q_1$", s = 15, linewidth=0.3, edgecolor='black')
+    ax1.scatter(x=Ls, y=qdists[:, 2], color='tomato', label="$Q_2$", s = 15, linewidth=0.3, edgecolor='black')
+    ax1.scatter(x=Ls, y=qdists[:, 3], color='orange', label="$Q_3$", s = 15, linewidth=0.3, edgecolor='black')
     ax1.set_xlabel('$L$')
-    ax1.set_ylabel('$q_n$')
-    ax1.legend(loc='upper right')
+    ax1.set_ylabel('$Q_n$')
+    ax1.legend(loc='upper right',frameon=True, framealpha=0.7, facecolor='white')
 
-    ax2 = fig.add_subplot(2, 2, 2)
-    ax2.scatter(x=1/Ls, y=qdists[:, 1], color='blue', label=None)
-    ax2.scatter(x=1/Ls, y=qdists[:, 2], color='red', label=None)
-    ax2.scatter(x=1/Ls, y=qdists[:, 3], color='orange', label=None)
+    # fig2 = plt.figure(figsize=figsize, layout='constrained')
+    # ax2 = fig1.add_subplot(1, 2, 2)
+    ax2 = axes[1]
+    ax2.set_box_aspect(1)
+    ax2.set_ylim(ymax=1.05, ymin=-0.05)
+
     popt1, _ = curve_fit(f=flinear, xdata=1/Ls[-4:-1], ydata=qdists[-4:-1,1])
     popt2, _ = curve_fit(f=flinear, xdata=1/Ls[-4:-1], ydata=qdists[-4:-1,2])
     popt3, _ = curve_fit(f=flinear, xdata=1/Ls[-4:-1], ydata=qdists[-4:-1,3])
@@ -75,29 +81,37 @@ if __name__ == '__main__':
     yfit1 = flinear(xfit, *popt1)
     yfit2 = flinear(xfit, *popt2)
     yfit3 = flinear(xfit, *popt3)
-    ax2.plot(xfit, yfit1, marker=None, linewidth=0.4, linestyle='--', label=f'$q_1^{{\infty}} = {yfit1[0]:.3f}$', color='blue')
-    ax2.plot(xfit, yfit2, marker=None, linewidth=0.4, linestyle='--', label=f'$q_2^{{\infty}} = {yfit2[0]:.3f}$', color='red')
-    ax2.plot(xfit, yfit3, marker=None, linewidth=0.4, linestyle='--', label=f'$q_3^{{\infty}} = {yfit3[0]:.3f}$', color='orange')
+
+    ax2.plot(xfit, yfit1, marker=None, linewidth=1.0, linestyle='-', label=f'$Q_1^{{\infty}} = {yfit1[0]:.3f}$', color='royalblue',zorder=1)
+    ax2.plot(xfit, yfit2, marker=None, linewidth=1.0, linestyle='-', label=f'$Q_2^{{\infty}} = {yfit2[0]:.3f}$', color='tomato',zorder=1)
+    ax2.plot(xfit, yfit3, marker=None, linewidth=1.0, linestyle='-', label=f'$Q_3^{{\infty}} = {yfit3[0]:.3f}$', color='orange',zorder=1)
+    ax2.scatter(x=1/Ls[::-1], y=qdists[::-1, 1], color='royalblue', label=None, s=15, linewidth=0.3, edgecolor='black',zorder=2)
+    ax2.scatter(x=1/Ls[::-1], y=qdists[::-1, 2], color='tomato', label=None, s=15, linewidth=0.3, edgecolor='black',zorder=2)
+    ax2.scatter(x=1/Ls[::-1], y=qdists[::-1, 3], color='orange', label=None, s=15, linewidth=0.3, edgecolor='black',zorder=2)
     ax2.set_xlabel('$1/L$')
-    ax2.set_ylabel('$q_n$')
-    ax2.legend(loc='upper right')
-
-
-    ax3 = fig.add_subplot(2, 2, 3)
-    ax3.scatter(x=Ls, y=qdists[:, 2] / qdists[:, 1], color='blue', label="$q_2/q_1$")
-    ax3.scatter(x=Ls, y=qdists[:, 3] / qdists[:, 2], color='red', label="$q_3/q_2$")
-    ax3.scatter(x=Ls, y=qdists[:, 4] / qdists[:, 3], color='orange', label="$q_4/q_3$")
+    # ax2.set_ylabel('$Q_n$')
+    ax2.legend(loc='upper left',frameon=True, framealpha=0.7, facecolor='white')
+    plt.show()
+    exit(0)
+    fig3 = plt.figure(figsize=figsize, layout='constrained')
+    ax3 = fig3.add_subplot(1, 1, 1)
+    ax3.set_box_aspect(1)
+    ax3.scatter(x=Ls, y=qdists[:, 2] / qdists[:, 1], color='royalblue', label="$Q_2/Q_1$")
+    ax3.scatter(x=Ls, y=qdists[:, 3] / qdists[:, 2], color='tomato', label="$Q_3/Q_2$")
+    ax3.scatter(x=Ls, y=qdists[:, 4] / qdists[:, 3], color='orange', label="$Q_4/Q_3$")
     ax3.set_xlabel('$L$')
-    ax3.set_ylabel('$q$-fractions')
+    ax3.set_ylabel('$Q$-fractions')
     ax3.legend(loc='center right')
 
-    ax4 = fig.add_subplot(2, 2, 4)
-    ax4.scatter(x=Ls, y=qdists[:, 2] / qdists[:, 1], color='blue', label="$q_2/q_1$")
-    ax4.scatter(x=Ls, y=qdists[:, 3] / qdists[:, 1], color='red', label="$q_3/q_1$")
-    ax4.scatter(x=Ls, y=qdists[:, 4] / qdists[:, 1], color='orange', label="$q_4/q_1$")
+    fig4 = plt.figure(figsize=figsize, layout='constrained')
+    ax4 = fig4.add_subplot(1, 1, 1)
+    ax4.set_box_aspect(1)
+    ax4.scatter(x=Ls, y=qdists[:, 2] / qdists[:, 1], color='royalblue', label="$Q_2/Q_1$")
+    ax4.scatter(x=Ls, y=qdists[:, 3] / qdists[:, 1], color='tomato', label="$Q_3/Q_1$")
+    ax4.scatter(x=Ls, y=qdists[:, 4] / qdists[:, 1], color='orange', label="$Q_4/Q_1$")
     ax4.set_xlabel('$L$')
-    ax4.set_ylabel('$q$-fractions')
+    ax4.set_ylabel('$Q$-fractions')
     ax4.legend(loc='center right')
 
-    plt.tight_layout()
+    # plt.tight_layout()
     plt.show()

@@ -1,5 +1,7 @@
 from itertools import product
 from pathlib import Path
+
+import matplotlib.pyplot as plt
 from matplotlib.ticker import FixedLocator,MaxNLocator
 import matplotlib.patheffects as pe
 import seaborn as sns
@@ -7,7 +9,9 @@ from scipy.optimize import curve_fit
 from scipy.stats.mstats import gmean
 import h5py
 from .tools import *
-
+from itertools import islice
+from scipy.signal import savgol_filter,find_peaks, find_peaks_cwt
+from scipy import interpolate
 
 # def floglog(x, a, b,c):
 #     return a + b*np.log(np.log(x + c))
@@ -24,6 +28,30 @@ def flinear(x, a, b):
 def fpower(x, a, b):
     with np.errstate(invalid='ignore'):
         return a * x ** b
+
+def batched(iterable, n):
+    # batched('ABCDEFG', 3) --> ABC DEF G
+    if n < 1:
+        raise ValueError('n must be at least one')
+    it = iter(iterable)
+    while batch := list(islice(it, n)):
+        yield batch
+
+@dataclass
+class Plots:
+    x : np.ndarray       = None
+    y : np.ndarray       = None
+    e : np.ndarray       = None
+    y_tavgs = []
+    e_tavgs = []
+    x_peaks : np.ndarray  = None
+    y_peaks : np.ndarray  = None
+    y_pinfty : np.ndarray  = None
+    e_pinfty : np.ndarray  = None
+    y_varx : np.ndarray    = None
+    e_varx : np.ndarray    = None
+    y_hartley : np.ndarray = None
+    e_hartley : np.ndarray = None
 
 
 def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo_filter=None, state_filter=None, point_filter=None, figs=None, palette_name=None,dbidx=0,dbnum=1):
@@ -68,11 +96,9 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
             dbval = None
             logger.debug('-- plotting subs: {}'.format(subvals))
             for lidx, linvals in enumerate(linprod):
-                palette, lstyles = get_colored_lstyles(db, linspec, palette_name, filter=None, idx=idx_palette)
-                color = palette[-1]
-                lstyle = lstyles[-1]
                 logger.debug('--- plotting lins: {}'.format(linvals))
-                xvals, yvals, pvals,mvals,gvals, evals,qvals, nvals = [], [],[], [], [], [], [], []
+                plots = Plots()
+                xvals, yvals, pvals, mvals, gvals, evals, qvals, nvals, vvals, vevals, speak, ybavg, ebavg, ybmed = [], [], [], [], [], [], [], [], [], [], [], [], [], []
                 legendrow = None
                 for xaxvals in xaxprod:
                     logger.debug('--- plotting xaxs: {}'.format(xaxvals))
@@ -86,6 +112,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     for datanode in datanodes:
                         # print(f'found datanode: {datanode}')
                         dbval = db['dsets'][datanode.name]
+                        L = dbval['vals']['L']
                         # ydata = datanode['avg'][meta['colname']][()]
                         # edata = datanode['ste'][meta['colname']][()]  # Use standard deviation for curve_fit
                         # tdata = datanode['avg']['physical_time'][()].astype(float)
@@ -100,36 +127,106 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         t = get_timepoints(t,dbval)
                         idx_num, idx_ent = t.idx_num_saturated, t.idx_ent_saturated
                         idx_sat = idx_num if 'number' in meta['dsetname'] else idx_ent
+                        # idx_sat = idx_ent
+                        idx_len = len(t.time)
+                        print(f'Saturation for {L=}: at {idx_num=} {idx_ent=}  ({idx_len}) total): time averaging {idx_len-idx_sat} points')
                         if meta.get('normpage'):
                             y /= midchain_page_entropy(dbval['vals']['L'])
                         elif meta.get('normsize'):
                             y /= dbval['vals']['L']
                         elif normalize := meta.get('normalize'):
                             y /= normalize
+
+                        if meta.get('plotpeakln2'):
+                            ytavg = np.nanmean(y[idx_sat:, :], axis=0)  # y dims: time and disorder realizations
+                            hist, edges = np.histogram(ytavg, bins=meta['plotpeakln2_bins'], range=meta['plotpeakln2_range'], density=True)
+                            bincentres = np.array([(edges[j] + edges[j + 1]) / 2. for j in range(len(edges) - 1)])
+                            hist_smooth = savgol_filter(hist, 20, 4)  # window size 51, polynomial order 3
+                            peak_idx,_ = find_peaks(hist_smooth, width=(10,None), prominence=(1.0,None))
+                            print(peak_idx)
+                            print(speak[-1])
+
+                            if len(peak_idx)!=1:
+                                raise AssertionError(f"Could not find exactly 1 peak:\n {peak_idx}")
+
+                            fig, axs = plt.subplots()
+                            axs.step(x=bincentres, y=hist, where='mid', label=None,color='black', path_effects=path_effects)
+                            axs.step(x=bincentres, y=hist_smooth, where='mid', label=None,color='red', path_effects=path_effects)
+                            axs.scatter(bincentres[peak_idx],hist_smooth[peak_idx], s=40,color='green', marker='v',zorder=50)
+                            speak.append(bincentres[peak_idx])
+                            # plt.show()
+
                         if meta.get('plotpinfty'):
                             if 'pinfty_number_entropies' in datanode.parent.parent:
-                                p = datanode.parent.parent['pinfty_number_entropies']['data'][()]
+                                # p = datanode.parent.parent['pinfty_number_entropies']['avg'][()]
+                                rhalf = int(n/2) if L==16 else int(n)
+                                p = np.nanmean(datanode.parent.parent['pinfty_number_entropies']['data'][idx_sat:,rhalf:], axis=1)
+                                print(f'shape p: {np.shape(p)}')
                             elif 'number_probabilities' in datanode.parent.parent:
                                 print('Warning: Could not find pinfty_number entropies. Calculating from scratch!')
+                                Lhalf = int(L/2)
+                                rhalf = int(n/2) if L==16 else int(n)
+                                realz = range(0, rhalf)
+                                # realz = range(rhalf, n)
+                                print('Reading shape')
+                                d0,d1,d2,d3 = np.shape(datanode.parent.parent['number_probabilities'])
+                                print('Allocating probs')
+                                probs = np.empty(shape=(d0, d2, rhalf))
+                                for r in batched(realz, 10000):
+                                    print(f'reading number_probabilities {r[0]}/{rhalf}')
+                                    probs[:, :, r] = datanode.parent.parent['number_probabilities'][:, Lhalf, :, r]
 
                                 # Take the shannon-entropy of infinite-time averaged number probabilities
-                                probs = datanode.parent.parent['number_probabilities'][()]
-                                ptavg = np.mean(probs[:, idx_sat:, :], axis=1)
+                                # probs = datanode.parent.parent['number_probabilities'][:, Lhalf, idx_sat:,:]
+                                ptavg = np.nanmean(probs[:, idx_sat:, :], axis=1)
                                 ptavg = np.ma.masked_invalid(np.ma.masked_equal(np.abs(ptavg), 0))
                                 with np.errstate(divide='ignore'):
                                     p = -np.sum(ptavg * np.log(ptavg), axis=0)
+                            elif 'number_probabilities2' in datanode.parent.parent:
+                                print('Warning: Could not find pinfty_number entropies. Calculating from scratch!')
+                                Lhalf = int(L/2)
+                                rhalf = int(n/2) if L==16 else int(n)
+                                realz = range(0, rhalf)
+                                # realz = range(rhalf, n)
+                                print('Reading shape')
+                                d0,d1,d2,d3 = np.shape(datanode.parent.parent['number_probabilities'])
+                                print('Allocating probs')
+                                probs = np.empty(shape=(d0, d2, rhalf))
+                                for r in batched(realz, 10000):
+                                    print(f'reading number_probabilities {r[0]}/{rhalf}')
+                                    probs[:, :, r] = datanode.parent.parent['number_probabilities'][:, Lhalf, :, r]
 
+                                # Take the shannon-entropy of infinite-time averaged number probabilities
+                                # probs = datanode.parent.parent['number_probabilities'][:, Lhalf, idx_sat:,:]
+                                ptavg = np.nanmean(probs[:, idx_sat:, :], axis=(1,2))
+                                ptavg = np.ma.masked_invalid(np.ma.masked_equal(np.abs(ptavg), 0))
+                                with np.errstate(divide='ignore'):
+                                    p = -np.sum(ptavg * np.log(ptavg), axis=0,keepdims=True)
                             else:
                                 raise LookupError('Could not find data to generate pinfty entropies')
+                        if meta.get('plotVarX'):
+                            L = dbval['vals']['L']
+                            posnode = datanode.parent.parent['nth_particle_position']
+                            r2 = range(int(L // 4) - 1, int(L // 4) + 1)  # Two central particles
+                            y0 = np.atleast_3d(posnode['pos_variance_neel0'][r2, :, :])   # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                            y1 = np.atleast_3d(posnode['pos_variance_neel1'][r2, :, :])   # 1010|1010 index L//4 = 2 is nearest the midchain boundary
+                            # y = np.atleast_2d(np.concatenate([y0, y1], axis=2))
+                            # Now interpret each particle is just more realizations at the midchain
+                            y = np.concatenate([y0[0,:, :], y0[1,:,:], y1[0,:,:], y1[1,:,:]], axis=1)
+                        if meta.get('plothartley'):
+                            y = np.atleast_2d(datanode.parent.parent['hartley_number_entropies/data'][()]).T
 
                         # Calculate the infinite time average (1/T) integral_0^T y(t) dt
-                        ytavg = np.mean(y[idx_sat:, :], axis=0)
+                        # reals = np.shape(y)[1]
+                        # off = int(reals / 2)
+                        # ext = int(reals / 5)
+                        esb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tp=t,nbs=100, dsetname=meta['dsetname'])
                         if 'mean' in meta['ystats']:
-                            yvals.append(np.mean(ytavg))
+                            yvals.append(esb.sinf_full_avg)
                             if meta.get('plotpinfty'):
                                 pvals.append(np.mean(p))
                         if 'median' in meta['ystats']:
-                            mvals.append(np.median(ytavg))
+                            mvals.append(esb.sinf_full_med)
                             if meta.get('plotpinfty'):
                                 pvals.append(np.median(p))
                         if 'gmean' in meta['ystats']:
@@ -138,9 +235,15 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                                 pvals.append(gmean(np.where(p < 1e-10, 1e-10, p)))
                         if meta.get('plotpinfty'):
                             qvals.append(np.std(p) / np.sqrt(len(p)))
+                        # if meta.get('plotVarX'):
+                        #     vevals.append(np.std(v) / np.sqrt(len(v)))
                         xvals.append(get_vals(dbval, xaxspec))
-                        evals.append(np.std(ytavg) / np.sqrt(len(ytavg)))
+                        evals.append(esb.sinf_full_err)
                         nvals.append(n)
+                        ybavg.append(esb.sinf_boot_avg)
+                        ybmed.append(esb.sinf_boot_med)
+                        ebavg.append(esb.sinf_boot_err)
+
                 yvals = np.ravel(yvals)
                 pvals = np.ravel(pvals)
                 qvals = np.ravel(qvals)
@@ -149,37 +252,60 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 xvals = np.ravel(xvals)
                 evals = np.ravel(evals)
                 nvals = np.ravel(nvals)
-                axn = ax
+                speak = np.ravel(speak)
+                ybavg = np.ravel(ybavg)
+                ybmed = np.ravel(ybmed)
+                ebavg = np.ravel(ebavg)
                 if meta.get('ytwinx'):
                     if lidx == 0:
-                        axn.annotate('', xy=(0.35, 0.85), xytext=(0.50, 0.85), xycoords='axes fraction',
+                        ax.annotate('', xy=(0.35, 0.85), xytext=(0.50, 0.85), xycoords='axes fraction',
                                      arrowprops=dict(color=color, arrowstyle='->'))
                     else :
-                        axn = ax.twinx()
-                        axn.set_box_aspect(1)
-                        # axn.set_visible(True)
-                        # axn.axis('off')
-                        axn.set_frame_on(False)
-                        axn.yaxis.set_visible(True)
-                        axn.annotate('', xy=(0.65, 0.85), xytext=(0.50,0.85), xycoords='axes fraction',
+                        ax = ax.twinx()
+                        ax.set_box_aspect(1)
+                        # ax.set_visible(True)
+                        # ax.axis('off')
+                        ax.set_frame_on(False)
+                        ax.yaxis.set_visible(True)
+                        ax.annotate('', xy=(0.65, 0.85), xytext=(0.50,0.85), xycoords='axes fraction',
                                 arrowprops=dict(color=color, arrowstyle='->'))
 
                         # l = ax.get_ylim()
                         # ln = yvals.min(), yvals.max()
                         # fun = lambda x: ln[0] + (x - l[0]) / (l[1] - l[0]) * (ln[1] - ln[0])
                         # ticks = fun(ax.get_yticks())
-                        axn.yaxis.set_major_locator(MaxNLocator(nbins=3))
+                        ax.yaxis.set_major_locator(MaxNLocator(nbins=3))
 
                 line2 = None
+                palette, lstyles = get_colored_lstyles(db, xaxspec, palette_name, filter=None, idx=idx_palette)
+                # color = palette[-1]
+                # lstyle = lstyles[-1]
                 if 'median' in meta['ystats']:
-                    line, = axn.plot(xvals, mvals, marker=None,linestyle=':', color=color, path_effects=path_effects)
+                    line, = ax.plot(xvals, mvals, marker=None,linestyle=':', color=color, path_effects=path_effects)
                 if 'gmean' in meta['ystats']:
                     # line, = ax.plot(xvals, gvals, marker=None, linestyle='--', color=color, path_effects=path_effects)
-                    line = axn.errorbar(x=xvals, y=gvals, yerr=evals, linestyle='--', color=color, path_effects=path_effects)
+                    line = ax.errorbar(x=xvals, y=gvals, yerr=evals, linestyle='--', color=color, path_effects=path_effects)
                 if 'mean' in meta['ystats']:
-                    line = axn.errorbar(x=xvals, y=yvals, yerr=evals, color=color, path_effects=path_effects)
+                    line, = ax.plot(xvals, yvals, marker=None, color='black', linewidth=1.0, path_effects=None)
+                    ax.plot(xvals, ybmed, color='red', linestyle=':', linewidth=1.0, path_effects=path_effects)
+                    ax.errorbar(x=xvals, y=ybavg, yerr=ebavg, color='blue', linestyle='-', capsize=1.0, path_effects=path_effects)
+                    for xval,yval,eval,color in zip(xvals, yvals, evals,palette):
+                        ax.errorbar(x=xval, y=yval, yerr=eval, color=color,linestyle='none',capsize=1.0, path_effects=path_effects,zorder=10)
+
+                if meta.get('plotpeakln2'):
+                    ax.plot(xvals, speak, marker=None, color='gray', path_effects=None)
+                    for xval, yval, color in zip(xvals, speak, palette):
+                        ax.scatter(x=xval, y=yval, color=color, marker='^', path_effects=path_effects, zorder=10)
+
                 if meta.get('plotpinfty'):
-                    line2 = axn.errorbar(x=xvals, y=pvals, yerr=qvals, linestyle='--', color=color, path_effects=path_effects)
+                    line2, = ax.plot(xvals, pvals, marker=None, color='black', linestyle=':', path_effects=None)
+                    for xval,pval,qval,color in zip(xvals, pvals, qvals,palette):
+                        ax.errorbar(x=xval, y=pval, yerr=qval, color=color,linestyle='none',capsize=1.0, path_effects=path_effects,zorder=10)
+                    # line2 = ax.errorbar(x=xvals, y=pvals, yerr=qvals, linestyle='--', color=color, path_effects=path_effects)
+
+                # if meta.get('plotVarX'):
+                #     line2 = ax.errorbar(x=xvals, y=vvals, yerr=vevals, linestyle='--', color=color,
+                #                          path_effects=path_effects)
 
                     # ax.fill_between(x=xvals, y1=yvals - evals, y2=yvals + evals, alpha=0.10, color=color)
                     # line, = ax.plot(xvals, yvals, marker=None, color=color, path_effects=path_effects)
@@ -194,13 +320,13 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     f['legends'][idx][icol]['handle'].append(line)
                     f['legends'][idx][icol]['title'] = db['tex'][key]
                     f['legends'][idx][icol]['label'].append(col)
-                f['legends'][idx][icol]['handle'].append(line)
-                f['legends'][idx][icol]['title'] = 'RPS' if dbidx==0 else 'Néel'
-                f['legends'][idx][icol]['label'].append('$\overline S_\mathrm{N}^\infty$')
-
-                f['legends'][idx][icol]['handle'].append(line2)
-                f['legends'][idx][icol]['title'] = 'RPS' if dbidx==0 else 'Néel'
-                f['legends'][idx][icol]['label'].append('$\overline S(p_\mathrm{N}^\infty)$')
+                # f['legends'][idx][icol]['handle'].append(line)
+                # f['legends'][idx][icol]['title'] = 'RPS' if dbidx==0 else 'Néel'
+                # f['legends'][idx][icol]['label'].append('$\overline S_\mathrm{N}^\infty$')
+                #
+                # f['legends'][idx][icol]['handle'].append(line2)
+                # f['legends'][idx][icol]['title'] = 'RPS' if dbidx==0 else 'Néel'
+                # f['legends'][idx][icol]['label'].append('$\overline S(p_\mathrm{N}^\infty)$')
 
 
                 if 'number' in meta['dsetname'] and meta.get('plotluitz') and legendrow is not None:
@@ -259,7 +385,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                                     f['legends2'][idx][icol]['handle'].append(line_ext)
                                     f['legends2'][idx][icol]['title'] = db['tex'][key]
                                     f['legends2'][idx][icol]['label'].append('')
-                if 'entanglement' in meta['dsetname'] and legendrow is not None:
+                if 'entanglement' in meta['dsetname'] and meta.get('plotluitz') and legendrow is not None:
                     # Plot Luitz's data
                     # Let's only do this for the largest system size (16)
                     # and only after the last plot, so that this legend entry is last

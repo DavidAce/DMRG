@@ -1,7 +1,7 @@
 import argparse
 
 
-def parse(algo, batches=None):
+def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
     if batches is not None:
         if not isinstance(batches, list):
             raise TypeError("batches must be a list")
@@ -66,7 +66,7 @@ def parse(algo, batches=None):
         'lbit90',  # 500 realizations u[16] f=[0.4], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
         'lbit91', # 20000 realizations u[16] f=[0.3], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time
         'lbit92', # 20000 realizations u[16] f=[0.2-0.5], L=[12,16] fixed many bugs and increased precision with __float128: Check L dependence in early time FAILED
-        'lbit93', # 80000 realizations u[16] f=[0.2-0.4], L=[12-24] fixed many bugs and increased precision with __float128:
+        'lbit93', # 200000 realizations u[16] f=[0.2-0.5], L=[12-28] fixed many bugs and increased precision with __float128:
         'lbit94', # 80000 realizations u[16] f=[0.2], L=[16] to test eps1e-8
         'lbit95',  # 80000 realizations u[16] f=[0.2], L=[16] to test eps1e-5 with the same seeds as lbit94
         'lbit96',  # filter bond_lim_2048 from lbit93
@@ -77,8 +77,15 @@ def parse(algo, batches=None):
         'lbit101',  # L16 u16 tgw8 expdecay with random product state init to check entanglement entropy distribution FINAL FULL SET OF SIMS
         'lbit103',  # L16 u16 tgw8 expdecay with neel init in the non-interacting limit
         'lbit104',  # L16 u16 tgw8 expdecay with two down one site from the middle (2d1)
-        'lbit106',  # L16 u16 tgw8 expdecay to check linspaced sampling
-
+        'lbit106',  # L12,L16 u16 tgw8 expdecay to check linspaced sampling, with neel initial state
+        'lbit107',  # L12,L16 u16 tgw8 expdecay to check linspaced sampling, with dislocated neel initial state
+        'lbit108',  # L16 u16 tgw8 r=1,2,3, expdecay, to check linspaced sampling with neel, for J2 range 1,2 and 3, with J3
+        'lbit109',  # L16 u16 tgw8 r=1,2,3,4, expdecay, to check linspaced sampling with neel, for J2 ranges, without J3
+        'lbit110',  # L16 u16 tgw8 r=2,3,4, expdecay, to check why there is a difference at small times
+        'lbit111',  # L16 u16 tgw8 r=2,3,4, expdecay, with low svd precision to check why there is a difference at small times
+        'lbit112',  # L16 u16 tgw8 , expdecay, with midchain singlet neel state to check if min/max SN evolves more symmetrically
+        'lbit113',  # L12-28 to calculate lbit stats for f0.2, u16 tgw8 expdecay
+        'lbit114',  # L16 to calculate the SN distribution without weights at f=0.06
     ]
     xdmrg_batches = ['data170',  #
                     ]
@@ -87,7 +94,7 @@ def parse(algo, batches=None):
 
     parser = argparse.ArgumentParser(description='dmrg-plot')
     parser.add_argument('--clear', action='store_true', help='Remake averaged.h5')
-    parser.add_argument('--basedir', type=str, help='Main directory for all mbl batch data', default='/mnt/WDB-AN1500/mbl_transition')
+    parser.add_argument('--basedir', type=str, help='Main directory for all mbl batch data', default=basedir)
     parser.add_argument('--algos', type=list, help='List of algorithms to plot data for', choices=['fLBIT', 'xDMRG'], default=[algo])
     parser.add_argument('--states', type=list, help='List of states to plot data for', default=['state_real'])
     parser.add_argument('--models', type=list, help='List of models to plot data for', default=['analysis', 'model'])
