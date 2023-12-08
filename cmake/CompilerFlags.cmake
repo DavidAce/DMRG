@@ -31,7 +31,7 @@ endif()
 
 # Settings for sanitizers
 if(COMPILER_ENABLE_ASAN)
-    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=address>) #-fno-omit-frame-pointer
+    target_compile_options(dmrg-flags INTERFACE $<$<COMPILE_LANGUAGE:CXX>:-fsanitize=address -fno-omit-frame-pointer>) #-fno-omit-frame-pointer
     target_link_libraries(dmrg-flags INTERFACE -fsanitize=address)
 endif()
 if(COMPILER_ENABLE_USAN)

@@ -92,18 +92,18 @@ else()
 endif()
 
 # Fix issue with Ceres linking to cuda
-find_package(CUDA) # Same call as when building Ceres
-if (CUDA_FOUND)
-    message("-- Found CUDA version ${CUDA_VERSION}: "
-            "${CUDA_LIBRARIES};"
-            "${CUDA_cusolver_LIBRARY};"
-            "${CUDA_cusparse_LIBRARY};"
-            "${CUDA_CUBLAS_LIBRARIES}"
-            )
-    target_link_libraries(dmrg-deps INTERFACE ${CUDA_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cusparse_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
-else ()
-    target_compile_definitions(dmrg-deps INTERFACE CERES_NO_CUDA)
-endif ()
+#find_package(CUDA) # Same call as when building Ceres
+#if (CUDA_FOUND)
+#    message("-- Found CUDA version ${CUDA_VERSION}: "
+#            "${CUDA_LIBRARIES};"
+#            "${CUDA_cusolver_LIBRARY};"
+#            "${CUDA_cusparse_LIBRARY};"
+#            "${CUDA_CUBLAS_LIBRARIES}"
+#            )
+#    target_link_libraries(dmrg-deps INTERFACE ${CUDA_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cusparse_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
+#else ()
+#    target_compile_definitions(dmrg-deps INTERFACE CERES_NO_CUDA)
+#endif ()
 
 
 ### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
