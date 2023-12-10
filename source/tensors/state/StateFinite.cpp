@@ -409,35 +409,37 @@ const Eigen::Tensor<StateFinite::Scalar, 2> &StateFinite::get_multisite_density_
     auto                     csites = num::range(sites.front(), sites.back() + 1); // Contiguous list of sites
 
     /*
-     *  -----|-----0
+     *  -----|-----2
      *  |    |
-     *  |    2
-     *  |    3
+     *  |    0
+     *  |    1
      *  |    |
-     *  -----|-----1
+     *  -----|-----3
      */
     for(auto &site : csites) {
         const auto &M    = get_mps_site(site).get_M();
+        auto        dL   = multisite_rho.dimension(0);
         auto        dR   = M.dimension(0);
         auto        chiR = M.dimension(2);
 
         bool contract_site = std::find(sites.begin(), sites.end(), site) == sites.end();
         if(contract_site) {
             if(&site == &csites.front()) { // First site
-                auto newdims = std::array<long, 4>{chiR, chiR, 1, 1};
-                temp         = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(newdims);
+                auto dim = std::array<long, 4>{1, 1, chiR, chiR};
+                temp     = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(dim);
             } else {
-                auto dL = multisite_rho.dimension(2);
-                auto newdims = std::array<long, 4>{chiR, chiR, dL, dL};
-                temp         = multisite_rho.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {0, 1})).reshape(newdims);
+                auto dL  = multisite_rho.dimension(0);
+                auto dim = std::array<long, 4>{dL, dL, chiR, chiR};
+                temp     = multisite_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2, 3}, {1, 0})).reshape(dim);
             }
-            multisite_rho = temp;
             //            temp = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
         } else {
             // The current site should be kept open
-            auto newdims = std::array<long, 4>{chiR, chiR, d0, d0};
-            temp         = multisite_rho.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {0, 1}));
+            auto           dim = std::array<long, 4>{dL * dR, dL * dR, chiR, chiR};
+            constexpr auto shf = std::array<long, 6>{0, 2, 1, 4, 3, 5};
+            temp               = multisite_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2}, {1})).shuffle(shf).reshape(dim);
         }
+        multisite_rho = temp;
     }
 }
 
