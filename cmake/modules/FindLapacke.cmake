@@ -172,10 +172,12 @@ function(find_Lapacke)
          # For this to work we install the lapack/lapacke reference implementation together
          # with flexiblas. This solution is inspired by the flexiblas easybuild config
          # We have to link link the manually installed lapacke with flexiblas (BLAS::BLAS)
+         # This also requires gfortran at the linking stage
         find_package(BLAS REQUIRED MODULE BYPASS_PROVIDER)
         find_package(LAPACK REQUIRED MODULE BYPASS_PROVIDER)
         find_package(lapacke REQUIRED BYPASS_PROVIDER) # From manual installation: gives a target "lapacke"
-        target_link_libraries(lapacke INTERFACE BLAS::BLAS LAPACK::LAPACK) # Link togeher
+        find_package(gfortran REQUIRED COMPONENTS quadmath BYPASS_PROVIDER)
+        target_link_libraries(lapacke INTERFACE BLAS::BLAS LAPACK::LAPACK gfortran::gfortran quadmath::quadmath) # Link togeher
     elseif(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
         set(ENABLE_BLAS95 ON)
         set(ENABLE_LAPACK95 ON)
@@ -222,7 +224,6 @@ function(find_Lapacke)
     endif()
 
 endfunction()
-
 find_Lapacke()
 if(TARGET lapacke::lapacke)
     set(LAPACKE_TARGET lapacke::lapacke)
