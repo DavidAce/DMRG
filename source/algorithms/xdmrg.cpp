@@ -254,7 +254,7 @@ void xdmrg::run_fes_analysis() {
     tools::log->info("Finished {} finite entanglement scaling of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(),
                      status.algo_stop_sv());
     // Reset our logger
-    tools::log            = tools::Logger::getLogger(status.algo_type_str());
+    tools::log            = tools::Logger::getLogger(fmt::format("{}",status.algo_type_sv()));
     status.fes_is_running = false;
 }
 

@@ -5,6 +5,7 @@
 #include <measure/MeasurementsStateFinite.h>
 #include <memory>
 #include <optional>
+#include <unordered_map>
 #include <unsupported/Eigen/CXX11/Tensor>
 
 /**
@@ -33,7 +34,9 @@ class StateFinite {
 
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 3>> multisite_mps = std::nullopt;
+        std::optional<Eigen::Tensor<Scalar, 3>>                   multisite_mps = std::nullopt;
+        std::unordered_map<std::string, Eigen::Tensor<Scalar, 4>> temporary_rho = {};
+
     };
 
     int                       direction = 1;
@@ -118,7 +121,7 @@ class StateFinite {
     std::vector<std::array<long, 3>> get_mps_dims_active() const;
     Eigen::Tensor<Scalar, 3>         get_multisite_mps(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3>  &get_multisite_mps() const;
-    const Eigen::Tensor<Scalar, 2>  &get_multisite_density_matrix(const std::vector<size_t> & sites) const;
+    const Eigen::Tensor<Scalar, 2>  get_multisite_density_matrix(const std::vector<size_t> &sites) const;
 
     public:
     void                set_truncation_error(size_t pos, double error);
@@ -133,13 +136,13 @@ class StateFinite {
     std::vector<double> get_truncation_errors_active() const;
     double              get_truncation_error_active_max() const;
 
-    size_t              num_sites_truncated(double truncation_threshold) const;
-    size_t              num_bonds_at_limit(long bond_lim) const;
-    bool                is_limited_by_bond(long bond_lim) const;
-    bool                is_truncated(double truncation_error_limit) const;
-    void                clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
-    void                clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
-    void                do_all_measurements() const;
+    size_t num_sites_truncated(double truncation_threshold) const;
+    size_t num_bonds_at_limit(long bond_lim) const;
+    bool   is_limited_by_bond(long bond_lim) const;
+    bool   is_truncated(double truncation_error_limit) const;
+    void   clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
+    void   clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
+    void   do_all_measurements() const;
 
     void                     tag_active_sites_normalized(bool tag) const;
     void                     tag_all_sites_normalized(bool tag) const;

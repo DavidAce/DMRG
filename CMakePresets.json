@@ -591,22 +591,22 @@
     },
     {
       "name": "debug-gcc-12-conan-mkl",
-      "jobs": 2,
+      "jobs": 8,
       "configurePreset": "debug-gcc-12-conan-mkl"
     },
     {
       "name": "debug-gcc-12-conan-openblas",
-      "jobs": 2,
+      "jobs": 8,
       "configurePreset": "debug-gcc-12-conan-openblas"
     },
     {
       "name": "debug-gcc-12-conan-flexiblas",
-      "jobs": 2,
+      "jobs": 8,
       "configurePreset": "debug-gcc-12-conan-flexiblas"
     },
     {
       "name": "debug-clang-15-conan-mkl",
-      "jobs": 2,
+      "jobs": 8,
       "configurePreset": "debug-clang-15-conan-mkl"
     },
     {

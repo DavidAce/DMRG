@@ -4,6 +4,7 @@
 #include "io/fmt.h"
 #include "math/eig.h"
 #include "math/float.h"
+#include "math/linalg/matrix.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/tenx.h"
@@ -51,12 +52,14 @@ void tools::finite::measure::do_all_measurements(const StateFinite &state) {
         state.measurements.number_entropies        = measure::number_entropies(state);
         state.measurements.expectation_values_sz   = measure::expectation_values(state, qm::spin::half::sz);
     }
-
     state.measurements.renyi_2         = measure::renyi_entropies(state, 2);
     state.measurements.renyi_3         = measure::renyi_entropies(state, 3);
     state.measurements.renyi_4         = measure::renyi_entropies(state, 4);
     state.measurements.renyi_inf       = measure::renyi_entropies(state, std::numeric_limits<double>::infinity());
     state.measurements.spin_components = measure::spin_components(state);
+    if(state.get_algorithm() == AlgorithmType::fDMRG) {
+        state.measurements.entanglement_entropies_subsystems = measure::entanglement_entropies_subsystems(state);
+    }
 }
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -191,6 +194,55 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
     if(entanglement_entropies.back() != 0.0) throw except::logic_error("Last entropy should be 0. Got: {:.16f}", entanglement_entropies.back());
     state.measurements.entanglement_entropies = entanglement_entropies;
     return state.measurements.entanglement_entropies.value();
+}
+
+Eigen::ArrayXXd tools::finite::measure::entanglement_entropies_subsystems(const StateFinite &state) {
+    if(state.measurements.entanglement_entropies_subsystems.has_value()) return state.measurements.entanglement_entropies_subsystems.value();
+    auto            t_ent  = tid::tic_scope("subsystem_entropies", tid::level::highest);
+    auto            len    = state.get_length<long>();
+    auto            bee    = measure::entanglement_entropies(state); // bipartite entanglement entropy
+    auto            solver = eig::solver();
+    Eigen::ArrayXXd ees    = Eigen::ArrayXXd::Zero(len, len); // entanglement entropy for sgements
+
+    for(long ext = 1; ext < len / 2 + 1; ++ext) {
+        for(long off = 0; off + ext <= len; ++off) {
+            // Check if the segment includes the edge, in which case
+            // we can simply take the bipartite entanglement entropy
+            bool is_left_edge  = off == 0;
+            bool is_right_edge = off + ext == len;
+            tools::log->info("Calculating subsystem entanglement entropy off {}, ext {}", off, ext);
+            if(is_left_edge) {
+                auto idx          = static_cast<size_t>(off + ext);
+                ees(ext - 1, off) = bee[idx];
+            } else if(is_right_edge) {
+                auto idx          = static_cast<size_t>(off);
+                ees(ext - 1, off) = bee[idx];
+            } else {
+                auto sites = num::range<size_t>(off, off + ext);
+                auto rho   = state.get_multisite_density_matrix(sites);
+                auto evs   = Eigen::ArrayXd();
+                if(tenx::isReal(rho)) {
+                    Eigen::Tensor<real, 2> rho_real = rho.real();
+                    tools::log->info("rho_real: \n{}", linalg::tensor::to_string(rho_real, 8, 10));
+                    solver.eig<eig::Form::SYMM>(rho_real.data(), rho_real.dimension(0), eig::Vecs::OFF);
+                    evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues of rho
+                } else {
+                    tools::log->info("rho: \n{}", linalg::tensor::to_string(rho, 8, 10));
+                    solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
+                    evs = eig::view::get_eigvals<cplx>(solver.result).real(); // Eigenvalues of rho
+                }
+                double s = 0;
+                for(const auto &e : evs) {
+                    if(e > 0) s += -e * std::log(e);
+                }
+                ees(ext - 1, off) = s; // -evs.cwiseProduct(evs.log()).sum();
+                tools::log->info("evs({},{}) = {}", ext - 1, off, linalg::matrix::to_string(evs, 8));
+                tools::log->info("ees({},{}) = {}", ext - 1, off, ees(ext - 1, off));
+            }
+        }
+    }
+    state.measurements.entanglement_entropies_subsystems = ees;
+    return state.measurements.entanglement_entropies_subsystems.value();
 }
 
 std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &state, double q) {
@@ -779,8 +831,8 @@ Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateF
     return expvals;
 }
 Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Matrix2cd &op) {
-            Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
-            return expectation_values(state, tensor_op);
+    Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
+    return expectation_values(state, tensor_op);
 }
 
 double tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1,

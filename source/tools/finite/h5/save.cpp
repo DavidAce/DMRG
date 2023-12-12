@@ -210,7 +210,33 @@ namespace tools::finite::h5 {
         auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
     }
-
+    void save::entropies_subsystems(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(sinfo.storage_level == StorageLevel::NONE) return;
+        if(sinfo.storage_event < StorageEvent::BOND_INCREASE) return;
+        if(not state.measurements.entanglement_entropies_subsystems)
+            state.measurements.entanglement_entropies_subsystems = tools::finite::measure::entanglement_entropies_subsystems(state);
+        auto t_hdf      = tid::tic_scope("entropies_subsystems", tid::level::higher);
+        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "entanglement_entropies_subsystem");
+        // Check if the current entry has already been appended
+        auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+        if(attrs == sinfo) return;
+        tools::log->trace("Appending to table: {}", table_path);
+        if(not attrs.link_exists) {
+            auto                 rows = static_cast<hsize_t>(state.measurements.entanglement_entropies_subsystems->rows());
+            auto                 cols = static_cast<hsize_t>(state.measurements.entanglement_entropies_subsystems->cols());
+            std::vector<hsize_t> dims = {rows, cols, 0};
+            std::vector<hsize_t> chnk = {rows, cols, 10};
+            h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
+            h5file.writeAttribute("size-1,offset,iter", table_path, "index");
+            h5file.writeAttribute("Entanglement entropies for subsystems", table_path, "description");
+        }
+        // Do not append if the iteration number is smaller than the dataset iter dimension
+        auto num_entries = h5file.getDatasetDimensions(table_path).back();
+        if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
+            h5file.appendToDataset(state.measurements.entanglement_entropies_subsystems.value(), table_path, 2);
+            tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
+        }
+    }
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(sinfo.algo_type != AlgorithmType::fLBIT) return;
         if(sinfo.storage_level == StorageLevel::NONE) return;
@@ -226,7 +252,7 @@ namespace tools::finite::h5 {
             auto                 rows = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(0));
             auto                 cols = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(1));
             std::vector<hsize_t> dims = {rows, cols, 0};
-            std::vector<hsize_t> chnk = {rows, cols, 50};
+            std::vector<hsize_t> chnk = {rows, cols, 10};
             h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
             h5file.writeAttribute("n_count, site, time", table_path, "index");
             h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", table_path, "description");
@@ -421,6 +447,7 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::bonds(h5file, sinfo, state);
         tools::finite::h5::save::truncation_errors(h5file, sinfo, state);
         tools::finite::h5::save::entropies_neumann(h5file, sinfo, state);
+        tools::finite::h5::save::entropies_subsystems(h5file, sinfo, state);
         tools::finite::h5::save::entropies_renyi(h5file, sinfo, state);
         tools::finite::h5::save::entropies_number(h5file, sinfo, state);
         tools::finite::h5::save::number_probabilities(h5file, sinfo, state);

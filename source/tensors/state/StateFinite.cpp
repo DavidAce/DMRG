@@ -400,14 +400,16 @@ const Eigen::Tensor<StateFinite::Scalar, 3> &StateFinite::get_multisite_mps() co
     return cache.multisite_mps.value();
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 2> &StateFinite::get_multisite_density_matrix(const std::vector<size_t> &sites) const {
+const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_multisite_density_matrix(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No sites on which to build a multisite density matrix");
     auto                     t_mps = tid::tic_scope("gen_rho", tid::level::highest);
     Eigen::Tensor<Scalar, 3> multisite_mps;
-    Eigen::Tensor<Scalar, 4> multisite_rho;
+    Eigen::Tensor<Scalar, 4> temporary_rho;
     Eigen::Tensor<Scalar, 4> temp;
-    auto                     csites = num::range(sites.front(), sites.back() + 1); // Contiguous list of sites
-
+    auto                     length = get_length<size_t>();
+    auto                     asites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
+    auto                     csites = std::vector<size_t>{};                               // Track sites that were contracted
+    auto                     osites = std::vector<size_t>{};                               // Track sites that were left open
     /*
      *  -----|-----2
      *  |    |
@@ -416,30 +418,77 @@ const Eigen::Tensor<StateFinite::Scalar, 2> &StateFinite::get_multisite_density_
      *  |    |
      *  -----|-----3
      */
-    for(auto &site : csites) {
-        const auto &M    = get_mps_site(site).get_M();
-        auto        dL   = multisite_rho.dimension(0);
+
+    for(auto &site : asites) {
+        const auto &mps  = get_mps_site(site);
+        auto        M    = mps.get_M(); // Can be an A, AC or a B site
+        auto        dL   = temporary_rho.dimension(0);
         auto        dR   = M.dimension(0);
         auto        chiR = M.dimension(2);
 
-        bool contract_site = std::find(sites.begin(), sites.end(), site) == sites.end();
-        if(contract_site) {
-            if(&site == &csites.front()) { // First site
-                auto dim = std::array<long, 4>{1, 1, chiR, chiR};
-                temp     = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(dim);
-            } else {
-                auto dL  = multisite_rho.dimension(0);
-                auto dim = std::array<long, 4>{dL, dL, chiR, chiR};
-                temp     = multisite_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2, 3}, {1, 0})).reshape(dim);
-            }
-            //            temp = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
-        } else {
-            // The current site should be kept open
-            auto           dim = std::array<long, 4>{dL * dR, dL * dR, chiR, chiR};
-            constexpr auto shf = std::array<long, 6>{0, 2, 1, 4, 3, 5};
-            temp               = multisite_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2}, {1})).shuffle(shf).reshape(dim);
+        if(mps.get_label() == "B" and site > 0 and site == sites.front()) {
+            // Before building the rho, we may need to prepend a lambda if the first site is a "B" matrix.
+            const auto &mps_left                  = get_mps_site(site - 1);
+            const auto &L                         = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
+            auto        LB                        = Eigen::Tensor<Scalar, 3>(M.dimensions());
+            LB.device(tenx::threads::getDevice()) = tenx::asDiagonal(L).contract(M, tenx::idx({1}, {1})).shuffle(std::array<long, 3>{1, 0, 2});
+            M                                     = LB;
         }
-        multisite_rho = temp;
+
+        bool contract_site = std::find(sites.begin(), sites.end(), site) == sites.end();
+        if(contract_site) csites.emplace_back(site);
+        if(!contract_site) osites.emplace_back(site);
+        auto rho_key = fmt::format("{}|{}", csites, osites);
+        if(cache.temporary_rho.find(rho_key) != cache.temporary_rho.end()) {
+            tools::log->info("-- cache hit: {} - site {}", rho_key, site);
+            temporary_rho = cache.temporary_rho.at(rho_key);
+        } else {
+            if(contract_site) {
+                tools::log->info("-- contract : {} - site {}", rho_key, site);
+                if(&site == &asites.front()) { // First site
+                    auto dim = std::array<long, 4>{1, 1, chiR, chiR};
+                    temp = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(dim);
+                } else {
+                    auto dim = std::array<long, 4>{dL, dL, chiR, chiR};
+                    temp.resize(dim);
+                    temp.device(tenx::threads::getDevice()) =
+                        temporary_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2, 3}, {1, 0})).reshape(dim);
+                }
+                //            temp = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
+            } else {
+                tools::log->info("-- add site : {} - site {}", rho_key, site);
+
+                // The current site should be kept open
+                if(&site == &asites.front()) { // First site
+                    auto dim = std::array<long, 4>{dR, dR, chiR, chiR};
+                    auto shf = std::array<long, 4>{0, 2, 1, 3};
+                    temp.resize(dim);
+                    temp.device(tenx::threads::getDevice()) = M.contract(M.conjugate(), tenx::idx({1}, {1})).shuffle(shf);
+                } else {
+                    auto           dim = std::array<long, 4>{dL * dR, dL * dR, chiR, chiR};
+                    constexpr auto shf = std::array<long, 6>{0, 2, 1, 4, 3, 5};
+                    temp.resize(dim);
+                    temp.device(tenx::threads::getDevice()) =
+                        temporary_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2}, {1})).shuffle(shf).reshape(dim);
+                }
+            }
+            temporary_rho                = temp;
+            cache.temporary_rho[rho_key] = temporary_rho;
+        }
+    }
+
+    const auto &mps = get_mps_site(sites.back());
+    if(mps.get_label() == "A" and sites.back() < length - 1) {
+        // Before closing off the rho, we may need to append a lambda if the last site was an "A" matrix.
+        // In this case we can simply contract the squared lambda matrix instead of tracing.
+        const auto &mps_right = get_mps_site(sites.back() + 1);
+        const auto &L         = mps_right.get_L();
+        auto        rho       = Eigen::Tensor<Scalar, 2>();
+        rho.resize(temporary_rho.dimension(0), temporary_rho.dimension(1));
+        rho.device(tenx::threads::getDevice()) = temporary_rho.contract(tenx::asDiagonal(L.square()), tenx::idx({2, 3}, {0, 1}));
+        return rho;
+    } else {
+        return temporary_rho.trace(std::array<long, 2>{2, 3});
     }
 }
 

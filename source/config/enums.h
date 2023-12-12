@@ -205,10 +205,57 @@ inline bool have_common(E1 lhs, E2 rhs) {
     return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
 }
 
+namespace enum_sfinae {
+    template<class T, class... Ts>
+    struct is_any : std::disjunction<std::is_same<T, Ts>...> {};
+    template<class T, class... Ts>
+    inline constexpr bool is_any_v = is_any<T, Ts...>::value;
+}
+
 template<typename T>
 constexpr std::string_view enum2sv(const T item) noexcept {
-    static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
     /* clang-format off */
+    static_assert(std::is_enum_v<T> and "enum2sv<T>: T must be an enum");
+    static_assert(enum_sfinae::is_any_v<T,
+        AlgorithmType,
+        AlgorithmStop,
+        MeanType,
+        MultisiteMove,
+        MultisiteWhen,
+        SVDLibrary,
+        UpdateWhen,
+        GateMove,
+        GateOp,
+        CircOp,
+        UnitaryGateWeight,
+        ModelType,
+        EdgeStatus,
+        TimeScale,
+        StorageLevel,
+        StorageEvent,
+        CopyPolicy,
+        ResetReason,
+        NormPolicy,
+        FileCollisionPolicy,
+        FileResumePolicy,
+        LogPolicy,
+        RandomizerMode,
+        OptType,
+        OptMode,
+        OptSolver,
+        OptRitz,
+        OptWhen,
+        OptExit,
+        OptMark,
+        OptInit,
+        OptEigs,
+        StateInitType,
+        StateInit,
+        fdmrg_task,
+        xdmrg_task,
+        flbit_task>);
+
+
     if constexpr(std::is_same_v<T, AlgorithmType>) switch(item) {
         case AlgorithmType::iDMRG:                                      return "iDMRG";
         case AlgorithmType::fDMRG:                                      return "fDMRG";
@@ -478,6 +525,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptExit::FAIL_ERROR)                                return "FAIL_ERROR";
         if(item == OptExit::NONE)                                      return "NONE";
     }
+    return "UNRECOGNIZED ENUM";
 }
 
 template<typename T>
@@ -518,13 +566,6 @@ std::string flag2str(const T &item) {
                             [](const std::string &ss, const std::string &s)
                             {return ss.empty() ? s : ss + "|" + s;});
 
-}
-
-namespace enum_sfinae{
-template<class T, class... Ts>
-struct is_any : std::disjunction<std::is_same<T, Ts>...> {};
-template<class T, class... Ts>
-inline constexpr bool is_any_v = is_any<T, Ts...>::value;
 }
 
 
@@ -866,3 +907,4 @@ constexpr auto mapEnum2Str(Args... enums) {
 }
 
 // inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::ising_majorana, ModelType::lbit);
+//  inline auto ModelType_s2e = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::ising_majorana, ModelType::lbit);

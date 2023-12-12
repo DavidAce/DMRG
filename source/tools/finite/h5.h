@@ -59,6 +59,7 @@ namespace tools::finite::h5 {
         extern void schmidt_values      (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void truncation_errors   (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void entropies_neumann   (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
+        extern void entropies_subsystems  (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void entropies_renyi     (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void entropies_number    (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);
         extern void expectations        (h5pp::File & h5file, const StorageInfo & sinfo, const StateFinite & state);

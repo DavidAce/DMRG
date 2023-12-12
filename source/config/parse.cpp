@@ -106,7 +106,7 @@ int settings::parse(int argc, char **argv) {
 
     auto s2e_log     = mapStr2Enum<spdlog::level::level_enum>("trace", "debug", "info");
     auto s2e_logh5pp = mapStr2Enum<h5pp::LogLevel>("trace", "debug", "info");
-    auto s2e_model   = ModelType_s2e;
+    auto s2e_model   = mapEnum2Str<ModelType>(ModelType::ising_tf_rf, ModelType::ising_sdual, ModelType::ising_majorana, ModelType::lbit);
     int  dummy       = 0;
 
     auto preload = [&argc, &argv, &s2e_log]() -> int {
