@@ -475,6 +475,17 @@ def get_batch_setup(projectname):
                     'time_steps': 0,
                 },
             }
+        },
+        'lbit115-xi': {
+            # Calculate lbit93 at xi=0.5 and 2.0 to see how the slope of SE is affected
+            'projectname': 'lbit115-xi',
+            'batch': {
+                'L16': {
+                    'seed_extent': [1000],
+                    'seed_offset': [16200000],
+                    'time_steps': 200,
+                },
+            }
         }
     }
 
