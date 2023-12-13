@@ -211,6 +211,7 @@ namespace tools::finite::h5 {
         data_as_table(h5file, sinfo, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
     }
     void save::entropies_subsystems(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(state.get_algorithm() != AlgorithmType::fDMRG) return;
         if(sinfo.storage_level == StorageLevel::NONE) return;
         if(sinfo.storage_event < StorageEvent::BOND_INCREASE) return;
         if(not state.measurements.entanglement_entropies_subsystems)
