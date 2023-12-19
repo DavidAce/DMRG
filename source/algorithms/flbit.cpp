@@ -811,6 +811,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto                usites = std::vector<size_t>{settings::model::model_size};
             auto                utgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_tgw8};
             auto                ucgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_cgw8};
+            auto                utypes = std::vector<UnitaryGateType>{settings::model::lbit::u_type};
             auto                udpths = std::vector<size_t>{settings::model::lbit::u_depth};
             auto                ufmixs = std::vector<double>{settings::model::lbit::u_fmix};
             auto                utstds = std::vector<double>{settings::model::lbit::u_tstd};
@@ -866,6 +867,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute(ucstds, "/fLBIT/model/lbits", "u_cstd");
                 h5file->writeAttribute(enum2sv(utgw8s), "/fLBIT/model/lbits", "u_tgw8");
                 h5file->writeAttribute(enum2sv(ucgw8s), "/fLBIT/model/lbits", "u_cgw8");
+                h5file->writeAttribute(enum2sv(utypes), "/fLBIT/model/lbits", "u_type");
                 h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
                 h5file->writeAttribute(randhf, "/fLBIT/model/lbits", "randomize_hfields");
                 h5file->writeAttribute(settings::flbit::cls::mpo_circuit_svd_bondlim, "/fLBIT/model/lbits", "u_bond");

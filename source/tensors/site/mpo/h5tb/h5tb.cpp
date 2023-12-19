@@ -199,6 +199,11 @@ h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_w8() {
     return enum_w8;
 }
 
+h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_ut() {
+    create_enum_ut();
+    return enum_ut;
+}
+
 void h5tb_lbit::create_enum_w8() {
     if(enum_w8.valid()) return;
     enum_w8 = H5Tenum_create(H5T_NATIVE_INT);
@@ -206,10 +211,21 @@ void h5tb_lbit::create_enum_w8() {
     H5Tenum_insert(enum_w8, "IDENTITY", (val = static_cast<int>(UnitaryGateWeight::IDENTITY), &val));
     H5Tenum_insert(enum_w8, "EXPDECAY", (val = static_cast<int>(UnitaryGateWeight::EXPDECAY), &val));
 }
-
+void h5tb_lbit::create_enum_ut() {
+    if(enum_ut.valid()) return;
+    enum_ut = H5Tenum_create(H5T_NATIVE_INT);
+    int val;
+    H5Tenum_insert(enum_ut, "ANDERSON", (val = static_cast<int>(UnitaryGateType::ANDERSON), &val));
+    H5Tenum_insert(enum_ut, "MBL", (val = static_cast<int>(UnitaryGateType::MBL), &val));
+}
 void h5tb_lbit::commit_enum_w8(const h5pp::hid::h5f &file_id) {
     if(H5Tcommitted(get_h5t_enum_w8()) > 0) return;
     herr_t err = H5Tcommit(file_id, "UnitaryGateWeight", get_h5t_enum_w8(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
+}
+void h5tb_lbit::commit_enum_ut(const h5pp::hid::h5f &file_id) {
+    if(H5Tcommitted(get_h5t_enum_ut()) > 0) return;
+    herr_t err = H5Tcommit(file_id, "UnitaryGateType", get_h5t_enum_ut(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
 }
 void h5tb_lbit::register_table_type() const {
@@ -235,6 +251,7 @@ void h5tb_lbit::register_table_type() const {
     H5Tinsert(h5_type, "u_cstd", HOFFSET(table, u_cstd), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "u_tgw8", HOFFSET(table, u_tgw8), get_h5t_enum_w8());
     H5Tinsert(h5_type, "u_cgw8", HOFFSET(table, u_cgw8), get_h5t_enum_w8());
+    H5Tinsert(h5_type, "u_type", HOFFSET(table, u_type), get_h5t_enum_ut());
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
@@ -270,6 +287,7 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
         if(p == "u_cstd")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_cstd);
         if(p == "u_tgw8")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_tgw8));
         if(p == "u_cgw8")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_cgw8));
+        if(p == "u_type")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_type));
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
         if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.distribution);
     /* clang-format on */

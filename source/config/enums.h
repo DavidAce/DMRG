@@ -18,6 +18,7 @@ enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
 enum class CircOp { NONE, ADJ, TRN };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
+enum class UnitaryGateType { ANDERSON, MBL };
 enum class UnitaryGateWeight { IDENTITY, EXPDECAY };
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
@@ -227,6 +228,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         GateMove,
         GateOp,
         CircOp,
+        UnitaryGateType,
         UnitaryGateWeight,
         ModelType,
         EdgeStatus,
@@ -310,6 +312,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == CircOp::NONE)                                       return "NONE";
         if(item == CircOp::ADJ)                                        return "ADJ";
         if(item == CircOp::TRN)                                        return "TRN";
+    }
+    if constexpr(std::is_same_v<T, UnitaryGateType>) {
+        if(item == UnitaryGateType::ANDERSON)                         return "ANDERSON";
+        if(item == UnitaryGateType::MBL)                              return "MBL";
     }
     if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
         if(item == UnitaryGateWeight::IDENTITY)                         return "IDENTITY";
@@ -583,6 +589,7 @@ constexpr auto sv2enum(std::string_view item) {
         GateMove,
         GateOp,
         CircOp,
+        UnitaryGateType,
         UnitaryGateWeight,
         ModelType,
         EdgeStatus,
@@ -665,6 +672,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "NONE")                                  return CircOp::NONE;
         if(item == "ADJ")                                   return CircOp::ADJ;
         if(item == "TRN")                                   return CircOp::TRN;
+    }
+    if constexpr(std::is_same_v<T, UnitaryGateType>) {
+        if(item == "ANDERSON")                              return UnitaryGateType::ANDERSON;
+        if(item == "MBL")                                   return UnitaryGateType::MBL;
     }
     if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
         if(item == "IDENTITY")                              return UnitaryGateWeight::IDENTITY;

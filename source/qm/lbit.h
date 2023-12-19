@@ -8,6 +8,7 @@
 #include <vector>
 
 enum class UnitaryGateWeight;
+enum class UnitaryGateType;
 enum class MeanType;
 class StateFinite;
 
@@ -20,6 +21,7 @@ namespace qm::lbit {
         double                                     cstd;    /*!< Standard deviation for the c parameters in the unitary gate  */
         UnitaryGateWeight                          tgw8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
         UnitaryGateWeight                          cgw8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
+        UnitaryGateType                            type;    /*!< Choose ANDERSON|MBL */
         double                                     hmean;   /*!< mean of random onsite fields */
         double                                     hwdth;   /*!< width of random onsite fields (st.dev. if normal) */
         std::string_view                           hdist;   /*!< distribution of onsite fields */
@@ -32,17 +34,17 @@ namespace qm::lbit {
     };
 
     struct lbitSupportAnalysis {
-        Eigen::Tensor<real, 6> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
-        Eigen::Tensor<real, 6> cls_avg_rms; // Root mean squared deviation
-        Eigen::Tensor<real, 6> cls_avg_rsq; // R-squared or coefficient of determination
-        Eigen::Tensor<real, 6> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
-        Eigen::Tensor<real, 6> cls_typ_rms; // Root mean squared deviation
-        Eigen::Tensor<real, 6> cls_typ_rsq; // R-squared or coefficient of determination
-        Eigen::Tensor<real, 7> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
-        Eigen::Tensor<real, 7> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
-        Eigen::Tensor<real, 7> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<real, 9> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
-        Eigen::Tensor<real, 9> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
+        Eigen::Tensor<real, 7> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 7> cls_avg_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 7> cls_avg_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 7> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 7> cls_typ_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 7> cls_typ_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 8> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
+        Eigen::Tensor<real, 8> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
+        Eigen::Tensor<real, 8> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<real, 10> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
+        Eigen::Tensor<real, 10> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
         lbitSupportAnalysis() {
             cls_avg_fit.setZero();
             cls_avg_rms.setZero();
@@ -56,7 +58,7 @@ namespace qm::lbit {
             corrmat.setZero();
             corroff.setZero();
         }
-        lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ntgw8, size_t ncgw8, size_t nreps, size_t nsize)
+        lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ntgw8, size_t ncgw8, size_t ntype, size_t nreps, size_t nsize)
             : lbitSupportAnalysis() {
             auto idpth = static_cast<Eigen::Index>(ndpth);
             auto ifmix = static_cast<Eigen::Index>(nfmix);
@@ -64,19 +66,20 @@ namespace qm::lbit {
             auto icstd = static_cast<Eigen::Index>(ncstd);
             auto itgw8 = static_cast<Eigen::Index>(ntgw8);
             auto icgw8 = static_cast<Eigen::Index>(ncgw8);
+            auto itype = static_cast<Eigen::Index>(ntype);
             auto ireps = static_cast<Eigen::Index>(nreps);
             auto isize = static_cast<Eigen::Index>(nsize);
-            cls_avg_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            cls_avg_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            cls_avg_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            cls_typ_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            cls_typ_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            cls_typ_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8);
-            corravg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
-            corrtyp.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
-            correrr.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, isize);
-            corrmat.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
-            corroff.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, ireps, isize, isize);
+            cls_avg_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
+            cls_avg_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
+            cls_avg_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
+            cls_typ_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
+            cls_typ_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
+            cls_typ_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
+            corravg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, isize);
+            corrtyp.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, isize);
+            correrr.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, isize);
+            corrmat.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, ireps, isize, isize);
+            corroff.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, ireps, isize, isize);
         }
     };
 
@@ -129,7 +132,9 @@ namespace qm::lbit {
                                                                   std::vector<double          >    utstds = {},
                                                                   std::vector<double          >    ucstds = {},
                                                                   std::vector<UnitaryGateWeight >  utgw8s = {},
-                                                                  std::vector<UnitaryGateWeight >  ucgw8s = {});
+                                                                  std::vector<UnitaryGateWeight >  ucgw8s = {},
+                                                                  std::vector<UnitaryGateType   >  utypes = {}
+                                                                );
 
     /* clang-format on */
 }

@@ -84,9 +84,9 @@ class h5tb_ising_tf_rf : public h5tb_base {
 class h5tb_lbit : public h5tb_base {
     public:
     struct table {
-        using vlen_type                         = h5pp::varr_t<h5pp::fstr_t<64>>;
-        h5pp::fstr_t<64>               J1_rand  = {}; /*!< On-site interaction */
-        h5pp::varr_t<h5pp::fstr_t<64>> J2_rand; /*!< Two-body interaction */
+        using vlen_type                        = h5pp::varr_t<h5pp::fstr_t<64>>;
+        h5pp::fstr_t<64>               J1_rand = {};  /*!< On-site interaction */
+        h5pp::varr_t<h5pp::fstr_t<64>> J2_rand;       /*!< Two-body interaction */
         h5pp::fstr_t<64>               J3_rand  = {}; /*!< Three-body interaction */
         double                         J1_mean  = 0;  /*!< Constant offset for on-site */
         double                         J2_mean  = 0;  /*!< Constant offset for two-body interaction */
@@ -103,6 +103,7 @@ class h5tb_lbit : public h5tb_base {
         double                         u_cstd   = 0;  /*!< Standard deviation for c-factors in the unitary gates */
         UnitaryGateWeight              u_tgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of thetas in unitary gates */
         UnitaryGateWeight              u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
+        UnitaryGateType                u_type   = UnitaryGateType::MBL;        /*!< Weights on the distribution of cterms in unitary gates */
         long                           spin_dim = 2;                           /*!< Spin dimension */
         h5pp::fstr_t<16>               distribution; /*!< The random number distribution. Choose between lognormal, normal or uniform */
     };
@@ -113,9 +114,13 @@ class h5tb_lbit : public h5tb_base {
     [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
 
     static h5pp::hid::h5t &get_h5t_enum_w8();
+    static h5pp::hid::h5t &get_h5t_enum_ut();
     static void            create_enum_w8();
+    static void            create_enum_ut();
     static void            commit_enum_w8(const h5pp::hid::h5f &file_id);
+    static void            commit_enum_ut(const h5pp::hid::h5f &file_id);
 
     private:
     static inline h5pp::hid::h5t enum_w8;
+    static inline h5pp::hid::h5t enum_ut;
 };

@@ -234,6 +234,7 @@ namespace settings {
             inline double            u_cstd        = 1.0;                         /*!< The standard deviation for the distribution of c-terms in the unitary gates */
             inline UnitaryGateWeight u_tgw8        = UnitaryGateWeight::IDENTITY; /*!< Weights for the c-terms in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite fields */
             inline UnitaryGateWeight u_cgw8        = UnitaryGateWeight::EXPDECAY; /*!< Weights for the theta's in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]), h are onsite fields */
+            inline UnitaryGateType   u_type        = UnitaryGateType::MBL;        /*!< Choose the gate type MBL|ANDERSON */
         }
     }
 
