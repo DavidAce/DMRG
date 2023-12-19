@@ -486,6 +486,17 @@ def get_batch_setup(projectname):
                     'time_steps': 200,
                 },
             }
+        },
+        'lbit116-anderson': {
+            # Calculate lbit93 at with the anderson unitary circuit to see how SN is affected
+            'projectname': 'lbit116-anderson',
+            'batch': {
+                'L16': {
+                    'seed_extent': [1000],
+                    'seed_offset': [16200000],
+                    'time_steps': 200,
+                },
+            }
         }
     }
 
