@@ -8,6 +8,12 @@ import matplotlib.patheffects as pe
 
 logger = logging.getLogger('plot-lbit')
 
+def format_err(val, err, min_decimals=None):
+    err_exponent =  np.floor(np.log10(err))
+    num_decimals =  int(np.abs(err_exponent))
+    if min_decimals is not None:
+        num_decimals = min_decimals
+    return f'{val:.{num_decimals}f}({err*10**num_decimals:1.0f})'
 
 def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filter=None, state_filter=None, figs=None,
                                  palette_name=None,dbidx=0,dbnum=1):
@@ -129,12 +135,14 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                                     iuse += 1
                                 if 'xi' in meta['legendfits']:
                                     f['legends'][idx][icol + iuse]['handle'].append(line)
-                                    f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.xi))
+                                    f['legends'][idx][icol + iuse]['label'].append(format_err(fit.xi, fit.xierr, 2))
+                                    # f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.xi))
                                     f['legends'][idx][icol + iuse]['title'] = '$\\xi_\\tau$'
                                     iuse += 1
                                 if 'beta' in meta['legendfits'] and np.isfinite(fit.beta):
                                     f['legends'][idx][icol + iuse]['handle'].append(line)
-                                    f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.beta))
+                                    f['legends'][idx][icol + iuse]['label'].append(format_err(fit.beta, fit.betaerr, 2))
+                                    # f['legends'][idx][icol + iuse]['label'].append('{:.2f}'.format(fit.beta))
                                     f['legends'][idx][icol + iuse]['title'] = '$\\beta$'
 
             if not idx in f['axes_used']:
@@ -144,7 +152,7 @@ def plot_v3_lbit_fig3_sub3_line1(db, meta, figspec, subspec, linspec, algo_filte
                 ax.set_title(subspec_title,horizontalalignment='left', x=0.05,fontstretch="ultra-condensed")
 
         if figspec_title := get_figspec_title(meta,dbval,figspec):
-            f['fig'].suptitle(figspec_title)
+            f['fig'].suptitle(figspec_title, y=0.66, x=0.85)
 
         f['filename'] = "{}/{}_fig({})_sub({})".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),

@@ -154,7 +154,7 @@ figure.subplot.hspace   : 0.0    # the amount of height reserved for space betwe
 #figure.constrained_layout.w_pad:  0   # inches. Default is 3/72 inches (3 points)
 #figure.constrained_layout.hspace: 0   # Space between subplot groups. Float representing
 #figure.constrained_layout.wspace: 0   # a fraction of the subplot widths being separated.
-
+figure.titlesize : small
 
 
 

@@ -37,17 +37,17 @@ def get_meta(plotdir, cachedir):
     # A figure spanning two-columns has 179.24548 mm = 7.05687 inches of width space
     # For a 2x3 grid, the easiest is to divide the width 7.05687/3 for each figure
     # figsize1x1_halfcol = 2.35229, 3.404 * 0.450, # Third-size for spanning a two-column document  with 3 figures
-    figsize1x1_halfcol = 2.26926, 3.404 * 0.440, # Third-size for spanning a two-column document  with 3 figures
+    figsize1x1_halfcol = 3.404 * 0.52, 3.404 * 0.5, # Third-size for spanning a two-column document  with 3 figures
     subplots1x1 = {
         'top': 0.997,
         'bottom': 0.17,
-        'left': 0.180,
+        'left': 0.210,
         'right': 0.997,
         'wspace': 0,
         'hspace': 0,
     }
     default = {
-        'box_aspect': 2.0/3,
+        'box_aspect': 1,
         'subspec_title': False,
         'figspec_title': False,
         'legendoutside': False,
@@ -63,12 +63,12 @@ def get_meta(plotdir, cachedir):
         'top': 1.0,
         'bottom': 0.15,
         'left': 0.02,#0.17,#0.02,
-        'right': 0.72,#1.0,
+        'right': 0.755,#1.0,
         'wspace': 0,
         'hspace': 0,
     }
     default_halfheight = {
-        'box_aspect': 0.95,#0.86 0#0.46,
+        'box_aspect': 0.86,#0.46,
         'figsize': (3.404 * 5.0/9, 3.404*0.25),
         'subspec_title': False,
         'figspec_title': False,
@@ -97,24 +97,7 @@ def get_meta(plotdir, cachedir):
         'subplots': subplots_inset,
         'font.size': 7.0,
     }
-    default_square = {
-        'box_aspect': 1,
-        'subspec_title': False,
-        'figspec_title': False,
-        'legendoutside': False,
-        'legendcollect': False,
-        'constrained_layout': False,
-        'axtitle': False,
-        'figsize': (3.404 * 0.45, 3.404*0.55),
-        'subplots': {
-            'top': 0.84,
-            'bottom': 0,
-            'left': 0.30,
-            'right': 0.99,
-            },
-        'cachedir': Path(cachedir),
-        'plotdir': Path(plotdir, Path(mplstyle).stem),
-    }
+
 
     meta = {
         'common': {
@@ -143,12 +126,12 @@ def get_meta(plotdir, cachedir):
                 # 'x': ['x_0.5000', 'x_1.0000'],
                 # 'f': ['f_0.0125', 'f_0.0250', 'f_0.0500','f_0.0750'],
                 # 'f': ['f_0.1000', 'f_0.1250', 'f_0.1500','f_0.1750','f_0.2000'],
-                'f': [0.2],
-                # 'f': [0.4],
+                # 'f': [0.2],
+                'f': [0.2, 0.4],
                 # 'f': [0.2, 0.4],
                 # 'f': [0.2, 0.3, 0.4],
+                # 'L': [12, 16, 20, 24, 28],
                 'L': [12, 16, 20, 24, 28],
-                # 'L': [12, 16, 20, 24, 28, 32],
                 # 'L': [20],
                 # 'L': [20],
                 # 'f': ['f_0.1500', 'f_0.2500', 'f_0.3000'],
@@ -159,18 +142,12 @@ def get_meta(plotdir, cachedir):
                 # 'u': ['u_5', 'u_6'],
                 # 'u': [32],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
-                'tgw8': ['ID'],
+                'tgw8': ['EX'],
                 'cgw8': ['EX'],
                 # 'u': [8,16,24,32,40,48,56,64],
                 # 'u': [8, 16, 32, 64, 80],
                 # 'ubond': [256],
             },
-            # 'include_v3': {
-            #     'f': [0.05, 0.1, 0.2, 0.4],
-            #     'L': [28],
-            #     'tgw8': ['ID'],
-            #     'cgw8': ['EX'],
-            # },
             'cachedir': Path(cachedir),
             'plotdir': Path(plotdir, Path(mplstyle).stem),
         },
@@ -233,9 +210,8 @@ def get_meta(plotdir, cachedir):
             'xlabel': '$t$',
             'xscale': 'log',
             'xticks': [1e1, 1e4, 1e7, 1e10, 1e13],
-            'yticks': [0, 0.5, 1.0, 1.5],
             'shadowoffset':(-0.35, -0.35),
-            'yformat': '%.2f',
+            # 'yformat': '%.2f',
             # 'yscale': 'log',
             # 'xticks': [1e0,1e2,1e4],
             # 'xmaloc': LogLocator(base=10, numticks=5, numdecs=7),
@@ -261,7 +237,7 @@ def get_meta(plotdir, cachedir):
             'timeselection': 'lnt',
             'timenormalization': '',
             'mplstyle': mplstyle,
-            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': [],  # Choose 'num', 'bmax','tsim'
 
             # 'legendlocation': (0.55, 0.44),
             'legendlocation': 'upper right',
@@ -675,14 +651,14 @@ def get_meta(plotdir, cachedir):
             'bbox_to_anchor': [(-0.05, 1.05), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
 
         },
-        'num-lnlnt': {
+        'num-lnlnt-f0.2': {
             'default': default,
             'groupname': 'measurements',
             'colname': 'number_entropy',
             'normpage': False,
             # 'titlename': 'Number Entropy',
             'filter': {
-                # 'f': [0.3,0.5],
+                'f': [0.2],
                 # 'u': [16],
             },
             'ylabel': '$\overline S_\mathrm{N}$',
@@ -694,6 +670,7 @@ def get_meta(plotdir, cachedir):
             'sharex': 'all',
             'sharey': 'none',
             'xticks': [-1, 0, 1, 2, 3],
+            'yticks': [0.130, 0.140, 0.150],
             'ytickparams': {
                 'axis': 'y',
                 'direction': 'in',
@@ -701,16 +678,16 @@ def get_meta(plotdir, cachedir):
             },
 
             'ylabel_inner_visible': False,
-            'ymin': 0.206,
-            'ymax': 0.237,
+            'ymin': 0.128,
+            'ymax': 0.153,
             'xmin': -1.75,
             'xmax': 3.5,
             'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
             'markerlist': ['growth-begin', 'num-saturated', 'ent-saturated'],
             'marklogwindow': True,
             'marksaturation': True,
-            'findloglogwindow': True,
-            'markloglogwindow': True,
+            'findloglogwindow': False,
+            'markloglogwindow': False,
             'markloglogoffset': 0.008,
             'fitloglogwindow': False,
             'fillerror': False,
@@ -722,9 +699,63 @@ def get_meta(plotdir, cachedir):
             'legendcollect': False,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper left', 'center right', 'upper left', 'center right'],
-            'bbox_to_anchor': [(-0.05, 1.05), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
+            'bbox_to_anchor': [(0.65, 0.75), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
+
+        },
+        'num-lnlnt-f0.4': {
+            'default': default,
+            'groupname': 'measurements',
+            'colname': 'number_entropy',
+            'normpage': False,
+            # 'titlename': 'Number Entropy',
+            'filter': {
+                'f': [0.4],
+                # 'u': [16],
+            },
+            'ylabel': '$\overline S_\mathrm{N}$',
+            'xlabel': '$\ln\ln t$',
+            'yformat': '%.2f',
+            # 'yscale': 'log',
+            'plotprefix': 'SN',
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
+            'sharex': 'all',
+            'sharey': 'none',
+            'xticks': [-1, 0, 1, 2, 3],
+            'yticks': [0.230, 0.240, 0.25],
+            'ytickparams': {
+                'axis': 'y',
+                'direction': 'in',
+                'pad': -22,
+            },
+            'ylabel_inner_visible': False,
+            # 'ymin': 0.128,
+            # 'ymax': 0.153,
+            'ymin': 0.230,
+            'ymax': 0.260,
+            'xmin': -1.75,
+            'xmax': 3.5,
+            'findsaturation': True,  # Instead of taking the last value, take the average of the plateau
+            'markerlist': ['growth-begin', 'num-saturated', 'ent-saturated'],
+            'marklogwindow': True,
+            'marksaturation': True,
+            'findloglogwindow': False,
+            'markloglogwindow': False,
+            'markloglogoffset': 0.008,
+            'fitloglogwindow': False,
+            'fillerror': False,
+            'markerror': False,
+            'timeselection': 'lnlnt',
+            'mplstyle': mplstyle,
+            'legendshow': True,
+            'legendoutside': False,
+            'legendcollect': False,
+            # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
+            # 'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendlocation': ['upper left', 'center right', 'upper left', 'center right'],
+            'bbox_to_anchor': [(0.65, 0.75), (1.05, 0.55), (-0.05, 1.05), (1.05, 0.55)],  # Use with loc 'upper right'
 
         },
         'num2-med': {
@@ -734,7 +765,7 @@ def get_meta(plotdir, cachedir):
             'normpage': False,
             # 'titlename': 'Number Entropy',
             'filter': {
-                # 'f': [0.3,0.5],
+                'f': [0.4],
                 # 'u': [16],
             },
             'xlabel': '$\ln\ln t$',
@@ -758,7 +789,7 @@ def get_meta(plotdir, cachedir):
             'timeselection': 'lnlnt',
             'mplstyle': mplstyle,
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['L', 'f'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': 'lower right',
             # 'legendlocation': (0.01, 0.65),
         },
@@ -1318,7 +1349,7 @@ def get_meta(plotdir, cachedir):
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'ylabel': '$|\\overline O(\\frac{L}{2},j)|$',
+            'ylabel': '$\\overline O(\\frac{L}{2},j)$',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
             # 'xlabelpad': -8,
@@ -1583,7 +1614,6 @@ def get_meta(plotdir, cachedir):
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_\mathrm{N}^\infty)$',
             'yscale': 'log',
-            'xlabelpad': -0.5,
             # 'yformat': '%.2f',
             'ymaloc': LogLocator(numticks=9),  # FixedLocator([1e-3,1e-2,1e-1,1e0,1e1]),
             # 'ymafmt': LogFormatterMathtext(labelOnlyBase=True),
@@ -1602,7 +1632,6 @@ def get_meta(plotdir, cachedir):
             'marklog3': True,
             'plotprefix': 'SN-divg',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'plotluitz': True,
             # 'ymin': 0.41,
             # 'ymax': 0.45,
             # 'xmin': 1,
@@ -1929,15 +1958,15 @@ def get_meta(plotdir, cachedir):
             'axtitle': True,
             # 'figsize': figsize1x1_fullcol,
             # 'subplots': subplots1x1,
-            'figsize': (3.404, 0.88 * 3.404),
-            'subplots': {
-                'top': 0.96,
-                'bottom': 0.09,
-                'left': 0.14,
-                'right': 0.90,
-                'wspace': 0.00,
-                'hspace': 0.00,
-            },
+            # 'figsize': (3.404, 0.88 * 3.404),
+            # 'subplots': {
+            #     'top': 0.96,
+            #     'bottom': 0.09,
+            #     'left': 0.14,
+            #     'right': 0.90,
+            #     'wspace': 0.00,
+            #     'hspace': 0.00,
+            # },
             # 'figsize' : (3.404*0.68, 3.404),
             # 'subplots': {
             #     'top': 1.0,
@@ -1978,6 +2007,9 @@ def get_meta(plotdir, cachedir):
             'xmin': 10,
             'xmax': 30,
             'mplstyle': mplstyle,
+            'num-bootstraps': 100,
+            'savejson': True,
+            'loadjson': True,
             'plotpinfty': False,
             'legendshow': False,
             'legendshow2': False,
@@ -2513,7 +2545,7 @@ def get_meta(plotdir, cachedir):
             # 'f': [0.3,0.5],
             # 'u': [16],
             # },
-            'ylabel': '\hspace{5mm}$\Delta \overline{\langle x_n \\rangle}$',
+            'ylabel': '$\Delta \overline{\langle x_n \\rangle}$',
             'xlabel': '$\ln\ln t$',
             # 'yformat': '%.3f',
             # 'yscale': 'log',
@@ -2544,8 +2576,8 @@ def get_meta(plotdir, cachedir):
             'markerlist': ['growth-begin', 'num-saturated', 'ent-saturated'],
             'marklogwindow': True,
             'marksaturation': True,
-            'findloglogwindow': True,
-            'markloglogwindow': True,
+            'findloglogwindow': False,
+            'markloglogwindow': False,
             'markloglogoffset': 0.008,
             'fitloglogwindow': False,
             'fillerror': False,
@@ -2688,7 +2720,7 @@ def get_meta(plotdir, cachedir):
                 # 'u': [16],
             },
             # 'figsize': (3.375, 3.00),
-            'ylabel': '$p({\sigma^2_{x_n\hspace{-1ex}}}^\infty)$',
+            'ylabel': '$p(\overline{\sigma^2_{x_n\hspace{-1ex}}}^\infty)$',
             'yscale': 'log',
             # 'yformat': '%.2f',
             'ymaloc': LogLocator(numticks=9),  # FixedLocator([1e-3,1e-2,1e-1,1e0,1e1]),
@@ -2704,7 +2736,7 @@ def get_meta(plotdir, cachedir):
             'tidx': 'window',  # Time indices for which to plot the distribution
             'bins': 100,
             'range': (0, 1.2),
-            'xlabel': '${\sigma^2_{x_n\hspace{-0.4ex}}}^\infty$',
+            'xlabel': '$\sigma^2_{x_n\hspace{-0.4ex}}$',
             'density': True,
             'marklog2': False,
             'marklog3': False,
@@ -2986,111 +3018,6 @@ def get_meta(plotdir, cachedir):
             'legendcollect': False,
             'legendlocation': ['upper right', 'upper right', 'lower right', 'lower right'],
             # 'bbox_to_anchor': [(1.05, 1.05)],  # Use with loc 'upper right'
-        },
-        'lbit84-avg': {
-            'default': default_square,
-            'frameon': True,
-            'groupname': 'lbits',
-            'dsetname': 'corrmat',
-            'axtitle': True,
-            'titlename': '$w_i$ on',
-
-            'ylabel': '$|\overline O(L/2,j)|$',
-            # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
-            'xlabel': "$j$",
-            # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prb else None,
-            'xticks': [0, 7, 14, 21, 28] if prl else None,
-            'yticks': None,  # [1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15],
-            # 'yticks': [0, -3, -6, -9, -12, -15],
-            'yscale': 'log',
-            'ynopos': 'mask',
-            'plotprefix': 'lbit-arithmetic',
-            'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'mplstyle': mplstyle,
-            # 'ymin': -16,
-            'ymin': 1e-16,
-            'xmax': 30,
-            'xmin': -1,
-            'xnormalize': False,
-            # 'xmax': 32 if prb else None,
-            # 'ymin': 1e-14,
-            # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
-            'legendfits': ['xi', 'beta'] if prl else ['C', 'xi', 'beta', 'pos'],
-            'legendoutside': False,
-            'legendcollect': False,
-            'legendlocation': (0.00, 1.025) if prl else 'center left',
-            # 'legendtitle': 'Arithmetic average',
-            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
-            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
-            'lbit-site': ['mid'],
-            'lbit-mean': 'arithmetic',
-            'lbit-axis': '',
-            'fit-beta': True,
-            'fit-ymin': 1e-14,
-            'fit-skip': 0,
-            'fit-mark': False,
-            'fit-plot': True,
-            'inset-cls': {
-                # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
-                'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
-                'coords': [None, None, None, None],
-                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
-                'legendtitle': '$\\xi_\\tau$',
-            },
-        },
-        'lbit84-typ': {
-            'default': default_square,
-            'frameon': True,
-            'axtitle': True,
-            'titlename':'$w_i$ off',
-            'groupname': 'lbits',
-            'dsetname': 'corrmat',
-            # 'ylabel': '$\overline O(L/2,j)$',
-            # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
-            'xlabel': "$j$",
-            # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prb else None,
-            'xticks': [0, 7, 14, 21, 28],
-            'yticks': None,  # [1, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15],
-            'yticklabels': [],
-            # 'yticks': [0, -3, -6, -9, -12, -15],
-            'yscale': 'log',
-            'ynopos': 'mask',
-            'plotprefix': 'lbit-geometric',
-            'plotdir': Path(plotdir, Path(mplstyle).stem),
-            'mplstyle': mplstyle,
-            # 'ymin': -16,
-            'ymin': 1e-16,
-            'xmax': 30,
-            'xmin': -1,
-            'xnormalize': False,
-            # 'xmax': 32 if prb else None,
-            # 'ymin': 1e-14,
-            # 'legendcols': ['f', 'tstd', 'tgw8', 'cstd', 'cgw8', 'ubond'],  # Choose 'num', 'bmax','tsim'
-            'legendcols': ['f'],  # Choose 'num', 'bmax','tsim'
-            'legendfits': ['xi', 'beta'] if prl else ['C', 'xi', 'beta', 'pos'],
-            'legendoutside': False,
-            'legendcollect': False,
-            'legendlocation': (0.00, 1.025) if prl else 'center left',
-            'legendtitle': 'Geometric average',
-            # 'legendtitle': '$y = C e^{-|i-j|/\\xi_\\tau}$',
-            # 'legendtitle': '$\log \\bar O(x) = a - x \\xi_\\tau^{-1}$',
-            'lbit-site': ['mid'],
-            'lbit-mean': 'geometric',
-
-            'lbit-axis': '',
-            'fit-beta': True,
-            'fit-ymin': 1e-14,
-            'fit-skip': 0,
-            'fit-mark': False,
-            'fit-plot': True,
-            'inset-cls': {
-                # 'pos': [0.03, 0.6, 0.40, 0.40], # Positon of the inset, x0 y0 width height
-                'pos': [0.17, 0.15, 0.25, 0.25],  # Positon of the inset, x0 y0 width height
-                'coords': [None, None, None, None],
-                # These zoom limits x1,x2,y1,y2, must be set by finding the maximum log log window
-                'legendtitle': '$\\xi_\\tau$',
-            },
         },
     }
 

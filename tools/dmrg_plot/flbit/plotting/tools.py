@@ -21,6 +21,7 @@ from scipy.stats import linregress
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from random import choices
+import json
 
 logger = logging.getLogger('tools')
 import tikzplotlib
@@ -80,7 +81,9 @@ def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
 
     # Skip the first color that is usually too dark or bright
     # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
-    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
+    # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
+    # print(linprod)
+    palette = sns.color_palette(palette=default_palette, n_colors=(10*len(linprod)+1))[::10]
     lstyles = [None] * len(linprod)
     if len(specs) == 2:
         linkey0 = get_keys(db, specs[0])  # Sets number of colors
@@ -272,6 +275,7 @@ class lbit_fit:
     pos : int = -1
     yfit: np.ndarray = field(default_factory=np.ndarray)
     xierr: np.float64 = np.nan
+    betaerr: np.float64 = np.nan
     idxN: int = -1
 
 
@@ -366,9 +370,11 @@ def get_lbit_fit_data(x, y, e=None, ymin=None, beta=None):
                 sfit  = stretchedFit()
                 sfit.pos = pos
                 popt, pcov = curve_fit(sfit.stretched_log, xdata=xflat, ydata=ylogs, sigma=elogs, p0=p0, bounds=bs)
-                pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
-                xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
-                return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr, -1)
+                perr = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
+                print(f'{perr=}')
+                xierr = perr[1] / np.sqrt(np.size(perr[1]))
+                betaerr = perr[2] / np.sqrt(np.size(perr[2]))
+                return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr, betaerr, -1)
             else:
                 pos = np.argmax(y)
                 p0 = 0.5, 1.0, 1.0
@@ -379,9 +385,11 @@ def get_lbit_fit_data(x, y, e=None, ymin=None, beta=None):
                 sfit  = stretchedFit()
                 sfit.pos = pos
                 popt, pcov = curve_fit(sfit.stretched_log, xdata=xflat, ydata=ylogs, sigma=elogs, p0=p0, bounds=bs)
-                pstd = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
-                xierr = pstd[1] / np.sqrt(np.size(pstd[1]))
-                return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr, -1)
+                perr = np.sqrt(np.diag(pcov))  # Gives 3 columns with len(xdata) rows
+                print(f'{perr=}')
+                xierr = perr[1] / np.sqrt(np.size(perr[1]))
+                betaerr = perr[2] / np.sqrt(np.size(perr[2]))
+                return lbit_fit(popt[0], popt[1], popt[2], pos, sfit.stretched_exp(x, *popt), xierr,betaerr, -1)
     except IndexError as e:
         print("Index error:", e)
         raise
@@ -409,7 +417,7 @@ def nb_mean_cmat(a, mean=None):
                 std[i, j] = np.nanstd(a[:, i, j])
             else:
                 raise ValueError("invalid mean")
-    return avg, std
+    return np.abs(avg), std
 
 
 @njit(parallel=True, cache=True)
@@ -479,8 +487,8 @@ def get_lbit_avg(corrmat, site=None, mean=None):
         site = 0
     if mean is None:
         mean = 'arithmetic'
-
-    full, stdv = nb_mean_cmat(np.abs(corrmat), mean=mean)
+    print(f'corrmat shape {np.shape(corrmat)}')
+    full, stdv = nb_mean_cmat(corrmat, mean=mean)
     fold = get_folded_matrix(full, rms=False, mean=mean)
     fodv = get_folded_matrix(stdv, rms=True, mean=mean)
 
@@ -685,8 +693,8 @@ class entropy_saturation_time_bootstrap:
 
 @dataclass
 class entropy_saturation_bootstrap:
-    sdavg : np.ndarray = field(default_factory=lambda: np.empty(shape=(0,)))# Disorder average
-    sravg : np.ndarray = field(default_factory=lambda: np.empty(shape=(0,)))# Running disorder average
+    # sdavg : np.ndarray = field(default_factory=lambda: np.empty(shape=(0,)))# Disorder average
+    # sravg : np.ndarray = field(default_factory=lambda: np.empty(shape=(0,)))# Running disorder average
 
     sinf_full_avg : np.float64 = np.nan
     sinf_full_err : np.float64 = np.nan
@@ -802,9 +810,9 @@ def get_entropy_saturation_from_bootstrap(sdata,
     esb.sinf_full_med = np.median(sinfs)
     esb.sinf_full_err = np.std(sinfs)/np.sqrt(rdim)
 
-    esb.sdavg = np.mean(sdata, keepdims=True, axis=1)
-    esb.sravg = running_avg(esb.sdavg)
-    tsat_full_idx, ssat_full_avg = get_saturation_from_diff(esb.sravg, wsize=0.01, setsign=1)
+    sdavg = np.mean(sdata, keepdims=True, axis=1)
+    sravg = running_avg(sdavg)
+    tsat_full_idx, ssat_full_avg = get_saturation_from_diff(sravg, wsize=0.01, setsign=1)
     tsat_full_idx = round(np.mean(tsat_full_idx))
     ssat_full_avg = np.mean(ssat_full_avg)
 
@@ -911,13 +919,14 @@ def find_davg_entropy_saturation_time_from_bootstrap(ydata, tp, nbs=100, dsetnam
     # plt.show()
     return tsb
 
-def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tp, nbs=100, dsetname='entanglement_entropy'):
+def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tdata, nbs=100, dsetname='entanglement_entropy'):
     # For each bootstrap set of realizations from ydata, this calculates the saturation time
     # and saturation value of individual realizations before averaging.
     if len(np.shape(sdata)) != 2:
         raise "sdata must be 2d matrix (time, realization), eg (200 x 80000)"
-    esb = get_entropy_saturation_from_bootstrap(sdata=sdata, tdata=tp.time, nbs=nbs)
-
+    print(f'bootstrapping {nbs=} ...')
+    esb = get_entropy_saturation_from_bootstrap(sdata=sdata, tdata=tdata, nbs=nbs)
+    print(f'bootstrapping {nbs=} ... done:')
 
     # tsats_rstd_avg_idx = np.mean(tsats_rstd_avg_idx)
 
@@ -925,12 +934,12 @@ def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tp, nbs=100, dse
 
     fig, ax = plt.subplots()
     ridx = range(150,160)
-    ax.plot(esb.sdavg, linewidth=1.0, color='red', linestyle=':')
+    # ax.plot(esb.sdavg, linewidth=1.0, color='red', linestyle=':')
     with sns.color_palette(palette='tab10', n_colors=len(ridx)):
         ax.plot(sdata[:,ridx])
-        ax.plot(esb.sravg, linewidth=1.0, linestyle='--')
-    tsat_phys_idx = tp.idx_ent_saturated if 'entanglement' in dsetname else tp.idx_num_saturated
-    ax.scatter(x=tsat_phys_idx, y=esb.sdavg[tsat_phys_idx,0], marker='o',s=40, linestyle='None', color='green', label='phys')
+        # ax.plot(esb.sravg, linewidth=1.0, linestyle='--')
+    # tsat_phys_idx = tp.idx_ent_saturated if 'entanglement' in dsetname else tp.idx_num_saturated
+    # ax.scatter(x=tsat_phys_idx, y=esb.sdavg[tsat_phys_idx,0], marker='o',s=40, linestyle='None', color='green', label='phys')
     ax.scatter(x=esb.tsat_full_avg_idx, y=esb.ssat_full_avg, marker='o', s=40, linestyle='None', color='red', label='ravg')
     ax.scatter(x=esb.tsat_boot_med_idx, y=esb.ssat_boot_med, marker='o', s=40, linestyle='None', color='blue', label='boot-median')
     ax.scatter(x=esb.tsat_boot_max_idx, y=esb.ssat_boot_max, marker='o', s=40, linestyle='None', color='purple', label='boot-max')
@@ -1114,7 +1123,7 @@ class timepoints:
     idx_num_saturated: int = 0
 
 
-def get_timepoints(tdata, db):
+def get_timepoints_old (tdata, db):
     if len(tdata) == 1:
         return 0, 0
     L = db['vals']['L']
@@ -1199,6 +1208,142 @@ def get_timepoints(tdata, db):
     # t.idx_num_lnlnt_begin = np.max([t.idx_num_lnlnt_begin, 0])  # Make sure its non-negative
     # t.idx_num_lnlnt_cease = np.max([t.idx_num_lnlnt_cease, 0])  # Make sure its non-negative
     # t.idx_num_saturated   = np.max([t.idx_num_saturated, 0])  # Make sure its non-negative
+
+    return t
+
+def get_timepoints(tdata, db):
+
+    if len(tdata) == 1:
+        return 0, 0
+    enttsb = None
+    numtsb = None
+    try:
+        entfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(db['vals']['cachedir'],
+                                                             'entanglement_entropy',
+                                                             db['vals']['L'],
+                                                             db['vals']['x'],
+                                                             db['vals']['w'],
+                                                             db['vals']['f'])
+        numfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(db['vals']['cachedir'],
+                                                             'number_entropy',
+                                                             db['vals']['L'],
+                                                             db['vals']['x'],
+                                                             db['vals']['w'],
+                                                             db['vals']['f']
+                                                             )
+        with open(entfile, 'r') as fp:
+            entjson = json.load(fp)
+            enttsb = entropy_saturation_bootstrap(**entjson)
+        with open(numfile, 'r') as fp:
+            numjson = json.load(fp)
+            numtsb = entropy_saturation_bootstrap(**numjson)
+    except Exception as ex:
+        print(f"{ex}\n"
+              f"Failed to load saturation times: try running plot_tsat.py first!")
+        pass
+        # raise FileNotFoundError(f"{ex}\n"
+        #                         f"Failed to load saturation times: try running plot_tsat.py first!")
+
+
+
+    L = db['vals']['L']
+    # r = np.max(db['vals']['r'])
+    x = db['vals']['x']
+    wn = db['vals']['w']
+
+
+    w1 = wn[0]  # The width of distribution for on-site field.
+    w2 = wn[1]  # The width of distribution for pairwise interactions. The distribution is either U(J2_mean-w,J2_mean+w) or N(J2_mean,w)
+    w3 = wn[2]  # The width of distribution for three-body interactions.
+
+    # if r == np.iinfo(np.uint64).max or r == 'L':
+    #     r = L
+    r = L # We get the correct times if we use r == L,
+    r2max = np.float64(np.min([r, L]))  # Number of sites from the center site to the edge site, max(|i-j|)/2
+    N = np.sqrt(2.0 / np.pi) # Factor coming from folded normal distribution
+
+    t = timepoints(time=tdata)
+    # t.time = tdata
+    w1 = 1.0 if w1 == 0.0 else w1
+    w2 = 1.0 if w2 == 0.0 else w2
+    w3 = 1.0 if w3 == 0.0 else w3
+
+
+    tmin1_ent = 1.0 / (w1*np.exp(0 / x))
+    tmax1_ent = 1.0 / (w1*np.exp(0 / x))
+    tmin2_ent = 1.0 / (w2*np.exp(-1.0 / x))
+    tmid2_ent = 1.0 / (w2*np.exp(- (r2max / 2)  / x) * N)
+    # tmax2_ent = 1.0 / (w2*np.exp(- (r2max - 1 ) / x) * N)
+    tmax2_ent = 0.027 * np.exp(L/0.99)
+    # print('RETURN THE SHIFT-VALUE OF TMAX2_ENT')
+    tmin3_ent = 1.0 / (w3*np.exp(-2.0 / x))
+    tmax3_ent = 1.0 / (w3*np.exp(-2.0 / x))
+
+    t.time_ent_lnt_begin = np.max([tmin1_ent, tmin2_ent, tmin3_ent])
+    t.time_ent_lnt_cease = tmid2_ent
+    t.idx_ent_lnt_begin = np.argmax(tdata.astype(float) >= t.time_ent_lnt_begin) - 1
+    t.idx_ent_lnt_cease = np.argmax(tdata.astype(float) >= t.time_ent_lnt_cease) - 1
+    if enttsb is None:
+        t.time_ent_saturated = np.max([tmax1_ent, tmax2_ent, tmax3_ent])
+        t.idx_ent_saturated = np.argmax(tdata.astype(float) >= t.time_ent_saturated) -1
+    else:
+        t.time_ent_saturated = enttsb.tsat_boot_avg  # np.max([tmax1_ent, tmax2_ent, tmax3_ent])
+        t.idx_ent_saturated = round(enttsb.tsat_boot_avg_idx) #np.argmax(tdata.astype(float) >= t.time_ent_saturated) -1
+
+        t.time_ent_lnt_cease = np.sqrt(enttsb.tsat_boot_avg)
+        # t.time_ent_lnt_cease = numtsb.tsat_boot_avg
+        t.idx_ent_lnt_cease = np.argmax(tdata.astype(float) >= t.time_ent_lnt_cease) - 1
+
+
+
+
+    t.idx_ent_lnt_begin = np.max([t.idx_ent_lnt_begin, 0])  # Make sure it is non-negative
+    t.idx_ent_lnt_cease = np.max([t.idx_ent_lnt_cease, 0])  # Make sure it is non-negative
+    t.idx_ent_saturated = np.max([t.idx_ent_saturated, 0])  # Make sure it is non-negative
+
+    # Now for the number entropy
+    cfit_num =  0.08
+    xfit_num = 2.0
+    tmin1_num = 1.0 / (w1*np.exp(0 / x))
+    tmax1_num = 1.0 / (w1*np.exp(0 / x))
+    tmin2_num = 1.0 / (w2*np.exp(- (1.0   / 2) / x) * N)
+    tmid2_num = 1.0 / (w2 * np.exp(- ((r2max / 4)) / x) * N)
+    # Subtract two:
+    #   In 010101|010101 the particle.
+    #   (OLD) The half-chain particle is a distance |i-j| = |(L/2-1) - 1| away from the furthest particle on the same side.
+    #   Excluding the particle at the edge, the most remote pair of particles are at |i-j| = |(L-1) - 2 - 1| = |L-4|
+    #   away from the furthest particle on the same side.
+    #   We exclude the particle at the edge because it is too restricted.
+    # tmax2_num = 1.0 / (w2 * np.exp(-((r2max / 2)-2.5) / x) * N)
+    tmax2_num = 1.0 / (w2 * np.exp(-((r2max-4) / 2) / x) * N)
+    # tmid2_num = tmid2_ent ** 0.5
+    # tmax2_num = tmax2_ent ** 0.5
+
+
+    # tmid2_num = 1.0 / (w2*np.exp(- ((r2max / 4)) / x) * N)
+    # Subtract two: In 01010|10101 excluding the edge particle, the most distant "1"'s are L/2-2=4 sites way
+    # tmax2_num = 1.0 / (w2*np.exp(- ((r2max / 2)-2) / x) * N)
+    tmin3_num = 1.0 / (w3*np.exp(- (2.0   / 1) / x))
+    tmax3_num = 1.0 / (w3*np.exp(- (2.0   / 1) / x))
+
+    # tmin1_num = 1.0 / w1
+    # tmax1_num = 1.0 / w1
+    # tmax2_num = 1.0/(np.exp(-(r2max/2.0) / x) * w2 * N) # Time before an exchange happens between the edge and one past the center from the central bond hits the edge
+    # tmid2_num = 1.0/(np.exp(-(r2max/4.0) / x) * w2 * N) # Time before entanglement from the central bond hits the edge
+    # tmin2_num = 1.0/(np.exp(-(1.0  /2.0) / x) * w2 * N) # Time before entanglement from the central bond hits the edge
+    # tmin3_num = 1.0 / w3
+    # tmax3_num = 1.0 / w3
+
+    t.time_num_lnlnt_begin = np.max([tmin1_num, tmin2_num, tmin3_num])
+    t.time_num_lnlnt_cease = tmid2_num
+    t.idx_num_lnlnt_begin = np.argmax(tdata.astype(float) >= t.time_num_lnlnt_begin) - 1
+    t.idx_num_lnlnt_cease = np.argmax(tdata.astype(float) >= t.time_num_lnlnt_cease) - 1
+    if numtsb is None:
+        t.time_num_saturated =  np.max([tmax1_num, tmax2_num, tmax3_num])
+        t.idx_num_saturated = np.argmax(tdata.astype(float) >= t.time_num_saturated) - 1
+    else:
+        t.time_num_saturated =  numtsb.tsat_boot_avg #np.max([tmax1_num, tmax2_num, tmax3_num])
+        t.idx_num_saturated = round(numtsb.tsat_boot_avg_idx)
 
     return t
 

@@ -10,7 +10,7 @@ mplstyle = '../common/stylesheets/prl.mplstyle'
 prl = 'prl' in mplstyle
 
 
-def get_meta(plotdir):
+def get_meta(plotdir, cachedir):
     figsize1x1_fullcol = 3.404 * 0.55, 3.404,  # Full-size in one column of a two-column document
     # figsize1x1_halfcol = 3.404 * 0.55, 3.404 * 0.50, # Half-size in one column of a two-column document
 
@@ -56,6 +56,8 @@ def get_meta(plotdir):
         'axtitle': False,
         'figsize': figsize1x1_halfcol,
         'subplots': subplots1x1,
+        'cachedir': Path(cachedir),
+        'plotdir': Path(plotdir, Path(mplstyle).stem),
     }
     subplots_halfheight = {
         'top': 1.0,
@@ -140,11 +142,13 @@ def get_meta(plotdir):
                 # 'u': [32],
                 # 'w': ['w[+1.0000_+0.2500_+0.1000]', 'w[+1.0000_+0.5000_+0.1000]']
                 'tgw8': ['ID'],
-                'cgw8': ['ID'],
+                'cgw8': ['EX', 'ID'],
                 # 'u': [8,16,24,32,40,48,56,64],
                 # 'u': [8, 16, 32, 64, 80],
                 # 'ubond': [256],
             },
+            'cachedir': Path(cachedir),
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
         },
 
         'ent': {
@@ -1537,14 +1541,15 @@ def get_meta(plotdir):
             'dsetname': 'number_entropy',
             'normpage': False,
             # 'titlename': 'Number Entropy',
-            'filter': {
-                # 'L': [12, 16, 20],
-                # 'f': [0.2,0.3,0.4,0.5],
-                # 'u': [16],
-            },
+            # 'filter': {
+            #     'L': [16],
+            #     'f': [0.06,0.2,],
+            #     # 'u': [16],
+            # },
             # 'figsize': (3.375, 3.00),
             'ylabel': '$p(S_\mathrm{N}^\infty)$',
             'yscale': 'log',
+            'xlabelpad': -0.5,
             # 'yformat': '%.2f',
             'ymaloc': LogLocator(numticks=9),  # FixedLocator([1e-3,1e-2,1e-1,1e0,1e1]),
             # 'ymafmt': LogFormatterMathtext(labelOnlyBase=True),
@@ -1560,7 +1565,8 @@ def get_meta(plotdir):
             'xlabel': '$S_\mathrm{N}^\infty$',
             'density': True,
             'marklog2': True,
-            'marklog3': True,
+            'marklog3': False,
+            'plotluitz': True,
             'plotprefix': 'SN-divg',
             'plotdir': Path(plotdir, Path(mplstyle).stem),
             # 'ymin': 0.41,
@@ -1570,17 +1576,18 @@ def get_meta(plotdir):
             # 'legendcols': ['f', 'x', 'num', 'bmax:.0f', 'bavg:.0f', 'tsim', 't:.1e'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['f', 'w'],  # Choose 'num', 'bmax','tsim'
             'legendshow': True,
-            'legendcols': [],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L','f'],  # Choose 'num', 'bmax','tsim'
             # 'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
             'legendoutside': False,
             'legendcollect': False,
             # 'legendlocation': 'lower left',
             'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
-            'bbox_to_anchor': (0.92, 1.05),  # Use with loc 'upper right'
+            'bbox_to_anchor': (1.05, 1.05),  # Use with loc 'upper right'
             'legend2location': 'lower left',
             # 'bbox_to_anchor2': (1.05, 0.40),  # Use with loc 'upper right'
             # 'bbox_to_anchor2': (0.825, 0.95),  # Use with loc 'upper right'
         },
+
         'zivg-num': {  # Zoomed Distribution of infinite time averaged entropy
             'default': default,
             'groupname': 'measurements',

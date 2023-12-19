@@ -10,6 +10,13 @@ import matplotlib.transforms as transforms
 
 logger = logging.getLogger('plot-time')
 
+def format_err(val, err, min_decimals=None):
+    err_exponent =  np.floor(np.log10(err))
+    num_decimals =  int(np.abs(err_exponent))
+    if min_decimals is not None:
+        num_decimals = min_decimals
+    return f'{val:.{num_decimals}f}({err*10**num_decimals:1.0f})'
+
 # def floglog(x, a, b,c):
 #     return a + b*np.log(np.log(x + c))
 def floglog_v2(x, a, b, c):
@@ -159,28 +166,30 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                         mean = 'mean' in neelselect
                         neel0 = 'neel0' in neelselect or mean
                         neel1 = 'neel1' in neelselect or mean
-                        n0 = np.shape(posnode['pos_variance_neel0'])[2] # Number of realizations with neel0
-                        n1 = np.shape(posnode['pos_variance_neel1'])[2] # Number of realizations with neel1
                         print("reading...")
-                        r0 = range(int(L//4)-1, int(L//4)+0) # Two central particles
-                        r1 = range(int(L//4)-0, int(L//4)+1) # Two central particles
-                        r2 = range(int(L//4)-1, int(L//4)+1) # Two central particles
-                        yneel0 = np.atleast_3d(posnode['pos_variance_neel0'][r0, :, :]) if neel0 else None
-                        yneel1 = np.atleast_3d(posnode['pos_variance_neel1'][r1, :, :]) if neel1 else None
+                        r0 = range(int(L//4)-1, int(L//4)+0) # One particle to the left o the half-chain
+                        r1 = range(int(L//4)-0, int(L//4)+1) # One particle o the right of the half-chain
+                        r2 = range(int(L//4)-1, int(L//4)+1) # Two central particles on either side of the half-chain
+                        n0 = np.shape(posnode['pos_variance_neel0'])[2] * len(r0) # Number of realizations with neel0
+                        n1 = np.shape(posnode['pos_variance_neel1'])[2] * len(r1) # Number of realizations with neel1
+                        yneel0 = np.atleast_3d(posnode['pos_variance_neel0'][r2, :, :]) if neel0 else None
+                        yneel1 = np.atleast_3d(posnode['pos_variance_neel1'][r2, :, :]) if neel1 else None
+
                         eneel0 = np.atleast_3d(np.sqrt(np.sum(n0 * posnode['pos_variance_dste_neel0'][r0, :]**2, axis=0))/np.sqrt(n0)) if neel0 else None
                         eneel1 = np.atleast_3d(np.sqrt(np.sum(n1 * posnode['pos_variance_dste_neel1'][r1, :]**2, axis=0))/np.sqrt(n1)) if neel1 else None
                         # pos_var_davg_mean = np.mean(np.concatenate([y0, y1], axis=2),axis=2)
                         # Now interpret each particle is just more realizations at the midchain
                         y4 = np.concatenate([yneel0[0, :, :],
-                                             # yneel0[1, :, :],
+                                             yneel0[1, :, :],
                                              yneel1[0, :, :],
-                                             # yneel1[1, :, :]
+                                             yneel1[1, :, :]
                                              ], axis=1) # four particles
                         # y4 = np.concatenate([yneel0[0, :, :], yneel1[1, :, :]], axis=1) # four particles
                         pos_var_davg_mean = np.atleast_2d(np.mean(y4, axis=1)) # Take the disorder average of all 4 particles
                         pos_var_dste_mean = np.atleast_2d(np.std(y4, axis=1))/np.sqrt(np.shape(y4)[1]) # Take the disorder average of all 4 particles
 
-                        print(f'shape {np.shape(pos_var_davg_mean)}')
+                        print(f'shape y4  {np.shape(y4)}')
+                        print(f'shape pos {np.shape(pos_var_davg_mean)}')
 
                         # pos_var_davg_mean = np.atleast_2d(np.mean(np.concatenate([pos_var_davg_neel0, pos_var_davg_neel1], axis=0), axis=0)) if mean else None
                         # pos_var_dste_mean = np.atleast_2d(np.sqrt(np.sum(np.concatenate([n0*pos_var_dste_neel0**2, n1*pos_var_dste_neel1**2], axis=0), axis=0))/np.sqrt(n0+n1)) if mean else None
@@ -203,6 +212,38 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             colnames.append(colname)
                         ydata = ydata.T
                         edata = edata.T
+                        print(f'shape ydata {np.shape(ydata)}')
+                    if meta.get('plotPosX'):
+                        # Plot the position expectation value of the midchain particle
+                        # 0101|0101 index L//4 - 1 = 1 is nearest the midchain boundary
+                        # 1010|1010 index L//4 - 0 = 2 is nearest the midchain boundary
+                        L = dbval['vals']['L']
+                        posnode = datanode.parent.parent['nth_particle_position']
+                        neelselect = meta.get('neelselection')
+                        mean = 'mean' in neelselect
+                        neel0 = 'neel0' in neelselect or mean
+                        neel1 = 'neel1' in neelselect or mean
+                        print("reading...")
+                        r0 = range(int(L//4)-1, int(L//4)+0) # One particle to the left o the half-chain
+                        r1 = range(int(L//4)-0, int(L//4)+1) # One particle o the right of the half-chain
+                        # r2 = range(int(L//4)-1, int(L//4)+1) # Two central particles on either side of the half-chain
+                        if 'neel0' in neelselect:
+                            ydata = np.atleast_2d(posnode['pos_expvalue_davg_neel0'][r0, :].T)
+                            edata = np.atleast_2d(posnode['pos_expvalue_dste_neel0'][r0, :].T)
+                            ydata -= L/2 - 1
+
+                        if 'neel1' in neelselect:
+                            ydata = np.atleast_2d(posnode['pos_expvalue_davg_neel1'][r1, :].T)
+                            edata = np.atleast_2d(posnode['pos_expvalue_dste_neel1'][r1, :].T)
+                            ydata -= L/2 - 0
+                        if 'mean' in neelselect:
+                            yneel0 = np.atleast_2d(posnode['pos_expvalue_davg_neel0'][r0, :].T)
+                            eneel0 = np.atleast_2d(posnode['pos_expvalue_dste_neel0'][r0, :].T)
+                            yneel1 = np.atleast_2d(posnode['pos_expvalue_davg_neel1'][r1, :].T)
+                            eneel1 = np.atleast_2d(posnode['pos_expvalue_dste_neel1'][r1, :].T)
+                            yneel0 -= L/2 - 1
+                            yneel1 -= L / 2 - 0
+                            ydata = np.mean([yneel0, yneel1], axis=0)  # four particles
                         print(f'shape ydata {np.shape(ydata)}')
 
                     if np.min(ndata) < 10:
@@ -326,17 +367,16 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                          pe.Normal()]
                                 if 'growth-begin' in meta.get('markerlist', []):
                                     ax.plot([x1], [sn1], color=color, marker='>',
-                                            markersize=3.0,
+                                            markersize=4.0,
                                             linestyle='None',
-                                            markerfacecolor=color,
-                                            markeredgecolor='white',
-                                            markeredgewidth=0.5,
-                                            path_effects=fx_begin,
-                                            alpha=1.0,
+                                            markeredgecolor=color,
+                                            markerfacecolor='none',
+                                            markeredgewidth=0.6,
+                                            path_effects=mark_effects,
                                             zorder=10,
                                             )
                                 if 'num-lnlnt-cease' in meta.get('markerlist', []):
-                                    ax.plot([x2], [y2], color=color, marker='s',
+                                    ax.plot([x2], [y2], color=color, marker='v',
                                             markersize=4.0,
                                             linestyle='None',
                                             markeredgecolor=color,
@@ -346,7 +386,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                             zorder=10,
                                             )
                                 if 'num-saturated' in meta.get('markerlist', []):
-                                    ax.plot([x3], [y3], color=color, marker='<',
+                                    ax.plot([x3], [y3], color=color, marker='s',
                                             markersize=4.0,
                                             linestyle='None',
                                             markeredgecolor=color,
@@ -356,23 +396,23 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                             zorder=10,
                                             )
                                 if 'ent-lnt-cease' in meta.get('markerlist', []):
-                                    ax.plot([x4], [y4], color=color, marker='s',
+                                    ax.plot([x4], [y4], color=color, marker='<',
                                             markersize=4.0,
                                             linestyle='None',
-                                            markerfacecolor=color,
-                                            markeredgecolor='none',
+                                            markeredgecolor=color,
+                                            markerfacecolor='none',
                                             markeredgewidth=0.6,
-                                            path_effects=patch_effects,
+                                            path_effects=mark_effects,
                                             zorder=10,
                                             )
                                 if 'ent-saturated' in meta.get('markerlist', []):
-                                    ax.plot([x5], [y5], color=color, marker='<',
+                                    ax.plot([x5], [y5], color=color, marker='o',
                                             markersize=4.0,
                                             linestyle='None',
-                                            markerfacecolor=color,
-                                            markeredgecolor='none',
+                                            markeredgecolor=color,
+                                            markerfacecolor='none',
                                             markeredgewidth=0.6,
-                                            path_effects=patch_effects,
+                                            path_effects=mark_effects,
                                             zorder=10,
                                             )
                             if meta.get('fitsatapproachlnt'):
@@ -410,7 +450,8 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             if meta.get('fitsatapproachlnlnt'):
                                 try:
                                     idx1 = t.idx_num_lnlnt_begin
-                                    idx2 = t.idx_num_lnlnt_cease
+                                    # idx2 = t.idx_num_lnlnt_cease
+                                    idx2 = t.idx_num_saturated
                                     if idx2 <= idx1:
                                         raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
                                     if idx1 + 10 > idx2:
@@ -432,6 +473,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                                 zorder=9,)
 
                                         kappa = popt[1]
+                                        kappa_std = np.sqrt(np.diag(pcov))[1]
                                     except IndexError as err:
                                         print(f'failed to plot approach: {e}')
                                         pass
@@ -443,7 +485,8 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             if meta.get('fitsatapproachpower'):
                                 try:
                                     idx1 = t.idx_num_lnlnt_begin
-                                    idx2 = t.idx_num_lnlnt_cease
+                                    # idx2 = t.idx_num_lnlnt_cease
+                                    idx2 = t.idx_num_saturated
                                     if idx2 <= idx1:
                                         raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
                                     if idx1 + 10 > idx2:
@@ -454,7 +497,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                             ylog = np.log10(y)
                                             tlog = np.log10(tdata)
                                             idx_min = int(idx1 * 0.75)
-                                            idx_max = int(np.min([len(tdata) - 1, idx2 * 1.5]))
+                                            idx_max = int(np.min([len(tdata) - 1, idx2 * 2.5]))
                                             # If y ~ At^alpha, then log(y) = log(A) + alpha * log(t), meaning we can do a linear
                                             # fit to the logx-logy data.
                                             popt_linear, pcov_linear = curve_fit(f=flinear, xdata=tlog[idx1:idx2],
@@ -484,7 +527,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
                         if meta.get('markerror'): # Adds one errorbar after each line
                             trans = transforms.blended_transform_factory(ax.transAxes, ax.transData)
-                            t = get_timepoints(tdata, dbval)
+                            t = get_timepoints(tdata, dbval, meta)
                             idx_sat = t.idx_num_saturated if 'number' in meta['colname'] else t.idx_ent_saturated
                             yavg = np.mean(y[idx_sat:], keepdims = True)
                             yerr = np.mean(e[idx_sat:], keepdims = True)
@@ -526,7 +569,11 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                 # f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
                             if kappa is not None:
                                 f['legends'][idx][icol]['handle'].append(line)
-                                f['legends'][idx][icol]['label'].append(f'{100*abs(kappa):.2f}')
+                                # f['legends'][idx][icol]['label'].append(f'{100*abs(kappa):.2f}')
+                                if alpha is None:
+                                    f['legends'][idx][icol]['label'].append(format_err(100*abs(kappa),100*kappa_std, 2))
+                                else:
+                                    f['legends'][idx][icol]['label'].append(f'{100*abs(kappa):.2f}')
                                 f['legends'][idx][icol]['title'] = '$100\kappa$'
                                 icol += 1
                                 # f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
@@ -700,6 +747,10 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     ax.set_title(axtitle,
                                  horizontalalignment='center', x=0.5,fontstretch="ultra-condensed",
                                  )
+            if meta.get('legendreversed'):
+                for icol in range(len(f['legends'][idx])):
+                    f['legends'][idx][icol]['handle'].reverse()
+                    f['legends'][idx][icol]['label'].reverse()
 
             if xlabel := meta.get('xlabel'):
                 ax.set_xlabel(xlabel)
@@ -744,6 +795,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                 for lidx,(x1, y1, c1, x2, y2, c2, x3, y3, c3, x4, y4, c4,x5,y5,c5) in enumerate(zip(xm1, ym1, cm1, xm2,ym2,cm2, xm3,ym3,cm3, xm4,ym4,cm4,xm5,ym5,cm5, )):
                     ridx = len(xm1) - lidx - 1# Reversed
                     yl = np.max([y5, ]) if meta['colname'] == 'entanglement_entropy' else ymmin - (ridx+1.5) / 24 * yrange
+                    # yl = ymmax - (ridx-9.5) / 24 * yrange
                     if meta.get('markloglogwindow') is True and meta.get('marklogwindow') is True and meta.get('marksaturation') is True:
                         axs.plot([x1, x5], [yl, yl], color=c5, marker=None, linestyle='dotted', path_effects=None, zorder=0) # Between rtriangle and square
                     else:
@@ -764,55 +816,66 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                             pe.Normal()]
                         if 'growth-begin' in meta.get('markerlist', []):
                             axs.plot([x1], [yl], color=c1, marker='>',
-                                     markersize=3.0,
-                                     linestyle='None',
+                                     # markersize=3.0,
+                                     # linestyle='None',
                                      # markeredgewidth=0.1,
-                                     markerfacecolor=c1,
-                                     markeredgecolor='white',
-                                     markeredgewidth=0.5,
-                                     path_effects=sn_fx,
-                                     alpha=1.0,
+                                     # markerfacecolor=c1,
+                                     # markeredgecolor='white',
+                                     # markeredgewidth=0.5,
+                                     # path_effects=sn_fx,
+                                     # alpha=1.0,
+                                     # zorder=10,
+                                     markersize=4.0,
+                                     linestyle='None',
+                                     markeredgecolor=c1,
+                                     markerfacecolor='none',
+                                     markeredgewidth=0.6,
+                                     path_effects=mark_effects,
                                      zorder=10,
+
                                 )
                         if 'num-lnlnt-cease' in meta.get('markerlist', []):
-                            axs.plot([x2], [yl], color=c2, marker='s',
-                                markersize=4.0,
-                                linestyle='None',
-                                markeredgecolor=c2,
-                                markerfacecolor='none',
-                                markeredgewidth=0.6,
-                                path_effects=mark_effects,
-                                zorder=10,
-                                )
+                            axs.plot([x2], [yl], color=c2, marker='v',
+                                     markersize=4.0,
+                                     linestyle='None',
+                                     markeredgecolor=c2,
+                                     markerfacecolor='none',
+                                     markeredgewidth=0.6,
+                                     path_effects=mark_effects,
+                                     zorder=10,
+                                     )
                     if meta.get('marklogwindow') is True:
                         if 'num-saturated' in meta.get('markerlist', []):
-                            axs.plot([x3], [yl], color=c3, marker='<',
+                            axs.plot([x3], [yl], color=c3, marker='s',
                                      markersize=4.0,
                                      linestyle='None',
                                      markeredgecolor=c3,
                                      markerfacecolor='none',
                                      markeredgewidth=0.6,
                                      path_effects=mark_effects,
-                                     zorder=10,)
+                                     zorder=10,
+                                     )
                     if meta.get('marksaturation') is True:
                         if 'ent-lnt-cease' in meta.get('markerlist', []):
-                            axs.plot([x4], [yl], color=c4, marker='s',
+                            axs.plot([x4], [yl], color=c4, marker='<',
                                      markersize=4.0,
                                      linestyle='None',
-                                     markeredgecolor='none',
-                                     markerfacecolor=c4,
+                                     markeredgecolor=c4,
+                                     markerfacecolor='none',
                                      markeredgewidth=0.6,
-                                     path_effects=patch_effects,
-                                     zorder=1,)
+                                     path_effects=mark_effects,
+                                     zorder=10,
+                                     )
                         if 'ent-saturated' in meta.get('markerlist', []):
-                            axs.plot([x5], [yl], color=c5, marker='<',
+                            axs.plot([x5], [yl], color=c5, marker='o',
                                      markersize=4.0,
                                      linestyle='None',
-                                     markeredgecolor='none',
-                                     markerfacecolor=c5,
+                                     markeredgecolor=c5,
+                                     markerfacecolor='none',
                                      markeredgewidth=0.6,
-                                     path_effects=patch_effects,
-                                     zorder=10,)
+                                     path_effects=mark_effects,
+                                     zorder=10,
+                                     )
                         # ax.plot([x5], [yl], color=c5, marker='X',
                                 # markersize=5,
                                 # linestyle='None',
@@ -840,7 +903,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             f['ymax'] = 1.1 * f['ymax']
 
         if figspec_title := get_figspec_title(meta, dbval, figspec):
-            f['fig'].suptitle(figspec_title)
+            f['fig'].suptitle(figspec_title, y=0.95)
 
         # prettify_plot4(fmeta=f, lgnd_meta=axes_legends)
         suffix = ''

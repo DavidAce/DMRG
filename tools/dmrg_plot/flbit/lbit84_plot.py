@@ -31,9 +31,10 @@ def lbit_plot(args):
             batchdir = batchglob[0]
             avgfile = f'{batchdir}analysis/data/averaged.h5'
             plotdir = f'{batchdir}analysis/plots'
+            cachedir = f'{batchdir}/analysis/cache'
             if not os.path.exists(plotdir):
                 os.makedirs(plotdir)
-            metas.append(get_meta(plotdir))
+            metas.append(get_meta(plotdir,cachedir))
             h5avgs.append(h5py.File(avgfile, 'r'))
             if version2:
                 dbs.append(load_time_database2(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,

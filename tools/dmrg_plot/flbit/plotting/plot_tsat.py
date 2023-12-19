@@ -1,3 +1,4 @@
+import os.path
 from itertools import product
 from pathlib import Path
 
@@ -12,11 +13,16 @@ from .tools import *
 from itertools import islice
 from scipy.signal import savgol_filter,find_peaks, find_peaks_cwt
 from scipy import interpolate
+import json
+from dataclasses import asdict
+
 
 def format_err(val, err, min_decimals=None):
-    val_exponent =  np.floor(np.log10(val))
     err_exponent =  np.floor(np.log10(err))
-    num_decimals =  int(np.abs(err_exponent))
+    if not np.isinf(err_exponent):
+        num_decimals =  int(np.abs(err_exponent))
+    else:
+        num_decimals = 0
     if min_decimals is not None:
         num_decimals = min_decimals
     return f'{val:.{num_decimals}f}({err*10**num_decimals:1.0f})'
@@ -59,6 +65,7 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
         plt.style.use(meta['mplstyle'])
         if 'slack' in meta['mplstyle']:
             path_effects = [pe.SimpleLineShadow(offset=(0.5, -0.5), alpha=0.3), pe.Normal()]
+    mark_effects = [pe.SimpleLineShadow(offset=meta.get('shadowoffset', (0.35, -0.35)), alpha=0.4), pe.Normal()]
 
     # legend_col_keys = list(itertools.chain(l1, [col for col in meta['legendcols'] if 'legendcols' in meta]))
     legend_col_keys = linspec.copy()
@@ -118,36 +125,53 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         t = mmntnode['avg']['physical_time'][()].astype(float)
                         s = datanode[meta['dsetname']][()] # Should be an entropy
                         n = datanode['avg']['num'][()][0]
-                        t = get_timepoints(t,dbval)
-                        idx_num, idx_ent = t.idx_num_saturated, t.idx_ent_saturated
-                        idx_sat = idx_num if 'number' in meta['dsetname'] else idx_ent
-                        # idx_sat = idx_ent
-                        idx_len = len(t.time)
-                        print(f'Saturation for {L=}: at {idx_num=} {idx_ent=}  ({idx_len}) total): time averaging {idx_len-idx_sat} points')
                         if meta.get('normpage'):
                             s /= midchain_page_entropy(dbval['vals']['L'])
                         elif meta.get('normsize'):
                             s /= dbval['vals']['L']
                         elif normalize := meta.get('normalize'):
                             s /= normalize
-
-
                         # Calculate the infinite time average (1/T) integral_0^T y(t) dt
                         # reals = np.shape(y)[1]
                         # off = int(reals / 2)
                         # ext = int(reals / 5)
                         # Plot the saturation time
                         if 'saturated' in meta['timepoints']:
-                            # tboot_idx_avg, tboot_idx_err, sboot_avg, sboot_err = get_entropy_saturation_from_bootstrap(ydata=s, nbs=100)
-                            tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=s, tp=t, nbs=meta.get('num-bootstraps', 100), dsetname=meta['dsetname'])
-                            tphys = t.time_num_saturated if 'number' in meta['dsetname'] else t.time_ent_saturated
+                            filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(dbval['vals']['cachedir'],
+                                                                                      meta['dsetname'],
+                                                                                      dbval['vals']['L'],
+                                                                                      dbval['vals']['x'],
+                                                                                      dbval['vals']['w'],
+                                                                                      dbval['vals']['f'] )
+                            if meta.get('loadjson') and os.path.isfile(filenamejson):
+                                with open(filenamejson, 'r') as fp:
+                                    tsb_json = json.load(fp)
+                                    tsb = entropy_saturation_bootstrap(**tsb_json)
+                            else:
+                                # tboot_idx_avg, tboot_idx_err, sboot_avg, sboot_err = get_entropy_saturation_from_bootstrap(ydata=s, nbs=100)
+                                tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=s, tdata=t, nbs=meta.get('num-bootstraps', 100), dsetname=meta['dsetname'])
+                                if meta.get('savejson'):
+                                    with open(filenamejson, 'w') as fp:
+                                        json.dump(asdict(tsb), fp, indent=4)
                             tboot = tsb.tsat_boot_avg
                             eboot = tsb.tsat_boot_err
+
+                        t = get_timepoints(t,dbval)
+                        tphys = t.time_num_saturated if 'number' in meta['dsetname'] else t.time_ent_saturated
+
                         tvals_phys.append(tphys)
                         tvals_boot.append(tboot)
                         evals_boot.append(eboot)
                         xvals.append(get_vals(dbval, xaxspec))
                         # nvals.append(n)
+
+                        idx_num, idx_ent = t.idx_num_saturated, t.idx_ent_saturated
+                        idx_sat = idx_num if 'number' in meta['dsetname'] else idx_ent
+                        # idx_sat = idx_ent
+                        idx_len = len(t.time)
+                        print(f'Saturation for {L=}: at {idx_num=} {idx_ent=}  ({idx_len}) total): time averaging {idx_len-idx_sat} points')
+
+
                 xvals = np.ravel(xvals)
                 evals_boot = np.atleast_2d(evals_boot)
                 # tvals_phys = np.ravel(tvals_phys)
@@ -188,9 +212,18 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 # for xval, tval, color in zip(xvals, tvals_phys, palette):
                 #     axn.plot(xval, tval, color=color, markersize=5, marker='o', markerfacecolor='none', markeredgewidth=0.5)
                 line, = ax.plot(xvals, tvals_boot, marker=None,linestyle='none', color='black', path_effects=None)
+                marker='o' if 'entanglement_entropy' in meta['dsetname'] else 's'
                 for xval, tval, eval, color in zip(xvals, tvals_boot, evals_boot, palette):
-                    axn.errorbar(x=xval, y=tval, yerr=np.atleast_2d(eval).T, color=color, linestyle='none', capsize=3.0, marker=None,
-                                 path_effects=path_effects, zorder=10)
+                    axn.plot([xval], [tval], color=color, marker=marker, markersize=4.0,
+                             linestyle='None',
+                             markeredgecolor=color,
+                             markerfacecolor='none',
+                             markeredgewidth=0.6,
+                             path_effects=mark_effects,
+                             zorder=10)
+                    axn.errorbar(x=xval, y=tval, yerr=np.atleast_2d(eval).T, color=color, linestyle='none', capsize=5.0,
+                                 marker=None,
+                                 path_effects=path_effects, zorder=9)
 
                 if meta.get('fit-tsat'):
 
@@ -211,14 +244,17 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     t_isect_err , t_slope_err = np.sqrt(np.diag(pcov))
                     print(t_isect_err, t_slope_err)
                     # Annotate
-                    xmid = np.mean(xvals)
+                    xmid = 22 #np.mean(xvals)
                     ymid = np.exp(fexplin(np.asarray([xmid]), *popt))
-                    xtxt = xmid * 1.15
-                    ytxt = ymid * 0.075
-                    entropy_symbol = '$t_{\mathrm{sat}}(\overline S_\mathrm{N})$' if 'number' in meta['dsetname'] else '$t_{\mathrm{sat}}(\overline S_\mathrm{E})$'
+                    xtxt_fr = xmid * 1.00
+                    ytxt_fr = np.exp(fexplin(np.asarray([xtxt_fr]), *popt))
+                    xtxt_to = xmid * 1.15
+                    ytxt_to = ymid * 0.01
+                    # entropy_symbol = '$t_{\mathrm{sat}}(\overline S_\mathrm{N})$' if 'number' in meta['dsetname'] else '$t_{\mathrm{sat}}(\overline S_\mathrm{E})$'
+                    entropy_symbol = '$\overline S_\mathrm{N}$' if 'number' in meta['dsetname'] else '$\overline S_\mathrm{E}$'
                     ax.annotate(entropy_symbol,
-                                xy=(xmid, ymid),
-                                xytext=(xtxt, ytxt),
+                                xy=(xtxt_fr, ytxt_fr),
+                                xytext=(xtxt_to, ytxt_to),
                                 arrowprops=dict(arrowstyle="->", color='black'),
                                 )
 
@@ -238,9 +274,10 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 if t_isect is not None and t_slope is not None:
                     # entropy_symbol = '\overline S_\mathrm{N}' if 'number' in meta['dsetname'] else '\overline S_\mathrm{E}'
                     # entropy_symbol = 't(\overline S_\mathrm{N})' if 'number' in meta['dsetname'] else 't(\overline S_\mathrm{E})'
-                    entropy_symbol = '\mathrm{N}' if 'number' in meta['dsetname'] else '\mathrm{E}'
+                    entropy_symbol = '\overline{S}_\mathrm{N}' if 'number' in meta['dsetname'] else '\overline{S}_\mathrm{E}'
+                    # entropy_symbol = 't_{\square}(\overline{S}_\mathrm{N})' if 'number' in meta['dsetname'] else 't_{\mbox{\large$\circ$}}(\overline{S}_\mathrm{E})'
                     f['legends'][idx][icol]['handle'].append(line)
-                    f['legends'][idx][icol]['title'] = 'Fit $t_\mathrm{sat}(\overline S_{\mathrm{E|N}}) = c e^{L/\\xi}$'
+                    f['legends'][idx][icol]['title'] = 'Fit $t(\overline S_{\mathrm{E|N}}) = c e^{L/\\xi}$'
                     # f['legends'][idx][icol]['label'].append(f'${entropy_symbol} = {t_isect:.3f}  e^{{(L/{t_slope:.3f})}}$')
                     # f['legends'][idx][icol]['label'].append(f'${entropy_symbol} : c={t_isect:.3f}\pm {t_isect_err:.3f},  \\xi={t_slope:.3f}\pm {t_slope_err:.3f}$')
                     f['legends'][idx][icol]['label'].append(f'${entropy_symbol} : c={format_err(t_isect, t_isect_err)},  \\xi={format_err(t_slope, t_slope_err)}$')

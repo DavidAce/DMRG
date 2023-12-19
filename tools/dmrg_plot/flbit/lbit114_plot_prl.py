@@ -36,20 +36,21 @@ def lbit_plot(args):
             batchdir = batchglob[0]
             # avgfile = f'{batchdir}/analysis/data-epstest/averaged-epstest.h5'
             plotdir = f'{batchdir}/analysis/plots'
+            cachedir = f'{batchdir}/analysis/cache'
             for avgfile in [
-                            # f'{batchdir}/analysis/data/averaged.h5',
-                            # f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',
+                            f'{batchdir}/analysis/data/averaged.h5',
+                            f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit106-lin/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit103-nil/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit100-rps/analysis/data/averaged.h5'
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit104-2d1/analysis/data/averaged.h5',
-                            f'/mnt/WDB-AN1500/mbl_transition/lbit114-now8/analysis/data/averaged.h5',
+                            # f'/mnt/S990PRO/mbl_transition/lbit114-now8/analysis/data/averaged.h5',
 
             ]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
                 print(f'found {avgfile=}')
-                metas.append(get_meta(plotdir))
+                metas.append(get_meta(plotdir,cachedir))
                 h5avgs.append(h5py.File(avgfile, 'r'))
                 if version2:
                     print('loading v2')
@@ -60,12 +61,12 @@ def lbit_plot(args):
                     dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
                                                    state_filter=state_filter, debug=False))
 
-            for avgfile in [f'/mnt/WDB-AN1500/mbl_transition/lbit113-lbit/analysis/data/averaged.h5',]:
+            for avgfile in [f'/mnt/S990PRO/mbl_transition/lbit113-lbit/analysis/data/averaged.h5',]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
                 print(f'found {avgfile=}')
                 h5avgs.append(h5py.File(avgfile, 'r'))
-                metas_lbit.append(get_meta(plotdir))
+                metas_lbit.append(get_meta(plotdir,cachedir))
                 if version2:
                     print('loading v2')
                     dbs_lbit.append(load_time_database2(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
@@ -100,9 +101,9 @@ def lbit_plot(args):
         "Paired",
     ]
     palettes = [  # Palette group for up to 4 categories
-        ["autumn_r", "winter_r", "spring_r","summer_r", ]
+        ["Oranges_r"],
         # ["viridis_r"]
-        # ["winter_r",  "summer_r", "autumn_r", "spring_r"]
+        ["Greens_r"]
         # ["Blues", "Greens", "Oranges", "Purples"],
         # ["winter_r", "autumn_r"],
         # ["Blues", "Oranges"],
@@ -134,9 +135,9 @@ def lbit_plot(args):
     linspec_c = ['u','L']
     xaxspec_c = ['f']
 
-    figspec = ['J','w', 'r','f']
-    subspec = ['u']
-    linspec = ['L']
+    figspec = ['J','w', 'r','u']
+    subspec = ['L']
+    linspec = ['f']
 
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u']
@@ -145,8 +146,10 @@ def lbit_plot(args):
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
         f = plot_divg_fig_sub_line(db=db, meta=meta['divg-num'], figspec=figspec, subspec=subspec, linspec=linspec,
                                    figs=f,
-                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+                                   palette_name=palette,dbidx=0,dbnum=1)
     save_figure(f)
+    plt.show()
+    exit(0)
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
         f = plot_time_fig_sub_line(db=db, meta=meta['numa-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec,
@@ -159,8 +162,7 @@ def lbit_plot(args):
                                    figs=f,
                                    palette_name=palette, dbidx=idx, dbnum=len(dbs))
     save_figure(f)
-    plt.show()
-    exit(0)
+
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
         f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
@@ -864,7 +866,7 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit114'],)# basedir='/mnt/wdpool/backup/lbit')
+    args = parse('fLBIT', ['lbit114'], basedir='/mnt/S990PRO/mbl_transition')
     #lbit_avg(args)
     lbit_plot(args)
 

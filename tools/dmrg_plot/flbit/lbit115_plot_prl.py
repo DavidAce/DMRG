@@ -8,7 +8,7 @@ from dmrg_plot.common.io.parse import parse
 from database.database import *
 from lbit_avg import lbit_avg
 # from plotting.meta93_slack import *
-from plotting.meta93_prl import *
+from plotting.meta115_prl import *
 from plotting.multiplot import *
 
 
@@ -21,10 +21,10 @@ def lbit_plot(args):
     batches = args.batches
     h5avgs = []
     dbs = []
-    dbs_lbit = []
+    dbs_lbit93 = []
     plotdir = None
     metas = []
-    metas_lbit = []
+    metas_lbit93 = []
     for batch in batches:
         batchglob = glob.glob(f'{projdir}/{batch}*')
         batchnum = int(''.join(i for i in batch if i.isdigit()))
@@ -61,19 +61,19 @@ def lbit_plot(args):
                     dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
                                                    state_filter=state_filter, debug=False))
 
-            for avgfile in [f'/mnt/S990PRO/mbl_transition/lbit113-lbit/analysis/data/averaged.h5',]:
+            for avgfile in [f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
                 print(f'found {avgfile=}')
                 h5avgs.append(h5py.File(avgfile, 'r'))
-                metas_lbit.append(get_meta(plotdir, cachedir))
+                metas_lbit93.append(get_meta(plotdir, cachedir))
                 if version2:
                     print('loading v2')
-                    dbs_lbit.append(load_time_database2(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
+                    dbs_lbit93.append(load_time_database2(h5avgs[-1], metas_lbit93[-1], algo_filter=algo_filter, model_filter=model_filter,
                                                    state_filter=state_filter, debug=False))
                 if version3:
                     print('loading v3')
-                    dbs_lbit.append(load_time_database3(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
+                    dbs_lbit93.append(load_time_database3(h5avgs[-1], metas_lbit93[-1], algo_filter=algo_filter, model_filter=model_filter,
                                                    state_filter=state_filter, debug=False))
 
 
@@ -101,9 +101,7 @@ def lbit_plot(args):
         "Paired",
     ]
     palettes = [  # Palette group for up to 4 categories
-        # ["viridis_r", "autumn_r", "winter_r", "spring_r"]
-        ["viridis_r", "autumn_r", "winter_r", "spring_r"]
-        # ["plasma_r", "autumn_r", "winter_r", "spring_r"]
+        ["summer_r", "autumn_r", "winter_r", "spring_r"]
         # ["autumn_r", "winter_r", "spring_r","summer_r" ]
         # ["viridis_r"]
         # ["winter_r",  "summer_r", "autumn_r", "spring_r"]
@@ -145,74 +143,67 @@ def lbit_plot(args):
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u']
     linspec_lbit = ['f','L']
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
-    #     f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit84-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
-    #                                linspec=linspec_lbit, figs=f, palette_name=palette)
-    #     break
-    # save_figure(f)
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
-    #     f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit84-typ'], figspec=figspec_lbit, subspec=subspec_lbit,
-    #                                linspec=linspec_lbit, figs=f, palette_name=palette)
-    #     break
-    # save_figure(f)
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_tsat_fig_sub_line(db=db, meta=meta['ent-sat'], figspec=figspec_Lf, subspec=subspec_Lf,
-    #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette, dbidx=idx,
-    #                                dbnum=len(dbs))
-    # # save_figure(f)
-    # # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_tsat_fig_sub_line(db=db, meta=meta['num-sat'], figspec=figspec_Lf, subspec=subspec_Lf,
-    #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette, dbidx=idx,
-    #                                dbnum=len(dbs))
-    # save_figure(f)
-    #
-    #
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
-    #
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['enta-lnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
-    #
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['numa-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
-    #
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['num-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec,
-    #                                figs=f,
-    #                                palette_name=palette, dbidx=idx, dbnum=len(dbs))
-    # save_figure(f)
 
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-        f = plot_time_fig_sub_line(db=db, meta=meta['posx'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+        f = plot_tsat_fig_sub_line(db=db, meta=meta['ent-sat'], figspec=figspec_Lf, subspec=subspec_Lf,
+                                   linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette, dbidx=idx,
+                                   dbnum=len(dbs))
+    # save_figure(f)
+    # f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_tsat_fig_sub_line(db=db, meta=meta['num-sat'], figspec=figspec_Lf, subspec=subspec_Lf,
+                                   linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette, dbidx=idx,
+                                   dbnum=len(dbs))
+    save_figure(f)
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    for idx, (db, meta, palette) in enumerate(zip(dbs_lbit93, metas_lbit93, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs_lbit93))
+
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['enta-lnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    for idx, (db, meta, palette) in enumerate(zip(dbs_lbit93, metas_lbit93, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['enta-lnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['numa-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['num-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f,
                                    palette_name=palette, dbidx=idx, dbnum=len(dbs))
     save_figure(f)
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['varx'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-    #                                palette_name=palette, dbidx=idx, dbnum=len(dbs))
-    # save_figure(f)
-    #
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['vara-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec,
-    #                                figs=f,
-    #                                palette_name=palette, dbidx=idx, dbnum=len(dbs))
-    # save_figure(f)
+    plt.show()
+    exit(0)
+
+
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['varx'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette, dbidx=idx, dbnum=len(dbs))
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['vara-lnlnt'], figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f,
+                                   palette_name=palette, dbidx=idx, dbnum=len(dbs))
+    save_figure(f)
 
     # plt.show()
     # exit(0)
@@ -227,43 +218,28 @@ def lbit_plot(args):
     #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
     # save_figure(f)
 
-    #
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_divg_fig_sub_line(db=db, meta=meta['divg-num'], figspec=figspec, subspec=subspec, linspec=linspec,
-    #                                figs=f,
-    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_time_fig_sub_line(db=db, meta=meta['numa'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
-    #                                palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
+    plt.show()
+    exit(0)
 
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_divg_fig_sub_line(db=db, meta=meta['divg-varx'], figspec=figspec, subspec=subspec, linspec=linspec,
-    #                                figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-    #     f = plot_tavg_fig_sub_line(db=db, meta=meta['tavg-varx-inset'], figspec=figspec_Lf, subspec=subspec_Lf,
-    #                                linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
-    # save_figure(f)
-    #
-    # plt.show()
-    # exit(0)
-
-
-    # f = None
-    # for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
-    #     f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
-    #                                linspec=linspec_lbit, figs=f, palette_name=palette)
-    #     break
-    # save_figure(f)
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_divg_fig_sub_line(db=db, meta=meta['divg-num'], figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
+    plt.show()
+    exit(0)
 
     plt.show()
     exit(0)
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
+                                   linspec=linspec_lbit, figs=f, palette_name=palette)
+        break
+
+    exit(0)
+
 
 
 
@@ -294,6 +270,11 @@ def lbit_plot(args):
                                    figs=f,
                                    palette_name=palette,dbidx=idx,dbnum=len(dbs))
     save_figure(f)
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_time_fig_sub_line(db=db, meta=meta['numa'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
+                                   palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
 
 
 
@@ -319,6 +300,12 @@ def lbit_plot(args):
 
 
     f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_divg_fig_sub_line(db=db, meta=meta['divg-varx'], figspec=figspec, subspec=subspec, linspec=linspec,
+                                   figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
+
+
 
 
     f = None
@@ -332,6 +319,11 @@ def lbit_plot(args):
                                    linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
     save_figure(f)
 
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_tavg_fig_sub_line(db=db, meta=meta['tavg-varx-inset'], figspec=figspec_Lf, subspec=subspec_Lf,
+                                   linspec=linspec_Lf, xaxspec=xaxspec_Lf, figs=f, palette_name=palette,dbidx=idx,dbnum=len(dbs))
+    save_figure(f)
 
 
 
@@ -920,7 +912,7 @@ def lbit_plot(args):
 
 
 if __name__ == '__main__':
-    args = parse('fLBIT', ['lbit93'],)# basedir='/mnt/wdpool/backup/lbit')
+    args = parse('fLBIT', ['lbit115'],)# basedir='/mnt/wdpool/backup/lbit')
     #lbit_avg(args)
     lbit_plot(args)
 

@@ -10,7 +10,7 @@ prb = 'prb' in mplstyle
 
 
 
-def get_meta(plotdir):
+def get_meta(plotdir,cachedir):
 
     default = {
         'box_aspect': 1,
@@ -86,6 +86,8 @@ def get_meta(plotdir):
                 # 'u': [8, 16, 32, 64, 80],
                 # 'ubond': [256],
             },
+            'cachedir': Path(cachedir),
+            'plotdir': Path(plotdir, Path(mplstyle).stem),
         },
 
         'ent': {
@@ -496,7 +498,7 @@ def get_meta(plotdir):
             # },
             # 'titlename': 'l-bit decay fit $C e^{-|i-j|/\\xi}$',
             # 'ylabel': '$\log_{10} \langle \langle O(|i-j|) \\rangle\\rangle$ ',
-            'ylabel': '$\\bar O(|i-j|)$',
+            'ylabel': '$\overline O(i,j)$',
             # 'ylabel': '$\log_{10} \\bar O(|i-j|)$ ',
             'xlabel': "$j$",
             # 'xticks': [0, 0.25, 0.5, 0.75, 1.0] if prb else None,

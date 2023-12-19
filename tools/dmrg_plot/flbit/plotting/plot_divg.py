@@ -52,9 +52,9 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
 
     numsubs *=dbnum
     subprod *=dbnum
-
     if figs is None:
         figs = [get_fig_meta(numsubs, meta=meta) for _ in range(numfigs)]
+
     for fidx, (figvals, f) in enumerate(zip(figprod, figs)):
         logger.debug('- plotting figs: {}'.format(figvals))
         idx_palette = fidx % len(palette_name)
@@ -173,6 +173,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                     # line, = ax.plot(bincentres, hist,label=None,
                     #                 color=color, path_effects=path_effects)
                     line, = ax.step(x=bincentres, y=hist, where='mid', label=None,
+                                    # linewidth=0.85,
                                     color=color, path_effects=path_effects)
                     # ax.set_yscale('log')
                     # mu, std = norm.fit(ytavg)
@@ -188,12 +189,20 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                         trans = transforms.blended_transform_factory(ax.transData, ax.transAxes)
                         ax.text(L // 2 - 0.5, 0.90, 'halfchain', fontsize='small', color='black', alpha=0.75, ha='right',
                                 va='center', rotation='vertical', transform=trans)
-                    for icol, (col, key) in enumerate(zip(legendrow, legend_col_keys)):
+                    icol = 0
+                    for (col, key) in zip(legendrow, legend_col_keys):
                         key, fmt = key.split(':') if ':' in key else [key, '']
                         f['legends'][idx][icol]['handle'].append(line)
                         f['legends'][idx][icol]['title'] = db['tex'][key]
                         f['legends'][idx][icol]['label'].append(col)
-            if ('number' in meta['dsetname'] and legendrow is not None
+                        icol += 1
+                    # f['legends'][idx][icol]['handle'].append(line)
+                    # f['legends'][idx][icol]['title'] = '$w_i$'
+                    # f['legends'][idx][icol]['label'].append('off' if f['figcount'] == 0 else 'on')
+            if ( meta.get('plotluitz')
+                    and f['figcount'] == 0
+                    and 'number' in meta['dsetname']
+                    and legendrow is not None
                     and not meta.get('plotPosX_neel0')
                     and not meta.get('plotPosX_neel1')
                     and not meta.get('plotVarX')):
@@ -220,7 +229,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                             # zorder=0 )
                         line_ext, = ax.step(x=bincentres, y=hist, where='mid', label=None, color=color, alpha=1.0,
                                             path_effects=path_effects,
-                                            linewidth=0.85,
+                                            linewidth=0.65,
                                             zorder=0)
                         if idx == 0: # Only on the leftmost subplot
                             # key, fmt = key.split(':') if ':' in key else [key, '']
@@ -325,6 +334,7 @@ def plot_divg_v3_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
         f['filename'] = "{}/{}_fig({})_sub({}){}".format(meta['plotdir'], meta['plotprefix'],
                                                        get_specvals(db, figspec, figvals),
                                                        get_specvals(db, subspec), suffix)
+        f['figcount'] += 1
     return figs
 
 

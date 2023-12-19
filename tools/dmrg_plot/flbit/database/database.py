@@ -163,6 +163,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             'u': set(), 'f': set(), 'tstd': set(), 'cstd': set(), 'tgw8': set(), 'cgw8': set(), 'ubond': set(),
         },
         'dsets': {},
+        'plotdir': meta['common']['plotdir'],
+        'cachedir': meta['common']['cachedir']
     }
     grouplist = list(set([metaval['groupname'] for metakey, metaval in meta.items() if 'groupname' in metaval]))
     dsetlist = list(set([metaval['dsetname'] for metakey, metaval in meta.items() if 'dsetname' in metaval]))
@@ -272,6 +274,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 db['dsets'][dname]['vals']['cgw8'] = cgw8
                 db['dsets'][dname]['vals']['ubond'] = ubond
                 db['dsets'][dname]['vals']['num'] = num
+                db['dsets'][dname]['vals']['plotdir'] = meta['common']['plotdir']
+                db['dsets'][dname]['vals']['cachedir'] = meta['common']['cachedir']
 
                 db['dsets'][dname]['node'] = {}
                 db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]
@@ -370,6 +374,9 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         db['dsets'][dname]['vals']['tsim'] = tsim
                         db['dsets'][dname]['vals']['bavg'] = bavg
                         db['dsets'][dname]['vals']['bmax'] = bmax
+                        db['dsets'][dname]['vals']['plotdir'] = meta['common']['plotdir']
+                        db['dsets'][dname]['vals']['cachedir'] = meta['common']['cachedir']
+
 
                         db['dsets'][dname]['node'] = {}
                         db['dsets'][dname]['node']['L'] = h5_src[match_path(modelnode.name, 'L')]

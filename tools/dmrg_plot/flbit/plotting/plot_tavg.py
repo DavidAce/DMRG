@@ -12,6 +12,7 @@ from .tools import *
 from itertools import islice
 from scipy.signal import savgol_filter,find_peaks, find_peaks_cwt
 from scipy import interpolate
+from dataclasses import asdict
 
 # def floglog(x, a, b,c):
 #     return a + b*np.log(np.log(x + c))
@@ -124,6 +125,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         t = mmntnode['avg']['physical_time'][()].astype(float)
                         y = datanode[meta['dsetname']][()]
                         n = datanode['avg']['num'][()][0]
+                        tdata = t
                         t = get_timepoints(t,dbval)
                         idx_num, idx_ent = t.idx_num_saturated, t.idx_ent_saturated
                         idx_sat = idx_num if 'number' in meta['dsetname'] else idx_ent
@@ -159,9 +161,10 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         if meta.get('plotpinfty'):
                             if 'pinfty_number_entropies' in datanode.parent.parent:
                                 # p = datanode.parent.parent['pinfty_number_entropies']['avg'][()]
-                                rhalf = int(n/2) if L==16 else int(n)
-                                p = np.nanmean(datanode.parent.parent['pinfty_number_entropies']['data'][idx_sat:,rhalf:], axis=1)
+                                # rhalf = int(n/2) if L==16 else int(n)
+                                p = np.nanmean(datanode.parent.parent['pinfty_number_entropies']['data'][idx_sat:,:], axis=1)
                                 print(f'shape p: {np.shape(p)}')
+                                print(f'{p=}')
                             elif 'number_probabilities' in datanode.parent.parent:
                                 print('Warning: Could not find pinfty_number entropies. Calculating from scratch!')
                                 Lhalf = int(L/2)
@@ -207,12 +210,17 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         if meta.get('plotVarX'):
                             L = dbval['vals']['L']
                             posnode = datanode.parent.parent['nth_particle_position']
-                            r2 = range(int(L // 4) - 1, int(L // 4) + 1)  # Two central particles
+                            r0 = range(int(L // 4) - 1, int(L // 4) + 0)  # One particle to the left o the half-chain
+                            r1 = range(int(L // 4) - 0, int(L // 4) + 1)  # One particle o the right of the half-chain
+                            r2 = range(int(L // 4) - 1, int(L // 4) + 1)  # Two central particles on either side of the half-chain
                             y0 = np.atleast_3d(posnode['pos_variance_neel0'][r2, :, :])   # 1010|1010 index L//4 = 2 is nearest the midchain boundary
                             y1 = np.atleast_3d(posnode['pos_variance_neel1'][r2, :, :])   # 1010|1010 index L//4 = 2 is nearest the midchain boundary
                             # y = np.atleast_2d(np.concatenate([y0, y1], axis=2))
                             # Now interpret each particle is just more realizations at the midchain
-                            y = np.concatenate([y0[0,:, :], y0[1,:,:], y1[0,:,:], y1[1,:,:]], axis=1)
+                            y = np.concatenate([y0[0, :, :], y0[1, :, :], y1[0, :, :], y1[1, :, :]], axis=1)
+                            # y = np.concatenate([y0[0, :, :], y1[1, :, :]], axis=1)
+                            # y = np.concatenate([y0[0, :, :], y1[0, :, :]], axis=1)
+
                         if meta.get('plothartley'):
                             y = np.atleast_2d(datanode.parent.parent['hartley_number_entropies/data'][()]).T
 
@@ -220,13 +228,39 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         # reals = np.shape(y)[1]
                         # off = int(reals / 2)
                         # ext = int(reals / 5)
-                        esb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tp=t,nbs=100, dsetname=meta['dsetname'])
+                        # esb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=100, dsetname=meta['dsetname'])
+                        # esb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=meta.get('num-bootstraps', 100), dsetname=meta['dsetname'])
+                        dsetname = 'varx' if meta.get('plotVarX') else meta['dsetname']
+                        filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(dbval['vals']['cachedir'],
+                                                                                  dsetname,
+                                                                                  dbval['vals']['L'],
+                                                                                  dbval['vals']['x'],
+                                                                                  dbval['vals']['w'],
+                                                                                  dbval['vals']['f']
+                                                                                  )
+                        if meta.get('loadjson') and os.path.isfile(filenamejson):
+                            with open(filenamejson, 'r') as fp:
+                                tsb_json = json.load(fp)
+                                tsb = entropy_saturation_bootstrap(**tsb_json)
+                        else:
+                            # tboot_idx_avg, tboot_idx_err, sboot_avg, sboot_err = get_entropy_saturation_from_bootstrap(ydata=s, nbs=100)
+                            tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=y, tdata=tdata, nbs=meta.get('num-bootstraps', 100), dsetname=dsetname)
+
+                            if meta.get('savejson'):
+                                with open(filenamejson, 'w') as fp:
+                                    json.dump(asdict(tsb), fp, indent=4)
+
+
+
                         if 'mean' in meta['ystats']:
-                            yvals.append(esb.sinf_full_avg)
+                            # if meta.get('plotVarX'):
+                            #     yvals.append(np.mean(y))
+                            # else:
+                            yvals.append(tsb.sinf_full_avg)
                             if meta.get('plotpinfty'):
                                 pvals.append(np.mean(p))
                         if 'median' in meta['ystats']:
-                            mvals.append(esb.sinf_full_med)
+                            mvals.append(tsb.sinf_full_med)
                             if meta.get('plotpinfty'):
                                 pvals.append(np.median(p))
                         if 'gmean' in meta['ystats']:
@@ -238,11 +272,11 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         # if meta.get('plotVarX'):
                         #     vevals.append(np.std(v) / np.sqrt(len(v)))
                         xvals.append(get_vals(dbval, xaxspec))
-                        evals.append(esb.sinf_full_err)
+                        evals.append(tsb.sinf_full_err)
                         nvals.append(n)
-                        ybavg.append(esb.sinf_boot_avg)
-                        ybmed.append(esb.sinf_boot_med)
-                        ebavg.append(esb.sinf_boot_err)
+                        ybavg.append(tsb.sinf_boot_avg)
+                        ybmed.append(tsb.sinf_boot_med)
+                        ebavg.append(tsb.sinf_boot_err)
 
                 yvals = np.ravel(yvals)
                 pvals = np.ravel(pvals)
@@ -287,10 +321,10 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                     line = ax.errorbar(x=xvals, y=gvals, yerr=evals, linestyle='--', color=color, path_effects=path_effects)
                 if 'mean' in meta['ystats']:
                     line, = ax.plot(xvals, yvals, marker=None, color='black', linewidth=1.0, path_effects=None)
-                    ax.plot(xvals, ybmed, color='red', linestyle=':', linewidth=1.0, path_effects=path_effects)
-                    ax.errorbar(x=xvals, y=ybavg, yerr=ebavg, color='blue', linestyle='-', capsize=1.0, path_effects=path_effects)
+                    # ax.plot(xvals, ybmed, color='red', linestyle=':', linewidth=1.0, path_effects=path_effects)
+                    # ax.errorbar(x=xvals, y=ybavg, yerr=ebavg, color='blue', linestyle='-', capsize=1.0, path_effects=path_effects)
                     for xval,yval,eval,color in zip(xvals, yvals, evals,palette):
-                        ax.errorbar(x=xval, y=yval, yerr=eval, color=color,linestyle='none',capsize=1.0, path_effects=path_effects,zorder=10)
+                        ax.errorbar(x=xval, y=yval, yerr=eval, color=color,linestyle='none',capsize=2.0, path_effects=path_effects,zorder=10)
 
                 if meta.get('plotpeakln2'):
                     ax.plot(xvals, speak, marker=None, color='gray', path_effects=None)
@@ -300,7 +334,7 @@ def plot_v3_tavg_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                 if meta.get('plotpinfty'):
                     line2, = ax.plot(xvals, pvals, marker=None, color='black', linestyle=':', path_effects=None)
                     for xval,pval,qval,color in zip(xvals, pvals, qvals,palette):
-                        ax.errorbar(x=xval, y=pval, yerr=qval, color=color,linestyle='none',capsize=1.0, path_effects=path_effects,zorder=10)
+                        ax.errorbar(x=xval, y=pval, yerr=qval, color=color,linestyle='none',capsize=2.0, path_effects=path_effects,zorder=10)
                     # line2 = ax.errorbar(x=xvals, y=pvals, yerr=qvals, linestyle='--', color=color, path_effects=path_effects)
 
                 # if meta.get('plotVarX'):
