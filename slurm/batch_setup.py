@@ -492,7 +492,7 @@ def get_batch_setup(projectname):
             'projectname': 'lbit116-anderson',
             'batch': {
                 'L16': {
-                    'seed_extent': [1000],
+                    'seed_extent': [50000],
                     'seed_offset': [16200000],
                     'time_steps': 200,
                 },
