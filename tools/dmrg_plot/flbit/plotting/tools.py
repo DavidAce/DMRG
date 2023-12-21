@@ -1315,7 +1315,9 @@ def get_timepoints(tdata, db):
     #   away from the furthest particle on the same side.
     #   We exclude the particle at the edge because it is too restricted.
     # tmax2_num = 1.0 / (w2 * np.exp(-((r2max / 2)-2.5) / x) * N)
-    tmax2_num = 1.0 / (w2 * np.exp(-((r2max-4) / 2) / x) * N)
+    # tmax2_num = 1.0 / (w2 * np.exp(-((r2max-4) / 2) / x) * N)
+    tmax2_num = 0.008 * np.exp(L/1.98)
+
     # tmid2_num = tmid2_ent ** 0.5
     # tmax2_num = tmax2_ent ** 0.5
 

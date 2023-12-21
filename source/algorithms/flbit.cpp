@@ -299,7 +299,8 @@ void flbit::update_time_step() {
         return;
     }
     status.delta_t = time_points[status.iter];
-    if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) throw except::logic_error("Expected nonzero delta_t after time step update");
+    if(settings::flbit::time_scale == TimeScale::LOGSPACED)
+        if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) throw except::logic_error("Expected nonzero delta_t after time step update");
     tools::log->debug("Time step iter {} | Δt = {} | t = {:8.2e}", status.iter, status.delta_t.to_floating_point<cplx>(),
                       status.phys_time.to_floating_point<real>());
 }
@@ -572,8 +573,8 @@ void flbit::create_unitary_circuit_gates() {
         //        unitary_gates_mpo_layer_full = qm::lbit::merge_unitary_mpo_layers(mpo_layers);
         ledge.resize(1);
         redge.resize(1);
-        ledge.setConstant(cplx(1.0,0.0));
-        redge.setConstant(cplx(1.0,0.0));
+        ledge.setConstant(cplx(1.0, 0.0));
+        redge.setConstant(cplx(1.0, 0.0));
     }
 }
 
@@ -905,7 +906,10 @@ void flbit::print_status() {
 
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
                           tools::finite::measure::bond_dimension_midchain(*tensors.state));
-    report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<real>()));
+    if(settings::flbit::time_scale == TimeScale::LOGSPACED)
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<real>()));
+    if(settings::flbit::time_scale == TimeScale::LINSPACED)
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", status.phys_time.to_floating_point<real>()));
     report += fmt::format("wtime:{:<}(+{:<}) ", fmt::format("{:>.1f}s", tid::get_unscoped("t_tot").get_time()),
                           fmt::format("{:>.1f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());

@@ -158,7 +158,7 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
                 break;
             }
             case UnitaryGateType::ANDERSON: {
-                M = th3 * 0.25 * (ID[0] + SZ[0] + SZ[1])   //
+                M =   th3 * 0.25 * (ID[0] + SZ[0] + SZ[1])   //
                     + th2 * 0.25 * (ID[0] - SZ[0] + SZ[1]) //
                     + th1 * 0.25 * (ID[0] + SZ[0] - SZ[1]) //
                     + th0 * 0.25 * (ID[0] - SZ[0] - SZ[1]) //

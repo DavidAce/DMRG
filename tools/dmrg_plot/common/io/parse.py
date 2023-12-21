@@ -87,6 +87,7 @@ def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
         'lbit113',  # L12-28 to calculate lbit stats for f0.2, u16 tgw8 expdecay
         'lbit114',  # L16 to calculate the SN distribution without weights at f=0.06
         'lbit115',  # L16 xi_J=0.5,2.0 to see how it affects the saturation time of SE
+        'lbit116',  # L16 anderson mode to see how it affects the saturation time of SN
     ]
     xdmrg_batches = ['data170',  #
                     ]
