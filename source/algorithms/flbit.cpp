@@ -482,6 +482,7 @@ void flbit::create_hamiltonian_gates() {
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
             ham_gates_1body.emplace_back(tensors.model->get_multisite_ham_t({pos}, nbody), sites, spins);
         }
+        tensors.model->clear_cache();
 
         auto J2_ctof = std::min(settings::model::lbit::J2_span, L - 1); // Max distance |i-j| to the furthest interacting site L-1
         for(auto posL : list_2body) {
@@ -497,10 +498,8 @@ void flbit::create_hamiltonian_gates() {
         tensors.model->clear_cache();
 
         for(auto posL : list_3body) {
-            auto range = 2ul; // Distance to next-nearest neighbor when 3 sites interact
-            auto posR  = posL + range;
-            if(posR >= L) break;
-            auto sites = num::range<size_t>(posL, posR + 1); // +1 to include last site
+            auto range = 2ul;                                                                    // Distance to next-nearest neighbor when 3 sites interact
+            auto sites = num::range<size_t>(posL, std::clamp<size_t>(posL + range + 1, 0ul, L)); // +1 to include last site
             auto nbody = std::vector<size_t>{3};
             auto spins = tensors.state->get_spin_dims(sites);
             tools::log->debug("Generating {}-body hamiltonian on sites {}", nbody, sites);
@@ -524,6 +523,7 @@ void flbit::create_hamiltonian_gates() {
         for(const auto &[idx, ham] : iter::enumerate(ham_gates_3body))
             if(tenx::isZero(ham.op_t)) tools::log->warn("ham3[{}] is all zeros", idx);
     }
+    tensors.model->clear_cache();
 }
 
 void flbit::update_time_evolution_gates() {
@@ -590,15 +590,15 @@ void flbit::time_evolve_lbit_state() {
     auto delta_t = status.delta_t.to_floating_point<cplx_t>();
     if(has_swap_gates) {
         tools::log->debug("Applying time evolution swap gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircOp::NONE, GateMove::ON, svd_cfg);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2body, CircOp::NONE, GateMove::ON, svd_cfg);
-        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3body, CircOp::NONE, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_1body, CircuitOp::NONE, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_2body, CircuitOp::NONE, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_swap_gates(*state_lbit, time_swap_gates_3body, CircuitOp::NONE, GateMove::AUTO, svd_cfg);
     }
     if(has_slow_gates) {
         tools::log->debug("Applying time evolution gates Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_1body, CircOp::NONE, true, GateMove::ON, svd_cfg);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_2body, CircOp::NONE, true, GateMove::ON, svd_cfg);
-        tools::finite::mps::apply_gates(*state_lbit, time_gates_3body, CircOp::NONE, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_1body, CircuitOp::NONE, true, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_2body, CircuitOp::NONE, true, GateMove::AUTO, svd_cfg);
+        tools::finite::mps::apply_gates(*state_lbit, time_gates_3body, CircuitOp::NONE, true, GateMove::AUTO, svd_cfg);
     }
     tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
 
@@ -612,18 +612,18 @@ void flbit::time_evolve_lbit_state() {
             for(auto &g : time_swap_gates_1body) g.unmark_as_used();
             for(auto &g : time_swap_gates_2body) g.unmark_as_used();
             for(auto &g : time_swap_gates_3body) g.unmark_as_used();
-            tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_3body, CircOp::ADJ, GateMove::AUTO, svd_cfg);
-            tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_2body, CircOp::ADJ, GateMove::AUTO, svd_cfg);
-            tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_1body, CircOp::ADJ, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_3body, CircuitOp::ADJ, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_2body, CircuitOp::ADJ, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_1body, CircuitOp::ADJ, GateMove::AUTO, svd_cfg);
         }
         if(has_slow_gates) {
             tools::log->debug("Applying time evolution gates backward Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
             for(auto &g : time_gates_1body) g.unmark_as_used();
             for(auto &g : time_gates_2body) g.unmark_as_used();
             for(auto &g : time_gates_3body) g.unmark_as_used();
-            tools::finite::mps::apply_gates(state_lbit_debug, time_gates_3body, CircOp::ADJ, true, GateMove::AUTO, svd_cfg);
-            tools::finite::mps::apply_gates(state_lbit_debug, time_gates_2body, CircOp::ADJ, true, GateMove::AUTO, svd_cfg);
-            tools::finite::mps::apply_gates(state_lbit_debug, time_gates_1body, CircOp::ADJ, true, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_gates(state_lbit_debug, time_gates_3body, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_gates(state_lbit_debug, time_gates_2body, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_gates(state_lbit_debug, time_gates_1body, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
         }
         tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
         auto overlap = tools::finite::ops::overlap(*state_lbit_init, state_lbit_debug);
@@ -660,7 +660,7 @@ void flbit::transform_to_real_basis() {
     } else {
         tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(),
                           unitary_gates_2site_layers.size());
-        tools::finite::mps::apply_circuit(*tensors.state, unitary_gates_2site_layers, CircOp::ADJ, false, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_circuit(*tensors.state, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
     }
 
     tools::finite::mps::normalize_state(*tensors.state, svd_cfg, NormPolicy::IFNEEDED);
@@ -695,7 +695,7 @@ void flbit::transform_to_real_basis() {
         }
         {
             auto state_lbit_debug = *tensors.state;
-            tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircOp::NONE, false, true, GateMove::ON, svd_cfg);
+            tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
             auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
             tools::log->info("Debug overlap: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
@@ -728,7 +728,7 @@ void flbit::transform_to_lbit_basis() {
         }
     } else {
         tools::log->info("Transforming {} to {} using {} unitary layers", tensors.state->get_name(), state_lbit->get_name(), unitary_gates_2site_layers.size());
-        tools::finite::mps::apply_circuit(*state_lbit, unitary_gates_2site_layers, CircOp::NONE, false, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_circuit(*state_lbit, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
     }
 
     //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
@@ -759,7 +759,7 @@ void flbit::transform_to_lbit_basis() {
                 throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
         } else {
             auto state_real_debug = *state_lbit;
-            tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircOp::ADJ, false, true, GateMove::ON, svd_cfg);
+            tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
             auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
             tools::log->info("Debug overlap: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)

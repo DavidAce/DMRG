@@ -2,7 +2,10 @@
 #if defined(USE_QUADMATH)
     #include "debug/exceptions.h"
     #include "io/fmt.h"
+    #include "io/fmt_f128_t.h"
+    #include "math/f128.h"
     #include <bitset>
+    #include <fmt/format.h>
     #include <h5pp/h5pp.h>
 template<typename T>
 std::string get_binary(T val) {
@@ -53,7 +56,7 @@ int main() {
     auto wval = __float128(0.1);
     auto wbin = get_binary(wval);
     fmt::print("tval = {} -> {} -> {}\n", tval, tbin, get_decimal<float>(tbin));
-    fmt::print("wval = {} -> {} -> {}\n", wval, wbin, get_decimal<__float128>(wbin));
+    fmt::print("wval = {} -> {} -> {}\n", f128_t(wval), wbin, f128_t(get_decimal<__float128>(wbin)));
 
     auto f = h5pp::File("h5float128.h5", h5pp::FilePermission::READWRITE, 2);
 
@@ -70,7 +73,7 @@ int main() {
     #if __BYTE_ORDER == LITTLE_ENDIAN
     auto sferr = H5Tset_fields(h5_float128_t, 127, 112, 15, 0, 112);
     #else
-    auto sferr    = H5Tset_fields(h5_real_t, 0, 1, 15, 16, 112);
+    auto sferr = H5Tset_fields(h5_real_t, 0, 1, 15, 16, 112);
     #endif
     auto sberr = H5Tset_ebias(h5_float128_t, 127);
     auto snerr = H5Tset_norm(h5_float128_t, H5T_norm_t::H5T_NORM_MSBSET);
@@ -98,7 +101,7 @@ int main() {
 
     auto rval = f.readDataset<__float128>("float128", std::nullopt, h5_float128_t);
     auto rbin = get_binary(rval);
-    fmt::print("rval = {} -> {} -> {}\n", rval, rbin, get_decimal<__float128>(rbin));
+    fmt::print("rval = {} -> {} -> {}\n", f128_t(rval), rbin, f128_t(get_decimal<__float128>(rbin)));
     if(rval != wval) throw std::runtime_error("rval != wval");
     return 0;
 }

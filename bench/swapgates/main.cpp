@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
                     bench.name(name).run([&]() {
                         auto state_tmp = state;
                         auto gates_tmp = gates;
-                        tools::finite::mps::apply_swap_gates(state_tmp, gates_tmp, CircOp::NONE, GateMove::ON, svdset);
+                        tools::finite::mps::apply_swap_gates(state_tmp, gates_tmp, CircuitOp::NONE, GateMove::ON, svdset);
                         ankerl::nanobench::doNotOptimizeAway(state_tmp);
                         ankerl::nanobench::doNotOptimizeAway(gates_tmp);
                     });

@@ -21,8 +21,9 @@ int main() {
     fmt::print("v3: {:>20.7f}\n", f128_t(v3));
     fmt::print("v4: {:<20.7f}\n", f128_t(v4));
     fmt::print("v4.string(5,8,f,<): {}\n", f128_t(v4).string(5,8, 'f', "<"));
-    fmt::print("v5: {:>.5f}\n", c128_t(v5));
-    fmt::print("v6: {:>.5f}\n", v6);
+    fmt::print("v5: {:>.5f}{:+>.5f}i\n", c128_t(v5).real(), c128_t(v5).imag());
+    fmt::print("v6: {:>.5f}{:+>.5f}i\n", c128_t(v6).real(), c128_t(v6).imag());
+    fmt::print("v7: {:>.5f}{:+>.5f}i\n", c128_t(v7).real(), c128_t(v7).imag());
 
     return 0;
 }

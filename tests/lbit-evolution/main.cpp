@@ -157,12 +157,12 @@ size_t assert_lbit_evolution(const flbit &f) {
     Eigen::VectorXcd vec_real_revo = unitarymatrix.adjoint() * exp_lbit_iHdt * unitarymatrix * vec_real_init;
     Eigen::VectorXcd vec_real_back = unitarymatrix.adjoint() * vec_lbit_init; // Returns the initial lbit state to real basis
 
-    auto overlap_lbit_levo_tebd = vec_lbit_levo.dot(vec_lbit_tebd);           // One if time evo works independently of U
-    auto overlap_lbit_revo_tebd = vec_lbit_revo.dot(vec_lbit_tebd);           // One if time evo and U both work
-    auto overlap_lbit_devo_init = vec_lbit_devo.dot(vec_lbit_init);           // One if time evo works independently of U
-    auto overlap_real_levo_tebd = vec_real_levo.dot(vec_real_tebd);           // One if time evo and U both work
-    auto overlap_real_revo_tebd = vec_real_revo.dot(vec_real_tebd);           // One if time evo and U both work
-    auto overlap_real_back_init = vec_real_back.dot(vec_real_init);           // One if U works independently of time evo
+    auto overlap_lbit_levo_tebd = vec_lbit_levo.dot(vec_lbit_tebd); // One if time evo works independently of U
+    auto overlap_lbit_revo_tebd = vec_lbit_revo.dot(vec_lbit_tebd); // One if time evo and U both work
+    auto overlap_lbit_devo_init = vec_lbit_devo.dot(vec_lbit_init); // One if time evo works independently of U
+    auto overlap_real_levo_tebd = vec_real_levo.dot(vec_real_tebd); // One if time evo and U both work
+    auto overlap_real_revo_tebd = vec_real_revo.dot(vec_real_tebd); // One if time evo and U both work
+    auto overlap_real_back_init = vec_real_back.dot(vec_real_init); // One if U works independently of time evo
 
     auto real_error_lbit_levo_tebd = std::abs(std::real(overlap_lbit_levo_tebd) - 1.0);
     auto real_error_lbit_revo_tebd = std::abs(std::real(overlap_lbit_revo_tebd) - 1.0);
@@ -193,15 +193,14 @@ size_t assert_lbit_evolution(const flbit &f) {
     tools::log->info("vec_real_levo.norm()   : {:.16f}", vec_real_levo.norm());
     tools::log->info("vec_real_revo.norm()   : {:.16f}", vec_real_revo.norm());
     tools::log->info("vec_real_back.norm()   : {:.16f}", vec_real_back.norm());
-
-    tools::log->info("overlap_lbit_levo_tebd : {:.16f} | {:.16f} |", overlap_lbit_levo_tebd, std::abs(overlap_lbit_levo_tebd));
-    tools::log->info("overlap_lbit_revo_tebd : {:.16f} | {:.16f} |", overlap_lbit_revo_tebd, std::abs(overlap_lbit_revo_tebd));
-    tools::log->info("overlap_lbit_devo_init : {:.16f} | {:.16f} |", overlap_lbit_devo_init, std::abs(overlap_lbit_devo_init));
-    tools::log->info("overlap_real_levo_tebd : {:.16f} | {:.16f} |", overlap_real_levo_tebd, std::abs(overlap_real_levo_tebd));
-    tools::log->info("overlap_real_revo_tebd : {:.16f} | {:.16f} |", overlap_real_revo_tebd, std::abs(overlap_real_revo_tebd));
-    tools::log->info("overlap_real_lbit_init : {:.16f} | {:.16f} |", overlap_real_back_init, std::abs(overlap_real_back_init));
-
     /* clang-format off */
+    tools::log->info("overlap_lbit_levo_tebd : {:.16f} | {:.16f} | One if time evo works independently of U", overlap_lbit_levo_tebd, std::abs(overlap_lbit_levo_tebd));
+    tools::log->info("overlap_lbit_revo_tebd : {:.16f} | {:.16f} | One if time evo and U both work"         , overlap_lbit_revo_tebd, std::abs(overlap_lbit_revo_tebd));
+    tools::log->info("overlap_lbit_devo_init : {:.16f} | {:.16f} | One if time evo works independently of U", overlap_lbit_devo_init, std::abs(overlap_lbit_devo_init));
+    tools::log->info("overlap_real_levo_tebd : {:.16f} | {:.16f} | One if time evo and U both work"         , overlap_real_levo_tebd, std::abs(overlap_real_levo_tebd));
+    tools::log->info("overlap_real_revo_tebd : {:.16f} | {:.16f} | One if time evo and U both work"         , overlap_real_revo_tebd, std::abs(overlap_real_revo_tebd));
+    tools::log->info("overlap_real_lbit_init : {:.16f} | {:.16f} | One if U works independently of time evo", overlap_real_back_init, std::abs(overlap_real_back_init));
+
     if(std::abs(vec_real_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_init.norm() {0:.{2}f} > {1:.{2}f}", vec_real_init.norm(), max_norm_error, digits10_d);
     if(std::abs(vec_lbit_init.norm()-1.0) > max_norm_error) throw except::logic_error("vec_lbit_init.norm() {0:.{2}f} > {1:.{2}f}", vec_lbit_init.norm(), max_norm_error, digits10_d);
     if(std::abs(vec_real_tebd.norm()-1.0) > max_norm_error) throw except::logic_error("vec_real_tebd.norm() {0:.{2}f} > {1:.{2}f}", vec_real_tebd.norm(), max_norm_error, digits10_d);
@@ -317,8 +316,8 @@ int main(int argc, char *argv[]) {
     tools::log->info(" __float128 max_dig: {}", FLT128_DIG);
 #endif
     // Initialize the flbit algorithm
-    auto flbit_swap = flbit(nullptr);            // Will evolve with swap gates on
-    auto flbit_slow = flbit(nullptr);            // Will evolve with swap gates off
+    auto flbit_swap = flbit(nullptr); // Will evolve with swap gates on
+    auto flbit_slow = flbit(nullptr); // Will evolve with swap gates off
 
     settings::flbit::time_gate_id_threshold = 0; // Turn off time gate skips
     settings::flbit::use_swap_gates         = true;
@@ -346,28 +345,23 @@ int main(int argc, char *argv[]) {
         flbit_swap.update_state();
         tools::finite::measure::do_all_measurements(*flbit_swap.tensors.state);
         flbit_swap.print_status();
+        test_swap_count += assert_lbit_evolution(flbit_swap);
+        flbit_swap.update_time_evolution_gates();
 
         set_log("slow");
         flbit_slow.update_state();
         tools::finite::measure::do_all_measurements(*flbit_slow.tensors.state);
         flbit_slow.print_status();
-
-        set_log("slow");
         test_slow_count += assert_lbit_evolution(flbit_slow);
-
-        set_log("swap");
-        test_swap_count += assert_lbit_evolution(flbit_swap);
+        flbit_slow.update_time_evolution_gates();
 
         set_log("both");
         test_both_count += assert_lbit_evolution(flbit_slow, flbit_swap);
 
-        set_log("swap");
-        flbit_swap.update_time_evolution_gates();
-        set_log("slow");
-        flbit_slow.update_time_evolution_gates();
     }
-    if(test_swap_count == 0) { throw except::logic_error("No swap tests ran"); }
-    if(test_slow_count == 0) { throw except::logic_error("No slow tests ran"); }
+    if(test_swap_count == 0) { throw except::logic_error("No swap tests ran. Count: {}", test_swap_count); }
+    if(test_slow_count == 0) { throw except::logic_error("No slow tests ran. Count: {}", test_slow_count); }
     if(test_swap_count != test_slow_count) { throw except::logic_error("Unequal number of tests ran: {} != {}", test_swap_count, test_slow_count); }
+    tools::log->info("Success!");
     return 0;
 }

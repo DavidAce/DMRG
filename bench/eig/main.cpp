@@ -56,10 +56,10 @@ std::string solve(const eig::settings &config, const h5pp::File &h5file, std::st
                           time, dims);
     }
 
-    Eigen::Tensor<eig::real, 3> mps   = h5file.readDataset<Eigen::Tensor<eig::cplx, 3>>(fmt::format("{}/mps", group)).real();
-    auto                        mpo2  = h5file.readDataset<Eigen::Tensor<eig::real, 4>>(fmt::format("{}/mpo2", group));
-    auto                        envL2 = h5file.readDataset<Eigen::Tensor<eig::real, 3>>(fmt::format("{}/envL2", group));
-    auto                        envR2 = h5file.readDataset<Eigen::Tensor<eig::real, 3>>(fmt::format("{}/envR2", group));
+    Eigen::Tensor<real, 3> mps   = h5file.readDataset<Eigen::Tensor<cplx, 3>>(fmt::format("{}/mps", group)).real();
+    auto                   mpo2  = h5file.readDataset<Eigen::Tensor<real, 4>>(fmt::format("{}/mpo2", group));
+    auto                   envL2 = h5file.readDataset<Eigen::Tensor<real, 3>>(fmt::format("{}/envL2", group));
+    auto                   envR2 = h5file.readDataset<Eigen::Tensor<real, 3>>(fmt::format("{}/envR2", group));
 
     auto ham2 = MatVecMPO<double>(envL2, envR2, mpo2);
     auto dims = ham2.get_shape_mps();
@@ -73,12 +73,12 @@ std::string solve(const eig::settings &config, const h5pp::File &h5file, std::st
     auto rnorm       = *std::max_element(s.result.meta.residual_norms.begin(), s.result.meta.residual_norms.end());
     auto maxInnerStr = fmt::format("{:>4}", s.config.primme_max_inner_iterations ? std::to_string(s.config.primme_max_inner_iterations.value()) : "auto");
     auto msg         = fmt::format(
-                FMT_STRING("Result: method {:<32} | {:^10} | nev {:>3} | ncv {:>3} | maxInner {:>4} | tol {:8.2e} | iter {:>5} | op {:>5} | mv {:>7} | Found {:<5} | "
+        FMT_STRING("Result: method {:<32} | {:^10} | nev {:>3} | ncv {:>3} | maxInner {:>4} | tol {:8.2e} | iter {:>5} | op {:>5} | mv {:>7} | Found {:<5} | "
                                    "rnorm {:8.2e} | var {:>12.6e} | time {:>10.3f} s | t/op {:>10.3f} ms | t/mv {:>10.3f} ms | dims {}"),
-                eig::MethodToString(config.primme_method.value()), group, s.config.maxNev.value(), s.config.maxNcv.value(), maxInnerStr, s.config.tol.value(),
-                s.result.meta.iter, s.result.meta.num_op, s.result.meta.num_mv, s.result.meta.eigvecsR_found, rnorm, s.result.get_eigvals()[0],
-                s.result.meta.time_total, s.result.meta.time_total * 1000.0 / static_cast<double>(s.result.meta.num_op),
-                s.result.meta.time_total * 1000.0 / static_cast<double>(s.result.meta.num_mv), dims);
+        eig::MethodToString(config.primme_method.value()), group, s.config.maxNev.value(), s.config.maxNcv.value(), maxInnerStr, s.config.tol.value(),
+        s.result.meta.iter, s.result.meta.num_op, s.result.meta.num_mv, s.result.meta.eigvecsR_found, rnorm, s.result.get_eigvals()[0],
+        s.result.meta.time_total, s.result.meta.time_total * 1000.0 / static_cast<double>(s.result.meta.num_op),
+        s.result.meta.time_total * 1000.0 / static_cast<double>(s.result.meta.num_mv), dims);
 
     tools::log->info("{}", tgt);
     tools::log->info("{}", msg);
