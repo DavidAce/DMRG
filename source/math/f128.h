@@ -54,14 +54,17 @@ struct f128_t {
         return val - v;
     }
     [[nodiscard]] std::string string(int prec = 36, int width = 0, char pres = 'f', std::string_view align = "") const {
+        if(prec < 0) prec = 36;
+        if(width < 0) width = 0;
         std::string buf;
         char        fstr[16];
-        std::snprintf(fstr, sizeof fstr, "%%%s%d.%dQ%c", align == "<" ? "-" : align.data(), width, prec, pres);
+        auto        res = std::snprintf(fstr, sizeof fstr, "%%%s%d.%uQ%c", align == "<" ? "-" : align.data(), width, prec, pres);
+        if(res < 0) std::runtime_error("f128_t.string(): snprintf() returned < 0");
         auto size = quadmath_snprintf(nullptr, 0, fstr, val);
         if(size >= 0) {
             buf.resize(static_cast<size_t>(size) + 1);
         } else {
-            throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned size < 0");
+            throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned < 0");
         }
         quadmath_snprintf(buf.data(), buf.size(), fstr, val);
         return buf;
