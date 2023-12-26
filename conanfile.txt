@@ -10,9 +10,9 @@ fmt/10.1.1
 spdlog/1.12.0
 eigen/3.4.0
 arpack++/2.3.0@davidace/dev
-cli11/2.3.1
+cli11/2.3.2
 backward-cpp/1.6
-zlib/1.2.13
+zlib/1.3
 pcg-cpp/cci.20210406
 # mpfr/4.1.0
 
