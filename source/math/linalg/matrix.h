@@ -44,22 +44,27 @@ namespace linalg::matrix {
 #if defined(USE_QUADMATH)
             else if constexpr(std::is_same_v<Inner, __float128>) {
                 std::string s;
-                std::string rbuf;
-                std::string ibuf;
-                auto        bufsize = std::max<size_t>(64, static_cast<size_t>(f.precision) + 34);
-                rbuf.resize(bufsize);
-                ibuf.resize(bufsize);
-                s.reserve(bufsize * m.derived().size());
+                auto        probablesize = 4 + 2 * (m.derived().size() + 1) * std::max<size_t>(64, static_cast<size_t>(f.precision) + 34);
+                s.reserve(probablesize);
                 std::string fmt = "%." + std::to_string(f.precision) + "Qg";
                 s += f.matPrefix;
                 for(long i = 0; i < m.derived().rows(); ++i) {
                     s += f.rowPrefix;
                     for(long j = 0; j < m.derived().cols(); ++j) {
-                        quadmath_snprintf(rbuf.data(), bufsize, fmt.data(), m.derived()(i, j).real());
-                        quadmath_snprintf(ibuf.data(), bufsize, fmt.data(), m.derived()(i, j).imag());
-                        s += "(" + rbuf + "," + ibuf + "i)";
+                        int rextent = quadmath_snprintf(nullptr, 0, fmt.data(), m.derived()(i, j).real());
+                        int iextent = quadmath_snprintf(nullptr, 0, fmt.data(), m.derived()(i, j).imag());
+                        if(rextent < 0) throw std::runtime_error("quadmath_snprintf (real) returned < 0");
+                        if(iextent < 0) throw std::runtime_error("quadmath_snprintf (imag) returned < 0");
+                        s += '(';
+                        auto roffset = s.size();
+                        s.resize(roffset + static_cast<size_t>(rextent) - 1);
+                        quadmath_snprintf(s.data() + roffset, static_cast<size_t>(rextent), fmt.data(), m.derived()(i, j).real());
+                        s += ',';
+                        auto ioffset = s.size();
+                        s.resize(ioffset + static_cast<size_t>(iextent) - 1);
+                        quadmath_snprintf(s.data() + ioffset, static_cast<size_t>(iextent), fmt.data(), m.derived()(i, j).imag());
+                        s += ')';
                         if(j + 1 != m.derived().cols()) s += f.coeffSeparator;
-
                     }
                     s += f.rowSuffix;
                     if(i + 1 != m.derived().rows()) s += f.rowSeparator;
@@ -76,23 +81,25 @@ namespace linalg::matrix {
 #if defined(USE_QUADMATH)
         else if constexpr(std::is_same_v<Scalar, __float128>) {
             std::string s;
-            std::string buf;
-            auto        bufsize = std::max<size_t>(64, static_cast<size_t>(f.precision) + 34);
-            buf.resize(bufsize);
-            s.reserve(bufsize * m.derived().size());
-            std::string fmt = "%." + std::to_string(f.precision) + "Qf";
+            std::string fmt          = "%." + std::to_string(f.precision) + "Qf";
+            auto        probablesize = m.derived().size() * std::max<size_t>(64, static_cast<size_t>(f.precision) + 34);
+            s.reserve(probablesize);
             s += f.matPrefix;
             for(long i = 0; i < m.derived().rows(); ++i) {
                 s += f.rowPrefix;
                 for(long j = 0; j < m.derived().cols(); ++j) {
-                    quadmath_snprintf(buf.data(), bufsize, fmt.data(), m.derived()(i, j));
-                    s += buf;
+                    int extent = quadmath_snprintf(nullptr, 0, fmt.data(), m.derived()(i, j));
+                    if(extent < 0) throw std::runtime_error("quadmath_snprintf returned < 0");
+                    auto offset = s.size();
+                    s.resize(s.size() + static_cast<size_t>(extent) - 1);
+                    quadmath_snprintf(s.data() + offset, static_cast<size_t>(extent), fmt.data(), m.derived()(i, j));
                     if(j + 1 != m.derived().cols()) s += f.coeffSeparator;
                 }
                 s += f.rowSuffix;
                 if(i + 1 != m.derived().rows()) s += f.rowSeparator;
             }
             s += f.matSuffix;
+            s.shrink_to_fit();
             return s;
         }
 #endif
