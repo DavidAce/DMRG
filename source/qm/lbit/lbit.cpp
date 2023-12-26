@@ -1208,7 +1208,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
         auto lbit_corrmat = Eigen::Tensor<cplx, 2>(ssites, ssites);
         lbit_corrmat.setZero();
         StateFinite state_ud = state;
-        tools::finite::mps::apply_circuit(state_ud, unitary_circuit, CircOp::ADJ, false, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
+        tools::finite::mps::apply_circuit(state_ud, unitary_circuit, CircuitOp::ADJ, false, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
         bond_maxu = std::max<long>(bond_maxu, state_ud.find_largest_bond());
         t_r.toc();
 
@@ -1218,7 +1218,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
             state_i.get_mps_site(i).apply_mpo(szi); // Apply σ^z_i on state_i
             t_i_u.tic();
 
-            tools::finite::mps::apply_circuit(state_i, unitary_circuit, CircOp::NONE, false, false, GateMove::ON, svd_cfg); // Apply U on state_i
+            tools::finite::mps::apply_circuit(state_i, unitary_circuit, CircuitOp::NONE, false, false, GateMove::ON, svd_cfg); // Apply U on state_i
             bond_maxi = std::max<long>(bond_maxi, state_i.find_largest_bond());
             t_i_u.toc();
             t_i.toc();

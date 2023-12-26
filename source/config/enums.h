@@ -16,7 +16,7 @@ enum class SVDLibrary { EIGEN, LAPACKE, RSVD };
 enum class UpdateWhen { NEVER, TRUNCATED, STUCK, SATURATED, ITERATION };
 enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
-enum class CircOp { NONE, ADJ, TRN };
+enum class CircuitOp { NONE, ADJ, TRN };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class UnitaryGateType { ANDERSON, MBL };
 enum class UnitaryGateWeight { IDENTITY, EXPDECAY };
@@ -227,7 +227,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         UpdateWhen,
         GateMove,
         GateOp,
-        CircOp,
+        CircuitOp,
         UnitaryGateType,
         UnitaryGateWeight,
         ModelType,
@@ -308,10 +308,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == GateOp::ADJ)                                        return "ADJ";
         if(item == GateOp::TRN)                                        return "TRN";
     }
-    if constexpr(std::is_same_v<T, CircOp>) {
-        if(item == CircOp::NONE)                                       return "NONE";
-        if(item == CircOp::ADJ)                                        return "ADJ";
-        if(item == CircOp::TRN)                                        return "TRN";
+    if constexpr(std::is_same_v<T, CircuitOp>) {
+        if(item == CircuitOp::NONE)                                       return "NONE";
+        if(item == CircuitOp::ADJ)                                        return "ADJ";
+        if(item == CircuitOp::TRN)                                        return "TRN";
     }
     if constexpr(std::is_same_v<T, UnitaryGateType>) {
         if(item == UnitaryGateType::ANDERSON)                         return "ANDERSON";
@@ -588,7 +588,7 @@ constexpr auto sv2enum(std::string_view item) {
         UpdateWhen,
         GateMove,
         GateOp,
-        CircOp,
+        CircuitOp,
         UnitaryGateType,
         UnitaryGateWeight,
         ModelType,
@@ -668,10 +668,10 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ADJ")                                   return GateOp::ADJ;
         if(item == "TRN")                                   return GateOp::TRN;
     }
-    if constexpr(std::is_same_v<T, CircOp>) {
-        if(item == "NONE")                                  return CircOp::NONE;
-        if(item == "ADJ")                                   return CircOp::ADJ;
-        if(item == "TRN")                                   return CircOp::TRN;
+    if constexpr(std::is_same_v<T, CircuitOp>) {
+        if(item == "NONE")                                  return CircuitOp::NONE;
+        if(item == "ADJ")                                   return CircuitOp::ADJ;
+        if(item == "TRN")                                   return CircuitOp::TRN;
     }
     if constexpr(std::is_same_v<T, UnitaryGateType>) {
         if(item == "ANDERSON")                              return UnitaryGateType::ANDERSON;

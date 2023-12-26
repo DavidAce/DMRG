@@ -403,7 +403,7 @@ void tools::finite::mps::apply_random_paulis(StateFinite &state, const std::vect
 }
 
 template<typename GateType>
-std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<GateType> &gates, CircOp cop,
+std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<GateType> &gates, CircuitOp cop,
                                                                bool range_long_to_short) {
     // Generate a list of staggered indices, without assuming that gates are sorted in any way
     // Consider a sequence of short-range gates such as [0,1], [1,2], [2,3], then this function is used to generate a new sequence without overlaps:
@@ -487,7 +487,7 @@ std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite
 
     // To apply inverse we reverse the layers
     // Note that we don't need to reverse groups because we assumed that these commute
-    bool reverse = cop != CircOp::NONE;
+    bool reverse = cop != CircuitOp::NONE;
     if(reverse) {
         for(auto &layer : layers) std::reverse(layer.begin(), layer.end());
         std::reverse(layers.begin(), layers.end());
@@ -502,9 +502,9 @@ std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite
     return gate_sequence;
 }
 
-template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, CircOp cop,
+template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::Gate> &gates, CircuitOp cop,
                                                                         bool range_long_to_short);
-template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, CircOp cop,
+template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, CircuitOp cop,
                                                                         bool range_long_to_short);
 
 void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, GateOp gop, GateMove gm,
@@ -567,7 +567,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
                           state.get_truncation_error(gate.pos.front()));
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, CircOp cop, bool moveback,
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, CircuitOp cop, bool moveback,
                                      GateMove gm, std::optional<svd::config> svd_cfg) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
@@ -580,7 +580,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen
     apply_gates(state, gates, cop, moveback, gm, svd_cfg);
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, CircOp cop, bool moveback, GateMove gm,
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::Gate> &gates, CircuitOp cop, bool moveback, GateMove gm,
                                      std::optional<svd::config> svd_cfg) {
     auto t_apply_gates = tid::tic_scope("apply_gates", tid::level::higher);
 
@@ -594,9 +594,9 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     Eigen::Tensor<cplx, 3> gate_mps;
     GateOp                 gop = GateOp::NONE;
     switch(cop) {
-        case CircOp::NONE: gop = GateOp::NONE; break;
-        case CircOp::ADJ: gop = GateOp::ADJ; break;
-        case CircOp::TRN: gop = GateOp::TRN; break;
+        case CircuitOp::NONE: gop = GateOp::NONE; break;
+        case CircuitOp::ADJ: gop = GateOp::ADJ; break;
+        case CircuitOp::TRN: gop = GateOp::TRN; break;
     }
     for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, gop, gm, svd_cfg);
 
@@ -606,16 +606,16 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
 }
 
-void tools::finite::mps::apply_circuit(StateFinite &state, const std::vector<std::vector<qm::Gate>> &circuit, CircOp cop, bool mark_as_used, bool moveback,
+void tools::finite::mps::apply_circuit(StateFinite &state, const std::vector<std::vector<qm::Gate>> &circuit, CircuitOp cop, bool mark_as_used, bool moveback,
                                        GateMove gm, std::optional<svd::config> svd_cfg) {
     //    tools::log->debug("Applying circuit | adjoint: {} | gm {}", adjoint, enum2sv(gm));
     switch(cop) {
-        case CircOp::ADJ:
-        case CircOp::TRN: {
+        case CircuitOp::ADJ:
+        case CircuitOp::TRN: {
             for(const auto &gates : iter::reverse(circuit)) apply_gates(state, gates, cop, moveback, gm, svd_cfg);
             break;
         }
-        case CircOp::NONE: {
+        case CircuitOp::NONE: {
             for(const auto &gates : circuit) apply_gates(state, gates, cop, moveback, gm, svd_cfg);
             break;
         }
@@ -835,7 +835,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     }
 }
 
-void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, CircOp cop, GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, CircuitOp cop, GateMove gm, std::optional<svd::config> svd_cfg) {
     auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
     if(gates.empty()) return;
     state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
@@ -867,9 +867,9 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     auto   gate_sequence = generate_gate_sequence(state, gates, cop);
     GateOp gop           = GateOp::NONE;
     switch(cop) {
-        case CircOp::NONE: gop = GateOp::NONE; break;
-        case CircOp::ADJ: gop = GateOp::ADJ; break;
-        case CircOp::TRN: gop = GateOp::TRN; break;
+        case CircuitOp::NONE: gop = GateOp::NONE; break;
+        case CircuitOp::ADJ: gop = GateOp::ADJ; break;
+        case CircuitOp::TRN: gop = GateOp::TRN; break;
     }
 
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
