@@ -13,6 +13,11 @@
 #include "tid/tid.h"
 #include "tools/finite/multisite.h"
 
+namespace settings {
+    inline constexpr bool debug_nbody_ham   = false;
+    inline constexpr bool verbose_nbody_ham = false;
+}
+
 ModelFinite::ModelFinite() = default; // Can't initialize lists since we don't know the model size yet
 
 // We need to define the destructor and other special functions
@@ -482,20 +487,19 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
 
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
     if(sites == active_sites and cache.multisite_mpo_t and not nbody) return cache.multisite_mpo_t.value();
-    if(not nbody)
-        tools::log->trace("Contracting multisite mpo tensor with sites {}", sites);
-    else
-        tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody.value());
 
+    auto                     nbody_str    = fmt::format("{}", nbody.has_value() ? nbody.value() : std::vector<size_t>{});
     auto                     t_mpo        = tid::tic_scope("get_multisite_mpo_t", tid::level::highest);
     constexpr auto           shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = tenx::idx({1}, {0});
     auto                     positions    = num::range<size_t>(sites.front(), sites.back() + 1);
     auto                     skip         = std::optional<std::vector<size_t>>();
+    auto                     keep_log     = std::vector<size_t>();
     auto                     skip_log     = std::vector<size_t>();
     bool                     do_cache     = nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
     Eigen::Tensor<cplx_t, 4> multisite_mpo_t, mpoL, mpoR;
     Eigen::Tensor<cplx_t, 2> mpoR_traced;
+    tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody_str);
 
     if(sites != positions) {
         skip = std::vector<size_t>{};
@@ -505,6 +509,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
     }
 
     for(const auto &pos : positions) {
+        if constexpr(settings::verbose_nbody_ham) tools::log->trace("contracting position {}", pos);
         // sites needs to be sorted, but may skip sites.
         // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
@@ -516,7 +521,13 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
                 multisite_mpo_t = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
             else
                 multisite_mpo_t = get_mpo(pos).MPO_t();
-            if(do_trace and do_cache) skip_log.emplace_back(pos);
+            if(do_cache) {
+                if(do_trace) {
+                    skip_log.emplace_back(pos);
+                } else {
+                    keep_log.emplace_back(pos);
+                }
+            }
             continue;
         }
 
@@ -537,10 +548,19 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
         multisite_mpo_t.resize(new_dims);
         // Generate a unique cache string for the mpo that will be generated.
         // If there is a match for the string in cache, use the corresponding mpo, otherwise we make it.
-        auto new_cache_string = fmt::format("siteL{}|pos{}|dims{}|skips{}|trace{}", sites.front(), pos, new_dims, skip_log, do_trace);
+        if(do_cache) {
+            if(do_trace) {
+                skip_log.emplace_back(pos);
+            } else {
+                keep_log.emplace_back(pos);
+            }
+        }
+        auto new_cache_string = fmt::format("keep{}|skip{}|nbody{}|dims{}", keep_log, skip_log, nbody_str, new_dims);
         if(do_cache and cache.multisite_mpo_t_temps.find(new_cache_string) != cache.multisite_mpo_t_temps.end()) {
+            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache hit: {}", new_cache_string);
             multisite_mpo_t = cache.multisite_mpo_t_temps.at(new_cache_string);
         } else {
+            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache new: {}", new_cache_string);
             if(do_trace) {
                 auto t_skip = tid::tic_scope("skipping", tid::level::highest);
                 // Trace the physical indices of this skipped mpo (this should trace an identity)
@@ -553,10 +573,9 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
                 auto t_app                                         = tid::tic_scope("appending", tid::level::highest);
                 multisite_mpo_t.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
             }
+            // This intermediate multisite_mpo_t could be the result we are looking for at a later time, so cache it!
             if(do_cache) cache.multisite_mpo_t_temps[new_cache_string] = multisite_mpo_t;
         }
-        if(do_trace and do_cache) skip_log.emplace_back(pos);
-        // This intermediate multisite_mpo_t could be the result we are looking for at a later time, so cache it!
     }
     return multisite_mpo_t;
 }
@@ -575,7 +594,10 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
 
 Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
-    if(sites == active_sites and cache.multisite_ham_t and not nbody) return cache.multisite_ham_t.value();
+    if(sites == active_sites and cache.multisite_ham_t and not nbody) {
+        tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
+        return cache.multisite_ham_t.value();
+    }
     // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
     auto multisite_mpo_t = get_multisite_mpo_t(sites, nbody);
     auto edgeL           = get_mpo(sites.front()).get_MPO_edge_left();
