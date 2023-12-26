@@ -4,6 +4,8 @@
     #include "io/fmt.h"
     #include "io/fmt_f128_t.h"
     #include "math/f128.h"
+    #include "math/float.h"
+    #include "math/rnd.h"
     #include <bitset>
     #include <fmt/format.h>
     #include <h5pp/h5pp.h>
@@ -103,6 +105,13 @@ int main() {
     auto rbin = get_binary(rval);
     fmt::print("rval = {} -> {} -> {}\n", f128_t(rval), rbin, f128_t(get_decimal<__float128>(rbin)));
     if(rval != wval) throw std::runtime_error("rval != wval");
+
+    h5pp::varr_t<h5pp::fstr_t<64>> test1;
+    h5pp::varr_t<h5pp::fstr_t<64>> test2 = {};
+    h5pp::varr_t<h5pp::fstr_t<64>> test3 = rnd::random<real_t>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
+    test1 = rnd::random<real_t>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
+    test2 = rnd::random<real_t>("normal", 0.0, 1.0, {1.0, 0.1, 0.001, 0.0001});
+    test3 = {};
     return 0;
 }
 #else

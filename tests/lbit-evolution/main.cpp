@@ -357,11 +357,12 @@ int main(int argc, char *argv[]) {
 
         set_log("both");
         test_both_count += assert_lbit_evolution(flbit_slow, flbit_swap);
-
     }
     if(test_swap_count == 0) { throw except::logic_error("No swap tests ran. Count: {}", test_swap_count); }
     if(test_slow_count == 0) { throw except::logic_error("No slow tests ran. Count: {}", test_slow_count); }
+    if(test_both_count == 0) { throw except::logic_error("No both tests ran. Count: {}", test_both_count); }
     if(test_swap_count != test_slow_count) { throw except::logic_error("Unequal number of tests ran: {} != {}", test_swap_count, test_slow_count); }
+    if(test_swap_count != test_both_count) { throw except::logic_error("Unequal number of tests ran: {} != {}", test_swap_count, test_both_count); }
     tools::log->info("Success!");
     return 0;
 }

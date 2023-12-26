@@ -57,16 +57,16 @@ struct f128_t {
         if(prec < 0) prec = 36;
         if(width < 0) width = 0;
         std::string buf;
-        char        fstr[16];
+        char        fstr[16] = {0};
         auto        res = std::snprintf(fstr, sizeof fstr, "%%%s%d.%uQ%c", align == "<" ? "-" : align.data(), width, prec, pres);
         if(res < 0) std::runtime_error("f128_t.string(): snprintf() returned < 0");
         auto size = quadmath_snprintf(nullptr, 0, fstr, val);
         if(size >= 0) {
-            buf.resize(static_cast<size_t>(size) + 1);
+            buf.resize(static_cast<size_t>(size));
         } else {
             throw std::runtime_error("f128_t.string(): quadmath_snprintf() returned < 0");
         }
-        quadmath_snprintf(buf.data(), buf.size(), fstr, val);
+        quadmath_snprintf(buf.data(), static_cast<size_t>(size), fstr, val);
         return buf;
     }
 };

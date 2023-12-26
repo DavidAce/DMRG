@@ -419,7 +419,7 @@ void LBit::randomize_hamiltonian() {
     // even if J2_span is shorter than full range.
 
     using namespace settings::model::lbit;
-    auto expw  = std::vector<real_t>(); // The exponentially decaying weights
+    auto expw  = std::vector<real_t>{}; // The exponentially decaying weights
     auto pos_i = get_position();
     for(size_t pos_j = pos_i; pos_j < settings::model::model_size; ++pos_j) {
         if(pos_j == pos_i) {

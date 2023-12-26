@@ -85,8 +85,8 @@ class h5tb_lbit : public h5tb_base {
     public:
     struct table {
         using vlen_type                        = h5pp::varr_t<h5pp::fstr_t<64>>;
-        h5pp::fstr_t<64>               J1_rand = {};  /*!< On-site interaction */
-        h5pp::varr_t<h5pp::fstr_t<64>> J2_rand;       /*!< Two-body interaction */
+        h5pp::fstr_t<64>               J1_rand  = {}; /*!< On-site interaction */
+        h5pp::varr_t<h5pp::fstr_t<64>> J2_rand  = {}; /*!< Two-body interaction */
         h5pp::fstr_t<64>               J3_rand  = {}; /*!< Three-body interaction */
         double                         J1_mean  = 0;  /*!< Constant offset for on-site */
         double                         J2_mean  = 0;  /*!< Constant offset for two-body interaction */
