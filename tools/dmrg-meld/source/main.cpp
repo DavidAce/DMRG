@@ -104,6 +104,7 @@ int main(int argc, char *argv[]) {
         app.add_option("--srcreqs"        , src_reqs        , "Required dataset names in each source file");
         app.add_flag  ("-f,--finished"    , finished        , "Require that src file has finished");
         app.add_flag  ("-l,--linkonly"    , link_only       , "Link only. Make the main file with external links to all the others");
+        app.add_flag  ("--lbitonly"       , lbit_only       , "Collect lbit supports only");
         app.add_flag  ("-r,--replace"     , replace         , "Replace existing files");
         app.add_flag  ("-T,--usetemp"     , use_tmp         , "Use temp directory");
         app.add_option("--time-steps"     , time_steps      , "Expected number of time steps (skip files on mismatch)" );
@@ -251,6 +252,11 @@ int main(int argc, char *argv[]) {
                 break;
             }
             case Model::LBIT: {
+                if(lbit_only) {
+                    keys.models.emplace_back(ModelKey("fLBIT", "model", "hamiltonian"));
+                    keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrmat", Size::FIX, 0));
+                    break;
+                }
                 keys.models.emplace_back(ModelKey("fLBIT", "model", "hamiltonian"));
 
                 // A table records data from the last time step
