@@ -83,7 +83,8 @@ struct RandomizedSubspaceIterations<MatrixType, RandomEngineType,
       tmpRows.noalias() = a * tmpCols;
     }
 
-    Eigen::ColPivHouseholderQR<Eigen::Ref<MatrixType>> qr(tmpRows);
+//    Eigen::ColPivHouseholderQR<Eigen::Ref<MatrixType>> qr(tmpRows);
+    Eigen::HouseholderQR<Eigen::Ref<MatrixType>> qr(tmpRows);
     tmpRows.noalias() = qr.householderQ() * MatrixType::Identity(numRows, dim);
 
     return tmpRows;
@@ -127,7 +128,8 @@ struct RandomizedSubspaceIterations<MatrixType, RandomEngineType,
     }
 
     tmpRows.noalias() = a * tmpCols;
-    Eigen::ColPivHouseholderQR<Eigen::Ref<MatrixType>> qr(tmpRows);
+//    Eigen::ColPivHouseholderQR<Eigen::Ref<MatrixType>> qr(tmpRows);
+    Eigen::HouseholderQR<Eigen::Ref<MatrixType>> qr(tmpRows);
     tmpRows.noalias() = qr.householderQ() * MatrixType::Identity(numRows, dim);
 
     return tmpRows;

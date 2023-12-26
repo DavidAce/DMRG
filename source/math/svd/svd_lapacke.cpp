@@ -82,6 +82,9 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
     if(svd_save != svd::save::NONE) save_svd(A);
     if(svd_save == svd::save::FAIL) saveMetaData.A = A;
+//    saveMetaData.svd_is_running = true; // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
+//    saveMetaData.svd_save = save::ALL;  // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
+//    saveMetaData.A = A; // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<int>(sizeS, 5)) : "";
 
@@ -411,7 +414,6 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         svd::log->trace("Truncating singular values");
         auto max_size                    = S.nonZeros();
         std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size));
-
         // Do the truncation
         U  = U.leftCols(rank).eval();
         S  = S.head(rank).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
@@ -456,6 +458,17 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                     "  Error message    : {}\n",
                                     S, truncation_error, rank, rows, cols, info, ex.what());
     }
+    // TODO: REMOVE THE SCOPE BELOW!
+//    if(std::min({rows, cols}) >= 2000) {
+//        svd::log->info("Dims ({},{}) | rank {} | discarded {} | norm {}", rows, cols, rank, std::min({rows, cols}) - rank, S.norm());
+////        saveMetaData.U                = U;
+//        saveMetaData.S                = S;
+////        saveMetaData.VT               = VT;
+//        saveMetaData.rank             = rank;
+//        saveMetaData.truncation_error = truncation_error;
+//        saveMetaData.info             = info;
+//        save_svd();
+//    }
     save_svd<Scalar>(U, S, VT, info);
     saveMetaData = svd::internal::SaveMetaData{}; // Clear
     svd::log->trace(

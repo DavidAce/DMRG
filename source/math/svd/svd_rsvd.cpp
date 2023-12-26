@@ -15,7 +15,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     auto t_rsvd   = tid::tic_scope("rsvd");
     long rank_lim = rank_max > 0 ? std::min(std::min(rows, cols), rank_max) : std::min(rows, cols);
     if(rank_lim <= 0) throw std::logic_error("rank_lim <= 0");
-    MatrixType<Scalar> mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
+    auto mat = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
 
     if(rows <= 0) throw except::runtime_error("SVD error: rows = {}", rows);
     if(cols <= 0) throw except::runtime_error("SVD error: cols = {}", cols);
@@ -32,11 +32,12 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     //    randomEngine.seed(777);
     //    rnd::
 
-    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Mgs> SVD(rnd::internal::rng);
+    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::None> SVD(rnd::internal::rng);
+    //    Rsvd::RandomizedSvd<MatrixType<Scalar>, pcg64, Rsvd::SubspaceIterationConditioner::Mgs> SVD(rnd::internal::rng);
 
     svd::log->debug("Running RSVD | {} x {} | truncation limit {:.4e} | rank_lim {}", rows, cols, truncation_lim, rank_lim);
     // Run the svd
-    SVD.compute(mat, rank_lim);
+    SVD.compute(mat, rank_lim, 2, 2);
 
     rank = SVD.singularValues().nonZeros();
     // Truncation error needs normalized singular values

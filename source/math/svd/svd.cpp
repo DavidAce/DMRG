@@ -222,7 +222,7 @@ template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<
 
 // template<typename Scalar>
 std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
-    //    assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
+//        assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
     VectorType<double> truncation_errors(S.size() + 1);
     for(long s = 0; s <= S.size(); s++) { truncation_errors[s] = S.bottomRows(S.size() - s).norm(); } // Last one should be zero, i.e. no truncation
     auto rank_    = (truncation_errors.array() >= truncation_lim).count();

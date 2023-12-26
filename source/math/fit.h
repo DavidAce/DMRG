@@ -27,7 +27,8 @@ namespace fit {
             Eigen::VectorXd X, Y;
             template<typename TX, typename TY>
             log_stretched_functor(const TX &xvec, const TY &yvec) : Functor(3, static_cast<int>(xvec.size())) {
-                if(xvec.size() != yvec.size()) throw std::runtime_error("fit::log_stretched: xvec and yvec size mismatch");
+                if(static_cast<size_t>(xvec.size()) != static_cast<size_t>(yvec.size()))
+                    throw std::runtime_error("fit::log_stretched: xvec and yvec size mismatch");
                 X = Eigen::Map<const Eigen::VectorXd>(xvec.data(), static_cast<Eigen::Index>(xvec.size()));
                 Y = Eigen::Map<const Eigen::VectorXd>(yvec.data(), static_cast<Eigen::Index>(yvec.size()));
             }

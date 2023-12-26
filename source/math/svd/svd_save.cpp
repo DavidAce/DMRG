@@ -31,7 +31,7 @@
 
 void svd::solver::save_svd() {
     auto &smd = saveMetaData;
-    if(smd.svd_save != save::FAIL) return;
+    if(smd.svd_save == save::NONE) return;
     if(not smd.svd_is_running) return;
     auto directory = h5pp::fs::path(settings::storage::output_filepath).parent_path().string();
     auto filepath  = fmt::format("{}/svd-save-{}.h5", directory, settings::input::seed);
@@ -103,12 +103,15 @@ void svd::solver::save_svd() {
         file.writeAttribute(eigen_version, group_name, "Eigen Version");
     }
     smd = svd::internal::SaveMetaData{};
+//    if (group_num > 50) std::exit(0);
 }
 
 template<typename Scalar>
-void svd::solver::save_svd(const MatrixType<Scalar> &A) const {
-    if(svd_save == save::NONE) return;
-    if(svd_save == save::FAIL) return;
+void svd::solver::save_svd(const MatrixType<Scalar> &A, std::optional<svd::save> override) const {
+    svd::save save_internal = override.has_value() ? override.value() : svd_save;
+    if(save_internal == save::NONE) return;
+    if(save_internal == save::FAIL) return;
+
     auto rows      = A.rows();
     auto cols      = A.cols();
     auto directory = h5pp::fs::path(settings::storage::output_filepath).parent_path().string();
@@ -117,9 +120,10 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A) const {
     auto file       = h5pp::File(filepath, h5pp::FilePermission::READWRITE);
     auto group_num  = 0;
     auto group_name = fmt::format("svd_{}", group_num);
-    if(svd_save == save::ALL)
+    if(override) {}
+    if(save_internal == save::ALL or override == save::ALL)
         while(file.linkExists(group_name)) group_name = fmt::format("svd_{}", ++group_num);
-    if(svd_save == save::LAST) group_name = "svd-last";
+    if(save_internal == save::LAST or override == save::LAST) group_name = "svd-last";
     file.writeDataset(A, fmt::format("{}/A", group_name), H5D_layout_t::H5D_CHUNKED);
     file.writeAttribute(rows, group_name, "rows");
     file.writeAttribute(cols, group_name, "cols");
@@ -133,7 +137,7 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A) const {
     file.writeAttribute(switchsize_gesdd, group_name, "switchsize_gesdd");
 
     if(svd_lib == svd::lib::lapacke) {
-#if defined(OPENBLAS_AVAILABLE)
+#if defined(SVD_SAVE_OPENBLAS_ATTRIBUTES)
         file.writeAttribute(OPENBLAS_VERSION, "OPENBLAS_VERSION", group_name);
         file.writeAttribute(openblas_get_num_threads(), "openblas_get_num_threads", group_name);
         file.writeAttribute(openblas_get_parallel(), "openblas_parallel_mode", group_name);
@@ -142,12 +146,16 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A) const {
         file.writeAttribute(OPENBLAS_GEMM_MULTITHREAD_THRESHOLD, "OPENBLAS_GEMM_MULTITHREAD_THRESHOLD", group_name);
 #endif
 
-#if defined(MKL_AVAILABLE)
+#if defined(SVD_SAVE_MKL_ATTRIBUTES)
         MKLVersion Version;
         mkl_get_version(&Version);
         file.writeAttribute(Version.MajorVersion, "Intel-MKL-MajorVersion", group_name);
         file.writeAttribute(Version.MinorVersion, "Intel-MKL-MinorVersion", group_name);
         file.writeAttribute(Version.UpdateVersion, "Intel-MKL-UpdateVersion", group_name);
+#endif
+#if defined(SVD_SAVE_FLEXIBLAS_ATTRIBUTES)
+        file.writeAttribute(FLEXIBLAS_DEFAULT_LIB_PATH, group_name, "FLEXIBLAS_DEFAULT_LIB_PATH");
+        file.writeAttribute(FLEXIBLAS_VERSION, group_name, "FLEXIBLAS_VERSION");
 #endif
     } else if(svd_lib == svd::lib::eigen) {
         auto eigen_version = fmt::format("{}.{}.{}", EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION);
@@ -177,7 +185,7 @@ void svd::solver::save_svd(const MatrixType<Scalar> &U, const VectorType<Scalar>
 
 using cplx = std::complex<double>;
 using real = double;
-template void svd::solver::save_svd(const MatrixType<real> &A) const;
-template void svd::solver::save_svd(const MatrixType<cplx> &A) const;
+template void svd::solver::save_svd(const MatrixType<real> &A, std::optional<svd::save> override) const;
+template void svd::solver::save_svd(const MatrixType<cplx> &A, std::optional<svd::save> override) const;
 template void svd::solver::save_svd(const MatrixType<real> &U, const VectorType<real> &S, const MatrixType<real> &VT, int info) const;
 template void svd::solver::save_svd(const MatrixType<cplx> &U, const VectorType<cplx> &S, const MatrixType<cplx> &VT, int info) const;

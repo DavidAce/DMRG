@@ -55,7 +55,7 @@ namespace svd {
         static void save_svd();
 
         template<typename Scalar>
-        void save_svd(const MatrixType<Scalar> &A) const;
+        void save_svd(const MatrixType<Scalar> &A, std::optional<svd::save> override = std::nullopt) const;
         template<typename Scalar>
         void save_svd(const MatrixType<Scalar> &U, const VectorType<Scalar> &S, const MatrixType<Scalar> &VT, int info) const;
         template<typename Scalar>
