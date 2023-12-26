@@ -34,7 +34,7 @@ namespace settings {
 #if defined(_OPENMP)
         std::string omp_proc_bind;
         switch(omp_get_proc_bind()) {
-            /* clang-format off */
+                /* clang-format off */
             case 0 : {omp_proc_bind = "false";break;}
             case 1 : {omp_proc_bind = "true";break;}
             case 2 : {omp_proc_bind = "primary";break;}
@@ -58,10 +58,10 @@ namespace settings {
 #if defined(EIGEN_USE_THREADS)
         eigen_msg.append(" | EIGEN_USE_THREADS");
         unsigned int stl_threads = settings::threading::num_threads;
-//        if (omp_threads <= 1) stl_threads = std::clamp(settings::threading::num_threads, stl_threads, settings::threading::max_threads);
-//        else if(settings::threading::num_threads > omp_threads){
-//            stl_threads = std::clamp(settings::threading::num_threads - omp_threads, stl_threads, settings::threading::max_threads);
-//        }
+        //        if (omp_threads <= 1) stl_threads = std::clamp(settings::threading::num_threads, stl_threads, settings::threading::max_threads);
+        //        else if(settings::threading::num_threads > omp_threads){
+        //            stl_threads = std::clamp(settings::threading::num_threads - omp_threads, stl_threads, settings::threading::max_threads);
+        //        }
         tenx::threads::setNumThreads(stl_threads);
 #else
         if(settings::threading::num_threads > 1)
@@ -69,7 +69,8 @@ namespace settings {
                              "Failed to enable threading in Eigen::Tensor with stl_threads = {}",
                              settings::threading::num_threads);
 #endif
-        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::num_threads, settings::threading::max_threads, eigen_msg);
+        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::num_threads,
+                         settings::threading::max_threads, eigen_msg);
 #if defined(OPENBLAS_AVAILABLE)
         auto envcoretype = get_env("OPENBLAS_CORETYPE");
         if(envcoretype) tools::log->info("Detected environment variable: OPENBLAS_CORETYPE={}", envcoretype.value());
@@ -87,10 +88,14 @@ namespace settings {
 #endif
 #if defined(FLEXIBLAS_AVAILABLE)
 
-        std::string buffer;
-        buffer.resize(64);
-        flexiblas_current_backend(buffer.data(), buffer.size());
-        tools::log->info("Flexiblas backend [{}] | num_threads {}", buffer, flexiblas_get_num_threads());
+        char buffer[32] = {0};
+        int  size       = flexiblas_current_backend(buffer, 32);
+        if(size > 0) {
+            tools::log->info("Flexiblas backend [{}] | num_threads {}", buffer, flexiblas_get_num_threads());
+        } else {
+            tools::log->info("Flexiblas backend read failed: size {}", size);
+        }
+
 #endif
         if(settings::threading::show_threads) exit(0);
     }
