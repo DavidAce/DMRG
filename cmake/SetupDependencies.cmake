@@ -21,7 +21,7 @@ find_package(Eigen3     3.4.0  REQUIRED)                                        
 find_package(h5pp       1.11.1 REQUIRED)                                         # h5pp for writing to file binary in format
 find_package(fmt        10.1.0 REQUIRED)
 find_package(spdlog     1.12.0 REQUIRED)
-find_package(Ceres      2.0    REQUIRED)                                         # ceres-solver (for L-BFGS routine)
+find_package(Ceres      2.2.0  REQUIRED)                                         # ceres-solver (for L-BFGS routine)
 find_package(CLI11      2.1.1  REQUIRED)                                         # Command line argument parser
 find_package(arpack-ng  3.8.0  REQUIRED)                                         # Iterative Eigenvalue solver for a few eigenvalues/eigenvectors using Arnoldi method.
 find_package(Backward   1.6    REQUIRED)

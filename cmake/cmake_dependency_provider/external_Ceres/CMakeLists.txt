@@ -13,8 +13,10 @@ set(cxxflags "-w")
 
 include(ExternalProject)
 ExternalProject_Add(external_Ceres
-        URL https://github.com/ceres-solver/ceres-solver/archive/refs/tags/2.1.0.tar.gz
-        URL_MD5 4ab48f439d63a09a075d4fcdcddc7667
+        #URL https://github.com/ceres-solver/ceres-solver/archive/refs/tags/2.1.0.tar.gz
+        URL https://github.com/ceres-solver/ceres-solver/archive/refs/tags/2.2.0.tar.gz
+        #URL_MD5 4ab48f439d63a09a075d4fcdcddc7667 #2.1.0
+        URL_MD5 b360c795a75c3e99d67a2a60f2004466  #2.2.0
         BUILD_ALWAYS TRUE # <- True will detect changes in dependencies of ceres
         PREFIX ${CMAKE_BINARY_DIR}
         INSTALL_DIR ${CMAKE_INSTALL_PREFIX}

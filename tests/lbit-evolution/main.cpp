@@ -106,7 +106,12 @@ size_t assert_lbit_evolution(const flbit &f) {
                             });
 
 #else
-    double max_tevo_error = 10 * precision_d * std::max({1.0, static_cast<double>(f.status.delta_t.abs())});
+    double max_tevo_error = 10 * precision_d *
+                            std::max({
+                                1.0,
+                                static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cplx_t>().real())),
+                                static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cplx_t>().imag())),
+                            });
 #endif
     double max_norm_error = settings::precision::max_norm_error;
     double max_untary_err = 10 * epsilon_d;
@@ -271,7 +276,14 @@ size_t assert_lbit_evolution(const flbit &f1, const flbit &f2) {
                             });
 
 #else
-    double max_tevo_error = 10 * precision_d * std::max({1.0, static_cast<double>(f1.status.delta_t.abs()), static_cast<double>(f2.status.delta_t.abs())});
+    double max_tevo_error = 10 * precision_d *
+                            std::max({
+                                1.0,
+                                static_cast<real>(std::abs(f1.status.delta_t.to_floating_point<cplx_t>().real())),
+                                static_cast<real>(std::abs(f1.status.delta_t.to_floating_point<cplx_t>().imag())),
+                                static_cast<real>(std::abs(f2.status.delta_t.to_floating_point<cplx_t>().real())),
+                                static_cast<real>(std::abs(f2.status.delta_t.to_floating_point<cplx_t>().imag())),
+                            });
 #endif
     /* clang-format off */
     if(real_error_real_init > max_tevo_error) throw except::logic_error("real_error_real_init {0:.{2}f} > {1:.{2}f}", real_error_real_init, max_tevo_error,digits10_d);

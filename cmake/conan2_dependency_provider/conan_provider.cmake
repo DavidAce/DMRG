@@ -381,16 +381,8 @@ function(detect_host_profile output_file)
     if(CMAKE_Fortran_COMPILER)
         string(APPEND PROFILE "FC=${CMAKE_Fortran_COMPILER}\n")
     endif()
-    string(APPEND PROFILE "[options]\n")
-#    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-#        string(APPEND PROFILE "h5pp/*:with_quadmath=True\n")
-#    else()
-#        string(APPEND PROFILE "h5pp/*:with_quadmath=False\n")
-#    endif()
     string(APPEND PROFILE "[conf]\n")
     string(APPEND PROFILE "tools.cmake.cmaketoolchain:generator=${CMAKE_GENERATOR}\n")
-
-
 
     # propagate compilers via profile
     append_compiler_executables_configuration()
