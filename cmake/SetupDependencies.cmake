@@ -14,7 +14,7 @@ endif()
 # Setup dependencies
 find_package(Threads           REQUIRED)
 find_package(OpenMP            REQUIRED COMPONENTS CXX )
-find_package(gfortran          REQUIRED COMPONENTS quadmath)
+find_package(gfortran          REQUIRED OPTIONAL_COMPONENTS quadmath)
 find_package(Lapacke           REQUIRED MODULE)
 find_package(pcg-cpp           REQUIRED)
 find_package(Eigen3     3.4.0  REQUIRED)                                         # Eigen3 numerical library (needed by ceres and h5pp)

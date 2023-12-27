@@ -208,8 +208,9 @@ namespace num {
      *   \param b last value in range
      *   \return std::vector<T2>. Example,  <code> Linspaced(5,1,5) </code> gives a std::vector<int>: <code> [1,2,3,4,5] </code>
      */
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>>>
+    template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
     [[nodiscard]] inline std::vector<T> LinSpaced(std::size_t N, T a, T b) {
+        static_assert(std::is_floating_point_v<T>);
         T              h   = (b - a) / static_cast<T>(N - 1);
         T              val = a;
         std::vector<T> xs(N);
@@ -222,8 +223,9 @@ namespace num {
         return xs;
     }
 
-    template<typename T, std::enable_if_t<std::is_floating_point_v<T>>>
+    template<typename T, typename = std::enable_if_t<std::is_floating_point_v<T>>>
     [[nodiscard]] inline std::vector<T> LogSpaced(std::size_t N, T a, T b, int base = 10, int keep_digits = -1) {
+        static_assert(std::is_floating_point_v<T>);
         if(a <= 0) throw std::range_error("a must be positive");
         if(b <= 0) throw std::range_error("b must be positive");
         T              baseT  = static_cast<T>(base);
@@ -365,13 +367,11 @@ namespace num {
     }
     template<typename Input>
     [[nodiscard]] Input cummin(const Input &in, size_t from = 0, size_t num = -1ul) {
-        return cumop(
-            in, [](auto &a, auto &b) { return std::min(a, b); }, from, num);
+        return cumop(in, [](auto &a, auto &b) { return std::min(a, b); }, from, num);
     }
     template<typename Input>
     [[nodiscard]] Input cummax(const Input &in, size_t from = 0, size_t num = -1ul) {
-        return cumop(
-            in, [](auto &a, auto &b) { return std::max(a, b); }, from, num);
+        return cumop(in, [](auto &a, auto &b) { return std::max(a, b); }, from, num);
     }
 
     /*! \brief Trapezoidal rule for numerical integration

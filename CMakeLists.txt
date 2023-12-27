@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.24)
 project(DMRG++
-        VERSION 3.0.0
+        VERSION 3.1.0
         DESCRIPTION "MPS algorithms for 1D quantum spin chains"
         HOMEPAGE_URL "https://github.com/DavidAce/DMRG")
 

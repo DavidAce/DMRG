@@ -176,8 +176,9 @@ function(find_Lapacke)
         find_package(BLAS REQUIRED MODULE BYPASS_PROVIDER)
         find_package(LAPACK REQUIRED MODULE BYPASS_PROVIDER)
         find_package(lapacke REQUIRED BYPASS_PROVIDER) # From manual installation: gives a target "lapacke"
-        find_package(gfortran REQUIRED COMPONENTS quadmath BYPASS_PROVIDER)
-        target_link_libraries(lapacke INTERFACE BLAS::BLAS LAPACK::LAPACK gfortran::gfortran quadmath::quadmath) # Link togeher
+        find_package(gfortran REQUIRED OPTIONAL_COMPONENTS quadmath BYPASS_PROVIDER)
+        target_link_libraries(lapacke INTERFACE BLAS::BLAS LAPACK::LAPACK gfortran::gfortran) # Link together
+
     elseif(BLA_VENDOR MATCHES Intel OR ENV{BLA_VENDOR} MATCHES Intel)
         set(ENABLE_BLAS95 ON)
         set(ENABLE_LAPACK95 ON)

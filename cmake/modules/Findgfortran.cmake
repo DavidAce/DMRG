@@ -27,7 +27,10 @@ endfunction()
 find_gfortran()
 
 if(quadmath IN_LIST gfortran_FIND_COMPONENTS)
-    find_package(quadmath ${gfortran_FIND_REQUIRED_quadmath})
+    if(gfortran_FIND_REQUIRED_quadmath)
+        set(REQUIRED REQUIRED)
+    endif()
+    find_package(quadmath ${REQUIRED})
 endif()
 
 include(FindPackageHandleStandardArgs)
