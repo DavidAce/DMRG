@@ -52,13 +52,6 @@ LBit::LBit(ModelType model_type_, size_t position_) : MpoSite(model_type_, posit
     h5tb.param.J3_wdth  = settings::model::lbit::J3_wdth;
     h5tb.param.J2_span  = settings::model::lbit::J2_span; // Can be 0. If -1ul = MAX then this means we want the cutoff to be full system range
     h5tb.param.xi_Jcls  = settings::model::lbit::xi_Jcls;
-    h5tb.param.u_depth  = settings::model::lbit::u_depth;
-    h5tb.param.u_fmix   = settings::model::lbit::u_fmix;
-    h5tb.param.u_tstd   = settings::model::lbit::u_tstd;
-    h5tb.param.u_cstd   = settings::model::lbit::u_cstd;
-    h5tb.param.u_tgw8   = settings::model::lbit::u_tgw8;
-    h5tb.param.u_cgw8   = settings::model::lbit::u_cgw8;
-    h5tb.param.u_type   = settings::model::lbit::u_type;
     h5tb.param.spin_dim = settings::model::lbit::spin_dim;
 
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
@@ -84,13 +77,6 @@ void LBit::set_parameters(TableMap &parameters) {
     h5tb.param.J3_wdth      = std::any_cast<decltype(h5tb.param.J3_wdth)>(parameters["J3_wdth"]);
     h5tb.param.J2_span      = std::any_cast<decltype(h5tb.param.J2_span)>(parameters["J2_span"]);
     h5tb.param.xi_Jcls      = std::any_cast<decltype(h5tb.param.xi_Jcls)>(parameters["xi_Jcls"]);
-    h5tb.param.u_depth      = std::any_cast<decltype(h5tb.param.u_depth)>(parameters["u_depth"]);
-    h5tb.param.u_fmix       = std::any_cast<decltype(h5tb.param.u_fmix)>(parameters["u_fmix"]);
-    h5tb.param.u_tstd       = std::any_cast<decltype(h5tb.param.u_tstd)>(parameters["u_tstd"]);
-    h5tb.param.u_cstd       = std::any_cast<decltype(h5tb.param.u_cstd)>(parameters["u_cstd"]);
-    h5tb.param.u_tgw8       = std::any_cast<decltype(h5tb.param.u_tgw8)>(parameters["u_tgw8"]);
-    h5tb.param.u_cgw8       = std::any_cast<decltype(h5tb.param.u_cgw8)>(parameters["u_cgw8"]);
-    h5tb.param.u_type       = std::any_cast<decltype(h5tb.param.u_type)>(parameters["u_type"]);
     h5tb.param.spin_dim     = std::any_cast<decltype(h5tb.param.spin_dim)>(parameters["spin_dim"]);
     h5tb.param.distribution = std::any_cast<decltype(h5tb.param.distribution)>(parameters["distribution"]);
     // Adjust J2_span, it doesn't make sense to have it larger than the system size anyway, so we use a cutoff
@@ -110,13 +96,6 @@ LBit::TableMap LBit::get_parameters() const {
     parameters["J2_span"]       = h5tb.param.J2_span;
     parameters["xi_Jcls"]       = h5tb.param.xi_Jcls;
     parameters["J2_ctof"]       = h5tb.param.J2_ctof;
-    parameters["u_depth"]       = h5tb.param.u_depth;
-    parameters["u_fmix"]        = h5tb.param.u_fmix;
-    parameters["u_tstd"]        = h5tb.param.u_tstd;
-    parameters["u_cstd"]        = h5tb.param.u_cstd;
-    parameters["u_tgw8"]        = h5tb.param.u_tgw8;
-    parameters["u_cgw8"]        = h5tb.param.u_cgw8;
-    parameters["u_type"]        = h5tb.param.u_type;
     parameters["spin_dim"]      = h5tb.param.spin_dim;
     parameters["distribution"]  = h5tb.param.distribution;
     return parameters;
@@ -134,13 +113,6 @@ std::any LBit::get_parameter(const std::string &name) const {
     else if(name == "J2_span")       return h5tb.param.J2_span;
     else if(name == "J2_ctof")       return h5tb.param.J2_ctof;
     else if(name == "xi_Jcls")       return h5tb.param.xi_Jcls;
-    else if(name == "u_depth")       return h5tb.param.u_depth;
-    else if(name == "u_fmix")        return h5tb.param.u_fmix;
-    else if(name == "u_tstd")        return h5tb.param.u_tstd;
-    else if(name == "u_cstd")        return h5tb.param.u_cstd;
-    else if(name == "u_tgw8")        return h5tb.param.u_tgw8;
-    else if(name == "u_cgw8")        return h5tb.param.u_cgw8;
-    else if(name == "u_type")        return h5tb.param.u_type;
     else if(name == "spin_dim")      return h5tb.param.spin_dim;
     else if(name == "distribution")  return h5tb.param.distribution;
     /* clang-format on */
@@ -725,11 +697,8 @@ void LBit::load_hamiltonian(const h5pp::File &file, std::string_view model_prefi
     if(std::abs(h5tb.param.J2_wdth - J2_wdth) > 1e-6) throw except::runtime_error("J2_wdth {:.16f} != {:.16f} lbit::J2_wdth", h5tb.param.J2_wdth, J2_wdth);
     if(std::abs(h5tb.param.J3_wdth - J3_wdth) > 1e-6) throw except::runtime_error("J3_wdth {:.16f} != {:.16f} lbit::J3_wdth", h5tb.param.J3_wdth, J3_wdth);
     if(std::abs(h5tb.param.xi_Jcls - xi_Jcls) > 1e-6) throw except::runtime_error("xi_Jcls {:.16f} != {:.16f} lbit::xi_Jcls", h5tb.param.xi_Jcls, xi_Jcls);
-    if(std::abs(h5tb.param.u_fmix - u_fmix) > 1e-6) throw except::runtime_error("u_fmix {:.16f} != {:.16f} lbit::u_fmix", h5tb.param.u_fmix, u_fmix);
     if(h5tb.param.distribution != distribution)
         throw except::runtime_error("distribution [{}] != lbit::distribution [{}]", h5tb.param.distribution, distribution);
     if(h5tb.param.J2_span != J2_span) throw except::runtime_error("J2_span {} != {} lbit::J2_span", h5tb.param.J2_span, J2_span);
-    if(h5tb.param.u_depth != u_depth) throw except::runtime_error("u_depth {:.16f} != {:.16f} lbit::u_depth", h5tb.param.u_depth, u_depth);
-
     build_mpo();
 }

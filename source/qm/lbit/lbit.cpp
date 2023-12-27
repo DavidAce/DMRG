@@ -24,6 +24,7 @@
 #include "tools/finite/mps.h"
 #include "tools/finite/ops.h"
 #include <algorithm>
+#include <h5pp/h5pp.h>
 #include <unordered_set>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
@@ -35,15 +36,43 @@ namespace settings {
 
 qm::lbit::UnitaryGateProperties::UnitaryGateProperties(const std::vector<double> &h)
     : sites(settings::model::model_size), depth(settings::model::lbit::u_depth), fmix(settings::model::lbit::u_fmix), tstd(settings::model::lbit::u_tstd),
-      cstd(settings::model::lbit::u_cstd), tgw8(settings::model::lbit::u_tgw8), cgw8(settings::model::lbit::u_cgw8), type(settings::model::lbit::u_type),
-      hmean(settings::model::lbit::J1_mean), hwdth(settings::model::lbit::J1_wdth), hdist(settings::model::lbit::distribution), hvals(h) {
-    if(tgw8 == UnitaryGateWeight::EXPDECAY and hvals.empty()) throw except::logic_error("No onsite fields h given for t UnitaryGateWeight::EXPDECAY");
-    if(cgw8 == UnitaryGateWeight::EXPDECAY and hvals.empty()) throw except::logic_error("No onsite fields h given for c UnitaryGateWeight::EXPDECAY");
+      cstd(settings::model::lbit::u_cstd), g8w8(settings::model::lbit::u_g8w8), type(settings::model::lbit::u_type), hmean(settings::model::lbit::J1_mean),
+      hwdth(settings::model::lbit::J1_wdth), hdist(settings::model::lbit::distribution), hvals(h) {
+    if(g8w8 == UnitaryGateWeight::EXPDECAY and hvals.empty()) throw except::logic_error("No onsite fields h given for UnitaryGateWeight::EXPDECAY");
 }
 
 std::string qm::lbit::UnitaryGateProperties::string() const {
-    return fmt::format("depth {} | fmix {:.3f} | tstd {:.3f} | cstd {:.3f} | tgw8 {} | cgw8 {} | type {} | hvals {::.3e}", depth, fmix, tstd, cstd,
-                       enum2sv(tgw8), enum2sv(cgw8), enum2sv(type), hvals);
+    return fmt::format("depth {} | fmix {:.3f} | tstd {:.3f} | cstd {:.3f} | g8w8 {} | type {} | hvals {::.3e}", depth, fmix, tstd, cstd, enum2sv(g8w8),
+                       enum2sv(type), hvals);
+}
+
+void qm::lbit::write_unitary_circuit_parameters(h5pp::File &file, std::string_view table_path, const std::vector<UnitaryGateParameters> &circuit) {
+    if(circuit.empty()) return;
+    if(file.linkExists(table_path))
+        throw except::logic_error("The random unitary circuit has already been written to file: {} | {}", file.getFilePath(), table_path);
+    tools::log->info("Writing unitary circuit to [{}]", table_path);
+    file.createTable(UnitaryGateParameters::get_h5_type(), table_path, "Random Unitary Circuit");
+    file.writeTableRecords(circuit, table_path);
+}
+
+std::vector<qm::lbit::UnitaryGateParameters> qm::lbit::read_unitary_circuit_parameters(const h5pp::File &file, std::string_view table_path) {
+    tools::log->info("Loading unitary circuit from table: [{}]", table_path);
+    return file.readTableRecords<std::vector<UnitaryGateParameters>>(table_path, h5pp::TableSelection::ALL);
+}
+std::vector<std::vector<qm::Gate>> qm::lbit::read_unitary_2site_gate_layers(const h5pp::File &file, std::string_view table_path) {
+    return get_unitary_2site_gate_layers(read_unitary_circuit_parameters(file, table_path));
+}
+
+std::vector<std::vector<qm::Gate>> qm::lbit::get_unitary_2site_gate_layers(const std::vector<UnitaryGateParameters> &circuit) {
+    /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations */
+    std::vector<std::vector<qm::Gate>> unitary_2site_gate_layers;
+    tools::log->trace("Loading twosite unitaries");
+    for(auto &p : circuit) {
+        if(p.layer >= unitary_2site_gate_layers.size()) unitary_2site_gate_layers.emplace_back(std::vector<qm::Gate>{});
+        auto &layer = unitary_2site_gate_layers.at(p.layer);
+        layer.emplace_back(get_unitary_2site_gate(p));
+    }
+    return unitary_2site_gate_layers;
 }
 
 template<typename Scalar>
@@ -91,14 +120,14 @@ auto get_permuted(const Eigen::Tensor<Scalar, 2> &in, MeanType meanType) {
 
 void qm::lbit::UnitaryGateProperties::randomize_hvals() const { hvals = rnd::random(hdist, hmean, hwdth, sites); }
 
-std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryGateProperties &u) {
-    /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations
+qm::Gate qm::lbit::get_unitary_2site_gate(const UnitaryGateParameters &u) {
+    /*! Returns a two site gate used in the random unitary circuit transform between physical and l-bit representations
      *
      *
      @verbatim
                    2      3               1
                    |      |               |
-                 [ exp(-ifM) ]  ---> [ exp(-ifM) ]
+                [ exp(-ifwM) ] ---> [ exp(-ifwM) ]
                    |      |               |
                    0      1               0
      @endverbatim
@@ -120,72 +149,82 @@ std::vector<qm::Gate> qm::lbit::get_unitary_2gate_layer(const qm::lbit::UnitaryG
         c  σ+σ- +
         c* σ-σ+
     */
+    constexpr bool kroneckerSwap = false;
+    static auto    SZ            = qm::spin::half::gen_twobody_spins(qm::spin::half::sz, kroneckerSwap); // We use these as matrices
+    static auto    SP            = qm::spin::half::gen_twobody_spins(qm::spin::half::sp, kroneckerSwap); // We use these as matrices
+    static auto    SM            = qm::spin::half::gen_twobody_spins(qm::spin::half::sm, kroneckerSwap); // We use these as matrices
+    static auto    ID            = qm::spin::half::gen_twobody_spins(qm::spin::half::id, kroneckerSwap); // We use these as matrices
+    static auto    N             = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
+    static auto    spin_dims     = std::vector<long>{2l, 2l};
 
+    auto M = Eigen::Matrix4cd();
+    switch(u.type) {
+        case UnitaryGateType::MBL: {
+            M = u.theta[0] * N[0] * N[1]                       //
+                + u.theta[1] * (ID[0] - N[0]) * N[1]           //
+                + u.theta[2] * N[0] * (ID[1] - N[1])           //
+                + u.theta[3] * (ID[0] - N[0]) * (ID[1] - N[1]) //
+                + u.c * SP[0] * SM[1]                          //
+                + std::conj(u.c) * SP[1] * SM[0];
+            break;
+        }
+        case UnitaryGateType::ANDERSON: {
+            M = u.theta[0] * 0.25 * (ID[0] + SZ[0] + SZ[1])   //
+                + u.theta[1] * 0.25 * (ID[0] - SZ[0] + SZ[1]) //
+                + u.theta[2] * 0.25 * (ID[0] + SZ[0] - SZ[1]) //
+                + u.theta[3] * 0.25 * (ID[0] - SZ[0] - SZ[1]) //
+                + u.c * SP[0] * SM[1]                         //
+                + std::conj(u.c) * SP[1] * SM[0];
+            break;
+        }
+        default: throw except::runtime_error("Unrecognized gate type: {}", enum2sv(u.type));
+    }
+
+    // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
+    // the kronecker product that generated two-site gates above has indexed right-to-left
+    //         1                   3      2              2      3                1
+    //         |                   |      |              |      |                |
+    //   [     M     ]  --->    [     M      ]   --->  [    M     ]  --->  [     M     ]
+    //         |                   |      |              |      |                |
+    //         0                   1      0              0      1                0
+    Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(M, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+    Eigen::MatrixXcd       expifM     = (-1.0i * u.f * u.w * tenx::MatrixMap(M_shuffled)).exp();
+    return {tenx::TensorMap(expifM), std::vector<size_t>{u.sites.front(), u.sites.back()}, spin_dims};
+}
+
+std::vector<qm::Gate> qm::lbit::create_unitary_2site_gate_layer(const qm::lbit::UnitaryGateProperties &u) {
+    /*! Returns a set of unitary two site operators used to transform between physical and l-bit representations */
     tools::log->trace("Generating twosite unitaries");
-    if(u.tgw8 == UnitaryGateWeight::EXPDECAY or u.cgw8 == UnitaryGateWeight::EXPDECAY) {
+    if(u.g8w8 == UnitaryGateWeight::EXPDECAY) {
         if(u.hvals.empty() or u.hvals.size() != u.sites) throw except::logic_error("uprop.hvals.size() {} != sites {}", u.hvals.size(), u.sites);
     }
-    constexpr bool        kroneckerSwap = false;
-    auto                  SZ            = qm::spin::half::gen_twobody_spins(qm::spin::half::sz, kroneckerSwap); // We use these as matrices
-    auto                  SP            = qm::spin::half::gen_twobody_spins(qm::spin::half::sp, kroneckerSwap); // We use these as matrices
-    auto                  SM            = qm::spin::half::gen_twobody_spins(qm::spin::half::sm, kroneckerSwap); // We use these as matrices
-    auto                  ID            = qm::spin::half::gen_twobody_spins(qm::spin::half::id, kroneckerSwap); // We use these as matrices
-    auto                  N             = std::vector<Eigen::Matrix4cd>{0.5 * (ID[0] + SZ[0]), 0.5 * (ID[1] + SZ[1])};
-    auto                  spin_dims     = std::vector<long>{2l, 2l};
     std::vector<qm::Gate> gates;
     gates.reserve(u.sites - 1);
     for(size_t idx = 0; idx < u.sites - 1; idx++) {
         // This 2-site gate connects sites idx and idx+1
-        // EXPDECAY correspond to squared exponential decay with adjacent field differences
-        auto tw  = u.tgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
-        auto cw  = u.cgw8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
-        auto th0 = tw * rnd::normal(0.0, u.tstd);
-        auto th1 = tw * rnd::normal(0.0, u.tstd);
-        auto th2 = tw * rnd::normal(0.0, u.tstd);
-        auto th3 = tw * rnd::normal(0.0, u.tstd);
-        auto rec = cw * rnd::normal(0.0, u.cstd);
-        auto imc = cw * rnd::normal(0.0, u.cstd);
-        auto c   = std::complex<double>(rec, imc); // complex normal random variable
-        auto M   = Eigen::Matrix4cd();
-        switch(u.type) {
-            case UnitaryGateType::MBL: {
-                M = th3 * N[0] * N[1]                       //
-                    + th2 * (ID[0] - N[0]) * N[1]           //
-                    + th1 * N[0] * (ID[1] - N[1])           //
-                    + th0 * (ID[0] - N[0]) * (ID[1] - N[1]) //
-                    + c * SP[0] * SM[1]                     //
-                    + std::conj(c) * SP[1] * SM[0];
-                break;
-            }
-            case UnitaryGateType::ANDERSON: {
-                M =   th3 * 0.25 * (ID[0] + SZ[0] + SZ[1])   //
-                    + th2 * 0.25 * (ID[0] - SZ[0] + SZ[1]) //
-                    + th1 * 0.25 * (ID[0] + SZ[0] - SZ[1]) //
-                    + th0 * 0.25 * (ID[0] - SZ[0] - SZ[1]) //
-                    + c * SP[0] * SM[1]                    //
-                    + std::conj(c) * SP[1] * SM[0];
-                break;
-            }
-            default: throw except::runtime_error("Unrecognized gate type: {}", enum2sv(u.type));
-        }
+        UnitaryGateParameters p;
+        p.layer = u.layer_count;
+        p.sites = {idx, idx + 1};
+        p.f     = u.fmix;
+        p.w     = u.g8w8 == UnitaryGateWeight::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
+        p.theta = {rnd::normal(0.0, u.tstd), //
+                   rnd::normal(0.0, u.tstd), //
+                   rnd::normal(0.0, u.tstd), //
+                   rnd::normal(0.0, u.tstd)};
+        p.c     = std::complex<double>(rnd::normal(0.0, u.cstd),  //
+                                       rnd::normal(0.0, u.cstd)); // complex normal random variable
+        p.type  = u.type;
+        gates.emplace_back(get_unitary_2site_gate(p));
 
-        // Here we shuffle to get the correct underlying index pattern: Sites are contracted left-to right, but
-        // the kronecker product that generated two-site gates above has indexed right-to-left
-        //         1                   3      2              2      3                1
-        //         |                   |      |              |      |                |
-        //   [ exp(-ifM) ]  --->    [ exp(-ifM) ]   --->  [ exp(-ifM) ]  --->  [ exp(-ifM) ]
-        //         |                   |      |              |      |                |
-        //         0                   1      0              0      1                0
-        Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(M, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
-        Eigen::MatrixXcd       expifM     = (-1.0i * u.fmix * tenx::MatrixMap(M_shuffled)).exp();
-        gates.emplace_back(tenx::TensorMap(expifM), std::vector<size_t>{idx, idx + 1}, spin_dims);
+        // Save for storage in a circuit table on file
+        if(u.keep_circuit) { u.circuit.emplace_back(p); }
     }
     if constexpr(settings::debug) {
         // Sanity check
         for(const auto &g : gates)
             if(not tenx::MatrixMap(g.op).isUnitary()) throw except::logic_error("u is not unitary!");
     }
-
+    u.layer_count += 1;
     return gates;
 }
 
@@ -311,7 +350,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::v
 }
 
 std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const UnitaryGateProperties &u) {
-    return get_unitary_mpo_layer(get_unitary_2gate_layer(u));
+    return get_unitary_mpo_layer(create_unitary_2site_gate_layer(u));
 }
 
 /*! \brief Merge multiple MPO layers into a single one using SVD.
@@ -1385,7 +1424,7 @@ std::vector<Eigen::Tensor<real, 2>> qm::lbit::get_lbit_correlation_matrices(cons
                 tools::log->debug("Randomized fields to: {::.4e}", uprop.hvals);
             }
             tools::log->trace("Generating circuit of unitary two-site gates: u_sites {} | u_depth {}", uprop.sites, uprop.depth);
-            for(size_t idx = 0; idx < uprop.depth; ++idx) { uprop.ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop)); }
+            for(size_t idx = 0; idx < uprop.depth; ++idx) { uprop.ulayers.emplace_back(qm::lbit::create_unitary_2site_gate_layer(uprop)); }
         }
     }
 
@@ -1413,7 +1452,7 @@ std::vector<Eigen::Tensor<real, 2>> qm::lbit::get_lbit_correlation_matrices2(con
                 tools::log->debug("Randomized fields to: {::.4e}", uprop.hvals);
             }
             tools::log->trace("Generating circuit of unitary two-site gates: u_sites {} | u_depth {}", uprop.sites, uprop.depth);
-            for(size_t idx = 0; idx < uprop.depth; ++idx) { uprop.ulayers.emplace_back(qm::lbit::get_unitary_2gate_layer(uprop)); }
+            for(size_t idx = 0; idx < uprop.depth; ++idx) { uprop.ulayers.emplace_back(qm::lbit::create_unitary_2site_gate_layer(uprop)); }
         }
     }
 
@@ -1425,16 +1464,14 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
                                                                   std::vector<double            >  u_fmixs,
                                                                   std::vector<double            >  u_tstds,
                                                                   std::vector<double            >  u_cstds,
-                                                                  std::vector<UnitaryGateWeight >  u_tgw8s,
-                                                                  std::vector<UnitaryGateWeight >  u_cgw8s,
+                                                                  std::vector<UnitaryGateWeight >  u_g8w8s,
                                                                   std::vector<UnitaryGateType   >  u_types) {
     auto t_lbit_analysis = tid::tic_scope("lbit_analysis");
     if(u_dpths.empty()) u_dpths = {u_defaults.depth};
     if(u_fmixs.empty()) u_fmixs = {u_defaults.fmix};
     if(u_tstds.empty()) u_tstds = {u_defaults.tstd};
     if(u_cstds.empty()) u_cstds = {u_defaults.cstd};
-    if(u_tgw8s.empty()) u_tgw8s = {u_defaults.tgw8};
-    if(u_cgw8s.empty()) u_cgw8s = {u_defaults.cgw8};
+    if(u_g8w8s.empty()) u_g8w8s = {u_defaults.g8w8};
     if(u_types.empty()) u_types = {u_defaults.type};
 
     auto reps = settings::flbit::cls::num_rnd_circuits;
@@ -1446,19 +1483,18 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         return res;
     };
 
-    lbitSupportAnalysis lbitSA(u_dpths.size(), u_fmixs.size(), u_tstds.size(), u_cstds.size(),u_tgw8s.size(),u_cgw8s.size(), u_types.size() , reps, u_defaults.sites);
-    lbitSupportAnalysis lbitSA2(u_dpths.size(), u_fmixs.size(), u_tstds.size(), u_cstds.size(),u_tgw8s.size(),u_cgw8s.size(), u_types.size() , reps, u_defaults.sites);
-    std::array<long, 8> offset8{}, extent8{};
-    std::array<long, 10> offset10{}, extent10{};
+    lbitSupportAnalysis lbitSA(u_dpths.size(), u_fmixs.size(), u_tstds.size(), u_cstds.size(),u_g8w8s.size(), u_types.size() , reps, u_defaults.sites);
+    lbitSupportAnalysis lbitSA2(u_dpths.size(), u_fmixs.size(), u_tstds.size(), u_cstds.size(),u_g8w8s.size(), u_types.size() , reps, u_defaults.sites);
+    std::array<long, 7> offset7{}, extent7{};
+    std::array<long, 9> offset9{}, extent9{};
     auto i_width = static_cast<long>(u_defaults.sites);
-    extent10 = {1, 1, 1, 1, 1, 1, 1 , 1, i_width, i_width};
+    extent9 = {1, 1, 1, 1, 1, 1, 1 , i_width, i_width};
 
     for (const auto & [i_dpth, u_dpth] : iter::enumerate<long>(u_dpths))
     for (const auto & [i_fmix, u_fmix] : iter::enumerate<long>(u_fmixs))
     for (const auto & [i_cstd, u_cstd] : iter::enumerate<long>(u_cstds))
     for (const auto & [i_tstd, u_tstd] : iter::enumerate<long>(u_tstds))
-    for (const auto & [i_tgw8, u_tgw8] : iter::enumerate<long>(u_tgw8s))
-    for (const auto & [i_cgw8, u_cgw8] : iter::enumerate<long>(u_cgw8s))
+    for (const auto & [i_g8w8, u_g8w8] : iter::enumerate<long>(u_g8w8s))
     for (const auto & [i_type, u_type] : iter::enumerate<long>(u_types))
     {
         auto uprop = u_defaults;
@@ -1466,106 +1502,58 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         uprop.fmix = u_fmix;
         uprop.tstd = u_tstd;
         uprop.cstd = u_cstd;
-        uprop.tgw8 = u_tgw8;
-        uprop.cgw8 = u_cgw8;
+        uprop.g8w8 = u_g8w8;
         uprop.type = u_type;
         for(const auto &ulayer : uprop.ulayers) for(auto &g : ulayer) g.unmark_as_used();
         bool use_mpo = uprop.depth >= settings::flbit::cls::mpo_circuit_switchdepth;
         tools::log->debug("Computing lbit supports | reps {} | rand h {} | mpo {} | {}", reps, rndh, use_mpo,uprop.string());
         auto lbit_corrmat_vec = get_lbit_correlation_matrices(uprop, reps, rndh, use_mpo);
-//        auto lbit_corrmat_vec2 = get_lbit_correlation_matrices2(uprop, reps, rndh, use_mpo);
 
         auto t_post = tid::tic_scope("post");
         for (const auto & [i_reps, lbit_corrmat] : iter::enumerate<long>(lbit_corrmat_vec)){
-            offset10 = {i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type, i_reps , 0, 0};
-            lbitSA.corrmat.slice(offset10, extent10) = lbit_corrmat.reshape(extent10);
-            lbitSA.corroff.slice(offset10, extent10) = get_permuted(lbit_corrmat, MeanType::GEOMETRIC).reshape(extent10);
+            offset9 = {i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type, i_reps , 0, 0};
+            lbitSA.corrmat.slice(offset9, extent9) = lbit_corrmat.reshape(extent9);
+            lbitSA.corroff.slice(offset9, extent9) = get_permuted(lbit_corrmat, MeanType::GEOMETRIC).reshape(extent9);
         }
-//        for (const auto & [i_reps, lbit_corrmat] : iter::enumerate<long>(lbit_corrmat_vec2)){
-//            offset9 = {i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_reps , 0, 0};
-//            lbitSA2.corrmat.slice(offset9, extent9) = lbit_corrmat.reshape(extent9);
-//            lbitSA2.corroff.slice(offset9, extent9) = get_permuted(lbit_corrmat, MeanType::GEOMETRIC).reshape(extent9);
-//        }
+
         auto [lbit_corrmat_avg,lbit_corrmat_typ, lbit_corrmat_err] = qm::lbit::get_lbit_correlation_statistics(lbit_corrmat_vec);
         auto [cls_avg, rms_avg, rsq_avg, yavg, cavg] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_avg, MeanType::ARITHMETIC);
         auto [cls_typ, rms_typ, rsq_typ, ytyp, ctyp] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_typ, MeanType::GEOMETRIC);
         tools::log->info("Computed lbit decay reps {} | rand h {} | mpo {} | {} | time {:8.3f} s | cls {:>8.6f} | rmsd {:.3e} | rsq {:.6f} | decay {:2} sites: {::8.2e}",
                          reps, rndh, use_mpo, uprop.string(), t_lbit_analysis->restart_lap(),cls_typ, rms_typ, rsq_typ, ctyp, ytyp);
-//        auto [lbit_corrmat_avg2,lbit_corrmat_typ2, lbit_corrmat_err2] = qm::lbit::get_lbit_correlation_statistics(lbit_corrmat_vec2);
-//        auto [cls_avg2, rms_avg2, rsq_avg2, yavg2, cavg2] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_avg2, MeanType::ARITHMETIC);
-//        auto [cls_typ2, rms_typ2, rsq_typ2, ytyp2, ctyp2] = qm::lbit::get_characteristic_length_scale(lbit_corrmat_typ2, MeanType::GEOMETRIC);
-//        tools::log->info("Computed lbit decay reps {} | rand h {} | mpo {} | {} | time {:8.3f} s | cls {:>8.6f} | rmsd {:.3e} | rsq {:.6f} | decay {:2} sites: {::8.2e}",
-//                         reps, rndh, use_mpo, uprop.string(), t_lbit_analysis->restart_lap(),cls_typ2, rms_typ2, rsq_typ2, ctyp2, ytyp2);
+
+        lbitSA.cls_avg_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type) = cls_avg;
+        lbitSA.cls_avg_rms(i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type) = rms_avg;
+        lbitSA.cls_avg_rsq(i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type) = rsq_avg;
+        lbitSA.cls_typ_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type) = cls_typ;
+        lbitSA.cls_typ_rms(i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type) = rms_typ;
+        lbitSA.cls_typ_rsq(i_dpth, i_fmix, i_tstd, i_cstd, i_g8w8, i_type) = rsq_typ;
 
 
-        lbitSA.cls_avg_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = cls_avg;
-        lbitSA.cls_avg_rms(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rms_avg;
-        lbitSA.cls_avg_rsq(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rsq_avg;
-        lbitSA.cls_typ_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = cls_typ;
-        lbitSA.cls_typ_rms(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rms_typ;
-        lbitSA.cls_typ_rsq(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rsq_typ;
+        offset7                              = {i_dpth, i_fmix, i_tstd, i_cstd,i_g8w8, i_type, 0};
+        extent7                              = {1, 1, 1, 1, 1, 1, static_cast<long>(yavg.size())};
+        lbitSA.corravg.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(yavg.data(), extent7);
+        extent7                              = {1, 1, 1, 1, 1, 1, static_cast<long>(ytyp.size())};
+        lbitSA.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp.data(), extent7);
 
-//        lbitSA2.cls_avg_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = cls_avg2;
-//        lbitSA2.cls_avg_rms(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rms_avg2;
-//        lbitSA2.cls_avg_rsq(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rsq_avg2;
-//        lbitSA2.cls_typ_fit(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = cls_typ2;
-//        lbitSA2.cls_typ_rms(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rms_typ2;
-//        lbitSA2.cls_typ_rsq(i_dpth, i_fmix, i_tstd, i_cstd, i_tgw8, i_cgw8, i_type) = rsq_typ2;
-
-
-
-        offset8                              = {i_dpth, i_fmix, i_tstd, i_cstd,i_tgw8, i_cgw8, i_type, 0};
-
-        extent8                              = {1, 1, 1, 1, 1, 1, 1, static_cast<long>(yavg.size())};
-        lbitSA.corravg.slice(offset8, extent8) = Eigen::TensorMap<Eigen::Tensor<real, 8>>(yavg.data(), extent8);
-//        lbitSA2.corravg.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(yavg2.data(), extent7);
-
-        extent8                              = {1, 1, 1, 1, 1, 1, 1, static_cast<long>(ytyp.size())};
-        lbitSA.corrtyp.slice(offset8, extent8) = Eigen::TensorMap<Eigen::Tensor<real, 8>>(ytyp.data(), extent8);
-//        lbitSA2.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp2.data(), extent7);
-
-//        try{
-            auto t_plot = tid::tic_scope("plot");
-            auto yavg_log   = num::cast<real>(yavg, lognoinf);
-            {
-                auto off10 = std::array<long,10>{0,0,0,0,0,0,0,0,i_width/2,0};
-                auto ext10 = std::array<long,10>{1,1, 1, 1, 1, 1, 1, 1, 1, i_width};
-                yavg_log = num::cast<real>(tenx::VectorCast(lbitSA.corrmat.slice(off10, ext10)), lognoinf);
-            }
-//            auto yavg_log2   = num::cast<real>(yavg2, lognoinf);
-            auto ytyp_log   = num::cast<real>(ytyp, lognoinf);
-            auto plt           = AsciiPlotter("lbit decay", 64, 20);
-            plt.addPlot(yavg_log, fmt::format("avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
-            plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
-//            plt.addPlot(yavg_log2, fmt::format("avg2 cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg2, rms_avg2, rsq_avg2, yavg2), '+');
-            plt.enable_legend();
-            plt.show();
-//        }catch(const std::exception & ex){
-//            tools::log->error("AsciiPlotter failed: {}", ex.what());
-//        }
+        auto t_plot = tid::tic_scope("plot");
+        auto yavg_log   = num::cast<real>(yavg, lognoinf);
+        {
+            auto off9 = std::array<long,9>{0,0,0,0,0,0,0,i_width/2,0};
+            auto ext9 = std::array<long,9>{1,1, 1, 1, 1, 1, 1, 1, i_width};
+            yavg_log = num::cast<real>(tenx::VectorCast(lbitSA.corrmat.slice(off9, ext9)), lognoinf);
+        }
+        auto ytyp_log   = num::cast<real>(ytyp, lognoinf);
+        auto plt           = AsciiPlotter("lbit decay", 64, 20);
+        plt.addPlot(yavg_log, fmt::format("avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
+        plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
+        plt.enable_legend();
+        plt.show();
         auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
         auto mid = static_cast<long>(lbit_corrmap.rows()/2);
         auto lbit_crossup = 0.5 * (lbit_corrmap.topRightCorner(mid,mid).cwiseAbs().sum() + lbit_corrmap.bottomLeftCorner(mid,mid).cwiseAbs().sum());
         tools::log->info("lbit cross-support: {:.3e}", lbit_crossup);
 
-//        {
-//            auto t_plot = tid::tic_scope("plot");
-//            auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
-//            auto rows  = lbit_corrmap.rows();
-//            auto yrows = std::vector<long>{0, rows/2, rows-1};
-//            auto plt           = AsciiPlotter("lbit decay", 150, 20);
-//            std::array<char,3> marks = {'o', 'x', '.'};
-//            size_t i = 0;
-//            for (const auto & row : yrows){
-//                auto y_row   = Eigen::VectorXd(lbit_corrmap.row(row));
-//                auto y_log   = num::cast<real>(y_row, lognoinf);
-//                auto mark = marks[i++];
-//                plt.addPlot(y_log, fmt::format("avg: {::+.4e}", y_row), mark);
-//                fmt::print("{} log: {::+.4}\n", mark, y_log);
-//            }
-//            plt.enable_legend();
-//            plt.show();
-//        }
     }
     /* clang-format on */
     return lbitSA;

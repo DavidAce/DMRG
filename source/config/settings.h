@@ -228,12 +228,11 @@ namespace settings {
             inline double            xi_Jcls       = 1.0;                         /*!< The characteristic length-scale xi of the exponentially decaying interactions: exp(-|i-j|/xi_Jcls) * Random(i,j,k...) */
             inline long              spin_dim      = 2;                           /*!< Spin dimension */
             inline std::string       distribution  = "normal";                    /*!< Random distribution for interaction strengths */
-            inline double            u_fmix        = 1.0;                         /*!< Mixing factor for unitary transformation to real-space */
-            inline size_t            u_depth       = 6;                           /*!< Depth of the circuit of unitary 2-site gates which transform lbit <-> real spaces */
+            inline double            u_fmix        = 0.2;                         /*!< Mixing factor for unitary transformation to real-space */
+            inline size_t            u_depth       = 16;                          /*!< Depth of the circuit of unitary 2-site gates which transform lbit <-> real spaces */
             inline double            u_tstd        = 1.0;                         /*!< The standard deviation for the distribution of thetas in the unitary gate */
             inline double            u_cstd        = 1.0;                         /*!< The standard deviation for the distribution of c-terms in the unitary gates */
-            inline UnitaryGateWeight u_tgw8        = UnitaryGateWeight::IDENTITY; /*!< Weights for the c-terms in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite fields */
-            inline UnitaryGateWeight u_cgw8        = UnitaryGateWeight::EXPDECAY; /*!< Weights for the theta's in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]), h are onsite fields */
+            inline UnitaryGateWeight u_g8w8        = UnitaryGateWeight::EXPDECAY; /*!< Weights the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite fields in the Hamiltonian */
             inline UnitaryGateType   u_type        = UnitaryGateType::MBL;        /*!< Choose the gate type MBL|ANDERSON */
         }
     }

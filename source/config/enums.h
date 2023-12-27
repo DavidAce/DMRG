@@ -19,7 +19,7 @@ enum class GateOp { NONE, CNJ, ADJ, TRN };
 enum class CircuitOp { NONE, ADJ, TRN };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
 enum class UnitaryGateType { ANDERSON, MBL };
-enum class UnitaryGateWeight { IDENTITY, EXPDECAY };
+enum class UnitaryGateWeight { IDENTITY, EXPDECAY }; // 1 or exp(-2|h[i] - h[i+1]|)
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };

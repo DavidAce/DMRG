@@ -125,8 +125,7 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::lbit::u_fmix"                          , model::lbit::u_fmix);
     dmrg_config.load_parameter("model::lbit::u_tstd"                          , model::lbit::u_tstd);
     dmrg_config.load_parameter("model::lbit::u_cstd"                          , model::lbit::u_cstd);
-    dmrg_config.load_parameter("model::lbit::u_tgw8"                          , model::lbit::u_tgw8);
-    dmrg_config.load_parameter("model::lbit::u_cgw8"                          , model::lbit::u_cgw8);
+    dmrg_config.load_parameter("model::lbit::u_g8w8"                          , model::lbit::u_g8w8);
     dmrg_config.load_parameter("model::lbit::u_type"                          , model::lbit::u_type);
     dmrg_config.load_parameter("model::lbit::spin_dim"                        , model::lbit::spin_dim);
     dmrg_config.load_parameter("model::lbit::distribution"                    , model::lbit::distribution);

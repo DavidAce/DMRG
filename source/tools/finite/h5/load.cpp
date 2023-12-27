@@ -91,7 +91,7 @@ namespace tools::finite::h5 {
         try {
             // Find the path to the model
             auto table_path = fmt::format("{}/hamiltonian", model_path);
-            tools::log->info("Loading model data from hamiltonian table: [{}]", table_path);
+            tools::log->info("Loading hamiltonian from table: [{}]", table_path);
             auto model_type = h5file.readAttribute<ModelType>(table_path, "model_type");
             auto model_size = h5file.readAttribute<size_t>(table_path, "model_size");
             if(model_type != settings::model::model_type)

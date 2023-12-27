@@ -5,22 +5,49 @@
 #include "qm.h"
 #include <complex>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 enum class UnitaryGateWeight;
 enum class UnitaryGateType;
 enum class MeanType;
 class StateFinite;
+namespace h5pp {
+    class File;
+    namespace hid {
+        class h5t;
+    }
+};
 
 namespace qm::lbit {
+
+    /*! The values that we need to recreate a unitary gate exactly */
+    struct UnitaryGateParameters {
+        size_t                layer; /*!< Layer number of this gate */
+        std::array<size_t, 2> sites; /*!< The two sites which this site connects */
+        double                f;     /*!< Mixing factor  */
+        double                w;     /*!< Gate weight value = exp(-2|h_i - h_i+1|) */
+        std::array<double, 4> theta; /*!< Random real valued thetas (for the mixing term)  */
+        std::complex<double>  c;     /*!< Random complex valued c (exchange term)  */
+        UnitaryGateType       type;  /*!< Gate type non-interacting or interacting: ANDERSON(0) OR MBL(1)  */
+
+        [[nodiscard]] static const h5pp::hid::h5t          get_h5_type();
+        [[nodiscard]] static std::vector<std::string_view> get_parameter_names() noexcept;
+        void                                               print_parameter_names() noexcept;
+        void                                               print_parameter_values() const noexcept;
+        [[nodiscard]] std::string                          fmt_value(std::string_view p) const;
+
+        private:
+        static h5pp::hid::h5t get_h5t_enum_ut();
+    };
+
     struct UnitaryGateProperties {
         size_t                                     sites;   /*!< Width of the circuit, i.e. system length/number of sites */
         size_t                                     depth;   /*!< Number of layers in the unitary circuit (1 layer connects all neighbors once) */
         double                                     fmix;    /*!< The mixing factor f in exp(-ifM) */
         double                                     tstd;    /*!< Standard deviation for the theta parameters in the unitary gate */
         double                                     cstd;    /*!< Standard deviation for the c parameters in the unitary gate  */
-        UnitaryGateWeight                          tgw8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
-        UnitaryGateWeight                          cgw8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
+        UnitaryGateWeight                          g8w8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
         UnitaryGateType                            type;    /*!< Choose ANDERSON|MBL */
         double                                     hmean;   /*!< mean of random onsite fields */
         double                                     hwdth;   /*!< width of random onsite fields (st.dev. if normal) */
@@ -28,23 +55,32 @@ namespace qm::lbit {
         mutable std::vector<double>                hvals;   /*!< onsite fields of the l-bit hamiltonian, needed for type == UnitaryGateWeight::EXPDECAY */
         mutable std::vector<std::vector<qm::Gate>> ulayers; /*!< The generated unitary circuit of two-site gates */
         UnitaryGateProperties() = default;
-        UnitaryGateProperties(const std::vector<double> &h = {});
-        std::string string() const;
-        void        randomize_hvals() const;
+        UnitaryGateProperties(const std::vector<double> &h);
+        std::string    string() const;
+        void           randomize_hvals() const;
+        bool           keep_circuit = false;
+        mutable size_t layer_count  = 0;
+
+        mutable std::vector<UnitaryGateParameters> circuit;
     };
 
+    void write_unitary_circuit_parameters(h5pp::File &file, std::string_view table_path, const std::vector<UnitaryGateParameters> &circuit);
+    std::vector<UnitaryGateParameters> read_unitary_circuit_parameters(const h5pp::File &file, std::string_view table_path);
+    std::vector<std::vector<qm::Gate>> read_unitary_2site_gate_layers(const h5pp::File &file, std::string_view table_path);
+    std::vector<std::vector<qm::Gate>> get_unitary_2site_gate_layers(const std::vector<UnitaryGateParameters> &circuit);
+
     struct lbitSupportAnalysis {
-        Eigen::Tensor<real, 7> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
-        Eigen::Tensor<real, 7> cls_avg_rms; // Root mean squared deviation
-        Eigen::Tensor<real, 7> cls_avg_rsq; // R-squared or coefficient of determination
-        Eigen::Tensor<real, 7> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
-        Eigen::Tensor<real, 7> cls_typ_rms; // Root mean squared deviation
-        Eigen::Tensor<real, 7> cls_typ_rsq; // R-squared or coefficient of determination
-        Eigen::Tensor<real, 8> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
-        Eigen::Tensor<real, 8> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
-        Eigen::Tensor<real, 8> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<real, 10> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
-        Eigen::Tensor<real, 10> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
+        Eigen::Tensor<real, 6> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 6> cls_avg_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 6> cls_avg_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 6> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 6> cls_typ_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 6> cls_typ_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 7> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
+        Eigen::Tensor<real, 7> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
+        Eigen::Tensor<real, 7> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<real, 9> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
+        Eigen::Tensor<real, 9> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
         lbitSupportAnalysis() {
             cls_avg_fit.setZero();
             cls_avg_rms.setZero();
@@ -58,28 +94,27 @@ namespace qm::lbit {
             corrmat.setZero();
             corroff.setZero();
         }
-        lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ntgw8, size_t ncgw8, size_t ntype, size_t nreps, size_t nsize)
+        lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ng8w8, size_t ntype, size_t nreps, size_t nsize)
             : lbitSupportAnalysis() {
             auto idpth = static_cast<Eigen::Index>(ndpth);
             auto ifmix = static_cast<Eigen::Index>(nfmix);
             auto itstd = static_cast<Eigen::Index>(ntstd);
             auto icstd = static_cast<Eigen::Index>(ncstd);
-            auto itgw8 = static_cast<Eigen::Index>(ntgw8);
-            auto icgw8 = static_cast<Eigen::Index>(ncgw8);
+            auto ig8w8 = static_cast<Eigen::Index>(ng8w8);
             auto itype = static_cast<Eigen::Index>(ntype);
             auto ireps = static_cast<Eigen::Index>(nreps);
             auto isize = static_cast<Eigen::Index>(nsize);
-            cls_avg_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
-            cls_avg_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
-            cls_avg_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
-            cls_typ_fit.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
-            cls_typ_rms.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
-            cls_typ_rsq.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype);
-            corravg.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, isize);
-            corrtyp.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, isize);
-            correrr.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, isize);
-            corrmat.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, ireps, isize, isize);
-            corroff.resize(idpth, ifmix, itstd, icstd, itgw8, icgw8, itype, ireps, isize, isize);
+            cls_avg_fit.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
+            cls_avg_rms.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
+            cls_avg_rsq.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
+            cls_typ_fit.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
+            cls_typ_rms.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
+            cls_typ_rsq.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
+            corravg.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, isize);
+            corrtyp.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, isize);
+            correrr.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, isize);
+            corrmat.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, ireps, isize, isize);
+            corroff.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, ireps, isize, isize);
         }
     };
 
@@ -90,7 +125,8 @@ namespace qm::lbit {
     extern std::vector<qm::Gate>                get_time_evolution_gates(cplx_t delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
     extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cplx_t delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
 //    extern std::vector<qm::Gate>                get_unitary_2gate_layer(size_t sites, double fmix);
-    extern std::vector<qm::Gate>                get_unitary_2gate_layer(const UnitaryGateProperties & u);
+    extern qm::Gate                             get_unitary_2site_gate(const UnitaryGateParameters &u);
+    extern std::vector<qm::Gate>                create_unitary_2site_gate_layer(const qm::lbit::UnitaryGateProperties &u);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const std::vector<qm::Gate> & ulayer, std::optional<svd::config> cfg = std::nullopt);
     extern std::vector<Eigen::Tensor<cplx, 4>>  get_unitary_mpo_layer(const UnitaryGateProperties & u);
     extern std::vector<Eigen::Tensor<cplx, 4>>  merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> & mpos_dn, const std::vector<Eigen::Tensor<cplx, 4>> & mpos_up, bool adj_dn = false);
@@ -131,8 +167,7 @@ namespace qm::lbit {
                                                                   std::vector<double          >    ufmixs = {},
                                                                   std::vector<double          >    utstds = {},
                                                                   std::vector<double          >    ucstds = {},
-                                                                  std::vector<UnitaryGateWeight >  utgw8s = {},
-                                                                  std::vector<UnitaryGateWeight >  ucgw8s = {},
+                                                                  std::vector<UnitaryGateWeight >  ug8w8s = {},
                                                                   std::vector<UnitaryGateType   >  utypes = {}
                                                                 );
 

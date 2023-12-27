@@ -1,7 +1,9 @@
 #pragma once
 #include "AlgorithmFinite.h"
+#include "qm/gate.h"
+#include "qm/lbit.h"
 #include <deque>
-#include <qm/gate.h>
+
 /*!
 // * \brief Class that runs the finite LBIT algorithm.
  */
@@ -21,6 +23,7 @@ class flbit : public AlgorithmFinite {
     std::vector<std::vector<qm::Gate>>               unitary_gates_2site_layers;
     std::vector<Eigen::Tensor<cplx, 4>>              unitary_gates_mpo_layer_full;
     std::vector<std::vector<Eigen::Tensor<cplx, 4>>> unitary_gates_mpo_layers;
+    qm::lbit::UnitaryGateProperties                  uprop;
     Eigen::Tensor<std::complex<double>, 1>           ledge, redge;
     std::vector<cplx_t>                              time_points;
     Eigen::Tensor<cplx, 2>                           lbit_overlap; // The real-space support of the l-bits

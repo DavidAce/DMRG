@@ -83,26 +83,8 @@ void flbit::resume() {
 
         tensors.move_center_point_to_inward_edge();
 
-        // Load the unitaries
-        unitary_gates_2site_layers.clear();
-        std::string grouppath = "/fLBIT/model/unitary_gates";
-        if(not h5file->linkExists(grouppath)) throw except::runtime_error("Missing link: {}", grouppath);
-        auto num_layers = h5file->readAttribute<size_t>(grouppath, "num_layers");
-        if(num_layers != settings::model::lbit::u_depth)
-            throw except::runtime_error("Mismatch in number of layers: file {} != cfg {}", num_layers != settings::model::lbit::u_depth);
-        unitary_gates_2site_layers.resize(num_layers);
-        for(auto &&[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
-            std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
-            auto        num_gates = h5file->readAttribute<size_t>(layerpath, "num_gates");
-            layer.resize(num_gates);
-            for(auto &&[idx_gate, u] : iter::enumerate(layer)) {
-                std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
-                auto        op       = h5file->readDataset<Eigen::Tensor<cplx, 2>>(gatepath);
-                auto        pos      = h5file->readAttribute<std::vector<size_t>>(gatepath, "pos");
-                auto        dim      = h5file->readAttribute<std::vector<long>>(gatepath, "dim");
-                u                    = qm::Gate(op, pos, dim);
-            }
-        }
+        // Load the unitary circuit
+        unitary_gates_2site_layers = qm::lbit::read_unitary_2site_gate_layers(*h5file, "/fLBIT/model/unitary_circuit");
 
         // Generate the corresponding state in lbit basis
         transform_to_lbit_basis();
@@ -563,10 +545,10 @@ void flbit::create_unitary_circuit_gates() {
     std::vector<double> fields;
     for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
     unitary_gates_2site_layers.resize(settings::model::lbit::u_depth);
-    auto uprop = qm::lbit::UnitaryGateProperties(fields);
+    uprop              = qm::lbit::UnitaryGateProperties(fields);
+    uprop.keep_circuit = settings::storage::storage_level_model >= StorageLevel::LIGHT;
     tools::log->info("Creating unitary circuit of 2-site gates {}", uprop.string());
-    for(auto &ulayer : unitary_gates_2site_layers) ulayer = qm::lbit::get_unitary_2gate_layer(uprop);
-
+    for(auto &ulayer : unitary_gates_2site_layers) ulayer = qm::lbit::create_unitary_2site_gate_layer(uprop);
     if(settings::flbit::use_mpo_circuit) {
         unitary_gates_mpo_layers.clear();
         for(const auto &ulayer : unitary_gates_2site_layers) unitary_gates_mpo_layers.emplace_back(qm::lbit::get_unitary_mpo_layer(ulayer));
@@ -689,7 +671,7 @@ void flbit::transform_to_real_basis() {
             }
             tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
             auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
-            tools::log->info("Debug overlap: {:.16f}", overlap);
+            tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
                 throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
         }
@@ -697,7 +679,7 @@ void flbit::transform_to_real_basis() {
             auto state_lbit_debug = *tensors.state;
             tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
             auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
-            tools::log->info("Debug overlap: {:.16f}", overlap);
+            tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
             if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
                 throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
         }
@@ -783,24 +765,34 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
 
     // Save the unitaries once
     if(h5file and storage_event == StorageEvent::MODEL) {
-        auto        t_h5      = tid::tic_scope("h5");
-        auto        t_event   = tid::tic_scope(enum2sv(storage_event), tid::highest);
-        auto        t_gates   = tid::tic_scope("gates");
-        std::string grouppath = "/fLBIT/model/unitary_gates";
-        if(h5file->linkExists(grouppath)) return;
-        for(const auto &[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
-            std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
-            for(const auto &[idx_gate, u] : iter::enumerate(layer)) {
-                std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
-                h5file->writeDataset(u.op, gatepath);
-                h5file->writeAttribute(u.dim, gatepath, "dim");
-                h5file->writeAttribute(u.pos, gatepath, "pos");
-            }
-            h5file->writeAttribute(static_cast<size_t>(idx_layer), layerpath, "idx_layer");
-            h5file->writeAttribute(layer.size(), layerpath, "num_gates");
-        }
-        h5file->writeAttribute(unitary_gates_2site_layers.size(), grouppath, "num_layers");
+        auto t_h5 = tid::tic_scope("h5");
+        qm::lbit::write_unitary_circuit_parameters(*h5file, "/fLBIT/model/unitary_circuit", uprop.circuit); // Writes a table with gate parameters for resuming
+        h5file->writeAttribute(uprop.depth, "/fLBIT/model/unitary_circuit", "u_depth");
+        h5file->writeAttribute(uprop.fmix, "/fLBIT/model/unitary_circuit", "u_fmix");
+        h5file->writeAttribute(uprop.tstd, "/fLBIT/model/unitary_circuit", "u_tstd");
+        h5file->writeAttribute(uprop.cstd, "/fLBIT/model/unitary_circuit", "u_cstd");
+        h5file->writeAttribute(uprop.g8w8, "/fLBIT/model/unitary_circuit", "u_g8w8");
+        h5file->writeAttribute(uprop.type, "/fLBIT/model/unitary_circuit", "u_type");
     }
+    //    if(h5file and storage_event == StorageEvent::MODEL) {
+    //        auto        t_h5      = tid::tic_scope("h5");
+    //        auto        t_event   = tid::tic_scope(enum2sv(storage_event), tid::highest);
+    //        auto        t_gates   = tid::tic_scope("gates");
+    //        std::string grouppath = "/fLBIT/model/unitary_gates";
+    //        if(h5file->linkExists(grouppath)) return;
+    //        for(const auto &[idx_layer, layer] : iter::enumerate(unitary_gates_2site_layers)) {
+    //            std::string layerpath = fmt::format("{}/layer_{}", grouppath, idx_layer);
+    //            for(const auto &[idx_gate, u] : iter::enumerate(layer)) {
+    //                std::string gatepath = fmt::format("{}/u_{}", layerpath, idx_gate);
+    //                h5file->writeDataset(u.op, gatepath);
+    //                h5file->writeAttribute(u.dim, gatepath, "dim");
+    //                h5file->writeAttribute(u.pos, gatepath, "pos");
+    //            }
+    //            h5file->writeAttribute(static_cast<size_t>(idx_layer), layerpath, "idx_layer");
+    //            h5file->writeAttribute(layer.size(), layerpath, "num_gates");
+    //        }
+    //        h5file->writeAttribute(unitary_gates_2site_layers.size(), grouppath, "num_layers");
+    //    }
 
     // Save the lbit analysis once
     if(h5file and storage_event == StorageEvent::MODEL) {
@@ -810,8 +802,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto nsamps = settings::flbit::cls::num_rnd_circuits;
         if(nsamps > 0) {
             auto                usites = std::vector<size_t>{settings::model::model_size};
-            auto                utgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_tgw8};
-            auto                ucgw8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_cgw8};
+            auto                ug8w8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_g8w8};
             auto                utypes = std::vector<UnitaryGateType>{settings::model::lbit::u_type};
             auto                udpths = std::vector<size_t>{settings::model::lbit::u_depth};
             auto                ufmixs = std::vector<double>{settings::model::lbit::u_fmix};
@@ -822,7 +813,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
             auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
             uprop_default.ulayers = unitary_gates_2site_layers;
-            auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, utgw8s, ucgw8s);
+            auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, ug8w8s);
             if(h5file and settings::storage::storage_level_model != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
@@ -866,8 +857,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
                 h5file->writeAttribute(utstds, "/fLBIT/model/lbits", "u_tstd");
                 h5file->writeAttribute(ucstds, "/fLBIT/model/lbits", "u_cstd");
-                h5file->writeAttribute(enum2sv(utgw8s), "/fLBIT/model/lbits", "u_tgw8");
-                h5file->writeAttribute(enum2sv(ucgw8s), "/fLBIT/model/lbits", "u_cgw8");
+                h5file->writeAttribute(enum2sv(ug8w8s), "/fLBIT/model/lbits", "u_g8w8");
                 h5file->writeAttribute(enum2sv(utypes), "/fLBIT/model/lbits", "u_type");
                 h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
                 h5file->writeAttribute(randhf, "/fLBIT/model/lbits", "randomize_hfields");

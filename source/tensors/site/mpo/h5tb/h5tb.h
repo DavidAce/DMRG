@@ -84,7 +84,7 @@ class h5tb_ising_tf_rf : public h5tb_base {
 class h5tb_lbit : public h5tb_base {
     public:
     struct table {
-        using vlen_type                        = h5pp::varr_t<h5pp::fstr_t<64>>;
+        using vlen_type                         = h5pp::varr_t<h5pp::fstr_t<64>>;
         h5pp::fstr_t<64>               J1_rand  = {}; /*!< On-site interaction */
         h5pp::varr_t<h5pp::fstr_t<64>> J2_rand  = {}; /*!< Two-body interaction */
         h5pp::fstr_t<64>               J3_rand  = {}; /*!< Three-body interaction */
@@ -97,13 +97,6 @@ class h5tb_lbit : public h5tb_base {
         size_t                         J2_span  = 0;  /*!< Maximum range for pairwise interactions, |i-j| <= J2_span. */
         size_t                         J2_ctof  = 0;  /*!< Effective range for pairwise interactions, |i-j| <= std::min(J2_span, model_size-1). */
         double                         xi_Jcls  = 0;  /*!< Exp. decay rate of two-body interactions: exp(-|i-j|/xi_Jcls) * J2_rand */
-        uint64_t                       u_depth  = 0;  /*!< Number of unitary 2-site layers which transform lbit <-> real spaces */
-        double                         u_fmix   = 0;  /*!< Mixing factor for unitary transformation to real-space */
-        double                         u_tstd   = 0;  /*!< Standard deviation for theta-factors in the unitary gates */
-        double                         u_cstd   = 0;  /*!< Standard deviation for c-factors in the unitary gates */
-        UnitaryGateWeight              u_tgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of thetas in unitary gates */
-        UnitaryGateWeight              u_cgw8   = UnitaryGateWeight::IDENTITY; /*!< Weights on the distribution of cterms in unitary gates */
-        UnitaryGateType                u_type   = UnitaryGateType::MBL;        /*!< Weights on the distribution of cterms in unitary gates */
         long                           spin_dim = 2;                           /*!< Spin dimension */
         h5pp::fstr_t<16>               distribution; /*!< The random number distribution. Choose between lognormal, normal or uniform */
     };
@@ -112,15 +105,4 @@ class h5tb_lbit : public h5tb_base {
     void                                        register_table_type() const;
     [[nodiscard]] std::string                   fmt_value(std::string_view p) const;
     [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
-
-    static h5pp::hid::h5t &get_h5t_enum_w8();
-    static h5pp::hid::h5t &get_h5t_enum_ut();
-    static void            create_enum_w8();
-    static void            create_enum_ut();
-    static void            commit_enum_w8(const h5pp::hid::h5f &file_id);
-    static void            commit_enum_ut(const h5pp::hid::h5f &file_id);
-
-    private:
-    static inline h5pp::hid::h5t enum_w8;
-    static inline h5pp::hid::h5t enum_ut;
 };

@@ -156,5 +156,4 @@ namespace qm {
         [[nodiscard]] Eigen::Tensor<cplx, 4> get_op(const std::vector<size_t> &pos);
         [[nodiscard]] Gate                   split() const; /*!< Split into individual sites with svd */
     };
-
 }
