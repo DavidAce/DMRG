@@ -2,7 +2,6 @@
 #pragma once
 #include <array>
 #include <ceres/first_order_function.h>
-#include <ceres/local_parameterization.h>
 #include <ceres/manifold.h>
 #include <memory>
 class StateFinite;
