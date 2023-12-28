@@ -167,7 +167,8 @@
       "cacheVariables": {
         "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-11",
-        "CMAKE_CXX_COMPILER": "g++-11"
+        "CMAKE_CXX_COMPILER": "g++-11",
+        "CMAKE_Fortran_COMPILER": "gfortran-11"
       }
     },
     {
@@ -176,7 +177,8 @@
       "cacheVariables": {
         "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-12",
-        "CMAKE_CXX_COMPILER": "g++-12"
+        "CMAKE_CXX_COMPILER": "g++-12",
+        "CMAKE_Fortran_COMPILER": "gfortran-12"
       }
     },
     {
@@ -185,7 +187,8 @@
       "cacheVariables": {
         "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-13",
-        "CMAKE_CXX_COMPILER": "g++-13"
+        "CMAKE_CXX_COMPILER": "g++-13",
+        "CMAKE_Fortran_COMPILER": "gfortran-13"
       }
     },
     {
@@ -331,6 +334,15 @@
       "inherits": [
         "flexiblas",
         "conan",
+        "debug-gcc-13"
+      ]
+    },
+    {
+      "name": "debug-gcc-13-cmake-flexiblas",
+      "displayName": "Debug|gcc-13|cmake|flexiblas",
+      "inherits": [
+        "flexiblas",
+        "cmake",
         "debug-gcc-13"
       ]
     },
@@ -678,6 +690,10 @@
     {
       "name": "debug-gcc-13-conan-flexiblas",
       "configurePreset": "debug-gcc-13-conan-flexiblas"
+    },
+    {
+      "name": "debug-gcc-13-cmake-flexiblas",
+      "configurePreset": "debug-gcc-13-cmake-flexiblas"
     },
     {
       "name": "debug-clang-15-conan-mkl",

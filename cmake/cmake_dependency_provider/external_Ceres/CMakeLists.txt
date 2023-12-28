@@ -39,17 +39,22 @@ ExternalProject_Add(external_Ceres
         -DCMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL=ON
         -DCMAKE_INSTALL_MESSAGE=LAZY
         -DCMAKE_CXX_FLAGS=${cxxflags}
+        -DBUILD_SHARED_LIBS:BOOL=OFF
         # Ceres flags
         -DMINIGLOG:BOOL=TRUE
         -DBUILD_TESTING:BOOL=OFF
         -DBUILD_EXAMPLES:BOOL=OFF
+        -DBUILD_DOCUMENTATION:BOOL=OFF
+        -DBUILD_BENCHMARKS:BOOL=OFF
         -DLAPACK:BOOL=OFF
         -DEIGENSPARSE:BOOL=ON
+        -DEIGENMETIS:BOOL=OFF
         -DGFLAGS:BOOL=OFF
         -DSUITESPARSE:BOOL=OFF
         -DCXSPARSE:BOOL=OFF
         -DSCHUR_SPECIALIZATIONS:BOOL=OFF
         -DCUSTOM_BLAS:BOOL=ON
+        -DUSE_CUDA:BOOL=OFF
         -DEigen3_ROOT:PATH=<INSTALL_DIR>
 
         # These are only needed if we enable glog and gflags
