@@ -8,8 +8,9 @@ namespace tenx {
 #if defined(EIGEN_USE_THREADS)
         extern std::unique_ptr<Eigen::ThreadPool>       tp;
         extern std::unique_ptr<Eigen::ThreadPoolDevice> dev;
-        void                                            setNumThreads(unsigned int num);
-        Eigen::ThreadPoolDevice                        &getDevice();
+        template<typename T>
+        extern void setNumThreads(T num);
+        Eigen::ThreadPoolDevice &getDevice();
 #else
         extern std::unique_ptr<Eigen::DefaultDevice> dev;
         void                                         setNumThreads([[maybe_unused]] int num);
