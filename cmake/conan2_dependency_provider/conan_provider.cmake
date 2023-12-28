@@ -425,6 +425,11 @@ function(conan_install)
     # Invoke "conan install" with the provided arguments
     set(CONAN_ARGS ${CONAN_ARGS} -of=${CONAN_OUTPUT_FOLDER})
     message(STATUS "CMake-Conan: conan install ${CMAKE_SOURCE_DIR} ${CONAN_ARGS} ${ARGN}")
+    if(DEFINED ENV{HOME})
+        file(LOCK $ENV{HOME}/cmake.conan.${PROJECT_NAME}.lock GUARD FUNCTION TIMEOUT 600)
+    elseif(DEFINED ENV{USERPROFILE})
+        file(LOCK $ENV{USERPROFILE}/cmake.conan.${PROJECT_NAME}.lock GUARD FUNCTION TIMEOUT 600)
+    endif()
     execute_process(COMMAND ${CONAN_COMMAND} install ${CMAKE_SOURCE_DIR} ${CONAN_ARGS} ${ARGN} --format=json
                     RESULT_VARIABLE return_code
                     OUTPUT_VARIABLE conan_stdout
