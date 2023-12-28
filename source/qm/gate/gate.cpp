@@ -161,17 +161,15 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
      *
      *  Remember to do the modulo separately on each diagonal entry h!
      */
-    if(!std::is_same_v<scalar_t, cplx_t>) { throw except::runtime_error("Expected scalar_t == cplx_t: got {}", sfinae::type_name<scalar_t>()); }
-    if(!std::is_same_v<alpha_t, cplx_t>) { throw except::runtime_error("Expected alpha_t == cplx_t: got {}", sfinae::type_name<alpha_t>()); }
+    //    static_assert(std::is_same_v<scalar_t, cplx_t>);
+    //    static_assert(std::is_same_v<alpha_t, cplx_t>);
+    //    if(!std::is_same_v<scalar_t, cplx_t>) { throw except::runtime_error("Expected scalar_t == cplx_t: got {}", sfinae::type_name<scalar_t>()); }
+    //    if(!std::is_same_v<alpha_t, cplx_t>) { throw except::runtime_error("Expected alpha_t == cplx_t: got {}", sfinae::type_name<alpha_t>()); }
 
-    auto op_map       = tenx::MatrixMap(op_);
-    bool exp_diagonal = false;
-    if constexpr(std::is_arithmetic_v<scalar_t>) {
-        exp_diagonal = op_map.isDiagonal();
-    } else {
-        // We only use __float128 for lbit calculations, whose Hamiltonian is diagonal
-        exp_diagonal = std::is_same_v<scalar_t, cplx_t> and std::is_same_v<real_t, __float128>;
-    }
+    auto           op_map                       = tenx::MatrixMap(op_);
+    constexpr bool scalar_t_is_float128 = std::is_same_v<scalar_t, __float128>;
+    constexpr bool scalar_t_is_complex_float128 = sfinae::is_std_complex_v<scalar_t> and std::is_same_v<typename scalar_t::value_type, __float128>;
+    bool exp_diagonal = tenx::isDiagonal(op);
 
     if(exp_diagonal and op_map.imag().isZero() and std::real(alpha) == 0) {
         using namespace std::complex_literals;
@@ -209,13 +207,10 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
                             }
 #else
                             {
-                                real_t one             = -1.0;
-                                real_t two             = 2.0;
-                                cplx_t one_i           = -1.0i;
-                                real_t two_pi_ld       = std::acos(-one) * two;
+                                real_t two_pi_ld       = std::acos(real_t(-1.0)) * real_t(2.0);
                                 real_t alpha_h_ld      = std::imag(-alpha) * static_cast<real_t>(std::real(h));
                                 real_t fmod_alpha_h_ld = std::fmod(alpha_h_ld, two_pi_ld);
-                                exp_ialpha_t           = std::exp(-one_i * fmod_alpha_h_ld);
+                                exp_ialpha_t           = std::exp(-1.0i * static_cast<real>(fmod_alpha_h_ld));
                                 if(std::isnan(fmod_alpha_h_ld)) { throw except::runtime_error("fmod gave nan"); }
                                 //                                tools::log->info("fmod: a {0} ({0:a}) * h {1} ({1:a}) = {2} ({2:a}) | 2pi {3} ({3:a}) | fmod
                                 //                                {4}({4: a}) | exp{5}({4: 5})",
@@ -228,10 +223,23 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
                         .asDiagonal();
         return tenx::TensorMap(diag.toDenseMatrix());
     } else {
+        tools::log->error("The given matrix is not diagonal!");
+        if constexpr(scalar_t_is_float128 or scalar_t_is_complex_float128) {
+            throw except::runtime_error("Non-diagonal Matrix exponential is undefined for type {}", sfinae::type_name<scalar_t>());
+        }
         if constexpr(std::is_arithmetic_v<scalar_t>) {
+            // This branch is valid for arithmetic T excluding T == __float128
             return tenx::TensorMap((static_cast<scalar_t>(alpha) * tenx::MatrixMap(op_)).exp().eval());
-        } else
-            throw except::runtime_error("Matrix exponential is undefined for type {}", sfinae::type_name<scalar_t>());
+        } else if constexpr(sfinae::is_std_complex_v<scalar_t>) {
+            if constexpr(std::is_arithmetic_v<typename scalar_t::value_type>) {
+                // This branch is valid for std::complex<T> excluding T == __float128
+                using value_t   = typename scalar_t::value_type;
+                auto alpha_cast = std::complex<value_t>(static_cast<value_t>(std::real(alpha)), static_cast<value_t>(std::imag(alpha)));
+                return tenx::TensorMap((alpha_cast * tenx::MatrixMap(op_)).exp().eval());
+            }
+        }
+        // We can't do matrix exponential on __float128 or std::complex<__float128>()
+        throw except::runtime_error("Matrix exponential is undefined for type {}", sfinae::type_name<scalar_t>());
     }
 }
 

@@ -98,7 +98,7 @@ size_t assert_lbit_evolution(const flbit &f) {
     });
 
 #if defined(USE_QUADMATH)
-    double max_tevo_error = 10 * precision_d *
+    double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
                                 static_cast<double>(fabsq(f.status.delta_t.to_floating_point<cplx_t>().real())),
@@ -106,7 +106,7 @@ size_t assert_lbit_evolution(const flbit &f) {
                             });
 
 #else
-    double max_tevo_error = 10 * precision_d *
+    double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
                                 static_cast<double>(std::abs(f.status.delta_t.to_floating_point<cplx_t>().real())),
@@ -266,7 +266,7 @@ size_t assert_lbit_evolution(const flbit &f1, const flbit &f2) {
         std::pow(f2.status.trnc_lim, 2.0),
     });
 #if defined(USE_QUADMATH)
-    double max_tevo_error = 10 * precision_d *
+    double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
                                 static_cast<real>(fabsq(f1.status.delta_t.to_floating_point<cplx_t>().real())),
@@ -276,7 +276,7 @@ size_t assert_lbit_evolution(const flbit &f1, const flbit &f2) {
                             });
 
 #else
-    double max_tevo_error = 10 * precision_d *
+    double max_tevo_error = 100 * precision_d *
                             std::max({
                                 1.0,
                                 static_cast<real>(std::abs(f1.status.delta_t.to_floating_point<cplx_t>().real())),

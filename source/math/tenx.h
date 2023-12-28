@@ -14,6 +14,9 @@
 #include <complex>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
+#if defined(USE_QUADMATH)
+#include <quadmath.h>
+#endif
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
 
@@ -133,8 +136,29 @@ namespace tenx {
 
     template<typename Scalar>
     Eigen::Tensor<Scalar, 2> asDiagonalInversed(const Eigen::Tensor<Scalar, 2> &tensor) {
-        if(not tensor.dimension(0) == tensor.dimension(1)) throw std::runtime_error("tenx::asDiagonalInversed expects a square tensor");
+        if(tensor.dimension(0) != tensor.dimension(1)) throw std::runtime_error("tenx::asDiagonalInversed expects a square tensor");
         return asDiagonalInversed(extractDiagonal(tensor));
+    }
+    template<typename Scalar>
+    bool isDiagonal(const Eigen::Tensor<Scalar, 2> &tensor, double threshold = std::numeric_limits<double>::epsilon()) {
+        if(tensor.dimension(0) != tensor.dimension(1)) return false;
+        for(long col = 0; col < tensor.dimension(1); ++col) {
+            for(long row = 0; row < tensor.dimension(0); ++row) {
+                if(col == row) continue;
+#if defined(USE_QUADMATH)
+                if constexpr(std::is_same_v<Scalar, __float128>) {
+                    if(fabsq(tensor(row, col)) > __float128(threshold)) return false;
+                } else if constexpr(std::is_same_v<Scalar, std::complex<__float128>>) {
+                    if(cabsq(tensor(row, col)) > __float128(threshold)) return false;
+                } else {
+                    if(std::abs(tensor(row, col)) > threshold) return false;
+                }
+#else
+                if(std::abs(tensor(row, col)) > threshold) return false;
+#endif
+            }
+        }
+        return true;
     }
 
     template<typename T, typename Device = Eigen::DefaultDevice>
