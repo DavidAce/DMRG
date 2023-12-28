@@ -1,7 +1,6 @@
 #include "../lbit.h"
 #include "config/enums.h"
 #include "debug/exceptions.h"
-#include "math/float.h"
 #include "tools/common/log.h"
 #include <h5pp/details/h5ppType.h>
 #include <hdf5.h>
@@ -59,6 +58,4 @@ std::string qm::lbit::UnitaryGateParameters::fmt_value(std::string_view p) const
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
-std::vector<std::string_view> qm::lbit::UnitaryGateParameters::get_parameter_names() noexcept {
-    return {"layer", "sites", "f", "w", "theta", "c", "type"};
-}
+std::vector<std::string_view> qm::lbit::UnitaryGateParameters::get_parameter_names() noexcept { return {"layer", "sites", "f", "w", "theta", "c", "type"}; }
