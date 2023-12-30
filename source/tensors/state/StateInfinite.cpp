@@ -333,8 +333,6 @@ void StateInfinite::clear_measurements() const {
     tools::common::views::components_computed = false;
 }
 
-void StateInfinite::do_all_measurements() const { tools::infinite::measure::do_all_measurements(*this); }
-
 void StateInfinite::swap_AB() {
     tools::log->trace("Swapping AB");
     swapped = !swapped;

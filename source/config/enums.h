@@ -22,20 +22,37 @@ enum class UnitaryGateType { ANDERSON, MBL };
 enum class UnitaryGateWeight { IDENTITY, EXPDECAY }; // 1 or exp(-2|h[i] - h[i+1]|)
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
+
+/*! How much to store of the object in question */
 enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
+
+/*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
-    NONE          = 0,
-    MODEL         = 1,
-    INIT_STATE    = 2,
-    EMIN_STATE    = 4,
-    EMAX_STATE    = 8,
-    PROJ_STATE    = 16,
-    BOND_INCREASE = 32,
-    TRNC_DECREASE = 64,
-    FES_STATE     = 128,
-    ITER_STATE    = 256,
-    LAST_STATE    = 512,
+    NONE        = 0,
+    MODEL       = 1,
+    INIT        = 2,
+    EMIN_STATE  = 4,
+    EMAX_STATE  = 8,
+    PROJECTION  = 16,
+    BOND_UPDATE = 32,
+    TRNC_UPDATE = 64,
+    FES_STEP    = 128,
+    ITERATION   = 256,
+    FINISHED    = 512,
 };
+
+/*! Determines in which cases we calculate and store to file */
+enum class StoragePolicy : int {
+    NONE    = 0,  /*!< Never store */
+    ONCE    = 1,  /*!< Store only once, on first contact  */
+    INIT    = 2,  /*!< Store only once during initialization e.g. model (usually in preprocessing) */
+    ITER    = 4,  /*!< Store after every iteration */
+    FAILURE = 8,  /*!< Store only if the simulation did not succeed (usually for debugging) */
+    SUCCESS = 16, /*!< Store only if the simulation succeeded */
+    FINISH  = 32, /*!< Store when the simulation has finished (regardless of failure or success) */
+    ALWAYS  = 64, /*!< Store every chance you get */
+};
+
 enum class CopyPolicy { FORCE, TRY, OFF };
 enum class ResetReason { INIT, FIND_WINDOW, SATURATED, NEW_STATE, BOND_UPDATE };
 enum class EnvExpandMode { ENE, VAR };
@@ -235,6 +252,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         TimeScale,
         StorageLevel,
         StorageEvent,
+        StoragePolicy,
         CopyPolicy,
         ResetReason,
         NormPolicy,
@@ -371,15 +389,25 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == StorageEvent::NONE)                                  return "NONE";
         if(item == StorageEvent::MODEL)                                 return "MODEL";
-        if(item == StorageEvent::INIT_STATE)                            return "INIT_STATE";
+        if(item == StorageEvent::INIT)                                  return "INIT";
         if(item == StorageEvent::EMIN_STATE)                            return "EMIN_STATE";
         if(item == StorageEvent::EMAX_STATE)                            return "EMAX_STATE";
-        if(item == StorageEvent::PROJ_STATE)                            return "PROJ_STATE";
-        if(item == StorageEvent::BOND_INCREASE)                         return "BOND_INCREASE";
-        if(item == StorageEvent::TRNC_DECREASE)                         return "TRNC_DECREASE";
-        if(item == StorageEvent::FES_STATE)                             return "FES_STATE";
-        if(item == StorageEvent::ITER_STATE)                            return "ITER_STATE";
-        if(item == StorageEvent::LAST_STATE)                            return "LAST_STATE";
+        if(item == StorageEvent::PROJECTION)                            return "PROJECTION";
+        if(item == StorageEvent::BOND_UPDATE)                           return "BOND_UPDATE";
+        if(item == StorageEvent::TRNC_UPDATE)                           return "TRNC_UPDATE";
+        if(item == StorageEvent::FES_STEP)                              return "FES_STEP";
+        if(item == StorageEvent::ITERATION)                             return "ITERATION";
+        if(item == StorageEvent::FINISHED)                              return "FINISHED";
+    }
+    if constexpr(std::is_same_v<T, StoragePolicy>) {
+        if(item == StoragePolicy::NONE)                                 return "NONE";
+        if(item == StoragePolicy::ONCE)                                 return "ONCE";
+        if(item == StoragePolicy::INIT)                                 return "INIT";
+        if(item == StoragePolicy::ITER)                                 return "ITER";
+        if(item == StoragePolicy::FAILURE)                              return "FAILURE";
+        if(item == StoragePolicy::SUCCESS)                              return "SUCCESS";
+        if(item == StoragePolicy::FINISH)                               return "FINISH";
+        if(item == StoragePolicy::ALWAYS)                               return "ALWAYS";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -596,6 +624,7 @@ constexpr auto sv2enum(std::string_view item) {
         TimeScale,
         StorageLevel,
         StorageEvent,
+        StoragePolicy,
         CopyPolicy,
         ResetReason,
         NormPolicy,
@@ -732,15 +761,27 @@ constexpr auto sv2enum(std::string_view item) {
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == "NONE")                                  return  StorageEvent::NONE;
         if(item == "MODEL")                                 return  StorageEvent::MODEL;
-        if(item == "INIT_STATE")                            return  StorageEvent::INIT_STATE;
+        if(item == "INIT")                                  return  StorageEvent::INIT;
         if(item == "EMIN_STATE")                            return  StorageEvent::EMIN_STATE;
         if(item == "EMAX_STATE")                            return  StorageEvent::EMAX_STATE;
-        if(item == "PROJ_STATE")                            return  StorageEvent::PROJ_STATE;
-        if(item == "BOND_INCREASE")                         return  StorageEvent::BOND_INCREASE;
-        if(item == "TRNC_DECREASE")                         return  StorageEvent::TRNC_DECREASE;
-        if(item == "FES_STATE")                             return  StorageEvent::FES_STATE;
-        if(item == "ITER_STATE")                            return  StorageEvent::ITER_STATE;
-        if(item == "LAST_STATE")                            return  StorageEvent::LAST_STATE;
+        if(item == "PROJECTION")                            return  StorageEvent::PROJECTION;
+        if(item == "BOND_UPDATE")                           return  StorageEvent::BOND_UPDATE;
+        if(item == "TRNC_UPDATE")                           return  StorageEvent::TRNC_UPDATE;
+        if(item == "FES_STEP")                              return  StorageEvent::FES_STEP;
+        if(item == "ITERATION")                             return  StorageEvent::ITERATION;
+        if(item == "FINISHED")                              return  StorageEvent::FINISHED;
+    }
+    if constexpr(std::is_same_v<T, StoragePolicy>) {
+        auto policy = StoragePolicy::NONE;
+        if(item.find("NONE")    != std::string_view::npos) policy |= StoragePolicy::NONE;
+        if(item.find("ONCE")    != std::string_view::npos) policy |= StoragePolicy::ONCE;
+        if(item.find("INIT")    != std::string_view::npos) policy |= StoragePolicy::INIT;
+        if(item.find("ITER")    != std::string_view::npos) policy |= StoragePolicy::ITER;
+        if(item.find("FAILURE") != std::string_view::npos) policy |= StoragePolicy::FAILURE;
+        if(item.find("SUCCESS") != std::string_view::npos) policy |= StoragePolicy::SUCCESS;
+        if(item.find("FINISH")  != std::string_view::npos) policy |= StoragePolicy::FINISH;
+        if(item.find("ALWAYS")  != std::string_view::npos) policy |= StoragePolicy::ALWAYS;
+        return policy;
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == "RANDOM_PRODUCT_STATE")                  return StateInit::RANDOM_PRODUCT_STATE;

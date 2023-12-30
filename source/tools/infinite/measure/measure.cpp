@@ -8,25 +8,6 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 
-void tools::infinite::measure::do_all_measurements(const TensorsInfinite &tensors) {
-    tensors.measurements.length                       = tools::infinite::measure::length(tensors);
-    tensors.measurements.energy_mpo                   = tools::infinite::measure::energy_mpo(tensors);
-    tensors.measurements.energy_per_site_mpo          = tools::infinite::measure::energy_per_site_mpo(tensors);
-    tensors.measurements.energy_variance_mpo          = tools::infinite::measure::energy_variance_mpo(tensors);
-    tensors.measurements.energy_per_site_ham          = tools::infinite::measure::energy_per_site_ham(tensors);
-    tensors.measurements.energy_per_site_mom          = tools::infinite::measure::energy_per_site_mom(tensors);
-    tensors.measurements.energy_variance_per_site_mpo = tools::infinite::measure::energy_variance_per_site_mpo(tensors);
-    tensors.measurements.energy_variance_per_site_ham = tools::infinite::measure::energy_variance_per_site_ham(tensors);
-    tensors.measurements.energy_variance_per_site_mom = tools::infinite::measure::energy_variance_per_site_mom(tensors);
-}
-
-void tools::infinite::measure::do_all_measurements(const StateInfinite &state) {
-    state.measurements.norm                 = tools::infinite::measure::norm(state);
-    state.measurements.bond_dim             = tools::infinite::measure::bond_dimension(state);
-    state.measurements.entanglement_entropy = tools::infinite::measure::entanglement_entropy(state);
-    state.measurements.truncation_error     = tools::infinite::measure::truncation_error(state);
-}
-
 size_t tools::infinite::measure::length(const TensorsInfinite &tensors) { return tensors.edges->get_length(); }
 size_t tools::infinite::measure::length(const EdgesInfinite &edges) { return edges.get_length(); }
 

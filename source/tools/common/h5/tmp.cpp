@@ -110,7 +110,7 @@ void tools::common::h5::tmp::copy_from_tmp(const h5pp::File &h5file, size_t iter
     auto                                                                  save_point = std::make_pair(iter, step);
     if(copy_policy == CopyPolicy::TRY) {
         // Check if we already copied the file this iteration and step
-        if(storage_event == StorageEvent::ITER_STATE and iter % settings::storage::copy_from_temp_freq != 0) return;
+        if(storage_event == StorageEvent::ITERATION and iter % settings::storage::copy_from_temp_freq != 0) return;
         if(save_log[h5file.getFilePath()] == save_point) return;
     }
     tools::common::h5::tmp::copy_from_tmp(h5file.getFilePath());

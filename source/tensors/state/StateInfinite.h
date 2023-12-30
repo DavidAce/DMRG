@@ -110,7 +110,6 @@ class StateInfinite {
     bool is_limited_by_bond(long bond_lim) const;
     bool is_truncated(double truncation_error_limit) const;
 
-    void do_all_measurements() const;
     void clear_measurements() const;
     void clear_cache() const;
 };

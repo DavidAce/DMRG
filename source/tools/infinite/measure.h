@@ -10,9 +10,6 @@ class EdgesInfinite;
 namespace tools::infinite::measure {
     using Scalar = std::complex<double>;
     /* clang-format off */
-    extern void   do_all_measurements             (const TensorsInfinite & tensors);
-    extern void   do_all_measurements             (const StateInfinite & state);
-
     extern size_t length                          (const TensorsInfinite & tensors);
     extern size_t length                          (const EdgesInfinite & edges);
     extern long   bond_dimension                  (const StateInfinite & state);

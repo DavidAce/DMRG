@@ -400,8 +400,8 @@ const Eigen::Tensor<StateFinite::Scalar, 3> &StateFinite::get_multisite_mps() co
     return cache.multisite_mps.value();
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_multisite_density_matrix(const std::vector<size_t> &sites) const {
-    if(sites.empty()) throw except::runtime_error("No sites on which to build a multisite density matrix");
+const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vector<size_t> &sites) const {
+    if(sites.empty()) throw except::runtime_error("No sites on which to build a reduced density matrix for a subsystem");
     auto                     t_mps = tid::tic_scope("gen_rho", tid::level::highest);
     Eigen::Tensor<Scalar, 3> multisite_mps;
     Eigen::Tensor<Scalar, 4> temporary_rho;
@@ -581,8 +581,6 @@ void StateFinite::clear_cache(LogPolicy logPolicy) const {
     if(logPolicy == LogPolicy::NORMAL) tools::log->trace("Clearing state cache");
     cache = Cache();
 }
-
-void StateFinite::do_all_measurements() const { tools::finite::measure::do_all_measurements(*this); }
 
 void StateFinite::tag_active_sites_normalized(bool tag) const {
     if(tag_normalized_sites.size() != get_length()) throw except::runtime_error("Cannot tag active sites, size mismatch in site list");

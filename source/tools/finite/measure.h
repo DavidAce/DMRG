@@ -13,9 +13,6 @@ class MpsSite;
 class AlgorithmStatus;
 struct MeasurementsTensorsFinite;
 namespace tools::finite::measure {
-    extern void do_all_measurements(const TensorsFinite &tensors);
-    extern void do_all_measurements(const StateFinite &state);
-
     struct LocalObservableOp {
         Eigen::Tensor<cplx, 2> op;
         long                   pos;
@@ -54,7 +51,7 @@ namespace tools::finite::measure {
     [[nodiscard]] extern double entanglement_entropy_current                (const StateFinite & state);
     [[nodiscard]] extern double entanglement_entropy_midchain               (const StateFinite & state);
     [[nodiscard]] extern std::vector<double> entanglement_entropies         (const StateFinite & state);
-    [[nodiscard]] extern Eigen::ArrayXXd entanglement_entropies_subsystems    (const StateFinite & state);
+    [[nodiscard]] extern Eigen::ArrayXXd subsystem_entanglement_entropies   (const StateFinite & state);
     [[nodiscard]] extern double renyi_entropy_midchain                      (const StateFinite & state, double q);
     [[nodiscard]] extern std::vector<double> renyi_entropies                (const StateFinite & state, double q);
     [[nodiscard]] extern double number_entropy_current                      (const StateFinite & state);

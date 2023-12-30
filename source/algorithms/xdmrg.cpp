@@ -99,7 +99,7 @@ void xdmrg::run_task_list(std::deque<xdmrg_task> &task_list) {
                 tensors.state->set_name(fmt::format("state_{}", excited_state_number));
                 run_algorithm();
                 break;
-            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::LAST_STATE); break;
+            case xdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
             case xdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case xdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case xdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
@@ -242,7 +242,7 @@ void xdmrg::run_fes_analysis() {
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}, bond_lim {}, trnc_lim {:.2e}", status.step, status.iter, status.position,
                           status.direction, status.bond_lim, status.trnc_lim);
 
-        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES_STATE);
+        reduce_bond_dimension_limit(settings::strategy::fes_rate, UpdateWhen::SATURATED, StorageEvent::FES_STEP);
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
 

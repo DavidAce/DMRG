@@ -35,27 +35,27 @@ struct DsetKey : public Key {
 struct TableKey : public Key {
     using Key::Key;
     static constexpr std::string_view            classtag = "table";
-    static constexpr std::array<StorageEvent, 1> event    = {StorageEvent::LAST_STATE}; // Grab table rows with these event types
+    static constexpr std::array<StorageEvent, 1> event    = {StorageEvent::FINISHED}; // Grab table rows with these event types
 };
 
 struct FesUpKey : public Key {
     using Key::Key;
     static constexpr std::string_view                classtag = "fesup";                       // Name of this type of key
-    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::BOND_INCREASE}; // Grab table rows with these event types
+    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::BOND_UPDATE}; // Grab table rows with these event types
     static constexpr std::array<std::string_view, 1> index    = {"bond_lim"};                  // Index this data according to this table field (first match)
 };
 
 struct FesDnKey : public Key {
     using Key::Key;
     static constexpr std::string_view                classtag = "fesdn";                   // Name of this type of key
-    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::FES_STATE}; // Grab table rows with these event types
+    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::FES_STEP}; // Grab table rows with these event types
     static constexpr std::array<std::string_view, 1> index    = {"bond_lim"};              // Index this data according to this table field (first match)
 };
 
 struct CronoKey : public Key {
     using Key::Key;
     static constexpr std::string_view                classtag = "crono";                    // Name of this type of key
-    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::ITER_STATE}; // Grab table rows with these event types
+    static constexpr std::array<StorageEvent, 1>     event    = {StorageEvent::ITERATION}; // Grab table rows with these event types
     static constexpr std::array<std::string_view, 1> index    = {"iter"};                   // Index this data according to this table field (first match)
 };
 

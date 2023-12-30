@@ -97,11 +97,6 @@ void TensorsInfinite::enlarge() {
     clear_measurements();
 }
 
-void TensorsInfinite::do_all_measurements() const {
-    state->do_all_measurements();
-    tools::infinite::measure::do_all_measurements(*this);
-}
-
 void TensorsInfinite::clear_measurements() const {
     state->clear_measurements();
     measurements = MeasurementsTensorsInfinite();

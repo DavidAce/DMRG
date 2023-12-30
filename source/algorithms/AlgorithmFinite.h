@@ -50,7 +50,7 @@ class AlgorithmFinite : public AlgorithmBase {
                                  std::optional<std::string> pattern = std::nullopt, std::optional<long> bond_lim = std::nullopt,
                                  std::optional<double> trnc_lim = std::nullopt);
 
-    void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) override;
+    void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY) override;
     void print_status() override;
     void print_status_full() final;
     void check_convergence_variance(std::optional<double> threshold = std::nullopt, std::optional<double> saturation_sensitivity = std::nullopt);

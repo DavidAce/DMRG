@@ -16,7 +16,10 @@ struct StorageInfo {
     StorageEvent &storage_event; // Reference to the status.event
     StorageLevel  storage_level = StorageLevel::NONE;
     std::string   state_name;
+    bool algorithm_has_finished = false;
+    bool algorithm_has_succeeded = false;
     void          assert_well_defined() const;
+    StoragePolicy get_state_storage_policy() const;
     std::string   get_state_prefix() const;
     std::string   get_mps_prefix() const;
     StorageInfo(const AlgorithmStatus &status, std::string_view state_name, StorageEvent event = StorageEvent::NONE);

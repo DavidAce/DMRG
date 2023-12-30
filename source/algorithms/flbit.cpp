@@ -154,7 +154,7 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
                 break;
             case flbit_task::TRANSFORM_TO_LBIT: transform_to_lbit_basis(); break;
             case flbit_task::TRANSFORM_TO_REAL: transform_to_real_basis(); break;
-            case flbit_task::POST_WRITE_RESULT: write_to_file(StorageEvent::LAST_STATE); break;
+            case flbit_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
             case flbit_task::POST_PRINT_RESULT: print_status_full(); break;
             case flbit_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case flbit_task::POST_FES_ANALYSIS: run_fes_analysis(); break;
@@ -223,7 +223,7 @@ void flbit::run_algorithm() {
     while(true) {
         update_state();
         check_convergence();
-        write_to_file(StorageEvent::ITER_STATE);
+        write_to_file(StorageEvent::ITERATION);
         print_status();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
@@ -546,7 +546,7 @@ void flbit::create_unitary_circuit_gates() {
     for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
     unitary_gates_2site_layers.resize(settings::model::lbit::u_depth);
     uprop              = qm::lbit::UnitaryGateProperties(fields);
-    uprop.keep_circuit = settings::storage::storage_level_model >= StorageLevel::LIGHT;
+    uprop.keep_circuit = settings::storage::table::random_unitary_circuit::policy != StoragePolicy::NONE;
     tools::log->info("Creating unitary circuit of 2-site gates {}", uprop.string());
     for(auto &ulayer : unitary_gates_2site_layers) ulayer = qm::lbit::create_unitary_2site_gate_layer(uprop);
     if(settings::flbit::use_mpo_circuit) {
@@ -752,8 +752,10 @@ void flbit::transform_to_lbit_basis() {
 
 void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     AlgorithmFinite::write_to_file(*tensors.state, *tensors.model, *tensors.edges, storage_event, copy_policy);
+    if(not state_lbit) transform_to_lbit_basis();
+    AlgorithmFinite::write_to_file(*state_lbit, *tensors.model, *tensors.edges, storage_event, copy_policy);
 
-    if(h5file and storage_event == StorageEvent::INIT_STATE) {
+    if(h5file and storage_event == StorageEvent::INIT) {
         using namespace settings::flbit;
         auto state_prefix = fmt::format("/fLBIT/{}", tensors.state->get_name());
         h5file->createGroup(state_prefix);
@@ -814,7 +816,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
             uprop_default.ulayers = unitary_gates_2site_layers;
             auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, ug8w8s);
-            if(h5file and settings::storage::storage_level_model != StorageLevel::NONE) {
+            if(h5file and settings::storage::dataset::lbit_analysis::level != StorageLevel::NONE) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
                 auto shape_avgs = std::vector<long>{1, lbitSA.corravg.size()};
@@ -822,13 +824,12 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                                                     static_cast<long>(settings::model::model_size)};
 
                 auto label_data = std::vector<std::string>{"sample", "i", "j"};
-                if(settings::storage::storage_level_model >= StorageLevel::LIGHT) {}
-                if(settings::storage::storage_level_model >= StorageLevel::LIGHT) {
+                if(settings::storage::dataset::lbit_analysis::level >= StorageLevel::LIGHT) {
                     h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/corrmat", H5D_CHUNKED, shape_data);
                     h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corrmat", "dimensions");
                     h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
                 }
-                if(settings::storage::storage_level_model >= StorageLevel::FULL) {
+                if(settings::storage::dataset::lbit_analysis::level == StorageLevel::FULL) {
                     h5file->writeDataset(lbitSA.cls_avg_fit, "/fLBIT/model/lbits/cls_avg_fit");
                     h5file->writeDataset(lbitSA.cls_avg_rms, "/fLBIT/model/lbits/cls_avg_rms");
                     h5file->writeDataset(lbitSA.cls_avg_rsq, "/fLBIT/model/lbits/cls_avg_rsq");

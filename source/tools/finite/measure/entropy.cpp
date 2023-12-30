@@ -637,7 +637,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     if(state.measurements.number_entropies) return state.measurements.number_entropies.value();
     if(state.get_algorithm() != AlgorithmType::fLBIT) {
         // Only fLBIT has particle-number conservation
-        throw except::logic_error("Called number_entropies(StateFinite) from algorithm [{}]. Only [fLBIT] is allowed.", enum2sv(state.get_algorithm()));
+        tools::log->warn("Called number_entropies(StateFinite) from algorithm [{}]: This has only been tested for the [fLBIT] algorithm");
     }
     //    number_entropies_mpo(state);
 

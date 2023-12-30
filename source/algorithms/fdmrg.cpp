@@ -81,7 +81,7 @@ void fdmrg::run_task_list(std::deque<fdmrg_task> &task_list) {
                 tensors.state->set_name("state_emax");
                 run_algorithm();
                 break;
-            case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::LAST_STATE); break;
+            case fdmrg_task::POST_WRITE_RESULT: write_to_file(StorageEvent::FINISHED); break;
             case fdmrg_task::POST_PRINT_RESULT: print_status_full(); break;
             case fdmrg_task::POST_PRINT_TIMERS: tools::common::timer::print_timers(); break;
             case fdmrg_task::POST_FES_ANALYSIS: run_fes_analysis(); break;

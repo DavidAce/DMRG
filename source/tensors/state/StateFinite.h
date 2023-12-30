@@ -121,7 +121,7 @@ class StateFinite {
     std::vector<std::array<long, 3>> get_mps_dims_active() const;
     Eigen::Tensor<Scalar, 3>         get_multisite_mps(const std::vector<size_t> &sites) const;
     const Eigen::Tensor<Scalar, 3>  &get_multisite_mps() const;
-    const Eigen::Tensor<Scalar, 2>  get_multisite_density_matrix(const std::vector<size_t> &sites) const;
+    const Eigen::Tensor<Scalar, 2>   get_reduced_density_matrix(const std::vector<size_t> &sites) const;
 
     public:
     void                set_truncation_error(size_t pos, double error);
@@ -142,7 +142,6 @@ class StateFinite {
     bool   is_truncated(double truncation_error_limit) const;
     void   clear_measurements(LogPolicy logPolicy = LogPolicy::NORMAL) const;
     void   clear_cache(LogPolicy logPolicy = LogPolicy::NORMAL) const;
-    void   do_all_measurements() const;
 
     void                     tag_active_sites_normalized(bool tag) const;
     void                     tag_all_sites_normalized(bool tag) const;

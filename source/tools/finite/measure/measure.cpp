@@ -21,46 +21,6 @@
 #include "tools/common/log.h"
 #include "tools/finite/ops.h"
 
-void tools::finite::measure::do_all_measurements(const TensorsFinite &tensors) {
-    tensors.measurements.length = measure::length(tensors);
-
-    // No need for energy or variance in fLBIT simulations. In fact, we don't update the ene and var environments,
-    // so this operation would give an error
-    if(tensors.state->get_algorithm() == AlgorithmType::fLBIT) return;
-    {
-        auto t_msr                           = tid::tic_scope("measure", tid::level::higher);
-        tensors.measurements.energy          = measure::energy(tensors); // This number is needed for variance calculation!
-        tensors.measurements.energy_variance = measure::energy_variance(tensors);
-    }
-    do_all_measurements(*tensors.state);
-}
-
-void tools::finite::measure::do_all_measurements(const StateFinite &state) {
-    auto t_msr                                       = tid::tic_scope("measure", tid::level::higher);
-    state.measurements.length                        = measure::length(state);
-    state.measurements.norm                          = measure::norm(state);
-    state.measurements.bond_dim                      = measure::bond_dimension_current(state);
-    state.measurements.bond_mid                      = measure::bond_dimension_midchain(state);
-    state.measurements.bond_dims                     = measure::bond_dimensions(state);
-    state.measurements.truncation_errors             = measure::truncation_errors(state);
-    state.measurements.entanglement_entropy_current  = measure::entanglement_entropy_current(state);
-    state.measurements.entanglement_entropy_midchain = measure::entanglement_entropy_midchain(state);
-    state.measurements.entanglement_entropies        = measure::entanglement_entropies(state);
-    if(state.get_algorithm() == AlgorithmType::fLBIT) {
-        state.measurements.number_entropy_current  = measure::number_entropy_current(state);
-        state.measurements.number_entropy_midchain = measure::number_entropy_midchain(state);
-        state.measurements.number_entropies        = measure::number_entropies(state);
-        state.measurements.expectation_values_sz   = measure::expectation_values(state, qm::spin::half::sz);
-    }
-    state.measurements.renyi_2         = measure::renyi_entropies(state, 2);
-    state.measurements.renyi_3         = measure::renyi_entropies(state, 3);
-    state.measurements.renyi_4         = measure::renyi_entropies(state, 4);
-    state.measurements.renyi_inf       = measure::renyi_entropies(state, std::numeric_limits<double>::infinity());
-    state.measurements.spin_components = measure::spin_components(state);
-    if(state.get_algorithm() == AlgorithmType::fDMRG) {
-        state.measurements.entanglement_entropies_subsystems = measure::entanglement_entropies_subsystems(state);
-    }
-}
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const StateFinite &state) { return state.get_length(); }
@@ -196,15 +156,15 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
     return state.measurements.entanglement_entropies.value();
 }
 
-Eigen::ArrayXXd tools::finite::measure::entanglement_entropies_subsystems(const StateFinite &state) {
-    if(state.measurements.entanglement_entropies_subsystems.has_value()) return state.measurements.entanglement_entropies_subsystems.value();
+Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const StateFinite &state) {
+    if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
     auto            t_ent  = tid::tic_scope("subsystem_entropies", tid::level::highest);
     auto            len    = state.get_length<long>();
     auto            bee    = measure::entanglement_entropies(state); // bipartite entanglement entropy
     auto            solver = eig::solver();
     Eigen::ArrayXXd ees    = Eigen::ArrayXXd::Zero(len, len); // entanglement entropy for sgements
 
-    for(long ext = 1; ext < len / 2 + 1; ++ext) {
+    for(long ext = 1; ext <= len / 2 + 1; ++ext) {
         for(long off = 0; off + ext <= len; ++off) {
             // Check if the segment includes the edge, in which case
             // we can simply take the bipartite entanglement entropy
@@ -219,7 +179,7 @@ Eigen::ArrayXXd tools::finite::measure::entanglement_entropies_subsystems(const 
                 ees(ext - 1, off) = bee[idx];
             } else {
                 auto sites = num::range<size_t>(off, off + ext);
-                auto rho   = state.get_multisite_density_matrix(sites);
+                auto rho   = state.get_reduced_density_matrix(sites);
                 auto evs   = Eigen::ArrayXd();
                 if(tenx::isReal(rho)) {
                     Eigen::Tensor<real, 2> rho_real = rho.real();
@@ -241,8 +201,8 @@ Eigen::ArrayXXd tools::finite::measure::entanglement_entropies_subsystems(const 
             }
         }
     }
-    state.measurements.entanglement_entropies_subsystems = ees;
-    return state.measurements.entanglement_entropies_subsystems.value();
+    state.measurements.subsystem_entanglement_entropies = ees;
+    return state.measurements.subsystem_entanglement_entropies.value();
 }
 
 std::vector<double> tools::finite::measure::renyi_entropies(const StateFinite &state, double q) {

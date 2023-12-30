@@ -19,6 +19,19 @@ void StorageInfo::assert_well_defined() const {
     if(not msg.empty()) throw except::logic_error("StorageInfo is not well defined. Missing fields: \n{}", msg);
 }
 
+StoragePolicy StorageInfo::get_state_storage_policy() const{
+    if(state_name == "state_init") return settings::storage::mps::state_init::policy;
+    if(state_name == "state_emid") return settings::storage::mps::state_emid::policy;
+    if(state_name == "state_emin") return settings::storage::mps::state_emin::policy;
+    if(state_name == "state_emax") return settings::storage::mps::state_emax::policy;
+    if(state_name == "state_real") return settings::storage::mps::state_real::policy;
+    if(state_name == "state_lbit") return settings::storage::mps::state_lbit::policy;
+
+    // xDMRG states are numbered like "state_#". We should therefore get the policy simply based on the algorithm
+    if(algo_type == AlgorithmType::xDMRG) return settings::storage::mps::state_emid::policy;
+    throw except::logic_error("Failed to get the storage policy for state name: [{}]", state_name);
+}
+
 std::string StorageInfo::get_state_prefix() const {
     assert_well_defined();
     return fmt::format("{}/{}", algo_name, state_name);
@@ -28,15 +41,15 @@ std::string StorageInfo::get_mps_prefix() const {
     std::string tag;
     auto        state_prefix = get_state_prefix();
     switch(storage_event) {
-        case StorageEvent::ITER_STATE: return fmt::format("{}/mps/iter_{}", state_prefix, iter);
-        case StorageEvent::INIT_STATE: return fmt::format("{}/mps/init", state_prefix);
-        case StorageEvent::LAST_STATE: return fmt::format("{}/mps", state_prefix);
-        case StorageEvent::PROJ_STATE: return fmt::format("{}/mps/proj", state_prefix);
-        case StorageEvent::BOND_INCREASE: return fmt::format("{}/{}/mps/bond_{}", state_prefix, bond_lim);
-        case StorageEvent::TRNC_DECREASE: return fmt::format("{}/{}/mps/trnc_{:.2e}", state_prefix, trnc_lim);
-        case StorageEvent::FES_STATE: return fmt::format("{}/{}/mps/fes_{}", state_prefix, bond_lim);
-        case StorageEvent::EMIN_STATE: return fmt::format("{}/state_emin/mps", algo_name);
-        case StorageEvent::EMAX_STATE: return fmt::format("{}/state_emax/mps", algo_name);
+        case StorageEvent::ITERATION: return fmt::format("{}/mps/iter_{}", state_prefix, iter);
+        case StorageEvent::INIT: return fmt::format("{}/mps", state_prefix);
+        case StorageEvent::FINISHED: return fmt::format("{}/mps", state_prefix);
+        case StorageEvent::PROJECTION: return fmt::format("{}/mps/proj", state_prefix);
+        case StorageEvent::BOND_UPDATE: return fmt::format("{}/mps/bond_{}", state_prefix, bond_lim);
+        case StorageEvent::TRNC_UPDATE: return fmt::format("{}/mps/trnc_{:.2e}", state_prefix, trnc_lim);
+        case StorageEvent::FES_STEP: return fmt::format("{}/mps/fes_{}", state_prefix, bond_lim);
+        case StorageEvent::EMIN_STATE: return fmt::format("{}/mps", state_prefix);
+        case StorageEvent::EMAX_STATE: return fmt::format("{}/mps", state_prefix);
         case StorageEvent::MODEL: throw except::logic_error("get_mps_prefix(): Invalid event: [MODEL]");
         case StorageEvent::NONE: throw except::logic_error("get_mps_prefix(): Invalid event: [NONE]");
         default: throw except::logic_error("Unhandled event: [{}]", enum2sv(storage_event));
@@ -44,28 +57,19 @@ std::string StorageInfo::get_mps_prefix() const {
 }
 
 StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_name, StorageEvent event)
-    : iter(status.iter), step(status.step), position(status.position), direction(status.direction), bond_lim(status.bond_lim), bond_max(status.bond_max),
-      trnc_lim(status.trnc_lim), algo_type(status.algo_type), algo_name(status.algo_type_sv()), storage_event(status.event), state_name(state_name) {
+    : iter(status.iter),                                     //
+      step(status.step), position(status.position),          //
+      direction(status.direction),                           //
+      bond_lim(status.bond_lim),                             //
+      bond_max(status.bond_max),                             //
+      trnc_lim(status.trnc_lim),                             //
+      algo_type(status.algo_type),                           //
+      algo_name(status.algo_type_sv()),                      //
+      storage_event(status.event),                           //
+      state_name(state_name),                                //
+      algorithm_has_finished(status.algorithm_has_finished), //
+      algorithm_has_succeeded(status.algorithm_has_succeeded) {
     if(storage_event == StorageEvent::NONE) storage_event = event;
-
-    switch(storage_event) {
-        case StorageEvent::ITER_STATE: {
-            if(settings::storage::storage_interval == 0) break;
-            if(status.iter % settings::storage::storage_interval != 0) break;
-            storage_level = settings::storage::storage_level_iter_state;
-            break;
-        }
-        case StorageEvent::INIT_STATE: storage_level = settings::storage::storage_level_init_state; break;
-        case StorageEvent::LAST_STATE: storage_level = settings::storage::storage_level_last_state; break;
-        case StorageEvent::EMIN_STATE: storage_level = settings::storage::storage_level_emin_state; break;
-        case StorageEvent::EMAX_STATE: storage_level = settings::storage::storage_level_emax_state; break;
-        case StorageEvent::PROJ_STATE: storage_level = settings::storage::storage_level_proj_state; break;
-        case StorageEvent::BOND_INCREASE: storage_level = settings::storage::storage_level_bond_state; break;
-        case StorageEvent::TRNC_DECREASE: storage_level = settings::storage::storage_level_trnc_state; break;
-        case StorageEvent::FES_STATE: storage_level = settings::storage::storage_level_fes_state; break;
-        case StorageEvent::MODEL: storage_level = settings::storage::storage_level_model; break;
-        case StorageEvent::NONE: break;
-    }
     assert_well_defined();
 }
 

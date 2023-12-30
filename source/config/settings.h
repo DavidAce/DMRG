@@ -83,18 +83,116 @@ namespace settings {
         inline std::string         file_resume_name                = ""  ;                         /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
         inline size_t              file_resume_iter                = -1ul;                         /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
 
-        inline StorageLevel        storage_level_iter_state        = StorageLevel::LIGHT;          /*!< Storage level for states during each iteration. */
-        inline StorageLevel        storage_level_init_state        = StorageLevel::LIGHT;          /*!< Storage level for states before the zeroth iteration */
-        inline StorageLevel        storage_level_last_state        = StorageLevel::LIGHT;          /*!< Storage level for states after the last iteration. */
-        inline StorageLevel        storage_level_emin_state        = StorageLevel::LIGHT;          /*!< Storage level for the minimum energy state (ground state) */
-        inline StorageLevel        storage_level_emax_state        = StorageLevel::LIGHT;          /*!< Storage level for the maximum energy state */
-        inline StorageLevel        storage_level_proj_state        = StorageLevel::LIGHT;          /*!< Storage level for the parity projected states, a projected version of the state written when a simulation terminates */
-        inline StorageLevel        storage_level_bond_state        = StorageLevel::NORMAL;         /*!< Storage level for states written on bond limit change */
-        inline StorageLevel        storage_level_trnc_state        = StorageLevel::NORMAL;         /*!< Storage level for states written on truncation error limit change */
-        inline StorageLevel        storage_level_fes_state         = StorageLevel::NORMAL;         /*!< Storage level for states written during finite entanglement scaling (fes) after the main simulation */
-        inline StorageLevel        storage_level_model             = StorageLevel::NORMAL;         /*!< Storage level for the model realization. NONE: OFF. LIGHT|NORMAL|FULL: the Hamiltonian parameter table */
-        inline StorageLevel        storage_level_timers            = StorageLevel::LIGHT;          /*!< Storage level for timers. NONE: off, LIGHT: tid::normal. NORMAL: tid::higher. FULL: tid::highest */
-        inline StorageLevel        storage_level_tables            = StorageLevel::LIGHT;          /*!< Storage level for tables. Where applicable: NONE: off, LIGHT: center site. NORMAL: all sites. FULL: all sites */
+        namespace mps::state_init{
+            /*! state_init is the initial state */
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace mps::state_emid{
+            /*! state_emid is obtained in the xDMRG algorithm (mid energy) */
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace mps::state_emin{
+            /*! state_emin is obtained in the fDMRG and xDMRG algorithms (min energy) */
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace mps::state_emax{
+            /*! state_emax is obtained in the fDMRG and xDMRG algorithms (max energy) */
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace mps::state_real{
+            /*! state_real is obtained in the fLBIT algorithm (in the "real" physical basis) */
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace mps::state_lbit{
+            /*! state_lbit is obtained in the fLBIT algorithm (in the lbit basis) */
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace mps::state_proj{
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+        }
+        namespace mps::state_bond{
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+        }
+        namespace mps::state_trnc{
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+        }
+        namespace mps::state_fes{
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+        }
+        namespace mpo::model{
+            inline StorageLevel  level  = StorageLevel::NONE;
+            inline StoragePolicy policy = StoragePolicy::INIT;
+        }
+        namespace table::bonds {
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace table::model{
+            inline StoragePolicy policy = StoragePolicy::INIT;
+        }
+        namespace table::measurements{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::status{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::memory{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::timers{
+            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace table::entanglement_entropies{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::truncation_errors{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::bond_dimensions{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::number_entropies{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::renyi_entropies{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+        }
+        namespace table::kvornings_marker{
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace table::expectation_values_spin_xyz{
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace table::correlation_matrix_spin_xyz{
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+        }
+        namespace table::random_unitary_circuit{
+            inline StoragePolicy policy = StoragePolicy::INIT;
+        }
+        namespace dataset::lbit_analysis{
+            inline StorageLevel level = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::INIT;
+        }
+        namespace dataset::subsystem_entropies{
+        /*! Entanglement entropy of all contiguous subsystems up to length L/2 + 1 */
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+            inline unsigned long chunksize = 10;
+        }
+        namespace dataset::number_probabilities{
+        /*! Probability of measuring n particles to the left of site i, for all n and i */
+            inline StoragePolicy policy = StoragePolicy::FINISH;
+            inline unsigned long chunksize = 10;
+        }
+        namespace dataset::expectation_values_spin_xyz{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+            inline unsigned long chunksize = 10;
+        }
 
         namespace tmp{
             inline std::string hdf5_temp_path;

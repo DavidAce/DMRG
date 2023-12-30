@@ -33,6 +33,7 @@ namespace tools::common::h5 {
         extern std::vector<MpsInfo>     find_fully_stored_mps   (const h5pp::File & h5file, std::string_view state_prefix);
     }
     namespace save{
+        bool should_save(const StorageInfo &sinfo, StoragePolicy policy);
 //        extern void bootstrap_save_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view link);
 //        extern void bootstrap_meta_log(std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
         extern void         bootstrap_meta_log  (std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix);
@@ -41,7 +42,7 @@ namespace tools::common::h5 {
         extern void         set_save_attrs      (h5pp::File &h5file, std::string_view link_path, const StorageInfo & info);
         extern hsize_t      get_table_offset    (const h5pp::File &h5file, std::string_view table_path, const StorageInfo & sinfo, const StorageAttrs & attrs);
         extern void         status              (h5pp::File & h5file, const StorageInfo & sinfo, const AlgorithmStatus &status);
-        extern void         mem                 (h5pp::File & h5file, const StorageInfo & sinfo);
+        extern void         memory                 (h5pp::File & h5file, const StorageInfo & sinfo);
         extern void         timer               (h5pp::File & h5file, const StorageInfo & sinfo);
         extern void         meta                (h5pp::File & h5file, const StorageInfo & sinfo);
         extern void         initial_state_attrs (h5pp::File & h5file, const StorageInfo & sinfo);

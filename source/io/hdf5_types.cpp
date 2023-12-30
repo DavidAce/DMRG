@@ -22,15 +22,15 @@ void h5_enum_storage_event::create() {
     int val;
     H5Tenum_insert(h5_storage_event, "NONE", (val = static_cast<int>(StorageEvent::NONE), &val));
     H5Tenum_insert(h5_storage_event, "MODEL", (val = static_cast<int>(StorageEvent::MODEL), &val));
-    H5Tenum_insert(h5_storage_event, "INIT_STATE", (val = static_cast<int>(StorageEvent::INIT_STATE), &val));
+    H5Tenum_insert(h5_storage_event, "INIT", (val = static_cast<int>(StorageEvent::INIT), &val));
     H5Tenum_insert(h5_storage_event, "EMIN_STATE", (val = static_cast<int>(StorageEvent::EMIN_STATE), &val));
     H5Tenum_insert(h5_storage_event, "EMAX_STATE", (val = static_cast<int>(StorageEvent::EMAX_STATE), &val));
-    H5Tenum_insert(h5_storage_event, "PROJ_STATE", (val = static_cast<int>(StorageEvent::PROJ_STATE), &val));
-    H5Tenum_insert(h5_storage_event, "BOND_INCREASE", (val = static_cast<int>(StorageEvent::BOND_INCREASE), &val));
-    H5Tenum_insert(h5_storage_event, "TRNC_DECREASE", (val = static_cast<int>(StorageEvent::TRNC_DECREASE), &val));
-    H5Tenum_insert(h5_storage_event, "FES_STATE", (val = static_cast<int>(StorageEvent::FES_STATE), &val));
-    H5Tenum_insert(h5_storage_event, "ITER_STATE", (val = static_cast<int>(StorageEvent::ITER_STATE), &val));
-    H5Tenum_insert(h5_storage_event, "LAST_STATE", (val = static_cast<int>(StorageEvent::LAST_STATE), &val));
+    H5Tenum_insert(h5_storage_event, "PROJECTION", (val = static_cast<int>(StorageEvent::PROJECTION), &val));
+    H5Tenum_insert(h5_storage_event, "BOND_UPDATE", (val = static_cast<int>(StorageEvent::BOND_UPDATE), &val));
+    H5Tenum_insert(h5_storage_event, "TRNC_UPDATE", (val = static_cast<int>(StorageEvent::TRNC_UPDATE), &val));
+    H5Tenum_insert(h5_storage_event, "FES_STEP", (val = static_cast<int>(StorageEvent::FES_STEP), &val));
+    H5Tenum_insert(h5_storage_event, "ITERATION", (val = static_cast<int>(StorageEvent::ITERATION), &val));
+    H5Tenum_insert(h5_storage_event, "FINISHED", (val = static_cast<int>(StorageEvent::FINISHED), &val));
 }
 
 void h5_enum_storage_event::commit(const h5pp::hid::h5f &file_id) {

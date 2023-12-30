@@ -66,7 +66,6 @@ namespace tools::finite::ed {
         auto  mps_list      = tools::common::split::split_mps(multisite_mps, spin_dims, positions, centerpos, std::nullopt); // No svd truncation
         state_ed.set_name("state_ed");
         state_ed.set_mps_sites(mps_list);
-        tools::finite::measure::do_all_measurements(state_ed);
 
         tools::log->info("Bond dimensions χ                  = {}", tools::finite::measure::bond_dimensions(state_ed));
         tools::log->info("Bond dimension  χ (mid)            = {}", tools::finite::measure::bond_dimension_midchain(state_ed));

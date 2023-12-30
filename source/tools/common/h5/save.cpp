@@ -12,6 +12,32 @@
 #include <string>
 
 namespace tools::common::h5 {
+    bool save::should_save(const StorageInfo &sinfo, StoragePolicy policy) {
+        if(policy == StoragePolicy::NONE) return false;
+        if(has_flag(policy, StoragePolicy::ONCE)) return false; // TODO sinfo needs a sort of counter...
+        if(has_flag(policy, StoragePolicy::INIT)) {
+            // TODO: Check that this is during initialization rather than "when storing the initial state"
+            return sinfo.storage_event == StorageEvent::INIT;
+        }
+        if(has_flag(policy, StoragePolicy::ITER)) {
+            return sinfo.iter % settings::storage::storage_interval == 0 and //
+                   sinfo.storage_event == StorageEvent::ITERATION;
+        }
+        if(has_flag(policy, StoragePolicy::FAILURE)) {
+            return sinfo.storage_event == StorageEvent::FINISHED and //
+                   sinfo.algorithm_has_finished == true and          //
+                   sinfo.algorithm_has_succeeded == false;
+        }
+        if(has_flag(policy, StoragePolicy::SUCCESS)) {
+            return sinfo.storage_event == StorageEvent::FINISHED and //
+                   sinfo.algorithm_has_finished == true and          //
+                   sinfo.algorithm_has_succeeded == true;
+        }
+        if(has_flag(policy, StoragePolicy::FINISH)) { return sinfo.storage_event == StorageEvent::FINISHED; }
+        if(has_flag(policy, StoragePolicy::ALWAYS)) return true;
+        throw except::logic_error("Unrecognized policy: {}", enum2sv(policy));
+    }
+
     void save::bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix) {
         if(save_log.empty()) {
             try {
@@ -23,8 +49,7 @@ namespace tools::common::h5 {
     }
 
     void save::status(h5pp::File &h5file, const StorageInfo &sinfo, const AlgorithmStatus &status) {
-        if(sinfo.storage_level == StorageLevel::NONE) return;
-        if(sinfo.storage_event <= StorageEvent::MODEL) return;
+        if(not should_save(sinfo, settings::storage::table::status::policy)) return;
         auto t_hdf = tid::tic_scope("status", tid::level::highest);
         sinfo.assert_well_defined();
 
@@ -42,9 +67,8 @@ namespace tools::common::h5 {
         save::set_save_attrs(h5file, table_path, sinfo);
     }
 
-    void save::mem(h5pp::File &h5file, const StorageInfo &sinfo) {
-        if(sinfo.storage_level == StorageLevel::NONE) return;
-        if(sinfo.storage_event <= StorageEvent::MODEL) return;
+    void save::memory(h5pp::File &h5file, const StorageInfo &sinfo) {
+        if(not should_save(sinfo, settings::storage::table::memory::policy)) return;
         auto t_hdf = tid::tic_scope("mem", tid::level::highest);
         sinfo.assert_well_defined();
 
@@ -74,9 +98,7 @@ namespace tools::common::h5 {
     }
 
     void save::timer(h5pp::File &h5file, const StorageInfo &sinfo) {
-        if(settings::storage::storage_level_timers == StorageLevel::NONE) return;
-        if(sinfo.storage_level == StorageLevel::NONE) return;
-        if(sinfo.storage_event <= StorageEvent::MODEL) return;
+        if(not should_save(sinfo, settings::storage::table::timers::policy)) return;
         auto t_timers = tid::tic_token("timers", tid::level::higher);
 
         // Define the table
@@ -90,9 +112,9 @@ namespace tools::common::h5 {
         auto table_items = std::vector<h5pp_ur::item>{};
         table_items.reserve(tid_tree.size());
         for(const auto &[i, t] : iter::enumerate(tid_tree)) {
-            if(settings::storage::storage_level_timers == StorageLevel::LIGHT and t->get_level() > tid::level::normal) continue;
-            if(settings::storage::storage_level_timers == StorageLevel::NORMAL and t->get_level() > tid::level::higher) continue;
-            if(settings::storage::storage_level_timers == StorageLevel::FULL and t->get_level() > tid::level::highest) continue;
+            if(settings::storage::table::timers::level == StorageLevel::LIGHT and t->get_level() > tid::level::normal) continue;
+            if(settings::storage::table::timers::level == StorageLevel::NORMAL and t->get_level() > tid::level::higher) continue;
+            if(settings::storage::table::timers::level == StorageLevel::FULL and t->get_level() > tid::level::highest) continue;
             table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
         }
         tools::log->trace("Appending to table: {}", table_path);
@@ -180,7 +202,7 @@ namespace tools::common::h5 {
         }
     }
     void save::initial_state_attrs(h5pp::File &h5file, const StorageInfo &sinfo) {
-        if(sinfo.storage_event != StorageEvent::INIT_STATE) return;
+        if(sinfo.storage_event != StorageEvent::INIT) return;
         if(settings::strategy::initial_pattern.empty()) {
             tools::log->warn("Could not save the initial state pattern: the pattern is empty");
             return;

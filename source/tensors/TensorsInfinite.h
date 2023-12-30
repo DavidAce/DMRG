@@ -50,7 +50,6 @@ class TensorsInfinite {
 
     void merge_twosite_tensor(const Eigen::Tensor<Scalar, 3> &twosite_tensor, std::optional<svd::config> svd_cfg = std::nullopt);
     void enlarge();
-    void do_all_measurements() const;
     void clear_measurements() const;
     void clear_cache() const;
 };

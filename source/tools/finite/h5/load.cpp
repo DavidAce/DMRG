@@ -13,6 +13,7 @@
 #include "tools/common/log.h"
 #include "tools/finite/env.h"
 #include "tools/finite/h5.h"
+#include "tools/finite/measure.h"
 #include "tools/finite/print.h"
 #include <algorithms/AlgorithmStatus.h>
 #include <complex>
@@ -132,7 +133,6 @@ namespace tools::finite::h5 {
         auto expected_measurements = h5file.readTableRecords<h5pp_table_measurements_finite::table>(measurements_path);
         tensors.state->clear_cache();
         tensors.state->clear_measurements();
-        tensors.state->do_all_measurements();
 
         if(algo_type == AlgorithmType::fLBIT) {
             // Check that the time limits are the same
@@ -172,9 +172,8 @@ namespace tools::finite::h5 {
             // In the fLBIT case, the MPO's belong to state_lbit, so measuring the energy on state_real w.r.t the lbit-hamiltonian makes no sense.
             tools::log->debug("Validating resumed state energy (without energy reduction): [{}]", state_prefix);
             tensors.clear_measurements();
-            tensors.do_all_measurements();
-            compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-5, "Energy");
-            compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-5, "Energy variance");
+            compare(tools::finite::measure::energy(tensors), expected_measurements.energy, 1e-5, "Energy");
+            compare(tools::finite::measure::energy_variance(tensors), expected_measurements.energy_variance, 1e-5, "Energy variance");
 
             if(settings::precision::use_mpo_energy_shift) {
                 tensors.shift_mpo_energy();
@@ -183,9 +182,8 @@ namespace tools::finite::h5 {
                 tensors.rebuild_edges();
                 tools::log->debug("Validating resumed state (after energy reduction): [{}]", state_prefix);
                 tensors.clear_measurements();
-                tensors.do_all_measurements();
-                compare(tensors.measurements.energy.value(), expected_measurements.energy, 1e-5, "Energy");
-                compare(tensors.measurements.energy_variance.value(), expected_measurements.energy_variance, 1e-5, "Energy variance");
+                compare(tools::finite::measure::energy(tensors), expected_measurements.energy, 1e-5, "Energy");
+                compare(tools::finite::measure::energy_variance(tensors), expected_measurements.energy_variance, 1e-5, "Energy variance");
             }
         }
     }

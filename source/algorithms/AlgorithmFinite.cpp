@@ -89,9 +89,9 @@ void AlgorithmFinite::run_postprocessing() {
         tensors.project_to_nearest_axis(settings::strategy::target_axis, svd::config(status.bond_lim, status.trnc_lim));
         tensors.rebuild_edges();
     }
-    write_to_file(StorageEvent::BOND_INCREASE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
-    write_to_file(StorageEvent::PROJ_STATE, CopyPolicy::OFF);    // To compare the finished state to a projected one
-    write_to_file(StorageEvent::LAST_STATE, CopyPolicy::FORCE);  // For final mps
+    write_to_file(StorageEvent::BOND_UPDATE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
+    write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);    // To compare the finished state to a projected one
+    write_to_file(StorageEvent::FINISHED, CopyPolicy::FORCE);  // For final mps
     print_status_full();
     run_fes_analysis();
     tools::log->info("Finished default postprocessing for {}", status.algo_type_sv());
@@ -311,7 +311,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
         tensors.rebuild_edges();
     }
     // Write current results before updating bond dimension
-    write_to_file(StorageEvent::BOND_INCREASE);
+    write_to_file(StorageEvent::BOND_UPDATE);
     if(settings::strategy::randomize_on_bond_update and status.bond_lim >= 32)
         initialize_state(ResetReason::BOND_UPDATE, StateInit::RANDOMIZE_PREVIOUS_STATE, std::nullopt, std::nullopt);
 
@@ -422,7 +422,7 @@ void AlgorithmFinite::update_truncation_error_limit() {
         tensors.rebuild_edges();
     }
     // Write current results before updating the truncation error limit
-    write_to_file(StorageEvent::TRNC_DECREASE);
+    write_to_file(StorageEvent::TRNC_UPDATE);
 
     // If we got to this point we will update the truncation error limit by a factor
     auto rate = settings::strategy::trnc_decrease_rate;
@@ -543,7 +543,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
         tools::log->info("-- energy density           : {}", tools::finite::measure::energy_normalized(tensors, status.energy_min, status.energy_max));
         tools::log->info("-- energy variance          : {:8.2e}", tools::finite::measure::energy_variance(tensors));
     }
-    write_to_file(StorageEvent::INIT_STATE);
+    write_to_file(StorageEvent::INIT);
 }
 
 void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
@@ -638,7 +638,7 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
             }
         }
         if(target_sector.value() == settings::strategy::target_axis) projected_iter = status.iter;
-        write_to_file(StorageEvent::PROJ_STATE, CopyPolicy::OFF);
+        write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);
     }
 }
 
@@ -895,7 +895,8 @@ void AlgorithmFinite::print_status() {
 }
 
 void AlgorithmFinite::print_status_full() {
-    tensors.redo_all_measurements();
+    tensors.clear_cache();
+    tensors.clear_measurements();
     tools::log->info("{:=^60}", "");
     tools::log->info("= {: ^56} =", fmt::format("Completed [{}][{}]", status.algo_type_sv(), tensors.state->get_name()));
     tools::log->info("{:=^60}", "");

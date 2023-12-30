@@ -102,8 +102,6 @@ class TensorsFinite {
     void                activate_sites(long threshold, size_t max_sites, size_t min_sites = 1);
     std::array<long, 3> active_problem_dims() const;
     long                active_problem_size() const;
-    void                do_all_measurements() const;
-    void                redo_all_measurements() const;
     size_t              move_center_point(std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_pos(long pos, std::optional<svd::config> svd_cfg = std::nullopt);
     size_t              move_center_point_to_inward_edge(std::optional<svd::config> svd_cfg = std::nullopt);

@@ -34,8 +34,8 @@ void AlgorithmInfinite::run_preprocessing() {
 
 void AlgorithmInfinite::run_postprocessing() {
     auto t_pos = tid::tic_scope("post");
-    write_to_file(StorageEvent::LAST_STATE);
-    copy_from_tmp(StorageEvent::LAST_STATE);
+    write_to_file(StorageEvent::FINISHED);
+    copy_from_tmp(StorageEvent::FINISHED);
     print_status_full();
 }
 
@@ -93,7 +93,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     if(grow_rate <= 1.0) throw except::runtime_error("Error: bond_increase_rate == {:.3f} | must be larger than one", grow_rate);
 
     // Write current results before updating bond dimension
-    write_to_file(StorageEvent::BOND_INCREASE);
+    write_to_file(StorageEvent::BOND_UPDATE);
 
     // If we got to this point we will update the bond dimension by a factor
     auto factor = settings::strategy::bond_increase_rate;
@@ -152,7 +152,7 @@ void AlgorithmInfinite::update_truncation_error_limit() {
     }
 
     // Write current results before updating the truncation error limit
-    write_to_file(StorageEvent::TRNC_DECREASE);
+    write_to_file(StorageEvent::TRNC_UPDATE);
 
     // If we got to this point we will update the truncation error limit by a factor
     auto rate = settings::strategy::trnc_decrease_rate;
@@ -265,13 +265,13 @@ void AlgorithmInfinite::write_to_file(StorageEvent storage_event, CopyPolicy cop
     tools::infinite::h5::save::bonds(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::state(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::edges(*h5file, sinfo, *tensors.edges);
-    if(storage_event == StorageEvent::PROJ_STATE) return; // Some storage reasons should not go further. Like projection.
+    if(storage_event == StorageEvent::PROJECTION) return; // Some storage reasons should not go further. Like projection.
 
     // The main results have now been written. Next we append data to tables
     tools::infinite::h5::save::measurements(*h5file, sinfo, tensors, status);
     tools::common::h5::save::status(*h5file, sinfo, status);
     tools::common::h5::save::timer(*h5file, sinfo);
-    tools::common::h5::save::mem(*h5file, sinfo);
+    tools::common::h5::save::memory(*h5file, sinfo);
     // Copy from temporary location to destination depending on given policy
     copy_from_tmp(storage_event, copy_policy);
 }
@@ -331,8 +331,6 @@ void AlgorithmInfinite::print_status() {
 }
 
 void AlgorithmInfinite::print_status_full() {
-    //    compute_observables();
-    tensors.state->do_all_measurements();
     using namespace std;
     using namespace tools::infinite::measure;
     tools::log->info("{:=^60}", "");

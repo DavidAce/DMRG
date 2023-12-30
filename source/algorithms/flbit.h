@@ -48,6 +48,6 @@ class flbit : public AlgorithmFinite {
     void time_evolve_lbit_state();
     void transform_to_real_basis();
     void transform_to_lbit_basis();
-    void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) final;
+    void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY) final;
     void print_status() final;
 };

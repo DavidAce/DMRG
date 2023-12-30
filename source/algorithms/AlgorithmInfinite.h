@@ -27,7 +27,7 @@ class AlgorithmInfinite : public AlgorithmBase {
                          std::optional<bool> use_eigenspinors = std::nullopt, std::optional<std::string> pattern = std::nullopt);
 
 
-    void write_to_file(StorageEvent storage_event = StorageEvent::ITER_STATE, CopyPolicy copy_policy = CopyPolicy::TRY) final;
+    void write_to_file(StorageEvent storage_event = StorageEvent::ITERATION, CopyPolicy copy_policy = CopyPolicy::TRY) final;
     void print_status()                                                                                                 final;
     void print_status_full()                                                                                            final;
     /* clang-format on */
