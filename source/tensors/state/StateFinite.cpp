@@ -402,7 +402,7 @@ const Eigen::Tensor<StateFinite::Scalar, 3> &StateFinite::get_multisite_mps() co
 
 const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vector<size_t> &sites) const {
     if(sites.empty()) throw except::runtime_error("No sites on which to build a reduced density matrix for a subsystem");
-    auto                     t_mps = tid::tic_scope("gen_rho", tid::level::highest);
+    auto                     t_mps = tid::tic_scope("gen_rho", tid::level::higher);
     Eigen::Tensor<Scalar, 3> multisite_mps;
     Eigen::Tensor<Scalar, 4> temporary_rho;
     Eigen::Tensor<Scalar, 4> temp;
@@ -420,14 +420,16 @@ const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_mat
      */
 
     for(auto &site : asites) {
-        const auto &mps  = get_mps_site(site);
-        auto        M    = mps.get_M(); // Can be an A, AC or a B site
-        auto        dL   = temporary_rho.dimension(0);
-        auto        dR   = M.dimension(0);
-        auto        chiR = M.dimension(2);
+        const auto &mps        = get_mps_site(site);
+        auto        M          = mps.get_M(); // Can be an A, AC or a B site
+        auto        dL         = temporary_rho.dimension(0);
+        auto        dR         = M.dimension(0);
+        auto        chiR       = M.dimension(2);
+        auto        t_contract = tid::tic_scope("contract", tid::level::higher);
 
         if(mps.get_label() == "B" and site > 0 and site == sites.front()) {
             // Before building the rho, we may need to prepend a lambda if the first site is a "B" matrix.
+            auto        t_prepend                 = tid::tic_scope("prepend", tid::level::higher);
             const auto &mps_left                  = get_mps_site(site - 1);
             const auto &L                         = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
             auto        LB                        = Eigen::Tensor<Scalar, 3>(M.dimensions());
@@ -440,15 +442,18 @@ const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_mat
         if(!contract_site) osites.emplace_back(site);
         auto rho_key = fmt::format("{}|{}", csites, osites);
         if(cache.temporary_rho.find(rho_key) != cache.temporary_rho.end()) {
+            auto t_cachehit = tid::tic_scope("cachehit", tid::level::higher);
             tools::log->info("-- cache hit: {} - site {}", rho_key, site);
             temporary_rho = cache.temporary_rho.at(rho_key);
         } else {
             if(contract_site) {
                 tools::log->info("-- contract : {} - site {}", rho_key, site);
                 if(&site == &asites.front()) { // First site
+                    auto t_A = tid::tic_scope("A-dL-1", tid::level::higher);
                     auto dim = std::array<long, 4>{1, 1, chiR, chiR};
-                    temp = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(dim);
+                    temp     = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(dim);
                 } else {
+                    auto t_B = tid::tic_scope(fmt::format("B-dL-{}", dL), tid::level::higher);
                     auto dim = std::array<long, 4>{dL, dL, chiR, chiR};
                     temp.resize(dim);
                     temp.device(tenx::threads::getDevice()) =
@@ -460,11 +465,13 @@ const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_mat
 
                 // The current site should be kept open
                 if(&site == &asites.front()) { // First site
+                    auto t_C = tid::tic_scope(fmt::format("C-dR-{}", dR), tid::level::higher);
                     auto dim = std::array<long, 4>{dR, dR, chiR, chiR};
                     auto shf = std::array<long, 4>{0, 2, 1, 3};
                     temp.resize(dim);
                     temp.device(tenx::threads::getDevice()) = M.contract(M.conjugate(), tenx::idx({1}, {1})).shuffle(shf);
                 } else {
+                    auto           t_D = tid::tic_scope(fmt::format("D-dLdR-{}", dL * dR), tid::level::higher);
                     auto           dim = std::array<long, 4>{dL * dR, dL * dR, chiR, chiR};
                     constexpr auto shf = std::array<long, 6>{0, 2, 1, 4, 3, 5};
                     temp.resize(dim);
@@ -481,13 +488,15 @@ const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_mat
     if(mps.get_label() == "A" and sites.back() < length - 1) {
         // Before closing off the rho, we may need to append a lambda if the last site was an "A" matrix.
         // In this case we can simply contract the squared lambda matrix instead of tracing.
-        const auto &mps_right = get_mps_site(sites.back() + 1);
-        const auto &L         = mps_right.get_L();
-        auto        rho       = Eigen::Tensor<Scalar, 2>();
+        auto        t_E = tid::tic_scope(fmt::format("E-rho-{}", temporary_rho.dimension(0)), tid::level::higher);
+        const auto &mps_right  = get_mps_site(sites.back() + 1);
+        const auto &L          = mps_right.get_L();
+        auto        rho        = Eigen::Tensor<Scalar, 2>();
         rho.resize(temporary_rho.dimension(0), temporary_rho.dimension(1));
         rho.device(tenx::threads::getDevice()) = temporary_rho.contract(tenx::asDiagonal(L.square()), tenx::idx({2, 3}, {0, 1}));
         return rho;
     } else {
+        auto t_F = tid::tic_scope(fmt::format("F-rho-{}", temporary_rho.dimension(0)), tid::level::higher);
         return temporary_rho.trace(std::array<long, 2>{2, 3});
     }
 }

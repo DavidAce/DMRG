@@ -158,9 +158,9 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const StateFinite &state) {
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
-    auto            t_ent  = tid::tic_scope("subsystem_entropies", tid::level::highest);
+    auto            t_ent  = tid::tic_scope("subsystem_entropies", tid::level::normal);
     auto            len    = state.get_length<long>();
-    auto            bee    = measure::entanglement_entropies(state); // bipartite entanglement entropy
+    auto            bee    = measure::entanglement_entropies(state); // bipartite entanglement entropies
     auto            solver = eig::solver();
     Eigen::ArrayXXd ees    = Eigen::ArrayXXd::Zero(len, len); // entanglement entropy for sgements
 
