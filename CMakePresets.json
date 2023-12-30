@@ -419,6 +419,16 @@
       ]
     },
     {
+      "name": "release-gcc-13-cmake-flexiblas-native",
+      "displayName": "Release|gcc-13|cmake|flexiblas|native",
+      "inherits": [
+        "native",
+        "flexiblas",
+        "cmake",
+        "release-gcc-13"
+      ]
+    },
+    {
       "name": "release-gcc-13-conan-flexiblas-native",
       "displayName": "Release|gcc-13|conan|flexiblas|native",
       "inherits": [
@@ -661,7 +671,11 @@
     },
     {
       "name": "release-gcc-13-cmake-flexiblas-native",
-      "configurePreset": "release-gcc-12-conan-openblas-native"
+      "configurePreset": "release-gcc-13-cmake-flexiblas-native"
+    },
+    {
+      "name": "release-gcc-13-conan-flexiblas-native",
+      "configurePreset": "release-gcc-13-conan-flexiblas-native"
     },
     {
       "name": "release-clang-15-conan-mkl-native",
