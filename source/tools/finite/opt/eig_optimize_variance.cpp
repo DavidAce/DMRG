@@ -19,7 +19,7 @@ namespace tools::finite::opt::internal {
             tools::log->trace("Full diagonalization of (H-E)²");
             auto        matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
             eig::solver solver;
-            solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, 1, 0.0, 1.0, 1);
+            solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, 1, 0.0, 1.0);
             eigs_extract_results(tensors, initial_mps, meta, solver, results, false);
         } else {
             throw except::logic_error("eig_variance_executor: Hamiltonian too big for eig solver: {}", problem_size);

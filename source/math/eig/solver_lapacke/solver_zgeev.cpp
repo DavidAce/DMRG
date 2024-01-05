@@ -19,8 +19,8 @@
 #include "../solver.h"
 #include <chrono>
 
-int eig::solver::zgeev(const cplx *matrix, size_type L) {
-    eig::log->trace("Starting eig_zgeev");
+int eig::solver::zgeev(cplx *matrix, size_type L) {
+    eig::log->trace("Starting eig_zgeev (non-optimized");
     auto  t_start  = std::chrono::high_resolution_clock::now();
     auto &eigvals  = result.get_eigvals<Form::NSYM>();
     auto &eigvecsR = result.get_eigvecs<Form::NSYM, Type::CPLX, Side::R>();

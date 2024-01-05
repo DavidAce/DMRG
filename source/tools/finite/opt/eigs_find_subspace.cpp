@@ -317,7 +317,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_full(const 
     tools::log->trace("Finding subspace -- full diag");
     auto t_full = tid::tic_scope("full");
     // Generate the Hamiltonian matrix
-    const auto &effective_hamiltonian = tensors.get_effective_hamiltonian<Scalar>();
+    auto effective_hamiltonian = tensors.get_effective_hamiltonian<Scalar>();
 
     // Create a solver and diagonalize the local effective Hamiltonian
     eig::solver solver;

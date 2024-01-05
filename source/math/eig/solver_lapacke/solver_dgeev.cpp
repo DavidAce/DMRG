@@ -19,14 +19,13 @@
 #include "../solver.h"
 #include <chrono>
 
-int eig::solver::dgeev(const real *matrix, size_type L) {
-    eig::log->trace("Starting eig_dgeev");
+int eig::solver::dgeev(real *matrix, size_type L) {
+    eig::log->trace("Starting eig_dgeev (non-optimized)");
     auto  t_start      = std::chrono::high_resolution_clock::now();
     auto &eigvals_real = result.eigvals_real;
     auto &eigvals_imag = result.eigvals_imag;
     eigvals_real.resize(static_cast<size_t>(L));
     eigvals_imag.resize(static_cast<size_t>(L));
-
     std::vector<double> eigvecsR_tmp(static_cast<size_t>(L * L));
     std::vector<double> eigvecsL_tmp(static_cast<size_t>(L * L));
 
@@ -34,12 +33,12 @@ int eig::solver::dgeev(const real *matrix, size_type L) {
     double lwork_query;
     char   jobz = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
 
-    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), const_cast<double *>(matrix), static_cast<int>(L), eigvals_real.data(),
+    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), matrix, static_cast<int>(L), eigvals_real.data(),
                               eigvals_imag.data(), eigvecsL_tmp.data(), static_cast<int>(L), eigvecsR_tmp.data(), static_cast<int>(L), &lwork_query, -1);
     int                 lwork = (int) std::real(2.0 * lwork_query); // Make it twice as big for performance.
     std::vector<double> work(static_cast<size_t>(lwork));
     auto                t_prep = std::chrono::high_resolution_clock::now();
-    info         = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), const_cast<double *>(matrix), static_cast<int>(L), eigvals_real.data(),
+    info         = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), matrix, static_cast<int>(L), eigvals_real.data(),
                                       eigvals_imag.data(), eigvecsL_tmp.data(), static_cast<int>(L), eigvecsR_tmp.data(), static_cast<int>(L), work.data(), lwork);
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {

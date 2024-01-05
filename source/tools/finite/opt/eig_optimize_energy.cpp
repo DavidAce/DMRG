@@ -21,30 +21,30 @@ namespace tools::finite::opt {
         eig::solver solver;
         if(meta.optMode == OptMode::VARIANCE) {
             tools::log->trace("Full diagonalization of local (H-E)²");
-            const auto &matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
-            solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, 1, 0.0, 1.0, 1);
+            auto matrix = tensors.get_effective_hamiltonian_squared<Scalar>();
+            solver.eig(matrix.data(), matrix.dimension(0), 'I', 1, 1, 0.0, 1.0);
         } else if(meta.optMode == OptMode::ENERGY) {
             tools::log->trace("Full diagonalization of local H");
-            const auto &matrix = tensors.get_effective_hamiltonian<Scalar>();
-            int         SR_il  = 1; // min nev index (starts from 1)
-            int         SR_iu  = 1; // max nev index
-            int         LR_il  = static_cast<int>(matrix.dimension(0));
-            int         LR_iu  = static_cast<int>(matrix.dimension(0));
+            auto matrix = tensors.get_effective_hamiltonian<Scalar>();
+            int  SR_il  = 1; // min nev index (starts from 1)
+            int  SR_iu  = 1; // max nev index
+            int  LR_il  = static_cast<int>(matrix.dimension(0));
+            int  LR_iu  = static_cast<int>(matrix.dimension(0));
             switch(meta.optRitz) {
-                case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0, 1); break;
-                case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0, 1); break;
+                case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
+                case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;
                 case OptRitz::SM: {
                     auto eigval = initial_mps.get_eigval();
                     auto eigvar = initial_mps.get_variance();
                     auto vl     = eigval - 2 * eigvar;
                     auto vu     = eigval + 2 * eigvar;
-                    solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu, 10);
+                    solver.eig(matrix.data(), matrix.dimension(0), 'V', 1, 1, vl, vu);
                     break;
                 }
             }
         } else {
             tools::log->trace("Full diagonalization of local H");
-            const auto &matrix = tensors.get_effective_hamiltonian<Scalar>();
+            auto matrix = tensors.get_effective_hamiltonian<Scalar>();
             solver.eig(matrix.data(), matrix.dimension(0), eig::Vecs::ON);
         }
         tools::finite::opt::internal::eigs_extract_results(tensors, initial_mps, meta, solver, results, false);

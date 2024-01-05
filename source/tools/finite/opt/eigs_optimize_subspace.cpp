@@ -141,13 +141,13 @@ opt_mps tools::finite::opt::internal::eigs_optimize_subspace(const TensorsFinite
         case OptType::CPLX: {
             tools::log->trace("Running EIGS subspace cplx");
             auto H2_subspace = subspace::get_hamiltonian_squared_in_subspace<cplx>(model, edges, subspace);
-            solver.eig<eig::Form::SYMM>(H2_subspace.data(), H2_subspace.rows(), 'I', 1, 1, 0.0, 1.0, 1);
+            solver.eig<eig::Form::SYMM>(H2_subspace.data(), H2_subspace.rows(), 'I', 1, 1, 0.0, 1.0);
             break;
         }
         case OptType::REAL: {
             tools::log->trace("Running EIGS subspace real");
             auto H2_subspace = subspace::get_hamiltonian_squared_in_subspace<real>(model, edges, subspace);
-            solver.eig<eig::Form::SYMM>(H2_subspace.data(), H2_subspace.rows(), 'I', 1, 1, 0.0, 1.0, 1);
+            solver.eig<eig::Form::SYMM>(H2_subspace.data(), H2_subspace.rows(), 'I', 1, 1, 0.0, 1.0);
             break;
         }
     }

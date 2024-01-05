@@ -21,19 +21,18 @@
 #include "debug/exceptions.h"
 #include <chrono>
 
-int eig::solver::zheevd(const cplx *matrix, size_type L) {
+int eig::solver::zheevd(cplx *matrix, size_type L) {
     eig::log->trace("Starting eig zheevd. Eigvecs: {}", config.compute_eigvecs.value() == eig::Vecs::ON);
     auto  t_start = std::chrono::high_resolution_clock::now();
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::CPLX>();
     eigvals.resize(static_cast<size_t>(L));
-    eigvecs.resize(static_cast<size_t>(L * L));
-    std::copy(matrix, matrix + L * L, eigvecs.begin());
 
     // These nice values are inspired from armadillo. The prefactors give good performance.
-    int               lwork  = static_cast<int>(2 * (2 * L + L * L));
-    int               lrwork = static_cast<int>(2 * (1 + 5 * L + 2 * (L * L)));
-    int               liwork = static_cast<int>(3 * (3 + 5 * L));
+    int               n      = static_cast<int>(L);
+    int               lwork  = 2 * (2 * n + n * n);
+    int               lrwork = 2 * (1 + 5 * n + 2 * (n * n));
+    int               liwork = 3 * (3 + 5 * n);
     int               info   = 0;
     std::vector<cplx> work(static_cast<size_t>(lwork));
     std::vector<real> rwork(static_cast<size_t>(lrwork));
@@ -41,12 +40,18 @@ int eig::solver::zheevd(const cplx *matrix, size_type L) {
     char              jobz   = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     auto              t_prep = std::chrono::high_resolution_clock::now();
 
-    info = LAPACKE_zheevd_work(LAPACK_COL_MAJOR, jobz, 'U', static_cast<int>(L), reinterpret_cast<lapack_complex_double *>(eigvecs.data()), static_cast<int>(L),
-                               eigvals.data(), reinterpret_cast<lapack_complex_double *>(work.data()), lwork, rwork.data(), lrwork, iwork.data(), liwork);
+    info = LAPACKE_zheevd_work(LAPACK_COL_MAJOR, jobz, 'U', n, reinterpret_cast<lapack_complex_double *>(matrix), n, eigvals.data(),
+                               reinterpret_cast<lapack_complex_double *>(work.data()), lwork, rwork.data(), lrwork, iwork.data(), liwork);
+
+    if(config.compute_eigvecs == Vecs::ON) {
+        eigvecs.resize(static_cast<size_t>(L * L));
+        std::copy(matrix, matrix + L * L, eigvecs.begin());
+    }
+
     auto t_total = std::chrono::high_resolution_clock::now();
 
     if(info == 0) {
-        result.meta.eigvecsR_found = true;
+        result.meta.eigvecsR_found = config.compute_eigvecs == Vecs::ON;
         result.meta.eigvals_found  = true;
         result.meta.rows           = L;
         result.meta.cols           = L;
@@ -58,7 +63,7 @@ int eig::solver::zheevd(const cplx *matrix, size_type L) {
         result.meta.time_prep      = std::chrono::duration<double>(t_prep - t_start).count();
         result.meta.time_total     = std::chrono::duration<double>(t_total - t_start).count();
     } else {
-        throw except::runtime_error("LAPACK zheevd failed with error: " + std::to_string(info));
+        throw std::runtime_error("LAPACK zheevd failed with error: " + std::to_string(info));
     }
     return info;
 }

@@ -20,10 +20,9 @@
 
 using namespace eig;
 
-int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int iu, double vl, double vu, int m) {
-    eig::log->trace("Starting eig dsyevx | range {} | i [{},{}] | v [{},{}] | m {}", range, il, iu, vl, vu, m);
+int eig::solver::dsyevx(real *matrix, size_type L, char range, int il, int iu, double vl, double vu) {
+    eig::log->trace("Starting eig dsyevx | range {} | i [{},{}] | v [{},{}]", range, il, iu, vl, vu);
     auto t_start = std::chrono::high_resolution_clock::now();
-    auto A       = std::vector<real>(matrix, matrix + L * L);
     char jobz    = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     int  info    = 0;
     int  n       = static_cast<int>(L);
@@ -31,11 +30,11 @@ int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int
     int  ldz     = std::max(1, n);
     int  liwork  = std::max(1, 5 * n);
     auto lifail  = std::max(1ul, static_cast<size_t>(n));
+    int  m_req = n; // For range == 'V' we don't know how many eigenvalues will be found in (vl,vu]
+    if(range == 'I') m_req = std::max(iu, il) - std::min(iu, il) + 1;
+    m_req = std::clamp(m_req, 1, std::min(m_req, n));
 
-    if(range == 'I') m = iu - il + 1;
-    m = std::min(m, n);
-
-    int              m_found = m;
+    int              m_found = 0;
     double           lwork_query[1];
     std::vector<int> iwork(static_cast<size_t>(liwork));
     std::vector<int> ifail(lifail);
@@ -43,10 +42,12 @@ int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::REAL>();
     eigvals.resize(static_cast<size_t>(ldz));
-    eigvecs.resize(static_cast<size_t>(ldz) * static_cast<size_t>(ldz)); // Docs claim ldz * m, but it segfaults when 'V' finds more than m eigvals
+    if(config.compute_eigvecs == Vecs::ON) {
+        eigvecs.resize(static_cast<size_t>(ldz * m_req)); // Docs claim ldz * m, but it segfaults when 'V' finds more than m eigvals
+    }
 
-    info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', static_cast<int>(L), A.data(), lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found,
-                               eigvals.data(), eigvecs.data(), ldz, lwork_query, -1, iwork.data(), ifail.data());
+    info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', n, matrix, lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found, eigvals.data(),
+                               eigvecs.data(), ldz, lwork_query, -1, iwork.data(), ifail.data());
 
     int lwork = static_cast<int>(lwork_query[0]);
     eig::log->trace(" lwork  = {}", lwork);
@@ -55,15 +56,15 @@ int eig::solver::dsyevx(const real *matrix, size_type L, char range, int il, int
 
     auto t_prep = std::chrono::high_resolution_clock::now();
 
-    info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', static_cast<int>(L), A.data(), lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found,
-                               eigvals.data(), eigvecs.data(), ldz, work.data(), lwork, iwork.data(), ifail.data());
+    info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', n, matrix, lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found, eigvals.data(),
+                               eigvecs.data(), ldz, work.data(), lwork, iwork.data(), ifail.data());
 
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
-        eig::log->trace("Found {} eigenvalues | requested {}", m_found, m);
+        eig::log->trace("Found {} eigenvalues",m_found);
         eigvals.resize(static_cast<size_t>(m_found));
-        eigvecs.resize(static_cast<size_t>(m_found) * static_cast<size_t>(ldz));
-        result.meta.eigvecsR_found = true;
+        eigvecs.resize(static_cast<size_t>(ldz * m_found));
+        result.meta.eigvecsR_found = config.compute_eigvecs == Vecs::ON;
         result.meta.eigvals_found  = true;
         result.meta.rows           = L;
         result.meta.cols           = m_found;

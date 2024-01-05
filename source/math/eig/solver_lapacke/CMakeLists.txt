@@ -6,6 +6,7 @@ add_source_target(dmrg-math-eig-lapacke
         solver_dsyevr.cpp
         solver_zgeev.cpp
         solver_zheevd.cpp
+        solver_zheevr.cpp
         OBJECT_LINK_LIBRARIES
         dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
