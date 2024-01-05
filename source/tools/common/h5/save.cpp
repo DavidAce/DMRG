@@ -203,18 +203,14 @@ namespace tools::common::h5 {
     }
     void save::initial_state_attrs(h5pp::File &h5file, const StorageInfo &sinfo) {
         if(sinfo.storage_event != StorageEvent::INIT) return;
-        if(settings::strategy::initial_pattern.empty()) {
-            tools::log->warn("Could not save the initial state pattern: the pattern is empty");
-            return;
-        }
         auto state_prefix = sinfo.get_state_prefix();
         h5file.createGroup(state_prefix);
         // Save the initial state pattern (rather than the MPS itself) and the initial state type
         h5file.writeAttribute(enum2sv(settings::strategy::initial_state), state_prefix, "initial_state");
-        h5file.writeAttribute(settings::strategy::initial_pattern, state_prefix, "initial_pattern");
         h5file.writeAttribute(enum2sv(settings::strategy::initial_type), state_prefix, "initial_type");
         h5file.writeAttribute(settings::strategy::initial_axis, state_prefix, "initial_axis");
         h5file.writeAttribute(settings::strategy::target_axis, state_prefix, "target_state_axis");
+        if(!settings::strategy::initial_pattern.empty()) { h5file.writeAttribute(settings::strategy::initial_pattern, state_prefix, "initial_pattern"); }
     }
 
     hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
