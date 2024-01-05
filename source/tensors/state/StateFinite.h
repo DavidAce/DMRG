@@ -1,6 +1,7 @@
 #pragma once
 
 #include "config/enums.h"
+#include "math/float.h"
 #include <complex>
 #include <measure/MeasurementsStateFinite.h>
 #include <memory>
@@ -29,14 +30,12 @@ class MpsSite;
 class TensorsFinite;
 
 class StateFinite {
-    public:
-    using Scalar = std::complex<double>;
-
     private:
     struct Cache {
-        std::optional<Eigen::Tensor<Scalar, 3>>                   multisite_mps = std::nullopt;
-        std::unordered_map<std::string, Eigen::Tensor<Scalar, 4>> temporary_rho = {};
-
+        std::optional<Eigen::Tensor<cplx, 3>>                   multisite_mps = std::nullopt;
+        std::unordered_map<std::string, Eigen::Tensor<cplx, 3>> mps_cplx      = {};
+        std::unordered_map<std::string, Eigen::Tensor<real, 3>> mps_real      = {};
+        std::unordered_map<std::string, Eigen::Tensor<cplx, 4>> temporary_rho = {};
     };
 
     int                       direction = 1;
@@ -67,8 +66,8 @@ class StateFinite {
     void                        set_algorithm(const AlgorithmType &algo_type);
     [[nodiscard]] AlgorithmType get_algorithm() const;
 
-    const Eigen::Tensor<Scalar, 1> &get_midchain_bond() const;
-    const Eigen::Tensor<Scalar, 1> &current_bond() const;
+    const Eigen::Tensor<cplx, 1> &get_midchain_bond() const;
+    const Eigen::Tensor<cplx, 1> &current_bond() const;
 
     template<typename T = size_t>
     [[nodiscard]] T get_length() const;
@@ -119,9 +118,14 @@ class StateFinite {
     long                             get_spin_dim() const;
     std::vector<std::array<long, 3>> get_mps_dims(const std::vector<size_t> &sites) const;
     std::vector<std::array<long, 3>> get_mps_dims_active() const;
-    Eigen::Tensor<Scalar, 3>         get_multisite_mps(const std::vector<size_t> &sites) const;
-    const Eigen::Tensor<Scalar, 3>  &get_multisite_mps() const;
-    const Eigen::Tensor<Scalar, 2>   get_reduced_density_matrix(const std::vector<size_t> &sites) const;
+    template<typename Scalar = cplx>
+    Eigen::Tensor<Scalar, 3>      get_multisite_mps(const std::vector<size_t> &sites, bool use_cache = false) const;
+    const Eigen::Tensor<cplx, 3> &get_multisite_mps() const;
+    template<typename Scalar = cplx>
+    Eigen::Tensor<Scalar, 2> get_reduced_density_matrix(const std::vector<size_t> &sites) const;
+    //    Eigen::Tensor<cplx, 2>           get_reduced_density_matrix_l2r(const std::vector<size_t> &sites) const;
+    //    Eigen::Tensor<cplx, 2>           get_reduced_density_matrix_r2l(const std::vector<size_t> &sites) const;
+    //    Eigen::Tensor<cplx, 2>           get_reduced_density_matrix(const std::vector<size_t> &sites) const;
 
     public:
     void                set_truncation_error(size_t pos, double error);

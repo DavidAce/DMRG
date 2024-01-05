@@ -79,8 +79,8 @@ void StateFinite::initialize(AlgorithmType algo_type, size_t model_size, long po
     mps_sites.clear();
 
     // Generate a simple state with all spins equal
-    Eigen::Tensor<Scalar, 3> M(static_cast<long>(spin_dim), 1, 1);
-    Eigen::Tensor<Scalar, 1> L(1);
+    Eigen::Tensor<cplx, 3> M(static_cast<long>(spin_dim), 1, 1);
+    Eigen::Tensor<cplx, 1> L(1);
     M(0, 0, 0) = 0;
     M(1, 0, 0) = 1;
     L(0)       = 1;
@@ -255,7 +255,7 @@ void StateFinite::assert_validity() const {
     }
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::get_midchain_bond() const {
+const Eigen::Tensor<cplx, 1> &StateFinite::get_midchain_bond() const {
     auto pos = get_position<long>();
     auto cnt = (get_length<long>() - 1) / 2;
     if(pos < cnt) return get_mps_site(cnt).get_L();
@@ -263,7 +263,7 @@ const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::get_midchain_bond() co
     return get_mps_site(cnt).get_LC();
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 1> &StateFinite::current_bond() const { return get_mps_site(get_position()).get_LC(); }
+const Eigen::Tensor<cplx, 1> &StateFinite::current_bond() const { return get_mps_site(get_position()).get_LC(); }
 
 template<typename T>
 const MpsSite &StateFinite::get_mps_site(T pos) const {
@@ -349,157 +349,149 @@ std::vector<std::array<long, 3>> StateFinite::get_mps_dims(const std::vector<siz
 
 std::vector<std::array<long, 3>> StateFinite::get_mps_dims_active() const { return get_mps_dims(active_sites); }
 
-Eigen::Tensor<StateFinite::Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites) const {
+template<typename Scalar>
+Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites, bool use_cache) const {
     if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");
-    if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
-    auto                     t_mps = tid::tic_scope("gen_mps", tid::level::highest);
-    Eigen::Tensor<Scalar, 3> multisite_mps;
-    Eigen::Tensor<Scalar, 3> temp;
-    for(auto &site : sites) {
-        if(&site == &sites.front()) { // First site
-            multisite_mps = get_mps_site(site).get_M();
-            continue;
-        }
-        const auto &M = get_mps_site(site).get_M();
-        multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
-    }
-    if(sites.front() != 0 and get_mps_site(sites.front()).get_label() == "B") {
-        // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
-        auto &mps_left = get_mps_site(sites.front() - 1);
-        auto &L_left   = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
-        if(L_left.dimension(0) != multisite_mps.dimension(1))
-            throw except::logic_error("get_multisite_mps: mismatching dimensions: L_left {} | multisite_mps {}", L_left.dimensions(),
-                                      multisite_mps.dimensions());
-        multisite_mps = tools::common::contraction::contract_bnd_mps_temp(L_left, multisite_mps, temp);
-    } else if(sites.back() < get_length() - 1 and get_mps_site(sites.back()).get_label() == "A") {
-        // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
-        auto &mps_right = get_mps_site(sites.back() + 1);
-        auto &L_right   = mps_right.get_L();
-        if(L_right.dimension(0) != multisite_mps.dimension(2))
-            throw except::logic_error("get_multisite_mps: mismatching dimensions: L_right {} | multisite_mps {}", L_right.dimensions(),
-                                      multisite_mps.dimensions());
-        multisite_mps = tools::common::contraction::contract_mps_bnd_temp(multisite_mps, L_right, temp);
-    }
+    if constexpr(std::is_same_v<Scalar, cplx>) {
+        if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
+        auto                   t_mps  = tid::tic_scope("gen_mps", tid::level::highest);
+        auto                   csites = std::vector<size_t>{}; // Keeps track of the contracted sites
+        auto                   length = get_length<size_t>();
+        Eigen::Tensor<cplx, 3> multisite_mps;
+        Eigen::Tensor<cplx, 3> temp;
+        for(auto &site : sites) {
+            csites.emplace_back(site);
+            const auto mps_key = fmt::format("{}", csites);
+            if(use_cache and cache.mps_cplx.find(mps_key) != cache.mps_cplx.end()) {
+                tools::log->debug("multisite_mps: cache_hit: {}", csites);
+                multisite_mps = cache.mps_cplx.at(mps_key);
+            } else {
+                const auto &mps       = get_mps_site(site);
+                auto        M         = mps.get_M();
+                bool        prepend_L = mps.get_label() == "B" and site > 0 and site == sites.front();
+                bool        append_L  = mps.get_label() == "A" and site + 1 < length and site == sites.back();
+                if(prepend_L) {
+                    // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
+                    auto        t_prepend = tid::tic_scope("prepend", tid::level::higher);
+                    const auto &mps_left  = get_mps_site(site - 1);
+                    const auto &L         = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
+                    if(L.dimension(0) != M.dimension(1))
+                        throw except::logic_error("get_multisite_mps<cplx>({}): mismatching dimensions: L (left) {} | M {}", sites, L.dimensions(),
+                                                  M.dimensions());
+                    M = tools::common::contraction::contract_bnd_mps_temp(L, M, temp);
+                }
+                if(append_L) {
+                    // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
+                    auto        t_append  = tid::tic_scope("append", tid::level::higher);
+                    const auto &mps_right = get_mps_site(site + 1);
+                    const auto &L         = mps_right.get_L();
+                    if(L.dimension(0) != M.dimension(2))
+                        throw except::logic_error("get_multisite_mps<cplx>({}): mismatching dimensions: M {} | L (right) {}", sites, M.dimensions(),
+                                                  L.dimensions());
+                    M = tools::common::contraction::contract_mps_bnd_temp(M, L, temp);
+                }
 
-    if constexpr(settings::debug) {
-        // Check the norm of the tensor on debug builds
-        auto   t_dbg = tid::tic_scope("debug");
-        double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
-        if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
-        if(std::abs(norm - 1) > settings::precision::max_norm_error) {
-            throw except::runtime_error("get_multisite_mps({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
-                                        settings::precision::max_norm_error);
+                if(&site == &sites.front()) { // First site
+                    multisite_mps = M;
+                } else { // Next sites
+                    multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
+                }
+
+                if(use_cache and not append_L) // If it is the last site, we may have closed off by appending L
+                    cache.mps_cplx[mps_key] = multisite_mps;
+            }
         }
+        if constexpr(settings::debug) {
+            // Check the norm of the tensor on debug builds
+            auto   t_dbg = tid::tic_scope("debug");
+            double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
+            if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
+            if(std::abs(norm - 1) > settings::precision::max_norm_error) {
+                throw except::runtime_error("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
+                                            settings::precision::max_norm_error);
+            }
+        }
+        return multisite_mps;
+    } else if constexpr(std::is_same_v<Scalar, real>) {
+        auto                   t_mps  = tid::tic_scope("gen_mps", tid::level::highest);
+        auto                   csites = std::vector<size_t>{}; // Keeps track of the contracted sites
+        auto                   length = get_length<size_t>();
+        Eigen::Tensor<real, 3> multisite_mps;
+        Eigen::Tensor<real, 3> temp;
+        for(auto &site : sites) {
+            csites.emplace_back(site);
+            const auto mps_key = fmt::format("{}", csites);
+            if(use_cache and cache.mps_real.find(mps_key) != cache.mps_real.end()) {
+                tools::log->trace("multisite_mps: cache_hit: {}", csites);
+                multisite_mps = cache.mps_real.at(mps_key);
+            } else {
+                const auto &mps       = get_mps_site(site);
+                auto        M         = Eigen::Tensor<real, 3>(mps.get_M().real());
+                bool        prepend_L = mps.get_label() == "B" and site > 0 and site == sites.front();
+                bool        append_L  = mps.get_label() == "A" and site + 1 < length and site == sites.back();
+                if(prepend_L) {
+                    // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
+                    tools::log->debug("Prepending L to B site {}", site);
+                    auto        t_prepend = tid::tic_scope("prepend", tid::level::higher);
+                    const auto &mps_left  = get_mps_site(site - 1);
+                    const auto  L         = Eigen::Tensor<real, 1>(mps_left.isCenter() ? mps_left.get_LC().real() : mps_left.get_L().real());
+                    if(L.dimension(0) != M.dimension(1))
+                        throw except::logic_error("get_multisite_mps<real>: mismatching dimensions: L (left) {} | M {}", L.dimensions(), M.dimensions());
+                    M = tools::common::contraction::contract_bnd_mps_temp(L, M, temp);
+                }
+                if(append_L) {
+                    // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
+                    tools::log->debug("Appending L to A site {}", site);
+                    auto        t_append  = tid::tic_scope("append", tid::level::higher);
+                    const auto &mps_right = get_mps_site(site + 1);
+                    const auto &L         = Eigen::Tensor<real, 1>(mps_right.get_L().real());
+                    if(L.dimension(0) != M.dimension(2))
+                        throw except::logic_error("get_multisite_mps<real>: mismatching dimensions: M {} | L (right) {}", M.dimensions(), L.dimensions());
+                    M = tools::common::contraction::contract_mps_bnd_temp(M, L, temp);
+                }
+
+                if(&site == &sites.front()) { // First site
+                    multisite_mps = M;
+                } else { // Next sites
+                    multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
+                }
+                if(use_cache and not append_L) // If it is the last site, we may have closed off by appending L
+                    cache.mps_real[mps_key] = multisite_mps;
+            }
+        }
+        if constexpr(settings::debug) {
+            // Check the norm of the tensor on debug builds
+            auto   t_dbg = tid::tic_scope("debug");
+            double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
+            if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
+            if(std::abs(norm - 1) > settings::precision::max_norm_error) {
+                throw except::runtime_error("get_multisite_mps<real>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
+                                            settings::precision::max_norm_error);
+            }
+        }
+        return multisite_mps;
     }
-    return multisite_mps;
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 3> &StateFinite::get_multisite_mps() const {
+template Eigen::Tensor<real, 3> StateFinite::get_multisite_mps<real>(const std::vector<size_t> &sites, bool use_cache) const;
+template Eigen::Tensor<cplx, 3> StateFinite::get_multisite_mps<cplx>(const std::vector<size_t> &sites, bool use_cache) const;
+
+const Eigen::Tensor<cplx, 3> &StateFinite::get_multisite_mps() const {
     if(cache.multisite_mps) return cache.multisite_mps.value();
     cache.multisite_mps = get_multisite_mps(active_sites);
     return cache.multisite_mps.value();
 }
 
-const Eigen::Tensor<StateFinite::Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vector<size_t> &sites) const {
-    if(sites.empty()) throw except::runtime_error("No sites on which to build a reduced density matrix for a subsystem");
-    auto                     t_mps = tid::tic_scope("gen_rho", tid::level::higher);
-    Eigen::Tensor<Scalar, 3> multisite_mps;
-    Eigen::Tensor<Scalar, 4> temporary_rho;
-    Eigen::Tensor<Scalar, 4> temp;
-    auto                     length = get_length<size_t>();
-    auto                     asites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
-    auto                     csites = std::vector<size_t>{};                               // Track sites that were contracted
-    auto                     osites = std::vector<size_t>{};                               // Track sites that were left open
-    /*
-     *  -----|-----2
-     *  |    |
-     *  |    0
-     *  |    1
-     *  |    |
-     *  -----|-----3
-     */
-
-    for(auto &site : asites) {
-        const auto &mps        = get_mps_site(site);
-        auto        M          = mps.get_M(); // Can be an A, AC or a B site
-        auto        dL         = temporary_rho.dimension(0);
-        auto        dR         = M.dimension(0);
-        auto        chiR       = M.dimension(2);
-        auto        t_contract = tid::tic_scope("contract", tid::level::higher);
-
-        if(mps.get_label() == "B" and site > 0 and site == sites.front()) {
-            // Before building the rho, we may need to prepend a lambda if the first site is a "B" matrix.
-            auto        t_prepend                 = tid::tic_scope("prepend", tid::level::higher);
-            const auto &mps_left                  = get_mps_site(site - 1);
-            const auto &L                         = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
-            auto        LB                        = Eigen::Tensor<Scalar, 3>(M.dimensions());
-            LB.device(tenx::threads::getDevice()) = tenx::asDiagonal(L).contract(M, tenx::idx({1}, {1})).shuffle(std::array<long, 3>{1, 0, 2});
-            M                                     = LB;
-        }
-
-        bool contract_site = std::find(sites.begin(), sites.end(), site) == sites.end();
-        if(contract_site) csites.emplace_back(site);
-        if(!contract_site) osites.emplace_back(site);
-        auto rho_key = fmt::format("{}|{}", csites, osites);
-        if(cache.temporary_rho.find(rho_key) != cache.temporary_rho.end()) {
-            auto t_cachehit = tid::tic_scope("cachehit", tid::level::higher);
-            tools::log->info("-- cache hit: {} - site {}", rho_key, site);
-            temporary_rho = cache.temporary_rho.at(rho_key);
-        } else {
-            if(contract_site) {
-                tools::log->info("-- contract : {} - site {}", rho_key, site);
-                if(&site == &asites.front()) { // First site
-                    auto t_A = tid::tic_scope("A-dL-1", tid::level::higher);
-                    auto dim = std::array<long, 4>{1, 1, chiR, chiR};
-                    temp     = tools::common::contraction::contract_mps_mps_partial(M, M, {0, 1}).reshape(dim);
-                } else {
-                    auto t_B = tid::tic_scope(fmt::format("B-dL-{}", dL), tid::level::higher);
-                    auto dim = std::array<long, 4>{dL, dL, chiR, chiR};
-                    temp.resize(dim);
-                    temp.device(tenx::threads::getDevice()) =
-                        temporary_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2, 3}, {1, 0})).reshape(dim);
-                }
-                //            temp = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
-            } else {
-                tools::log->info("-- add site : {} - site {}", rho_key, site);
-
-                // The current site should be kept open
-                if(&site == &asites.front()) { // First site
-                    auto t_C = tid::tic_scope(fmt::format("C-dR-{}", dR), tid::level::higher);
-                    auto dim = std::array<long, 4>{dR, dR, chiR, chiR};
-                    auto shf = std::array<long, 4>{0, 2, 1, 3};
-                    temp.resize(dim);
-                    temp.device(tenx::threads::getDevice()) = M.contract(M.conjugate(), tenx::idx({1}, {1})).shuffle(shf);
-                } else {
-                    auto           t_D = tid::tic_scope(fmt::format("D-dLdR-{}", dL * dR), tid::level::higher);
-                    auto           dim = std::array<long, 4>{dL * dR, dL * dR, chiR, chiR};
-                    constexpr auto shf = std::array<long, 6>{0, 2, 1, 4, 3, 5};
-                    temp.resize(dim);
-                    temp.device(tenx::threads::getDevice()) =
-                        temporary_rho.contract(M, tenx::idx({2}, {1})).contract(M.conjugate(), tenx::idx({2}, {1})).shuffle(shf).reshape(dim);
-                }
-            }
-            temporary_rho                = temp;
-            cache.temporary_rho[rho_key] = temporary_rho;
-        }
-    }
-
-    const auto &mps = get_mps_site(sites.back());
-    if(mps.get_label() == "A" and sites.back() < length - 1) {
-        // Before closing off the rho, we may need to append a lambda if the last site was an "A" matrix.
-        // In this case we can simply contract the squared lambda matrix instead of tracing.
-        auto        t_E = tid::tic_scope(fmt::format("E-rho-{}", temporary_rho.dimension(0)), tid::level::higher);
-        const auto &mps_right  = get_mps_site(sites.back() + 1);
-        const auto &L          = mps_right.get_L();
-        auto        rho        = Eigen::Tensor<Scalar, 2>();
-        rho.resize(temporary_rho.dimension(0), temporary_rho.dimension(1));
-        rho.device(tenx::threads::getDevice()) = temporary_rho.contract(tenx::asDiagonal(L.square()), tenx::idx({2, 3}, {0, 1}));
-        return rho;
-    } else {
-        auto t_F = tid::tic_scope(fmt::format("F-rho-{}", temporary_rho.dimension(0)), tid::level::higher);
-        return temporary_rho.trace(std::array<long, 2>{2, 3});
-    }
+template<typename Scalar>
+Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vector<size_t> &sites) const {
+    auto asites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
+    if(sites != asites) throw except::logic_error("get_reduced_density_matrix expected contiguous sites. Got: {}", sites);
+    auto mps = get_multisite_mps<Scalar>(sites, true);
+    return tools::common::contraction::contract_mps_partial(mps, {1, 2});
 }
+
+template Eigen::Tensor<real, 2> StateFinite::get_reduced_density_matrix<real>(const std::vector<size_t> &sites) const;
+template Eigen::Tensor<cplx, 2> StateFinite::get_reduced_density_matrix<cplx>(const std::vector<size_t> &sites) const;
 
 void StateFinite::set_truncation_error(size_t pos, double error) { get_mps_site(pos).set_truncation_error(error); }
 void StateFinite::set_truncation_error(double error) { set_truncation_error(get_position(), error); }
