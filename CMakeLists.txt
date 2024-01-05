@@ -84,10 +84,6 @@ add_subdirectory(source)
 ### Link all the things!
 target_link_libraries(DMRG++ PRIVATE dmrg-main)
 
-
-### Enable mold linker (incompatible with lto). Requires COMPILER_ENABLE_MOLD=ON
-target_enable_mold(DMRG++)
-
 ### Enable static linking of libgcc and libstdc++. Requires BUILD_SHARED_LIBS=OFF
 target_enable_static_libgcc(DMRG++)
 

@@ -55,17 +55,14 @@ class DMRGConan(ConanFile):
 
 
     def requirements(self):
-        self.requires("h5pp/1.11.1@davidace/dev")
+        self.requires("h5pp/[>=1.11.1 <1.12]@davidace/dev")
         self.requires("ceres-solver/2.2.0")
-        self.requires("fmt/10.1.1")
-        self.requires("spdlog/1.12.0")
+        self.requires("fmt/[>=10.1.0 <10.2]")
+        self.requires("spdlog/[>=1.12.0 <1.13]")
         self.requires("eigen/3.4.0")
-        self.requires("arpack++/2.3.0@davidace/dev")
         self.requires("cli11/2.3.2")
         self.requires("backward-cpp/1.6")
-        self.requires("zlib/1.3")
         self.requires("pcg-cpp/cci.20220409")
-        # self.requires("mpfr/4.1.0")
 
 
     def validate(self):

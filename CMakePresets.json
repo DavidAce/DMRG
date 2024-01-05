@@ -22,7 +22,6 @@
         "EIGEN_USE_THREADS": "TRUE",
         "TBLIS_THREAD_MODEL": "openmp",
         "BUILD_SHARED_LIBS": "FALSE",
-        "COMPILER_ENABLE_MOLD": "FALSE",
         "COMPILER_PROFILE_BUILD": "FALSE",
         "CMAKE_VERBOSE_MAKEFILE": "FALSE",
         "CMAKE_MESSAGE_LOG_LEVEL": "STATUS",
@@ -107,7 +106,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "COMPILER_ENABLE_PCH": "TRUE",
-        "COMPILER_ENABLE_CCACHE": "TRUE"
+        "COMPILER_ENABLE_CCACHE": "TRUE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
       }
     },
     {
@@ -121,7 +121,6 @@
         "DMRG_CMAKE_DEBUG": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",
         "COMPILER_ENABLE_USAN": "TRUE",
-        "COMPILER_ENABLE_MOLD": "FALSE",
         "COMPILER_ENABLE_PCH": "FALSE",
         "COMPILER_ENABLE_CCACHE": "FALSE",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
@@ -138,7 +137,8 @@
         "CMAKE_CXX_FLAGS": "-g -ggdb -fdiagnostics-color=always -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS": "-g -ggdb -fdiagnostics-color=always -fno-omit-frame-pointer",
         "COMPILER_ENABLE_PCH": "TRUE",
-        "COMPILER_ENABLE_CCACHE": "TRUE"
+        "COMPILER_ENABLE_CCACHE": "TRUE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"
       }
     },
     {
@@ -178,7 +178,9 @@
         "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-12",
         "CMAKE_CXX_COMPILER": "g++-12",
-        "CMAKE_Fortran_COMPILER": "gfortran-12"
+        "CMAKE_Fortran_COMPILER": "gfortran-12",
+        "CMAKE_EXE_LINKER_FLAGS": " -fuse-ld=mold -Wl,--enable-new-dtags",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=mold"
       }
     },
     {
@@ -188,7 +190,10 @@
         "DMRG_USE_QUADMATH": "TRUE",
         "CMAKE_C_COMPILER": "gcc-13",
         "CMAKE_CXX_COMPILER": "g++-13",
-        "CMAKE_Fortran_COMPILER": "gfortran-13"
+        "CMAKE_Fortran_COMPILER": "gfortran-13",
+        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -Wno-array-bounds",
+        "CMAKE_EXE_LINKER_FLAGS": "-fuse-ld=mold -Wl,--enable-new-dtags",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fuse-ld=mold"
       }
     },
     {
@@ -235,11 +240,7 @@
         "gcc-11",
         "release",
         "default"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      }
+      ]
     },
     {
       "name": "release-gcc-12",
@@ -249,11 +250,7 @@
         "gcc-12",
         "release",
         "default"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      }
+      ]
     },
     {
       "name": "release-gcc-13",
@@ -263,11 +260,7 @@
         "gcc-13",
         "release",
         "default"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      }
+      ]
     },
     {
       "name": "release-clang-15",
@@ -277,11 +270,7 @@
         "clang-15",
         "release",
         "default"
-      ],
-      "cacheVariables": {
-        "COMPILER_ENABLE_MOLD": "TRUE",
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      }
+      ]
     },
     {
       "name": "debug-gcc-12",
@@ -291,10 +280,7 @@
         "gcc-12",
         "debug",
         "default"
-      ],
-      "cacheVariables": {
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      }
+      ]
     },
     {
       "name": "debug-gcc-13",
@@ -304,10 +290,7 @@
         "gcc-13",
         "debug",
         "default"
-      ],
-      "cacheVariables": {
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE"
-      }
+      ]
     },
     {
       "name": "debug-clang-15",
@@ -436,7 +419,10 @@
         "flexiblas",
         "conan",
         "release-gcc-13"
-      ]
+      ],
+      "cacheVariables": {
+        "COMPILER_ENABLE_PCH": "FALSE"
+      }
     },
     {
       "name": "release-clang-15-conan-mkl-native",
@@ -561,6 +547,7 @@
       "name": "kraken",
       "displayName": "Release|march=haswell|conan|mkl",
       "inherits": [
+        "gcc-12",
         "flexiblas",
         "haswell",
         "conan",
@@ -571,7 +558,6 @@
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-release-pkg-install",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
-        "COMPILER_ENABLE_MOLD": "TRUE",
         "DMRG_BUILD_TOOLS": "TRUE",
         "DMRG_USE_QUADMATH": "TRUE"
       }
@@ -593,7 +579,6 @@
         "DMRG_USE_QUADMATH": "TRUE",
         "COMPILER_ENABLE_ASAN": "TRUE",
         "COMPILER_ENABLE_USAN": "TRUE",
-        "COMPILER_ENABLE_MOLD": "FALSE",
         "COMPILER_ENABLE_PCH": "FALSE",
         "COMPILER_ENABLE_CCACHE": "FALSE"
       },

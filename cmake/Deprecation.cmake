@@ -55,7 +55,11 @@ if(COMPILER_ENABLE_LTO)
     message(FATAL_ERROR "The option [COMPILER_ENABLE_LTO] has been deprecated.. Replace by:\n"
             "CMAKE_INTERPROCEDURAL_OPTIMIZATION:BOOL=[TRUE|FALSE]")
 endif()
-
+if(COMPILER_ENABLE_MOLD)
+    message(FATAL_ERROR "The option [COMPILER_ENABLE_MOLD] has been deprecated.. Replace by:\n"
+                    "\tCMAKE_EXE_LINKER_FLAGS=-fuse-ld=mold\n"
+                    "\tCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=mold")
+endif()
 if(DMRG_MARCH)
     message(FATAL_ERROR "The option [DMRG_MARCH] has been deprecated.")
 endif()
