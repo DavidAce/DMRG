@@ -301,18 +301,6 @@ void TensorsFinite::shift_mpo_energy(std::optional<double> energy_shift_per_site
     }
 }
 
-void TensorsFinite::set_psfactor(double psfactor) {
-    tools::log->info("Setting parity separation factor: {:.16f}", psfactor);
-    model->set_psfactor(psfactor);
-    model->clear_mpo_squared();
-    edges->eject_edges_all();
-    rebuild_mpo();
-    rebuild_mpo_squared();
-    rebuild_edges();
-    if constexpr(settings::debug) model->assert_validity();
-    if constexpr(settings::debug) edges->assert_validity();
-}
-
 void TensorsFinite::rebuild_mpo() {
     tools::log->trace("Rebuilding MPO");
     model->build_mpo();

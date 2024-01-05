@@ -24,8 +24,6 @@ IsingSelfDual::IsingSelfDual(ModelType model_type_, size_t position_) : MpoSite(
 
     h5tb.param.spin_dim     = settings::model::ising_sdual::spin_dim;
     h5tb.param.distribution = settings::model::ising_sdual::distribution;
-    parity_sep              = settings::model::ising_sdual::parity_sep;
-
     extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
     extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
 }
@@ -106,13 +104,6 @@ void IsingSelfDual::build_mpo()
 
     mpo_internal.resize(5, 5, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
-    if(parity_sep) {
-        mpo_internal.resize(6, 6, h5tb.param.spin_dim, h5tb.param.spin_dim);
-        mpo_internal.setZero();
-        // Multiply the psfactor on the edge! Not on each MPO!
-        mpo_internal.slice(std::array<long, 4>{5, 5, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
-    }
-
     mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
     mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
     mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
@@ -203,7 +194,6 @@ long IsingSelfDual::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
 void IsingSelfDual::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
-    if(parity_sep) set_psfactor(2.0 * (h5tb.param.J_mean + h5tb.param.h_mean) * (1.0 + h5tb.param.lambda) * static_cast<double>(all_parameters.size()));
     set_parameters(all_parameters[get_position()]);
 }
 

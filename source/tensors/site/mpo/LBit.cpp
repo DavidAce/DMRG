@@ -652,7 +652,6 @@ Eigen::Tensor<cplx, 4> LBit::MPO_shifted_view(double site_energy) const {
     Eigen::Tensor<cplx, 4> temp = MPO();
     long                   row  = temp.dimension(0) - 1;
     long                   col  = 0;
-    if(parity_sep) row = temp.dimension(0) - 2;
     Eigen::Tensor<cplx, 2> Z                                           = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I                                           = tenx::TensorMap(id);
     temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J1_rand.to_floating_point<real>()) * Z - site_energy * I;
@@ -670,7 +669,6 @@ void LBit::set_averages([[maybe_unused]] std::vector<TableMap> lattice_parameter
         lattice_parameters.back()["J3_rand"]    = decltype(h5tb.param.J3_rand)(0.0);
         lattice_parameters.end()[-2]["J3_rand"] = decltype(h5tb.param.J3_rand)(0.0);
     }
-    if(parity_sep) throw std::runtime_error("Parity sector separation is not supported on LBIT MPO");
     set_parameters(lattice_parameters[get_position()]);
 }
 

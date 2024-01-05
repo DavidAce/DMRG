@@ -135,12 +135,10 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("model::ising_tf_rf::distribution"             , model::ising_tf_rf::distribution);
     dmrg_config.load_parameter("model::ising_sdual::delta"                    , model::ising_sdual::delta);
     dmrg_config.load_parameter("model::ising_sdual::lambda"                   , model::ising_sdual::lambda);
-    dmrg_config.load_parameter("model::ising_sdual::parity_sep"               , model::ising_sdual::parity_sep);
     dmrg_config.load_parameter("model::ising_sdual::distribution"             , model::ising_sdual::distribution);
     dmrg_config.load_parameter("model::ising_sdual::spin_dim"                 , model::ising_sdual::spin_dim);
     dmrg_config.load_parameter("model::ising_majorana::delta"                 , model::ising_majorana::delta);
     dmrg_config.load_parameter("model::ising_majorana::g"                     , model::ising_majorana::g);
-    dmrg_config.load_parameter("model::ising_majorana::parity_sep"            , model::ising_majorana::parity_sep);
     dmrg_config.load_parameter("model::ising_majorana::distribution"          , model::ising_majorana::distribution);
     dmrg_config.load_parameter("model::ising_majorana::spin_dim"              , model::ising_majorana::spin_dim);
     dmrg_config.load_parameter("model::lbit::J1_mean"                         , model::lbit::J1_mean);

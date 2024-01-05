@@ -236,25 +236,6 @@ void MpoSite::set_energy_shift(double site_energy) {
     }
 }
 
-void MpoSite::set_psfactor(double psfactor_) {
-    // TODO: remove everything about psfactor: it's better to add a parity shift to the mpo
-    if(psfactor != 0 and psfactor_ == 0) {
-        parity_sep = false;
-        psfactor   = psfactor_;
-        build_mpo();
-        mpo_squared  = std::nullopt;
-        unique_id    = std::nullopt;
-        unique_id_sq = std::nullopt;
-    } else if(psfactor_ != psfactor) {
-        parity_sep = true;
-        psfactor   = psfactor_;
-        build_mpo();
-        mpo_squared  = std::nullopt;
-        unique_id    = std::nullopt;
-        unique_id_sq = std::nullopt;
-    }
-}
-
 void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
     if(sign == 0) return;
     if(not qm::spin::half::is_valid_axis(axis)) return;
@@ -276,7 +257,6 @@ Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_left() const {
     Eigen::Tensor<cplx, 1> ledge(ldim);
     ledge.setZero();
     ledge(ldim - 1) = 1;
-    if(parity_sep) ledge(ldim - 2) = 1;
     return ledge;
 }
 
@@ -286,7 +266,6 @@ Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_right() const {
     Eigen::Tensor<cplx, 1> redge(rdim);
     redge.setZero();
     redge(0) = 1;
-    if(parity_sep) redge(rdim - 1) = psfactor; // Add the parity separation factor here
     return redge;
 }
 

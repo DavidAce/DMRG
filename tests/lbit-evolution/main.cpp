@@ -355,14 +355,12 @@ int main(int argc, char *argv[]) {
     while(flbit_swap.status.algo_stop == AlgorithmStop::NONE and flbit_slow.status.algo_stop == AlgorithmStop::NONE) {
         set_log("swap");
         flbit_swap.update_state();
-        tools::finite::measure::do_all_measurements(*flbit_swap.tensors.state);
         flbit_swap.print_status();
         test_swap_count += assert_lbit_evolution(flbit_swap);
         flbit_swap.update_time_evolution_gates();
 
         set_log("slow");
         flbit_slow.update_state();
-        tools::finite::measure::do_all_measurements(*flbit_slow.tensors.state);
         flbit_slow.print_status();
         test_slow_count += assert_lbit_evolution(flbit_slow);
         flbit_slow.update_time_evolution_gates();

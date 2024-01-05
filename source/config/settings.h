@@ -300,7 +300,6 @@ namespace settings {
         namespace ising_sdual {
             inline double       lambda        = 0;              /*!< Lambda parameter related to next nearest neighbor coupling */
             inline double       delta         = 0;              /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing max(J_mean,h_mean) = 1 */
-            inline bool         parity_sep    = false;          /*!< Separation of +-Z parity sectors */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
         }
@@ -309,7 +308,6 @@ namespace settings {
         namespace ising_majorana {
             inline double       g             = 0;              /*!< Interaction parameter for nearest ZZ and next-nearest XX neighbor coupling */
             inline double       delta         = 0;              /*!< Delta defined as log(J_mean) - log(h_mean). We get J_mean and h_mean by fixing delta = 2lnW, W = J_wdth = 1/h_wdth */
-            inline bool         parity_sep    = false;          /*!< Separation of +-Z parity sectors */
             inline long         spin_dim      = 2;              /*!< Spin dimension */
             inline std::string  distribution  = "uniform";      /*!< Random distribution for couplings and fields */
         }

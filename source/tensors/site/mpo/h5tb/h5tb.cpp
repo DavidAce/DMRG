@@ -76,28 +76,20 @@ void h5tb_ising_majorana::register_table_type() const {
     if(h5_type.valid()) return;
 
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(table));
-    H5Tinsert(h5_type, "J_mean", HOFFSET(table, J_mean), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "J_wdth", HOFFSET(table, J_wdth), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "J_rand", HOFFSET(table, J_rand), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "h_mean", HOFFSET(table, h_mean), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "h_wdth", HOFFSET(table, h_wdth), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "h_rand", HOFFSET(table, h_rand), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "g", HOFFSET(table, g), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "delta", HOFFSET(table, delta), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J_rand", HOFFSET(table, J_rand), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "h_rand", HOFFSET(table, h_rand), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
 
 std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
     /* clang-format off */
-        if(p == "J_mean")           return fmt::format(FMT_STRING("{:<8.2e}") , param.J_mean);
-        if(p == "J_wdth")           return fmt::format(FMT_STRING("{:<8.2e}") , param.J_wdth);
-        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<8.2e}") , param.J_rand);
-        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<8.2e}") , param.h_mean);
-        if(p == "h_wdth")           return fmt::format(FMT_STRING("{:<8.2e}") , param.h_wdth);
-        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<8.2e}") , param.h_rand);
         if(p == "g")                return fmt::format(FMT_STRING("{:<7.4f}") , param.g);
         if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
+        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<8.2e}") , param.J_rand);
+        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<8.2e}") , param.h_rand);
         if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
         if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
     /* clang-format on */
@@ -105,7 +97,7 @@ std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
 }
 
 std::vector<std::string_view> h5tb_ising_majorana::get_parameter_names() const noexcept {
-    return {"J_mean", "J_wdth", "J_rand", "h_mean", "h_wdth", "h_rand", "g", "delta", "spin_dim", "distribution"};
+    return {"g", "delta", "J_rand", "h_rand", "spin_dim", "distribution"};
 }
 
 /*
@@ -156,78 +148,6 @@ std::vector<std::string_view> h5tb_ising_tf_rf::get_parameter_names() const noex
  *
  */
 
-// h5tb_lbit::table_str h5tb_lbit::table::get_table_str() const {
-//     table_str ts;
-// #if defined(USE_QUADMATH)
-//     static_assert(std::is_same_v<real_t, __float128>);
-//     ts.J1_rand = fmt::format("{:.36f}", this->J1_rand);
-//     ts.J3_rand = fmt::format("{:.36f}", this->J3_rand);
-//     std::vector<h5pp::vstr_t> J2_rand_str;
-//     for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.36f}", j2)); }
-//     ts.J2_rand = J2_rand_str;
-// #else
-//     static_assert(std::is_same_v<real_t, long double>);
-//     ts.J1_rand = fmt::format("{:.21f}", this->J1_rand);
-//     ts.J3_rand = fmt::format("{:.21f}", this->J3_rand);
-//     std::vector<h5pp::vstr_t> J2_rand_str;
-//     for(const auto &j2 : this->J2_rand) { J2_rand_str.emplace_back(fmt::format("{:.21f}", j2)); }
-//     ts.J2_rand = J2_rand_str;
-// #endif
-//     return ts;
-// }
-
-// h5tb_lbit::table h5tb_lbit::table::operator=(const h5tb_lbit::table_str &ts) {
-//     table t;
-// #if defined(USE_QUADMATH)
-//     static_assert(std::is_same_v<real_t, __float128>);
-//     this->J1_rand = strtoflt128(ts.J1_rand.c_str(), nullptr);
-//     this->J3_rand = strtoflt128(ts.J3_rand.c_str(), nullptr);
-//     std::vector<real_t> J2_rand_str;
-//     for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtoflt128(j2.c_str(), nullptr)); }
-// #else
-//     static_assert(std::is_same_v<real_t, long double>);
-//     this->J1_rand = strtold(ts.J1_rand.c_str(), nullptr);
-//     this->J3_rand = strtold(ts.J3_rand.c_str(), nullptr);
-//     std::vector<real_t> J2_rand_str;
-//     for(const auto &j2 : ts.J2_rand) { J2_rand_str.emplace_back(strtold(j2.c_str(), nullptr)); }
-// #endif
-//     return t;
-// }
-
-//h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_w8() {
-//    create_enum_w8();
-//    return enum_w8;
-//}
-
-//h5pp::hid::h5t &h5tb_lbit::get_h5t_enum_ut() {
-//    create_enum_ut();
-//    return enum_ut;
-//}
-
-//void h5tb_lbit::create_enum_w8() {
-//    if(enum_w8.valid()) return;
-//    enum_w8 = H5Tenum_create(H5T_NATIVE_INT);
-//    int val;
-//    H5Tenum_insert(enum_w8, "IDENTITY", (val = static_cast<int>(UnitaryGateWeight::IDENTITY), &val));
-//    H5Tenum_insert(enum_w8, "EXPDECAY", (val = static_cast<int>(UnitaryGateWeight::EXPDECAY), &val));
-//}
-//void h5tb_lbit::create_enum_ut() {
-//    if(enum_ut.valid()) return;
-//    enum_ut = H5Tenum_create(H5T_NATIVE_INT);
-//    int val;
-//    H5Tenum_insert(enum_ut, "ANDERSON", (val = static_cast<int>(UnitaryGateType::ANDERSON), &val));
-//    H5Tenum_insert(enum_ut, "MBL", (val = static_cast<int>(UnitaryGateType::MBL), &val));
-//}
-//void h5tb_lbit::commit_enum_w8(const h5pp::hid::h5f &file_id) {
-//    if(H5Tcommitted(get_h5t_enum_w8()) > 0) return;
-//    herr_t err = H5Tcommit(file_id, "UnitaryGateWeight", get_h5t_enum_w8(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-//    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
-//}
-//void h5tb_lbit::commit_enum_ut(const h5pp::hid::h5f &file_id) {
-//    if(H5Tcommitted(get_h5t_enum_ut()) > 0) return;
-//    herr_t err = H5Tcommit(file_id, "UnitaryGateType", get_h5t_enum_ut(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-//    if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
-//}
 void h5tb_lbit::register_table_type() const {
     if(h5_type.valid()) return;
     h5_type                       = H5Tcreate(H5T_COMPOUND, sizeof(table));
@@ -245,12 +165,6 @@ void h5tb_lbit::register_table_type() const {
     H5Tinsert(h5_type, "J2_span", HOFFSET(table, J2_span), H5T_NATIVE_ULONG);
     H5Tinsert(h5_type, "J2_ctof", HOFFSET(table, J2_ctof), H5T_NATIVE_ULONG);
     H5Tinsert(h5_type, "xi_Jcls", HOFFSET(table, xi_Jcls), H5T_NATIVE_DOUBLE);
-//    H5Tinsert(h5_type, "u_depth", HOFFSET(table, u_depth), H5T_NATIVE_UINT64);
-//    H5Tinsert(h5_type, "u_fmix", HOFFSET(table, u_fmix), H5T_NATIVE_DOUBLE);
-//    H5Tinsert(h5_type, "u_tstd", HOFFSET(table, u_tstd), H5T_NATIVE_DOUBLE);
-//    H5Tinsert(h5_type, "u_cstd", HOFFSET(table, u_cstd), H5T_NATIVE_DOUBLE);
-//    H5Tinsert(h5_type, "u_g8w8", HOFFSET(table, u_g8w8), get_h5t_enum_w8());
-//    H5Tinsert(h5_type, "u_type", HOFFSET(table, u_type), get_h5t_enum_ut());
     H5Tinsert(h5_type, "spin_dim", HOFFSET(table, spin_dim), H5T_NATIVE_LONG);
     H5Tinsert(h5_type, "distribution", HOFFSET(table, distribution), decltype(table::distribution)::get_h5type());
 }
@@ -293,8 +207,7 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
 }
 
 std::vector<std::string_view> h5tb_lbit::get_parameter_names() const noexcept {
-    return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth",  "J2_wdth",
-            "J3_wdth", "J2_span", "J2_ctof", "xi_Jcls",
-//            "u_fmix",  "u_depth",
+    return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span", "J2_ctof", "xi_Jcls",
+            //            "u_fmix",  "u_depth",
             "spin_dim", "distribution"};
 }

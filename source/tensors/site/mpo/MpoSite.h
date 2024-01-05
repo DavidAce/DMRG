@@ -24,8 +24,6 @@ class MpoSite {
     // Common parameters
     std::optional<size_t> position;                  /*!< Position on a finite chain */
     double                e_shift           = 0;     /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
-    double                psfactor          = 0;     /*!< Parity sector separation factor */
-    bool                  parity_sep        = false; /*!< Parity sector separation on/off */
     int                   parity_shift_sign = 0;     /*!< Sign of parity sector to shift */
     std::string           parity_shift_axus = {};    /*!< Unsigned axis {x,y,z} of spin parity sector to shift */
 
@@ -42,7 +40,6 @@ class MpoSite {
     void                                          set_position(size_t new_pos);
     void                                          assert_validity() const;
     void                                          set_energy_shift(double site_energy);
-    void                                          set_psfactor(double psfactor);
     void                                          set_parity_shift_mpo_squared(int sign, std::string_view axis);
     std::pair<int, std::string_view>              get_parity_shift_mpo_squared() const;
     void                                          build_mpo_squared();
@@ -78,7 +75,7 @@ class MpoSite {
     [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const                           = 0;
     [[nodiscard]] virtual long                     get_spin_dimension() const                                                     = 0;
     [[nodiscard]] virtual TableMap                 get_parameters() const                                                         = 0;
-    [[nodiscard]] virtual std::any                 get_parameter(const std::string &name) const                                   = 0;
+    [[nodiscard]] virtual std::any                 get_parameter(std::string_view name) const                                     = 0;
 
     virtual void print_parameter_names() const                                             = 0;
     virtual void print_parameter_values() const                                            = 0;
