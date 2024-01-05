@@ -22,10 +22,12 @@ class MpoSite {
     mutable std::optional<std::size_t> unique_id;
     mutable std::optional<std::size_t> unique_id_sq;
     // Common parameters
-    std::optional<size_t> position;                  /*!< Position on a finite chain */
-    double                e_shift           = 0;     /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
-    int                   parity_shift_sign = 0;     /*!< Sign of parity sector to shift */
-    std::string           parity_shift_axus = {};    /*!< Unsigned axis {x,y,z} of spin parity sector to shift */
+    std::optional<size_t> position;                    /*!< Position on a finite chain */
+    double                e_shift                = 0;  /*!< "Shifted" energy offset for this mpo (to make energy-shifted MPO views) */
+    int                   parity_shift_sign_mpo  = 0;  /*!< Sign of parity sector to shift for the MPO*/
+    std::string           parity_shift_axus_mpo  = {}; /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO */
+    int                   parity_shift_sign_mpo2 = 0;  /*!< Sign of parity sector to shift for the MPO²*/
+    std::string           parity_shift_axus_mpo2 = {}; /*!< Unsigned axis {x,y,z} of spin parity sector to shift for the MPO² */
 
     std::array<long, 4>                   extent4{}; /*!< Extent of pauli matrices in a rank-4 tensor */
     std::array<long, 2>                   extent2{}; /*!< Extent of pauli matrices in a rank-2 tensor */
@@ -40,6 +42,8 @@ class MpoSite {
     void                                          set_position(size_t new_pos);
     void                                          assert_validity() const;
     void                                          set_energy_shift(double site_energy);
+    void                                          set_parity_shift_mpo(int sign, std::string_view axis);
+    std::pair<int, std::string_view>              get_parity_shift_mpo() const;
     void                                          set_parity_shift_mpo_squared(int sign, std::string_view axis);
     std::pair<int, std::string_view>              get_parity_shift_mpo_squared() const;
     void                                          build_mpo_squared();
@@ -58,7 +62,7 @@ class MpoSite {
     [[nodiscard]] std::vector<std::any>           get_parameter_values() const;
     [[nodiscard]] bool                            is_real() const;
     [[nodiscard]] bool                            has_nan() const;
-    [[nodiscard]] bool                            is_shifted() const;
+    [[nodiscard]] bool                            is_energy_shifted() const;
     [[nodiscard]] bool                            is_compressed_mpo_squared() const;
     [[nodiscard]] double                          get_energy_shift() const;
     [[nodiscard]] Eigen::Tensor<cplx, 1>          get_MPO_edge_left() const;
@@ -71,8 +75,8 @@ class MpoSite {
                                                                   std::optional<std::vector<size_t>> skip = std::nullopt) const   = 0;
     [[nodiscard]] virtual Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
                                                                     std::optional<std::vector<size_t>> skip = std::nullopt) const = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view() const                                                       = 0;
-    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const                           = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view() const                                                = 0;
+    [[nodiscard]] virtual Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view(double energy_shift_per_site) const                    = 0;
     [[nodiscard]] virtual long                     get_spin_dimension() const                                                     = 0;
     [[nodiscard]] virtual TableMap                 get_parameters() const                                                         = 0;
     [[nodiscard]] virtual std::any                 get_parameter(std::string_view name) const                                     = 0;

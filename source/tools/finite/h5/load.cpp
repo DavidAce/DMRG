@@ -175,7 +175,7 @@ namespace tools::finite::h5 {
             compare(tools::finite::measure::energy(tensors), expected_measurements.energy, 1e-5, "Energy");
             compare(tools::finite::measure::energy_variance(tensors), expected_measurements.energy_variance, 1e-5, "Energy variance");
 
-            if(settings::precision::use_mpo_energy_shift) {
+            if(settings::precision::use_energy_shifted_mpo) {
                 tensors.shift_mpo_energy();
                 tensors.rebuild_mpo();
                 tensors.rebuild_mpo_squared();

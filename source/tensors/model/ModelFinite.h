@@ -36,7 +36,9 @@ class ModelFinite {
     void                                compress_mpo_squared();
     void                                set_energy_shift(double total_energy);
     void                                set_energy_shift_per_site(double energy_shift_per_site);
-    void                                set_psfactor(double psfactor);
+    bool                                set_parity_shift_mpo(int sign, std::string_view axis);
+    std::pair<int, std::string_view>    get_parity_shift_mpo() const;
+    bool                                has_parity_shift_mpo() const;
     bool                                set_parity_shift_mpo_squared(int sign, std::string_view axis);
     std::pair<int, std::string_view>    get_parity_shift_mpo_squared() const;
     bool                                has_parity_shift_mpo_squared() const;
@@ -66,7 +68,7 @@ class ModelFinite {
     [[nodiscard]] bool                  is_compressed_mpo_squared() const;
     [[nodiscard]] double                get_energy_shift() const;
     [[nodiscard]] double                get_energy_shift_per_site() const;
-    [[nodiscard]] std::vector<std::any> get_parameter(const std::string &fieldname);
+    [[nodiscard]] std::vector<std::any> get_parameter(std::string_view fieldname);
 
     // For local operations
     ModelLocal get_local(const std::vector<size_t> &sites) const;

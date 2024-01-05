@@ -8,29 +8,18 @@
 #include "tools/common/log.h"
 #include <h5pp/h5pp.h>
 
-double delta_to_J_wdth(double delta) { return std::exp(delta / 2.0); }
-
-double delta_to_h_wdth(double delta) { return std::exp(-delta / 2.0); }
+// double delta_to_J_mean(double delta) { return ;  }
+// double delta_to_h_mean(double delta) { return ;  }
+double delta_to_W_J(double delta) { return std::exp(delta / 2.0); }
+double delta_to_W_h(double delta) { return std::exp(-delta / 2.0); }
 
 IsingMajorana::IsingMajorana(ModelType model_type_, size_t position_) : MpoSite(model_type_, position_) {
-    h5tb.param.g      = settings::model::ising_majorana::g;
-    h5tb.param.delta  = settings::model::ising_majorana::delta;
-    h5tb.param.J_wdth = delta_to_J_wdth(h5tb.param.delta);
-    h5tb.param.h_wdth = delta_to_h_wdth(h5tb.param.delta);
-    h5tb.param.J_mean = 0.5 * h5tb.param.J_wdth;
-    h5tb.param.h_mean = 0.5 * h5tb.param.h_wdth;
-
-    // Sanity check on delta, J_mean, h_mean
-    double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
-    if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
-        throw except::logic_error("error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
-
+    h5tb.param.g            = settings::model::ising_majorana::g;
+    h5tb.param.delta        = settings::model::ising_majorana::delta;
     h5tb.param.spin_dim     = settings::model::ising_majorana::spin_dim;
     h5tb.param.distribution = settings::model::ising_majorana::distribution;
-    parity_sep              = settings::model::ising_majorana::parity_sep;
-
-    extent4 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
-    extent2 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
+    extent4                 = {1, 1, h5tb.param.spin_dim, h5tb.param.spin_dim};
+    extent2                 = {h5tb.param.spin_dim, h5tb.param.spin_dim};
 }
 
 double IsingMajorana::get_coupling() const { return h5tb.param.J_rand; }
@@ -39,14 +28,10 @@ void   IsingMajorana::print_parameter_names() const { h5tb.print_parameter_names
 void   IsingMajorana::print_parameter_values() const { h5tb.print_parameter_values(); }
 
 void IsingMajorana::set_parameters(TableMap &parameters) {
-    h5tb.param.J_mean                = std::any_cast<decltype(h5tb.param.J_mean)>(parameters["J_mean"]);
-    h5tb.param.J_wdth                = std::any_cast<decltype(h5tb.param.J_wdth)>(parameters["J_wdth"]);
-    h5tb.param.J_rand                = std::any_cast<decltype(h5tb.param.J_rand)>(parameters["J_rand"]);
-    h5tb.param.h_mean                = std::any_cast<decltype(h5tb.param.h_mean)>(parameters["h_mean"]);
-    h5tb.param.h_wdth                = std::any_cast<decltype(h5tb.param.h_wdth)>(parameters["h_wdth"]);
-    h5tb.param.h_rand                = std::any_cast<decltype(h5tb.param.h_rand)>(parameters["h_rand"]);
     h5tb.param.g                     = std::any_cast<decltype(h5tb.param.g)>(parameters["g"]);
     h5tb.param.delta                 = std::any_cast<decltype(h5tb.param.delta)>(parameters["delta"]);
+    h5tb.param.J_rand                = std::any_cast<decltype(h5tb.param.J_rand)>(parameters["J_rand"]);
+    h5tb.param.h_rand                = std::any_cast<decltype(h5tb.param.h_rand)>(parameters["h_rand"]);
     h5tb.param.spin_dim              = std::any_cast<decltype(h5tb.param.spin_dim)>(parameters["spin_dim"]);
     h5tb.param.distribution          = std::any_cast<decltype(h5tb.param.distribution)>(parameters["distribution"]);
     all_mpo_parameters_have_been_set = true;
@@ -55,30 +40,22 @@ void IsingMajorana::set_parameters(TableMap &parameters) {
 IsingMajorana::TableMap IsingMajorana::get_parameters() const {
     /* clang-format off */
     TableMap parameters;
-    parameters["J_mean"]   = h5tb.param.J_mean;
-    parameters["J_wdth"]   = h5tb.param.J_wdth;
-    parameters["J_rand"]   = h5tb.param.J_rand;
-    parameters["h_mean"]   = h5tb.param.h_mean;
-    parameters["h_wdth"]   = h5tb.param.h_wdth;
-    parameters["h_rand"]   = h5tb.param.h_rand;
-    parameters["g"]        = h5tb.param.g;
-    parameters["delta"]    = h5tb.param.delta;
-    parameters["spin_dim"] = h5tb.param.spin_dim;
+    parameters["g"]             = h5tb.param.g;
+    parameters["delta"]         = h5tb.param.delta;
+    parameters["J_rand"]        = h5tb.param.J_rand;
+    parameters["h_rand"]        = h5tb.param.h_rand;
+    parameters["spin_dim"]      = h5tb.param.spin_dim;
     parameters["distribution"]  = h5tb.param.distribution;
     return parameters;
     /* clang-format on */
 }
 
-std::any IsingMajorana::get_parameter(const std::string &name) const {
+std::any IsingMajorana::get_parameter(const std::string_view name) const {
     /* clang-format off */
-    if     (name == "J_mean")       return  h5tb.param.J_mean;
-    else if(name == "J_wdth")       return  h5tb.param.J_wdth;
-    else if(name == "J_rand")       return  h5tb.param.J_rand;
-    else if(name == "h_mean")       return  h5tb.param.h_mean;
-    else if(name == "h_wdth")       return  h5tb.param.h_wdth;
-    else if(name == "h_rand")       return  h5tb.param.h_rand;
-    else if(name == "g")            return  h5tb.param.g;
+    if(name == "g")                 return  h5tb.param.g;
     else if(name == "delta")        return  h5tb.param.delta;
+    else if(name == "J_rand")       return  h5tb.param.J_rand;
+    else if(name == "h_rand")       return  h5tb.param.h_rand;
     else if(name == "spin_dim")     return  h5tb.param.spin_dim;
     else if(name == "distribution") return  h5tb.param.distribution;
     /* clang-format on */
@@ -86,7 +63,7 @@ std::any IsingMajorana::get_parameter(const std::string &name) const {
 }
 
 void IsingMajorana::build_mpo()
-/*! Builds the MPO hamiltonian as a rank 4 tensor. Notation following Schollwöck (2010)
+/*! Builds the MPO hamiltonian as a rank 4 tensor.
  *
  * H = Σ J_{i} σx_{i} σx_{i+1} + h_{i} σz_{i} + g*(σz_i σz_{i+1} + σx_{i} σx_{i+2})
  *
@@ -102,6 +79,12 @@ void IsingMajorana::build_mpo()
  *        |
  *        3
  *
+ *  We use the definitions from https://link.aps.org/doi/10.1103/PhysRevResearch.4.L032016
+ *  We take g > 0 and use box distributions for h_i and J_i in Box(0,W_h|J), where W_h|J are the
+ *  disorder strengths of h_i and J_i.
+ *  The disorder strengths are set to W_J = 1/W_h = W, giving us a single control parameter
+ *  delta = <ln J_i> - <ln h_i> =  2ln(W).
+ *
  */
 {
     using namespace qm::spin::half;
@@ -110,13 +93,6 @@ void IsingMajorana::build_mpo()
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
     mpo_internal.resize(5, 5, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
-    if(parity_sep) {
-        mpo_internal.resize(6, 6, h5tb.param.spin_dim, h5tb.param.spin_dim);
-        mpo_internal.setZero();
-        // Multiply the psfactor on the edge! Not on each MPO!
-        mpo_internal.slice(std::array<long, 4>{5, 5, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
-    }
-
     mpo_internal.slice(std::array<long, 4>{0, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
     mpo_internal.slice(std::array<long, 4>{1, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sx);
     mpo_internal.slice(std::array<long, 4>{2, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(sz);
@@ -126,6 +102,31 @@ void IsingMajorana::build_mpo()
     mpo_internal.slice(std::array<long, 4>{4, 2, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(h5tb.param.g * sz);
     mpo_internal.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(h5tb.param.g * sx);
     mpo_internal.slice(std::array<long, 4>{4, 4, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(id);
+
+    if(parity_shift_sign_mpo != 0 and not parity_shift_axus_mpo.empty()) {
+        // This redefines H --> H² + Q(σ), where
+        //      * Q(σ) = 0.5 * ( I - prod(σ) ) = Proj(-σ), i.e. the "conjugate" projection operator (sign flipped).
+        //      * σ is a pauli matrix (usually σ^z)
+        // Observe that Q(σ)|ψ+-⟩ = (1 -+ 1) |ψ+-⟩
+        // For ground state DMRG (fDMRG) we can add the projection on H directly, as
+        //              H --> (H + Q(σ))
+        //     such that
+        //              (H + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (E + 0) |ψ+⟩
+        //              (H + Q(σ)) |ψ-⟩ = (σ² + 0.5(1+1)) |ψ-⟩ = (E + 1) |ψ-⟩
+        auto d0 = mpo_internal.dimension(0);
+        auto d1 = mpo_internal.dimension(1);
+        auto d2 = mpo_internal.dimension(2);
+        auto d3 = mpo_internal.dimension(3);
+        auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo);
+
+        Eigen::Tensor<cplx, 4> mpo_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
+        mpo_with_parity_shift_op.setZero();
+        mpo_with_parity_shift_op.slice(tenx::array4{0, 0, 0, 0}, mpo_internal.dimensions())          = mpo_internal;
+        mpo_with_parity_shift_op.slice(tenx::array4{d0, d1, 0, 0}, extent4).reshape(extent2)         = tenx::TensorMap(id);
+        mpo_with_parity_shift_op.slice(tenx::array4{d0 + 1, d1 + 1, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(pl);
+        mpo_internal                                                                                 = mpo_with_parity_shift_op;
+    }
+
     if(tenx::hasNaN(mpo_internal)) {
         print_parameter_names();
         print_parameter_values();
@@ -135,21 +136,9 @@ void IsingMajorana::build_mpo()
 }
 
 void IsingMajorana::randomize_hamiltonian() {
-    if(h5tb.param.distribution == "normal") {
-        h5tb.param.J_rand = rnd::normal(h5tb.param.J_mean, h5tb.param.J_wdth);
-        h5tb.param.h_rand = rnd::normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(h5tb.param.distribution == "lognormal") {
-        h5tb.param.J_rand = rnd::log_normal(h5tb.param.J_mean, h5tb.param.J_wdth);
-        h5tb.param.h_rand = rnd::log_normal(h5tb.param.h_mean, h5tb.param.h_wdth);
-    } else if(h5tb.param.distribution == "uniform") {
-        h5tb.param.J_rand = rnd::uniform_double_box(0, h5tb.param.J_wdth);
-        h5tb.param.h_rand = rnd::uniform_double_box(0, h5tb.param.h_wdth);
-    } else if(h5tb.param.distribution == "constant") {
-        h5tb.param.J_rand = h5tb.param.J_mean;
-        h5tb.param.h_rand = h5tb.param.h_mean;
-    } else {
-        throw except::runtime_error("wrong distribution [{}]: expected one of normal | lognormal | uniform | constant", h5tb.param.distribution);
-    }
+    if(h5tb.param.distribution != "uniform") throw except::runtime_error("IsingMajorana expects a uniform distribution. Got: {}", h5tb.param.distribution);
+    h5tb.param.J_rand = rnd::uniform_double_box(0, delta_to_W_J(h5tb.param.delta));
+    h5tb.param.h_rand = rnd::uniform_double_box(0, delta_to_W_h(h5tb.param.delta));
 
     all_mpo_parameters_have_been_set = false;
     mpo_squared                      = std::nullopt;
@@ -157,8 +146,7 @@ void IsingMajorana::randomize_hamiltonian() {
     unique_id_sq                     = std::nullopt;
 }
 
-Eigen::Tensor<cplx, 4> IsingMajorana::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
-                                                              [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+Eigen::Tensor<cplx, 4> IsingMajorana::MPO_nbody_view(std::optional<std::vector<size_t>> nbody, [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     // Next-nearest neighbor terms are counted as 3-body terms because 3 sites are involved: the skipped site counts
@@ -178,14 +166,15 @@ Eigen::Tensor<cplx, 4> IsingMajorana::MPO_nbody_view(std::optional<std::vector<s
     MPO_nbody.slice(std::array<long, 4>{4, 3, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(J3 * h5tb.param.g * sx);
     return MPO_nbody;
 }
+
 Eigen::Tensor<cplx_t, 4> IsingMajorana::MPO_nbody_view_t([[maybe_unused]] std::optional<std::vector<size_t>> nbody,
-                                                                  [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+                                                         [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     throw except::runtime_error("IsingMajorana::MPO_nbody_view_t is not implemented");
 }
 
-Eigen::Tensor<cplx, 4> IsingMajorana::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
+Eigen::Tensor<cplx, 4> IsingMajorana::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(e_shift); }
 
-Eigen::Tensor<cplx, 4> IsingMajorana::MPO_shifted_view(double energy_shift_per_site) const {
+Eigen::Tensor<cplx, 4> IsingMajorana::MPO_energy_shifted_view(double energy_shift_per_site) const {
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> temp                                           = MPO();
     temp.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - energy_shift_per_site * id);
@@ -198,13 +187,11 @@ long IsingMajorana::get_spin_dimension() const { return h5tb.param.spin_dim; }
 
 void IsingMajorana::set_averages(std::vector<TableMap> all_parameters, bool infinite) {
     if(not infinite) { all_parameters.back()["J_rand"] = 0.0; }
-    //    if(parity_sep) psfactor = 0.5;
-    if(parity_sep) psfactor = 2.0 * (h5tb.param.J_mean + h5tb.param.h_mean) * (1.0 + h5tb.param.g) * static_cast<double>(all_parameters.size());
     set_parameters(all_parameters[get_position()]);
 }
 
 void IsingMajorana::save_hamiltonian(h5pp::File &file, std::string_view hamiltonian_table_path) const {
-    if(not file.linkExists(hamiltonian_table_path)) file.createTable(h5tb.get_h5_type(), hamiltonian_table_path, "Selfdual Ising");
+    if(not file.linkExists(hamiltonian_table_path)) file.createTable(h5tb.get_h5_type(), hamiltonian_table_path, "Ising-Majorana");
     file.appendTableRecords(h5tb.param, hamiltonian_table_path);
 }
 
@@ -216,23 +203,9 @@ void IsingMajorana::load_hamiltonian(const h5pp::File &file, std::string_view mo
     } else
         throw except::runtime_error("could not load mpo: table [{}] does not exist", ham_table);
 
-    // Check that we are on the same point of the phase diagram
-    auto J_wdth = delta_to_J_wdth(h5tb.param.delta);
-    auto h_wdth = delta_to_h_wdth(h5tb.param.delta);
-
     using namespace settings::model::ising_majorana;
-    if(std::abs(h5tb.param.delta - delta) > 1e-6) throw except::runtime_error("delta  {:.16f} != {:.16f} ising_majorana::delta", h5tb.param.delta, delta);
     if(std::abs(h5tb.param.g - g) > 1e-6) throw except::runtime_error("g {:.16f} != {:.16f} ising_majorana::g", h5tb.param.g, g);
-    if(std::abs(h5tb.param.J_wdth - J_wdth) > 1e-6) throw except::runtime_error("J_wdth {:.16f} != {:.16f} ising_majorana::J_wdth", h5tb.param.J_wdth, J_wdth);
-    if(std::abs(h5tb.param.h_wdth - h_wdth) > 1e-6) throw except::runtime_error("h_wdth {:.16f} != {:.16f} ising_majorana::h_wdth", h5tb.param.h_wdth, h_wdth);
-    if(h5tb.param.distribution != distribution)
-        throw except::runtime_error("distribution {} != {} ising_majorana::distribution", h5tb.param.distribution, distribution);
-
-    // Sanity check on delta, J_mean, h_mean
-    double delta_check = std::log(h5tb.param.J_mean) - std::log(h5tb.param.h_mean);
-    if(std::abs(h5tb.param.delta - delta_check) > 1e-10)
-        throw except::logic_error("Error when transforming delta to (J_mean, h_mean): delta {:.12f} != {:.16f} delta_check", h5tb.param.delta, delta_check);
+    if(std::abs(h5tb.param.delta - delta) > 1e-6) throw except::runtime_error("delta  {:.16f} != {:.16f} ising_majorana::delta", h5tb.param.delta, delta);
 
     build_mpo();
 }
-

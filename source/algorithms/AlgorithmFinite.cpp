@@ -155,7 +155,7 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
 }
 
 void AlgorithmFinite::shift_mpo_energy() {
-    if(not settings::precision::use_mpo_energy_shift) return;
+    if(not settings::precision::use_energy_shifted_mpo) return;
     if(not tensors.position_is_inward_edge()) return;
     tensors.shift_mpo_energy();    // Avoid catastrophic cancellation by shifting energy on each mpo by E/L
     tensors.rebuild_mpo_squared(); // The shift clears our squared mpo's. So we have to rebuild them. Compression is retained.
@@ -251,7 +251,7 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
     double energy_abs                 = std::abs(energy.value());
     double energy_pow                 = energy_abs * energy_abs;
     double digits10                   = std::numeric_limits<double>::digits10;
-    double energy_top                 = settings::precision::use_mpo_energy_shift ? energy_abs : energy_pow;
+    double energy_top                 = settings::precision::use_energy_shifted_mpo ? energy_abs : energy_pow;
     double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_top))) + 1;
     double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
     status.energy_variance_max_digits = static_cast<size_t>(max_digits);
@@ -642,8 +642,15 @@ void AlgorithmFinite::try_projection(std::optional<std::string> target_sector) {
     }
 }
 
-void AlgorithmFinite::try_parity_shift() {
-    if(not settings::precision::use_mpo_parity_shift) return;
+void AlgorithmFinite::try_parity_shifting_mpo() {
+    if(not settings::precision::use_parity_shifted_mpo) return;
+    if(not tensors.position_is_inward_edge()) return;
+    if(not qm::spin::half::is_valid_axis(settings::strategy::target_axis)) return;
+    tensors.set_parity_shift_mpo(settings::strategy::target_axis);
+}
+
+void AlgorithmFinite::try_parity_shifting_mpo_squared() {
+    if(not settings::precision::use_parity_shifted_mpo_squared) return;
     if(not tensors.position_is_inward_edge()) return;
     if(not qm::spin::half::is_valid_axis(settings::strategy::target_axis)) return;
     tensors.set_parity_shift_mpo_squared(settings::strategy::target_axis);

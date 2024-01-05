@@ -62,7 +62,7 @@ IsingSelfDual::TableMap IsingSelfDual::get_parameters() const {
     return parameters;
 }
 
-std::any IsingSelfDual::get_parameter(const std::string &name) const {
+std::any IsingSelfDual::get_parameter(std::string_view name) const {
     /* clang-format off */
     if     (name == "J_mean")        return h5tb.param.J_mean;
     else if(name == "J_wdth")        return h5tb.param.J_wdth;
@@ -179,9 +179,9 @@ Eigen::Tensor<cplx_t, 4> IsingSelfDual::MPO_nbody_view_t([[maybe_unused]] std::o
     throw except::runtime_error("IsingSelfDual::MPO_nbody_view_t is not implemented");
 }
 
-Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
+Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(e_shift); }
 
-Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_shifted_view(double energy_shift_per_site) const {
+Eigen::Tensor<cplx, 4> IsingSelfDual::MPO_energy_shifted_view(double energy_shift_per_site) const {
     using namespace qm::spin::half;
     Eigen::Tensor<cplx, 4> temp                                           = MPO();
     temp.slice(std::array<long, 4>{4, 0, 0, 0}, extent4).reshape(extent2) = tenx::TensorCast(get_field() * sz - energy_shift_per_site * id);

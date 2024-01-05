@@ -26,10 +26,11 @@ Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
         mpo2    = mpo.contract(mpo.conjugate(), tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(tenx::array4{d0, d1, d2, d3});
     }
 
-    if(parity_shift_sign != 0 and not parity_shift_axus.empty()) {
+    if(parity_shift_sign_mpo2 != 0 and not parity_shift_axus_mpo2.empty()) {
         // This redefines H² --> H² + Q(σ), where
         //      * Q(σ) = 0.5 * ( I - prod(σ) ) = Proj(-σ), i.e. the "conjugate" projection operator (sign flipped).
         //      * σ is a pauli matrix (usually σ^z)
+        // Observe that Q(σ)|ψ+-⟩ = (1 -+ 1) |ψ+-⟩
         //
         // Example: Let H² be the "energy-shifted" Hamiltonian squared, i.e.
         //                  H² = (H-E)²,
@@ -46,19 +47,24 @@ Eigen::Tensor<cplx, 4> MpoSite::get_non_compressed_mpo_squared() const {
         //              (H² + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (Var(H) + 0) |ψ+⟩
         //              (H² + Q(σ)) |ψ-⟩ = (σ² + 0.5(1+1)) |ψ-⟩ = (Var(H) + 1) |ψ-⟩
         //
-        //          Note:
-        //          1) Var(H) is typically a number close to 0, so 1 adds a very large gap.
-        //          2) We could in principle add the projecton on the mpo for H instead by defining
-        //                      H  -->  (H + iQ(σ))
-        //                      H² --> H^† H  = H² + Q(σ)² = H² + Q(σ)
-        //             but this introduces imaginaries in all the MPOs which gives us a performance
-        //             penalty by forcing us to use complex versions of all the expensive operations.
+        //  Note:
+        //  1) Var(H) is typically a number close to 0, so 1 adds a very large gap.
+        //  2) We could in principle add the projection on the mpo for H instead by defining
+        //              H  -->  (H + iQ(σ))
+        //              H² --> H^† H  = H² + Q(σ)² = H² + Q(σ)
+        //     but this introduces imaginaries in all the MPOs which gives us a performance
+        //     penalty by forcing us to use complex versions of all the expensive operations.
+        //  3) For ground state DMRG (fDMRG) we can add the projection on H directly, as
+        //              H --> (H + Q(σ))
+        //     such that
+        //              (H + Q(σ)) |ψ+⟩ = (σ² + 0.5(1-1)) |ψ+⟩ = (E + 0) |ψ+⟩
+        //              (H + Q(σ)) |ψ-⟩ = (σ² + 0.5(1+1)) |ψ-⟩ = (E + 1) |ψ-⟩
 
         auto d0 = mpo2.dimension(0);
         auto d1 = mpo2.dimension(1);
         auto d2 = mpo2.dimension(2);
         auto d3 = mpo2.dimension(3);
-        auto pl = qm::spin::half::get_pauli(parity_shift_axus);
+        auto pl = qm::spin::half::get_pauli(parity_shift_axus_mpo2);
         auto id = qm::spin::half::id;
 
         Eigen::Tensor<cplx, 4> mpo2_with_parity_shift_op(d0 + 2, d1 + 2, d2, d3);
@@ -204,7 +210,7 @@ size_t MpoSite::get_position() const {
     }
 }
 
-bool MpoSite::is_shifted() const { return e_shift != 0.0; }
+bool MpoSite::is_energy_shifted() const { return e_shift != 0.0; }
 
 bool MpoSite::is_compressed_mpo_squared() const {
     // When H² = mpo*mpo is compressed, we typically find that the virtual bonds
@@ -220,7 +226,7 @@ bool MpoSite::is_compressed_mpo_squared() const {
     const auto &mpo_sq = MPO2();
     auto        d0     = mpo.dimension(0);
     auto        d1     = mpo.dimension(1);
-    auto        d2     = parity_shift_sign == 0 ? 0 : 2;
+    auto        d2     = parity_shift_sign_mpo2 == 0 ? 0 : 2;
     return mpo_sq.dimension(0) != d0 * d0 + d2 or mpo_sq.dimension(1) != d1 * d1 + d2;
 }
 
@@ -229,73 +235,127 @@ double MpoSite::get_energy_shift() const { return e_shift; }
 void MpoSite::set_energy_shift(double site_energy) {
     if(e_shift != site_energy) {
         e_shift      = site_energy;
-        mpo_internal = MPO_shifted_view();
+        mpo_internal = MPO_energy_shifted_view();
         mpo_squared  = std::nullopt;
         unique_id    = std::nullopt;
         unique_id_sq = std::nullopt;
     }
 }
 
+void MpoSite::set_parity_shift_mpo(int sign, std::string_view axis) {
+    if(sign == 0) return;
+    if(not qm::spin::half::is_valid_axis(axis)) return;
+    if(std::abs(sign) != 1) throw except::logic_error("MpoSite::set_parity_shift_mpo: wrong sign value [{}] | expected -1 or 1", sign);
+    auto axus = qm::spin::half::get_axis_unsigned(axis);
+    if(sign != parity_shift_sign_mpo or axus != parity_shift_axus_mpo) {
+        tools::log->trace("MpoSite[{}]: Setting MPO parity shift: {:+}{}", get_position(), sign, axus);
+        parity_shift_sign_mpo = sign;
+        parity_shift_axus_mpo = axus;
+        build_mpo();
+    }
+}
+
+std::pair<int, std::string_view> MpoSite::get_parity_shift_mpo() const { return {parity_shift_sign_mpo, parity_shift_axus_mpo}; }
+
 void MpoSite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
     if(sign == 0) return;
     if(not qm::spin::half::is_valid_axis(axis)) return;
-    if(std::abs(sign) != 1) throw except::logic_error("MpoSite::set_parity_shift_mpo_squared: wrong sign value [{}] | expected -1, 0 or 1", sign);
+    if(std::abs(sign) != 1) throw except::logic_error("MpoSite::set_parity_shift_mpo_squared: wrong sign value [{}] | expected -1 or 1", sign);
     auto axus = qm::spin::half::get_axis_unsigned(axis);
-    if(sign != parity_shift_sign or axus != parity_shift_axus) {
-        tools::log->trace("MpoSite[{}]: Setting MPO2 proj: {:+}{}", get_position(), sign, axus);
-        parity_shift_sign = sign;
-        parity_shift_axus = axus;
+    if(sign != parity_shift_sign_mpo2 or axus != parity_shift_axus_mpo2) {
+        tools::log->trace("MpoSite[{}]: Setting MPO² parity shift: {:+}{}", get_position(), sign, axus);
+        parity_shift_sign_mpo2 = sign;
+        parity_shift_axus_mpo2 = axus;
         build_mpo_squared();
     }
 }
 
-std::pair<int, std::string_view> MpoSite::get_parity_shift_mpo_squared() const { return {parity_shift_sign, parity_shift_axus}; }
+std::pair<int, std::string_view> MpoSite::get_parity_shift_mpo_squared() const { return {parity_shift_sign_mpo2, parity_shift_axus_mpo2}; }
 
 Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_left() const {
-    if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build left edge: mpo has not been built yet", get_position());
+    if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build the left edge: mpo has not been built yet", get_position());
     auto                   ldim = mpo_internal.dimension(0);
     Eigen::Tensor<cplx, 1> ledge(ldim);
     ledge.setZero();
-    ledge(ldim - 1) = 1;
+    if(parity_shift_sign_mpo == 0) {
+        /*
+         *  MPO = |1 0|
+         *        |h 1|
+         *  So the left edge picks out the row for h
+         */
+        ledge(ldim - 1) = 1;
+    } else {
+        /*
+         *  MPO = |1 0 0 0|
+         *        |h 1 0 0|
+         *        |0 0 1 0|
+         *        |0 0 0 σ|
+         *  So the left edge picks out the row for h, as well as 1 and σ along the diagonal
+         */
+        ledge(ldim - 3) = 1; // The bottom left corner
+        ledge(ldim - 2) = 1;
+        ledge(ldim - 1) = 1;
+    }
     return ledge;
 }
 
 Eigen::Tensor<cplx, 1> MpoSite::get_MPO_edge_right() const {
-    if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build right edge: mpo has not been built yet", get_position());
+    if(mpo_internal.size() == 0) throw except::runtime_error("mpo({}): can't build the right edge: mpo has not been built yet", get_position());
     auto                   rdim = mpo_internal.dimension(1);
     Eigen::Tensor<cplx, 1> redge(rdim);
     redge.setZero();
-    redge(0) = 1;
+
+    if(parity_shift_sign_mpo == 0) {
+        /*
+         *  MPO = |1 0|
+         *        |h 1|
+         *  So the right edge picks out the column for h
+         */
+        redge(0) = 1; // The bottom left corner
+    } else {
+        /*
+         *  MPO = |1 0 0 0|
+         *        |h 1 0 0|
+         *        |0 0 1 0|
+         *        |0 0 0 σ|
+         *  So the right edge picks out the column for h, as well as 1 and σ along the diagonal
+         *  We also put the overall - sign on prod(σ) if this is the first site.
+         */
+        auto q          = position == 0 ? -parity_shift_sign_mpo : 1.0; // Selects the opposite sector sign (only needed on one MPO)
+        redge(0)        = 1;                                            // The bottom left corner of the original non-parity-shifted mpo
+        redge(rdim - 2) = 0.5;
+        redge(rdim - 1) = 0.5 * q;
+    }
     return redge;
 }
 
 Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_left() const {
-    auto edge  = get_MPO_edge_left();
-    auto d0    = edge.dimension(0);
-    auto edge2 = edge.contract(edge, tenx::idx()).reshape(tenx::array1{d0 * d0});
-    if(parity_shift_sign != 0) {
-        Eigen::Tensor<cplx, 1> edge2_projz(d0 * d0 + 2);
-        edge2_projz.setZero();
-        edge2_projz.slice(tenx::array1{0}, edge2.dimensions()) = edge2;
-        edge2_projz(d0 * d0 + 0)                               = 1.0;
-        edge2_projz(d0 * d0 + 1)                               = 1.0;
-        return edge2_projz;
+    auto ledge  = get_MPO_edge_left();
+    auto d0     = ledge.dimension(0);
+    auto ledge2 = ledge.contract(ledge, tenx::idx()).reshape(tenx::array1{d0 * d0});
+    if(parity_shift_sign_mpo2 != 0) {
+        auto ledge2_with_shift = Eigen::Tensor<cplx, 1>(d0 * d0 + 2);
+        ledge2_with_shift.setZero();
+        ledge2_with_shift.slice(tenx::array1{0}, ledge2.dimensions()) = ledge2;
+        ledge2_with_shift(d0 * d0 + 0)                                = 1.0;
+        ledge2_with_shift(d0 * d0 + 1)                                = 1.0;
+        return ledge2_with_shift;
     }
-    return edge2;
+    return ledge2;
 }
 
 Eigen::Tensor<cplx, 1> MpoSite::get_MPO2_edge_right() const {
-    auto edge  = get_MPO_edge_right();
-    auto d0    = edge.dimension(0);
-    auto edge2 = edge.contract(edge.conjugate(), tenx::idx()).reshape(tenx::array1{d0 * d0});
-    if(parity_shift_sign != 0) {
-        auto                   q = position == 0 ? -parity_shift_sign : 1.0; // Selects the opposite sector sign (only needed on one MPO)
-        Eigen::Tensor<cplx, 1> edge2_projz(d0 * d0 + 2);
-        edge2_projz.setZero();
-        edge2_projz.slice(tenx::array1{0}, edge2.dimensions()) = edge2;
-        edge2_projz(d0 * d0 + 0)                               = 0.5;
-        edge2_projz(d0 * d0 + 1)                               = 0.5 * q;
-        return edge2_projz;
+    auto redge = get_MPO_edge_right();
+    auto d0    = redge.dimension(0);
+    auto edge2 = redge.contract(redge.conjugate(), tenx::idx()).reshape(tenx::array1{d0 * d0});
+    if(parity_shift_sign_mpo2 != 0) {
+        auto q                 = position == 0 ? -parity_shift_sign_mpo2 : 1.0; // Selects the opposite sector sign (only needed on one MPO)
+        auto redge2_with_shift = Eigen::Tensor<cplx, 1>(d0 * d0 + 2);
+        redge2_with_shift.setZero();
+        redge2_with_shift.slice(tenx::array1{0}, edge2.dimensions()) = edge2;
+        redge2_with_shift(d0 * d0 + 0)                               = 0.5;
+        redge2_with_shift(d0 * d0 + 1)                               = 0.5 * q;
+        return redge2_with_shift;
     }
     return edge2;
 }

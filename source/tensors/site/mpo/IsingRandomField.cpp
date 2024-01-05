@@ -59,7 +59,7 @@ IsingRandomField::TableMap IsingRandomField::get_parameters() const {
     return parameters;
 }
 
-std::any IsingRandomField::get_parameter(const std::string &name) const {
+std::any IsingRandomField::get_parameter(std::string_view name) const {
     /* clang-format off */
    if     (name == "J1")            return  h5tb.param.J1;
    else if(name == "J2")            return  h5tb.param.J2;
@@ -126,7 +126,7 @@ void IsingRandomField::randomize_hamiltonian() {
 }
 
 Eigen::Tensor<cplx, 4> IsingRandomField::MPO_nbody_view(std::optional<std::vector<size_t>>                  nbody,
-                                                                 [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+                                                        [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     // This function returns a view of the MPO including only n-body terms.
     // For instance, if nbody_terms == {2,3}, this would exclude on-site terms.
     if(not nbody) return MPO();
@@ -142,12 +142,12 @@ Eigen::Tensor<cplx, 4> IsingRandomField::MPO_nbody_view(std::optional<std::vecto
     return MPO_nbody;
 }
 Eigen::Tensor<cplx_t, 4> IsingRandomField::MPO_nbody_view_t([[maybe_unused]] std::optional<std::vector<size_t>> nbody,
-                                                                  [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
+                                                            [[maybe_unused]] std::optional<std::vector<size_t>> skip) const {
     throw except::runtime_error("IsingRandomField::MPO_nbody_view_t is not implemented");
 }
-Eigen::Tensor<cplx, 4> IsingRandomField::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
+Eigen::Tensor<cplx, 4> IsingRandomField::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(e_shift); }
 
-Eigen::Tensor<cplx, 4> IsingRandomField::MPO_shifted_view(double site_energy) const {
+Eigen::Tensor<cplx, 4> IsingRandomField::MPO_energy_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<cplx, 4> temp                                           = MPO();
@@ -177,7 +177,6 @@ void IsingRandomField::set_averages([[maybe_unused]] std::vector<TableMap> latti
         h_sum += h_tran_ + h_rand_;
     }
 
-    if(parity_sep) psfactor = J_sum + h_sum;
     set_parameters(lattice_parameters[get_position()]);
 }
 

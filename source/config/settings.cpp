@@ -205,8 +205,9 @@ void settings::load(Loader &dmrg_config) {
 
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_otf"    , precision::use_compressed_mpo_squared_otf);
-    dmrg_config.load_parameter("precision::use_mpo_energy_shift"              , precision::use_mpo_energy_shift);
-    dmrg_config.load_parameter("precision::use_mpo_parity_shift"              , precision::use_mpo_parity_shift);
+    dmrg_config.load_parameter("precision::use_energy_shifted_mpo"            , precision::use_energy_shifted_mpo);
+    dmrg_config.load_parameter("precision::use_parity_shifted_mpo"            , precision::use_parity_shifted_mpo);
+    dmrg_config.load_parameter("precision::use_parity_shifted_mpo_squared"    , precision::use_parity_shifted_mpo_squared);
     dmrg_config.load_parameter("precision::variance_convergence_threshold"    , precision::variance_convergence_threshold);
     dmrg_config.load_parameter("precision::variance_saturation_sensitivity"   , precision::variance_saturation_sensitivity);
     dmrg_config.load_parameter("precision::entropy_saturation_sensitivity"    , precision::entropy_saturation_sensitivity);

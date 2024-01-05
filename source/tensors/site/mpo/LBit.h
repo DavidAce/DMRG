@@ -17,11 +17,11 @@ class LBit : public MpoSite {
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const final;
     [[nodiscard]] Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
                                                             std::optional<std::vector<size_t>> skip = std::nullopt) const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view() const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view(double site_energy) const final;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view() const final;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view(double site_energy) const final;
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
-    [[nodiscard]] std::any                 get_parameter(const std::string &name) const final;
+    [[nodiscard]] std::any                 get_parameter(std::string_view name) const final;
     //    [[nodiscard]] Eigen::MatrixXcd single_site_hamiltonian(size_t position, size_t sites, std::vector<Eigen::MatrixXcd> &SX, std::vector<Eigen::MatrixXcd>
     //    &SY,
     //                                                           std::vector<Eigen::MatrixXcd> &SZ) const final;

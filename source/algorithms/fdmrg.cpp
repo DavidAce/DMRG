@@ -12,6 +12,7 @@
 #include "tools/finite/opt.h"
 #include "tools/finite/opt_meta.h"
 #include "tools/finite/opt_mps.h"
+#include "tools/finite/print.h"
 
 fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg"); }
 
@@ -112,6 +113,7 @@ void fdmrg::run_preprocessing() {
     status.clear();
     tensors.state->set_name("state_init");
     initialize_model(); // First use of random!
+    tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
     init_truncation_error_limits();
     initialize_state(ResetReason::INIT, settings::strategy::initial_state);
@@ -143,6 +145,7 @@ void fdmrg::run_algorithm() {
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
+        try_parity_shifting_mpo();              // This shifts the energy of the opposite spin parity sector, to resolve degeneracy/spectral pairing
         shift_mpo_energy();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();

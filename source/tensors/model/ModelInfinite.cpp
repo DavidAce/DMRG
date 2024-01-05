@@ -159,7 +159,7 @@ Eigen::DSizes<long, 4> ModelInfinite::dimensions() const {
     return Eigen::DSizes<long, 4>{dim0, dim1, dim2, dim3};
 }
 
-bool ModelInfinite::is_shifted() const { return HA->is_shifted() and HB->is_shifted(); }
+bool ModelInfinite::is_shifted() const { return HA->is_energy_shifted() and HB->is_energy_shifted(); }
 
 double ModelInfinite::get_energy_shift_per_site() const {
     if(not num::all_equal(HA->get_energy_shift(), get_mpo_siteB().get_energy_shift()))

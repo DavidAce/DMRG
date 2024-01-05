@@ -186,6 +186,17 @@ void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional
     if(sign != 0) clear_cache();
 }
 
+void TensorsFinite::set_parity_shift_mpo(std::string_view axis) {
+    auto sign = qm::spin::half::get_sign(axis);
+    if(sign == 0) sign = tools::finite::measure::spin_sign(*state, axis);
+    bool modified = model->set_parity_shift_mpo(sign, axis); // will ignore the sign on the axis string if present
+    if(modified) {
+        clear_cache();
+        rebuild_edges_ene();
+        if constexpr(settings::debug) assert_validity();
+    }
+}
+
 void TensorsFinite::set_parity_shift_mpo_squared(std::string_view axis) {
     auto sign = qm::spin::half::get_sign(axis);
     if(sign == 0) sign = tools::finite::measure::spin_sign(*state, axis);

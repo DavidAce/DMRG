@@ -102,7 +102,7 @@ LBit::TableMap LBit::get_parameters() const {
     /* clang-format on */
 }
 
-std::any LBit::get_parameter(const std::string &name) const {
+std::any LBit::get_parameter(std::string_view name) const {
     /* clang-format off */
     if     (name == "J1_rand")       return h5tb.param.J1_rand.to_floating_point<real_t>();
     else if(name == "J2_rand")       return h5tb.param.J2_rand.to_floating_point<real_t>();
@@ -445,7 +445,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
     auto J1_rand = h5tb.param.J1_rand.to_floating_point<real_t>();
     auto J2_rand = h5tb.param.J2_rand.to_floating_point<real_t>();
     auto J3_rand = h5tb.param.J3_rand.to_floating_point<real_t>();
-    if(skip) {
+    if(skip and not skip->empty()) {
         auto skip_this_pos = std::find(skip->begin(), skip->end(), get_position()) != skip->end();
         if(skip_this_pos) {
             // This site is skipped. No interactions should be contributed from here. Set all interactions to zero
@@ -559,7 +559,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     auto J1_rand = h5tb.param.J1_rand.to_floating_point<real_t>();
     auto J2_rand = h5tb.param.J2_rand.to_floating_point<real_t>();
     auto J3_rand = h5tb.param.J3_rand.to_floating_point<real_t>();
-    if(skip) {
+    if(skip and not skip->empty()) {
         auto skip_this_pos = std::find(skip->begin(), skip->end(), get_position()) != skip->end();
         if(skip_this_pos) {
             // This site is skipped. No interactions should be contributed from here. Set all interactions to zero
@@ -644,9 +644,9 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     return MPO_nbody;
 }
 
-Eigen::Tensor<cplx, 4> LBit::MPO_shifted_view() const { return MPO_shifted_view(e_shift); }
+Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view() const { return MPO_energy_shifted_view(e_shift); }
 
-Eigen::Tensor<cplx, 4> LBit::MPO_shifted_view(double site_energy) const {
+Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
     Eigen::Tensor<cplx, 4> temp = MPO();

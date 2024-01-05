@@ -268,8 +268,9 @@ namespace settings {
     namespace precision {
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
         inline bool     use_compressed_mpo_squared_otf  = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
-        inline bool     use_mpo_energy_shift            = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
-        inline bool     use_mpo_parity_shift            = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
+        inline bool     use_energy_shifted_mpo          = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
+        inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
+        inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline double   variance_convergence_threshold  = 1e-12 ;                  /*!< Desired precision on total energy variance. The MPS state is considered good enough when its energy variance reaches below this value */
         inline double   variance_saturation_sensitivity = 1e-1  ;                  /*!< Energy variance saturates when its log stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */
         inline double   entropy_saturation_sensitivity  = 1e-3  ;                  /*!< Entanglement entropy saturates when it stops changing below this order of magnitude between sweeps. Good values are 1e-1 to 1e-4   */

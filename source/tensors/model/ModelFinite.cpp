@@ -107,11 +107,11 @@ void ModelFinite::assert_validity() const {
 
 // For energy-shifted MPO's
 bool ModelFinite::is_shifted() const {
-    bool shifted = MPO.front()->is_shifted();
+    bool shifted = MPO.front()->is_energy_shifted();
     for(const auto &mpo : MPO)
-        if(shifted != mpo->is_shifted())
-            throw std::runtime_error(
-                fmt::format("First MPO has is_shifted: {}, but MPO at pos {} has is_shifted: {}", shifted, mpo->get_position(), mpo->is_shifted()));
+        if(shifted != mpo->is_energy_shifted())
+            throw std::runtime_error(fmt::format("First MPO has is_shifted: {}, but MPO at pos {} has is_energy_shifted: {}", shifted, mpo->get_position(),
+                                                 mpo->is_energy_shifted()));
     return shifted;
 }
 
@@ -134,7 +134,7 @@ double ModelFinite::get_energy_shift_per_site() const {
     return e_shift;
 }
 
-std::vector<std::any> ModelFinite::get_parameter(const std::string &fieldname) {
+std::vector<std::any> ModelFinite::get_parameter(std::string_view fieldname) {
     std::vector<std::any> fields;
     for(const auto &mpo : MPO) { fields.emplace_back(mpo->get_parameter(fieldname)); }
     return fields;
@@ -338,9 +338,31 @@ void ModelFinite::set_energy_shift_per_site(double energy_shift_per_site) {
     clear_cache();
 }
 
-void ModelFinite::set_psfactor(double psfactor) {
-    for(const auto &mpo : MPO) mpo->set_psfactor(psfactor);
+bool ModelFinite::set_parity_shift_mpo(int sign, std::string_view axis) {
+    if(not qm::spin::half::is_valid_axis(axis)) return false;
+    if(get_parity_shift_mpo() == std::make_pair(sign, axis)) return false;
+    tools::log->info("Setting MPO parity shift for axis {}{}", sign == 0 ? "" : (sign < 0 ? "-" : "+"), qm::spin::half::get_axis_unsigned(axis));
+    for(const auto &mpo : MPO) mpo->set_parity_shift_mpo(sign, axis);
     clear_cache();
+    return true;
+}
+
+std::pair<int, std::string_view> ModelFinite::get_parity_shift_mpo() const {
+    auto parity_shift     = std::pair<int, std::string_view>{0, ""};
+    bool parity_shift_set = false;
+    for(const auto &mpo : MPO) {
+        if(not parity_shift_set) {
+            parity_shift     = mpo->get_parity_shift_mpo();
+            parity_shift_set = true;
+        } else if(parity_shift != mpo->get_parity_shift_mpo())
+            throw except::logic_error("mpo parity shift at site {} differs from shift at site 0", mpo->get_position());
+    }
+    return parity_shift;
+}
+
+bool ModelFinite::has_parity_shift_mpo() const {
+    auto parity_shift = get_parity_shift_mpo();
+    return parity_shift.first != 0 and not parity_shift.second.empty();
 }
 
 bool ModelFinite::set_parity_shift_mpo_squared(int sign, std::string_view axis) {
@@ -493,7 +515,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
     constexpr auto           shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto           contract_idx = tenx::idx({1}, {0});
     auto                     positions    = num::range<size_t>(sites.front(), sites.back() + 1);
-    auto                     skip         = std::optional<std::vector<size_t>>();
+    auto                     skip         = std::vector<size_t>{};
     auto                     keep_log     = std::vector<size_t>();
     auto                     skip_log     = std::vector<size_t>();
     bool                     do_cache     = nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
@@ -502,9 +524,8 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
     tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody_str);
 
     if(sites != positions) {
-        skip = std::vector<size_t>{};
         for(const auto &pos : positions) {
-            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip->emplace_back(pos);
+            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip.emplace_back(pos);
         }
     }
 
@@ -514,13 +535,14 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
         // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
         // the physical dimension doesn't grow.
-        bool do_trace = skip.has_value() and std::find(skip->begin(), skip->end(), pos) != skip->end();
+        bool do_trace = std::find(skip.begin(), skip.end(), pos) != skip.end();
         if(multisite_mpo_t.size() == 0) {
             auto t_pre = tid::tic_scope("prepending", tid::level::highest);
-            if(nbody or skip)
+            if(nbody or not skip.empty()) {
                 multisite_mpo_t = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
-            else
+            } else {
                 multisite_mpo_t = get_mpo(pos).MPO_t();
+            }
             if(do_cache) {
                 if(do_trace) {
                     skip_log.emplace_back(pos);
@@ -531,7 +553,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
             continue;
         }
 
-        if(nbody or skip) {
+        if(nbody or not skip.empty()) {
             mpoL = multisite_mpo_t;
             mpoR = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
         } else {
@@ -637,7 +659,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_shifted_view(double energy
     constexpr auto         contract_idx = tenx::idx({1}, {0});
     for(const auto &site : active_sites) {
         if(multisite_mpo.size() == 0) {
-            multisite_mpo = get_mpo(site).MPO_shifted_view(energy_per_site);
+            multisite_mpo = get_mpo(site).MPO_energy_shifted_view(energy_per_site);
             continue;
         }
         const auto         &mpo      = get_mpo(site);
@@ -648,7 +670,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_shifted_view(double energy
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
         temp.device(tenx::threads::getDevice()) =
-            multisite_mpo.contract(mpo.MPO_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            multisite_mpo.contract(mpo.MPO_energy_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo = temp;
     }
     return multisite_mpo;

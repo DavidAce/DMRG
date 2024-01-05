@@ -25,11 +25,11 @@ class IsingMajorana : public MpoSite {
                                                           std::optional<std::vector<size_t>> skip = std::nullopt) const final;
     [[nodiscard]] Eigen::Tensor<cplx_t, 4> MPO_nbody_view_t(std::optional<std::vector<size_t>> nbody,
                                                             std::optional<std::vector<size_t>> skip = std::nullopt) const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view() const final;
-    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_shifted_view(double energy_shift_per_site) const final;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view() const final;
+    [[nodiscard]] Eigen::Tensor<cplx, 4>   MPO_energy_shifted_view(double energy_shift_per_site) const final;
     [[nodiscard]] long                     get_spin_dimension() const final;
     [[nodiscard]] TableMap                 get_parameters() const final;
-    [[nodiscard]] std::any                 get_parameter(const std::string &name) const override;
+    [[nodiscard]] std::any                 get_parameter(std::string_view name) const override;
     void                                   print_parameter_names() const final;
     void                                   print_parameter_values() const final;
     void                                   set_parameters(TableMap &parameters) final;
