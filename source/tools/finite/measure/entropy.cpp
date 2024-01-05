@@ -71,9 +71,9 @@ struct Amplitude {
     long                                  state_size;        // System size
     std::bitset<N>                        bits;              // Bits that select spins on each MPS site
     long                                  pos = -1l;         // Keeps track of the latest mps pos that has been contracted into ampl
-    Eigen::Tensor<StateFinite::Scalar, 1> ampl;              // Accumulates the MPS tensors
+    Eigen::Tensor<cplx, 1> ampl;              // Accumulates the MPS tensors
     bool                                  cache_hit = false; // True if eval was avoided due to cache hit
-    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<StateFinite::Scalar, 1> &ampl_)
+    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<cplx, 1> &ampl_)
         : state_size(state_size_), bits(bits_), ampl(ampl_) {
         // In the beginning, no mps site has been contracted into ampl, so pos must be outside the chain 0...L
         if constexpr(from == From::A) pos = -1l;
@@ -179,7 +179,7 @@ struct Amplitude {
                 }
 
                 auto                                  t_con = tid::tic_scope("contract");
-                Eigen::Tensor<StateFinite::Scalar, 1> temp;
+                Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps up to, but not including, the last mps at mps_site
                 for(const auto &mps : state.mps_sites) {
                     long mps_pos = mps->template get_position<long>();
@@ -251,7 +251,7 @@ struct Amplitude {
                 }
 
                 auto                                  t_con = tid::tic_scope("contract");
-                Eigen::Tensor<StateFinite::Scalar, 1> temp;
+                Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps
                 for(const auto &mps : iter::reverse(state.mps_sites)) {
                     long mps_pos = mps->template get_position<long>();

@@ -1,6 +1,7 @@
 
 #include "../measure.h"
 #include "config/settings.h"
+#include "debug/info.h"
 #include "io/fmt.h"
 #include "math/eig.h"
 #include "math/float.h"
@@ -20,7 +21,6 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/ops.h"
-
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const StateFinite &state) { return state.get_length(); }
@@ -158,14 +158,15 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const StateFinite &state) {
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
-    auto            t_ent  = tid::tic_scope("subsystem_entropies", tid::level::normal);
-    auto            len    = state.get_length<long>();
-    auto            bee    = measure::entanglement_entropies(state); // bipartite entanglement entropies
-    auto            solver = eig::solver();
-    Eigen::ArrayXXd ees    = Eigen::ArrayXXd::Zero(len, len); // entanglement entropy for sgements
-
-    for(long ext = 1; ext <= len / 2 + 1; ++ext) {
-        for(long off = 0; off + ext <= len; ++off) {
+    auto            t_ent   = tid::tic_scope("subsystem_entropies", tid::level::normal);
+    auto            len     = state.get_length<long>();
+    auto            bee     = measure::entanglement_entropies(state); // bipartite entanglement entropies
+    auto            solver  = eig::solver();
+    Eigen::ArrayXXd ees     = Eigen::ArrayXXd::Zero(len, len); // entanglement entropy for sgements
+    bool            is_real = state.is_real();
+    for(long off = 0; off < len; ++off) {
+        for(long ext = 1; ext <= len / 2; ++ext) {
+            if(off + ext >= len) continue;
             // Check if the segment includes the edge, in which case
             // we can simply take the bipartite entanglement entropy
             bool is_left_edge  = off == 0;
@@ -179,27 +180,43 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
                 ees(ext - 1, off) = bee[idx];
             } else {
                 auto sites = num::range<size_t>(off, off + ext);
-                auto rho   = state.get_reduced_density_matrix(sites);
                 auto evs   = Eigen::ArrayXd();
-                if(tenx::isReal(rho)) {
-                    Eigen::Tensor<real, 2> rho_real = rho.real();
-                    tools::log->info("rho_real: \n{}", linalg::tensor::to_string(rho_real, 8, 10));
-                    solver.eig<eig::Form::SYMM>(rho_real.data(), rho_real.dimension(0), eig::Vecs::OFF);
+                if(is_real) {
+                    auto rho = state.get_reduced_density_matrix<real>(sites);
+                    tools::log->info("eig rho_real: {} ...", rho.dimensions());
+                    if(rho.dimension(0) <= 8192) {
+                        solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
+                    } else {
+                        solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), 'V', -1, -1, 1e-14, 1, eig::Vecs::OFF);
+                    }
                     evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues of rho
+                    tools::log->info("eig rho_real: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
+                                     solver.result.meta.time_prep);
                 } else {
-                    tools::log->info("rho: \n{}", linalg::tensor::to_string(rho, 8, 10));
+                    auto rho = state.get_reduced_density_matrix<cplx>(sites);
+                    tools::log->info("eig rho_cplx: {} ...", rho.dimensions());
+
                     solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
                     evs = eig::view::get_eigvals<cplx>(solver.result).real(); // Eigenvalues of rho
+                    tools::log->info("eig rho_cplx: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
+                                     solver.result.meta.time_prep);
                 }
                 double s = 0;
+                //                tools::log->debug("evs > 1e-8 : {}", (evs > 1e-8).count());
+                //                tools::log->debug("evs > 1e-10: {}", (evs > 1e-10).count());
+                //                tools::log->debug("evs > 1e-12: {}", (evs > 1e-12).count());
+                tools::log->debug("evs > 1e-14: {}", (evs > 1e-14).count());
+                //                tools::log->debug("evs > 1e-16: {}", (evs > 1e-16).count());
                 for(const auto &e : evs) {
                     if(e > 0) s += -e * std::log(e);
                 }
                 ees(ext - 1, off) = s; // -evs.cwiseProduct(evs.log()).sum();
-                tools::log->info("evs({},{}) = {}", ext - 1, off, linalg::matrix::to_string(evs, 8));
-                tools::log->info("ees({},{}) = {}", ext - 1, off, ees(ext - 1, off));
+                                       //                tools::log->info("evs({},{}) = {}", ext - 1, off, evs.size());
+                tools::log->debug("ees({},{}) = {}", ext - 1, off, ees(ext - 1, off));
             }
+            tools::log->debug("RSS {:.3f} MB | Peak {:.3f} MB", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb());
         }
+        state.clear_cache();
     }
     state.measurements.subsystem_entanglement_entropies = ees;
     return state.measurements.subsystem_entanglement_entropies.value();
@@ -627,7 +644,7 @@ double tools::finite::measure::energy_normalized(const Eigen::Tensor<cplx, 3> &m
 
 double tools::finite::measure::residual_norm(const Eigen::Tensor<cplx, 3> &mps, const Eigen::Tensor<cplx, 4> &mpo, const Eigen::Tensor<cplx, 3> &envL,
                                              const Eigen::Tensor<cplx, 3> &envR) {
-    // Calculate the residual_norm r = |Hv - Ev|, where v is an mps
+    // Calculate the residual_norm r = |Hv - Ev|
     auto Hv = tools::common::contraction::matrix_vector_product(mps, mpo, envL, envR);
     auto E  = tools::common::contraction::expectation_value(mps, mpo, envL, envR);
     return (tenx::VectorMap(Hv) - E * tenx::VectorMap(mps)).norm();

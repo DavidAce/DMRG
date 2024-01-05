@@ -20,7 +20,7 @@ namespace settings {
 struct Amplitude {
     std::bitset<64>                       bits;                // Bits that select spins on each MPS site
     std::optional<long>                   site = std::nullopt; // MPS site (not Schmidt site!)
-    Eigen::Tensor<StateFinite::Scalar, 1> ampl;                // Accumulates the MPS tensors
+    Eigen::Tensor<cplx, 1> ampl;                // Accumulates the MPS tensors
 
     [[nodiscard]] std::string to_string(const std::bitset<64> &b, long num) const {
         std::string s;
@@ -66,7 +66,7 @@ struct Amplitude {
                 ampl.resize(1);
                 ampl.setConstant(1.0);
             }
-            Eigen::Tensor<StateFinite::Scalar, 1> temp;
+            Eigen::Tensor<cplx, 1> temp;
             // Contract the missing mps up to, but not including, the last mps at mps_site
             for(const auto &mps : state.mps_sites) {
                 long pos = mps->get_position<long>();
@@ -130,7 +130,7 @@ struct Amplitude {
                 ampl.resize(1);
                 ampl.setConstant(1.0);
             }
-            Eigen::Tensor<StateFinite::Scalar, 1> temp;
+            Eigen::Tensor<cplx, 1> temp;
             // Contract the missing mps
             for(const auto &mps : iter::reverse(state.mps_sites)) {
                 long pos = mps->get_position<long>();
