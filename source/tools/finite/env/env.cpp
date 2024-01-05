@@ -41,7 +41,7 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
     // force us to insert a non-normalized mps into the environment ahead.
     // The rule is to optimize the site which loses normalization during the expansion.
 
-    using Scalar = StateFinite::Scalar;
+    using Scalar = cplx;
     if(not num::all_equal(state.get_length(), model.get_length(), edges.get_length()))
         throw except::runtime_error("All lengths not equal: state {} | model {} | edges {}", state.get_length(), model.get_length(), edges.get_length());
     if(not num::all_equal(state.active_sites, model.active_sites, edges.active_sites))
