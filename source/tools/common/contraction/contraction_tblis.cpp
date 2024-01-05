@@ -278,9 +278,9 @@ template void tools::common::contraction::contract_mps_mps(      cplx * res_ptr 
                                                            const cplx * const mpsL_ptr, std::array<long,3> mpsL_dims,
                                                            const cplx * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
-//template void tools::common::contraction::contract_mps_mps(      real * res_ptr       , std::array<long,3> res_dims,
-//                                                           const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
-//                                                           const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
+template void tools::common::contraction::contract_mps_mps(      real * res_ptr       , std::array<long,3> res_dims,
+                                                           const real * const mpsL_ptr, std::array<long,3> mpsL_dims,
+                                                           const real * const mpsR_ptr, std::array<long,3> mpsR_dims);
 
 
 
@@ -299,8 +299,8 @@ double tools::common::contraction::contract_mps_mps_overlap(const Scalar * const
 
 template double tools::common::contraction::contract_mps_mps_overlap(const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
                                                                      const cplx * const mps2_ptr, std::array<long,3> mps2_dims);
-//template double tools::common::contraction::contract_mps_mps_overlap(const real * const mps1_ptr, std::array<long,3> mps1_dims,
-//                                                                     const real * const mps2_ptr, std::array<long,3> mps2_dims);
+template double tools::common::contraction::contract_mps_mps_overlap(const real * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                     const real * const mps2_ptr, std::array<long,3> mps2_dims);
 
 
 template<typename Scalar>
@@ -319,10 +319,10 @@ template void tools::common::contraction::contract_mps_mps_partial(      cplx * 
                                                                    const cplx * const mps1_ptr, std::array<long,3> mps1_dims,
                                                                    const cplx * const mps2_ptr, std::array<long,3> mps2_dims,
                                                                    std::array<long,2> idx);
-//template void tools::common::contraction::contract_mps_mps_partial(      real *       res_ptr , std::array<long,2> res_dims,
-//                                                                   const real * const mps1_ptr, std::array<long,3> mps1_dims,
-//                                                                   const real * const mps2_ptr, std::array<long,3> mps2_dims,
-//                                                                   std::array<long,2> idx);
+template void tools::common::contraction::contract_mps_mps_partial(      real *       res_ptr , std::array<long,2> res_dims,
+                                                                   const real * const mps1_ptr, std::array<long,3> mps1_dims,
+                                                                   const real * const mps2_ptr, std::array<long,3> mps2_dims,
+                                                                   std::array<long,2> idx);
 
 
 template<typename Scalar>

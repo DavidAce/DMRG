@@ -253,12 +253,14 @@ namespace tools::common::contraction {
         const auto         &mps1_ref = static_cast<const mps_type &>(mps1);
         const auto         &mps2_ref = static_cast<const mps_type &>(mps2);
         std::array<long, 2> dims     = {};
-        if(idx[1] == 1)
+        if(idx == std::array<long, 2>{0, 1})
             dims = {mps1_ref.dimension(2), mps2_ref.dimension(2)};
-        else if(idx[1] == 2)
+        else if(idx == std::array<long, 2>{0, 2})
             dims = {mps1_ref.dimension(1), mps2_ref.dimension(1)};
+        else if(idx == std::array<long, 2>{1, 2})
+            dims = {mps1_ref.dimension(0), mps2_ref.dimension(0)};
         else
-            throw except::runtime_error("Expected idx [0,1] or [0,2]. Got: {}", idx);
+            throw except::runtime_error("Expected idx [0,1], [0,2] or [1,2]. Got: {}", idx);
         Eigen::Tensor<typename mps_type::Scalar, 2> res(dims);
         contract_mps_mps_partial(res.data(), res.dimensions(), mps1_ref.data(), mps1_ref.dimensions(), mps2_ref.data(), mps2_ref.dimensions(), idx);
         return res;
@@ -269,12 +271,15 @@ namespace tools::common::contraction {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         const auto         &mps_ref = static_cast<const mps_type &>(mps);
         std::array<long, 2> dims    = {};
-        if(idx[1] == 1)
+        if(idx == std::array<long, 2>{0, 1})
             dims = {mps_ref.dimension(2), mps_ref.dimension(2)};
-        else if(idx[1] == 2)
+        else if(idx == std::array<long, 2>{0, 2})
             dims = {mps_ref.dimension(1), mps_ref.dimension(1)};
+        else if(idx == std::array<long, 2>{1, 2})
+            dims = {mps_ref.dimension(0), mps_ref.dimension(0)};
         else
-            throw except::runtime_error("Expected idx [0,1] or [0,2]. Got: {}", idx);
+            throw except::runtime_error("Expected idx [0,1], [0,2] or [1,2]. Got: {}", idx);
+
         Eigen::Tensor<typename mps_type::Scalar, 2> res(dims);
         contract_mps_mps_partial(res.data(), res.dimensions(), mps_ref.data(), mps_ref.dimensions(), mps_ref.data(), mps_ref.dimensions(), idx);
         return res;
