@@ -55,23 +55,39 @@ namespace tenx {
     inline constexpr idxlistpair<0> idx() { return {}; }
 
     template<std::size_t N, typename idxType>
-    constexpr idxlistpair<N> idx(const idxType (&list1)[N], const idxType (&list2)[N]) {
-        // Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
-        // tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
+    constexpr idxlistpair<N> idx(const std::array<idxType, N> &list1, const std::array<idxType, N> &list2) {
+        /*! Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
+         * tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
+         */
         idxlistpair<N> pairlistOut;
         for(size_t i = 0; i < N; i++) {
-            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{static_cast<Eigen::Index>(list1[i]), static_cast<Eigen::Index>(list2[i])};
+            if constexpr(std::is_signed_v<idxType>) {
+                assert(list1[i] >= 0);
+                assert(list2[i] >= 0);
+            }
+            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{
+                static_cast<Eigen::Index>(list1[i]), //
+                static_cast<Eigen::Index>(list2[i])  //
+            };
         }
         return pairlistOut;
     }
 
     template<std::size_t N, typename idxType>
-    constexpr idxlistpair<N> idx(const std::array<idxType, N> &list1, const std::array<idxType, N> &list2) {
-        // Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
-        // tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
+    constexpr idxlistpair<N> idx(const idxType (&list1)[N], const idxType (&list2)[N]) {
+        /*! Use numpy-style indexing for contraction. Each list contains a list of indices to be contracted for the respective
+         * tensors. This function zips them together into pairs as used in Eigen::Tensor module. This does not sort the indices in decreasing order.
+         */
         idxlistpair<N> pairlistOut;
         for(size_t i = 0; i < N; i++) {
-            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{static_cast<Eigen::Index>(list1[i]), static_cast<Eigen::Index>(list2[i])};
+            if constexpr(std::is_signed_v<idxType>) {
+                assert(list1[i] >= 0);
+                assert(list2[i] >= 0);
+            }
+            pairlistOut[i] = Eigen::IndexPair<Eigen::Index>{
+                static_cast<Eigen::Index>(list1[i]), //
+                static_cast<Eigen::Index>(list2[i])  //
+            };
         }
         return pairlistOut;
     }
