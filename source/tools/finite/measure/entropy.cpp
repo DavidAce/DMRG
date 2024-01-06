@@ -68,13 +68,12 @@ template<auto N>
 
 template<From from, auto N = 64>
 struct Amplitude {
-    long                                  state_size;        // System size
-    std::bitset<N>                        bits;              // Bits that select spins on each MPS site
-    long                                  pos = -1l;         // Keeps track of the latest mps pos that has been contracted into ampl
+    long                   state_size;        // System size
+    std::bitset<N>         bits;              // Bits that select spins on each MPS site
+    long                   pos = -1l;         // Keeps track of the latest mps pos that has been contracted into ampl
     Eigen::Tensor<cplx, 1> ampl;              // Accumulates the MPS tensors
-    bool                                  cache_hit = false; // True if eval was avoided due to cache hit
-    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<cplx, 1> &ampl_)
-        : state_size(state_size_), bits(bits_), ampl(ampl_) {
+    bool                   cache_hit = false; // True if eval was avoided due to cache hit
+    Amplitude(long state_size_, const std::bitset<64> &bits_, const Eigen::Tensor<cplx, 1> &ampl_) : state_size(state_size_), bits(bits_), ampl(ampl_) {
         // In the beginning, no mps site has been contracted into ampl, so pos must be outside the chain 0...L
         if constexpr(from == From::A) pos = -1l;
         if constexpr(from == From::B) pos = state_size;
@@ -178,7 +177,7 @@ struct Amplitude {
                                           to_string(tgt_pos + 1));
                 }
 
-                auto                                  t_con = tid::tic_scope("contract");
+                auto                   t_con = tid::tic_scope("contract");
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps up to, but not including, the last mps at mps_site
                 for(const auto &mps : state.mps_sites) {
@@ -250,7 +249,7 @@ struct Amplitude {
                     }
                 }
 
-                auto                                  t_con = tid::tic_scope("contract");
+                auto                   t_con = tid::tic_scope("contract");
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps
                 for(const auto &mps : iter::reverse(state.mps_sites)) {
@@ -639,7 +638,10 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         // Only fLBIT has particle-number conservation
         tools::log->warn("Called number_entropies(StateFinite) from algorithm [{}]: This has only been tested for the [fLBIT] algorithm");
     }
-    //    number_entropies_mpo(state);
+    if(state.popcount == -1ul or state.popcount > state.get_length()) {
+        tools::log->error("Canceled number entropy calculation because state.popcount == {}", state.popcount);
+        return std::vector<double>(state.get_length<size_t>(), 0.0);
+    }
 
     auto t_num      = tid::tic_scope("number_entropy", tid::level::highest);
     auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
