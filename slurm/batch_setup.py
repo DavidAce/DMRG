@@ -497,6 +497,16 @@ def get_batch_setup(projectname):
                     'time_steps': 200,
                 },
             }
+        },
+        'fdmrg-isingmajorana1-init': {
+            # Calculate subsystem entanglement entropies for  ground states
+            'projectname': 'fdmrg-isingmajorana1-init',
+            'batch': {
+                'L16|g0.5': {
+                    'seed_extent': [100],
+                    'seed_offset': [160500000],
+                },
+            }
         }
     }
 
