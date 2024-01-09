@@ -117,8 +117,9 @@ void AlgorithmLauncher::start_h5file() {
     h5file->writeDataset(env::build::os_release, ".env/DMRG++/build/os_release");
     h5file->writeDataset(env::build::os_version, ".env/DMRG++/build/os_version");
     h5file->writeDataset(env::build::os_platform, ".env/DMRG++/build/os_platform");
-    h5file->writeDataset(env::build::march, ".env/DMRG++/build/march");
-    h5file->writeDataset(env::build::mtune, ".env/DMRG++/build/mtune");
+    h5file->writeDataset(env::build::compiler, ".env/DMRG++/build/compiler");
+    h5file->writeDataset(env::build::compiler_flags, ".env/DMRG++/build/compiler_flags");
+    h5file->writeDataset(env::build::linker_flags, ".env/DMRG++/build/linker_flags");
     h5file->writeDataset(env::git::branch, ".env/DMRG++/git/branch");
     h5file->writeDataset(env::git::commit_hash, ".env/DMRG++/git/commit");
     h5file->writeDataset(env::git::revision, ".env/DMRG++/git/revision");
