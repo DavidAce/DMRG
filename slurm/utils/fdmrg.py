@@ -51,6 +51,32 @@ def get_h5_status(filename, batch):
         if model_type != 'ising_majorana':
             raise AssertionError(f"Expected model_type==ising_majorana. Got: {model_type}")
 
+        expected_dset_paths = [
+            '/common/finished_all',
+            '/fDMRG/model/hamiltonian',
+            '/fDMRG/state_emin/measurements',
+            '/fDMRG/state_emin/status',
+            '/fDMRG/state_emin/mem_usage',
+        ]
+        expected_link_attrs = {
+            'initial_pattern': '/fDMRG/state_emin',
+            'initial_state': '/fDMRG/state_emin',
+        }
+
+        try:
+            with h5py.File(filename, 'r') as h5file:
+                expected_dsets = [h5file.get(path) for path in expected_dset_paths]
+                expected_attrs = [h5file.get(link).attrs.get(attr) for attr,link in expected_link_attrs.items() if link in h5file]
+                missing_dsets = [path for dset,path in zip(expected_dsets,expected_dset_paths) if dset is None]
+                missing_attrs = [path for link,path in zip(expected_attrs,expected_link_attrs) if link is None]
+                if len(missing_dsets) > 0:
+                    return f"FAILED|missing datasets:{missing_dsets}"
+                if len(missing_dsets) > 0:
+                    return f"FAILED|missing attributes:{missing_attrs}"
+                return "FINISHED"
+        except Exception as e:
+            print(traceback.format_exc())
+            return f"FAILED|{e}"
 
     else:
         return "MISSING"
