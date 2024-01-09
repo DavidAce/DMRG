@@ -171,5 +171,21 @@ namespace qm::lbit {
                                                                   std::vector<UnitaryGateType   >  utypes = {}
                                                                 );
 
+    StateFinite transform_to_real_basis(const StateFinite &lbit_state,
+                                        const std::vector<std::vector<qm::Gate>> & unitary_gates_2site_layers,
+                                        svd::config svd_cfg);
+    StateFinite transform_to_real_basis(const StateFinite &lbit_state,
+                                        const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &unitary_gates_mpo_layers,
+                                        const Eigen::Tensor<std::complex<double>, 1> & ledge,
+                                        const Eigen::Tensor<std::complex<double>, 1> & redge,
+                                        svd::config svd_cfg);
+    StateFinite transform_to_lbit_basis(const StateFinite &real_state,
+                                        const std::vector<std::vector<qm::Gate>> & unitary_gates_2site_layers,
+                                        svd::config svd_cfg);
+    StateFinite transform_to_lbit_basis(const StateFinite &real_state,
+                                        const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &unitary_gates_mpo_layers,
+                                        const Eigen::Tensor<std::complex<double>, 1> & ledge,
+                                        const Eigen::Tensor<std::complex<double>, 1> & redge,
+                                        svd::config svd_cfg);
     /* clang-format on */
 }

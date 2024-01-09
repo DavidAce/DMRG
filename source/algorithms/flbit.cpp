@@ -4,6 +4,8 @@
 #include "debug/info.h"
 #include "general/iter.h"
 #include "io/fmt.h"
+#include "math/eig/solver.h"
+#include "math/eig/view.h"
 #include "math/float.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
@@ -617,137 +619,37 @@ void flbit::time_evolve_lbit_state() {
 
 void flbit::transform_to_real_basis() {
     if(unitary_gates_2site_layers.size() != settings::model::lbit::u_depth) create_unitary_circuit_gates();
-    auto t_map    = tid::tic_scope("l2r");
-    tensors.state = std::make_unique<StateFinite>(*state_lbit);
-    tensors.state->set_name("state_real");
-    tensors.state->clear_cache();
-    tensors.state->clear_measurements();
-    tensors.clear_measurements();
-    tensors.clear_cache();
-
+    auto t_map      = tid::tic_scope("l2r");
     auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
     svd_cfg.svd_lib = svd::lib::lapacke;
     svd_cfg.svd_rtn = svd::rtn::geauto;
+    if(not tensors.state) tensors.state = std::make_unique<StateFinite>(*state_lbit);
     if(settings::flbit::use_mpo_circuit) {
-        svd_cfg.rank_max = static_cast<long>(static_cast<double>(tensors.state->find_largest_bond()) * 4);
-        tools::log->debug("Transforming {} to {} using {} unitary mpo layers", state_lbit->get_name(), tensors.state->get_name(),
-                          unitary_gates_mpo_layers.size());
-        for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
-            tools::finite::ops::apply_mpos(*tensors.state, mpo_layer, ledge, redge, true);
-            if((idx_layer + 1) % 1 == 0) {
-                tools::finite::mps::normalize_state(*tensors.state, svd_cfg, NormPolicy::ALWAYS);
-                svd_cfg.rank_max = static_cast<long>(static_cast<double>(tensors.state->find_largest_bond()) * 4);
-            }
-        }
-    } else {
-        tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit->get_name(), tensors.state->get_name(),
-                          unitary_gates_2site_layers.size());
-        tools::finite::mps::apply_circuit(*tensors.state, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
-    }
+        *tensors.state = qm::lbit::transform_to_real_basis(*state_lbit, unitary_gates_mpo_layers, ledge, redge, svd_cfg);
 
-    tools::finite::mps::normalize_state(*tensors.state, svd_cfg, NormPolicy::IFNEEDED);
+    } else {
+        *tensors.state = qm::lbit::transform_to_real_basis(*state_lbit, unitary_gates_2site_layers, svd_cfg);
+    }
+    tensors.clear_measurements();
+    tensors.clear_cache();
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-
-    if constexpr(settings::debug) {
-        auto t_dbg = tid::tic_scope("debug");
-        if(tools::log->level() <= spdlog::level::debug) {
-            tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
-            tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
-        }
-        // Check normalization
-        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
-
-        // Double-check the transform operation
-        // Check that the transform backwards is equal to the original state
-        if(settings::flbit::use_mpo_circuit) {
-            auto state_lbit_debug = *tensors.state;
-            for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
-                tools::finite::ops::apply_mpos(state_lbit_debug, mpo_layer, ledge, redge, false);
-                if((idx_layer + 1) % 1 == 0) {
-                    tools::finite::mps::normalize_state(state_lbit_debug, svd_cfg, NormPolicy::ALWAYS);
-                    svd_cfg.rank_max = static_cast<long>(static_cast<double>(tensors.state->find_largest_bond()) * 2);
-                }
-            }
-            tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
-            auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
-            tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
-            if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
-                throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
-        }
-        {
-            auto state_lbit_debug = *tensors.state;
-            tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
-            auto overlap = tools::finite::ops::overlap(*state_lbit, state_lbit_debug);
-            tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
-            if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
-                throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
-        }
-    }
 }
 
 void flbit::transform_to_lbit_basis() {
     if(unitary_gates_2site_layers.size() != settings::model::lbit::u_depth) create_unitary_circuit_gates();
-    auto t_map = tid::tic_scope("r2l");
-    state_lbit = std::make_unique<StateFinite>(*tensors.state);
-    state_lbit->set_name("state_lbit");
-    state_lbit->clear_cache();
-    state_lbit->clear_measurements();
+    auto t_map      = tid::tic_scope("r2l");
     auto svd_cfg    = svd::config(status.bond_lim, status.trnc_lim);
     svd_cfg.svd_lib = svd::lib::lapacke;
     svd_cfg.svd_rtn = svd::rtn::geauto;
+    if(not state_lbit) state_lbit = std::make_unique<StateFinite>(*tensors.state);
     if(settings::flbit::use_mpo_circuit) {
-        svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_lbit->find_largest_bond()) * 4);
-        tools::log->info("Transforming {} to {} using {} unitary mpo layers", tensors.state->get_name(), state_lbit->get_name(),
-                         unitary_gates_mpo_layers.size());
-        for(const auto &[idx_layer, mpo_layer] : iter::enumerate_reverse(unitary_gates_mpo_layers)) {
-            tools::finite::ops::apply_mpos(*state_lbit, mpo_layer, ledge, redge, false);
-            if((idx_layer) % 1 == 0) {
-                tools::log->info("Normalizing with rank_max {} | max bond {}", svd_cfg.rank_max.value(), state_lbit->find_largest_bond());
-                tools::finite::mps::normalize_state(*state_lbit, svd_cfg, NormPolicy::ALWAYS);
-                svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_lbit->find_largest_bond()) * 4);
-            }
-        }
+        *state_lbit = qm::lbit::transform_to_lbit_basis(*tensors.state, unitary_gates_mpo_layers, ledge, redge, svd_cfg);
     } else {
-        tools::log->info("Transforming {} to {} using {} unitary layers", tensors.state->get_name(), state_lbit->get_name(), unitary_gates_2site_layers.size());
-        tools::finite::mps::apply_circuit(*state_lbit, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+        *state_lbit = qm::lbit::transform_to_lbit_basis(*tensors.state, unitary_gates_2site_layers, svd_cfg);
     }
-
-    //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
-    tools::finite::mps::normalize_state(*state_lbit, std::nullopt, NormPolicy::IFNEEDED);
     status.position  = tensors.get_position<long>();
     status.direction = tensors.state->get_direction();
-    tools::log->debug("time r2l: {:.3e} s", t_map->get_last_interval());
-    if constexpr(settings::debug) {
-        auto t_dbg = tid::tic_scope("debug");
-        if(tools::log->level() <= spdlog::level::debug) {
-            tools::log->debug("{} bond dimensions: {}", state_lbit->get_name(), tools::finite::measure::bond_dimensions(*state_lbit));
-            tools::log->debug("{} bond dimensions: {}", tensors.state->get_name(), tools::finite::measure::bond_dimensions(*tensors.state));
-        }
-        // Check normalization
-        for(const auto &mps : state_lbit->mps_sites) mps->assert_normalized();
-
-        // Double-check the that transform operation backwards is equal to the original state
-        if(settings::flbit::use_mpo_circuit) {
-            auto state_real_debug = *state_lbit;
-            for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
-                tools::finite::ops::apply_mpos(state_real_debug, mpo_layer, ledge, redge, true);
-                if((idx_layer + 1) % 1 == 0) { tools::finite::mps::normalize_state(state_real_debug, svd_cfg, NormPolicy::ALWAYS); }
-            }
-            tools::finite::mps::normalize_state(state_real_debug, std::nullopt, NormPolicy::IFNEEDED);
-            auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
-            tools::log->info("Debug overlap: {:.16f}", overlap);
-            if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
-                throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
-        } else {
-            auto state_real_debug = *state_lbit;
-            tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
-            auto overlap = tools::finite::ops::overlap(*tensors.state, state_real_debug);
-            tools::log->info("Debug overlap: {:.16f}", overlap);
-            if(std::abs(overlap - 1.0) > 10 * status.trnc_lim)
-                throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
-        }
-    }
 }
 
 void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
@@ -868,6 +770,67 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             }
         }
         if(settings::flbit::cls::exit_when_done) exit(0);
+    }
+    // Save the lbit density matrix analysis
+    auto num_rps = settings::flbit::opdm::num_rps; // Number of random product states
+    if(num_rps > 0 and h5file and storage_event == StorageEvent::MODEL) {
+        auto length      = static_cast<long>(settings::model::model_size);
+        auto svd_cfg     = svd::config(status.bond_max, status.trnc_min);
+        svd_cfg.svd_lib  = svd::lib::lapacke;
+        svd_cfg.svd_rtn  = svd::rtn::geauto;
+        auto sz          = tenx::TensorCast(qm::spin::half::sz);
+        auto sp          = tenx::TensorCast(qm::spin::half::sp);
+        auto sm          = tenx::TensorCast(qm::spin::half::sm);
+        using op_t       = tools::finite::measure::LocalObservableOp;
+        using opstring_t = std::vector<op_t>;
+        tools::log->info("sp: {::.1f}", tenx::span(sp));
+        tools::log->info("sm: {::.1f}", tenx::span(sm));
+        auto eigvals_all = Eigen::MatrixXd(num_rps, length);
+        for(auto nrps : num::range(0, num_rps)) {
+            auto eig_sol        = eig::solver();
+            auto pattern        = std::string();
+            auto state_lbit_rps = StateFinite(AlgorithmType::fLBIT, settings::model::model_size, 0);
+            tools::finite::mps::initialize_state(state_lbit_rps, StateInit::PRODUCT_STATE_NEEL_SHUFFLED, StateInitType::REAL, "+z", false, 1, pattern);
+            tools::finite::mps::normalize_state(state_lbit_rps, svd_cfg, NormPolicy::ALWAYS);
+            auto state_real_rps = qm::lbit::transform_to_real_basis(state_lbit_rps, unitary_gates_2site_layers, svd_cfg); // Applies U^\dagger
+            tools::finite::mps::normalize_state(state_real_rps, svd_cfg, NormPolicy::ALWAYS);
+
+            auto rho = Eigen::Tensor<cplx, 2>(length, length);
+            rho.setZero();
+            // Now we make measurements on every pair of sites
+            for(long pos_i = 0; pos_i < length; ++pos_i) {
+                for(long pos_j = pos_i; pos_j < length; ++pos_j) {
+                    // Create an operator string from pos_i to pos_j, where
+                    //      pos_i has sp,
+                    //      pos_j has sm,
+                    // insert szm from pos_i (including) to pos_j (excluding).
+                    auto opstring = opstring_t{op_t{sp, pos_i}}; // sigma+_i sigma-_j
+                    if(pos_i < pos_j) {
+                        for(auto pos_x : num::range(pos_i, pos_j)) opstring.emplace_back(op_t{sz, pos_x});
+                    }
+                    opstring.emplace_back(op_t{sm, pos_j});
+                    rho(pos_i, pos_j) = tools::finite::measure::expectation_value(state_real_rps, opstring);
+                    if(pos_i != pos_j) rho(pos_j, pos_i) = std::conj(rho(pos_i, pos_j));
+                }
+            }
+            auto rho_matrix = tenx::MatrixMap(rho);
+            auto rho_trace  = rho_matrix.trace();
+            tools::log->info("pattern {}", pattern);
+            //            tools::log->info("rho: \n{}", linalg::tensor::to_string(rho, 8));
+            tools::log->info("rho trace: {:.16f}", rho_trace);
+            if(not rho_matrix.isApprox(rho_matrix.conjugate().transpose())) throw except::logic_error("rho is not hermitian");
+            //            if(std::abs(rho_trace - 1.0) > 1e-14) throw except::logic_error("R does not have trace 1");
+            eig_sol.setLogLevel(0);
+            eig_sol.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
+            auto eigvals = eig::view::get_eigvals<real>(eig_sol.result);
+            tools::log->info("eigvals {:2}: {::.3e} | sum {:.16f}", nrps, eigvals, eigvals.sum());
+            if(std::abs(rho_trace - static_cast<double>(length) / 2.0) > 1e-12) throw except::logic_error("R does not have trace L/2");
+            if(eigvals.real().maxCoeff() > 1 + 1e-8) throw except::logic_error("The largest eigenvalue is larger than 1");
+            if(eigvals.real().minCoeff() < 0 - 1e-8) throw except::logic_error("The smallest eigenvalue is smaller than 0");
+            eigvals_all.row(nrps) = eigvals.cwiseAbs();
+        }
+        tools::log->info("average: {::.15f}", eigvals_all.array().colwise().mean().transpose());
+        if(settings::flbit::opdm::exit_when_done) exit(0);
     }
 }
 

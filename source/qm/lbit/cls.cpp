@@ -67,7 +67,7 @@ using cplx = cplx;
  */
 std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std::vector<Eigen::Tensor<cplx, 4>> &mpos_dn,
                                                                        const std::vector<Eigen::Tensor<cplx, 4>> &mpos_up, bool adj_dn) {
-    if(mpos_dn.size() != mpos_up.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
+    if(mpos_dn.size() != mpos_up.size()) throw except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
     if constexpr(settings::debug_cls) tools::log->debug("Merging mpos dn and up");
     auto t_merge         = tid::tic_scope("merge2");
     auto mpos            = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());
@@ -184,8 +184,8 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
                                                                        const std::vector<Eigen::Tensor<cplx, 4>> &mpos_md,
                                                                        const std::vector<Eigen::Tensor<cplx, 4>> &mpos_up) {
     if(mpos_md.empty()) return merge_unitary_mpo_layers(mpos_dn, mpos_up, true);
-    if(mpos_dn.size() != mpos_up.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
-    if(mpos_dn.size() != mpos_md.size()) except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_md.size());
+    if(mpos_dn.size() != mpos_up.size()) throw except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_up.size());
+    if(mpos_dn.size() != mpos_md.size()) throw except::logic_error("size mismatch: {} != {}", mpos_dn.size(), mpos_md.size());
     if constexpr(settings::debug_cls) tools::log->debug("Merging mpos dn md up");
     auto t_merge         = tid::tic_scope("merge3");
     auto mpos            = std::vector<Eigen::Tensor<cplx, 4>>(mpos_dn.size());

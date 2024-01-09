@@ -187,9 +187,17 @@ qm::Gate qm::lbit::get_unitary_2site_gate(const UnitaryGateParameters &u) {
     //   [     M     ]  --->    [     M      ]   --->  [    M     ]  --->  [     M     ]
     //         |                   |      |              |      |                |
     //         0                   1      0              0      1                0
-    Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(M, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
-    Eigen::MatrixXcd       expifM     = (-1.0i * u.f * u.w * tenx::MatrixMap(M_shuffled)).exp();
-    return {tenx::TensorMap(expifM), std::vector<size_t>{u.sites.front(), u.sites.back()}, spin_dims};
+    //        Eigen::Tensor<cplx, 2> M_shuffled = tenx::TensorMap(M, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+    //        Eigen::MatrixXcd       expifwM     = (-1.0i * u.f * u.w * tenx::MatrixMap(M_shuffled)).exp();
+    Eigen::MatrixXcd       expifwM_unshuffled = (-1.0i * u.f * u.w * M).exp();
+    Eigen::Tensor<cplx, 2> expifwM            = tenx::TensorMap(expifwM_unshuffled, 2, 2, 2, 2).shuffle(tenx::array4{1, 0, 3, 2}).reshape(tenx::array2{4, 4});
+    if constexpr(settings::debug) {
+        // Sanity check
+        if(not tenx::MatrixMap(expifwM).isUnitary()) throw except::logic_error("expifM is not unitary!");
+        //        if(not expifwM.isUnitary()) throw except::logic_error("expifM is not unitary!");
+    }
+    return {expifwM, std::vector<size_t>{u.sites.front(), u.sites.back()}, spin_dims};
+    //    return {tenx::TensorMap(expifwM), std::vector<size_t>{u.sites.front(), u.sites.back()}, spin_dims};
 }
 
 std::vector<qm::Gate> qm::lbit::create_unitary_2site_gate_layer(const qm::lbit::UnitaryGateProperties &u) {
@@ -1557,4 +1565,148 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
     }
     /* clang-format on */
     return lbitSA;
+}
+
+StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, const std::vector<std::vector<qm::Gate>> &unitary_gates_2site_layers,
+                                              svd::config svd_cfg) {
+    auto        t_map      = tid::tic_scope("l2r");
+    StateFinite state_real = state_lbit; // Make a copy
+    state_real.set_name("state_real");
+    state_real.clear_cache();
+    state_real.clear_measurements();
+    tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit.get_name(), state_real.get_name(), unitary_gates_2site_layers.size());
+    tools::finite::mps::apply_circuit(state_real, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
+
+    tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::IFNEEDED);
+    //    status.position  = tensors.get_position<long>();
+    //    status.direction = tensors.state->get_direction();
+
+    if constexpr(settings::debug) {
+        auto t_dbg = tid::tic_scope("debug");
+        // Check normalization
+        for(const auto &mps : state_lbit.mps_sites) mps->assert_normalized();
+        // Double-check the transform operation
+        // Check that the transform backwards is equal to the original state
+        auto state_lbit_debug = state_real;
+        tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+        auto overlap = tools::finite::ops::overlap(state_lbit, state_lbit_debug);
+        tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
+        if(svd_cfg.truncation_limit.has_value())
+            if(std::abs(overlap - 1.0) > 10 * svd_cfg.truncation_limit.value())
+                throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
+    }
+    return state_real;
+}
+
+StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &unitary_gates_mpo_layers,
+                                              const Eigen::Tensor<std::complex<double>, 1> &ledge, const Eigen::Tensor<std::complex<double>, 1> &redge,
+                                              svd::config svd_cfg) {
+    auto        t_map      = tid::tic_scope("l2r");
+    StateFinite state_real = state_lbit; // Make a copy
+    state_real.set_name("state_real");
+    state_real.clear_cache();
+    state_real.clear_measurements();
+    svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
+    tools::log->debug("Transforming {} to {} using {} unitary mpo layers", state_lbit.get_name(), state_real.get_name(), unitary_gates_mpo_layers.size());
+    for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
+        tools::finite::ops::apply_mpos(state_real, mpo_layer, ledge, redge, true);
+        if((idx_layer + 1) % 1 == 0) {
+            tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::ALWAYS);
+            svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
+        }
+    }
+
+    tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::IFNEEDED);
+    if constexpr(settings::debug) {
+        auto t_dbg = tid::tic_scope("debug");
+        // Check normalization
+        for(const auto &mps : state_lbit.mps_sites) mps->assert_normalized();
+
+        // Double-check the transform operation
+        // Check that the transform backwards is equal to the original state
+        auto state_lbit_debug = state_real;
+        for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
+            tools::finite::ops::apply_mpos(state_lbit_debug, mpo_layer, ledge, redge, false);
+            if((idx_layer + 1) % 1 == 0) {
+                tools::finite::mps::normalize_state(state_lbit_debug, svd_cfg, NormPolicy::ALWAYS);
+                svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 2);
+            }
+        }
+        tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
+        auto overlap = tools::finite::ops::overlap(state_lbit, state_lbit_debug);
+        tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
+        if(svd_cfg.truncation_limit.has_value())
+            if(std::abs(overlap - 1.0) > 10 * svd_cfg.truncation_limit.value())
+                throw except::runtime_error("State overlap after transform back from real is not 1: Got {:.16f}", overlap);
+    }
+    return state_real;
+}
+StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, const std::vector<std::vector<qm::Gate>> &unitary_gates_2site_layers,
+                                              svd::config svd_cfg) {
+    auto        t_map      = tid::tic_scope("r2l");
+    StateFinite state_lbit = state_real; // Make a copy
+    state_lbit.set_name("state_lbit");
+    state_lbit.clear_cache();
+    state_lbit.clear_measurements();
+    tools::log->info("Transforming {} to {} using {} unitary layers", state_real.get_name(), state_lbit.get_name(), unitary_gates_2site_layers.size());
+    tools::finite::mps::apply_circuit(state_lbit, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+
+    //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
+    tools::finite::mps::normalize_state(state_lbit, std::nullopt, NormPolicy::IFNEEDED);
+    tools::log->debug("time r2l: {:.3e} s", t_map->get_last_interval());
+    if constexpr(settings::debug) {
+        auto t_dbg = tid::tic_scope("debug");
+        // Check normalization
+        for(const auto &mps : state_lbit.mps_sites) mps->assert_normalized();
+
+        // Double-check the that transform operation backwards is equal to the original state
+        auto state_real_debug = state_lbit;
+        tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
+        auto overlap = tools::finite::ops::overlap(state_real, state_real_debug);
+        tools::log->info("Debug overlap: {:.16f}", overlap);
+        if(svd_cfg.truncation_limit.has_value())
+            if(std::abs(overlap - 1.0) > 10 * svd_cfg.truncation_limit.value())
+                throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
+    }
+    return state_lbit;
+}
+StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, const std::vector<std::vector<Eigen::Tensor<cplx, 4>>> &unitary_gates_mpo_layers,
+                                              const Eigen::Tensor<std::complex<double>, 1> &ledge, const Eigen::Tensor<std::complex<double>, 1> &redge,
+                                              svd::config svd_cfg) {
+    auto        t_map      = tid::tic_scope("r2l");
+    StateFinite state_lbit = state_real; // Make a copy
+    state_lbit.set_name("state_lbit");
+    state_lbit.clear_cache();
+    state_lbit.clear_measurements();
+    svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
+    tools::log->info("Transforming {} to {} using {} unitary mpo layers", state_real.get_name(), state_lbit.get_name(), unitary_gates_mpo_layers.size());
+    for(const auto &[idx_layer, mpo_layer] : iter::enumerate_reverse(unitary_gates_mpo_layers)) {
+        tools::finite::ops::apply_mpos(state_lbit, mpo_layer, ledge, redge, false);
+        if((idx_layer) % 1 == 0) {
+            tools::log->info("Normalizing with rank_max {} | max bond {}", svd_cfg.rank_max.value(), state_lbit.find_largest_bond());
+            tools::finite::mps::normalize_state(state_lbit, svd_cfg, NormPolicy::ALWAYS);
+            svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
+        }
+    }
+
+    tools::finite::mps::normalize_state(state_lbit, std::nullopt, NormPolicy::IFNEEDED);
+    if constexpr(settings::debug) {
+        auto t_dbg = tid::tic_scope("debug");
+        // Check normalization
+        for(const auto &mps : state_lbit.mps_sites) mps->assert_normalized();
+
+        // Double-check the that transform operation backwards is equal to the original state
+        auto state_real_debug = state_lbit;
+        for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
+            tools::finite::ops::apply_mpos(state_real_debug, mpo_layer, ledge, redge, true);
+            if((idx_layer + 1) % 1 == 0) { tools::finite::mps::normalize_state(state_real_debug, svd_cfg, NormPolicy::ALWAYS); }
+        }
+        tools::finite::mps::normalize_state(state_real_debug, std::nullopt, NormPolicy::IFNEEDED);
+        auto overlap = tools::finite::ops::overlap(state_real, state_real_debug);
+        tools::log->info("Debug overlap: {:.16f}", overlap);
+        if(svd_cfg.truncation_limit.has_value())
+            if(std::abs(overlap - 1.0) > 10 * svd_cfg.truncation_limit.value())
+                throw except::runtime_error("State overlap after transform back from lbit is not 1: Got {:.16f}", overlap);
+    }
+    return state_lbit;
 }
