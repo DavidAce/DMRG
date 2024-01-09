@@ -15,7 +15,7 @@ namespace eig::view {
     Eigen::Map<VectorType<Scalar>> get_eigvals(const eig::solution &result, bool converged_only = true) {
         if(not result.meta.eigvals_found) throw except::runtime_error("Results have not been obtained yet: eigvals found [{}]", result.meta.eigvals_found);
         if constexpr(std::is_same_v<Scalar, real>)
-            if(not result.eigvals_are_real()) throw except::runtime_error("Can't view real eigenvalues: solution has complex eigenvalues");
+            if(not result.eigvals_are_real()) throw except::runtime_error("Can't view real eigenvalues: the solution has complex eigenvalues");
 
         auto &eigvals = result.get_eigvals<Scalar>();
         if(eigvals.empty()) throw except::runtime_error("The requested eigenvalues are empty. Did you request the correct type?");

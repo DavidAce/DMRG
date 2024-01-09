@@ -16,6 +16,13 @@
 
 fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg"); }
 
+std::string_view fdmrg::get_state_name() const {
+    if(ritz == OptRitz::SR)
+        return "state_emin";
+    else
+        return "state_emax";
+}
+
 void fdmrg::resume() {
     // Resume can imply many things
     // 1) Resume a simulation which terminated prematurely
@@ -111,7 +118,7 @@ void fdmrg::run_preprocessing() {
     tools::log->info("Running {} preprocessing", status.algo_type_sv());
     auto t_pre = tid::tic_scope("pre");
     status.clear();
-    tensors.state->set_name("state_init");
+    if(tensors.state->get_name().empty()) tensors.state->set_name(get_state_name());
     initialize_model(); // First use of random!
     tools::finite::print::model(*tensors.model);
     init_bond_dimension_limits();
@@ -121,12 +128,7 @@ void fdmrg::run_preprocessing() {
 }
 
 void fdmrg::run_algorithm() {
-    if(tensors.state->get_name().empty()) {
-        if(ritz == OptRitz::SR)
-            tensors.state->set_name("state_emin");
-        else
-            tensors.state->set_name("state_emax");
-    }
+    if(tensors.state->get_name().empty()) tensors.state->set_name(get_state_name());
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
     auto t_run       = tid::tic_scope("run");
@@ -145,7 +147,7 @@ void fdmrg::run_algorithm() {
         update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
         update_expansion_factor_alpha(); // Will update the subspace expansion factor
         try_projection();
-        try_parity_shifting_mpo();              // This shifts the energy of the opposite spin parity sector, to resolve degeneracy/spectral pairing
+        try_parity_shifting_mpo(); // This shifts the energy of the opposite spin parity sector, to resolve degeneracy/spectral pairing
         shift_mpo_energy();
         move_center_point();
         status.wall_time = tid::get_unscoped("t_tot").get_time();
@@ -226,7 +228,8 @@ void fdmrg::check_convergence() {
         "Sweep report: converged {} (σ² {} Sₑ {} spin {}) | saturated {} (σ² {} Sₑ {}) | stuck {} | succeeded: {} | has to stop: {} | σ²H target {:8.2e}",
         status.algorithm_converged_for, status.variance_mpo_converged_for, status.entanglement_converged_for, status.spin_parity_has_converged,
         status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for, status.algorithm_has_stuck_for,
-        status.algorithm_has_succeeded, status.algorithm_has_to_stop, std::max({settings::precision::variance_convergence_threshold, status.energy_variance_prec_limit}));
+        status.algorithm_has_succeeded, status.algorithm_has_to_stop,
+        std::max({settings::precision::variance_convergence_threshold, status.energy_variance_prec_limit}));
     status.algo_stop = AlgorithmStop::NONE;
     if(status.iter >= settings::fdmrg::min_iters) {
         if(status.iter >= settings::fdmrg::max_iters) status.algo_stop = AlgorithmStop::MAX_ITERS;

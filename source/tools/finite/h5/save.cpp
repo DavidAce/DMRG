@@ -105,7 +105,7 @@ namespace tools::finite::h5 {
             auto t_hdf = tid::tic_scope("spin_local", tid::level::higher);
             //            tools::log->trace("Saving spin expectation values to {}", sinfo.get_state_prefix());
             if(not state.measurements.expectation_values_sz.has_value())
-                state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz);
+                state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz).real();
             //            save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
             auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "expectation_values_sz");
             tools::log->trace("Appending to table: {}", table_path);

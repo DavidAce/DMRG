@@ -83,11 +83,6 @@ namespace settings {
         inline std::string         file_resume_name                = ""  ;                         /*!< On file_collision_policy=RESUME|REVIVE: resume from state candidate matching this string. Empty implies any */
         inline size_t              file_resume_iter                = -1ul;                         /*!< On file_collision_policy=RESUME|REVIVE: which iteration to resume from. -1ul implies resume from last available iteration */
 
-        namespace mps::state_init{
-            /*! state_init is the initial state */
-            inline StorageLevel  level  = StorageLevel::LIGHT;
-            inline StoragePolicy policy = StoragePolicy::FINISH;
-        }
         namespace mps::state_emid{
             /*! state_emid is obtained in the xDMRG algorithm (mid energy) */
             inline StorageLevel  level  = StorageLevel::LIGHT;
@@ -396,6 +391,11 @@ namespace settings {
             inline size_t   mpo_circuit_switchdepth   = 10;                        /*!< Cast the unitary circuit to an approximate compressed MPO form when the circuit depth (u_depth) is this value or more    */
             inline long     mpo_circuit_svd_bondlim   = 128;                       /*!< The bond dimension limit used in the SVD when casting the circuit to compressed MPO form */
             inline double   mpo_circuit_svd_trnclim   = 1e-14;                     /*!< The truncation error limit used in the SVD when casting the circuit to compressed MPO form */
+        }
+        /*! \namespace settings::flbit::opdm Settings for calculating the averaged one-particle density matrix */
+        namespace opdm {
+            inline size_t num_rps                      = 0;                        /*!< Number of random product states (zero magnetization) to average over ( <=0 to disable) */
+            inline bool   exit_when_done               = false;                    /*!< If true, the program exits after calculating the opdm. Otherwise it starts the time evolution as usual */
         }
 }
 

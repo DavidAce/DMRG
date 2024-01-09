@@ -80,9 +80,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::file_resume_policy"                  , storage::file_resume_policy);
     dmrg_config.load_parameter("storage::file_resume_name"                    , storage::file_resume_name);
     dmrg_config.load_parameter("storage::file_resume_iter"                    , storage::file_resume_iter);
-
-    dmrg_config.load_parameter("storage::mps::state_init::level"                            , storage::mps::state_init::level);
-    dmrg_config.load_parameter("storage::mps::state_init::policy"                           , storage::mps::state_init::policy);
     dmrg_config.load_parameter("storage::mps::state_emid::level"                            , storage::mps::state_emid::level);
     dmrg_config.load_parameter("storage::mps::state_emid::policy"                           , storage::mps::state_emid::policy);
     dmrg_config.load_parameter("storage::mps::state_emin::level"                            , storage::mps::state_emin::level);

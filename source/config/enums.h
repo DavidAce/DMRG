@@ -43,14 +43,17 @@ enum class StorageEvent : int {
 
 /*! Determines in which cases we calculate and store to file */
 enum class StoragePolicy : int {
-    NONE    = 0,  /*!< Never store */
-    ONCE    = 1,  /*!< Store only once, on first contact  */
-    INIT    = 2,  /*!< Store only once during initialization e.g. model (usually in preprocessing) */
-    ITER    = 4,  /*!< Store after every iteration */
-    FAILURE = 8,  /*!< Store only if the simulation did not succeed (usually for debugging) */
-    SUCCESS = 16, /*!< Store only if the simulation succeeded */
-    FINISH  = 32, /*!< Store when the simulation has finished (regardless of failure or success) */
-    ALWAYS  = 64, /*!< Store every chance you get */
+    NONE    = 0,   /*!< Never store */
+    ONCE    = 1,   /*!< Store only once, on first contact  */
+    INIT    = 2,   /*!< Store only once during initialization e.g. model (usually in preprocessing) */
+    ITER    = 4,   /*!< Store after every iteration */
+    PROJ    = 8,   /*!< Store after projections */
+    BOND    = 16,  /*!< Store after bond updates */
+    TRNC    = 32,  /*!< Store after truncation error limit updates */
+    FAILURE = 64,  /*!< Store only if the simulation did not succeed (usually for debugging) */
+    SUCCESS = 128, /*!< Store only if the simulation succeeded */
+    FINISH  = 256, /*!< Store when the simulation has finished (regardless of failure or success) */
+    ALWAYS  = 512, /*!< Store every chance you get */
 };
 
 enum class CopyPolicy { FORCE, TRY, OFF };
@@ -404,6 +407,9 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StoragePolicy::ONCE)                                 return "ONCE";
         if(item == StoragePolicy::INIT)                                 return "INIT";
         if(item == StoragePolicy::ITER)                                 return "ITER";
+        if(item == StoragePolicy::PROJ)                                 return "PROJ";
+        if(item == StoragePolicy::BOND)                                 return "BOND";
+        if(item == StoragePolicy::TRNC)                                 return "TRNC";
         if(item == StoragePolicy::FAILURE)                              return "FAILURE";
         if(item == StoragePolicy::SUCCESS)                              return "SUCCESS";
         if(item == StoragePolicy::FINISH)                               return "FINISH";
@@ -777,6 +783,9 @@ constexpr auto sv2enum(std::string_view item) {
         if(item.find("ONCE")    != std::string_view::npos) policy |= StoragePolicy::ONCE;
         if(item.find("INIT")    != std::string_view::npos) policy |= StoragePolicy::INIT;
         if(item.find("ITER")    != std::string_view::npos) policy |= StoragePolicy::ITER;
+        if(item.find("PROJ")    != std::string_view::npos) policy |= StoragePolicy::PROJ;
+        if(item.find("BOND")    != std::string_view::npos) policy |= StoragePolicy::BOND;
+        if(item.find("TRNC")    != std::string_view::npos) policy |= StoragePolicy::TRNC;
         if(item.find("FAILURE") != std::string_view::npos) policy |= StoragePolicy::FAILURE;
         if(item.find("SUCCESS") != std::string_view::npos) policy |= StoragePolicy::SUCCESS;
         if(item.find("FINISH")  != std::string_view::npos) policy |= StoragePolicy::FINISH;

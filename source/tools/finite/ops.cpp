@@ -319,8 +319,8 @@ StateFinite tools::finite::ops::get_projection_to_nearest_axis(const StateFinite
 }
 
 auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) -> cplx {
-    if(state1.get_length() != state2.get_length()) except::logic_error("ERROR: States have different lengths! Can't do overlap.");
-    if(state1.get_position() != state2.get_position()) except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
+    if(state1.get_length() != state2.get_length()) throw except::logic_error("ERROR: States have different lengths! Can't do overlap.");
+    if(state1.get_position() != state2.get_position()) throw except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
     size_t pos     = 0;
     auto   overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0, 1});
     Eigen::Tensor<cplx, 2> temp;

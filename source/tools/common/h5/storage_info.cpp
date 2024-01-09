@@ -20,7 +20,6 @@ void StorageInfo::assert_well_defined() const {
 }
 
 StoragePolicy StorageInfo::get_state_storage_policy() const{
-    if(state_name == "state_init") return settings::storage::mps::state_init::policy;
     if(state_name == "state_emid") return settings::storage::mps::state_emid::policy;
     if(state_name == "state_emin") return settings::storage::mps::state_emin::policy;
     if(state_name == "state_emax") return settings::storage::mps::state_emax::policy;
@@ -42,7 +41,7 @@ std::string StorageInfo::get_mps_prefix() const {
     auto        state_prefix = get_state_prefix();
     switch(storage_event) {
         case StorageEvent::ITERATION: return fmt::format("{}/mps/iter_{}", state_prefix, iter);
-        case StorageEvent::INIT: return fmt::format("{}/mps", state_prefix);
+        case StorageEvent::INIT: return fmt::format("{}/mps/init", state_prefix);
         case StorageEvent::FINISHED: return fmt::format("{}/mps", state_prefix);
         case StorageEvent::PROJECTION: return fmt::format("{}/mps/proj", state_prefix);
         case StorageEvent::BOND_UPDATE: return fmt::format("{}/mps/bond_{}", state_prefix, bond_lim);

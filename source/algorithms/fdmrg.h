@@ -11,6 +11,8 @@ namespace tools::finite::opt {
 
 class StateFinite;
 class fdmrg : public AlgorithmFinite {
+    private:
+    std::string_view get_state_name() const;
     public:
     using OptMeta = tools::finite::opt::OptMeta;
     // Inherit the constructor of class_algorithm_base

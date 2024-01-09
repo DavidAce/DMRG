@@ -2,6 +2,7 @@
 #include "../measure.h"
 #include "config/settings.h"
 #include "debug/info.h"
+#include "general/iter.h"
 #include "io/fmt.h"
 #include "math/eig.h"
 #include "math/float.h"
@@ -183,22 +184,22 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
                 auto evs   = Eigen::ArrayXd();
                 if(is_real) {
                     auto rho = state.get_reduced_density_matrix<real>(sites);
-                    tools::log->info("eig rho_real: {} ...", rho.dimensions());
+                    tools::log->trace("eig rho_real: {} ...", rho.dimensions());
                     if(rho.dimension(0) <= 8192) {
                         solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
                     } else {
                         solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), 'V', -1, -1, 1e-14, 1, eig::Vecs::OFF);
                     }
                     evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues of rho
-                    tools::log->info("eig rho_real: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
+                    tools::log->trace("eig rho_real: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
                                      solver.result.meta.time_prep);
                 } else {
                     auto rho = state.get_reduced_density_matrix<cplx>(sites);
-                    tools::log->info("eig rho_cplx: {} ...", rho.dimensions());
+                    tools::log->trace("eig rho_cplx: {} ...", rho.dimensions());
 
                     solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
-                    evs = eig::view::get_eigvals<cplx>(solver.result).real(); // Eigenvalues of rho
-                    tools::log->info("eig rho_cplx: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
+                    evs = eig::view::get_eigvals<real>(solver.result).real(); // Eigenvalues of rho
+                    tools::log->trace("eig rho_cplx: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
                                      solver.result.meta.time_prep);
                 }
                 double s = 0;
@@ -675,51 +676,36 @@ double tools::finite::measure::residual_norm_full(const StateFinite &state, cons
     return (Hv - v.dot(Hv) * v).norm();
 }
 
-double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
+cplx tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableOp> &ops) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
-    if(ops.empty()) throw std::runtime_error("expectation_value: obs is empty");
-    auto                   d0    = state.mps_sites.front()->get_chiL();
-    Eigen::Tensor<cplx, 2> chain = tenx::TensorCast(Eigen::MatrixXcd::Identity(d0, d0));
-    Eigen::Tensor<cplx, 2> temp;
-    //    for(const auto &mps : state.mps_sites) {
-    //        const auto &M     = mps->get_M();
-    //        const auto  pos   = mps->get_position<long>();
-    //        const auto  ob_it = std::find_if(ops.begin(), ops.end(), [&pos](const auto &ob) { return ob.pos == pos and not ob.used; });
-    //        temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-    //        if(ob_it != ops.end()) {
-    //            auto M_op                           = ob_it->op.contract(M, tenx::idx({1}, {0}));
-    //            temp.device(tenx::omp::getDevice()) = chain.contract(M_op, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
-    //            ob_it->used                         = true;
-    //        } else {
-    //            temp.device(tenx::omp::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
-    //        }
-    //        chain = temp;
-    //    }
-    Eigen::Tensor<cplx, 3> M;
+    if(ops.empty()) throw std::runtime_error("expectation_value: ops is empty");
+    auto d0    = state.mps_sites.front()->get_chiL();
+    auto chain = tenx::TensorCast(Eigen::MatrixXcd::Identity(d0, d0));
+    if constexpr(settings::debug) {
+        if(d0 != 1) tools::log->warn("expectation_value: chiL is not 1");
+    }
     for(const auto &mps : state.mps_sites) {
-        const auto pos   = mps->get_position<long>();
-        const auto op_it = std::find_if(ops.begin(), ops.end(), [&pos](const LocalObservableOp &op) { return op.pos == pos and not op.used; });
-        //        M.resize(mps->dimensions());
-        if(op_it != ops.end()) {
-            //            M.device(tenx::omp::getDevice()) = op_it->op.contract(mps->get_M(), tenx::idx({1}, {0}));
-            M           = op_it->op.contract(mps->get_M(), tenx::idx({1}, {0}));
-            op_it->used = true;
-        } else {
-            M = mps->get_M();
+        Eigen::Tensor<cplx, 3> M   = mps->get_M();
+        const auto             pos = mps->get_position<long>();
+        for(const auto &op : iter::reverse(ops)) {
+            // Reverse to apply operators right to left, if they are on the same position
+            // i.e. ABC|psi> should apply C first and A last (if A and C are on the same site).
+            if(op.used or op.pos != pos) continue;
+            auto temp                               = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
+            temp.device(tenx::threads::getDevice()) = op.op.contract(M, tenx::idx({1}, {0}));
+            M                                       = temp;
+            op.used                                 = true;
         }
-        temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
+        auto temp                               = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
         temp.device(tenx::threads::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
         chain                                   = temp;
     }
 
-    auto expval = tenx::MatrixMap(chain).trace();
-    if(std::imag(expval) > 1e-14) tools::log->warn("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval), std::imag(expval));
-    if(std::imag(expval) > 1e-8)
-        throw except::runtime_error("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval), std::imag(expval));
-    return std::real(expval);
+    Eigen::Tensor<cplx, 0> expval = chain.trace();
+    return expval.coeff(0);
 }
 
-double tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableMpo> &mpos) {
+cplx tools::finite::measure::expectation_value(const StateFinite &state, const std::vector<LocalObservableMpo> &mpos) {
     if(state.mps_sites.empty()) throw std::runtime_error("expectation_value: state.mps_sites is empty");
     if(mpos.empty()) throw std::runtime_error("expectation_value: obs is empty");
 
@@ -791,15 +777,15 @@ double tools::finite::measure::expectation_value(const StateFinite &state, const
 
     if(std::imag(expval(0)) > 1e-14)
         tools::log->warn("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
-    if(std::imag(expval(0)) > 1e-8)
-        throw except::runtime_error("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
-    return std::real(expval(0));
+    //    if(std::imag(expval(0)) > 1e-8)
+    //        throw except::runtime_error("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
+    return expval(0);
 }
 
-Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op) {
+Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op) {
     tools::log->trace("Measuring local expectation values");
-    long                     len = state.get_length<long>();
-    Eigen::Tensor<double, 1> expvals(len);
+    long                   len = state.get_length<long>();
+    Eigen::Tensor<cplx, 1> expvals(len);
     expvals.setZero();
     for(long pos = 0; pos < len; pos++) {
         LocalObservableOp ob1 = {op, pos};
@@ -807,13 +793,12 @@ Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateF
     }
     return expvals;
 }
-Eigen::Tensor<double, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Matrix2cd &op) {
+Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Matrix2cd &op) {
     Eigen::Tensor<cplx, 2> tensor_op = tenx::TensorMap(op);
     return expectation_values(state, tensor_op);
 }
 
-double tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1,
-                                           long pos2) {
+cplx tools::finite::measure::correlation(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1, const Eigen::Tensor<cplx, 2> &op2, long pos1, long pos2) {
     if(pos1 == pos2) {
         // Stack the operators
         Eigen::Tensor<cplx, 2> op12 = op1.contract(op2, tenx::idx({0}, {1}));
@@ -827,13 +812,13 @@ double tools::finite::measure::correlation(const StateFinite &state, const Eigen
     }
 }
 
-Eigen::Tensor<double, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1,
-                                                                    const Eigen::Tensor<cplx, 2> &op2) {
+Eigen::Tensor<cplx, 2> tools::finite::measure::correlation_matrix(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op1,
+                                                                  const Eigen::Tensor<cplx, 2> &op2) {
     tools::log->trace("Measuring correlation matrix");
 
-    long                     len = state.get_length<long>();
-    bool                     eq  = tenx::MatrixMap(op1) == tenx::MatrixMap(op2);
-    Eigen::Tensor<double, 2> C(len, len);
+    long                   len = state.get_length<long>();
+    bool                   eq  = tenx::MatrixMap(op1) == tenx::MatrixMap(op2);
+    Eigen::Tensor<cplx, 2> C(len, len);
     C.setZero();
 
     for(long pos_j = 0; pos_j < len; pos_j++) {
@@ -848,8 +833,8 @@ Eigen::Tensor<double, 2> tools::finite::measure::correlation_matrix(const StateF
     return C;
 }
 
-Eigen::Tensor<double, 2> tools::finite::measure::kvornings_matrix(const StateFinite &state) {
-    /* We creata matrix of the form
+Eigen::Tensor<cplx, 2> tools::finite::measure::kvornings_matrix(const StateFinite &state) {
+    /* We create a matrix of the form
      *
      *
      * R(i,j) =  | r++ r+- |
@@ -862,117 +847,87 @@ Eigen::Tensor<double, 2> tools::finite::measure::kvornings_matrix(const StateFin
      *      r-- = r+-(i,j) = ⟨sm(i) sz(i)sz(i+1)...sz(j-1) sp(j)⟩
      *
      * and sp, sm, sz are the plus, minus and z pauli matrices at some site i.
-     * Note that each r is an LxL matrix, so C must be a 2Lx2L matrix.
+     * Note that each r is an LxL matrix, so R must be a 2Lx2L matrix.
+     * Note also that the signs are "crossed" intentionally: r++ has sp and sm, and so on.
      *
      */
 
     tools::log->trace("Measuring kvornings matrix");
+    long L   = state.get_length<long>();
+    auto R   = Eigen::MatrixXcd(2 * L, 2 * L); // Allocate the full rho matrix "R"
+    auto rpp = R.topLeftCorner(L, L);          // One quadrant of R: rho++
+    auto rpm = R.topRightCorner(L, L);         // One quadrant of R: rho+-
+    auto rmp = R.bottomLeftCorner(L, L);       // One quadrant of R: rho-+
+    auto rmm = R.bottomRightCorner(L, L);      // One quadrant of R: rho--
 
-    const auto sp = tenx::TensorCast(qm::spin::half::sp);
-    const auto sm = tenx::TensorCast(qm::spin::half::sm);
-    const auto sz = tenx::TensorCast(qm::spin::half::sz);
+    // Define pauli matrices sigma plus, minus and z.
+    auto sp = tenx::TensorCast(qm::spin::half::sp);
+    auto sm = tenx::TensorCast(qm::spin::half::sm);
+    auto sz = tenx::TensorCast(qm::spin::half::sz);
 
-    Eigen::Tensor<cplx, 2> spp = sp.contract(sp, tenx::idx({0}, {1}));
-    Eigen::Tensor<cplx, 2> spm = sp.contract(sm, tenx::idx({0}, {1}));
-    Eigen::Tensor<cplx, 2> smp = sm.contract(sp, tenx::idx({0}, {1}));
-    Eigen::Tensor<cplx, 2> smm = sm.contract(sm, tenx::idx({0}, {1}));
-
-    Eigen::Tensor<cplx, 2> spz = sp.contract(sz, tenx::idx({0}, {1}));
-    Eigen::Tensor<cplx, 2> smz = sm.contract(sz, tenx::idx({0}, {1}));
-    Eigen::Tensor<cplx, 2> szp = sz.contract(sp, tenx::idx({0}, {1}));
-    Eigen::Tensor<cplx, 2> szm = sz.contract(sm, tenx::idx({0}, {1}));
-
-    long            L = state.get_length<long>();
-    Eigen::MatrixXd R(2 * L, 2 * L);
-    auto            rpp = R.topLeftCorner(L, L);     // r++
-    auto            rpm = R.topRightCorner(L, L);    // r+-
-    auto            rmp = R.bottomLeftCorner(L, L);  // r-+
-    auto            rmm = R.bottomRightCorner(L, L); // r--
-
-    for(long pos_j = 0; pos_j < L; pos_j++) {
-        for(long pos_i = 0; pos_i < L; pos_i++) {
+    // Shorthand types
+    using op_t       = LocalObservableOp;
+    using opstring_t = std::vector<op_t>;
+    for(long pos_i = 0; pos_i < L; ++pos_i) {
+        for(long pos_j = pos_i; pos_j < L; ++pos_j) {
             // Create an operator string from pos_i to pos_j, where
-            // pos_i has sp,
-            // pos_j has sm,
-            // insert zm from pos_i (including) to pos_j (excluding).
-            std::vector<LocalObservableOp> opp, opm, omp, omm; // Operator strings for the r matrices
-            if(pos_i == pos_j) {
-                // Use the stacked operators
-                opp.emplace_back(LocalObservableOp{spm, pos_i});
-                opm.emplace_back(LocalObservableOp{spp, pos_i});
-                omp.emplace_back(LocalObservableOp{smm, pos_i});
-                omm.emplace_back(LocalObservableOp{smp, pos_i});
-            } else if(pos_i < pos_j) {
-                for(long pos = pos_i; pos <= pos_j; pos++) {
-                    if(pos == pos_i) {
-                        opp.emplace_back(LocalObservableOp{spz, pos});
-                        opm.emplace_back(LocalObservableOp{spz, pos});
-                        omp.emplace_back(LocalObservableOp{smz, pos});
-                        omm.emplace_back(LocalObservableOp{smz, pos});
-                    } else if(pos == pos_j) {
-                        opp.emplace_back(LocalObservableOp{sm, pos});
-                        opm.emplace_back(LocalObservableOp{sp, pos});
-                        omp.emplace_back(LocalObservableOp{sm, pos});
-                        omm.emplace_back(LocalObservableOp{sp, pos});
-                    } else {
-                        opp.emplace_back(LocalObservableOp{sz, pos});
-                        opm.emplace_back(LocalObservableOp{sz, pos});
-                        omp.emplace_back(LocalObservableOp{sz, pos});
-                        omm.emplace_back(LocalObservableOp{sz, pos});
-                    }
-                }
-
-            } else {
-                for(long pos = pos_j; pos <= pos_i; pos++) {
-                    if(pos == pos_i) {
-                        opp.emplace_back(LocalObservableOp{sp, pos});
-                        opm.emplace_back(LocalObservableOp{sp, pos});
-                        omp.emplace_back(LocalObservableOp{sm, pos});
-                        omm.emplace_back(LocalObservableOp{sm, pos});
-                    } else if(pos == pos_j) {
-                        opp.emplace_back(LocalObservableOp{szm, pos});
-                        opm.emplace_back(LocalObservableOp{szp, pos});
-                        omp.emplace_back(LocalObservableOp{szm, pos});
-                        omm.emplace_back(LocalObservableOp{szp, pos});
-                    } else {
-                        opp.emplace_back(LocalObservableOp{sz, pos});
-                        opm.emplace_back(LocalObservableOp{sz, pos});
-                        omp.emplace_back(LocalObservableOp{sz, pos});
-                        omm.emplace_back(LocalObservableOp{sz, pos});
-                    }
+            //      pos_i has sp (or sm)
+            //      pos_j has sm (or sp)
+            // Then insert sz from pos_i (including) to pos_j (excluding).
+            auto opp = opstring_t{op_t{sp, pos_i}}; // adds s+_i
+            auto opm = opstring_t{op_t{sp, pos_i}}; // adds s+_i
+            auto omp = opstring_t{op_t{sm, pos_i}}; // adds s-_i
+            auto omm = opstring_t{op_t{sm, pos_i}}; // adds s-_i
+            if(pos_i < pos_j) {
+                for(auto pos_x : num::range(pos_i, pos_j)) {
+                    opp.emplace_back(op_t{sz, pos_x}); // adds sz_i sz_{i} ... sz_{j-1}
+                    opm.emplace_back(op_t{sz, pos_x}); // adds sz_i sz_{i} ... sz_{j-1}
+                    omp.emplace_back(op_t{sz, pos_x}); // adds sz_i sz_{i} ... sz_{j-1}
+                    omm.emplace_back(op_t{sz, pos_x}); // adds sz_i sz_{i} ... sz_{j-1}
                 }
             }
+            opp.emplace_back(op_t{sm, pos_j}); // adds  s-_j
+            opm.emplace_back(op_t{sp, pos_j}); // adds  s+_j
+            omp.emplace_back(op_t{sm, pos_j}); // adds  s-_j
+            omm.emplace_back(op_t{sp, pos_j}); // adds  s+_j
 
+            // Calculate the expectation value of the operator string
             rpp(pos_i, pos_j) = expectation_value(state, opp);
             rpm(pos_i, pos_j) = expectation_value(state, opm);
             rmp(pos_i, pos_j) = expectation_value(state, omp);
             rmm(pos_i, pos_j) = expectation_value(state, omm);
 
-            //             Symmetry
-            //            rpp(pos_j, pos_i) = rpp(pos_i, pos_j);
-            //            rpm(pos_j, pos_i) = rpm(pos_i, pos_j);
-            //            rmp(pos_j, pos_i) = rmp(pos_i, pos_j);
-            //            rmm(pos_j, pos_i) = rmm(pos_i, pos_j);
+            // Set the Hermitian conjugates on the opposite side
+            if(pos_i != pos_j) {
+                rpp(pos_j, pos_i) = std::conj(rpp(pos_i, pos_j));
+                rpm(pos_j, pos_i) = std::conj(rmp(pos_i, pos_j)); // Mix pm <-> mp
+                rmp(pos_j, pos_i) = std::conj(rpm(pos_i, pos_j)); // Mix mp <-> pm
+                rmm(pos_j, pos_i) = std::conj(rmm(pos_i, pos_j));
+            }
         }
     }
-    if(not R.isApprox(R.transpose())) except::logic_error("R is not symmetric");
-
+    //    tools::log->info("rho++: trace {:.16f}\n{}", rpp.trace(), linalg::matrix::to_string(rpp, 8));
+    //    tools::log->info("rho+-: trace {:.16f}\n{}", rpm.trace(), linalg::matrix::to_string(rpm, 8));
+    //    tools::log->info("rho-+: trace {:.16f}\n{}", rmp.trace(), linalg::matrix::to_string(rmp, 8));
+    //    tools::log->info("rho--: trace {:.16f}\n{}", rmm.trace(), linalg::matrix::to_string(rmm, 8));
+    tools::log->info("R    : trace {:.16f}", R.trace());
+    if(not R.isApprox(R.conjugate().transpose())) throw except::logic_error("R is not hermitian");
+    if(std::abs(R.trace() - static_cast<double>(L)) > 1e-8) throw std::runtime_error("R.trace() != L");
     return tenx::TensorMap(R);
 }
 
 Eigen::Tensor<double, 1> tools::finite::measure::kvornings_marker(const StateFinite &state) {
     if(not state.measurements.kvornings_marker) {
-        auto R = kvornings_matrix(state);
-        //        tools::log->info("Kvornings matrix: \n{}\n", linalg::tensor::to_string(R, 5));
+        auto R      = kvornings_matrix(state);
         auto solver = eig::solver();
         solver.eig<eig::Form::SYMM>(R.data(), R.dimension(0), eig::Vecs::OFF);
         state.measurements.kvornings_marker = tenx::TensorCast(eig::view::get_eigvals<double>(solver.result));
-        tools::log->info("Kvornings marker: {:+9.4e}", fmt::join(tenx::span(state.measurements.kvornings_marker.value()), ", "));
+        tools::log->info("Kvornings marker: {::+9.4e}", tenx::span(state.measurements.kvornings_marker.value()));
     }
     return state.measurements.kvornings_marker.value();
 }
 
-double tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<double, 2> &correlation_matrix) {
+cplx tools::finite::measure::structure_factor(const StateFinite &state, const Eigen::Tensor<cplx, 2> &correlation_matrix) {
     tools::log->trace("Measuring structure factor");
     if(correlation_matrix.dimension(0) != correlation_matrix.dimension(1))
         throw except::logic_error("Correlation matrix is not square: dims {}", correlation_matrix.dimensions());
@@ -982,9 +937,9 @@ double tools::finite::measure::structure_factor(const StateFinite &state, const 
 }
 
 std::array<Eigen::Tensor<double, 1>, 3> tools::finite::measure::expectation_values_xyz(const StateFinite &state) {
-    if(not state.measurements.expectation_values_sx) state.measurements.expectation_values_sx = measure::expectation_values(state, qm::spin::half::sx);
-    if(not state.measurements.expectation_values_sy) state.measurements.expectation_values_sy = measure::expectation_values(state, qm::spin::half::sy);
-    if(not state.measurements.expectation_values_sz) state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz);
+    if(not state.measurements.expectation_values_sx) state.measurements.expectation_values_sx = measure::expectation_values(state, qm::spin::half::sx).real();
+    if(not state.measurements.expectation_values_sy) state.measurements.expectation_values_sy = measure::expectation_values(state, qm::spin::half::sy).real();
+    if(not state.measurements.expectation_values_sz) state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz).real();
     return {state.measurements.expectation_values_sx.value(), state.measurements.expectation_values_sy.value(),
             state.measurements.expectation_values_sz.value()};
 }
@@ -995,17 +950,17 @@ std::array<double, 3> tools::finite::measure::expectation_value_xyz(const StateF
     Eigen::Tensor<cplx, 2> sy  = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz  = tenx::TensorMap(qm::spin::half::sz);
     auto                   pos = (state.get_length<long>() - 1) / 2;
-    return {measure::expectation_value(state, {LocalObservableOp{sx, pos}}), measure::expectation_value(state, {LocalObservableOp{sy, pos}}),
-            measure::expectation_value(state, {LocalObservableOp{sz, pos}})};
+    return {measure::expectation_value(state, {LocalObservableOp{sx, pos}}).real(), measure::expectation_value(state, {LocalObservableOp{sy, pos}}).real(),
+            measure::expectation_value(state, {LocalObservableOp{sz, pos}}).real()};
 }
 
 std::array<Eigen::Tensor<double, 2>, 3> tools::finite::measure::correlation_matrix_xyz(const StateFinite &state) {
     Eigen::Tensor<cplx, 2> sx = tenx::TensorMap(qm::spin::half::sx);
     Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
-    if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
-    if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
-    if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
+    if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx).real();
+    if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy).real();
+    if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz).real();
     return {state.measurements.correlation_matrix_sx.value(), state.measurements.correlation_matrix_sy.value(),
             state.measurements.correlation_matrix_sz.value()};
 }
@@ -1015,16 +970,19 @@ std::array<double, 3> tools::finite::measure::structure_factor_xyz(const StateFi
     Eigen::Tensor<cplx, 2> sy = tenx::TensorMap(qm::spin::half::sy);
     Eigen::Tensor<cplx, 2> sz = tenx::TensorMap(qm::spin::half::sz);
     if(not state.measurements.structure_factor_x) {
-        if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
-        state.measurements.structure_factor_x = measure::structure_factor(state, state.measurements.correlation_matrix_sx.value());
+        auto correlation_matrix_sx = measure::correlation_matrix(state, sx, sx);
+        if(not state.measurements.correlation_matrix_sx) state.measurements.correlation_matrix_sx = correlation_matrix_sx.real();
+        state.measurements.structure_factor_x = measure::structure_factor(state, correlation_matrix_sx).real();
     }
     if(not state.measurements.structure_factor_y) {
-        if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
-        state.measurements.structure_factor_y = measure::structure_factor(state, state.measurements.correlation_matrix_sy.value());
+        auto correlation_matrix_sy = measure::correlation_matrix(state, sy, sy);
+        if(not state.measurements.correlation_matrix_sy) state.measurements.correlation_matrix_sy = correlation_matrix_sy.real();
+        state.measurements.structure_factor_y = measure::structure_factor(state, correlation_matrix_sy).real();
     }
     if(not state.measurements.structure_factor_z) {
-        if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
-        state.measurements.structure_factor_z = measure::structure_factor(state, state.measurements.correlation_matrix_sz.value());
+        auto correlation_matrix_sz = measure::correlation_matrix(state, sz, sz);
+        if(not state.measurements.correlation_matrix_sz) state.measurements.correlation_matrix_sz = correlation_matrix_sz.real();
+        state.measurements.structure_factor_z = measure::structure_factor(state, correlation_matrix_sz).real();
     }
 
     return {state.measurements.structure_factor_x.value(), state.measurements.structure_factor_y.value(), state.measurements.structure_factor_z.value()};

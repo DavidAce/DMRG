@@ -76,8 +76,7 @@ void eig::solver::eig(Scalar *matrix, size_type L, Vecs compute_eigvecs_, Dephas
             if constexpr(form == Form::SYMM) {
                 if(config.tag.empty()) config.tag = "dsyevd";
                 info = dsyevd(matrix, L);
-            }
-            else if constexpr(form == Form::NSYM) {
+            } else if constexpr(form == Form::NSYM) {
                 if(config.tag.empty()) config.tag = "dgeev";
                 info = dgeev(matrix, L);
             }
@@ -86,8 +85,9 @@ void eig::solver::eig(Scalar *matrix, size_type L, Vecs compute_eigvecs_, Dephas
             if constexpr(form == Form::SYMM) {
                 if(config.tag.empty()) config.tag = "zheevd";
                 info = zheevd(matrix, L);
-            }
-            else if constexpr(form == Form::NSYM) {
+//                if(config.tag.empty()) config.tag = "zheev";
+//                info = zheev(matrix, L);
+            } else if constexpr(form == Form::NSYM) {
                 if(config.tag.empty()) config.tag = "zgeev";
                 info = zgeev(matrix, L);
             }

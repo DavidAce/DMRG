@@ -15,27 +15,26 @@ namespace tools::common::h5 {
     bool save::should_save(const StorageInfo &sinfo, StoragePolicy policy) {
         if(policy == StoragePolicy::NONE) return false;
         if(has_flag(policy, StoragePolicy::ONCE)) return false; // TODO sinfo needs a sort of counter...
-        if(has_flag(policy, StoragePolicy::INIT)) {
-            // TODO: Check that this is during initialization rather than "when storing the initial state"
-            return sinfo.storage_event == StorageEvent::INIT;
-        }
-        if(has_flag(policy, StoragePolicy::ITER)) {
-            return sinfo.iter % settings::storage::storage_interval == 0 and //
-                   sinfo.storage_event == StorageEvent::ITERATION;
-        }
-        if(has_flag(policy, StoragePolicy::FAILURE)) {
-            return sinfo.storage_event == StorageEvent::FINISHED and //
-                   sinfo.algorithm_has_finished == true and          //
-                   sinfo.algorithm_has_succeeded == false;
-        }
-        if(has_flag(policy, StoragePolicy::SUCCESS)) {
-            return sinfo.storage_event == StorageEvent::FINISHED and //
-                   sinfo.algorithm_has_finished == true and          //
-                   sinfo.algorithm_has_succeeded == true;
-        }
-        if(has_flag(policy, StoragePolicy::FINISH)) { return sinfo.storage_event == StorageEvent::FINISHED; }
         if(has_flag(policy, StoragePolicy::ALWAYS)) return true;
-        throw except::logic_error("Unrecognized policy: {}", enum2sv(policy));
+        if(sinfo.storage_event == StorageEvent::INIT) {
+            // TODO: Check that this is during initialization rather than "when storing the initial state"
+            return has_flag(policy, StoragePolicy::INIT);
+        }
+        if(sinfo.storage_event == StorageEvent::ITERATION) {
+            return has_flag(policy, StoragePolicy::ITER) and sinfo.iter % settings::storage::storage_interval == 0;
+        }
+        if(sinfo.storage_event == StorageEvent::FINISHED) {
+            bool has_failed   = sinfo.algorithm_has_finished and not sinfo.algorithm_has_succeeded;
+            bool has_suceeded = sinfo.algorithm_has_finished and sinfo.algorithm_has_succeeded;
+            bool has_finished = sinfo.algorithm_has_finished;
+            if(has_failed and has_flag(policy, StoragePolicy::FAILURE)) return true;
+            if(has_suceeded and has_flag(policy, StoragePolicy::SUCCESS)) return true;
+            return has_finished and has_flag(policy, StoragePolicy::FINISH);
+        }
+        if(sinfo.storage_event == StorageEvent::PROJECTION) { return has_flag(policy, StoragePolicy::PROJ); }
+        if(sinfo.storage_event == StorageEvent::BOND_UPDATE) { return has_flag(policy, StoragePolicy::BOND); }
+        if(sinfo.storage_event == StorageEvent::TRNC_UPDATE) { return has_flag(policy, StoragePolicy::TRNC); }
+        throw except::logic_error("Storage policy [{}] has not been implemented for event [{}]", enum2sv(policy), enum2sv(sinfo.storage_event));
     }
 
     void save::bootstrap_meta_log(std::unordered_map<std::string, AlgorithmStatus> &save_log, const h5pp::File &h5file, std::string_view state_prefix) {

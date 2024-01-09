@@ -26,6 +26,7 @@ namespace eig {
         int dsyevd(real *matrix, size_type L);
         int dsyevr(real *matrix, size_type L, char range, int il, int iu, double vl, double vu);
         int dsyevx(real *matrix, size_type L, char range, int il, int iu, double vl, double vu);
+        int zheev(cplx *matrix, size_type L);
         int zheevd(cplx *matrix, size_type L);
         int zheevr(cplx *matrix, size_type L, char range, int il, int iu, double vl, double vu);
         int dgeev(real *matrix, size_type L);
