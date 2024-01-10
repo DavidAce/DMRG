@@ -188,30 +188,40 @@ enum class xdmrg_task {
     TIMER_RESET,
 };
 
+
+
+template<typename T, typename = std::void_t<>>
+struct enum_is_bitflag : std::false_type {};
+template<typename T>
+struct enum_is_bitflag<T, std::void_t<decltype(T::allow_bitops)>> : public std::true_type {};
+template<typename T>
+constexpr bool enum_is_bitflag_v = enum_is_bitflag<T>();
+
+
 template<typename E>
-constexpr auto operator|(E lhs, E rhs) -> decltype(E::allow_bitops) {
+constexpr auto operator|(E lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
     using U = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<U>(lhs) | static_cast<U>(rhs));
 }
 template<typename E>
-constexpr auto operator&(E lhs, E rhs) -> decltype(E::allow_bitops) {
+constexpr auto operator&(E lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
     using U = std::underlying_type_t<E>;
     return static_cast<E>(static_cast<U>(lhs) & static_cast<U>(rhs));
 }
 template<typename E>
-constexpr auto operator|=(E lhs, E rhs) -> decltype(E::allow_bitops) {
+constexpr auto operator|=(E &lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
     lhs = lhs | rhs;
     return lhs;
 }
 
 template<typename E>
-inline bool has_flag(E target, E check) {
+inline bool has_flag(E target, E check) noexcept{
     using U = std::underlying_type_t<E>;
     return (static_cast<U>(target) & static_cast<U>(check)) == static_cast<U>(check);
 }
 
 template<typename E1, typename E2>
-inline bool have_common(E1 lhs, E2 rhs) {
+inline bool have_common(E1 lhs, E2 rhs) noexcept {
     using U1 = std::underlying_type_t<E1>;
     using U2 = std::underlying_type_t<E2>;
     static_assert(std::is_same_v<U1, U2>);
@@ -226,7 +236,7 @@ namespace enum_sfinae {
 }
 
 template<typename T>
-std::vector<std::string_view> enum2sv(const std::vector<T> &items) {
+std::vector<std::string_view> enum2sv(const std::vector<T> &items) noexcept {
     auto v = std::vector<std::string_view>();
     v.reserve(items.size());
     for(const auto &item : items) v.emplace_back(enum2sv(item));
@@ -234,7 +244,7 @@ std::vector<std::string_view> enum2sv(const std::vector<T> &items) {
 }
 
 template<typename T>
-std::string flag2str(const T &item) {
+std::string flag2str(const T &item) noexcept {
     static_assert(std::is_same_v<T, OptExit> or //
                   std::is_same_v<T, OptWhen> or //
                   std::is_same_v<T, StoragePolicy>);
@@ -277,7 +287,6 @@ std::string flag2str(const T &item) {
     return std::accumulate(std::begin(v), std::end(v), std::string(),
                            [](const std::string &ss, const std::string &s) { return ss.empty() ? s : ss + "|" + s; });
 }
-
 
 template<typename T>
 constexpr std::string_view enum2sv(const T item) noexcept {
@@ -442,7 +451,18 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StorageEvent::FINISHED)                              return "FINISHED";
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
-        return flag2str(item);
+        if(item == StoragePolicy::NONE)                                 return "NONE";
+        if(item == StoragePolicy::ONCE)                                 return "ONCE";
+        if(item == StoragePolicy::INIT)                                 return "INIT";
+        if(item == StoragePolicy::ITER)                                 return "ITER";
+        if(item == StoragePolicy::PROJ)                                 return "PROJ";
+        if(item == StoragePolicy::BOND)                                 return "BOND";
+        if(item == StoragePolicy::TRNC)                                 return "TRNC";
+        if(item == StoragePolicy::FAILURE)                              return "FAILURE";
+        if(item == StoragePolicy::SUCCESS)                              return "SUCCESS";
+        if(item == StoragePolicy::FINISH)                               return "FINISH";
+        if(item == StoragePolicy::ALWAYS)                               return "ALWAYS";
+        return "BITFLAG";
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -762,17 +782,17 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
         auto policy = StoragePolicy::NONE;
-        if(item.find("ON")     != std::string_view::npos) policy |= StoragePolicy::ONCE;
-        if(item.find("IN")     != std::string_view::npos) policy |= StoragePolicy::INIT;
-        if(item.find("IT")     != std::string_view::npos) policy |= StoragePolicy::ITER;
-        if(item.find("PR")     != std::string_view::npos) policy |= StoragePolicy::PROJ;
-        if(item.find("BO")     != std::string_view::npos) policy |= StoragePolicy::BOND;
-        if(item.find("TR")     != std::string_view::npos) policy |= StoragePolicy::TRNC;
-        if(item.find("FA")     != std::string_view::npos) policy |= StoragePolicy::FAILURE;
-        if(item.find("SU")     != std::string_view::npos) policy |= StoragePolicy::SUCCESS;
-        if(item.find("FI")     != std::string_view::npos) policy |= StoragePolicy::FINISH;
-        if(item.find("AL")     != std::string_view::npos) policy |= StoragePolicy::ALWAYS;
-        if(item.find("RE")     != std::string_view::npos) policy |= StoragePolicy::REPLACE;
+        if(item.find("ONCE") != std::string_view::npos) policy |= StoragePolicy::ONCE;
+        if(item.find("INIT") != std::string_view::npos) policy |= StoragePolicy::INIT;
+        if(item.find("ITER") != std::string_view::npos) policy |= StoragePolicy::ITER;
+        if(item.find("PROJ") != std::string_view::npos) policy |= StoragePolicy::PROJ;
+        if(item.find("BOND") != std::string_view::npos) policy |= StoragePolicy::BOND;
+        if(item.find("TRNC") != std::string_view::npos) policy |= StoragePolicy::TRNC;
+        if(item.find("FAIL") != std::string_view::npos) policy |= StoragePolicy::FAILURE;
+        if(item.find("SUCC") != std::string_view::npos) policy |= StoragePolicy::SUCCESS;
+        if(item.find("FINI") != std::string_view::npos) policy |= StoragePolicy::FINISH;
+        if(item.find("ALWA") != std::string_view::npos) policy |= StoragePolicy::ALWAYS;
+        if(item.find("REPL") != std::string_view::npos) policy |= StoragePolicy::REPLACE;
         return policy;
     }
     if constexpr(std::is_same_v<T, StateInit>) {

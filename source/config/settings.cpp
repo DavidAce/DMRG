@@ -85,9 +85,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::mps::state_emax::policy"                               , storage::mps::state_emax::policy);
     dmrg_config.load_parameter("storage::mps::state_real::policy"                               , storage::mps::state_real::policy);
     dmrg_config.load_parameter("storage::mps::state_lbit::policy"                               , storage::mps::state_lbit::policy);
-    dmrg_config.load_parameter("storage::mps::state_proj::level"                                , storage::mps::state_proj::policy);
-    dmrg_config.load_parameter("storage::mps::state_bond::level"                                , storage::mps::state_bond::policy);
-    dmrg_config.load_parameter("storage::mps::state_fes::level"                                 , storage::mps::state_fes::policy);
     dmrg_config.load_parameter("storage::mpo::model::policy"                                    , storage::mpo::model::policy);
     dmrg_config.load_parameter("storage::table::bonds::policy"                                  , storage::table::bonds::policy);
     dmrg_config.load_parameter("storage::table::model::policy"                                  , storage::table::model::policy);
@@ -111,7 +108,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("storage::dataset::number_probabilities::chunksize"              , storage::dataset::number_probabilities::chunksize);
     dmrg_config.load_parameter("storage::dataset::expectation_values_spin_xyz::policy"          , storage::dataset::expectation_values_spin_xyz::policy);
     dmrg_config.load_parameter("storage::dataset::expectation_values_spin_xyz::chunksize"       , storage::dataset::expectation_values_spin_xyz::chunksize);
-    dmrg_config.load_parameter("storage::table::correlation_matrix_spin_xyz::policy"            , storage::dataset::correlation_matrix_spin_xyz::policy);
+    dmrg_config.load_parameter("storage::dataset::correlation_matrix_spin_xyz::policy"          , storage::dataset::correlation_matrix_spin_xyz::policy);
+    dmrg_config.load_parameter("storage::dataset::correlation_matrix_spin_xyz::chunksize"       , storage::dataset::correlation_matrix_spin_xyz::chunksize);
 
 
     dmrg_config.load_parameter("model::model_type"                            , model::model_type);

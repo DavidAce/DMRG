@@ -103,18 +103,6 @@ namespace settings {
             /*! state_lbit is obtained in the fLBIT algorithm (in the lbit basis) */
             inline StoragePolicy policy = StoragePolicy::NONE;
         }
-        namespace mps::state_proj{
-            inline StoragePolicy policy = StoragePolicy::NONE;
-        }
-        namespace mps::state_bond{
-            inline StoragePolicy policy = StoragePolicy::NONE;
-        }
-        namespace mps::state_trnc{
-            inline StoragePolicy policy = StoragePolicy::NONE;
-        }
-        namespace mps::state_fes{
-            inline StoragePolicy policy = StoragePolicy::ITER;
-        }
         namespace mpo::model{
             inline StoragePolicy policy = StoragePolicy::NONE;
         }

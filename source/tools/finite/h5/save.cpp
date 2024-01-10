@@ -170,8 +170,6 @@ namespace tools::finite::h5 {
         if(attrs == sinfo) return;
         auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
-        tools::log->trace("Appending to table: {}", table_path);
-
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
                           flag2str(sinfo.get_table_storage_policy(table_name)));

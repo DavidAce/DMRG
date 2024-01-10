@@ -1,9 +1,9 @@
 #pragma once
+#include "config/enums.h"
 #include "debug/exceptions.h"
 #include "io/filesystem.h"
 #include "tid/enums.h"
 #include "tools/common/log.h"
-#include "config/enums.h"
 #include <string>
 #include <unordered_map>
 
@@ -24,10 +24,14 @@ class Loader {
         try {
             T new_value = find_parameter<T>(param_name);
             param_value = new_value;
-            if constexpr(std::is_enum_v<T>)
-                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, enum2sv<T>(param_value));
-            else
-                tools::log->debug("Loaded parameter: {:<48} = {:<20}", param_name, param_value);
+            if constexpr(std::is_enum_v<T>) {
+                if constexpr(enum_is_bitflag_v<T>)
+                    tools::log->debug("Loaded parameter: {:<64} = {:<20}", param_name, flag2str(param_value));
+                else
+                    tools::log->debug("Loaded parameter: {:<64} = {:<20}", param_name, enum2sv<T>(param_value));
+
+            } else
+                tools::log->debug("Loaded parameter: {:<64} = {:<20}", param_name, param_value);
 
         } catch(std::exception &ex) { tools::log->warn("Failed to read parameter [{}]: {}", param_name, ex.what()); }
     }

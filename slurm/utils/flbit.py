@@ -32,11 +32,20 @@ def get_unique_config_string(d: dict, dl: dict, delim: str):
     u_cstd, u_cstds = [x.get('model::lbit::u_cstd') for x in [d, dl]]
     u_cgw8, u_cgw8s = [x.get('model::lbit::u_cgw8') for x in [d, dl]]
     u_bond, u_bonds = [x.get('flbit::cls::mpo_circuit_svd_bondlim') for x in [d, dl]]
+    u_g8w8, u_g8w8s = [x.get('model::lbit::u_g8w8') for x in [d, dl]]
+    u_type, u_types = [x.get('model::lbit::u_type') for x in [d, dl]]
 
-    str_circuit += f"_tw{u_tstd}" if u_tstds is not None and (len(u_tgw8s) > 1 or len(u_tstds) > 1) else ''
-    str_circuit += f"{u_tgw8[:2]}" if u_tgw8s is not None and (len(u_tgw8s) > 1 or len(u_tstds) > 1) else ''
-    str_circuit += f"_cw{u_cstd}" if u_cstds is not None and (len(u_cgw8s) > 1 or len(u_cstds) > 1) else ''
-    str_circuit += f"{u_cgw8[:2]}" if u_cgw8s is not None and (len(u_cgw8s) > 1 or len(u_cstds) > 1) else ''
+
+    str_circuit += f"_tw{u_tstd}" if u_tstds is not None and len(u_tstds) > 1 else ''
+    if u_tgw8s is not None:
+        str_circuit += f"{u_tgw8[:2]}" if u_tgw8s is not None and len(u_tgw8s) > 1 else ''
+    str_circuit += f"_cw{u_cstd}" if u_cstds is not None and len(u_cstds) > 1 else ''
+    if u_cgw8s is not None:
+        str_circuit += f"{u_cgw8[:2]}" if u_cgw8s is not None and len(u_cgw8s) > 1 else ''
+    if u_g8w8s is not None:
+        str_circuit += f"{u_g8w8[:2]}" if u_g8w8s is not None and len(u_g8w8s) > 1 else ''
+    if u_types is not None:
+        str_circuit += f"_{u_type[:3]}" if u_types is not None and len(u_types) > 1 else ''
     str_circuit += f"_bond{u_bond}" if u_bonds is not None and len(u_bonds) > 1 else ''
     return f"L{str_L}{delim}J{str_J}{delim}x{str_x}{delim}r{str_rL}{delim}u[{str_circuit}]"
 
@@ -96,6 +105,13 @@ def get_max_time(d: dict, dl: dict, p: dict):
     if L == 32 and tmax != 1e14:
         raise AssertionError(f"{L=} is supposed to have tmax=1e14. Got {tmax=:.1e}")
     return '{:.1e}'.format(tmax)
+
+def get_max_steps(d: dict, dl: dict, p: dict):
+    L  = float(d['model::model_size'])
+    if L <= 20:
+        return '200'
+    else:
+        return '100'
 
 def all_equal(iterable):
     g = groupby(iterable)
