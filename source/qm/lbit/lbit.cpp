@@ -133,10 +133,10 @@ qm::Gate qm::lbit::get_unitary_2site_gate(const UnitaryGateParameters &u) {
      @endverbatim
 
      Where M is defined as
-        θ³n[i]n[i+1] +
-        θ²n[i](1-n[i+1]) +
-        θ¹(1-n[i])n[i+1] +
-        θ⁰(1-n[i])(1-n[i+1]) +
+        θ³ n[i]     n[i+1]      +
+        θ² n[i]     (1-n[i+1])  +
+        θ¹(1-n[i])  n[i+1]      +
+        θ⁰(1-n[i])  (1-n[i+1])  +
         c  σ+σ- +
         c* σ-σ+
 

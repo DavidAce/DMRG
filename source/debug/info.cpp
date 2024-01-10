@@ -12,46 +12,36 @@ std::string debug::hostname() {
 }
 
 std::string debug::cpu_info(std::string_view info) {
-    std::ifstream filestream("/proc/cpuinfo");
-    std::string   line;
+    std::ifstream    filestream("/proc/cpuinfo");
+    std::string      line;
+    std::string_view sep = ": ";
     while(std::getline(filestream, line)) {
-        std::istringstream is_line(line);
-        std::string        key;
-        if(std::getline(is_line, key, ':')) {
-            if(key == info) {
-                std::string value_str;
-                if(std::getline(is_line, value_str)) { return value_str; }
-            }
+        if(line.rfind(info, 0) == 0) { // Starts with info
+            auto pos_colon = line.find(sep);
+            return line.substr(pos_colon + sep.size());
         }
     }
     return {};
 }
 
-double debug::mem_usage_in_mb(std::string_view name) {
-    std::ifstream filestream("/proc/self/status");
-    std::string   line;
+double debug::mem_usage_in_mb(std::string_view info) {
+    std::ifstream    filestream("/proc/self/status");
+    std::string      line;
+    std::string_view sep = ": ";
     while(std::getline(filestream, line)) {
-        std::istringstream is_line(line);
-        std::string        key;
-        if(std::getline(is_line, key, ':')) {
-            if(key == name) {
-                std::string value_str;
-                if(std::getline(is_line, value_str)) {
-                    // Filter non-digit characters
-                    value_str.erase(std::remove_if(value_str.begin(), value_str.end(), [](auto const &c) -> bool { return not std::isdigit(c); }),
-                                    value_str.end());
-                    // Extract the number
-                    long long value = 0;
-                    try {
-                        std::string::size_type sz; // alias of size_t
-                        value = std::stoll(value_str, &sz);
-                    } catch(const std::exception &ex) {
-                        std::fprintf(stderr, "Could not read mem usage from /proc/self/status: Failed to parse string [%s]: %s", value_str.c_str(), ex.what());
-                    }
-                    // Now we have the value in kb
-                    return static_cast<double>(value) / 1024.0;
-                }
+        if(line.rfind(info, 0) == 0) { // Starts with info
+            auto pos_colon = line.find(sep);
+            auto value_str = line.substr(pos_colon + sep.size());
+            value_str.erase(std::remove_if(value_str.begin(), value_str.end(), [](auto const &c) -> bool { return not std::isdigit(c); }), value_str.end());
+            // Extract the number
+            long long value = -1;
+            try {
+                value = std::stoll(value_str);
+            } catch(const std::exception &ex) {
+                std::fprintf(stderr, "Could not read mem usage from /proc/self/status: Failed to parse string [%s]: %s", value_str.c_str(), ex.what());
             }
+            // Now we have the value in kb
+            return static_cast<double>(value) / 1024.0;
         }
     }
     return -1.0;
