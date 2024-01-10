@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 
     using cplx = std::complex<double>;
     using op_t = Eigen::Tensor<cplx, 2>;
-    fmt::print("Using {} {}\n", env::build::march, env::build::mtune);
+    fmt::print("Compiler flags {}\n", env::build::compiler_flags);
 
     auto                      h5svd = h5pp::File(filepath, h5pp::FileAccess::READONLY);
     StateFinite               state;

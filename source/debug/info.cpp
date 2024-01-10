@@ -4,7 +4,6 @@
 #include <climits>
 #include <ctime>
 #include <fstream>
-#include <sstream>
 #include <unistd.h>
 
 std::string debug::datetime() {

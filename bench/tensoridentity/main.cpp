@@ -20,7 +20,7 @@ Eigen::Tensor<Scalar, 2> identity2(const Eigen::Index &dim) {
 }
 
 int main() {
-    fmt::print("Using {} {}", env::build::march, env::build::mtune);
+    fmt::print("Compiler flags {}", env::build::compiler_flags);
     using real = double;
     using cplx = std::complex<double>;
     Eigen::Tensor<real, 2>        idd;
