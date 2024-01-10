@@ -503,17 +503,17 @@ def get_batch_setup(projectname):
             'projectname': 'lbit117-anderson',
             'batch': {
                 'L12': {
-                    'seed_extent': [100],
+                    'seed_extent': [50000],
                     'seed_offset': [12000000],
                     'time_steps': 200,
                 },
                 'L16': {
-                    'seed_extent': [100],
+                    'seed_extent': [50000],
                     'seed_offset': [16000000],
                     'time_steps': 200,
                 },
                 'L20': {
-                    'seed_extent': [100],
+                    'seed_extent': [50000],
                     'seed_offset': [20000000],
                     'time_steps': 200,
                 },
