@@ -654,8 +654,10 @@ void flbit::transform_to_lbit_basis() {
 
 void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     AlgorithmFinite::write_to_file(*tensors.state, *tensors.model, *tensors.edges, storage_event, copy_policy);
-    if(not state_lbit) transform_to_lbit_basis();
-    AlgorithmFinite::write_to_file(*state_lbit, *tensors.model, *tensors.edges, storage_event, copy_policy);
+    if(settings::storage::mps::state_lbit::policy != StoragePolicy::NONE) {
+        if(not state_lbit) transform_to_lbit_basis();
+        AlgorithmFinite::write_to_file(*state_lbit, *tensors.model, *tensors.edges, storage_event, copy_policy);
+    }
 
     if(h5file and storage_event == StorageEvent::INIT) {
         using namespace settings::flbit;
