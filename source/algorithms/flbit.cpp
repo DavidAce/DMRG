@@ -816,21 +816,21 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             }
             auto rho_matrix = tenx::MatrixMap(rho);
             auto rho_trace  = rho_matrix.trace();
-            tools::log->info("pattern {}", pattern);
-            //            tools::log->info("rho: \n{}", linalg::tensor::to_string(rho, 8));
-            tools::log->info("rho trace: {:.16f}", rho_trace);
+            tools::log->debug("pattern {}", pattern);
+            tools::log->debug("rho trace: {:.16f}", rho_trace);
             if(not rho_matrix.isApprox(rho_matrix.conjugate().transpose())) throw except::logic_error("rho is not hermitian");
-            //            if(std::abs(rho_trace - 1.0) > 1e-14) throw except::logic_error("R does not have trace 1");
-            eig_sol.setLogLevel(0);
             eig_sol.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
             auto eigvals = eig::view::get_eigvals<real>(eig_sol.result);
-            tools::log->info("eigvals {:2}: {::.3e} | sum {:.16f}", nrps, eigvals, eigvals.sum());
+            tools::log->info("opdm eigvals {:2}: {::.3e} | sum {:.16f}", nrps, eigvals, eigvals.sum());
             if(std::abs(rho_trace - static_cast<double>(length) / 2.0) > 1e-12) throw except::logic_error("R does not have trace L/2");
             if(eigvals.real().maxCoeff() > 1 + 1e-8) throw except::logic_error("The largest eigenvalue is larger than 1");
             if(eigvals.real().minCoeff() < 0 - 1e-8) throw except::logic_error("The smallest eigenvalue is smaller than 0");
             eigvals_all.row(nrps) = eigvals.cwiseAbs();
         }
-        tools::log->info("average: {::.15f}", eigvals_all.array().colwise().mean().transpose());
+        Eigen::VectorXd average = eigvals_all.array().colwise().mean();
+        tools::log->info("opdm average: {::.15f}", average.transpose());
+        h5file->writeDataset(average, "/fLBIT/model/opdm-eigv");
+        h5file->writeAttribute("eigenvalues of the one-paricle densiy matrix: an exact step-function means non-interacting", "/fLBIT/model/opdm-eigv", "description");
         if(settings::flbit::opdm::exit_when_done) exit(0);
     }
 }

@@ -236,6 +236,8 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::cls::mpo_circuit_switchdepth" , flbit::cls::mpo_circuit_switchdepth);
     dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_bondlim" , flbit::cls::mpo_circuit_svd_bondlim);
     dmrg_config.load_parameter("flbit::cls::mpo_circuit_svd_trnclim" , flbit::cls::mpo_circuit_svd_trnclim);
+    dmrg_config.load_parameter("flbit::opdm::num_rps"                , flbit::opdm::num_rps);
+    dmrg_config.load_parameter("flbit::opdm::exit_when_done"         , flbit::opdm::exit_when_done);
 
 
     //Parameters controlling excited state DMRG

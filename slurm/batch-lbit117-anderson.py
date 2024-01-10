@@ -48,7 +48,9 @@ config_ranges = {
     "flbit::time_final_real": [get_max_time],  # "{:.1e}".format(max_time),
     "flbit::time_final_imag": ['0.0'],
     "flbit::time_num_steps": [get_max_steps],
+    "flbit::cls::num_rnd_circuits": ['1'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
+    "flbit::opdm::num_rps": ['10'],
 }
 
 configs = get_config_product(config_ranges, config_paths)
