@@ -3,6 +3,7 @@
 #include <string_view>
 
 namespace debug {
+    extern std::string datetime();
     extern std::string hostname();
     extern std::string cpu_info(std::string_view info = "model name");
     extern void        print_mem_usage();

@@ -41,7 +41,8 @@ void AlgorithmLauncher::start_h5file() {
     // 2) The .h5 file does not exist yet -> start new simulation
 
     if(h5pp::fs::exists(settings::storage::output_filepath)) {
-        tools::log->info("Found an existing HDF5 file: [{}] | policy {}", settings::storage::output_filepath, enum2sv(settings::storage::file_collision_policy));
+        tools::log->info("Found an existing HDF5 file: [{}] | policy {}", settings::storage::output_filepath,
+                         enum2sv(settings::storage::file_collision_policy));
         switch(settings::storage::file_collision_policy) {
             case FileCollisionPolicy::REVIVE:
             case FileCollisionPolicy::RESUME: {
@@ -60,10 +61,10 @@ void AlgorithmLauncher::start_h5file() {
                     auto finished_all = h5file->readDataset<bool>("common/finished_all");
 
                     // For fLBIT simulations we can check if we actually got the expected number of iterations
-                    auto time_num_steps = h5file->readAttribute<std::optional<size_t>>("fLBIT/state_real", "time_num_steps");
+                    auto time_num_steps    = h5file->readAttribute<std::optional<size_t>>("fLBIT/state_real", "time_num_steps");
                     auto measurements_iter = h5file->readAttribute<std::optional<size_t>>("fLBIT/state_real/measurements", "iter");
-                    if (time_num_steps.has_value() and measurements_iter.has_value()){
-                        if  (measurements_iter.value() < time_num_steps.value()){
+                    if(time_num_steps.has_value() and measurements_iter.has_value()) {
+                        if(measurements_iter.value() < time_num_steps.value()) {
                             tools::log->info("Detected missing iterations in 'fLBIT/state_real'");
                             finished_all = false;
                         }
@@ -109,8 +110,10 @@ void AlgorithmLauncher::start_h5file() {
     }
     h5file->setCompressionLevel(settings::storage::compression_level);
     // Put git metadata in file
+    h5file->writeDataset(debug::datetime(), ".env/DMRG++/exec/datetime");
     h5file->writeDataset(debug::hostname(), ".env/DMRG++/exec/hostname");
     h5file->writeDataset(debug::cpu_info(), ".env/DMRG++/exec/cpu_type");
+    h5file->writeDataset(env::build::datetime, ".env/DMRG++/build/datetime");
     h5file->writeDataset(env::build::hostname, ".env/DMRG++/build/hostname");
     h5file->writeDataset(env::build::cpu_type, ".env/DMRG++/build/cpu_type");
     h5file->writeDataset(env::build::os_name, ".env/DMRG++/build/os_name");
