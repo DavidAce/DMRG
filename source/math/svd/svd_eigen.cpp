@@ -108,8 +108,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         // #endif
 
         throw except::runtime_error("Eigen SVD error \n"
-                                    "  Rank max       = {}\n"
-                                    "  Dims             = ({}, {})\n"
+                                    "  Rank max         = {}\n"
+                                    "  Dimensions       = ({}, {})\n"
                                     "  A all finite     : {}\n"
                                     "  U all finite     : {}\n"
                                     "  S all finite     : {}\n"

@@ -171,7 +171,7 @@ void AlgorithmInfinite::update_truncation_error_limit() {
 }
 
 void AlgorithmInfinite::initialize_state(ResetReason reason, std::optional<std::string> sector, std::optional<bool> use_eigenspinors,
-                                        std::optional<std::string> pattern) {
+                                         std::optional<std::string> pattern) {
     tools::log->trace("Initializing state");
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -258,9 +258,7 @@ void AlgorithmInfinite::check_convergence_entg_entropy(std::optional<double> sen
 
 void AlgorithmInfinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     auto sinfo = StorageInfo(status, tensors.state->get_name(), storage_event);
-    if(sinfo.storage_level == StorageLevel::NONE) return;
-    tools::log->debug("Writing to file: Reason [{}] | Level [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
-                      sinfo.get_state_prefix());
+    tools::log->debug("Writing to file: Reason [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), sinfo.get_state_prefix());
     // Start saving tensors and metadata
     tools::infinite::h5::save::bonds(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::state(*h5file, sinfo, *tensors.state);

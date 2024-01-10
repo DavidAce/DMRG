@@ -54,8 +54,7 @@ std::vector<tools::common::h5::MpsInfo> tools::common::h5::resume::find_fully_st
         auto iter  = h5file.readAttribute<size_t>(path, "iter");
         auto step  = h5file.readAttribute<size_t>(path, "step");
         auto event = h5file.readAttribute<StorageEvent>(path, "storage_event");
-        auto level = h5file.readAttribute<StorageLevel>(path, "storage_level");
-        if(level == StorageLevel::FULL) mps_info.emplace_back(MpsInfo{path, iter, step, event});
+        mps_info.emplace_back(MpsInfo{path, iter, step, event});
     }
     // Sort according to step
     std::sort(begin(mps_info), end(mps_info), [](const MpsInfo &i1, const MpsInfo &i2) { return i1.step < i2.step; });

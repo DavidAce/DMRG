@@ -85,44 +85,38 @@ namespace settings {
 
         namespace mps::state_emid{
             /*! state_emid is obtained in the xDMRG algorithm (mid energy) */
-            inline StorageLevel  level  = StorageLevel::LIGHT;
-            inline StoragePolicy policy = StoragePolicy::FINISH;
+            inline StoragePolicy policy = StoragePolicy::ITER;
         }
         namespace mps::state_emin{
             /*! state_emin is obtained in the fDMRG and xDMRG algorithms (min energy) */
-            inline StorageLevel  level  = StorageLevel::LIGHT;
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
         namespace mps::state_emax{
             /*! state_emax is obtained in the fDMRG and xDMRG algorithms (max energy) */
-            inline StorageLevel  level  = StorageLevel::LIGHT;
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
         namespace mps::state_real{
             /*! state_real is obtained in the fLBIT algorithm (in the "real" physical basis) */
-            inline StorageLevel  level  = StorageLevel::LIGHT;
             inline StoragePolicy policy = StoragePolicy::ITER;
         }
         namespace mps::state_lbit{
             /*! state_lbit is obtained in the fLBIT algorithm (in the lbit basis) */
-            inline StorageLevel  level  = StorageLevel::LIGHT;
-            inline StoragePolicy policy = StoragePolicy::ITER;
+            inline StoragePolicy policy = StoragePolicy::NONE;
         }
         namespace mps::state_proj{
-            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::NONE;
         }
         namespace mps::state_bond{
-            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::NONE;
         }
         namespace mps::state_trnc{
-            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::NONE;
         }
         namespace mps::state_fes{
-            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline StoragePolicy policy = StoragePolicy::ITER;
         }
         namespace mpo::model{
-            inline StorageLevel  level  = StorageLevel::NONE;
-            inline StoragePolicy policy = StoragePolicy::INIT;
+            inline StoragePolicy policy = StoragePolicy::NONE;
         }
         namespace table::bonds {
             inline StoragePolicy policy = StoragePolicy::FINISH;
@@ -140,7 +134,7 @@ namespace settings {
             inline StoragePolicy policy = StoragePolicy::ITER;
         }
         namespace table::timers{
-            inline StorageLevel  level  = StorageLevel::LIGHT;
+            inline tid::level  level    = tid::level::normal;
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
         namespace table::entanglement_entropies{
@@ -164,17 +158,13 @@ namespace settings {
         namespace table::expectation_values_spin_xyz{
             inline StoragePolicy policy = StoragePolicy::FINISH;
         }
-        namespace table::correlation_matrix_spin_xyz{
-            inline StoragePolicy policy = StoragePolicy::FINISH;
-        }
         namespace table::random_unitary_circuit{
             inline StoragePolicy policy = StoragePolicy::INIT;
         }
         namespace dataset::lbit_analysis{
-            inline StorageLevel level = StorageLevel::LIGHT;
             inline StoragePolicy policy = StoragePolicy::INIT;
         }
-        namespace dataset::subsystem_entropies{
+        namespace dataset::subsystem_entanglement_entropies{
         /*! Entanglement entropy of all contiguous subsystems up to length L/2 + 1 */
             inline StoragePolicy policy = StoragePolicy::FINISH;
             inline unsigned long chunksize = 10;
@@ -188,7 +178,10 @@ namespace settings {
             inline StoragePolicy policy = StoragePolicy::ITER;
             inline unsigned long chunksize = 10;
         }
-
+        namespace dataset::correlation_matrix_spin_xyz{
+            inline StoragePolicy policy = StoragePolicy::ITER;
+            inline unsigned long chunksize = 10;
+        }
         namespace tmp{
             inline std::string hdf5_temp_path;
             inline std::string hdf5_final_path;

@@ -20,6 +20,7 @@ namespace tools::common::h5 {
             // TODO: Check that this is during initialization rather than "when storing the initial state"
             return has_flag(policy, StoragePolicy::INIT);
         }
+        if(sinfo.storage_event == StorageEvent::MODEL) { return has_flag(policy, StoragePolicy::INIT); }
         if(sinfo.storage_event == StorageEvent::ITERATION) {
             return has_flag(policy, StoragePolicy::ITER) and sinfo.iter % settings::storage::storage_interval == 0;
         }
@@ -60,8 +61,8 @@ namespace tools::common::h5 {
         if(not attrs.link_exists) h5file.createTable(h5pp_table_algorithm_status::get_h5t(), table_path, "Algorithm Status");
         if(attrs == sinfo) return;
         auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
-        tools::log->trace("Writing to table: {} | event {} | level {} | offset {}", table_path, enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
-                          offset);
+        tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
+                          flag2str(settings::storage::table::status::policy));
         h5file.writeTableRecords(status, table_path, offset);
         save::set_save_attrs(h5file, table_path, sinfo);
     }
@@ -72,7 +73,7 @@ namespace tools::common::h5 {
         sinfo.assert_well_defined();
 
         // Define the table
-        std::string table_path = fmt::format("{}/mem_usage", sinfo.get_state_prefix());
+        std::string table_path = fmt::format("{}/memory", sinfo.get_state_prefix());
 
         // Check if the current entry has already been appended
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
@@ -81,18 +82,18 @@ namespace tools::common::h5 {
         auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         // Define the table entry
-        tools::log->trace("Appending to table: {}", table_path);
-        h5pp_table_memory_usage::table mem_usage_entry{};
-        mem_usage_entry.iter     = sinfo.iter;
-        mem_usage_entry.step     = sinfo.step;
-        mem_usage_entry.position = sinfo.position;
-        mem_usage_entry.event    = sinfo.storage_event;
-        mem_usage_entry.bond_lim = sinfo.bond_lim;
-        mem_usage_entry.rss      = debug::mem_rss_in_mb();
-        mem_usage_entry.hwm      = debug::mem_hwm_in_mb();
-        mem_usage_entry.vm       = debug::mem_vm_in_mb();
-        tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
-        h5file.writeTableRecords(mem_usage_entry, table_path, offset);
+        h5pp_table_memory_usage::table memory_entry{};
+        memory_entry.iter     = sinfo.iter;
+        memory_entry.step     = sinfo.step;
+        memory_entry.position = sinfo.position;
+        memory_entry.event    = sinfo.storage_event;
+        memory_entry.bond_lim = sinfo.bond_lim;
+        memory_entry.rss      = debug::mem_rss_in_mb();
+        memory_entry.hwm      = debug::mem_hwm_in_mb();
+        memory_entry.vm       = debug::mem_vm_in_mb();
+        tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
+                          flag2str(settings::storage::table::memory::policy));
+        h5file.writeTableRecords(memory_entry, table_path, offset);
         save::set_save_attrs(h5file, table_path, sinfo);
     }
 
@@ -111,12 +112,13 @@ namespace tools::common::h5 {
         auto table_items = std::vector<h5pp_ur::item>{};
         table_items.reserve(tid_tree.size());
         for(const auto &[i, t] : iter::enumerate(tid_tree)) {
-            if(settings::storage::table::timers::level == StorageLevel::LIGHT and t->get_level() > tid::level::normal) continue;
-            if(settings::storage::table::timers::level == StorageLevel::NORMAL and t->get_level() > tid::level::higher) continue;
-            if(settings::storage::table::timers::level == StorageLevel::FULL and t->get_level() > tid::level::highest) continue;
+            if(settings::storage::table::timers::level == tid::level::normal and t->get_level() > tid::level::normal) continue;
+            if(settings::storage::table::timers::level == tid::level::higher and t->get_level() > tid::level::higher) continue;
+            if(settings::storage::table::timers::level == tid::level::highest and t->get_level() > tid::level::highest) continue;
             table_items.emplace_back(h5pp_ur::item{t.key, t->get_time(), t.sum, t.frac * 100, t->get_time_avg(), t->get_level(), t->get_tic_count()});
         }
-        tools::log->trace("Appending to table: {}", table_path);
+        tools::log->trace("Writing to table: {} | event {} | policy {}", table_path, enum2sv(sinfo.storage_event),
+                          flag2str(settings::storage::table::timers::policy));
         h5file.writeTableRecords(table_items, table_path, 0);
         save::set_save_attrs(h5file, table_path, sinfo);
     }
@@ -165,14 +167,12 @@ namespace tools::common::h5 {
             auto bmax = h5file.readAttribute<std::optional<int64_t>>(link_path, "bond_max");
             auto trnc = h5file.readAttribute<std::optional<double>>(link_path, "trnc_lim");
             auto evnt = h5file.readAttribute<std::optional<StorageEvent>>(link_path, "storage_event");
-            auto levl = h5file.readAttribute<std::optional<StorageLevel>>(link_path, "storage_level");
             if(iter) attrs.iter = iter.value();
             if(step) attrs.step = step.value();
             if(blim) attrs.bond_lim = blim.value();
             if(bmax) attrs.bond_max = bmax.value();
             if(trnc) attrs.trnc_lim = trnc.value();
             if(evnt) attrs.storage_event = evnt.value();
-            if(levl) attrs.storage_level = levl.value();
         }
         return attrs;
     }
@@ -185,7 +185,6 @@ namespace tools::common::h5 {
             h5file.writeAttribute(info.bond_max, link_path, "bond_max");
             h5file.writeAttribute(info.trnc_lim, link_path, "trnc_lim");
             h5file.writeAttribute(info.storage_event, link_path, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
-            h5file.writeAttribute(info.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
         }
     }
     void save::set_save_attrs(h5pp::File &h5file, std::string_view link_path, const StorageInfo &sinfo) {
@@ -197,7 +196,6 @@ namespace tools::common::h5 {
             h5file.writeAttribute(sinfo.bond_max, link_path, "bond_max");
             h5file.writeAttribute(sinfo.trnc_lim, link_path, "trnc_lim");
             h5file.writeAttribute(sinfo.storage_event, link_path, "storage_event", std::nullopt, h5_enum_storage_event::get_h5t());
-            h5file.writeAttribute(sinfo.storage_level, link_path, "storage_level", std::nullopt, h5_enum_storage_level::get_h5t());
         }
     }
     void save::initial_state_attrs(h5pp::File &h5file, const StorageInfo &sinfo) {
@@ -214,7 +212,8 @@ namespace tools::common::h5 {
 
     hsize_t save::get_table_offset(const h5pp::File &h5file, std::string_view table_path, const StorageInfo &sinfo, const StorageAttrs &attrs) {
         // Get the table index where we should write the current entry
-        if(sinfo.storage_level == StorageLevel::LIGHT) {
+        bool replace = has_flag(sinfo.get_table_storage_policy(table_path), StoragePolicy::REPLACE);
+        if(replace) {
             // Try to find the last occurrence of this event type, to replace it
             auto events = h5file.readTableField<std::vector<StorageEvent>>(table_path, "event", h5pp::TableSelection::ALL);
             auto offset = events.size(); // This should point one past the latest table entry, so that we append

@@ -718,7 +718,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
             uprop_default.ulayers = unitary_gates_2site_layers;
             auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, ug8w8s);
-            if(h5file and settings::storage::dataset::lbit_analysis::level != StorageLevel::NONE) {
+            if(h5file and settings::storage::dataset::lbit_analysis::policy == StoragePolicy::INIT) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
                 auto shape_avgs = std::vector<long>{1, lbitSA.corravg.size()};
@@ -726,36 +726,35 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                                                     static_cast<long>(settings::model::model_size)};
 
                 auto label_data = std::vector<std::string>{"sample", "i", "j"};
-                if(settings::storage::dataset::lbit_analysis::level >= StorageLevel::LIGHT) {
-                    h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/corrmat", H5D_CHUNKED, shape_data);
-                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corrmat", "dimensions");
-                    h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
-                }
-                if(settings::storage::dataset::lbit_analysis::level == StorageLevel::FULL) {
-                    h5file->writeDataset(lbitSA.cls_avg_fit, "/fLBIT/model/lbits/cls_avg_fit");
-                    h5file->writeDataset(lbitSA.cls_avg_rms, "/fLBIT/model/lbits/cls_avg_rms");
-                    h5file->writeDataset(lbitSA.cls_avg_rsq, "/fLBIT/model/lbits/cls_avg_rsq");
-                    h5file->writeDataset(lbitSA.cls_typ_fit, "/fLBIT/model/lbits/cls_typ_fit");
-                    h5file->writeDataset(lbitSA.cls_typ_rms, "/fLBIT/model/lbits/cls_typ_rms");
-                    h5file->writeDataset(lbitSA.cls_typ_rsq, "/fLBIT/model/lbits/cls_typ_rsq");
+                //                if(settings::storage::dataset::lbit_analysis::level >= StorageLevel::LIGHT) {
+                h5file->writeDataset(lbitSA.corrmat, "/fLBIT/model/lbits/corrmat", H5D_CHUNKED, shape_data);
+                h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corrmat", "dimensions");
+                h5file->writeAttribute("The operator support matrix O(i,j) = (1/2^L) Tr(tau_i^z sigma_j^z)", "/fLBIT/model/lbits/corrmat", "description");
+                //                }
+                //                if(settings::storage::dataset::lbit_analysis::level == StorageLevel::FULL) {
+                h5file->writeDataset(lbitSA.cls_avg_fit, "/fLBIT/model/lbits/cls_avg_fit");
+                h5file->writeDataset(lbitSA.cls_avg_rms, "/fLBIT/model/lbits/cls_avg_rms");
+                h5file->writeDataset(lbitSA.cls_avg_rsq, "/fLBIT/model/lbits/cls_avg_rsq");
+                h5file->writeDataset(lbitSA.cls_typ_fit, "/fLBIT/model/lbits/cls_typ_fit");
+                h5file->writeDataset(lbitSA.cls_typ_rms, "/fLBIT/model/lbits/cls_typ_rms");
+                h5file->writeDataset(lbitSA.cls_typ_rsq, "/fLBIT/model/lbits/cls_typ_rsq");
 
-                    h5file->writeDataset(lbitSA.corravg, "/fLBIT/model/lbits/corravg", H5D_CHUNKED, shape_avgs);
-                    h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corravg", "dimensions");
-                    h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
+                h5file->writeDataset(lbitSA.corravg, "/fLBIT/model/lbits/corravg", H5D_CHUNKED, shape_avgs);
+                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corravg", "dimensions");
+                h5file->writeAttribute("Site arithmetic average <<O(|i-j|)>>", "/fLBIT/model/lbits/corravg", "description");
 
-                    h5file->writeDataset(lbitSA.corrtyp, "/fLBIT/model/lbits/corrtyp", H5D_CHUNKED, shape_avgs);
-                    h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corrtyp", "dimensions");
-                    h5file->writeAttribute("Site geometric average <<O(|i-j|)>>_typ", "/fLBIT/model/lbits/corrtyp", "description");
+                h5file->writeDataset(lbitSA.corrtyp, "/fLBIT/model/lbits/corrtyp", H5D_CHUNKED, shape_avgs);
+                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/corrtyp", "dimensions");
+                h5file->writeAttribute("Site geometric average <<O(|i-j|)>>_typ", "/fLBIT/model/lbits/corrtyp", "description");
 
-                    h5file->writeDataset(lbitSA.correrr, "/fLBIT/model/lbits/correrr", H5D_CHUNKED, shape_avgs);
-                    h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/correrr", "dimensions");
-                    h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/correrr", "description");
+                h5file->writeDataset(lbitSA.correrr, "/fLBIT/model/lbits/correrr", H5D_CHUNKED, shape_avgs);
+                h5file->writeAttribute(label_dist, "/fLBIT/model/lbits/correrr", "dimensions");
+                h5file->writeAttribute("Standard error of <<O(|i-j|)>>", "/fLBIT/model/lbits/correrr", "description");
 
-                    h5file->writeDataset(lbitSA.corroff, "/fLBIT/model/lbits/corroff", H5D_CHUNKED, shape_data);
-                    h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corroff", "dimensions");
-                    h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff",
-                                           "description");
-                }
+                h5file->writeDataset(lbitSA.corroff, "/fLBIT/model/lbits/corroff", H5D_CHUNKED, shape_data);
+                h5file->writeAttribute(label_data, "/fLBIT/model/lbits/corroff", "dimensions");
+                h5file->writeAttribute("The operator support matrix with shifted columns O(i,j) --> O(i,|i-j|)", "/fLBIT/model/lbits/corroff", "description");
+                //                }
                 h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
                 h5file->writeAttribute(utstds, "/fLBIT/model/lbits", "u_tstd");

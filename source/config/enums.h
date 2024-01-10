@@ -23,9 +23,6 @@ enum class UnitaryGateWeight { IDENTITY, EXPDECAY }; // 1 or exp(-2|h[i] - h[i+1
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
 
-/*! How much to store of the object in question */
-enum class StorageLevel { NONE, LIGHT, NORMAL, FULL };
-
 /*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
     NONE        = 0,
@@ -41,19 +38,23 @@ enum class StorageEvent : int {
     FINISHED    = 512,
 };
 
-/*! Determines in which cases we calculate and store to file */
+/*! Determines in which cases we calculate and store to file
+ *  Note that many flags can be set simultaneously
+ */
 enum class StoragePolicy : int {
-    NONE    = 0,   /*!< Never store */
-    ONCE    = 1,   /*!< Store only once, on first contact  */
-    INIT    = 2,   /*!< Store only once during initialization e.g. model (usually in preprocessing) */
-    ITER    = 4,   /*!< Store after every iteration */
-    PROJ    = 8,   /*!< Store after projections */
-    BOND    = 16,  /*!< Store after bond updates */
-    TRNC    = 32,  /*!< Store after truncation error limit updates */
-    FAILURE = 64,  /*!< Store only if the simulation did not succeed (usually for debugging) */
-    SUCCESS = 128, /*!< Store only if the simulation succeeded */
-    FINISH  = 256, /*!< Store when the simulation has finished (regardless of failure or success) */
-    ALWAYS  = 512, /*!< Store every chance you get */
+    NONE    = 0,    /*!< Never store */
+    ONCE    = 1,    /*!< Store only once, on first contact  */
+    INIT    = 2,    /*!< Store only once during initialization e.g. model (usually in preprocessing) */
+    ITER    = 4,    /*!< Store after every iteration */
+    PROJ    = 8,    /*!< Store after projections */
+    BOND    = 16,   /*!< Store after bond updates */
+    TRNC    = 32,   /*!< Store after truncation error limit updates */
+    FAILURE = 64,   /*!< Store only if the simulation did not succeed (usually for debugging) */
+    SUCCESS = 128,  /*!< Store only if the simulation succeeded */
+    FINISH  = 256,  /*!< Store when the simulation has finished (regardless of failure or success) */
+    ALWAYS  = 512,  /*!< Store every chance you get */
+    REPLACE = 1024, /*!< Keep only the last event (i.e. replace previous events when possible) */
+    allow_bitops
 };
 
 enum class CopyPolicy { FORCE, TRY, OFF };
@@ -82,7 +83,8 @@ enum class OptWhen : int {
     PREV_FAIL_NOCHANGE = 8,
     PREV_FAIL_WORSENED = 16,
     PREV_FAIL_ERROR    = 32,
-    ALWAYS             = 64
+    ALWAYS             = 64,
+    allow_bitops
 };
 enum class OptEigs { NEVER, WHEN_STUCK, WHEN_SATURATED, ALWAYS }; // When to prefer eigs over bfgs (the default)
 
@@ -95,6 +97,7 @@ enum class OptExit : int {
     FAIL_WORSENED = 16,
     FAIL_ERROR    = 32,
     NONE          = 64,
+    allow_bitops
 };
 enum class OptMark {
     PASS,
@@ -185,45 +188,34 @@ enum class xdmrg_task {
     TIMER_RESET,
 };
 
-template<typename T, bool B = std::is_enum<T>::value>
-struct is_scoped_enum : std::false_type {};
-template<typename T>
-struct is_scoped_enum<T, true> : std::integral_constant<bool, !std::is_convertible<T, typename std::underlying_type<T>::type>::value> {};
-template<typename T>
-constexpr bool is_scoped_enum_v = is_scoped_enum<T>();
-
-template<typename T>
-constexpr bool is_scoped_enum_int_v() {
-    if constexpr(is_scoped_enum_v<T>)
-        return std::is_same_v<typename std::underlying_type<T>::type, int>;
-    else
-        return false;
+template<typename E>
+constexpr auto operator|(E lhs, E rhs) -> decltype(E::allow_bitops) {
+    using U = std::underlying_type_t<E>;
+    return static_cast<E>(static_cast<U>(lhs) | static_cast<U>(rhs));
 }
-
-template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
-constexpr typename std::underlying_type<E>::type enum2int(E e) noexcept {
-    return static_cast<typename std::underlying_type<E>::type>(e);
+template<typename E>
+constexpr auto operator&(E lhs, E rhs) -> decltype(E::allow_bitops) {
+    using U = std::underlying_type_t<E>;
+    return static_cast<E>(static_cast<U>(lhs) & static_cast<U>(rhs));
 }
-
-template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
-constexpr inline E operator|(E lhs, E rhs) {
-    using T = std::underlying_type_t<E>;
-    return static_cast<E>(static_cast<T>(lhs) | static_cast<T>(rhs));
-}
-
-template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
-constexpr inline E &operator|=(E &lhs, E rhs) {
+template<typename E>
+constexpr auto operator|=(E lhs, E rhs) -> decltype(E::allow_bitops) {
     lhs = lhs | rhs;
     return lhs;
 }
 
-template<typename E, typename = std::enable_if_t<is_scoped_enum_int_v<E>()>>
+template<typename E>
 inline bool has_flag(E target, E check) {
-    return (static_cast<int>(target) & static_cast<int>(check)) == static_cast<int>(check);
+    using U = std::underlying_type_t<E>;
+    return (static_cast<U>(target) & static_cast<U>(check)) == static_cast<U>(check);
 }
-template<typename E1, typename E2, typename = std::enable_if_t<is_scoped_enum_int_v<E1>() and is_scoped_enum_int_v<E2>()>>
+
+template<typename E1, typename E2>
 inline bool have_common(E1 lhs, E2 rhs) {
-    return (static_cast<int>(lhs) & static_cast<int>(rhs)) != 0;
+    using U1 = std::underlying_type_t<E1>;
+    using U2 = std::underlying_type_t<E2>;
+    static_assert(std::is_same_v<U1, U2>);
+    return (static_cast<U1>(lhs) & static_cast<U2>(rhs)) != 0;
 }
 
 namespace enum_sfinae {
@@ -232,6 +224,60 @@ namespace enum_sfinae {
     template<class T, class... Ts>
     inline constexpr bool is_any_v = is_any<T, Ts...>::value;
 }
+
+template<typename T>
+std::vector<std::string_view> enum2sv(const std::vector<T> &items) {
+    auto v = std::vector<std::string_view>();
+    v.reserve(items.size());
+    for(const auto &item : items) v.emplace_back(enum2sv(item));
+    return v;
+}
+
+template<typename T>
+std::string flag2str(const T &item) {
+    static_assert(std::is_same_v<T, OptExit> or //
+                  std::is_same_v<T, OptWhen> or //
+                  std::is_same_v<T, StoragePolicy>);
+
+    std::vector<std::string> v;
+    if constexpr(std::is_same_v<T, OptExit>) {
+        if(has_flag(item, OptExit::FAIL_GRADIENT)) v.emplace_back("FAIL_GRADIENT");
+        if(has_flag(item, OptExit::FAIL_RESIDUAL)) v.emplace_back("FAIL_RESIDUAL");
+        if(has_flag(item, OptExit::FAIL_OVERLAP)) v.emplace_back("FAIL_OVERLAP");
+        if(has_flag(item, OptExit::FAIL_NOCHANGE)) v.emplace_back("FAIL_NOCHANGE");
+        if(has_flag(item, OptExit::FAIL_WORSENED)) v.emplace_back("FAIL_WORSENED");
+        if(has_flag(item, OptExit::FAIL_ERROR)) v.emplace_back("FAIL_ERROR");
+        if(has_flag(item, OptExit::NONE)) v.emplace_back("NONE");
+        if(v.empty()) return "SUCCESS";
+    }
+    if constexpr(std::is_same_v<T, OptWhen>) {
+        if(has_flag(item, OptWhen::PREV_FAIL_GRADIENT)) v.emplace_back("PREV_FAIL_GRADIENT");
+        if(has_flag(item, OptWhen::PREV_FAIL_RESIDUAL)) v.emplace_back("PREV_FAIL_RESIDUAL");
+        if(has_flag(item, OptWhen::PREV_FAIL_OVERLAP)) v.emplace_back("PREV_FAIL_OVERLAP");
+        if(has_flag(item, OptWhen::PREV_FAIL_NOCHANGE)) v.emplace_back("PREV_FAIL_NOCHANGE");
+        if(has_flag(item, OptWhen::PREV_FAIL_WORSENED)) v.emplace_back("PREV_FAIL_WORSENED");
+        if(has_flag(item, OptWhen::PREV_FAIL_ERROR)) v.emplace_back("PREV_FAIL_ERROR");
+        if(has_flag(item, OptWhen::ALWAYS)) v.emplace_back("ALWAYS");
+        if(v.empty()) return "NEVER";
+    }
+    if constexpr(std::is_same_v<T, StoragePolicy>) {
+        if(has_flag(item, StoragePolicy::ONCE)) v.emplace_back("ONCE");
+        if(has_flag(item, StoragePolicy::INIT)) v.emplace_back("INIT");
+        if(has_flag(item, StoragePolicy::ITER)) v.emplace_back("ITER");
+        if(has_flag(item, StoragePolicy::PROJ)) v.emplace_back("PROJ");
+        if(has_flag(item, StoragePolicy::BOND)) v.emplace_back("BOND");
+        if(has_flag(item, StoragePolicy::TRNC)) v.emplace_back("TRNC");
+        if(has_flag(item, StoragePolicy::FAILURE)) v.emplace_back("FAILURE");
+        if(has_flag(item, StoragePolicy::SUCCESS)) v.emplace_back("SUCCESS");
+        if(has_flag(item, StoragePolicy::FINISH)) v.emplace_back("FINISH");
+        if(has_flag(item, StoragePolicy::ALWAYS)) v.emplace_back("ALWAYS");
+        if(has_flag(item, StoragePolicy::REPLACE)) v.emplace_back("REPLACE");
+        if(v.empty()) return "NONE";
+    }
+    return std::accumulate(std::begin(v), std::end(v), std::string(),
+                           [](const std::string &ss, const std::string &s) { return ss.empty() ? s : ss + "|" + s; });
+}
+
 
 template<typename T>
 constexpr std::string_view enum2sv(const T item) noexcept {
@@ -253,7 +299,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         ModelType,
         EdgeStatus,
         TimeScale,
-        StorageLevel,
         StorageEvent,
         StoragePolicy,
         CopyPolicy,
@@ -383,12 +428,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == LogPolicy::NORMAL)                                   return "NORMAL";
         if(item == LogPolicy::QUIET)                                    return "QUIET";
     }
-    if constexpr(std::is_same_v<T, StorageLevel>) {
-        if(item == StorageLevel::NONE)                                  return "NONE";
-        if(item == StorageLevel::LIGHT)                                 return "LIGHT";
-        if(item == StorageLevel::NORMAL)                                return "NORMAL";
-        if(item == StorageLevel::FULL)                                  return "FULL";
-    }
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == StorageEvent::NONE)                                  return "NONE";
         if(item == StorageEvent::MODEL)                                 return "MODEL";
@@ -403,17 +442,7 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StorageEvent::FINISHED)                              return "FINISHED";
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
-        if(item == StoragePolicy::NONE)                                 return "NONE";
-        if(item == StoragePolicy::ONCE)                                 return "ONCE";
-        if(item == StoragePolicy::INIT)                                 return "INIT";
-        if(item == StoragePolicy::ITER)                                 return "ITER";
-        if(item == StoragePolicy::PROJ)                                 return "PROJ";
-        if(item == StoragePolicy::BOND)                                 return "BOND";
-        if(item == StoragePolicy::TRNC)                                 return "TRNC";
-        if(item == StoragePolicy::FAILURE)                              return "FAILURE";
-        if(item == StoragePolicy::SUCCESS)                              return "SUCCESS";
-        if(item == StoragePolicy::FINISH)                               return "FINISH";
-        if(item == StoragePolicy::ALWAYS)                               return "ALWAYS";
+        return flag2str(item);
     }
     if constexpr(std::is_same_v<T, StateInit>) {
         if(item == StateInit::RANDOM_PRODUCT_STATE)                     return "RANDOM_PRODUCT_STATE";
@@ -568,45 +597,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     return "UNRECOGNIZED ENUM";
 }
 
-template<typename T>
-std::vector<std::string_view> enum2sv(const std::vector<T> &items) {
-    auto v = std::vector<std::string_view>();
-    v.reserve(items.size());
-    for (const auto & item : items) v.emplace_back(enum2sv(item));
-    return v;
-}
-
-template<typename T>
-std::string flag2str(const T &item) {
-    static_assert((std::is_same_v<T, OptExit> or std::is_same_v<T,OptWhen>) and
-        "flag2str only works with OptWhen or OptExit");
-
-    std::vector<std::string> v;
-    if constexpr(std::is_same_v<T,OptExit>){
-        if(has_flag(item,OptExit::FAIL_GRADIENT)) v.emplace_back("FAIL_GRADIENT");
-        if(has_flag(item,OptExit::FAIL_RESIDUAL)) v.emplace_back("FAIL_RESIDUAL");
-        if(has_flag(item,OptExit::FAIL_OVERLAP))  v.emplace_back("FAIL_OVERLAP");
-        if(has_flag(item,OptExit::FAIL_NOCHANGE)) v.emplace_back("FAIL_NOCHANGE");
-        if(has_flag(item,OptExit::FAIL_WORSENED)) v.emplace_back("FAIL_WORSENED");
-        if(has_flag(item,OptExit::FAIL_ERROR))    v.emplace_back("FAIL_ERROR");
-        if(has_flag(item,OptExit::NONE))          v.emplace_back("NONE");
-        if(v.empty()) return "SUCCESS";
-    }
-    if constexpr(std::is_same_v<T,OptWhen>){
-        if(has_flag(item,OptWhen::PREV_FAIL_GRADIENT)) v.emplace_back("PREV_FAIL_GRADIENT");
-        if(has_flag(item,OptWhen::PREV_FAIL_RESIDUAL)) v.emplace_back("PREV_FAIL_RESIDUAL");
-        if(has_flag(item,OptWhen::PREV_FAIL_OVERLAP))  v.emplace_back("PREV_FAIL_OVERLAP");
-        if(has_flag(item,OptWhen::PREV_FAIL_NOCHANGE)) v.emplace_back("PREV_FAIL_NOCHANGE");
-        if(has_flag(item,OptWhen::PREV_FAIL_WORSENED)) v.emplace_back("PREV_FAIL_WORSENED");
-        if(has_flag(item,OptWhen::PREV_FAIL_ERROR))    v.emplace_back("PREV_FAIL_ERROR");
-        if(has_flag(item,OptWhen::ALWAYS))             v.emplace_back("ALWAYS");
-        if(v.empty()) return "NEVER";
-    }
-    return  std::accumulate(std::begin(v), std::end(v), std::string(),
-                            [](const std::string &ss, const std::string &s)
-                            {return ss.empty() ? s : ss + "|" + s;});
-
-}
 
 
 
@@ -628,7 +618,6 @@ constexpr auto sv2enum(std::string_view item) {
         ModelType,
         EdgeStatus,
         TimeScale,
-        StorageLevel,
         StorageEvent,
         StoragePolicy,
         CopyPolicy,
@@ -758,12 +747,6 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "NORMAL")                                return LogPolicy::NORMAL;
         if(item == "QUIET")                                 return LogPolicy::QUIET;
     }
-    if constexpr(std::is_same_v<T, StorageLevel>) {
-        if(item == "NONE")                                  return StorageLevel::NONE;
-        if(item == "LIGHT")                                 return StorageLevel::LIGHT;
-        if(item == "NORMAL")                                return StorageLevel::NORMAL;
-        if(item == "FULL")                                  return StorageLevel::FULL;
-    }
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == "NONE")                                  return  StorageEvent::NONE;
         if(item == "MODEL")                                 return  StorageEvent::MODEL;
@@ -779,17 +762,17 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
         auto policy = StoragePolicy::NONE;
-        if(item.find("NONE")    != std::string_view::npos) policy |= StoragePolicy::NONE;
-        if(item.find("ONCE")    != std::string_view::npos) policy |= StoragePolicy::ONCE;
-        if(item.find("INIT")    != std::string_view::npos) policy |= StoragePolicy::INIT;
-        if(item.find("ITER")    != std::string_view::npos) policy |= StoragePolicy::ITER;
-        if(item.find("PROJ")    != std::string_view::npos) policy |= StoragePolicy::PROJ;
-        if(item.find("BOND")    != std::string_view::npos) policy |= StoragePolicy::BOND;
-        if(item.find("TRNC")    != std::string_view::npos) policy |= StoragePolicy::TRNC;
-        if(item.find("FAILURE") != std::string_view::npos) policy |= StoragePolicy::FAILURE;
-        if(item.find("SUCCESS") != std::string_view::npos) policy |= StoragePolicy::SUCCESS;
-        if(item.find("FINISH")  != std::string_view::npos) policy |= StoragePolicy::FINISH;
-        if(item.find("ALWAYS")  != std::string_view::npos) policy |= StoragePolicy::ALWAYS;
+        if(item.find("ON")     != std::string_view::npos) policy |= StoragePolicy::ONCE;
+        if(item.find("IN")     != std::string_view::npos) policy |= StoragePolicy::INIT;
+        if(item.find("IT")     != std::string_view::npos) policy |= StoragePolicy::ITER;
+        if(item.find("PR")     != std::string_view::npos) policy |= StoragePolicy::PROJ;
+        if(item.find("BO")     != std::string_view::npos) policy |= StoragePolicy::BOND;
+        if(item.find("TR")     != std::string_view::npos) policy |= StoragePolicy::TRNC;
+        if(item.find("FA")     != std::string_view::npos) policy |= StoragePolicy::FAILURE;
+        if(item.find("SU")     != std::string_view::npos) policy |= StoragePolicy::SUCCESS;
+        if(item.find("FI")     != std::string_view::npos) policy |= StoragePolicy::FINISH;
+        if(item.find("AL")     != std::string_view::npos) policy |= StoragePolicy::ALWAYS;
+        if(item.find("RE")     != std::string_view::npos) policy |= StoragePolicy::REPLACE;
         return policy;
     }
     if constexpr(std::is_same_v<T, StateInit>) {

@@ -31,8 +31,6 @@ namespace tools::infinite::h5::save {
 }
 
 void tools::infinite::h5::save::bonds(h5pp::File &h5file, const StorageInfo &sinfo, const StateInfinite &state) {
-    if(sinfo.storage_level == StorageLevel::NONE) return;
-
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
     auto tic          = tid::tic_token("state");
@@ -49,8 +47,6 @@ void tools::infinite::h5::save::bonds(h5pp::File &h5file, const StorageInfo &sin
 }
 
 void tools::infinite::h5::save::state(h5pp::File &h5file, const StorageInfo &sinfo, const StateInfinite &state) {
-    if(sinfo.storage_level < StorageLevel::FULL) return;
-
     // Checks if the current entry has already been saved
     // If it is empty because we are resuming, check if there is a log entry on file already
     auto tic        = tid::tic_token("state");
@@ -63,7 +59,6 @@ void tools::infinite::h5::save::state(h5pp::File &h5file, const StorageInfo &sin
 }
 
 void tools::infinite::h5::save::edges(h5pp::File &h5file, const StorageInfo &sinfo, const EdgesInfinite &edges) {
-    if(sinfo.storage_level < StorageLevel::NORMAL) return;
     auto        tic = tid::tic_token("edges");
     const auto &ene = edges.get_ene_blk();
     const auto &var = edges.get_var_blk();
@@ -75,7 +70,6 @@ void tools::infinite::h5::save::edges(h5pp::File &h5file, const StorageInfo &sin
 
 /*! Write down the Hamiltonian model type and site info as attributes */
 void tools::infinite::h5::save::model(h5pp::File &h5file, const StorageInfo &sinfo, const ModelInfinite &model) {
-    if(sinfo.storage_level < StorageLevel::LIGHT) return;
     tools::log->trace("Writing Hamiltonian model");
     auto table_path = fmt::format("{}/model/hamiltonian", sinfo.algo_name);
     if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
@@ -88,13 +82,12 @@ void tools::infinite::h5::save::model(h5pp::File &h5file, const StorageInfo &sin
 }
 
 void tools::infinite::h5::save::mpo(h5pp::File &h5file, const StorageInfo &sinfo, const ModelInfinite &model) {
-    if(sinfo.storage_level < StorageLevel::FULL) return;
     // We do not expect the MPO's to change. Therefore, if they exist, there is nothing else to do here
     auto model_prefix = fmt::format("{}/model", sinfo.algo_name);
     if(h5file.linkExists(model_prefix)) return tools::log->trace("The model has already been written to [{}]", model_prefix);
-    tools::log->trace("Storing [{: ^6}]: mpo tensors", enum2sv(sinfo.storage_level));
     auto tic        = tid::tic_token("mpo");
     auto mpo_prefix = fmt::format("{}/mpo", model_prefix);
+    tools::log->trace("Storing mpo [{}]", mpo_prefix);
     model.get_mpo_siteA().save_mpo(h5file, mpo_prefix);
     model.get_mpo_siteB().save_mpo(h5file, mpo_prefix);
 
@@ -106,7 +99,6 @@ void tools::infinite::h5::save::mpo(h5pp::File &h5file, const StorageInfo &sinfo
 }
 
 void tools::infinite::h5::save::measurements(h5pp::File &h5file, const StorageInfo &sinfo, const TensorsInfinite &tensors, const AlgorithmStatus &status) {
-    if(sinfo.storage_level == StorageLevel::NONE) return;
     auto table_path = fmt::format("{}/measurements", sinfo.get_state_prefix());
     // Check if the current entry has already been appended
     static std::unordered_map<std::string, std::pair<uint64_t, uint64_t>> save_log;

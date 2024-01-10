@@ -19,7 +19,46 @@ void StorageInfo::assert_well_defined() const {
     if(not msg.empty()) throw except::logic_error("StorageInfo is not well defined. Missing fields: \n{}", msg);
 }
 
-StoragePolicy StorageInfo::get_state_storage_policy() const{
+StoragePolicy StorageInfo::get_table_storage_policy(std::string_view table_path) const {
+    /* clang-format off */
+    using namespace settings::storage::table;
+    if(table_path.find("bonds")                       != std::string_view::npos) return bonds::policy;
+    if(table_path.find("model")                       != std::string_view::npos) return model::policy;
+    if(table_path.find("measurements")                != std::string_view::npos) return measurements::policy;
+    if(table_path.find("status")                      != std::string_view::npos) return status::policy;
+    if(table_path.find("memory")                      != std::string_view::npos) return memory::policy;
+    if(table_path.find("timers")                      != std::string_view::npos) return timers::policy;
+    if(table_path.find("entanglement_entropies")      != std::string_view::npos) return entanglement_entropies::policy;
+    if(table_path.find("truncation_errors")           != std::string_view::npos) return truncation_errors::policy;
+    if(table_path.find("bond_dimensions")             != std::string_view::npos) return bond_dimensions::policy;
+    if(table_path.find("number_entropies")            != std::string_view::npos) return number_entropies::policy;
+    if(table_path.find("renyi_entropies")             != std::string_view::npos) return renyi_entropies::policy;
+    if(table_path.find("kvornings_marker")            != std::string_view::npos) return kvornings_marker::policy;
+    if(table_path.find("expectation_values_s")        != std::string_view::npos) return expectation_values_spin_xyz::policy;
+    if(table_path.find("random_unitary_circuit")      != std::string_view::npos) return random_unitary_circuit::policy;
+    throw except::logic_error("Could not match storage policy for table: [{}]", table_path);
+    /* clang-format on */
+}
+
+StoragePolicy StorageInfo::get_dataset_storage_policy(std::string_view dset_path) const {
+    /* clang-format off */
+    using namespace settings::storage::dataset;
+    if(dset_path.find("lbit_analysis")                    != std::string_view::npos) return lbit_analysis::policy;
+    if(dset_path.find("subsystem_entanglement_entropies") != std::string_view::npos) return subsystem_entanglement_entropies::policy;
+    if(dset_path.find("number_probabilities")             != std::string_view::npos) return number_probabilities::policy;
+    if(dset_path.find("expectation_values_spin")          != std::string_view::npos) return expectation_values_spin_xyz::policy;
+    if(dset_path.find("correlation_matrix_s")             != std::string_view::npos) return correlation_matrix_spin_xyz::policy;
+    throw except::logic_error("Could not match storage policy for dataset: [{}]", dset_path);
+    /* clang-format on */
+}
+
+StoragePolicy StorageInfo::get_mpo_storage_policy(std::string_view model_path) const {
+    using namespace settings::storage::mpo;
+    if(model_path.find("mpo") != std::string_view::npos) return model::policy;
+    throw except::logic_error("Could not match storage policy for mpo: [{}]", model_path);
+}
+
+StoragePolicy StorageInfo::get_state_storage_policy() const {
     if(state_name == "state_emid") return settings::storage::mps::state_emid::policy;
     if(state_name == "state_emin") return settings::storage::mps::state_emin::policy;
     if(state_name == "state_emax") return settings::storage::mps::state_emax::policy;
@@ -40,7 +79,10 @@ std::string StorageInfo::get_mps_prefix() const {
     std::string tag;
     auto        state_prefix = get_state_prefix();
     switch(storage_event) {
-        case StorageEvent::ITERATION: return fmt::format("{}/mps/iter_{}", state_prefix, iter);
+        case StorageEvent::ITERATION: {
+            // TODO check storage level. If replace, just set "iter_last"
+            return fmt::format("{}/mps/iter_{}", state_prefix, iter);
+        }
         case StorageEvent::INIT: return fmt::format("{}/mps/init", state_prefix);
         case StorageEvent::FINISHED: return fmt::format("{}/mps", state_prefix);
         case StorageEvent::PROJECTION: return fmt::format("{}/mps/proj", state_prefix);
@@ -81,14 +123,13 @@ StorageAttrs::StorageAttrs(const StorageInfo &sinfo) {
     bond_max      = sinfo.bond_max;
     trnc_lim      = sinfo.trnc_lim;
     storage_event = sinfo.storage_event;
-    storage_level = sinfo.storage_level;
 }
 bool StorageAttrs::operator==(const StorageAttrs &sinfo) {
     return iter == sinfo.iter and step == sinfo.step and bond_lim == sinfo.bond_lim and bond_max == sinfo.bond_max and trnc_lim == sinfo.trnc_lim and
-           storage_event == sinfo.storage_event and storage_level == sinfo.storage_level;
+           storage_event == sinfo.storage_event;
 }
 
 bool StorageAttrs::operator==(const StorageInfo &sinfo) {
     return iter == sinfo.iter and step == sinfo.step and bond_lim == sinfo.bond_lim and bond_max == sinfo.bond_max and trnc_lim == sinfo.trnc_lim and
-           storage_event == sinfo.storage_event and storage_level == sinfo.storage_level;
+           storage_event == sinfo.storage_event;
 }

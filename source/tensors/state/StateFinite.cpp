@@ -559,8 +559,8 @@ size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
 }
 
 size_t StateFinite::num_bonds_at_limit(long bond_lim) const {
-    auto bond_dims    = tools::finite::measure::bond_dimensions(*this);
-    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dims.begin(), bond_dims.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
+    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*this);
+    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dimensions.begin(), bond_dimensions.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
     return bonds_at_lim;
 }
 

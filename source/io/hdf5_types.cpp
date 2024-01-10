@@ -39,27 +39,6 @@ void h5_enum_storage_event::commit(const h5pp::hid::h5f &file_id) {
     if(err < 0) throw except::runtime_error("Failed to commit StorageEvent to file");
 }
 
-h5pp::hid::h5t &h5_enum_storage_level::get_h5t() {
-    create();
-    return h5_storage_level;
-}
-
-void h5_enum_storage_level::create() {
-    if(h5_storage_level.valid()) return;
-    h5_storage_level = H5Tcreate(H5T_ENUM, sizeof(StorageLevel));
-    int val;
-    H5Tenum_insert(h5_storage_level, "NONE", (val = 0, &val));
-    H5Tenum_insert(h5_storage_level, "LIGHT", (val = 1, &val));
-    H5Tenum_insert(h5_storage_level, "NORMAL", (val = 2, &val));
-    H5Tenum_insert(h5_storage_level, "FULL", (val = 3, &val));
-}
-
-void h5_enum_storage_level::commit(const h5pp::hid::h5f &file_id) {
-    if(H5Tcommitted(get_h5t()) > 0) return;
-    herr_t err = H5Tcommit(file_id, "StorageLevel", get_h5t(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    if(err < 0) throw except::runtime_error("Failed to commit StorageLevel to file");
-}
-
 h5pp::hid::h5t &h5_enum_algo_type::get_h5t() {
     create();
     return h5_algo_type;

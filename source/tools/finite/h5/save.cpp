@@ -42,7 +42,6 @@ namespace tools::finite::h5 {
         auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
         // Define the table entry
-        tools::log->trace("Appending to table: {}", table_path);
         h5pp_table_measurements_finite::table measurement_entry{};
         measurement_entry.iter     = static_cast<uint64_t>(sinfo.iter);
         measurement_entry.step     = static_cast<uint64_t>(sinfo.step);
@@ -75,13 +74,14 @@ namespace tools::finite::h5 {
         measurement_entry.algorithm_time = status.algo_time;
         measurement_entry.physical_time  = status.phys_time;
 
-        tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
+        tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
+                          flag2str(settings::storage::table::measurements::policy));
         h5file.writeTableRecords(measurement_entry, table_path, offset);
         tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
     }
 
     void save::correlations(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(not should_save(sinfo, settings::storage::table::correlation_matrix_spin_xyz::policy)) return;
+        if(not should_save(sinfo, settings::storage::dataset::correlation_matrix_spin_xyz::policy)) return;
         auto correlation_matrix_xyz = tools::finite::measure::correlation_matrix_xyz(state);
         /* clang-format off */
         save::data(h5file, sinfo, correlation_matrix_xyz[0], "correlation_matrix_sx", sinfo.get_state_prefix());
@@ -107,19 +107,20 @@ namespace tools::finite::h5 {
             if(not state.measurements.expectation_values_sz.has_value())
                 state.measurements.expectation_values_sz = measure::expectation_values(state, qm::spin::half::sz).real();
             //            save::data_as_table(h5file, sinfo, state.measurements.expectation_values_sz, "expectation_values_sz", "<sigma z>", "L_");
-            auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "expectation_values_sz");
-            tools::log->trace("Appending to table: {}", table_path);
+            auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "expectation_values_sz");
             // Check if the current entry has already been appended
-            auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+            auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
             if(attrs == sinfo) return;
             if(not attrs.link_exists) {
                 auto                 rows = static_cast<hsize_t>(state.measurements.expectation_values_sz->dimension(0));
                 std::vector<hsize_t> dims = {rows, 0};
                 std::vector<hsize_t> chnk = {rows, settings::storage::dataset::expectation_values_spin_xyz::chunksize};
-                h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
+                h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
             }
-            h5file.appendToDataset(state.measurements.expectation_values_sz.value(), table_path, 1);
-            tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
+            tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                              flag2str(settings::storage::dataset::expectation_values_spin_xyz::policy));
+            h5file.appendToDataset(state.measurements.expectation_values_sz.value(), dset_path, 1);
+            tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
         }
     }
 
@@ -145,7 +146,8 @@ namespace tools::finite::h5 {
         if(attrs == sinfo) return;
         auto offset = tools::common::h5::save::get_table_offset(h5file, table_path, sinfo, attrs);
 
-        tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
+        tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
+                          flag2str(sinfo.get_table_storage_policy(table_name)));
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
         auto entry = h5pp_table_data<T>::make_entry(sinfo.iter, sinfo.step, sinfo.position, sinfo.storage_event, sinfo.bond_lim, data, size);
         h5file.writeTableRecords(entry, table_path, offset);
@@ -155,7 +157,6 @@ namespace tools::finite::h5 {
     template<typename T>
     void save::data_as_table_vla(h5pp::File &h5file, const StorageInfo &sinfo, const std::vector<T> &data, const h5pp::hid::h5t &h5elem_t,
                                  std::string_view table_name, std::string_view table_title, std::string_view fieldname) {
-        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto t_hdf = tid::tic_scope(table_name);
         sinfo.assert_well_defined();
 
@@ -172,7 +173,8 @@ namespace tools::finite::h5 {
         tools::log->trace("Appending to table: {}", table_path);
 
         // Copy the data into an std::vector<std::byte> stream, which will act as a struct for our table entry
-        tools::log->trace("Writing to table: {} | offset {}", table_path, offset);
+        tools::log->trace("Writing to table: {} | event {} | offset {} | policy {}", table_path, enum2sv(sinfo.storage_event), offset,
+                          flag2str(sinfo.get_table_storage_policy(table_name)));
         auto entry = h5pp_table_data<T>::make_entry(sinfo.iter, sinfo.step, sinfo.position, sinfo.storage_event, sinfo.bond_lim, data.data(), data.size());
         h5file.writeTableRecords(entry, table_path, offset);
         tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
@@ -181,7 +183,7 @@ namespace tools::finite::h5 {
     void save::bond_dimensions(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
         if(not should_save(sinfo, settings::storage::table::bond_dimensions::policy)) return;
         auto t_hdf = tid::tic_scope("bond_dimensions", tid::level::higher);
-        data_as_table(h5file, sinfo, tools::finite::measure::bond_dimensions(state), "bond_dims", "Bond Dimensions", "L_");
+        data_as_table(h5file, sinfo, tools::finite::measure::bond_dimensions(state), "bond_dimensions", "Bond Dimensions", "L_");
     }
 
     void save::truncation_errors(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
@@ -195,11 +197,11 @@ namespace tools::finite::h5 {
         auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::entanglement_entropies(state), "entanglement_entropies", "Entanglement Entropies", "L_");
     }
-    void save::subsystem_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if(not should_save(sinfo, settings::storage::dataset::subsystem_entropies::policy)) return;
+    void save::subsystem_entanglement_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
+        if(not should_save(sinfo, settings::storage::dataset::subsystem_entanglement_entropies::policy)) return;
         if(not state.measurements.subsystem_entanglement_entropies)
             state.measurements.subsystem_entanglement_entropies = tools::finite::measure::subsystem_entanglement_entropies(state);
-        auto t_hdf     = tid::tic_scope("subsystem_entropies", tid::level::higher);
+        auto t_hdf     = tid::tic_scope("subsystem_entanglement_entropies", tid::level::higher);
         auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "subsystem_entanglement_entropies");
         // Check if the current entry has already been appended
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
@@ -209,7 +211,7 @@ namespace tools::finite::h5 {
             auto                 rows = static_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->rows());
             auto                 cols = static_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->cols());
             std::vector<hsize_t> dims = {rows, cols, 0};
-            std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::subsystem_entropies::chunksize};
+            std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::subsystem_entanglement_entropies::chunksize};
             h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
             h5file.writeAttribute("extent-1,offset,iter", dset_path, "index");
             h5file.writeAttribute("Entanglement entropies for subsystems", dset_path, "description");
@@ -217,40 +219,43 @@ namespace tools::finite::h5 {
         // Do not append if the iteration number is smaller than the dataset iter dimension
         auto num_entries = h5file.getDatasetDimensions(dset_path).back();
         if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
+            tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                              flag2str(sinfo.get_dataset_storage_policy(dset_path)));
             h5file.appendToDataset(state.measurements.subsystem_entanglement_entropies.value(), dset_path, 2);
             tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
         }
     }
     void save::number_probabilities(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if (not should_save(sinfo, settings::storage::dataset::number_probabilities::policy)) return;
+        if(not should_save(sinfo, settings::storage::dataset::number_probabilities::policy)) return;
         if(not state.measurements.number_probabilities)
             throw except::logic_error("Number probabilities have not been computed yet.\n"
-                                      "Make sure to compute the number entropies before saving the number probabilities") ;
-        auto t_hdf      = tid::tic_scope("number_probabilities", tid::level::higher);
-        auto table_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "number_probabilities");
-        tools::log->trace("Appending to table: {}", table_path);
+                                      "Make sure to compute the number entropies before saving the number probabilities");
+        auto t_hdf     = tid::tic_scope("number_probabilities", tid::level::higher);
+        auto dset_path = fmt::format("{}/{}", sinfo.get_state_prefix(), "number_probabilities");
         // Check if the current entry has already been appended
-        auto attrs = tools::common::h5::save::get_save_attrs(h5file, table_path);
+        auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
         if(attrs == sinfo) return;
         if(not attrs.link_exists) {
             auto                 rows = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(0));
             auto                 cols = static_cast<hsize_t>(state.measurements.number_probabilities->dimension(1));
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::number_probabilities::chunksize};
-            h5file.createDataset(table_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
-            h5file.writeAttribute("n_count, site, time", table_path, "index");
-            h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", table_path, "description");
+            h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);
+            h5file.writeAttribute("n_count, site, time", dset_path, "index");
+            h5file.writeAttribute("Probability of finding n_count particles to the left of a site at a time index", dset_path, "description");
         }
         // Do not append if the iteration number is smaller than the dataset iter dimension
-        auto num_entries = h5file.getDatasetDimensions(table_path).back();
+        auto num_entries = h5file.getDatasetDimensions(dset_path).back();
         if(sinfo.iter >= num_entries * settings::storage::storage_interval) {
-            h5file.appendToDataset(state.measurements.number_probabilities.value(), table_path, 2);
-            tools::common::h5::save::set_save_attrs(h5file, table_path, sinfo);
+            tools::log->trace("Writing to dataset: {} | event {} | policy {}", dset_path, enum2sv(sinfo.storage_event),
+                              flag2str(sinfo.get_dataset_storage_policy(dset_path)));
+            h5file.appendToDataset(state.measurements.number_probabilities.value(), dset_path, 2);
+            tools::common::h5::save::set_save_attrs(h5file, dset_path, sinfo);
         }
     }
 
     void save::renyi_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if (not should_save(sinfo, settings::storage::table::renyi_entropies::policy)) return;
+        if(not should_save(sinfo, settings::storage::table::renyi_entropies::policy)) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         auto inf   = std::numeric_limits<double>::infinity();
         data_as_table(h5file, sinfo, tools::finite::measure::renyi_entropies(state, 2), "renyi_entropies_2", "Midchain Renyi Entropy 2", "L_");
@@ -260,13 +265,13 @@ namespace tools::finite::h5 {
     }
 
     void save::number_entropies(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if (not should_save(sinfo, settings::storage::table::number_entropies::policy)) return;
+        if(not should_save(sinfo, settings::storage::table::number_entropies::policy)) return;
         auto t_hdf = tid::tic_scope("entropies", tid::level::higher);
         data_as_table(h5file, sinfo, tools::finite::measure::number_entropies(state), "number_entropies", "Number entropies", "L_");
     }
 
     void save::bonds(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if (not should_save(sinfo, settings::storage::table::bonds::policy)) return;
+        if(not should_save(sinfo, settings::storage::table::bonds::policy)) return;
         auto t_hdf = tid::tic_scope("bonds", tid::level::higher);
         // Transform from cplx to real to save space
         auto        h5real      = h5pp::type::getH5Type<real>();
@@ -282,15 +287,14 @@ namespace tools::finite::h5 {
     }
 
     void save::state(h5pp::File &h5file, const StorageInfo &sinfo, const StateFinite &state) {
-        if (not should_save(sinfo, sinfo.get_state_storage_policy())) return;
+        if(not should_save(sinfo, sinfo.get_state_storage_policy())) return;
         auto t_hdf      = tid::tic_scope("state", tid::level::higher);
         auto mps_prefix = sinfo.get_mps_prefix();
 
         // Check if the current entry has already been saved
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, mps_prefix);
         if(attrs == sinfo) return;
-
-        tools::log->trace("Storing [{: ^6}]: mps tensors", enum2sv(sinfo.storage_level));
+        tools::log->trace("Writing mps: {} | event {} | policy {}", mps_prefix, enum2sv(sinfo.storage_event), flag2str(sinfo.get_state_storage_policy()));
         for(const auto &mps : state.mps_sites) {
             auto dsetName = fmt::format("{}/M_{}", mps_prefix, mps->get_position<long>());
             h5file.writeDataset(mps->get_M_bare(), dsetName, H5D_CHUNKED); // Important to write bare matrices!!
@@ -318,11 +322,12 @@ namespace tools::finite::h5 {
 
     /*! Write down the Hamiltonian model type and site info as attributes */
     void save::model(h5pp::File &h5file, const StorageInfo &sinfo, const ModelFinite &model) {
-        if (not should_save(sinfo, settings::storage::table::model::policy)) return;
+        if(not should_save(sinfo, settings::storage::table::model::policy)) return;
         std::string table_path = fmt::format("{}/model/hamiltonian", sinfo.algo_name);
         if(h5file.linkExists(table_path)) return tools::log->debug("The hamiltonian has already been written to [{}]", table_path);
 
-        tools::log->trace("Storing table: [{}]", table_path);
+        tools::log->trace("Writing table: {} | event {} | policy {}", table_path, enum2sv(sinfo.storage_event),
+                          flag2str(settings::storage::table::model::policy));
         auto t_hdf = tid::tic_scope("model", tid::level::higher);
         for(auto site = 0ul; site < model.get_length(); site++) model.get_mpo(site).save_hamiltonian(h5file, table_path);
         h5file.writeAttribute(settings::model::model_size, table_path, "model_size");
@@ -332,14 +337,13 @@ namespace tools::finite::h5 {
 
     /*! Write all the MPO's with site info in attributes */
     void tools::finite::h5::save::mpo(h5pp::File &h5file, const StorageInfo &sinfo, const ModelFinite &model) {
-        if (not should_save(sinfo, settings::storage::mpo::model::policy)) return;
-        if(sinfo.storage_level < StorageLevel::FULL) return;
-        if(sinfo.storage_event != StorageEvent::MODEL) return;
+        if(not should_save(sinfo, settings::storage::mpo::model::policy)) return;
         std::string mpo_prefix = fmt::format("{}/model/mpo", sinfo.get_state_prefix());
         // We do not expect the MPO's to change. Therefore, if they exist, there is nothing else to do here
         if(h5file.linkExists(mpo_prefix)) return tools::log->trace("The MPO's have already been written to [{}]", mpo_prefix);
         auto t_hdf = tid::tic_scope("mpo", tid::level::higher);
-        tools::log->trace("Storing [{: ^6}]: mpos", enum2sv(sinfo.storage_level));
+        tools::log->trace("Writing mpos: {} | event {} | policy {}", mpo_prefix, enum2sv(sinfo.storage_event),
+                          flag2str(sinfo.get_mpo_storage_policy(mpo_prefix)));
         for(size_t pos = 0; pos < model.get_length(); pos++) { model.get_mpo(pos).save_mpo(h5file, mpo_prefix); }
         h5file.writeAttribute(settings::model::model_size, mpo_prefix, "model_size");
         h5file.writeAttribute(enum2sv(settings::model::model_type), mpo_prefix, "model_type");
@@ -347,19 +351,19 @@ namespace tools::finite::h5 {
 
     template<typename T>
     void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const T &data, std::string_view data_name, std::string_view prefix) {
-        if(sinfo.storage_level == StorageLevel::NONE) return;
         auto t_data    = tid::tic_scope("data");
         auto data_path = fmt::format("{}/{}", prefix, data_name);
 
         // Check if the current entry has already been saved
         auto attrs = tools::common::h5::save::get_save_attrs(h5file, data_path);
         if(attrs == sinfo) return;
-
         H5D_layout_t layout;
         if(std::is_scalar_v<T>)
             layout = H5D_layout_t::H5D_COMPACT;
         else
             layout = H5D_layout_t::H5D_CHUNKED;
+        tools::log->trace("Writing to dataset: {} | event {} | policy {}", data_path, enum2sv(sinfo.storage_event),
+                          flag2str(sinfo.get_dataset_storage_policy(data_name)));
         h5file.writeDataset(data, data_path, layout);
         tools::common::h5::save::set_save_attrs(h5file, data_path, sinfo);
     }
@@ -405,8 +409,7 @@ namespace tools::finite::h5 {
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(status.event), tid::level::highest);
 
-        tools::log->debug("Writing to file: Event [{}] | Level [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), enum2sv(sinfo.storage_level),
-                          sinfo.get_state_prefix());
+        tools::log->debug("Writing to file: Event [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), sinfo.get_state_prefix());
 
         // The file can be kept open during writes
         h5file.setKeepFileOpened();
@@ -423,7 +426,7 @@ namespace tools::finite::h5 {
         tools::finite::h5::save::bonds(h5file, sinfo, state);
         tools::finite::h5::save::truncation_errors(h5file, sinfo, state);
         tools::finite::h5::save::entanglement_entropies(h5file, sinfo, state);
-        tools::finite::h5::save::subsystem_entropies(h5file, sinfo, state);
+        tools::finite::h5::save::subsystem_entanglement_entropies(h5file, sinfo, state);
         tools::finite::h5::save::renyi_entropies(h5file, sinfo, state);
         tools::finite::h5::save::number_entropies(h5file, sinfo, state);
         tools::finite::h5::save::number_probabilities(h5file, sinfo, state);

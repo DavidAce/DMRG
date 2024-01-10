@@ -76,18 +76,18 @@ long tools::finite::measure::bond_dimension_midchain(const StateFinite &state) {
 }
 
 std::vector<long> tools::finite::measure::bond_dimensions(const StateFinite &state) {
-    if(state.measurements.bond_dims) return state.measurements.bond_dims.value();
-    auto              t_bond = tid::tic_scope("bond_dims", tid::level::highest);
-    std::vector<long> bond_dims;
-    bond_dims.reserve(state.get_length() + 1);
-    if(not state.has_center_point()) bond_dims.emplace_back(state.mps_sites.front()->get_chiL());
+    if(state.measurements.bond_dimensions) return state.measurements.bond_dimensions.value();
+    auto              t_bond = tid::tic_scope("bond_dimensions", tid::level::highest);
+    std::vector<long> bond_dimensions;
+    bond_dimensions.reserve(state.get_length() + 1);
+    if(not state.has_center_point()) bond_dimensions.emplace_back(state.mps_sites.front()->get_chiL());
     for(const auto &mps : state.mps_sites) {
-        bond_dims.emplace_back(mps->get_L().dimension(0));
-        if(mps->isCenter()) { bond_dims.emplace_back(mps->get_LC().dimension(0)); }
+        bond_dimensions.emplace_back(mps->get_L().dimension(0));
+        if(mps->isCenter()) { bond_dimensions.emplace_back(mps->get_LC().dimension(0)); }
     }
-    if(bond_dims.size() != state.get_length() + 1) throw except::logic_error("bond_dims.size() should be length+1");
-    state.measurements.bond_dims = bond_dims;
-    return state.measurements.bond_dims.value();
+    if(bond_dimensions.size() != state.get_length() + 1) throw except::logic_error("bond_dimensions.size() should be length+1");
+    state.measurements.bond_dimensions = bond_dimensions;
+    return state.measurements.bond_dimensions.value();
 }
 
 std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFinite &state) {
@@ -103,13 +103,13 @@ std::vector<long> tools::finite::measure::bond_dimensions_active(const StateFini
         return {state.get_mps_site(state.active_sites[0]).get_chiR()};
     }
     if(state.active_sites.size() == 2) return {state.get_mps_site(state.active_sites[0]).get_chiR()};
-    std::vector<long> bond_dims;
+    std::vector<long> bond_dimensions;
     for(const auto &pos : state.active_sites) {
         if(&pos == &state.active_sites.front()) continue;
         const auto &mps = state.get_mps_site(pos);
-        bond_dims.push_back(mps.get_chiL());
+        bond_dimensions.push_back(mps.get_chiL());
     }
-    return bond_dims;
+    return bond_dimensions;
 }
 
 double tools::finite::measure::entanglement_entropy_current(const StateFinite &state) {
@@ -159,7 +159,7 @@ std::vector<double> tools::finite::measure::entanglement_entropies(const StateFi
 
 Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const StateFinite &state) {
     if(state.measurements.subsystem_entanglement_entropies.has_value()) return state.measurements.subsystem_entanglement_entropies.value();
-    auto            t_ent   = tid::tic_scope("subsystem_entropies", tid::level::normal);
+    auto            t_ent   = tid::tic_scope("subsystem_entanglement_entropies", tid::level::normal);
     auto            len     = state.get_length<long>();
     auto            bee     = measure::entanglement_entropies(state); // bipartite entanglement entropies
     auto            solver  = eig::solver();

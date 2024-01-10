@@ -14,11 +14,13 @@ struct StorageInfo {
     AlgorithmType algo_type = AlgorithmType::ANY;
     std::string   algo_name;
     StorageEvent &storage_event; // Reference to the status.event
-    StorageLevel  storage_level = StorageLevel::NONE;
     std::string   state_name;
-    bool algorithm_has_finished = false;
-    bool algorithm_has_succeeded = false;
+    bool          algorithm_has_finished  = false;
+    bool          algorithm_has_succeeded = false;
     void          assert_well_defined() const;
+    StoragePolicy get_table_storage_policy(std::string_view table_path) const;
+    StoragePolicy get_dataset_storage_policy(std::string_view dset_path) const;
+    StoragePolicy get_mpo_storage_policy(std::string_view model_path) const;
     StoragePolicy get_state_storage_policy() const;
     std::string   get_state_prefix() const;
     std::string   get_mps_prefix() const;
@@ -34,7 +36,6 @@ struct StorageAttrs {
     long         bond_max      = -1;
     double       trnc_lim      = -1;
     StorageEvent storage_event = StorageEvent::NONE;
-    StorageLevel storage_level = StorageLevel::NONE;
     mutable bool link_exists   = false;
     StorageAttrs()             = default;
     StorageAttrs(const StorageInfo &sinfo);
