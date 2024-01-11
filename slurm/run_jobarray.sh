@@ -87,7 +87,7 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE LOCAL->REMOTE   : $rclone_operation ${@:2}"
+  echodate "RCLONE LOCAL->REMOTE    : $rclone_operation ${@:2}"
   rclone $rclone_operation --files-from=$filesfromtxt . "$rclone_remote/$rclone_prefix" -L --update
 }
 
@@ -120,7 +120,7 @@ rclone_files_from_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE REMOTE->LOCAL   : $rclone_operation ${@:2}"
+  echodate "RCLONE REMOTE->LOCAL    : $rclone_operation ${@:2}"
   rclone $rclone_operation --files-from=$filesfromtxt "$rclone_remote/$rclone_prefix" . -L --update
   return 0 # It's fine if this function fails
 }
@@ -240,13 +240,14 @@ run_sim_id() {
   fi
 
   # Step 5) Prepare to launch
-  echodate "EXEC LINE                : $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext"
   if [ -z  "$dryrun" ]; then
     # Add a RUNNING line to loginfo and copy it to remote, to make sure other clusters can see this seed is taken
     log "$infoline|RUNNING" "$loginfo"
     rclone_files_to_remote copy "$loginfo"
     # Add a TIMEOUT line to loginfo if we are force-closed at any time from now on
     trap 'log "$infoline|TIMEOUT" "$loginfo"' SIGINT SIGTERM
+    echodate "EXEC LINE                : $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args"
+    echodate "LOGFILE                  : $logtext"
 
     # Run the simulation
     $exec --config=$config_path --outfile=$outfile --seed=$model_seed --threads=$SLURM_CPUS_PER_TASK $extra_args &>> $logtext
