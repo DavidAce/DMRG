@@ -72,8 +72,8 @@ rclone_files_to_remote () {
 
   # Generate a file list
   echodate "GENERATING FILESFROM     : $rclone_operation $filesfromtxt"
-  mkdir -p ".rclone"
-  filesfromtxt=".rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  mkdir -p "$tempdir/DMRG.$USER/rclone"
+  filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   for file in "${@:2}"; do
     echo "$file" >> "$filesfromtxt"
   done
@@ -85,7 +85,7 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation --files-from=$filesfromtxt . $rclone_remote/$rclone_prefix -L --update --fast-list"
+  echodate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation --files-from=$filesfromtxt . $rclone_remote/$rclone_prefix -L --update --no-traverse"
   rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --fast-list
   if [ "$?" != "0" ]; then
       echodate "RCLONE LOCAL->REMOTE     : FAILED TRANSFER: ${@:2}"
@@ -107,8 +107,8 @@ rclone_files_from_remote () {
   esac
 
   # Generate a file list
-  mkdir -p ".rclone"
-  filesfromtxt=".rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  mkdir -p "$tempdir/DMRG.$USER/rclone"
+  filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   touch $filesfromtxt
   for file in "${@:2}"; do
       echo "$file" >> filesfromtxt
@@ -123,7 +123,7 @@ rclone_files_from_remote () {
     fi
   fi
   pwd
-  echodate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from=$filesfromtxt $rclone_remote/$rclone_prefix . -L --update --fast-list"
+  echodate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from=$filesfromtxt $rclone_remote/$rclone_prefix . -L --update --no-traverse"
   rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list
   if [ "$?" != "0" ]; then
       echodate "RCLONE REMOTE->LOCAL     : FAILED $rclone_operation ${@:2}"
