@@ -56,7 +56,6 @@ def get_h5_status(filename, batch):
             '/fDMRG/model/hamiltonian',
             '/fDMRG/state_emin/measurements',
             '/fDMRG/state_emin/status',
-            '/fDMRG/state_emin/mem_usage',
         ]
         expected_link_attrs = {
             'initial_pattern': '/fDMRG/state_emin',

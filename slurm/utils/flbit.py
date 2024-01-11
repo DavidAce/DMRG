@@ -152,7 +152,6 @@ def get_h5_status(filename, batch):
             '/common/finished_all',
             '/fLBIT/state_real/measurements',
             '/fLBIT/state_real/status',
-            '/fLBIT/state_real/mem_usage',
             '/fLBIT/state_real/number_probabilities',
         ]
         optional_dset_paths = [
@@ -199,7 +198,7 @@ def get_h5_status(filename, batch):
                     evn_neel = 'b'+''.join(np.resize(['0','1'], int(length)))
                     odd_neel = 'b'+''.join(np.resize(['1','0'], int(length)))
                     has_neel_init_pattern = np.all(optional_attrs[0] == evn_neel) or np.all(optional_attrs[0] == odd_neel)
-                    should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename or 'lbit116-anderson' in filename
+                    should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename or 'lbit116-anderson' in filename or 'lbit117' in filename
                     if should_be_neel and not has_neel_init_pattern:
                         return f"FAILED|initial state pattern is not neel: {optional_attrs[0]}"
                     if not should_be_neel and has_neel_init_pattern:
@@ -217,12 +216,12 @@ def get_h5_status(filename, batch):
 
                 time_steps = batch['time_steps']
                 num_entries = get_num_entries(expected_dsets, expected_num=time_steps, kind=256)
-                num_are_equal = all_equal([x for x in num_entries.values() if x is not None])
+                num_are_equal = all_equal([v for k,v in num_entries.items() if v is not None and v > 1]) # We can save just the last iter, in which case v == 1
                 if not num_are_equal:
-                    return  f"FAILED|unequal iters: {num_are_equal}: expected: {time_steps})"
+                    return  f"FAILED|unequal iters: {num_are_equal}: expected: {time_steps}: {num_entries})"
 
                 for dset, num in num_entries.items():
-                    if num is not None and num < time_steps:
+                    if num is not None and num < time_steps and num > 1:
                         return f"TIMEOUT|found too few iters: {dset}: found {num}, expected: {time_steps})"
                     if num is not None and num > time_steps:
                         return f"FAILED|found too many iters: {dset}: found {num}, expected: {time_steps})"

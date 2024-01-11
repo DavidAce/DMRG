@@ -87,7 +87,7 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE LOCAL->REMOTE    : $rclone_operation ${@:2}"
+  echodate "RCLONE LOCAL->REMOTE     : $rclone_operation ${@:2}"
   rclone $rclone_operation --files-from=$filesfromtxt . "$rclone_remote/$rclone_prefix" -L --update
 }
 
@@ -120,7 +120,7 @@ rclone_files_from_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE REMOTE->LOCAL    : $rclone_operation ${@:2}"
+  echodate "RCLONE REMOTE->LOCAL     : $rclone_operation ${@:2}"
   rclone $rclone_operation --files-from=$filesfromtxt "$rclone_remote/$rclone_prefix" . -L --update
   return 0 # It's fine if this function fails
 }
