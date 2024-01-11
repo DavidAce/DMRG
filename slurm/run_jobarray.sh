@@ -58,32 +58,70 @@ log(){
   echo "$statusline" >> $2
 }
 
-rclone_copy_to_remote () {
+rclone_files_to_remote () {
   if [ -z "$rclone_prefix" ]; then
     return
   fi
-  if [ -f $1 ] ; then
-    if [ "$2" == "true" ]; then
-      echodate "RCLONE MOVE LOCAL->REMOTE: $1"
-      rclone moveto "$1" "$rclone_remote/$rclone_prefix/$1" -L --update
+  case "$1" in
+  auto|copy|move)
+    ;;
+  *)
+    echo "Error: invalid rclone operation: [$1]" >&2
+    exit 1
+    ;;
+  esac
+
+  # Generate a file list
+  mkdir -p "$tempdir/DMRG.$USER/rclone"
+  filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  for arg in "${@:2}"; do
+      echo "$arg" >> filesfromtxt
+  done
+  # Remove the filesfromtxt when finished
+  trap 'rm -rf "$filesfromtxt"' RETURN
+  rclone_operation="$1"
+  if [[ "$rclone_operation" == "auto" ]]; then
+    if [[ "$rclone_remove" == "true" ]]; then
+      rclone_operation="move"
     else
-      echodate "RCLONE COPY LOCAL->REMOTE: $1"
-      rclone copyto "$1" "$rclone_remote/$rclone_prefix/$1" -L --update
+      rclone_operation="copy"
     fi
   fi
+  echodate "RCLONE LOCAL->REMOTE   : $rclone_operation ${@:2}"
+  rclone $rclone_operation --files-from=$filesfromtxt . "$rclone_remote/$rclone_prefix" -L --update
 }
 
-rclone_copy_from_remote() {
+rclone_files_from_remote () {
   if [ -z "$rclone_prefix" ]; then
-    return 0
+    return
   fi
-  file_remote="$rclone_remote/$rclone_prefix/$1"
-  file_remote_lsf=$(rclone lsf $file_remote)
-  rclone_lsf_exit_code=$?
-  if [ "$rclone_lsf_exit_code" == "0" ] && [ "$file_remote_lsf" == "$2" ]; then
-    echodate "RCLONE COPY REMOTE->LOCAL: $1"
-    rclone copyto $file_remote $1 -L --update
+  case "$1" in
+  auto|copy|move)
+    ;;
+  *)
+    echo "Error: invalid rclone operation: [$1]" >&2
+    exit 1
+    ;;
+  esac
+
+  # Generate a file list
+  mkdir -p "$tempdir/DMRG.$USER/rclone"
+  filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  for arg in "${@:2}"; do
+      echo "$arg" >> filesfromtxt
+  done
+  # Remove the filesfromtxt when finished
+  trap 'rm -rf "$filesfromtxt"' RETURN
+  rclone_operation="$1"
+  if [[ "$rclone_operation" == "auto" ]]; then
+    if [[ "$rclone_remove" == "true" ]]; then
+      rclone_operation="move"
+    else
+      rclone_operation="copy"
+    fi
   fi
+  echodate "RCLONE REMOTE->LOCAL   : $rclone_operation ${@:2}"
+  rclone $rclone_operation --files-from=$filesfromtxt "$rclone_remote/$rclone_prefix" . -L --update
   return 0 # It's fine if this function fails
 }
 
@@ -132,9 +170,7 @@ run_sim_id() {
       # Copy results back to remote
       # We do this in case there are remnant files on disk that need to be moved.
       # The rclone command has --update, so only newer files get moved.
-      rclone_copy_to_remote $logtext $rclone_remove
-      rclone_copy_to_remote $outfile $rclone_remove
-      rclone_copy_to_remote $loginfo $rclone_remove
+      rclone_files_to_remote auto "$logtext" "$loginfo" "$outfile"
        # We do not add an RCLONED line anymore.
       return 0
     fi
@@ -147,7 +183,7 @@ run_sim_id() {
   # Next, check if the results already exist in the remote
   # If they do, use copy the remote file to local
   # This command will only copy if the remote file is newer.
-  rclone_copy_from_remote "$loginfo" "$model_seed.info"
+  rclone_files_from_remote copy "$loginfo"
   if [[ -f $loginfo ]]; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
@@ -157,9 +193,7 @@ run_sim_id() {
       # Copy results back to remote
       # We do this in case there are remnant files on disk that need to be moved.
       # The rclone command has --update, so only newer files get moved.
-      rclone_copy_to_remote $logtext $rclone_remove
-      rclone_copy_to_remote $outfile $rclone_remove
-      rclone_copy_to_remote $loginfo $rclone_remove
+      rclone_files_to_remote auto "$logtext" "$outfile" "$loginfo"
       # We do not add an RCLONED line anymore.
       return 0
     elif [[ "$infostatus" =~ RUNNING ]] ; then
@@ -195,8 +229,7 @@ run_sim_id() {
 
   # Step 3)
   # Get the latest data to continue from.
-  rclone_copy_from_remote "$outfile" "mbl_$model_seed.h5"
-  rclone_copy_from_remote "$logtext" "$model_seed.txt"
+  rclone_from_remote copy "$logtext" "$outfile"
 
 
   # Step 4)
@@ -211,7 +244,7 @@ run_sim_id() {
   if [ -z  "$dryrun" ]; then
     # Add a RUNNING line to loginfo and copy it to remote, to make sure other clusters can see this seed is taken
     log "$infoline|RUNNING" "$loginfo"
-    rclone_copy_to_remote $loginfo "false"
+    rclone_files_to_remote copy "$loginfo"
     # Add a TIMEOUT line to loginfo if we are force-closed at any time from now on
     trap 'log "$infoline|TIMEOUT" "$loginfo"' SIGINT SIGTERM
 
@@ -225,9 +258,8 @@ run_sim_id() {
     fi
     if [ "$exit_code" == "0" ] ; then
       log "$infoline|FINISHED" "$loginfo"
-      rclone_copy_to_remote $logtext $rclone_remove
-      rclone_copy_to_remote $outfile $rclone_remove
-      rclone_copy_to_remote $loginfo $rclone_remove
+      rclone_files_to_remote auto "$logtext" "$loginfo" "$outfile"
+
       # We do not add an RCLONED line anymore.
     fi
   fi
@@ -312,8 +344,8 @@ if [ "$parallel" == "true" ]; then
   export -f echodate
   export -f log
   export -f run_sim_id
-  export -f rclone_copy_to_remote
-  export -f rclone_copy_from_remote
+  export -f rclone_files_to_remote
+  export -f rclone_files_from_remote
   joblog="logs/parallel-$(( seed_offset + start_id ))_$(( seed_offset + end_id )).log" # zero-indexed id's
   echodate "parallel --memfree=$SLURM_MEM_PER_CPU --jobs=$SLURM_NTASKS --ungroup --delay=.2s --joblog=$joblog --colsep=' ' run_sim_id ::: seq $start_id $end_id"
   parallel --memfree=$SLURM_MEM_PER_CPU \
