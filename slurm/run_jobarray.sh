@@ -2,7 +2,6 @@
 
 #SBATCH --kill-on-invalid-dep=yes
 #SBATCH --output=logs/%x-%A_%a.txt
-#SBATCH --error=logs/%x-%A_%a.err
 
 PROGNAME=$0
 usage() {
@@ -75,13 +74,8 @@ rclone_files_to_remote () {
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   for file in "${@:2}"; do
-      if [ -f "$file" ]; then
-        echo "$file" >> "$filesfromtxt"
-      fi
+    echo "$file" >> "$filesfromtxt"
   done
-  if [ ! -f $filesfromtxt ]; then
-    return 0
-  fi
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -90,8 +84,13 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE LOCAL->REMOTE     : $rclone_operation ${@:2}"
-  rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update
+
+  rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --fast-list
+  if [ "$?" == "0" ]; then
+      echodate "RCLONE LOCAL->REMOTE     : $rclone_operation $filesfromtxt"
+  else
+      echodate "RCLONE LOCAL->REMOTE     : FAILED TRANSFER: ${@:2}"
+  fi
   rm -rf "$filesfromtxt"
 }
 
@@ -112,11 +111,10 @@ rclone_files_from_remote () {
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   touch $filesfromtxt
-  for arg in "${@:2}"; do
-      echo "$arg" >> filesfromtxt
+  for file in "${@:2}"; do
+      echo "$file" >> filesfromtxt
   done
   # Remove the filesfromtxt when finished
-  trap 'rm -rf "$filesfromtxt"' RETURN
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -125,8 +123,13 @@ rclone_files_from_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE REMOTE->LOCAL     : $rclone_operation ${@:2}"
-  rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update
+
+  rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list
+  if [ "$?" == "0" ]; then
+      echodate "RCLONE REMOTE->LOCAL     : $rclone_operation $filesfromtxt"
+  else
+      echodate "RCLONE REMOTE->LOCAL     : $rclone_operation ${@:2}"
+  fi
   rm -rf "$filesfromtxt"
   return 0 # It's fine if this function fails
 }
