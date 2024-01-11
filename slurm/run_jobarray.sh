@@ -123,6 +123,7 @@ rclone_files_from_remote () {
       rclone_operation="copy"
     fi
   fi
+  pwd
   echodate 'RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list'
   rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list
   if [ "$?" != "0" ]; then
