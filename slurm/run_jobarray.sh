@@ -123,12 +123,10 @@ rclone_files_from_remote () {
       rclone_operation="copy"
     fi
   fi
-
+  echodate 'RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list'
   rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list
-  if [ "$?" == "0" ]; then
-      echodate "RCLONE REMOTE->LOCAL     : $rclone_operation $filesfromtxt"
-  else
-      echodate "RCLONE REMOTE->LOCAL     : $rclone_operation ${@:2}"
+  if [ "$?" != "0" ]; then
+      echodate "RCLONE REMOTE->LOCAL     : FAILED $rclone_operation ${@:2}"
   fi
   rm -rf "$filesfromtxt"
   return 0 # It's fine if this function fails
