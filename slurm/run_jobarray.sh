@@ -85,8 +85,8 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation --files-from=$filesfromtxt . $rclone_remote/$rclone_prefix -L --update --no-traverse"
-  rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --fast-list
+  echodate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation --files-from=$filesfromtxt . $rclone_remote/$rclone_prefix -L --update --no-traverse --multi-thread-streams 1"
+  rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" != "0" ]; then
       echodate "RCLONE LOCAL->REMOTE     : FAILED TRANSFER: ${@:2}"
   fi
@@ -123,8 +123,8 @@ rclone_files_from_remote () {
     fi
   fi
   pwd
-  echodate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from=$filesfromtxt $rclone_remote/$rclone_prefix . -L --update --no-traverse"
-  rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --fast-list
+  echodate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from=$filesfromtxt $rclone_remote/$rclone_prefix . -L --update --no-traverse --multi-thread-streams 1"
+  rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" != "0" ]; then
       echodate "RCLONE REMOTE->LOCAL     : FAILED $rclone_operation ${@:2}"
   fi
