@@ -74,11 +74,11 @@ rclone_files_to_remote () {
   # Generate a file list
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  touch $filesfromtxt
   for arg in "${@:2}"; do
       echo "$arg" >> filesfromtxt
   done
-  # Remove the filesfromtxt when finished
-  trap 'rm -rf "$filesfromtxt"' RETURN
+  cat $filesfromtxt
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -88,7 +88,8 @@ rclone_files_to_remote () {
     fi
   fi
   echodate "RCLONE LOCAL->REMOTE     : $rclone_operation ${@:2}"
-  rclone $rclone_operation --files-from=$filesfromtxt . "$rclone_remote/$rclone_prefix" -L --update
+  rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update
+  rm -rf "$filesfromtxt"
 }
 
 rclone_files_from_remote () {
@@ -107,6 +108,7 @@ rclone_files_from_remote () {
   # Generate a file list
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  touch $filesfromtxt
   for arg in "${@:2}"; do
       echo "$arg" >> filesfromtxt
   done
@@ -121,7 +123,8 @@ rclone_files_from_remote () {
     fi
   fi
   echodate "RCLONE REMOTE->LOCAL     : $rclone_operation ${@:2}"
-  rclone $rclone_operation --files-from=$filesfromtxt "$rclone_remote/$rclone_prefix" . -L --update
+  rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update
+  rm -rf "$filesfromtxt"
   return 0 # It's fine if this function fails
 }
 
@@ -229,7 +232,7 @@ run_sim_id() {
 
   # Step 3)
   # Get the latest data to continue from.
-  rclone_from_remote copy "$logtext" "$outfile"
+  rclone_files_from_remote copy "$logtext" "$outfile"
 
 
   # Step 4)
@@ -260,7 +263,6 @@ run_sim_id() {
     if [ "$exit_code" == "0" ] ; then
       log "$infoline|FINISHED" "$loginfo"
       rclone_files_to_remote auto "$logtext" "$loginfo" "$outfile"
-
       # We do not add an RCLONED line anymore.
     fi
   fi
