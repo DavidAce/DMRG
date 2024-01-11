@@ -71,6 +71,7 @@ rclone_files_to_remote () {
   esac
 
   # Generate a file list
+  echodate "GENERATING FILESFROM     : $rclone_operation $filesfromtxt"
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   for file in "${@:2}"; do
@@ -84,11 +85,9 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-
+  echodate 'RCLONE LOCAL->REMOTE     : rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --fast-list'
   rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --fast-list
-  if [ "$?" == "0" ]; then
-      echodate "RCLONE LOCAL->REMOTE     : $rclone_operation $filesfromtxt"
-  else
+  if [ "$?" != "0" ]; then
       echodate "RCLONE LOCAL->REMOTE     : FAILED TRANSFER: ${@:2}"
   fi
   rm -rf "$filesfromtxt"
