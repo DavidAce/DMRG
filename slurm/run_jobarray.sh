@@ -60,7 +60,7 @@ log(){
 
 rclone_files_to_remote () {
   if [ -z "$rclone_prefix" ]; then
-    return
+    return 0
   fi
   case "$1" in
   auto|copy|move)
@@ -74,11 +74,14 @@ rclone_files_to_remote () {
   # Generate a file list
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
-  touch $filesfromtxt
-  for arg in "${@:2}"; do
-      echo "$arg" >> filesfromtxt
+  for file in "${@:2}"; do
+      if [ -f "$file" ]; then
+        echo "$file" >> "$filesfromtxt"
+      fi
   done
-  cat $filesfromtxt
+  if [ ! -f $filesfromtxt ]; then
+    return 0
+  fi
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -165,10 +168,10 @@ run_sim_id() {
   if [ -f "$status_path" ]; then
     status="$(fgrep -e "$model_seed" "$status_path" | cut -d '|' -f2)" # Should get one of TIMEOUT,FAILED,MISSING,FINISHED
     if [ -z "$status" ]; then
-          echodate "STATUS                   : $model_seed $id NULL "
+          echodate "STATUS                   : $model_seed $id NULL"
           return 0
     fi
-    echodate "STATUS                   : $model_seed $id $status "
+    echodate "STATUS                   : $model_seed $id $status"
     if [ "$status" == "FINISHED" ]; then
       # Copy results back to remote
       # We do this in case there are remnant files on disk that need to be moved.
