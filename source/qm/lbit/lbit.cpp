@@ -1545,16 +1545,20 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         lbitSA.corrtyp.slice(offset7, extent7) = Eigen::TensorMap<Eigen::Tensor<real, 7>>(ytyp.data(), extent7);
 
         auto t_plot = tid::tic_scope("plot");
-        auto yavg_log   = num::cast<real>(yavg, lognoinf);
-        {
+        auto plt           = AsciiPlotter("lbit decay", 64, 20);
+
+        {   // Select the half-chain l-bit
             auto off9 = std::array<long,9>{0,0,0,0,0,0,0,i_width/2,0};
             auto ext9 = std::array<long,9>{1,1, 1, 1, 1, 1, 1, 1, i_width};
-            yavg_log = num::cast<real>(tenx::VectorCast(lbitSA.corrmat.slice(off9, ext9)), lognoinf);
+            auto ymid_log = num::cast<real>(tenx::VectorCast(lbitSA.corrmat.slice(off9, ext9)), lognoinf);
+            plt.addPlot(ymid_log, fmt::format("j=L/2: avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
         }
-        auto ytyp_log   = num::cast<real>(ytyp, lognoinf);
-        auto plt           = AsciiPlotter("lbit decay", 64, 20);
-        plt.addPlot(yavg_log, fmt::format("avg cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_avg, rms_avg, rsq_avg, yavg), 'o');
-        plt.addPlot(ytyp_log, fmt::format("typ cls {:.3e} rmsd {:.3e} rsq {:.6f}: {::+.4e}", cls_typ, rms_typ, rsq_typ, ytyp), '+');
+        {   // Select the edge l-bit
+            auto off9 = std::array<long,9>{0,0,0,0,0,0,0,0};
+            auto ext9 = std::array<long,9>{1,1, 1, 1, 1, 1, 1, 1, i_width};
+            auto yedg_log = num::cast<real>(tenx::VectorCast(lbitSA.corrmat.slice(off9, ext9)), lognoinf);
+            plt.addPlot(yedg_log, fmt::format("j=0", cls_avg, rms_avg, rsq_avg, yavg), 'x');
+        }
         plt.enable_legend();
         plt.show();
         auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);

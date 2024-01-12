@@ -80,6 +80,10 @@ rclone_files_to_remote () {
   for file in "${@:2}"; do
     echo "$file" >> "$filesfromtxt"
   done
+  if [ ! -f "$filesfromtxt" ]; then
+    return 0
+  fi
+
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -88,7 +92,7 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echondate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation"
+  echondate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation "
   for file in "${@:2}"; do
      printf "$(basename $file) "
   done
@@ -122,7 +126,10 @@ rclone_files_from_remote () {
   for file in "${@:2}"; do
       echo "$file" >> filesfromtxt
   done
-  # Remove the filesfromtxt when finished
+  if [ ! -f "$filesfromtxt" ]; then
+    return 0
+  fi
+
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -132,7 +139,7 @@ rclone_files_from_remote () {
     fi
   fi
 
-  echondate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation"
+  echondate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation "
   for file in "${@:2}"; do
      printf "$(basename $file) "
   done

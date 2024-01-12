@@ -784,8 +784,6 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         auto sm          = tenx::TensorCast(qm::spin::half::sm);
         using op_t       = tools::finite::measure::LocalObservableOp;
         using opstring_t = std::vector<op_t>;
-        tools::log->info("sp: {::.1f}", tenx::span(sp));
-        tools::log->info("sm: {::.1f}", tenx::span(sm));
         auto eigvals_all = Eigen::MatrixXd(num_rps, length);
         for(auto nrps : num::range(0, num_rps)) {
             auto eig_sol        = eig::solver();
@@ -816,12 +814,11 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             }
             auto rho_matrix = tenx::MatrixMap(rho);
             auto rho_trace  = rho_matrix.trace();
-            tools::log->debug("pattern {}", pattern);
             tools::log->debug("rho trace: {:.16f}", rho_trace);
             if(not rho_matrix.isApprox(rho_matrix.conjugate().transpose())) throw except::logic_error("rho is not hermitian");
             eig_sol.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
             auto eigvals = eig::view::get_eigvals<real>(eig_sol.result);
-            tools::log->info("opdm eigvals {:2}: {::.3e} | sum {:.16f}", nrps, eigvals, eigvals.sum());
+            tools::log->info("opdm eigv {:2} {}: {::.2e} | sum {:.15f}", nrps, pattern, eigvals, eigvals.sum());
             if(std::abs(rho_trace - static_cast<double>(length) / 2.0) > 1e-12) throw except::logic_error("R does not have trace L/2");
             if(eigvals.real().maxCoeff() > 1 + 1e-8) throw except::logic_error("The largest eigenvalue is larger than 1");
             if(eigvals.real().minCoeff() < 0 - 1e-8) throw except::logic_error("The smallest eigenvalue is smaller than 0");
