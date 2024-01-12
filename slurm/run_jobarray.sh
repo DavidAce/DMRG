@@ -48,6 +48,10 @@ while getopts c:hde:Ff:m:o:p:PrRs: o; do
 done
 export config_path=$config_path
 
+echondate(){
+    printf "%(%Y-%m-%dT%H:%M:%S)T:$*" -1
+}
+
 echodate(){
     printf "%(%Y-%m-%dT%H:%M:%S)T:$*\n" -1
 }
@@ -71,7 +75,6 @@ rclone_files_to_remote () {
   esac
 
   # Generate a file list
-  echodate "GENERATING FILESFROM     : $rclone_operation $filesfromtxt"
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   for file in "${@:2}"; do
@@ -85,7 +88,11 @@ rclone_files_to_remote () {
       rclone_operation="copy"
     fi
   fi
-  echodate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation --files-from=$filesfromtxt . $rclone_remote/$rclone_prefix -L --update --no-traverse --multi-thread-streams 1"
+  echondate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation"
+  for file in "${@:2}"; do
+     printf "$(basename $file) "
+  done
+  printf "\n"
   rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" != "0" ]; then
       echodate "RCLONE LOCAL->REMOTE     : FAILED TRANSFER: ${@:2}"
@@ -122,8 +129,12 @@ rclone_files_from_remote () {
       rclone_operation="copy"
     fi
   fi
-  pwd
-  echodate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation --files-from=$filesfromtxt $rclone_remote/$rclone_prefix . -L --update --no-traverse --multi-thread-streams 1"
+
+  echondate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation"
+  for file in "${@:2}"; do
+     printf "$(basename $file) "
+  done
+  printf "\n"
   rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" != "0" ]; then
       echodate "RCLONE REMOTE->LOCAL     : FAILED $rclone_operation ${@:2}"
