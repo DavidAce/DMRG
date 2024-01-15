@@ -78,11 +78,10 @@ rclone_files_to_remote () {
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   for file in "${@:2}"; do
-    echo "$file" >> "$filesfromtxt"
+    if [ -f "$file" ]; then
+      echo "$file" >> "$filesfromtxt"
+    fi
   done
-  if [ ! -f "$filesfromtxt" ]; then
-    return 0
-  fi
 
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
@@ -124,11 +123,11 @@ rclone_files_from_remote () {
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   touch $filesfromtxt
   for file in "${@:2}"; do
-      echo "$file" >> filesfromtxt
+    if [ -f "$file" ]; then
+      echo "$file" >> "$filesfromtxt"
+    fi
   done
-  if [ ! -f "$filesfromtxt" ]; then
-    return 0
-  fi
+
 
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
