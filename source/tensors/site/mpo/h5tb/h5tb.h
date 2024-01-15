@@ -9,20 +9,20 @@
 #include <string_view>
 #include <vector>
 
+template<typename h5tb_derived_t>
 class h5tb_base {
     protected:
     inline static h5pp::hid::h5t h5_type;
 
     public:
-    virtual void                                        register_table_type() const = 0;
-    [[nodiscard]] const h5pp::hid::h5t                 &get_h5_type() const;
-    [[nodiscard]] virtual std::string                   fmt_value(std::string_view p) const  = 0;
-    [[nodiscard]] virtual std::vector<std::string_view> get_parameter_names() const noexcept = 0;
-    void                                                print_parameter_names() const noexcept;
-    void                                                print_parameter_values() const noexcept;
+    virtual void                        register_table_type() const = 0;
+    [[nodiscard]] const h5pp::hid::h5t &get_h5_type() const;
+    [[nodiscard]] virtual std::string   fmt_value(std::string_view p) const = 0;
+    void                                print_parameter_names() const noexcept;
+    void                                print_parameter_values() const noexcept;
 };
 
-class h5tb_ising_selfdual : public h5tb_base {
+class h5tb_ising_selfdual : public h5tb_base<h5tb_ising_selfdual> {
     public:
     struct table {
         double           J_mean   = 0; /*!< Mean for the distrbution of J_rand */
@@ -37,13 +37,13 @@ class h5tb_ising_selfdual : public h5tb_base {
         h5pp::fstr_t<16> distribution; /*!< The random distribution of J_rnd and h_rnd. Choose between lognormal, normal or uniform */
     };
 
-    table                                       param;
-    void                                        register_table_type() const;
-    [[nodiscard]] std::string                   fmt_value(std::string_view p) const;
-    [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
+    table                                                           param;
+    void                                                            register_table_type() const;
+    [[nodiscard]] std::string                                       fmt_value(std::string_view p) const;
+    [[nodiscard]] static constexpr std::array<std::string_view, 10> get_parameter_names() noexcept;
 };
 
-class h5tb_ising_majorana : public h5tb_base {
+class h5tb_ising_majorana : public h5tb_base<h5tb_ising_majorana> {
     public:
     struct table {
         double           g      = 0; /*!< Interaction parameter for nearest ZZ and next-nearest XX neighbor coupling */
@@ -53,13 +53,13 @@ class h5tb_ising_majorana : public h5tb_base {
         long             spin_dim = 2; /*!< Spin dimension */
         h5pp::fstr_t<16> distribution; /*!< The random distribution of J_rand and h_rand. Choose between lognormal, normal or uniform */
     };
-    table                                       param;
-    void                                        register_table_type() const;
-    [[nodiscard]] std::string                   fmt_value(std::string_view p) const;
-    [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
+    table                                                          param;
+    void                                                           register_table_type() const;
+    [[nodiscard]] std::string                                      fmt_value(std::string_view p) const;
+    [[nodiscard]] static constexpr std::array<std::string_view, 6> get_parameter_names() noexcept;
 };
 
-class h5tb_ising_tf_rf : public h5tb_base {
+class h5tb_ising_tf_rf : public h5tb_base<h5tb_ising_tf_rf> {
     public:
     struct table {
         double           J1       = 0; /*!< Nearest neighbor coupling */
@@ -71,13 +71,13 @@ class h5tb_ising_tf_rf : public h5tb_base {
         long             spin_dim = 2; /*!< Spin dimension */
         h5pp::fstr_t<16> distribution; /*!< The random distribution of h_rand. Choose between lognormal, normal or uniform */
     };
-    table                                       param;
-    void                                        register_table_type() const;
-    [[nodiscard]] std::string                   fmt_value(std::string_view p) const;
-    [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
+    table                                                          param;
+    void                                                           register_table_type() const;
+    [[nodiscard]] std::string                                      fmt_value(std::string_view p) const;
+    [[nodiscard]] static constexpr std::array<std::string_view, 8> get_parameter_names() noexcept;
 };
 
-class h5tb_lbit : public h5tb_base {
+class h5tb_lbit : public h5tb_base<h5tb_lbit> {
     public:
     struct table {
         using vlen_type                         = h5pp::varr_t<h5pp::fstr_t<64>>;
@@ -97,8 +97,8 @@ class h5tb_lbit : public h5tb_base {
         h5pp::fstr_t<16>               distribution;  /*!< The random number distribution. Choose between lognormal, normal or uniform */
     };
 
-    table                                       param;
-    void                                        register_table_type() const;
-    [[nodiscard]] std::string                   fmt_value(std::string_view p) const;
-    [[nodiscard]] std::vector<std::string_view> get_parameter_names() const noexcept;
+    table                                                           param;
+    void                                                            register_table_type() const;
+    [[nodiscard]] std::string                                       fmt_value(std::string_view p) const;
+    [[nodiscard]] static constexpr std::array<std::string_view, 14> get_parameter_names() noexcept;
 };

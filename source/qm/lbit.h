@@ -29,8 +29,8 @@ namespace qm::lbit {
         double                w;     /*!< Gate weight value = exp(-2|h_i - h_i+1|) */
         std::array<double, 4> theta; /*!< Random real valued thetas (for the mixing term)  */
         std::complex<double>  c;     /*!< Random complex valued c (exchange term)  */
-        UnitaryGateType       type;  /*!< Gate type non-interacting or interacting: ANDERSON(0) OR MBL(1)  */
         UnitaryGateWeight     g8w8;  /*!< Gate weights OFF (IDENTITY) or ON (EXPDECAY)  */
+        UnitaryGateType       type;  /*!< Gate type non-interacting or interacting: ANDERSON(0) OR MBL(1)  */
 
         [[nodiscard]] static const h5pp::hid::h5t                      get_h5_type();
         [[nodiscard]] constexpr static std::array<std::string_view, 8> get_parameter_names() noexcept;

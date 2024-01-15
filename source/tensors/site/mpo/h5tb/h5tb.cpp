@@ -4,21 +4,30 @@
 #include "tools/common/log.h"
 #include <hdf5.h>
 
-const h5pp::hid::h5t &h5tb_base::get_h5_type() const {
+template<typename h5tb_derived_t>
+const h5pp::hid::h5t &h5tb_base<h5tb_derived_t>::get_h5_type() const {
     register_table_type();
     return h5_type;
 }
-void h5tb_base::print_parameter_names() const noexcept {
+
+template<typename h5tb_derived_t>
+void h5tb_base<h5tb_derived_t>::print_parameter_names() const noexcept {
     std::string name_line;
-    for(const auto &name : get_parameter_names()) name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
+    for(const auto &name : h5tb_derived_t::get_parameter_names()) name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
     tools::log->info(name_line);
 }
 
-void h5tb_base::print_parameter_values() const noexcept {
+template<typename h5tb_derived_t>
+void h5tb_base<h5tb_derived_t>::print_parameter_values() const noexcept {
     std::string value_line;
-    for(const auto &name : get_parameter_names()) value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
+    for(const auto &name : h5tb_derived_t::get_parameter_names()) value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
     tools::log->info(value_line);
 }
+
+template class h5tb_base<h5tb_ising_tf_rf>;
+template class h5tb_base<h5tb_ising_majorana>;
+template class h5tb_base<h5tb_ising_selfdual>;
+template class h5tb_base<h5tb_lbit>;
 
 /*
  *
@@ -60,7 +69,7 @@ std::string h5tb_ising_selfdual::fmt_value(std::string_view p) const {
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
-std::vector<std::string_view> h5tb_ising_selfdual::get_parameter_names() const noexcept {
+constexpr std::array<std::string_view, 10> h5tb_ising_selfdual::get_parameter_names() noexcept {
     return {"J_mean", "J_wdth", "J_rand", "h_mean", "h_wdth", "h_rand", "lambda", "delta", "spin_dim", "distribution"};
 }
 
@@ -96,7 +105,7 @@ std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
-std::vector<std::string_view> h5tb_ising_majorana::get_parameter_names() const noexcept {
+constexpr std::array<std::string_view, 6> h5tb_ising_majorana::get_parameter_names() noexcept {
     return {"g", "delta", "J_rand", "h_rand", "spin_dim", "distribution"};
 }
 
@@ -136,7 +145,7 @@ std::string h5tb_ising_tf_rf::fmt_value(std::string_view p) const {
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
-std::vector<std::string_view> h5tb_ising_tf_rf::get_parameter_names() const noexcept {
+constexpr std::array<std::string_view, 8> h5tb_ising_tf_rf::get_parameter_names() noexcept {
     return {"J1", "J2", "h_tran", "h_mean", "h_wdth", "h_rand", "spin_dim", "distribution"};
 }
 
@@ -194,20 +203,13 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
         if(p == "xi_Jcls")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.xi_Jcls);
         if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
         if(p == "J2_ctof")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_ctof);
-//        if(p == "u_depth")     return fmt::format(FMT_STRING("{:>7}"),     param.u_depth);
-//        if(p == "u_fmix")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_fmix);
-//        if(p == "u_tstd")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_tstd);
-//        if(p == "u_cstd")      return fmt::format(FMT_STRING("{:<7.4f}"),  param.u_cstd);
-//        if(p == "u_g8w8")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_g8w8));
-//        if(p == "u_type")      return fmt::format(FMT_STRING("{}"),        enum2sv(param.u_type));
         if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
         if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.distribution);
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
-std::vector<std::string_view> h5tb_lbit::get_parameter_names() const noexcept {
-    return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span", "J2_ctof", "xi_Jcls",
-            //            "u_fmix",  "u_depth",
-            "spin_dim", "distribution"};
+constexpr std::array<std::string_view, 14> h5tb_lbit::get_parameter_names() noexcept {
+    return {"J1_rand", "J2_rand", "J3_rand", "J1_mean", "J2_mean", "J3_mean",  "J1_wdth",
+            "J2_wdth", "J3_wdth", "J2_span", "J2_ctof", "xi_Jcls", "spin_dim", "distribution"};
 }

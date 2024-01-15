@@ -20,8 +20,8 @@ const h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5_type() {
     H5Tinsert(h5_type, "w", HOFFSET(qm::lbit::UnitaryGateParameters, w), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "theta", HOFFSET(qm::lbit::UnitaryGateParameters, theta), H5_ARRAY4_TYPE);
     H5Tinsert(h5_type, "c", HOFFSET(qm::lbit::UnitaryGateParameters, c), h5pp::type::getH5Type<decltype(qm::lbit::UnitaryGateParameters::c)>());
+    H5Tinsert(h5_type, "g8w8", HOFFSET(qm::lbit::UnitaryGateParameters, g8w8), get_h5t_enum_uw());
     H5Tinsert(h5_type, "type", HOFFSET(qm::lbit::UnitaryGateParameters, type), get_h5t_enum_ut());
-    H5Tinsert(h5_type, "g8w8", HOFFSET(qm::lbit::UnitaryGateParameters, type), get_h5t_enum_uw());
     return h5_type;
 }
 
@@ -65,12 +65,12 @@ std::string qm::lbit::UnitaryGateParameters::fmt_value(std::string_view p) const
         if(p == "w")      return fmt::format(FMT_STRING("{:<9.2e}")  , w);
         if(p == "theta")  return fmt::format(FMT_STRING("{::<+9.2e}"), theta);
         if(p == "c")      return fmt::format(FMT_STRING("{}")        , c);
-        if(p == "type")   return fmt::format(FMT_STRING("{}")        , enum2sv(type));
         if(p == "g8w8")   return fmt::format(FMT_STRING("{}")        , enum2sv(g8w8));
+        if(p == "type")   return fmt::format(FMT_STRING("{}")        , enum2sv(type));
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
 constexpr std::array<std::string_view, 8> qm::lbit::UnitaryGateParameters::get_parameter_names() noexcept {
-    return {"layer", "sites", "f", "w", "theta", "c", "type", "g8w8"};
+    return {"layer", "sites", "f", "w", "theta", "c", "g8w8",  "type"};
 }
