@@ -143,7 +143,6 @@ rclone_files_from_remote () {
   for file in "${@:2}"; do
      printf "$(basename $file) "
   done
-  printf "\n"
   rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" == "0" ]; then
       printf " -- SUCCESS\n"
