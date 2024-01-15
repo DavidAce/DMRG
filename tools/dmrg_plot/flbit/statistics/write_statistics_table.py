@@ -716,7 +716,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         for key, dset in model_node.items():
             if isinstance(dset, h5py.Group):
                 continue
-            if any(x in key for x in ['.db', 'hamiltonian']):
+            if any(x in key for x in ['.db', 'hamiltonian', 'unitary_circuit']):
                 continue
             if key in attrs_node._v_attrs:
                 break
