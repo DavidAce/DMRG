@@ -21,9 +21,11 @@ const h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5_type() {
     H5Tinsert(h5_type, "theta", HOFFSET(qm::lbit::UnitaryGateParameters, theta), H5_ARRAY4_TYPE);
     H5Tinsert(h5_type, "c", HOFFSET(qm::lbit::UnitaryGateParameters, c), h5pp::type::getH5Type<decltype(qm::lbit::UnitaryGateParameters::c)>());
     H5Tinsert(h5_type, "type", HOFFSET(qm::lbit::UnitaryGateParameters, type), get_h5t_enum_ut());
+    H5Tinsert(h5_type, "g8w8", HOFFSET(qm::lbit::UnitaryGateParameters, type), get_h5t_enum_uw());
     return h5_type;
 }
-void qm::lbit::UnitaryGateParameters::print_parameter_names() noexcept {
+
+void qm::lbit::UnitaryGateParameters::print_parameter_names() const noexcept {
     std::string name_line;
     for(const auto &name : get_parameter_names()) name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
     tools::log->info(name_line);
@@ -35,7 +37,7 @@ void qm::lbit::UnitaryGateParameters::print_parameter_values() const noexcept {
     tools::log->info(value_line);
 }
 
-h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5t_enum_ut() {
+const h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5t_enum_ut() {
     static h5pp::hid::h5t enum_ut;
     if(enum_ut.valid()) return enum_ut;
     enum_ut = H5Tenum_create(H5T_NATIVE_INT);
@@ -43,6 +45,16 @@ h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5t_enum_ut() {
     H5Tenum_insert(enum_ut, "ANDERSON", (val = static_cast<int>(UnitaryGateType::ANDERSON), &val));
     H5Tenum_insert(enum_ut, "MBL", (val = static_cast<int>(UnitaryGateType::MBL), &val));
     return enum_ut;
+}
+
+const h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5t_enum_uw() {
+    static h5pp::hid::h5t enum_uw;
+    if(enum_uw.valid()) return enum_uw;
+    enum_uw = H5Tenum_create(H5T_NATIVE_INT);
+    int val;
+    H5Tenum_insert(enum_uw, "IDENTITY", (val = static_cast<int>(UnitaryGateWeight::IDENTITY), &val));
+    H5Tenum_insert(enum_uw, "EXPDECAY", (val = static_cast<int>(UnitaryGateWeight::EXPDECAY), &val));
+    return enum_uw;
 }
 
 std::string qm::lbit::UnitaryGateParameters::fmt_value(std::string_view p) const {
@@ -54,8 +66,11 @@ std::string qm::lbit::UnitaryGateParameters::fmt_value(std::string_view p) const
         if(p == "theta")  return fmt::format(FMT_STRING("{::<+9.2e}"), theta);
         if(p == "c")      return fmt::format(FMT_STRING("{}")        , c);
         if(p == "type")   return fmt::format(FMT_STRING("{}")        , enum2sv(type));
+        if(p == "g8w8")   return fmt::format(FMT_STRING("{}")        , enum2sv(g8w8));
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
 
-std::vector<std::string_view> qm::lbit::UnitaryGateParameters::get_parameter_names() noexcept { return {"layer", "sites", "f", "w", "theta", "c", "type"}; }
+constexpr std::array<std::string_view, 8> qm::lbit::UnitaryGateParameters::get_parameter_names() noexcept {
+    return {"layer", "sites", "f", "w", "theta", "c", "type", "g8w8"};
+}

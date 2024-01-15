@@ -10,6 +10,7 @@
 #include "meld-io/parse.h"
 #include "meld-io/type.h"
 #include "mpi/mpi-tools.h"
+#include "qm/lbit.h"
 #include "tid/tid.h"
 #include <cstdlib>
 #include <fstream>
@@ -92,42 +93,42 @@ namespace tools::h5io {
         return *std::max_element(decs.begin(), decs.end());
     }
 
-    template<typename T>
-    std::string get_standardized_base(const ModelId<T> &H) {
+    template<typename H, typename C>
+    std::string get_standardized_base(const ModelId<H, C> &M) {
         auto t_scope = tid::tic_scope(__FUNCTION__);
-        if constexpr(std::is_same_v<T, sdual>) {
+        if constexpr(std::is_same_v<H, sdual>) {
             size_t decimals = 4;
-            return h5pp::format("L{1}/l{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.lambda, H.p.delta);
+            return h5pp::format("L{1}/l{2:.{0}f}/d{3:+.{0}f}", decimals, M.model_size, M.h.lambda, M.h.delta);
         }
-        if constexpr(std::is_same_v<T, majorana>) {
+        if constexpr(std::is_same_v<H, majorana>) {
             size_t decimals = 4;
-            return h5pp::format("L{1}/g{2:.{0}f}/d{3:+.{0}f}", decimals, H.model_size, H.p.g, H.p.delta);
+            return h5pp::format("L{1}/g{2:.{0}f}/d{3:+.{0}f}", decimals, M.model_size, M.h.g, M.h.delta);
         }
-        if constexpr(std::is_same_v<T, lbit>) {
-            size_t J_dec = get_max_decimals({H.p.J1_mean, H.p.J1_wdth, H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth});
-            size_t x_dec = get_max_decimals({H.p.xi_Jcls});
-            size_t u_dec = get_max_decimals({H.p.u_fmix, H.p.u_tstd, H.p.u_cstd});
-            auto   L_str = fmt::format(FMT_COMPILE("L{}"), H.model_size);
-            auto   J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:.{0}f}_{3:+.{0}f}±{4:.{0}f}_{5:+.{0}f}±{6:.{0}f}]"), J_dec, H.p.J1_mean, H.p.J1_wdth,
-                                       H.p.J2_mean, H.p.J2_wdth, H.p.J3_mean, H.p.J3_wdth);
-            auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, H.p.xi_Jcls);
+        if constexpr(std::is_same_v<H, lbit>) {
+            size_t J_dec = get_max_decimals({M.h.J1_mean, M.h.J1_wdth, M.h.J2_mean, M.h.J2_wdth, M.h.J3_mean, M.h.J3_wdth});
+            size_t x_dec = get_max_decimals({M.h.xi_Jcls});
+            size_t u_dec = get_max_decimals({M.c.u_fmix, M.c.u_tstd, M.c.u_cstd});
+            auto   L_str = fmt::format(FMT_COMPILE("L{}"), M.model_size);
+            auto   J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:.{0}f}_{3:+.{0}f}±{4:.{0}f}_{5:+.{0}f}±{6:.{0}f}]"), J_dec, M.h.J1_mean, M.h.J1_wdth,
+                                       M.h.J2_mean, M.h.J2_wdth, M.h.J3_mean, M.h.J3_wdth);
+            auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, M.h.xi_Jcls);
             // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
-            auto r_str      = H.p.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", H.p.J2_span);
-            auto u_du_str   = fmt::format(FMT_COMPILE("d[{}]"), H.p.u_depth);
-            auto u_f_str    = fmt::format(FMT_COMPILE("_f[{1:.{0}f}]"), u_dec, H.p.u_fmix);
-            auto u_tw_str   = fmt::format(FMT_COMPILE("_t[N(0,{1:.{0}f})]"), u_dec, H.p.u_tstd);
-            auto u_cw_str   = fmt::format(FMT_COMPILE("_c[N(0,{1:.{0}f})]"), u_dec, H.p.u_cstd);
-            auto u_w8_str   = fmt::format(FMT_COMPILE("_w[{0:.2}]"), enum2sv(H.p.u_g8w8));
-            auto u_bond_str = fmt::format(FMT_COMPILE("_bond[{}]"), H.p.u_bond);
+            auto r_str      = M.h.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", M.h.J2_span);
+            auto u_du_str   = fmt::format(FMT_COMPILE("d[{}]"), M.c.u_depth);
+            auto u_f_str    = fmt::format(FMT_COMPILE("_f[{1:.{0}f}]"), u_dec, M.c.u_fmix);
+            auto u_tw_str   = fmt::format(FMT_COMPILE("_t[N(0,{1:.{0}f})]"), u_dec, M.c.u_tstd);
+            auto u_cw_str   = fmt::format(FMT_COMPILE("_c[N(0,{1:.{0}f})]"), u_dec, M.c.u_cstd);
+            auto u_w8_str   = fmt::format(FMT_COMPILE("_w[{0:.2}]"), enum2sv(M.c.u_g8w8));
+            auto u_bond_str = fmt::format(FMT_COMPILE("_bond[{}]"), M.c.u_bond);
             auto u_str      = fmt::format(FMT_COMPILE("u[{}{}{}{}{}{}]"), u_du_str, u_f_str, u_tw_str, u_cw_str, u_w8_str, u_bond_str);
             auto base       = fmt::format(FMT_COMPILE("{0}/{1}/{2}/{3}/{4}"), L_str, J_str, x_str, r_str, u_str);
             tools::logger::log->info("creating base: {}", base);
             return base;
         }
     }
-    template std::string get_standardized_base(const ModelId<sdual> &H);
-    template std::string get_standardized_base(const ModelId<majorana> &H);
-    template std::string get_standardized_base(const ModelId<lbit> &H);
+    template std::string get_standardized_base(const ModelId<sdual, nocircuit> &M);
+    template std::string get_standardized_base(const ModelId<majorana, nocircuit> &M);
+    template std::string get_standardized_base(const ModelId<lbit, lbit_circuit> &M);
 
     std::vector<std::string> findKeys(const h5pp::File &h5_src, const std::string &root, const std::vector<std::string> &expectedKeys, long hits, long depth,
                                       bool usecache) {
@@ -206,66 +207,71 @@ namespace tools::h5io {
         }
         return result;
     }
-    template<typename T>
-    std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<T>> &srcModelDb, const std::vector<ModelKey> &srcKeys) {
+    template<typename H, typename C>
+    std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<H, C>> &srcModelDb,
+                                    const std::vector<ModelKey> &srcKeys) {
         auto                  t_scope = tid::tic_scope(__FUNCTION__);
         std::vector<ModelKey> keys;
         for(const auto &srcKey : srcKeys) {
-            auto path = fmt::format("{}/{}/{}", srcKey.algo, srcKey.model, srcKey.name);
-            auto key  = fmt::format("{}|{}", h5pp::fs::path(h5_src.getFilePath()).parent_path(), path);
-            if(srcModelDb.find(key) == srcModelDb.end() and h5_src.linkExists(path)) {
+            auto hamiltonian_path = fmt::format("{}/{}/{}", srcKey.algo, srcKey.model, srcKey.name);
+            auto key              = fmt::format("{}|{}", h5pp::fs::path(h5_src.getFilePath()).parent_path(), hamiltonian_path);
+            if(srcModelDb.find(key) == srcModelDb.end() and h5_src.linkExists(hamiltonian_path)) {
                 // Copy the model from the attributes in h5_src to a struct ModelId
-                srcModelDb[key]   = ModelId<T>();
+                srcModelDb[key]   = ModelId<H, C>();
                 auto &srcModelId  = srcModelDb[key];
-                auto &hamiltonian = srcModelId.p;
-                if constexpr(std::is_same_v<T, sdual>) {
-                    auto h5tb_hamiltonian   = h5_src.readTableRecords<h5tb_ising_selfdual::table>(path, h5pp::TableSelection::FIRST);
-                    hamiltonian.J_mean      = h5tb_hamiltonian.J_mean;
-                    hamiltonian.J_wdth      = h5tb_hamiltonian.J_wdth;
-                    hamiltonian.h_mean      = h5tb_hamiltonian.h_mean;
-                    hamiltonian.h_wdth      = h5tb_hamiltonian.h_wdth;
-                    hamiltonian.lambda      = h5tb_hamiltonian.lambda;
-                    hamiltonian.delta       = h5tb_hamiltonian.delta;
-                    srcModelId.distribution = h5tb_hamiltonian.distribution;
+                auto &hamiltonian = srcModelId.h;
+                if constexpr(std::is_same_v<H, sdual>) {
+                    auto h5tb_hamiltonian    = h5_src.readTableRecords<h5tb_ising_selfdual::table>(hamiltonian_path, h5pp::TableSelection::FIRST);
+                    hamiltonian.J_mean       = h5tb_hamiltonian.J_mean;
+                    hamiltonian.J_wdth       = h5tb_hamiltonian.J_wdth;
+                    hamiltonian.h_mean       = h5tb_hamiltonian.h_mean;
+                    hamiltonian.h_wdth       = h5tb_hamiltonian.h_wdth;
+                    hamiltonian.lambda       = h5tb_hamiltonian.lambda;
+                    hamiltonian.delta        = h5tb_hamiltonian.delta;
+                    hamiltonian.distribution = h5tb_hamiltonian.distribution;
                 }
-                if constexpr(std::is_same_v<T, majorana>) {
-                    auto h5tb_hamiltonian   = h5_src.readTableRecords<h5tb_ising_majorana::table>(path, h5pp::TableSelection::FIRST);
-                    hamiltonian.g           = h5tb_hamiltonian.g;
-                    hamiltonian.delta       = h5tb_hamiltonian.delta;
-                    srcModelId.distribution = h5tb_hamiltonian.distribution;
+                if constexpr(std::is_same_v<H, majorana>) {
+                    auto h5tb_hamiltonian    = h5_src.readTableRecords<h5tb_ising_majorana::table>(hamiltonian_path, h5pp::TableSelection::FIRST);
+                    hamiltonian.g            = h5tb_hamiltonian.g;
+                    hamiltonian.delta        = h5tb_hamiltonian.delta;
+                    hamiltonian.distribution = h5tb_hamiltonian.distribution;
                 }
-                if constexpr(std::is_same_v<T, lbit>) {
-                    auto h5tb_hamiltonian = h5_src.readTableRecords<h5tb_lbit::table>(path, h5pp::TableSelection::FIRST);
-                    hamiltonian.J1_mean   = h5tb_hamiltonian.J1_mean;
-                    hamiltonian.J2_mean   = h5tb_hamiltonian.J2_mean;
-                    hamiltonian.J3_mean   = h5tb_hamiltonian.J3_mean;
-                    hamiltonian.J1_wdth   = h5tb_hamiltonian.J1_wdth;
-                    hamiltonian.J2_wdth   = h5tb_hamiltonian.J2_wdth;
-                    hamiltonian.J3_wdth   = h5tb_hamiltonian.J3_wdth;
-                    hamiltonian.xi_Jcls   = h5tb_hamiltonian.xi_Jcls;
-                    hamiltonian.J2_span   = h5tb_hamiltonian.J2_span;
-                    auto path_circuit   = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
-                    hamiltonian.u_depth = h5_src.readAttribute<size_t>(path_circuit, "u_depth");
-                    hamiltonian.u_fmix  = h5_src.readAttribute<double>(path_circuit, "u_fmix");
-                    hamiltonian.u_tstd  = h5_src.readAttribute<double>(path_circuit, "u_tstd");
-                    hamiltonian.u_cstd  = h5_src.readAttribute<double>(path_circuit, "u_cstd");
-                    hamiltonian.u_g8w8  = h5_src.readAttribute<UnitaryGateWeight>(path_circuit, "u_g8w8");
-                    hamiltonian.u_type  = h5_src.readAttribute<UnitaryGateType>(path_circuit, "u_type");
+                if constexpr(std::is_same_v<H, lbit>) {
+                    auto  h5tb_hamiltonian = h5_src.readTableRecords<h5tb_lbit::table>(hamiltonian_path, h5pp::TableSelection::FIRST);
+                    auto  circuit_path     = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
+                    auto  h5tb_circuit     = h5_src.readTableRecords<qm::lbit::UnitaryGateParameters>(circuit_path, h5pp::TableSelection::FIRST);
+                    auto &circuit          = srcModelId.c;
 
-                    auto path_lbits = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
+                    hamiltonian.J1_mean      = h5tb_hamiltonian.J1_mean;
+                    hamiltonian.J2_mean      = h5tb_hamiltonian.J2_mean;
+                    hamiltonian.J3_mean      = h5tb_hamiltonian.J3_mean;
+                    hamiltonian.J1_wdth      = h5tb_hamiltonian.J1_wdth;
+                    hamiltonian.J2_wdth      = h5tb_hamiltonian.J2_wdth;
+                    hamiltonian.J3_wdth      = h5tb_hamiltonian.J3_wdth;
+                    hamiltonian.xi_Jcls      = h5tb_hamiltonian.xi_Jcls;
+                    hamiltonian.J2_span      = h5tb_hamiltonian.J2_span;
+                    hamiltonian.distribution = h5tb_hamiltonian.distribution;
+
+                    auto path_circuit = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
+                    circuit.u_depth   = h5_src.readAttribute<size_t>(path_circuit, "u_depth");
+                    circuit.u_fmix    = h5_src.readAttribute<double>(path_circuit, "u_fmix");
+                    circuit.u_tstd    = h5_src.readAttribute<double>(path_circuit, "u_tstd");
+                    circuit.u_cstd    = h5_src.readAttribute<double>(path_circuit, "u_cstd");
+                    circuit.u_g8w8    = h5_src.readAttribute<UnitaryGateWeight>(path_circuit, "u_g8w8");
+                    circuit.u_type    = h5_src.readAttribute<UnitaryGateType>(path_circuit, "u_type");
+                    auto path_lbits   = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
                     if(h5_src.linkExists(path_lbits)) {
                         auto u_bond = h5_src.readAttribute<std::optional<long>>(path_lbits, "u_bond");
                         if(not u_bond.has_value()) u_bond = text::extract_value_between<long>(key, "_bond", "]");
                         if(not u_bond.has_value()) throw except::logic_error("Failed to get u_bond value from string: {}", key);
-                        hamiltonian.u_bond = u_bond.value();
+                        circuit.u_bond = u_bond.value();
                     }
-                    srcModelId.distribution = h5tb_hamiltonian.distribution;
                 }
-                srcModelId.model_size = h5_src.readAttribute<size_t>(path, "model_size");
-                srcModelId.model_type = h5_src.readAttribute<std::string>(path, "model_name");
+                srcModelId.model_size = h5_src.readAttribute<size_t>(hamiltonian_path, "model_size");
+                srcModelId.model_type = h5_src.readAttribute<std::string>(hamiltonian_path, "model_name");
                 srcModelId.algorithm  = srcKey.algo;
                 srcModelId.key        = key;
-                srcModelId.path       = path;
+                srcModelId.path       = hamiltonian_path;
                 srcModelId.basepath   = get_standardized_base(srcModelId);
                 tools::logger::log->info("srcModelId.basepath = {} | key {}", srcModelId.basepath, key);
             }
@@ -274,16 +280,16 @@ namespace tools::h5io {
         }
         return keys;
     }
-    template std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<sdual>> &srcModelDb,
+    template std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<sdual, nocircuit>> &srcModelDb,
                                              const std::vector<ModelKey> &srcKeys);
-    template std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<majorana>> &srcModelDb,
+    template std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<majorana, nocircuit>> &srcModelDb,
                                              const std::vector<ModelKey> &srcKeys);
-    template std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<lbit>> &srcModelDb,
+    template std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<lbit, lbit_circuit>> &srcModelDb,
                                              const std::vector<ModelKey> &srcKeys);
 
-    template<typename T>
+    template<typename H, typename C>
     void saveModel([[maybe_unused]] const h5pp::File &h5_src, h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtModelDb,
-                   const ModelId<T> &modelId, const FileId &fileId) {
+                   const ModelId<H, C> &modelId, const FileId &fileId) {
         auto              t_scope      = tid::tic_scope(__FUNCTION__);
         const std::string tgtModelPath = fmt::format("{}/{}", modelId.basepath, modelId.path);
 
@@ -292,7 +298,7 @@ namespace tools::h5io {
             tools::logger::log->trace("modelId key    {}", modelId.key);
             tools::logger::log->trace("modelId path   {}", modelId.path);
             tools::logger::log->trace("modelId bpath  {}", modelId.basepath);
-            tools::logger::log->trace("modelId fields {}", modelId.p.fields);
+            tools::logger::log->trace("modelId fields {}", modelId.h.fields);
             tgtModelDb[tgtModelPath] = h5_tgt.getTableInfo(tgtModelPath);
 
             auto &tgtId   = tgtModelDb[tgtModelPath];
@@ -300,70 +306,38 @@ namespace tools::h5io {
 
             // It doesn't make sense to copy the whole hamiltonian table here:
             // It is specific to a single realization, but here we collect the fields common to all realizations.
-            const auto &srcModelInfo = h5_src.getTableInfo(modelId.path); // This will return a TableInfo to a an existing table in the source file
-            auto        modelPath    = fmt::format("{}/{}/model", modelId.basepath, modelId.algorithm); // Generate a new path for the target group
-            auto        tablePath    = fmt::format("{}/hamiltonian", modelPath);                        // Generate a new path for the target table
+            const auto &srcModelInfo    = h5_src.getTableInfo(modelId.path); // This will return a TableInfo to a an existing table in the source file
+            auto        modelPath       = fmt::format("{}/{}/model", modelId.basepath, modelId.algorithm); // Generate a new path for the target group
+            auto        hamiltonianPath = fmt::format("{}/hamiltonian", modelPath);                        // Generate a new path for the target table
 
             // Update an entry of the hamiltonian table with the relevant fields
-            tools::logger::log->trace("Copying model {}", modelId.basepath);
+            tools::logger::log->trace("Copying model {}", hamiltonianPath);
+            tgtInfo = h5_tgt.createTable(modelId.h.get_h5_type(), hamiltonianPath, h5pp::format("{} Hamiltonian", modelId.algorithm));
+            h5_tgt.writeTableRecords(modelId.h, hamiltonianPath);
 
-            {
-                // Copy the table fields that exist in the src model hamiltonian
-                std::vector<std::string> fields;
-                for(size_t fidx = 0; fidx < modelId.p.fields.size(); ++fidx) {
-                    const auto &field = modelId.p.fields[fidx];
-                    auto        fitr  = std::find(srcModelInfo.fieldNames->begin(), srcModelInfo.fieldNames->end(), field);
-                    if(fitr != srcModelInfo.fieldNames->end()) { fields.emplace_back(field); }
-                }
-                auto h5t_model = h5pp::util::getFieldTypeId(srcModelInfo, fields); // Generate a h5t with the relevant fields
-                auto modelData =
-                    h5_src.readTableField<std::vector<std::byte>>(srcModelInfo, h5t_model, h5pp::TableSelection::LAST); // Read those fields into a buffer
-                tgtInfo = h5_tgt.createTable(h5t_model, tablePath, h5pp::format("{} Hamiltonian", modelId.algorithm));
-                h5_tgt.writeTableRecords(modelData, tablePath);
+            if constexpr(std::is_same_v<H, lbit>) {
+                auto circuitPath = fmt::format("{}/unitary_circuit", modelPath); // Generate a new path for the target table for the circuit
+                tools::logger::log->trace("Copying the unitary circuit {}", circuitPath);
+
+                // Copy the table fields that exist in the src circuit
+                h5_tgt.createTable(modelId.c.get_h5_type(), circuitPath, h5pp::format("Unitary Circuit", modelId.algorithm));
+                h5_tgt.writeTableRecords(modelId.c, circuitPath);
             }
+
             // Update the database
             tgtId.insert(fileId.seed, 0);
 
-            // Now copy some helpful scalar datasets. This data is available in the attributes of the table above but this is also handy
-            h5_tgt.writeDataset(modelId.model_size, fmt::format("{}/{}/model/model_size", modelId.basepath, modelId.algorithm));
-            h5_tgt.writeDataset(modelId.model_type, fmt::format("{}/{}/model/model_type", modelId.basepath, modelId.algorithm));
-            h5_tgt.writeDataset(modelId.distribution, fmt::format("{}/{}/model/distribution", modelId.basepath, modelId.algorithm));
-            if constexpr(std::is_same_v<T, sdual>) {
-                h5_tgt.writeDataset(modelId.p.J_mean, fmt::format("{}/{}/model/J_mean", modelId.basepath, modelId.algorithm));
-                h5_tgt.writeDataset(modelId.p.J_wdth, fmt::format("{}/{}/model/J_wdth", modelId.basepath, modelId.algorithm));
-                h5_tgt.writeDataset(modelId.p.h_mean, fmt::format("{}/{}/model/h_mean", modelId.basepath, modelId.algorithm));
-                h5_tgt.writeDataset(modelId.p.h_wdth, fmt::format("{}/{}/model/h_wdth", modelId.basepath, modelId.algorithm));
-                h5_tgt.writeDataset(modelId.p.lambda, fmt::format("{}/{}/model/lambda", modelId.basepath, modelId.algorithm));
-                h5_tgt.writeDataset(modelId.p.delta, fmt::format("{}/{}/model/delta", modelId.basepath, modelId.algorithm));
-            }
-            if constexpr(std::is_same_v<T, majorana>) {
-                h5_tgt.writeDataset(modelId.p.g, fmt::format("{}/{}/model/g", modelId.basepath, modelId.algorithm));
-                h5_tgt.writeDataset(modelId.p.delta, fmt::format("{}/{}/model/delta", modelId.basepath, modelId.algorithm));
-            }
-            if constexpr(std::is_same_v<T, lbit>) {
-                h5_tgt.writeDataset(modelId.p.J1_mean, fmt::format("{}/J1_mean", modelPath));
-                h5_tgt.writeDataset(modelId.p.J2_mean, fmt::format("{}/J2_mean", modelPath));
-                h5_tgt.writeDataset(modelId.p.J3_mean, fmt::format("{}/J3_mean", modelPath));
-                h5_tgt.writeDataset(modelId.p.J1_wdth, fmt::format("{}/J1_wdth", modelPath));
-                h5_tgt.writeDataset(modelId.p.J2_wdth, fmt::format("{}/J2_wdth", modelPath));
-                h5_tgt.writeDataset(modelId.p.J3_wdth, fmt::format("{}/J3_wdth", modelPath));
-                h5_tgt.writeDataset(modelId.p.J2_span, fmt::format("{}/J2_span", modelPath));
-                h5_tgt.writeDataset(modelId.p.xi_Jcls, fmt::format("{}/xi_Jcls", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_depth, fmt::format("{}/u_depth", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_fmix, fmt::format("{}/u_fmix", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_tstd, fmt::format("{}/u_tstd", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_cstd, fmt::format("{}/u_cstd", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_g8w8, fmt::format("{}/u_g8w8", modelPath));
-                h5_tgt.writeDataset(modelId.p.u_bond, fmt::format("{}/u_bond", modelPath));
-            }
+            // Now write the same data as scalar attributes, which can be helpful sometimes
+            h5_tgt.writeAttribute(modelId.model_size, hamiltonianPath, "model_size");
+            h5_tgt.writeAttribute(modelId.model_type, hamiltonianPath, "model_type");
         }
     }
     template void saveModel(const h5pp::File &h5_src, h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtModelDb,
-                            const ModelId<sdual> &modelId, const FileId &fileId);
+                            const ModelId<sdual, nocircuit> &modelId, const FileId &fileId);
     template void saveModel(const h5pp::File &h5_src, h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtModelDb,
-                            const ModelId<majorana> &modelId, const FileId &fileId);
+                            const ModelId<majorana, nocircuit> &modelId, const FileId &fileId);
     template void saveModel(const h5pp::File &h5_src, h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtModelDb,
-                            const ModelId<lbit> &modelId, const FileId &fileId);
+                            const ModelId<lbit, lbit_circuit> &modelId, const FileId &fileId);
 
     std::vector<DsetKey> gatherDsetKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::DsetInfo> &srcDsetDb, const PathId &pathid,
                                         const std::vector<DsetKey> &srcKeys) {
@@ -494,12 +468,12 @@ namespace tools::h5io {
         return keys;
     }
 
-    template<typename ModelType>
+    template<typename ModelIdType>
     void merge(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys, tools::h5db::TgtDb &tgtdb) {
         auto t_scope = tid::tic_scope(__FUNCTION__);
         // Define reusable source Info
-        static tools::h5db::SrcDb<ModelId<ModelType>> srcdb;
-        h5pp::fs::path                                parent_path = h5pp::fs::path(h5_src.getFilePath()).parent_path();
+        static tools::h5db::SrcDb<ModelIdType> srcdb;
+        h5pp::fs::path                         parent_path = h5pp::fs::path(h5_src.getFilePath()).parent_path();
         if(srcdb.parent_path != parent_path) {
             // Clear when moving to another set of seeds (new point on the phase diagram)
             srcdb.clear();
@@ -593,9 +567,12 @@ namespace tools::h5io {
             throw std::runtime_error(fmt::format("Error when treating file [{}]", h5_src.getFilePath()));
         }
     }
-    template void merge<sdual>(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys, tools::h5db::TgtDb &tgtdb);
-    template void merge<majorana>(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys, tools::h5db::TgtDb &tgtdb);
-    template void merge<lbit>(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys, tools::h5db::TgtDb &tgtdb);
+    template void merge<ModelId<sdual, nocircuit>>(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys,
+                                                   tools::h5db::TgtDb &tgtdb);
+    template void merge<ModelId<majorana, nocircuit>>(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys,
+                                                      tools::h5db::TgtDb &tgtdb);
+    template void merge<ModelId<lbit, lbit_circuit>>(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys,
+                                                     tools::h5db::TgtDb &tgtdb);
 
     void writeProfiling(h5pp::File &h5_tgt) {
         auto t_scope = tid::tic_scope(__FUNCTION__);

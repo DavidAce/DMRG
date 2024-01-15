@@ -25,6 +25,7 @@ target_link_libraries(dmrg-meld PRIVATE
                       dmrg-debug
                       dmrg-stacktrace
                       dmrg-tensors-mpo-h5tb # To read the hamiltonian table
+                      dmrg-qm-lbit-h5tb  # To read the circuit table
                       dmrg-tid)
 target_link_libraries(dmrg-meld PRIVATE dmrg-flags)
 target_include_directories(dmrg-meld PRIVATE ${CMAKE_SOURCE_DIR}/source)

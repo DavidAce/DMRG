@@ -22,25 +22,25 @@ namespace tools::h5io {
 
     std::string get_tmp_dirname(std::string_view exename);
 
-    template<typename T>
-    std::string get_standardized_base(const ModelId<T> &H);
+    template<typename H, typename C>
+    std::string get_standardized_base(const ModelId<H, C> &M);
 
     std::vector<std::string> findKeys(const h5pp::File &h5_src, const std::string &root, const std::vector<std::string> &expectedKeys, long hits = -1,
                                       long depth = 0, bool usecache = true);
 
-    template<typename T>
-    std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<T>> &srcModelDb, const std::vector<ModelKey> &srcKeys);
+    template<typename H, typename C>
+    std::vector<ModelKey> loadModel(const h5pp::File &h5_src, std::unordered_map<std::string, ModelId<H, C>> &srcModelDb, const std::vector<ModelKey> &srcKeys);
 
-    template<typename T>
+    template<typename H, typename C>
     void saveModel(const h5pp::File &h5_src, h5pp::File &h5_tgt, std::unordered_map<std::string, InfoId<h5pp::TableInfo>> &tgtTableDb,
-                   const ModelId<T> &modelId, const FileId &fileId);
+                   const ModelId<H, C> &modelId, const FileId &fileId);
 
     std::vector<DsetKey>  gatherDsetKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::DsetInfo> &srcDsetDb, const PathId &pathid,
                                          const std::vector<DsetKey> &srcKeys);
     std::vector<TableKey> gatherTableKeys(const h5pp::File &h5_src, std::unordered_map<std::string, h5pp::TableInfo> &srcTableDb, const PathId &pathid,
                                           const std::vector<TableKey> &tables);
 
-    template<typename ModelType>
+    template<typename ModelIdType>
     void merge(h5pp::File &h5_tgt, const h5pp::File &h5_src, const FileId &fileId, const tools::h5db::Keys &keys, tools::h5db::TgtDb &tgtdb);
 
     void writeProfiling(h5pp::File &h5_tgt);

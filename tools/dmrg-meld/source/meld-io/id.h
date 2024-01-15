@@ -58,43 +58,60 @@ struct FileId {
     [[nodiscard]] std::string string() const;
 };
 
+struct lbit_circuit {
+    size_t                      u_depth;
+    double                      u_fmix;
+    double                      u_tstd;
+    double                      u_cstd;
+    UnitaryGateWeight           u_g8w8;
+    UnitaryGateType             u_type;
+    long                        u_bond = -1;
+    static constexpr auto       fields = std::array<std::string_view, 7>{"u_fmix", "u_depth", "u_tstd", "u_cstd", "u_g8w8", "u_type", "u_bond"};
+    static const h5pp::hid::h5t get_h5_type();
+};
+
+struct nocircuit {};
+
 struct lbit {
-    double                   J1_mean, J2_mean, J3_mean;
-    double                   J1_wdth, J2_wdth, J3_wdth;
-    size_t                   J2_span;
-    double                   xi_Jcls;
-    size_t                   u_depth;
-    double                   u_fmix;
-    double                   u_tstd, u_cstd;
-    UnitaryGateWeight        u_g8w8;
-    UnitaryGateType          u_type;
-    long                     u_bond = -1;
-    std::vector<std::string> fields = {"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span", "xi_Jcls",
-                                       "u_fmix",  "u_depth", "u_tstd",  "u_cstd",  "u_g8w8",  "u_type",  "u_bond"};
+    double                J1_mean;
+    double                J2_mean;
+    double                J3_mean;
+    double                J1_wdth;
+    double                J2_wdth;
+    double                J3_wdth;
+    size_t                J2_span;
+    double                xi_Jcls;
+    h5pp::vstr_t          distribution;
+    static constexpr auto fields = std::array<std::string_view, 8>{"J1_mean", "J2_mean", "J3_mean", "J1_wdth", "J2_wdth", "J3_wdth", "J2_span", "xi_Jcls"};
+    static const h5pp::hid::h5t get_h5_type();
 };
 
 struct sdual {
-    double                   J_mean;
-    double                   J_wdth;
-    double                   h_mean;
-    double                   h_wdth;
-    double                   lambda;
-    double                   delta;
-    std::vector<std::string> fields = {"J_mean", "J_wdth", "h_mean", "h_wdth", "lambda", "delta"};
+    double                      J_mean;
+    double                      J_wdth;
+    double                      h_mean;
+    double                      h_wdth;
+    double                      lambda;
+    double                      delta;
+    h5pp::vstr_t                distribution;
+    static constexpr auto       fields = std::array<std::string_view, 6>{"J_mean", "J_wdth", "h_mean", "h_wdth", "lambda", "delta"};
+    static const h5pp::hid::h5t get_h5_type();
 };
 
 struct majorana {
-    double                   g;
-    double                   delta;
-    std::vector<std::string> fields = {"g", "delta"};
+    double                      g;
+    double                      delta;
+    h5pp::vstr_t                distribution;
+    static constexpr auto       fields = std::array<std::string_view, 6>{"g", "delta"};
+    static const h5pp::hid::h5t get_h5_type();
 };
 
-template<typename Param>
+template<typename Hamiltonian, typename Circuit>
 struct ModelId {
-    Param       p;
+    Hamiltonian h;
+    Circuit     c;
     size_t      model_size;
     std::string model_type;
-    std::string distribution;
     std::string algorithm;
     std::string key;
     std::string path;

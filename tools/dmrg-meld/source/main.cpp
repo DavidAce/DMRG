@@ -262,13 +262,16 @@ int main(int argc, char *argv[]) {
                 // A table records data from the last time step
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "status"));
                 keys.tables.emplace_back(TableKey("fLBIT", "state_*", "mem_usage"));
+                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "memory"));
+                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "bond_dimensions"));
+                keys.tables.emplace_back(TableKey("fLBIT", "state_*", "truncation_errors"));
                 // A crono records data from each time step
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "measurements", time_steps));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", time_steps));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", time_steps));
+//                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dimensions", time_steps));
+//                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "bond_dims", time_steps));
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "entanglement_entropies", time_steps));
                 keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "number_entropies", time_steps));
-                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
+//                keys.cronos.emplace_back(CronoKey("fLBIT", "state_*", "truncation_errors", time_steps));
 
                 // Last argument is the axis along which to build the time series
                 keys.dsets.emplace_back(DsetKey("fLBIT", "state_*", "number_probabilities", Size::FIX, 3, SlabSelect::FULL));
@@ -507,15 +510,15 @@ int main(int argc, char *argv[]) {
                     auto srcKeepOpen = h5_src.getFileHandleToken();
                     switch(model) {
                         case Model::SDUAL: {
-                            tools::h5io::merge<sdual>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<ModelId<sdual,nocircuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                         case Model::MAJORANA: {
-                            tools::h5io::merge<majorana>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<ModelId<majorana,nocircuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                         case Model::LBIT: {
-                            tools::h5io::merge<lbit>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
+                            tools::h5io::merge<ModelId<lbit,lbit_circuit>>(h5_tgt_part, h5_src, fileId, keys, tgtdb);
                             break;
                         }
                     }

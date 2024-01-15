@@ -30,15 +30,16 @@ namespace qm::lbit {
         std::array<double, 4> theta; /*!< Random real valued thetas (for the mixing term)  */
         std::complex<double>  c;     /*!< Random complex valued c (exchange term)  */
         UnitaryGateType       type;  /*!< Gate type non-interacting or interacting: ANDERSON(0) OR MBL(1)  */
+        UnitaryGateWeight     g8w8;  /*!< Gate weights OFF (IDENTITY) or ON (EXPDECAY)  */
 
-        [[nodiscard]] static const h5pp::hid::h5t          get_h5_type();
-        [[nodiscard]] static std::vector<std::string_view> get_parameter_names() noexcept;
-        void                                               print_parameter_names() noexcept;
-        void                                               print_parameter_values() const noexcept;
-        [[nodiscard]] std::string                          fmt_value(std::string_view p) const;
+        [[nodiscard]] static const h5pp::hid::h5t                      get_h5_type();
+        [[nodiscard]] constexpr static std::array<std::string_view, 8> get_parameter_names() noexcept;
+        void                                                           print_parameter_names() const noexcept;
+        void                                                           print_parameter_values() const noexcept;
+        [[nodiscard]] std::string                                      fmt_value(std::string_view p) const;
 
-        private:
-        static h5pp::hid::h5t get_h5t_enum_ut();
+        static const h5pp::hid::h5t get_h5t_enum_ut();
+        static const h5pp::hid::h5t get_h5t_enum_uw();
     };
 
     struct UnitaryGateProperties {

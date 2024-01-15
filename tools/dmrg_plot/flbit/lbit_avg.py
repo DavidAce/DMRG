@@ -82,7 +82,8 @@ def lbit_avg(args):
                 'status': ['iter',
                            'bond_lim', 'bond_max',
                            'phys_time', 'algo_time', 'delta_t'],
-                'mem_usage': 'ALL',
+                # 'mem_usage': 'ALL',
+                'memory': 'ALL',
                 'bond_dimensions': 'ALL',
                 'truncation_errors': 'ALL',
                 # If the following tables exist, save it under <tablename>/data
@@ -99,11 +100,11 @@ def lbit_avg(args):
                                      'truncation_error',
                                      'algorithm_time',
                                      'physical_time'],
-                    'bond_dims': 'ALL',
-                    'bond_dimensions': 'ALL',
+                    # 'bond_dims': 'ALL',
+                    # 'bond_dimensions': 'ALL',
                     'entanglement_entropies': 'ALL',
                     'number_entropies': 'ALL',
-                    'truncation_errors': 'ALL',
+                    # 'truncation_errors': 'ALL',
                     # 'number_probabilities': 'ALL',
                     # If a table with this name exists, save its midchain column to a new dataset with the same name
                     '__save_mid__': ['entanglement_entropies', 'number_entropies'],
@@ -121,7 +122,7 @@ if __name__ == '__main__':
     # args = parse('fLBIT', ['lbit114'],)# basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit93'])
     # args = parse('fLBIT', ['lbit115'])
-    args = parse('fLBIT', ['lbit116'])
+    args = parse('fLBIT', ['lbit117'])
     # args = parse('fLBIT', ['lbit106'], )#basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit106'], basedir='/mnt/wdpool/backup/lbit')
     args.clear = True

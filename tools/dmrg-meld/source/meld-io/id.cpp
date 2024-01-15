@@ -2,6 +2,7 @@
 #include "general/sfinae.h"
 #include "logger.h"
 #include "meta.h"
+#include "qm/lbit.h"
 #include "tid/tid.h"
 #include <h5pp/details/h5ppHdf5.h>
 #include <h5pp/details/h5ppInfo.h>
@@ -181,4 +182,85 @@ void H5T_profiling::register_table_type() {
     H5Tinsert(h5_type, "time", HOFFSET(item, time), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "avg", HOFFSET(item, avg), H5T_NATIVE_DOUBLE);
     H5Tinsert(h5_type, "count", HOFFSET(item, count), H5T_NATIVE_UINT64);
+}
+
+const h5pp::hid::h5t lbit::get_h5_type() {
+    static h5pp::hid::h5t h5_type;
+    if(h5_type.valid()) return h5_type;
+    h5_type = H5Tcreate(H5T_COMPOUND, sizeof(lbit));
+    H5Tinsert(h5_type, "J1_mean", HOFFSET(lbit, J1_mean), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J2_mean", HOFFSET(lbit, J2_mean), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J3_mean", HOFFSET(lbit, J3_mean), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J1_wdth", HOFFSET(lbit, J1_wdth), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J2_wdth", HOFFSET(lbit, J2_wdth), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J3_wdth", HOFFSET(lbit, J3_wdth), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "J2_span", HOFFSET(lbit, J2_span), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "xi_Jcls", HOFFSET(lbit, xi_Jcls), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "distribution", HOFFSET(lbit, distribution), h5pp::vstr_t::get_h5type());
+    return h5_type;
+}
+
+const h5pp::hid::h5t lbit_circuit::get_h5_type() {
+    static h5pp::hid::h5t h5_type;
+    if(h5_type.valid()) return h5_type;
+    h5_type = H5Tcreate(H5T_COMPOUND, sizeof(lbit_circuit));
+    H5Tinsert(h5_type, "u_depth", HOFFSET(lbit_circuit, u_depth), H5T_NATIVE_ULONG);
+    H5Tinsert(h5_type, "u_fmix", HOFFSET(lbit_circuit, u_fmix), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_tstd", HOFFSET(lbit_circuit, u_tstd), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_cstd", HOFFSET(lbit_circuit, u_cstd), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_g8w8", HOFFSET(lbit_circuit, u_g8w8), qm::lbit::UnitaryGateParameters::get_h5t_enum_uw());
+    H5Tinsert(h5_type, "u_type", HOFFSET(lbit_circuit, u_type), qm::lbit::UnitaryGateParameters::get_h5t_enum_ut());
+    H5Tinsert(h5_type, "u_bond", HOFFSET(lbit_circuit, u_bond), H5T_NATIVE_LONG);
+    return h5_type;
+}
+
+struct TableColumnType {
+    std::string    name;
+    size_t         offset;
+    h5pp::hid::h5t type;
+};
+h5pp::hid::h5t get_compound_type(const std::vector<TableColumnType> &table_columns, size_t table_size = 0) {
+    if(table_size == 0) {
+        for(const auto &col : table_columns) table_size += H5Tget_size(col.type);
+    }
+    h5pp::hid::h5t h5_type;
+    h5_type = H5Tcreate(H5T_COMPOUND, table_size);
+    for(const auto &col : table_columns) {
+        herr_t res = H5Tinsert(h5_type, col.name.c_str(), col.offset, col.type);
+        if(res != 0) { throw std::runtime_error("H5Tinsert returned != 0"); }
+    }
+    return h5_type;
+}
+
+const h5pp::hid::h5t sdual::get_h5_type() {
+    static h5pp::hid::h5t h5_type;
+    if(h5_type.valid()) return h5_type;
+    h5_type = get_compound_type({{"J_mean", HOFFSET(sdual, J_mean), H5T_NATIVE_DOUBLE},
+                                 {"J_wdth", HOFFSET(sdual, J_wdth), H5T_NATIVE_DOUBLE},
+                                 {"h_mean", HOFFSET(sdual, h_mean), H5T_NATIVE_DOUBLE},
+                                 {"h_wdth", HOFFSET(sdual, h_wdth), H5T_NATIVE_DOUBLE},
+                                 {"lambda", HOFFSET(sdual, lambda), H5T_NATIVE_DOUBLE},
+                                 {"lambda", HOFFSET(sdual, delta), H5T_NATIVE_DOUBLE},
+                                 {"distribution", HOFFSET(sdual, distribution), h5pp::vstr_t::get_h5type()}},
+                                sizeof(sdual));
+
+    //    h5_type            = H5Tcreate(H5T_COMPOUND, sizeof(sdual));
+    //    H5Tinsert(h5_type, "J_mean", HOFFSET(sdual, J_mean), H5T_NATIVE_DOUBLE);
+    //    H5Tinsert(h5_type, "J_wdth", HOFFSET(sdual, J_wdth), H5T_NATIVE_DOUBLE);
+    //    H5Tinsert(h5_type, "h_mean", HOFFSET(sdual, h_mean), H5T_NATIVE_DOUBLE);
+    //    H5Tinsert(h5_type, "h_wdth", HOFFSET(sdual, h_wdth), H5T_NATIVE_DOUBLE);
+    //    H5Tinsert(h5_type, "lambda", HOFFSET(sdual, lambda), H5T_NATIVE_DOUBLE);
+    //    H5Tinsert(h5_type, "delta", HOFFSET(sdual, delta), H5T_NATIVE_DOUBLE);
+    //    H5Tinsert(h5_type, "distribution", HOFFSET(sdual, distribution), h5pp::vstr_t::get_h5type());
+    return h5_type;
+}
+
+const h5pp::hid::h5t majorana::get_h5_type() {
+    static h5pp::hid::h5t h5_type;
+    if(h5_type.valid()) return h5_type;
+    h5_type = H5Tcreate(H5T_COMPOUND, sizeof(majorana));
+    H5Tinsert(h5_type, "g", HOFFSET(majorana, g), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "delta", HOFFSET(majorana, delta), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "distribution", HOFFSET(majorana, distribution), h5pp::vstr_t::get_h5type());
+    return h5_type;
 }
