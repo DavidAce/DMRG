@@ -602,6 +602,7 @@
       "name": "tetralith",
       "displayName": "Release|march=native|conan|flexiblas",
       "inherits": [
+        "gcc",
         "flexiblas",
         "native",
         "conan",
@@ -610,7 +611,7 @@
       ],
       "binaryDir": "${sourceDir}/build/Release",
       "cacheVariables": {
-        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "FALSE",
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
         "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install",
         "DMRG_BUILD_TOOLS": "FALSE",
         "DMRG_USE_QUADMATH": "TRUE",
