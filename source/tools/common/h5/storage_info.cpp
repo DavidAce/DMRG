@@ -2,7 +2,7 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
-#include "fmt/core.h"
+#include <fmt/core.h>
 #include <string>
 void StorageInfo::assert_well_defined() const {
     std::string msg;
