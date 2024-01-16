@@ -127,14 +127,8 @@ rclone_files_from_remote () {
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
   touch $filesfromtxt
   for file in "${@:2}"; do
-    if [ -f "$file" ]; then
-      echo "$file" >> "$filesfromtxt"
-    fi
+    echo "$file" >> "$filesfromtxt"
   done
-  if [ ! -f "$filesfromtxt" ]; then
-    return 0
-  fi
-
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
