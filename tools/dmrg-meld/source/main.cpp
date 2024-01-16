@@ -318,7 +318,7 @@ int main(int argc, char *argv[]) {
             } catch(const std::exception &ex) {
                 H5Eprint(H5E_DEFAULT, stderr);
                 tools::logger::log->error("Error opening target file: {}", ex.what());
-                tools::logger::log->error("Replacing broken file: [{}]: {}", tools::h5io::h5_tgt_part_path);
+                tools::logger::log->error("Replacing broken file: [{}]", tools::h5io::h5_tgt_part_path);
                 h5_tgt_part = h5pp::File(tools::h5io::h5_tgt_part_path, h5pp::FilePermission::REPLACE, verbosity_h5pp);
             }
             //            auto h5_tgt = h5pp::File(h5_tgt_path, perm, verbosity_h5pp);

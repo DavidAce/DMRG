@@ -3,17 +3,7 @@
 #include "io/fmt.h"
 #include <stdexcept>
 
-// #ifndef EXCEPT_DEPRECATED
-//     #define EXCEPT_DEPRECATED __attribute__((deprecated))
-// #endif
 namespace except {
-    //    namespace internal {
-    //        template<typename... T>
-    //        EXCEPT_DEPRECATED inline void debug_type(T...) {}
-    //        template<typename... T>
-    //        EXCEPT_DEPRECATED inline void debug_type() {}
-    //    }
-
     class runtime_error : public std::runtime_error {
         public:
         using std::runtime_error::runtime_error;
@@ -56,7 +46,3 @@ namespace except {
     };
 
 }
-
-// #define EXCEPT_EXTERN extern
-// #include "exceptions.txx"
-// #undef EXCEPT_EXTERN

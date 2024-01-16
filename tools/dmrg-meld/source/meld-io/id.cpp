@@ -240,7 +240,7 @@ const h5pp::hid::h5t sdual::get_h5_type() {
                                  {"h_mean", HOFFSET(sdual, h_mean), H5T_NATIVE_DOUBLE},
                                  {"h_wdth", HOFFSET(sdual, h_wdth), H5T_NATIVE_DOUBLE},
                                  {"lambda", HOFFSET(sdual, lambda), H5T_NATIVE_DOUBLE},
-                                 {"lambda", HOFFSET(sdual, delta), H5T_NATIVE_DOUBLE},
+                                 {"delta", HOFFSET(sdual, delta), H5T_NATIVE_DOUBLE},
                                  {"distribution", HOFFSET(sdual, distribution), h5pp::vstr_t::get_h5type()}},
                                 sizeof(sdual));
 

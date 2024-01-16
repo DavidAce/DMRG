@@ -36,7 +36,7 @@ namespace tools::finite::h5 {
         void data_as_table(h5pp::File &h5file, const StorageInfo & sinfo, const T * const data, size_t size, std::string_view table_name, std::string_view table_title, std::string_view fieldname);
         template<typename T>
         void data_as_table(h5pp::File &h5file, const StorageInfo & sinfo, const T & data, std::string_view table_name, std::string_view table_title, std::string_view fieldname){
-            if constexpr(sfinae::is_specialization_v<T, std::optional>){
+            if constexpr(sfinae::is_std_optional_v<T>){
                 if(data.has_value()) data_as_table(h5file, sinfo, data.value(), table_name, table_title, fieldname);
             }
             else if constexpr (sfinae::has_data_v<T> and sfinae::has_size_v<T>) data_as_table(h5file, sinfo, data.data(), static_cast<size_t>(data.size()), table_name, table_title, fieldname);
