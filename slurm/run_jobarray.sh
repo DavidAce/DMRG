@@ -77,14 +77,16 @@ rclone_files_to_remote () {
   # Generate a file list
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
+  transferlist=()
   for file in "${@:2}"; do
     if [ -f "$file" ]; then
       echo "$file" >> "$filesfromtxt"
+      transferlist+=("$(basename $file)")
     fi
   done
 
-  if [ ! -f "$filesfromtxt" ]; then
-    return 0
+  if [ ${#transferlist[@]} -eq 0 ]; then
+    return 0 # empty array
   fi
 
   rclone_operation="$1"
@@ -96,17 +98,20 @@ rclone_files_to_remote () {
     fi
   fi
   echondate "RCLONE LOCAL->REMOTE     : rclone $rclone_operation "
-  for file in "${@:2}"; do
-     printf "$(basename $file) "
+  for file in "${transferlist[@]}"; do
+     printf "$file "
   done
   rclone $rclone_operation --files-from="$filesfromtxt" . "$rclone_remote/$rclone_prefix" -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" == "0" ]; then
       printf " -- SUCCESS\n"
+      rm -rf "$filesfromtxt"
+      return 0
   else
       printf " -- FAILED\n"
       cat $filesfromtxt
+      rm -rf "$filesfromtxt"
+      return 1
   fi
-  rm -rf "$filesfromtxt"
 }
 
 rclone_files_from_remote () {
@@ -125,9 +130,10 @@ rclone_files_from_remote () {
   # Generate a file list
   mkdir -p "$tempdir/DMRG.$USER/rclone"
   filesfromtxt="$tempdir/DMRG.$USER/rclone/filesfrom.${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.txt"
-  touch $filesfromtxt
+  transferlist=()
   for file in "${@:2}"; do
     echo "$file" >> "$filesfromtxt"
+    transferlist+=("$(basename $file)")
   done
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
@@ -139,8 +145,8 @@ rclone_files_from_remote () {
   fi
 
   echondate "RCLONE REMOTE->LOCAL     : rclone $rclone_operation "
-  for file in "${@:2}"; do
-     printf "$(basename $file) "
+  for file in "${transferlist[@]}"; do
+     printf "$file "
   done
   rclone $rclone_operation --files-from="$filesfromtxt" "$rclone_remote/$rclone_prefix" . -L --update --no-traverse --multi-thread-streams 1
   if [ "$?" == "0" ]; then
@@ -222,7 +228,6 @@ run_sim_id() {
       # We do this in case there are remnant files on disk that need to be moved.
       # The rclone command has --update, so only newer files get moved.
       rclone_files_to_remote auto "$logtext" "$outfile" "$loginfo"
-      # We do not add an RCLONED line anymore.
       return 0
     elif [[ "$infostatus" =~ RUNNING ]] ; then
       # This could be a simulation that terminated abruptly, or it is actually running right now.
@@ -233,9 +238,9 @@ run_sim_id() {
         old_array_task_id="$(tail -n 1 $loginfo  | xargs -d '|'  -n1 | grep SLURM_ARRAY_TASK_ID | awk -F ':' '{print $2}')"
         old_job_id=${old_array_job_id}_${old_array_task_id}
         slurm_state=$(sacct -X --jobs $old_job_id --format=state --parsable2 --noheader)
-        echodate "STATUS                   : $model_seed $id jobid [$old_array_job_id] has state [$slurm_state] on this cluster ($cluster)"
+        echodate "STATUS                   : jobid [$old_array_job_id] task [$old_array_task_id] step $id with seed $model_seed  has state [$slurm_state] on this cluster ($cluster)"
         if [ "$slurm_state" == "RUNNING" ] ; then
-          echodate "STATUS                 : already running on this cluster, with jobid [$old_job_id], aborting"
+          echodate "STATUS                   : already running on this cluster, with jobid [$old_job_id], aborting"
           return 0 # Go to next id
         fi
       elif [ ! -z "$cluster" ]; then
