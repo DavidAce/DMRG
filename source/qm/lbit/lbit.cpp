@@ -1404,8 +1404,7 @@ std::tuple<double, double, double, std::vector<double>, size_t>
     size_t s    = std::min<size_t>(1ul, e); // starting index: skip the first point because the exp decay starts further away
     auto   lfit = stat::linearFit(xdata, ylogs, s, e);
     double cls  = 1.0 / std::abs(lfit.slope);
-    tools::log->debug("Computed lbit decay | cls {:>8.6f} | rmsd {:.3e} | R² {:.6f} | mean {} | using y idx {} to {}: {::.3e}", cls, lfit.rms, lfit.rsq, s, e,
-                      ymean);
+    tools::log->debug("Computed lbit decay | cls {:>8.6f} | rmsd {:.3e} | R² {:.6f} | using y idx {} to {}: {::.3e}", cls, lfit.rms, lfit.rsq, s, e, ymean);
     //    tools::log->info("Computed lbit decay | coeffs {::>8.6f} | status {} | tol {:.2e}", fit_log.coeffs, fit_log.status, tol);
     return {cls, lfit.rms, lfit.rsq, ymean, c};
 }

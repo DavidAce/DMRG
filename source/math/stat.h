@@ -99,7 +99,7 @@ namespace stat {
         if(n == 0) return 0.0;
         auto X_mean = stat::mean(X, start_point, end_point);
         auto sum    = std::accumulate(x_it, x_en, static_cast<typename ContainerType::value_type>(0.0),
-                                      [&X_mean](auto &x1, auto &x2) { return x1 + (x2 - X_mean) * (x2 - X_mean); });
+                                      [&X_mean](auto x1, auto x2) { return x1 + (x2 - X_mean) * (x2 - X_mean); });
         return sum / n;
     }
     template<typename ContainerType>
@@ -220,9 +220,9 @@ namespace stat {
         if(n <= 1) return LinearFit(); // Need at least 2 points
         double avgX    = std::accumulate(x_it, x_en, 0.0) / n;
         double avgY    = std::accumulate(y_it, y_en, 0.0) / n;
-        auto   xxsqerr = [&](const auto &a, const auto &b) { return (a - avgX) * (b - avgX); };
-        auto   yysqerr = [&](const auto &a, const auto &b) { return (a - avgY) * (b - avgY); };
-        auto   xysqerr = [&](const auto &a, const auto &b) { return (a - avgX) * (b - avgY); };
+        auto   xxsqerr = [&](auto a, auto b) { return (a - avgX) * (b - avgX); };
+        auto   yysqerr = [&](auto a, auto b) { return (a - avgY) * (b - avgY); };
+        auto   xysqerr = [&](auto a, auto b) { return (a - avgX) * (b - avgY); };
         double sxx     = std::inner_product(x_it, x_en, x_it, 0.0, std::plus<>(), xxsqerr);
         double syy     = std::inner_product(y_it, y_en, y_it, 0.0, std::plus<>(), yysqerr); // aka total sum of squares TSS
         double sxy     = std::inner_product(x_it, x_en, y_it, 0.0, std::plus<>(), xysqerr);

@@ -28,12 +28,17 @@ namespace sfinae {
     template<class T, class... Ts>
     inline constexpr bool are_same_v = are_same<T, Ts...>::value;
 
+#if __cplusplus >= 202002L
+    template<typename T>
+    concept has_size_v = requires(T m) { m.size(); };
+#else
     template<typename T, typename = std::void_t<>>
     struct has_size : public std::false_type {};
     template<typename T>
     struct has_size<T, std::void_t<decltype(std::declval<T>().size())>> : public std::true_type {};
     template<typename T>
     inline constexpr bool has_size_v = has_size<T>::value;
+#endif
 
     template<typename T, typename = std::void_t<>>
     struct has_resize : public std::false_type {};

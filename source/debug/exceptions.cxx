@@ -2,8 +2,8 @@
 //    #define EXCEPT_DEPRECATED /* empty */
 //#endif
 
-#include "exceptions.h"
+//#include "exceptions.h"
 
-#define EXCEPT_EXTERN /* empty */
-#include "exceptions.txx"
-#undef EXCEPT_EXTERN
+//#define EXCEPT_EXTERN /* empty */
+//#include "exceptions.txx"
+//#undef EXCEPT_EXTERN

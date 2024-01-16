@@ -3,9 +3,9 @@
 #include "io/fmt.h"
 #include <stdexcept>
 
-//#ifndef EXCEPT_DEPRECATED
-//    #define EXCEPT_DEPRECATED __attribute__((deprecated))
-//#endif
+// #ifndef EXCEPT_DEPRECATED
+//     #define EXCEPT_DEPRECATED __attribute__((deprecated))
+// #endif
 namespace except {
     //    namespace internal {
     //        template<typename... T>
@@ -18,21 +18,21 @@ namespace except {
         public:
         using std::runtime_error::runtime_error;
         template<typename... Args>
-        runtime_error(Args &&...args) : std::runtime_error(fmt::format(std::forward<Args>(args)...)) {}
+        runtime_error(fmt::format_string<Args...> fs, Args &&...args) : std::runtime_error(fmt::format(fs, std::forward<Args>(args)...)) {}
     };
 
     class logic_error : public std::logic_error {
         public:
         using std::logic_error::logic_error;
         template<typename... Args>
-        logic_error(Args &&...args) : std::logic_error(fmt::format(std::forward<Args>(args)...)) {}
+        logic_error(fmt::format_string<Args...> fs, Args &&...args) : std::logic_error(fmt::format(fs, std::forward<Args>(args)...)) {}
     };
 
     class range_error : public std::range_error {
         public:
         using std::range_error::range_error;
         template<typename... Args>
-        range_error(Args &&...args) : std::range_error(fmt::format(std::forward<Args>(args)...)) {}
+        range_error(fmt::format_string<Args...> fs, Args &&...args) : std::range_error(fmt::format(fs, std::forward<Args>(args)...)) {}
     };
 
     class state_error : public except::runtime_error {
@@ -57,6 +57,6 @@ namespace except {
 
 }
 
-#define EXCEPT_EXTERN extern
-#include "exceptions.txx"
-#undef EXCEPT_EXTERN
+// #define EXCEPT_EXTERN extern
+// #include "exceptions.txx"
+// #undef EXCEPT_EXTERN

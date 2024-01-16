@@ -71,9 +71,9 @@ namespace num {
     template<class T, class U>
     [[nodiscard]] constexpr bool cmp_less(T t, U u) noexcept {
         if constexpr(internal::is_reference_wrapper_v<T>)
-            return cmp_less(t.get(), u);
+            return num::cmp_less(t.get(), u);
         else if constexpr(internal::is_reference_wrapper_v<U>)
-            return cmp_less(t, u.get());
+            return num::cmp_less(t, u.get());
         else if constexpr(std::is_same_v<T, U>)
             return t < u;
         else if constexpr(std::is_floating_point_v<T> and std::is_floating_point_v<U>)
@@ -96,17 +96,17 @@ namespace num {
 
     template<class T, class U>
     [[nodiscard]] constexpr bool cmp_greater(T t, U u) noexcept {
-        return cmp_less(u, t);
+        return num::cmp_less(u, t);
     }
 
     template<class T, class U>
     [[nodiscard]] constexpr bool cmp_less_equal(T t, U u) noexcept {
-        return !cmp_greater(t, u);
+        return !num::cmp_greater(t, u);
     }
 
     template<class T, class U>
     [[nodiscard]] constexpr bool cmp_greater_equal(T t, U u) noexcept {
-        return !cmp_less(t, u);
+        return !num::cmp_less(t, u);
     }
 
     template<typename out_t, typename ContainerT, typename Func>
@@ -185,15 +185,15 @@ namespace num {
         std::vector<T> vec;
         vec.reserve(num_steps);
         auto val = static_cast<T>(first);
-        if(cmp_less(first, last)) {
-            while(cmp_less(val, last)) {
+        if(num::cmp_less(first, last)) {
+            while(num::cmp_less(val, last)) {
                 vec.emplace_back(val);
-                val += cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
+                val += num::cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
             }
         } else {
-            while(cmp_greater(val, last)) {
+            while(num::cmp_greater(val, last)) {
                 vec.emplace_back(val);
-                val -= cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
+                val -= num::cmp_less(step, 0) ? -static_cast<T>(step) : static_cast<T>(step);
             }
         }
         if constexpr(std::is_signed_v<T3>) {
@@ -367,11 +367,11 @@ namespace num {
     }
     template<typename Input>
     [[nodiscard]] Input cummin(const Input &in, size_t from = 0, size_t num = -1ul) {
-        return cumop(in, [](auto &a, auto &b) { return std::min(a, b); }, from, num);
+        return cumop(in, [](auto a, auto b) { return std::min(a, b); }, from, num);
     }
     template<typename Input>
     [[nodiscard]] Input cummax(const Input &in, size_t from = 0, size_t num = -1ul) {
-        return cumop(in, [](auto &a, auto &b) { return std::max(a, b); }, from, num);
+        return cumop(in, [](auto a, auto b) { return std::max(a, b); }, from, num);
     }
 
     /*! \brief Trapezoidal rule for numerical integration

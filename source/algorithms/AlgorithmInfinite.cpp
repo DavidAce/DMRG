@@ -365,7 +365,7 @@ void AlgorithmInfinite::print_status_full() {
 
     switch(status.algo_type) {
         case AlgorithmType::iDMRG: break;
-        case AlgorithmType::iTEBD: tools::log->info("δt                    = {:<16.16f}", status.delta_t); break;
+        case AlgorithmType::iTEBD: tools::log->info("δt                    = {:<16.16f}", status.delta_t.to_floating_point<double>()); break;
 
         default: throw except::runtime_error("Wrong simulation type");
     }

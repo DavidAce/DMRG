@@ -25,9 +25,9 @@ struct fmt::formatter<std::complex<T>, Char> : fmt::formatter<T, Char> {
     template<typename FormatCtx>
     auto format(const std::complex<T> &x, FormatCtx &ctx) const -> decltype(ctx.out()) {
         base::format(x.real(), ctx);
-        if(x.imag() >= 0 && specs_.sign != sign::plus) format_to(ctx.out(), "+");
+        if(x.imag() >= 0 && specs_.sign != sign::plus) fmt::format_to(ctx.out(), "+");
         base::format(x.imag(), ctx);
-        return format_to(ctx.out(), "i");
+        return fmt::format_to(ctx.out(), "i");
     }
 };
 
