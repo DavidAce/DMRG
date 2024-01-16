@@ -519,6 +519,27 @@ def get_batch_setup(projectname):
                 },
             }
         },
+        'lbit118-mbl': {
+            # Calculate lbit93 with the mbl circuit to check SN(L)
+            'projectname': 'lbit118-mbl',
+            'batch': {
+                'L12': {
+                    'seed_extent': [50000],
+                    'seed_offset': [12000000],
+                    'time_steps': 200,
+                },
+                'L16': {
+                    'seed_extent': [50000],
+                    'seed_offset': [16000000],
+                    'time_steps': 200,
+                },
+                'L20': {
+                    'seed_extent': [50000],
+                    'seed_offset': [20000000],
+                    'time_steps': 200,
+                },
+            }
+        },
         'fdmrg-isingmajorana1-init': {
             # Calculate subsystem entanglement entropies for  ground states
             'projectname': 'fdmrg-isingmajorana1-init',

@@ -83,6 +83,10 @@ rclone_files_to_remote () {
     fi
   done
 
+  if [ ! -f "$filesfromtxt" ]; then
+    return 0
+  fi
+
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
     if [[ "$rclone_remove" == "true" ]]; then
@@ -127,7 +131,9 @@ rclone_files_from_remote () {
       echo "$file" >> "$filesfromtxt"
     fi
   done
-
+  if [ ! -f "$filesfromtxt" ]; then
+    return 0
+  fi
 
   rclone_operation="$1"
   if [[ "$rclone_operation" == "auto" ]]; then
