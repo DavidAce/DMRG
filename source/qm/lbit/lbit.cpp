@@ -325,7 +325,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::v
     for(size_t gidx = 0; gidx < ulayer.size() /* == L-1 */; ++gidx) {
         // Step 2
         std::tie(mpos[gidx], gate3) = svd.split_mpo_gate(gate5, cfg.value());
-        tools::log->debug("split ugate[idx:{}]", gidx);
+        if constexpr(settings::verbose_circuit) tools::log->debug("split ugate[idx:{}]", gidx);
         if(gidx + 1 >= ulayer.size()) break; // We can't add more gates. Now gate 3 has the mpo corresponding to site L
         // Step 3
         const auto &ugate = ulayer[gidx + 1];
@@ -337,10 +337,10 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::get_unitary_mpo_layer(const std::v
 
         if((gidx % 2) == 0 /* even */) {
             // Contract from above
-            tools::log->debug("contr gate3[idx:{}] onto ugate[idx:{} pos:{}] from above", gidx, gidx + 1, ugate.pos);
+            if constexpr(settings::verbose_circuit) tools::log->debug("contr gate3[idx:{}] onto ugate[idx:{} pos:{}] from above", gidx, gidx + 1, ugate.pos);
             gate5 = gate3.contract(ugate.op.reshape(dims4), tenx::idx({1}, {2})).shuffle(std::array<long, 5>{0, 2, 1, 3, 4});
         } else {
-            tools::log->debug("contr gate3[idx:{}] onto ugate[idx:{} pos:{}] from below", gidx, gidx + 1, ugate.pos);
+            if constexpr(settings::verbose_circuit) tools::log->debug("contr gate3[idx:{}] onto ugate[idx:{} pos:{}] from below", gidx, gidx + 1, ugate.pos);
             gate5 = gate3.contract(ugate.op.reshape(dims4), tenx::idx({2}, {0})).shuffle(std::array<long, 5>{0, 1, 3, 2, 4});
         }
     }

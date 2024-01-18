@@ -39,6 +39,7 @@ def lbit_avg(args):
             'dsets': {  # For time independent data (or at the last time step)
                 'schmidt_midchain': {},
                 'model/hamiltonian': {'copy': True, },
+                'model/unitary_circuit': {'copy': True, },
                 'model/model_size': {'copy': True, },
                 'model/lbits/cls_avg_fit': {'axis': 0, },
                 'model/lbits/cls_avg_rms': {'axis': 0, },
@@ -122,7 +123,8 @@ if __name__ == '__main__':
     # args = parse('fLBIT', ['lbit114'],)# basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit93'])
     # args = parse('fLBIT', ['lbit115'])
-    args = parse('fLBIT', ['lbit117'])
+    # args = parse('fLBIT', ['lbit117'])
+    args = parse('fLBIT', ['lbit118'])
     # args = parse('fLBIT', ['lbit106'], )#basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit106'], basedir='/mnt/wdpool/backup/lbit')
     args.clear = True

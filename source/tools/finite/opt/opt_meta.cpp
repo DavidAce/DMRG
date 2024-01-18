@@ -4,12 +4,12 @@
 
 namespace tools::finite::opt {
     OptMeta::OptMeta()
-        : optMode(OptMode::VARIANCE), optSolver(OptSolver::BFGS), optType(OptType::CPLX), optInit(OptInit::CURRENT_STATE), optWhen(OptWhen::ALWAYS),
+        : optFunc(OptFunc::VARIANCE), optSolver(OptSolver::EIGS), optType(OptType::CPLX), optInit(OptInit::CURRENT_STATE), optWhen(OptWhen::ALWAYS),
           optRitz(OptRitz::SR), optExit(OptExit::NONE) {}
 
-    OptMeta::OptMeta(OptRitz ritz, OptMode mode) : OptMeta() {
+    OptMeta::OptMeta(OptRitz ritz, OptFunc mode) : OptMeta() {
         optRitz = ritz;
-        optMode = mode;
+        optFunc = mode;
     }
 
     bool OptMeta::should_proceed(OptExit previous_exit) const {
@@ -25,9 +25,9 @@ namespace tools::finite::opt {
         }
     }
     void OptMeta::validate() const {
-        if(optMode == OptMode::OVERLAP and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [OVERLAP] and solver [BFGS] are incompatible");
-        if(optMode == OptMode::SUBSPACE and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver [BFGS] are incompatible");
-        if(optMode == OptMode::ENERGY and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver [BFGS] are incompatible");
+//        if(optFunc == OptFunc::OVERLAP and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [OVERLAP] and solver [BFGS] are incompatible");
+//        if(optFunc == OptFunc::SUBSPACE and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver [BFGS] are incompatible");
+//        if(optFunc == OptFunc::ENERGY and optSolver == OptSolver::BFGS) throw except::runtime_error("opt: mode [ENERGY] and solver [BFGS] are incompatible");
     }
 
 }

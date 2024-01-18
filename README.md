@@ -113,7 +113,6 @@ mechanism to let CMake call conan to install all the dependencies automatically.
 - [**primme**](https://github.com/primme/primme) Eigenvalue solver. Complements Arpack.
 - [**h5pp**](https://github.com/DavidAce/h5pp) a wrapper for HDF5. Includes [HDF5](https://www.hdfgroup.org/solutions/hdf5/), [spdlog](https://github.com/gabime/spdlog)
   and [fmt](https://github.com/fmtlib/fmt).
-- [**ceres**](http://ceres-solver.org/) Optimization library with L-BFGS routines for unconstrained minimization.
 - [**CLI11**](https://github.com/CLIUtils/CLI11) input argument parser
 - [**Backward-cpp**](https://github.com/bombela/backward-cpp) pretty stack trace printer.
 

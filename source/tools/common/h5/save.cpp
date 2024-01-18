@@ -14,7 +14,6 @@
 namespace tools::common::h5 {
     bool save::should_save(const StorageInfo &sinfo, StoragePolicy policy) {
         if(policy == StoragePolicy::NONE) return false;
-        if(has_flag(policy, StoragePolicy::ONCE)) return false; // TODO sinfo needs a sort of counter...
         if(has_flag(policy, StoragePolicy::ALWAYS)) return true;
         if(sinfo.storage_event == StorageEvent::INIT) {
             // TODO: Check that this is during initialization rather than "when storing the initial state"
@@ -32,9 +31,16 @@ namespace tools::common::h5 {
             if(has_suceeded and has_flag(policy, StoragePolicy::SUCCESS)) return true;
             return has_finished and has_flag(policy, StoragePolicy::FINISH);
         }
+        if(sinfo.storage_event == StorageEvent::EMIN) { return has_flag(policy, StoragePolicy::EMIN); }
+        if(sinfo.storage_event == StorageEvent::EMAX) { return has_flag(policy, StoragePolicy::EMAX); }
         if(sinfo.storage_event == StorageEvent::PROJECTION) { return has_flag(policy, StoragePolicy::PROJ); }
         if(sinfo.storage_event == StorageEvent::BOND_UPDATE) { return has_flag(policy, StoragePolicy::BOND); }
         if(sinfo.storage_event == StorageEvent::TRNC_UPDATE) { return has_flag(policy, StoragePolicy::TRNC); }
+        if(sinfo.storage_event == StorageEvent::FES_STEP) {
+            return has_flag(policy, StoragePolicy::BOND) or
+                   has_flag(policy, StoragePolicy::TRNC) or
+                   has_flag(policy, StoragePolicy::ITER); }
+
         throw except::logic_error("Storage policy [{}] has not been implemented for event [{}]", enum2sv(policy), enum2sv(sinfo.storage_event));
     }
 

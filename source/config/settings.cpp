@@ -176,23 +176,20 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("strategy::trnc_decrease_when"                 , strategy::trnc_decrease_when);
     dmrg_config.load_parameter("strategy::trnc_decrease_rate"                 , strategy::trnc_decrease_rate);
 
+    dmrg_config.load_parameter("solver::eig_max_size"                         , solver::eig_max_size);
     dmrg_config.load_parameter("solver::eigs_iter_max"                        , solver::eigs_iter_max);
     dmrg_config.load_parameter("solver::eigs_tol_min"                         , solver::eigs_tol_min);
     dmrg_config.load_parameter("solver::eigs_tol_max"                         , solver::eigs_tol_max);
     dmrg_config.load_parameter("solver::eigs_ncv"                             , solver::eigs_ncv);
-    dmrg_config.load_parameter("solver::bfgs_max_iter"                        , solver::bfgs_max_iter);
-    dmrg_config.load_parameter("solver::iter_stuck_multiplier"                , solver::iter_stuck_multiplier);
-    dmrg_config.load_parameter("solver::max_size_full_eigs"                   , solver::max_size_full_eigs);
-    dmrg_config.load_parameter("solver::max_size_shift_invert"                , solver::max_size_shift_invert);
-    dmrg_config.load_parameter("solver::bfgs_fix_rnorm_w_eigs"                , solver::bfgs_fix_rnorm_w_eigs);
-    dmrg_config.load_parameter("solver::prefer_eigs_over_bfgs"                , solver::prefer_eigs_over_bfgs);
+    dmrg_config.load_parameter("solver::eigs_stuck_multiplier"                , solver::eigs_stuck_multiplier);
+    dmrg_config.load_parameter("solver::eigs_max_size_shift_invert"           , solver::eigs_max_size_shift_invert);
     dmrg_config.load_parameter("solver::svd_truncation_lim"                   , solver::svd_truncation_lim);
     dmrg_config.load_parameter("solver::svd_truncation_init"                  , solver::svd_truncation_init);
     dmrg_config.load_parameter("solver::svd_switchsize_bdc"                   , solver::svd_switchsize_bdc);
     dmrg_config.load_parameter("solver::svd_save_fail"                        , solver::svd_save_fail);
 
     dmrg_config.load_parameter("precision::use_compressed_mpo_squared_all"    , precision::use_compressed_mpo_squared_all);
-    dmrg_config.load_parameter("precision::use_compressed_mpo_squared_otf"    , precision::use_compressed_mpo_squared_otf);
+    dmrg_config.load_parameter("precision::use_compressed_mpo_on_the_fly"     , precision::use_compressed_mpo_on_the_fly);
     dmrg_config.load_parameter("precision::use_energy_shifted_mpo"            , precision::use_energy_shifted_mpo);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo"            , precision::use_parity_shifted_mpo);
     dmrg_config.load_parameter("precision::use_parity_shifted_mpo_squared"    , precision::use_parity_shifted_mpo_squared);

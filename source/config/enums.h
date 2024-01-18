@@ -25,17 +25,17 @@ enum class TimeScale { LINSPACED, LOGSPACED };
 
 /*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
-    NONE        = 0,
-    MODEL       = 1,
-    INIT        = 2,
-    EMIN_STATE  = 4,
-    EMAX_STATE  = 8,
-    PROJECTION  = 16,
-    BOND_UPDATE = 32,
-    TRNC_UPDATE = 64,
-    FES_STEP    = 128,
-    ITERATION   = 256,
-    FINISHED    = 512,
+    NONE        = 0,   /*!< No event */
+    MODEL       = 1,   /*!< the model was defined */
+    INIT        = 2,   /*!< the initial state was defined */
+    EMIN        = 4,   /*!< the ground state was found (e.g. before xDMRG) */
+    EMAX        = 8,   /*!< the highest energy eigenstate was found (e.g. before xDMRG) */
+    PROJECTION  = 16,  /*!< a projection to a spin parity sector was made */
+    BOND_UPDATE = 32,  /*!< the bond dimension limit was updated */
+    TRNC_UPDATE = 64,  /*!< the truncation error threshold for SVD was updated */
+    FES_STEP    = 128, /*!< a finite-entanglement scaling step was made */
+    ITERATION   = 256, /*!< an iteration finished */
+    FINISHED    = 512, /*!< a simulation has finished */
 };
 
 /*! Determines in which cases we calculate and store to file
@@ -43,17 +43,18 @@ enum class StorageEvent : int {
  */
 enum class StoragePolicy : int {
     NONE    = 0,    /*!< Never store */
-    ONCE    = 1,    /*!< Store only once, on first contact  */
-    INIT    = 2,    /*!< Store only once during initialization e.g. model (usually in preprocessing) */
-    ITER    = 4,    /*!< Store after every iteration */
-    PROJ    = 8,    /*!< Store after projections */
-    BOND    = 16,   /*!< Store after bond updates */
-    TRNC    = 32,   /*!< Store after truncation error limit updates */
-    FAILURE = 64,   /*!< Store only if the simulation did not succeed (usually for debugging) */
-    SUCCESS = 128,  /*!< Store only if the simulation succeeded */
-    FINISH  = 256,  /*!< Store when the simulation has finished (regardless of failure or success) */
-    ALWAYS  = 512,  /*!< Store every chance you get */
-    REPLACE = 1024, /*!< Keep only the last event (i.e. replace previous events when possible) */
+    INIT    = 1,    /*!< Store only once during initialization e.g. model (usually in preprocessing) */
+    ITER    = 2,    /*!< Store after every iteration */
+    EMIN    = 4,    /*!< Store after finding the ground state (e.g. before xDMRG) */
+    EMAX    = 8,    /*!< Store after finding the highest energy eigenstate (e.g. before xDMRG) */
+    PROJ    = 16,   /*!< Store after projections */
+    BOND    = 32,   /*!< Store after bond updates */
+    TRNC    = 64,   /*!< Store after truncation error limit updates */
+    FAILURE = 128,  /*!< Store only if the simulation did not succeed (usually for debugging) */
+    SUCCESS = 256,  /*!< Store only if the simulation succeeded */
+    FINISH  = 512,  /*!< Store when the simulation has finished (regardless of failure or success) */
+    ALWAYS  = 1024, /*!< Store every chance you get */
+    REPLACE = 2048, /*!< Keep only the last event (i.e. replace previous events when possible) */
     allow_bitops
 };
 
@@ -72,8 +73,32 @@ enum class FileResumePolicy { FULL, FAST };
 enum class LogPolicy { NORMAL, QUIET };
 enum class RandomizerMode { SHUFFLE, SELECT1, ASIS };
 enum class OptType { REAL, CPLX };
-enum class OptMode { ENERGY, VARIANCE, OVERLAP, SUBSPACE, SIMPS };
-enum class OptSolver { EIGS, BFGS };
+enum class OptFunc {
+    /*! Choose the objective function for the optimization.
+     * Below, H and |psi> are the effective Hamiltonian and state corresponding to
+     * a one or more lattice sites.
+     */
+    ENERGY,   /*!< Keep an energy eigenstate H|psi> = E|psi> (ground state or excited state)   */
+    VARIANCE, /*!< Keep the smallest eigenstate of (H-E)^2|psi> = Var(H) |psi>, where E is a target energy */
+    OVERLAP   /*!< Among all eigenstates of H, keep the state which maximizes the overlap with the current state |<psi'|psi>| -> 1 */
+};
+
+/*! Choose the algorithm for the optimization.
+ *
+ * Note that H and |psi> are the effective Hamiltonian and state corresponding to
+ * a one or more lattice sites.
+ */
+enum class OptAlgo {
+    DIRECT,   /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
+    SUBSPACE, /*!< Find a state |psi> = λ_0|psi_0> + λ_1|psi_1>... by finding the ground state of of (H-E)^2_ij = <psi_i|(H-E)^2|psi_j> , where psi_i,psi_j are
+                 eigenstates of H which span the current state */
+    SHIFTINV, /*!< Find a mid-spectrum eigenstate of H using shift-invert (only compatible with OptFunc::ENERGY).  */
+    MPSEIGS   /*!< Apply all MPO's onto all MPS (all L sites) in the matrix-vector product of a matrix-free eigenvalue solver  */
+};            //
+enum class OptSolver {
+    EIG, /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
+    EIGS /*!< Apply the eigensolver directly on H|psi> or (H-E)^2|psi> */
+};
 enum class OptRitz { LR, SR, SM }; // Smallest Real or Largest Real, i.e. ground state or max state. Use SM for middle of spectrum states.
 enum class OptWhen : int {
     NEVER              = 0,
@@ -86,7 +111,6 @@ enum class OptWhen : int {
     ALWAYS             = 64,
     allow_bitops
 };
-enum class OptEigs { NEVER, WHEN_STUCK, WHEN_SATURATED, ALWAYS }; // When to prefer eigs over bfgs (the default)
 
 enum class OptExit : int {
     SUCCESS       = 0,
@@ -188,15 +212,12 @@ enum class xdmrg_task {
     TIMER_RESET,
 };
 
-
-
 template<typename T, typename = std::void_t<>>
 struct enum_is_bitflag : std::false_type {};
 template<typename T>
 struct enum_is_bitflag<T, std::void_t<decltype(T::allow_bitops)>> : public std::true_type {};
 template<typename T>
 constexpr bool enum_is_bitflag_v = enum_is_bitflag<T>();
-
 
 template<typename E>
 constexpr auto operator|(E lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
@@ -215,7 +236,7 @@ constexpr auto operator|=(E &lhs, E rhs) noexcept -> decltype(E::allow_bitops) {
 }
 
 template<typename E>
-inline bool has_flag(E target, E check) noexcept{
+inline bool has_flag(E target, E check) noexcept {
     using U = std::underlying_type_t<E>;
     return (static_cast<U>(target) & static_cast<U>(check)) == static_cast<U>(check);
 }
@@ -271,9 +292,10 @@ std::string flag2str(const T &item) noexcept {
         if(v.empty()) return "NEVER";
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
-        if(has_flag(item, StoragePolicy::ONCE)) v.emplace_back("ONCE");
         if(has_flag(item, StoragePolicy::INIT)) v.emplace_back("INIT");
         if(has_flag(item, StoragePolicy::ITER)) v.emplace_back("ITER");
+        if(has_flag(item, StoragePolicy::EMIN)) v.emplace_back("EMIN");
+        if(has_flag(item, StoragePolicy::EMAX)) v.emplace_back("EMAX");
         if(has_flag(item, StoragePolicy::PROJ)) v.emplace_back("PROJ");
         if(has_flag(item, StoragePolicy::BOND)) v.emplace_back("BOND");
         if(has_flag(item, StoragePolicy::TRNC)) v.emplace_back("TRNC");
@@ -318,14 +340,14 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         LogPolicy,
         RandomizerMode,
         OptType,
-        OptMode,
+        OptFunc,
+        OptAlgo,
         OptSolver,
         OptRitz,
         OptWhen,
         OptExit,
         OptMark,
         OptInit,
-        OptEigs,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -441,8 +463,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == StorageEvent::NONE)                                  return "NONE";
         if(item == StorageEvent::MODEL)                                 return "MODEL";
         if(item == StorageEvent::INIT)                                  return "INIT";
-        if(item == StorageEvent::EMIN_STATE)                            return "EMIN_STATE";
-        if(item == StorageEvent::EMAX_STATE)                            return "EMAX_STATE";
+        if(item == StorageEvent::EMIN)                                  return "EMIN";
+        if(item == StorageEvent::EMAX)                                  return "EMAX";
         if(item == StorageEvent::PROJECTION)                            return "PROJECTION";
         if(item == StorageEvent::BOND_UPDATE)                           return "BOND_UPDATE";
         if(item == StorageEvent::TRNC_UPDATE)                           return "TRNC_UPDATE";
@@ -452,9 +474,10 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
         if(item == StoragePolicy::NONE)                                 return "NONE";
-        if(item == StoragePolicy::ONCE)                                 return "ONCE";
         if(item == StoragePolicy::INIT)                                 return "INIT";
         if(item == StoragePolicy::ITER)                                 return "ITER";
+        if(item == StoragePolicy::EMIN)                                 return "EMIN";
+        if(item == StoragePolicy::EMAX)                                 return "EMAX";
         if(item == StoragePolicy::PROJ)                                 return "PROJ";
         if(item == StoragePolicy::BOND)                                 return "BOND";
         if(item == StoragePolicy::TRNC)                                 return "TRNC";
@@ -569,16 +592,20 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptType::REAL)                                      return "REAL";
         if(item == OptType::CPLX)                                      return "CPLX";
     }
-    if constexpr(std::is_same_v<T,OptMode>){
-        if(item == OptMode::ENERGY  )                                  return "ENERGY";
-        if(item == OptMode::VARIANCE)                                  return "VARIANCE";
-        if(item == OptMode::OVERLAP)                                   return "OVERLAP";
-        if(item == OptMode::SUBSPACE)                                  return "SUBSPACE";
-        if(item == OptMode::SIMPS)                                     return "SIMPS";
+    if constexpr(std::is_same_v<T,OptFunc>){
+        if(item == OptFunc::ENERGY  )                                  return "ENERGY";
+        if(item == OptFunc::VARIANCE)                                  return "VARIANCE";
+        if(item == OptFunc::OVERLAP)                                   return "OVERLAP";
+    }
+    if constexpr(std::is_same_v<T,OptAlgo>){
+        if(item == OptAlgo::DIRECT)                                    return "DIRECT";
+        if(item == OptAlgo::SUBSPACE)                                  return "SUBSPACE";
+        if(item == OptAlgo::SHIFTINV)                                  return "SHIFTINV";
+        if(item == OptAlgo::MPSEIGS)                                   return "MPSEIGS";
     }
     if constexpr(std::is_same_v<T,OptSolver>){
+        if(item == OptSolver::EIG)                                     return "EIG";
         if(item == OptSolver::EIGS)                                    return "EIGS";
-        if(item == OptSolver::BFGS)                                    return "BFGS";
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == OptWhen::NEVER)                                     return "NEVER";
@@ -589,12 +616,6 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == OptWhen::PREV_FAIL_WORSENED)                        return "PREV_FAIL_WORSENED";
         if(item == OptWhen::PREV_FAIL_ERROR)                           return "PREV_FAIL_ERROR";
         if(item == OptWhen::ALWAYS)                                    return "ALWAYS";
-    }
-    if constexpr(std::is_same_v<T,OptEigs>){
-        if(item == OptEigs::NEVER)                                     return "NEVER";
-        if(item == OptEigs::WHEN_STUCK)                                return "WHEN_STUCK";
-        if(item == OptEigs::WHEN_SATURATED)                            return "WHEN_SATURATED";
-        if(item == OptEigs::ALWAYS)                                    return "ALWAYS";
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == OptMark::PASS)                                      return "PASS";
@@ -648,14 +669,13 @@ constexpr auto sv2enum(std::string_view item) {
         LogPolicy,
         RandomizerMode,
         OptType,
-        OptMode,
+        OptFunc,
         OptSolver,
         OptRitz,
         OptWhen,
         OptExit,
         OptMark,
         OptInit,
-        OptEigs,
         StateInitType,
         StateInit,
         fdmrg_task,
@@ -771,8 +791,8 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "NONE")                                  return  StorageEvent::NONE;
         if(item == "MODEL")                                 return  StorageEvent::MODEL;
         if(item == "INIT")                                  return  StorageEvent::INIT;
-        if(item == "EMIN_STATE")                            return  StorageEvent::EMIN_STATE;
-        if(item == "EMAX_STATE")                            return  StorageEvent::EMAX_STATE;
+        if(item == "EMIN")                                  return  StorageEvent::EMIN;
+        if(item == "EMAX")                                  return  StorageEvent::EMAX;
         if(item == "PROJECTION")                            return  StorageEvent::PROJECTION;
         if(item == "BOND_UPDATE")                           return  StorageEvent::BOND_UPDATE;
         if(item == "TRNC_UPDATE")                           return  StorageEvent::TRNC_UPDATE;
@@ -782,9 +802,10 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, StoragePolicy>) {
         auto policy = StoragePolicy::NONE;
-        if(item.find("ONCE") != std::string_view::npos) policy |= StoragePolicy::ONCE;
         if(item.find("INIT") != std::string_view::npos) policy |= StoragePolicy::INIT;
         if(item.find("ITER") != std::string_view::npos) policy |= StoragePolicy::ITER;
+        if(item.find("EMIN") != std::string_view::npos) policy |= StoragePolicy::EMIN;
+        if(item.find("EMAX") != std::string_view::npos) policy |= StoragePolicy::EMAX;
         if(item.find("PROJ") != std::string_view::npos) policy |= StoragePolicy::PROJ;
         if(item.find("BOND") != std::string_view::npos) policy |= StoragePolicy::BOND;
         if(item.find("TRNC") != std::string_view::npos) policy |= StoragePolicy::TRNC;
@@ -904,16 +925,20 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "REAL")                                  return OptType::REAL;
         if(item == "CPLX")                                  return OptType::CPLX;
     }
-    if constexpr(std::is_same_v<T,OptMode>){
-        if(item == "ENERGY")                                return OptMode::ENERGY;
-        if(item == "VARIANCE")                              return OptMode::VARIANCE;
-        if(item == "OVERLAP")                               return OptMode::OVERLAP;
-        if(item == "SUBSPACE")                              return OptMode::SUBSPACE;
-        if(item == "SIMPS")                                 return OptMode::SIMPS;
+    if constexpr(std::is_same_v<T,OptFunc>){
+        if(item == "ENERGY")                                return OptFunc::ENERGY;
+        if(item == "VARIANCE")                              return OptFunc::VARIANCE;
+        if(item == "OVERLAP")                               return OptFunc::OVERLAP;
+    }
+    if constexpr(std::is_same_v<T,OptAlgo>){
+        if(item == "DIRECT")                                return OptAlgo::DIRECT;
+        if(item == "SUBSPACE")                              return OptAlgo::SUBSPACE;
+        if(item == "SHIFTINV")                              return OptAlgo::SHIFTINV;
+        if(item == "MPSEIGS")                               return OptAlgo::MPSEIGS;
     }
     if constexpr(std::is_same_v<T,OptSolver>){
-        if(item == "EIGS")                                  return OptSolver::EIGS;
-        if(item == "BFGS")                                  return OptSolver::BFGS;
+        if(item == "EIG")                                  return OptSolver::EIG;
+        if(item == "EIGS")                                 return OptSolver::EIGS;
     }
     if constexpr(std::is_same_v<T,OptWhen>){
         if(item == "NEVER")                                 return OptWhen::NEVER;
@@ -924,12 +949,6 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "PREV_FAIL_WORSENED")                    return OptWhen::PREV_FAIL_WORSENED;
         if(item == "PREV_FAIL_ERROR")                       return OptWhen::PREV_FAIL_ERROR;
         if(item == "ALWAYS")                                return OptWhen::ALWAYS;
-    }
-    if constexpr(std::is_same_v<T,OptEigs>){
-        if(item == "NEVER")                                 return OptEigs::NEVER;
-        if(item == "WHEN_STUCK")                            return OptEigs::WHEN_STUCK;
-        if(item == "WHEN_SATURATED")                        return OptEigs::WHEN_SATURATED;
-        if(item == "ALWAYS")                                return OptEigs::ALWAYS;
     }
     if constexpr(std::is_same_v<T,OptMark>){
         if(item == "PASS")                                  return OptMark::PASS;

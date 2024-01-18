@@ -1,34 +1,28 @@
 add_source_target(dmrg-tools-finite-opt
         TARGET_SOURCES
-        bfgs_base_functor.cpp
-        bfgs_optimize_variance.cpp
-        bfgs_variance_functor.cpp
-        bfgs_subspace_functor.cpp
-        bfgs_callback.cpp
-        eigs_optimize_subspace.cpp
-        eigs_extract_results.cpp
-        eigs_filter_subspace.cpp
-        eigs_optimize_energy.cpp
-        eigs_optimize_variance.cpp
-        eigs_optimize_overlap.cpp
-        eigs_optimize_subspace.cpp
-        eigs_find_subspace.cpp
-        eig_optimize_energy.cpp
-        eig_optimize_variance.cpp
-        report.cpp
-        opt.cpp
-        opt_mps.cpp
-        opt_meta.cpp
+            find_subspace.cpp
+            filter_subspace.cpp
+            optimize_overlap.cpp
+            optimize_energy.cpp
+            optimize_energy_eig.cpp
+            optimize_variance.cpp
+            optimize_variance_subspace.cpp
+            optimize_variance_eig.cpp
+            opt.cpp
+            opt_mps.cpp
+            opt_meta.cpp
+            opt_extract_results.cpp
+            report.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+            dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-config
-        dmrg-math-eig
-        dmrg-algorithms-status
-        dmrg-tensors-finite
-        dmrg-tools-finite-measure
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+            dmrg-tid
+            dmrg-config
+            dmrg-math-eig
+            dmrg-algorithms-status
+            dmrg-tensors-finite
+            dmrg-tools-finite-measure
+            dmrg-tools-common-log
+            dmrg-tools-common-contraction
         )
 

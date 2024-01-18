@@ -89,8 +89,6 @@ std::string StorageInfo::get_mps_prefix() const {
         case StorageEvent::BOND_UPDATE: return fmt::format("{}/mps/bond_{}", state_prefix, bond_lim);
         case StorageEvent::TRNC_UPDATE: return fmt::format("{}/mps/trnc_{:.2e}", state_prefix, trnc_lim);
         case StorageEvent::FES_STEP: return fmt::format("{}/mps/fes_{}", state_prefix, bond_lim);
-        case StorageEvent::EMIN_STATE: return fmt::format("{}/mps", state_prefix);
-        case StorageEvent::EMAX_STATE: return fmt::format("{}/mps", state_prefix);
         case StorageEvent::MODEL: throw except::logic_error("get_mps_prefix(): Invalid event: [MODEL]");
         case StorageEvent::NONE: throw except::logic_error("get_mps_prefix(): Invalid event: [NONE]");
         default: throw except::logic_error("Unhandled event: [{}]", enum2sv(storage_event));

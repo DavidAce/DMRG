@@ -19,6 +19,11 @@
 #include "tools/finite/print.h"
 #include <h5pp/h5pp.h>
 
+AlgorithmFinite::AlgorithmFinite(AlgorithmType algo_type) : AlgorithmBase(algo_type) {
+    tools::log->trace("Constructing class_algorithm_finite");
+    tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
+}
+
 AlgorithmFinite::AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type) : AlgorithmBase(std::move(h5ppFile_), algo_type) {
     tools::log->trace("Constructing class_algorithm_finite");
     tensors.initialize(algo_type, settings::model::model_type, settings::model::model_size, 0);
@@ -171,7 +176,6 @@ void AlgorithmFinite::try_moving_sites() {
     //  pos : the index of a slot on the lattice, which can not be moved. (long)
     //  site: the index of a particle on the lattice, which can be moved. (size_t)
     //  dir : Direction on which to move the position: +1l = right, -1l = left.
-    auto prefer_eigs_backup                    = settings::solver::prefer_eigs_over_bfgs;
     auto eigs_iter_max_backup                  = settings::solver::eigs_iter_max;
     auto eigs_tol_min_backup                   = settings::solver::eigs_tol_min;
     auto eigs_ncv_backup                       = settings::solver::eigs_ncv;
@@ -181,7 +185,6 @@ void AlgorithmFinite::try_moving_sites() {
     settings::solver::eigs_iter_max            = 100;
     settings::solver::eigs_tol_min             = std::min(1e-14, settings::solver::eigs_tol_min);
     settings::solver::eigs_ncv                 = std::max(35ul, settings::solver::eigs_ncv);
-    settings::solver::prefer_eigs_over_bfgs    = OptEigs::ALWAYS;
     settings::strategy::multisite_mps_when     = MultisiteWhen::ALWAYS;
     settings::strategy::multisite_mps_site_max = 2;
     settings::strategy::multisite_mps_site_def = 2;
@@ -238,7 +241,6 @@ void AlgorithmFinite::try_moving_sites() {
     settings::solver::eigs_iter_max            = eigs_iter_max_backup;
     settings::solver::eigs_tol_min             = eigs_tol_min_backup;
     settings::solver::eigs_ncv                 = eigs_ncv_backup;
-    settings::solver::prefer_eigs_over_bfgs    = prefer_eigs_backup;
     settings::strategy::multisite_mps_when     = multisite_mps_when_backup;
     settings::strategy::multisite_mps_site_max = multisite_mps_site_max_backup;
     settings::strategy::multisite_mps_site_def = multisite_mps_site_def_backup;
@@ -500,7 +502,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
         if(state_init == StateInit::RANDOMIZE_PREVIOUS_STATE) trnc_lim = 1e-2;
     }
 
-    tensors.activate_sites(settings::solver::max_size_shift_invert, 2); // Activate a pair of sites so that asserts and measurements work
+    tensors.activate_sites(settings::solver::eigs_max_size_shift_invert, 2); // Activate a pair of sites so that asserts and measurements work
     tensors.rebuild_edges();
     tensors.initialize_state(reason, state_init, state_type.value(), axis.value(), use_eigenspinors.value(), bond_lim.value(), pattern.value());
     if(settings::strategy::project_initial_state and qm::spin::half::is_valid_axis(axis.value())) {

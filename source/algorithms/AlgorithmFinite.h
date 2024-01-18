@@ -16,6 +16,7 @@ class AlgorithmFinite : public AlgorithmBase {
     public:
     // Inherit the constructor of class_algorithm_base
     using AlgorithmBase::AlgorithmBase;
+    explicit AlgorithmFinite(AlgorithmType algo_type);
     explicit AlgorithmFinite(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type);
     TensorsFinite tensors; // State, model and edges
 
@@ -23,7 +24,7 @@ class AlgorithmFinite : public AlgorithmBase {
 
     size_t                   projected_iter = 0; /*!< The last iteration when projection was tried */
     size_t                   expanded_iter  = 0; /*!< The last iteration when expansion was tried */
-    std::optional<OptMode>   last_optmode   = std::nullopt;
+    std::optional<OptFunc>   last_optmode   = std::nullopt;
     std::optional<OptSolver> last_optspace  = std::nullopt;
 
     public:

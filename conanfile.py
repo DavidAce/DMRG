@@ -44,7 +44,6 @@ class DMRGConan(ConanFile):
     def config_options(self):
         self.options["hdf5"].with_zlib = self.options.with_zlib
         self.options["h5pp"].with_quadmath = self.options.with_quadmath
-        self.options["ceres-solver"].use_glog = False
         # Use backtrace because this doesn't invoke any further dependencies that break easily on CI.
         # We take care of linking with system libdw instead, if needed.
         self.options["backward-cpp"].stack_walking = "backtrace"
@@ -56,7 +55,6 @@ class DMRGConan(ConanFile):
 
     def requirements(self):
         self.requires("h5pp/[>=1.11.2 <1.12]@davidace/dev")
-        self.requires("ceres-solver/2.2.0")
         self.requires("fmt/[>=10.1.0 <=10.2]")
         self.requires("spdlog/[>=1.13.0 <1.14]")
         self.requires("eigen/3.4.0")
@@ -76,30 +74,7 @@ class DMRGConan(ConanFile):
             self.output.warning("DMRG++ requires C++17. Your compiler is unknown. Assuming it supports C++17.")
 
 
-### NOTE October 4 2020 ####
+### NOTE October 4, 2020 ####
 # Another flag that seems to fix weird release-only bugs is
 #            -fno-strict-aliasing
 
-### NOTE August 26 2020 ####
-#
-# Ceres started crashing on Tetralith again using -march=native.
-# Tried to solve this issue once and for all.
-# I've tried the following flags during compilation of DMRG++ and ceres-solver:
-#
-#           -DEIGEN_MALLOC_ALREADY_ALIGNED=[none,0,1]
-#           -DEIGEN_MAX_ALIGN_BYTES=[none,16,32]
-#           -march=[none,native]
-#           -std=[none,c++17]
-#
-# Up until now, [0,16,none,none] has worked but now for some reason it stopped working.
-# I noticed the -std=c++17 flag was not being passed on conan builds, so ceres defaulted to -std=c++14 instead.
-# I fixed this in the conanfile.py of the ceres build. The -download-method=fetch method already had this fixed.
-# When no Eigen flags were passed, and ceres-solver finally built with -std=c++17 the issues vanished.
-# In the end what worked was [none,none,native,c++17] in both DMRG++ and ceres-solver.
-# It is important that the same eigen setup is used in all compilation units, and c++17/c++14 seems to
-# make Eigen infer some flags differently. In any case, settinc c++17 and no flags for eigen anywhere
-# lets Eigen do its thing in the same way everywhere.
-#
-#
-# ceres-solver:eigen_malloc_already_aligned=1
-# ceres-solver:eigen_max_align_bytes=32

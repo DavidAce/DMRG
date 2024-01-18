@@ -39,13 +39,12 @@ def lbit_plot(args):
             cachedir = f'{batchdir}/analysis/cache'
             for avgfile in [
                             f'{batchdir}/analysis/data/averaged3.h5',
-                            # f'/mnt/WDB-AN1500/mbl_transition/lbit93-precision/analysis/data/averaged.h5',
+                            f'/mnt/WDB-AN1500/mbl_transition/lbit118-mbl/analysis/data/averaged3.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit106-lin/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit103-nil/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit100-rps/analysis/data/averaged.h5'
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit104-2d1/analysis/data/averaged.h5',
                             # f'/mnt/WDB-AN1500/mbl_transition/lbit114-now8/analysis/data/averaged.h5',
-
             ]:
                 if not os.path.exists(plotdir):
                     os.makedirs(plotdir)
@@ -59,22 +58,22 @@ def lbit_plot(args):
                 if version3:
                     print('loading v3')
                     dbs.append(load_time_database3(h5avgs[-1], metas[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                                   state_filter=state_filter, debug=False))
+                                                   state_filter=state_filter, debug=True))
 
-            for avgfile in [f'/mnt/S990PRO/mbl_transition/lbit113-lbit/analysis/data/averaged.h5',]:
-                if not os.path.exists(plotdir):
-                    os.makedirs(plotdir)
-                print(f'found {avgfile=}')
-                h5avgs.append(h5py.File(avgfile, 'r'))
-                metas_lbit.append(get_meta(plotdir, cachedir))
-                if version2:
-                    print('loading v2')
-                    dbs_lbit.append(load_time_database2(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                                   state_filter=state_filter, debug=False))
-                if version3:
-                    print('loading v3')
-                    dbs_lbit.append(load_time_database3(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
-                                                   state_filter=state_filter, debug=False))
+            # for avgfile in [f'/mnt/S990PRO/mbl_transition/lbit113-lbit/analysis/data/averaged.h5',]:
+            #     if not os.path.exists(plotdir):
+            #         os.makedirs(plotdir)
+            #     print(f'found {avgfile=}')
+            #     h5avgs.append(h5py.File(avgfile, 'r'))
+            #     metas_lbit.append(get_meta(plotdir, cachedir))
+            #     if version2:
+            #         print('loading v2')
+            #         dbs_lbit.append(load_time_database2(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
+            #                                        state_filter=state_filter, debug=False))
+            #     if version3:
+            #         print('loading v3')
+            #         dbs_lbit.append(load_time_database3(h5avgs[-1], metas_lbit[-1], algo_filter=algo_filter, model_filter=model_filter,
+            #                                        state_filter=state_filter, debug=False))
 
 
 
@@ -144,6 +143,9 @@ def lbit_plot(args):
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u']
     linspec_lbit = ['f','L']
+
+    # logging.basicConfig(level=logging.DEBUG)
+
     # f = None
     # for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
     #     f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit84-avg'], figspec=figspec_lbit, subspec=subspec_lbit,

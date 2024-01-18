@@ -278,11 +278,18 @@ OptSolver opt_mps::get_optsolver() const {
     else
         throw except::runtime_error("opt_mps: optSolver not set");
 }
-OptMode opt_mps::get_optmode() const {
-    if(optMode)
-        return optMode.value();
+OptFunc opt_mps::get_optfunc() const {
+    if(optFunc)
+        return optFunc.value();
     else
-        throw except::runtime_error("opt_mps: optMode not set");
+        throw except::runtime_error("opt_mps: optFunc not set");
+}
+
+OptAlgo opt_mps::get_optalgo() const {
+    if(optAlgo)
+        return optAlgo.value();
+    else
+        throw except::runtime_error("opt_mps: optAlgo not set");
 }
 
 OptExit opt_mps::get_optexit() const {
@@ -379,7 +386,8 @@ void opt_mps::set_tensor_real(const double *data, const Eigen::DSizes<long, 3> &
 }
 
 void opt_mps::set_optsolver(OptSolver optSpace_) { optSolver = optSpace_; }
-void opt_mps::set_optmode(OptMode optMode_) { optMode = optMode_; }
+void opt_mps::set_optfunc(OptFunc optFunc_) { optFunc = optFunc_; }
+void opt_mps::set_optalgo(OptAlgo optAlgo_) { optAlgo = optAlgo_; }
 void opt_mps::set_optexit(OptExit optExit_) { optExit = optExit_; }
 void opt_mps::set_bond_limit(long bond_) { bond_lim = bond_; }
 void opt_mps::set_trnc_limit(double trnc_) { trnc_lim = trnc_; }

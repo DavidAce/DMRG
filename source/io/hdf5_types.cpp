@@ -23,8 +23,8 @@ void h5_enum_storage_event::create() {
     H5Tenum_insert(h5_storage_event, "NONE", (val = static_cast<int>(StorageEvent::NONE), &val));
     H5Tenum_insert(h5_storage_event, "MODEL", (val = static_cast<int>(StorageEvent::MODEL), &val));
     H5Tenum_insert(h5_storage_event, "INIT", (val = static_cast<int>(StorageEvent::INIT), &val));
-    H5Tenum_insert(h5_storage_event, "EMIN_STATE", (val = static_cast<int>(StorageEvent::EMIN_STATE), &val));
-    H5Tenum_insert(h5_storage_event, "EMAX_STATE", (val = static_cast<int>(StorageEvent::EMAX_STATE), &val));
+    H5Tenum_insert(h5_storage_event, "EMIN", (val = static_cast<int>(StorageEvent::EMIN), &val));
+    H5Tenum_insert(h5_storage_event, "EMAX", (val = static_cast<int>(StorageEvent::EMAX), &val));
     H5Tenum_insert(h5_storage_event, "PROJECTION", (val = static_cast<int>(StorageEvent::PROJECTION), &val));
     H5Tenum_insert(h5_storage_event, "BOND_UPDATE", (val = static_cast<int>(StorageEvent::BOND_UPDATE), &val));
     H5Tenum_insert(h5_storage_event, "TRNC_UPDATE", (val = static_cast<int>(StorageEvent::TRNC_UPDATE), &val));

@@ -181,13 +181,13 @@ void xdmrg::run_algorithm() {
         // Prepare for next step
 
         // Updating bond dimension must go first since it decides based on truncation error, but a projection+normalize resets truncation.
-        update_bond_dimension_limit();   // Will update bond dimension if the state precision is being limited by bond dimension
-        update_truncation_error_limit(); // Will update truncation error limit if the state is being truncated
-        update_expansion_factor_alpha(); // Will update the subspace expansion factor
-        try_projection();                // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
-        try_parity_shifting_mpo_squared();              // This shifts the variance of the opposite spin parity sector, to resolve degeneracy/spectral pairing
-        shift_mpo_energy();              // Subtracts the current energy per site E/L from each MPO.
-        try_moving_sites();              // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
+        update_bond_dimension_limit();     // Will update bond dimension if the state precision is being limited by bond dimension
+        update_truncation_error_limit();   // Will update truncation error limit if the state is being truncated
+        update_expansion_factor_alpha();   // Will update the subspace expansion factor
+        try_projection();                  // Tries to project the state to the nearest global spin parity sector along settings::strategy::target_axis
+        try_parity_shifting_mpo_squared(); // This shifts the variance of the opposite spin parity sector, to resolve degeneracy/spectral pairing
+        shift_mpo_energy();                // Subtracts the current energy per site E/L from each MPO.
+        try_moving_sites();                // Tries to overcome an entanglement barrier by moving sites around the lattice, to optimize non-nearest neighbors
         try_residual_optimization();
         move_center_point(); // Moves the center point AC to the next site and increments status.iter and status.step
         status.wall_time = tid::get_unscoped("t_tot").get_time();
@@ -254,7 +254,7 @@ void xdmrg::run_fes_analysis() {
     tools::log->info("Finished {} finite entanglement scaling of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(),
                      status.algo_stop_sv());
     // Reset our logger
-    tools::log            = tools::Logger::getLogger(fmt::format("{}",status.algo_type_sv()));
+    tools::log            = tools::Logger::getLogger(fmt::format("{}", status.algo_type_sv()));
     status.fes_is_running = false;
 }
 
@@ -279,14 +279,12 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m1.trnc_lim = status.trnc_lim;
 
     // Set up a multiplier for number of iterations
-    size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::iter_stuck_multiplier : 1;
+    size_t iter_stuck_multiplier = status.algorithm_has_stuck_for > 0 ? settings::solver::eigs_stuck_multiplier : 1;
 
     // Copy settings
+    m1.min_sites     = 1;
     m1.max_sites     = std::min(2ul, settings::strategy::multisite_mps_site_def); // Default is 2-site dmrg, unless we specifically ask for 1-site
-    m1.compress_otf  = settings::precision::use_compressed_mpo_squared_otf;
-    m1.bfgs_max_iter = settings::solver::bfgs_max_iter * iter_stuck_multiplier;
-    m1.bfgs_max_rank = status.algorithm_has_stuck_for == 0 ? 16 : 64; // Tested: around 8-32 seems to be a good compromise,but larger is more precise sometimes.
-                                                                      // Overhead goes from 1.2x to 2x computation time at in 8 -> 64
+    m1.compress_otf  = settings::precision::use_compressed_mpo_on_the_fly;
     m1.eigs_iter_max = status.variance_mpo_converged_for > 0 or status.energy_variance_lowest < settings::precision::variance_convergence_threshold
                            ? std::min(settings::solver::eigs_iter_max, 10000ul)       // Avoid running too many iterations when already converged
                            : settings::solver::eigs_iter_max * iter_stuck_multiplier; // Run as much as it takes before convergence
@@ -298,6 +296,7 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     if(status.fes_is_running) m1.eigs_tol = settings::solver::eigs_tol_max;              // No need for high precision during FES.
 
     m1.eigs_ncv = settings::solver::eigs_ncv;
+
     // Adjust the maximum number of sites to consider
     if(status.algorithm_has_succeeded)
         m1.max_sites = m1.min_sites; // No need to do expensive operations -- just finish
@@ -312,23 +311,14 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
             case MultisiteWhen::ALWAYS: m1.max_sites = std::min(multisite_mps_site_def + saturated_for + 1, multisite_mps_site_max); break;
         }
     }
-
-    // Next we set up the mode at the early stages of the simulation
-    // Note that we make stricter requirements as we go down the if-list
-    bool prefer_eigs_never          = settings::solver::prefer_eigs_over_bfgs == OptEigs::NEVER;
-    bool prefer_eigs_when_stuck     = settings::solver::prefer_eigs_over_bfgs == OptEigs::WHEN_STUCK and status.algorithm_has_stuck_for > 0;
-    bool prefer_eigs_when_saturated = settings::solver::prefer_eigs_over_bfgs == OptEigs::WHEN_SATURATED and status.algorithm_saturated_for > 0;
-    bool prefer_eigs_always         = settings::solver::prefer_eigs_over_bfgs == OptEigs::ALWAYS;
-
-    if(m1.optSolver == OptSolver::BFGS and not prefer_eigs_never and
-       (prefer_eigs_when_saturated or prefer_eigs_when_stuck or prefer_eigs_always or status.fes_is_running)) {
-        m1.optMode   = OptMode::VARIANCE;
-        m1.optSolver = OptSolver::EIGS;
-    }
+    m1.optFunc   = OptFunc::VARIANCE;
+    m1.optAlgo   = OptAlgo::DIRECT;
+    m1.optSolver = OptSolver::EIGS;
 
     if(status.iter < settings::xdmrg::opt_overlap_iters + settings::xdmrg::opt_subspace_iters and settings::xdmrg::opt_subspace_iters > 0) {
         // If early in the simulation, and the bond dimension is small enough we use shift-invert optimization
-        m1.optMode   = OptMode::SUBSPACE;
+        m1.optFunc   = OptFunc::VARIANCE;
+        m1.optAlgo   = OptAlgo::SUBSPACE;
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         if(settings::xdmrg::opt_subspace_bond_lim > 0 and m1.bond_lim > settings::xdmrg::opt_subspace_bond_lim) {
@@ -340,7 +330,8 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
 
     if(status.iter < settings::xdmrg::opt_overlap_iters) {
         // Very early in the simulation it is worth just following the overlap to get the overall structure of the final state
-        m1.optMode   = OptMode::OVERLAP;
+        m1.optAlgo   = OptAlgo::SUBSPACE;
+        m1.optFunc   = OptFunc::OVERLAP;
         m1.optSolver = OptSolver::EIGS;
         m1.max_sites = settings::strategy::multisite_mps_site_max;
         m1.retry     = false;
@@ -351,30 +342,34 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     }
 
     // Setup strong overrides to normal conditions, e.g. when the algorithm has already converged
-    if(tensors.state->size_1site() > settings::solver::max_size_shift_invert) {
+    if(tensors.state->size_1site() > std::max({settings::solver::eig_max_size, settings::solver::eigs_max_size_shift_invert})) {
         // Make sure to avoid size-sensitive optimization modes if the 1-site problem size is huge
-        // When this happens, we should use optimize VARIANCE using EIGS or BFGS instead.
-        m1.optMode = OptMode::VARIANCE;
+        // When this happens, we should use optimize VARIANCE with EIGS instead.
+        m1.optAlgo = OptAlgo::DIRECT;
+        m1.optFunc = OptFunc::VARIANCE;
+        m1.optSolver = OptSolver::EIGS;
     }
 
     // Set up the maximum problem size here
-    switch(m1.optMode) {
-        case OptMode::OVERLAP:
-        case OptMode::SUBSPACE: m1.max_problem_size = settings::solver::max_size_shift_invert; break;
-        case OptMode::ENERGY:
-        case OptMode::SIMPS:
-        case OptMode::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
-    }
+    if(m1.optAlgo == OptAlgo::SUBSPACE)
+        m1.max_problem_size = settings::solver::eigs_max_size_shift_invert;
+    else
+        m1.max_problem_size = settings::precision::max_size_multisite;
+    //
+    //    switch(m1.optAlgo) {
+    //        case OptAlgo::OVERLAP:
+    //        case OptFunc::SUBSPACE: m1.max_problem_size = settings::solver::max_size_shift_invert; break;
+    //        case OptFunc::ENERGY:
+    //        case OptFunc::SIMPS:
+    //        case OptFunc::VARIANCE: m1.max_problem_size = settings::precision::max_size_multisite; break;
+    //    }
 
     m1.chosen_sites = tools::finite::multisite::generate_site_list(*tensors.state, m1.max_problem_size, m1.max_sites, m1.min_sites, "meta 1");
     m1.problem_dims = tools::finite::multisite::get_dimensions(*tensors.state, m1.chosen_sites);
     m1.problem_size = tools::finite::multisite::get_problem_size(*tensors.state, m1.chosen_sites);
 
-    // Do eigs (or eig) instead of bfgs when it's cheap
-    if(m1.problem_size <= settings::solver::max_size_full_eigs) m1.optSolver = OptSolver::EIGS;
-
-    // Let EIGS fix BFGS rnorm when enabled
-    if(m1.optSolver == OptSolver::BFGS) m1.retry = settings::solver::bfgs_fix_rnorm_w_eigs;
+    // Do eig instead of eigs when it's cheap
+    if(m1.problem_size <= settings::solver::eig_max_size) m1.optSolver = OptSolver::EIG;
 
     if(status.env_expansion_alpha > 0 and not status.fes_is_running) {
         // If we are doing 1-site dmrg, then we better use subspace expansion
@@ -398,26 +393,25 @@ std::vector<xdmrg::OptMeta> xdmrg::get_opt_conf_list() {
     m2.label   = "m2";
     m2.optInit = OptInit::LAST_RESULT;
     m2.retry   = false;
-    if(m1.optMode == OptMode::SUBSPACE) {
+    if(m1.optAlgo == OptAlgo::SUBSPACE) {
         // I.e. if we did a SUBSPACE run that did not result in better variance, try VARIANCE optimization
         // This usually helps to fine-tune the result if the subspace had bad quality.
         m2.optWhen   = OptWhen::PREV_FAIL_WORSENED; // Don't worry about the gradient
-        m2.optMode   = OptMode::VARIANCE;
-        m2.optSolver = OptSolver::BFGS;
+        m2.optFunc   = OptFunc::VARIANCE;
+        m2.optSolver = OptSolver::EIGS;
         metas.emplace_back(m2);
-    } else if(m1.optSolver == OptSolver::EIGS and m1.optMode == OptMode::ENERGY) {
+    } else if(m1.optSolver == OptSolver::EIGS and m1.optFunc == OptFunc::ENERGY) {
         // If we did a EIGS|ENERGY optimization that worsened the variance, run EIGS|VARIANCE with the last result as initial state
         m2.optWhen   = OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
-        m2.optMode   = OptMode::VARIANCE;
+        m2.optFunc   = OptFunc::VARIANCE;
         m2.optInit   = OptInit::LAST_RESULT;
         metas.emplace_back(m2);
-    } else if(m1.optMode == OptMode::VARIANCE and
-              (m1.optSolver == OptSolver::EIGS or (m1.optSolver == OptSolver::BFGS and settings::solver::bfgs_fix_rnorm_w_eigs))) {
+    } else if(m1.optFunc == OptFunc::VARIANCE and m1.optSolver == OptSolver::EIGS) {
         // If we did a VARIANCE optimization whose residual_norm did succeed, then run again for longer and more sites
         m2.optWhen   = OptWhen::PREV_FAIL_RESIDUAL | OptWhen::PREV_FAIL_OVERLAP | OptWhen::PREV_FAIL_GRADIENT | OptWhen::PREV_FAIL_WORSENED;
         m2.optSolver = OptSolver::EIGS;
-        m2.optMode   = OptMode::VARIANCE;
+        m2.optFunc   = OptFunc::VARIANCE;
         m2.optInit   = OptInit::LAST_RESULT;
         metas.emplace_back(m2);
     }
@@ -464,7 +458,7 @@ void xdmrg::update_state() {
 
         // Announce the current configuration for optimization
         tools::log->debug("Running meta {}/{}: {} | init {} | mode {} | space {} | type {} | sites {} | dims {} = {} | ε = {:.2e} | α = {:.3e}", idx_conf + 1,
-                          confList.size(), meta.label, enum2sv(meta.optInit), enum2sv(meta.optMode), enum2sv(meta.optSolver), enum2sv(meta.optType),
+                          confList.size(), meta.label, enum2sv(meta.optInit), enum2sv(meta.optFunc), enum2sv(meta.optSolver), enum2sv(meta.optType),
                           meta.chosen_sites, tensors.state->active_dimensions(), tensors.state->active_problem_size(), meta.trnc_lim,
                           (meta.alpha_expansion ? meta.alpha_expansion.value() : std::numeric_limits<double>::quiet_NaN()));
         // Run the optimization
@@ -513,7 +507,7 @@ void xdmrg::update_state() {
         results.back().set_optexit(meta.optExit);
         /* clang-format on */
 
-        tools::log->trace(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(meta.optMode),
+        tools::log->trace(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(meta.optFunc),
                           enum2sv(meta.optSolver), flag2str(meta.optExit), variance_before_step.value(), results.back().get_variance(),
                           results.back().get_relchange() * 100);
         if(results.back().get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
@@ -527,7 +521,7 @@ void xdmrg::update_state() {
                                              "sites {} |"
                                              "{:20} | {} | time {:.2e} s"),
                                   r.get_name(), r.get_energy(), r.get_variance(), r.get_rnorm(), r.get_overlap(), r.get_alpha(), r.get_sites(),
-                                  fmt::format("[{}][{}]", enum2sv(r.get_optmode()), enum2sv(r.get_optsolver())), flag2str(r.get_optexit()), r.get_time());
+                                  fmt::format("[{}][{}]", enum2sv(r.get_optfunc()), enum2sv(r.get_optsolver())), flag2str(r.get_optexit()), r.get_time());
 
         // Sort the results in order of increasing variance
         auto comp_variance = [](const opt_mps &lhs, const opt_mps &rhs) {
@@ -540,7 +534,7 @@ void xdmrg::update_state() {
         // Take the best result
         const auto &winner = results.front();
         last_optspace      = winner.get_optsolver();
-        last_optmode       = winner.get_optmode();
+        last_optmode       = winner.get_optfunc();
         tensors.activate_sites(winner.get_sites());
         tensors.state->tag_active_sites_normalized(false);
         if(not winner.mps_backup.empty()) {
@@ -650,7 +644,7 @@ void xdmrg::initialize_state_in_energy_window(ResetReason reason, StateInit stat
     auto t_rnd             = tid::tic_scope("rnd_state_ewin", tid::level::higher);
     int  counter           = 0;
     bool outside_of_window = true;
-    tensors.activate_sites(settings::solver::max_size_full_eigs, 2);
+    tensors.activate_sites(settings::solver::eig_max_size, 2);
     tensors.rebuild_edges();
     while(true) {
         initialize_state(ResetReason::FIND_WINDOW, state_type, std::nullopt, sector, ""); // Do not use the pattern: set to empty string
@@ -688,25 +682,27 @@ void xdmrg::find_energy_range() {
     // Find the lowest energy state
     {
         auto  t_gs = tid::tic_scope("fDMRG");
-        fdmrg fdmrg_gs(h5file);
+        fdmrg fdmrg_gs{};
         *fdmrg_gs.tensors.model = *tensors.model; // Copy the model
         fdmrg_gs.tensors.state->set_name("state_emin");
         tools::log = tools::Logger::setLogger(fmt::format("{}-gs", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
         fdmrg_gs.run_task_list(gs_tasks);
         status.energy_min = tools::finite::measure::energy(fdmrg_gs.tensors);
-        write_to_file(*fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges, StorageEvent::EMIN_STATE, CopyPolicy::OFF);
+        fdmrg_gs.h5file   = h5file;
+        write_to_file(*fdmrg_gs.tensors.state, *fdmrg_gs.tensors.model, *fdmrg_gs.tensors.edges, StorageEvent::EMIN, CopyPolicy::OFF);
     }
 
     // Find the highest energy state
     {
         auto  t_hs = tid::tic_scope("fDMRG");
-        fdmrg fdmrg_hs(h5file);
+        fdmrg fdmrg_hs{};
         *fdmrg_hs.tensors.model = *tensors.model; // Copy the model
         fdmrg_hs.tensors.state->set_name("state_emax");
         tools::log = tools::Logger::setLogger(fmt::format("{}-hs", status.algo_type_sv()), settings::console::loglevel, settings::console::timestamp);
         fdmrg_hs.run_task_list(hs_tasks);
         status.energy_max = tools::finite::measure::energy(fdmrg_hs.tensors);
-        write_to_file(*fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges, StorageEvent::EMAX_STATE, CopyPolicy::OFF);
+        fdmrg_hs.h5file   = h5file;
+        write_to_file(*fdmrg_hs.tensors.state, *fdmrg_hs.tensors.model, *fdmrg_hs.tensors.edges, StorageEvent::EMAX, CopyPolicy::OFF);
     }
 
     // Reset our logger

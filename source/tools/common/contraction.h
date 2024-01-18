@@ -34,14 +34,6 @@ namespace tools::common::contraction {
                                const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
                                const Scalar * const envL_ptr, std::array<long,3> envL_dims,
                                const Scalar * const envR_ptr, std::array<long,3> envR_dims);
-    template<typename Scalar>
-    void matrix_inverse_vector_product_bfgs(
-                               Scalar * res_ptr,
-                               const Scalar * const mps_ptr, std::array<long,3> mps_dims,
-                               const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
-                               const Scalar * const envL_ptr, std::array<long,3> envL_dims,
-                               const Scalar * const envR_ptr, std::array<long,3> envR_dims);
-
 
     template<typename mps_type, typename mpo_type, typename env_type>
     double expectation_value(

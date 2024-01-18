@@ -188,18 +188,15 @@ namespace settings {
         inline size_t logh5pp       = 2;                              /*!< Verbosity of h5pp library [0-6] Level 2 or 3 is recommended for normal use */
 }
 
-    /*! \namespace settings::solvers Settings affecting the solvers (eig, eigs, bfgs, svd) */
+    /*! \namespace settings::solvers Settings affecting the solvers (eig, eigs, svd) */
     namespace solver {
+        inline long     eig_max_size                    = 4096  ;                  /*!< Maximum problem size before switching from eig to eigs. */
         inline size_t   eigs_iter_max                   = 100000;                  /*!< Maximum number of iterations for eigenvalue solver. */
         inline double   eigs_tol_min                    = 1e-14 ;                  /*!< Precision tolerance for halting the eigenvalue solver. */
         inline double   eigs_tol_max                    = 1e-8 ;                   /*!< Precision tolerance for halting the eigenvalue solver. */
         inline size_t   eigs_ncv                        = 32    ;                  /*!< Parameter controlling the krylov/column space of the Arnoldi eigenvalue solver */
-        inline size_t   bfgs_max_iter                   = 1000  ;                  /*!< Maximum number of iterations for the L-BFGS solver. */
-        inline size_t   iter_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on BFGS/EIGS by this factor when stuck */
-        inline long     max_size_full_eigs              = 2048  ;                  /*!< Maximum problem size allowed for full diagonalization of the local (effective) hamiltonian matrix. */
-        inline long     max_size_shift_invert           = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
-        inline OptEigs  prefer_eigs_over_bfgs           = OptEigs::ALWAYS;         /*!< Prefer using the eigenvalue solver for (H-E/L)² over BFGS. Choose {WHEN_SATURATED, ALWAYS} */
-        inline bool     bfgs_fix_rnorm_w_eigs           = true;                    /*!< Use the eigenvalue solver for (H-E/L)² when BFGS returns with bad gradient */
+        inline long     eigs_max_size_shift_invert      = 4096  ;                  /*!< Maximum problem size allowed for shift-invert of the local (effective) hamiltonian matrix. */
+        inline size_t   eigs_stuck_multiplier           = 1     ;                  /*!< Increase number of iterations on OptSolver::EIGS by this factor when stuck */
         inline double   svd_truncation_lim              = 1e-16 ;                  /*!< Truncation error limit, i.e. discard singular values while the truncation error is lower than this */
         inline double   svd_truncation_init             = 1e-3  ;                  /*!< If truncation error limit is updated (trnc_decrease_when != NEVER), start from this value */
         inline size_t   svd_switchsize_bdc              = 16    ;                  /*!< Linear size of a matrix, below which SVD will use slower but more precise JacobiSVD instead of BDC (default is 16 , good could be ~64) */
@@ -243,7 +240,7 @@ namespace settings {
     /*! \namespace settings::precision Settings for the convergence threshold and precision of MPS, SVD and eigensolvers */
     namespace precision {
         inline bool     use_compressed_mpo_squared_all  = false ;                  /*!< Use SVD to compress the bond dimensions of all H² mpos at the end of an iteration */
-        inline bool     use_compressed_mpo_squared_otf  = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
+        inline bool     use_compressed_mpo_on_the_fly   = true  ;                  /*!< Use SVD to compress the bond dimensions of the multisite H² mpo on-the-fly, just before an optimization step  */
         inline bool     use_energy_shifted_mpo          = true  ;                  /*!< Whether to subtract E/L from ALL mpos to avoid catastrophic cancellation when computing the variance */
         inline bool     use_parity_shifted_mpo          = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */
         inline bool     use_parity_shifted_mpo_squared  = true  ;                  /*!< Lift spin parity sector degeneracy by (H-E)² --> ((H-E)² + Q(σ)) where Q(σ) = 0.5(1 - prod(σ)) = P(-σ). */

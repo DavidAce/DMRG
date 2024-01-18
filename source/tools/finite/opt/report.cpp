@@ -5,38 +5,6 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 
-/* clang-format off */
-void tools::finite::opt::reports::print_bfgs_report(){
-    if (tools::log->level() > spdlog::level::debug) return;
-    if (bfgs_log.empty()) return;
-    tools::log->debug(FMT_STRING("{:<52} {:<7} {:<7} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<8} {:<8} {:<10} {:<10}"),
-                      "Optimization report",
-                      "size",
-                      "space",
-                      "E",
-                      "σ²H", // Special characters are counted properly in fmt 1.7.0
-                      "overlap",
-                      "norm",
-                      "rnorm",
-                      "iter",
-                      "ops",
-                      "|Δf|",
-                      "|∇Ψ|ᵐᵃˣ",
-                      "time [s]",
-                      "avg [op/s]");
-    for(auto &entry : bfgs_log){
-        tools::log->debug(FMT_STRING("- {:<50} {:<7} {:<7} {:<22.16f} {:<8.2e} {:<18.15f} {:<18.15f} {:<8.2e} {:<5} {:<7} {:<8.2e} {:<8.2e} {:<10.2e} {:<10.2e}"),
-        entry.description, entry.size,
-        entry.space, entry.energy,
-        entry.variance,
-        entry.overlap,entry.norm, entry.rnorm,
-        entry.iter, entry.counter,
-        entry.delta_f, entry.max_grad_norm,
-        entry.time,
-        static_cast<double>(entry.counter)/entry.time);
-    }
-    bfgs_log.clear();
-}
 
 void tools::finite::opt::reports::print_subs_report(){
     if (tools::log->level() > spdlog::level::debug) return;
@@ -73,36 +41,6 @@ void tools::finite::opt::reports::print_subs_report(){
 
 
 
-void tools::finite::opt::reports::print_time_report(){
-    if (tools::log->level() > spdlog::level::trace) return;
-    if(time_log.empty()) return;
-    tools::log->trace(FMT_STRING("BFGS Time report [s] {:<10} {:<10} {:<10} {:<10} {:<10} {:<10} {:<10}"),
-                      "<ψ|H²|ψ>",
-                      "<ψ|H|ψ>",
-                      "H²|ψ>",
-                      "H|ψ>",
-                      "sum",
-                      "step",
-                      "l-bfgs");
-    for(auto &entry : time_log){
-    tools::log->trace(FMT_STRING("{:<21} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e} {:<10.2e}"),
-                     " ",
-                      entry.vH2v,
-                      entry.vHv,
-                      entry.vH2,
-                      entry.vH,
-                      (
-                        entry.vH2v +
-                        entry.vHv +
-                        entry.vH2 +
-                        entry.vH
-                      ),
-                     entry.step,
-                     entry.bfgs);
-    }
-    time_log.clear();
-}
-
 void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_entries){
     if (eigs_log.empty()) return;
     auto level = eigs_log.front().level;
@@ -110,7 +48,7 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
         eigs_log.clear();
         return;
     }
-    tools::log->log(level, FMT_STRING("{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}"),
+    tools::log->log(level, "{:<52} {:<7} {:<4} {:<4} {:<4} {:<4} {:<8} {:<22} {:<22} {:<8} {:<18} {:<18} {:<8} {:<5} {:<7} {:<7} {:<10} {:<10}",
                       "Optimization report",
                       "size",
                       "ritz",
@@ -146,25 +84,6 @@ void tools::finite::opt::reports::print_eigs_report(std::optional<size_t> max_en
 }
 
 /* clang-format on */
-void tools::finite::opt::reports::bfgs_add_entry(const std::string &description, long size, long space, double energy, double variance, double overlap,
-                                                 double norm, double rnorm, double delta_f, double grad_norm, size_t iter, size_t counter, double time) {
-    if(tools::log->level() > spdlog::level::debug) return;
-    bfgs_log.push_back({description, size, space, energy, variance, overlap, norm, rnorm, delta_f, grad_norm, iter, counter, time});
-}
-void tools::finite::opt::reports::bfgs_add_entry(std::string_view mode, std::string_view tag, const opt_mps &mps, std::optional<long> space) {
-    if(tools::log->level() > spdlog::level::debug) return;
-    if(not space) space = mps.get_tensor().size();
-    std::string description = fmt::format("{:<8} {:<16} {}", mode, mps.get_name(), tag);
-    bfgs_log.push_back(bfgs_entry{description, mps.get_tensor().size(), space.value(), mps.get_energy(), mps.get_variance(), mps.get_overlap(), mps.get_norm(),
-                                  mps.get_rnorm(), mps.get_delta_f(), mps.get_grad_max(), mps.get_iter(), mps.get_mv(), mps.get_time()});
-}
-
-void tools::finite::opt::reports::time_add_entry() {
-    if(tools::log->level() > spdlog::level::trace) return;
-    time_log.push_back({tid::get("vH2v").get_last_interval(), tid::get("vHv").get_last_interval(), tid::get("vH2").get_last_interval(),
-                        tid::get("vH").get_last_interval(), tid::get("bfgs").get_last_interval(), tid::get("step").get_last_interval()});
-}
-
 void tools::finite::opt::reports::subs_add_entry(long nev, double max_olap, double min_olap, double eps, double eig_time, double ham_time, double lu_time,
                                                  long iter, long mv, long pc) {
     if(tools::log->level() > spdlog::level::debug) return;

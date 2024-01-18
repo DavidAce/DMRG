@@ -18,6 +18,7 @@ class AlgorithmBase {
     public:
     using cplx      = std::complex<double>;
     AlgorithmBase() = default;
+    AlgorithmBase(AlgorithmType algo_type_);
     AlgorithmBase(std::shared_ptr<h5pp::File> h5ppFile_, AlgorithmType algo_type_);
     std::shared_ptr<h5pp::File> h5file;
     AlgorithmStatus             status;

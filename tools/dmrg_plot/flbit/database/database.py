@@ -143,6 +143,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             'x': '$\\xi_J$', 'r': '$r$',
             'u': '$d_u$', 'f': '$f$', 'tstd': '$\sigma_\\theta$', 'cstd': '$\sigma_c$', 'tgw8': '$w_\\theta$',
             'cgw8': '$w_c$',
+            'g8w8': '$w$',
+            'type': '$m$',
             'ubond': '$\chi_u$',
             't': '$t$',
             'algo': 'algo',
@@ -160,7 +162,7 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             'J': set(), 'J1': set(), 'J2': set(), 'J3': set(),
             'w': set(), 'w1': set(), 'w2': set(), 'w3': set(),
             'x': set(), 'r': set(),
-            'u': set(), 'f': set(), 'tstd': set(), 'cstd': set(), 'tgw8': set(), 'cgw8': set(), 'ubond': set(),
+            'u': set(), 'f': set(), 'tstd': set(), 'cstd': set(), 'tgw8': set(), 'cgw8': set(), 'g8w8' : set(), 'type': set(), 'ubond': set(),
         },
         'dsets': {},
         'plotdir': meta['common']['plotdir'],
@@ -178,32 +180,52 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
             print(' Found algo {}'.format(algopath))
         modelnode = algonode['model']
         hamiltonian = modelnode['hamiltonian']
-        L = modelnode['model_size'][()]
+        lbitcircuit = modelnode['unitary_circuit']
+        L = hamiltonian.attrs['model_size'][()]
         J = tuple([hamiltonian['J1_mean'][0], hamiltonian['J2_mean'][0], hamiltonian['J3_mean'][0]])
         w = tuple([hamiltonian['J1_wdth'][0], hamiltonian['J2_wdth'][0], hamiltonian['J3_wdth'][0]])
         r = hamiltonian['J2_span'][0]
         x = hamiltonian['xi_Jcls'][0] if 'xi_Jcls' in hamiltonian.dtype.fields else hamiltonian['J2_xcls'][0]
-        u = hamiltonian['u_depth'][0]
-        f = hamiltonian['u_fmix'][0]
-        tstd = hamiltonian['u_tstd'][0]
-        cstd = hamiltonian['u_cstd'][0]
-        tgw8 = 'ID' if hamiltonian['u_tgw8'][0] == 0 else 'EX'
-        cgw8 = 'ID' if hamiltonian['u_cgw8'][0] == 0 else 'EX'
-        ubond = int(find_between(modelnode.name, '_bond', ']'))
+        u = lbitcircuit['u_depth'][0]
+        f = lbitcircuit['u_fmix'][0]
+        tstd = lbitcircuit['u_tstd'][0]
+        cstd = lbitcircuit['u_cstd'][0]
+        g8w8 = None
+        type = None
+        tgw8 = None
+        cgw8 = None
+        ubond = -1
+
+        if 'u_g8w8' in lbitcircuit.dtype.fields.keys():
+            g8w8 = 'ID' if lbitcircuit['u_g8w8'][0] == 0 else 'EX'
+        if 'u_type' in lbitcircuit.dtype.fields.keys():
+            type = 'AND' if lbitcircuit['u_type'][0] == 0 else 'MBL'
+        if 'u_tgw8' in hamiltonian.dtype.fields.keys():
+            tgw8 = 'ID' if hamiltonian['u_tgw8'][0] == 0 else 'EX'
+        if 'u_cgw8' in hamiltonian.dtype.fields.keys():
+            cgw8 = 'ID' if hamiltonian['u_cgw8'][0] == 0 else 'EX'
+        if 'u_bond' in lbitcircuit.dtype.fields.keys():
+            ubond = lbitcircuit['u_bond'][0]
+        elif 'u_bond' in hamiltonian.dtype.fields.keys():
+            ubond = hamiltonian['u_bond'][0]
+        else:
+            int(find_between(modelnode.name, '_bond', ']'))
 
         # L if r == np.iinfo(np.uint64).max else r
         # Skip if not asked for
         if incl := meta.get('common').get('include_v3'):
             val_requested = True
-            for tag, val in zip(['L', 'J', 'w', 'x', 'r', 'u', 'f', 'tstd', 'cstd', 'tgw8', 'cgw8', 'ubond'],
-                                [L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8, ubond]):
+            for tag, val in zip(['L', 'J', 'w', 'x', 'r', 'u', 'f', 'tstd', 'cstd', 'tgw8', 'cgw8', 'g8w8', 'type', 'ubond'],
+                                [L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8,g8w8,type, ubond]):
                 if tag in incl and not val in incl.get(tag):
+                    if debug:
+                        print(f" Not requested: {tag}:{val}")
                     val_requested = False
                     break
             if not val_requested:
                 continue
             elif debug:
-                print(" Adding keys:", [L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8, ubond])
+                print(" Adding keys:", [L, J, w, x, r, u, f, tstd, cstd, tgw8, cgw8,g8w8, type, ubond])
 
 
         rval = 'L' if r == np.iinfo(np.uint64).max else r
@@ -226,6 +248,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
         db['vals']['cstd'].add(cstd)
         db['vals']['tgw8'].add(tgw8)
         db['vals']['cgw8'].add(cgw8)
+        db['vals']['g8w8'].add(g8w8)
+        db['vals']['type'].add(type)
         db['vals']['ubond'].add(ubond)
 
         if debug:
@@ -272,6 +296,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 db['dsets'][dname]['vals']['cstd'] = cstd
                 db['dsets'][dname]['vals']['tgw8'] = tgw8
                 db['dsets'][dname]['vals']['cgw8'] = cgw8
+                db['dsets'][dname]['vals']['g8w8'] = g8w8
+                db['dsets'][dname]['vals']['type'] = type
                 db['dsets'][dname]['vals']['ubond'] = ubond
                 db['dsets'][dname]['vals']['num'] = num
                 db['dsets'][dname]['vals']['plotdir'] = meta['common']['plotdir']
@@ -288,6 +314,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                 db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
                 db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
                 db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['g8w8'] = h5_src[match_path(modelnode.name, 'u[')]
+                db['dsets'][dname]['node']['type'] = h5_src[match_path(modelnode.name, 'u[')]
                 db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
                 db['dsets'][dname]['node']['model'] = modelnode
                 db['dsets'][dname]['node']['data'] = datanode
@@ -313,6 +341,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         'cstd': '{:.2f}'.format(cstd),
                         'tgw8': '{}'.format(tgw8),
                         'cgw8': '{}'.format(cgw8),
+                        'g8w8': '{}'.format(g8w8),
+                        'type': '{}'.format(type),
                         'ubond': '{}'.format(ubond),
                         'num': '{}'.format(num),
                         'algo': algokey,
@@ -370,6 +400,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         db['dsets'][dname]['vals']['cstd'] = cstd
                         db['dsets'][dname]['vals']['tgw8'] = tgw8
                         db['dsets'][dname]['vals']['cgw8'] = cgw8
+                        db['dsets'][dname]['vals']['g8w8'] = g8w8
+                        db['dsets'][dname]['vals']['type'] = type
                         db['dsets'][dname]['vals']['ubond'] = ubond
                         db['dsets'][dname]['vals']['tsim'] = tsim
                         db['dsets'][dname]['vals']['bavg'] = bavg
@@ -389,6 +421,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                         db['dsets'][dname]['node']['cstd'] = h5_src[match_path(modelnode.name, 'u[')]
                         db['dsets'][dname]['node']['tgw8'] = h5_src[match_path(modelnode.name, 'u[')]
                         db['dsets'][dname]['node']['cgw8'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['g8w8'] = h5_src[match_path(modelnode.name, 'u[')]
+                        db['dsets'][dname]['node']['type'] = h5_src[match_path(modelnode.name, 'u[')]
                         db['dsets'][dname]['node']['ubond'] = h5_src[match_path(modelnode.name, 'u[')]
                         db['dsets'][dname]['node']['model'] = modelnode
                         db['dsets'][dname]['node']['data'] = datanode
@@ -417,6 +451,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                                 'cstd': '{:.2f}'.format(cstd),
                                 'tgw8': '{}'.format(tgw8),
                                 'cgw8': '{}'.format(cgw8),
+                                'g8w8': '{}'.format(g8w8),
+                                'type': '{}'.format(type),
                                 'ubond': '{}'.format(ubond),
                                 'num': '{}'.format(num),
                                 'tsim': '{:>.1f}m'.format(tsim),
@@ -446,6 +482,8 @@ def load_time_database3(h5_src, meta, algo_filter=None, model_filter=None, state
                                 'cstd': '${}{}{:>.2f}$'.format(db['tex']['cstd'].strip('$'), '{:}', cstd),
                                 'tgw8': '{}{}{}'.format(db['tex']['tgw8'].strip('$'), '{:}', tgw8),
                                 'cgw8': '{}{}{}'.format(db['tex']['cgw8'].strip('$'), '{:}', cgw8),
+                                'g8w8': '{}{}{}'.format(db['tex']['cgw8'].strip('$'), '{:}', g8w8),
+                                'type': '{}{}{}'.format(db['tex']['cgw8'].strip('$'), '{:}', type),
                                 'ubond': '{}{}{}'.format(db['tex']['ubond'].strip('$'), '{:}', ubond),
                             },
                         }

@@ -414,11 +414,9 @@ def write_statistics_dset(meta, props, h5_tgt):
 
     else:
         if dsetcopy:
-            print(f'deep copying dset: {dsetname} {np.shape(dsetnode)}')
+            print(f'copying dset: {dsetname} {np.shape(dsetnode)}')
             tgt_node = h5_tgt.require_group(dsetnode.parent.name)
-            zlvl = None if np.shape(dsetnode) == () else (1 if 'corrmat' in dsetname else 6)
-            zlbl = None if np.shape(dsetnode) == () else "gzip"
-            tgt_node.create_dataset(name=dsetname, data=dsetnode, compression=zlbl, compression_opts=zlvl)
+            tgt_node.copy(source=dsetnode, dest=tgt_node)
         else:
             tgt_node = h5_tgt.require_group(dsetpath)
             # print('writing dset "{}" along axis {}'.format(dsetname, dsetaxis))
@@ -493,25 +491,12 @@ def write_statistics(src, tgt, reqs):
     write_statistics_crono4.hartley_number_entropy_data = None
 
     with h5py.File(src, 'r', libver='latest', swmr=True, rdcc_nbytes=1 * 1024 ** 3, rdcc_nslots=521, driver='sec2') as h5_src:
-        # exit(0)
-        with tb.File(tgt, 'a') as h5f:
-            print('Averaging cronos v4')
-            node_cache = {}
-            done_crono = {}
-            for crononame, cronopath, crononode in h5py_node_iterator(node=h5_src, keypattern='cronos', dep=20,
-                                                                      excludeKeys=['.db', 'model', 'tables', 'dsets'],
-                                                                      nodeType=h5py.Group, godeeper=False):
-                print('found cronos:', cronopath)
-                if done := done_crono.get(cronopath):
-                    continue
-                else:
-                    for iternode in h5py_node_iterator(node=crononode, keypattern='iter_', dep=1, nodeType=h5py.Group,
-                                                       godeeper=False):
-                        done_crono[cronopath] = write_statistics_crono4(iternode, reqs['cronos'], h5f, node_cache)
-                        # print('found iter:', iternode[1])
-                        if done := done_crono.get(cronopath):
-                            print('{} is done'.format(cronopath))
-                            break
+        with h5py.File(tgt, 'w') as h5_tgt:
+            print('Averaging dsets')
+            for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
+                                                                   nodeType=h5py.Dataset):
+                print('Found dset: {}'.format(dsetpath))
+                write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
 
         print('Averaging tables')
         for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
@@ -520,22 +505,26 @@ def write_statistics(src, tgt, reqs):
             write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
 
 
-        with h5py.File(tgt, 'w') as h5_tgt:
-            print('Averaging dsets')
-            for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
-                                                                   nodeType=h5py.Dataset):
-                print('Found dset: {}'.format(dsetpath))
-                # if 'f0.3' in dsetpath:
-                #     continue
-                # if 'L12' in dsetpath:
-                #     continue
-                # if not 'L28' in dsetpath:
-                #     continue
-                write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
-                # if all([x in dsetpath for x in ['number_probabilities', 'L28']]):
-                #     h5close(h5_src)
-                #     return
-
+        with tb.File(tgt, 'a') as h5f:
+            print('Averaging cronos v4')
+            node_cache = {}
+            done_crono = {}
+            for crononame, cronopath, crononode in h5py_node_iterator(node=h5_src, keypattern='cronos', dep=20,
+                                                                      excludeKeys=['.db', 'model', 'tables',
+                                                                                   'dsets'],
+                                                                      nodeType=h5py.Group, godeeper=False):
+                print('found cronos:', cronopath)
+                if done := done_crono.get(cronopath):
+                    continue
+                else:
+                    for iternode in h5py_node_iterator(node=crononode, keypattern='iter_', dep=1,
+                                                       nodeType=h5py.Group,
+                                                       godeeper=False):
+                        done_crono[cronopath] = write_statistics_crono4(iternode, reqs['cronos'], h5f, node_cache)
+                        # print('found iter:', iternode[1])
+                        if done := done_crono.get(cronopath):
+                            print('{} is done'.format(cronopath))
+                            break
 
 
     with h5py.File(tgt, 'a') as h5_tgt:

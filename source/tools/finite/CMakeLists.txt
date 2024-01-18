@@ -1,42 +1,42 @@
 add_source_target(dmrg-tools-finite-ops
         TARGET_SOURCES
-        ops.cpp
+            ops.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+            dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-qm-spin
-        dmrg-qm-mpo
-        dmrg-tensors-state-finite
-        dmrg-tensors-mpo
-        dmrg-math-tenx
-        dmrg-tools-finite-mps
-        dmrg-tools-finite-measure
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+            dmrg-tid
+            dmrg-qm-spin
+            dmrg-qm-mpo
+            dmrg-tensors-state-finite
+            dmrg-tensors-mpo
+            dmrg-math-tenx
+            dmrg-tools-finite-mps
+            dmrg-tools-finite-measure
+            dmrg-tools-common-log
+            dmrg-tools-common-contraction
         )
 
 add_source_target(dmrg-tools-finite-mpo
         TARGET_SOURCES
-        mpo.cpp
+            mpo.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+            dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tid
-        dmrg-math-svd
-        dmrg-math-tenx
-        dmrg-tensors-mpo
-        dmrg-tools-common-log
-        dmrg-tools-common-contraction
+            dmrg-tid
+            dmrg-math-svd
+            dmrg-math-tenx
+            dmrg-tensors-mpo
+            dmrg-tools-common-log
+            dmrg-tools-common-contraction
         )
 add_source_target(dmrg-tools-finite-print
         TARGET_SOURCES
-        print.cpp
+            print.cpp
         OBJECT_LINK_LIBRARIES
-        dmrg-deps dmrg-flags
+            dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES
-        dmrg-tensors-finite
-        dmrg-tools-common-log
+            dmrg-tensors-finite
+            dmrg-tools-common-log
         )
 
 

@@ -4,7 +4,6 @@
 #include "tools/common/log.h"
 #include "tools/finite/opt.h"
 #include "tools/finite/opt_mps.h"
-#include <ceres/gradient_problem_solver.h>
 
 /* clang-format off */
 namespace tools::finite::opt::internal{
@@ -13,21 +12,16 @@ namespace tools::finite::opt::internal{
     template<typename T, auto rank = 3>
     using TensorType = Eigen::Tensor<T, rank>;
 
-    extern opt_mps lbfgspp_optimize_variance  (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps stlbfgs_optimize_variance  (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps bfgs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eig_optimize_energy        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eig_optimize_variance      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eigs_optimize_energy       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eigs_optimize_subspace     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eigs_optimize_variance     (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern opt_mps eigs_optimize_overlap      (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
-    extern void eigs_extract_results          (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
+    extern opt_mps optimize_overlap             (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps optimize_energy_eigs         (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps optimize_energy_eig          (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps optimize_variance_eigs       (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps optimize_variance_eig        (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern opt_mps optimize_variance_subspace   (const TensorsFinite & tensors, const opt_mps & initial_mps, const AlgorithmStatus & status, OptMeta & meta);
+    extern void extract_results            (const TensorsFinite & tensors, const opt_mps & initial_mps, const OptMeta & meta, const eig::solver &solver,
                                                std::vector<opt_mps> &results, bool converged_only = true, double max_overlap_sq_sum = 0.7);
-    extern void eigs_extract_results_subspace (const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta,
+    extern void extract_results_subspace (const TensorsFinite &tensors, const opt_mps &initial_mps, const OptMeta &meta,
                                                const eig::solver &solver, const std::vector<opt_mps> & subspace_mps, std::vector<opt_mps> &results );
-    template<typename Scalar>
-    extern void eig_executor                  (const TensorsFinite &tensors, const opt_mps &initial_mps, std::vector<opt_mps> &results, const OptMeta &meta);
 
     namespace comparator{
         extern bool energy              (const opt_mps &lhs, const opt_mps &rhs);
@@ -95,8 +89,6 @@ namespace tools::finite::opt::internal{
                                                                                                          const EdgesFinite & edges,
                                                                                                          const std::vector<opt_mps> & eigvecs);
     }
-
-    inline ceres::GradientProblemSolver::Options bfgs_default_options;
 
     inline bool no_state_in_window = false;
 

@@ -48,7 +48,7 @@ namespace tools::finite::ed {
         std::vector<tools::finite::opt::opt_mps> results;
         auto                                     t_ext = tid::tic_scope("extract");
 
-        tools::finite::opt::internal::eigs_extract_results(tensors_ed, target_mps, meta, solver, results, true, 1.5);
+        tools::finite::opt::internal::extract_results(tensors_ed, target_mps, meta, solver, results, true, 1.5);
         t_ext.toc();
         for(const auto &[num, mps] : iter::enumerate(results)) { tools::finite::opt::reports::eigs_add_entry(mps); }
         tools::finite::opt::reports::print_eigs_report();

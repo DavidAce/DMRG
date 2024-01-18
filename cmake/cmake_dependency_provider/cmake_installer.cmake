@@ -17,7 +17,7 @@ function(pkg_install_dependencies  package_name)
         # C++ frontend for arpack-ng. Custom find module.
         pkg_install(arpack++)
 
-        # Eigen3 numerical library (needed by ceres and h5pp)
+        # Eigen3 numerical library
         pkg_install(Eigen3)
 
         # cli11 for parsing cli arguments
@@ -29,24 +29,11 @@ function(pkg_install_dependencies  package_name)
         # Backward for printing pretty stack traces
         pkg_install(Backward)
 
-        # ceres-solver (for L-BFGS routine)
-        pkg_install(Ceres)
-
         pkg_install(primme)
 
         if(DMRG_ENABLE_TBLIS)
             pkg_install(tblis)
         endif()
-
-#        target_link_libraries(dmrg-deps INTERFACE
-#                CLI11::CLI11
-#                pcg-cpp::pcg-cpp
-#                h5pp::h5pp
-#                arpack++::arpack++
-#                Ceres::ceres
-#                BLAS::BLAS
-#                Backward::Backward
-#                )
 
         set(PKG_INSTALL_SUCCESS TRUE CACHE BOOL "PKG dependency install has been invoked and was successful")
         set(PKG_IS_RUNNING FALSE CACHE INTERNAL "" FORCE)

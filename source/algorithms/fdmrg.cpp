@@ -14,6 +14,7 @@
 #include "tools/finite/opt_mps.h"
 #include "tools/finite/print.h"
 
+fdmrg::fdmrg() : AlgorithmFinite(AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg (without a file)"); }
 fdmrg::fdmrg(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fDMRG) { tools::log->trace("Constructing class_fdmrg"); }
 
 std::string_view fdmrg::get_state_name() const {
@@ -164,12 +165,12 @@ void fdmrg::run_fes_analysis() {
 
 void fdmrg::update_state() {
     auto    t_step = tid::tic_scope("step");
-    OptMeta meta(ritz, OptMode::ENERGY);
+    OptMeta meta(ritz, OptFunc::ENERGY);
     if(tensors.is_real()) meta.optType = OptType::REAL; // Can do everything in real mode if the model is real
     std::optional<double> alpha_expansion = std::nullopt;
     tools::log->debug("Starting fDMRG iter {} | step {} | pos {} | dir {} | ritz {} | type {}", status.iter, status.step, status.position, status.direction,
                       enum2sv(ritz), enum2sv(meta.optType));
-    tensors.activate_sites(settings::solver::max_size_shift_invert, settings::strategy::multisite_mps_site_def);
+    tensors.activate_sites(settings::solver::eigs_max_size_shift_invert, settings::strategy::multisite_mps_site_def);
     tensors.rebuild_edges();
     if(not tensors.active_sites.empty()) {
         if(status.env_expansion_alpha > 0) {

@@ -6,8 +6,9 @@
 #include <vector>
 
 enum class OptSolver;
+enum class OptFunc;
+enum class OptAlgo;
 enum class OptType;
-enum class OptMode;
 enum class OptInit;
 enum class OptWhen;
 enum class OptExit;
@@ -15,7 +16,8 @@ enum class OptRitz;
 
 namespace tools::finite::opt {
     struct OptMeta {
-        OptMode               optMode;
+        OptFunc               optFunc;
+        OptAlgo               optAlgo;
         OptSolver             optSolver;
         OptType               optType;
         OptInit               optInit;
@@ -37,14 +39,9 @@ namespace tools::finite::opt {
         std::optional<double> eigs_tol                = std::nullopt;
         std::optional<int>    eigs_ncv                = std::nullopt;
         std::optional<int>    eigs_iter_max           = std::nullopt;
-        std::optional<double> bfgs_grad_tol           = std::nullopt;
-        std::optional<int>    bfgs_max_iter           = std::nullopt;
-        std::optional<int>    bfgs_max_rank           = std::nullopt;
-        std::optional<double> bfgs_func_tol           = std::nullopt;
-        std::optional<bool>   bfgs_eigenvalue_scaling = std::nullopt;
 
         OptMeta();
-        explicit OptMeta(OptRitz ritz, OptMode mode);
+        explicit OptMeta(OptRitz ritz, OptFunc mode);
         [[nodiscard]] bool should_proceed(OptExit previous_exit) const;
         void               validate() const;
     };

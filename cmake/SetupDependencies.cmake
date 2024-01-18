@@ -21,7 +21,6 @@ find_package(Eigen3     3.4.0           REQUIRED)                               
 find_package(h5pp       1.11.0...1.11.1 REQUIRED)                                         # h5pp for writing to file binary in format
 find_package(fmt        10.1.0...10.1.2 REQUIRED)
 find_package(spdlog     1.11.0...1.12.0 REQUIRED)
-find_package(Ceres      2.2.0           REQUIRED)                                         # ceres-solver (for L-BFGS routine)
 find_package(CLI11      2.1.1...2.3.2   REQUIRED)                                         # Command line argument parser
 find_package(Backward   1.6             REQUIRED)
 #find_package(arpack++   2.3.0  REQUIRED)                                          # C++ frontend for arpack-ng. Custom find module.
@@ -56,7 +55,6 @@ target_link_libraries(dmrg-deps INTERFACE
             Eigen3::Eigen
             fmt::fmt
             spdlog::spdlog
-            Ceres::ceres
             lapacke::lapacke
             arpack++::arpack++
             arpack-ng::arpack-ng
@@ -88,21 +86,6 @@ if(TARGET Eigen3::Eigen)
 else()
     message(FATAL_ERROR "Target not defined: Eigen3::Eigen")
 endif()
-
-# Fix issue with Ceres linking to cuda
-#find_package(CUDA) # Same call as when building Ceres
-#if (CUDA_FOUND)
-#    message("-- Found CUDA version ${CUDA_VERSION}: "
-#            "${CUDA_LIBRARIES};"
-#            "${CUDA_cusolver_LIBRARY};"
-#            "${CUDA_cusparse_LIBRARY};"
-#            "${CUDA_CUBLAS_LIBRARIES}"
-#            )
-#    target_link_libraries(dmrg-deps INTERFACE ${CUDA_LIBRARIES} ${CUDA_cusolver_LIBRARY} ${CUDA_cusparse_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
-#else ()
-#    target_compile_definitions(dmrg-deps INTERFACE CERES_NO_CUDA)
-#endif ()
-
 
 ### Set the floating point type high-precision arithmetic (used in lbit Hamiltonian parameters
 ### for accurate long time-scale evolution)

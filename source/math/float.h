@@ -1,8 +1,8 @@
 #pragma once
 #ifndef DMRG_FLOAT_H
     #define DMRG_FLOAT_H
-    #include <complex>
     #include "f128.h"
+    #include <complex>
 // This header defines the floating point types used throughout this program
 
 using real = double;

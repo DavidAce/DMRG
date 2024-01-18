@@ -180,14 +180,14 @@ namespace tools::h5io {
                     else if(key.back() == '*') {
                         std::string_view key_match = std::string_view(key).substr(0, key.size() - 2);
                         for(auto &item : h5_src.findGroups(key_match, root, hits, depth)) {
-                            if(not text::startsWith(item, key_match)) continue;
+                            if(not item.starts_with(key_match)) continue;
                             if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;
                             found.emplace_back(item);
                         }
                     } else {
                         for(auto &item : h5_src.findGroups(key, root, hits, depth)) {
                             tools::logger::log->info("Found item [{}]", item);
-                            if(not text::endsWith(item, key)) continue;
+                            if(not item.ends_with(key)) continue;
                             if(found.size() > 1 and std::find(found.begin(), found.end(), item) != found.end()) continue;
                             found.emplace_back(item);
                         }
