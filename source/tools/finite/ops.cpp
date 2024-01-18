@@ -1,7 +1,7 @@
 #include "tools/finite/ops.h"
 #include "config/debug.h"
 #include "general/iter.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
 #include "qm/mpo.h"
@@ -16,6 +16,7 @@
 //
 #include "debug/exceptions.h"
 #include "tools/common/contraction.h"
+#include <fmt/ranges.h>
 
 namespace settings {
     inline constexpr bool debug_projection   = false;
@@ -322,7 +323,7 @@ auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &s
     if(state1.get_length() != state2.get_length()) throw except::logic_error("ERROR: States have different lengths! Can't do overlap.");
     if(state1.get_position() != state2.get_position()) throw except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
     size_t pos     = 0;
-    auto   overlap = tools::common::contraction::contract_mps_mps_partial(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M(), {0, 1});
+    auto   overlap = tools::common::contraction::contract_mps_mps_partial<std::array{0l, 1l}>(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M());
     Eigen::Tensor<cplx, 2> temp;
     for(pos = 1; pos < state1.get_length(); pos++) {
         const auto &M1 = state1.get_mps_site(pos).get_M();

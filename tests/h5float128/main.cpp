@@ -1,7 +1,7 @@
 
 #if defined(USE_QUADMATH)
     #include "debug/exceptions.h"
-    #include "io/fmt.h"
+    #include "io/fmt_custom.h"
     #include "io/fmt_f128_t.h"
     #include "math/f128.h"
     #include "math/float.h"

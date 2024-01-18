@@ -1,6 +1,6 @@
 #include "../spin.h"
 #include "debug/exceptions.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/linalg/matrix.h"
 #include <Eigen/Core>
 #include <unsupported/Eigen/CXX11/Tensor>

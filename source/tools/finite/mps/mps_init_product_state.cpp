@@ -11,6 +11,7 @@
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include <bitset>
+#include <fmt/ranges.h>
 
 std::string tools::finite::mps::init::get_bitfield(const StateFinite &state, const std::string &pattern) {
     if(pattern.empty()) return {};

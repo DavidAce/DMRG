@@ -191,7 +191,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             if(V_stash) {
                 auto vdim = V_stash->data.dimensions();
                 if(vdim[0] * vdim[1] > vdim[2])
-                    tools::log->error(FMT_STRING("V_stash with dimensions {} for pos {} is not a diagonal matrix!"), vdim, V_stash->pos_dst);
+                    tools::log->error("V_stash with dimensions {} for pos {} is not a diagonal matrix!", vdim, V_stash->pos_dst);
             }
         }
 
@@ -218,7 +218,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         } else if(U_stash) {
             auto udim = U_stash->data.dimensions();
             if(udim[1] < udim[0] * udim[2])
-                tools::log->error(FMT_STRING("U_stash with dimensions {} for pos {} is not a diagonal matrix!"), udim, U_stash->pos_dst);
+                tools::log->error("U_stash with dimensions {} for pos {} is not a diagonal matrix!", udim, U_stash->pos_dst);
         }
     } else if(positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 3");

@@ -1,7 +1,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "io/filesystem.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"
 #include "tools/common/log.h"

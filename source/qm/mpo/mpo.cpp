@@ -5,6 +5,8 @@
 #include "math/tenx.h"
 #include "qm/spin.h"
 #include "tools/common/log.h"
+#include <fmt/ranges.h>
+
 namespace qm::mpo {
     std::tuple<Eigen::Tensor<cplx, 4>, Eigen::Tensor<cplx, 3>, Eigen::Tensor<cplx, 3>> pauli_mpo(const Eigen::MatrixXcd &paulimatrix)
     /*! Builds the MPO string for measuring  spin on many-body systems.

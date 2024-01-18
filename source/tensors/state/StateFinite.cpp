@@ -12,6 +12,7 @@
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/multisite.h"
+#include <fmt/ranges.h>
 
 namespace settings {
     inline constexpr bool debug_state = false;
@@ -487,7 +488,7 @@ Eigen::Tensor<Scalar, 2> StateFinite::get_reduced_density_matrix(const std::vect
     auto asites = num::range<size_t>(sites.front(), sites.back() + 1); // Contiguous list of all sites
     if(sites != asites) throw except::logic_error("get_reduced_density_matrix expected contiguous sites. Got: {}", sites);
     auto mps = get_multisite_mps<Scalar>(sites, true);
-    return tools::common::contraction::contract_mps_partial(mps, {1, 2});
+    return tools::common::contraction::contract_mps_partial<std::array{1l, 2l}>(mps);
 }
 
 template Eigen::Tensor<real, 2> StateFinite::get_reduced_density_matrix<real>(const std::vector<size_t> &sites) const;
@@ -559,8 +560,9 @@ size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
 }
 
 size_t StateFinite::num_bonds_at_limit(long bond_lim) const {
-    auto bond_dimensions    = tools::finite::measure::bond_dimensions(*this);
-    auto bonds_at_lim = static_cast<size_t>(std::count_if(bond_dimensions.begin(), bond_dimensions.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
+    auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
+    auto bonds_at_lim =
+        static_cast<size_t>(std::count_if(bond_dimensions.begin(), bond_dimensions.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
     return bonds_at_lim;
 }
 

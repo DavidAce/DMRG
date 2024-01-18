@@ -9,6 +9,7 @@
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
+#include <fmt/ranges.h>
 #include <utility>
 
 namespace settings {
@@ -79,11 +80,11 @@ bool MpsSite::is_normalized(double prec) const {
         return std::abs(norm - 1) <= prec;
     }
     if(get_label() == "A") {
-        auto id = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 1});
+        auto id = tools::common::contraction::contract_mps_partial<std::array{0l, 1l}>(get_M_bare());
         return tenx::isIdentity(id, prec);
     }
     if(get_label() == "B") {
-        auto id    = tools::common::contraction::contract_mps_partial(get_M_bare(), {0, 2});
+        auto id    = tools::common::contraction::contract_mps_partial<std::array{0l, 2l}>(get_M_bare());
         auto is_id = tenx::isIdentity(id, prec);
         if(not is_id) tools::log->error("B^dagger B:\n{}\n", linalg::tensor::to_string(id, 16));
         return is_id;

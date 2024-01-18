@@ -125,7 +125,7 @@ void eig::solver::MultOPv_wrapper(void *x, int *ldx, void *y, int *ldy, int *blo
 
 std::string getLogMessage(struct primme_params *primme) {
     if(primme->monitor == nullptr) {
-        return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s"),
+        return fmt::format("iter {:>6} | mv {:>6} | size {} | f {:12.5e} | time {:9.3e}s | {:8.2e} it/s | {:8.2e} mv/s",
                            primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, primme->stats.elapsedTime,
                            primme->stats.numOuterIterations / primme->stats.elapsedTime, primme->stats.numMatvecs / primme->stats.timeMatvec);
     }
@@ -133,8 +133,8 @@ std::string getLogMessage(struct primme_params *primme) {
     auto       &result   = solver.result;
     auto       &eigvals  = result.get_eigvals<eig::Form::SYMM>();
     std::string msg_diff = eigvals.size() >= 2 ? fmt::format(" | f1-f0 {:12.5e}", std::abs(eigvals[0] - eigvals[1])) : "";
-    return fmt::format(FMT_STRING("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
-                                  "it/s | {:8.2e} mv/s | {}"),
+    return fmt::format("iter {:>6} | mv {:>6} | size {} | f {:12.5e}{} | rnorm {:8.2e} | time {:9.3e}s | {:8.2e} "
+                                  "it/s | {:8.2e} mv/s | {}",
                        primme->stats.numOuterIterations, primme->stats.numMatvecs, primme->n, primme->stats.estimateMinEVal, msg_diff,
                        result.meta.last_res_norm, primme->stats.elapsedTime, primme->stats.numOuterIterations / primme->stats.elapsedTime,
                        static_cast<double>(primme->stats.numMatvecs) / primme->stats.timeMatvec, eig::MethodToString(solver.config.primme_method));
@@ -185,12 +185,12 @@ void monitorFun([[maybe_unused]] void *basisEvals, [[maybe_unused]] int *basisSi
                 auto rnorms               = Eigen::Map<const Eigen::VectorXd>(static_cast<double *>(basisNorms), *basisSize);
                 result.meta.last_res_norm = rnorms.maxCoeff();
             }
-            eig::log->log(level, FMT_STRING("{}{}{} | {}"), getLogMessage(primme), basisMessage, nlockMessage, eventMessage);
+            eig::log->log(level, "{}{}{} | {}", getLogMessage(primme), basisMessage, nlockMessage, eventMessage);
             result.meta.last_log_time = primme->stats.elapsedTime;
             result.meta.last_log_iter = primme->stats.numMatvecs;
         }
     } else {
-        eig::log->trace(FMT_STRING("{} | {}"), getLogMessage(primme), eventMessage);
+        eig::log->trace("{} | {}", getLogMessage(primme), eventMessage);
     }
 }
 

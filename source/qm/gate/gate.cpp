@@ -5,6 +5,8 @@
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "general/sfinae.h"
+#include "io/fmt_custom.h"
+#include "io/fmt_f128_t.h"
 #include "math/float.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
@@ -12,13 +14,10 @@
 #include "math/tenx.h"
 #include "tools/common/log.h"
 #include <Eigen/Core>
+#include <fmt/ranges.h>
 #include <set>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <utility>
-
-//
-// #include <mpfr.h>
-// #include <mpreal.h>
 
 namespace settings {
     inline constexpr bool debug_gates   = false;
@@ -167,9 +166,9 @@ Eigen::Tensor<scalar_t, 2> qm::Gate::exp_internal(const Eigen::Tensor<scalar_t, 
     //    if(!std::is_same_v<alpha_t, cplx_t>) { throw except::runtime_error("Expected alpha_t == cplx_t: got {}", sfinae::type_name<alpha_t>()); }
 
     auto           op_map                       = tenx::MatrixMap(op_);
-    constexpr bool scalar_t_is_float128 = std::is_same_v<scalar_t, __float128>;
+    constexpr bool scalar_t_is_float128         = std::is_same_v<scalar_t, __float128>;
     constexpr bool scalar_t_is_complex_float128 = sfinae::is_std_complex_v<scalar_t> and std::is_same_v<typename scalar_t::value_type, __float128>;
-    bool exp_diagonal = tenx::isDiagonal(op);
+    bool           exp_diagonal                 = tenx::isDiagonal(op);
 
     if(exp_diagonal and op_map.imag().isZero() and std::real(alpha) == 0) {
         using namespace std::complex_literals;

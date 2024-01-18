@@ -3,6 +3,7 @@
 #include "tid/tid.h"
 #include <complex>
 #include <csignal>
+#include <fmt/ranges.h>
 
 #ifndef lapack_complex_float
     #define lapack_complex_float std::complex<float>
@@ -82,9 +83,9 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
     if(svd_save != svd::save::NONE) save_svd(A);
     if(svd_save == svd::save::FAIL) saveMetaData.A = A;
-//    saveMetaData.svd_is_running = true; // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
-//    saveMetaData.svd_save = save::ALL;  // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
-//    saveMetaData.A = A; // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
+    //    saveMetaData.svd_is_running = true; // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
+    //    saveMetaData.svd_save = save::ALL;  // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
+    //    saveMetaData.A = A; // TODO: REMOVE THIS LINE! We don't really want to save it every time!!
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<int>(sizeS, 5)) : "";
 
@@ -459,16 +460,16 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                     S, truncation_error, rank, rows, cols, info, ex.what());
     }
     // TODO: REMOVE THE SCOPE BELOW!
-//    if(std::min({rows, cols}) >= 2000) {
-//        svd::log->info("Dims ({},{}) | rank {} | discarded {} | norm {}", rows, cols, rank, std::min({rows, cols}) - rank, S.norm());
-////        saveMetaData.U                = U;
-//        saveMetaData.S                = S;
-////        saveMetaData.VT               = VT;
-//        saveMetaData.rank             = rank;
-//        saveMetaData.truncation_error = truncation_error;
-//        saveMetaData.info             = info;
-//        save_svd();
-//    }
+    //    if(std::min({rows, cols}) >= 2000) {
+    //        svd::log->info("Dims ({},{}) | rank {} | discarded {} | norm {}", rows, cols, rank, std::min({rows, cols}) - rank, S.norm());
+    ////        saveMetaData.U                = U;
+    //        saveMetaData.S                = S;
+    ////        saveMetaData.VT               = VT;
+    //        saveMetaData.rank             = rank;
+    //        saveMetaData.truncation_error = truncation_error;
+    //        saveMetaData.info             = info;
+    //        save_svd();
+    //    }
     save_svd<Scalar>(U, S, VT, info);
     saveMetaData = svd::internal::SaveMetaData{}; // Clear
     svd::log->trace(

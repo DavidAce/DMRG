@@ -1,7 +1,7 @@
 #include "../opt_mps.h"
 #include "config/debug.h"
 #include "debug/exceptions.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/float.h"
 #include "math/num.h"
 

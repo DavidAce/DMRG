@@ -1,7 +1,7 @@
 #include "hdf5_types.h"
 #include "algorithms/AlgorithmStatus.h"
 #include "debug/exceptions.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "tid/enums.h"
 #include <array>
 #include <cstdio>

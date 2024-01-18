@@ -2,7 +2,7 @@
 
 #include "algorithms/AlgorithmStatus.h"
 #include "debug/exceptions.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/float.h"
 #include "tid/enums.h"
 #include <array>

@@ -2,9 +2,11 @@
 #include "config/debug.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "io/fmt_custom.h"
 #include "math/linalg.h"
 #include "math/tenx.h"
 #include "tools/common/log.h"
+#include <fmt/ranges.h>
 #include <unsupported/Eigen/MatrixFunctions>
 #include <vector>
 

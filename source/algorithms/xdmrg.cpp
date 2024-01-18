@@ -3,7 +3,7 @@
 #include "debug/exceptions.h"
 #include "fdmrg.h"
 #include "general/iter.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/num.h"
 #include "math/rnd.h"
 #include "qm/time.h"
@@ -507,7 +507,7 @@ void xdmrg::update_state() {
         results.back().set_optexit(meta.optExit);
         /* clang-format on */
 
-        tools::log->trace(FMT_STRING("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)"), enum2sv(meta.optFunc),
+        tools::log->trace("Optimization [{}|{}]: {}. Variance change {:8.2e} --> {:8.2e} ({:.3f} %)", enum2sv(meta.optFunc),
                           enum2sv(meta.optSolver), flag2str(meta.optExit), variance_before_step.value(), results.back().get_variance(),
                           results.back().get_relchange() * 100);
         if(results.back().get_relchange() > 1000) tools::log->error("Variance increase by over 1000x: Something is very wrong");
@@ -516,10 +516,10 @@ void xdmrg::update_state() {
     if(not results.empty()) {
         if(tools::log->level() <= spdlog::level::debug)
             for(const auto &r : results)
-                tools::log->debug(FMT_STRING("Candidate: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
+                tools::log->debug("Candidate: {:<24} | E {:<20.16f}| σ²H {:<8.2e} | rnorm {:8.2e} | overlap {:.16f} | "
                                              "alpha {:8.2e} | "
                                              "sites {} |"
-                                             "{:20} | {} | time {:.2e} s"),
+                                             "{:20} | {} | time {:.2e} s",
                                   r.get_name(), r.get_energy(), r.get_variance(), r.get_rnorm(), r.get_overlap(), r.get_alpha(), r.get_sites(),
                                   fmt::format("[{}][{}]", enum2sv(r.get_optfunc()), enum2sv(r.get_optsolver())), flag2str(r.get_optexit()), r.get_time());
 

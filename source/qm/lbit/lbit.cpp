@@ -6,7 +6,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "io/spdlog.h"
 #include "math/fit.h"
 #include "math/float.h"

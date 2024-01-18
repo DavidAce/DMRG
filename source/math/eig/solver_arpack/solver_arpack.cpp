@@ -325,7 +325,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
                 if(config.logTime) {
                     auto time_since_last_log = std::abs(t_arpack->get_last_interval() - result.meta.last_log_time);
                     if(time_since_last_log > config.logTime.value()) {
-                        eig::log->trace(FMT_STRING("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op"), iter, nops, t_arpack->get_last_interval(),
+                        eig::log->trace("iter {:<4} | ops {:<5} | time {:8.2f} s | dt {:8.2f} ms/op", iter, nops, t_arpack->get_last_interval(),
                                         t_mult->get_last_interval() / nops * 1000);
                         result.meta.last_log_time = t_arpack->get_last_interval();
                     }
@@ -352,7 +352,7 @@ void eig::solver_arpack<MatrixType>::find_solution_rc(Derived &solver) {
             }
         }
 
-        eig::log->debug(FMT_STRING("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}"), nops, iter, t_arpack->get_last_interval(),
+        eig::log->debug("ops {:<5} | iter {:<4} | time {:8.2f} s | dt {:8.2f} ms/op | actual iters {}", nops, iter, t_arpack->get_last_interval(),
                         t_arpack->get_last_interval() / solver.GetIter() * 1000, solver.GetIter());
         result.meta.arnoldi_found = solver.ArnoldiBasisFound(); // Copy the value here because solver.FindEigenv...() will set BasisOk=false later
         if(not solver.ArnoldiBasisFound()) eig::log->warn("Arnoldi basis was not found");

@@ -13,6 +13,7 @@
 #include "tools/finite/measure.h"
 #include <bitset>
 #include <Eigen/QR>
+#include <fmt/ranges.h>
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> get_random_unitary_matrix(long rows, long cols) {

@@ -1,7 +1,7 @@
 #include "fdmrg.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
 #include "tools/common/h5.h"

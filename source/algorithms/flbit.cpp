@@ -3,11 +3,10 @@
 #include "debug/exceptions.h"
 #include "debug/info.h"
 #include "general/iter.h"
-#include "io/fmt.h"
+#include "io/fmt_f128_t.h"
 #include "math/eig/solver.h"
 #include "math/eig/view.h"
 #include "math/float.h"
-#include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/tenx.h"
 #include "qm/lbit.h"
@@ -25,6 +24,7 @@
 #include "tools/finite/mps.h"
 #include "tools/finite/ops.h"
 #include "tools/finite/print.h"
+#include <fmt/ranges.h>
 #include <h5pp/h5pp.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 
@@ -827,7 +827,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         Eigen::VectorXd average = eigvals_all.array().colwise().mean();
         tools::log->info("opdm average: {::.15f}", average.transpose());
         h5file->writeDataset(average, "/fLBIT/model/opdm-eigv");
-        h5file->writeAttribute("eigenvalues of the one-paricle densiy matrix: an exact step-function means non-interacting", "/fLBIT/model/opdm-eigv", "description");
+        h5file->writeAttribute("eigenvalues of the one-paricle densiy matrix: an exact step-function means non-interacting", "/fLBIT/model/opdm-eigv",
+                               "description");
         if(settings::flbit::opdm::exit_when_done) exit(0);
     }
 }

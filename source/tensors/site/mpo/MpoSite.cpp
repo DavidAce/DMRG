@@ -1,6 +1,7 @@
 #include "MpoSite.h"
 #include "config/debug.h"
 #include "debug/exceptions.h"
+#include "io/fmt_f128_t.h"
 #include "math/float.h"
 #include "math/hash.h"
 #include "math/rnd.h"

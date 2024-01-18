@@ -2,7 +2,6 @@
 #include "../spin.h"
 #include "config/debug.h"
 #include "config/enums.h"
-// #include "config/settings.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
@@ -16,6 +15,7 @@
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include <algorithm>
+#include <fmt/ranges.h>
 #include <unordered_set>
 #include <vector>
 

@@ -306,7 +306,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
     state.measurements.number_entropies        = number_entropies;
     state.measurements.number_entropy_midchain = number_entropies.at(state.get_length() / 2);
     state.measurements.number_entropy_current  = number_entropies.at(state.get_position<size_t>() + 1);
-    tools::log->debug(FMT_STRING("Number entropies: {:.4f}"), fmt::join(number_entropies, ", "));
+    tools::log->debug("Number entropies: {:.4f}", fmt::join(number_entropies, ", "));
     return state.measurements.number_entropies.value();
 }
 

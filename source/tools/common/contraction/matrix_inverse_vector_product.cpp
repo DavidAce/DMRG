@@ -8,6 +8,7 @@
 #include <complex>
 #include <Eigen/IterativeLinearSolvers>
 #include <unsupported/Eigen/IterativeSolvers>
+#include <fmt/ranges.h>
 
 template<typename Scalar_>
 class MatrixReplacement;

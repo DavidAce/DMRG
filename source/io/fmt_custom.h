@@ -1,16 +1,11 @@
 #pragma once
 
-#include <fmt/compile.h>
 #include <fmt/core.h>
-#include <fmt/format.h>
-#include <fmt/ranges.h>
-#include <fmt/std.h>
-#include "fmt_f128_t.h"
 #if defined(FMT_HEADER_ONLY)
     #pragma message "{fmt} has been included as header-only library. This causes large compile-time overhead"
 #endif
 
-#if defined(FMT_FORMAT_H_) && !defined(FMT_USE_COMPLEX)
+#if defined(FMT_CORE_H_) && !defined(FMT_USE_COMPLEX)
     #define FMT_USE_COMPLEX 1
     #include <complex>
     #include <type_traits>
@@ -32,8 +27,8 @@ struct fmt::formatter<std::complex<T>, Char> : fmt::formatter<T, Char> {
 };
 
 #endif
-#if defined(FMT_FORMAT_H_)
-    #include <complex>
+#if defined(FMT_CORE_H_) && !defined(FMT_USE_REFWRAP)
+    #define FMT_USE_REFWRAP 1
     #include <type_traits>
 
 template<typename T>
@@ -50,6 +45,3 @@ struct fmt::formatter<std::reference_wrapper<T>> : fmt::formatter<T> {
 };
 #endif
 
-#define FMT_EXTERN extern
-#include "fmt.txx"
-#undef FMT_EXTERN

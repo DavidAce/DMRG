@@ -13,6 +13,7 @@
 #include "tools/common/log.h"
 #include "tools/finite/mps.h"
 #include <bitset>
+#include <fmt/ranges.h>
 #include <utility>
 
 namespace settings {

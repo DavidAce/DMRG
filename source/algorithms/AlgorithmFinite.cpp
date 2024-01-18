@@ -844,22 +844,22 @@ void AlgorithmFinite::print_status() {
 
     std::string report;
     //    report += fmt::format("{:<} ", status.algo_type_sv());
-    report += fmt::format(FMT_STRING("{:<} "), tensors.state->get_name());
-    report += fmt::format(FMT_STRING("iter:{:<4} "), status.iter);
-    report += fmt::format(FMT_STRING("step:{:<5} "), status.step);
-    report += fmt::format(FMT_STRING("L:{} "), tensors.get_length());
+    report += fmt::format("{:<} ", tensors.state->get_name());
+    report += fmt::format("iter:{:<4} ", status.iter);
+    report += fmt::format("step:{:<5} ", status.step);
+    report += fmt::format("L:{} ", tensors.get_length());
     std::string site_str;
-    if(tensors.active_sites.empty()) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.state->get_position<long>());
-    if(tensors.active_sites.size() == 1) site_str = fmt::format(FMT_STRING("{:^6}"), tensors.active_sites.front());
+    if(tensors.active_sites.empty()) site_str = fmt::format("{:^6}", tensors.state->get_position<long>());
+    if(tensors.active_sites.size() == 1) site_str = fmt::format("{:^6}", tensors.active_sites.front());
     if(tensors.active_sites.size() >= 2) {
         auto frnt = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.front()) : tensors.active_sites.front();
         auto back = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.back()) : tensors.active_sites.back();
         if(tensors.position_is_at(static_cast<long>(tensors.active_sites.front())))
-            site_str = fmt::format(FMT_STRING("{:>2}.{:>2} "), frnt, back);
+            site_str = fmt::format("{:>2}.{:>2} ", frnt, back);
         else if(tensors.position_is_at(static_cast<long>(tensors.active_sites.back())))
-            site_str = fmt::format(FMT_STRING("{:>2} {:>2}."), frnt, back);
+            site_str = fmt::format("{:>2} {:>2}.", frnt, back);
         else
-            site_str = fmt::format(FMT_STRING("{:>2} {:>2} "), frnt, back);
+            site_str = fmt::format("{:>2} {:>2} ", frnt, back);
     }
     if(tensors.state->get_direction() > 0) {
         report += fmt::format("l:|{}⟩ ", site_str);
@@ -867,31 +867,31 @@ void AlgorithmFinite::print_status() {
         report += fmt::format("l:⟨{}| ", site_str);
     }
 
-    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format(FMT_STRING("e:{:<5.3f} "), status.energy_dens); }
+    if(status.algo_type == AlgorithmType::xDMRG) { report += fmt::format("e:{:<5.3f} ", status.energy_dens); }
     double ene = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy(tensors);
     double var = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
-    report += fmt::format(FMT_STRING("E:{:<20.16f} "), ene);
-    report += fmt::format(FMT_STRING("σ²H:{:<8.2e} [{:<8.2e}] "), var, status.energy_variance_lowest);
-    report += fmt::format(FMT_STRING("Sₑ({:>2}):{:<10.8f} "), tensors.state->get_position<long>(),
+    report += fmt::format("E:{:<20.16f} ", ene);
+    report += fmt::format("σ²H:{:<8.2e} [{:<8.2e}] ", var, status.energy_variance_lowest);
+    report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(),
                           tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
-    report += fmt::format(FMT_STRING("ε:{:<8.2e} "), tensors.state->get_truncation_error_active_max());
-    if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format(FMT_STRING("α:{:<8.2e} "), status.env_expansion_alpha);
-    report += fmt::format(FMT_STRING("χ:{:<3}|{:<3}|"), settings::get_bond_max(status.algo_type), status.bond_lim);
+    report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
+    if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
+    report += fmt::format("χ:{:<3}|{:<3}|", settings::get_bond_max(status.algo_type), status.bond_lim);
     auto bonds_maxims = std::vector<long>(std::max<size_t>(1, settings::strategy::multisite_mps_site_def - 1), settings::get_bond_max(status.algo_type));
     auto bonds_merged = tools::finite::measure::bond_dimensions_active(*tensors.state);
-    auto bonds_padlen = fmt::format(FMT_STRING("{}"), bonds_maxims).size();
-    auto bonds_string = fmt::format(FMT_STRING("{}"), bonds_merged);
-    report += fmt::format(FMT_STRING("{0:<{1}} "), bonds_string, bonds_padlen);
+    auto bonds_padlen = fmt::format("{}", bonds_maxims).size();
+    auto bonds_string = fmt::format("{}", bonds_merged);
+    report += fmt::format("{0:<{1}} ", bonds_string, bonds_padlen);
 
     if(last_optmode and last_optspace)
-        report += fmt::format(FMT_STRING("opt:[{}|{}] "), enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
-    report += fmt::format(FMT_STRING("con:{:<1} "), status.algorithm_converged_for);
-    report += fmt::format(FMT_STRING("stk:{:<1} "), status.algorithm_has_stuck_for);
-    report += fmt::format(FMT_STRING("sat:{:<1}[σ² {:<1} Sₑ {:<1}] "), status.algorithm_saturated_for, status.variance_mpo_saturated_for,
+        report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
+    report += fmt::format("con:{:<1} ", status.algorithm_converged_for);
+    report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
+    report += fmt::format("sat:{:<1}[σ² {:<1} Sₑ {:<1}] ", status.algorithm_saturated_for, status.variance_mpo_saturated_for,
                           status.entanglement_saturated_for);
-    report += fmt::format(FMT_STRING("time:{:<9} "), fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
-    report += fmt::format(FMT_STRING("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB "), debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
+    report += fmt::format("time:{:<9} ", fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
+    report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }
 

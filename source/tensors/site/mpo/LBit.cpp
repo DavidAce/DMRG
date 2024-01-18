@@ -2,12 +2,14 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "io/fmt_f128_t.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
 #include "qm/spin.h"
 #include "tools/common/log.h"
+#include <fmt/ranges.h>
 #include <h5pp/h5pp.h>
 
 namespace settings {
@@ -649,9 +651,9 @@ Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view() const { return MPO_energy
 Eigen::Tensor<cplx, 4> LBit::MPO_energy_shifted_view(double site_energy) const {
     using namespace qm::spin::half;
     if(site_energy == 0) { return MPO(); }
-    Eigen::Tensor<cplx, 4> temp = MPO();
-    long                   row  = temp.dimension(0) - 1;
-    long                   col  = 0;
+    Eigen::Tensor<cplx, 4> temp                                        = MPO();
+    long                   row                                         = temp.dimension(0) - 1;
+    long                   col                                         = 0;
     Eigen::Tensor<cplx, 2> Z                                           = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I                                           = tenx::TensorMap(id);
     temp.slice(tenx::array4{row, col, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J1_rand.to_floating_point<real>()) * Z - site_energy * I;

@@ -1,6 +1,6 @@
 
 #if defined(USE_QUADMATH)
-    #include "io/fmt.h"
+    #include "io/fmt_custom.h"
     #include "math/f128.h"
     #include <fmt/format.h>
 

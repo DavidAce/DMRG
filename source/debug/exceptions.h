@@ -1,6 +1,6 @@
 #pragma once
 
-#include "io/fmt.h"
+#include <fmt/core.h>
 #include <stdexcept>
 
 namespace except {

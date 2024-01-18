@@ -27,13 +27,13 @@ const h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5_type() {
 
 void qm::lbit::UnitaryGateParameters::print_parameter_names() const noexcept {
     std::string name_line;
-    for(const auto &name : get_parameter_names()) name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
+    for(const auto &name : get_parameter_names()) name_line.append(fmt::format("{:<{}} ", name, fmt_value(name).size()));
     tools::log->info(name_line);
 }
 
 void qm::lbit::UnitaryGateParameters::print_parameter_values() const noexcept {
     std::string value_line;
-    for(const auto &name : get_parameter_names()) value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
+    for(const auto &name : get_parameter_names()) value_line.append(fmt::format("{} ", fmt_value(name)));
     tools::log->info(value_line);
 }
 
@@ -59,14 +59,14 @@ const h5pp::hid::h5t qm::lbit::UnitaryGateParameters::get_h5t_enum_uw() {
 
 std::string qm::lbit::UnitaryGateParameters::fmt_value(std::string_view p) const {
     /* clang-format off */
-        if(p == "layer")  return fmt::format(FMT_STRING("{:>7}")     , layer);
-        if(p == "sites")  return fmt::format(FMT_STRING("{::4}")     , sites);
-        if(p == "f")      return fmt::format(FMT_STRING("{:<7.4f}")  , f);
-        if(p == "w")      return fmt::format(FMT_STRING("{:<9.2e}")  , w);
-        if(p == "theta")  return fmt::format(FMT_STRING("{::<+9.2e}"), theta);
-        if(p == "c")      return fmt::format(FMT_STRING("{}")        , c);
-        if(p == "g8w8")   return fmt::format(FMT_STRING("{}")        , enum2sv(g8w8));
-        if(p == "type")   return fmt::format(FMT_STRING("{}")        , enum2sv(type));
+        if(p == "layer")  return fmt::format("{:>7}"     , layer);
+        if(p == "sites")  return fmt::format("{::4}"     , sites);
+        if(p == "f")      return fmt::format("{:<7.4f}"  , f);
+        if(p == "w")      return fmt::format("{:<9.2e}"  , w);
+        if(p == "theta")  return fmt::format("{::<+9.2e}", theta);
+        if(p == "c")      return fmt::format("{}"        , c);
+        if(p == "g8w8")   return fmt::format("{}"        , enum2sv(g8w8));
+        if(p == "type")   return fmt::format("{}"        , enum2sv(type));
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }

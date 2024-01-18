@@ -1,5 +1,5 @@
 #pragma once
-#include "fmt.h"
+#include "fmt_custom.h"
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
     #define SPDLOG_FMT_EXTERNAL

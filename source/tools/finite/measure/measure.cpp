@@ -3,7 +3,7 @@
 #include "config/settings.h"
 #include "debug/info.h"
 #include "general/iter.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/eig.h"
 #include "math/float.h"
 #include "math/linalg/matrix.h"
@@ -22,6 +22,7 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/ops.h"
+#include <fmt/ranges.h>
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
 size_t tools::finite::measure::length(const StateFinite &state) { return state.get_length(); }
@@ -44,7 +45,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         for(const auto &mps : state.mps_sites) {
             const auto &M = mps->get_M();
             if(first) {
-                chain = tools::common::contraction::contract_mps_partial(M, {0, 1});
+                chain = tools::common::contraction::contract_mps_partial<std::array{0l, 1l}>(M);
                 first = false;
                 continue;
             }
@@ -192,7 +193,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
                     }
                     evs = eig::view::get_eigvals<real>(solver.result); // Eigenvalues of rho
                     tools::log->trace("eig rho_real: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
-                                     solver.result.meta.time_prep);
+                                      solver.result.meta.time_prep);
                 } else {
                     auto rho = state.get_reduced_density_matrix<cplx>(sites);
                     tools::log->trace("eig rho_cplx: {} ...", rho.dimensions());
@@ -200,7 +201,7 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
                     solver.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
                     evs = eig::view::get_eigvals<real>(solver.result).real(); // Eigenvalues of rho
                     tools::log->trace("eig rho_cplx: {} ... time {:.2e} s (prep {:.2e} s)", rho.dimensions(), solver.result.meta.time_total,
-                                     solver.result.meta.time_prep);
+                                      solver.result.meta.time_prep);
                 }
                 double s = 0;
                 //                tools::log->debug("evs > 1e-8 : {}", (evs > 1e-8).count());

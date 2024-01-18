@@ -19,6 +19,7 @@
 #include "tools/common/split.h"
 #include "tools/finite/measure.h"
 #include "tools/finite/ops.h"
+#include <fmt/ranges.h>
 
 namespace settings {
     inline constexpr bool debug_merge   = false;
@@ -40,8 +41,8 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
         if(state.get_direction() == 1 and state.get_mps_site().get_chiR() != 1)
             throw except::logic_error("chiR at position {} must have dimension 1, but it has dimension {}. Mps dims {}", state.get_position(),
                                       state.get_mps_site().get_chiR(), state.get_mps_site().dimensions());
-        state.flip_direction();                  // Instead of moving out of the chain, just flip the direction and return
-        return 0;                                // No moves this time, return 0
+        state.flip_direction(); // Instead of moving out of the chain, just flip the direction and return
+        return 0;               // No moves this time, return 0
     } else {
         long pos  = state.get_position<long>();  // If all sites are B's, then this is -1. Otherwise, this is the current "A*LC" site
         long posC = pos + state.get_direction(); // This is the site which becomes the new center position
@@ -375,8 +376,8 @@ bool tools::finite::mps::normalize_state(StateFinite &state, std::optional<svd::
     return true;
 }
 
-void tools::finite::mps::initialize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view axis, bool use_eigenspinors,
-                                         long bond_lim, std::string &pattern) {
+void tools::finite::mps::initialize_state(StateFinite &state, StateInit init, StateInitType type, std::string_view axis, bool use_eigenspinors, long bond_lim,
+                                          std::string &pattern) {
     switch(init) {
         case StateInit::RANDOM_PRODUCT_STATE: return init::random_product_state(state, type, axis, use_eigenspinors, pattern);
         case StateInit::RANDOM_ENTANGLED_STATE: return init::random_entangled_state(state, type, axis, bond_lim, use_eigenspinors);
@@ -447,15 +448,15 @@ std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite
     std::vector<std::vector<std::vector<size_t>>> layers; // Layer --> group --> idx
     std::vector<size_t>                           idx = num::range<size_t>(0, gates.size());
     while(not idx.empty()) {
-        std::vector<std::vector<size_t>> layer;                                  // Group --> idx
+        std::vector<std::vector<size_t>> layer; // Group --> idx
         std::vector<size_t>              idx_used;
         size_t                           at = gates.at(idx.front()).pos.front(); // Left most leg of the gate at idx[0].
         for(size_t i = 0; i < idx.size(); i++) {
-            const auto &gate_i = gates.at(idx.at(i));                            // Gate at idx[i]
+            const auto &gate_i = gates.at(idx.at(i)); // Gate at idx[i]
             if(gate_i.pos.front() >= at) {
-                auto                back_i = gate_i.pos.back();                  // Right-most leg of gate idx[i]
-                std::vector<size_t> group_i;                                     // List of idx with gates starting at the same position (i.e. same "at")
-                for(size_t j = i; j < idx.size(); j++) {                         // Look ahead
+                auto                back_i = gate_i.pos.back(); // Right-most leg of gate idx[i]
+                std::vector<size_t> group_i;                    // List of idx with gates starting at the same position (i.e. same "at")
+                for(size_t j = i; j < idx.size(); j++) {        // Look ahead
                     // In this part we accept a gate if gate j is further ahead than i, without overlap.
                     const auto &gate_j  = gates.at(idx.at(j)); // gate_i == gate_j on first iteration of j, so we always accept
                     auto        front_j = gate_j.pos.front();
@@ -567,8 +568,8 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
                           state.get_truncation_error(gate.pos.front()));
 }
 
-void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, CircuitOp cop, bool moveback,
-                                     GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 2>> &nsite_tensors, size_t gate_size, CircuitOp cop,
+                                     bool moveback, GateMove gm, std::optional<svd::config> svd_cfg) {
     // Pack the two-site operators into a vector of qm::Gates
     std::vector<qm::Gate> gates;
     gates.reserve(nsite_tensors.size());
@@ -835,7 +836,8 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     }
 }
 
-void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, CircuitOp cop, GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::SwapGate> &gates, CircuitOp cop, GateMove gm,
+                                          std::optional<svd::config> svd_cfg) {
     auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
     if(gates.empty()) return;
     state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache

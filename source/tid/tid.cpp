@@ -10,7 +10,7 @@ namespace tid {
         const ur *ur_ref_t::operator->() const { return &ref.get(); }
 
         [[nodiscard]] std::string ur_ref_t::str() const {
-            return fmt::format(FMT_STRING("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | level {6} | count {7}"), key,
+            return fmt::format("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | level {6} | count {7}", key,
                                tree_max_key_size, ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), level2sv(ref.get().get_level()),
                                ref.get().get_tic_count());
         }
@@ -121,9 +121,9 @@ namespace tid {
         else
             key = fmt::format("{}.{}", prefix, u.get_label());
 
-        std::vector<internal::ur_ref_t> tree = {internal::ur_ref_t{key, u, 0.0, 1.0}};
+        auto tree = std::vector<internal::ur_ref_t>  {{.key=key, .ref=u, .sum=0.0, .frac=1.0}};
         for(const auto &un : u.ur_under) {
-            tree.front().sum += un.second->get_time(); // Add up times under
+            tree.front().sum += un.second->get_time(); // Add times under
             for(const auto &t : get_tree(*un.second, key, l)) {
                 //                if(un.second->get_time() == 0) {
                 //                    // If the intermediate node did not measure time, add the times under it instead

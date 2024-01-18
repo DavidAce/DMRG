@@ -13,14 +13,14 @@ const h5pp::hid::h5t &h5tb_base<h5tb_derived_t>::get_h5_type() const {
 template<typename h5tb_derived_t>
 void h5tb_base<h5tb_derived_t>::print_parameter_names() const noexcept {
     std::string name_line;
-    for(const auto &name : h5tb_derived_t::get_parameter_names()) name_line.append(fmt::format(FMT_STRING("{:<{}} "), name, fmt_value(name).size()));
+    for(const auto &name : h5tb_derived_t::get_parameter_names()) name_line.append(fmt::format("{:<{}} ", name, fmt_value(name).size()));
     tools::log->info(name_line);
 }
 
 template<typename h5tb_derived_t>
 void h5tb_base<h5tb_derived_t>::print_parameter_values() const noexcept {
     std::string value_line;
-    for(const auto &name : h5tb_derived_t::get_parameter_names()) value_line.append(fmt::format(FMT_STRING("{} "), fmt_value(name)));
+    for(const auto &name : h5tb_derived_t::get_parameter_names()) value_line.append(fmt::format("{} ", fmt_value(name)));
     tools::log->info(value_line);
 }
 
@@ -55,16 +55,16 @@ void h5tb_ising_selfdual::register_table_type() const {
 
 std::string h5tb_ising_selfdual::fmt_value(std::string_view p) const {
     /* clang-format off */
-        if(p == "J_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_mean);
-        if(p == "J_wdth")           return fmt::format(FMT_STRING("{:<9.2e}") , param.J_wdth);
-        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.J_rand);
-        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_mean);
-        if(p == "h_wdth")           return fmt::format(FMT_STRING("{:<9.2e}") , param.h_wdth);
-        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
-        if(p == "lambda")           return fmt::format(FMT_STRING("{:<7.4f}") , param.lambda);
-        if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
-        if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
-        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        if(p == "J_mean")           return fmt::format("{:<+9.2e}", param.J_mean);
+        if(p == "J_wdth")           return fmt::format("{:<9.2e}" , param.J_wdth);
+        if(p == "J_rand")           return fmt::format("{:<+9.2e}", param.J_rand);
+        if(p == "h_mean")           return fmt::format("{:<+9.2e}", param.h_mean);
+        if(p == "h_wdth")           return fmt::format("{:<9.2e}", param.h_wdth);
+        if(p == "h_rand")           return fmt::format("{:<+9.2e}", param.h_rand);
+        if(p == "lambda")           return fmt::format("{:<7.4f}", param.lambda);
+        if(p == "delta")            return fmt::format("{:<+7.4f}", param.delta);
+        if(p == "spin_dim")         return fmt::format("{:>8}", param.spin_dim);
+        if(p == "distribution")     return fmt::format("{:<12}", param.distribution);
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
@@ -95,12 +95,12 @@ void h5tb_ising_majorana::register_table_type() const {
 
 std::string h5tb_ising_majorana::fmt_value(std::string_view p) const {
     /* clang-format off */
-        if(p == "g")                return fmt::format(FMT_STRING("{:<7.4f}") , param.g);
-        if(p == "delta")            return fmt::format(FMT_STRING("{:<+7.4f}"), param.delta);
-        if(p == "J_rand")           return fmt::format(FMT_STRING("{:<8.2e}") , param.J_rand);
-        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<8.2e}") , param.h_rand);
-        if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
-        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        if(p == "g")                return fmt::format("{:<7.4f}" , param.g);
+        if(p == "delta")            return fmt::format("{:<+7.4f}", param.delta);
+        if(p == "J_rand")           return fmt::format("{:<8.2e}" , param.J_rand);
+        if(p == "h_rand")           return fmt::format("{:<8.2e}" , param.h_rand);
+        if(p == "spin_dim")         return fmt::format("{:>8}"    , param.spin_dim);
+        if(p == "distribution")     return fmt::format("{:<12}"   , param.distribution);
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
@@ -133,14 +133,14 @@ void h5tb_ising_tf_rf::register_table_type() const {
 
 std::string h5tb_ising_tf_rf::fmt_value(std::string_view p) const {
     /* clang-format off */
-        if(p == "J1")               return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1);
-        if(p == "J2")               return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2);
-        if(p == "h_tran")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_tran);
-        if(p == "h_mean")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_mean);
-        if(p == "h_wdth")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_wdth);
-        if(p == "h_rand")           return fmt::format(FMT_STRING("{:<+9.2e}"), param.h_rand);
-        if(p == "spin_dim")         return fmt::format(FMT_STRING("{:>8}")    , param.spin_dim);
-        if(p == "distribution")     return fmt::format(FMT_STRING("{:<12}")   , param.distribution);
+        if(p == "J1")               return fmt::format("{:<+9.2e}", param.J1);
+        if(p == "J2")               return fmt::format("{:<+9.2e}", param.J2);
+        if(p == "h_tran")           return fmt::format("{:<+9.2e}", param.h_tran);
+        if(p == "h_mean")           return fmt::format("{:<+9.2e}", param.h_mean);
+        if(p == "h_wdth")           return fmt::format("{:<+9.2e}", param.h_wdth);
+        if(p == "h_rand")           return fmt::format("{:<+9.2e}", param.h_rand);
+        if(p == "spin_dim")         return fmt::format("{:>8}"    , param.spin_dim);
+        if(p == "distribution")     return fmt::format("{:<12}"   , param.distribution);
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }
@@ -188,23 +188,23 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
             else
                 J2_rand.emplace_back(std::numeric_limits<real>::quiet_NaN());
         }
-        return fmt::format(FMT_STRING("{::<+9.2e}"), J2_rand);
+        return fmt::format("{::<+9.2e}", J2_rand);
     }
 
     /* clang-format off */
-        if(p == "J1_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_rand.to_floating_point<real>());
-        if(p == "J3_rand")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_rand.to_floating_point<real>());
-        if(p == "J1_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J1_mean);
-        if(p == "J2_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J2_mean);
-        if(p == "J3_mean")     return fmt::format(FMT_STRING("{:<+9.2e}"), param.J3_mean);
-        if(p == "J1_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J1_wdth);
-        if(p == "J2_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J2_wdth);
-        if(p == "J3_wdth")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.J3_wdth);
-        if(p == "xi_Jcls")     return fmt::format(FMT_STRING("{:<7.4f}"),  param.xi_Jcls);
-        if(p == "J2_span")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
-        if(p == "J2_ctof")     return fmt::format(FMT_STRING("{:>7}"),     param.J2_ctof);
-        if(p == "spin_dim")    return fmt::format(FMT_STRING("{:>8}"),     param.spin_dim);
-        if(p == "distribution")return fmt::format(FMT_STRING("{:<12}"),    param.distribution);
+        if(p == "J1_rand")     return fmt::format("{:<+9.2e}", param.J1_rand.to_floating_point<real>());
+        if(p == "J3_rand")     return fmt::format("{:<+9.2e}", param.J3_rand.to_floating_point<real>());
+        if(p == "J1_mean")     return fmt::format("{:<+9.2e}", param.J1_mean);
+        if(p == "J2_mean")     return fmt::format("{:<+9.2e}", param.J2_mean);
+        if(p == "J3_mean")     return fmt::format("{:<+9.2e}", param.J3_mean);
+        if(p == "J1_wdth")     return fmt::format("{:<7.4f}",  param.J1_wdth);
+        if(p == "J2_wdth")     return fmt::format("{:<7.4f}",  param.J2_wdth);
+        if(p == "J3_wdth")     return fmt::format("{:<7.4f}",  param.J3_wdth);
+        if(p == "xi_Jcls")     return fmt::format("{:<7.4f}",  param.xi_Jcls);
+        if(p == "J2_span")     return fmt::format("{:>7}",     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
+        if(p == "J2_ctof")     return fmt::format("{:>7}",     param.J2_ctof);
+        if(p == "spin_dim")    return fmt::format("{:>8}",     param.spin_dim);
+        if(p == "distribution")return fmt::format("{:<12}",    param.distribution);
     /* clang-format on */
     throw except::runtime_error("Unrecognized parameter: {}", p);
 }

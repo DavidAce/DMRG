@@ -1,7 +1,8 @@
 #include "../contraction.h"
-#include "io/fmt.h"
+#include "io/fmt_custom.h"
 #include "math/tenx.h"
 #include "tid/tid.h"
+#include <fmt/ranges.h>
 #include <omp.h>
 #include <tblis/tblis.h>
 #include <tblis/util/thread.h>
