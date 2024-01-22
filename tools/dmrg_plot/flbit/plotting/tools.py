@@ -73,17 +73,17 @@ def get_colored_lstyles(db, specs, default_palette, filter=None, idx = None):
             palette_prod = []
             for pidx in range(slens[0]):
                 # Skip the first color that is usually too dark or bright
-                # palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
-                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]))
+                palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]+1)[1:] )
+                # palette_prod.extend(sns.color_palette(palette=default_palette[pidx], n_colors=slens[1]))
             return palette_prod, lstyles
         else:
             default_palette = default_palette[idx]
 
     # Skip the first color that is usually too dark or bright
-    # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
+    palette = sns.color_palette(palette=default_palette, n_colors=len(linprod)+1)[1:]
     # palette = sns.color_palette(palette=default_palette, n_colors=len(linprod))
     # print(linprod)
-    palette = sns.color_palette(palette=default_palette, n_colors=(10*len(linprod)+1))[::10]
+    # palette = sns.color_palette(palette=default_palette, n_colors=(10*len(linprod)+1))[::10]
     lstyles = [None] * len(linprod)
     if len(specs) == 2:
         linkey0 = get_keys(db, specs[0])  # Sets number of colors
