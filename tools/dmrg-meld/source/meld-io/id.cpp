@@ -206,10 +206,9 @@ const h5pp::hid::h5t lbit_circuit::get_h5_type() {
     h5_type = H5Tcreate(H5T_COMPOUND, sizeof(lbit_circuit));
     H5Tinsert(h5_type, "u_depth", HOFFSET(lbit_circuit, u_depth), H5T_NATIVE_ULONG);
     H5Tinsert(h5_type, "u_fmix", HOFFSET(lbit_circuit, u_fmix), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "u_tstd", HOFFSET(lbit_circuit, u_tstd), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "u_cstd", HOFFSET(lbit_circuit, u_cstd), H5T_NATIVE_DOUBLE);
-    H5Tinsert(h5_type, "u_g8w8", HOFFSET(lbit_circuit, u_g8w8), qm::lbit::UnitaryGateParameters::get_h5t_enum_uw());
-    H5Tinsert(h5_type, "u_type", HOFFSET(lbit_circuit, u_type), qm::lbit::UnitaryGateParameters::get_h5t_enum_ut());
+    H5Tinsert(h5_type, "u_lambda", HOFFSET(lbit_circuit, u_lambda), H5T_NATIVE_DOUBLE);
+    H5Tinsert(h5_type, "u_wkind", HOFFSET(lbit_circuit, u_wkind), qm::lbit::UnitaryGateParameters::get_h5t_enum_uwkind());
+    H5Tinsert(h5_type, "u_mkind", HOFFSET(lbit_circuit, u_mkind), qm::lbit::UnitaryGateParameters::get_h5t_enum_umkind());
     H5Tinsert(h5_type, "u_bond", HOFFSET(lbit_circuit, u_bond), H5T_NATIVE_LONG);
     return h5_type;
 }

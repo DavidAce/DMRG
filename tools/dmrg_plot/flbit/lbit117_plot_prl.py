@@ -101,11 +101,12 @@ def lbit_plot(args):
     ]
     palettes = [  # Palette group for up to 4 categories
         # ["viridis_r", "autumn_r", "winter_r", "spring_r"]
-        ["autumn", "autumn_r", "winter_r", "spring_r"],
-        ["viridis_r", "autumn_r", "winter_r", "spring_r"],
+        # ["autumn_r", "autumn_r", "winter_r", "spring_r"],
+        # ["winter_r", "autumn_r", "winter_r", "spring_r"],
         # ["viridis_r"]
         # ["winter_r",  "summer_r", "autumn_r", "spring_r"]
-        # ["Blues", "Greens", "Oranges", "Purples"],
+        ["Blues", "Greens", "Oranges", "Purples"],
+        ["Oranges", "Greens", "Oranges", "Purples"],
         # ["winter_r", "autumn_r"],
         # ["Blues", "Oranges"],
         # ["Greens", "Reds"],
@@ -176,7 +177,7 @@ def lbit_plot(args):
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
         f = plot_time_fig_sub_line(db=db, meta=meta['ent'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,
                                    palette_name=palette,dbidx=0,dbnum=1)
-
+    save_figure(f)
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
         f = plot_time_fig_sub_line(db=db, meta=meta['enta-lnt'], figspec=figspec, subspec=subspec, linspec=linspec, figs=f,

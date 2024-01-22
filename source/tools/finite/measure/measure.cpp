@@ -403,6 +403,8 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
             statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
         }
     }
+    // Finally we view a slice of known size 2^L
+    statev = statev.slice(off1,ext1);
     double norm = tenx::norm(statev);
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("mps2tensor [{}]: Norm far from unity: {:.16f}", name, norm); }
     return statev.template cast<cplx>();
@@ -673,7 +675,8 @@ double tools::finite::measure::residual_norm_full(const StateFinite &state, cons
     auto t  = mps2tensor(state);
     auto Hv = tenx::VectorMap(Ht);
     auto v  = tenx::VectorMap(t);
-    tools::log->info("Calculating (Hv - v.dot(Hv) * v).norm()");
+    tools::log->info("Calculating (Hv - v.dot(Hv) * v).norm() | v.size() == {} | Hv.size() == {}", v.size(), Hv.size());
+    if(v.size() != Hv.size()) throw except::logic_error("Size mismatch: v.size() == {} | Hv.size() == {}", v.size(), Hv.size());
     return (Hv - v.dot(Hv) * v).norm();
 }
 

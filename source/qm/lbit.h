@@ -8,8 +8,8 @@
 #include <string_view>
 #include <vector>
 
-enum class UnitaryGateWeight;
-enum class UnitaryGateType;
+enum class LbitCircuitGateWeightKind;
+enum class LbitCircuitGateMatrixKind;
 enum class MeanType;
 class StateFinite;
 namespace h5pp {
@@ -28,28 +28,30 @@ namespace qm::lbit {
         double                f;     /*!< Mixing factor  */
         double                w;     /*!< Gate weight value = exp(-2|h_i - h_i+1|) */
         std::array<double, 4> theta; /*!< Random real valued thetas (for the mixing term)  */
-        std::complex<double>  c;     /*!< Random complex valued c (exchange term)  */
-        UnitaryGateWeight     g8w8;  /*!< Gate weights OFF (IDENTITY) or ON (EXPDECAY)  */
-        UnitaryGateType       type;  /*!< Gate type non-interacting or interacting: ANDERSON(0) OR MBL(1)  */
+        double l; /*!< lambda parameter used in the Hermitian matrix g8mx for the unitary circuit gates: controls the size of the sz_i*sz_j terms */
+        std::complex<double>      c;     /*!< Random complex valued c (exchange term)  */
+        LbitCircuitGateWeightKind wkind; /*!< Weights w_i in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite
+                                            fields in the Hamiltonian */
+        LbitCircuitGateMatrixKind mkind; /*!< MATRIX_(V1|V2|V3) controls the kind o Hermitian matrix used in the unitary circuit gates */
 
         [[nodiscard]] static const h5pp::hid::h5t                      get_h5_type();
-        [[nodiscard]] constexpr static std::array<std::string_view, 8> get_parameter_names() noexcept;
+        [[nodiscard]] constexpr static std::array<std::string_view, 9> get_parameter_names() noexcept;
         void                                                           print_parameter_names() const noexcept;
         void                                                           print_parameter_values() const noexcept;
         [[nodiscard]] std::string                                      fmt_value(std::string_view p) const;
 
-        static const h5pp::hid::h5t get_h5t_enum_ut();
-        static const h5pp::hid::h5t get_h5t_enum_uw();
+        static const h5pp::hid::h5t get_h5t_enum_umkind();
+        static const h5pp::hid::h5t get_h5t_enum_uwkind();
     };
 
     struct UnitaryGateProperties {
-        size_t                                     sites;   /*!< Width of the circuit, i.e. system length/number of sites */
-        size_t                                     depth;   /*!< Number of layers in the unitary circuit (1 layer connects all neighbors once) */
-        double                                     fmix;    /*!< The mixing factor f in exp(-ifM) */
-        double                                     tstd;    /*!< Standard deviation for the theta parameters in the unitary gate */
-        double                                     cstd;    /*!< Standard deviation for the c parameters in the unitary gate  */
-        UnitaryGateWeight                          g8w8;    /*!< Choose IDENTITY|EXPDECAY type of gate weight (hvals is required for EXPDECAY) */
-        UnitaryGateType                            type;    /*!< Choose ANDERSON|MBL */
+        size_t                    sites;  /*!< Width of the circuit, i.e. system length/number of sites */
+        size_t                    depth;  /*!< Number of layers in the unitary circuit (1 layer connects all neighbors once) */
+        double                    fmix;   /*!< The mixing factor f in exp(-ifwM) */
+        double                    lambda; /*!< The mixing factor f in exp(-ifwM) */
+        LbitCircuitGateWeightKind wkind; /*!< Weights w_i in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite
+                                            fields in the Hamiltonian */
+        LbitCircuitGateMatrixKind                  mkind;   /*!< MATRIX_(V1|V2|V3) controls the kind of Hermitian matrix used in the unitary circuit gates */
         double                                     hmean;   /*!< mean of random onsite fields */
         double                                     hwdth;   /*!< width of random onsite fields (st.dev. if normal) */
         std::string_view                           hdist;   /*!< distribution of onsite fields */
@@ -71,17 +73,17 @@ namespace qm::lbit {
     std::vector<std::vector<qm::Gate>> get_unitary_2site_gate_layers(const std::vector<UnitaryGateParameters> &circuit);
 
     struct lbitSupportAnalysis {
-        Eigen::Tensor<real, 6> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
-        Eigen::Tensor<real, 6> cls_avg_rms; // Root mean squared deviation
-        Eigen::Tensor<real, 6> cls_avg_rsq; // R-squared or coefficient of determination
-        Eigen::Tensor<real, 6> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
-        Eigen::Tensor<real, 6> cls_typ_rms; // Root mean squared deviation
-        Eigen::Tensor<real, 6> cls_typ_rsq; // R-squared or coefficient of determination
-        Eigen::Tensor<real, 7> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
-        Eigen::Tensor<real, 7> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
-        Eigen::Tensor<real, 7> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
-        Eigen::Tensor<real, 9> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
-        Eigen::Tensor<real, 9> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
+        Eigen::Tensor<real, 5> cls_avg_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 5> cls_avg_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 5> cls_avg_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 5> cls_typ_fit; // Characteristic length-scale of lbits from linear regression of log data
+        Eigen::Tensor<real, 5> cls_typ_rms; // Root mean squared deviation
+        Eigen::Tensor<real, 5> cls_typ_rsq; // R-squared or coefficient of determination
+        Eigen::Tensor<real, 6> corravg;     // The lbit correlation matrix of l-bits averaged over site and disorder
+        Eigen::Tensor<real, 6> corrtyp;     // The lbit correlation matrix of l-bits geometrically averaged over site and disorder
+        Eigen::Tensor<real, 6> correrr;     // The sterr of l-bits: permuted and averaged over site and disorder
+        Eigen::Tensor<real, 8> corrmat;     // The raw data from l-bit correlation matrices or the trace O(i,j) for each realization
+        Eigen::Tensor<real, 8> corroff;     // The offset lbit correlation matrices O(i, |i-j|) for each realization.
         lbitSupportAnalysis() {
             cls_avg_fit.setZero();
             cls_avg_rms.setZero();
@@ -95,27 +97,25 @@ namespace qm::lbit {
             corrmat.setZero();
             corroff.setZero();
         }
-        lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t ntstd, size_t ncstd, size_t ng8w8, size_t ntype, size_t nreps, size_t nsize)
-            : lbitSupportAnalysis() {
-            auto idpth = static_cast<Eigen::Index>(ndpth);
-            auto ifmix = static_cast<Eigen::Index>(nfmix);
-            auto itstd = static_cast<Eigen::Index>(ntstd);
-            auto icstd = static_cast<Eigen::Index>(ncstd);
-            auto ig8w8 = static_cast<Eigen::Index>(ng8w8);
-            auto itype = static_cast<Eigen::Index>(ntype);
-            auto ireps = static_cast<Eigen::Index>(nreps);
-            auto isize = static_cast<Eigen::Index>(nsize);
-            cls_avg_fit.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
-            cls_avg_rms.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
-            cls_avg_rsq.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
-            cls_typ_fit.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
-            cls_typ_rms.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
-            cls_typ_rsq.resize(idpth, ifmix, itstd, icstd, ig8w8, itype);
-            corravg.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, isize);
-            corrtyp.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, isize);
-            correrr.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, isize);
-            corrmat.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, ireps, isize, isize);
-            corroff.resize(idpth, ifmix, itstd, icstd, ig8w8, itype, ireps, isize, isize);
+        lbitSupportAnalysis(size_t ndpth, size_t nfmix, size_t nlambda, size_t nweight, size_t nmatrix, size_t nreps, size_t nsize) : lbitSupportAnalysis() {
+            auto idpth   = static_cast<Eigen::Index>(ndpth);
+            auto ifmix   = static_cast<Eigen::Index>(nfmix);
+            auto ilambda = static_cast<Eigen::Index>(nlambda);
+            auto iweight = static_cast<Eigen::Index>(nweight);
+            auto imatrix = static_cast<Eigen::Index>(nmatrix);
+            auto ireps   = static_cast<Eigen::Index>(nreps);
+            auto isize   = static_cast<Eigen::Index>(nsize);
+            cls_avg_fit.resize(idpth, ifmix, ilambda, iweight, imatrix);
+            cls_avg_rms.resize(idpth, ifmix, ilambda, iweight, imatrix);
+            cls_avg_rsq.resize(idpth, ifmix, ilambda, iweight, imatrix);
+            cls_typ_fit.resize(idpth, ifmix, ilambda, iweight, imatrix);
+            cls_typ_rms.resize(idpth, ifmix, ilambda, iweight, imatrix);
+            cls_typ_rsq.resize(idpth, ifmix, ilambda, iweight, imatrix);
+            corravg.resize(idpth, ifmix, ilambda, iweight, imatrix, isize);
+            corrtyp.resize(idpth, ifmix, ilambda, iweight, imatrix, isize);
+            correrr.resize(idpth, ifmix, ilambda, iweight, imatrix, isize);
+            corrmat.resize(idpth, ifmix, ilambda, iweight, imatrix, ireps, isize, isize);
+            corroff.resize(idpth, ifmix, ilambda, iweight, imatrix, ireps, isize, isize);
         }
     };
 
@@ -164,12 +164,11 @@ namespace qm::lbit {
 
     extern lbitSupportAnalysis                  get_lbit_support_analysis(
                                                                   const UnitaryGateProperties      & u_defaults,
-                                                                  std::vector<size_t          >    udpths = {},
-                                                                  std::vector<double          >    ufmixs = {},
-                                                                  std::vector<double          >    utstds = {},
-                                                                  std::vector<double          >    ucstds = {},
-                                                                  std::vector<UnitaryGateWeight >  ug8w8s = {},
-                                                                  std::vector<UnitaryGateType   >  utypes = {}
+                                                                  std::vector<size_t>                  udpths = {},
+                                                                  std::vector<double>                  ufmixs = {},
+                                                                  std::vector<double>                  ulambdas = {},
+                                                                  std::vector<LbitCircuitGateWeightKind>   uweights = {},
+                                                                  std::vector<LbitCircuitGateMatrixKind>   umatrixs = {}
                                                                 );
 
     StateFinite transform_to_real_basis(const StateFinite &lbit_state,

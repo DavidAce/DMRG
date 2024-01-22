@@ -1,5 +1,5 @@
 #pragma once
-#include "debug/exceptions.h"
+// #include "debug/exceptions.h"
 #include "general/sfinae.h"
 #include "math/float.h"
 #include "math/tenx.h"
@@ -66,11 +66,13 @@ namespace qm {
         Gate(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &op_, std::vector<size_t> pos_, std::vector<long> dim_, const Device &device = Device())
             : pos(std::move(pos_)), dim(std::move(dim_)) {
             auto tensor   = tenx::asEval(op_, device);
-            auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
+            [[maybe_unused]] auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
             static_assert(tensor.rank() == 2);
-            if(dim_prod != tensor.dimension(0) or dim_prod != tensor.dimension(1))
-                throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, tensor.dimension(0), tensor.dimension(1));
-            if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
+            assert(dim_prod == tensor.dimension(0) and dim_prod == tensor.dimension(1));
+            assert(pos.size() == dim.size());
+//            if(dim_prod != tensor.dimension(0) or dim_prod != tensor.dimension(1))
+//                throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, tensor.dimension(0), tensor.dimension(1));
+//            if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
             // We use a unary expression to cast from std::complex<__float128> to std::complex<double>
 //            if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx>)
                 op = op_.unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});

@@ -218,7 +218,7 @@ run_sim_id() {
   # If they do, use copy the remote file to local
   # This command will only copy if the remote file is newer.
   rclone_files_from_remote copy "$loginfo"
-  if [[ -f $loginfo ]]; then
+    if [[ -f $loginfo ]]; then
     echodate "LOGINFO                  : $(tail -n 1 $loginfo)"
     infostatus=$(tail -n 2 $loginfo | awk -F'|' '{print $NF}') # Should be one of RUNNING, FINISHED, RCLONED or FAILED. Add -n 2 to read two lines, in case there is a trailing newline
     echodate "STATUS (loginfo)         : $model_seed $id $infostatus"
@@ -247,11 +247,11 @@ run_sim_id() {
         if [[ "$status" =~ TIMEOUT|FAILED ]]; then
           # We should assume that it timed out on the other cluster
           echodate "STATUS                   : $model_seed $id may have timed out on another cluster: $cluster, running job"
-        else
+        elif [[ "$force_run" == "false" ]]; then
           echodate "STATUS                   : $model_seed $id RUNNING detected on another cluster: $cluster, aborting"
           return 0 # Go to next id because this job is handled by another cluster
         fi
-      else
+      elif [[ "$force_run" == "false" ]]; then
         echodate "STATUS                   : $model_seed $id RUNNING on unknown cluster, aborting"
         return 0 # Go to next id because this job is handled somehow...
       fi

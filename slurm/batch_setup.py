@@ -540,6 +540,32 @@ def get_batch_setup(projectname):
                 },
             }
         },
+        'lbit119-m3': {
+            # Calculate SN(L) varying the new lambda parameter
+            'projectname': 'lbit119-m3',
+            'batch': {
+                'L8': {
+                    'seed_extent': [10000],
+                    'seed_offset': [8000000],
+                    'time_steps': 200,
+                },
+                'L12': {
+                    'seed_extent': [10000],
+                    'seed_offset': [12000000],
+                    'time_steps': 200,
+                },
+                'L16': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16000000],
+                    'time_steps': 200,
+                },
+                'L20': {
+                    'seed_extent': [10000],
+                    'seed_offset': [20000000],
+                    'time_steps': 200,
+                },
+            }
+        },
         'fdmrg-isingmajorana1-init': {
             # Calculate subsystem entanglement entropies for  ground states
             'projectname': 'fdmrg-isingmajorana1-init',

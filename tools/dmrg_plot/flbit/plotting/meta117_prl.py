@@ -183,7 +183,7 @@ def get_meta(plotdir, cachedir):
             'timeselection': 'lnt',
             'timenormalization': '',
             'mplstyle': mplstyle,
-            'legendcols': ['L'],  # Choose 'num', 'bmax','tsim'
+            'legendcols': ['L', 'num'],  # Choose 'num', 'bmax','tsim'
             'legendlocation': ['upper right', 'upper right', 'upper right', 'upper right', ],
             # 'bbox_to_anchor': (1.0, 0.70),  # Use with loc 'upper right'
             'bbox_to_anchor': (1.04, 1.09),

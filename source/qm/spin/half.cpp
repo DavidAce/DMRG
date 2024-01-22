@@ -39,7 +39,7 @@ namespace qm::spin::half {
                                        (Eigen::Vector2cd() << 1.0, -1.0i).finished()/std::sqrt(2)};
 
     std::array<Eigen::Vector2cd,2> sz_spinors{(Eigen::Vector2cd() << 1.0, 0.0).finished()/std::sqrt(2),
-                                       (Eigen::Vector2cd() << 0.0, 1.0).finished()/std::sqrt(2)};
+                                              (Eigen::Vector2cd() << 0.0, 1.0).finished()/std::sqrt(2)};
 
     std::vector<Eigen::MatrixXcd> SX;
     std::vector<Eigen::MatrixXcd> SY;
@@ -92,8 +92,8 @@ namespace qm::spin::half {
         if(axus == "x" and sign < 0) return sx_spinors[1];
         if(axus == "y" and sign >= 0) return sy_spinors[0];
         if(axus == "y" and sign < 0) return sy_spinors[1];
-        if(axus == "z" and sign >= 0) return sz_spinors[0];
-        if(axus == "z" and sign < 0) return sz_spinors[1];
+        if(axus == "z" and sign >= 0) return sz_spinors[0]; // Spin up is |0> = (1,0)
+        if(axus == "z" and sign < 0) return sz_spinors[1];  // Spin down is |1> = (0,1)
         throw except::runtime_error("get_spinor given invalid axis: {}", axis);
     }
 

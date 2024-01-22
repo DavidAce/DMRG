@@ -288,22 +288,21 @@ namespace settings {
 
         /*! \namespace settings::model::lbit Settings for the l-bit Hamiltonian */
         namespace lbit {
-            inline double            J1_mean       = 0;                           /*!< Constant offset for on-site */
-            inline double            J2_mean       = 0;                           /*!< Constant offset for two-body interaction */
-            inline double            J3_mean       = 0;                           /*!< Constant offset for three-body interaction */
-            inline double            J1_wdth       = 1.0;                         /*!< Width of the distribution for on-site interactions */
-            inline double            J2_wdth       = 1.0;                         /*!< Width of the distribution for two-body interaction (st.dev. for normal distribution). */
-            inline double            J3_wdth       = 1.0;                         /*!< Width of the distribution for three-body interaction */
-            inline size_t            J2_span       = -1ul;                        /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Use -1 for infinite. Note that J2_span + 1 MPOs are used */
-            inline double            xi_Jcls       = 1.0;                         /*!< The characteristic length-scale xi of the exponentially decaying interactions: exp(-|i-j|/xi_Jcls) * Random(i,j,k...) */
-            inline long              spin_dim      = 2;                           /*!< Spin dimension */
-            inline std::string       distribution  = "normal";                    /*!< Random distribution for interaction strengths */
-            inline double            u_fmix        = 0.2;                         /*!< Mixing factor for unitary transformation to real-space */
-            inline size_t            u_depth       = 16;                          /*!< Depth of the circuit of unitary 2-site gates which transform lbit <-> real spaces */
-            inline double            u_tstd        = 1.0;                         /*!< The standard deviation for the distribution of thetas in the unitary gate */
-            inline double            u_cstd        = 1.0;                         /*!< The standard deviation for the distribution of c-terms in the unitary gates */
-            inline UnitaryGateWeight u_g8w8        = UnitaryGateWeight::EXPDECAY; /*!< Weights the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite fields in the Hamiltonian */
-            inline UnitaryGateType   u_type        = UnitaryGateType::MBL;        /*!< Choose the gate type MBL|ANDERSON */
+            inline double      J1_mean       = 0;                                      /*!< Constant offset for on-site */
+            inline double      J2_mean       = 0;                                      /*!< Constant offset for two-body interaction */
+            inline double      J3_mean       = 0;                                      /*!< Constant offset for three-body interaction */
+            inline double      J1_wdth       = 1.0;                                    /*!< Width of the distribution for on-site interactions */
+            inline double      J2_wdth       = 1.0;                                    /*!< Width of the distribution for two-body interaction (st.dev. for normal distribution). */
+            inline double      J3_wdth       = 1.0;                                    /*!< Width of the distribution for three-body interaction */
+            inline size_t      J2_span       = -1ul;                                   /*!< Maximum allowed range for pairwise interactions, |i-j| <= J2_span. Use -1 for infinite. Note that J2_span + 1 MPOs are used */
+            inline double      xi_Jcls       = 1.0;                                    /*!< The characteristic length-scale xi of the exponentially decaying interactions: J = exp(-|i-j|/xi_Jcls) * Random(i,j) */
+            inline long        spin_dim      = 2;                                      /*!< Spin dimension */
+            inline std::string distribution  = "normal";                               /*!< Random distribution for the interaction strengths in J2 */
+            inline double      u_fmix        = 0.2;                                    /*!< Mixing factor for unitary transformation to real-space */
+            inline size_t      u_depth       = 16;                                     /*!< Depth of the circuit of unitary 2-site gates which transform lbit <-> real spaces */
+            inline double      u_lambda      = 1.0;                                    /*!< lambda parameter used in the Hermitian matrix g8mx for the unitary circuit gates: controls the size of the sz_i*sz_j terms */
+            inline auto        u_wkind      = LbitCircuitGateWeightKind::EXPDECAY;     /*!< Weights w_i in the unitary 2-site gates. Choose [IDENTITY, EXPDECAY] for 1 or exp(-2|h[i] - h[i+1]|), h are onsite fields in the Hamiltonian */
+            inline auto        u_mkind      = LbitCircuitGateMatrixKind::MATRIX_V3;    /*!< MATRIX_(V1|V2|V3) controls the kind of Hermitian matrix used in the unitary circuit gates */
         }
     }
 

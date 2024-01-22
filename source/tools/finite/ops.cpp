@@ -69,7 +69,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
                                     const Eigen::Tensor<cplx, 3> &Redge, bool adjoint) {
     // Apply MPO's on Gamma matrices and
     // increase the size on all Lambdas by chi*mpoDim
-    tools::log->trace("Applying MPO's");
+    tools::log->trace("Applying MPOs");
     if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
 
     if constexpr(settings::verbose_projection) {

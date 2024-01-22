@@ -18,10 +18,41 @@ enum class GateMove { OFF, ON, AUTO };
 enum class GateOp { NONE, CNJ, ADJ, TRN };
 enum class CircuitOp { NONE, ADJ, TRN };
 enum class ModelType { ising_tf_rf, ising_sdual, ising_majorana, lbit };
-enum class UnitaryGateType { ANDERSON, MBL };
-enum class UnitaryGateWeight { IDENTITY, EXPDECAY }; // 1 or exp(-2|h[i] - h[i+1]|)
 enum class EdgeStatus { STALE, FRESH };
 enum class TimeScale { LINSPACED, LOGSPACED };
+
+/*! \brief The type of Hermitian matrix M_i used in the 2-site gates u_i of the random unitary circuit for our l-bit model: u_i = exp(-i f w_i M_i)
+ */
+enum class LbitCircuitGateMatrixKind : int {
+    MATRIX_V1,    /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
+                  * \verbatim
+                  * M_i = θ₀/4 (1 + σz[i] + σz[i+1] + λ σz[i] σz[i+1])
+                  *     + θ₁/4 (1 + σz[i] - σz[i+1] - λ σz[i] σz[i+1])
+                  *     + θ₂/4 (1 - σz[i] + σz[i+1] - λ σz[i] σz[i+1])
+                  *     + θ₃/4 (1 - σz[i] - σz[i+1] + λ σz[i] σz[i+1])
+                  *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
+                  * \endverbatim */
+    MATRIX_V2,    /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
+                  * \verbatim
+                  * M_i = θ₀/2 σz[i]
+                  *     + θ₁/2 σz[i+1]
+                  *     + θ₂/2 λ σz[i]σz[i+1]
+                  *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
+                  * \endverbatim */
+    MATRIX_V3,    /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
+                  * \verbatim
+                  * M_i = θ₀/2 σz[i]
+                  *     + θ₁/2 σz[i+1]
+                  *     + λ σz[i]σz[i+1]
+                  *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
+                  * \endverbatim */
+};
+
+/*! The type of weights w_i used in each 2-site gate u_i of the random unitary circuit for our l-bit model: u_i = exp(-i f w_i M_i) */
+enum class LbitCircuitGateWeightKind : int {
+    IDENTITY, /*!< w_i = 1 (i.e. disables weighs) */
+    EXPDECAY, /*!< w_i = exp(-2|h[i] - h[i+1]|), where h[i] are on-site fields of the l-bit Hamiltonian */
+};
 
 /*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
@@ -325,8 +356,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         GateMove,
         GateOp,
         CircuitOp,
-        UnitaryGateType,
-        UnitaryGateWeight,
+        LbitCircuitGateMatrixKind,
+        LbitCircuitGateWeightKind,
         ModelType,
         EdgeStatus,
         TimeScale,
@@ -400,23 +431,24 @@ constexpr std::string_view enum2sv(const T item) noexcept {
         if(item == GateMove::AUTO)                                      return "AUTO";
     }
     if constexpr(std::is_same_v<T, GateOp>) {
-        if(item == GateOp::NONE)                                       return "NONE";
-        if(item == GateOp::CNJ)                                        return "CNJ";
-        if(item == GateOp::ADJ)                                        return "ADJ";
-        if(item == GateOp::TRN)                                        return "TRN";
+        if(item == GateOp::NONE)                                        return "NONE";
+        if(item == GateOp::CNJ)                                         return "CNJ";
+        if(item == GateOp::ADJ)                                         return "ADJ";
+        if(item == GateOp::TRN)                                         return "TRN";
     }
     if constexpr(std::is_same_v<T, CircuitOp>) {
-        if(item == CircuitOp::NONE)                                       return "NONE";
-        if(item == CircuitOp::ADJ)                                        return "ADJ";
-        if(item == CircuitOp::TRN)                                        return "TRN";
+        if(item == CircuitOp::NONE)                                     return "NONE";
+        if(item == CircuitOp::ADJ)                                      return "ADJ";
+        if(item == CircuitOp::TRN)                                      return "TRN";
     }
-    if constexpr(std::is_same_v<T, UnitaryGateType>) {
-        if(item == UnitaryGateType::ANDERSON)                         return "ANDERSON";
-        if(item == UnitaryGateType::MBL)                              return "MBL";
+    if constexpr(std::is_same_v<T, LbitCircuitGateMatrixKind>) {
+        if(item == LbitCircuitGateMatrixKind::MATRIX_V1)                    return "MATRIX_V1";
+        if(item == LbitCircuitGateMatrixKind::MATRIX_V2)                    return "MATRIX_V2";
+        if(item == LbitCircuitGateMatrixKind::MATRIX_V3)                    return "MATRIX_V3";
     }
-    if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
-        if(item == UnitaryGateWeight::IDENTITY)                         return "IDENTITY";
-        if(item == UnitaryGateWeight::EXPDECAY)                         return "EXPDECAY";
+    if constexpr(std::is_same_v<T, LbitCircuitGateWeightKind>) {
+        if(item == LbitCircuitGateWeightKind::IDENTITY)                     return "IDENTITY";
+        if(item == LbitCircuitGateWeightKind::EXPDECAY)                     return "EXPDECAY";
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == ModelType::ising_tf_rf)                              return "ising_tf_rf";
@@ -654,8 +686,8 @@ constexpr auto sv2enum(std::string_view item) {
         GateMove,
         GateOp,
         CircuitOp,
-        UnitaryGateType,
-        UnitaryGateWeight,
+        LbitCircuitGateMatrixKind,
+        LbitCircuitGateWeightKind,
         ModelType,
         EdgeStatus,
         TimeScale,
@@ -737,13 +769,15 @@ constexpr auto sv2enum(std::string_view item) {
         if(item == "ADJ")                                   return CircuitOp::ADJ;
         if(item == "TRN")                                   return CircuitOp::TRN;
     }
-    if constexpr(std::is_same_v<T, UnitaryGateType>) {
-        if(item == "ANDERSON")                              return UnitaryGateType::ANDERSON;
-        if(item == "MBL")                                   return UnitaryGateType::MBL;
+    if constexpr(std::is_same_v<T, LbitCircuitGateMatrixKind>) {
+        if(item == "MATRIX_V1")                             return LbitCircuitGateMatrixKind::MATRIX_V1;
+        if(item == "MATRIX_V2")                             return LbitCircuitGateMatrixKind::MATRIX_V2;
+        if(item == "MATRIX_V3")                             return LbitCircuitGateMatrixKind::MATRIX_V3;
+
     }
-    if constexpr(std::is_same_v<T, UnitaryGateWeight>) {
-        if(item == "IDENTITY")                              return UnitaryGateWeight::IDENTITY;
-        if(item == "EXPDECAY")                              return UnitaryGateWeight::EXPDECAY;
+    if constexpr(std::is_same_v<T, LbitCircuitGateWeightKind>) {
+        if(item == "IDENTITY")                              return LbitCircuitGateWeightKind::IDENTITY;
+        if(item == "EXPDECAY")                              return LbitCircuitGateWeightKind::EXPDECAY;
     }
     if constexpr(std::is_same_v<T, ModelType>) {
         if(item == "ising_tf_rf")                           return ModelType::ising_tf_rf;

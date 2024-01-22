@@ -234,7 +234,7 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
                 std::tie(mpo_sq, T_l2r) = svd.split_mpo_l2r(T_mpo_sq);
                 if(idx + 1 == mpos_sq.size())
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
-                    mpo_sq = Eigen::Tensor<cplx, 4>(mpo_sq.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}));
+                    mpo_sq = mpo_sq.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             }
             if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
         }
@@ -254,7 +254,7 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
                 std::tie(T_r2l, mpo_sq) = svd.split_mpo_r2l(mpo_sq_T);
                 if(idx == 0)
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
-                    mpo_sq = Eigen::Tensor<cplx, 4>(T_r2l.contract(mpo_sq, tenx::idx({1}, {0})));
+                    mpo_sq = T_r2l.contract(mpo_sq, tenx::idx({1}, {0}));
             }
             if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
         }

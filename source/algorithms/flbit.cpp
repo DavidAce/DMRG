@@ -672,13 +672,15 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     // Save the unitaries once
     if(h5file and storage_event == StorageEvent::MODEL) {
         auto t_h5 = tid::tic_scope("h5");
-        qm::lbit::write_unitary_circuit_parameters(*h5file, "/fLBIT/model/unitary_circuit", uprop.circuit); // Writes a table with gate parameters for resuming
-        h5file->writeAttribute(uprop.depth, "/fLBIT/model/unitary_circuit", "u_depth");
-        h5file->writeAttribute(uprop.fmix, "/fLBIT/model/unitary_circuit", "u_fmix");
-        h5file->writeAttribute(uprop.tstd, "/fLBIT/model/unitary_circuit", "u_tstd");
-        h5file->writeAttribute(uprop.cstd, "/fLBIT/model/unitary_circuit", "u_cstd");
-        h5file->writeAttribute(uprop.g8w8, "/fLBIT/model/unitary_circuit", "u_g8w8");
-        h5file->writeAttribute(uprop.type, "/fLBIT/model/unitary_circuit", "u_type");
+        if(settings::storage::table::random_unitary_circuit::policy == StoragePolicy::INIT) {
+            if(uprop.circuit.empty()) throw except::logic_error("The unitary circuit is empty");
+            qm::lbit::write_unitary_circuit_parameters(*h5file, "/fLBIT/model/unitary_circuit",
+                                                       uprop.circuit); // Writes a table with gate parameters for resuming
+            h5file->writeAttribute(uprop.depth, "/fLBIT/model/unitary_circuit", "u_depth");
+            h5file->writeAttribute(uprop.fmix, "/fLBIT/model/unitary_circuit", "u_fmix");
+            h5file->writeAttribute(uprop.wkind, "/fLBIT/model/unitary_circuit", "u_wkind");
+            h5file->writeAttribute(uprop.mkind, "/fLBIT/model/unitary_circuit", "u_mkind");
+        }
     }
     //    if(h5file and storage_event == StorageEvent::MODEL) {
     //        auto        t_h5      = tid::tic_scope("h5");
@@ -707,19 +709,18 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
         if(h5file and h5file->linkExists("/fLBIT/model/lbits")) return;
         auto nsamps = settings::flbit::cls::num_rnd_circuits;
         if(nsamps > 0) {
-            auto                usites = std::vector<size_t>{settings::model::model_size};
-            auto                ug8w8s = std::vector<UnitaryGateWeight>{settings::model::lbit::u_g8w8};
-            auto                utypes = std::vector<UnitaryGateType>{settings::model::lbit::u_type};
-            auto                udpths = std::vector<size_t>{settings::model::lbit::u_depth};
-            auto                ufmixs = std::vector<double>{settings::model::lbit::u_fmix};
-            auto                utstds = std::vector<double>{settings::model::lbit::u_tstd};
-            auto                ucstds = std::vector<double>{settings::model::lbit::u_cstd};
-            auto                randhf = settings::flbit::cls::randomize_hfields;
+            auto                usites   = std::vector<size_t>{settings::model::model_size};
+            auto                udpths   = std::vector<size_t>{settings::model::lbit::u_depth};
+            auto                ufmixs   = std::vector<double>{settings::model::lbit::u_fmix};
+            auto                ulambdas = std::vector<double>{settings::model::lbit::u_lambda};
+            auto                uwkinds  = std::vector<LbitCircuitGateWeightKind>{settings::model::lbit::u_wkind};
+            auto                umkinds  = std::vector<LbitCircuitGateMatrixKind>{settings::model::lbit::u_mkind};
+            auto                randhf   = settings::flbit::cls::randomize_hfields;
             std::vector<double> fields;
             for(const auto &field : tensors.model->get_parameter("J1_rand")) fields.emplace_back(static_cast<double>(std::any_cast<real_t>(field)));
             auto uprop_default    = qm::lbit::UnitaryGateProperties(fields);
             uprop_default.ulayers = unitary_gates_2site_layers;
-            auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, utstds, ucstds, ug8w8s);
+            auto lbitSA           = qm::lbit::get_lbit_support_analysis(uprop_default, udpths, ufmixs, ulambdas, uwkinds, umkinds);
             if(h5file and settings::storage::dataset::lbit_analysis::policy == StoragePolicy::INIT) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
@@ -759,10 +760,9 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 //                }
                 h5file->writeAttribute(udpths, "/fLBIT/model/lbits", "u_depth");
                 h5file->writeAttribute(ufmixs, "/fLBIT/model/lbits", "u_fmix");
-                h5file->writeAttribute(utstds, "/fLBIT/model/lbits", "u_tstd");
-                h5file->writeAttribute(ucstds, "/fLBIT/model/lbits", "u_cstd");
-                h5file->writeAttribute(enum2sv(ug8w8s), "/fLBIT/model/lbits", "u_g8w8");
-                h5file->writeAttribute(enum2sv(utypes), "/fLBIT/model/lbits", "u_type");
+                h5file->writeAttribute(ulambdas, "/fLBIT/model/lbits", "u_lambda");
+                h5file->writeAttribute(enum2sv(uwkinds), "/fLBIT/model/lbits", "u_wkind");
+                h5file->writeAttribute(enum2sv(umkinds), "/fLBIT/model/lbits", "u_mkind");
                 h5file->writeAttribute(nsamps, "/fLBIT/model/lbits", "samples");
                 h5file->writeAttribute(randhf, "/fLBIT/model/lbits", "randomize_hfields");
                 h5file->writeAttribute(settings::flbit::cls::mpo_circuit_svd_bondlim, "/fLBIT/model/lbits", "u_bond");

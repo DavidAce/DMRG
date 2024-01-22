@@ -107,21 +107,21 @@ namespace tools::h5io {
         if constexpr(std::is_same_v<H, lbit>) {
             size_t J_dec = get_max_decimals({M.h.J1_mean, M.h.J1_wdth, M.h.J2_mean, M.h.J2_wdth, M.h.J3_mean, M.h.J3_wdth});
             size_t x_dec = get_max_decimals({M.h.xi_Jcls});
-            size_t u_dec = get_max_decimals({M.c.u_fmix, M.c.u_tstd, M.c.u_cstd});
-            auto   L_str = fmt::format(FMT_COMPILE("L{}"), M.model_size);
-            auto   J_str = fmt::format(FMT_COMPILE("J[{1:+.{0}f}±{2:.{0}f}_{3:+.{0}f}±{4:.{0}f}_{5:+.{0}f}±{6:.{0}f}]"), J_dec, M.h.J1_mean, M.h.J1_wdth,
-                                       M.h.J2_mean, M.h.J2_wdth, M.h.J3_mean, M.h.J3_wdth);
-            auto   x_str = fmt::format(FMT_COMPILE("x{1:.{0}f}"), x_dec, M.h.xi_Jcls);
+            size_t u_dec = get_max_decimals({M.c.u_fmix, M.c.u_lambda});
+            auto   L_str = fmt::format("L{}", M.model_size);
+            auto   J_str = fmt::format("J[{1:+.{0}f}±{2:.{0}f}_{3:+.{0}f}±{4:.{0}f}_{5:+.{0}f}±{6:.{0}f}]", J_dec, M.h.J1_mean, M.h.J1_wdth, M.h.J2_mean,
+                                       M.h.J2_wdth, M.h.J3_mean, M.h.J3_wdth);
+            auto   x_str = fmt::format("x{1:.{0}f}", x_dec, M.h.xi_Jcls);
             // J2_span is special since it can be -1ul, meaning long range. We prefer putting L in the path rather than 18446744073709551615
             auto r_str      = M.h.J2_span == -1ul ? fmt::format("rL") : fmt::format("r{}", M.h.J2_span);
-            auto u_du_str   = fmt::format(FMT_COMPILE("d[{}]"), M.c.u_depth);
-            auto u_f_str    = fmt::format(FMT_COMPILE("_f[{1:.{0}f}]"), u_dec, M.c.u_fmix);
-            auto u_tw_str   = fmt::format(FMT_COMPILE("_t[N(0,{1:.{0}f})]"), u_dec, M.c.u_tstd);
-            auto u_cw_str   = fmt::format(FMT_COMPILE("_c[N(0,{1:.{0}f})]"), u_dec, M.c.u_cstd);
-            auto u_w8_str   = fmt::format(FMT_COMPILE("_w[{0:.2}]"), enum2sv(M.c.u_g8w8));
-            auto u_bond_str = fmt::format(FMT_COMPILE("_bond[{}]"), M.c.u_bond);
-            auto u_str      = fmt::format(FMT_COMPILE("u[{}{}{}{}{}{}]"), u_du_str, u_f_str, u_tw_str, u_cw_str, u_w8_str, u_bond_str);
-            auto base       = fmt::format(FMT_COMPILE("{0}/{1}/{2}/{3}/{4}"), L_str, J_str, x_str, r_str, u_str);
+            auto u_du_str   = fmt::format("d[{}]", M.c.u_depth);
+            auto u_f_str    = fmt::format("_f[{1:.{0}f}]", u_dec, M.c.u_fmix);
+            auto u_l_str    = fmt::format("_l[{1:.{0}f}]", u_dec, M.c.u_lambda);
+            auto u_wk_str   = fmt::format("_w[{0:.2}]", enum2sv(M.c.u_wkind));
+            auto u_mk_str   = fmt::format("_m[{0:.2}]", enum2sv(M.c.u_mkind).substr(6));
+            auto u_bond_str = fmt::format("_bond[{}]", M.c.u_bond);
+            auto u_str      = fmt::format("u[{}{}{}{}{}{}]", u_du_str, u_f_str, u_l_str, u_wk_str, u_mk_str, u_bond_str);
+            auto base       = fmt::format("{0}/{1}/{2}/{3}/{4}", L_str, J_str, x_str, r_str, u_str);
             tools::logger::log->info("creating base: {}", base);
             return base;
         }
@@ -255,10 +255,9 @@ namespace tools::h5io {
                     auto path_circuit = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
                     circuit.u_depth   = h5_src.readAttribute<size_t>(path_circuit, "u_depth");
                     circuit.u_fmix    = h5_src.readAttribute<double>(path_circuit, "u_fmix");
-                    circuit.u_tstd    = h5_src.readAttribute<double>(path_circuit, "u_tstd");
-                    circuit.u_cstd    = h5_src.readAttribute<double>(path_circuit, "u_cstd");
-                    circuit.u_g8w8    = h5_src.readAttribute<UnitaryGateWeight>(path_circuit, "u_g8w8");
-                    circuit.u_type    = h5_src.readAttribute<UnitaryGateType>(path_circuit, "u_type");
+                    circuit.u_lambda  = h5_src.readAttribute<double>(path_circuit, "u_lambda");
+                    circuit.u_wkind   = h5_src.readAttribute<LbitCircuitGateWeightKind>(path_circuit, "u_wkind");
+                    circuit.u_mkind   = h5_src.readAttribute<LbitCircuitGateMatrixKind>(path_circuit, "u_mkind");
                     auto path_lbits   = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
                     if(h5_src.linkExists(path_lbits)) {
                         auto u_bond = h5_src.readAttribute<std::optional<long>>(path_lbits, "u_bond");

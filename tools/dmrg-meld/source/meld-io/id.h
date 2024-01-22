@@ -62,11 +62,11 @@ struct lbit_circuit {
     size_t                      u_depth;
     double                      u_fmix;
     double                      u_tstd;
-    double                      u_cstd;
-    UnitaryGateWeight           u_g8w8;
-    UnitaryGateType             u_type;
+    double                      u_lambda;
+    LbitCircuitGateWeightKind   u_wkind;
+    LbitCircuitGateMatrixKind   u_mkind;
     long                        u_bond = -1;
-    static constexpr auto       fields = std::array<std::string_view, 7>{"u_fmix", "u_depth", "u_tstd", "u_cstd", "u_g8w8", "u_type", "u_bond"};
+    static constexpr auto       fields = std::array<std::string_view, 7>{"u_fmix", "u_depth", "u_lambda", "u_wkind", "u_mkind", "u_bond"};
     static const h5pp::hid::h5t get_h5_type();
 };
 

@@ -60,7 +60,7 @@ These model Hamiltonians of 1D quantum systems are included:
 
 - `ModelType::ising_sdual`: The Self-dual transverse-field Ising model.
 - `ModelType::ising_tf_rf`: The Transverse-field Ising model with random on-site field.
-- `ModelType::lbit`: The l-bit Hamiltonian, used to describe a many-body localized phase (MBL)
+- `ModelType::lbit`: The l-bit Hamiltonian, used to describe a many-body localized phase
   in terms of its local integrals of motion (the l-bits).
 
 The Hamiltonians are implemented as *Matrix Product Operators* (MPO), located under `source/tensors/model`. The model
