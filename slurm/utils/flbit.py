@@ -31,22 +31,34 @@ def get_unique_config_string(d: dict, dl: dict, delim: str):
     u_tgw8, u_tgw8s = [x.get('model::lbit::u_tgw8') for x in [d, dl]]
     u_cstd, u_cstds = [x.get('model::lbit::u_cstd') for x in [d, dl]]
     u_cgw8, u_cgw8s = [x.get('model::lbit::u_cgw8') for x in [d, dl]]
+    u_cgw8, u_cgw8s = [x.get('model::lbit::u_cgw8') for x in [d, dl]]
     u_bond, u_bonds = [x.get('flbit::cls::mpo_circuit_svd_bondlim') for x in [d, dl]]
     u_g8w8, u_g8w8s = [x.get('model::lbit::u_g8w8') for x in [d, dl]]
     u_type, u_types = [x.get('model::lbit::u_type') for x in [d, dl]]
+    u_lambda, u_lambdas = [x.get('model::lbit::u_lambda') for x in [d, dl]]
+    u_wkind, u_wkinds = [x.get('model::lbit::u_wkind') for x in [d, dl]]
+    u_mkind, u_mkinds = [x.get('model::lbit::u_mkind') for x in [d, dl]]
 
-
-    str_circuit += f"_tw{u_tstd}" if u_tstds is not None and len(u_tstds) > 1 else ''
+    if u_tstds is not None:
+        str_circuit += f"_tw{u_tstd}" if len(u_tstds) > 1 else ''
     if u_tgw8s is not None:
-        str_circuit += f"{u_tgw8[:2]}" if u_tgw8s is not None and len(u_tgw8s) > 1 else ''
-    str_circuit += f"_cw{u_cstd}" if u_cstds is not None and len(u_cstds) > 1 else ''
+        str_circuit += f"{u_tgw8[:2]}" if len(u_tgw8s) > 1 else ''
+    if u_cstds is not None:
+        str_circuit += f"_cw{u_cstd}" if len(u_cstds) > 1 else ''
     if u_cgw8s is not None:
-        str_circuit += f"{u_cgw8[:2]}" if u_cgw8s is not None and len(u_cgw8s) > 1 else ''
+        str_circuit += f"{u_cgw8[:2]}" if len(u_cgw8s) > 1 else ''
     if u_g8w8s is not None:
-        str_circuit += f"{u_g8w8[:2]}" if u_g8w8s is not None and len(u_g8w8s) > 1 else ''
+        str_circuit += f"{u_g8w8[:2]}" if len(u_g8w8s) > 1 else ''
     if u_types is not None:
-        str_circuit += f"_{u_type[:3]}" if u_types is not None and len(u_types) > 1 else ''
-    str_circuit += f"_bond{u_bond}" if u_bonds is not None and len(u_bonds) > 1 else ''
+        str_circuit += f"_{u_type[:3]}" if len(u_types) > 1 else ''
+    if u_lambdas is not None:
+        str_circuit += f"_l{u_lambda}"
+    if u_wkinds is not None:
+        str_circuit += f"_w{u_wkind[:3]}"
+    if u_mkinds is not None:
+        str_circuit += f"_m{u_mkind[-2:]}"
+    if u_bonds is not None:
+        str_circuit += f"_bond{u_bond}" if len(u_bonds) > 1 else ''
     return f"L{str_L}{delim}J{str_J}{delim}x{str_x}{delim}r{str_rL}{delim}u[{str_circuit}]"
 
 def get_config_filename(d: dict, dl: dict, p: dict):
