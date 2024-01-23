@@ -61,6 +61,7 @@ class DMRGConan(ConanFile):
         self.requires("cli11/2.3.2")
         self.requires("backward-cpp/1.6")
         self.requires("pcg-cpp/cci.20220409")
+        self.requires("tomlplusplus/3.4.0")
 
 
     def validate(self):

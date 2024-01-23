@@ -74,7 +74,7 @@ namespace sfinae {
 
     template<typename T>
     concept has_resize_v = requires(T m) {
-        { m.resize() } -> std::same_as<void>;
+        { m.resize(0) } -> std::same_as<void>;
     };
 
     template<typename T>
@@ -83,9 +83,7 @@ namespace sfinae {
     };
 
     template<typename T>
-    concept has_value_type_v = requires(T m) {
-        { T::value_type };
-    };
+    concept has_value_type_v = requires { typename T::value_type; };
 
     template<typename T>
     concept has_c_str_v = requires(T m) {
@@ -98,14 +96,10 @@ namespace sfinae {
     };
 
     template<typename T>
-    concept has_Scalar_v = requires(T m) {
-        { T::Scalar };
-    };
+    concept has_Scalar_v = requires { T::Scalar; };
 
     template<typename T>
-    concept has_NumIndices_v = requires(T m) {
-        { T::NumIndices };
-    };
+    concept has_NumIndices_v = requires { T::NumIndices; };
 
     template<typename T>
     concept has_dimensions_v = requires(T m) {
@@ -448,5 +442,4 @@ namespace sfinae {
         return is_Scalar2_v<T> or is_Scalar3_v<T>;
     }
 #endif
-
 }

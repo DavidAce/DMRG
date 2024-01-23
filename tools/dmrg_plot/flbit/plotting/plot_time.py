@@ -120,7 +120,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
             # for dirvals in dirprod:
             # palette = plt.rcParams['axes.prop_cycle'].by_key()['color']
             palette, lstyles = get_colored_lstyles(db, linspec, palette_name, filter=None, idx=idx_palette)
-            graypalette, _ = get_colored_lstyles(db, linspec, ["Greys"], filter=None, idx=idx_palette)
+            # graypalette, _ = get_colored_lstyles(db, linspec, ["Greys"], filter=None, idx=idx_palette)
 
             xm1,ym1,cm1,xm2,ym2,cm2,xm3,ym3,cm3,xm4,ym4,cm4, xm5,ym5,cm5 = [],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
 
@@ -416,37 +416,35 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                             zorder=10,
                                             )
                             if meta.get('fitsatapproachlnt'):
+                                idx1 = t.idx_ent_lnt_begin
+                                idx2 = t.idx_ent_lnt_cease
                                 try:
-                                    idx1 = t.idx_ent_lnt_begin
-                                    idx2 = t.idx_ent_lnt_cease
+                                    gamma = 0
                                     if idx2 <= idx1:
                                         raise IndexError("Invalid index order: idx1 {} | idx2 {}".format(idx1, idx2))
-                                    if idx1 + 10 > idx2:
+                                    if idx1 + 1 >= idx2:
                                         raise IndexError("Too few datapoints for a fit: idx1 {} | idx2 {}".format(idx1, idx2))
-                                    try:
-                                        with np.errstate(divide='ignore', invalid='ignore'):
-                                            tlog = np.log(tdata)
-                                        popt, pcov = curve_fit(f=flinear, xdata=tlog[idx1:idx2],
-                                                                          ydata=y[idx1:idx2])
-                                        idx_min = int(idx1 * 0.5)
-                                        idx_max = int(np.min([len(tdata) - 1, idx2 * 1.3]))
-                                        tfit = xdata[idx_min:idx_max]
-                                        yfit = flinear(tlog[idx_min:idx_max], *popt)
-                                        ax.plot(tfit, yfit, marker=None,
-                                                linewidth=0.4,
-                                                linestyle=(0,(4,4)), label='fit', color=color,
-                                                path_effects=yfit_effects,
-                                                zorder=9,)
+                                    with np.errstate(divide='ignore', invalid='ignore'):
+                                        tlog = np.log(tdata)
+                                    popt, pcov = curve_fit(f=flinear, xdata=tlog[idx1:idx2],
+                                                                      ydata=y[idx1:idx2])
+                                    idx_min = int(idx1 * 0.5)
+                                    idx_max = int(np.min([len(tdata) - 1, idx2 * 1.3]))
+                                    tfit = xdata[idx_min:idx_max]
+                                    yfit = flinear(tlog[idx_min:idx_max], *popt)
+                                    ax.plot(tfit, yfit, marker=None,
+                                            linewidth=0.4,
+                                            linestyle=(0,(4,4)), label='fit', color=color,
+                                            path_effects=yfit_effects,
+                                            zorder=9,)
 
-                                        gamma = popt[1]
-                                    except IndexError as err:
-                                        print(f'failed to plot approach: {e}')
-                                        pass
-                                    except ValueError as err:
-                                        logger.error("Fit to loglog approach failed: {}".format(err))
-
-                                except IndexError as e:
+                                    gamma = popt[1]
+                                except IndexError as err:
+                                    print(f'failed to plot approach: {err}')
                                     pass
+                                except ValueError as err:
+                                    logger.error("Fit to loglog approach failed: {}".format(err))
+
                             if meta.get('fitsatapproachlnlnt'):
                                 try:
                                     idx1 = t.idx_num_lnlnt_begin
@@ -577,6 +575,7 @@ def plot_v3_time_fig_sub_line(db, meta, figspec, subspec, linspec, algo_filter=N
                                 f['legends'][idx][icol]['title'] = '$100\kappa$'
                                 icol += 1
                                 # f['legends'][idx][icol]['header'] = get_title(dbval, subspec, width=16)
+                            print(f"{gamma=}")
                             if gamma is not None:
                                 f['legends'][idx][icol]['handle'].append(line)
                                 f['legends'][idx][icol]['label'].append(f'{100*abs(gamma):.2f}')

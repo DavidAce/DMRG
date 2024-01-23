@@ -137,12 +137,13 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                         # ext = int(reals / 5)
                         # Plot the saturation time
                         if 'saturated' in meta['timepoints']:
-                            filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(dbval['vals']['cachedir'],
+                            filenamejson = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}]_l[{}].json".format(dbval['vals']['cachedir'],
                                                                                       meta['dsetname'],
                                                                                       dbval['vals']['L'],
                                                                                       dbval['vals']['x'],
                                                                                       dbval['vals']['w'],
-                                                                                      dbval['vals']['f'] )
+                                                                                      dbval['vals']['f'],
+                                                                                      dbval['vals']['l'])
                             if meta.get('loadjson') and os.path.isfile(filenamejson):
                                 with open(filenamejson, 'r') as fp:
                                     tsb_json = json.load(fp)
@@ -151,6 +152,8 @@ def plot_v3_tsat_fig_sub_line(db, meta, figspec, subspec, linspec, xaxspec, algo
                                 # tboot_idx_avg, tboot_idx_err, sboot_avg, sboot_err = get_entropy_saturation_from_bootstrap(ydata=s, nbs=100)
                                 tsb = find_entropy_inftime_saturation_value_from_bootstrap(sdata=s, tdata=t, nbs=meta.get('num-bootstraps', 100), dsetname=meta['dsetname'])
                                 if meta.get('savejson'):
+                                    if not os.path.exists(dbval['vals']['cachedir']):
+                                        os.makedirs(dbval['vals']['cachedir'])
                                     with open(filenamejson, 'w') as fp:
                                         json.dump(asdict(tsb), fp, indent=4)
                             tboot = tsb.tsat_boot_avg

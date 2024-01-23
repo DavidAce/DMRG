@@ -89,7 +89,8 @@ def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
         'lbit115',  # L16 xi_J=0.5,2.0 to see how it affects the saturation time of SE
         'lbit116',  # L16 anderson mode to see how it affects the saturation time of SN
         'lbit117',  # L[12-20] anderson mode to see how it affects SN(L)
-        'lbit117',  # L[12-20] mbl mode to see how it affects SN(L) compared to lbit117
+        'lbit118',  # L[12-20] mbl mode to see how it affects SN(L) compared to lbit117
+        'lbit119',  # L[8-16] vary the new lambda parameter
     ]
     xdmrg_batches = ['data170',  #
                     ]

@@ -118,7 +118,7 @@ namespace tools::h5io {
             auto u_f_str    = fmt::format("_f[{1:.{0}f}]", u_dec, M.c.u_fmix);
             auto u_l_str    = fmt::format("_l[{1:.{0}f}]", u_dec, M.c.u_lambda);
             auto u_wk_str   = fmt::format("_w[{0:.2}]", enum2sv(M.c.u_wkind));
-            auto u_mk_str   = fmt::format("_m[{0:.2}]", enum2sv(M.c.u_mkind).substr(6));
+            auto u_mk_str   = fmt::format("_m[{0:.2}]", enum2sv(M.c.u_mkind).substr(7));
             auto u_bond_str = fmt::format("_bond[{}]", M.c.u_bond);
             auto u_str      = fmt::format("u[{}{}{}{}{}{}]", u_du_str, u_f_str, u_l_str, u_wk_str, u_mk_str, u_bond_str);
             auto base       = fmt::format("{0}/{1}/{2}/{3}/{4}", L_str, J_str, x_str, r_str, u_str);
@@ -239,7 +239,7 @@ namespace tools::h5io {
                 if constexpr(std::is_same_v<H, lbit>) {
                     auto  h5tb_hamiltonian = h5_src.readTableRecords<h5tb_lbit::table>(hamiltonian_path, h5pp::TableSelection::FIRST);
                     auto  circuit_path     = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
-                    auto  h5tb_circuit     = h5_src.readTableRecords<qm::lbit::UnitaryGateParameters>(circuit_path, h5pp::TableSelection::FIRST);
+                    auto  h5tb_circuit     = h5_src.readTableRecords<qm::lbit::UnitaryGateParameters>(circuit_path, h5pp::TableSelection::LAST);
                     auto &circuit          = srcModelId.c;
 
                     hamiltonian.J1_mean      = h5tb_hamiltonian.J1_mean;
@@ -253,12 +253,13 @@ namespace tools::h5io {
                     hamiltonian.distribution = h5tb_hamiltonian.distribution;
 
                     auto path_circuit = fmt::format("{}/{}/unitary_circuit", srcKey.algo, srcKey.model);
-                    circuit.u_depth   = h5_src.readAttribute<size_t>(path_circuit, "u_depth");
-                    circuit.u_fmix    = h5_src.readAttribute<double>(path_circuit, "u_fmix");
-                    circuit.u_lambda  = h5_src.readAttribute<double>(path_circuit, "u_lambda");
-                    circuit.u_wkind   = h5_src.readAttribute<LbitCircuitGateWeightKind>(path_circuit, "u_wkind");
-                    circuit.u_mkind   = h5_src.readAttribute<LbitCircuitGateMatrixKind>(path_circuit, "u_mkind");
-                    auto path_lbits   = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
+                    circuit.u_depth   = h5tb_circuit.layer + 1; // h5_src.readAttribute<size_t>(path_circuit, "u_depth");
+                    circuit.u_fmix    = h5tb_circuit.f;         // h5_src.readAttribute<double>(path_circuit, "u_fmix");
+                    circuit.u_lambda  = h5tb_circuit.l;         // h5_src.readAttribute<std::optional<double>>(path_circuit, "u_lambda");
+                    circuit.u_wkind   = h5tb_circuit.wkind;     // circuit.u_wkind = h5_src.readAttribute<LbitCircuitGateWeightKind>(path_circuit, "u_wkind");
+                    circuit.u_mkind   = h5tb_circuit.mkind;     // circuit.u_mkind = h5_src.readAttribute<LbitCircuitGateMatrixKind>(path_circuit, "u_mkind");
+
+                    auto path_lbits = fmt::format("{}/{}/lbits", srcKey.algo, srcKey.model);
                     if(h5_src.linkExists(path_lbits)) {
                         auto u_bond = h5_src.readAttribute<std::optional<long>>(path_lbits, "u_bond");
                         if(not u_bond.has_value()) u_bond = text::extract_value_between<long>(key, "_bond", "]");

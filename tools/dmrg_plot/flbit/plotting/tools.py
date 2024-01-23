@@ -929,7 +929,7 @@ def find_entropy_inftime_saturation_value_from_bootstrap(sdata, tdata, nbs=100, 
     print(f'bootstrapping {nbs=} ... done:')
 
     # tsats_rstd_avg_idx = np.mean(tsats_rstd_avg_idx)
-
+    return esb
 
 
     fig, ax = plt.subplots()
@@ -1218,19 +1218,22 @@ def get_timepoints(tdata, db):
     enttsb = None
     numtsb = None
     try:
-        entfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(db['vals']['cachedir'],
+        entfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
                                                              'entanglement_entropy',
                                                              db['vals']['L'],
                                                              db['vals']['x'],
                                                              db['vals']['w'],
-                                                             db['vals']['f'])
-        numfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}].json".format(db['vals']['cachedir'],
+                                                             db['vals']['f'],
+                                                             db['vals']['l'],
+                                                                         )
+        numfile = "{}/tsat_{}_L[{}]_x[{}]_w[{}]_f[{}]_l[{}].json".format(db['vals']['cachedir'],
                                                              'number_entropy',
                                                              db['vals']['L'],
                                                              db['vals']['x'],
                                                              db['vals']['w'],
-                                                             db['vals']['f']
-                                                             )
+                                                             db['vals']['f'],
+                                                             db['vals']['l'],
+                                                                   )
         with open(entfile, 'r') as fp:
             entjson = json.load(fp)
             enttsb = entropy_saturation_bootstrap(**entjson)
