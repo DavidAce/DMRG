@@ -171,14 +171,14 @@ qm::Gate qm::lbit::get_unitary_2site_gate(const UnitaryGateParameters &u) {
         }
         case LbitCircuitGateMatrixKind::MATRIX_V2: {
             M =   u.theta[0] * 0.5 * SZ[0]
-                + u.theta[1] * 0.5 * SZ[0]
+                + u.theta[1] * 0.5 * SZ[1]
                 + u.theta[2] * 0.5 * SZ[0] * SZ[1] * u.l
                 + u.c * SP[0] * SM[1] + std::conj(u.c) * SM[0] * SP[1];
             break;
         }
         case LbitCircuitGateMatrixKind::MATRIX_V3:{
             M =   u.theta[0] * 0.5 * SZ[0]
-                + u.theta[1] * 0.5 * SZ[0]
+                + u.theta[1] * 0.5 * SZ[1]
                 + u.l   * 0.5 * SZ[0] * SZ[1]
                 + u.c * SP[0] * SM[1] + std::conj(u.c) * SM[0] * SP[1];
             break;

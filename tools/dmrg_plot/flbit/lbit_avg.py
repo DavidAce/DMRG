@@ -125,7 +125,8 @@ if __name__ == '__main__':
     # args = parse('fLBIT', ['lbit115'])
     # args = parse('fLBIT', ['lbit117'])
     # args = parse('fLBIT', ['lbit118'])
-    args = parse('fLBIT', ['lbit119'])
+    # args = parse('fLBIT', ['lbit119'])
+    args = parse('fLBIT', ['lbit120'])
     # args = parse('fLBIT', ['lbit106'], )#basedir='/mnt/wdpool/backup/lbit')
     # args = parse('fLBIT', ['lbit106'], basedir='/mnt/wdpool/backup/lbit')
     args.clear = True
