@@ -288,13 +288,12 @@ run_sim_id() {
     echodate "EXIT CODE                : $exit_code"
     if [ "$exit_code" != "0" ]; then
       log "$infoline|FAILED" "$loginfo"
-      return $?
-    fi
-    if [ "$exit_code" == "0" ] ; then
+    else
       log "$infoline|FINISHED" "$loginfo"
       rclone_files_to_remote auto "$logtext" "$loginfo" "$outfile"
       # We do not add an RCLONED line anymore.
     fi
+    return $exit_code
   fi
 }
 
