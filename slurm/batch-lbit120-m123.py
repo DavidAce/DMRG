@@ -37,7 +37,7 @@ config_ranges = {
     "model::lbit::xi_Jcls": ['1.00'],
     "model::lbit::u_depth": ['16'],
     "model::lbit::u_fmix": ['0.20'],
-    "model::lbit::u_lambda": ['0.0', '1.0', '2.0'],
+    "model::lbit::u_lambda": ['0.0', '2.0', '4.0', '6.0', '8.0'],
     "model::lbit::u_wkind": ['EXPDECAY'],
     "model::lbit::u_mkind": ['MATRIX_V1', 'MATRIX_V2', 'MATRIX_V3'],
     "flbit::time_scale": ['LOGSPACED'],
