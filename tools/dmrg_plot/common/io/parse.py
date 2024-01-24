@@ -90,8 +90,8 @@ def parse(algo, batches=None, basedir='/mnt/WDB-AN1500/mbl_transition'):
         'lbit116',  # L16 anderson mode to see how it affects the saturation time of SN
         'lbit117',  # L[12-20] anderson mode to see how it affects SN(L)
         'lbit118',  # L[12-20] mbl mode to see how it affects SN(L) compared to lbit117
-        'lbit119',  # L[8-16] vary the new lambda parameter
-        'lbit120',  # L16 with MATRIX_(V1|V2|V3) to make sure the same f can be used in all three
+        'lbit119',  # FAILED (typo in the hermitian matrix in the circuit) L[8-16] vary the new lambda parameter
+        'lbit120',  # L16 with MATRIX_(V1|V2|V3) varying lambda and to make sure the same f can be used in all three
 
     ]
     xdmrg_batches = ['data170',  #
