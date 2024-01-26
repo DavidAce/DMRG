@@ -105,7 +105,7 @@ void tools::finite::mps::init::set_midchain_singlet_neel_state(StateFinite &stat
         }
     }
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = 1 + static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1')); // Add one because of the singlet
+    state.popcount = 1 + safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1')); // Add one because of the singlet
     move_center_point_to_pos_dir(state, 0, 1);
     state.clear_measurements();
     state.clear_cache();

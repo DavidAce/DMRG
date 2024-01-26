@@ -46,7 +46,7 @@ namespace settings {
         tools::log->info("OpenMP | omp_max_threads {} | omp_max_active_levels {} | omp_dynamic {} | omp_proc_bind [{}] | omp_num_procs {}",
                          omp_get_max_threads(), omp_get_max_active_levels(), omp_get_dynamic(), omp_proc_bind, omp_get_num_procs());
 
-//        omp_threads = static_cast<unsigned int>(omp_get_max_threads());
+//        omp_threads = safe_cast<unsigned int>(omp_get_max_threads());
 #endif
         std::string eigen_msg;
 #if defined(EIGEN_USE_MKL_ALL)
@@ -79,7 +79,7 @@ namespace settings {
         if(openblas_parallel_mode == 0) openblas_parallel_str = "sequential";
         if(openblas_parallel_mode == 1) openblas_parallel_str = "threads";
         if(openblas_parallel_mode == 2) openblas_parallel_str = "openmp";
-        if(openblas_parallel_mode == 1) openblas_set_num_threads(static_cast<int>(num_threads)); // Use this for blas-related threading
+        if(openblas_parallel_mode == 1) openblas_set_num_threads(safe_cast<int>(num_threads)); // Use this for blas-related threading
         tools::log->info("{} NUM_THREADS={} | parallel_mode={} | corename={}", openblas_get_config(), openblas_get_num_threads(), openblas_parallel_str,
                          openblas_get_corename());
 #endif

@@ -1,3 +1,4 @@
+#include "math/cast.h"
 #include "math/eig.h"
 #include "math/tenx.h"
 #include "qm/time.h"
@@ -28,8 +29,8 @@ StateInfinite::Scalar moment_generating_function(const StateInfinite &state_orig
         tools::common::views::get_transfer_matrix_theta_evn(state_evolved).reshape(tenx::array2{sizeLB, sizeLB});
     using namespace settings::solver;
     eig::solver solver;
-    auto        nev = static_cast<eig::size_type>(1);
-    auto        ncv = static_cast<eig::size_type>(eigs_ncv);
+    auto        nev = safe_cast<eig::size_type>(1);
+    auto        ncv = safe_cast<eig::size_type>(eigs_ncv);
 
     solver.eigs(transfer_matrix_theta_evn.data(), sizeLB, nev, ncv, eig::Ritz::LM, eig::Form::NSYM, eig::Side::R, std::nullopt, eig::Shinv::OFF, eig::Vecs::OFF,
                 eig::Dephase::OFF);

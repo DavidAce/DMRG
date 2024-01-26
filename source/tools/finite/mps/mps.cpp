@@ -5,6 +5,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/svd.h"
@@ -60,7 +61,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
         if(state.get_direction() == 1) {
-            auto  posC_ul = static_cast<size_t>(posC);   // Cast to unsigned
+            auto  posC_ul = safe_cast<size_t>(posC);   // Cast to unsigned
             auto &mpsC    = state.get_mps_site(posC);    // This becomes the new AC (currently B)
             auto  trnc    = mpsC.get_truncation_error(); // Truncation error of the old B/new AC, i.e. bond to the right of posC,
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
@@ -68,7 +69,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
             tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, svd_cfg, LogPolicy::QUIET);
             mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
         } else if(state.get_direction() == -1) {
-            auto  pos_ul         = static_cast<size_t>(pos);   // Cast to unsigned
+            auto  pos_ul         = safe_cast<size_t>(pos);   // Cast to unsigned
             auto &mps            = state.get_mps_site(pos);    // This AC becomes the new B
             auto  trnc           = mps.get_truncation_error(); // Truncation error of old AC/new B, i.e. bond to the left of pos,
             auto  onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (LC is unset later)
@@ -95,8 +96,8 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, std::optional<s
 
         long  posL    = state.get_direction() == 1 ? pos + 1 : pos - 1;
         long  posR    = state.get_direction() == 1 ? pos + 2 : pos;
-        auto  posL_ul = static_cast<size_t>(posL);
-        auto  posR_ul = static_cast<size_t>(posR);
+        auto  posL_ul = safe_cast<size_t>(posL);
+        auto  posR_ul = safe_cast<size_t>(posR);
         auto &mps     = state.get_mps_site();
         auto &mpsL    = state.get_mps_site(posL); // Becomes the new center position
         auto &mpsR    = state.get_mps_site(posR); // The site to the right of the new center position
@@ -105,7 +106,7 @@ size_t tools::finite::mps::move_center_point(StateFinite &state, std::optional<s
         Eigen::Tensor<cplx, 1> LC                  = mps.get_LC();
         double                 truncation_error_LC = mps.get_truncation_error_LC();
         auto                   twosite_tensor      = state.get_multisite_mps({posL_ul, posR_ul});
-        tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, static_cast<long>(posL), svd_cfg,
+        tools::finite::mps::merge_multisite_mps(state, twosite_tensor, {static_cast<size_t>(posL), static_cast<size_t>(posR)}, safe_cast<long>(posL), svd_cfg,
                                                 LogPolicy::QUIET);
         state.clear_cache(LogPolicy::QUIET);
         state.clear_measurements(LogPolicy::QUIET);
@@ -206,8 +207,8 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     }
 
     // Can't set center on one of sites if the current center is too far away: we would end up with interleaved A's and B sites
-    bool center_in_sites = center_position == std::clamp<long>(center_position, static_cast<long>(sites.front()), static_cast<long>(sites.back()));
-    bool center_in_range = current_position == std::clamp<long>(current_position, static_cast<long>(sites.front() - 1), static_cast<long>(sites.back()));
+    bool center_in_sites = center_position == std::clamp<long>(center_position, safe_cast<long>(sites.front()), safe_cast<long>(sites.back()));
+    bool center_in_range = current_position == std::clamp<long>(current_position, safe_cast<long>(sites.front()) - 1, safe_cast<long>(sites.back()));
     if(center_in_sites and not center_in_range)
         throw except::runtime_error("merge_multisite_mps: cannot merge multisite_mps {} with new center at {}: current center {} is too far", sites,
                                     center_position, current_position);
@@ -226,9 +227,9 @@ size_t tools::finite::mps::merge_multisite_mps(StateFinite &state, const Eigen::
     std::optional<stash<Eigen::Tensor<cplx, 1>>> lc_move = std::nullopt;
     if(center_position != current_position and current_position >= 0) {
         auto &mps      = state.get_mps_site(current_position); // Guaranteed to have LC since that is the definition of current_position
-        auto  pos_back = static_cast<long>(sites.back());
-        auto  pos_frnt = static_cast<long>(sites.front());
-        auto  pos_curr = static_cast<size_t>(current_position);
+        auto  pos_back = safe_cast<long>(sites.back());
+        auto  pos_frnt = safe_cast<long>(sites.front());
+        auto  pos_curr = safe_cast<size_t>(current_position);
 
         // Detect right-move
         if(center_position > current_position) { // This AC will become an A (AC moves to the right)
@@ -526,7 +527,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise, they are front/back of gate.pos.
         // Note 2: both the swap and apply operations will set the current center on the left-most site of the gate.
         auto tgt_gate = gate.pos;
-        auto tgt_posC = std::clamp<long>(old_posC, static_cast<long>(tgt_gate.front()) - 1l, static_cast<long>(tgt_gate.back()));
+        auto tgt_posC = std::clamp<long>(old_posC, safe_cast<long>(tgt_gate.front()) - 1l, safe_cast<long>(tgt_gate.back()));
         auto num_step = move_center_point_to_pos_dir(state, tgt_posC, 1, svd_cfg);
         if constexpr(settings::debug_gates)
             if(num_step > 0)
@@ -560,7 +561,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         tools::log->trace("apply_gate: applied pos {} | op {} | gm {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front()));
 
-    auto new_posC = gm == GateMove::ON ? static_cast<long>(gate.pos.front()) : old_posC;
+    auto new_posC = gm == GateMove::ON ? safe_cast<long>(gate.pos.front()) : old_posC;
     tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, new_posC, svd_cfg, LogPolicy::QUIET);
     if constexpr(settings::debug_gates)
         tools::log->trace("apply_gate: merged  pos {} | op {} | gm {} | center {} -> {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
@@ -738,7 +739,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
                                                          .reshape(rsh3); // prepare for merge
     auto new_pos = old_pos;
     if(gm == GateMove::ON)
-        new_pos = static_cast<long>(posL); // The benefit of GateMove::ON is to prefer "AC-B" splits that require a single SVD as often as possible
+        new_pos = safe_cast<long>(posL); // The benefit of GateMove::ON is to prefer "AC-B" splits that require a single SVD as often as possible
 
     // This SVD shouldn't modify the current mps, so no truncation here (no svd config)
     merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, std::nullopt, LogPolicy::QUIET);
@@ -781,7 +782,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise they are front/back of gate.pos.
         // Note 2: both the swap and apply operations will set the current center on the left-most site of the gate.
         auto tgt_gate = gate.swaps.empty() ? gate.pos : std::vector<size_t>{gate.swaps[0].posL, gate.swaps[0].posR};
-        auto tgt_posC = std::clamp<long>(old_posC, static_cast<long>(tgt_gate.front()) - 1l, static_cast<long>(tgt_gate.back()));
+        auto tgt_posC = std::clamp<long>(old_posC, safe_cast<long>(tgt_gate.front()) - 1l, safe_cast<long>(tgt_gate.back()));
         auto num_step = move_center_point_to_pos_dir(state, tgt_posC, 1, svd_cfg);
         if constexpr(settings::debug_gates)
             if(num_step > 0)
@@ -819,7 +820,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
                           svd::solver::get_count());
 
     // It's best to do an AC-B type of SVD split, so we put the center poisition on the left-most site when GateMove::ON
-    long new_posC = gm == GateMove::ON ? static_cast<long>(pos_idxs.front()) : old_posC;
+    long new_posC = gm == GateMove::ON ? safe_cast<long>(pos_idxs.front()) : old_posC;
 
     tools::finite::mps::merge_multisite_mps(state, temp, pos_idxs, new_posC, svd_cfg, LogPolicy::QUIET);
     if constexpr(settings::debug_gates)

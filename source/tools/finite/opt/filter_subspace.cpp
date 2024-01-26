@@ -1,5 +1,6 @@
 #include "../opt_mps.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "tools/common/log.h"
 #include "tools/finite/opt/opt-internal.h"
 
@@ -99,7 +100,7 @@ std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_wi
         max_overlap_val = overlaps.maxCoeff(&idx);
         if(max_overlap_val == 0.0) break;
         best_idx.emplace_back(idx);
-        const auto &eigvec = *std::next(eigvecs.begin(), static_cast<long>(idx));
+        const auto &eigvec = *std::next(eigvecs.begin(), safe_cast<long>(idx));
         if(eigvec.is_basis_vector) best_val.emplace_back(max_overlap_val);
         if(best_idx.size() > max_eigvecs) break;
         double sq_sum_overlap = overlaps.cwiseAbs2().sum();
@@ -112,7 +113,7 @@ std::vector<size_t> tools::finite::opt::internal::subspace::get_idx_to_eigvec_wi
 
 Eigen::MatrixXcd tools::finite::opt::internal::subspace::get_eigvecs(const std::vector<opt_mps> &eigvecs) {
     long             rows = eigvecs.front().get_tensor().size();
-    long             cols = static_cast<long>(eigvecs.size());
+    long             cols = safe_cast<long>(eigvecs.size());
     Eigen::MatrixXcd eigvecs_mat(rows, cols);
     long             idx = 0;
     for(const auto &eigvec : eigvecs) {
@@ -124,7 +125,7 @@ Eigen::MatrixXcd tools::finite::opt::internal::subspace::get_eigvecs(const std::
 }
 
 Eigen::VectorXd tools::finite::opt::internal::subspace::get_eigvals(const std::vector<opt_mps> &eigvecs) {
-    long            size = static_cast<long>(eigvecs.size());
+    long            size = safe_cast<long>(eigvecs.size());
     Eigen::VectorXd eigvals(size);
     long            idx = 0;
     for(const auto &eigvec : eigvecs) {
@@ -136,7 +137,7 @@ Eigen::VectorXd tools::finite::opt::internal::subspace::get_eigvals(const std::v
 }
 
 Eigen::VectorXd tools::finite::opt::internal::subspace::get_energies(const std::vector<opt_mps> &eigvecs) {
-    Eigen::VectorXd energies(static_cast<long>(eigvecs.size()));
+    Eigen::VectorXd energies(safe_cast<long>(eigvecs.size()));
     long            idx = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
@@ -178,7 +179,7 @@ double tools::finite::opt::internal::subspace::get_subspace_error(const std::vec
 }
 
 Eigen::VectorXd tools::finite::opt::internal::subspace::get_overlaps(const std::vector<opt_mps> &eigvecs) {
-    Eigen::VectorXd overlaps(static_cast<long>(eigvecs.size()));
+    Eigen::VectorXd overlaps(safe_cast<long>(eigvecs.size()));
     long            idx = 0;
     for(const auto &eigvec : eigvecs) {
         if(not eigvec.is_basis_vector) continue;
@@ -192,7 +193,7 @@ std::pair<double, size_t> find_max_overlap(const std::vector<double> &overlaps) 
     auto max_it  = max_element(overlaps.begin(), overlaps.end());
     auto max_val = *max_it;
     auto max_idx = std::distance(overlaps.begin(), max_it);
-    return {max_val, static_cast<size_t>(max_idx)};
+    return {max_val, safe_cast<size_t>(max_idx)};
 }
 
 Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(const std::vector<opt_mps> &eigvecs, size_t idx) {
@@ -200,8 +201,8 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     // Essentially this old computation
     //      Eigen::VectorXcd subspace_vector = (eigvecs.adjoint() * fullspace_vector).normalized();
 
-    auto             fullspace_vector = std::next(eigvecs.begin(), static_cast<long>(idx))->get_vector();
-    long             subspace_size    = static_cast<long>(eigvecs.size());
+    auto             fullspace_vector = std::next(eigvecs.begin(), safe_cast<long>(idx))->get_vector();
+    long             subspace_size    = safe_cast<long>(eigvecs.size());
     Eigen::VectorXcd subspace_vector(subspace_size);
     long             subspace_idx = 0;
     for(const auto &eigvec : eigvecs) {
@@ -216,7 +217,7 @@ Eigen::VectorXcd tools::finite::opt::internal::subspace::get_vector_in_subspace(
     // In this function we project a vector to the subspace spanned by a small set of eigenvectors
     // Essentially this old computation
     //      Eigen::VectorXcd subspace_vector = (eigvecs.adjoint() * fullspace_vector).normalized();
-    long             subspace_size = static_cast<long>(eigvecs.size());
+    long             subspace_size = safe_cast<long>(eigvecs.size());
     Eigen::VectorXcd subspace_vector(subspace_size);
     long             subspace_idx = 0;
     for(const auto &eigvec : eigvecs) {

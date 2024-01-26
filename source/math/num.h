@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cast.h"
 #include <algorithm>
 #include <cmath>
 #include <complex>
@@ -7,6 +8,7 @@
 #include <iterator>
 #include <numeric>
 #include <vector>
+
 #if defined(USE_QUADMATH)
     #include <quadmath.h>
 #endif
@@ -181,7 +183,7 @@ namespace num {
     [[nodiscard]] std::vector<T> range(T1 first, T2 last, T3 step = static_cast<T3>(1)) noexcept {
         if(step == 0) return {static_cast<T>(first)};
         auto num_steps =
-            static_cast<size_t>(std::abs((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
+            safe_cast<size_t>(std::abs((static_cast<double>(last) - static_cast<double>(first) + static_cast<double>(step)) / static_cast<double>(step)));
         std::vector<T> vec;
         vec.reserve(num_steps);
         auto val = static_cast<T>(first);
@@ -302,7 +304,7 @@ namespace num {
     [[nodiscard]] auto sum(const Input &in, size_t from = 0, size_t num = -1ul) {
         if(num == -1ul) num = in.size();
         num = std::min<size_t>(num, static_cast<size_t>(in.size()) - from);
-        return std::accumulate(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num),
+        return std::accumulate(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num),
                                static_cast<typename Input::value_type>(0));
     }
 
@@ -317,7 +319,7 @@ namespace num {
     [[nodiscard]] auto prod(const Input &in, size_t from = 0, size_t num = -1ul) {
         from = std::clamp<size_t>(from, 0, in.size());
         num  = std::clamp<size_t>(num, 0, in.size() - from);
-        return std::accumulate(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), 1, std::multiplies<>());
+        return std::accumulate(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), 1, std::multiplies<>());
     }
     template<typename Input>
     [[nodiscard]] auto diff(const Input &in, size_t from = 0, size_t num = -1ul) {
@@ -326,13 +328,13 @@ namespace num {
         if constexpr(std::is_default_constructible_v<Input>) {
             Input res;
             res.reserve(num);
-            std::adjacent_difference(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), std::back_inserter(res));
+            std::adjacent_difference(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), std::back_inserter(res));
             return res;
         } else {
             using value_type = typename Input::value_type;
             std::vector<value_type> res;
             res.reserve(num);
-            std::adjacent_difference(std::begin(in) + static_cast<long>(from), std::begin(in) + static_cast<long>(from + num), std::back_inserter(res));
+            std::adjacent_difference(std::begin(in) + safe_cast<long>(from), std::begin(in) + safe_cast<long>(from + num), std::back_inserter(res));
             return res;
         }
     }
@@ -349,7 +351,7 @@ namespace num {
         Input res;
         from = std::clamp<size_t>(from, 0, in.size());
         num  = std::clamp<size_t>(num, 0, in.size());
-        std::partial_sum(in.begin() + static_cast<long>(from), in.begin() + static_cast<long>(from + num), std::back_inserter(res), op);
+        std::partial_sum(in.begin() + safe_cast<long>(from), in.begin() + safe_cast<long>(from + num), std::back_inserter(res), op);
         return res;
     }
 
@@ -384,10 +386,10 @@ namespace num {
      */
     template<typename ContainerType1, typename ContainerType2>
     double trapz(const ContainerType1 &X, const ContainerType2 &Y, long from = 0, long num = -1) {
-        auto   xfrm = std::clamp<long>(from, 0, static_cast<long>(X.size()));
-        auto   yfrm = std::clamp<long>(from, 0, static_cast<long>(Y.size()));
-        auto   xnum = std::clamp<long>(num, xfrm, static_cast<long>(X.size()));
-        auto   ynum = std::clamp<long>(num, yfrm, static_cast<long>(Y.size()));
+        auto   xfrm = std::clamp<long>(from, 0, safe_cast<long>(X.size()));
+        auto   yfrm = std::clamp<long>(from, 0, safe_cast<long>(Y.size()));
+        auto   xnum = std::clamp<long>(num, xfrm, safe_cast<long>(X.size()));
+        auto   ynum = std::clamp<long>(num, yfrm, safe_cast<long>(Y.size()));
         auto   x_it = X.begin() + from;
         auto   y_it = Y.begin() + from;
         auto   x_en = X.begin() + xnum;
@@ -416,11 +418,11 @@ namespace num {
 
     template<typename R, typename T>
     [[nodiscard]] R next_power_of_two(T val) {
-        return static_cast<R>(std::pow<long>(2, static_cast<long>(std::ceil(std::log2(std::real(val))))));
+        return static_cast<R>(std::pow<long>(2, safe_cast<long>(std::ceil(std::log2(std::real(val))))));
     }
     template<typename R, typename T>
     [[nodiscard]] R prev_power_of_two(T val) {
-        return static_cast<R>(std::pow<long>(2, static_cast<long>(std::floor(std::log2(std::real(val - 1))))));
+        return static_cast<R>(std::pow<long>(2, safe_cast<long>(std::floor(std::log2(std::real(val - 1))))));
     }
 
     template<typename R, typename T>

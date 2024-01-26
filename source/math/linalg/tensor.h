@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "math/cast.h"
 #include <array>
 #include <fmt/core.h>
 #include <unsupported/Eigen/CXX11/Tensor>
@@ -76,15 +77,15 @@ namespace linalg::tensor {
                 }
 
             auto max_val   = static_cast<double>(matrix.cwiseAbs().maxCoeff());
-            int  min_width = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val))) + comma + prec);
+            int  min_width = std::max(width, safe_cast<int>(1 + std::max(0.0, std::log10(max_val))) + comma + prec);
 
             int min_width_real = min_width;
             int min_width_imag = min_width;
             if constexpr(linalg::is_std_complex_v<Scalar>) {
                 auto max_val_real = static_cast<double>(matrix.real().cwiseAbs().maxCoeff());
                 auto max_val_imag = static_cast<double>(matrix.imag().cwiseAbs().maxCoeff());
-                min_width_real    = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val_real))) + comma + prec);
-                min_width_imag    = std::max(width, static_cast<int>(1 + std::max(0.0, std::log10(max_val_imag))) + comma + prec);
+                min_width_real    = std::max(width, safe_cast<int>(1 + std::max(0.0, std::log10(max_val_real))) + comma + prec);
+                min_width_imag    = std::max(width, safe_cast<int>(1 + std::max(0.0, std::log10(max_val_imag))) + comma + prec);
                 if(matrix.real().minCoeff() < 0) min_width_real += 1;
                 if(matrix.imag().minCoeff() < 0) min_width_imag += 1;
             } else {

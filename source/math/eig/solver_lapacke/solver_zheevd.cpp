@@ -19,6 +19,7 @@
 #include "../log.h"
 #include "../solver.h"
 #include "debug/exceptions.h"
+#include "math/cast.h"
 #include <chrono>
 
 int eig::solver::zheev(cplx *matrix, size_type L) {
@@ -26,9 +27,9 @@ int eig::solver::zheev(cplx *matrix, size_type L) {
     auto  t_start = std::chrono::high_resolution_clock::now();
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::CPLX>();
-    eigvals.resize(static_cast<size_t>(L));
+    eigvals.resize(safe_cast<size_t>(L));
 
-    int  n             = static_cast<int>(L);
+    int  n             = safe_cast<int>(L);
     char jobz          = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     auto t_prep        = std::chrono::high_resolution_clock::now();
     cplx work_query[1] = {0};
@@ -39,8 +40,8 @@ int eig::solver::zheev(cplx *matrix, size_type L) {
         LAPACKE_zheev_work(LAPACK_COL_MAJOR, jobz, 'U', n, reinterpret_cast<lapack_complex_double *>(matrix), n, eigvals.data(), work_query, -1, rwork.data());
     if(info != 0) throw std::runtime_error("LAPACK zheev query failed with error: " + std::to_string(info));
 
-    int  lwork = static_cast<int>(std::abs(work_query[0]));
-    auto work  = std::vector<cplx>(static_cast<size_t>(lwork));
+    int  lwork = safe_cast<int>(std::abs(work_query[0]));
+    auto work  = std::vector<cplx>(safe_cast<size_t>(lwork));
 
     info = LAPACKE_zheev_work(LAPACK_COL_MAJOR, jobz, 'U', n, reinterpret_cast<lapack_complex_double *>(matrix), n, eigvals.data(),
                               reinterpret_cast<lapack_complex_double *>(work.data()), lwork, rwork.data());
@@ -74,7 +75,7 @@ int eig::solver::zheevd(cplx *matrix, size_type L) {
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::CPLX>();
     eigvals.resize(static_cast<size_t>(L));
 
-    int  n              = static_cast<int>(L);
+    int  n              = safe_cast<int>(L);
     char jobz           = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     auto t_prep         = std::chrono::high_resolution_clock::now();
     cplx work_query[1]  = {0};
@@ -85,18 +86,18 @@ int eig::solver::zheevd(cplx *matrix, size_type L) {
     if(info != 0) throw std::runtime_error("LAPACK zheevd query failed with error: " + std::to_string(info));
 
     // These nice values are inspired from armadillo. The prefactors give good performance.
-    int  lwork  = static_cast<int>(std::abs(work_query[0])); // 2 * (2 * n + n * n);
-    int  lrwork = static_cast<int>(rwork_query[0]);          // 2 * (1 + 5 * n + 2 * (n * n));
-    int  liwork = static_cast<int>(iwork_query[0]);          // 3 * (3 + 5 * n);
-    auto work   = std::vector<cplx>(static_cast<size_t>(lwork));
-    auto rwork  = std::vector<real>(static_cast<size_t>(lrwork));
-    auto iwork  = std::vector<int>(static_cast<size_t>(liwork));
+    int  lwork  = safe_cast<int>(std::abs(work_query[0])); // 2 * (2 * n + n * n);
+    int  lrwork = safe_cast<int>(rwork_query[0]);          // 2 * (1 + 5 * n + 2 * (n * n));
+    int  liwork = safe_cast<int>(iwork_query[0]);          // 3 * (3 + 5 * n);
+    auto work   = std::vector<cplx>(safe_cast<size_t>(lwork));
+    auto rwork  = std::vector<real>(safe_cast<size_t>(lrwork));
+    auto iwork  = std::vector<int>(safe_cast<size_t>(liwork));
 
     info = LAPACKE_zheevd_work(LAPACK_COL_MAJOR, jobz, 'U', n, reinterpret_cast<lapack_complex_double *>(matrix), n, eigvals.data(),
                                reinterpret_cast<lapack_complex_double *>(work.data()), lwork, rwork.data(), lrwork, iwork.data(), liwork);
     if(info != 0) throw std::runtime_error("LAPACK zheevd failed with error: " + std::to_string(info));
     if(config.compute_eigvecs == Vecs::ON) {
-        eigvecs.resize(static_cast<size_t>(L * L));
+        eigvecs.resize(safe_cast<size_t>(L * L));
         std::copy(matrix, matrix + L * L, eigvecs.begin());
     }
 

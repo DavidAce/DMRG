@@ -1,6 +1,7 @@
 #include <complex.h>
 #undef I
 
+#include "../cast.h"
 #include "../svd.h"
 #include "debug/exceptions.h"
 #include "tid/tid.h"
@@ -49,16 +50,16 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
     // Setup the SVD solver
     if(switchsize_gesdd == -1ul) {
-        SVD.setSwitchSize(static_cast<int>(minRC));
+        SVD.setSwitchSize(safe_cast<int>(minRC));
     } else {
-        SVD.setSwitchSize(static_cast<int>(switchsize_gesdd));
+        SVD.setSwitchSize(safe_cast<int>(switchsize_gesdd));
     }
 
     // Add suffix for more detailed breakdown of matrix sizes
     auto t_suffix = benchmark ? fmt::format("{}", num::next_multiple<long>(minRC, 5l)) : "";
     auto svd_info =
         fmt::format("| {} x {} | rank_max {} | truncation limit {:.4e} | switchsize bdc {}", rows, cols, rank_max, truncation_lim, switchsize_gesdd);
-    bool use_jacobi = minRC < static_cast<long>(switchsize_gesdd);
+    bool use_jacobi = minRC < safe_cast<long>(switchsize_gesdd);
     if(use_jacobi or svd_rtn == rtn::gejsv or svd_rtn == svd::rtn::gesvj) {
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD {}", svd_info);

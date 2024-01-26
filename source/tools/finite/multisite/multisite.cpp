@@ -82,11 +82,11 @@ std::vector<size_t> tools::finite::multisite::generate_site_list(StateFinite &st
         long max_pos = initial_position;
         long min_pos = initial_position;
         if(direction > 0) {
-            max_pos = std::clamp<long>(initial_position + static_cast<long>(max_sites), initial_position, length - 1);
+            max_pos = std::clamp<long>(initial_position + safe_cast<long>(max_sites), initial_position, length - 1);
             min_pos = initial_position;
         } else {
             max_pos = std::clamp<long>(initial_position + 1, initial_position, length - 1);
-            min_pos = std::clamp<long>(max_pos - static_cast<long>(max_sites) + 1, 0, initial_position);
+            min_pos = std::clamp<long>(max_pos - safe_cast<long>(max_sites) + 1, 0, initial_position);
         }
 
         auto range = num::range<size_t>(min_pos, max_pos + 1); // +1 to include last position

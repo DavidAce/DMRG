@@ -17,6 +17,7 @@
 
 #include "../log.h"
 #include "../solver.h"
+#include "math/cast.h"
 #include <chrono>
 
 int eig::solver::dgeev(real *matrix, size_type L) {
@@ -24,22 +25,22 @@ int eig::solver::dgeev(real *matrix, size_type L) {
     auto  t_start      = std::chrono::high_resolution_clock::now();
     auto &eigvals_real = result.eigvals_real;
     auto &eigvals_imag = result.eigvals_imag;
-    eigvals_real.resize(static_cast<size_t>(L));
-    eigvals_imag.resize(static_cast<size_t>(L));
-    std::vector<double> eigvecsR_tmp(static_cast<size_t>(L * L));
-    std::vector<double> eigvecsL_tmp(static_cast<size_t>(L * L));
+    eigvals_real.resize(safe_cast<size_t>(L));
+    eigvals_imag.resize(safe_cast<size_t>(L));
+    std::vector<double> eigvecsR_tmp(safe_cast<size_t>(L * L));
+    std::vector<double> eigvecsL_tmp(safe_cast<size_t>(L * L));
 
     int    info = 0;
     double lwork_query;
     char   jobz = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
 
-    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), matrix, static_cast<int>(L), eigvals_real.data(),
-                              eigvals_imag.data(), eigvecsL_tmp.data(), static_cast<int>(L), eigvecsR_tmp.data(), static_cast<int>(L), &lwork_query, -1);
+    info = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, safe_cast<int>(L), matrix, safe_cast<int>(L), eigvals_real.data(), eigvals_imag.data(),
+                              eigvecsL_tmp.data(), safe_cast<int>(L), eigvecsR_tmp.data(), safe_cast<int>(L), &lwork_query, -1);
     int                 lwork = (int) std::real(2.0 * lwork_query); // Make it twice as big for performance.
-    std::vector<double> work(static_cast<size_t>(lwork));
+    std::vector<double> work(safe_cast<size_t>(lwork));
     auto                t_prep = std::chrono::high_resolution_clock::now();
-    info         = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, static_cast<int>(L), matrix, static_cast<int>(L), eigvals_real.data(),
-                                      eigvals_imag.data(), eigvecsL_tmp.data(), static_cast<int>(L), eigvecsR_tmp.data(), static_cast<int>(L), work.data(), lwork);
+    info         = LAPACKE_dgeev_work(LAPACK_COL_MAJOR, jobz, jobz, safe_cast<int>(L), matrix, safe_cast<int>(L), eigvals_real.data(), eigvals_imag.data(),
+                                      eigvecsL_tmp.data(), safe_cast<int>(L), eigvecsR_tmp.data(), safe_cast<int>(L), work.data(), lwork);
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
         result.meta.eigvecsR_found = true;
@@ -61,20 +62,20 @@ int eig::solver::dgeev(real *matrix, size_type L) {
     auto &eigvals  = result.eigvals_cplx;
     auto &eigvecsR = result.eigvecsR_cplx;
     auto &eigvecsL = result.eigvecsL_cplx;
-    eigvals.resize(static_cast<size_t>(L));
-    eigvecsR.resize(static_cast<size_t>(L * L));
-    eigvecsL.resize(static_cast<size_t>(L * L));
+    eigvals.resize(safe_cast<size_t>(L));
+    eigvecsR.resize(safe_cast<size_t>(L * L));
+    eigvecsL.resize(safe_cast<size_t>(L * L));
 
     // Copy eigenvalues
-    for(size_t i = 0; i < static_cast<size_t>(L); i++) eigvals[i] = std::complex<double>(eigvals_real[i], eigvals_imag[i]);
+    for(size_t i = 0; i < safe_cast<size_t>(L); i++) eigvals[i] = std::complex<double>(eigvals_real[i], eigvals_imag[i]);
     // Release real/imag parts
     eigvals_real.clear();
     eigvals_imag.clear();
 
     // Copy eigenvectors
     auto count = 0ul;
-    auto rows  = static_cast<size_t>(L);
-    auto cols  = static_cast<size_t>(L);
+    auto rows  = safe_cast<size_t>(L);
+    auto cols  = safe_cast<size_t>(L);
     for(size_t i = 0; i < rows; i++) {
         size_t j = 0;
         while(j < cols) {

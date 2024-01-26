@@ -16,6 +16,7 @@
 #endif
 #include "../log.h"
 #include "../solver.h"
+#include "math/cast.h"
 #include <chrono>
 
 using namespace eig;
@@ -27,7 +28,7 @@ int eig::solver::dsyevr(real *matrix /*!< gets destroyed */, size_type L, char r
     //    auto A     = std::vector<real>(matrix, matrix + L * L);
     char jobz  = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     int  info  = 0;
-    int  n     = static_cast<int>(L);
+    int  n     = safe_cast<int>(L);
     int  lda   = std::max(1, n);
     int  ldz   = std::max(1, n);
     int  m_req = n; // For range == 'V' we don't know how many eigenvalues will be found in (vl,vu]
@@ -37,12 +38,12 @@ int eig::solver::dsyevr(real *matrix /*!< gets destroyed */, size_type L, char r
     int              m_found = 0;
     int              iwork_query[1];
     double           lwork_query[1];
-    std::vector<int> isuppz(static_cast<size_t>(2 * m_req));
-    std::vector<int> ifail(static_cast<unsigned long>(L));
+    std::vector<int> isuppz(safe_cast<size_t>(2 * m_req));
+    std::vector<int> ifail(safe_cast<unsigned long>(L));
 
     auto &eigvals = result.get_eigvals<Form::SYMM>();
     auto &eigvecs = result.get_eigvecs<Form::SYMM, Type::REAL>();
-    eigvals.resize(static_cast<size_t>(ldz));
+    eigvals.resize(safe_cast<size_t>(ldz));
     if(config.compute_eigvecs == Vecs::ON) {
         eigvecs.resize(static_cast<size_t>(ldz * m_req)); // Docs claim ldz * m, but it segfaults when 'V' finds more than m eigvals
     }
@@ -50,8 +51,8 @@ int eig::solver::dsyevr(real *matrix /*!< gets destroyed */, size_type L, char r
                                eigvecs.data(), ldz, isuppz.data(), lwork_query, -1, iwork_query, -1);
     if(info < 0) throw std::runtime_error("LAPACKE_dsyevr_work query: info" + std::to_string(info));
 
-    int lwork  = static_cast<int>(lwork_query[0]);
-    int liwork = static_cast<int>(iwork_query[0]);
+    int lwork  = safe_cast<int>(lwork_query[0]);
+    int liwork = safe_cast<int>(iwork_query[0]);
 
     eig::log->trace(" lwork  = {}", lwork);
     eig::log->trace(" liwork = {}", liwork);

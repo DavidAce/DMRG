@@ -696,7 +696,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     //                h5file->writeAttribute(u.dim, gatepath, "dim");
     //                h5file->writeAttribute(u.pos, gatepath, "pos");
     //            }
-    //            h5file->writeAttribute(static_cast<size_t>(idx_layer), layerpath, "idx_layer");
+    //            h5file->writeAttribute(safe_cast<size_t>(idx_layer), layerpath, "idx_layer");
     //            h5file->writeAttribute(layer.size(), layerpath, "num_gates");
     //        }
     //        h5file->writeAttribute(unitary_gates_2site_layers.size(), grouppath, "num_layers");
@@ -725,8 +725,8 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
                 // Put the sample dimension first so that we can collect many simulations in dmrg-meld along the 0'th dim
                 auto label_dist = std::vector<std::string>{"sample", "|i-j|"};
                 auto shape_avgs = std::vector<long>{1, lbitSA.corravg.size()};
-                auto shape_data = std::vector<long>{static_cast<long>(nsamps), static_cast<long>(settings::model::model_size),
-                                                    static_cast<long>(settings::model::model_size)};
+                auto shape_data = std::vector<long>{safe_cast<long>(nsamps), safe_cast<long>(settings::model::model_size),
+                                                    safe_cast<long>(settings::model::model_size)};
 
                 auto label_data = std::vector<std::string>{"sample", "i", "j"};
                 //                if(settings::storage::dataset::lbit_analysis::level >= StorageLevel::LIGHT) {
@@ -775,10 +775,10 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     // Save the lbit density matrix analysis
     auto num_rps = settings::flbit::opdm::num_rps; // Number of random product states
     if(num_rps > 0 and h5file and storage_event == StorageEvent::MODEL) {
-        auto length      = static_cast<long>(settings::model::model_size);
-        auto svd_cfg     = svd::config(status.bond_max, status.trnc_min);
+        auto length      = safe_cast<long>(settings::model::model_size);
+        auto svd_cfg     = svd::config(8192, 1e-12);
         svd_cfg.svd_lib  = svd::lib::lapacke;
-        svd_cfg.svd_rtn  = svd::rtn::geauto;
+        svd_cfg.svd_rtn  = svd::rtn::gejsv;
         auto sz          = tenx::TensorCast(qm::spin::half::sz);
         auto sp          = tenx::TensorCast(qm::spin::half::sp);
         auto sm          = tenx::TensorCast(qm::spin::half::sm);

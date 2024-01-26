@@ -2,6 +2,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/num.h"
 #include "math/stat.h"
 #include "tools/common/h5.h"
@@ -118,7 +119,7 @@ AlgorithmBase::SaturationReport AlgorithmBase::check_saturation(const std::vecto
 
     // From the end, count how many Y_sat[i] are 1,  before finding a 0.
     for(const auto &[i, y] : iter::enumerate_reverse(report.Y_sat)) {
-        report.saturated_point = static_cast<size_t>(i);
+        report.saturated_point = i;
         if(y == 0) break;
         report.saturated_count++;
     }

@@ -5,6 +5,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/linalg.h"
 #include "math/num.h"
 #include "math/rnd.h"
@@ -295,8 +296,8 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator5(const std::vector<s
     // Apply szj to each position one by one
     for(auto &&[pos_res, result] : iter::enumerate(results)) {
         // If pos_szi is too far way from pos_szj, then the result should be zero exactly, no need to compute it.
-        long pos_diff = std::abs(static_cast<long>(pos_res) - static_cast<long>(pos_szi));
-        long max_diff = 2 * static_cast<long>(mpo_layers.size());
+        long pos_diff = std::abs(static_cast<long>(pos_res) - safe_cast<long>(pos_szi));
+        long max_diff = 2 * safe_cast<long>(mpo_layers.size());
         if(pos_diff > max_diff) {
             result.setZero();
             continue;
@@ -316,7 +317,7 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator5(const std::vector<s
     }
 
     // Collect the results into a 1d tensor
-    auto corrvec = Eigen::Tensor<cplx, 1>(static_cast<long>(results.size()));
+    auto corrvec = Eigen::Tensor<cplx, 1>(safe_cast<long>(results.size()));
     for(const auto &[pos_res, result] : iter::enumerate(results)) {
         if(result.size() != 1) { throw except::logic_error("result should be a 1x1 matrix"); }
         corrvec(static_cast<long>(pos_res)) = result.coeff(0);
@@ -370,7 +371,7 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator6(const std::vector<s
     }
 
     // Collect the results into a 1d tensor
-    auto corrvec = Eigen::Tensor<cplx, 1>(static_cast<long>(results.size()));
+    auto corrvec = Eigen::Tensor<cplx, 1>(safe_cast<long>(results.size()));
     for(const auto &[pos_res, result] : iter::enumerate(results)) {
         if(result.size() != 1) { throw except::logic_error("result should be a 1x1 matrix"); }
         corrvec(static_cast<long>(pos_res)) = result.coeff(0);

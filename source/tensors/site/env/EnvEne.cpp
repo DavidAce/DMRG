@@ -125,7 +125,7 @@ void EnvEne::set_edge_dims(const MpsSite &mps, const MpoSite &mpo) {
     Eigen::Tensor<cplx, 1> edge;
     if(side == "L") edge = mpo.get_MPO_edge_left();
     if(side == "R") edge = mpo.get_MPO_edge_right();
-    std::size_t unique_id_edge = hash::hash_buffer(edge.data(), static_cast<size_t>(edge.size()));
+    std::size_t unique_id_edge = hash::hash_buffer(edge.data(), safe_cast<size_t>(edge.size()));
     if(unique_id_env and unique_id_env.value() == unique_id_edge) return;
     if constexpr(settings::debug)
         if(side != "L" and side != "R") throw except::runtime_error("Wrong side: {}", side);

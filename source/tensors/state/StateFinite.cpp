@@ -4,6 +4,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/num.h"
 #include "StateFinite.h"
 #include "tensors/site/mps/MpsSite.h"
@@ -75,20 +76,20 @@ void StateFinite::initialize(AlgorithmType algo_type, size_t model_size, long po
     tools::log->debug("Initializing state: sites {} | position {} | spin_dim {}", model_size, position, spin_dim);
     if(model_size < 2) throw except::logic_error("Tried to initialize state with less than 2 sites");
     if(model_size > 2048) throw except::logic_error("Tried to initialize state with more than 2048 sites");
-    if(position >= static_cast<long>(model_size)) throw except::logic_error("Tried to initialize state at a position larger than the number of sites");
+    if(position >= safe_cast<long>(model_size)) throw except::logic_error("Tried to initialize state at a position larger than the number of sites");
 
     mps_sites.clear();
 
     // Generate a simple state with all spins equal
-    Eigen::Tensor<cplx, 3> M(static_cast<long>(spin_dim), 1, 1);
+    Eigen::Tensor<cplx, 3> M(safe_cast<long>(spin_dim), 1, 1);
     Eigen::Tensor<cplx, 1> L(1);
     M(0, 0, 0) = 0;
     M(1, 0, 0) = 1;
     L(0)       = 1;
     for(size_t site = 0; site < model_size; site++) {
-        std::string label = static_cast<long>(site) <= position ? "A" : "B";
+        std::string label = safe_cast<long>(site) <= position ? "A" : "B";
         mps_sites.emplace_back(std::make_unique<MpsSite>(M, L, site, 0.0, label));
-        if(static_cast<long>(site) == position) { mps_sites.back()->set_LC(L); }
+        if(safe_cast<long>(site) == position) { mps_sites.back()->set_LC(L); }
     }
     if(mps_sites.size() != model_size) throw except::logic_error("Initialized state with wrong size");
     if(not get_mps_site(position).isCenter()) throw except::logic_error("Initialized state center bond at the wrong position");
@@ -108,7 +109,7 @@ void StateFinite::set_positions() {
 
 template<typename T>
 T StateFinite::get_length() const {
-    return static_cast<T>(mps_sites.size());
+    return safe_cast<T>(mps_sites.size());
 }
 template double             StateFinite::get_length<double>() const;
 template size_t             StateFinite::get_length<size_t>() const;
@@ -204,7 +205,7 @@ bool StateFinite::position_is_outward_edge_left([[maybe_unused]] size_t nsite) c
 }
 
 bool StateFinite::position_is_outward_edge_right(size_t nsite) const {
-    return get_position<long>() >= get_length<long>() - static_cast<long>(nsite) and direction == 1;
+    return get_position<long>() >= get_length<long>() - safe_cast<long>(nsite) and direction == 1;
 }
 
 bool StateFinite::position_is_outward_edge(size_t nsite) const { return position_is_outward_edge_left(nsite) or position_is_outward_edge_right(nsite); }
@@ -214,7 +215,7 @@ bool StateFinite::position_is_inward_edge_left([[maybe_unused]] size_t nsite) co
 }
 
 bool StateFinite::position_is_inward_edge_right(size_t nsite) const {
-    return get_position<long>() >= get_length<long>() - static_cast<long>(nsite) and direction == -1;
+    return get_position<long>() >= get_length<long>() - safe_cast<long>(nsite) and direction == -1;
 }
 
 bool StateFinite::position_is_inward_edge(size_t nsite) const { return position_is_inward_edge_left(nsite) or position_is_inward_edge_right(nsite); }
@@ -271,8 +272,8 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
     if constexpr(std::is_signed_v<T>)
         if(pos < 0) throw except::range_error("get_mps_site(pos): pos out of range: {}", pos);
     if(pos >= get_length<T>()) throw except::range_error("get_mps_site(pos): pos out of range: {}", pos);
-    const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
-    if(mps_ptr->get_position<T>() != pos) throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>());
+    const auto &mps_ptr = *std::next(mps_sites.begin(), safe_cast<long>(pos));
+    if(mps_ptr->template get_position<T>() != pos) throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->template get_position<T>());
     return *mps_ptr;
 
     //    if(algo == AlgorithmType::fLBIT){
@@ -283,7 +284,7 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
     //        throw except::runtime_error("get_mps_site(pos): pos {} not found", pos);
     //    }else{
     //        // There shouldn't be any swap operator, we can safely assume the mps positions are sorted
-    //        const auto &mps_ptr = *std::next(mps_sites.begin(), static_cast<long>(pos));
+    //        const auto &mps_ptr = *std::next(mps_sites.begin(), safe_cast<long>(pos));
     //        if(mps_ptr->get_position<T>() != pos)
     //            throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->get_position<T>());
     //        return *mps_ptr;
@@ -554,7 +555,7 @@ double              StateFinite::get_truncation_error_active_max() const {
 
 size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
     auto truncation_errors = get_truncation_errors();
-    auto trunc_bond_count  = static_cast<size_t>(
+    auto trunc_bond_count  = safe_cast<size_t>(
         std::count_if(truncation_errors.begin(), truncation_errors.end(), [truncation_threshold](auto const &val) { return val > truncation_threshold; }));
     return trunc_bond_count;
 }
@@ -562,7 +563,7 @@ size_t StateFinite::num_sites_truncated(double truncation_threshold) const {
 size_t StateFinite::num_bonds_at_limit(long bond_lim) const {
     auto bond_dimensions = tools::finite::measure::bond_dimensions(*this);
     auto bonds_at_lim =
-        static_cast<size_t>(std::count_if(bond_dimensions.begin(), bond_dimensions.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
+        safe_cast<size_t>(std::count_if(bond_dimensions.begin(), bond_dimensions.end(), [bond_lim](auto const &dim) { return dim >= bond_lim; }));
     return bonds_at_lim;
 }
 
@@ -662,8 +663,8 @@ bool StateFinite::is_normalized_on_active_sites() const {
     if(tag_normalized_sites.size() != get_length())
         throw except::runtime_error("Cannot check normalization status on active sites, size mismatch in site list");
     if(active_sites.empty()) return false;
-    auto first_site_ptr = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.front()));
-    auto last_site_ptr  = std::next(tag_normalized_sites.begin(), static_cast<long>(active_sites.back()));
+    auto first_site_ptr = std::next(tag_normalized_sites.begin(), safe_cast<long>(active_sites.front()));
+    auto last_site_ptr  = std::next(tag_normalized_sites.begin(), safe_cast<long>(active_sites.back()));
     return std::all_of(first_site_ptr, last_site_ptr, [](bool v) { return v; });
 }
 

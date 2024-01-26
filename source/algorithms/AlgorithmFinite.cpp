@@ -3,6 +3,7 @@
 #include "debug/exceptions.h"
 #include "debug/info.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/num.h"
 #include "math/tenx/span.h"
 #include "qm/spin.h"
@@ -95,7 +96,7 @@ void AlgorithmFinite::run_postprocessing() {
         tensors.rebuild_edges();
     }
     write_to_file(StorageEvent::BOND_UPDATE, CopyPolicy::OFF); // To get checkpoint/chi_# with the current result (which would otherwise be missing
-    write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);    // To compare the finished state to a projected one
+    write_to_file(StorageEvent::PROJECTION, CopyPolicy::OFF);  // To compare the finished state to a projected one
     write_to_file(StorageEvent::FINISHED, CopyPolicy::FORCE);  // For final mps
     print_status_full();
     run_fes_analysis();
@@ -109,9 +110,9 @@ void AlgorithmFinite::move_center_point(std::optional<long> num_moves) {
         else {
             long posL_edge     = 0;
             long posR_edge     = tensors.get_length<long>() - 1;
-            long posL_active   = static_cast<long>(tensors.active_sites.front());
-            long posR_active   = static_cast<long>(tensors.active_sites.back());
-            long num_active    = static_cast<long>(tensors.active_sites.size());
+            long posL_active   = safe_cast<long>(tensors.active_sites.front());
+            long posR_active   = safe_cast<long>(tensors.active_sites.back());
+            long num_active    = safe_cast<long>(tensors.active_sites.size());
             bool reached_edgeR = tensors.state->get_direction() == 1 and posR_edge == posR_active;
             bool reached_edgeL = tensors.state->get_direction() == -1 and posL_edge == posL_active;
 
@@ -213,7 +214,7 @@ void AlgorithmFinite::try_moving_sites() {
                                                 sites_mps->at(tensors.active_sites.back()), tensors.active_sites.front(), tensors.active_sites.back(),
                                                 tools::finite::measure::energy_variance(tensors)));
             status.step += 1;
-            tensors.move_site_to_pos(static_cast<size_t>(site), tgt_pos, sites_mps, sites_mpo, tgt_pos);
+            tensors.move_site_to_pos(safe_cast<size_t>(site), tgt_pos, sites_mps, sites_mpo, tgt_pos);
             tools::log->debug("Labels    : {}", tensors.state->get_labels());
             tools::log->debug("Sites mps : {}", sites_mps.value());
             tools::log->debug("Sites mpo : {}", sites_mpo.value());
@@ -256,7 +257,7 @@ void AlgorithmFinite::update_variance_max_digits(std::optional<double> energy) {
     double energy_top                 = settings::precision::use_energy_shifted_mpo ? energy_abs : energy_pow;
     double energy_exp                 = std::ceil(std::max(0.0, std::log10(energy_top))) + 1;
     double max_digits                 = std::floor(std::max(0.0, digits10 - energy_exp));
-    status.energy_variance_max_digits = static_cast<size_t>(max_digits);
+    status.energy_variance_max_digits = safe_cast<size_t>(max_digits);
     status.energy_variance_prec_limit = std::pow(10.0, -max_digits);
     tools::log->debug("Estimated limit on energy variance precision: {:.3e}", status.energy_variance_prec_limit);
 }
@@ -332,7 +333,7 @@ void AlgorithmFinite::update_bond_dimension_limit() {
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
 
     tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
-    status.bond_lim                   = static_cast<long>(bond_new);
+    status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
     status.algorithm_has_stuck_for    = 0;
     status.algorithm_saturated_for    = 0;
@@ -366,7 +367,7 @@ void AlgorithmFinite::reduce_bond_dimension_limit(double rate, UpdateWhen when, 
             status.algo_stop = AlgorithmStop::SUCCESS;
         } else {
             if(storage_event != StorageEvent::NONE) tools::log->info("Updating bond dimension limit {} -> {}", status.bond_lim, bond_new);
-            status.bond_lim = static_cast<long>(bond_new);
+            status.bond_lim = safe_cast<long>(bond_new);
         }
         iter_last_bond_reduce = status.iter;
     }
@@ -479,8 +480,8 @@ void AlgorithmFinite::initialize_model() {
 }
 
 void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init, std::optional<StateInitType> state_type, std::optional<std::string> axis,
-                                      std::optional<bool> use_eigenspinors, std::optional<std::string> pattern, std::optional<long> bond_lim,
-                                      std::optional<double> trnc_lim) {
+                                       std::optional<bool> use_eigenspinors, std::optional<std::string> pattern, std::optional<long> bond_lim,
+                                       std::optional<double> trnc_lim) {
     auto t_rnd = tid::tic_scope("rnd_state", tid::level::higher);
     if(reason == ResetReason::SATURATED) {
         if(status.num_resets >= settings::strategy::max_resets)
@@ -495,7 +496,7 @@ void AlgorithmFinite::initialize_state(ResetReason reason, StateInit state_init,
     if(not bond_lim) {
         bond_lim = settings::get_bond_init(status.algo_type);
         if(settings::strategy::bond_increase_when == UpdateWhen::NEVER and state_init == StateInit::RANDOMIZE_PREVIOUS_STATE)
-            bond_lim = static_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
+            bond_lim = safe_cast<long>(std::pow(2, std::floor(std::log2(tensors.state->find_largest_bond())))); // Nearest power of two from below
     }
     if(not trnc_lim) {
         trnc_lim = settings::solver::svd_truncation_init;
@@ -750,7 +751,7 @@ void AlgorithmFinite::check_convergence_entg_entropy(std::optional<double> satur
             return r1.saturated_count < r2.saturated_count;
         });
         if(last_saturated_itr != reports.end()) {
-            auto  last_saturated_site         = static_cast<size_t>(std::distance(reports.begin(), last_saturated_itr));
+            auto  last_saturated_site         = safe_cast<size_t>(std::distance(reports.begin(), last_saturated_itr));
             auto &report                      = reports[last_saturated_site];
             status.entanglement_saturated_for = report.saturated_count;
             if(tools::log->level() >= spdlog::level::debug)
@@ -854,9 +855,9 @@ void AlgorithmFinite::print_status() {
     if(tensors.active_sites.size() >= 2) {
         auto frnt = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.front()) : tensors.active_sites.front();
         auto back = sites_mps.has_value() ? sites_mps->at(tensors.active_sites.back()) : tensors.active_sites.back();
-        if(tensors.position_is_at(static_cast<long>(tensors.active_sites.front())))
+        if(tensors.position_is_at(safe_cast<long>(tensors.active_sites.front())))
             site_str = fmt::format("{:>2}.{:>2} ", frnt, back);
-        else if(tensors.position_is_at(static_cast<long>(tensors.active_sites.back())))
+        else if(tensors.position_is_at(safe_cast<long>(tensors.active_sites.back())))
             site_str = fmt::format("{:>2} {:>2}.", frnt, back);
         else
             site_str = fmt::format("{:>2} {:>2} ", frnt, back);
@@ -872,8 +873,7 @@ void AlgorithmFinite::print_status() {
     double var = tensors.active_sites.empty() ? std::numeric_limits<double>::quiet_NaN() : tools::finite::measure::energy_variance(tensors);
     report += fmt::format("E:{:<20.16f} ", ene);
     report += fmt::format("σ²H:{:<8.2e} [{:<8.2e}] ", var, status.energy_variance_lowest);
-    report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(),
-                          tools::finite::measure::entanglement_entropy_current(*tensors.state));
+    report += fmt::format("Sₑ({:>2}):{:<10.8f} ", tensors.state->get_position<long>(), tools::finite::measure::entanglement_entropy_current(*tensors.state));
 
     report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_active_max());
     if(settings::strategy::multisite_mps_site_def == 1) report += fmt::format("α:{:<8.2e} ", status.env_expansion_alpha);
@@ -888,8 +888,8 @@ void AlgorithmFinite::print_status() {
         report += fmt::format("opt:[{}|{}] ", enum2sv(last_optmode.value()).substr(0, 3), enum2sv(last_optspace.value()).substr(0, 3));
     report += fmt::format("con:{:<1} ", status.algorithm_converged_for);
     report += fmt::format("stk:{:<1} ", status.algorithm_has_stuck_for);
-    report += fmt::format("sat:{:<1}[σ² {:<1} Sₑ {:<1}] ", status.algorithm_saturated_for, status.variance_mpo_saturated_for,
-                          status.entanglement_saturated_for);
+    report +=
+        fmt::format("sat:{:<1}[σ² {:<1} Sₑ {:<1}] ", status.algorithm_saturated_for, status.variance_mpo_saturated_for, status.entanglement_saturated_for);
     report += fmt::format("time:{:<9} ", fmt::format("{:>7.1f}s", tid::get_unscoped("t_tot").get_time()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);

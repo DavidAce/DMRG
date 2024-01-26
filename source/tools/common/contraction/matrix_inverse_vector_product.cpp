@@ -1,14 +1,15 @@
 #include "math/tenx/fwd_decl.h"
 // Eigen goes first
 #include "debug/exceptions.h"
+#include "math/cast.h"
 #include "math/tenx.h"
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include <complex>
 #include <Eigen/IterativeLinearSolvers>
-#include <unsupported/Eigen/IterativeSolvers>
 #include <fmt/ranges.h>
+#include <unsupported/Eigen/IterativeSolvers>
 
 template<typename Scalar_>
 class MatrixReplacement;
@@ -46,8 +47,8 @@ class MatrixReplacement : public Eigen::EigenBase<MatrixReplacement<Scalar_>> {
     mutable int                 counter = 0;
     mutable std::vector<Scalar> tmp;
 
-    [[nodiscard]] Eigen::Index rows() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
-    [[nodiscard]] Eigen::Index cols() const { return static_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] Eigen::Index rows() const { return safe_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
+    [[nodiscard]] Eigen::Index cols() const { return safe_cast<int>(mps_size); }; /*!< Linear size\f$d^2 \times \chi_L \times \chi_R \f$  */
 
     template<typename Rhs>
     Eigen::Product<MatrixReplacement, Rhs, Eigen::AliasFreeProduct> operator*(const Eigen::MatrixBase<Rhs> &x) const {
@@ -169,8 +170,9 @@ void tools::common::contraction::matrix_inverse_vector_product(Scalar *res_ptr, 
         solver.setTolerance(tolerance);
         solver.compute(matRepl);
         res = solver.solveWithGuess(mps, guess_cbs);
-        tools::log->info("CG Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(), static_cast<int>(solver.info()),
-                         solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter, t_mativec->get_last_interval());
+        tools::log->info("CG Preconditioner: size {} | info {} | tol {:8.5e} | err {:8.5e} | iter {} | counter {} | time {:.2e}", mps.size(),
+                         static_cast<int>(solver.info()), solver.tolerance(), solver.error(), solver.iterations(), matRepl.counter,
+                         t_mativec->get_last_interval());
         guess_cbs = res;
     }
 

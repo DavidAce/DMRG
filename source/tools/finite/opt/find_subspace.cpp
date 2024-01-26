@@ -2,6 +2,7 @@
 // -- (textra first)
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
+#include "math/cast.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_dense.h"
 #include "math/eig/matvec/matvec_mpo.h"
@@ -36,7 +37,7 @@ std::vector<int> subspace::generate_nev_list(int rows) {
     if(3072 < rows and rows <= 4096) nev_list = {16};
     if(4096 < rows) nev_list = {4};
 
-    while(nev_list.size() > 1 and (nev_list.back() * 2 > rows or static_cast<size_t>(nev_list.back()) > settings::precision::max_subspace_size))
+    while(nev_list.size() > 1 and (nev_list.back() * 2 > rows or safe_cast<size_t>(nev_list.back()) > settings::precision::max_subspace_size))
         nev_list.pop_back();
     if(nev_list.empty()) throw except::logic_error("nev_list is empty");
     return nev_list;
@@ -93,7 +94,7 @@ std::vector<opt_mps> subspace::find_subspace(const TensorsFinite &tensors, doubl
     for(const auto &item : reports::subs_log) { eigvec_time += item.ham_time + item.lu_time + item.eig_time; }
 
     std::vector<opt_mps> subspace;
-    subspace.reserve(static_cast<size_t>(eigvals.size()));
+    subspace.reserve(safe_cast<size_t>(eigvals.size()));
     for(long idx = 0; idx < eigvals.size(); idx++) {
         // Important to normalize the eigenvectors that we get from the solver: they are not always well normalized when we get them!
         auto eigvec_i = tenx::TensorCast(eigvecs.col(idx).normalized(), multisite_mps.dimensions());
@@ -154,7 +155,7 @@ std::pair<Eigen::MatrixXcd, Eigen::VectorXd> subspace::find_subspace_part(const 
     // Initialize eigvals/eigvecs containers that store the results
     Eigen::VectorXd  eigvals;
     Eigen::MatrixXcd eigvecs;
-    for(auto nev : generate_nev_list(static_cast<int>(problem_size))) {
+    for(auto nev : generate_nev_list(safe_cast<int>(problem_size))) {
         eig::solver solver;
         solver.config        = config;
         solver.config.maxNev = nev;
@@ -361,7 +362,7 @@ MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &m
     long dim0   = mpo2.dimension(2);
     long dim1   = env2.L.dimension(0);
     long dim2   = env2.R.dimension(0);
-    long eignum = static_cast<long>(eigvecs.size()); // Number of eigenvectors
+    long eignum = safe_cast<long>(eigvecs.size()); // Number of eigenvectors
 
     Eigen::Tensor<std::complex<double>, 0> H2_ij;
     Eigen::Tensor<std::complex<double>, 3> H2_mps(dim0, dim1, dim2); // The local hamiltonian multiplied by mps at column j.
@@ -370,10 +371,10 @@ MatrixType<T> subspace::get_hamiltonian_squared_in_subspace(const ModelFinite &m
         const auto &mps_j = std::next(eigvecs.begin(), col)->get_tensor();
         tools::common::contraction::matrix_vector_product(H2_mps, mps_j, mpo2, env2.L, env2.R);
         for(auto row = col; row < eignum; row++) {
-            const auto &mps_i                    = std::next(eigvecs.begin(), row)->get_tensor();
+            const auto &mps_i                        = std::next(eigvecs.begin(), row)->get_tensor();
             H2_ij.device(tenx::threads::getDevice()) = mps_i.conjugate().contract(H2_mps, tenx::idx({0, 1, 2}, {0, 1, 2}));
             H2_sub(row, col)                         = H2_ij(0);
-            H2_sub(col, row)                     = std::conj(H2_ij(0));
+            H2_sub(col, row)                         = std::conj(H2_ij(0));
         }
     }
     if constexpr(std::is_same_v<T, double>)

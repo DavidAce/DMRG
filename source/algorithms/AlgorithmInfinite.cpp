@@ -2,6 +2,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "debug/info.h"
+#include "math/cast.h"
 #include "math/num.h"
 #include "tensors/model/ModelInfinite.h"
 #include "tensors/state/StateInfinite.h"
@@ -49,10 +50,10 @@ void AlgorithmInfinite::update_variance_max_digits(std::optional<double> energy)
     if(not energy) energy = tools::infinite::measure::energy_per_site_mpo(tensors) * static_cast<double>(status.iter);
     if(settings::precision::use_energy_shifted_mpo)
         status.energy_variance_max_digits =
-            static_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::abs(energy.value())))));
+            safe_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::abs(energy.value())))));
     else
         status.energy_variance_max_digits =
-            static_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy.value(), 2)))));
+            safe_cast<size_t>(std::floor(std::numeric_limits<double>::digits10 - std::max(0.0, std::log10(std::pow(energy.value(), 2)))));
 
     status.energy_variance_prec_limit = std::pow(10, -status.energy_variance_max_digits);
 }
@@ -110,7 +111,7 @@ void AlgorithmInfinite::update_bond_dimension_limit() {
     bond_new = std::min(bond_new, static_cast<double>(status.bond_max));
 
     tools::log->info("Updating bond dimension limit {} -> {} | truncated {} | saturated {}", status.bond_lim, bond_new, is_truncated, is_saturated);
-    status.bond_lim                   = static_cast<long>(bond_new);
+    status.bond_lim                   = safe_cast<long>(bond_new);
     status.bond_limit_has_reached_max = status.bond_lim == status.bond_max;
     status.algorithm_has_stuck_for    = 0;
     status.algorithm_saturated_for    = 0;

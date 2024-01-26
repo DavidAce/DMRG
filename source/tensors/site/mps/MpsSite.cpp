@@ -198,7 +198,7 @@ void MpsSite::set_position(const size_t position_) {
 template<typename T>
 T MpsSite::get_position() const {
     if(position) {
-        return static_cast<T>(position.value());
+        return safe_cast<T>(position.value());
     } else {
         throw std::runtime_error("MpsSite::get_position(): Position hasn't been set on mps site.");
     }
@@ -598,8 +598,8 @@ void MpsSite::convert_LB_to_B(const Eigen::Tensor<cplx, 1> &LL) {
 
 std::size_t MpsSite::get_unique_id() const {
     if(unique_id) return unique_id.value();
-    unique_id = hash::hash_buffer(get_M().data(), static_cast<size_t>(get_M().size()));
-    unique_id = hash::hash_buffer(get_L().data(), static_cast<size_t>(get_L().size()), unique_id.value());
-    //    if(isCenter()) unique_id = hash::hash_buffer(get_LC().data(), static_cast<size_t>(get_LC().size()), unique_id.value());
+    unique_id = hash::hash_buffer(get_M().data(), safe_cast<size_t>(get_M().size()));
+    unique_id = hash::hash_buffer(get_L().data(), safe_cast<size_t>(get_L().size()), unique_id.value());
+    //    if(isCenter()) unique_id = hash::hash_buffer(get_LC().data(), safe_cast<size_t>(get_LC().size()), unique_id.value());
     return unique_id.value();
 }

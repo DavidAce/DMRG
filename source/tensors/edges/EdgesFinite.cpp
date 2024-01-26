@@ -3,6 +3,7 @@
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "math/num.h"
+#include "math/cast.h"
 #include "tensors/site/env/EnvEne.h"
 #include "tensors/site/env/EnvPair.h"
 #include "tensors/site/env/EnvVar.h"
@@ -159,28 +160,28 @@ void EdgesFinite::eject_edges_all() {
 const EnvEne &EdgesFinite::get_env_eneL(size_t pos) const {
     if(pos >= get_length()) throw except::range_error("get_env_eneL(pos:{}): pos is out of range | system size {}", pos, get_length());
     if(pos >= eneL.size()) throw except::range_error("get_env_eneL(pos:{}): pos is out of range | eneL.size() == {}", pos, eneL.size());
-    const auto &env = **std::next(eneL.begin(), static_cast<long>(pos));
+    const auto &env = **std::next(eneL.begin(), safe_cast<long>(pos));
     if(env.get_position() != pos) throw except::logic_error("get_env_eneL(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 const EnvEne &EdgesFinite::get_env_eneR(size_t pos) const {
     if(pos >= get_length()) throw except::range_error("get_env_eneR(pos:{}): pos is out of range | system size {}", pos, get_length());
     if(pos >= eneR.size()) throw except::range_error("get_env_eneR(pos:{}): pos is out of range | eneR.size() == {}", pos, eneR.size());
-    const auto &env = **std::next(eneR.begin(), static_cast<long>(pos));
+    const auto &env = **std::next(eneR.begin(), safe_cast<long>(pos));
     if(env.get_position() != pos) throw except::logic_error("get_env_eneR(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 const EnvVar &EdgesFinite::get_env_varL(size_t pos) const {
     if(pos >= get_length()) throw except::range_error("get_env_varL(pos:{}): pos is out of range | system size {}", pos, get_length());
     if(pos >= varL.size()) throw except::range_error("get_env_varL(pos:{}): pos is out of range | varL.size() == {}", pos, varL.size());
-    const auto &env = **std::next(varL.begin(), static_cast<long>(pos));
+    const auto &env = **std::next(varL.begin(), safe_cast<long>(pos));
     if(env.get_position() != pos) throw except::logic_error("get_env_varL(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }
 const EnvVar &EdgesFinite::get_env_varR(size_t pos) const {
     if(pos >= get_length()) throw except::range_error("get_env_varR(pos:{}): pos is out of range | system size {}", pos, get_length());
     if(pos >= varR.size()) throw except::range_error("get_env_varR(pos:{}): pos is out of range | varR.size() == {}", pos, varR.size());
-    const auto &env = **std::next(varR.begin(), static_cast<long>(pos));
+    const auto &env = **std::next(varR.begin(), safe_cast<long>(pos));
     if(env.get_position() != pos) throw except::logic_error("get_env_varR(pos:{}): position mismatch {}", pos, env.get_position());
     return env;
 }

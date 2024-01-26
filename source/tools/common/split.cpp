@@ -213,7 +213,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
 
         if(pos == center_position + 1 and S_stash) { // The stash in S becomes the LC for the site on the left
-            mps.stash_C(S_stash->data, S_stash->error, static_cast<size_t>(center_position));
+            mps.stash_C(S_stash->data, S_stash->error, safe_cast<size_t>(center_position));
             S_stash.reset();
         } else if(U_stash) {
             auto udim = U_stash->data.dimensions();
@@ -394,7 +394,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         }
         if(&spin_dim == &spin_dims.back()                            // Reached last site in spin_dims
            and spin_dim == V.dimension(0)                            // V has one site left
-           and static_cast<size_t>(center_position) > positions[idx] // Only needed when the site to the right is another A
+           and safe_cast<size_t>(center_position) > positions[idx] // Only needed when the site to the right is another A
         ) {
             // We reached the last site, and now V == L*GL, i.e. a theta with dim(0) == spin_dims.back().
             // Make sure we don't over-truncate during this SVD, so that we keep the bond dimension compatible with the adjacent site to the right.
@@ -514,7 +514,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
         }
         if(&spin_dim == &spin_dims.front()                               // Reached the first site in spin_dims
            and spin_dim == U.dimension(0)                                // U has one site left
-           and static_cast<size_t>(center_position) + 1 < positions[idx] // Only needed if the site to the left would be another B.
+           and safe_cast<size_t>(center_position + 1)  < positions[idx] // Only needed if the site to the left would be another B.
         ) {
             // We reached the first site, and now U == LG*L, i.e. a theta with dim(0) == spin_dims.front().
             // Make sure we don't over-truncate during this SVD, so that we keep the bond dimension compatible with the adjacent site to the left.

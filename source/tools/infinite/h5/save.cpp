@@ -1,5 +1,6 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "io/hdf5_types.h"
+#include "math/cast.h"
 #include "tensors/edges/EdgesInfinite.h"
 #include "tensors/model/ModelInfinite.h"
 #include "tensors/site/mpo/MpoSite.h"
@@ -111,10 +112,10 @@ void tools::infinite::h5::save::measurements(h5pp::File &h5file, const StorageIn
     h5pp_table_measurements_infinite::table measurement_entry{};
     const auto                             &state = *tensors.state;
 
-    measurement_entry.step                 = static_cast<uint64_t>(sinfo.step);
-    measurement_entry.iter                 = static_cast<uint64_t>(sinfo.iter);
-    measurement_entry.position             = static_cast<int64_t>(sinfo.position);
-    measurement_entry.length               = static_cast<uint64_t>(tools::infinite::measure::length(tensors));
+    measurement_entry.step                 = safe_cast<uint64_t>(sinfo.step);
+    measurement_entry.iter                 = safe_cast<uint64_t>(sinfo.iter);
+    measurement_entry.position             = safe_cast<int64_t>(sinfo.position);
+    measurement_entry.length               = safe_cast<uint64_t>(tools::infinite::measure::length(tensors));
     measurement_entry.bond_dim             = tools::infinite::measure::bond_dimension(state);
     measurement_entry.bond_lim             = sinfo.bond_lim;
     measurement_entry.bond_max             = sinfo.bond_max;

@@ -175,10 +175,10 @@ Eigen::ArrayXXd tools::finite::measure::subsystem_entanglement_entropies(const S
             bool is_right_edge = off + ext == len;
             tools::log->info("Calculating subsystem entanglement entropy off {}, ext {}", off, ext);
             if(is_left_edge) {
-                auto idx          = static_cast<size_t>(off + ext);
+                auto idx          = safe_cast<size_t>(off + ext);
                 ees(ext - 1, off) = bee[idx];
             } else if(is_right_edge) {
-                auto idx          = static_cast<size_t>(off);
+                auto idx          = safe_cast<size_t>(off);
                 ees(ext - 1, off) = bee[idx];
             } else {
                 auto sites = num::range<size_t>(off, off + ext);

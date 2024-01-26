@@ -251,8 +251,8 @@ void tools::finite::env::assert_edges_var(const StateFinite &state, const ModelF
     size_t posR_active      = edges.active_sites.back();
 
     //    long   current_position = state.get_position<long>();
-    //    size_t posL_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
-    //    size_t posR_active      = static_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    size_t posL_active      = safe_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
+    //    size_t posR_active      = safe_cast<size_t>(std::clamp<long>(current_position, 0, state.get_length<long>() - 1));
     //    if(not edges.active_sites.empty()) {
     //        posL_active = edges.active_sites.front();
     //        posR_active = edges.active_sites.back();

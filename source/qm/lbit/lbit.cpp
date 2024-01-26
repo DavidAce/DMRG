@@ -8,6 +8,7 @@
 #include "general/iter.h"
 #include "io/fmt_custom.h"
 #include "io/spdlog.h"
+#include "math/cast.h"
 #include "math/fit.h"
 #include "math/float.h"
 #include "math/linalg.h"
@@ -39,7 +40,8 @@ qm::lbit::UnitaryGateProperties::UnitaryGateProperties(const std::vector<double>
     : sites(settings::model::model_size), depth(settings::model::lbit::u_depth), fmix(settings::model::lbit::u_fmix), lambda(settings::model::lbit::u_lambda),
       wkind(settings::model::lbit::u_wkind), mkind(settings::model::lbit::u_mkind), hmean(settings::model::lbit::J1_mean),
       hwdth(settings::model::lbit::J1_wdth), hdist(settings::model::lbit::distribution), hvals(h) {
-    if(wkind == LbitCircuitGateWeightKind::EXPDECAY and hvals.empty()) throw except::logic_error("No onsite fields h given for LbitCircuitGateWeight::EXPDECAY");
+    if(wkind == LbitCircuitGateWeightKind::EXPDECAY and hvals.empty())
+        throw except::logic_error("No onsite fields h given for LbitCircuitGateWeight::EXPDECAY");
 }
 
 std::string qm::lbit::UnitaryGateProperties::string() const {
@@ -1028,7 +1030,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
         https://onlinelibrary.wiley.com/doi/10.1002/andp.201600322
     */
     auto t_corrmat    = tid::tic_scope("corrmat3");
-    auto ssites       = static_cast<long>(sites);
+    auto ssites       = safe_cast<long>(sites);
     auto lbit_corrmat = Eigen::Tensor<cplx, 2>(ssites, ssites);
     for(long j = 0; j < ssites; j++) {
         for(long i = 0; i < ssites; i++) {
@@ -1056,7 +1058,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
 }
 
 Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<Eigen::Tensor<cplx, 4>> &mpo_layer) {
-    auto                   ssites = static_cast<long>(mpo_layer.size());
+    auto                   ssites = safe_cast<long>(mpo_layer.size());
     Eigen::Tensor<cplx, 2> lbit_corrmat(ssites, ssites);
 
     /*! \brief Calculates the correlator as an operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
@@ -1106,7 +1108,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
         if(mpo_layer.empty()) throw except::logic_error("mpo layer is empty");
         if(mpo_layer.size() != mpo_layers.front().size()) throw except::logic_error("mpo layer size mismatch");
     }
-    auto                   ssites = static_cast<long>(mpo_layers.front().size());
+    auto                   ssites = safe_cast<long>(mpo_layers.front().size());
     Eigen::Tensor<cplx, 2> lbit_corrmat(ssites, ssites);
 
     /*! \brief Calculates the correlator as an operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
@@ -1154,7 +1156,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix2(const std::vector<
         if(mpo_layer.empty()) throw except::logic_error("mpo layer is empty");
         if(mpo_layer.size() != mpo_layers.front().size()) throw except::logic_error("mpo layer size mismatch");
     }
-    auto                   ssites = static_cast<long>(mpo_layers.front().size());
+    auto                   ssites = safe_cast<long>(mpo_layers.front().size());
     Eigen::Tensor<cplx, 2> lbit_corrmat(ssites, ssites);
 
     /*! \brief Calculates the correlator as an operator overlap O(i,j) = Tr(𝜌_i σ^z_j) / Tr(𝜌_j)
@@ -1510,7 +1512,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
     lbitSupportAnalysis lbitSA2(u_dpths.size(), u_fmixs.size(),u_lambdas.size(), u_wkinds.size(), u_mkinds.size() , reps, u_defaults.sites);
     std::array<long, 6> offset6{}, extent6{};
     std::array<long, 8> offset8{}, extent8{};
-    auto i_width = static_cast<long>(u_defaults.sites);
+    auto i_width = safe_cast<long>(u_defaults.sites);
     extent8 = {1, 1, 1, 1, 1,1,  i_width, i_width};
 
     for (const auto & [i_dpth, u_dpth] : iter::enumerate<long>(u_dpths))
@@ -1552,9 +1554,9 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
 
 
         offset6                              = {i_dpth, i_fmix, i_lambda, i_wkind, i_mkind, 0};
-        extent6                              = {1, 1, 1, 1, 1, static_cast<long>(yavg.size())};
+        extent6                              = {1, 1, 1, 1, 1, safe_cast<long>(yavg.size())};
         lbitSA.corravg.slice(offset6, extent6) = Eigen::TensorMap<Eigen::Tensor<real, 6>>(yavg.data(), extent6);
-        extent6                              = {1, 1, 1, 1, 1, static_cast<long>(ytyp.size())};
+        extent6                              = {1, 1, 1, 1, 1, safe_cast<long>(ytyp.size())};
         lbitSA.corrtyp.slice(offset6, extent6) = Eigen::TensorMap<Eigen::Tensor<real, 6>>(ytyp.data(), extent6);
 
         auto t_plot = tid::tic_scope("plot");
@@ -1575,7 +1577,7 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         plt.enable_legend();
         plt.show();
         auto lbit_corrmap = tenx::MatrixMap(lbit_corrmat_avg);
-        auto mid = static_cast<long>(lbit_corrmap.rows()/2);
+        auto mid = safe_cast<long>(lbit_corrmap.rows()/2);
         auto lbit_crossup = 0.5 * (lbit_corrmap.topRightCorner(mid,mid).cwiseAbs().sum() + lbit_corrmap.bottomLeftCorner(mid,mid).cwiseAbs().sum());
         tools::log->info("lbit cross-support: {:.3e}", lbit_crossup);
 
@@ -1623,13 +1625,13 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
     state_real.set_name("state_real");
     state_real.clear_cache();
     state_real.clear_measurements();
-    svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
+    svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
     tools::log->debug("Transforming {} to {} using {} unitary mpo layers", state_lbit.get_name(), state_real.get_name(), unitary_gates_mpo_layers.size());
     for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
         tools::finite::ops::apply_mpos(state_real, mpo_layer, ledge, redge, true);
         if((idx_layer + 1) % 1 == 0) {
             tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::ALWAYS);
-            svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
+            svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
         }
     }
 
@@ -1646,7 +1648,7 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
             tools::finite::ops::apply_mpos(state_lbit_debug, mpo_layer, ledge, redge, false);
             if((idx_layer + 1) % 1 == 0) {
                 tools::finite::mps::normalize_state(state_lbit_debug, svd_cfg, NormPolicy::ALWAYS);
-                svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 2);
+                svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 2);
             }
         }
         tools::finite::mps::normalize_state(state_lbit_debug, std::nullopt, NormPolicy::IFNEEDED);
@@ -1695,14 +1697,14 @@ StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, con
     state_lbit.set_name("state_lbit");
     state_lbit.clear_cache();
     state_lbit.clear_measurements();
-    svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
+    svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
     tools::log->info("Transforming {} to {} using {} unitary mpo layers", state_real.get_name(), state_lbit.get_name(), unitary_gates_mpo_layers.size());
     for(const auto &[idx_layer, mpo_layer] : iter::enumerate_reverse(unitary_gates_mpo_layers)) {
         tools::finite::ops::apply_mpos(state_lbit, mpo_layer, ledge, redge, false);
         if((idx_layer) % 1 == 0) {
             tools::log->info("Normalizing with rank_max {} | max bond {}", svd_cfg.rank_max.value(), state_lbit.find_largest_bond());
             tools::finite::mps::normalize_state(state_lbit, svd_cfg, NormPolicy::ALWAYS);
-            svd_cfg.rank_max = static_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
+            svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_lbit.find_largest_bond()) * 4);
         }
     }
 

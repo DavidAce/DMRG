@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cast.h"
 #include "general/iter.h"
 #include "num.h"
 #include <algorithm>
@@ -72,9 +73,9 @@ namespace stat {
         auto x_it_mid = X.begin();
         std::advance(x_it_mid, start_point.value());
         // ... and then the mid-point between start to end
-        std::advance(x_it_mid, static_cast<long>(n / 2));
+        std::advance(x_it_mid, safe_cast<long>(n / 2));
 
-        if(n > 0 and num::mod<size_t>(static_cast<size_t>(n), 2) == 0) {
+        if(n > 0 and num::mod<size_t>(safe_cast<size_t>(n), 2) == 0) {
             // Even number of elements, take mean between middle elements
             auto a = *x_it_mid;
             std::advance(x_it_mid, -1);
@@ -124,8 +125,8 @@ namespace stat {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         long idx0         = std::distance(X.begin(), x_it);
         long idxN         = std::distance(X.begin(), x_en);
-        long xlen         = std::distance(x_it, x_en);                                               // Number of points to consider in X
-        long wlen         = std::max<long>(2, static_cast<long>(width * static_cast<double>(xlen))); // Number of points in the moving window
+        long xlen         = std::distance(x_it, x_en);                                             // Number of points to consider in X
+        long wlen         = std::max<long>(2, safe_cast<long>(width * static_cast<double>(xlen))); // Number of points in the moving window
         while(x_it != x_en) {
             long idx_beg = std::distance(X.begin(), x_it); // Center around x_it
             long idx_end = std::distance(X.begin(), x_it); // Center around x_it
@@ -136,7 +137,7 @@ namespace stat {
                 }
                 if(idx_beg == idx0 and idx_end == idxN) break;
             }
-            if(idx_beg < 0 or static_cast<size_t>(idx_end) > X.size()) break;
+            if(idx_beg < 0 or safe_cast<size_t>(idx_end) > X.size()) break;
             res.emplace_back(stdev(X, idx_beg, idx_end));
             x_it++;
         }
@@ -151,8 +152,8 @@ namespace stat {
         auto [x_it, x_en] = get_start_end_iterators(X, start_point, end_point);
         long idx0         = std::distance(X.begin(), x_it);
         long idxN         = std::distance(X.begin(), x_en);
-        long xlen         = std::distance(x_it, x_en);                                               // Number of points to consider in X
-        long wlen         = std::max<long>(2, static_cast<long>(width * static_cast<double>(xlen))); // Number of points in the moving window
+        long xlen         = std::distance(x_it, x_en);                                             // Number of points to consider in X
+        long wlen         = std::max<long>(2, safe_cast<long>(width * static_cast<double>(xlen))); // Number of points in the moving window
         while(x_it != x_en) {
             long idx_beg = std::distance(X.begin(), x_it); // Center around x_it
             long idx_end = std::distance(X.begin(), x_it); // Center around x_it
@@ -253,7 +254,7 @@ namespace stat {
 
     template<typename ContainerType1, typename ContainerType2>
     [[nodiscard]] double slope_at(const ContainerType1 &X, const ContainerType2 &Y, size_t at, size_t width = 1) {
-        auto min_idx = static_cast<size_t>(std::max(static_cast<long>(at) - static_cast<long>(width), 0l));
+        auto min_idx = static_cast<size_t>(std::max(safe_cast<long>(at) - safe_cast<long>(width), 0l));
         auto max_idx = static_cast<size_t>(std::min(at + width, Y.size()));
         return linearFit(X, Y, min_idx, max_idx).first;
     }
@@ -261,12 +262,12 @@ namespace stat {
     template<typename ContainerType>
     [[nodiscard]] ContainerType smooth(const ContainerType &X, long width = 2) {
         if(X.size() <= 2) return X;
-        width = std::min<long>(4, static_cast<long>(X.size()) / 2);
+        width = std::min<long>(4, safe_cast<long>(X.size()) / 2);
         ContainerType S;
         S.reserve(X.size());
         for(auto &&[i, x] : iter::enumerate(X)) {
-            auto min_idx = std::clamp<long>(static_cast<long>(i) - width, 0l, static_cast<long>(i));
-            auto max_idx = std::clamp<long>(static_cast<long>(i) + width, static_cast<long>(i), static_cast<long>(X.size()) - 1l);
+            auto min_idx = std::clamp<long>(safe_cast<long>(i) - width, 0l, safe_cast<long>(i));
+            auto max_idx = std::clamp<long>(safe_cast<long>(i) + width, safe_cast<long>(i), safe_cast<long>(X.size()) - 1l);
             S.push_back(stat::mean(X, min_idx, max_idx));
         }
         return S;

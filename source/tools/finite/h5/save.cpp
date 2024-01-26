@@ -43,11 +43,11 @@ namespace tools::finite::h5 {
 
         // Define the table entry
         h5pp_table_measurements_finite::table measurement_entry{};
-        measurement_entry.iter     = static_cast<uint64_t>(sinfo.iter);
-        measurement_entry.step     = static_cast<uint64_t>(sinfo.step);
-        measurement_entry.position = static_cast<long>(sinfo.position);
+        measurement_entry.iter     = safe_cast<uint64_t>(sinfo.iter);
+        measurement_entry.step     = safe_cast<uint64_t>(sinfo.step);
+        measurement_entry.position = safe_cast<long>(sinfo.position);
         measurement_entry.event    = sinfo.storage_event;
-        measurement_entry.length   = static_cast<uint64_t>(tools::finite::measure::length(state));
+        measurement_entry.length   = safe_cast<uint64_t>(tools::finite::measure::length(state));
         if(status.algo_type != AlgorithmType::fLBIT) {
             measurement_entry.energy                 = tools::finite::measure::energy(state, model, edges);
             measurement_entry.energy_variance        = tools::finite::measure::energy_variance(state, model, edges);
@@ -57,7 +57,7 @@ namespace tools::finite::h5 {
         measurement_entry.truncation_error = state.get_truncation_error_midchain();
         measurement_entry.bond_lim         = sinfo.bond_lim;
         measurement_entry.bond_max         = sinfo.bond_max;
-        measurement_entry.bond_mid         = static_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
+        measurement_entry.bond_mid         = safe_cast<long>(tools::finite::measure::bond_dimension_midchain(state));
 
         measurement_entry.entanglement_entropy = tools::finite::measure::entanglement_entropy_midchain(state);
         measurement_entry.renyi_entropy_2      = tools::finite::measure::renyi_entropy_midchain(state, 2);
@@ -112,7 +112,7 @@ namespace tools::finite::h5 {
             auto attrs = tools::common::h5::save::get_save_attrs(h5file, dset_path);
             if(attrs == sinfo) return;
             if(not attrs.link_exists) {
-                auto                 rows = static_cast<hsize_t>(state.measurements.expectation_values_sz->dimension(0));
+                auto                 rows = safe_cast<hsize_t>(state.measurements.expectation_values_sz->dimension(0));
                 std::vector<hsize_t> dims = {rows, 0};
                 std::vector<hsize_t> chnk = {rows, settings::storage::dataset::expectation_values_spin_xyz::chunksize};
                 h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk);
@@ -206,8 +206,8 @@ namespace tools::finite::h5 {
         if(attrs == sinfo) return;
         tools::log->trace("Appending to dataset: {}", dset_path);
         if(not attrs.link_exists) {
-            auto                 rows = static_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->rows());
-            auto                 cols = static_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->cols());
+            auto                 rows = safe_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->rows());
+            auto                 cols = safe_cast<hsize_t>(state.measurements.subsystem_entanglement_entropies->cols());
             std::vector<hsize_t> dims = {rows, cols, 0};
             std::vector<hsize_t> chnk = {rows, cols, settings::storage::dataset::subsystem_entanglement_entropies::chunksize};
             h5file.createDataset(dset_path, h5pp::type::getH5Type<double>(), H5D_CHUNKED, dims, chnk, std::nullopt, 2);

@@ -27,8 +27,8 @@ namespace settings {
 template<typename T>
 std::vector<T> subset(const std::vector<T> &vec, size_t idx_start, size_t num) {
     if(idx_start + num > vec.size()) throw except::range_error("Vector subset start {} num {} out of range for vector of size {}", idx_start, num, vec.size());
-    auto vec_bgn = vec.begin() + static_cast<long>(idx_start);
-    auto vec_end = vec_bgn + static_cast<long>(num);
+    auto vec_bgn = vec.begin() + safe_cast<long>(idx_start);
+    auto vec_end = vec_bgn + safe_cast<long>(num);
     return std::vector<T>(vec_bgn, vec_end);
 }
 
@@ -581,8 +581,8 @@ std::vector<std::string> qm::get_lightcone_picture(const std::vector<std::vector
     std::vector<std::string> pic;
     if(not layers.empty() and not cone.empty()) {
         size_t sw = sep.size();
-        size_t tw = static_cast<size_t>(tag.size()) + 5;                                       // Tag width (brackets, number and colon)
-        size_t mw = static_cast<size_t>(layers.front().back().pos.back() + 1) * (pw + sw) + 1; // max cone width
+        size_t tw = safe_cast<size_t>(tag.size()) + 5;                                       // Tag width (brackets, number and colon)
+        size_t mw = safe_cast<size_t>(layers.front().back().pos.back() + 1) * (pw + sw) + 1; // max cone width
         pic       = std::vector<std::string>(cone.size(), fmt::format("{0:^{1}}", " ", tw + mw));
         for(const auto &[i, c] : iter::enumerate(cone)) {
             pic[i].replace(0, tw, fmt::format("{}[{:^2}]:", tag, i));
@@ -1138,15 +1138,15 @@ qm::Gate qm::trace(const qm::Gate &gate, const std::array<Eigen::IndexPair<Eigen
         auto it1 = std::find(idx.begin(), idx.end(), std::max(pair.first, pair.second));
         if(it1 != idx.end()) {
             auto idx_rm1 = std::distance(idx.begin(), it1);
-            if(idx_rm1 < static_cast<long>(pos.size())) pos.erase(pos.begin() + idx_rm1);
-            if(idx_rm1 < static_cast<long>(dim.size())) dim.erase(dim.begin() + idx_rm1);
+            if(idx_rm1 < safe_cast<long>(pos.size())) pos.erase(pos.begin() + idx_rm1);
+            if(idx_rm1 < safe_cast<long>(dim.size())) dim.erase(dim.begin() + idx_rm1);
             idx.erase(it1);
         }
         auto it2 = std::find(idx.begin(), idx.end(), std::min(pair.first, pair.second));
         if(it2 != idx.end()) {
             auto idx_rm2 = std::distance(idx.begin(), it2);
-            if(idx_rm2 < static_cast<long>(pos.size())) pos.erase(pos.begin() + idx_rm2);
-            if(idx_rm2 < static_cast<long>(dim.size())) dim.erase(dim.begin() + idx_rm2);
+            if(idx_rm2 < safe_cast<long>(pos.size())) pos.erase(pos.begin() + idx_rm2);
+            if(idx_rm2 < safe_cast<long>(dim.size())) dim.erase(dim.begin() + idx_rm2);
             idx.erase(it2);
         }
     }

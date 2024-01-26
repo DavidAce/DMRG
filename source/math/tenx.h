@@ -6,6 +6,7 @@
     #define lapack_complex_double std::complex<double>
 #endif
 
+#include "math/cast.h"
 #include "tenx/eval.h"
 #include "tenx/sfinae.h"
 #include "tenx/span.h"
@@ -15,7 +16,7 @@
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <vector>
 #if defined(USE_QUADMATH)
-#include <quadmath.h>
+    #include <quadmath.h>
 #endif
 
 /*! \brief **Textra** stands for "Tensor Extra". Provides extra functionality to Eigen::Tensor.*/
@@ -479,7 +480,7 @@ namespace tenx {
 
     template<typename Scalar>
     bool hasNaN(const std::vector<Scalar> &vec) {
-        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(vec.data(), static_cast<long>(vec.size()));
+        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(vec.data(), safe_cast<long>(vec.size()));
         return hasNaN(vector);
     }
 

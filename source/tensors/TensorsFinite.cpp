@@ -3,6 +3,7 @@
 #include "config/debug.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "math/cast.h"
 #include "math/num.h"
 #include "math/tenx.h"
 #include "qm/spin.h"
@@ -72,10 +73,11 @@ void TensorsFinite::initialize_model() {
     rebuild_mpo_squared();
 }
 
-void TensorsFinite::initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors, long bond_lim, std::string & pattern) {
+void TensorsFinite::initialize_state(ResetReason reason, StateInit state_init, StateInitType state_type, std::string_view axis, bool use_eigenspinors,
+                                     long bond_lim, std::string &pattern) {
     state->clear_measurements();
     tools::log->debug("Initializing state [{}] to [{}] | Reason [{}] | Type [{}] | Sector [{}] | bond_lim {} | eigspinors {} | pattern {}", state->get_name(),
-                     enum2sv(state_init), enum2sv(reason), enum2sv(state_type), axis, bond_lim, use_eigenspinors, pattern);
+                      enum2sv(state_init), enum2sv(reason), enum2sv(state_type), axis, bond_lim, use_eigenspinors, pattern);
 
     tools::log->debug("Initializing state - Before: norm {:.16f} | spin components {:+.16f}", tools::finite::measure::norm(*state),
                       fmt::join(tools::finite::measure::spin_components(*state), ", "));
@@ -149,7 +151,7 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian() const
     }
 }
 template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian() const;
-template const Eigen::Tensor<cplx, 2> &TensorsFinite::get_effective_hamiltonian() const;
+template const Eigen::Tensor<cplx, 2>                &TensorsFinite::get_effective_hamiltonian() const;
 
 template<typename Scalar>
 const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared() const {
@@ -172,14 +174,10 @@ const Eigen::Tensor<Scalar, 2> &TensorsFinite::get_effective_hamiltonian_squared
     }
 }
 template const Eigen::Tensor<TensorsFinite::real, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
-template const Eigen::Tensor<cplx, 2> &TensorsFinite::get_effective_hamiltonian_squared() const;
+template const Eigen::Tensor<cplx, 2>                &TensorsFinite::get_effective_hamiltonian_squared() const;
 
-env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_ene_blk() const {
-    return std::as_const(*edges).get_multisite_env_ene_blk();
-}
-env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_var_blk() const {
-    return std::as_const(*edges).get_multisite_env_var_blk();
-}
+env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_ene_blk() const { return std::as_const(*edges).get_multisite_env_ene_blk(); }
+env_pair<const Eigen::Tensor<cplx, 3>> TensorsFinite::get_multisite_env_var_blk() const { return std::as_const(*edges).get_multisite_env_var_blk(); }
 
 void TensorsFinite::project_to_nearest_axis(std::string_view axis, std::optional<svd::config> svd_cfg) {
     auto sign = tools::finite::ops::project_to_nearest_axis(*state, axis, svd_cfg);
@@ -484,20 +482,20 @@ void TensorsFinite::move_site_mps(const size_t site, const long steps, std::vect
     long dir = steps < 0l ? -1l : 1l;
 
     for(long step = 0; std::abs(step) < std::abs(steps); step += dir) {
-        long posL = std::min(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
-        long posR = std::max(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
+        long posL = std::min(safe_cast<long>(site) + step, safe_cast<long>(site) + step + dir);
+        long posR = std::max(safe_cast<long>(site) + step, safe_cast<long>(site) + step + dir);
         if(posL == posR) break;
         if(posL < 0 or posL >= get_length<long>()) break;
         if(posR < 0 or posR >= get_length<long>()) break;
         tools::log->debug("swapping mps sites {} <--> {}", posL, posR);
         // Move the MPS site
-        tools::finite::mps::swap_sites(*state, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
+        tools::finite::mps::swap_sites(*state, safe_cast<size_t>(posL), safe_cast<size_t>(posR), sites_mps, GateMove::OFF);
     }
     if(new_pos) {
         if(new_pos.value() != std::clamp(new_pos.value(), 0l, get_length<long>()))
             throw except::runtime_error("move_site: expected new_pos in range [0,{}]. Got {}", get_length<long>(), new_pos.value());
         move_center_point_to_pos(new_pos.value());
-        activate_sites(std::vector<size_t>{static_cast<size_t>(new_pos.value())});
+        activate_sites(std::vector<size_t>{safe_cast<size_t>(new_pos.value())});
     }
 
     tools::log->debug("Sites mps: {}", sites_mps);
@@ -513,14 +511,14 @@ void TensorsFinite::move_site_mpo(const size_t site, const long steps, std::vect
     long dir = steps < 0l ? -1l : 1l;
 
     for(long step = 0; std::abs(step) < std::abs(steps); step += dir) {
-        long posL = std::min(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
-        long posR = std::max(static_cast<long>(site) + step, static_cast<long>(site) + step + dir);
+        long posL = std::min(safe_cast<long>(site) + step, safe_cast<long>(site) + step + dir);
+        long posR = std::max(safe_cast<long>(site) + step, safe_cast<long>(site) + step + dir);
         if(posL == posR) break;
         if(posL < 0 or posL >= get_length<long>()) break;
         if(posR < 0 or posR >= get_length<long>()) break;
         tools::log->debug("swapping mpo sites {} <--> {}", posL, posR);
         // Move the MPO site
-        tools::finite::mpo::swap_sites(*model, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mpo);
+        tools::finite::mpo::swap_sites(*model, safe_cast<size_t>(posL), safe_cast<size_t>(posR), sites_mpo);
     }
     tools::log->debug("Sites mpo: {}", sites_mpo);
     clear_cache();
@@ -552,7 +550,7 @@ void TensorsFinite::move_site_mps_to_pos(const size_t site, const long tgt_pos, 
         if(posR < 0 or posR >= get_length<long>()) break;
         tools::log->debug("swapping mps sites {} <--> {}", posL, posR);
         // Move the MPS site
-        tools::finite::mps::swap_sites(*state, static_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
+        tools::finite::mps::swap_sites(*state, safe_cast<size_t>(posL), static_cast<size_t>(posR), sites_mps, GateMove::OFF);
     }
     if(new_pos) {
         if(new_pos.value() != std::clamp(new_pos.value(), 0l, get_length<long>()))

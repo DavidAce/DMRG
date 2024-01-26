@@ -44,8 +44,8 @@ template<typename Scalar, bool sparseLU>
 MatVecSparse<Scalar, sparseLU>::MatVecSparse(const Scalar *A_, long L_, bool copy_data, eig::Form form_, eig::Side side_)
     : A_ptr(A_), L(L_), form(form_), side(side_) {
     if(copy_data) {
-        A_stl.resize(static_cast<size_t>(L * L));
-        std::copy(A_ptr, A_ptr + static_cast<size_t>(L * L), A_stl.begin());
+        A_stl.resize(safe_cast<size_t>(L * L));
+        std::copy(A_ptr, A_ptr + safe_cast<size_t>(L * L), A_stl.begin());
         A_ptr = A_stl.data();
     }
 
@@ -303,8 +303,8 @@ void MatVecSparse<Scalar, sparseLU>::set_shift(std::complex<double> shift) {
 
     sigma = shift;
     if(A_stl.empty()) {
-        A_stl.resize(static_cast<size_t>(L * L));
-        std::copy(A_ptr, A_ptr + static_cast<size_t>(L * L), A_stl.begin());
+        A_stl.resize(safe_cast<size_t>(L * L));
+        std::copy(A_ptr, A_ptr + safe_cast<size_t>(L * L), A_stl.begin());
         A_ptr = A_stl.data();
     }
     Eigen::Map<MatrixType<Scalar>> A_matrix(A_stl.data(), L, L);

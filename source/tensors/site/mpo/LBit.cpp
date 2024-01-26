@@ -3,6 +3,7 @@
 #include "debug/exceptions.h"
 #include "general/iter.h"
 #include "io/fmt_f128_t.h"
+#include "math/cast.h"
 #include "math/linalg/tensor.h"
 #include "math/num.h"
 #include "math/rnd.h"
@@ -217,7 +218,7 @@ void LBit::build_mpo()
         throw except::runtime_error("mpo({}): can't build mpo: full lattice parameters haven't been set yet.", get_position());
     Eigen::Tensor<cplx, 2> Z = tenx::TensorMap(sz);
     Eigen::Tensor<cplx, 2> I = tenx::TensorMap(id);
-    long                   R = static_cast<long>(settings::model::model_size - 1);
+    long                   R = safe_cast<long>(settings::model::model_size - 1);
     long                   F = R + 2l;
     mpo_internal.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal.setZero();
@@ -236,7 +237,7 @@ void LBit::build_mpo()
     if(R >= 1)
         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.size())) {
             mpo_internal.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
-                static_cast<real>(h5tb.param.J2_rand.at(static_cast<size_t>(i)).to_floating_point<real_t>()) * Z;
+                static_cast<real>(h5tb.param.J2_rand.at(safe_cast<size_t>(i)).to_floating_point<real_t>()) * Z;
         }
     mpo_internal.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = static_cast<real>(h5tb.param.J3_rand.to_floating_point<real_t>()) * Z;
 
@@ -347,7 +348,7 @@ void LBit::build_mpo_t()
     //    Eigen::Tensor<cplx, 2> n = tenx::TensorCast(0.5 * (id + sz));
     Eigen::Tensor<cplx_t, 2> Z = tenx::TensorMap(sz).cast<cplx_t>();
     Eigen::Tensor<cplx_t, 2> I = tenx::TensorMap(id).cast<cplx_t>();
-    long                     R = static_cast<long>(settings::model::model_size - 1);
+    long                     R = safe_cast<long>(settings::model::model_size - 1);
     long                     F = R + 2l;
     mpo_internal_t.resize(F + 1, F + 1, h5tb.param.spin_dim, h5tb.param.spin_dim);
     mpo_internal_t.setZero();
@@ -365,7 +366,7 @@ void LBit::build_mpo_t()
     if(R >= 1)
         for(const auto &i : num::range<long>(1, h5tb.param.J2_rand.size())) {
             mpo_internal_t.slice(tenx::array4{F, i, 0, 0}, extent4).reshape(extent2) =
-                h5tb.param.J2_rand.at(static_cast<size_t>(i)).to_floating_point<real_t>() * Z;
+                h5tb.param.J2_rand.at(safe_cast<size_t>(i)).to_floating_point<real_t>() * Z;
         }
     mpo_internal_t.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = h5tb.param.J3_rand.to_floating_point<real_t>() * Z;
 
@@ -427,7 +428,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
 
     if(not nbody) return MPO();
     auto   Rul                        = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
-    long   R                          = static_cast<long>(Rul);          // Range
+    long   R                          = safe_cast<long>(Rul);            // Range
     long   F                          = R + 2l;                          // Last index of mpo
     size_t pos                        = get_position();
     auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
@@ -522,7 +523,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
     if(R >= 1)
         for(const auto &r : J2_range) {
             if(r >= J2_rand.size()) break;
-            MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * static_cast<double>(J2_rand[r]) * Z;
+            MPO_nbody.slice(tenx::array4{F, safe_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * static_cast<double>(J2_rand[r]) * Z;
         }
 
     MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * static_cast<double>(J3_rand) * Z;
@@ -541,7 +542,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
 
     if(not nbody) return MPO_t();
     auto   Rul                        = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
-    long   R                          = static_cast<long>(Rul);          // Range
+    long   R                          = safe_cast<long>(Rul);            // Range
     long   F                          = R + 2l;                          // Last index of mpo
     size_t pos                        = get_position();
     auto   J2_range                   = num::range<size_t>(1, R + 1); // +1 so that R itself is included
@@ -636,7 +637,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     if(R >= 1)
         for(const auto &r : J2_range) {
             if(r >= J2_rand.size()) break;
-            MPO_nbody.slice(tenx::array4{F, static_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * Z;
+            MPO_nbody.slice(tenx::array4{F, safe_cast<long>(r), 0, 0}, extent4).reshape(extent2) = J2_on * J2_rand[r] * Z;
         }
 
     MPO_nbody.slice(tenx::array4{F, F - 1, 0, 0}, extent4).reshape(extent2) = J3_on * J3_rand * Z;

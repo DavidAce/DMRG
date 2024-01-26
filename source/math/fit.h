@@ -26,11 +26,11 @@ namespace fit {
         struct log_stretched_functor : Functor<double> {
             Eigen::VectorXd X, Y;
             template<typename TX, typename TY>
-            log_stretched_functor(const TX &xvec, const TY &yvec) : Functor(3, static_cast<int>(xvec.size())) {
+            log_stretched_functor(const TX &xvec, const TY &yvec) : Functor(3, safe_cast<int>(xvec.size())) {
                 if(static_cast<size_t>(xvec.size()) != static_cast<size_t>(yvec.size()))
                     throw std::runtime_error("fit::log_stretched: xvec and yvec size mismatch");
-                X = Eigen::Map<const Eigen::VectorXd>(xvec.data(), static_cast<Eigen::Index>(xvec.size()));
-                Y = Eigen::Map<const Eigen::VectorXd>(yvec.data(), static_cast<Eigen::Index>(yvec.size()));
+                X = Eigen::Map<const Eigen::VectorXd>(xvec.data(), safe_cast<Eigen::Index>(xvec.size()));
+                Y = Eigen::Map<const Eigen::VectorXd>(yvec.data(), safe_cast<Eigen::Index>(yvec.size()));
             }
             int operator()(const Eigen::VectorXd &C, Eigen::VectorXd &F) const {
                 // Fit xy-data to the log of a stretched exponential y(x) = log(a) - (x/b)  ** c
@@ -44,7 +44,7 @@ namespace fit {
         struct exp_stretched_functor : Functor<double> {
             Eigen::VectorXd X, Y;
             template<typename TX, typename TY>
-            exp_stretched_functor(const TX &xvec, const TY &yvec) : Functor(3, static_cast<int>(xvec.size())) {
+            exp_stretched_functor(const TX &xvec, const TY &yvec) : Functor(3, safe_cast<int>(xvec.size())) {
                 if(xvec.size() != yvec.size()) throw std::runtime_error("fit::log_stretched: xvec and yvec size mismatch");
                 X = Eigen::Map<const Eigen::VectorXd>(xvec.data(), static_cast<Eigen::Index>(xvec.size()));
                 Y = Eigen::Map<const Eigen::VectorXd>(yvec.data(), static_cast<Eigen::Index>(yvec.size()));
@@ -61,7 +61,7 @@ namespace fit {
         struct exp_functor : Functor<double> {
             Eigen::VectorXd X, Y;
             template<typename TX, typename TY>
-            exp_functor(const TX &xvec, const TY &yvec) : Functor(2, static_cast<int>(xvec.size())) {
+            exp_functor(const TX &xvec, const TY &yvec) : Functor(2, safe_cast<int>(xvec.size())) {
                 if(xvec.size() != yvec.size()) throw std::runtime_error("fit::log_stretched: xvec and yvec size mismatch");
                 X = Eigen::Map<const Eigen::VectorXd>(xvec.data(), static_cast<Eigen::Index>(xvec.size()));
                 Y = Eigen::Map<const Eigen::VectorXd>(yvec.data(), static_cast<Eigen::Index>(yvec.size()));
@@ -78,7 +78,7 @@ namespace fit {
         struct log_functor : Functor<double> {
             Eigen::VectorXd X, Y;
             template<typename TX, typename TY>
-            log_functor(const TX &xvec, const TY &yvec) : Functor(2, static_cast<int>(xvec.size())) {
+            log_functor(const TX &xvec, const TY &yvec) : Functor(2, safe_cast<int>(xvec.size())) {
                 if(xvec.size() != yvec.size()) throw std::runtime_error("fit::log_stretched: xvec and yvec size mismatch");
                 X = Eigen::Map<const Eigen::VectorXd>(xvec.data(), static_cast<Eigen::Index>(xvec.size()));
                 Y = Eigen::Map<const Eigen::VectorXd>(yvec.data(), static_cast<Eigen::Index>(yvec.size()));

@@ -3,6 +3,7 @@
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/eig.h"
 #include "math/linalg/tensor.h"
 #include "math/svd.h"
@@ -77,7 +78,7 @@ void ModelFinite::initialize(ModelType model_type_, size_t model_size) {
 
 const MpoSite &ModelFinite::get_mpo(size_t pos) const {
     if(pos >= MPO.size()) throw except::range_error("get_mpo(pos) pos out of range: {}", pos);
-    return **std::next(MPO.begin(), static_cast<long>(pos));
+    return **std::next(MPO.begin(), safe_cast<long>(pos));
 }
 
 MpoSite &ModelFinite::get_mpo(size_t pos) { return const_cast<MpoSite &>(static_cast<const ModelFinite &>(*this).get_mpo(pos)); }
@@ -321,8 +322,8 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
 //
 //         Eigen::Tensor<double,1> S_real = S.real();
 //         Eigen::Tensor<double,1> D_real = D.real();
-//         tools::log->info("mpo²[{}] svds: {:8.4e}", static_cast<long>(pos), fmt::join(tenx::span(S_real),", "));
-//         tools::log->info("mpo²[{}] eigv: {:8.4e}", static_cast<long>(pos), fmt::join(tenx::span(D_real),", "));
+//         tools::log->info("mpo²[{}] svds: {:8.4e}", safe_cast<long>(pos), fmt::join(tenx::span(S_real),", "));
+//         tools::log->info("mpo²[{}] eigv: {:8.4e}", safe_cast<long>(pos), fmt::join(tenx::span(D_real),", "));
 //         mpos_squared_sqrt.emplace_back(mpo_squared_sqrt);
 //     }
 //

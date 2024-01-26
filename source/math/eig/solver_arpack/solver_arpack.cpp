@@ -23,6 +23,7 @@
 #include "../matvec/matvec_mpo.h"
 #include "../matvec/matvec_sparse.h"
 #include "general/sfinae.h"
+#include "math/cast.h"
 #include "tid/tid.h"
 #include <algorithm>
 #include <arpack++/arrseig.h>
@@ -71,8 +72,8 @@ template<typename MatrixType>
 eig::solver_arpack<MatrixType>::solver_arpack(MatrixType &matrix_, eig::settings &config_, eig::solution &result_)
     : matrix(matrix_), config(config_), result(result_) {
     if(not config.initial_guess.empty()) residual = static_cast<Scalar *>(config.initial_guess[0].ptr); // Can only take one (the first) residual_norm pointer
-    nev_internal = std::clamp<int>(static_cast<int>(config.maxNev.value()), 1, matrix.rows() / 2);
-    ncv_internal = std::clamp<int>(static_cast<int>(config.maxNcv.value()), static_cast<int>(config.maxNev.value()) + 1, matrix.rows());
+    nev_internal = std::clamp<int>(safe_cast<int>(config.maxNev.value()), 1, matrix.rows() / 2);
+    ncv_internal = std::clamp<int>(safe_cast<int>(config.maxNcv.value()), safe_cast<int>(config.maxNev.value()) + 1, matrix.rows());
 }
 
 template<typename MatrixType>
@@ -80,8 +81,8 @@ void eig::solver_arpack<MatrixType>::eigs() {
     auto t_arp = tid::tic_scope("arpack");
 
     result.reset();
-    nev_internal = std::clamp<int>(static_cast<int>(config.maxNev.value()), 1, matrix.rows() / 2);
-    ncv_internal = std::clamp<int>(static_cast<int>(config.maxNcv.value()), static_cast<int>(config.maxNev.value()) + 1, matrix.rows());
+    nev_internal = std::clamp<int>(safe_cast<int>(config.maxNev.value()), 1, matrix.rows() / 2);
+    ncv_internal = std::clamp<int>(safe_cast<int>(config.maxNcv.value()), safe_cast<int>(config.maxNev.value()) + 1, matrix.rows());
 
     config.checkRitz();
     matrix.set_mode(config.form.value());
@@ -104,7 +105,7 @@ void eig::solver_arpack<MatrixType>::eigs_sym() {
         if(config.form != Form::SYMM) throw std::runtime_error("ERROR: config not SYMMETRIC");
         if(matrix.get_form() != Form::SYMM) throw std::runtime_error("ERROR: matrix not SYMMETRIC");
         ARSymStdEig<double, MatrixType> solver(matrix.rows(), nev_internal, &matrix, &MatrixType::MultAx, config.get_ritz_string().data(), ncv_internal,
-                                               config.tol.value(), static_cast<int>(config.maxIter.value()), residual);
+                                               config.tol.value(), safe_cast<int>(config.maxIter.value()), residual);
         find_solution(solver, config.maxNev.value());
         copy_solution(solver);
 
@@ -120,7 +121,7 @@ void eig::solver_arpack<MatrixType>::eigs_sym_rc() {
         if(config.form != Form::SYMM) throw std::runtime_error("ERROR: config not SYMMETRIC");
         if(matrix.get_form() != Form::SYMM) throw std::runtime_error("ERROR: matrix not SYMMETRIC");
         ARrcSymStdEig<double> solver(matrix.rows(), nev_internal, config.get_ritz_string().data(), ncv_internal, config.tol.value(),
-                                     static_cast<int>(config.maxIter.value()), residual, true);
+                                     safe_cast<int>(config.maxIter.value()), residual, true);
         find_solution_rc(solver);
         copy_solution(solver);
     } else {
@@ -152,7 +153,7 @@ void eig::solver_arpack<MatrixType>::eigs_nsym_rc() {
         if(matrix.get_form() != Form::NSYM) throw std::runtime_error("ERROR: matrix not NSYM");
         //        if(nev_internal == 1) { nev_internal++; }
         ARrcNonSymStdEig<double> solver(matrix.rows(), nev_internal, config.get_ritz_string().data(), ncv_internal, config.tol.value(),
-                                        static_cast<int>(config.maxIter.value()), residual, true);
+                                        safe_cast<int>(config.maxIter.value()), residual, true);
         find_solution_rc(solver);
         copy_solution(solver);
     } else {
@@ -176,7 +177,7 @@ template<typename MatrixType>
 void eig::solver_arpack<MatrixType>::eigs_comp_rc() {
     if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
         ARrcCompStdEig<double> solver(matrix.rows(), nev_internal, config.get_ritz_string().data(), ncv_internal, config.tol.value(),
-                                      static_cast<int>(config.maxIter.value()), residual, true);
+                                      safe_cast<int>(config.maxIter.value()), residual, true);
         find_solution_rc(solver);
         copy_solution(solver);
     } else {
@@ -240,7 +241,7 @@ void eig::solver_arpack<MatrixType>::find_solution(Derived &solver, eig::size_ty
     else
         result.meta.eigvecsR_found = solver.EigenvectorsFound(); // BOOL!
 
-    result.meta.eigvals_found = solver.EigenvaluesFound();       // BOOL!
+    result.meta.eigvals_found = solver.EigenvaluesFound(); // BOOL!
     result.meta.num_mv        = matrix.num_mv;
     result.meta.num_op        = matrix.num_op;
     result.meta.iter          = solver.GetIter();
@@ -433,8 +434,8 @@ void eig::solver_arpack<MatrixType>::copy_solution(Derived &solver) {
     using eigvec_type                         = std::remove_pointer_t<decltype(solver.RawEigenvectors())>;
     auto           eigvecsize                 = result.meta.rows * result.meta.cols;
     auto           eigvalsize                 = result.meta.cols;
-    auto           eigvalsize_t               = static_cast<size_t>(eigvalsize);
-    auto           eigvecsize_t               = static_cast<size_t>(eigvecsize);
+    auto           eigvalsize_t               = safe_cast<size_t>(eigvalsize);
+    auto           eigvecsize_t               = safe_cast<size_t>(eigvecsize);
     constexpr auto eigval_has_imag_separately = eig::sfinae::has_RawEigenvaluesImag_v<Derived>;
     constexpr auto eigval_is_cplx             = std::is_same_v<cplx, eigval_type>;
     constexpr auto eigval_is_real             = std::is_same_v<real, eigval_type>;
@@ -499,12 +500,12 @@ template<typename eval_t, typename evec_t, Side side>
 void eig::solver_arpack<MatrixType>::compute_residual_norms() {
     using VType = Eigen::Matrix<evec_t, Eigen::Dynamic, 1>;
     if(matrix.get_side() != side) throw std::logic_error("Matrix has different side");
-    auto eigvalsize_t = static_cast<size_t>(result.meta.cols);
+    auto eigvalsize_t = safe_cast<size_t>(result.meta.cols);
     result.meta.residual_norms.resize(eigvalsize_t);
     auto &eigvals = result.get_eigvals<eval_t>();
     auto &eigvecs = result.get_eigvecs<evec_t, side>();
     for(size_t i = 0; i < eigvalsize_t; i++) {
-        auto eigvec_i   = Eigen::Map<VType>(eigvecs.data() + static_cast<long>(i) * result.meta.cols, result.meta.rows);
+        auto eigvec_i   = Eigen::Map<VType>(eigvecs.data() + safe_cast<long>(i) * result.meta.cols, result.meta.rows);
         auto A_eigvec_i = VType(result.meta.rows);
         matrix.MultAx(eigvec_i.data(), A_eigvec_i.data());
         result.meta.residual_norms.at(i) = (A_eigvec_i - eigvec_i * eigvals.at(i)).norm();

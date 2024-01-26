@@ -227,7 +227,7 @@ void xdmrg::run_fes_analysis() {
     tensors.move_center_point_to_inward_edge();
     tensors.activate_sites({tensors.get_position()});
     tensors.rebuild_edges();
-    auto bond_max_dim = static_cast<long>(std::pow(2.0, tensors.get_length<double>() / 2));
+    auto bond_max_dim = safe_cast<long>(std::pow(2.0, tensors.get_length<double>() / 2));
     status.bond_lim   = std::min(bond_max_dim, status.bond_max);
     while(true) {
         tools::log->trace("Starting xDMRG FES step {}, iter {}, pos {}, dir {}, bond_lim {}, trnc_lim {:.2e}", status.step, status.iter, status.position,

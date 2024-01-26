@@ -16,6 +16,7 @@
 #endif
 #include "../log.h"
 #include "../solver.h"
+#include "math/cast.h"
 #include <chrono>
 
 using namespace eig;
@@ -25,12 +26,12 @@ int eig::solver::dsyevx(real *matrix, size_type L, char range, int il, int iu, d
     auto t_start = std::chrono::high_resolution_clock::now();
     char jobz    = config.compute_eigvecs == Vecs::ON ? 'V' : 'N';
     int  info    = 0;
-    int  n       = static_cast<int>(L);
+    int  n       = safe_cast<int>(L);
     int  lda     = std::max(1, n);
     int  ldz     = std::max(1, n);
     int  liwork  = std::max(1, 5 * n);
     auto lifail  = std::max(1ul, static_cast<size_t>(n));
-    int  m_req = n; // For range == 'V' we don't know how many eigenvalues will be found in (vl,vu]
+    int  m_req   = n; // For range == 'V' we don't know how many eigenvalues will be found in (vl,vu]
     if(range == 'I') m_req = std::max(iu, il) - std::min(iu, il) + 1;
     m_req = std::clamp(m_req, 1, std::min(m_req, n));
 
@@ -49,7 +50,7 @@ int eig::solver::dsyevx(real *matrix, size_type L, char range, int il, int iu, d
     info = LAPACKE_dsyevx_work(LAPACK_COL_MAJOR, jobz, range, 'U', n, matrix, lda, vl, vu, il, iu, 2 * LAPACKE_dlamch('S'), &m_found, eigvals.data(),
                                eigvecs.data(), ldz, lwork_query, -1, iwork.data(), ifail.data());
 
-    int lwork = static_cast<int>(lwork_query[0]);
+    int lwork = safe_cast<int>(lwork_query[0]);
     eig::log->trace(" lwork  = {}", lwork);
     eig::log->trace(" liwork = {}", liwork);
     std::vector<double> work(static_cast<size_t>(lwork));
@@ -61,7 +62,7 @@ int eig::solver::dsyevx(real *matrix, size_type L, char range, int il, int iu, d
 
     auto t_total = std::chrono::high_resolution_clock::now();
     if(info == 0) {
-        eig::log->trace("Found {} eigenvalues",m_found);
+        eig::log->trace("Found {} eigenvalues", m_found);
         eigvals.resize(static_cast<size_t>(m_found));
         eigvecs.resize(static_cast<size_t>(ldz * m_found));
         result.meta.eigvecsR_found = config.compute_eigvecs == Vecs::ON;

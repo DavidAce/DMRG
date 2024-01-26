@@ -276,7 +276,7 @@ void EnvBase::set_edge_dims(const Eigen::Tensor<cplx, 3> &MPS, const Eigen::Tens
 
 std::size_t EnvBase::get_unique_id() const {
     if(unique_id) return unique_id.value();
-    unique_id = hash::hash_buffer(get_block().data(), static_cast<size_t>(get_block().size()));
+    unique_id = hash::hash_buffer(get_block().data(), safe_cast<size_t>(get_block().size()));
     return unique_id.value();
 }
 

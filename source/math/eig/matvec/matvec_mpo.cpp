@@ -64,12 +64,12 @@ template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const E
 
 template<typename T>
 int MatVecMPO<T>::rows() const {
-    return static_cast<int>(size_mps);
+    return safe_cast<int>(size_mps);
 }
 
 template<typename T>
 int MatVecMPO<T>::cols() const {
-    return static_cast<int>(size_mps);
+    return safe_cast<int>(size_mps);
 }
 
 template<typename T>

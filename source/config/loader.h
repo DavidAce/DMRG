@@ -2,6 +2,7 @@
 #include "config/enums.h"
 #include "debug/exceptions.h"
 #include "io/filesystem.h"
+#include "math/cast.h"
 #include "tid/enums.h"
 #include "tools/common/log.h"
 #include <string>
@@ -51,7 +52,7 @@ class Loader {
                 throw except::range_error("Parameter [{}] has no value", param_name);
             }
             if constexpr(std::is_same_v<T, unsigned int>) {
-                auto val = static_cast<int>(std::stoi(param_val));
+                auto val = safe_cast<int>(std::stoi(param_val));
                 if(val < 0) throw except::runtime_error("Read negative value for unsigned parameter: {}", val);
                 return static_cast<T>(val);
             }

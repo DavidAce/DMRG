@@ -71,7 +71,7 @@ namespace tools::finite::opt {
                 }
             }
         }
-        if(init.size() > static_cast<size_t>(nev)) throw except::logic_error("Found too many initial guesses");
+        if(init.size() > safe_cast<size_t>(nev)) throw except::logic_error("Found too many initial guesses");
         return init;
     }
 

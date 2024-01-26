@@ -1,5 +1,6 @@
 #include "qm/mpo.h"
 #include "debug/exceptions.h"
+#include "math/cast.h"
 #include "math/num.h"
 #include "math/rnd.h"
 #include "math/tenx.h"
@@ -234,7 +235,7 @@ namespace qm::mpo {
      */
     {
         if(paulimatrices.empty()) throw except::runtime_error("List of pauli matrices is empty");
-        long                   num_paulis = static_cast<long>(paulimatrices.size());
+        long                   num_paulis = safe_cast<long>(paulimatrices.size());
         long                   spin_dim   = 2;
         auto                   I          = Eigen::MatrixXcd::Identity(spin_dim, spin_dim).eval();
         std::array<long, 4>    extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
@@ -244,8 +245,7 @@ namespace qm::mpo {
         MPO_S.setZero();
         MPO_I.setZero();
         for(long diag_pos = 0; diag_pos < num_paulis; diag_pos++) {
-            MPO_S.slice(std::array<long, 4>{diag_pos, diag_pos, 0, 0}, extent4).reshape(extent2) =
-                tenx::TensorMap(paulimatrices[static_cast<size_t>(diag_pos)]);
+            MPO_S.slice(std::array<long, 4>{diag_pos, diag_pos, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(paulimatrices[safe_cast<size_t>(diag_pos)]);
             MPO_I.slice(std::array<long, 4>{diag_pos, diag_pos, 0, 0}, extent4).reshape(extent2) = tenx::TensorMap(I);
         }
 
@@ -346,10 +346,10 @@ namespace qm::mpo {
                     [[fallthrough]];
                 }
                 case RandomizerMode::ASIS: {
-                    auto num_paulis = static_cast<long>(paulimatrices.size());
+                    auto num_paulis = safe_cast<long>(paulimatrices.size());
                     mpo.resize(num_paulis, num_paulis, spin_dim, spin_dim);
                     for(long idx = 0; idx < num_paulis; idx++) {
-                        auto        uidx                             = static_cast<size_t>(idx);
+                        auto        uidx                             = safe_cast<size_t>(idx);
                         const auto &pauli                            = paulimatrices[pauli_idx[uidx]];
                         offset4                                      = {idx, idx, 0, 0};
                         mpo.slice(offset4, extent4).reshape(extent2) = tenx::TensorCast(pauli);
@@ -406,7 +406,7 @@ namespace qm::mpo {
     {
         if(paulimatrices.empty()) throw except::runtime_error("List of pauli matrices is empty");
         if(paulimatrices.size() != uniform_dist_widths.size()) throw except::runtime_error("List size mismatch: paulimatrices and uniform_dist_widths");
-        long                num_paulis = static_cast<long>(paulimatrices.size());
+        long                num_paulis = safe_cast<long>(paulimatrices.size());
         long                spin_dim   = 2;
         std::array<long, 4> extent4    = {1, 1, spin_dim, spin_dim}; /*!< Extent of pauli matrices in a rank-4 tensor */
         std::array<long, 2> extent2    = {spin_dim, spin_dim};       /*!< Extent of pauli matrices in a rank-2 tensor */
@@ -416,7 +416,7 @@ namespace qm::mpo {
             Eigen::Tensor<cplx, 4> MPO_S(num_paulis, num_paulis, spin_dim, spin_dim);
             MPO_S.setZero();
             for(long idx = 0; idx < num_paulis; idx++) {
-                auto        uidx                               = static_cast<size_t>(idx);
+                auto        uidx                               = safe_cast<size_t>(idx);
                 auto        coeff                              = 1 + rnd::uniform_double_box(uniform_dist_widths[uidx]);
                 auto        offset4                            = std::array<long, 4>{idx, idx, 0, 0};
                 const auto &pauli                              = paulimatrices[uidx];

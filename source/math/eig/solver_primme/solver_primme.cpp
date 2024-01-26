@@ -252,10 +252,10 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
 
     /* Set problem parameters */
     primme.n = matrix.rows();                                                    /* set problem dimension */
-    if(config.maxNev) primme.numEvals = static_cast<int>(config.maxNev.value()); /* Number of wanted eigenpairs */
+    if(config.maxNev) primme.numEvals = safe_cast<int>(config.maxNev.value()); /* Number of wanted eigenpairs */
     if(config.tol) primme.eps = config.tol.value();                              /* ||r|| <= eps * ||matrix|| */
     if(config.ritz) primme.target = RitzToTarget(config.ritz.value());
-    if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(static_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
+    if(config.maxNcv) primme.maxBasisSize = std::clamp<int>(safe_cast<int>(config.maxNcv.value()), primme.numEvals + 1, primme.n);
     if(config.maxIter) primme.maxOuterIterations = config.maxIter.value();
     if(config.maxIter) primme.maxMatvecs = config.maxIter.value();
     if(config.primme_projection) primme.projectionParams.projection = stringToProj(config.primme_projection);
@@ -279,13 +279,13 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
         case primme_target::primme_closest_abs: {
             if(not config.primme_target_shifts.empty()) {
                 eig::log->debug("Setting target shifts: {:.8f}", fmt::join(config.primme_target_shifts, ", "));
-                primme.numTargetShifts = static_cast<int>(config.primme_target_shifts.size());
+                primme.numTargetShifts = safe_cast<int>(config.primme_target_shifts.size());
                 primme.targetShifts    = config.primme_target_shifts.data();
             } else if(config.sigma and not matrix.isReadyShift()) {
                 // We handle shifts by applying them directly on the matrix if possible. Else here:
                 eig::log->debug("Setting target shift: {:.8f}", std::real(config.sigma.value()));
                 config.primme_target_shifts = {std::real(config.sigma.value())};
-                primme.numTargetShifts      = static_cast<int>(config.primme_target_shifts.size());
+                primme.numTargetShifts      = safe_cast<int>(config.primme_target_shifts.size());
                 primme.targetShifts         = config.primme_target_shifts.data();
             } else
                 throw std::runtime_error("primme_target:primme_closest_???: no target shift given");
@@ -325,7 +325,7 @@ int eig::solver::eigs_primme(MatrixProductType &matrix) {
                 auto source = static_cast<Scalar *>(ig.ptr);
                 auto target = eigvecs.data() + static_cast<size_t>(ig.idx * primme.n);
                 std::copy_n(source, primme.n, target);
-                primme.initSize = std::max(primme.initSize, static_cast<int>(ig.idx) + 1);
+                primme.initSize = std::max(primme.initSize, safe_cast<int>(ig.idx) + 1);
             }
         }
     }

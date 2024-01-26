@@ -1,5 +1,6 @@
 #include "views.h"
 #include "log.h"
+#include "math/cast.h"
 #include "math/eig.h"
 #include "math/num.h"
 #include "math/tenx.h"
@@ -41,8 +42,8 @@ void tools::common::views::compute_mps_components(const StateInfinite &state) {
     // On even thetas we have  chiA = chiB on the outer bond
     // On odd thetas we have chiC on the outer bond.
     //    int chiA2 = (int)(state.MPS->chiA()*state.MPS->chiA());
-    int chiB2 = static_cast<int>(state.chiB() * state.chiB());
-    int chiC2 = static_cast<int>(state.chiC() * state.chiC());
+    int chiB2 = safe_cast<int>(state.chiB() * state.chiB());
+    int chiC2 = safe_cast<int>(state.chiC() * state.chiC());
 
     theta                                           = get_theta(state);
     Eigen::Tensor<Scalar, 2> theta_evn_transfer_mat = get_transfer_matrix_theta_evn(state).reshape(tenx::array2{chiB2, chiB2});
@@ -109,15 +110,15 @@ void tools::common::views::compute_mps_components(const StateInfinite &state) {
         str +=
             fmt::format(" l_evn_LBGA_r_odd                                = {:.15f}{:+.15f}\n", std::real(l_evn_LBGA_r_odd(0)), std::imag(l_evn_LBGA_r_odd(0)));
         str += fmt::format(" < l_evn | r_evn >                               = {:.15f}{:+.15f}\n", std::real(le_re(0)),
-                           std::imag(le_re(0)));     //  l_evn.contract(r_evn, tenx::idx({0,1},{0,1})));
+                           std::imag(le_re(0))); //  l_evn.contract(r_evn, tenx::idx({0,1},{0,1})));
         str += fmt::format(" < l_odd | r_odd >                               = {:.15f}{:+.15f}\n", std::real(lo_ro(0)),
-                           std::imag(lo_ro(0)));     //  l_odd.contract(r_odd, tenx::idx({0,1},{0,1})));
+                           std::imag(lo_ro(0))); //  l_odd.contract(r_odd, tenx::idx({0,1},{0,1})));
         str += fmt::format(" < l_evn | LAGA  | r_odd >                       = {:.15f}{:+.15f}\n", std::real(le_laga(0)),
-                           std::imag(le_laga(0)));   //  l_evn.contract(transfer_matrix_LAGA, tenx::idx({0,1},{0,1})).contract(r_odd, tenx::idx({0,1},{0,1})));
+                           std::imag(le_laga(0))); //  l_evn.contract(transfer_matrix_LAGA, tenx::idx({0,1},{0,1})).contract(r_odd, tenx::idx({0,1},{0,1})));
         str += fmt::format(" < l_odd | LCGB  | r_evn >                       = {:.15f}{:+.15f}\n", std::real(lo_lcgb(0)),
-                           std::imag(lo_lcgb(0)));   //  l_odd.contract(transfer_matrix_LCGB, tenx::idx({0,1},{0,1})).contract(r_evn, tenx::idx({0,1},{0,1})));
+                           std::imag(lo_lcgb(0))); //  l_odd.contract(transfer_matrix_LCGB, tenx::idx({0,1},{0,1})).contract(r_evn, tenx::idx({0,1},{0,1})));
         str += fmt::format(" < theta     | theta >                           = {:.15f}{:+.15f}\n", std::real(thth(0)),
-                           std::imag(thth(0)));      //  theta.contract(theta.conjugate(), tenx::idx({1,3,0,2},{1,3,0,2})));
+                           std::imag(thth(0))); //  theta.contract(theta.conjugate(), tenx::idx({1,3,0,2},{1,3,0,2})));
         str += fmt::format(" < theta_evn_normalized | theta_evn_normalized > = {:.15f}{:+.15f}\n", std::real(then_then(0)),
                            std::imag(then_then(0))); //  theta_evn_normalized.contract(theta_evn_normalized.conjugate(), tenx::idx({0,2},{0,2})).contract(l_evn,
                                                      //  tenx::idx({0,2},{0,1})).contract(r_evn,tenx::idx({0,1},{0,1})));
@@ -125,9 +126,9 @@ void tools::common::views::compute_mps_components(const StateInfinite &state) {
                            std::imag(thon_thon(0))); //  theta_odd_normalized.contract(theta_odd_normalized.conjugate(), tenx::idx({0,2},{0,2})).contract(l_odd,
                                                      //  tenx::idx({0,2},{0,1})).contract(r_odd,tenx::idx({0,1},{0,1})));
         str += fmt::format(" < theta_evn_normalized | theta_evn_normalized > = {:.15f}{:+.15f}\n", std::real(tren_le(0)),
-                           std::imag(tren_le(0)));   //  transfer_matrix_evn.contract(l_evn, tenx::idx({0,1},{0,1})).contract(r_evn,tenx::idx({0,1},{0,1})));
+                           std::imag(tren_le(0))); //  transfer_matrix_evn.contract(l_evn, tenx::idx({0,1},{0,1})).contract(r_evn,tenx::idx({0,1},{0,1})));
         str += fmt::format(" < theta_odd_normalized | theta_odd_normalized > = {:.15f}{:+.15f}\n", std::real(trod_lo(0)),
-                           std::imag(trod_lo(0)));   //  transfer_matrix_odd.contract(l_odd, tenx::idx({0,1},{0,1})).contract(r_odd,tenx::idx({0,1},{0,1})));
+                           std::imag(trod_lo(0))); //  transfer_matrix_odd.contract(l_odd, tenx::idx({0,1},{0,1})).contract(r_odd,tenx::idx({0,1},{0,1})));
         tools::log->trace(str);
     }
 }

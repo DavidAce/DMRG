@@ -3,6 +3,7 @@
 #include "config/debug.h"
 #include "debug/exceptions.h"
 #include "general/iter.h"
+#include "math/cast.h"
 #include "math/linalg/matrix.h"
 #include "math/num.h"
 #include "math/rnd.h"
@@ -34,7 +35,7 @@ template<From from, auto N, bool on = settings::debug_numen>
         }
 
         // Extract the relevant bits
-        auto bs = b.to_string().substr(static_cast<std::string::size_type>(N) - static_cast<std::string::size_type>(num_bits));
+        auto bs = b.to_string().substr(safe_cast<std::string::size_type>(N) - safe_cast<std::string::size_type>(num_bits));
 
         if constexpr(from == From::B) {
             // Print in the original order, from N - state_size + num_bits until the end
@@ -63,7 +64,7 @@ template<auto N>
     //     return r.none()
     if constexpr(settings::debug or settings::debug_numen)
         if(num_bits < 0) throw except::runtime_error("num_bits must be in range [0,{}] | Got: {}", N, num_bits);
-    const auto num = static_cast<size_t>(num_bits);
+    const auto num = safe_cast<size_t>(num_bits);
     return ((b1 << (N - num)) ^ (b2 << (N - num))).none();
 }
 
@@ -190,7 +191,7 @@ struct Amplitude {
                                                     tgt_pos, pos, ampl.size(), mps_pos, mps->get_chiL(), to_string());
 
                     long                size = mps->get_chiR();
-                    std::array<long, 3> off  = {bits[static_cast<size_t>(mps_pos)], 0, 0}; // This selects which bit gets appended to ampl
+                    std::array<long, 3> off  = {bits[safe_cast<size_t>(mps_pos)], 0, 0}; // This selects which bit gets appended to ampl
                     std::array<long, 3> ext  = {1, mps->get_chiL(), mps->get_chiR()};
                     // ampl never has a trailing Lambda
                     if constexpr(settings::verbose_numen)
@@ -263,7 +264,7 @@ struct Amplitude {
 
                     long                mps_rpos = state_size - 1 - mps_pos;
                     long                size     = mps->get_chiL();
-                    std::array<long, 3> off      = {bits[static_cast<size_t>(mps_rpos)], 0, 0}; // This selects which bit gets prepended to ampl
+                    std::array<long, 3> off      = {bits[safe_cast<size_t>(mps_rpos)], 0, 0}; // This selects which bit gets prepended to ampl
                     std::array<long, 3> ext      = {1, mps->get_chiL(), mps->get_chiR()};
 
                     // ampl never has a trailing Lambda
@@ -310,7 +311,7 @@ size_t nextGreaterWithSameSetBit(size_t n) {
 }
 
 // function to find the position of rightmost set bit. Returns -1 if there are no set bits
-size_t getFirstSetBitPos(size_t n) { return static_cast<size_t>((std::log2(n & -n) + 1) - 1); }
+size_t getFirstSetBitPos(size_t n) { return safe_cast<size_t>((std::log2(n & -n) + 1) - 1); }
 
 // function to find the next greater integer
 size_t nextGreaterWithOneMoreSetBit(size_t n) {
@@ -447,7 +448,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     auto                t_prob    = tid::tic_scope("probability");
     auto                state_pos = state.get_position<long>();
     auto                state_len = state.get_length<long>();
-    std::vector<double> probability(static_cast<size_t>(state_len + 1), 0.0);
+    std::vector<double> probability(safe_cast<size_t>(state_len + 1), 0.0);
     double              probability_sum = 0.0;
     // Figure out which schmidt values to use
     auto                     t_figout = tid::tic_scope("figout");
@@ -474,7 +475,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
 
     for(auto &&[a_idx, a] : iter::enumerate(amplitudes)) {
         auto n  = a.bits.count();
-        long nl = static_cast<long>(n); // Number of bits in amplitude a, as <long>
+        long nl = safe_cast<long>(n); // Number of bits in amplitude a, as <long>
         // Evaluate the amplitude vector (this updates its internal position)
         a.eval(state, tgt_pos, cache);
         if(a.ampl.size() != schmidt_values.size()) {
@@ -581,13 +582,13 @@ std::vector<Amplitude<from>> generate_amplitude_list_rrp(long state_len, long mp
     if(state_len <= mps_pos) throw except::logic_error("Expected a state_len <= mps_pos. Got: state_len={}, mps_pos={}", state_len, mps_pos);
     auto t_amp    = tid::tic_scope("amplitude");
     auto num_bits = -1ul;
-    if constexpr(from == From::A) { num_bits = static_cast<size_t>(mps_pos + 1l); }
-    if constexpr(from == From::B) { num_bits = static_cast<size_t>(state_len - mps_pos); }
+    if constexpr(from == From::A) { num_bits = safe_cast<size_t>(mps_pos + 1l); }
+    if constexpr(from == From::B) { num_bits = safe_cast<size_t>(state_len - mps_pos); }
     auto                         rrp = get_random_roundrobin_popcount_vector(num_bits);
     std::vector<Amplitude<from>> amplitudes;
     amplitudes.reserve(rrp.size());
     //    long start_pos = from == From::A ? -1l : state_len;
-    for(const auto &num : rrp) amplitudes.emplace_back(Amplitude<from>{state_len, std::bitset<64>(static_cast<unsigned long long int>(num)), {}});
+    for(const auto &num : rrp) amplitudes.emplace_back(Amplitude<from>{state_len, std::bitset<64>(safe_cast<unsigned long long int>(num)), {}});
     return amplitudes;
 }
 
@@ -666,14 +667,14 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         std::vector<Amplitude<From::A>> cache;
         for(const auto &mps : state_copy.mps_sites) {
             auto pos = mps->get_position<long>();
-            auto idx = static_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
+            auto idx = safe_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
             if(pos > state_pos) break;               // Only compute up to and including AC
             if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
             auto amplitudes                     = generate_amplitude_list_rrp<From::A>(state_llen, pos);
             auto probability                    = compute_probability_rrp<Side::LEFT>(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
-            auto                psize           = static_cast<long>(probability.size());
+            auto                psize           = safe_cast<long>(probability.size());
             std::array<long, 2> offset          = {0, pos + 1};
             std::array<long, 2> extent          = {psize, 1};
             probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
@@ -684,14 +685,14 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         std::vector<Amplitude<From::B>> cache;
         for(const auto &mps : iter::reverse(state_copy.mps_sites)) { // Now compute from the right edge until the middle
             auto pos = mps->get_position<long>();
-            auto idx = static_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
+            auto idx = safe_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
             if(pos <= state_pos + 1) break;      // +1 because we don't need to compute AC again
             if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
             auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_llen, pos);
             auto probability                    = compute_probability_rrp<Side::LEFT>(state_copy, pos, amplitudes, cache);
             auto number_entropy                 = -std::accumulate(probability.begin(), probability.end(), 0.0, von_neumann_sum);
             number_entropies[idx]               = std::abs(number_entropy);
-            auto                psize           = static_cast<long>(probability.size());
+            auto                psize           = safe_cast<long>(probability.size());
             std::array<long, 2> offset          = {0, pos};
             std::array<long, 2> extent          = {psize, 1};
             probabilities.slice(offset, extent) = Eigen::TensorMap<Eigen::Tensor<double, 2>>(probability.data(), psize, 1);
@@ -758,7 +759,7 @@ double tools::finite::measure::number_entropy_midchain(const StateFinite &state)
 //     //    auto                tgt_rpos  = state_len - 1 - tgt_pos;
 //     //    auto                prob_size = tgt_pos > state_pos ? tgt_rpos + 2 : tgt_pos + 2;
 //     auto                prob_size = tgt_pos + 2;
-//     std::vector<double> probability(static_cast<size_t>(prob_size), 0.0);
+//     std::vector<double> probability(safe_cast<size_t>(prob_size), 0.0);
 //     double              probability_sum = 0.0;
 //     // Figure out which schmidt values to use
 //     auto                     t_figout = tid::tic_scope("figout");
@@ -780,7 +781,7 @@ double tools::finite::measure::number_entropy_midchain(const StateFinite &state)
 //     namp.reserve(amplitudes.size());
 //     for(const auto &a : amplitudes) namp.emplace_back(a.bits.count());
 //
-//     auto              nmax = static_cast<size_t>(tgt_pos) + 1ul; // Maximum number of n
+//     auto              nmax = safe_cast<size_t>(tgt_pos) + 1ul; // Maximum number of n
 //     std::vector<bool> nflg(nmax + 1, false);                     // Flags for each n to tell if they have all been found in amplitudes
 //
 //     Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), tgt_pos + 2);
@@ -796,9 +797,9 @@ double tools::finite::measure::number_entropy_midchain(const StateFinite &state)
 //         if(idx == -1ul) // Could not find next idx. Probably all have been checked.
 //             break;
 //         auto &a  = amplitudes[idx];
-//         long  nl = static_cast<long>(a.bits.count()); // Number of bits in amplitude a, as <long>
+//         long  nl = safe_cast<long>(a.bits.count()); // Number of bits in amplitude a, as <long>
 //         if constexpr(settings::debug_numen)
-//             if(static_cast<long>(n) != nl) throw except::logic_error("Wrong bit number!");
+//             if(safe_cast<long>(n) != nl) throw except::logic_error("Wrong bit number!");
 //         // Evaluate the amplitude vector
 //         a.eval(state, tgt_pos, cache);
 //         if(a.ampl.size() != schmidt_values.size()) {
@@ -894,10 +895,10 @@ double tools::finite::measure::number_entropy_midchain(const StateFinite &state)
 //     }
 //
 //     std::vector<Amplitude<from>> amplitudes;
-//     amplitudes.reserve(static_cast<size_t>(num_bitseqs));
+//     amplitudes.reserve(safe_cast<size_t>(num_bitseqs));
 //     long start_pos = from == From::A ? -1l : state_len;
 //     for(long count = 0; count < num_bitseqs; count++)
-//         amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(static_cast<unsigned long long int>(count)), {}});
+//         amplitudes.emplace_back(Amplitude<from>{state_len, start_pos, std::bitset<64>(safe_cast<unsigned long long int>(count)), {}});
 //
 //     return amplitudes;
 // }

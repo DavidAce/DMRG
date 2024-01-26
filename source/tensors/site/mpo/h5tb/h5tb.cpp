@@ -1,6 +1,7 @@
 #include "h5tb.h"
 #include "debug/exceptions.h"
 #include "math/float.h"
+#include "math/cast.h"
 #include "tools/common/log.h"
 #include <hdf5.h>
 
@@ -201,7 +202,7 @@ std::string h5tb_lbit::fmt_value(std::string_view p) const {
         if(p == "J2_wdth")     return fmt::format("{:<7.4f}",  param.J2_wdth);
         if(p == "J3_wdth")     return fmt::format("{:<7.4f}",  param.J3_wdth);
         if(p == "xi_Jcls")     return fmt::format("{:<7.4f}",  param.xi_Jcls);
-        if(p == "J2_span")     return fmt::format("{:>7}",     param.J2_span == -1ul ? -1l : static_cast<long>(param.J2_span));
+        if(p == "J2_span")     return fmt::format("{:>7}",     param.J2_span == -1ul ? -1l : safe_cast<long>(param.J2_span));
         if(p == "J2_ctof")     return fmt::format("{:>7}",     param.J2_ctof);
         if(p == "spin_dim")    return fmt::format("{:>8}",     param.spin_dim);
         if(p == "distribution")return fmt::format("{:<12}",    param.distribution);

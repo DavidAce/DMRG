@@ -1,8 +1,10 @@
 #pragma once
 #include "../enums.h"
+#include "math/cast.h"
 #include <complex>
 #include <memory>
 #include <vector>
+
 namespace tid {
     class ur;
 }
@@ -35,8 +37,8 @@ class MatVecSparse {
     MatVecSparse(const Scalar *A_, long L_, bool copy_data, eig::Form form_ = eig::Form::SYMM, eig::Side side_ = eig::Side::R);
     ~MatVecSparse();
     // Functions used in in Arpack++ solver
-    [[nodiscard]] int rows() const { return static_cast<int>(L); };
-    [[nodiscard]] int cols() const { return static_cast<int>(L); };
+    [[nodiscard]] int rows() const { return safe_cast<int>(L); };
+    [[nodiscard]] int cols() const { return safe_cast<int>(L); };
     void              FactorOP();                                   //  Factors (A-sigma*I) into PLU
     void              MultOPv(Scalar *x_in_ptr, Scalar *x_out_ptr); //   Computes the matrix-vector product x_out <- inv(A-sigma*I)*x_in.
     void              MultOPv(void *x, int *ldx, void *y, int *ldy, int *blockSize, primme_params *primme, int *err);

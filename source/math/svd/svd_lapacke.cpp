@@ -54,8 +54,8 @@ template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows,
                                                                                                                   long cols) const {
     // Setup useful sizes
-    int rowsA = static_cast<int>(rows);
-    int colsA = static_cast<int>(cols);
+    int rowsA = safe_cast<int>(rows);
+    int colsA = safe_cast<int>(cols);
     int sizeS = std::min(rowsA, colsA);
 
     if(rows < cols and (svd_rtn == rtn::gejsv or svd_rtn == rtn::gesvj)) {
@@ -134,8 +134,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
                                                -1);
                     if(info != 0) break;
-                    int lrwork = static_cast<int>(rwork[0]);
-                    rwork.resize(static_cast<size_t>(std::max(1, lrwork)));
+                    int lrwork = safe_cast<int>(rwork[0]);
+                    rwork.resize(safe_cast<size_t>(std::max(1, lrwork)));
 
                     info = LAPACKE_dgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
                                                lrwork);
@@ -147,7 +147,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     V.resize(rowsV, colsV); // Local matrix gets transposed after computation
 
                     int lrwork = std::max(6, rowsA + colsA);
-                    rwork.resize(static_cast<size_t>(lrwork));
+                    rwork.resize(safe_cast<size_t>(lrwork));
                     info =
                         LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, rwork.data(), lrwork);
                     if(info < 0) throw except::runtime_error("Lapacke SVD dgesvj error: parameter {} is invalid", info);
@@ -166,8 +166,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     int lrwork = std::max(2 * rowsA + colsA, 6 * colsA + 2 * colsA * colsA);
                     int liwork = std::max(3, rowsA + 3 * colsA);
 
-                    rwork.resize(static_cast<size_t>(lrwork));
-                    iwork.resize(static_cast<size_t>(liwork));
+                    rwork.resize(safe_cast<size_t>(lrwork));
+                    iwork.resize(safe_cast<size_t>(liwork));
 
                     info = LAPACKE_dgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
@@ -186,16 +186,16 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
                     int lrwork = std::max(1, mn * (6 + 4 * mn) + mx);
                     int liwork = std::max(1, 8 * mn);
-                    rwork.resize(static_cast<size_t>(lrwork));
-                    iwork.resize(static_cast<size_t>(liwork));
+                    rwork.resize(safe_cast<size_t>(lrwork));
+                    iwork.resize(safe_cast<size_t>(liwork));
 
                     info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(), -1,
                                                iwork.data());
                     if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
                     if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
 
-                    lrwork = static_cast<int>(rwork[0]);
-                    rwork.resize(static_cast<size_t>(std::max(1, lrwork)));
+                    lrwork = safe_cast<int>(rwork[0]);
+                    rwork.resize(safe_cast<size_t>(std::max(1, lrwork)));
 
                     auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix), tid::highest);
                     info       = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
@@ -212,14 +212,14 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     double vl    = std::min(1e-10, truncation_lim / 5.0);
                     double vu    = std::max(1e+10, truncation_lim / 5.0);
                     int    il    = 1;
-                    int    iu    = std::min<int>(sizeS, static_cast<int>(rank_max));
+                    int    iu    = std::min<int>(sizeS, safe_cast<int>(rank_max));
                     char   range = rank_max < sizeS ? 'I' : 'V';
 
                     if(svdx_select.has_value()) {
                         if(std::holds_alternative<svdx_indices_t>(svdx_select.value())) {
                             auto sel = std::get<svdx_indices_t>(svdx_select.value());
-                            iu       = std::min<int>(static_cast<int>(sel.iu), static_cast<int>(rank_max));
-                            il       = std::min<int>(static_cast<int>(sel.il), static_cast<int>(rank_max));
+                            iu       = std::min<int>(safe_cast<int>(sel.iu), safe_cast<int>(rank_max));
+                            il       = std::min<int>(safe_cast<int>(sel.il), safe_cast<int>(rank_max));
                             range    = 'I';
                         } else if(std::holds_alternative<svdx_values_t>(svdx_select.value())) {
                             auto sel = std::get<svdx_values_t>(svdx_select.value());
@@ -232,15 +232,15 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     int ns     = 0;
                     int lrwork = std::max(1, mn * 2 + mx);
                     int liwork = std::max(1, 12 * mn);
-                    rwork.resize(static_cast<size_t>(lrwork));
-                    iwork.resize(static_cast<size_t>(liwork));
+                    rwork.resize(safe_cast<size_t>(lrwork));
+                    iwork.resize(safe_cast<size_t>(liwork));
 
                     info = LAPACKE_dgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', range, rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
                                                 VT.data(), ldvt, rwork.data(), -1, iwork.data());
                     if(info != 0) break;
 
-                    lrwork = static_cast<int>(std::real(rwork[0]));
-                    rwork.resize(static_cast<size_t>(std::max(1, lrwork)));
+                    lrwork = safe_cast<int>(std::real(rwork[0]));
+                    rwork.resize(safe_cast<size_t>(std::max(1, lrwork)));
 
                     info = LAPACKE_dgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', 'V', rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
                                                 VT.data(), ldvt, rwork.data(), lrwork, iwork.data());
@@ -268,14 +268,14 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
                     int lcwork = 1;
                     int lrwork = std::max(1, 5 * mn);
-                    cwork.resize(static_cast<size_t>(lcwork));
-                    rwork.resize(static_cast<size_t>(lrwork));
+                    cwork.resize(safe_cast<size_t>(lcwork));
+                    rwork.resize(safe_cast<size_t>(lrwork));
 
                     info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
                                                -1, rwork.data());
                     if(info != 0) break;
-                    lcwork = static_cast<int>(std::real(cwork[0]));
-                    cwork.resize(static_cast<size_t>(std::max(1, lcwork)));
+                    lcwork = safe_cast<int>(std::real(cwork[0]));
+                    cwork.resize(safe_cast<size_t>(std::max(1, lcwork)));
                     info = LAPACKE_zgesvd_work(LAPACK_COL_MAJOR, 'S', 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
                                                lcwork, rwork.data());
                     break;
@@ -290,10 +290,10 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), -1,
                                                rwork.data(), -1);
                     if(info != 0) break;
-                    int lcwork = static_cast<int>(std::real(cwork[0]));
-                    int lrwork = static_cast<int>(rwork[0]);
-                    cwork.resize(static_cast<size_t>(std::max(1, lcwork)));
-                    rwork.resize(static_cast<size_t>(std::max(6, lrwork)));
+                    int lcwork = safe_cast<int>(std::real(cwork[0]));
+                    int lrwork = safe_cast<int>(rwork[0]);
+                    cwork.resize(safe_cast<size_t>(std::max(1, lcwork)));
+                    rwork.resize(safe_cast<size_t>(std::max(6, lrwork)));
 
                     info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), lcwork,
                                                rwork.data(), lrwork);
@@ -319,12 +319,12 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                                U.data(), ldu, V.data(), ldv, cwork.data(), -1, rwork.data(), -1, iwork.data());
                     if(info != 0) break;
 
-                    int lcwork = static_cast<int>(std::real(cwork[0]));
-                    int lrwork = static_cast<int>(rwork[0]);
-                    int liwork = static_cast<int>(iwork[0]);
-                    cwork.resize(static_cast<size_t>(std::max(2, lcwork)));
-                    rwork.resize(static_cast<size_t>(std::max(7, lrwork)));
-                    iwork.resize(static_cast<size_t>(std::max({4, 2 * rowsA + colsA, liwork})));
+                    int lcwork = safe_cast<int>(std::real(cwork[0]));
+                    int lrwork = safe_cast<int>(rwork[0]);
+                    int liwork = safe_cast<int>(iwork[0]);
+                    cwork.resize(safe_cast<size_t>(std::max(2, lcwork)));
+                    rwork.resize(safe_cast<size_t>(std::max(7, lrwork)));
+                    iwork.resize(safe_cast<size_t>(std::max({4, 2 * rowsA + colsA, liwork})));
 
                     info = LAPACKE_zgejsv_work(LAPACK_COL_MAJOR, 'F' /* 'R' may also work well */, 'U', 'V', 'N' /* 'R' kills small columns of A */,
                                                'T' /* T/N:  T will transpose if faster. Ignored if A is rectangular */,
@@ -350,8 +350,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                                rwork.data(), iwork.data());
                     if(info != 0) break;
 
-                    lcwork = static_cast<int>(std::real(cwork[0]));
-                    cwork.resize(static_cast<size_t>(std::max(1, lcwork)));
+                    lcwork = safe_cast<int>(std::real(cwork[0]));
+                    cwork.resize(safe_cast<size_t>(std::max(1, lcwork)));
 
                     info = LAPACKE_zgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, cwork.data(),
                                                lcwork, rwork.data(), iwork.data());
@@ -365,14 +365,14 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     double vl    = std::min(1e10, truncation_lim / 5.0);
                     double vu    = std::max(1e10, truncation_lim / 5.0);
                     int    il    = 1;
-                    int    iu    = std::min<int>(sizeS, static_cast<int>(rank_max));
+                    int    iu    = std::min<int>(sizeS, safe_cast<int>(rank_max));
                     char   range = rank_max < sizeS ? 'I' : 'V';
 
                     if(svdx_select.has_value()) {
                         if(std::holds_alternative<svdx_indices_t>(svdx_select.value())) {
                             auto sel = std::get<svdx_indices_t>(svdx_select.value());
-                            iu       = std::min<int>(static_cast<int>(sel.iu), static_cast<int>(rank_max));
-                            il       = std::min<int>(static_cast<int>(sel.il), static_cast<int>(rank_max));
+                            iu       = std::min<int>(safe_cast<int>(sel.iu), safe_cast<int>(rank_max));
+                            il       = std::min<int>(safe_cast<int>(sel.il), safe_cast<int>(rank_max));
                             range    = 'I';
                         } else if(std::holds_alternative<svdx_values_t>(svdx_select.value())) {
                             auto sel = std::get<svdx_values_t>(svdx_select.value());
@@ -394,8 +394,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                                 VT.data(), ldvt, cwork.data(), -1, rwork.data(), iwork.data());
                     if(info != 0) break;
 
-                    lcwork = static_cast<int>(std::real(cwork[0]));
-                    cwork.resize(static_cast<size_t>(std::max(1, lcwork)));
+                    lcwork = safe_cast<int>(std::real(cwork[0]));
+                    cwork.resize(safe_cast<size_t>(std::max(1, lcwork)));
 
                     info = LAPACKE_zgesvdx_work(LAPACK_COL_MAJOR, 'V', 'V', 'V', rowsA, colsA, A.data(), lda, vl, vu, il, iu, &ns, S.data(), U.data(), ldu,
                                                 VT.data(), ldvt, cwork.data(), lcwork, rwork.data(), iwork.data());

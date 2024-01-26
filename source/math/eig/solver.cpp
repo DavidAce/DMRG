@@ -33,8 +33,8 @@ void eig::solver::subtract_phase(std::vector<Scalar> &eigvecs, size_type L, size
         if(eigvecs.empty()) return;
         if(nev > 0) {
             for(size_type i = 0; i < nev; i++) {
-                if(eigvecs[static_cast<size_t>(i * L)].imag() == 0.0) { continue; }
-                Scalar inv_phase     = Scalar(0.0, -1.0) * std::arg(eigvecs[static_cast<size_t>(i * L)]);
+                if(eigvecs[safe_cast<size_t>(i * L)].imag() == 0.0) { continue; }
+                Scalar inv_phase     = Scalar(0.0, -1.0) * std::arg(eigvecs[safe_cast<size_t>(i * L)]);
                 auto   begin         = eigvecs.begin() + i * L;
                 auto   end           = begin + L;
                 Scalar exp_inv_phase = std::exp(inv_phase);

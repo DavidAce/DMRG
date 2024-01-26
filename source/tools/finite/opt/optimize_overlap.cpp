@@ -1,6 +1,7 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "math/cast.h"
 #include "tid/tid.h"
 #include "tools/common/log.h"
 #include "tools/finite/measure.h"
@@ -58,8 +59,7 @@ using namespace tools::finite::opt::internal;
  *
  * Step 2) Return the eigenstate with the highest overlap to the current state.
  */
-opt_mps tools::finite::opt::internal::optimize_overlap(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status,
-                                                            OptMeta &meta) {
+opt_mps tools::finite::opt::internal::optimize_overlap(const TensorsFinite &tensors, const opt_mps &initial_mps, const AlgorithmStatus &status, OptMeta &meta) {
     if(meta.optFunc != OptFunc::OVERLAP)
         throw except::runtime_error("optimize_overlap: Expected OptFunc [{}] | Got [{}]", enum2sv(OptFunc::OVERLAP), enum2sv(meta.optFunc));
     tools::log->trace("Optimizing in OVERLAP mode");
@@ -85,14 +85,13 @@ opt_mps tools::finite::opt::internal::optimize_overlap(const TensorsFinite &tens
 
     auto max_overlap_idx = internal::subspace::get_idx_to_eigvec_with_highest_overlap(subspace, status.energy_llim, status.energy_ulim);
     if(max_overlap_idx) {
-        auto &eigvec_max_overlap = *std::next(subspace.begin(), static_cast<long>(max_overlap_idx.value()));
+        auto &eigvec_max_overlap = *std::next(subspace.begin(), safe_cast<long>(max_overlap_idx.value()));
         eigvec_max_overlap.set_variance(tools::finite::measure::energy_variance(eigvec_max_overlap.get_tensor(), tensors));
         if(tools::log->level() == spdlog::level::trace) {
-            tools::log->trace("optimize_overlap: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}",
-                              max_overlap_idx.value(), eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy(), eigvec_max_overlap.get_variance());
+            tools::log->trace("optimize_overlap: eigvec {:<2} has highest overlap {:.16f} | energy {:>20.16f} | variance {:>8.2e}", max_overlap_idx.value(),
+                              eigvec_max_overlap.get_overlap(), eigvec_max_overlap.get_energy(), eigvec_max_overlap.get_variance());
         }
-        if(eigvec_max_overlap.get_overlap() < 0.1)
-            tools::log->debug("optimize_overlap: Overlap fell below < 0.1: {:20.16f}", eigvec_max_overlap.get_overlap());
+        if(eigvec_max_overlap.get_overlap() < 0.1) tools::log->debug("optimize_overlap: Overlap fell below < 0.1: {:20.16f}", eigvec_max_overlap.get_overlap());
         return eigvec_max_overlap;
     } else {
         tools::log->warn("optimize_overlap: No overlapping states in energy range. Max overlap has energy. Returning the state unchanged.");

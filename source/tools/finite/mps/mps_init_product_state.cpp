@@ -110,7 +110,7 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
     }
     tools::log->debug("Initial state: {}", bitfield);
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.popcount = safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -154,7 +154,7 @@ void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &st
         }
     }
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.popcount = safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -191,7 +191,7 @@ void tools::finite::mps::init::set_product_state_domain_wall(StateFinite &state,
     }
     tools::log->debug("Initial state: {}", bitfield);
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.popcount = safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -216,7 +216,7 @@ void tools::finite::mps::init::set_product_state_aligned(StateFinite &state, Sta
         }
     }
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.popcount = safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -254,7 +254,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
         }
     }
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.popcount = safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites
@@ -313,7 +313,7 @@ void tools::finite::mps::init::set_product_state_on_axis_using_pattern(StateFini
     }
     tools::log->debug("Initial state on axis {}: {}", axis, bitfield);
     pattern        = fmt::format("b{}", bitfield);
-    state.popcount = static_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
+    state.popcount = safe_cast<size_t>(std::count(bitfield.begin(), bitfield.end(), '1'));
     state.clear_measurements();
     state.clear_cache();
     state.tag_all_sites_normalized(false); // This operation denormalizes all sites

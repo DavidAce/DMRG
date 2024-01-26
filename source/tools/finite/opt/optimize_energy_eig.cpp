@@ -1,6 +1,7 @@
 #include "algorithms/AlgorithmStatus.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "math/cast.h"
 #include "math/eig.h"
 #include "math/eig/matvec/matvec_mpo.h"
 #include "tensors/model/ModelFinite.h"
@@ -19,8 +20,8 @@ namespace tools::finite::opt::internal {
         auto        matrix = tensors.get_effective_hamiltonian<Scalar>();
         int         SR_il  = 1; // min nev index (starts from 1)
         int         SR_iu  = 1; // max nev index
-        int         LR_il  = static_cast<int>(matrix.dimension(0));
-        int         LR_iu  = static_cast<int>(matrix.dimension(0));
+        int         LR_il  = safe_cast<int>(matrix.dimension(0));
+        int         LR_iu  = safe_cast<int>(matrix.dimension(0));
         switch(meta.optRitz) {
             case OptRitz::SR: solver.eig(matrix.data(), matrix.dimension(0), 'I', SR_il, SR_iu, 0.0, 1.0); break;
             case OptRitz::LR: solver.eig(matrix.data(), matrix.dimension(0), 'I', LR_il, LR_iu, 0.0, 1.0); break;

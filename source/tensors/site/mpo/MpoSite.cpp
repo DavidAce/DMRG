@@ -2,6 +2,7 @@
 #include "config/debug.h"
 #include "debug/exceptions.h"
 #include "io/fmt_f128_t.h"
+#include "math/cast.h"
 #include "math/float.h"
 #include "math/hash.h"
 #include "math/rnd.h"
@@ -435,12 +436,12 @@ void MpoSite::load_mpo(const h5pp::File &file, std::string_view mpo_prefix) {
 
 std::size_t MpoSite::get_unique_id() const {
     if(unique_id) return unique_id.value();
-    unique_id = hash::hash_buffer(MPO().data(), static_cast<size_t>(MPO().size()));
+    unique_id = hash::hash_buffer(MPO().data(), safe_cast<size_t>(MPO().size()));
     return unique_id.value();
 }
 
 std::size_t MpoSite::get_unique_id_sq() const {
     if(unique_id_sq) return unique_id_sq.value();
-    unique_id_sq = hash::hash_buffer(MPO2().data(), static_cast<size_t>(MPO2().size()));
+    unique_id_sq = hash::hash_buffer(MPO2().data(), safe_cast<size_t>(MPO2().size()));
     return unique_id_sq.value();
 }

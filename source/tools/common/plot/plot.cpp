@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 #include "../plot.h"
+#include "math/cast.h"
 #include <algorithm>
 #include <cmath>
 #include <fmt/core.h>
@@ -35,7 +36,7 @@ size_t map_to_idx(double val, double in_min, double in_max, size_t num_steps) {
     auto rel_value = (std::max(val, in_min) - std::min(val, in_min)) * rel_range;
     auto rel_index = max_index - rel_value;
     //    fmt::print("val {} | rel {} range {} num {} | idx {}\n", val, rel_value, rel_range, num_steps, rel_index);
-    return static_cast<size_t>(std::floor(std::abs(rel_index)));
+    return safe_cast<size_t>(std::floor(std::abs(rel_index)));
 }
 
 std::vector<double> resample(const std::vector<double> &ydata, size_t newlength) {
@@ -51,8 +52,8 @@ std::vector<double> resample(const std::vector<double> &ydata, size_t newlength)
             auto x       = static_cast<double>(newindex) * factor;
             auto x1      = floor(x);
             auto x2      = x1 + 1.0;
-            auto y1      = ydata.at(std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x1)), oldlength - 1));
-            auto y2      = ydata.at(std::min<size_t>(std::max<size_t>(0, static_cast<size_t>(x2)), oldlength - 1));
+            auto y1      = ydata.at(std::min<size_t>(std::max<size_t>(0, safe_cast<size_t>(x1)), oldlength - 1));
+            auto y2      = ydata.at(std::min<size_t>(std::max<size_t>(0, safe_cast<size_t>(x2)), oldlength - 1));
             auto y       = y1 + (y2 - y1) * (x - x1) / (x2 - x1);
             auto safeidx = std::min<size_t>(std::max<size_t>(0, newindex), newlength - 1);
             if(safeidx >= newdata.size())
@@ -146,9 +147,8 @@ void AsciiPlotter::show() {
     for(size_t curve = 0; curve < ydata.size(); curve++) {
         auto resampled = resample(ydata.at(curve), width);
         for(size_t col = 0; col < width; col++) {
-            size_t row             = map_to_idx(resampled.at(col), ymin, ymax, height);
-            if (row < height)
-                canvas.at(row).at(col) = markers.at(curve);
+            size_t row = map_to_idx(resampled.at(col), ymin, ymax, height);
+            if(row < height) canvas.at(row).at(col) = markers.at(curve);
         }
     }
 
