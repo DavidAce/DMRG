@@ -36,7 +36,8 @@ namespace tools::h5xf {
             tgtInfo.dsetSlab->offset->at(axis) = index;
 
             // Sometimes there is an extra entry at the end in the source data. We should ignore it.
-            tgtInfo.dsetSlab->extent->at(2) = tgtInfo.dsetDims->at(2); // Copy the time dimension to ignore extra entries
+            if(tgtInfo.dsetSlab->extent->size() >= 3 and tgtInfo.dsetDims->size() >= 3)
+                tgtInfo.dsetSlab->extent->at(2) = tgtInfo.dsetDims->at(2); // Copy the time dimension to ignore extra entries
 
             switch(ssel) {
                 case SlabSelect::FULL: {

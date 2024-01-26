@@ -39,6 +39,7 @@ def lbit_avg(args):
             'dsets': {  # For time independent data (or at the last time step)
                 'schmidt_midchain': {},
                 'model/hamiltonian': {'copy': True, },
+                'model/opdm-eigv': {'copy': True, },
                 'model/unitary_circuit': {'copy': True, },
                 'model/model_size': {'copy': True, },
                 'model/lbits/cls_avg_fit': {'axis': 0, },

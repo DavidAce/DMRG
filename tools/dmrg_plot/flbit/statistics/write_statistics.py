@@ -242,7 +242,7 @@ def write_statistics_dset(meta, props, h5_tgt):
         pos_variance_neel1_dset = None
         neel_type_dset = None
 
-        chunksize = np.min([maxbatchsize, 1000])
+        chunksize = np.min([d3, maxbatchsize, 1000])
         if do_nth_particle:
             tgt_node = h5_tgt.require_group(nth_particle_position_path)
             tgt_node.attrs.create(name="description",
@@ -491,19 +491,11 @@ def write_statistics(src, tgt, reqs):
     write_statistics_crono4.hartley_number_entropy_data = None
 
     with h5py.File(src, 'r', libver='latest', swmr=True, rdcc_nbytes=1 * 1024 ** 3, rdcc_nslots=521, driver='sec2') as h5_src:
-        with h5py.File(tgt, 'w') as h5_tgt:
-            print('Averaging dsets')
-            for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
-                                                                   nodeType=h5py.Dataset):
-                print('Found dset: {}'.format(dsetpath))
-                write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
-
         print('Averaging tables')
         for tablename, tablepath, tablenode in h5py_node_iterator(node=h5_src, keypattern=reqs['tables'], dep=20,
                                                                   excludeKeys=['.db', 'cronos', 'dsets', 'iter_'],
                                                                   nodeType=h5py.Dataset):
             write_statistics_table2((tablename, tablepath, tablenode), reqs['tables'], tgt)
-
 
         with tb.File(tgt, 'a') as h5f:
             print('Averaging cronos v4')
@@ -525,6 +517,14 @@ def write_statistics(src, tgt, reqs):
                         if done := done_crono.get(cronopath):
                             print('{} is done'.format(cronopath))
                             break
+
+        with h5py.File(tgt, 'w') as h5_tgt:
+            print('Averaging dsets')
+            for dsetname, dsetpath, dsetnode in h5py_node_iterator(node=h5_src, keypattern=reqs['dsets'], dep=20, excludeKeys=['.db', 'cronos', 'iter_'],
+                                                                   nodeType=h5py.Dataset):
+                print('Found dset: {}'.format(dsetpath))
+                write_statistics_dset((dsetname, dsetpath, dsetnode), reqs['dsets'], h5_tgt)
+
 
 
     with h5py.File(tgt, 'a') as h5_tgt:

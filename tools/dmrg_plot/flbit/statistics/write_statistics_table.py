@@ -393,6 +393,8 @@ def write_statistics_table2(nodemeta, tablereqs, tgt):
                     continue
                 if '.db' in key or dset.dtype.type is np.void:  # Tables are np.void
                     continue
+                if 'opdm-eigv' in key:
+                    continue
                 if key in flbit_node.attrs:
                     break
                 # print(key,dset,model_node)
@@ -716,7 +718,7 @@ def write_statistics_crono4(nodemeta, crono_tables, h5f: tb.File, nodecache):
         for key, dset in model_node.items():
             if isinstance(dset, h5py.Group):
                 continue
-            if any(x in key for x in ['.db', 'hamiltonian', 'unitary_circuit']):
+            if any(x in key for x in ['.db', 'hamiltonian', 'unitary_circuit', 'opdm-eigv']):
                 continue
             if key in attrs_node._v_attrs:
                 break

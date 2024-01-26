@@ -139,21 +139,31 @@ def lbit_plot(args):
     xaxspec_c = ['f']
 
     figspec = ['J','w', 'r','f']
-    subspec = ['u']
-    linspec = ['L', 'l']
+    subspec = ['u', 'L']
+    linspec = ['mkind', 'l' ]
 
     figspec_lbit = ['J', 'w', 'r']
     subspec_lbit = ['u','f']
-    linspec_lbit = ['L', 'l']
+    linspec_lbit = ['L', 'l', 'mkind']
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
-        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec,
+        f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm'], figspec=figspec, subspec=subspec,
                                    linspec=linspec, figs=f, palette_name=palette)
         break
     save_figure(f)
 
     plt.show()
     exit(0)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs, metas, palettes)):
+        f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec, subspec=subspec,
+                                   linspec=linspec, figs=f, palette_name=palette)
+        break
+    save_figure(f)
+
+    # plt.show()
+    # exit(0)
     # logging.basicConfig(level=logging.DEBUG)
 
     # f = None
@@ -269,6 +279,13 @@ def lbit_plot(args):
     f = None
     for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
         f = plot_lbit_fig_sub_line(db=db, meta=meta['lbit-avg'], figspec=figspec_lbit, subspec=subspec_lbit,
+                                   linspec=linspec_lbit, figs=f, palette_name=palette)
+        break
+    save_figure(f)
+
+    f = None
+    for idx, (db, meta, palette) in enumerate(zip(dbs_lbit, metas_lbit, palettes)):
+        f = plot_opdm_fig_sub_line(db=db, meta=meta['opdm'], figspec=figspec_lbit, subspec=subspec_lbit,
                                    linspec=linspec_lbit, figs=f, palette_name=palette)
         break
     save_figure(f)

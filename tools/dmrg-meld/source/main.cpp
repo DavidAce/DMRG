@@ -286,6 +286,7 @@ int main(int argc, char *argv[]) {
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "correrr", Size::FIX, 0));
                 keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corrmat", Size::FIX, 0));
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "corroff", Size::FIX, 0));
+                keys.dsets.emplace_back(DsetKey("fLBIT", "model", "opdm-eigv", Size::FIX, 1));
 
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_avg", Size::FIX, 0));
                 //                keys.dsets.emplace_back(DsetKey("fLBIT", "model/lbits", "decay_err", Size::FIX, 0));
