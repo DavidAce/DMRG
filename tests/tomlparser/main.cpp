@@ -13,7 +13,7 @@ T get_value(toml::node_view<toml::node> node) {
             return sv2enum<T>(value.value());
         else
             throw std::runtime_error("Missing value for node");
-    } else if constexpr(sfinae::is_vector_v<T>) {
+    } else if constexpr(sfinae::is_std_vector_v<T>) {
         using value_type = T::value_type;
         T            res;
         toml::array *array = node.as_array();
@@ -24,7 +24,7 @@ T get_value(toml::node_view<toml::node> node) {
             return res;
         }
 
-    } else if constexpr(sfinae::is_array_v<T>) {
+    } else if constexpr(sfinae::is_std_array_v<T>) {
         using value_type = T::value_type;
         T            res;
         toml::array *array = node.as_array();
