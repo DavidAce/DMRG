@@ -10,6 +10,7 @@
 #include <fmt/ranges.h>
 #include <fmt/format.h>
 
+
 namespace settings {
     inline constexpr bool debug_swap   = false;
     inline constexpr bool verbose_swap = false;

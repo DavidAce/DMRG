@@ -334,7 +334,10 @@ namespace tenx {
     //    //Tensor to matrix conversions//
     //    //****************************//
     //
-
+    template<typename Scalar>
+    auto MatrixCast(const Eigen::Tensor<Scalar, 2> &tensor) {
+        return static_cast<MatrixType<Scalar>>(Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1)));
+    }
     template<typename T, typename sizeType, typename Device = Eigen::DefaultDevice>
     auto MatrixCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const sizeType rows, const sizeType cols, const Device &device = Device()) {
         auto tensor    = asEval(expr, device);
@@ -440,8 +443,17 @@ namespace tenx {
 
     template<typename Scalar, auto rank>
     bool isReal(const Eigen::Tensor<Scalar, rank> &tensor, double threshold = std::numeric_limits<double>::epsilon()) {
-        Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>> vector(tensor.data(), tensor.size());
-        return isReal(vector, threshold);
+        if constexpr(sfinae::is_std_complex_v<Scalar>) {
+            auto vector   = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(tensor.data(), tensor.size());
+            auto imag_sum = vector.imag().cwiseAbs().sum();
+            threshold *= std::max<double>(1.0, static_cast<double>(vector.size()));
+            //            if(imag_sum >= threshold) {
+            //                std::printf("thr*size : %.20f imag_sum : %.20f | isreal %d \n", threshold, imag_sum, imag_sum < threshold);
+            //            }
+            return imag_sum < threshold;
+        } else {
+            return true;
+        }
     }
 
     template<typename Scalar, auto rank>
@@ -539,6 +551,100 @@ namespace tenx {
     double sparcity(const Eigen::EigenBase<Derived> &matrix) {
         return static_cast<double>((matrix.derived().array() != 0.0).count()) / static_cast<double>(matrix.derived().size());
     }
+
+    //******************************//
+    // BLAS operations with tensors //
+    //******************************//
+    template<typename Scalar>
+    void gemm(Eigen::Tensor<Scalar, 2> &lhs, const Eigen::Tensor<Scalar, 2> &rhs1, const Eigen::Tensor<Scalar, 2> &rhs2) {
+        lhs.resize(rhs1.dimension(0), rhs2.dimension(1));
+        auto lhs_map      = Eigen::Map<MatrixType<Scalar>>(lhs.data(), rhs1.dimension(0), rhs2.dimension(1));
+        auto rhs1_map     = MatrixMap(rhs1);
+        auto rhs2_map     = MatrixMap(rhs2);
+        lhs_map.noalias() = rhs1_map * rhs2_map; // Calls BLAS GEMM
+    }
+    template<typename Scalar>
+    Eigen::Tensor<Scalar, 2> gemm(const Eigen::Tensor<Scalar, 2> &rhs1, const Eigen::Tensor<Scalar, 2> &rhs2) {
+        auto lhs          = Eigen::Tensor<Scalar, 2>(rhs1.dimension(0), rhs2.dimension(1));
+        auto lhs_map      = Eigen::Map<MatrixType<Scalar>>(lhs.data(), rhs1.dimension(0), rhs2.dimension(1));
+        auto rhs1_map     = MatrixMap(rhs1);
+        auto rhs2_map     = MatrixMap(rhs2);
+        lhs_map.noalias() = rhs1_map * rhs2_map; // Calls BLAS GEMM
+        return lhs;
+    }
+    template<typename Scalar>
+    Eigen::Tensor<Scalar, 4> gemm_mpo(const Eigen::Tensor<Scalar, 4> &rhs1, const Eigen::Tensor<Scalar, 4> &rhs2) {
+        /*!       2                2                  1                2                  1    4                  2    3
+         *        |                |                  |                |                  |    |                  |    |
+         * 0---[rhs1]---1    ---[rhs2]---   =  0---[rhs1]---3   0---[rhs2]---1  =   0---[rhs1rhs2]---3   =  0---[rhs1rhs2]---1
+         *        |                |                  |                |                  |    |                  |    |
+         *        3                3                  2                3                  2    5                  4    5
+         */
+        using cplx    = Scalar;
+        using real    = typename cplx::value_type; // We assume cplx is std::complex<>
+        auto dim6     = array6{rhs1.dimension(0), rhs1.dimension(2), rhs1.dimension(3), rhs2.dimension(1), rhs2.dimension(2), rhs2.dimension(3)};
+        auto dim_lhsA = array4{rhs1.dimension(0), rhs1.dimension(2) * rhs1.dimension(3), rhs2.dimension(1), rhs2.dimension(2) * rhs2.dimension(3)};
+        auto dim_lhsB = array4{rhs1.dimension(0), rhs2.dimension(1), rhs1.dimension(2) * rhs2.dimension(2), rhs1.dimension(3) * rhs2.dimension(3)};
+        auto dim_rhs1 = rhs1.dimensions();
+        auto dim_rhs2 = rhs2.dimensions();
+        auto shf6     = tenx::array6{0, 3, 1, 4, 2, 5};
+        if(isReal(rhs1) and isReal(rhs2)) {
+            // We get a speedup by multiplying reals instead of complex
+            Eigen::Tensor<real, 4> lhs_real(dim_lhsA);
+            Eigen::Tensor<real, 4> rhs1_real = rhs1.shuffle(array4{0, 2, 3, 1}).real(); // Prepare for gemm
+            Eigen::Tensor<real, 4> rhs2_real = rhs2.real();
+            auto                   lhs_map   = Eigen::Map<MatrixType<real>>(lhs_real.data(), dim_lhsA[0] * dim_lhsA[1], dim_lhsA[2] * dim_lhsA[3]);
+            auto                   rhs1_map  = MatrixMap(rhs1_real, dim_rhs1[0] * dim_rhs1[2] * dim_rhs1[3], dim_rhs1[1]);
+            auto                   rhs2_map  = MatrixMap(rhs2_real, dim_rhs2[0], dim_rhs2[1] * dim_rhs2[2] * dim_rhs2[3]);
+            lhs_map.noalias()                = rhs1_map * rhs2_map; // Calls BLAS GEMM
+            return lhs_real.reshape(dim6).shuffle(shf6).reshape(dim_lhsB).template cast<cplx>();
+        } else {
+            Eigen::Tensor<cplx, 4> lhs(dim_lhsA);
+            Eigen::Tensor<cplx, 4> rhs1_shf4 = rhs1.shuffle(array4{0, 2, 3, 1}); // Prepare for gemm
+            auto                   lhs_map   = Eigen::Map<MatrixType<cplx>>(lhs.data(), dim_lhsA[0] * dim_lhsA[1], dim_lhsA[2] * dim_lhsA[3]);
+            auto                   rhs1_map  = MatrixMap(rhs1_shf4, dim_rhs1[0] * dim_rhs1[2] * dim_rhs1[3], dim_rhs1[1]);
+            auto                   rhs2_map  = MatrixMap(rhs2, dim_rhs2[0], dim_rhs2[1] * dim_rhs2[2] * dim_rhs2[3]);
+            lhs_map.noalias()                = rhs1_map * rhs2_map; // Calls BLAS GEMM
+            return lhs.reshape(dim6).shuffle(shf6).reshape(dim_lhsB);
+        }
+    }
+    template<typename Derived, typename Device = Eigen::DefaultDevice>
+    Eigen::Tensor<typename Derived::Scalar, 2> gemm_gate(const Eigen::TensorBase<Derived, Eigen::ReadOnlyAccessors> &dn_expr,
+                                                         const Eigen::TensorBase<Derived, Eigen::ReadOnlyAccessors> &up_expr, const Device &device = Device()) {
+        /*  Left connection
+         *     2     4    5
+         *     |     |    |             3   4   5              1
+         *     |    [  up  ]            |   |   |              |
+         *     |     |    |      =    [   gate    ]  =   [   gate    ]
+         *    [  dn  ]    |             |   |   |              |
+         *     |     |    |             0   1   2              0
+         *     0     1    3
+         */
+        using Scalar = typename Derived::Scalar;
+        auto dn_eval = tenx::asEval(dn_expr, device);
+        auto up_eval = tenx::asEval(up_expr, device);
+        static_assert(dn_eval.NumDimensions == 4);
+        static_assert(up_eval.NumDimensions == 4);
+        auto dn     = dn_eval.map();
+        auto up     = up_eval.map();
+        auto dim6A  = tenx::array6{dn.dimension(0), dn.dimension(1), dn.dimension(2), up.dimension(1), up.dimension(2), up.dimension(3)};
+        auto dim2A  = tenx::array2{dn.dimension(0) * dn.dimension(1) * dn.dimension(2), up.dimension(1) * up.dimension(2) * up.dimension(3)};
+        auto dim2B  = tenx::array2{dn.dimension(0) * dn.dimension(1) * up.dimension(3), dn.dimension(2) * up.dimension(2) * up.dimension(3)};
+        auto op     = Eigen::Tensor<Scalar, 6>(dim6A);
+        auto op_map = Eigen::Map<tenx::MatrixType<Scalar>>(op.data(), dim2A[0], dim2A[1]);
+        auto dn_map = Eigen::Map<const tenx::MatrixType<Scalar>>(dn.data(), dn.dimension(0) * dn.dimension(1) * dn.dimension(2), dn.dimension(3));
+        auto up_map = Eigen::Map<const tenx::MatrixType<Scalar>>(up.data(), up.dimension(0), up.dimension(1) * up.dimension(2) * up.dimension(3));
+        op_map      = dn_map * up_map;
+        return op.shuffle(tenx::array6{0, 1, 3, 2, 4, 5}).reshape(dim2B);
+    }
+    //        template<typename T, typename sizeType, typename Device = Eigen::DefaultDevice>
+    //    auto MatrixCast(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &expr, const sizeType rows, const sizeType cols, const Device &device = Device())
+    //    {
+    //        auto tensor    = asEval(expr, device);
+    //        auto tensorMap = tensor.map();
+    //        using Scalar   = typename decltype(tensorMap)::Scalar;
+    //        return static_cast<MatrixType<Scalar>>(Eigen::Map<const MatrixType<Scalar>>(tensorMap.data(), rows, cols));
+    //    }
 
 }
 /*clang-format on */

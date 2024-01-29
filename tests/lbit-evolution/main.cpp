@@ -52,23 +52,30 @@ auto get_hamiltonian(const flbit &f) -> Eigen::Matrix<cplx_t, Eigen::Dynamic, Ei
 }
 
 size_t assert_lbit_evolution(const flbit &f) {
-    // Test time evolution as  |psi(t+dt)> = U^-1 exp(-iHdt) U |psi(t)>, starting from t = 0
-    // We get a unitary tensor whose index 0 connects onto index 0 on an MPS, meaning,
+    // Test time evolution as  |psi(t+dt)> = U exp(-iH'dt) U^-1 |psi(t)>, starting from t = 0
+    // We get a unitary tensor whose index 1 connects onto index 0 on an MPS, meaning,
     /*
      * @verbatim
-     *     1---A---2
+     *        |psi>
      *         |
      *         0
      *         1
      *         |
-     *         U
+     *         U†
      *         |
      *         0
      * @endverbatim
      *
      *  When we use matrix operations, the multiplication works as
      *
-     *  0---U---1 0---A
+     *  0---U†---1 0---|psi>
+     *
+     *
+     *  The unitary is expressed as a circuit of 2-site gates, composed of many layers U[i].
+     *  When we apply the inverse from the left, the whole circuit needs to be reversed:
+     *
+     *  (...U[3]U[2]U[1]U[0])† |psi>  = (U[0]†U[1]†U[2]†U[3]†...) |psi>
+     *
      *
      *
      */
@@ -147,6 +154,8 @@ size_t assert_lbit_evolution(const flbit &f) {
     if(not unitarymatrix.isUnitary()) throw except::logic_error("unitarymatrix is not unitary");
     if(not exp_lbit_iHdt.isUnitary()) throw except::logic_error("exp_lbit_iHdt is not unitary");
 
+
+
     auto             psi_real_init = tools::finite::measure::mps2tensor(*f.state_real_init);
     auto             psi_lbit_init = tools::finite::measure::mps2tensor(*f.state_lbit_init);
     auto             psi_real_tebd = tools::finite::measure::mps2tensor(*f.tensors.state);
@@ -156,11 +165,11 @@ size_t assert_lbit_evolution(const flbit &f) {
     Eigen::VectorXcd vec_real_tebd = tenx::VectorMap(psi_real_tebd);
     Eigen::VectorXcd vec_lbit_tebd = tenx::VectorMap(psi_lbit_tebd);
     Eigen::VectorXcd vec_lbit_levo = exp_lbit_iHdt * vec_lbit_init;                 // From lbit
-    Eigen::VectorXcd vec_lbit_revo = exp_lbit_iHdt * unitarymatrix * vec_real_init; // From real
+    Eigen::VectorXcd vec_lbit_revo = exp_lbit_iHdt * unitarymatrix.adjoint() * vec_real_init; // From real
     Eigen::VectorXcd vec_lbit_devo = exp_lbit_iHdt.conjugate() * vec_lbit_tebd;     // From real
-    Eigen::VectorXcd vec_real_levo = unitarymatrix.adjoint() * exp_lbit_iHdt * vec_lbit_init;
-    Eigen::VectorXcd vec_real_revo = unitarymatrix.adjoint() * exp_lbit_iHdt * unitarymatrix * vec_real_init;
-    Eigen::VectorXcd vec_real_back = unitarymatrix.adjoint() * vec_lbit_init; // Returns the initial lbit state to real basis
+    Eigen::VectorXcd vec_real_levo = unitarymatrix * exp_lbit_iHdt * vec_lbit_init;
+    Eigen::VectorXcd vec_real_revo = unitarymatrix * exp_lbit_iHdt * unitarymatrix.adjoint() * vec_real_init;
+    Eigen::VectorXcd vec_real_back = unitarymatrix * vec_lbit_init; // Returns the initial lbit state to real basis
 
     auto overlap_lbit_levo_tebd = vec_lbit_levo.dot(vec_lbit_tebd); // One if time evo works independently of U
     auto overlap_lbit_revo_tebd = vec_lbit_revo.dot(vec_lbit_tebd); // One if time evo and U both work

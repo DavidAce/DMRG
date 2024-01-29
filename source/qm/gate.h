@@ -49,7 +49,7 @@ namespace qm {
         protected:
         template<typename scalar_t, typename alpha_t>
         Eigen::Tensor<scalar_t, 2> exp_internal(const Eigen::Tensor<scalar_t,2> & op_, alpha_t alpha) const;
-
+        enum class Side {L, R};
         mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
         mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
         mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
@@ -107,8 +107,10 @@ namespace qm {
         [[nodiscard]] Gate trace_pos(const std::vector<size_t> & pos_) const;
         [[nodiscard]] Gate trace_pos(size_t pos_) const;
         [[nodiscard]] cplx trace() const;
-        template<auto rank>
+        template<auto rank, Side s = Side::R>
         [[nodiscard]] std::array<long,rank> shape() const;
+        template<auto rank>
+        [[nodiscard]] std::array<long, rank> shape(const std::array<size_t,rank/2> & pos_partition) const;
         [[nodiscard]] std::vector<size_t> idx() const;
         [[nodiscard]] std::vector<size_t> idx_up() const;
         [[nodiscard]] std::vector<size_t> idx_dn() const;

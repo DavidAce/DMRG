@@ -61,7 +61,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
         if(pos >= 0) LC = state.get_mps_site(pos).get_LC();
 
         if(state.get_direction() == 1) {
-            auto  posC_ul = safe_cast<size_t>(posC);   // Cast to unsigned
+            auto  posC_ul = safe_cast<size_t>(posC);     // Cast to unsigned
             auto &mpsC    = state.get_mps_site(posC);    // This becomes the new AC (currently B)
             auto  trnc    = mpsC.get_truncation_error(); // Truncation error of the old B/new AC, i.e. bond to the right of posC,
             // Construct a single-site tensor. This is equivalent to state.get_multisite_mps(...) but avoid normalization checks.
@@ -69,7 +69,7 @@ size_t tools::finite::mps::move_center_point_single_site(StateFinite &state, std
             tools::finite::mps::merge_multisite_mps(state, onesite_tensor, {posC_ul}, posC, svd_cfg, LogPolicy::QUIET);
             mpsC.set_truncation_error_LC(std::max(trnc, mpsC.get_truncation_error_LC()));
         } else if(state.get_direction() == -1) {
-            auto  pos_ul         = safe_cast<size_t>(pos);   // Cast to unsigned
+            auto  pos_ul         = safe_cast<size_t>(pos);     // Cast to unsigned
             auto &mps            = state.get_mps_site(pos);    // This AC becomes the new B
             auto  trnc           = mps.get_truncation_error(); // Truncation error of old AC/new B, i.e. bond to the left of pos,
             auto  onesite_tensor = mps.get_M(); // No need to contract anything this time. Note that we must take a copy! Not a reference (LC is unset later)
@@ -517,7 +517,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
     auto old_posC = state.get_position<long>();
     auto old_svds = svd::solver::get_count();
 
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: status  pos {} | op {} | gm {} | center {} | svds {} | labels {}", gate.pos, enum2sv(gop), enum2sv(gm), old_posC,
                           old_svds, state.get_labels());
     if(gm == GateMove::ON) {
@@ -529,7 +529,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         auto tgt_gate = gate.pos;
         auto tgt_posC = std::clamp<long>(old_posC, safe_cast<long>(tgt_gate.front()) - 1l, safe_cast<long>(tgt_gate.back()));
         auto num_step = move_center_point_to_pos_dir(state, tgt_posC, 1, svd_cfg);
-        if constexpr(settings::debug_gates)
+        if constexpr(settings::verbose_gates)
             if(num_step > 0)
                 tools::log->trace("apply_gate: moved   pos {} | op {} | gm {} | center {} -> {} | tgt {} | steps {} | svds {}", gate.pos, enum2sv(gop),
                                   enum2sv(gm), old_posC, tgt_posC, tgt_gate, num_step, svd::solver::get_count());
@@ -557,13 +557,13 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
         temp.device(tenx::threads::getDevice()) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
         gate.mark_as_used();
     }
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: applied pos {} | op {} | gm {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front()));
 
     auto new_posC = gm == GateMove::ON ? safe_cast<long>(gate.pos.front()) : old_posC;
     tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, new_posC, svd_cfg, LogPolicy::QUIET);
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: merged  pos {} | op {} | gm {} | center {} -> {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           old_posC, new_posC, svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(),
                           state.get_truncation_error(gate.pos.front()));
@@ -589,7 +589,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
     if(gates.empty()) return;
     auto svd_count     = svd::solver::get_count();
     auto gate_sequence = generate_gate_sequence(state, gates, cop);
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gates: current pos {} dir {} | gate_sequence {}", state.get_position<long>(), state.get_direction(), gate_sequence);
 
     state.clear_cache(LogPolicy::QUIET);
@@ -604,7 +604,7 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
 
     if(moveback) move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
     svd_count = svd::solver::get_count() - svd_count;
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->debug("apply_gates: applied {} gates | svds {} | time {:.4f}", gates.size(), svd_count, t_apply_gates->get_last_interval());
 }
 
@@ -746,13 +746,13 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     std::swap(sites[posL], sites[posR]);
 
     // Sanity check
-    if constexpr(settings::debug_gates) {
+    if constexpr(settings::verbose_gates) {
         tools::log->trace("swap_sites     : swapped pos [{}, {}] | idx {} | gm {} | center {} -> {} | svds {} -> {} | labels {} | sites {}", posL, posR,
                           get_site_idx<size_t>(sites, {posL, posR}), enum2sv(gm), old_pos, new_pos, old_svd, svd::solver::get_count(), state.get_labels(),
                           sites);
-        if constexpr(settings::debug)
-            for(const auto &mps : state.mps_sites) mps->assert_normalized();
     }
+    if constexpr(settings::debug_gates)
+        for(const auto &mps : state.mps_sites) mps->assert_normalized();
 }
 
 void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, Eigen::Tensor<cplx, 3> &temp, GateOp gop, std::vector<size_t> &sites,
@@ -771,7 +771,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     // Note that the point of swap gates is to apply gates on nearest neighbors. Therefore, pos_idx should always
     // be a vector of elements with increments by 1 for the gate to be applicable.
 
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: status  pos {} | idx {} | gm {} | center {} | svds {} | labels {} | sites {}", gate.pos, pos_idxs, enum2sv(gm),
                           old_posC, old_svds, state.get_labels(), sites);
 
@@ -779,12 +779,12 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         // When gm == GateMove::ON, applying swap operators automatically moves the center position onto posL. This can
         // happen IFF the center position is already on one of posL-1, posL or posR.
         // To get this process going we need to move the center into one of these positions first.
-        // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise they are front/back of gate.pos.
+        // Note 1: posL and posR here refer to the first swap in the gate if it exists. Otherwise, they are front/back of gate.pos.
         // Note 2: both the swap and apply operations will set the current center on the left-most site of the gate.
         auto tgt_gate = gate.swaps.empty() ? gate.pos : std::vector<size_t>{gate.swaps[0].posL, gate.swaps[0].posR};
         auto tgt_posC = std::clamp<long>(old_posC, safe_cast<long>(tgt_gate.front()) - 1l, safe_cast<long>(tgt_gate.back()));
         auto num_step = move_center_point_to_pos_dir(state, tgt_posC, 1, svd_cfg);
-        if constexpr(settings::debug_gates)
+        if constexpr(settings::verbose_gates)
             if(num_step > 0)
                 tools::log->trace("apply_swap_gate: moved  pos {} | gm {} | center {} -> {} | tgt {} | steps {} | svds {}", gate.pos, enum2sv(gm), old_posC,
                                   tgt_posC, tgt_gate, num_step, svd::solver::get_count());
@@ -815,15 +815,15 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
         temp.device(tenx::threads::getDevice()) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
         gate.mark_as_used();
     }
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: applied pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::get_count());
 
-    // It's best to do an AC-B type of SVD split, so we put the center poisition on the left-most site when GateMove::ON
+    // It's best to do an AC-B type of SVD split, so we put the center position on the left-most site when GateMove::ON
     long new_posC = gm == GateMove::ON ? safe_cast<long>(pos_idxs.front()) : old_posC;
 
     tools::finite::mps::merge_multisite_mps(state, temp, pos_idxs, new_posC, svd_cfg, LogPolicy::QUIET);
-    if constexpr(settings::debug_gates)
+    if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::get_count());
 
@@ -831,7 +831,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     for(const auto &r : gate.rwaps) swap_sites(state, r.posL, r.posR, sites, gm);
 
     // Sanity check
-    if constexpr(settings::debug_gates) {
+    if constexpr(settings::verbose_gates) {
         tools::log->trace("apply_swap_gate: return  pos {} | gm {} | center {} -> {} | svds {} | labels {} | sites {}", gate.pos, enum2sv(gm), old_posC,
                           new_posC, svd::solver::get_count(), state.get_labels(), sites);
     }
@@ -845,8 +845,8 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     // Sanity check
     if constexpr(settings::debug_gates) {
         for(const auto &mps : state.mps_sites) mps->assert_normalized();
-        tools::log->trace("before applying swap gates: labels {}", state.get_labels());
     }
+    if constexpr(settings::verbose_gates)  tools::log->trace("before applying swap gates: labels {}", state.get_labels());
 
     if(gm == GateMove::AUTO) {
         // It only pays to move center point if we are actually using swaps
@@ -885,7 +885,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
 
     move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
 
-    if constexpr(settings::debug_gates) {
+    if constexpr(settings::verbose_gates) {
         svds_count = svd::solver::get_count() - svds_count;
         tools::log->debug("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
                           rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
