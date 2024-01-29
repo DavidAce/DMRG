@@ -590,7 +590,7 @@ def get_batch_setup(projectname):
         },
         'lbit122-fleff': {
             # Calculate SN(L) varying the new lambda parameter
-            'projectname': 'lbit121-fleff',
+            'projectname': 'lbit122-fleff',
             'batch': {
                 'L12': {
                     'seed_extent': [1000],
