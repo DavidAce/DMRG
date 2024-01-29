@@ -588,6 +588,17 @@ def get_batch_setup(projectname):
                 },
             }
         },
+        'lbit122-fleff': {
+            # Calculate SN(L) varying the new lambda parameter
+            'projectname': 'lbit121-fleff',
+            'batch': {
+                'L12': {
+                    'seed_extent': [1000],
+                    'seed_offset': [12000000],
+                    'time_steps': 200,
+                },
+            }
+        },
         'fdmrg-isingmajorana1-init': {
             # Calculate subsystem entanglement entropies for  ground states
             'projectname': 'fdmrg-isingmajorana1-init',
