@@ -64,6 +64,7 @@ StoragePolicy StorageInfo::get_state_storage_policy() const {
     if(state_name == "state_emax") return settings::storage::mps::state_emax::policy;
     if(state_name == "state_real") return settings::storage::mps::state_real::policy;
     if(state_name == "state_lbit") return settings::storage::mps::state_lbit::policy;
+    if(state_name == "state_eff")  return settings::storage::mps::state_lbit::policy; // Reuse lbit
 
     // xDMRG states are numbered like "state_#". We should therefore get the policy simply based on the algorithm
     if(algo_type == AlgorithmType::xDMRG) return settings::storage::mps::state_emid::policy;
