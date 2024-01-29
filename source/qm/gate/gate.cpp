@@ -90,7 +90,8 @@ auto group(const std::vector<long> &dim, const std::vector<size_t> &pattern) {
 
 template<auto N, auto M>
 constexpr auto group(const std::array<long, N> &dim, const std::array<size_t, M> &pattern) {
-    // Group tensor indices together.
+    /*! Group tensor indices together.
+     * */
     std::array<long, M> res{};
     size_t              dim_offset = 0;
     for(size_t i = 0; i < M; i++) {
@@ -326,30 +327,98 @@ const Eigen::Tensor<cplx, 2> &qm::Gate::unaryOp(GateOp unop) const {
     }
 }
 
-template<auto rank>
+template<auto rank, qm::Gate::Side s>
 std::array<long, rank> qm::Gate::shape() const {
-    if constexpr(rank == 1) { return {op.dimension(0) * op.dimension(1)}; }
-    if constexpr(rank == 2) {
+    if constexpr(rank == 1) {
+        return {op.dimension(0) * op.dimension(1)};
+    } else if constexpr(rank == 2) {
         return {op.dimension(0), op.dimension(1)};
+    } else if constexpr(rank == 4 and s == Side::R) {
+        long dimL = 1;
+        long dimR = dim.back();
+        for(size_t i = 0; i < dim.size() - 1; i++) dimL *= dim[i];
+        return {dimL, dimR, dimL, dimR};
+    } else if constexpr(rank == 4 and s == Side::L) {
+        long dimL = dim.front();
+        long dimR = 1;
+        for(size_t i = 1; i < dim.size(); i++) dimR *= dim[i];
+        return {dimL, dimR, dimL, dimR};
     } else {
         if(rank == 2 * dim.size()) {
+            // Equal split.
+            // If pos={0,1,2,3,4} and dim == {2,2,2,2,2} and rank == 10, then
+            // - i iterates {0 ... 9},
+            // - dims = {2,2,2,2,2 | 2,2,2,2,2}; where | separates above and below the gate.
             std::array<long, rank> dims{};
-            for(size_t i = 0; i < dims.size(); i++) dims[i] = dim[i % dim.size()];
+            for(size_t i = 0; i < rank; i++) dims[i] = dim[i % dim.size()];
             return dims;
-        } else {
-            throw except::range_error("Can't compute shape of rank {} for gate with pos {} and dim {}", rank, pos, dim);
         }
+
+        throw except::range_error("Can't compute shape of rank {} for gate with pos {} and dim {}", rank, pos, dim);
     }
 }
-template std::array<long, 1>  qm::Gate::shape() const;
-template std::array<long, 2>  qm::Gate::shape() const;
-template std::array<long, 4>  qm::Gate::shape() const;
-template std::array<long, 6>  qm::Gate::shape() const;
-template std::array<long, 8>  qm::Gate::shape() const;
-template std::array<long, 10> qm::Gate::shape() const;
-template std::array<long, 12> qm::Gate::shape() const;
-template std::array<long, 14> qm::Gate::shape() const;
-template std::array<long, 16> qm::Gate::shape() const;
+
+template std::array<long, 1>  qm::Gate::shape<1, qm::Gate::Side::R>() const;
+template std::array<long, 2>  qm::Gate::shape<2, qm::Gate::Side::R>() const;
+template std::array<long, 4>  qm::Gate::shape<4, qm::Gate::Side::R>() const;
+template std::array<long, 6>  qm::Gate::shape<6, qm::Gate::Side::R>() const;
+template std::array<long, 8>  qm::Gate::shape<8, qm::Gate::Side::R>() const;
+template std::array<long, 10> qm::Gate::shape<10, qm::Gate::Side::R>() const;
+template std::array<long, 12> qm::Gate::shape<12, qm::Gate::Side::R>() const;
+template std::array<long, 14> qm::Gate::shape<14, qm::Gate::Side::R>() const;
+template std::array<long, 16> qm::Gate::shape<16, qm::Gate::Side::R>() const;
+template std::array<long, 18> qm::Gate::shape<18, qm::Gate::Side::R>() const;
+template std::array<long, 20> qm::Gate::shape<20, qm::Gate::Side::R>() const;
+template std::array<long, 22> qm::Gate::shape<22, qm::Gate::Side::R>() const;
+template std::array<long, 24> qm::Gate::shape<24, qm::Gate::Side::R>() const;
+
+template<auto rank>
+std::array<long, rank> qm::Gate::shape(const std::array<size_t,rank/2> &pos_partition) const {
+    // std::vector<long> qm::Gate::shape(const std::vector<long> &pos_partition) const {
+    /*!
+     * Gets us the shape of this gate with positions grouped according to pos_partition
+     *
+     * Pos split pattern tells how to group the positions.
+     *
+     *  For example, if the current gate has pos {0,1,2,3,4}, with dims 32x32, we may want to group them as
+     *  {{0,1}, {2,3,4}}, in which case pos_partition should be {2, 3},
+     *  meaning "first a group of two positions, then another group of three positions"
+     *
+     *  We use the same partition up and down, so the gate dimensions will be partitioned as {2,3,2,3}.
+     *  This will result in shape {2x2, 2x2x2, 2x2, 2x2x2}
+     *
+     */
+
+    auto possize = std::reduce(pos_partition.begin(), pos_partition.end());
+    if(possize != pos.size()) throw except::runtime_error("pos_partition sum {}, expeced pos.size() == {}", possize, pos.size());
+    if(rank != 2 * pos.size()) throw except::runtime_error("rank {}, expeced  pos.size() == {} * 2", rank, pos.size());
+    std::array<long, rank / 2> dimpart;
+    for(auto &d : dimpart) d = 1l; // Initialize to 1
+
+    size_t offset = 0;
+    for(size_t ip = 0; ip < pos_partition.size(); ++ip) {
+        auto np = pos_partition[ip]; // Number of positions on this partition
+        for(size_t id = 0; id < np; ++id) { dimpart[ip] *= dim[id + offset]; }
+        offset += np;
+    }
+    return concat(dimpart, dimpart);
+}
+template std::array<long, 2>  qm::Gate::shape(const std::array<size_t, 1> &) const;
+template std::array<long, 4>  qm::Gate::shape(const std::array<size_t, 2> &) const;
+template std::array<long, 6>  qm::Gate::shape(const std::array<size_t, 3> &) const;
+template std::array<long, 8>  qm::Gate::shape(const std::array<size_t, 4> &) const;
+template std::array<long, 10> qm::Gate::shape(const std::array<size_t, 5> &) const;
+template std::array<long, 12> qm::Gate::shape(const std::array<size_t, 6> &) const;
+template std::array<long, 14> qm::Gate::shape(const std::array<size_t, 7> &) const;
+template std::array<long, 16> qm::Gate::shape(const std::array<size_t, 8> &) const;
+template std::array<long, 18> qm::Gate::shape(const std::array<size_t, 9> &) const;
+template std::array<long, 20> qm::Gate::shape(const std::array<size_t, 10> &) const;
+template std::array<long, 22> qm::Gate::shape(const std::array<size_t, 11> &) const;
+template std::array<long, 24> qm::Gate::shape(const std::array<size_t, 12> &) const;
+template std::array<long, 26> qm::Gate::shape(const std::array<size_t, 13> &) const;
+template std::array<long, 28> qm::Gate::shape(const std::array<size_t, 14> &) const;
+template std::array<long, 30> qm::Gate::shape(const std::array<size_t, 15> &) const;
+template std::array<long, 32> qm::Gate::shape(const std::array<size_t, 16> &) const;
 
 std::vector<size_t> qm::Gate::idx() const {
     std::vector<size_t> idx(pos.size() * 2);
@@ -938,7 +1007,8 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
 
     if(not pos_isect.empty() and pos_nsect.empty() and inc) {
         // This case is a vertical stack. Should be the simplest case
-        Eigen::Tensor<cplx, 2> op = dn_gate.op.contract(up_gate.op, tenx::idx({1}, {0}));
+        auto op = tenx::gemm(dn_gate.op, up_gate.op); // Calls BLAS GEMM
+                                                      //        op.device(tenx::threads::getDevice()) = dn_gate.op.contract(up_gate.op, tenx::idx({1}, {0}));
         return qm::Gate{op, dn_gate.pos, dn_gate.dim};
     }
     if(not pos_isect.empty() and not pos_nsect.empty() and inc) {
@@ -970,7 +1040,8 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
             if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
             auto                   dim2 = dn_gate.shape<2>();
-            Eigen::Tensor<cplx, 2> op   = dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({3}, {0})).reshape(dim2);
+            Eigen::Tensor<cplx, 2> op(dim2);
+            op.device(tenx::threads::getDevice()) = dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({3}, {0})).reshape(dim2);
             return qm::Gate{op, dn_gate.pos, dn_gate.dim};
         } else if(dn_gate.pos.front() == pos_isect.front()) {
             /*  Left connection
@@ -989,7 +1060,9 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
             if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
             auto                   dim2 = dn_gate.shape<2>();
-            Eigen::Tensor<cplx, 2> op   = dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({2}, {0})).shuffle(tenx::array4{0, 1, 3, 2}).reshape(dim2);
+            Eigen::Tensor<cplx, 2> op(dim2);
+            op.device(tenx::threads::getDevice()) =
+                dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({2}, {0})).shuffle(tenx::array4{0, 1, 3, 2}).reshape(dim2);
             return qm::Gate{op, dn_gate.pos, dn_gate.dim};
         } else {
             /*  Center connection
@@ -1007,7 +1080,8 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
             if(dn_size == 7) dn_shp6 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
             if(dn_size == 8) dn_shp6 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
             auto                   dim2 = dn_gate.shape<2>();
-            Eigen::Tensor<cplx, 2> op =
+            Eigen::Tensor<cplx, 2> op(dim2);
+            op.device(tenx::threads::getDevice()) =
                 dn_gate.op.reshape(dn_shp6).contract(up_gate.op, tenx::idx({4}, {0})).shuffle(tenx::array6{0, 1, 2, 3, 5, 4}).reshape(dim2);
             return qm::Gate{op, dn_gate.pos, dn_gate.dim};
         }
@@ -1018,10 +1092,10 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
         std::array<long, 4> up_shp4{};
         std::vector<size_t> pos;
         std::vector<long>   dim;
-        auto                dn_size  = dn_gate.pos.size();
-        auto                up_size  = up_gate.pos.size();
-        size_t              dn_merge = dn_size - pos_isect.size();
-        size_t              up_merge = up_size - pos_isect.size();
+        auto                dn_size  = dn_gate.pos.size();         // Number of sites
+        auto                up_size  = up_gate.pos.size();         // Number of sites
+        size_t              dn_merge = dn_size - pos_isect.size(); // Number of sites to merge
+        size_t              up_merge = up_size - pos_isect.size(); // Number of sites to merge
         // Decide if this connects on the right or right leg
         if(dn_gate.pos.front() == up_gate.pos.back()) {
             /*  Right connection
@@ -1033,22 +1107,11 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
              *      |    |     |           0   1   2              0
              *      3    0     1
              */
-            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{1, dn_merge}));
-            if(up_size == 2) up_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            if(up_size == 3) up_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            if(up_size == 4) up_shp4 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            if(up_size == 5) up_shp4 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            if(up_size == 6) up_shp4 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            if(up_size == 7) up_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            if(up_size == 8) up_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{up_merge, 1}));
-            auto                   dim2 = repeat(std::array<long, 1>{up_shp4[0] * up_shp4[1] * dn_shp4[1]});
-            Eigen::Tensor<cplx, 2> op =
+            auto                   dim2      = repeat(std::array<long, 1>{up_shp4[0] * up_shp4[1] * dn_shp4[1]});
+            up_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{up_merge, 1});
+            dn_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{1, dn_merge});
+            Eigen::Tensor<cplx, 2> op(dim2);
+            op.device(tenx::threads::getDevice()) =
                 dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({2}, {1})).shuffle(tenx::array6{3, 0, 1, 4, 5, 2}).reshape(dim2);
             pos = concat(up_gate.pos, subset(dn_gate.pos, 1, dn_merge));
             dim = concat(up_gate.dim, subset(dn_gate.dim, 1, dn_merge));
@@ -1063,23 +1126,14 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
              *     |     |    |             0   1   2              0
              *     0     1    3
              */
-            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{dn_merge, 1}));
-            if(up_size == 2) up_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            if(up_size == 3) up_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            if(up_size == 4) up_shp4 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            if(up_size == 5) up_shp4 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            if(up_size == 6) up_shp4 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            if(up_size == 7) up_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            if(up_size == 8) up_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{1, up_merge}));
-            auto                   dim2 = repeat(std::array<long, 1>{dn_shp4[0] * up_shp4[0] * up_shp4[1]});
-            Eigen::Tensor<cplx, 2> op =
-                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({3}, {0})).shuffle(tenx::array6{0, 1, 3, 2, 4, 5}).reshape(dim2);
+            dn_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{dn_merge, 1});
+            up_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{1, up_merge});
+            auto op = tenx::gemm_gate(dn_gate.op.reshape(dn_shp4), up_gate.op.reshape(up_shp4));
+            //            auto dim2 = repeat(std::array<long, 1>{dn_shp4[0] * up_shp4[0] * up_shp4[1]});
+            //            Eigen::Tensor<cplx, 2> op(dim2);
+            //            op.device(tenx::threads::getDevice()) =
+            //                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({3}, {0})).shuffle(tenx::array6{0, 1, 3, 2, 4,
+            //                5}).reshape(dim2);
             pos = concat(subset(dn_gate.pos, 0, dn_merge), up_gate.pos);
             dim = concat(subset(dn_gate.dim, 0, dn_merge), up_gate.dim);
             return qm::Gate{op, pos, dim};

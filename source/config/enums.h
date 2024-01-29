@@ -24,28 +24,28 @@ enum class TimeScale { LINSPACED, LOGSPACED };
 /*! \brief The type of Hermitian matrix M_i used in the 2-site gates u_i of the random unitary circuit for our l-bit model: u_i = exp(-i f w_i M_i)
  */
 enum class LbitCircuitGateMatrixKind : int {
-    MATRIX_V1,    /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
-                  * \verbatim
-                  * M_i = θ₀/4 (1 + σz[i] + σz[i+1] + λ σz[i] σz[i+1])
-                  *     + θ₁/4 (1 + σz[i] - σz[i+1] - λ σz[i] σz[i+1])
-                  *     + θ₂/4 (1 - σz[i] + σz[i+1] - λ σz[i] σz[i+1])
-                  *     + θ₃/4 (1 - σz[i] - σz[i+1] + λ σz[i] σz[i+1])
-                  *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
-                  * \endverbatim */
-    MATRIX_V2,    /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
-                  * \verbatim
-                  * M_i = θ₀/2 σz[i]
-                  *     + θ₁/2 σz[i+1]
-                  *     + θ₂/2 λ σz[i]σz[i+1]
-                  *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
-                  * \endverbatim */
-    MATRIX_V3,    /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
-                  * \verbatim
-                  * M_i = θ₀/2 σz[i]
-                  *     + θ₁/2 σz[i+1]
-                  *     + λ σz[i]σz[i+1]
-                  *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
-                  * \endverbatim */
+    MATRIX_V1, /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
+                * \verbatim
+                * M_i = θ₀/4 (1 + σz[i] + σz[i+1] + λ σz[i] σz[i+1])
+                *     + θ₁/4 (1 + σz[i] - σz[i+1] - λ σz[i] σz[i+1])
+                *     + θ₂/4 (1 - σz[i] + σz[i+1] - λ σz[i] σz[i+1])
+                *     + θ₃/4 (1 - σz[i] - σz[i+1] + λ σz[i] σz[i+1])
+                *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
+                * \endverbatim */
+    MATRIX_V2, /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
+                * \verbatim
+                * M_i = θ₀/2 σz[i]
+                *     + θ₁/2 σz[i+1]
+                *     + θ₂/2 λ σz[i]σz[i+1]
+                *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
+                * \endverbatim */
+    MATRIX_V3, /*!< Below, θᵢ, RE(c), and IM(c) are gaussian N(0,1) and λ is a constant
+                * \verbatim
+                * M_i = θ₀/2 σz[i]
+                *     + θ₁/2 σz[i+1]
+                *     + λ σz[i]σz[i+1]
+                *     + c σ+[i]σ-[i+1] + c^* σ-[i]σ+[i+1]
+                * \endverbatim */
 };
 
 /*! The type of weights w_i used in each 2-site gate u_i of the random unitary circuit for our l-bit model: u_i = exp(-i f w_i M_i) */
@@ -57,8 +57,8 @@ enum class LbitCircuitGateWeightKind : int {
 /*! The reason that we are invoking a storage call */
 enum class StorageEvent : int {
     NONE        = 0,   /*!< No event */
-    MODEL       = 1,   /*!< the model was defined */
-    INIT        = 2,   /*!< the initial state was defined */
+    INIT        = 1,   /*!< the initial state was defined */
+    MODEL       = 2,   /*!< the model was defined */
     EMIN        = 4,   /*!< the ground state was found (e.g. before xDMRG) */
     EMAX        = 8,   /*!< the highest energy eigenstate was found (e.g. before xDMRG) */
     PROJECTION  = 16,  /*!< a projection to a spin parity sector was made */
@@ -493,8 +493,8 @@ constexpr std::string_view enum2sv(const T item) noexcept {
     }
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == StorageEvent::NONE)                                  return "NONE";
-        if(item == StorageEvent::MODEL)                                 return "MODEL";
         if(item == StorageEvent::INIT)                                  return "INIT";
+        if(item == StorageEvent::MODEL)                                 return "MODEL";
         if(item == StorageEvent::EMIN)                                  return "EMIN";
         if(item == StorageEvent::EMAX)                                  return "EMAX";
         if(item == StorageEvent::PROJECTION)                            return "PROJECTION";
@@ -823,8 +823,8 @@ constexpr auto sv2enum(std::string_view item) {
     }
     if constexpr(std::is_same_v<T, StorageEvent>) {
         if(item == "NONE")                                  return  StorageEvent::NONE;
-        if(item == "MODEL")                                 return  StorageEvent::MODEL;
         if(item == "INIT")                                  return  StorageEvent::INIT;
+        if(item == "MODEL")                                 return  StorageEvent::MODEL;
         if(item == "EMIN")                                  return  StorageEvent::EMIN;
         if(item == "EMAX")                                  return  StorageEvent::EMAX;
         if(item == "PROJECTION")                            return  StorageEvent::PROJECTION;

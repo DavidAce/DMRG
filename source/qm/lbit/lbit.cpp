@@ -185,7 +185,7 @@ qm::Gate qm::lbit::get_unitary_2site_gate(const UnitaryGateParameters &u) {
                 + u.c * SP[0] * SM[1] + std::conj(u.c) * SM[0] * SP[1];
             break;
         }
-        /*clang-format on */
+        /* clang-format on */
         default: throw except::runtime_error("Unrecognized gate matrix kind: {}", enum2sv(u.mkind));
     }
 
@@ -205,7 +205,7 @@ qm::Gate qm::lbit::get_unitary_2site_gate(const UnitaryGateParameters &u) {
         if(not tenx::MatrixMap(expifwM).isUnitary()) throw except::logic_error("expifM is not unitary!");
         //        if(not expifwM.isUnitary()) throw except::logic_error("expifM is not unitary!");
     }
-//    tools::log->info("exp(-ifwM): {}", linalg::matrix::to_string(expifwM_unshuffled, 8));
+    //    tools::log->info("exp(-ifwM): {}", linalg::matrix::to_string(expifwM_unshuffled, 8));
     return {expifwM, std::vector<size_t>{u.sites.front(), u.sites.back()}, spin_dims};
     //    return {tenx::TensorMap(expifwM), std::vector<size_t>{u.sites.front(), u.sites.back()}, spin_dims};
 }
@@ -227,12 +227,9 @@ std::vector<qm::Gate> qm::lbit::create_unitary_2site_gate_layer(const qm::lbit::
         p.l     = u.lambda;
         p.w     = u.wkind == LbitCircuitGateWeightKind::EXPDECAY ? std::exp(-2.0 * std::abs(u.hvals[idx] - u.hvals[idx + 1])) : 1.0;
         p.theta = {rnd::normal(0.0, 1.0), rnd::normal(0.0, 1.0), rnd::normal(0.0, 1.0), rnd::normal(0.0, 1.0)};
-        switch(u.mkind){
-            case LbitCircuitGateMatrixKind::MATRIX_V1:
-                break;
-            case LbitCircuitGateMatrixKind::MATRIX_V2:
-                p.theta[3] = 0.0;
-                break;
+        switch(u.mkind) {
+            case LbitCircuitGateMatrixKind::MATRIX_V1: break;
+            case LbitCircuitGateMatrixKind::MATRIX_V2: p.theta[3] = 0.0; break;
             case LbitCircuitGateMatrixKind::MATRIX_V3:
                 p.theta[2] = 0.0;
                 p.theta[3] = 0.0;
@@ -240,8 +237,8 @@ std::vector<qm::Gate> qm::lbit::create_unitary_2site_gate_layer(const qm::lbit::
         }
         p.c     = std::complex<double>(rnd::normal(0.0, 1.0),  //
                                        rnd::normal(0.0, 1.0)); // complex normal random variable
-        p.mkind  = u.mkind;
-        p.wkind  = u.wkind;
+        p.mkind = u.mkind;
+        p.wkind = u.wkind;
         gates.emplace_back(get_unitary_2site_gate(p));
 
         // Save for storage in a circuit table on file
@@ -390,52 +387,96 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     return mpo_merged;
 }
 
+// Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_layer_as_tensor_old(const std::vector<qm::Gate> &unitary_layer) {
+//     auto cfg                 = svd::config();
+//     cfg.svd_lib              = svd::lib::lapacke;
+//     cfg.svd_rtn              = svd::rtn::geauto;
+//     cfg.rank_max             = 256;
+//     cfg.truncation_limit     = 1e-14;
+//     cfg.switchsize_gesdd     = settings::solver::svd_switchsize_bdc;
+//     auto           mpo_layer = Eigen::Tensor<cplx, 4>();
+//     constexpr auto con2      = tenx::idx({1}, {0});
+//     constexpr auto shf6      = tenx::array6{0, 3, 1, 4, 2, 5};
+//     for(const auto &mpo : get_unitary_mpo_layer(unitary_layer, cfg)) {
+//         if(mpo_layer.size() == 0) {
+//             mpo_layer = mpo;
+//             continue;
+//         }
+//         auto                   dimL = mpo_layer.dimensions();
+//         auto                   dimR = mpo.dimensions();
+//         auto                   shp4 = tenx::array4{dimL[0], dimR[1], dimL[2] * dimR[2], dimL[3] * dimR[3]};
+//         Eigen::Tensor<cplx, 4> tmp  = mpo_layer.contract(mpo, con2).shuffle(shf6).reshape(shp4);
+//         mpo_layer                   = tmp;
+//     }
+//     auto shf4         = tenx::array4{0, 3, 1, 2}; // cast to matrix assuming that the virtual bonds have dimension 1
+//     auto shp2         = tenx::array2{mpo_layer.dimension(0) * mpo_layer.dimension(3), mpo_layer.dimension(2) * mpo_layer.dimension(1)};
+//     auto tensor_layer = Eigen::Tensor<cplx, 2>(mpo_layer.shuffle(shf4).reshape(shp2));
+//     if constexpr(settings::debug_circuit)
+//         if(not tenx::MatrixMap(tensor_layer).isUnitary(1e-12)) throw except::logic_error("get_unitary_layer_as_tensor: tensor_layer is not unitary");
+//     return tensor_layer;
+// }
+
 Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_layer_as_tensor(const std::vector<qm::Gate> &unitary_layer) {
-    auto cfg                 = svd::config();
-    cfg.svd_lib              = svd::lib::lapacke;
-    cfg.svd_rtn              = svd::rtn::geauto;
-    cfg.rank_max             = 256;
-    cfg.truncation_limit     = 1e-14;
-    cfg.switchsize_gesdd     = settings::solver::svd_switchsize_bdc;
-    auto           mpo_layer = Eigen::Tensor<cplx, 4>();
-    constexpr auto con2      = tenx::idx({1}, {0});
-    constexpr auto shf6      = tenx::array6{0, 3, 1, 4, 2, 5};
-    for(const auto &mpo : get_unitary_mpo_layer(unitary_layer, cfg)) {
-        if(mpo_layer.size() == 0) {
-            mpo_layer = mpo;
+    /* We apply gates from top to bottom
+     *   ---A0----A1----A2----A3--       ...
+     *      |     |     |     |
+     *      [g(01)]     [g(23)]
+     *      |     |     |     |
+     *            [g(12)]
+     *            |     |
+     * where
+     *    2     3
+     *    |     |
+     *    [g(12)]
+     *    |     |
+     *    0     1
+     *
+     */
+    tools::log->trace("contracting unitary layer as tensor");
+    qm::Gate fullgate;
+    for(const auto &[i, g] : iter::enumerate(unitary_layer)) {
+        tools::log->trace("contracting gate {}", g.pos);
+        if(i == 0) {
+            // First gate
+            fullgate = g;
             continue;
         }
-        auto                   dimL = mpo_layer.dimensions();
-        auto                   dimR = mpo.dimensions();
-        auto                   shp4 = tenx::array4{dimL[0], dimR[1], dimL[2] * dimR[2], dimL[3] * dimR[3]};
-        Eigen::Tensor<cplx, 4> tmp  = mpo_layer.contract(mpo, con2).shuffle(shf6).reshape(shp4);
-        mpo_layer                   = tmp;
+        if(g.pos.front() % 2 == 0) {
+            // Even gate 01, 23, 45 ... fullgate connects to g from below
+            fullgate = fullgate.connect_below(g);
+        } else {
+            // Odd gate 12, 34, 56 ... fullgate connects to g from above
+            fullgate = fullgate.connect_above(g);
+        }
     }
-    auto shf4         = tenx::array4{0, 3, 1, 2}; // cast to matrix assuming that the virtual bonds have dimension 1
-    auto shp2         = tenx::array2{mpo_layer.dimension(0) * mpo_layer.dimension(3), mpo_layer.dimension(2) * mpo_layer.dimension(1)};
-    auto tensor_layer = Eigen::Tensor<cplx, 2>(mpo_layer.shuffle(shf4).reshape(shp2));
+
     if constexpr(settings::debug_circuit)
-        if(not tenx::MatrixMap(tensor_layer).isUnitary(1e-12)) throw except::logic_error("get_unitary_layer_as_tensor: tensor_layer is not unitary");
-    return tensor_layer;
+        if(not tenx::MatrixMap(fullgate.op).isUnitary(1e-12)) throw except::logic_error("get_unitary_layer_as_tensor: tensor_layer is not unitary");
+    return fullgate.op;
 }
 
 Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_circuit_as_tensor(const std::vector<std::vector<qm::Gate>> &unitary_circuit) {
-    auto cfg             = svd::config();
-    cfg.svd_lib          = svd::lib::lapacke;
-    cfg.svd_rtn          = svd::rtn::geauto;
-    cfg.rank_max         = 256;
-    cfg.truncation_limit = 1e-14;
-    cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     Eigen::Tensor<cplx, 2> all_layers;
-    for(const auto &layer : unitary_circuit) {
+    Eigen::Tensor<cplx, 2> tmp_layers;
+    for(const auto &[lidx, layer] : iter::enumerate(unitary_circuit)) {
         auto one_layer = get_unitary_layer_as_tensor(layer);
-        if(all_layers.size() == 0) {
+        if(lidx == 0) {
             all_layers = one_layer;
             continue;
         }
-        // New layers appended from below (we apply a circuit top to bottom, with the MPS at the top, physical index pointing down)
-        Eigen::Tensor<cplx, 2> tmp_layers = all_layers.contract(one_layer, tenx::idx({1}, {0}));
-        all_layers                        = tmp_layers;
+        // New layers appended from below: we apply a circuit top to bottom, with the MPS at the top, physical index pointing down)
+        // Alternatively, right to left, so ... U3 U2 U1 U0 |psi>
+        tools::log->trace("contracting layer {} | dims one_layer {} | dims all_layers {}", lidx, one_layer.dimensions(), all_layers.dimensions());
+        tools::log->trace("contracting ...");
+        auto t_con = tid::tic_token("contract-u");
+        all_layers = tenx::gemm(one_layer, all_layers);
+//        tmp        = one * all; // This is about 2x faster because it calls BLAS/MKL GEMM. The tensor contraction version does not!
+
+        //                        tmp_layers = one_layer.contract(all_layers, tenx::idx({1}, {0}));
+        //        tmp_layers.device(tenx::threads::getDevice()) = one_layer.contract(all_layers, tenx::idx({1}, {0}));
+        tools::log->trace("contracting ... {:.3e} s", t_con->get_last_interval());
+//        tools::log->trace("copying result");
+//        all_layers = tmp_layers;
     }
     if constexpr(settings::debug_circuit)
         if(not tenx::MatrixMap(all_layers).isUnitary(1e-12)) throw except::logic_error("get_unitary_circuit_as_tensor: all_layers is not unitary");
@@ -505,7 +546,7 @@ std::vector<qm::SwapGate> qm::lbit::get_time_evolution_swap_gates(cplx_t delta_t
 
 std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site(size_t sites, cplx_t delta_t,
                                                                                  const std::vector<Eigen::Tensor<cplx, 2>> &hams_2site) {
-    // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore we can immediately use the relation
+    // In l-bit systems we are aldready in a diagonal basis, so h_{j,j+1} and h_{j+1,j+2} commute. Therefore, we can immediately use the relation
     //      exp(-i*dt *[h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}]) =  exp(-i*dt [h_{j,j+1}]) * exp(-i*dt*[h_{j+1,j+2}]) * ... * exp(-i*dt*[h_{L-2, L-1}])
     // without passing through the Suzuki-Trotter decomposition.
     // Here we expect "hams_2site" to contain terms like  h_{j,j+1} + h_{j+1,j+2} + ... + h_{L-2, L-1}.
@@ -1593,8 +1634,9 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
     state_real.set_name("state_real");
     state_real.clear_cache();
     state_real.clear_measurements();
-    tools::log->debug("Transforming {} to {} using {} unitary layers", state_lbit.get_name(), state_real.get_name(), unitary_gates_2site_layers.size());
-    tools::finite::mps::apply_circuit(state_real, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
+    tools::log->debug("Transforming {} to {} using {} unitary layers: Ψ = U|Ψ'⟩", state_lbit.get_name(), state_real.get_name(),
+                      unitary_gates_2site_layers.size());
+    tools::finite::mps::apply_circuit(state_real, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
 
     tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::IFNEEDED);
     //    status.position  = tensors.get_position<long>();
@@ -1607,7 +1649,7 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
         // Double-check the transform operation
         // Check that the transform backwards is equal to the original state
         auto state_lbit_debug = state_real;
-        tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
         auto overlap = tools::finite::ops::overlap(state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
         if(svd_cfg.truncation_limit.has_value())
@@ -1626,7 +1668,8 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
     state_real.clear_cache();
     state_real.clear_measurements();
     svd_cfg.rank_max = safe_cast<long>(static_cast<double>(state_real.find_largest_bond()) * 4);
-    tools::log->debug("Transforming {} to {} using {} unitary mpo layers", state_lbit.get_name(), state_real.get_name(), unitary_gates_mpo_layers.size());
+    tools::log->debug("Transforming {} to {} using {} unitary mpo layers Ψ = U|Ψ'⟩", state_lbit.get_name(), state_real.get_name(),
+                      unitary_gates_mpo_layers.size());
     for(const auto &[idx_layer, mpo_layer] : iter::enumerate(unitary_gates_mpo_layers)) {
         tools::finite::ops::apply_mpos(state_real, mpo_layer, ledge, redge, true);
         if((idx_layer + 1) % 1 == 0) {
@@ -1667,8 +1710,9 @@ StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, con
     state_lbit.set_name("state_lbit");
     state_lbit.clear_cache();
     state_lbit.clear_measurements();
-    tools::log->info("Transforming {} to {} using {} unitary layers", state_real.get_name(), state_lbit.get_name(), unitary_gates_2site_layers.size());
-    tools::finite::mps::apply_circuit(state_lbit, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+    tools::log->info("Transforming {} to {} using {} unitary layers Ψ' = U†|Ψ⟩", state_real.get_name(), state_lbit.get_name(),
+                     unitary_gates_2site_layers.size());
+    tools::finite::mps::apply_circuit(state_lbit, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
 
     //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
     tools::finite::mps::normalize_state(state_lbit, std::nullopt, NormPolicy::IFNEEDED);
@@ -1680,7 +1724,7 @@ StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, con
 
         // Double-check the that transform operation backwards is equal to the original state
         auto state_real_debug = state_lbit;
-        tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
         auto overlap = tools::finite::ops::overlap(state_real, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(svd_cfg.truncation_limit.has_value())

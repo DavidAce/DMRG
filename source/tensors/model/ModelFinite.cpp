@@ -174,40 +174,36 @@ void ModelFinite::clear_mpo_squared() {
     for(const auto &mpo : MPO) mpo->clear_mpo_squared();
 }
 
+void ModelFinite::compress_mpo() {
+    cache.multisite_mpo = std::nullopt;
+    cache.multisite_ham = std::nullopt;
+    auto mpo_compressed = get_compressed_mpos();
+    for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo(mpo_compressed[pos]);
+}
+
 void ModelFinite::compress_mpo_squared() {
     cache.multisite_mpo_squared = std::nullopt;
     cache.multisite_ham_squared = std::nullopt;
-    auto mpo_squared_compressed = get_compressed_mpo_squared();
+    auto mpo_squared_compressed = get_compressed_mpos_squared();
     for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_squared_compressed[pos]);
 }
-
-// void ModelFinite::sqrt_mpo_squared() {
-//     cache.multisite_mpo_squared = std::nullopt;
-//     cache.multisite_ham_squared = std::nullopt;
-//     auto mpo_squared_sqrt       = get_sqrt_mpo_squared();
-//     for(const auto &[pos, mpo] : iter::enumerate(MPO)) mpo->set_mpo_squared(mpo_squared_sqrt[pos]);
-// }
 
 bool ModelFinite::has_mpo_squared() const {
     return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
-    tools::log->trace("Compressing MPO²: {} sites", MPO.size());
-    if(not has_mpo_squared()) build_mpo_squared(); // Make sure they exist.
-    // Collect all the mpo² (doesn't matter if they are already compressed)
-    std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
-    mpos_sq.reserve(MPO.size());
-    for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->MPO2());
+std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos) {
+    tools::log->trace("Compressing MPOs: {} sites", mpos.size());
+    //    std::vector<Eigen::Tensor<cplx, 4>> mpos_compressed = mpos;
 
     // Setup SVD
     // Here we need a lot of precision:
     //  - Use very low svd threshold
     //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
-    auto svd_cfg = svd::config();
     // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
     // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
+    auto svd_cfg    = svd::config();
     svd_cfg.svd_lib = svd::lib::lapacke;
     svd_cfg.svd_rtn = svd::rtn::gejsv;
 
@@ -216,56 +212,143 @@ std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpo_squared() {
     // Print the results
     std::vector<std::string> report;
     if(tools::log->level() == spdlog::level::trace)
-        for(const auto &mpo : mpos_sq) report.emplace_back(fmt::format("{}", mpo.dimensions()));
+        for(const auto &mpo : mpos) report.emplace_back(fmt::format("{}", mpo.dimensions()));
 
     for(size_t iter = 0; iter < 4; iter++) {
         // Next compress from left to right
         Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
-        Eigen::Tensor<cplx, 4> T_mpo_sq;
-        for(const auto &[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
-            auto mpo_sq_dim_old = mpo_sq.dimensions();
+        Eigen::Tensor<cplx, 4> T_mpo;
+        for(auto &&[idx, mpo] : iter::enumerate(mpos)) {
+            auto mpo_sq_dim_old = mpo.dimensions();
             if(T_l2r.size() == 0)
-                T_mpo_sq = mpo_sq;
+                T_mpo = mpo;
             else
-                T_mpo_sq = T_l2r.contract(mpo_sq, tenx::idx({1}, {0}));
+                T_mpo = T_l2r.contract(mpo, tenx::idx({1}, {0}));
 
-            if(idx == mpos_sq.size() - 1) {
-                mpo_sq = T_mpo_sq;
+            if(idx == mpos.size() - 1) {
+                mpo = T_mpo;
             } else {
-                std::tie(mpo_sq, T_l2r) = svd.split_mpo_l2r(T_mpo_sq);
-                if(idx + 1 == mpos_sq.size())
+                std::tie(mpo, T_l2r) = svd.split_mpo_l2r(T_mpo);
+                if(idx + 1 == mpos.size())
                     // The remaining transfer matrix T can be multiplied back into the last MPO from the right
-                    mpo_sq = mpo_sq.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+                    mpo = Eigen::Tensor<cplx, 4>(mpo.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}));
             }
-            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
+            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo.dimensions());
         }
 
         // Now we have done left to right. Next we do right to left
-        Eigen::Tensor<cplx, 2> T_r2l;    // Transfer matrix
-        Eigen::Tensor<cplx, 4> mpo_sq_T; // Absorbs transfer matrix
-        for(const auto &[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
-            auto mpo_sq_dim_old = mpo_sq.dimensions();
+        Eigen::Tensor<cplx, 2> T_r2l; // Transfer matrix
+        Eigen::Tensor<cplx, 4> mpo_T; // Absorbs transfer matrix
+        for(auto &&[idx, mpo] : iter::enumerate_reverse(mpos)) {
+            auto mpo_dim_old = mpo.dimensions();
             if(T_r2l.size() == 0)
-                mpo_sq_T = mpo_sq;
+                mpo_T = mpo;
             else
-                mpo_sq_T = mpo_sq.contract(T_r2l, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+                mpo_T = mpo.contract(T_r2l, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             if(idx == 0) {
-                mpo_sq = mpo_sq_T;
+                mpo = mpo_T;
             } else {
-                std::tie(T_r2l, mpo_sq) = svd.split_mpo_r2l(mpo_sq_T);
+                std::tie(T_r2l, mpo) = svd.split_mpo_r2l(mpo_T);
                 if(idx == 0)
                     // The remaining transfer matrix T can be multiplied back into the first MPO from the left
-                    mpo_sq = T_r2l.contract(mpo_sq, tenx::idx({1}, {0}));
+                    mpo = Eigen::Tensor<cplx, 4>(T_r2l.contract(mpo, tenx::idx({1}, {0})));
             }
-            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
+            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_dim_old, mpo.dimensions());
         }
     }
 
     // Print the results
     if(tools::log->level() == spdlog::level::trace)
-        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo {}: {} -> {}", idx, msg, mpos[idx].dimensions());
 
-    return mpos_sq;
+    return mpos;
+}
+
+std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos() {
+    tools::log->trace("Compressing MPO: {} sites", MPO.size());
+    // Collect all the mpo (doesn't matter if they are already compressed)
+    std::vector<Eigen::Tensor<cplx, 4>> mpos;
+    mpos.reserve(MPO.size());
+    for(const auto &mpo : MPO) mpos.emplace_back(mpo->MPO());
+    return get_compressed_mpos(mpos);
+}
+
+std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared() {
+    tools::log->trace("Compressing MPO²: {} sites", MPO.size());
+    if(not has_mpo_squared()) build_mpo_squared(); // Make sure they exist.
+    // Collect all the mpo² (doesn't matter if they are already compressed)
+    std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
+    mpos_sq.reserve(MPO.size());
+    for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->MPO2());
+    return get_compressed_mpos(mpos_sq);
+
+    // Setup SVD
+    // Here we need a lot of precision:
+    //  - Use very low svd threshold
+    //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
+    //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
+    // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
+    // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
+
+    //    auto svd_cfg    = svd::config();
+    //    svd_cfg.svd_lib = svd::lib::lapacke;
+    //    svd_cfg.svd_rtn = svd::rtn::gejsv;
+    //
+    //    svd::solver svd(svd_cfg);
+    //
+    //    // Print the results
+    //    std::vector<std::string> report;
+    //    if(tools::log->level() == spdlog::level::trace)
+    //        for(const auto &mpo : mpos_sq) report.emplace_back(fmt::format("{}", mpo.dimensions()));
+    //
+    //    for(size_t iter = 0; iter < 4; iter++) {
+    //        // Next compress from left to right
+    //        Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
+    //        Eigen::Tensor<cplx, 4> T_mpo_sq;
+    //        for(auto &&[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
+    //            auto mpo_sq_dim_old = mpo_sq.dimensions();
+    //            if(T_l2r.size() == 0)
+    //                T_mpo_sq = mpo_sq;
+    //            else
+    //                T_mpo_sq = T_l2r.contract(mpo_sq, tenx::idx({1}, {0}));
+    //
+    //            if(idx == mpos_sq.size() - 1) {
+    //                mpo_sq = T_mpo_sq;
+    //            } else {
+    //                std::tie(mpo_sq, T_l2r) = svd.split_mpo_l2r(T_mpo_sq);
+    //                if(idx + 1 == mpos_sq.size())
+    //                    // The remaining transfer matrix T can be multiplied back into the last MPO from the right
+    //                    mpo_sq = Eigen::Tensor<cplx, 4>(mpo_sq.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}));
+    //            }
+    //            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
+    //        }
+    //
+    //        // Now we have done left to right. Next we do right to left
+    //        Eigen::Tensor<cplx, 2> T_r2l;    // Transfer matrix
+    //        Eigen::Tensor<cplx, 4> mpo_sq_T; // Absorbs transfer matrix
+    //        for(auto &&[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
+    //            auto mpo_sq_dim_old = mpo_sq.dimensions();
+    //            if(T_r2l.size() == 0)
+    //                mpo_sq_T = mpo_sq;
+    //            else
+    //                mpo_sq_T = mpo_sq.contract(T_r2l, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+    //            if(idx == 0) {
+    //                mpo_sq = mpo_sq_T;
+    //            } else {
+    //                std::tie(T_r2l, mpo_sq) = svd.split_mpo_r2l(mpo_sq_T);
+    //                if(idx == 0)
+    //                    // The remaining transfer matrix T can be multiplied back into the first MPO from the left
+    //                    mpo_sq = Eigen::Tensor<cplx, 4>(T_r2l.contract(mpo_sq, tenx::idx({1}, {0})));
+    //            }
+    //            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
+    //        }
+    //    }
+    //
+    //    // Print the results
+    //    if(tools::log->level() == spdlog::level::trace)
+    //        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
+    //
+    //    return mpos_sq;
 }
 
 // std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_sqrt_mpo_squared() {
@@ -415,7 +498,8 @@ ModelLocal ModelFinite::get_local() const { return get_local(active_sites); }
 
 std::array<long, 4> ModelFinite::active_dimensions() const { return tools::finite::multisite::get_dimensions(*this); }
 
-Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
+Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody, bool with_edgeL,
+                                                      bool with_edgeR) const {
     // Observe that nbody empty/nullopt have very different meanings
     //      - empty means that no interactions should be taken into account, effectively setting all J(i,j...) = 0
     //      - nullopt means that we want the default mpo with (everything on)
@@ -424,52 +508,95 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
 
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite mpo tensor");
     if(sites == active_sites and cache.multisite_mpo and not nbody) return cache.multisite_mpo.value();
-    if(not nbody)
-        tools::log->trace("Contracting multisite mpo tensor with sites {}", sites);
-    else
-        tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody.value());
 
+    auto                   nbody_str    = fmt::format("{}", nbody.has_value() ? nbody.value() : std::vector<size_t>{});
     auto                   t_mpo        = tid::tic_scope("get_multisite_mpo", tid::level::highest);
     constexpr auto         shuffle_idx  = tenx::array6{0, 3, 1, 4, 2, 5};
     constexpr auto         contract_idx = tenx::idx({1}, {0});
     auto                   positions    = num::range<size_t>(sites.front(), sites.back() + 1);
-    auto                   skip         = std::optional<std::vector<size_t>>();
+    auto                   skip         = std::vector<size_t>{};
+    auto                   keep_log     = std::vector<size_t>();
     auto                   skip_log     = std::vector<size_t>();
-    bool                   do_cache     = nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
+    bool                   do_cache     = !with_edgeL and !with_edgeR and nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
     Eigen::Tensor<cplx, 4> multisite_mpo, mpoL, mpoR;
     Eigen::Tensor<cplx, 2> mpoR_traced;
+    // The hamiltonian is the lower left corner he full system mpo chain, which we can extract using edgeL and edgeR
+    Eigen::Tensor<cplx, 1> edgeL = get_mpo(sites.front()).get_MPO_edge_left();
+    Eigen::Tensor<cplx, 1> edgeR = get_mpo(sites.back()).get_MPO_edge_right();
+
+    tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody_str);
 
     if(sites != positions) {
-        skip = std::vector<size_t>{};
         for(const auto &pos : positions) {
-            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip->emplace_back(pos);
+            if(std::find(sites.begin(), sites.end(), pos) == sites.end()) skip.emplace_back(pos);
         }
     }
 
     for(const auto &pos : positions) {
+        if constexpr(settings::verbose_nbody_ham) tools::log->trace("contracting position {}", pos);
         // sites needs to be sorted, but may skip sites.
         // For instance, sites == {3,9} is valid. Then sites 4,5,6,7,8 are skipped.
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
         // the physical dimension doesn't grow.
-        bool do_trace = skip.has_value() and std::find(skip->begin(), skip->end(), pos) != skip->end();
-        if(multisite_mpo.size() == 0) {
+        bool do_trace = std::find(skip.begin(), skip.end(), pos) != skip.end();
+        if(pos == positions.front()) {
             auto t_pre = tid::tic_scope("prepending", tid::level::highest);
-            if(nbody or skip)
+            if(nbody or not skip.empty()) {
                 multisite_mpo = get_mpo(pos).MPO_nbody_view(nbody, skip);
-            else
+            } else {
                 multisite_mpo = get_mpo(pos).MPO();
-
-            if(do_trace and do_cache) skip_log.emplace_back(pos);
+            }
+            if(do_cache) {
+                if(do_trace) {
+                    skip_log.emplace_back(pos);
+                } else {
+                    keep_log.emplace_back(pos);
+                }
+            }
+            if(with_edgeL and pos == positions.front()) {
+                /* We can prepend edgeL to the first mpo to reduce the size of subsequent operations.
+                 * Start by converting the edge from a rank1 to a rank2 with a dummy index of size 1:
+                 *                        2               2
+                 *                        |               |
+                 *    0---[L]---(1)(0)---[M]---1 =  0---[LM]---1
+                 *                        |               |
+                 *                        3               3
+                 */
+                mpoL          = edgeL.reshape(tenx::array2{1, edgeL.size()}).contract(multisite_mpo, tenx::idx({1}, {0}));
+                multisite_mpo = mpoL;
+            }
+            if(with_edgeR and pos == positions.back()) {
+                /* This only happens when positions.size() == 1
+                 * We can append edgeR to the last mpo to reduce the size of subsequent operations.
+                 * Start by converting the edge from a rank1 to a rank2 with a dummy index of size 1:
+                 *         2                              1                       2
+                 *         |                              |                       |
+                 *    0---[M]---1  0---[R]---1   =  0---[MR]---3  [shuffle]  0---[MR]---1
+                 *         |                              |                       |
+                 *         3                              2                       3
+                 */
+                auto mpoR_edgeR = Eigen::Tensor<cplx, 4>(multisite_mpo.contract(edgeR.reshape(tenx::array2{edgeR.size(), 1}), tenx::idx({1}, {0})));
+                multisite_mpo   = mpoR_edgeR.shuffle(tenx::array4{0, 3, 1, 2});
+            }
             continue;
         }
 
-        if(nbody or skip) {
-            mpoL = multisite_mpo;
-            mpoR = get_mpo(pos).MPO_nbody_view(nbody, skip);
-        } else {
-            mpoL = multisite_mpo;
-            mpoR = get_mpo(pos).MPO();
+        mpoL = multisite_mpo;
+        mpoR = nbody or not skip.empty() ? get_mpo(pos).MPO_nbody_view(nbody, skip) : get_mpo(pos).MPO();
+
+        if(with_edgeR and pos == positions.back()) {
+            /* We can append edgeL to the first mpo to reduce the size of subsequent operations.
+             * Start by converting the edge from a rank1 to a rank2 with a dummy index of size 1:
+             *         2                              1                       2
+             *         |                              |                       |
+             *    0---[M]---1  0---[R]---1   =  0---[MR]---3  [shuffle]  0---[MR]---1
+             *         |                              |                       |
+             *         3                              2                       3
+             */
+            auto mpoR_edgeR = Eigen::Tensor<cplx, 4>(mpoR.contract(edgeR.reshape(std::array<long, 2>{edgeR.size(), 1}), tenx::idx({1}, {0})));
+            mpoR            = mpoR_edgeR.shuffle(tenx::array4{0, 3, 1, 2});
         }
+        tools::log->trace("contracting position {} | mpoL {} | mpoR {}", pos, mpoL.dimensions(), mpoR.dimensions());
 
         // Determine if this position adds to the physical dimension or if it will get traced over
         long dim0     = mpoL.dimension(0);
@@ -478,10 +605,21 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
         long dim3     = mpoL.dimension(3) * (do_trace ? 1l : mpoR.dimension(3));
         auto new_dims = std::array<long, 4>{dim0, dim1, dim2, dim3};
         multisite_mpo.resize(new_dims);
-        auto new_cache_string = fmt::format("siteL{}|pos{}|dims{}|skips{}|trace{}", sites.front(), pos, new_dims, skip_log, do_trace);
-        if(do_cache and cache.multisite_mpo_temps.find(new_cache_string) != cache.multisite_mpo_temps.end()) {
+        // Generate a unique cache string for the mpo that will be generated.
+        // If there is a match for the string in cache, use the corresponding mpo, otherwise we make it.
+        if(do_cache) {
+            if(do_trace) {
+                skip_log.emplace_back(pos);
+            } else {
+                keep_log.emplace_back(pos);
+            }
+        }
+        auto new_cache_string = fmt::format("keep{}|skip{}|nbody{}|dims{}", keep_log, skip_log, nbody_str, new_dims);
+        if(do_cache and cache.multisite_mpo_t_temps.find(new_cache_string) != cache.multisite_mpo_t_temps.end()) {
+            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache hit: {}", new_cache_string);
             multisite_mpo = cache.multisite_mpo_temps.at(new_cache_string);
         } else {
+            if constexpr(settings::verbose_nbody_ham) tools::log->trace("cache new: {}", new_cache_string);
             if(do_trace) {
                 auto t_skip = tid::tic_scope("skipping", tid::level::highest);
                 // Trace the physical indices of this skipped mpo (this should trace an identity)
@@ -494,14 +632,17 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
                 auto t_app                                       = tid::tic_scope("appending", tid::level::highest);
                 multisite_mpo.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
             }
+            // This intermediate multisite_mpo_t could be the result we are looking for at a later time, so cache it!
             if(do_cache) cache.multisite_mpo_temps[new_cache_string] = multisite_mpo;
         }
-        if(do_trace and do_cache) skip_log.emplace_back(pos);
     }
+    if(with_edgeL) assert(multisite_mpo.dimension(0) == 1);
+    if(with_edgeR) assert(multisite_mpo.dimension(1) == 1);
     return multisite_mpo;
 }
 
-Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
+Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody, bool with_edgeL,
+                                                          bool with_edgeR) const {
     // Observe that nbody empty/nullopt have very different meanings
     //      - empty means that no interactions should be taken into account, effectively setting all J(i,j...) = 0
     //      - nullopt means that we want the default mpo with (everything on)
@@ -519,9 +660,13 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
     auto                     skip         = std::vector<size_t>{};
     auto                     keep_log     = std::vector<size_t>();
     auto                     skip_log     = std::vector<size_t>();
-    bool                     do_cache     = nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
+    bool                     do_cache = !with_edgeL and !with_edgeR and nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
     Eigen::Tensor<cplx_t, 4> multisite_mpo_t, mpoL, mpoR;
     Eigen::Tensor<cplx_t, 2> mpoR_traced;
+    // The hamiltonian is the lower left corner he full system mpo chain, which we can extract using edgeL and edgeR
+    Eigen::Tensor<cplx_t, 1> edgeL = get_mpo(sites.front()).get_MPO_edge_left().cast<cplx_t>();
+    Eigen::Tensor<cplx_t, 1> edgeR = get_mpo(sites.back()).get_MPO_edge_right().cast<cplx_t>();
+
     tools::log->trace("Contracting multisite mpo tensor with sites {} | nbody {} ", sites, nbody_str);
 
     if(sites != positions) {
@@ -537,7 +682,7 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
         // When a site is skipped, we set the contribution from its interaction terms to zero and trace over it so that
         // the physical dimension doesn't grow.
         bool do_trace = std::find(skip.begin(), skip.end(), pos) != skip.end();
-        if(multisite_mpo_t.size() == 0) {
+        if(pos == positions.front()) {
             auto t_pre = tid::tic_scope("prepending", tid::level::highest);
             if(nbody or not skip.empty()) {
                 multisite_mpo_t = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
@@ -551,15 +696,48 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
                     keep_log.emplace_back(pos);
                 }
             }
+            if(with_edgeL and pos == positions.front()) {
+                /* We can prepend edgeL to the first mpo to reduce the size of subsequent operations.
+                 * Start by converting the edge from a rank1 to a rank2 with a dummy index of size 1:
+                 *                        2               2
+                 *                        |               |
+                 *    0---[L]---(1)(0)---[M]---1 =  0---[LM]---1
+                 *                        |               |
+                 *                        3               3
+                 */
+                mpoL            = edgeL.reshape(tenx::array2{1, edgeL.size()}).contract(multisite_mpo_t, tenx::idx({1}, {0}));
+                multisite_mpo_t = mpoL;
+            }
+            if(with_edgeR and pos == positions.back()) {
+                /* This only happens when positions.size() == 1
+                 * We can append edgeR to the last mpo to reduce the size of subsequent operations.
+                 * Start by converting the edge from a rank1 to a rank2 with a dummy index of size 1:
+                 *        2                              1                       2
+                 *        |                              |                       |
+                 *   0---[M]---1  0---[R]---1   =  0---[MR]---3  [shuffle]  0---[MR]---1
+                 *        |                              |                       |
+                 *        3                              2                       3
+                 */
+                auto mpoR_edgeR = Eigen::Tensor<cplx_t, 4>(multisite_mpo_t.contract(edgeR.reshape(tenx::array2{edgeR.size(), 1}), tenx::idx({1}, {0})));
+                multisite_mpo_t = mpoR_edgeR.shuffle(tenx::array4{0, 3, 1, 2});
+            }
             continue;
         }
 
-        if(nbody or not skip.empty()) {
-            mpoL = multisite_mpo_t;
-            mpoR = get_mpo(pos).MPO_nbody_view_t(nbody, skip);
-        } else {
-            mpoL = multisite_mpo_t;
-            mpoR = get_mpo(pos).MPO_t();
+        mpoL = multisite_mpo_t;
+        mpoR = nbody or not skip.empty() ? get_mpo(pos).MPO_nbody_view_t(nbody, skip) : get_mpo(pos).MPO_t();
+
+        if(with_edgeR and pos == positions.back()) {
+            /* We can append edgeL to the first mpo to reduce the size of subsequent operations.
+             * Start by converting the edge from a rank1 to a rank2 with a dummy index of size 1:
+             *        2                              1                       2
+             *        |                              |                       |
+             *   0---[M]---1  0---[R]---1   =  0---[MR]---3  [shuffle]  0---[MR]---1
+             *        |                              |                       |
+             *        3                              2                       3
+             */
+            auto mpoR_edgeR = Eigen::Tensor<cplx_t, 4>(mpoR.contract(edgeR.reshape(tenx::array2{edgeR.size(), 1}), tenx::idx({1}, {0})));
+            mpoR            = mpoR_edgeR.shuffle(tenx::array4{0, 3, 1, 2});
         }
 
         // Determine if this position adds to the physical dimension or if it will get traced over
@@ -600,19 +778,75 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
             if(do_cache) cache.multisite_mpo_t_temps[new_cache_string] = multisite_mpo_t;
         }
     }
+    if(with_edgeL) assert(multisite_mpo_t.dimension(0) == 1);
+    if(with_edgeR) assert(multisite_mpo_t.dimension(1) == 1);
     return multisite_mpo_t;
 }
 
 Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
     if(sites.empty()) throw std::runtime_error("No active sites on which to build a multisite hamiltonian tensor");
-    if(sites == active_sites and cache.multisite_ham and not nbody) return cache.multisite_ham.value();
-    // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
-    auto multisite_mpo = get_multisite_mpo(sites, nbody);
-    auto edgeL         = get_mpo(sites.front()).get_MPO_edge_left();
-    auto edgeR         = get_mpo(sites.back()).get_MPO_edge_right();
-    return multisite_mpo.contract(edgeL, tenx::idx({0}, {0}))
-        .contract(edgeR, tenx::idx({0}, {0}))
-        .reshape(tenx::array2{multisite_mpo.dimension(2), multisite_mpo.dimension(3)});
+    if(sites == active_sites and cache.multisite_ham and not nbody) {
+        tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
+        return cache.multisite_ham.value();
+    }
+    long spin_dim = 1;
+    for(const auto &pos : sites) { spin_dim *= get_mpo(pos).get_spin_dimension(); }
+    auto dim2 = tenx::array2{spin_dim, spin_dim};
+    if(sites.size() < 4) {
+        return get_multisite_mpo(sites, nbody, true, true).reshape(dim2);
+    } else {
+        // When there are many sites, it's beneficial to split sites into two equal chunks and then merge them (because edgeL/edgeR makes them small)
+        auto half      = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
+        auto sitesL    = std::vector<size_t>(sites.begin(), sites.begin() + half);
+        auto sitesR    = std::vector<size_t>(sites.begin() + half, sites.end());
+//        long spin_dimL = 1;
+//        long spin_dimR = 1;
+//        for(const auto &pos : sitesL) { spin_dimL *= get_mpo(pos).get_spin_dimension(); }
+//        for(const auto &pos : sitesR) { spin_dimR *= get_mpo(pos).get_spin_dimension(); }
+//        auto dimL = tenx::array2{spin_dimL * spin_dimL, get_mpo(sitesL.back()).MPO().dimension(1)};
+//        auto dimR = tenx::array2{get_mpo(sitesR.front()).MPO().dimension(0), spin_dimR * spin_dimR};
+//        auto shf6 = tenx::array6{0, 3, 1, 4, 2, 5};
+//        // For dim6, recall that mpoL is shuffled, so these dimensions are not the usual ones.
+//        auto dims_L_front = get_mpo(sitesL.front()).MPO().dimensions();
+//        auto dims_R_back  = get_mpo(sitesR.back()).MPO().dimensions();
+//        auto dim6         = tenx::array6{1, spin_dimL, spin_dimL, 1, spin_dimR, spin_dimR};
+
+        auto mpoL  = get_multisite_mpo(sitesL, nbody, true, false); // Shuffle so we can use GEMM
+        auto mpoR  = get_multisite_mpo(sitesR, nbody, false, true);
+        auto mpoLR = tenx::gemm_mpo(mpoL, mpoR);
+        return mpoLR.reshape(tenx::array2{spin_dim, spin_dim});
+        //
+        //        Eigen::Tensor<cplx, 2> mpoL =
+        //            get_multisite_mpo(sitesL, nbody, true, false).shuffle(tenx::array4{0, 2, 3, 1}).reshape(dimL); // Shuffle so we can use GEMM
+        //        Eigen::Tensor<cplx, 2> mpoR = get_multisite_mpo(sitesR, nbody, false, true).reshape(dimR);
+        //        bool isReal = tenx::isReal(mpoL) and tenx::isReal(mpoR);
+        //        if(isReal) {
+        //            // We get a speedup by contracting reals instead of complex
+        //            Eigen::Tensor<real, 2> mpoL_real = mpoL.real();
+        //            Eigen::Tensor<real, 2> mpoR_real = mpoR.real();
+        //            tools::log->info("get_multisite_ham(real): allocating for mpoL {} mpoR {} = {}", mpoL.dimensions(), mpoR.dimensions(), dim2);
+        //            Eigen::Tensor<real, 2> multisite_ham(dim2);
+        //            tools::log->info("get_multisite_ham(real): contracting");
+        //            tenx::gemm(multisite_ham, mpoL_real, mpoR_real);
+        //            tools::log->info("get_multisite_ham(real): finished");
+        //            return multisite_ham.reshape(dim6).shuffle(shf6).reshape(dim2).cast<cplx>();
+    }
+    //    else {
+    //        tools::log->info("get_multisite_ham: allocating for mpoL {} mpoR {} = {}", mpoL.dimensions(), mpoR.dimensions(), dim2);
+    //        Eigen::Tensor<cplx, 2> multisite_ham(dim2);
+    //        tools::log->info("get_multisite_ham: contracting");
+    //        tenx::gemm(multisite_ham, mpoL, mpoR);
+    //        tools::log->info("get_multisite_ham: finished");
+    //        return multisite_ham.reshape(dim6).shuffle(shf6).reshape(dim2);
+    //    }
+
+    //            tools::log->info("get_multisite_ham: contracting", mpoL.dimensions(), mpoR.dimensions());
+    //        multisite_mpo.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, tenx::idx({1}, {0})).reshape(dims);
+    //}
+    //    assert(multisite_mpo.dimension(0) == 1);
+    //    assert(multisite_mpo.dimension(1) == 1);
+    //    auto newdims = tenx::array2{multisite_mpo.dimension(2), multisite_mpo.dimension(3)};
+    //    return multisite_mpo.reshape(newdims);
 }
 
 Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody) const {
@@ -621,13 +855,25 @@ Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size
         tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
         return cache.multisite_ham_t.value();
     }
-    // A multisite_ham is simply the corner of a multisite_mpo where the hamiltonian resides
-    auto multisite_mpo_t = get_multisite_mpo_t(sites, nbody);
-    auto edgeL           = get_mpo(sites.front()).get_MPO_edge_left();
-    auto edgeR           = get_mpo(sites.back()).get_MPO_edge_right();
-    return multisite_mpo_t.contract(edgeL.cast<cplx_t>(), tenx::idx({0}, {0}))
-        .contract(edgeR.cast<cplx_t>(), tenx::idx({0}, {0}))
-        .reshape(tenx::array2{multisite_mpo_t.dimension(2), multisite_mpo_t.dimension(3)});
+    Eigen::Tensor<cplx_t, 4> multisite_mpo_t;
+    if(sites.size() < 4) {
+        multisite_mpo_t = get_multisite_mpo_t(sites, nbody, true, true);
+    } else {
+        // When there are many sites, it's beneficial to split sites into two equal chunks and then merge them (because edgeL/edgeR makes them small)
+        auto half   = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
+        auto sitesL = std::vector<size_t>(sites.begin(), sites.begin() + half);
+        auto sitesR = std::vector<size_t>(sites.begin() + half, sites.end());
+        auto mpoL   = get_multisite_mpo_t(sitesL, nbody, true, false);
+        auto mpoR   = get_multisite_mpo_t(sitesR, nbody, false, true);
+        auto dims   = std::array<long, 4>{mpoL.dimension(0), mpoR.dimension(1), mpoL.dimension(2) * mpoR.dimension(2), mpoL.dimension(3) * mpoR.dimension(3)};
+        tools::log->info("get_multisite_ham_t: contracting mpoL {} mpoR {}", mpoL.dimensions(), mpoR.dimensions());
+        multisite_mpo_t.resize(dims);
+        multisite_mpo_t.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, tenx::idx({1}, {0})).reshape(dims);
+    }
+    assert(multisite_mpo_t.dimension(0) == 1);
+    assert(multisite_mpo_t.dimension(1) == 1);
+    auto newdims = tenx::array2{multisite_mpo_t.dimension(2), multisite_mpo_t.dimension(3)};
+    return multisite_mpo_t.reshape(newdims);
 }
 
 const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo() const {
@@ -635,6 +881,7 @@ const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo() const {
     cache.multisite_mpo = get_multisite_mpo(active_sites);
     return cache.multisite_mpo.value();
 }
+
 const Eigen::Tensor<cplx_t, 4> &ModelFinite::get_multisite_mpo_t() const {
     if(cache.multisite_mpo_t and not active_sites.empty()) return cache.multisite_mpo_t.value();
     cache.multisite_mpo_t = get_multisite_mpo_t(active_sites);

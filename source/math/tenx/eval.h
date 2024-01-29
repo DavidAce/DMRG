@@ -28,9 +28,9 @@ namespace tenx {
         }
 
         //        constexpr auto rank() { return DimType{}.size(); }
-        constexpr auto rank() { return NumDimensions; }
+        consteval auto rank() { return NumDimensions; }
         constexpr auto dimensions() { return m_eval.dimensions(); }
-        constexpr auto size() { return m_eval.size(); }
+        consteval auto size() { return m_eval.size(); }
         constexpr auto data() { return m_eval.data(); }
         constexpr auto dimension(unsigned long n) { return m_eval.dimensions()[n]; }
 

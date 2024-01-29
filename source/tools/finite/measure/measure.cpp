@@ -403,7 +403,7 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
             statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
         }
     }
-    // Finally we view a slice of known size 2^L
+    // Finally, we view a slice of known size 2^L
     statev = statev.slice(off1,ext1);
     double norm = tenx::norm(statev);
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("mps2tensor [{}]: Norm far from unity: {:.16f}", name, norm); }

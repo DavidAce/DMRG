@@ -145,10 +145,10 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
          *--|                      2                             |
          *  |                      |                             |
          *  |--0---[ I ]---1  0--[mpo]--1                2 ---[Redge]
-         *                          |                             |
-         *                          2                             |
-         *                                                        |
-         *                                                1 ------|
+         *                         |                             |
+         *                         2                             |
+         *                                                       |
+         *                                               1 ------|
          */
         auto                  &mps      = state.get_mps_site(state.get_length() - 1);
         auto                   label    = mps.get_label();
