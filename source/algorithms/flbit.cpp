@@ -286,15 +286,6 @@ void flbit::run_algorithm() {
 }
 
 void flbit::run_algorithm2() {
-    //    if(tensors.state->get_name().empty()) tensors.state->set_name("state_real");
-    //    if(not state_lbit) transform_to_lbit_basis();
-    //    if(time_points.empty()) create_time_points();
-    //    if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) update_time_step();
-    //    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
-    //                     tensors.state->get_name());
-    //    auto t_run = tid::tic_scope("run");
-    //    if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
-
     // Get the interacting Hamiltonian in the diagonal l-bit basis in matrix form
     auto sites = num::range<size_t>(0, tensors.get_length(), 1);
     auto nbody = std::vector<size_t>{1, 2, 3};
@@ -355,15 +346,22 @@ void flbit::run_algorithm2() {
     tools::log->info("Starting time evolution");
     //    tools::log->info("hamilonian_eff_diagonal: {}", hamiltonian_eff_diagonal);
     //    tools::log->info("hamilonian_mbl_diagonal: {}", hamiltonian_mbl_diagonal);
-    auto state_mbl = *tensors.state;
-    auto state_eff = *tensors.state;
+    //    auto state_mbl = *tensors.state;
+    auto  state_backup  = *tensors.state;
+    auto  status_backup = status;
+    auto  state_mbl     = *tensors.state;
+    auto &state_eff     = *tensors.state; // Hijack the state to functionality for free...
+    state_mbl.set_name("state_mbl");
+    state_eff.set_name("state_eff");
 
     // Precompute Udagger psi
     auto u_and_psi_init = u_and.adjoint() * psi_init;
     auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
+    auto t_run          = tid::tic_scope("eff");
 
     for(auto time : time_points) {
-        auto t_step = tid::tic_token("step");
+        auto t_step    = tid::tic_token("step");
+        status.delta_t = time;
         using namespace std::complex_literals;
         auto t_f64 = std::complex<real>(static_cast<real>(time.real()), static_cast<real>(time.imag()));
         // Generate the time evolution operator in diagonal form
@@ -394,33 +392,30 @@ void flbit::run_algorithm2() {
         fmt::print("mbl SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_mbl1, number_entropy_mbl1, t_f64.real(),
                    t_step->get_last_interval());
 
-        // Split in the middle with svd to get the schmidt values
-        //        auto [U_eff, S_eff, V_eff] = solver.do_svd_ptr(psi_eff.data(), rows, cols, svd_cfg);
-        //        auto [U_mbl, S_mbl, V_mbl] = solver.do_svd_ptr(psi_mbl.data(), rows, cols, svd_cfg);
-        //        S_eff.normalize();
-        //        S_mbl.normalize();
-        //        double entanglement_entropy_eff = -S_eff.cwiseAbs2().dot(S_eff.array().cwiseAbs2().log().matrix());
-        //        double entanglement_entropy_mbl = -S_mbl.cwiseAbs2().dot(S_mbl.array().cwiseAbs2().log().matrix());
-        //        fmt::print("entanglement entropy 2: eff {:.16f} mbl {:.16f} time {:.2e} + i{:.2e}\n", entanglement_entropy_eff, entanglement_entropy_mbl,
-        //        t_f64.real(),
-        //                   t_f64.imag());
+        // Update stuff manually
+        status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);
+        status.iter += 1;
+        status.step += settings::model::model_size;
+        status.position  = tensors.get_position<long>();
+        status.direction = tensors.state->get_direction();
+
+        check_convergence();
+        AlgorithmFinite::write_to_file(state_eff, *tensors.model, *tensors.edges, StorageEvent::ITERATION, CopyPolicy::TRY);
+        print_status();
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+
+        if(status.iter >= time_points.size())  status.algo_stop = AlgorithmStop::SUCCESS;
+
+        // It's important not to perform the last move, so we break now: that last state would not get optimized
+        if(status.algo_stop != AlgorithmStop::NONE) break;
+        status.wall_time = tid::get_unscoped("t_tot").get_time();
+        status.algo_time = t_run->get_time();
+        t_run->start_lap();
     }
-    //    while(true) {
-    //        update_state();
-    //        check_convergence();
-    //        write_to_file(StorageEvent::ITERATION);
-    //        print_status();
-    //        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-    //
-    //        // It's important not to perform the last move, so we break now: that last state would not get optimized
-    //        if(status.algo_stop != AlgorithmStop::NONE) break;
-    //        update_time_evolution_gates();
-    //        status.wall_time = tid::get_unscoped("t_tot").get_time();
-    //        status.algo_time = t_run->get_time();
-    //        t_run->start_lap();
-    //    }
-    //    tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
+    tools::log->info("Finished effective simulation of state [{}] -- stop reason: {}", tensors.state->get_name(), status.algo_stop_sv());
     //    status.algorithm_has_finished = true;
+    status         = status_backup;
+    *tensors.state = state_backup;
 }
 
 void flbit::run_fes_analysis() {

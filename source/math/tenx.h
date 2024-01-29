@@ -591,7 +591,7 @@ namespace tenx {
         if(isReal(rhs1) and isReal(rhs2)) {
             // We get a speedup by multiplying reals instead of complex
             Eigen::Tensor<real, 4> lhs_real(dim_lhsA);
-            Eigen::Tensor<real, 4> rhs1_real = rhs1.shuffle(array4{0, 2, 3, 1}).real(); // Prepare for gemm
+            Eigen::Tensor<real, 4> rhs1_real = rhs1.real().shuffle(array4{0, 2, 3, 1}); // Prepare for gemm
             Eigen::Tensor<real, 4> rhs2_real = rhs2.real();
             auto                   lhs_map   = Eigen::Map<MatrixType<real>>(lhs_real.data(), dim_lhsA[0] * dim_lhsA[1], dim_lhsA[2] * dim_lhsA[3]);
             auto                   rhs1_map  = MatrixMap(rhs1_real, dim_rhs1[0] * dim_rhs1[2] * dim_rhs1[3], dim_rhs1[1]);
