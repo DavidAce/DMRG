@@ -26,7 +26,7 @@ config_ranges = {
     "solver::svd_save_fail": ['false'],
     "strategy::initial_state": ["PRODUCT_STATE_NEEL"],
     "model::model_type": ['lbit'],
-    "model::model_size": ['8', '10', '12'],
+    "model::model_size": ['8', '10', '12', '14'],
     "model::lbit::J1_mean": ['+0.00'],
     "model::lbit::J2_mean": ['+0.00'],
     "model::lbit::J3_mean": ['+0.00'],
