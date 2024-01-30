@@ -39,6 +39,7 @@ namespace tenx {
         constexpr auto   map() { return Eigen::TensorMap<Eigen::Tensor<Scalar, NumDimensions>>(m_eval.data(), m_eval.dimensions()); }
     };
 
+
     // Evaluates expressions if needed
     template<typename T, int AccessLevel, typename Device = Eigen::DefaultDevice>
     auto asEval(const Eigen::TensorBase<T, AccessLevel> &expr, const Device &device = Device()) {

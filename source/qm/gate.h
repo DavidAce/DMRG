@@ -65,19 +65,17 @@ namespace qm {
         template<typename T, typename Device = Eigen::DefaultDevice>
         Gate(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &op_, std::vector<size_t> pos_, std::vector<long> dim_, const Device &device = Device())
             : pos(std::move(pos_)), dim(std::move(dim_)) {
-            auto tensor   = tenx::asEval(op_, device);
             [[maybe_unused]] auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
-            static_assert(tensor.rank() == 2);
-            assert(dim_prod == tensor.dimension(0) and dim_prod == tensor.dimension(1));
             assert(pos.size() == dim.size());
-//            if(dim_prod != tensor.dimension(0) or dim_prod != tensor.dimension(1))
-//                throw except::logic_error("dim {} not compatible with matrix dimensions {} x {}", dim, tensor.dimension(0), tensor.dimension(1));
-//            if(pos.size() != dim.size()) throw except::logic_error("pos.size() {} != dim.size() {}", pos, dim);
-            // We use a unary expression to cast from std::complex<__float128> to std::complex<double>
-//            if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx>)
-                op = op_.unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
-            if constexpr (std::is_same_v<std::decay_t<typename T::Scalar>, cplx_t>)
-                op_t = op_.unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
+            if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx_t>){
+                op.resize(tenx::array2{dim_prod, dim_prod});
+                op.device(device) = op_.eval().unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
+                op_t.resize(tenx::array2{dim_prod, dim_prod});
+                op_t.device(device) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
+            }else if (std::is_same_v<std::decay_t<typename T::Scalar>, cplx>){
+                op.resize(tenx::array2{dim_prod, dim_prod});
+                op.device(device) = op_.eval();
+            }
         }
         template<typename T>
         Gate(const Eigen::EigenBase<T> & op_, std::vector<size_t> pos_, std::vector<long> dim_)

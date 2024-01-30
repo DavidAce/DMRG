@@ -289,27 +289,27 @@ void flbit::run_algorithm2() {
     // Get the interacting Hamiltonian in the diagonal l-bit basis in matrix form
     auto sites = num::range<size_t>(0, tensors.get_length(), 1);
     auto nbody = std::vector<size_t>{1, 2, 3};
-    tools::log->info("Generating hamiltonian_mbl_diagonal sites {} | nbody {}", sites, nbody);
     tensors.clear_cache();
     tensors.clear_measurements();
     Eigen::VectorXcd hamiltonian_mbl_diagonal;
     {
-        // Compress for speedup
-        tensors.model->compress_mpo();
+        tools::log->info("Generating hamiltonian_mbl_diagonal sites {} | nbody {}", sites, nbody);
+        tensors.model->compress_mpo(); // Compress for speedup
         auto hamiltonian_mbl_diagonal_tensor = tensors.model->get_multisite_ham(sites, nbody);              // lbit hamiltonian (with J_ij...)
         hamiltonian_mbl_diagonal             = tenx::MatrixMap(hamiltonian_mbl_diagonal_tensor).diagonal(); // Keep the diagonal part (to save memory)
         tensors.model->build_mpo();                                                                         // Rebuild the original
     }
 
-    // Get the interacting mbl unitary transformation in matrix form
-    tools::log->info("Generating u_mbl");
-    auto u_mbl_tensor = qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers);
-    auto u_mbl        = tenx::MatrixMap(u_mbl_tensor);
+    Eigen::MatrixXcd hamiltonian_mbl;
+    { // Get the interacting mbl unitary transformation in matrix form
+        tools::log->info("Generating u_mbl");
+        auto u_mbl_tensor = qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers);
+        auto u_mbl        = tenx::MatrixMap(u_mbl_tensor);
 
-    // Create the l-bit Hamiltonian in the original basis
-    tools::log->info("Generating hamiltonian_mbl");
-    Eigen::MatrixXcd hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal.asDiagonal() * u_mbl.adjoint(); // interacting lbit hamiltonian
-
+        // Create the l-bit Hamiltonian in the original basis
+        tools::log->info("Generating hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal * u_mbl^-1");
+        hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal.asDiagonal() * u_mbl.adjoint(); // interacting lbit hamiltonian
+    }
     // Get the non-interacting anderson unitary transformation in matrix form
     // This should be indentical to the current one, except for lambda = 0
     // We will later make the assumption that this can "kind of" diagonalize our mbl hamiltonian
@@ -323,8 +323,9 @@ void flbit::run_algorithm2() {
 
     // Create an effective Hamiltonian
     tools::log->info("Generating hamiltonian_eff_almost_diagonal");
-    Eigen::MatrixXcd hamiltonian_eff_almost_diagonal = u_and.adjoint() * hamiltonian_mbl * u_and;  // This should be almost diagonal
-    Eigen::VectorXcd hamiltonian_eff_diagonal        = hamiltonian_eff_almost_diagonal.diagonal(); // Keep only the diagonal part
+    Eigen::VectorXcd hamiltonian_eff_diagonal        = (u_and.adjoint() * hamiltonian_mbl * u_and).diagonal(); // Keep only the diagonal part of an "almost" diagonal matrix
+
+    hamiltonian_mbl = Eigen::MatrixXcd(); // Clear to save memory, we don't need it anymore
     //    Eigen::MatrixXcd hamiltonian_eff                 = u_and * hamiltonian_eff_diagonal * u_and.adjoint(); // Go back to the original basis
 
     // Get the initial state in vector form
@@ -349,14 +350,14 @@ void flbit::run_algorithm2() {
     //    auto state_mbl = *tensors.state;
     auto  state_backup  = *tensors.state;
     auto  status_backup = status;
-    auto  state_mbl     = *tensors.state;
+//    auto  state_mbl     = *tensors.state;
     auto &state_eff     = *tensors.state; // Hijack the state to functionality for free...
-    state_mbl.set_name("state_mbl");
+//    state_mbl.set_name("state_mbl");
     state_eff.set_name("state_eff");
 
     // Precompute Udagger psi
     auto u_and_psi_init = u_and.adjoint() * psi_init;
-    auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
+//    auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
     auto t_run          = tid::tic_scope("eff");
 
     for(auto time : time_points) {
@@ -367,30 +368,27 @@ void flbit::run_algorithm2() {
         // Generate the time evolution operator in diagonal form
         tools::log->info("Exponentiating the diagonal Hamiltonians");
         Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
-        Eigen::VectorXcd tevo_mbl_diagonal = (-1.0i * t_f64 * hamiltonian_mbl_diagonal).array().exp();
-        //        tools::log->info("Defining the time-evolution operator");
-        //        Eigen::MatrixXcd tevo_eff = u_and * tevo_eff_diagonal.asDiagonal() * u_and.adjoint();
-        //        Eigen::MatrixXcd tevo_mbl = u_mbl * tevo_mbl_diagonal.asDiagonal() * u_mbl.adjoint();
+//        Eigen::VectorXcd tevo_mbl_diagonal = (-1.0i * t_f64 * hamiltonian_mbl_diagonal).array().exp();
         // Time evolve
         tools::log->info("Time-evolving");
         Eigen::VectorXcd psi_eff = u_and * tevo_eff_diagonal.asDiagonal() * u_and_psi_init;
-        Eigen::VectorXcd psi_mbl = u_mbl * tevo_mbl_diagonal.asDiagonal() * u_mbl_psi_init;
+//        Eigen::VectorXcd psi_mbl = u_mbl * tevo_mbl_diagonal.asDiagonal() * u_mbl_psi_init;
         tools::log->info("Merging into state");
         auto mps_eff = tenx::TensorMap(psi_eff, psi_eff.size(), 1, 1);
-        auto mps_mbl = tenx::TensorMap(psi_mbl, psi_mbl.size(), 1, 1);
+//        auto mps_mbl = tenx::TensorMap(psi_mbl, psi_mbl.size(), 1, 1);
         // Merge these psi into the current state
         tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, svd_cfg);
-        tools::finite::mps::merge_multisite_mps(state_mbl, mps_mbl, sites, 0, svd_cfg);
+//        tools::finite::mps::merge_multisite_mps(state_mbl, mps_mbl, sites, 0, svd_cfg);
 
         auto entanglement_entropy_eff1 = tools::finite::measure::entanglement_entropy_midchain(state_eff);
-        auto entanglement_entropy_mbl1 = tools::finite::measure::entanglement_entropy_midchain(state_mbl);
+//        auto entanglement_entropy_mbl1 = tools::finite::measure::entanglement_entropy_midchain(state_mbl);
 
         auto number_entropy_eff1 = tools::finite::measure::number_entropy_midchain(state_eff);
-        auto number_entropy_mbl1 = tools::finite::measure::number_entropy_midchain(state_mbl);
+//        auto number_entropy_mbl1 = tools::finite::measure::number_entropy_midchain(state_mbl);
         fmt::print("eff SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_eff1, number_entropy_eff1, t_f64.real(),
                    t_step->get_last_interval());
-        fmt::print("mbl SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_mbl1, number_entropy_mbl1, t_f64.real(),
-                   t_step->get_last_interval());
+//        fmt::print("mbl SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_mbl1, number_entropy_mbl1, t_f64.real(),
+//                   t_step->get_last_interval());
 
         // Update stuff manually
         status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);

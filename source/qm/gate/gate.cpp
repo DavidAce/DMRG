@@ -3,6 +3,7 @@
 #include "qm/gate.h"
 #include "config/enums.h"
 #include "debug/exceptions.h"
+#include "debug/info.h"
 #include "general/iter.h"
 #include "general/sfinae.h"
 #include "io/fmt_custom.h"
@@ -998,6 +999,36 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                                 pos_isect, pos_nsect);
 }
 
+template<typename Derived, typename Device = Eigen::DefaultDevice>
+Eigen::Tensor<typename Derived::Scalar, 2> gemm_gate(const Eigen::TensorBase<Derived, Eigen::ReadOnlyAccessors> &dn_expr,
+                                                     const Eigen::TensorBase<Derived, Eigen::ReadOnlyAccessors> &up_expr, const Device &device = Device()) {
+    /*  Left connection
+     *     2     4    5
+     *     |     |    |             3   4   5              1
+     *     |    [  up  ]            |   |   |              |
+     *     |     |    |      =    [   gate    ]  =   [   gate    ]
+     *    [  dn  ]    |             |   |   |              |
+     *     |     |    |             0   1   2              0
+     *     0     1    3
+     */
+    using Scalar = typename Derived::Scalar;
+    auto dn_eval = tenx::asEval(dn_expr, device);
+    auto up_eval = tenx::asEval(up_expr, device);
+    static_assert(dn_eval.NumDimensions == 4);
+    static_assert(up_eval.NumDimensions == 4);
+    auto dn     = dn_eval.map();
+    auto up     = up_eval.map();
+    auto dim6A  = tenx::array6{dn.dimension(0), dn.dimension(1), dn.dimension(2), up.dimension(1), up.dimension(2), up.dimension(3)};
+    auto dim2A  = tenx::array2{dn.dimension(0) * dn.dimension(1) * dn.dimension(2), up.dimension(1) * up.dimension(2) * up.dimension(3)};
+    auto dim2B  = tenx::array2{dn.dimension(0) * dn.dimension(1) * up.dimension(3), dn.dimension(2) * up.dimension(2) * up.dimension(3)};
+    auto op     = Eigen::Tensor<Scalar, 6>(dim6A);
+    auto op_map = Eigen::Map<tenx::MatrixType<Scalar>>(op.data(), dim2A[0], dim2A[1]);
+    auto dn_map = Eigen::Map<const tenx::MatrixType<Scalar>>(dn.data(), dn.dimension(0) * dn.dimension(1) * dn.dimension(2), dn.dimension(3));
+    auto up_map = Eigen::Map<const tenx::MatrixType<Scalar>>(up.data(), up.dimension(0), up.dimension(1) * up.dimension(2) * up.dimension(3));
+    op_map      = dn_map * up_map;
+    return op.shuffle(tenx::array6{0, 1, 3, 2, 4, 5}).reshape(dim2B);
+}
+
 qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
     std::vector<size_t> pos_isect; // locations that intersect: both on middle and updown gates
     std::vector<size_t> pos_nsect; // locations that do not intersect: not in both on middle and updown gates
@@ -1056,13 +1087,6 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
              *          [  dn  ]
              *           |    |
              */
-//            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
-//            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
-//            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
-//            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
-//            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
-//            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
-//            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{up_merge, dn_merge}));
             dn_shp4                     = dn_gate.shape<4>(std::array<size_t, 2>{up_merge, dn_merge});
             auto                   dim2 = dn_gate.shape<2>();
             Eigen::Tensor<cplx, 2> op(dim2);
@@ -1078,12 +1102,6 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
              *          [    dn    ]
              *           |    |   |
              */
-//            if(dn_size == 3) dn_shp6 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
-//            if(dn_size == 4) dn_shp6 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
-//            if(dn_size == 5) dn_shp6 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
-//            if(dn_size == 6) dn_shp6 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
-//            if(dn_size == 7) dn_shp6 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
-//            if(dn_size == 8) dn_shp6 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset}));
             dn_shp6                     = dn_gate.shape<6>(std::array<size_t, 3>{offset, up_size, dn_size - up_size - offset});
             auto                   dim2 = dn_gate.shape<2>();
             Eigen::Tensor<cplx, 2> op(dim2);
@@ -1111,15 +1129,14 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
              *      |    |     |           0   1   2              0
              *      3    0     1
              */
-            auto                   up_shp4 = up_gate.shape<4>(std::array<size_t, 2>{up_merge, 1});
-            auto                   dn_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{1, dn_merge});
-            auto                   dim2    = repeat(std::array<long, 1>{up_shp4[0] * up_shp4[1] * dn_shp4[1]});
-            Eigen::Tensor<cplx, 2> op(dim2);
-            op.device(tenx::threads::getDevice()) =
-                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({2}, {1})).shuffle(tenx::array6{3, 0, 1, 4, 5, 2}).reshape(dim2);
-            pos = concat(up_gate.pos, subset(dn_gate.pos, 1, dn_merge));
-            dim = concat(up_gate.dim, subset(dn_gate.dim, 1, dn_merge));
-            return qm::Gate{op, pos, dim};
+            auto up_shp4 = up_gate.shape<4>(std::array<size_t, 2>{up_merge, 1});
+            auto dn_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{1, dn_merge});
+            auto dim2    = repeat(std::array<long, 1>{up_shp4[0] * up_shp4[1] * dn_shp4[1]});
+            pos          = concat(up_gate.pos, subset(dn_gate.pos, 1, dn_merge));
+            dim          = concat(up_gate.dim, subset(dn_gate.dim, 1, dn_merge));
+            return qm::Gate{
+                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({2}, {1})).shuffle(tenx::array6{3, 0, 1, 4, 5, 2}).reshape(dim2),
+                pos, dim, tenx::threads::getDevice()};
         } else {
             /*  Left connection
              *     2     4    5
@@ -1133,15 +1150,13 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
 
             auto dn_shp4 = dn_gate.shape<4>(std::array<size_t, 2>{dn_merge, 1});
             auto up_shp4 = up_gate.shape<4>(std::array<size_t, 2>{1, up_merge});
-            auto op      = tenx::gemm_gate(dn_gate.op.reshape(dn_shp4), up_gate.op.reshape(up_shp4));
-            //            auto dim2 = repeat(std::array<long, 1>{dn_shp4[0] * up_shp4[0] * up_shp4[1]});
-            //            Eigen::Tensor<cplx, 2> op(dim2);
-            //            op.device(tenx::threads::getDevice()) =
-            //                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({3}, {0})).shuffle(tenx::array6{0, 1, 3, 2, 4,
-            //                5}).reshape(dim2);
-            pos = concat(subset(dn_gate.pos, 0, dn_merge), up_gate.pos);
-            dim = concat(subset(dn_gate.dim, 0, dn_merge), up_gate.dim);
-            return qm::Gate{op, pos, dim};
+            //            auto op      = gemm_gate(dn_gate.op.reshape(dn_shp4), up_gate.op.reshape(up_shp4));
+            auto dim2 = repeat(std::array<long, 1>{dn_shp4[0] * up_shp4[0] * up_shp4[1]});
+            pos       = concat(subset(dn_gate.pos, 0, dn_merge), up_gate.pos);
+            dim       = concat(subset(dn_gate.dim, 0, dn_merge), up_gate.dim);
+            return qm::Gate{
+                dn_gate.op.reshape(dn_shp4).contract(up_gate.op.reshape(up_shp4), tenx::idx({3}, {0})).shuffle(tenx::array6{0, 1, 3, 2, 4, 5}).reshape(dim2),
+                pos, dim, tenx::threads::getDevice()};
         }
     }
 

@@ -5,6 +5,7 @@
 // #include "config/settings.h"
 #include "config/settings.h"
 #include "debug/exceptions.h"
+#include "debug/info.h"
 #include "general/iter.h"
 #include "io/fmt_custom.h"
 #include "io/spdlog.h"
@@ -434,19 +435,35 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_layer_as_tensor(const std::vector<q
      */
     tools::log->trace("contracting unitary layer as tensor");
     qm::Gate fullgate;
+    double   rss_start = 0;
+    double   hwm_start = 0;
+    auto     printlog  = [&](const std::vector<size_t> &pos, std::string_view tag) -> void {
+        if constexpr(settings::debug_circuit) {
+            double hwm = debug::mem_hwm_in_mb();
+            double rss = debug::mem_rss_in_mb();
+            tools::log->info("contracted gate {} {} | rss {:<.1f} (+{:<.1f}) hwm {:<.1f} mb (+{:<.1f})", pos, tag, rss, rss - rss_start, hwm, hwm - hwm_start);
+        }
+    };
+
     for(const auto &[i, g] : iter::enumerate(unitary_layer)) {
-        tools::log->trace("contracting gate {}", g.pos);
+        if constexpr(settings::debug_circuit) {
+            rss_start = debug::mem_rss_in_mb();
+            hwm_start = debug::mem_hwm_in_mb();
+        }
         if(i == 0) {
             // First gate
             fullgate = g;
+            printlog(g.pos, "first");
             continue;
         }
         if(g.pos.front() % 2 == 0) {
             // Even gate 01, 23, 45 ... fullgate connects to g from below
             fullgate = fullgate.connect_below(g);
+            printlog(g.pos, "from below");
         } else {
             // Odd gate 12, 34, 56 ... fullgate connects to g from above
             fullgate = fullgate.connect_above(g);
+            printlog(g.pos, "from above");
         }
     }
 
@@ -457,26 +474,35 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_layer_as_tensor(const std::vector<q
 
 Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_circuit_as_tensor(const std::vector<std::vector<qm::Gate>> &unitary_circuit) {
     Eigen::Tensor<cplx, 2> all_layers;
-    Eigen::Tensor<cplx, 2> tmp_layers;
+    double                 rss_start = 0;
+    double                 hwm_start = 0;
+    auto                   printlog  = [&](size_t lidx, double t) -> void {
+        //        if constexpr(settings::debug_circuit) {
+        double hwm = debug::mem_hwm_in_mb();
+        double rss = debug::mem_rss_in_mb();
+        tools::log->info("contracted layer {} dims {} ... {:.3e} s | rss {:<.1f} (+{:<.1f}) hwm {:<.1f} mb (+{:<.1f})", lidx,
+                                            all_layers.dimensions(), t, rss, rss - rss_start, hwm, hwm - hwm_start);
+        //        }
+    };
+
     for(const auto &[lidx, layer] : iter::enumerate(unitary_circuit)) {
-        auto one_layer = get_unitary_layer_as_tensor(layer);
+        //        if constexpr(settings::debug_circuit) {
+        rss_start = debug::mem_rss_in_mb();
+        hwm_start = debug::mem_hwm_in_mb();
+        //        }
+        auto t_con = tid::tic_token("contract-u");
+
         if(lidx == 0) {
-            all_layers = one_layer;
+            all_layers = get_unitary_layer_as_tensor(layer);
+            printlog(lidx, t_con->get_last_interval());
             continue;
         }
         // New layers appended from below: we apply a circuit top to bottom, with the MPS at the top, physical index pointing down)
         // Alternatively, right to left, so ... U3 U2 U1 U0 |psi>
-        tools::log->trace("contracting layer {} | dims one_layer {} | dims all_layers {}", lidx, one_layer.dimensions(), all_layers.dimensions());
-        tools::log->trace("contracting ...");
-        auto t_con = tid::tic_token("contract-u");
-        all_layers = tenx::gemm(one_layer, all_layers);
-//        tmp        = one * all; // This is about 2x faster because it calls BLAS/MKL GEMM. The tensor contraction version does not!
-
-        //                        tmp_layers = one_layer.contract(all_layers, tenx::idx({1}, {0}));
-        //        tmp_layers.device(tenx::threads::getDevice()) = one_layer.contract(all_layers, tenx::idx({1}, {0}));
-        tools::log->trace("contracting ... {:.3e} s", t_con->get_last_interval());
-//        tools::log->trace("copying result");
-//        all_layers = tmp_layers;
+        if constexpr(settings::debug_circuit) tools::log->debug("contracting layer {} | dims all_layers {} ...", lidx, all_layers.dimensions());
+        // This is about 2x faster because it calls BLAS/MKL GEMM. The tensor contraction version does not!
+        all_layers = tenx::gemm(get_unitary_layer_as_tensor(layer), all_layers);
+        printlog(lidx, t_con->get_last_interval());
     }
     if constexpr(settings::debug_circuit)
         if(not tenx::MatrixMap(all_layers).isUnitary(1e-12)) throw except::logic_error("get_unitary_circuit_as_tensor: all_layers is not unitary");
