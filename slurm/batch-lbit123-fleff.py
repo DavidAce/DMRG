@@ -8,9 +8,9 @@ config_paths = {
     'config_template'   : 'template_configs/flbit-v2.cfg',
     'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
     'output_stem'       : 'mbl',
-    'config_dir'        : "config-lbitlbit123",
-    'output_dir'        : "output-lbitlbit123",
-    'status_dir'        : "status-lbitlbit123",
+    'config_dir'        : "config-lbit123",
+    'output_dir'        : "output-lbit123",
+    'status_dir'        : "status-lbit123",
     'temp_dir'          : "/scratch/local" if "lith" in platform.node() else (os.environ.get('PDC_TMP') if "PDC_TMP" in os.environ else "/tmp")
 }
 
