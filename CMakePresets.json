@@ -615,6 +615,25 @@
       }
     },
     {
+      "name": "tetralith-debug",
+      "displayName": "Debug|conan|flexiblas",
+      "inherits": [
+        "gcc",
+        "flexiblas",
+        "conan",
+        "debug",
+        "default"
+      ],
+      "binaryDir": "${sourceDir}/build/Debug",
+      "cacheVariables": {
+        "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE",
+        "CMAKE_INSTALL_PREFIX": "$env{HOME}/dmrg-pkg-install-debug",
+        "DMRG_BUILD_TOOLS": "FALSE",
+        "DMRG_USE_QUADMATH": "TRUE",
+        "CONAN_OPTIONS": "-o hdf5:shared=True"
+      }
+    },
+    {
       "name": "pdc",
       "displayName": "Release|march=native|conan|mkl",
       "inherits": [
@@ -727,6 +746,12 @@
       "name": "tetralith",
       "displayName": "Release|march=native|conan|mkl",
       "configurePreset": "tetralith",
+      "jobs": 16
+    },
+    {
+      "name": "tetralith-debug",
+      "displayName": "Debug|conan|mkl",
+      "configurePreset": "tetralith-debug",
       "jobs": 16
     },
     {
