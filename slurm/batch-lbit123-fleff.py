@@ -40,6 +40,7 @@ config_ranges = {
     "model::lbit::u_lambda": ['0.1', '1.0', '5.0'],
     "model::lbit::u_wkind": ['EXPDECAY'],
     "model::lbit::u_mkind": ['MATRIX_V2'],
+    "flbit::run_effective_model": ['true'],
     "flbit::time_scale": ['LOGSPACED'],
     "flbit::bond_max": ['8192'],
     "flbit::time_start_real": ['1e-1'],
