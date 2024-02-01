@@ -427,7 +427,7 @@ Eigen::Tensor<cplx, 4> LBit::MPO_nbody_view(std::optional<std::vector<size_t>> n
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO();
-    if(nbody.value() == std::vector<size_t>{1, 2, 3}) return MPO(); // Everything is turned on
+//    if(nbody.value() == std::vector<size_t>{1, 2, 3}) return MPO(); // Everything is turned on
 
     auto   Rul                        = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
     long   R                          = safe_cast<long>(Rul);            // Range
@@ -544,7 +544,7 @@ Eigen::Tensor<cplx_t, 4> LBit::MPO_nbody_view_t(std::optional<std::vector<size_t
     // For instance if skip == {2}, then interaction terms such as J[0,2], J[1,2] and J[2,3] are set to zero.
 
     if(not nbody) return MPO_t();
-    if(nbody.value() == std::vector<size_t>{1, 2, 3}) return MPO_t();    // Everything is turned on
+//    if(nbody.value() == std::vector<size_t>{1, 2, 3}) return MPO_t();    // Everything is turned on
     auto   Rul                        = settings::model::model_size - 1; // Range unsigned long (with "full range": R = L-1)
     long   R                          = safe_cast<long>(Rul);            // Range
     long   F                          = R + 2l;                          // Last index of mpo

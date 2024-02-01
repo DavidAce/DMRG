@@ -15,7 +15,10 @@
 
 //
 #include "debug/exceptions.h"
+#include "math/linalg.h"
+#include "math/svd.h"
 #include "tools/common/contraction.h"
+#include "tools/finite/mpo.h"
 #include <fmt/ranges.h>
 
 namespace settings {
@@ -95,7 +98,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
     // Hence, asking for get_M_bare() will get us the A/B with mpo's connected.
 
     // Note:
-    // If M is an A then M_bare = L0*M,, and the mpo was applied on A.
+    // If M is an A then M_bare = L0*M, and the mpo was applied on A.
     // If M is an AC then M_bare = L0*M, (L1 = LC) and the mpo was applied on M_bare, LC dim increased by mpodim
     // If M is a B then M_bare = M * L1, and there is no L0.
     {
@@ -107,7 +110,7 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
          *    |                               |              |       |
          *  [Ledge]--- 2                0---[mpo]---1  0---[ I ]--1--|
          *    |                               |
-         *    |                               2
+         *    |                               3
          *    |
          *    |
          *    |------ 1
@@ -191,6 +194,134 @@ void tools::finite::ops::apply_mpos(StateFinite &state, const std::vector<Eigen:
             throw except::runtime_error("Entanglement entropy has nans:\n{}", tools::finite::measure::entanglement_entropies(state));
         }
     }
+}
+
+void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const svd::config &svd_cfg) {
+    tools::log->trace("Applying MPOs");
+    if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
+    svd::solver                           svd(svd_cfg);
+    std::optional<Eigen::Tensor<cplx, 1>> S_prev;
+    std::optional<Eigen::Tensor<cplx, 2>> U_prev, V_prev, SV, US;
+    Eigen::Tensor<cplx, 3>                ASV, USB; // The two remaining matrices in the center
+    auto                                  pos_center = state.get_position();
+
+    for(size_t pos = 0; pos < pos_center + 1; ++pos) {
+        auto &mps_site = state.get_mps_site(pos);
+        auto &mps      = mps_site.get_M();
+        auto &mpo      = mpos[pos];
+        /* Connect to mps
+         *
+         *        1---[M]---2        3---[M]---4                     2---[M]---4             1---[M]---2
+         *             |                  |                               |                       |
+         *             0                  |                               |                       0
+         *             2        =         |            shuffle            |        reshape
+         *             |                  |           (2,0,3,1,4)         |
+         *       0---[mpo]---1      0---[mpo]---1                   1---[mpo]---3
+         *             |                  |                               |
+         *             3                  2                               0
+         */
+        long                   d0      = mpo.dimension(3);
+        long                   d1      = mps.dimension(1) * mpo.dimension(0);
+        long                   d2      = mps.dimension(2) * mpo.dimension(1);
+        Eigen::Tensor<cplx, 3> mpo_mps = mpo.contract(mps, tenx::idx({2}, {0})).shuffle(tenx::array5{2, 0, 3, 1, 4}).reshape(tenx::array3{d0, d1, d2});
+
+        if(S_prev) mps_site.set_L(S_prev.value(), svd.get_truncation_error());
+        if(S_prev and V_prev) {
+            mpo_mps = Eigen::Tensor<cplx, 3>(tenx::asDiagonal(S_prev.value())
+                                                 .contract(V_prev.value(), tenx::idx({1}, {0}))
+                                                 .contract(mpo_mps, tenx::idx({1}, {1}))
+                                                 .shuffle(tenx::array3{1, 0, 2}));
+            d0      = mpo_mps.dimension(0);
+            d1      = mpo_mps.dimension(1);
+            d2      = mpo_mps.dimension(2);
+            S_prev  = std::nullopt;
+            V_prev  = std::nullopt;
+        }
+
+        if(pos == pos_center) {
+            ASV    = mpo_mps;
+            S_prev = std::nullopt;
+            V_prev = std::nullopt;
+        } else {
+            auto [U, S, V] = svd.decompose(mpo_mps, d0 * d1, d2);
+            mps_site.set_M(Eigen::Tensor<cplx, 3>(U.reshape(tenx::array3{d0, d1, S.size()})));
+            S_prev = S;
+            V_prev = V;
+        }
+    }
+
+    for(size_t pos = state.get_length() - 1; pos > pos_center; --pos) {
+        auto &mps_site = state.get_mps_site(pos);
+        auto &mps      = mps_site.get_M();
+        auto &mpo      = mpos[pos];
+        /* Connect to mps
+         *
+         *        1---[M]---2        3---[M]---4                     2---[M]---4             1---[M]---2
+         *             |                  |                               |                       |
+         *             0                  |                               |                       0
+         *             2        =         |            shuffle            |        reshape
+         *             |                  |           (2,0,3,1,4)         |
+         *       0---[mpo]---1      0---[mpo]---1                   1---[mpo]---3
+         *             |                  |                               |
+         *             3                  2                               0
+         */
+        long                   d0      = mpo.dimension(3);
+        long                   d1      = mps.dimension(1) * mpo.dimension(0);
+        long                   d2      = mps.dimension(2) * mpo.dimension(1);
+        Eigen::Tensor<cplx, 3> mpo_mps = mpo.contract(mps, tenx::idx({2}, {0})).shuffle(tenx::array5{2, 0, 3, 1, 4}).reshape(tenx::array3{d0, d1, d2});
+        if(S_prev) mps_site.set_L(S_prev.value(), svd.get_truncation_error());
+        if(U_prev and S_prev) {
+            mpo_mps =
+                Eigen::Tensor<cplx, 3>(mpo_mps.contract(U_prev.value(), tenx::idx({2}, {0})).contract(tenx::asDiagonal(S_prev.value()), tenx::idx({2}, {0})));
+            S_prev = std::nullopt;
+            U_prev = std::nullopt;
+            d0     = mpo_mps.dimension(0);
+            d1     = mpo_mps.dimension(1);
+            d2     = mpo_mps.dimension(2);
+        }
+
+        if(pos == pos_center + 1) {
+            USB    = mpo_mps;
+            U_prev = std::nullopt;
+            S_prev = std::nullopt;
+        } else {
+            auto [U, S, V] = svd.decompose(mpo_mps, d1, d0 * d2);
+            U_prev         = U;
+            S_prev         = S;
+            mps_site.set_M(Eigen::Tensor<cplx, 3>(V.reshape(tenx::array3{d0, S.size(), d2})));
+        }
+    }
+
+    /*!
+     *  1---[ASV]---2     1---[USB]---2            1---[ASV]----[USB]---3
+     *        |                 |           --->         |        |
+     *        0                 0                        0        2
+     *
+     */
+
+    long d0     = ASV.dimension(0) * ASV.dimension(1);
+    long d1     = USB.dimension(0) * USB.dimension(2);
+    auto ASVUSB = Eigen::Tensor<cplx, 2>(d0, d1);
+
+    ASVUSB.device(tenx::threads::getDevice()) = ASV.contract(USB, tenx::idx({2}, {1})).reshape(tenx::array2{d0, d1});
+    auto [U, S, VT]                           = svd.decompose(ASVUSB, svd_cfg);
+
+    auto &mpsL = state.get_mps_site(pos_center);
+    auto &mpsR = state.get_mps_site(pos_center + 1);
+    mpsL.set_M(Eigen::Tensor<cplx, 3>(U.reshape(tenx::array3{ASV.dimension(0), ASV.dimension(1), S.size()})));
+    mpsL.set_LC(S);
+    mpsR.set_M(Eigen::Tensor<cplx, 3>(VT.reshape(tenx::array3{USB.dimension(0), S.size(), USB.dimension(2)})));
+
+    state.clear_measurements();
+    state.clear_cache();
+    state.tag_all_sites_normalized(false); // This operation denormalizes all sites
+}
+
+void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vector<Eigen::Tensor<cplx, 4>> &mpos, const Eigen::Tensor<cplx, 1> &Ledge,
+                                            const Eigen::Tensor<cplx, 1> &Redge, const svd::config &svd_cfg) {
+    tools::log->trace("Applying MPOs");
+    if(mpos.size() != state.get_length()) throw except::runtime_error("Number of mpo's doesn't match the number of sites on the system");
+    apply_mpos_general(state, mpo::get_mpos_with_edges(mpos, Ledge, Redge), svd_cfg);
 }
 
 void tools::finite::ops::project_to_axis(StateFinite &state, const Eigen::MatrixXcd &paulimatrix, int sign, std::optional<svd::config> svd_cfg) {
@@ -322,8 +453,8 @@ StateFinite tools::finite::ops::get_projection_to_nearest_axis(const StateFinite
 auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &state2) -> cplx {
     if(state1.get_length() != state2.get_length()) throw except::logic_error("ERROR: States have different lengths! Can't do overlap.");
     if(state1.get_position() != state2.get_position()) throw except::logic_error("ERROR: States need to be at the same position! Can't do overlap.");
-    size_t pos     = 0;
-    auto   overlap = tools::common::contraction::contract_mps_mps_partial<std::array{0l, 1l}>(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M());
+    size_t pos   = 0;
+    auto overlap = tools::common::contraction::contract_mps_mps_partial<std::array{0l, 1l}>(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M());
     Eigen::Tensor<cplx, 2> temp;
     for(pos = 1; pos < state1.get_length(); pos++) {
         const auto &M1 = state1.get_mps_site(pos).get_M();

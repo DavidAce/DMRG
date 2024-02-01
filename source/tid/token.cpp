@@ -1,7 +1,11 @@
 #include "tid.h"
 namespace tid {
-    token::token(ur &t_) : t(t_) { t.tic(); }
+    token::token(ur &t_) : t(t_) {
+        if(t.lvl == level::disabled) return;
+        t.tic();
+    }
     token::token(ur &t_, std::string_view prefix_) : t(t_) {
+        if(t.lvl == level::disabled) return;
         if(tid::internal::ur_prefix.empty()) {
             temp_prefix = std::string(prefix_);
         } else {
@@ -12,6 +16,7 @@ namespace tid {
     }
 
     token::~token() noexcept {
+        if(t.lvl == level::disabled) return;
         try {
             if(t.is_measuring) t.toc();
             if(not temp_prefix.empty()) {
@@ -21,8 +26,12 @@ namespace tid {
         } catch(const std::exception &ex) { fprintf(stderr, "tid: error in token destructor for tid::ur [%s]: %s", t.get_label().c_str(), ex.what()); }
     }
 
-    void token::tic() noexcept { t.tic(); }
+    void token::tic() noexcept {
+        if(t.lvl == level::disabled) return;
+        t.tic();
+    }
     void token::toc() noexcept {
+        if(t.lvl == level::disabled) return;
         t.toc();
         if(not temp_prefix.empty()) {
             auto pos = tid::internal::ur_prefix.rfind(temp_prefix);

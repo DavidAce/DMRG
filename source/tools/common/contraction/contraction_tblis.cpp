@@ -205,7 +205,7 @@ template<typename Scalar>
 void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      , std::array<long,3> res_dims,
                                                    const Scalar * const mps_ptr, std::array<long,3> mps_dims,
                                                    const Scalar * const bnd_ptr, std::array<long,1> bnd_dims){
-    auto t_con = tid::tic_token("contract_mps_bnd", tid::level::highest);
+//    auto t_con = tid::tic_token("contract_mps_bnd", tid::level::highest);
 //    auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
 //    auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
 //    auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -232,7 +232,7 @@ void  tools::common::contraction::contract_bnd_mps(
           Scalar * res_ptr      , std::array<long,3> res_dims,
     const Scalar * const bnd_ptr, std::array<long,1> bnd_dims,
     const Scalar * const mps_ptr, std::array<long,3> mps_dims){
-    auto t_con = tid::tic_token("contract_bnd_mps", tid::level::highest);
+//    auto t_con = tid::tic_token("contract_bnd_mps", tid::level::highest);
     auto res = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps_ptr,mps_dims);
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
@@ -254,7 +254,7 @@ template<typename Scalar>
 void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       , std::array<long,3> res_dims,
                                                   const Scalar * const mpsL_ptr, std::array<long,3> mpsL_dims,
                                                   const Scalar * const mpsR_ptr, std::array<long,3> mpsR_dims){
-    auto t_con = tid::tic_token("contract_mps_mps", tid::level::highest);
+//    auto t_con = tid::tic_token("contract_mps_mps", tid::level::highest);
     auto res  = Eigen::TensorMap<Eigen::Tensor<Scalar,3>>(res_ptr,res_dims);
     auto mpsL = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsL_ptr, mpsL_dims);
     auto mpsR = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mpsR_ptr, mpsR_dims);

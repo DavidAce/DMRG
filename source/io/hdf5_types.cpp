@@ -259,6 +259,7 @@ void h5pp_ur::register_table_type() {
     if(not h5_level_type.valid()) {
         h5_level_type = H5Tcreate(H5T_ENUM, sizeof(tid::level));
         int val;
+        H5Tenum_insert(h5_level_type, "disabled", (val = tid::level::disabled, &val));
         H5Tenum_insert(h5_level_type, "parent", (val = tid::level::parent, &val));
         H5Tenum_insert(h5_level_type, "normal", (val = tid::level::normal, &val));
         H5Tenum_insert(h5_level_type, "higher", (val = tid::level::higher, &val));

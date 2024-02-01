@@ -110,6 +110,12 @@ namespace tools::finite::measure {
 
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & op, const std::vector<LocalObservableOp> & ops);
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state, const std::vector<LocalObservableMpo> & mpos);
+    [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state1, const StateFinite & state2,
+                                                                          const std::vector<Eigen::Tensor<cplx,4>> & mpos);
+    [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state1, const StateFinite & state2,
+                                                                          const std::vector<Eigen::Tensor<cplx,4>> & mpos,
+                                                                          const Eigen::Tensor<cplx,1> & ledge,
+                                                                          const Eigen::Tensor<cplx,1> & redge);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,2> &op);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Tensor<cplx,4> &mpo);
     [[nodiscard]] extern Eigen::Tensor<cplx, 1>   expectation_values     (const StateFinite & state, const Eigen::Matrix2cd &op);

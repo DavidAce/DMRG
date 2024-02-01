@@ -22,6 +22,7 @@
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
 #include "tools/finite/ops.h"
+#include "tools/finite/mpo.h"
 #include <fmt/ranges.h>
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -404,7 +405,7 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         }
     }
     // Finally, we view a slice of known size 2^L
-    statev = statev.slice(off1,ext1);
+    statev      = statev.slice(off1, ext1);
     double norm = tenx::norm(statev);
     if(std::abs(norm - 1.0) > settings::precision::max_norm_error) { tools::log->warn("mps2tensor [{}]: Norm far from unity: {:.16f}", name, norm); }
     return statev.template cast<cplx>();
@@ -784,6 +785,54 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
     //    if(std::imag(expval(0)) > 1e-8)
     //        throw except::runtime_error("expectation_value: result has imaginary part: {:+8.2e}{:+8.2e} i", std::real(expval(0)), std::imag(expval(0)));
     return expval(0);
+}
+
+cplx tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx, 4>> &mpos) {
+    /*!
+     * Calculates <state1 | mpos | state2>
+     */
+    auto t_expval = tid::tic_scope("expval", tid::level::highest);
+    if(!num::all_equal(state1.get_length(), state2.get_length(), mpos.size()))
+        throw except::logic_error("Sizes are not equal: state1:{} state2:{} mpos:{}", state1.get_length(), state2.get_length(), mpos.size());
+    auto L = mpos.size();
+    if(state1.get_mps_site(0).get_chiL() != 1) throw except::logic_error("state1 left bond dimension != 1: got {}", state1.get_mps_site(0).get_chiL());
+    if(state2.get_mps_site(0).get_chiL() != 1) throw except::logic_error("state2 left bond dimension != 1: got {}", state2.get_mps_site(0).get_chiL());
+    if(mpos.front().dimension(0) != 1) throw except::logic_error("mpos left bond dimension != 1: got {}", mpos.front().dimension(0));
+    if(state1.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state1 right bond dimension != 1: got {}", state1.get_mps_site(L - 1).get_chiR());
+    if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
+    if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
+    Eigen::Tensor<cplx, 4> result, tmp;
+    for(size_t pos = 0; pos < L; ++pos) {
+        const auto &mps1 = state1.get_mps_site(pos).get_M();
+        const auto &mps2 = state2.get_mps_site(pos).get_M();
+        const auto &mpo  = mpos[pos];
+        if(pos == 0) {
+            auto dim4 = tenx::array4{mpo.dimension(0) * mps1.dimension(1) * mps2.dimension(1), mps1.dimension(2), mpo.dimension(1), mps2.dimension(2)};
+            auto shf6 = tenx::array6{0, 2, 4, 1, 3, 5};
+            result.resize(dim4);
+            result.device(tenx::threads::getDevice()) =
+                mps1.conjugate().contract(mpo, tenx::idx({0}, {2})).contract(mps2, tenx::idx({4}, {0})).shuffle(shf6).reshape(dim4);
+            continue;
+        }
+        auto dim4 = tenx::array4{result.dimension(0), mps1.dimension(2), mpo.dimension(1), mps2.dimension(2)};
+        tmp.resize(dim4);
+        tmp.device(tenx::threads::getDevice()) =
+            result.contract(mps1.conjugate(), tenx::idx({1}, {1})).contract(mpo, tenx::idx({1, 3}, {0, 2})).contract(mps2, tenx::idx({1, 4}, {1, 0}));
+        result = tmp;
+    }
+    // In the end we should have a tensor of size 1 (if the state and mpo edges have dim 1).
+    // We can extract and return this value
+    if(result.size() != 1) tools::log->warn("expectation_value: result does not have size 1!");
+    return result.coeff(0);
+}
+
+cplx tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
+                                               const Eigen::Tensor<cplx, 1> &ledge, const Eigen::Tensor<cplx, 1> &redge) {
+    /*!
+     * Calculates <state1 | mpos | state2>
+     */
+    auto mpos_w_edge = mpo::get_mpos_with_edges(mpos, ledge, redge);
+    return expectation_value(state1, state2, mpos_w_edge);
 }
 
 Eigen::Tensor<cplx, 1> tools::finite::measure::expectation_values(const StateFinite &state, const Eigen::Tensor<cplx, 2> &op) {

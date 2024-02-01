@@ -211,6 +211,7 @@ void settings::load(Loader &dmrg_config) {
 
     //Parameters controlling finite-LBIT
     dmrg_config.load_parameter("flbit::on"                           , flbit::on);
+    dmrg_config.load_parameter("flbit::run_effective_model"          , flbit::run_effective_model);
     dmrg_config.load_parameter("flbit::max_iters"                    , flbit::max_iters);
     dmrg_config.load_parameter("flbit::min_iters"                    , flbit::min_iters);
     dmrg_config.load_parameter("flbit::use_swap_gates"               , flbit::use_swap_gates);

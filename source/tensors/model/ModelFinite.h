@@ -12,6 +12,8 @@
 class MpoSite;
 class TensorsFinite;
 class ModelLocal;
+enum  class CompressWithEdges {OFF, ON};
+
 class ModelFinite {
     private:
     friend TensorsFinite;
@@ -27,9 +29,7 @@ class ModelFinite {
         std::unordered_map<std::string, Eigen::Tensor<cplx_t, 4>> multisite_mpo_t_temps; // Keeps previous results for reuse
     };
     mutable Cache                       cache;
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos);
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos();
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos_squared();
+//    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos);
     void                                randomize();
     void                                clear_mpo_squared();
     bool                                has_mpo_squared() const;
@@ -67,6 +67,9 @@ class ModelFinite {
     void           compress_mpo();
     void           compress_mpo_squared();
 
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(CompressWithEdges withEdges = CompressWithEdges::OFF);
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos_squared(CompressWithEdges withEdges = CompressWithEdges::OFF);
+
     [[nodiscard]] bool                  is_shifted() const; // For shifted energy MPO's
     [[nodiscard]] bool                  is_compressed_mpo_squared() const;
     [[nodiscard]] double                get_energy_shift() const;
@@ -78,9 +81,9 @@ class ModelFinite {
     ModelLocal get_local() const;
 
     // For multisite
-    std::array<long, 4>             active_dimensions() const;
-    Eigen::Tensor<cplx, 4>          get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt,
-                                                      bool with_edgeL = false, bool with_edgeR = false) const;
+    std::array<long, 4>    active_dimensions() const;
+    Eigen::Tensor<cplx, 4> get_multisite_mpo(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt, bool with_edgeL = false,
+                                             bool with_edgeR = false) const;
     Eigen::Tensor<cplx_t, 4>        get_multisite_mpo_t(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt,
                                                         bool with_edgeL = false, bool with_edgeR = false) const;
     Eigen::Tensor<cplx, 2>          get_multisite_ham(const std::vector<size_t> &sites, std::optional<std::vector<size_t>> nbody = std::nullopt) const;

@@ -107,10 +107,10 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
      *
      */
     if constexpr(std::is_same_v<Scalar, cplx>) {
-        auto chiL   = multisite_mps.dimension(1);
-        auto chiR   = multisite_mps.dimension(2);
-        auto t_real = tid::tic_scope("isReal", tid::level::highest);
+        auto chiL = multisite_mps.dimension(1);
+        auto chiR = multisite_mps.dimension(2);
         if(chiL * chiR > 512 * 512 and tenx::isReal(multisite_mps)) {
+            auto t_real = tid::tic_scope("isReal", tid::level::highest);
             tools::log->info("Converting to real!");
             return split_mps<real>(multisite_mps.real(), spin_dims, positions, center_position, svd_cfg);
         }
@@ -123,7 +123,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         throw except::runtime_error("Could not split multisite tensor: size mismatch in given lists: spin_dims {} != positions {} -- sizes not equal",
                                     spin_dims, positions);
 
-    auto t_split = tid::tic_scope("split");
+    auto t_split = tid::tic_scope("split", tid::level::highest);
 
     // Set up the svd settings if not given explicitly
     if(not svd_cfg) svd_cfg = svd::config();
@@ -131,15 +131,15 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     if(not svd_cfg->switchsize_gesdd.has_value()) svd_cfg->switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     if(not svd_cfg->svd_save.has_value()) svd_cfg->svd_save = settings::solver::svd_save_fail ? svd::save::FAIL : svd::save::NONE;
 
-    // Split the multisite tensor at the given center position.
-    std::vector<size_t> positions_left, positions_right;
-    std::vector<long>   spin_dims_left, spin_dims_right;
-
     // Define dimensions and positions after the desired split
     long chiL = multisite_mps.dimension(1);
     long chiR = multisite_mps.dimension(2);
     long dL   = 1;
     long dR   = 1;
+
+    // Split the multisite tensor at the given center position.
+    std::vector<size_t> positions_left, positions_right;
+    std::vector<long>   spin_dims_left, spin_dims_right;
 
     auto pos_it = positions.begin();
     auto dim_it = spin_dims.begin();
@@ -155,6 +155,41 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
         pos_it++;
         dim_it++;
+    }
+
+    if(positions.size() == 1) {
+        auto t_short = tid::tic_scope("short", tid::level::highest);
+        auto svd = svd::solver();
+        // We can take a shortcut when given a multisite_mps with just a single site
+        auto d0  = multisite_mps.dimension(0);
+        auto d1  = multisite_mps.dimension(1);
+        auto d2  = multisite_mps.dimension(2);
+        auto pos = positions.front();
+        if(dL == spin_dims.front()) {
+            auto [U3, S1, V3] = svd.schmidt_multisite(multisite_mps, d0, 1, d1, d2, svd_cfg.value());
+            if(static_cast<long>(pos) == center_position) {
+                auto mps_site = MpsSite(U3, pos, "AC"); // Single site
+                mps_site.set_LC(S1, svd.get_truncation_error());
+                mps_site.stash_V(V3, pos + 1);
+                return {mps_site};
+            } else {
+                auto mps_site = MpsSite(U3, pos, "A"); // Single site
+                mps_site.stash_S(S1, svd.get_truncation_error(), pos + 1);
+                mps_site.stash_V(V3, pos + 1);
+                return {mps_site};
+            }
+
+        } else if(dR == spin_dims.front()) {
+            auto [U3, S1, V3] = svd.schmidt_multisite(multisite_mps, 1, d0, d1, d2, svd_cfg.value());
+            auto mps_site     = MpsSite(V3, positions.front(), "B"); // Single site
+            if(static_cast<long>(pos) == center_position + 1) {
+                mps_site.stash_C(S1, svd.get_truncation_error(), static_cast<size_t>(center_position)); // The site to the left is a center, S1 belongs to it
+            } else {
+                mps_site.stash_S(S1, svd.get_truncation_error(), pos - 1); // The site to the left is a B, S1 belongs to it
+            }
+            mps_site.stash_U(U3, pos - 1);
+            return {mps_site};
+        }
     }
 
     // Initialize the new mps_sites
@@ -177,7 +212,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     if(positions.size() == positions_left.size()) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 1");
-        auto t_o1    = tid::tic_scope("o1");
+        auto t_o1    = tid::tic_scope("o1", tid::level::highest);
         mps_sites_As = internal::split_mps_into_As(multisite_mps, spin_dims_left, positions_left, center_position, svd_cfg.value());
         // Remnant stash
         auto &mps     = mps_sites_As.back();
@@ -190,14 +225,13 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             auto &V_stash = mps.get_V_stash();
             if(V_stash) {
                 auto vdim = V_stash->data.dimensions();
-                if(vdim[0] * vdim[1] > vdim[2])
-                    tools::log->error("V_stash with dimensions {} for pos {} is not a diagonal matrix!", vdim, V_stash->pos_dst);
+                if(vdim[0] * vdim[1] > vdim[2]) tools::log->error("V_stash with dimensions {} for pos {} is not a diagonal matrix!", vdim, V_stash->pos_dst);
             }
         }
 
     } else if(positions.size() == positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 2 - sites {} become B's", positions);
-        auto t_o2    = tid::tic_scope("o2");
+        auto t_o2    = tid::tic_scope("o2", tid::level::highest);
         mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, center_position, svd_cfg.value());
         // Take care of stash
         auto &mps     = mps_sites_Bs.front();
@@ -217,22 +251,21 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
             S_stash.reset();
         } else if(U_stash) {
             auto udim = U_stash->data.dimensions();
-            if(udim[1] < udim[0] * udim[2])
-                tools::log->error("U_stash with dimensions {} for pos {} is not a diagonal matrix!", udim, U_stash->pos_dst);
+            if(udim[1] < udim[0] * udim[2]) tools::log->error("U_stash with dimensions {} for pos {} is not a diagonal matrix!", udim, U_stash->pos_dst);
         }
     } else if(positions.size() == 2 and positions_left.size() == 1 and positions_right.size() == 1) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 3");
-        auto t_o3 = tid::tic_scope("o3");
+        auto t_o3 = tid::tic_scope("o3", tid::level::highest);
         // Set up the SVD
         svd::solver svd(svd_cfg);
         std::tie(U, S, V) = svd.schmidt_multisite(multisite_mps, dL, dR, chiL, chiR);
-        mps_sites_As.emplace_back(U, std::nullopt, positions.front(), 0, "AC");
+        mps_sites_As.emplace_back(U, positions.front(), "AC");
         mps_sites_As.back().set_LC(S, svd.get_truncation_error());
-        mps_sites_Bs.emplace_back(V, std::nullopt, positions.back(), 0, "B");
+        mps_sites_Bs.emplace_back(V, positions.back(), "B");
 
     } else if(positions_left.size() >= positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 4");
-        auto t_o4    = tid::tic_scope("o4");
+        auto t_o4    = tid::tic_scope("o4", tid::level::highest);
         mps_sites_As = internal::split_mps_into_As(multisite_mps, spin_dims_left, positions_left, center_position, svd_cfg.value());
         // We expect stashed S and V. Merge these and send onward to B's
         auto &V_stash = mps_sites_As.back().get_V_stash();
@@ -255,7 +288,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         }
     } else if(positions_left.size() < positions_right.size()) {
         if constexpr(settings::debug_split) tools::log->trace("split: option 5");
-        auto t_o5    = tid::tic_scope("o5");
+        auto t_o5    = tid::tic_scope("o5", tid::level::highest);
         mps_sites_Bs = internal::split_mps_into_Bs(multisite_mps, spin_dims_right, positions_right, center_position, svd_cfg.value());
         // We expect stashed U and S. Merge these and send onward to A's
         auto &U_stash = mps_sites_Bs.front().get_U_stash();
@@ -388,12 +421,12 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
          */
 
         if(S_prev) {
-            auto t_sv = tid::tic_token("contract_sv");
+            auto t_sv = tid::tic_token("contract_sv", tid::level::highest);
             // Let V absorb S from the previous SVD (see note below)
             V = tools::common::contraction::contract_bnd_mps_temp(S_prev.value(), V, SV_temp);
         }
-        if(&spin_dim == &spin_dims.back()                            // Reached last site in spin_dims
-           and spin_dim == V.dimension(0)                            // V has one site left
+        if(&spin_dim == &spin_dims.back()                          // Reached last site in spin_dims
+           and spin_dim == V.dimension(0)                          // V has one site left
            and safe_cast<size_t>(center_position) > positions[idx] // Only needed when the site to the right is another A
         ) {
             // We reached the last site, and now V == L*GL, i.e. a theta with dim(0) == spin_dims.back().
@@ -421,8 +454,8 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
     // At the last step we have residual_norm S and V left over. Stash them!
     auto &mps = mps_sites.back();
     auto  pos = mps.get_position();
-    if(S_prev) mps.stash_S(S_prev.value().template cast<cplx>(), S_prev_error, pos + 1);
-    mps.stash_V(V.template cast<cplx>(), pos + 1);
+    if(S_prev) mps.stash_S(S_prev.value(), S_prev_error, pos + 1);
+    mps.stash_V(V, pos + 1);
     return mps_sites;
 }
 
@@ -508,13 +541,13 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
          */
 
         if(S_prev) {
-            auto t_sv = tid::tic_token("contract_us");
+            auto t_sv = tid::tic_token("contract_us", tid::level::highest);
             // Let U absorb S from the previous SVD (see note below)
             U = tools::common::contraction::contract_mps_bnd_temp(U, S_prev.value(), US_temp);
         }
-        if(&spin_dim == &spin_dims.front()                               // Reached the first site in spin_dims
-           and spin_dim == U.dimension(0)                                // U has one site left
-           and safe_cast<size_t>(center_position + 1)  < positions[idx] // Only needed if the site to the left would be another B.
+        if(&spin_dim == &spin_dims.front()                             // Reached the first site in spin_dims
+           and spin_dim == U.dimension(0)                              // U has one site left
+           and safe_cast<size_t>(center_position + 1) < positions[idx] // Only needed if the site to the left would be another B.
         ) {
             // We reached the first site, and now U == LG*L, i.e. a theta with dim(0) == spin_dims.front().
             // Make sure we don't over-truncate during this SVD, so that we keep the bond dimension compatible with the adjacent site to the left.
@@ -542,8 +575,8 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
     auto &mps = mps_sites.front();
     auto  pos = mps.get_position();
     if(pos > 0) { // More left-normalized sites left in U
-        if(S_prev) mps.stash_S(S_prev.value().template cast<cplx>(), S_prev_error, pos - 1);
-        mps.stash_U(U.template cast<cplx>(), pos - 1);
+        if(S_prev) mps.stash_S(S_prev.value(), S_prev_error, pos - 1);
+        mps.stash_U(U, pos - 1);
     }
     return mps_sites;
 }

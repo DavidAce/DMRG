@@ -66,7 +66,7 @@ void tools::finite::mps::init::set_midchain_singlet_neel_state(StateFinite &stat
     singlet_a.slice(std::array<long, 3>{0, 0, 1}, std::array<long, 3>{2, 1, 1}) = spinors[1];  // a_down
     singlet_b.slice(std::array<long, 3>{0, 0, 0}, std::array<long, 3>{2, 1, 1}) = spinors[1];  // b_down
     singlet_b.slice(std::array<long, 3>{0, 1, 0}, std::array<long, 3>{2, 1, 1}) = -spinors[0]; // b_up // Minus sign for singlet instead of triplet state
-    auto bitfield                                                               = get_bitfield(state, pattern);
+    auto bitfield                                                               = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length(), 0);
         for(auto &&[i, p] : iter::enumerate(bitfield)) {

@@ -587,7 +587,7 @@ std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_2site
 
 std::vector<Eigen::Tensor<cplx, 2>> qm::lbit::get_time_evolution_operators_3site(size_t sites, cplx_t delta_t,
                                                                                  const std::vector<Eigen::Tensor<cplx, 2>> &hams_3site) {
-    // In l-bit systems we are aldready in a diagonal basis, so h_{i,j,k} and h_{l,m,n} commute. Therefore we can immediately use the relation
+    // In l-bit systems we are aldready in a diagonal basis, so h_{i,j,k} and h_{l,m,n} commute. Therefore, we can immediately use the relation
     // exp(A + B) = exp(A)exp(B)
     // without passing through the Suzuki-Trotter decomposition.
 

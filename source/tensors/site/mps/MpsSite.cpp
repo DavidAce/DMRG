@@ -20,19 +20,40 @@ namespace settings {
 }
 
 MpsSite::MpsSite() = default;
-MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_) {
+
+template<typename T3, typename T1>
+requires is_valid_tensor3<T3> && is_valid_tensor1<T1>
+MpsSite::MpsSite(const T3 &M_, const T1 &L_, size_t pos, double error, std::string_view label_) {
     set_position(pos);
     set_label(label_);
     set_M(M_);
     set_L(L_);
     set_truncation_error(error);
 }
-MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_)
-    : MpsSite(Eigen::Tensor<cplx, 3>(M_.cast<cplx>()), Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), pos, error, label_) {}
-MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_)
-    : MpsSite(M_, Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), pos, error, label_) {}
+/* clang-format off */
+template MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &M_, const Eigen::TensorMap<Eigen::Tensor<real, 1>> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &M_, const Eigen::TensorMap<Eigen::Tensor<cplx, 1>> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &M_, const Eigen::TensorMap<Eigen::Tensor<real, 1>> &L_, size_t pos, double error, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &M_, const Eigen::TensorMap<Eigen::Tensor<cplx, 1>> &L_, size_t pos, double error, std::string_view label_);
+/* clang-format on */
 
-MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_) {
+template<typename T3>
+requires is_valid_tensor3<T3>
+MpsSite::MpsSite(const T3 &M_, size_t pos, std::string_view label_) {
+    set_position(pos);
+    set_label(label_);
+    set_M(M_);
+}
+template MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, size_t pos, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, size_t pos,std::string_view label_);
+template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &M_, size_t pos, std::string_view label_);
+template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &M_, size_t pos, std::string_view label_);
+
+MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, const std::optional<Eigen::Tensor<cplx, 1>> &L_, size_t pos, double error, std::string_view label_) {
     set_position(pos);
     set_label(label_);
     set_M(M_);
@@ -40,10 +61,10 @@ MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<c
     set_truncation_error(error);
 }
 
-MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<real, 1>> L_, size_t pos, double error, std::string_view label_) {
+MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, const std::optional<Eigen::Tensor<real, 1>> &L_, size_t pos, double error, std::string_view label_) {
     set_position(pos);
     set_label(label_);
-    set_M(M_.cast<cplx>());
+    set_M(M_);
     if(L_) set_L(L_.value());
     set_truncation_error(error);
 }
@@ -129,7 +150,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
         throw except::runtime_error("MpsSite::get_M_bare(): M has not been set at position {}", get_position());
 }
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
-    auto t_get = tid::tic_scope("get_M", tid::level::highest);
+//    auto t_get = tid::tic_scope("get_M", tid::level::highest);
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw except::runtime_error("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0),
@@ -230,38 +251,52 @@ void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx
 void MpsSite::set_mps(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, double error, std::string_view label_) {
     set_mps(M_, Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), error, label_);
 }
-void MpsSite::set_M(const Eigen::Tensor<cplx, 3> &M_) {
+
+template<typename T3>
+requires is_valid_tensor3<T3>
+void MpsSite::set_M(const T3 &M_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
     if(position) {
-        M = M_;
+        M         = Eigen::Tensor<cplx, 3>(); // Initialize std::optional
+        M.value() = M_.template cast<cplx>();
         MC.reset();
         unique_id = std::nullopt;
     } else
         throw std::runtime_error("MpsSite::set_M(const Eigen::Tensor<cplx, 3> &): Can't set M: Position hasn't been set yet");
 }
-void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &L_, double error /* Negative is ignored */) {
+template void MpsSite::set_M(const Eigen::Tensor<real, 3> &M_);
+template void MpsSite::set_M(const Eigen::Tensor<cplx, 3> &M_);
+template void MpsSite::set_M(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &M_);
+template void MpsSite::set_M(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &M_);
+
+template<typename T1>
+requires is_valid_tensor1<T1>
+void MpsSite::set_L(const T1 &L_, double error /* Negative is ignored */) {
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(L_).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_L(): Norm of L is too far from unity: {:.16f}", norm);
-        //            throw except::runtime_error("MpsSite::set_L(): Can't set L: Norm of L is too far from unity: {:.16f}", norm);
-        //        if(position and position.value() == 0 and get_label() != "B"){
-        //            if(L_.size() != 1) throw except::logic_error("Left edge L should have size 1");
-        //            if(std::abs(L_.coeff(0)) != 1.0) throw except::logic_error("Left edge L should be equal to 1");
-        //        }
     }
 
     if(position) {
         set_truncation_error(error);
-        L         = L_;
+        L         = Eigen::Tensor<cplx, 1>(); // Initialize std::optional
+        L.value() = L_.template cast<cplx>();
         unique_id = std::nullopt;
     } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
 }
-void MpsSite::set_L(const Eigen::Tensor<real, 1> &L_, double error) { set_L(Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), error); }
+template void MpsSite::set_L(const Eigen::Tensor<real, 1> &LC_, double error);
+template void MpsSite::set_L(const Eigen::Tensor<cplx, 1> &LC_, double error);
+template void MpsSite::set_L(const Eigen::TensorMap<Eigen::Tensor<real, 1>> &LC_, double error);
+template void MpsSite::set_L(const Eigen::TensorMap<Eigen::Tensor<cplx, 1>> &LC_, double error);
+
+// void MpsSite::set_L(const Eigen::Tensor<real, 1> &L_, double error) { set_L(Eigen::Tensor<cplx, 1>(L_.cast<cplx>()), error); }
 void MpsSite::set_L(const std::pair<Eigen::Tensor<cplx, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
 void MpsSite::set_L(const std::pair<Eigen::Tensor<real, 1>, double> &L_and_error) { set_L(L_and_error.first, L_and_error.second); }
 
-void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative is ignored */) {
+template<typename T1>
+requires is_valid_tensor1<T1>
+void MpsSite::set_LC(const T1 &LC_, double error /* Negative is ignored */) {
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(LC_).norm();
         if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_LC(): Norm of LC is too far from unity: {:.16f}", norm);
@@ -273,13 +308,19 @@ void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error /* Negative
     if(position) {
         set_label("AC");
         set_truncation_error_LC(error);
-        LC = LC_;
+        LC         = Eigen::Tensor<cplx, 1>();
+        LC.value() = LC_.template cast<cplx>();
         MC.reset();
         unique_id = std::nullopt;
     } else
         throw std::runtime_error("Can't set LC: Position hasn't been set yet");
 }
-void MpsSite::set_LC(const Eigen::Tensor<real, 1> &LC_, double error) { set_LC(Eigen::Tensor<cplx, 1>(LC_.cast<cplx>()), error); }
+template void MpsSite::set_LC(const Eigen::Tensor<real, 1> &LC_, double error);
+template void MpsSite::set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error);
+template void MpsSite::set_LC(const Eigen::TensorMap<Eigen::Tensor<real, 1>> &LC_, double error);
+template void MpsSite::set_LC(const Eigen::TensorMap<Eigen::Tensor<cplx, 1>> &LC_, double error);
+
+// void MpsSite::set_LC(const Eigen::Tensor<real, 1> &LC_, double error) { set_LC(Eigen::Tensor<cplx, 1>(LC_.cast<cplx>()), error); }
 void MpsSite::set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
 void MpsSite::set_LC(const std::pair<Eigen::Tensor<real, 1>, double> &LC_and_error) { set_LC(LC_and_error.first, LC_and_error.second); }
 
@@ -316,7 +357,7 @@ void MpsSite::unset_L() {
 }
 
 void MpsSite::fuse_mps(const MpsSite &other) {
-    auto t_fuse = tid::tic_scope("fuse", tid::level::highest);
+//    auto t_fuse = tid::tic_scope("fuse", tid::level::highest);
     // This operation is done when merging mps after an svd split, for instance
     auto tag  = get_tag();       // tag, (example: A[3])
     auto otag = other.get_tag(); // other tag, (example: AC[3])
@@ -395,11 +436,6 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
         throw std::runtime_error("L_temp is wrong: This may be due to the broadcasting bug: https://gitlab.com/libeigen/eigen/-/issues/2351");
     }
 
-    if(isCenter()) {
-        Eigen::Tensor<cplx, 1> LC_temp = tenx::broadcast(get_LC(), {mpoDimR});
-        tenx::normalize(LC_temp);
-        set_LC(LC_temp);
-    }
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     if(adjoint) {
         M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
@@ -412,9 +448,14 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
                                                              .shuffle(tenx::array5{4, 0, 2, 1, 3})
                                                              .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     }
-
+    if(isCenter()) {
+        Eigen::Tensor<cplx, 1> LC_temp = tenx::broadcast(get_LC(), {mpoDimR});
+        tenx::normalize(LC_temp);
+        set_LC(LC_temp);
+    }
     set_L(L_temp);
     set_M(M_bare_temp);
+
     if constexpr(settings::verbose_apply_mpo) {
         tools::log->trace("L({}) after:\n{}\n", get_position(), linalg::tensor::to_string(get_L(), 4, 6));
         tools::log->trace("M({}) after:\n{}\n", get_position(), linalg::tensor::to_string(get_M_bare(), 4, 6));
@@ -434,16 +475,52 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint) {
     set_M(M_bare_temp);
 }
 
-void MpsSite::stash_U(const Eigen::Tensor<cplx, 3> &U, size_t dst) const { U_stash = stash<Eigen::Tensor<cplx, 3>>{U, 0, dst}; }
-void MpsSite::stash_S(const Eigen::Tensor<cplx, 1> &S, double error, size_t dst) const { S_stash = stash<Eigen::Tensor<cplx, 1>>{S, error, dst}; }
+template<typename T3>
+requires is_valid_tensor3<T3>
+void MpsSite::stash_U(const T3 &U, size_t dst) const {
+    U_stash = stash<Eigen::Tensor<cplx, 3>>{.data = U.template cast<cplx>(), .error = 0, .pos_dst = dst};
+}
+template void MpsSite::stash_U(const Eigen::Tensor<cplx, 3> &U, size_t dst) const;
+template void MpsSite::stash_U(const Eigen::Tensor<real, 3> &U, size_t dst) const;
+template void MpsSite::stash_U(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &U, size_t dst) const;
+template void MpsSite::stash_U(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &U, size_t dst) const;
+
+template<typename T1>
+requires is_valid_tensor1<T1>
+void MpsSite::stash_S(const T1 &S, double error, size_t dst) const {
+    S_stash = stash<Eigen::Tensor<cplx, 1>>{.data = S.template cast<cplx>(), .error = error, .pos_dst = dst};
+}
+template void MpsSite::stash_S(const Eigen::Tensor<cplx, 1> &S, double error, size_t dst) const;
+template void MpsSite::stash_S(const Eigen::Tensor<real, 1> &S, double error, size_t dst) const;
+template void MpsSite::stash_S(const Eigen::TensorMap<Eigen::Tensor<cplx, 1>> &S, double error, size_t dst) const;
+template void MpsSite::stash_S(const Eigen::TensorMap<Eigen::Tensor<real, 1>> &S, double error, size_t dst) const;
+
+template<typename T1>
+requires is_valid_tensor1<T1>
+void MpsSite::stash_C(const T1 &C, double error, size_t dst) const {
+    C_stash = stash<Eigen::Tensor<cplx, 1>>{.data = C.template cast<cplx>(), .error = error, .pos_dst = dst};
+}
+template void MpsSite::stash_C(const Eigen::Tensor<cplx, 1> &S, double error, size_t dst) const;
+template void MpsSite::stash_C(const Eigen::Tensor<real, 1> &S, double error, size_t dst) const;
+template void MpsSite::stash_C(const Eigen::TensorMap<Eigen::Tensor<cplx, 1>> &S, double error, size_t dst) const;
+template void MpsSite::stash_C(const Eigen::TensorMap<Eigen::Tensor<real, 1>> &S, double error, size_t dst) const;
+
 void MpsSite::stash_S(const std::pair<Eigen::Tensor<cplx, 1>, double> &S_and_error, size_t dst) const {
     S_stash = stash<Eigen::Tensor<cplx, 1>>{S_and_error.first, S_and_error.second, dst};
 }
-void MpsSite::stash_C(const Eigen::Tensor<cplx, 1> &C, double error, size_t dst) const { C_stash = stash<Eigen::Tensor<cplx, 1>>{C, error, dst}; }
 void MpsSite::stash_C(const std::pair<Eigen::Tensor<cplx, 1>, double> &C_and_error, size_t dst) const {
     C_stash = stash<Eigen::Tensor<cplx, 1>>{C_and_error.first, C_and_error.second, dst};
 }
-void MpsSite::stash_V(const Eigen::Tensor<cplx, 3> &V, size_t dst) const { V_stash = stash<Eigen::Tensor<cplx, 3>>{V, 0, dst}; }
+
+template<typename T3>
+requires is_valid_tensor3<T3>
+void MpsSite::stash_V(const T3 &V, size_t dst) const {
+    V_stash = stash<Eigen::Tensor<cplx, 3>>{.data = V.template cast<cplx>(), .error = 0, .pos_dst = dst};
+}
+template void MpsSite::stash_V(const Eigen::Tensor<cplx, 3> &V, size_t dst) const;
+template void MpsSite::stash_V(const Eigen::Tensor<real, 3> &V, size_t dst) const;
+template void MpsSite::stash_V(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &V, size_t dst) const;
+template void MpsSite::stash_V(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &V, size_t dst) const;
 
 std::optional<stash<Eigen::Tensor<cplx, 3>>> &MpsSite::get_U_stash() const { return U_stash; }
 std::optional<stash<Eigen::Tensor<cplx, 1>>> &MpsSite::get_S_stash() const { return S_stash; }
@@ -489,7 +566,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
-        auto t_stash = tid::tic_token("take_stash_V", tid::level::highest);
+//        auto t_stash = tid::tic_token("take_stash_V", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking V stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.V_stash->data.dimensions());
@@ -525,7 +602,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  Here we simply set it as the new L of this site.
          */
 
-        auto t_stash = tid::tic_token("take_stash_U", tid::level::highest);
+//        auto t_stash = tid::tic_token("take_stash_U", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking U stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.U_stash->data.dimensions());
@@ -556,7 +633,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
-        auto t_stash = tid::tic_token("take_stash_S", tid::level::highest);
+//        auto t_stash = tid::tic_token("take_stash_S", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking S stash from {} | L dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(), other.get_tag(), L->size(),
                               other.S_stash->data.size(), get_truncation_error(), other.S_stash->error);
@@ -569,7 +646,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
-        auto t_stash = tid::tic_token("take_stash_C", tid::level::highest);
+//        auto t_stash = tid::tic_token("take_stash_C", tid::level::highest);
         if constexpr(settings::verbose_merge) tools::log->trace("MpsSite({})::take_stash: Taking C stash from {}", get_tag(), other.get_tag());
         if(label == "B")
             tools::log->warn("MpsSite({})::take_stash: Taking C_stash to set LC on B-site | LC dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(),

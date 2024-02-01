@@ -624,8 +624,18 @@ def get_batch_setup(projectname):
                     'time_steps': 200,
                 },
                 'L14': {
-                    'seed_extent': [5000],
+                    'seed_extent': [10000],
                     'seed_offset': [14000000],
+                    'time_steps': 200,
+                },
+                'L16': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16000000],
+                    'time_steps': 200,
+                },
+                'L20': {
+                    'seed_extent': [10000],
+                    'seed_offset': [20000000],
                     'time_steps': 200,
                 },
             }

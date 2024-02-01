@@ -443,7 +443,7 @@ std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite
     // to the original position.
     //    if(state.get_direction() < 0 and past_middle) state.flip_direction(); // Turn direction away from middle
     //    if(state.get_direction() > 0 and not past_middle) state.flip_direction(); // Turn direction away from middle
-    auto                                          t_gen     = tid::tic_scope("gen_gate_seq");
+    auto                                          t_gen     = tid::tic_scope("gen_gate_seq", tid::level::highest);
     auto                                          state_len = state.get_length<long>();
     auto                                          state_pos = state.get_position<long>();
     std::vector<std::vector<std::vector<size_t>>> layers; // Layer --> group --> idx
@@ -551,7 +551,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
      */
 
     {
-        auto        t_apply = tid::tic_token("apply");
+        auto        t_apply = tid::tic_token("apply", tid::level::highest);
         const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
         temp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
         temp.device(tenx::threads::getDevice()) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));

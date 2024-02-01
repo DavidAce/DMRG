@@ -16,6 +16,13 @@ namespace qm {
 
 /* clang-format off */
 class StateFinite;
+enum class BitOrder {AsIs, Reverse};
+namespace tools{
+    extern std::string get_bitfield(size_t nbits, const std::string &pattern, BitOrder bitOrder = BitOrder::AsIs);
+    extern std::string get_bitfield(size_t nbits, size_t pattern, BitOrder bitOrder = BitOrder::AsIs);
+}
+
+
 namespace tools::finite::mps {
     using cplx = std::complex<double>;
     extern size_t move_center_point_single_site      (StateFinite & state, std::optional<svd::config> svd_cfg = std::nullopt);
@@ -47,7 +54,6 @@ namespace tools::finite::mps {
         inline std::set<size_t> used_bitfields;
         extern bool bitfield_is_valid (size_t bitfield);
         extern std::vector<long> get_valid_bond_dimensions(size_t sizeplusone, long spin_dim, long bond_lim);
-        extern std::string get_bitfield(const StateFinite &state, const std::string &pattern);
 
         extern void random_product_state        (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, std::string &pattern);
         extern void random_entangled_state      (StateFinite & state, StateInitType type, std::string_view axis, bool use_eigenspinors, long bond_lim);

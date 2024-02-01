@@ -1,5 +1,6 @@
 #include "../svd.h"
 #include "debug/exceptions.h"
+#include "math/num.h"
 #include "tid/tid.h"
 #include <complex>
 #include <csignal>
@@ -31,24 +32,24 @@ namespace svd {
 #endif
 }
 
-namespace svd {
-
-    namespace internal {
-        // These are workspace arrays used by LAPACK which can be reused for the duration of the program.
-        // Call clear() to recover the memory space
-        std::vector<int>                  iwork;
-        std::vector<std::complex<double>> cwork;
-        std::vector<double>               rwork;
-        void                              clear_lapack() {
-            iwork = std::vector<int>();
-            cwork = std::vector<std::complex<double>>();
-            rwork = std::vector<double>();
-            iwork.shrink_to_fit();
-            cwork.shrink_to_fit();
-            rwork.shrink_to_fit();
-        }
-    }
-}
+// namespace svd {
+//
+//     namespace internal {
+//         // These are workspace arrays used by LAPACK which can be reused for the duration of the program.
+//         // Call clear() to recover the memory space
+//         std::vector<int>                  iwork;
+//         std::vector<std::complex<double>> cwork;
+//         std::vector<double>               rwork;
+//         void                              clear_lapack() {
+//             iwork = std::vector<int>();
+//             cwork = std::vector<std::complex<double>>();
+//             rwork = std::vector<double>();
+//             iwork.shrink_to_fit();
+//             cwork.shrink_to_fit();
+//             rwork.shrink_to_fit();
+//         }
+//     }
+// }
 
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows,
@@ -60,25 +61,25 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
     if(rows < cols and (svd_rtn == rtn::gejsv or svd_rtn == rtn::gesvj)) {
         // The jacobi routines needs a tall matrix
-        auto t_adj = tid::tic_token("adjoint", tid::highest);
+        //        auto t_adj = tid::tic_token("adjoint", tid::highest);
         svd::log->trace("Transposing {}x{} into a tall matrix {}x{}", rows, cols, cols, rows);
         MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
         A.adjointInPlace(); // Adjoint directly on a map seems to give a bug?
         // Sanity checks
-        if(A.rows() <= 0) throw std::logic_error("SVD error: rows() == 0");
-        if(A.cols() <= 0) throw std::logic_error("SVD error: cols() == 0");
+        assert(A.rows() > 0);
+        assert(A.cols() > 0);
 
-        t_adj.toc();
+        //        t_adj.toc();
         auto [U, S, VT] = do_svd_lapacke(A.data(), A.rows(), A.cols());
-        if(U.rows() != A.rows()) throw except::logic_error("U.rows():{} != A.rows():{}", U.rows(), A.rows());
-        if(VT.cols() != A.cols()) throw except::logic_error("VT.cols():{} != A.cols():{}", VT.cols(), A.cols());
+        assert(U.rows() != A.rows());
+        assert(VT.cols() != A.cols());
         return std::make_tuple(VT.adjoint(), S, U.adjoint());
     }
-    auto t_lpk = tid::tic_scope("lapacke", tid::highest);
+    //    auto t_lpk = tid::tic_scope("lapacke", tid::highest);
 
     // Sanity checks
-    if(rows <= 0) throw std::logic_error("SVD error: rows() <= 0");
-    if(cols <= 0) throw std::logic_error("SVD error: cols() <= 0");
+    assert(rows > 0);
+    assert(cols > 0);
 
     MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols); // gets destroyed in some routines
     if(svd_save != svd::save::NONE) save_svd(A);
@@ -111,17 +112,23 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     int         mx = std::max(rowsA, colsA);
     int         mn = std::min(rowsA, colsA);
     std::string errmsg;
+    //    auto t_pre = tid::tic_scope("preamble", tid::highest);
+
     try {
         // Sanity checks
-        if constexpr(!ndebug)
+        if constexpr(!ndebug) {
             if(A.isZero(1e-16)) svd::log->warn("Lapacke SVD: A is a zero matrix");
-        if(not A.allFinite()) {
-            print_matrix(A.data(), A.rows(), A.cols());
-            throw std::runtime_error("A has inf's or nan's");
+            if(not A.allFinite()) {
+                print_matrix(A.data(), A.rows(), A.cols());
+                throw std::runtime_error("A has inf's or nan's");
+            }
         }
+
         using namespace svd::internal;
         if constexpr(std::is_same<Scalar, double>::value) {
-            auto t_svd = tid::tic_token(fmt::format("d{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
+            //            auto t_svd = tid::tic_token(fmt::format("d{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
+            std::vector<int>                  iwork;
+            std::vector<double>               rwork;
             if constexpr(!ndebug)
                 svd::log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
                                 switchsize_gesdd, sizeS);
@@ -197,9 +204,9 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     lrwork = safe_cast<int>(rwork[0]);
                     rwork.resize(safe_cast<size_t>(std::max(1, lrwork)));
 
-                    auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix), tid::highest);
-                    info       = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
-                                                     lrwork, iwork.data());
+                    //                    auto t_sdd = tid::tic_token(fmt::format("dgesdd{}", t_suffix), tid::highest);
+                    info = LAPACKE_dgesdd_work(LAPACK_COL_MAJOR, 'S', rowsA, colsA, A.data(), lda, S.data(), U.data(), ldu, VT.data(), ldvt, rwork.data(),
+                                               lrwork, iwork.data());
                     if(info < 0) throw except::runtime_error("Lapacke SVD dgesdd error: parameter {} is invalid", info);
                     if(info > 0) throw except::runtime_error("Lapacke SVD dgesdd error: could not converge: info {}", info);
                     break;
@@ -256,7 +263,10 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             if(info < 0) throw except::runtime_error("Lapacke SVD d{} error: parameter {} is invalid", enum2sv(svd_rtn), info);
             if(info > 0) throw except::runtime_error("Lapacke SVD d{} error: could not converge: info {}", enum2sv(svd_rtn), info);
         } else if constexpr(std::is_same<Scalar, std::complex<double>>::value) {
-            auto t_svd = tid::tic_token(fmt::format("z{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
+            //            auto t_svd = tid::tic_token(fmt::format("z{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
+            std::vector<int>                  iwork;
+            std::vector<std::complex<double>> cwork;
+            std::vector<double>               rwork;
             if constexpr(!ndebug)
                 svd::log->debug("Running Lapacke z{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
                                 switchsize_gesdd, sizeS);
@@ -459,22 +469,17 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                                     "  Error message    : {}\n",
                                     S, truncation_error, rank, rows, cols, info, ex.what());
     }
-    // TODO: REMOVE THE SCOPE BELOW!
-    //    if(std::min({rows, cols}) >= 2000) {
-    //        svd::log->info("Dims ({},{}) | rank {} | discarded {} | norm {}", rows, cols, rank, std::min({rows, cols}) - rank, S.norm());
-    ////        saveMetaData.U                = U;
-    //        saveMetaData.S                = S;
-    ////        saveMetaData.VT               = VT;
-    //        saveMetaData.rank             = rank;
-    //        saveMetaData.truncation_error = truncation_error;
-    //        saveMetaData.info             = info;
-    //        save_svd();
-    //    }
-    save_svd<Scalar>(U, S, VT, info);
-    saveMetaData = svd::internal::SaveMetaData{}; // Clear
-    svd::log->trace(
-        "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
-        truncation_lim, rank, rank_max, rows, cols, truncation_error, t_lpk->get_last_interval());
+
+    if(svd_save != save::NONE) {
+        save_svd<Scalar>(U, S, VT, info);
+        saveMetaData = svd::internal::SaveMetaData{}; // Clear
+    }
+    if(svd::log->level() == spdlog::level::trace)
+        svd::log->trace(
+            "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
+            truncation_lim, rank, rank_max, rows, cols, truncation_error, 0.0
+            //            t_lpk->get_last_interval()
+        );
     return std::make_tuple(U, S, VT);
 }
 using real = double;

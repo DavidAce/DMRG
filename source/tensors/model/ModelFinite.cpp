@@ -12,6 +12,7 @@
 #include "qm/spin.h"
 #include "tensors/site/mpo/MpoFactory.h"
 #include "tid/tid.h"
+#include "tools/finite/mpo.h"
 #include "tools/finite/multisite.h"
 
 namespace settings {
@@ -192,226 +193,41 @@ bool ModelFinite::has_mpo_squared() const {
     return std::all_of(MPO.begin(), MPO.end(), [](const auto &mpo) { return mpo->has_mpo_squared(); });
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos(std::vector<Eigen::Tensor<cplx, 4>> mpos) {
-    tools::log->trace("Compressing MPOs: {} sites", mpos.size());
-    //    std::vector<Eigen::Tensor<cplx, 4>> mpos_compressed = mpos;
-
-    // Setup SVD
-    // Here we need a lot of precision:
-    //  - Use very low svd threshold
-    //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
-    //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
-    // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
-    // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
-    auto svd_cfg    = svd::config();
-    svd_cfg.svd_lib = svd::lib::lapacke;
-    svd_cfg.svd_rtn = svd::rtn::gejsv;
-
-    svd::solver svd(svd_cfg);
-
-    // Print the results
-    std::vector<std::string> report;
-    if(tools::log->level() == spdlog::level::trace)
-        for(const auto &mpo : mpos) report.emplace_back(fmt::format("{}", mpo.dimensions()));
-
-    for(size_t iter = 0; iter < 4; iter++) {
-        // Next compress from left to right
-        Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
-        Eigen::Tensor<cplx, 4> T_mpo;
-        for(auto &&[idx, mpo] : iter::enumerate(mpos)) {
-            auto mpo_sq_dim_old = mpo.dimensions();
-            if(T_l2r.size() == 0)
-                T_mpo = mpo;
-            else
-                T_mpo = T_l2r.contract(mpo, tenx::idx({1}, {0}));
-
-            if(idx == mpos.size() - 1) {
-                mpo = T_mpo;
-            } else {
-                std::tie(mpo, T_l2r) = svd.split_mpo_l2r(T_mpo);
-                if(idx + 1 == mpos.size())
-                    // The remaining transfer matrix T can be multiplied back into the last MPO from the right
-                    mpo = Eigen::Tensor<cplx, 4>(mpo.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}));
-            }
-            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo.dimensions());
-        }
-
-        // Now we have done left to right. Next we do right to left
-        Eigen::Tensor<cplx, 2> T_r2l; // Transfer matrix
-        Eigen::Tensor<cplx, 4> mpo_T; // Absorbs transfer matrix
-        for(auto &&[idx, mpo] : iter::enumerate_reverse(mpos)) {
-            auto mpo_dim_old = mpo.dimensions();
-            if(T_r2l.size() == 0)
-                mpo_T = mpo;
-            else
-                mpo_T = mpo.contract(T_r2l, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
-            if(idx == 0) {
-                mpo = mpo_T;
-            } else {
-                std::tie(T_r2l, mpo) = svd.split_mpo_r2l(mpo_T);
-                if(idx == 0)
-                    // The remaining transfer matrix T can be multiplied back into the first MPO from the left
-                    mpo = Eigen::Tensor<cplx, 4>(T_r2l.contract(mpo, tenx::idx({1}, {0})));
-            }
-            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_dim_old, mpo.dimensions());
-        }
-    }
-
-    // Print the results
-    if(tools::log->level() == spdlog::level::trace)
-        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo {}: {} -> {}", idx, msg, mpos[idx].dimensions());
-
-    return mpos;
-}
-
-std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos() {
-    tools::log->trace("Compressing MPO: {} sites", MPO.size());
+std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos(CompressWithEdges withEdges) {
+    tools::log->trace("Compressing MPO: {} sites | with edges {}", MPO.size(), static_cast<std::underlying_type_t<CompressWithEdges>>(withEdges));
     // Collect all the mpo (doesn't matter if they are already compressed)
     std::vector<Eigen::Tensor<cplx, 4>> mpos;
     mpos.reserve(MPO.size());
     for(const auto &mpo : MPO) mpos.emplace_back(mpo->MPO());
-    return get_compressed_mpos(mpos);
+    switch(withEdges) {
+        case CompressWithEdges::OFF: return tools::finite::mpo::get_compressed_mpos(mpos);
+        case CompressWithEdges::ON: {
+            auto ledge = MPO.front()->get_MPO_edge_left();
+            auto redge = MPO.back()->get_MPO_edge_right();
+            return tools::finite::mpo::get_compressed_mpos(mpos, ledge, redge);
+        }
+        default: throw except::runtime_error("Unrecognized enum value <CompressWithEdges>: {}", static_cast<std::underlying_type_t<CompressWithEdges>>(withEdges));
+    }
 }
 
-std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared() {
-    tools::log->trace("Compressing MPO²: {} sites", MPO.size());
+std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_compressed_mpos_squared(CompressWithEdges withEdges) {
+    tools::log->trace("Compressing MPO²: {} sites | with edges {}", MPO.size(), static_cast<std::underlying_type_t<CompressWithEdges>>(withEdges));
     if(not has_mpo_squared()) build_mpo_squared(); // Make sure they exist.
     // Collect all the mpo² (doesn't matter if they are already compressed)
     std::vector<Eigen::Tensor<cplx, 4>> mpos_sq;
     mpos_sq.reserve(MPO.size());
     for(const auto &mpo : MPO) mpos_sq.emplace_back(mpo->MPO2());
-    return get_compressed_mpos(mpos_sq);
-
-    // Setup SVD
-    // Here we need a lot of precision:
-    //  - Use very low svd threshold
-    //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
-    //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
-    // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
-    // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
-
-    //    auto svd_cfg    = svd::config();
-    //    svd_cfg.svd_lib = svd::lib::lapacke;
-    //    svd_cfg.svd_rtn = svd::rtn::gejsv;
-    //
-    //    svd::solver svd(svd_cfg);
-    //
-    //    // Print the results
-    //    std::vector<std::string> report;
-    //    if(tools::log->level() == spdlog::level::trace)
-    //        for(const auto &mpo : mpos_sq) report.emplace_back(fmt::format("{}", mpo.dimensions()));
-    //
-    //    for(size_t iter = 0; iter < 4; iter++) {
-    //        // Next compress from left to right
-    //        Eigen::Tensor<cplx, 2> T_l2r; // Transfer matrix
-    //        Eigen::Tensor<cplx, 4> T_mpo_sq;
-    //        for(auto &&[idx, mpo_sq] : iter::enumerate(mpos_sq)) {
-    //            auto mpo_sq_dim_old = mpo_sq.dimensions();
-    //            if(T_l2r.size() == 0)
-    //                T_mpo_sq = mpo_sq;
-    //            else
-    //                T_mpo_sq = T_l2r.contract(mpo_sq, tenx::idx({1}, {0}));
-    //
-    //            if(idx == mpos_sq.size() - 1) {
-    //                mpo_sq = T_mpo_sq;
-    //            } else {
-    //                std::tie(mpo_sq, T_l2r) = svd.split_mpo_l2r(T_mpo_sq);
-    //                if(idx + 1 == mpos_sq.size())
-    //                    // The remaining transfer matrix T can be multiplied back into the last MPO from the right
-    //                    mpo_sq = Eigen::Tensor<cplx, 4>(mpo_sq.contract(T_l2r, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}));
-    //            }
-    //            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
-    //        }
-    //
-    //        // Now we have done left to right. Next we do right to left
-    //        Eigen::Tensor<cplx, 2> T_r2l;    // Transfer matrix
-    //        Eigen::Tensor<cplx, 4> mpo_sq_T; // Absorbs transfer matrix
-    //        for(auto &&[idx, mpo_sq] : iter::enumerate_reverse(mpos_sq)) {
-    //            auto mpo_sq_dim_old = mpo_sq.dimensions();
-    //            if(T_r2l.size() == 0)
-    //                mpo_sq_T = mpo_sq;
-    //            else
-    //                mpo_sq_T = mpo_sq.contract(T_r2l, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
-    //            if(idx == 0) {
-    //                mpo_sq = mpo_sq_T;
-    //            } else {
-    //                std::tie(T_r2l, mpo_sq) = svd.split_mpo_r2l(mpo_sq_T);
-    //                if(idx == 0)
-    //                    // The remaining transfer matrix T can be multiplied back into the first MPO from the left
-    //                    mpo_sq = Eigen::Tensor<cplx, 4>(T_r2l.contract(mpo_sq, tenx::idx({1}, {0})));
-    //            }
-    //            if constexpr(settings::debug) tools::log->trace("iter {} | idx {} | dim {} -> {}", iter, idx, mpo_sq_dim_old, mpo_sq.dimensions());
-    //        }
-    //    }
-    //
-    //    // Print the results
-    //    if(tools::log->level() == spdlog::level::trace)
-    //        for(const auto &[idx, msg] : iter::enumerate(report)) tools::log->debug("mpo² {}: {} -> {}", idx, msg, mpos_sq[idx].dimensions());
-    //
-    //    return mpos_sq;
+    switch(withEdges) {
+        case CompressWithEdges::OFF: return tools::finite::mpo::get_compressed_mpos(mpos_sq); break;
+        case CompressWithEdges::ON: {
+            auto ledge = MPO.front()->get_MPO2_edge_left();
+            auto redge = MPO.back()->get_MPO2_edge_right();
+            return tools::finite::mpo::get_compressed_mpos(mpos_sq, ledge, redge);
+            break;
+        }
+        default: throw except::runtime_error("Unrecognized enum value <CompressWithEdges>: {}", static_cast<std::underlying_type_t<CompressWithEdges>>(withEdges));
+    }
 }
-
-// std::vector<Eigen::Tensor<cplx, 4>> ModelFinite::get_sqrt_mpo_squared() {
-//     if(is_compressed_mpo_squared()) throw except::logic_error("Can only take sqrt of non-compressed MPO²");
-//     tools::log->trace("Taking square root of MPO²: {} sites", MPO.size());
-//
-//     // Setup SVD
-//     // Here we need a lot of precision:
-//     //  - Use very low svd threshold
-//     //  - Force the use of JacobiSVD by setting the switchsize_bdc to something large
-//     //  - Force the use of Lapacke -- it is more precise than Eigen (I don't know why)
-//     auto svd_cfg = svd::config();
-//     // Eigen Jacobi becomes ?gesvd (i.e. using QR) with the BLAS backend.
-//     // See here: https://eigen.tuxfamily.org/bz/show_bug.cgi?id=1732
-//     svd_cfg.svd_lib        = svd::lib::lapacke;
-//     svd_cfg.switchsize_bdc = 4096;
-//     svd_cfg.use_bdc        = false;
-//
-//     svd::solver svd(svd_cfg);
-//
-//     // Setup EIG
-//     auto solver = eig::solver();
-//
-//     // Allocate resulting sqrt mpo²
-//     std::vector<Eigen::Tensor<cplx, 4>> mpos_squared_sqrt;
-//     mpos_squared_sqrt.reserve(MPO.size());
-//
-//     for(const auto &[pos, mpo] : iter::enumerate(MPO)) {
-//         const auto &d = mpo->MPO().dimensions();
-//         // Set up the re-shape and shuffles to convert mpo² to a rank2-tensor
-//         auto shf6 = std::array<long, 6>{0, 2, 4, 1, 3, 5};
-//         auto shp6 = std::array<long, 6>{d[0], d[0], d[1], d[1], d[2], d[3]};
-//         auto shp2 = std::array<long, 2>{d[0] * d[1] * d[2], d[0] * d[1] * d[3]};
-//         auto shp4 = std::array<long, 4>{d[0] * d[0], d[1] * d[1], d[2], d[3]};
-//
-//         Eigen::Tensor<cplx, 2> mpo_squared_matrix = mpo->MPO2().reshape(shp6).shuffle(shf6).reshape(shp2);
-//
-//         auto [U, S, VT] = svd.decompose(mpo_squared_matrix);
-//         shf6            = {0, 3, 1, 4, 2, 5};
-//         shp6            = {d[0], d[1], d[2], d[0], d[1], d[3]};
-//
-//         Eigen::Tensor<cplx, 4> mpo_squared_sqrt =
-//             U.contract(tenx::asDiagonal(S.sqrt()), tenx::idx({1}, {0})).contract(VT, tenx::idx({1}, {0})).reshape(shp6).shuffle(shf6).reshape(shp4);
-//         mpos_squared_sqrt.emplace_back(mpo_squared_sqrt);
-//
-//         solver.eig<eig::Form::SYMM>(mpo_squared_matrix.data(), mpo_squared_matrix.dimension(0), eig::Vecs::ON);
-//         auto D           = tenx::TensorCast(eig::view::get_eigvals<real>(solver.result).cast<cplx>());
-//         auto V           = tenx::TensorCast(eig::view::get_eigvecs<cplx>(solver.result));
-//         mpo_squared_sqrt = V.contract(tenx::asDiagonal(D.sqrt()), tenx::idx({1}, {0}))
-//                                .contract(V.shuffle(std::array<long, 2>{1, 0}), tenx::idx({1}, {0}))
-//                                .reshape(shp6)
-//                                .shuffle(shf6)
-//                                .reshape(shp4);
-//
-//         Eigen::Tensor<double,1> S_real = S.real();
-//         Eigen::Tensor<double,1> D_real = D.real();
-//         tools::log->info("mpo²[{}] svds: {:8.4e}", safe_cast<long>(pos), fmt::join(tenx::span(S_real),", "));
-//         tools::log->info("mpo²[{}] eigv: {:8.4e}", safe_cast<long>(pos), fmt::join(tenx::span(D_real),", "));
-//         mpos_squared_sqrt.emplace_back(mpo_squared_sqrt);
-//     }
-//
-//     return mpos_squared_sqrt;
-// }
 
 void ModelFinite::set_energy_shift(double total_energy) { set_energy_shift_per_site(total_energy / static_cast<double>(get_length())); }
 
@@ -796,25 +612,25 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
         return get_multisite_mpo(sites, nbody, true, true).reshape(dim2);
     } else {
         // When there are many sites, it's beneficial to split sites into two equal chunks and then merge them (because edgeL/edgeR makes them small)
-        auto half      = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
-        auto sitesL    = std::vector<size_t>(sites.begin(), sites.begin() + half);
-        auto sitesR    = std::vector<size_t>(sites.begin() + half, sites.end());
-//        long spin_dimL = 1;
-//        long spin_dimR = 1;
-//        for(const auto &pos : sitesL) { spin_dimL *= get_mpo(pos).get_spin_dimension(); }
-//        for(const auto &pos : sitesR) { spin_dimR *= get_mpo(pos).get_spin_dimension(); }
-//        auto dimL = tenx::array2{spin_dimL * spin_dimL, get_mpo(sitesL.back()).MPO().dimension(1)};
-//        auto dimR = tenx::array2{get_mpo(sitesR.front()).MPO().dimension(0), spin_dimR * spin_dimR};
-//        auto shf6 = tenx::array6{0, 3, 1, 4, 2, 5};
-//        // For dim6, recall that mpoL is shuffled, so these dimensions are not the usual ones.
-//        auto dims_L_front = get_mpo(sitesL.front()).MPO().dimensions();
-//        auto dims_R_back  = get_mpo(sitesR.back()).MPO().dimensions();
-//        auto dim6         = tenx::array6{1, spin_dimL, spin_dimL, 1, spin_dimR, spin_dimR};
-
-        auto mpoL  = get_multisite_mpo(sitesL, nbody, true, false); // Shuffle so we can use GEMM
-        auto mpoR  = get_multisite_mpo(sitesR, nbody, false, true);
-        auto mpoLR = tenx::gemm_mpo(mpoL, mpoR);
+        auto half   = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
+        auto sitesL = std::vector<size_t>(sites.begin(), sites.begin() + half);
+        auto sitesR = std::vector<size_t>(sites.begin() + half, sites.end());
+        auto mpoL   = get_multisite_mpo(sitesL, nbody, true, false); // Shuffle so we can use GEMM
+        auto mpoR   = get_multisite_mpo(sitesR, nbody, false, true);
+        auto mpoLR  = tenx::gemm_mpo(mpoL, mpoR);
         return mpoLR.reshape(tenx::array2{spin_dim, spin_dim});
+        //        long spin_dimL = 1;
+        //        long spin_dimR = 1;
+        //        for(const auto &pos : sitesL) { spin_dimL *= get_mpo(pos).get_spin_dimension(); }
+        //        for(const auto &pos : sitesR) { spin_dimR *= get_mpo(pos).get_spin_dimension(); }
+        //        auto dimL = tenx::array2{spin_dimL * spin_dimL, get_mpo(sitesL.back()).MPO().dimension(1)};
+        //        auto dimR = tenx::array2{get_mpo(sitesR.front()).MPO().dimension(0), spin_dimR * spin_dimR};
+        //        auto shf6 = tenx::array6{0, 3, 1, 4, 2, 5};
+        //        // For dim6, recall that mpoL is shuffled, so these dimensions are not the usual ones.
+        //        auto dims_L_front = get_mpo(sitesL.front()).MPO().dimensions();
+        //        auto dims_R_back  = get_mpo(sitesR.back()).MPO().dimensions();
+        //        auto dim6         = tenx::array6{1, spin_dimL, spin_dimL, 1, spin_dimR, spin_dimR};
+
         //
         //        Eigen::Tensor<cplx, 2> mpoL =
         //            get_multisite_mpo(sitesL, nbody, true, false).shuffle(tenx::array4{0, 2, 3, 1}).reshape(dimL); // Shuffle so we can use GEMM
@@ -855,25 +671,21 @@ Eigen::Tensor<cplx_t, 2> ModelFinite::get_multisite_ham_t(const std::vector<size
         tools::log->info("cache hit: sites{}|nbody{}", sites, nbody.has_value() ? nbody.value() : std::vector<size_t>{});
         return cache.multisite_ham_t.value();
     }
-    Eigen::Tensor<cplx_t, 4> multisite_mpo_t;
+    long spin_dim = 1;
+    for(const auto &pos : sites) { spin_dim *= get_mpo(pos).get_spin_dimension(); }
+    auto dim2 = tenx::array2{spin_dim, spin_dim};
     if(sites.size() < 4) {
-        multisite_mpo_t = get_multisite_mpo_t(sites, nbody, true, true);
+        return get_multisite_mpo_t(sites, nbody, true, true).reshape(dim2);
     } else {
         // When there are many sites, it's beneficial to split sites into two equal chunks and then merge them (because edgeL/edgeR makes them small)
         auto half   = static_cast<long>((sites.size() + 1) / 2); // Let the left side take one more site in odd cases, because we contract from the left
         auto sitesL = std::vector<size_t>(sites.begin(), sites.begin() + half);
         auto sitesR = std::vector<size_t>(sites.begin() + half, sites.end());
-        auto mpoL   = get_multisite_mpo_t(sitesL, nbody, true, false);
+        auto mpoL   = get_multisite_mpo_t(sitesL, nbody, true, false); // Shuffle so we can use GEMM
         auto mpoR   = get_multisite_mpo_t(sitesR, nbody, false, true);
-        auto dims   = std::array<long, 4>{mpoL.dimension(0), mpoR.dimension(1), mpoL.dimension(2) * mpoR.dimension(2), mpoL.dimension(3) * mpoR.dimension(3)};
-        tools::log->info("get_multisite_ham_t: contracting mpoL {} mpoR {}", mpoL.dimensions(), mpoR.dimensions());
-        multisite_mpo_t.resize(dims);
-        multisite_mpo_t.device(tenx::threads::getDevice()) = mpoL.contract(mpoR, tenx::idx({1}, {0})).reshape(dims);
+        auto mpoLR  = tenx::gemm_mpo(mpoL, mpoR);
+        return mpoLR.reshape(tenx::array2{spin_dim, spin_dim});
     }
-    assert(multisite_mpo_t.dimension(0) == 1);
-    assert(multisite_mpo_t.dimension(1) == 1);
-    auto newdims = tenx::array2{multisite_mpo_t.dimension(2), multisite_mpo_t.dimension(3)};
-    return multisite_mpo_t.reshape(newdims);
 }
 
 const Eigen::Tensor<cplx, 4> &ModelFinite::get_multisite_mpo() const {

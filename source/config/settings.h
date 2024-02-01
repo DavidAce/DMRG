@@ -344,6 +344,7 @@ namespace settings {
     /*! \namespace settings::flbit Settings for the finite l-bit algorithm */
     namespace flbit {
         inline bool     on                     = false;                            /*!< Turns flbit simulation on/off. */
+        inline bool     run_effective_model    = true;                             /*!< Runs the effecive model before the actual simulation */
         inline size_t   max_iters              = 10000;                            /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters              = 4;                                /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates         = true;                             /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */
@@ -359,7 +360,6 @@ namespace settings {
         inline double   time_gate_id_threshold = 1e-8;                             /*!< Skip time evo. gates if exp(-iHt) is ~ 1 within this threshold */
         inline size_t   print_freq             = 1;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     store_wavefn           = false;                            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
-
         /*! \namespace settings::flbit::cls Settings for calculating the characteristic length-scale of lbits */
         namespace  cls {
             inline size_t   num_rnd_circuits          = 1;                         /*!< Calculate the characteristic length-scale for this many realizations of the unitary circuit */

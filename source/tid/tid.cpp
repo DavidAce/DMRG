@@ -4,15 +4,19 @@
 #include <fmt/format.h>
 #include <string>
 #include <string_view>
+
+#if defined(_OPENMP)
+    #include <omp.h>
+#endif
+
 namespace tid {
     namespace internal {
 
         const ur *ur_ref_t::operator->() const { return &ref.get(); }
 
         [[nodiscard]] std::string ur_ref_t::str() const {
-            return fmt::format("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | level {6} | count {7}", key,
-                               tree_max_key_size, ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), level2sv(ref.get().get_level()),
-                               ref.get().get_tic_count());
+            return fmt::format("{0:<{1}} {2:>8.3f} s | sum {3:>8.3f} s | {4:>6.2f} % | avg {5:>8.2e} s | level {6} | count {7}", key, tree_max_key_size,
+                               ref.get().get_time(), sum, 100 * frac, ref.get().get_time_avg(), level2sv(ref.get().get_level()), ref.get().get_tic_count());
         }
 
         template<typename T>
@@ -41,31 +45,17 @@ namespace tid {
         keys.pop_front();
         return get(keys, l, u_sub);
     }
-    ur &get(std::string_view key, level l, std::optional<std::string_view> prefix) {
-        std::string parsed_key(key);
+    ur &get(std::string_view key, level l, bool unscoped) {
         std::string prefix_key;
-        if(prefix)
-            prefix_key = std::string(prefix.value());
-        else
-            prefix_key = internal::ur_prefix;
-
-        // Use prepended '.' to go to parent scope
-        while(true) {
-            auto pos_dd = parsed_key.rfind('.', 0);
-            if(pos_dd != std::string::npos) {
-                parsed_key.erase(pos_dd, 1);
-                auto pos_sc = prefix_key.rfind('.');
-                if(pos_sc != std::string::npos) prefix_key.erase(pos_sc, prefix_key.size() - pos_sc);
-            } else
-                break;
+        if(internal::ur_prefix.empty()) { // No earlier prefix so just use key as prefix
+            prefix_key = key;
+        }
+        if(unscoped) {
+            prefix_key = key;
+        } else { // Append to get prefix.key
+            prefix_key = fmt::format("{}.{}", internal::ur_prefix, key);
         }
 
-        if(prefix_key.empty()) {
-            // No earlier prefix so just use key as prefix
-            prefix_key = std::string(parsed_key);
-        } else
-            // Append to get prefix.key
-            prefix_key = fmt::format("{}.{}", prefix_key, parsed_key);
         // If the element does not exist we insert it here
         if(prefix_key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", prefix_key));
         auto  sp       = tid::internal::split<std::deque<std::string_view>>(prefix_key, ".");
@@ -76,22 +66,24 @@ namespace tid {
         return get(sp, l, ur_found);
     }
 
-    ur &get_unscoped(std::string_view key, level l) {
-        return get(key, l, "");
-
-        //        if(key.empty()) throw except::runtime_error("Invalid key: {}", key);
-        //        auto result = internal::tid_db.insert(std::make_pair(key, tid::ur(key)));
-        //        auto & ur = result.first->second;
-        //        if(result.second and l != level::parent)  ur.set_level(l); // Set the level on creation only
-        //        return ur;
-    }
+    ur &get_unscoped(std::string_view key, level l) { return get(key, l, true); }
 
     token tic_token(std::string_view key, level l) {
+        if(internal::current_level < l) return internal::dummy.tic_token();
+#if defined(_OPENMP)
+        if(omp_in_parallel()) return internal::dummy.tic_token();
+#endif
         if(internal::ur_prefix.size() >= 200) printf("ur prefix: %s\n", internal::ur_prefix.c_str());
         return tid::get(key, l).tic_token();
     }
 
-    token tic_scope(std::string_view key, level l) { return tid::get(key, l).tic_token(key); }
+    token tic_scope(std::string_view key, level l) {
+        if(internal::current_level < l) return internal::dummy.tic_token();
+#if defined(_OPENMP)
+        if(omp_in_parallel()) return internal::dummy.tic_token();
+#endif
+        return tid::get(key, l).tic_token(key);
+    }
 
     void tic(std::string_view key, level l) { get(key, l).tic(); }
 
@@ -121,7 +113,7 @@ namespace tid {
         else
             key = fmt::format("{}.{}", prefix, u.get_label());
 
-        auto tree = std::vector<internal::ur_ref_t>  {{.key=key, .ref=u, .sum=0.0, .frac=1.0}};
+        auto tree = std::vector<internal::ur_ref_t>{{.key = key, .ref = u, .sum = 0.0, .frac = 1.0}};
         for(const auto &un : u.ur_under) {
             tree.front().sum += un.second->get_time(); // Add times under
             for(const auto &t : get_tree(*un.second, key, l)) {
@@ -190,6 +182,7 @@ namespace tid {
         }
         return matches;
     }
+    void set_level(level l) { internal::current_level = l; }
 
     void print_tree(const tid::ur &u, std::string_view prefix, level l) {
         for(const auto &t : tid::get_tree(u, prefix)) {

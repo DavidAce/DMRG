@@ -12,6 +12,11 @@ namespace tools::finite::mpo {
     extern std::pair<Eigen::Tensor<cplx, 4>,Eigen::Tensor<cplx, 4>>
                 swap_mpo    (const Eigen::Tensor<cplx, 4> & mpoL, const Eigen::Tensor<cplx, 4> & mpoR);
     extern void swap_sites  (ModelFinite & model, size_t posL, size_t posR, std::vector<size_t> & sites);
+
+    extern std::vector<Eigen::Tensor<cplx,4>> get_mpos_with_edges (const std::vector<Eigen::Tensor<cplx,4>> & mpos, const Eigen::Tensor<cplx,1> & Ledge, const Eigen::Tensor<cplx,1> & Redge);
+    extern std::vector<Eigen::Tensor<cplx,4>> get_compressed_mpos (std::vector<Eigen::Tensor<cplx, 4>> mpos);
+    extern std::vector<Eigen::Tensor<cplx,4>> get_compressed_mpos (const std::vector<Eigen::Tensor<cplx,4>> & mpos, const Eigen::Tensor<cplx,1> & Ledge, const Eigen::Tensor<cplx,1> & Redge);
+
 }
 
 /* clang-format on */

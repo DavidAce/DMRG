@@ -89,7 +89,7 @@ long long svd::solver::get_count() { return count; }
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
                                                                                                               const svd::config &svd_cfg) {
-    auto t_svd = tid::tic_scope("svd", tid::level::highest);
+//    auto t_svd = tid::tic_scope("svd", tid::level::highest);
 
     copy_config(svd_cfg);
     auto sizeS    = std::min(rows, cols);
@@ -98,13 +98,13 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     // Resolve geauto
     if(svd_cfg.svd_rtn == svd::rtn::geauto or svd_rtn == svd::rtn::geauto) {
         svd_rtn = svd::rtn::gesvj;
-        if(switchsize_gejsv != -1ul and num::cmp_greater_equal(sizeS, switchsize_gejsv)) svd_rtn = svd::rtn::gejsv;
-        if(switchsize_gesvd != -1ul and num::cmp_greater_equal(sizeS, switchsize_gesvd)) svd_rtn = svd::rtn::gesvd;
-        if(switchsize_gesdd != -1ul and num::cmp_greater_equal(sizeS, switchsize_gesdd)) svd_rtn = svd::rtn::gesdd;
+        if(switchsize_gejsv != -1ul and std::cmp_greater_equal(sizeS, switchsize_gejsv)) svd_rtn = svd::rtn::gejsv;
+        if(switchsize_gesvd != -1ul and std::cmp_greater_equal(sizeS, switchsize_gesvd)) svd_rtn = svd::rtn::gesvd;
+        if(switchsize_gesdd != -1ul and std::cmp_greater_equal(sizeS, switchsize_gesdd)) svd_rtn = svd::rtn::gesdd;
 
         if(svd_rtn == rtn::gesdd) {
-            bool is_rank_low   = num::cmp_greater_equal(sizeS, rank_lim * 8);  // Will keep at least 25% of the singular values
-            bool is_rank_lower = num::cmp_greater_equal(sizeS, rank_lim * 16); // Will keep at least 10% of the singular values
+            bool is_rank_low   = std::cmp_greater_equal(sizeS, rank_lim * 8);  // Will keep at least 25% of the singular values
+            bool is_rank_lower = std::cmp_greater_equal(sizeS, rank_lim * 16); // Will keep at least 10% of the singular values
             if(is_rank_low) { svd_rtn = svd::rtn::gesvdx; }
             if(is_rank_lower) { svd_rtn = svd::rtn::gersvd; }
         }
@@ -139,7 +139,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     return do_svd_lapacke(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
                 svd::log->warn("{} {} failed to perform SVD: {} | Trying Eigen", enum2sv(svd_lib), enum2sv(svd_rtn), std::string_view(ex.what()));
-                svd_rtn = num::cmp_greater_equal(sizeS, switchsize_gesdd) ? rtn::gesdd : rtn::gejsv;
+                svd_rtn = std::cmp_greater_equal(sizeS, switchsize_gesdd) ? rtn::gesdd : rtn::gejsv;
                 return do_svd_eigen(mat_ptr, rows, cols);
             }
             break;

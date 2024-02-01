@@ -311,15 +311,29 @@ namespace tenx {
     }
 
     template<typename Derived, auto rank>
-    auto TensorMap(const Eigen::PlainObjectBase<Derived> &matrix, const std::array<long, rank> &dims) {
-        return Eigen::TensorMap<const Eigen::Tensor<const typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
+    auto TensorMap(Eigen::PlainObjectBase<Derived> &matrix, const std::array<long, rank> &dims) {
+        return Eigen::TensorMap<Eigen::Tensor<typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
     }
-
+    template<typename Derived, auto rank>
+    auto TensorMap(const Eigen::PlainObjectBase<Derived> &matrix, const std::array<long, rank> &dims) {
+        return Eigen::TensorMap<const Eigen::Tensor<typename Derived::Scalar, rank>>(matrix.derived().data(), dims);
+    }
+    template<typename Derived, typename... Dims>
+    auto TensorMap(Eigen::PlainObjectBase<Derived> &matrix, const Dims... dims) {
+        return TensorMap(matrix, std::array<long, static_cast<long>(sizeof...(Dims))>{dims...});
+    }
     template<typename Derived, typename... Dims>
     auto TensorMap(const Eigen::PlainObjectBase<Derived> &matrix, const Dims... dims) {
-        return TensorMap(matrix, std::array<long, static_cast<int>(sizeof...(Dims))>{dims...});
+        return TensorMap(matrix, std::array<long, static_cast<long>(sizeof...(Dims))>{dims...});
     }
-
+    template<typename Derived>
+    auto TensorMap(Eigen::PlainObjectBase<Derived> &matrix) {
+        if constexpr(Derived::ColsAtCompileTime == 1 or Derived::RowsAtCompileTime == 1) {
+            return TensorMap(matrix, matrix.size());
+        } else {
+            return TensorMap(matrix, matrix.rows(), matrix.cols());
+        }
+    }
     template<typename Derived>
     auto TensorMap(const Eigen::PlainObjectBase<Derived> &matrix) {
         if constexpr(Derived::ColsAtCompileTime == 1 or Derived::RowsAtCompileTime == 1) {
@@ -328,7 +342,6 @@ namespace tenx {
             return TensorMap(matrix, matrix.rows(), matrix.cols());
         }
     }
-
     //
     //    //****************************//
     //    //Tensor to matrix conversions//
@@ -373,6 +386,10 @@ namespace tenx {
     template<typename Scalar, auto rank>
     auto VectorMap(const Eigen::Tensor<Scalar, rank> &tensor) {
         return Eigen::Map<const VectorType<Scalar>>(tensor.data(), tensor.size());
+    }
+    template<typename Derived>
+    auto VectorMap(const Eigen::TensorMap<Derived> &tensor) {
+        return Eigen::Map<const VectorType<typename Derived::Scalar>>(tensor.data(), tensor.size());
     }
     template<typename Scalar, auto rank>
     auto VectorMap(const Eigen::Tensor<Scalar, rank> &&tensor) = delete; // Prevent map from temporary

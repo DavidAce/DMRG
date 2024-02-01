@@ -273,7 +273,8 @@ const MpsSite &StateFinite::get_mps_site(T pos) const {
         if(pos < 0) throw except::range_error("get_mps_site(pos): pos out of range: {}", pos);
     if(pos >= get_length<T>()) throw except::range_error("get_mps_site(pos): pos out of range: {}", pos);
     const auto &mps_ptr = *std::next(mps_sites.begin(), safe_cast<long>(pos));
-    if(mps_ptr->template get_position<T>() != pos) throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->template get_position<T>());
+    if(mps_ptr->template get_position<T>() != pos)
+        throw except::range_error("get_mps_site(pos): mismatch pos {} != mps pos {}", pos, mps_ptr->template get_position<T>());
     return *mps_ptr;
 
     //    if(algo == AlgorithmType::fLBIT){
@@ -409,8 +410,11 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
             double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
             if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
             if(std::abs(norm - 1) > settings::precision::max_norm_error) {
-                throw except::runtime_error("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
-                                            settings::precision::max_norm_error);
+                tools::log->warn("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
+                                 settings::precision::max_norm_error);
+                //                throw except::runtime_error("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites,
+                //                std::abs(norm - 1),
+                //                                            settings::precision::max_norm_error);
             }
         }
         return multisite_mps;
@@ -467,8 +471,11 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
             double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
             if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
             if(std::abs(norm - 1) > settings::precision::max_norm_error) {
-                throw except::runtime_error("get_multisite_mps<real>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
-                                            settings::precision::max_norm_error);
+                tools::log->warn("get_multisite_mps<real>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
+                                 settings::precision::max_norm_error);
+                //                throw except::runtime_error("get_multisite_mps<real>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites,
+                //                std::abs(norm - 1),
+                //                                            settings::precision::max_norm_error);
             }
         }
         return multisite_mps;

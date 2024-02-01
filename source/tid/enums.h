@@ -4,22 +4,25 @@
 
 namespace tid {
     enum level : int {
-        parent  = -1,
-        normal  = 0,
-        higher  = 1,
-        highest = 2,
+        disabled = -2,
+        parent   = -1,
+        normal   = 0,
+        higher   = 1,
+        highest  = 2,
     };
 
     constexpr std::string_view level2sv(level l) noexcept {
         switch(l) {
-            case parent: return "parent  ";
-            case normal: return "normal  ";
-            case higher: return "higher  ";
-            case highest: return "highest ";
+            case disabled: return "disabled";
+            case parent: return "parent";
+            case normal: return "normal";
+            case higher: return "higher";
+            case highest: return "highest";
             default: return "unknown tid::level";
         }
     }
     constexpr level sv2level(std::string_view l) {
+        if(l == "disabled") return tid::level::disabled;
         if(l == "parent") return tid::level::parent;
         if(l == "normal") return tid::level::normal;
         if(l == "higher") return tid::level::higher;

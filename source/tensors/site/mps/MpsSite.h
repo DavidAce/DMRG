@@ -5,6 +5,22 @@
 #include <optional>
 #include <unsupported/Eigen/CXX11/Tensor>
 
+template<typename T>
+concept is_valid_tensor3 = std::is_same_v<T, Eigen::Tensor<cplx, 3>> ||                   //
+                           std::is_same_v<T, Eigen::Tensor<real, 3>> ||                   //
+                           std::is_same_v<T, Eigen::TensorMap<Eigen::Tensor<cplx, 3>>> || //
+                           std::is_same_v<T, Eigen::TensorMap<Eigen::Tensor<real, 3>>>;   //
+//                                std::is_same_v<T, Eigen::TensorMap<const Eigen::Tensor<cplx, 3>>> || //
+//                                std::is_same_v<T, Eigen::TensorMap<const Eigen::Tensor<real, 3>>>;
+
+template<typename T>
+concept is_valid_tensor1 = std::is_same_v<T, Eigen::Tensor<cplx, 1>> ||                   //
+                           std::is_same_v<T, Eigen::Tensor<real, 1>> ||                   //
+                           std::is_same_v<T, Eigen::TensorMap<Eigen::Tensor<cplx, 1>>> || //
+                           std::is_same_v<T, Eigen::TensorMap<Eigen::Tensor<real, 1>>>;   //||       //
+//                           std::is_same_v<T, Eigen::TensorMap<const Eigen::Tensor<cplx, 1>>> || //
+//                           std::is_same_v<T, Eigen::TensorMap<const Eigen::Tensor<real, 1>>>;
+
 class MpsSite {
     public:
     using value_type = cplx;
@@ -26,11 +42,14 @@ class MpsSite {
 
     public:
     ~MpsSite(); // Read comment on implementation
-    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<cplx, 1> &L_, size_t pos, double error, std::string_view label_);
-    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
-    explicit MpsSite(const Eigen::Tensor<real, 3> &M_, const Eigen::Tensor<real, 1> &L_, size_t pos, double error, std::string_view label_);
-    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, std::optional<Eigen::Tensor<cplx, 1>> L_, size_t pos, double error, std::string_view label_);
-    explicit MpsSite(const Eigen::Tensor<real, 3> &M_, std::optional<Eigen::Tensor<real, 1>> L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<cplx, 3> &M_, const std::optional<Eigen::Tensor<cplx, 1>> &L_, size_t pos, double error, std::string_view label_);
+    explicit MpsSite(const Eigen::Tensor<real, 3> &M_, const std::optional<Eigen::Tensor<real, 1>> &L_, size_t pos, double error, std::string_view label_);
+    template<typename T3, typename T1>
+    requires is_valid_tensor3<T3> && is_valid_tensor1<T1>
+    MpsSite(const T3 &M_, const T1 &L_, size_t pos, double error, std::string_view label_);
+    template<typename T3>
+    requires is_valid_tensor3<T3>
+    MpsSite(const T3 &M_, size_t pos, std::string_view label_);
     MpsSite();                                    // ctor
     MpsSite(const MpsSite &other);                // default copy ctor
     MpsSite(MpsSite &&other) noexcept;            // default move ctor
@@ -71,13 +90,18 @@ class MpsSite {
     template<typename T>
     [[nodiscard]] bool is_at_position(T pos) const;
 
-    void set_M(const Eigen::Tensor<cplx, 3> &M_);
-    void set_L(const Eigen::Tensor<cplx, 1> &L_, double error = 0);
-    void set_L(const Eigen::Tensor<real, 1> &L_, double error = 0);
+    template<typename T3>
+    requires is_valid_tensor3<T3>
+    void set_M(const T3 &M_);
+    template<typename T1>
+    requires is_valid_tensor1<T1>
+    void set_L(const T1 &L_, double error = 0);
+    template<typename T1>
+    requires is_valid_tensor1<T1>
+    void set_LC(const T1 &LC_, double error = 0);
+
     void set_L(const std::pair<Eigen::Tensor<cplx, 1>, double> &L_and_error);
     void set_L(const std::pair<Eigen::Tensor<real, 1>, double> &L_and_error);
-    void set_LC(const Eigen::Tensor<cplx, 1> &LC_, double error = 0);
-    void set_LC(const Eigen::Tensor<real, 1> &LC_, double error = 0);
     void set_LC(const std::pair<Eigen::Tensor<cplx, 1>, double> &LC_and_error);
     void set_LC(const std::pair<Eigen::Tensor<real, 1>, double> &LC_and_error);
     void set_truncation_error(double error);
@@ -93,12 +117,21 @@ class MpsSite {
     void apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint = false);
     void apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint = false);
 
-    void stash_U(const Eigen::Tensor<cplx, 3> &U, size_t dst) const;
-    void stash_S(const Eigen::Tensor<cplx, 1> &S, double error, size_t dst) const;
+    template<typename T3>
+    requires is_valid_tensor3<T3>
+    void stash_U(const T3 &U, size_t dst) const;
+    template<typename T1>
+    requires is_valid_tensor1<T1>
+    void stash_S(const T1 &S, double error, size_t dst) const;
+    template<typename T1>
+    requires is_valid_tensor1<T1>
+    void stash_C(const T1 &S, double error, size_t dst) const;
+    template<typename T3>
+    requires is_valid_tensor3<T3>
+    void stash_V(const T3 &V, size_t dst) const;
+
     void stash_S(const std::pair<Eigen::Tensor<cplx, 1>, double> &S_and_error, size_t dst) const;
-    void stash_C(const Eigen::Tensor<cplx, 1> &S, double error, size_t dst) const;
     void stash_C(const std::pair<Eigen::Tensor<cplx, 1>, double> &S_and_error, size_t dst) const;
-    void stash_V(const Eigen::Tensor<cplx, 3> &V, size_t dst) const;
     void drop_stash() const;
     void drop_stashed_errors() const;
     void take_stash(const MpsSite &other);

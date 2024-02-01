@@ -7,12 +7,14 @@
 #include "math/eig/solver.h"
 #include "math/eig/view.h"
 #include "math/float.h"
+#include "math/linalg.h"
 #include "math/num.h"
 #include "math/svd.h"
 #include "math/tenx.h"
 #include "qm/lbit.h"
 #include "qm/spin.h"
 #include "tensors/model/ModelFinite.h"
+#include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tensors/state/StateFinite.h"
 #include "tid/tid.h"
@@ -214,46 +216,47 @@ void flbit::run_preprocessing() {
     // Generate the corresponding state in lbit basis
     transform_to_lbit_basis();
     if constexpr(settings::debug) {
-        // We know that we should get back to the initial state in the real basis, if we apply
-        // the unitary transformation on the lbit state : Ψ = U|Ψ'⟩
-        auto svd_cfg           = svd::config(status.bond_lim, status.trnc_lim);
-        svd_cfg.svd_lib        = svd::lib::lapacke;
-        svd_cfg.svd_rtn        = svd::rtn::geauto;
-        StateFinite state_real = *tensors.state;
-        if(settings::flbit::use_mpo_circuit) {
-            state_real = qm::lbit::transform_to_real_basis(*state_lbit, unitary_gates_mpo_layers, ledge, redge, svd_cfg);
+        if(tensors.get_length() <= 8) {
+            // We know that we should get back to the initial state in the real basis, if we apply
+            // the unitary transformation on the lbit state : Ψ = U|Ψ'⟩
+            auto svd_cfg           = svd::config(status.bond_lim, status.trnc_lim);
+            svd_cfg.svd_lib        = svd::lib::lapacke;
+            svd_cfg.svd_rtn        = svd::rtn::geauto;
+            StateFinite state_real = *tensors.state;
+            if(settings::flbit::use_mpo_circuit) {
+                state_real = qm::lbit::transform_to_real_basis(*state_lbit, unitary_gates_mpo_layers, ledge, redge, svd_cfg);
 
-        } else {
-            state_real = qm::lbit::transform_to_real_basis(*state_lbit, unitary_gates_2site_layers, svd_cfg);
+            } else {
+                state_real = qm::lbit::transform_to_real_basis(*state_lbit, unitary_gates_2site_layers, svd_cfg);
+            }
+            auto psi_lbit_t  = tools::finite::measure::mps2tensor(*state_lbit);
+            auto psi_real1_t = tools::finite::measure::mps2tensor(*tensors.state);
+            auto psi_real2_t = tools::finite::measure::mps2tensor(state_real);
+            auto u_circuit_t =
+                qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers); // TODO: For some reason this is a transpose away from our typical circuit
+            auto        psi_lbit_v            = tenx::VectorMap(psi_lbit_t);
+            auto        psi_real1_v           = tenx::VectorMap(psi_real1_t);
+            auto        psi_real2_v           = tenx::VectorMap(psi_real2_t);
+            auto        u_circuit_m           = tenx::MatrixMap(u_circuit_t);
+            cplx        overlap_real1_real2   = psi_real1_v.dot(psi_real2_v);
+            cplx        overlap_real1_u_lbit  = psi_real1_v.dot(u_circuit_m * psi_lbit_v);
+            cplx        overlap_lbit_ua_real1 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real1_v);
+            cplx        overlap_lbit_ua_real2 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real2_v);
+            auto        uadjoint_u            = Eigen::MatrixXcd(u_circuit_m.adjoint() * u_circuit_m);
+            std::string err;
+            if(std::abs(overlap_real1_real2.real() + overlap_real1_real2.imag() - 1) > status.trnc_lim * 10)
+                err += fmt::format("overlap_real1_real2: {:.16f}\n", overlap_real1_real2);
+            if(std::abs(overlap_real1_u_lbit.real() + overlap_real1_u_lbit.imag() - 1) > status.trnc_lim * 10)
+                err += fmt::format("overlap_real1_u_lbit: {:.16f}\n", overlap_real1_u_lbit);
+            if(std::abs(overlap_lbit_ua_real1.real() + overlap_lbit_ua_real1.imag() - 1) > status.trnc_lim * 10)
+                err += fmt::format("overlap_lbit_ua_real1: {:.16f}\n", overlap_lbit_ua_real1);
+            if(std::abs(overlap_lbit_ua_real2.real() + overlap_lbit_ua_real2.imag() - 1) > status.trnc_lim * 10)
+                err += fmt::format("overlap_lbit_ua_real2: {:.16f}\n", overlap_lbit_ua_real2);
+            if(not uadjoint_u.isIdentity(status.trnc_lim * 10)) err += fmt::format("uadjoint_u is not an identity matrix");
+
+            if(not err.empty()) throw except::logic_error("Debug error:\n{}", err);
         }
-        auto psi_lbit_t  = tools::finite::measure::mps2tensor(*state_lbit);
-        auto psi_real1_t = tools::finite::measure::mps2tensor(*tensors.state);
-        auto psi_real2_t = tools::finite::measure::mps2tensor(state_real);
-        auto u_circuit_t =
-            qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers); // TODO: For some reason this is a transpose away from our typical circuit
-        auto        psi_lbit_v            = tenx::VectorMap(psi_lbit_t);
-        auto        psi_real1_v           = tenx::VectorMap(psi_real1_t);
-        auto        psi_real2_v           = tenx::VectorMap(psi_real2_t);
-        auto        u_circuit_m           = tenx::MatrixMap(u_circuit_t);
-        cplx        overlap_real1_real2   = psi_real1_v.dot(psi_real2_v);
-        cplx        overlap_real1_u_lbit  = psi_real1_v.dot(u_circuit_m * psi_lbit_v);
-        cplx        overlap_lbit_ua_real1 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real1_v);
-        cplx        overlap_lbit_ua_real2 = psi_lbit_v.dot(u_circuit_m.adjoint() * psi_real2_v);
-        auto        uadjoint_u            = Eigen::MatrixXcd(u_circuit_m.adjoint() * u_circuit_m);
-        std::string err;
-        if(std::abs(overlap_real1_real2.real() + overlap_real1_real2.imag() - 1) > settings::precision::max_norm_error)
-            err += fmt::format("overlap_real1_real2: {:.16f}\n", overlap_real1_real2);
-        if(std::abs(overlap_real1_u_lbit.real() + overlap_real1_u_lbit.imag() - 1) > settings::precision::max_norm_error)
-            err += fmt::format("overlap_real1_u_lbit: {:.16f}\n", overlap_real1_u_lbit);
-        if(std::abs(overlap_lbit_ua_real1.real() + overlap_lbit_ua_real1.imag() - 1) > settings::precision::max_norm_error)
-            err += fmt::format("overlap_lbit_ua_real1: {:.16f}\n", overlap_lbit_ua_real1);
-        if(std::abs(overlap_lbit_ua_real2.real() + overlap_lbit_ua_real2.imag() - 1) > settings::precision::max_norm_error)
-            err += fmt::format("overlap_lbit_ua_real2: {:.16f}\n", overlap_lbit_ua_real2);
-        if(not uadjoint_u.isIdentity(settings::precision::max_norm_error)) err += fmt::format("uadjoint_u is not an identity matrix");
-
-        if(not err.empty()) throw except::logic_error("Debug error:\n{}", err);
     }
-
     tools::log->info("Finished {} preprocessing", status.algo_type_sv());
 }
 
@@ -266,7 +269,7 @@ void flbit::run_algorithm() {
                      tensors.state->get_name());
     auto t_run = tid::tic_scope("run");
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
-    run_algorithm2();
+    if(settings::flbit::run_effective_model) run_algorithm2();
     while(true) {
         update_state();
         check_convergence();
@@ -285,80 +288,272 @@ void flbit::run_algorithm() {
     status.algorithm_has_finished = true;
 }
 
+// void flbit::run_algorithm2() {
+//     // Get the interacting Hamiltonian in the diagonal l-bit basis in matrix form
+//     auto sites = num::range<size_t>(0, tensors.get_length(), 1);
+//     auto nbody = std::vector<size_t>{1, 2, 3};
+//     tensors.clear_cache();
+//     tensors.clear_measurements();
+//     auto svd_cfg    = svd::config();
+//     svd_cfg.svd_lib = svd::lib::lapacke;
+//     svd_cfg.svd_rtn = svd::rtn::gesdd;
+//     //    svd_cfg.rank_max         = rows;
+//     svd_cfg.truncation_limit = status.trnc_lim;
+//     //    auto solver              = svd::solver(svd_cfg);
+//     Eigen::VectorXcd hamiltonian_eff_diagonal_test;
+//     {
+//         // We get the diagonal elements ⟨Ψ_i| U_and† U_mbl H' U_mbl† U_and |Ψ_i⟩ where |Ψ_i⟩ is a 2^L basis
+////        auto flipbit = [](size_t n, const size_t pos) -> size_t { return n ^= static_cast<size_t>(1) << pos; };
+////        auto flipall = [&flipbit](size_t n, const size_t len) -> size_t {
+////            for(size_t pos = 0; pos < len; ++pos) n = flipbit(n, pos);
+////            return n;
+////        };
+////        auto findidx = [](const auto &seq, size_t val) -> std::ptrdiff_t {
+////            auto it = std::find(seq.begin(), seq.end(), val);
+////            if(it != seq.end()) return std::distance(seq.begin(), it);
+////            return -1l;
+////        };
+//        auto num_states = static_cast<Eigen::Index>(std::pow(2, sites.size()));
+//        auto bitseqs    = std::vector<size_t>();
+//        bitseqs.reserve(static_cast<size_t>(num_states) / 2);
+//        for(auto b : num::range<size_t>(0, num_states)) {
+//            //            auto it1 = std::find(bitseqs.begin(), bitseqs.end(), b);
+//            //            auto it2 = std::find(bitseqs.begin(), bitseqs.end(), flipall(b, sites.size()));
+//            //            if(it1 == bitseqs.end() and it2 == bitseqs.end())
+//            bitseqs.emplace_back(b);
+//        }
+//
+//        auto circuit_noninteracting = uprop.circuit;
+//        for(auto &gate : circuit_noninteracting) gate.l = 0; // Set all the lambdas equal to zero to turn off interaction
+//        auto u_and = qm::lbit::get_unitary_2site_gate_layers(circuit_noninteracting);
+//        auto u_mbl = unitary_gates_2site_layers;
+//
+//        //        auto ham_swap_gates1 = ham_swap_gates_1body;
+//        //        auto ham_swap_gates2 = ham_swap_gates_2body;
+//        //        auto ham_swap_gates3 = ham_swap_gates_3body;
+//        //        for(auto &g : ham_swap_gates1) g.generate_swap_sequences();
+//        //        for(auto &g : ham_swap_gates2) g.generate_swap_sequences();
+//        //        for(auto &g : ham_swap_gates3) g.generate_swap_sequences();
+//        Eigen::Tensor<cplx, 1>              mpo_l = tensors.model->get_mpo(0).get_MPO_edge_left();
+//        Eigen::Tensor<cplx, 1>              mpo_r = tensors.model->get_mpo(sites.size() - 1).get_MPO_edge_right();
+//        std::vector<Eigen::Tensor<cplx, 4>> mpos;
+//        for(const auto &pos : sites) {
+//            mpos.emplace_back(tensors.model->get_mpo(pos).MPO());
+//            //            tools::log->info("mpo: {}\n{}",mpos.back().dimensions(), linalg::tensor::to_string(mpos.back(), 8,10));
+//        }
+//        hamiltonian_eff_diagonal_test.resize(static_cast<long>(bitseqs.size()));
+//        for(const auto &[idx, b] : iter::enumerate(bitseqs)) {
+//            auto pattern = fmt::format("b{}", tools::get_bitfield(sites.size(), b, BitOrder::Reverse)); // Sort states with "1" appearing left to right
+//            auto state_i = StateFinite(AlgorithmType::fLBIT, sites.size(), 0, 2);
+//            tools::finite::mps::init::set_product_state_on_axis_using_pattern(state_i, StateInitType::REAL, "z", pattern);
+//            tools::finite::mps::apply_circuit(state_i, u_and, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
+//            tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, false, true, GateMove::AUTO, svd_cfg);
+//            hamiltonian_eff_diagonal_test[static_cast<long>(idx)] = tools::finite::measure::expectation_value(state_i, state_i, mpos, mpo_l, mpo_r);
+//            tools::log->info("⟨Ψ_{0}| U_and† U_mbl H' U_mbl† U_and |Ψ_{0}⟩ = {1}", pattern, hamiltonian_eff_diagonal_test[static_cast<long>(idx)]);
+//            //            auto mps_i = tools::finite::measure::mps2tensor(state_i);
+//            //            tools::log->info("⟨mps{0} tenx::VectorMap(i_mps).dot(H_diag * tenx::VectorMap(i_mps) mps{0}⟩ = {1}", b,
+//            //                             tenx::VectorMap(mps_i).dot(H_diag * tenx::VectorMap(mps_i)));
+//        }
+//    }
+//    // Sort the eigenvalues in ascending order
+//    //    tools::log->info("hamiltonian_eff_diagonal_test: {}", hamiltonian_eff_diagonal_test);
+//    //    std::sort(hamiltonian_eff_diagonal_test.begin(), hamiltonian_eff_diagonal_test.end(), [](auto v1, auto v2) -> bool { return v1.real() < v2.real();
+//    }); tools::log->info("hamiltonian_eff_diagonal_test: {}", hamiltonian_eff_diagonal_test); Eigen::VectorXcd hamiltonian_mbl_diagonal;
+//    {
+//        tools::log->info("Generating hamiltonian_mbl_diagonal sites {}", sites);
+//        //        tensors.model->compress_mpo();                                                                      // Compress for speedup
+//        auto hamiltonian_mbl_diagonal_tensor = tensors.model->get_multisite_ham(sites, std::nullopt);       // lbit hamiltonian (with J_ij...)
+//        hamiltonian_mbl_diagonal             = tenx::MatrixMap(hamiltonian_mbl_diagonal_tensor).diagonal(); // Keep the diagonal part (to save memory)
+//        tools::log->info("hamiltonian_mbl_diagonal:      {}", hamiltonian_mbl_diagonal);
+//
+//        //        tensors.model->build_mpo();                                                                         // Rebuild the original
+//    }
+//
+//    Eigen::MatrixXcd hamiltonian_mbl;
+//    { // Get the interacting mbl unitary transformation in matrix form
+//        tools::log->info("Generating u_mbl");
+//        auto u_mbl_tensor = qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers);
+//        auto u_mbl        = tenx::MatrixMap(u_mbl_tensor);
+//
+//        // Create the l-bit Hamiltonian in the original basis
+//        tools::log->info("Generating hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal * u_mbl^-1");
+//        hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal.asDiagonal() * u_mbl.adjoint(); // interacting lbit hamiltonian
+//    }
+//    // Get the non-interacting anderson unitary transformation in matrix form
+//    // This should be indentical to the current one, except for lambda = 0
+//    // We will later make the assumption that this can "kind of" diagonalize our mbl hamiltonian
+//    tools::log->info("Generating unitary_gates_2site_layers_noninteracting");
+//    auto circuit_noninteracting = uprop.circuit;
+//    for(auto &gate : circuit_noninteracting) gate.l = 0; // Set all the lambdas equal to zero to turn off interaction
+//    auto unitary_gates_2site_layers_noninteracting = qm::lbit::get_unitary_2site_gate_layers(circuit_noninteracting);
+//    tools::log->info("Generating u_and");
+//    auto u_and_tensor = qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers_noninteracting);
+//    auto u_and        = tenx::MatrixMap(u_and_tensor);
+//
+//    // Create an effective Hamiltonian
+//    tools::log->info("Generating hamiltonian_eff_diagonal");
+//    Eigen::VectorXcd hamiltonian_eff_diagonal =
+//        (u_and.adjoint() * hamiltonian_mbl * u_and).diagonal(); // Keep only the diagonal part of an "almost" diagonal matrix
+//
+//    tools::log->info("hamiltonian_eff_diagonal:      {}", hamiltonian_eff_diagonal);
+//    tools::log->info("hamiltonian_eff_diagonal_test: {}", hamiltonian_eff_diagonal_test);
+//    tools::log->info("hamiltonian_eff_diagonal:      trace {}", hamiltonian_eff_diagonal.trace());
+//    tools::log->info("hamiltonian_eff_diagonal_test: trace {}", hamiltonian_eff_diagonal_test.trace());
+//
+//    hamiltonian_mbl = Eigen::MatrixXcd(); // Clear to save memory, we don't need it anymore
+//    //    Eigen::MatrixXcd hamiltonian_eff                 = u_and * hamiltonian_eff_diagonal * u_and.adjoint(); // Go back to the original basis
+//
+//    // Get the initial state in vector form
+//    tools::log->info("Generating psi_init");
+//    auto psi_init_tensor = tools::finite::measure::mps2tensor(*state_real_init);
+//    auto psi_init        = tenx::VectorMap(psi_init_tensor);
+//
+//    auto rows = static_cast<long>(std::pow(2.0, tensors.get_length() / 2)); // Used for the schmidt decomposition
+//    auto cols = static_cast<long>(std::pow(2.0, tensors.get_length() / 2));
+//    if(rows * cols != psi_init.size()) throw except::logic_error("rows * cols != size");
+//
+//    // Start the time-evolution
+//    tools::log->info("Starting time evolution");
+//    //    tools::log->info("hamilonian_eff_diagonal: {}", hamiltonian_eff_diagonal);
+//    //    tools::log->info("hamilonian_mbl_diagonal: {}", hamiltonian_mbl_diagonal);
+//    //    auto state_mbl = *tensors.state;
+//    auto  state_backup  = *tensors.state;
+//    auto  status_backup = status;
+//    auto &state_eff1    = *tensors.state; // Hijack the state to functionality for free...
+//    state_eff1.set_name("state_eff");
+//    auto state_eff2 = *tensors.state;
+//    state_eff2.set_name("state_eff2");
+//    auto state_eff3 = *tensors.state;
+//    state_eff3.set_name("state_eff3");
+//    // Precompute Udagger psi
+//    auto u_and_psi_init = u_and.adjoint() * psi_init;
+//    //    auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
+//    auto t_run = tid::tic_scope("eff");
+//
+//    for(auto time : time_points) {
+//        auto t_step    = tid::tic_token("step");
+//        status.delta_t = time;
+//        using namespace std::complex_literals;
+//        auto t_f64 = std::complex<real>(static_cast<real>(time.real()), static_cast<real>(time.imag()));
+//        // Generate the time evolution operator in diagonal form
+//        tools::log->info("Exponentiating the diagonal Hamiltonians");
+//        Eigen::VectorXcd tevo_eff1_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
+//        Eigen::VectorXcd tevo_eff2_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal_test).array().exp();
+//        // Time evolve
+//        tools::log->info("Time-evolving");
+//        Eigen::VectorXcd psi_eff1 = u_and * tevo_eff1_diagonal.asDiagonal() * u_and_psi_init;
+//        Eigen::VectorXcd psi_eff2 = u_and * tevo_eff2_diagonal.asDiagonal() * u_and_psi_init;
+//        Eigen::VectorXcd psi_eff3 = tevo_eff2_diagonal.asDiagonal() * u_and_psi_init;
+//        tools::log->info("Merging into state");
+//        auto mps_eff1 = tenx::TensorMap(psi_eff1, psi_eff1.size(), 1, 1);
+//        auto mps_eff2 = tenx::TensorMap(psi_eff2, psi_eff2.size(), 1, 1);
+//        auto mps_eff3 = tenx::TensorMap(psi_eff3, psi_eff2.size(), 1, 1);
+//        // Merge these psi into the current state
+//        tools::finite::mps::merge_multisite_mps(state_eff1, mps_eff1, sites, 0, svd_cfg);
+//        tools::finite::mps::merge_multisite_mps(state_eff2, mps_eff2, sites, 0, svd_cfg);
+//        tools::finite::mps::merge_multisite_mps(state_eff3, mps_eff3, sites, 0, svd_cfg);
+//
+//        tools::finite::mps::apply_circuit(state_eff3, unitary_gates_2site_layers_noninteracting, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
+//
+//        auto entanglement_entropy_eff1 = tools::finite::measure::entanglement_entropy_midchain(state_eff1);
+//        auto entanglement_entropy_eff2 = tools::finite::measure::entanglement_entropy_midchain(state_eff2);
+//        auto entanglement_entropy_eff3 = tools::finite::measure::entanglement_entropy_midchain(state_eff3);
+//
+//        auto number_entropy_eff1 = tools::finite::measure::number_entropy_midchain(state_eff1);
+//        auto number_entropy_eff2 = tools::finite::measure::number_entropy_midchain(state_eff2);
+//        auto number_entropy_eff3 = tools::finite::measure::number_entropy_midchain(state_eff3);
+//        fmt::print("eff1 SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_eff1, number_entropy_eff1, t_f64.real(),
+//                   t_step->get_last_interval());
+//        fmt::print("eff2 SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_eff2, number_entropy_eff2, t_f64.real(),
+//                   t_step->get_last_interval());
+//        fmt::print("eff3 SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_eff3, number_entropy_eff3, t_f64.real(),
+//                   t_step->get_last_interval());
+//        // Update stuff manually
+//        status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);
+//        status.iter += 1;
+//        status.step += settings::model::model_size;
+//        status.position  = tensors.get_position<long>();
+//        status.direction = tensors.state->get_direction();
+//
+//        check_convergence();
+//        AlgorithmFinite::write_to_file(state_eff1, *tensors.model, *tensors.edges, StorageEvent::ITERATION, CopyPolicy::TRY);
+//        print_status();
+//        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
+//
+//        if(status.iter >= time_points.size()) status.algo_stop = AlgorithmStop::SUCCESS;
+//
+//        // It's important not to perform the last move, so we break now: that last state would not get optimized
+//        if(status.algo_stop != AlgorithmStop::NONE) break;
+//        status.wall_time = tid::get_unscoped("t_tot").get_time();
+//        status.algo_time = t_run->get_time();
+//        t_run->start_lap();
+//    }
+//    tools::log->info("Finished effective simulation of state [{}] -- stop reason: {}", tensors.state->get_name(), status.algo_stop_sv());
+//    //    status.algorithm_has_finished = true;
+//    status         = status_backup;
+//    *tensors.state = state_backup;
+//}
+
 void flbit::run_algorithm2() {
     // Get the interacting Hamiltonian in the diagonal l-bit basis in matrix form
     auto sites = num::range<size_t>(0, tensors.get_length(), 1);
-    auto nbody = std::vector<size_t>{1, 2, 3};
     tensors.clear_cache();
     tensors.clear_measurements();
-    Eigen::VectorXcd hamiltonian_mbl_diagonal;
-    {
-        tools::log->info("Generating hamiltonian_mbl_diagonal sites {} | nbody {}", sites, nbody);
-        tensors.model->compress_mpo(); // Compress for speedup
-        auto hamiltonian_mbl_diagonal_tensor = tensors.model->get_multisite_ham(sites, nbody);              // lbit hamiltonian (with J_ij...)
-        hamiltonian_mbl_diagonal             = tenx::MatrixMap(hamiltonian_mbl_diagonal_tensor).diagonal(); // Keep the diagonal part (to save memory)
-        tensors.model->build_mpo();                                                                         // Rebuild the original
-    }
+    auto svd_cfg             = svd::config();
+    svd_cfg.svd_lib          = svd::lib::lapacke;
+    svd_cfg.svd_rtn          = svd::rtn::geauto;
+    svd_cfg.switchsize_gejsv = 0;
+    svd_cfg.switchsize_gesvd = 1;
+    svd_cfg.switchsize_gesdd = 16;
+    svd_cfg.truncation_limit = status.trnc_lim;
+    svd_cfg.rank_max         = status.bond_lim;
 
-    Eigen::MatrixXcd hamiltonian_mbl;
-    { // Get the interacting mbl unitary transformation in matrix form
-        tools::log->info("Generating u_mbl");
-        auto u_mbl_tensor = qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers);
-        auto u_mbl        = tenx::MatrixMap(u_mbl_tensor);
-
-        // Create the l-bit Hamiltonian in the original basis
-        tools::log->info("Generating hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal * u_mbl^-1");
-        hamiltonian_mbl = u_mbl * hamiltonian_mbl_diagonal.asDiagonal() * u_mbl.adjoint(); // interacting lbit hamiltonian
-    }
-    // Get the non-interacting anderson unitary transformation in matrix form
-    // This should be indentical to the current one, except for lambda = 0
-    // We will later make the assumption that this can "kind of" diagonalize our mbl hamiltonian
-    tools::log->info("Generating unitary_gates_2site_layers_noninteracting");
+    // Define the circuits
     auto circuit_noninteracting = uprop.circuit;
     for(auto &gate : circuit_noninteracting) gate.l = 0; // Set all the lambdas equal to zero to turn off interaction
-    auto unitary_gates_2site_layers_noninteracting = qm::lbit::get_unitary_2site_gate_layers(circuit_noninteracting);
-    tools::log->info("Generating u_and");
-    auto u_and_tensor = qm::lbit::get_unitary_circuit_as_tensor(unitary_gates_2site_layers_noninteracting);
-    auto u_and        = tenx::MatrixMap(u_and_tensor);
+    auto             u_and = qm::lbit::get_unitary_2site_gate_layers(circuit_noninteracting);
+    auto            &u_mbl = unitary_gates_2site_layers;
+    Eigen::VectorXcd hamiltonian_eff_diagonal;
+    {
+        auto t_eff      = tid::tic_scope("eff");
+        auto num_states = static_cast<Eigen::Index>(std::pow(2, sites.size()));
+        auto bitseqs    = std::vector<size_t>();
+        bitseqs.reserve(static_cast<size_t>(num_states) / 2);
+        for(auto b : num::range<size_t>(0, num_states)) { bitseqs.emplace_back(b); }
+        auto mpos = tensors.model->get_compressed_mpos(CompressWithEdges::ON);
+        hamiltonian_eff_diagonal.resize(static_cast<long>(bitseqs.size()));
+#pragma omp parallel for private(u_and, u_mbl) schedule(dynamic, 16)
+        for(size_t idx = 0; idx < bitseqs.size(); ++idx) {
+            auto pattern =
+                fmt::format("b{}", tools::get_bitfield(sites.size(), bitseqs[idx], BitOrder::Reverse)); // Sort states with "1" appearing left to right
+            auto state_i = StateFinite(AlgorithmType::fLBIT, sites.size(), 0, 2);
+            tools::finite::mps::init::set_product_state_on_axis_using_pattern(state_i, StateInitType::REAL, "z", pattern);
+            tools::finite::mps::apply_circuit(state_i, u_and, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, false, true, GateMove::AUTO, svd_cfg);
+            hamiltonian_eff_diagonal[static_cast<long>(idx)] = tools::finite::measure::expectation_value(state_i, state_i, mpos);
+            if(num::mod<size_t>(idx, bitseqs.size() / 64) == 0)
+                tools::log->info("{0:>6}/{1} {2} {3:.3e} s (thread {4:<2}/{5}): ⟨Ψ_i U_and† U_mbl H' U_mbl† U_and |Ψ_i⟩ = {6}", idx, bitseqs.size(), pattern,
+                                 t_eff->get_time(), omp_get_thread_num(), omp_get_num_threads(), hamiltonian_eff_diagonal[static_cast<long>(idx)]);
+        }
+        tools::log->info("finished generating hamiltonian_eff_diagonal: {:.3e} s", t_eff->get_last_interval());
+    }
 
-    // Create an effective Hamiltonian
-    tools::log->info("Generating hamiltonian_eff_almost_diagonal");
-    Eigen::VectorXcd hamiltonian_eff_diagonal        = (u_and.adjoint() * hamiltonian_mbl * u_and).diagonal(); // Keep only the diagonal part of an "almost" diagonal matrix
-
-    hamiltonian_mbl = Eigen::MatrixXcd(); // Clear to save memory, we don't need it anymore
-    //    Eigen::MatrixXcd hamiltonian_eff                 = u_and * hamiltonian_eff_diagonal * u_and.adjoint(); // Go back to the original basis
-
-    // Get the initial state in vector form
-    tools::log->info("Generating psi_init");
-    auto psi_init_tensor = tools::finite::measure::mps2tensor(*state_real_init);
-    auto psi_init        = tenx::VectorMap(psi_init_tensor);
-
-    auto rows = static_cast<long>(std::pow(2.0, tensors.get_length() / 2)); // Used for the schmidt decomposition
-    auto cols = static_cast<long>(std::pow(2.0, tensors.get_length() / 2));
-    if(rows * cols != psi_init.size()) throw except::logic_error("rows * cols != size");
-
-    auto svd_cfg    = svd::config();
-    svd_cfg.svd_lib = svd::lib::lapacke;
-    svd_cfg.svd_rtn = svd::rtn::gesdd;
-    //    svd_cfg.rank_max         = rows;
-    svd_cfg.truncation_limit = status.trnc_lim;
-    //    auto solver              = svd::solver(svd_cfg);
     // Start the time-evolution
     tools::log->info("Starting time evolution");
-    //    tools::log->info("hamilonian_eff_diagonal: {}", hamiltonian_eff_diagonal);
-    //    tools::log->info("hamilonian_mbl_diagonal: {}", hamiltonian_mbl_diagonal);
-    //    auto state_mbl = *tensors.state;
     auto  state_backup  = *tensors.state;
     auto  status_backup = status;
-//    auto  state_mbl     = *tensors.state;
-    auto &state_eff     = *tensors.state; // Hijack the state to functionality for free...
-//    state_mbl.set_name("state_mbl");
+    auto &state_eff     = *tensors.state; // Hijack the state to get functionality for free...
     state_eff.set_name("state_eff");
 
-    // Precompute Udagger psi
-    auto u_and_psi_init = u_and.adjoint() * psi_init;
-//    auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
-    auto t_run          = tid::tic_scope("eff");
+    // Precompute Udagger psi_init in vector form
+    tools::log->info("Generating u_and^dagger psi_init");
+    auto u_and_adj_state_init = state_eff;
+    tools::finite::mps::apply_circuit(u_and_adj_state_init, u_and, CircuitOp::ADJ, false, true, GateMove::AUTO, svd_cfg);
+    auto u_and_adj_psi_init_tensor = tools::finite::measure::mps2tensor(u_and_adj_state_init);
+    auto u_and_adj_psi_init_vector = tenx::VectorMap(u_and_adj_psi_init_tensor);
+
+    //    auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
+    auto t_run = tid::tic_scope("eff");
 
     for(auto time : time_points) {
         auto t_step    = tid::tic_token("step");
@@ -368,27 +563,15 @@ void flbit::run_algorithm2() {
         // Generate the time evolution operator in diagonal form
         tools::log->info("Exponentiating the diagonal Hamiltonians");
         Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
-//        Eigen::VectorXcd tevo_mbl_diagonal = (-1.0i * t_f64 * hamiltonian_mbl_diagonal).array().exp();
         // Time evolve
         tools::log->info("Time-evolving");
-        Eigen::VectorXcd psi_eff = u_and * tevo_eff_diagonal.asDiagonal() * u_and_psi_init;
-//        Eigen::VectorXcd psi_mbl = u_mbl * tevo_mbl_diagonal.asDiagonal() * u_mbl_psi_init;
+        Eigen::VectorXcd psi_eff = tevo_eff_diagonal.asDiagonal() * u_and_adj_psi_init_vector;
         tools::log->info("Merging into state");
+
         auto mps_eff = tenx::TensorMap(psi_eff, psi_eff.size(), 1, 1);
-//        auto mps_mbl = tenx::TensorMap(psi_mbl, psi_mbl.size(), 1, 1);
         // Merge these psi into the current state
         tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, svd_cfg);
-//        tools::finite::mps::merge_multisite_mps(state_mbl, mps_mbl, sites, 0, svd_cfg);
-
-        auto entanglement_entropy_eff1 = tools::finite::measure::entanglement_entropy_midchain(state_eff);
-//        auto entanglement_entropy_mbl1 = tools::finite::measure::entanglement_entropy_midchain(state_mbl);
-
-        auto number_entropy_eff1 = tools::finite::measure::number_entropy_midchain(state_eff);
-//        auto number_entropy_mbl1 = tools::finite::measure::number_entropy_midchain(state_mbl);
-        fmt::print("eff SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_eff1, number_entropy_eff1, t_f64.real(),
-                   t_step->get_last_interval());
-//        fmt::print("mbl SE {:.16f} SN {:.16f} time {:.2e} | +{:.2e}\n", entanglement_entropy_mbl1, number_entropy_mbl1, t_f64.real(),
-//                   t_step->get_last_interval());
+        tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
 
         // Update stuff manually
         status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);
@@ -402,7 +585,7 @@ void flbit::run_algorithm2() {
         print_status();
         tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
 
-        if(status.iter >= time_points.size())  status.algo_stop = AlgorithmStop::SUCCESS;
+        if(status.iter >= time_points.size()) status.algo_stop = AlgorithmStop::SUCCESS;
 
         // It's important not to perform the last move, so we break now: that last state would not get optimized
         if(status.algo_stop != AlgorithmStop::NONE) break;
@@ -1031,7 +1214,7 @@ void flbit::print_status() {
         report += fmt::format("Sₙ(L/2):{:<18.16f} ", tensors.state->measurements.number_entropy_midchain.value());
 
     if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
-        report += fmt::format("Sₙ(L/2) lbit:{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
+        report += fmt::format("Sₙ(L/2):{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
 
     report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
                           tools::finite::measure::bond_dimension_midchain(*tensors.state));

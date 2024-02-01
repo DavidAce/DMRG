@@ -13,25 +13,40 @@
 #include <bitset>
 #include <fmt/ranges.h>
 
-std::string tools::finite::mps::init::get_bitfield(const StateFinite &state, const std::string &pattern) {
+std::string tools::get_bitfield(size_t nbits, const std::string &pattern, BitOrder bitOrder) {
     if(pattern.empty()) return {};
     std::string bitfield;
     if(pattern.front() == 'b') {
         // We have a bit string pattern
         bitfield = pattern.substr(1, std::string::npos);
     } else if(std::isdigit(pattern.front())) {
-        bitfield = fmt::format("{0:0>{1}b}\n", std::stoull(pattern), state.get_length());
+        bitfield = fmt::format("{0:0>{1}b}", std::stoull(pattern), nbits);
     } else {
         throw except::runtime_error("Unrecognized initial state pattern: [{}]\n"
                                     "Hint: use a pattern 'b<bitfield>' or give the bitfield as a non-negative integer\n",
                                     pattern);
     }
-    if(bitfield.size() != state.get_length())
+    if(bitfield.size() != nbits)
         throw except::runtime_error("The parsed pattern gives a bitfield that is shorter than the state length.\n"
                                     "    Pattern         : {}\n"
-                                    "    Bitfield        : {}\n"
-                                    "    Number of sites : {}\n",
-                                    pattern, bitfield, state.get_length());
+                                    "    Bitfield        : {} (size {})\n"
+                                    "    Number of bits  : {}\n",
+                                    pattern, bitfield, bitfield.size(), nbits);
+    if(bitOrder == BitOrder::Reverse) { std::reverse(bitfield.begin(), bitfield.end()); }
+    return bitfield;
+}
+
+std::string tools::get_bitfield(size_t nbits, size_t pattern, BitOrder bitOrder) {
+    std::string bitfield;
+    bitfield = fmt::format("{0:0>{1}b}", pattern, nbits);
+
+    if(bitfield.size() != nbits)
+        throw except::runtime_error("The parsed pattern gives a bitfield that is shorter than the state length.\n"
+                                    "    Pattern         : {}\n"
+                                    "    Bitfield        : {} (size {})\n"
+                                    "    Number of bits  : {}\n",
+                                    pattern, bitfield, bitfield.size(), nbits);
+    if(bitOrder == BitOrder::Reverse) { std::reverse(bitfield.begin(), bitfield.end()); }
     return bitfield;
 }
 
@@ -92,7 +107,7 @@ void tools::finite::mps::init::set_product_state_neel_shuffled(StateFinite &stat
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
     std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
-    auto                                  bitfield = get_bitfield(state, pattern);
+    auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length(), 0);
         for(auto &&[i, b] : iter::enumerate(bitfield)) b = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010 or 10101010..
@@ -126,7 +141,7 @@ void tools::finite::mps::init::set_product_state_neel_dislocated(StateFinite &st
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
     std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
-    auto                                  bitfield = get_bitfield(state, pattern);
+    auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length(), 0);
         // Sets pattern 010101101010
@@ -232,7 +247,7 @@ void tools::finite::mps::init::set_product_state_neel(StateFinite &state, StateI
     if(type == StateInitType::REAL and axus == "y") throw std::runtime_error("StateInitType REAL incompatible with state on axis [y] which impliex CPLX");
     std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
-    auto                                  bitfield = get_bitfield(state, pattern);
+    auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length(), 0);
         for(auto &&[i, p] : iter::enumerate(bitfield)) p = num::mod<size_t>(i, 2) == 0 ? '0' : '1'; // Set Neel pattern 0101010
@@ -296,7 +311,7 @@ void tools::finite::mps::init::set_product_state_on_axis_using_pattern(StateFini
     if(pattern.empty()) throw except::runtime_error("Initial state pattern is an empty string.");
     std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
-    auto                                  bitfield = get_bitfield(state, pattern);
+    auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
 
     Eigen::Tensor<cplx, 1> L(1);
     L.setConstant(1.0);
@@ -330,7 +345,7 @@ void tools::finite::mps::init::set_random_product_state_on_axis_using_eigenspino
     std::string                           label    = "A";
     std::array<Eigen::Tensor<cplx, 3>, 2> spinors  = {tenx::TensorCast(qm::spin::half::get_spinor(axus, +1).normalized(), 2, 1, 1),
                                                       tenx::TensorCast(qm::spin::half::get_spinor(axus, -1).normalized(), 2, 1, 1)};
-    auto                                  bitfield = get_bitfield(state, pattern);
+    auto                                  bitfield = tools::get_bitfield(state.get_length(), pattern);
     if(bitfield.empty() or bitfield.size() != state.get_length()) {
         bitfield.resize(state.get_length() + 1, 0);
         for(auto &&[i, b] : iter::enumerate(bitfield)) {

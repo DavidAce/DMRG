@@ -194,9 +194,15 @@ namespace svd {
              * The function call argument order dL, dR, chiL,chiR is meant as a hint for how to use this function.
              *
              */
+            if(dR == 1) { // probably a single-site right-moving split. No need for a shuffle on VT!
+                auto [U, S, VT] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, svd_cfg);
+                return std::make_tuple(tenx::TensorMap(U, dL, chiL, S.size()), tenx::TensorMap(S.normalized().template cast<Scalar>(), S.size()),
+                                   tenx::TensorMap(VT, 1, S.size(), chiR));
 
-            Eigen::Tensor<Scalar, 4> tensor_for_schmidt = tensor.reshape(tenx::array4{dL, dR, chiL, chiR}).shuffle(tenx::array4{0, 2, 1, 3});
-            return schmidt(tensor_for_schmidt, dL, chiL, dR, chiR, svd_cfg);
+            } else {
+                Eigen::Tensor<Scalar, 4> tensor_for_schmidt = tensor.reshape(tenx::array4{dL, dR, chiL, chiR}).shuffle(tenx::array4{0, 2, 1, 3});
+                return schmidt(tensor_for_schmidt, dL, chiL, dR, chiR, svd_cfg);
+            }
         }
 
         template<typename Scalar>

@@ -103,7 +103,7 @@ namespace tid {
         ur       &insert(std::string_view label, level l); // For adding leafs to the tree
     };
 
-    [[nodiscard]] extern ur   &get(std::string_view key, level l = level::parent, std::optional<std::string_view> prefix = std::nullopt);
+    [[nodiscard]] extern ur   &get(std::string_view key, level l = level::parent, bool unscoped = false);
     [[nodiscard]] extern ur   &get_unscoped(std::string_view key, level l = level::parent);
     [[nodiscard]] extern token tic_token(std::string_view key, level l = level::parent);
     [[nodiscard]] extern token tic_scope(std::string_view key, level l = level::parent);
@@ -125,7 +125,8 @@ namespace tid {
             [[nodiscard]] std::string             str() const;
             const ur                             *operator->() const;
         };
-
+        inline tid::level current_level = tid::normal;
+        inline tid::ur dummy("disabled", level::disabled);
         using tid_db_unordered_map_t = std::unordered_map<std::string, ur>;
         inline tid_db_unordered_map_t tid_db;
 
@@ -138,7 +139,7 @@ namespace tid {
     [[nodiscard]] extern std::vector<internal::ur_ref_t> get_tree(std::string_view prefix = "", level l = level::normal);
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match);
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(std::string_view match);
-
-    void print_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
-    void print_tree(std::string_view prefix = "", level l = level::normal);
+    void                                                 set_level(level l);
+    void                                                 print_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
+    void                                                 print_tree(std::string_view prefix = "", level l = level::normal);
 }

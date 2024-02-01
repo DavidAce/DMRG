@@ -29,7 +29,7 @@ namespace svd {
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows,
                                                                                                                 long cols) const {
-    auto t_eigen = tid::tic_scope("eigen", tid::highest);
+//    auto t_eigen = tid::tic_scope("eigen", tid::highest);
     svd::log->trace("Starting SVD with Eigen");
     auto                                 minRC = std::min(rows, cols);
     Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
@@ -64,12 +64,12 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         // We only use Jacobi for precision. So we use all the precision we can get.
         svd::log->debug("Running Eigen::JacobiSVD {}", svd_info);
         // Run the svd
-        auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix), tid::highest);
+//        auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix), tid::highest);
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
         svd::log->debug("Running Eigen::BDCSVD {}", svd_info);
         // Run the svd
-        auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix), tid::highest);
+//        auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix), tid::highest);
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
     }
 
