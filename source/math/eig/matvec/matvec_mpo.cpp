@@ -53,14 +53,10 @@ MatVecMPO<T>::MatVecMPO(const Eigen::Tensor<S, 3> &envL_, /*!< The left block te
     t_multAx   = std::make_unique<tid::ur>("Time MultAx");
 }
 
-template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_,
-                                         const Eigen::Tensor<real, 4> &mpo_);
-template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_,
-                                         const Eigen::Tensor<real, 4> &mpo_);
-template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const Eigen::Tensor<cplx, 3> &envR_,
-                                         const Eigen::Tensor<cplx, 4> &mpo_);
-template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const Eigen::Tensor<cplx, 3> &envR_,
-                                         const Eigen::Tensor<cplx, 4> &mpo_);
+template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_, const Eigen::Tensor<real, 4> &mpo_);
+template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<real, 3> &envL_, const Eigen::Tensor<real, 3> &envR_, const Eigen::Tensor<real, 4> &mpo_);
+template MatVecMPO<cplx>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const Eigen::Tensor<cplx, 3> &envR_, const Eigen::Tensor<cplx, 4> &mpo_);
+template MatVecMPO<real>::MatVecMPO(const Eigen::Tensor<cplx, 3> &envL_, const Eigen::Tensor<cplx, 3> &envR_, const Eigen::Tensor<cplx, 4> &mpo_);
 
 template<typename T>
 int MatVecMPO<T>::rows() const {
@@ -352,12 +348,13 @@ Eigen::Tensor<T, 6> MatVecMPO<T>::get_tensor() const {
     auto t_token = t_genMat->tic_token();
     eig::log->debug("Generating tensor");
 
-    auto                d0 = shape_mps[0];
-    auto                d1 = shape_mps[1];
-    auto                d2 = shape_mps[2];
+    auto d0      = shape_mps[0];
+    auto d1      = shape_mps[1];
+    auto d2      = shape_mps[2];
+    auto & threads = tenx::threads::get();
     Eigen::Tensor<T, 6> tensor;
     tensor.resize(tenx::array6{d0, d1, d2, d0, d1, d2});
-    tensor.device(tenx::threads::getDevice()) =
+    tensor.device(*threads.dev) =
         get_envL().contract(get_mpo(), tenx::idx({2}, {0})).contract(get_envR(), tenx::idx({2}, {2})).shuffle(tenx::array6{2, 0, 4, 3, 1, 5});
     return tensor;
 }

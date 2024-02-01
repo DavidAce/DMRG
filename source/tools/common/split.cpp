@@ -159,7 +159,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
 
     if(positions.size() == 1) {
         auto t_short = tid::tic_scope("short", tid::level::highest);
-        auto svd = svd::solver();
+        auto svd     = svd::solver();
         // We can take a shortcut when given a multisite_mps with just a single site
         auto d0  = multisite_mps.dimension(0);
         auto d1  = multisite_mps.dimension(1);
@@ -196,8 +196,8 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
     std::vector<MpsSite> mps_sites_As;
     std::deque<MpsSite>  mps_sites_Bs;
     // Initialize the left/right unitary matrices
-    Eigen::Tensor<Scalar, 3> U, V;
-    Eigen::Tensor<Scalar, 1> S;
+    //    Eigen::Tensor<Scalar, 3> U, V;
+    //    Eigen::Tensor<Scalar, 1> S;
 
     // Now there are 5 options
     // 1) All sites will become A-sites
@@ -258,7 +258,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto t_o3 = tid::tic_scope("o3", tid::level::highest);
         // Set up the SVD
         svd::solver svd(svd_cfg);
-        std::tie(U, S, V) = svd.schmidt_multisite(multisite_mps, dL, dR, chiL, chiR);
+        auto [U, S, V] = svd.schmidt_multisite(multisite_mps, dL, dR, chiL, chiR);
         mps_sites_As.emplace_back(U, positions.front(), "AC");
         mps_sites_As.back().set_LC(S, svd.get_truncation_error());
         mps_sites_Bs.emplace_back(V, positions.back(), "B");
@@ -271,6 +271,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &V_stash = mps_sites_As.back().get_V_stash();
         auto &S_stash = mps_sites_As.back().get_S_stash();
         if(V_stash and S_stash) {
+            auto V = Eigen::Tensor<Scalar, 3>();
             if constexpr(std::is_same_v<Scalar, real>)
                 V = tools::common::contraction::contract_bnd_mps_temp(S_stash->data, V_stash->data).real();
             else
@@ -294,6 +295,7 @@ std::vector<MpsSite> tools::common::split::split_mps(const Eigen::Tensor<Scalar,
         auto &U_stash = mps_sites_Bs.front().get_U_stash();
         auto &S_stash = mps_sites_Bs.front().get_S_stash();
         if(U_stash and S_stash) {
+            auto U = Eigen::Tensor<Scalar, 3>();
             if constexpr(std::is_same_v<Scalar, real>)
                 U = tools::common::contraction::contract_mps_bnd_temp(U_stash->data, S_stash->data).real();
             else
@@ -587,128 +589,3 @@ template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(c
 template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<long> &spin_dims,
                                                                                const std::vector<size_t> &positions, long center_position,
                                                                                svd::config &svd_cfg);
-
-// template<typename Scalar>
-// std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs2(const Eigen::Tensor<Scalar, 3> &multisite_mps, const std::vector<long> &spin_dims,
-//                                                                        const std::vector<size_t> &positions,
-//                                                                        std::optional<svd::config> svd_cfg) {
-//     /*  Here we split an mps containing multiple sites into its consituent sites from the right
-//      *  Consider a case with 3 sites and
-//      *  spin_dims = {2,2,2}
-//      *  sites = {6,7,8}
-//      *
-//      *  then
-//      *
-//      *  chiL ---[mps]--- chiR
-//      *            |
-//      *         d^3=2*2*2
-//      * Becomes
-//      *
-//      *  chiL---[B6]---chi  chi---[L6]---chi   chi---[B7]---chi  chi---[L7]---chi   chi---[B8]---chiR
-//      *          |                                    |                                    |
-//      *         d=2                                  d=2                                  d=2
-//      *
-//      *
-//      * By convention, a multisite_tensor is created by merging sites from left to right, that is
-//      *
-//      * 1-2-3-4-5
-//      * 12-3-4-5
-//      * 123-4-5
-//      * 1234-5
-//      * 12345
-//      *
-//      * Here we do the process in reverse order, i.e.
-//      *
-//      * 12345
-//      * 1234-5
-//      * 123-4-5
-//      * 12-3-4-5
-//      * 1-2-3-4-5
-//      *
-//      * Note that the spin dimensions are given in left-to-right order, i.e. 12345
-//      */
-//     //    if(spin_dims.empty()) throw except::runtime_error("Could not split multisite tensor from the right: spin_dims list is empty");
-//     if(spin_dims.size() != positions.size())
-//         throw except::runtime_error(
-//             "Could not split multisite tensor from the right: size mismatch in given lists: spin_dims {} != sites {} -- sizes not equal",
-//             spin_dims, positions);
-//
-//     // A special case is when we do one-site tensors. Then we expect
-//     // this function to receive a "V^dagger" without sites in it ( S*V^dagger will become a center bond).
-//     if(positions.empty()) return std::deque<MpsSite>();
-//     auto t_to_b = tid::tic_scope("to_b", tid::level::highest);
-//
-//     // Initialize the resulting container of split sites
-//     std::deque<MpsSite> mps_sites;
-//     // Now we have multiple spin dimensions
-//
-//     // Set up the SVD
-//     svd::solver svd(svd_cfg);
-//
-//     // Declare the the tensors that will catch the schmidt (SVD) decompositions
-//     Eigen::Tensor<Scalar, 3>                U = multisite_mps;              // This side contains all the sites
-//     Eigen::Tensor<Scalar, 1>                S;                              // The singular values
-//     Eigen::Tensor<Scalar, 3>                V;                              // This will become the first site extracted
-//     Eigen::Tensor<Scalar, 3>                US_temp;                        // Temporary for contracting U*S
-//     std::optional<Eigen::Tensor<Scalar, 1>> S_prev       = std::nullopt;    // Starts out empty, needs to be checked outside of this split
-//     double                                  S_prev_error = -1;              // Truncation error from the previous iteration. Negative is ignored
-//     for(const auto &[idx, spin_dim] : iter::enumerate_reverse(spin_dims)) { // Iterate in reverse order
-//         /* The schmidt decomposition gives us the 3 matrices to the left of the line |:
-//          *                                                      |
-//          * chiL ---[U]----chi chi---[S]---chi chi---[V]---chiR  |  chi---[S_prev]---chi
-//          *          |                                |          |
-//          *      d^(sites-1)                          d          |
-//          *
-//          * Here V is an "M" matrix of type B = Gamma * Lambda
-//          * See the notes on svd.schmidt at its definition
-//          */
-//
-//         if(&spin_dim == &spin_dims.front()) {
-//             // We reached the first site, and now U == LG*L, i.e. a theta with dim(0) == spin_dims.front().
-//             // All we need to do to convert U -> B is to multiply the inverse of L on the left:
-//             // B = L^-1 * U = L^-1 LG*L = GL
-//             // We don't have access to that L here, but we know it exists in the state outside of this routine.
-//             break;
-//         }
-//
-//         // Note: From the SVD below we get three components
-//         // U:   Contains one site less than the previous iteration.
-//         //      Before using U as the next multisite mps, it absorbs the S so that the next V to pop out is a right-unitary B-type matrix.
-//         // S:   A set of singular values, "L" matrix, belonging to the left site  (i.e. the next B to pop out of U)
-//         // V:   A right-unitary "B" matrix which is a "Gamma*Lambda" in Vidal's notation
-//
-//         std::tie(U, S, V) = svd.schmidt_into_right_normalized(U, spin_dim, bond_lim);
-//         if(S.size() == 0) throw except::runtime_error("Could not split multisite tensor: Got 0 singular values from right svd");
-//
-//         {
-//             // Contract U and S, i.e. we make a new "theta". In Vidal-form we contract LG * L (where the U = LG)
-//             auto t_sv = tid::tic_token("contract_us");
-//             U         = tools::common::contraction::contract_mps_bnd_temp(U, S, US_temp);
-//         }
-//
-//         // We have everything we need to make a "B" matrix.
-//         // S_prev is empty in the first iteration. It is supposed to be the S to the right of V.
-//         mps_sites.emplace_front(V, S_prev, positions[idx], S_prev_error, "B"); // S_prev is empty the first iteration.
-//
-//         // Store the singular values for the next iteration
-//         S_prev       = S;
-//         S_prev_error = svd.truncation_error;
-//     }
-//
-//     // Now we have a series of B-B-B-B matrices and their corresponding L's stored in mps_sites.
-//     // The left-most site is still a U == L * B == Vidal-form LGL
-//     // We can't do anything about the last U here but we make a site anyway and signal the need for
-//     // multiplying L^-1 from the left by tagging it with "LB", simply because
-//     //      B = L^-1 * LB
-//     mps_sites.emplace_front(U, S_prev, positions.front(), S_prev_error, "LB");
-//     return mps_sites;
-// }
-//
-// template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs2(const Eigen::Tensor<real, 3> &multisite_mps, const std::vector<long>
-// &spin_dims,
-//                                                                                 const std::vector<size_t> &positions,
-//                                                                                 std::optional<svd::config> svd_cfg);
-// template std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs2(const Eigen::Tensor<cplx, 3> &multisite_mps, const std::vector<long>
-// &spin_dims,
-//                                                                                 const std::vector<size_t> &positions,
-//                                                                                 std::optional<svd::config> svd_cfg);

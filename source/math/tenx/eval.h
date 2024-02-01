@@ -1,18 +1,21 @@
 #pragma once
 
-#include <unsupported/Eigen/CXX11/Tensor>
+#include <unsupported/Eigen/CXX11/Tensor> // Include before sfinae
+//
+#include "sfinae.h"
+#include "threads.h"
 
 namespace tenx {
     template<typename Derived, typename Device = Eigen::DefaultDevice>
     class selfCleaningEvaluator {
         private:
         using Evaluator = Eigen::TensorEvaluator<const Eigen::TensorForcedEvalOp<const Derived>, Device>;
-        using DimType   = typename Evaluator::Dimensions;
         Evaluator m_eval;
 
         public:
+        using Dimensions                    = typename Evaluator::Dimensions;
         using Scalar                        = typename Eigen::internal::remove_const<typename decltype(m_eval)::Scalar>::type;
-        static constexpr auto NumDimensions = Eigen::internal::array_size<DimType>::value;
+        static constexpr auto NumDimensions = Eigen::internal::array_size<Dimensions>::value;
 
         selfCleaningEvaluator(const Evaluator &eval) : m_eval(eval) {}
         template<int AccessLevel>
@@ -21,7 +24,7 @@ namespace tenx {
         }
 
         ~selfCleaningEvaluator() {
-            // This whole point of this object is to call cleanup automatically on destruct.
+            // The whole point of this object is to call cleanup automatically on destruct.
             // If there are pending operations to evaluate, m_eval will allocate a buffer to hold a result,
             // which needs to be deallocated.
             m_eval.cleanup();
@@ -30,7 +33,7 @@ namespace tenx {
         //        constexpr auto rank() { return DimType{}.size(); }
         consteval auto rank() { return NumDimensions; }
         constexpr auto dimensions() { return m_eval.dimensions(); }
-        consteval auto size() { return m_eval.size(); }
+        constexpr auto size() { return Eigen::internal::array_prod(m_eval.dimensions()); } // Some ops don't have .size()?
         constexpr auto data() { return m_eval.data(); }
         constexpr auto dimension(unsigned long n) { return m_eval.dimensions()[n]; }
 
@@ -39,10 +42,32 @@ namespace tenx {
         constexpr auto   map() { return Eigen::TensorMap<Eigen::Tensor<Scalar, NumDimensions>>(m_eval.data(), m_eval.dimensions()); }
     };
 
-
     // Evaluates expressions if needed
-    template<typename T, int AccessLevel, typename Device = Eigen::DefaultDevice>
-    auto asEval(const Eigen::TensorBase<T, AccessLevel> &expr, const Device &device = Device()) {
-        return selfCleaningEvaluator(expr, device);
+    template<typename T, int AccessLevel>
+    requires(!tenx::sfinae::is_plain_tensor_v<T>)
+    auto asEval(const Eigen::TensorBase<T, AccessLevel> &expr) {
+        return selfCleaningEvaluator(expr, *threads::get().dev);
+    }
+    template<typename T, int AccessLevel>
+    requires tenx::sfinae::is_plain_tensor_v<T>
+    auto asEval(const Eigen::TensorBase<T, AccessLevel> &expr) {
+        // Unwraps the derived type const T (same as the protected .derived() member in Eigen::TensorBase)
+        if constexpr(tenx::sfinae::is_eigen_tensormap_v<T>)
+            return *static_cast<const T *>(&expr); // Avoids a copy by returning a tensormap
+        else {
+            const auto &ref = *static_cast<const T *>(&expr);
+            return Eigen::TensorMap<const T>(ref.data(), ref.dimensions());
+        }
+    }
+    template<typename T, int AccessLevel>
+    requires tenx::sfinae::is_plain_tensor_v<T>
+    auto asEval(Eigen::TensorBase<T, AccessLevel> &expr) {
+        // Unwraps the derived type T (same as the protected .derived() member in Eigen::TensorBase)
+        if constexpr(tenx::sfinae::is_eigen_tensormap_v<T>)
+            return *static_cast<T *>(&expr); // Avoids a copy by returning a tensormap
+        else {
+            auto &ref = *static_cast<T *>(&expr);
+            return Eigen::TensorMap<T>(ref.data(), ref.dimensions());
+        }
     }
 }

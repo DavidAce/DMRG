@@ -54,7 +54,7 @@ namespace qm {
         mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
         mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
         mutable std::optional<Eigen::Tensor<cplx,2>> trn = std::nullopt;
-        mutable bool used = false;
+
         public:
         Eigen::Tensor<cplx,2> op;
         Eigen::Tensor<cplx_t,2> op_t;
@@ -62,19 +62,20 @@ namespace qm {
         std::vector<long> dim;
         Gate() = default;
 
-        template<typename T, typename Device = Eigen::DefaultDevice>
-        Gate(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &op_, std::vector<size_t> pos_, std::vector<long> dim_, const Device &device = Device())
+        template<typename T>
+        Gate(const Eigen::TensorBase<T, Eigen::ReadOnlyAccessors> &op_, std::vector<size_t> pos_, std::vector<long> dim_)
             : pos(std::move(pos_)), dim(std::move(dim_)) {
             [[maybe_unused]] auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
             assert(pos.size() == dim.size());
+            auto & threads = tenx::threads::get();
             if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx_t>){
                 op.resize(tenx::array2{dim_prod, dim_prod});
-                op.device(device) = op_.eval().unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
+                op.device(*threads.dev) = op_.eval().unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
                 op_t.resize(tenx::array2{dim_prod, dim_prod});
-                op_t.device(device) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
+                op_t.device(*threads.dev) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
             }else if (std::is_same_v<std::decay_t<typename T::Scalar>, cplx>){
                 op.resize(tenx::array2{dim_prod, dim_prod});
-                op.device(device) = op_.eval();
+                op.device(*threads.dev) = op_.eval();
             }
         }
         template<typename T>
@@ -86,9 +87,6 @@ namespace qm {
         explicit Gate(const Eigen::Tensor<cplx_t,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx alpha);
         explicit Gate(const Eigen::Tensor<cplx_t,2> & op_, std::vector<size_t> pos_, std::vector<long> dim_, cplx_t alpha);
 
-        void mark_as_used() const;
-        void unmark_as_used() const;
-        bool was_used() const;
         [[nodiscard]] Gate exp(cplx alpha) const;
         [[nodiscard]] Gate exp(cplx_t alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;

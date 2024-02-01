@@ -346,8 +346,8 @@ void flbit::run_algorithm() {
 //            auto pattern = fmt::format("b{}", tools::get_bitfield(sites.size(), b, BitOrder::Reverse)); // Sort states with "1" appearing left to right
 //            auto state_i = StateFinite(AlgorithmType::fLBIT, sites.size(), 0, 2);
 //            tools::finite::mps::init::set_product_state_on_axis_using_pattern(state_i, StateInitType::REAL, "z", pattern);
-//            tools::finite::mps::apply_circuit(state_i, u_and, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
-//            tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, false, true, GateMove::AUTO, svd_cfg);
+//            tools::finite::mps::apply_circuit(state_i, u_and, CircuitOp::NONE, true, GateMove::AUTO, svd_cfg);
+//            tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
 //            hamiltonian_eff_diagonal_test[static_cast<long>(idx)] = tools::finite::measure::expectation_value(state_i, state_i, mpos, mpo_l, mpo_r);
 //            tools::log->info("⟨Ψ_{0}| U_and† U_mbl H' U_mbl† U_and |Ψ_{0}⟩ = {1}", pattern, hamiltonian_eff_diagonal_test[static_cast<long>(idx)]);
 //            //            auto mps_i = tools::finite::measure::mps2tensor(state_i);
@@ -453,7 +453,7 @@ void flbit::run_algorithm() {
 //        tools::finite::mps::merge_multisite_mps(state_eff2, mps_eff2, sites, 0, svd_cfg);
 //        tools::finite::mps::merge_multisite_mps(state_eff3, mps_eff3, sites, 0, svd_cfg);
 //
-//        tools::finite::mps::apply_circuit(state_eff3, unitary_gates_2site_layers_noninteracting, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
+//        tools::finite::mps::apply_circuit(state_eff3, unitary_gates_2site_layers_noninteracting, CircuitOp::NONE, true, GateMove::AUTO, svd_cfg);
 //
 //        auto entanglement_entropy_eff1 = tools::finite::measure::entanglement_entropy_midchain(state_eff1);
 //        auto entanglement_entropy_eff2 = tools::finite::measure::entanglement_entropy_midchain(state_eff2);
@@ -522,81 +522,73 @@ void flbit::run_algorithm2() {
         for(auto b : num::range<size_t>(0, num_states)) { bitseqs.emplace_back(b); }
         auto mpos = tensors.model->get_compressed_mpos(CompressWithEdges::ON);
         hamiltonian_eff_diagonal.resize(static_cast<long>(bitseqs.size()));
-#pragma omp parallel for private(u_and, u_mbl) schedule(dynamic, 16)
+#pragma omp parallel for schedule(dynamic, 16) private(u_and, u_mbl)
         for(size_t idx = 0; idx < bitseqs.size(); ++idx) {
             auto pattern =
                 fmt::format("b{}", tools::get_bitfield(sites.size(), bitseqs[idx], BitOrder::Reverse)); // Sort states with "1" appearing left to right
             auto state_i = StateFinite(AlgorithmType::fLBIT, sites.size(), 0, 2);
             tools::finite::mps::init::set_product_state_on_axis_using_pattern(state_i, StateInitType::REAL, "z", pattern);
-            tools::finite::mps::apply_circuit(state_i, u_and, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
-            tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, false, true, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_circuit(state_i, u_and, CircuitOp::NONE, true, GateMove::AUTO, svd_cfg);
+            tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
             hamiltonian_eff_diagonal[static_cast<long>(idx)] = tools::finite::measure::expectation_value(state_i, state_i, mpos);
             if(num::mod<size_t>(idx, bitseqs.size() / 64) == 0)
                 tools::log->info("{0:>6}/{1} {2} {3:.3e} s (thread {4:<2}/{5}): ⟨Ψ_i U_and† U_mbl H' U_mbl† U_and |Ψ_i⟩ = {6}", idx, bitseqs.size(), pattern,
                                  t_eff->get_time(), omp_get_thread_num(), omp_get_num_threads(), hamiltonian_eff_diagonal[static_cast<long>(idx)]);
         }
-        tools::log->info("finished generating hamiltonian_eff_diagonal: {:.3e} s", t_eff->get_last_interval());
+        tools::log->info("Finished calculating hamiltonian_eff_diagonal: {:.3e} s", t_eff->get_last_interval());
     }
+    {
+        tools::log->info("Generating u_and^dagger psi_init");
+        auto u_and_adj_state_init = *tensors.state;
+        tools::finite::mps::apply_circuit(u_and_adj_state_init, u_and, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
+        auto             u_and_adj_psi_init_tensor = tools::finite::measure::mps2tensor(u_and_adj_state_init);
+        Eigen::VectorXcd u_and_adj_psi_init_vector = tenx::VectorMap(u_and_adj_psi_init_tensor);
+        tools::log->info("Starting time evolution");
 
-    // Start the time-evolution
-    tools::log->info("Starting time evolution");
-    auto  state_backup  = *tensors.state;
-    auto  status_backup = status;
-    auto &state_eff     = *tensors.state; // Hijack the state to get functionality for free...
-    state_eff.set_name("state_eff");
+#pragma omp parallel for ordered schedule(dynamic, 1)
+        for(size_t tidx = 0; tidx < time_points.size(); ++tidx) {
+            auto  t_step     = tid::tic_token("step");
+            auto  time       = time_points[tidx];
+            auto  tensor_eff = tensors;
+            auto &state_eff  = *tensor_eff.state;
+            auto  status_eff = status;
 
-    // Precompute Udagger psi_init in vector form
-    tools::log->info("Generating u_and^dagger psi_init");
-    auto u_and_adj_state_init = state_eff;
-    tools::finite::mps::apply_circuit(u_and_adj_state_init, u_and, CircuitOp::ADJ, false, true, GateMove::AUTO, svd_cfg);
-    auto u_and_adj_psi_init_tensor = tools::finite::measure::mps2tensor(u_and_adj_state_init);
-    auto u_and_adj_psi_init_vector = tenx::VectorMap(u_and_adj_psi_init_tensor);
+            state_eff.set_name("state_eff");
+            status_eff.algo_type = AlgorithmType::fLBIT;
+            status_eff.delta_t   = time;
+            using namespace std::complex_literals;
+            auto t_f64 = std::complex<real>(static_cast<real>(time.real()), static_cast<real>(time.imag()));
+            // Generate the time evolution operator in diagonal form
+            tools::log->debug("Exponentiating the diagonal Hamiltonians");
+            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
+            // Time evolve
+            tools::log->debug("Time-evolving: {}", t_f64);
+            Eigen::VectorXcd psi_eff = tevo_eff_diagonal.asDiagonal() * u_and_adj_psi_init_vector;
+            tools::log->debug("Merging into state");
 
-    //    auto u_mbl_psi_init = u_mbl.adjoint() * psi_init;
-    auto t_run = tid::tic_scope("eff");
+            auto mps_eff = tenx::TensorMap(psi_eff, psi_eff.size(), 1, 1);
+            // Merge these psi into the current state
+            tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, svd_cfg);
+            tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, true, GateMove::ON, svd_cfg);
 
-    for(auto time : time_points) {
-        auto t_step    = tid::tic_token("step");
-        status.delta_t = time;
-        using namespace std::complex_literals;
-        auto t_f64 = std::complex<real>(static_cast<real>(time.real()), static_cast<real>(time.imag()));
-        // Generate the time evolution operator in diagonal form
-        tools::log->info("Exponentiating the diagonal Hamiltonians");
-        Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
-        // Time evolve
-        tools::log->info("Time-evolving");
-        Eigen::VectorXcd psi_eff = tevo_eff_diagonal.asDiagonal() * u_and_adj_psi_init_vector;
-        tools::log->info("Merging into state");
+            // Update stuff
+            status_eff.phys_time = abs_t(time);
+            status_eff.iter      = tidx + 1;
+            status_eff.step      = status_eff.iter * settings::model::model_size;
+            status_eff.position  = state_eff.get_position<long>();
+            status_eff.direction = state_eff.get_direction();
+            status_eff.wall_time = tid::get_unscoped("t_tot").get_time();
+            //            status_eff.algo_time = t_run->get_time();
+            if(tidx + 1 >= time_points.size()) status_eff.algo_stop = AlgorithmStop::SUCCESS;
 
-        auto mps_eff = tenx::TensorMap(psi_eff, psi_eff.size(), 1, 1);
-        // Merge these psi into the current state
-        tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, svd_cfg);
-        tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, false, true, GateMove::AUTO, svd_cfg);
-
-        // Update stuff manually
-        status.phys_time = abs_t(time_points[std::min(status.iter, time_points.size() - 1)]);
-        status.iter += 1;
-        status.step += settings::model::model_size;
-        status.position  = tensors.get_position<long>();
-        status.direction = tensors.state->get_direction();
-
-        check_convergence();
-        AlgorithmFinite::write_to_file(state_eff, *tensors.model, *tensors.edges, StorageEvent::ITERATION, CopyPolicy::TRY);
-        print_status();
-        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status.step, status.iter, status.position, status.direction);
-
-        if(status.iter >= time_points.size()) status.algo_stop = AlgorithmStop::SUCCESS;
-
-        // It's important not to perform the last move, so we break now: that last state would not get optimized
-        if(status.algo_stop != AlgorithmStop::NONE) break;
-        status.wall_time = tid::get_unscoped("t_tot").get_time();
-        status.algo_time = t_run->get_time();
-        t_run->start_lap();
+#pragma omp ordered
+            {
+                print_status(status_eff, tensor_eff);
+                tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges, status_eff, StorageEvent::ITERATION,
+                                                    CopyPolicy::TRY);
+            }
+        }
     }
-    tools::log->info("Finished effective simulation of state [{}] -- stop reason: {}", tensors.state->get_name(), status.algo_stop_sv());
-    //    status.algorithm_has_finished = true;
-    status         = status_backup;
-    *tensors.state = state_backup;
 }
 
 void flbit::run_fes_analysis() {
@@ -952,18 +944,12 @@ void flbit::time_evolve_lbit_state() {
         auto state_lbit_debug = *state_lbit;
         if(has_swap_gates) {
             tools::log->debug("Applying time evolution swap gates backward Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
-            for(auto &g : time_swap_gates_1body) g.unmark_as_used();
-            for(auto &g : time_swap_gates_2body) g.unmark_as_used();
-            for(auto &g : time_swap_gates_3body) g.unmark_as_used();
             tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_3body, CircuitOp::ADJ, GateMove::AUTO, svd_cfg);
             tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_2body, CircuitOp::ADJ, GateMove::AUTO, svd_cfg);
             tools::finite::mps::apply_swap_gates(state_lbit_debug, time_swap_gates_1body, CircuitOp::ADJ, GateMove::AUTO, svd_cfg);
         }
         if(has_slow_gates) {
             tools::log->debug("Applying time evolution gates backward Δt = ({:.2e}, {:.2e})", f128_t(std::real(delta_t)), f128_t(std::imag(delta_t)));
-            for(auto &g : time_gates_1body) g.unmark_as_used();
-            for(auto &g : time_gates_2body) g.unmark_as_used();
-            for(auto &g : time_gates_3body) g.unmark_as_used();
             tools::finite::mps::apply_gates(state_lbit_debug, time_gates_3body, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
             tools::finite::mps::apply_gates(state_lbit_debug, time_gates_2body, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
             tools::finite::mps::apply_gates(state_lbit_debug, time_gates_1body, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
@@ -1192,38 +1178,40 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     }
 }
 
-void flbit::print_status() {
-    if(num::mod(status.iter, settings::print_freq(status.algo_type)) != 0) return;
-    if(settings::print_freq(status.algo_type) == 0) return;
+void flbit::print_status(const AlgorithmStatus &st, const TensorsFinite &ts) {
+    if(num::mod(st.iter, settings::print_freq(st.algo_type)) != 0) return;
+    if(settings::print_freq(st.algo_type) == 0) return;
     auto        t_print = tid::tic_scope("print");
     std::string report;
-    report += fmt::format("{:<} ", tensors.state->get_name());
-    report += fmt::format("iter:{:<4} ", status.iter);
-    report += fmt::format("step:{:<5} ", status.step);
-    report += fmt::format("L:{} ", tensors.get_length());
-    if(tensors.active_sites.empty())
-        report += fmt::format("l:{:<2} ", tensors.get_position());
-    else if(tensors.state->get_direction() > 0)
-        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.front(), tensors.active_sites.back());
-    else if(tensors.state->get_direction() < 0)
-        report += fmt::format("l:[{:>2}-{:<2}] ", tensors.active_sites.back(), tensors.active_sites.front());
+    report += fmt::format("{:<} ", ts.state->get_name());
+    report += fmt::format("iter:{:<4} ", st.iter);
+    report += fmt::format("step:{:<5} ", st.step);
+    report += fmt::format("L:{} ", ts.get_length());
+    if(ts.active_sites.empty())
+        report += fmt::format("l:{:<2} ", ts.get_position());
+    else if(ts.state->get_direction() > 0)
+        report += fmt::format("l:[{:>2}-{:<2}] ", ts.active_sites.front(), ts.active_sites.back());
+    else if(ts.state->get_direction() < 0)
+        report += fmt::format("l:[{:>2}-{:<2}] ", ts.active_sites.back(), ts.active_sites.front());
     //    report += fmt::format("E/L:{:<20.16f} ", tools::finite::measure::energy_per_site(tensors));
-    report += fmt::format("ε:{:<8.2e} ", tensors.state->get_truncation_error_midchain());
-    report += fmt::format("Sₑ(L/2):{:<18.16f} ", tools::finite::measure::entanglement_entropy_midchain(*tensors.state));
-    if(tensors.state->measurements.number_entropy_midchain) // This one is expensive
-        report += fmt::format("Sₙ(L/2):{:<18.16f} ", tensors.state->measurements.number_entropy_midchain.value());
+    report += fmt::format("ε:{:<8.2e} ", ts.state->get_truncation_error_midchain());
+    report += fmt::format("Sₑ(L/2):{:<18.16f} ", tools::finite::measure::entanglement_entropy_midchain(*ts.state));
+    if(ts.state->measurements.number_entropy_midchain) // This one is expensive
+        report += fmt::format("Sₙ(L/2):{:<18.16f} ", ts.state->measurements.number_entropy_midchain.value());
 
-    if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
-        report += fmt::format("Sₙ(L/2):{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
+    //    if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
+    //        report += fmt::format("Sₙ(L/2):{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
 
-    report += fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(status.algo_type), status.bond_lim,
-                          tools::finite::measure::bond_dimension_midchain(*tensors.state));
+    report +=
+        fmt::format("χ:{:<3}|{:<3}|{:<3} ", settings::get_bond_max(st.algo_type), st.bond_lim, tools::finite::measure::bond_dimension_midchain(*ts.state));
     if(settings::flbit::time_scale == TimeScale::LOGSPACED)
-        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", status.phys_time.to_floating_point<real>()));
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.2e}s", st.phys_time.to_floating_point<real>()));
     if(settings::flbit::time_scale == TimeScale::LINSPACED)
-        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", status.phys_time.to_floating_point<real>()));
+        report += fmt::format("ptime:{:<} ", fmt::format("{:>.6f}s", st.phys_time.to_floating_point<real>()));
     report += fmt::format("wtime:{:<}(+{:<}) ", fmt::format("{:>.1f}s", tid::get_unscoped("t_tot").get_time()),
                           fmt::format("{:>.1f}s", tid::get_unscoped("fLBIT")["run"].get_lap()));
     report += fmt::format("mem[rss {:<.1f}|peak {:<.1f}|vm {:<.1f}]MB ", debug::mem_rss_in_mb(), debug::mem_hwm_in_mb(), debug::mem_vm_in_mb());
     tools::log->info(report);
 }
+
+void flbit::print_status() { print_status(status, tensors); }

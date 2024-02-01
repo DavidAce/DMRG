@@ -108,13 +108,14 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
 
         {
             // Make mpsL normalized. This is strictly optional, but we do it so that normalization checks can succeed
-            double                   norm_old = tools::common::contraction::contract_mps_norm(mpsL.get_M());
+            cplx                     norm_old = tools::common::contraction::contract_mps_norm(mpsL.get_M());
             Eigen::Tensor<Scalar, 3> M_tmp    = mpsL.get_M_bare() * mpsL.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
             mpsL.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
-                auto   mpsL_final = state.get_multisite_mps({mpsL.get_position()});
-                double norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
-                tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), norm_old, norm_new);
+                auto mpsL_final = state.get_multisite_mps({mpsL.get_position()});
+                cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsL_final);
+                tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsL.get_label(), mpsL.get_position(), std::abs(norm_old),
+                                  std::abs(norm_new));
             }
         }
 
@@ -146,13 +147,14 @@ std::vector<size_t> tools::finite::env::expand_environment(StateFinite &state, c
 
         {
             // Make mpsR normalized. This is strictly optional, but we do it so that normalization checks can succeed
-            double                   norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
+            cplx                     norm_old = tools::common::contraction::contract_mps_norm(mpsR.get_M());
             Eigen::Tensor<Scalar, 3> M_tmp    = mpsR.get_M_bare() * mpsR.get_M_bare().constant(std::pow(norm_old, -0.5)); // Rescale
             mpsR.set_M(M_tmp);
             if constexpr(settings::debug or settings::debug_expansion) {
-                auto   mpsR_final = state.get_multisite_mps({mpsR.get_position()});
-                double norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
-                tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), norm_old, norm_new);
+                auto mpsR_final = state.get_multisite_mps({mpsR.get_position()});
+                cplx norm_new   = tools::common::contraction::contract_mps_norm(mpsR_final);
+                tools::log->debug("Normalized expanded mps {}({}): {:.16f} -> {:.16f}", mpsR.get_label(), mpsR.get_position(), std::abs(norm_old),
+                                  std::abs(norm_new));
             }
         }
         tools::log->debug("Environment expansion pos {} | alpha {:.2e} | χ {} -> {} -> {} | χlim {}", pos_expanded, alpha.value(), dimR_old[1],

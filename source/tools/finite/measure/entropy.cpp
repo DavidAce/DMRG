@@ -179,7 +179,9 @@ struct Amplitude {
                                           to_string(tgt_pos + 1));
                 }
 
-                auto                   t_con = tid::tic_scope("contract");
+                auto t_con   = tid::tic_scope("contract");
+                auto & threads = tenx::threads::get();
+
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps up to, but not including, the last mps at mps_site
                 for(const auto &mps : state.mps_sites) {
@@ -198,10 +200,9 @@ struct Amplitude {
                         tools::log->trace("from A: contraction: pos {:>2} | tgt {:>2} | bits {} -> {}", mps_pos, tgt_pos, to_string(), to_string(mps_pos + 1));
 
                     temp.resize(size);
-                    temp.device(tenx::threads::getDevice()) =
-                        ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
-                    ampl = temp;    // Update the current amplitude
-                    pos  = mps_pos; // Update the current site
+                    temp.device(*threads.dev) = ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
+                    ampl                      = temp;    // Update the current amplitude
+                    pos                       = mps_pos; // Update the current site
 
                     // Add to cache
                     cidx = get_idx_from_unsorted_cache(cache, pos + 1);
@@ -251,7 +252,8 @@ struct Amplitude {
                     }
                 }
 
-                auto                   t_con = tid::tic_scope("contract");
+                auto                   t_con   = tid::tic_scope("contract");
+                auto                   & threads = tenx::threads::get();
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps
                 for(const auto &mps : iter::reverse(state.mps_sites)) {
@@ -272,10 +274,9 @@ struct Amplitude {
                         tools::log->trace("from B: contraction: pos  {:>2} | tgt {:>2} | bits {} <- {}", mps_pos, tgt_pos, to_string(state_size - mps_pos),
                                           to_string());
                     temp.resize(size);
-                    temp.device(tenx::threads::getDevice()) =
-                        mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
-                    ampl = temp;    // Update the current amplitude
-                    pos  = mps_pos; // Update the current site
+                    temp.device(*threads.dev) = mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
+                    ampl                      = temp;    // Update the current amplitude
+                    pos                       = mps_pos; // Update the current site
 
                     // Add to cache
                     cidx = get_idx_from_unsorted_cache(cache, state_size - pos);
@@ -668,7 +669,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         for(const auto &mps : state_copy.mps_sites) {
             auto pos = mps->get_position<long>();
             auto idx = safe_cast<size_t>(pos) + 1; // First [0] and last [L+1] number entropy are zero. Then mps[0] generates number entropy idx 1, and so on.
-            if(pos > state_pos) break;               // Only compute up to and including AC
+            if(pos > state_pos) break;             // Only compute up to and including AC
             if(mps->get_label() == "B") throw except::logic_error("Expected A/AC site, got B");
             auto amplitudes                     = generate_amplitude_list_rrp<From::A>(state_llen, pos);
             auto probability                    = compute_probability_rrp<Side::LEFT>(state_copy, pos, amplitudes, cache);
@@ -686,7 +687,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         for(const auto &mps : iter::reverse(state_copy.mps_sites)) { // Now compute from the right edge until the middle
             auto pos = mps->get_position<long>();
             auto idx = safe_cast<size_t>(pos); // First [0] and last [L+1] number entropy are zero. Then mps[L] generates number entropy idx L, and so on.
-            if(pos <= state_pos + 1) break;      // +1 because we don't need to compute AC again
+            if(pos <= state_pos + 1) break;    // +1 because we don't need to compute AC again
             if(mps->get_label() != "B") throw except::logic_error("Expected B site, got {}", mps->get_label());
             auto amplitudes                     = generate_amplitude_list_rrp<From::B>(state_llen, pos);
             auto probability                    = compute_probability_rrp<Side::LEFT>(state_copy, pos, amplitudes, cache);

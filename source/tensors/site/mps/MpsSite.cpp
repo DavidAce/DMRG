@@ -49,7 +49,7 @@ MpsSite::MpsSite(const T3 &M_, size_t pos, std::string_view label_) {
     set_M(M_);
 }
 template MpsSite::MpsSite(const Eigen::Tensor<real, 3> &M_, size_t pos, std::string_view label_);
-template MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, size_t pos,std::string_view label_);
+template MpsSite::MpsSite(const Eigen::Tensor<cplx, 3> &M_, size_t pos, std::string_view label_);
 template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<real, 3>> &M_, size_t pos, std::string_view label_);
 template MpsSite::MpsSite(const Eigen::TensorMap<Eigen::Tensor<cplx, 3>> &M_, size_t pos, std::string_view label_);
 
@@ -97,8 +97,8 @@ bool MpsSite::has_nan() const { return tenx::hasNaN(get_M_bare()) or tenx::hasNa
 bool MpsSite::is_normalized(double prec) const {
     auto t_dbg = tid::tic_token("is_normalized", tid::level::highest);
     if(isCenter() or get_label() == "AC") {
-        auto norm = tools::common::contraction::contract_mps_norm(get_M());
-        return std::abs(norm - 1) <= prec;
+        cplx norm = tools::common::contraction::contract_mps_norm(get_M());
+        return std::abs(norm - 1.0) <= prec;
     }
     if(get_label() == "A") {
         auto id = tools::common::contraction::contract_mps_partial<std::array{0l, 1l}>(get_M_bare());
@@ -150,7 +150,7 @@ const Eigen::Tensor<cplx, 3> &MpsSite::get_M_bare() const {
         throw except::runtime_error("MpsSite::get_M_bare(): M has not been set at position {}", get_position());
 }
 const Eigen::Tensor<cplx, 3> &MpsSite::get_M() const {
-//    auto t_get = tid::tic_scope("get_M", tid::level::highest);
+    //    auto t_get = tid::tic_scope("get_M", tid::level::highest);
     if(isCenter()) {
         if(LC.value().dimension(0) != get_M_bare().dimension(2))
             throw except::runtime_error("MpsSite::get_M(): M and LC dim mismatch: {} != {} at position {}", get_M_bare().dimension(2), LC.value().dimension(0),
@@ -274,7 +274,7 @@ requires is_valid_tensor1<T1>
 void MpsSite::set_L(const T1 &L_, double error /* Negative is ignored */) {
     if constexpr(settings::debug) {
         auto norm = tenx::VectorMap(L_).norm();
-        if(std::abs(norm - 1) > 1e-8) tools::log->warn("MpsSite::set_L(): Norm of L is too far from unity: {:.16f}", norm);
+        if(std::abs(norm - 1.0) > 1e-8) tools::log->warn("MpsSite::set_L(): Norm of L is too far from unity: {:.16f}", norm);
     }
 
     if(position) {
@@ -357,7 +357,7 @@ void MpsSite::unset_L() {
 }
 
 void MpsSite::fuse_mps(const MpsSite &other) {
-//    auto t_fuse = tid::tic_scope("fuse", tid::level::highest);
+    //    auto t_fuse = tid::tic_scope("fuse", tid::level::highest);
     // This operation is done when merging mps after an svd split, for instance
     auto tag  = get_tag();       // tag, (example: A[3])
     auto otag = other.get_tag(); // other tag, (example: AC[3])
@@ -435,18 +435,18 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
         for(long i = 0; i < L_temp.size(); i++) std::printf("(%.16f, %.16f)\n", L_temp[i].real(), L_temp[i].imag());
         throw std::runtime_error("L_temp is wrong: This may be due to the broadcasting bug: https://gitlab.com/libeigen/eigen/-/issues/2351");
     }
-
+    auto                   & threads = tenx::threads::get();
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     if(adjoint) {
-        M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
-                                                             .contract(mpo.conjugate(), tenx::idx({0}, {2}))
-                                                             .shuffle(tenx::array5{4, 0, 2, 1, 3})
-                                                             .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+        M_bare_temp.device(*threads.dev) = get_M_bare()
+                                               .contract(mpo.conjugate(), tenx::idx({0}, {2}))
+                                               .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                               .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     } else {
-        M_bare_temp.device(tenx::threads::getDevice()) = get_M_bare()
-                                                             .contract(mpo, tenx::idx({0}, {3}))
-                                                             .shuffle(tenx::array5{4, 0, 2, 1, 3})
-                                                             .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
+        M_bare_temp.device(*threads.dev) = get_M_bare()
+                                               .contract(mpo, tenx::idx({0}, {3}))
+                                               .shuffle(tenx::array5{4, 0, 2, 1, 3})
+                                               .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     }
     if(isCenter()) {
         Eigen::Tensor<cplx, 1> LC_temp = tenx::broadcast(get_LC(), {mpoDimR});
@@ -464,13 +464,14 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
 }
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint) {
-    auto                   t_mpo = tid::tic_token("apply_mpo", tid::level::higher);
-    auto                   dim0  = adjoint ? mpo.dimension(0) : mpo.dimension(1);
-    Eigen::Tensor<cplx, 3> M_bare_temp(dim0, get_chiL(), get_chiR());
+    auto t_mpo       = tid::tic_token("apply_mpo", tid::level::higher);
+    auto dim0        = adjoint ? mpo.dimension(0) : mpo.dimension(1);
+    auto M_bare_temp = Eigen::Tensor<cplx, 3>(dim0, get_chiL(), get_chiR());
+    auto & threads     = tenx::threads::get();
     if(adjoint) {
-        M_bare_temp.device(tenx::threads::getDevice()) = mpo.conjugate().contract(get_M_bare(), tenx::idx({0}, {0}));
+        M_bare_temp.device(*threads.dev) = mpo.conjugate().contract(get_M_bare(), tenx::idx({0}, {0}));
     } else {
-        M_bare_temp.device(tenx::threads::getDevice()) = mpo.contract(get_M_bare(), tenx::idx({1}, {0}));
+        M_bare_temp.device(*threads.dev) = mpo.contract(get_M_bare(), tenx::idx({1}, {0}));
     }
     set_M(M_bare_temp);
 }
@@ -566,7 +567,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  for the site on the left. Presumably the true LC is on some site further to the right.
          *  Here we simply set it as the new L of this site.
          */
-//        auto t_stash = tid::tic_token("take_stash_V", tid::level::highest);
+        //        auto t_stash = tid::tic_token("take_stash_V", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking V stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.V_stash->data.dimensions());
@@ -602,7 +603,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *  Here we simply set it as the new L of this site.
          */
 
-//        auto t_stash = tid::tic_token("take_stash_U", tid::level::highest);
+        //        auto t_stash = tid::tic_token("take_stash_U", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking U stash from {} | dims {} -> {}", get_tag(), other.get_tag(), dimensions(),
                               other.U_stash->data.dimensions());
@@ -633,7 +634,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from AC to a B-site. Then the old LC matrix is inherited as an L matrix.
          *      - We are doing subspace expansion to left or right. Then we get U or V, together with an S to insert into this site.
          */
-//        auto t_stash = tid::tic_token("take_stash_S", tid::level::highest);
+        //        auto t_stash = tid::tic_token("take_stash_S", tid::level::highest);
         if constexpr(settings::verbose_merge)
             tools::log->trace("MpsSite({})::take_stash: Taking S stash from {} | L dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(), other.get_tag(), L->size(),
                               other.S_stash->data.size(), get_truncation_error(), other.S_stash->error);
@@ -646,7 +647,7 @@ void MpsSite::take_stash(const MpsSite &other) {
          *      - This is being transformed from a B to an AC-site. Then the LC was just created in an SVD.
          *      - We are doing subspace expansion to the left. Then we get U, together with a C to insert into this AC site.
          */
-//        auto t_stash = tid::tic_token("take_stash_C", tid::level::highest);
+        //        auto t_stash = tid::tic_token("take_stash_C", tid::level::highest);
         if constexpr(settings::verbose_merge) tools::log->trace("MpsSite({})::take_stash: Taking C stash from {}", get_tag(), other.get_tag());
         if(label == "B")
             tools::log->warn("MpsSite({})::take_stash: Taking C_stash to set LC on B-site | LC dim {} -> {} | err {:.3e} -> {:.3e}", get_tag(),

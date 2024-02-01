@@ -16,10 +16,10 @@ namespace tools::common::contraction {
 
     /* clang-format off */
     template<typename Scalar>
-    double expectation_value(  const Scalar * const mps_ptr, std::array<long,3> mps_dims,
-                               const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
-                               const Scalar * const envL_ptr, std::array<long,3> envL_dims,
-                               const Scalar * const envR_ptr, std::array<long,3> envR_dims);
+    double expectation_value(const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+                             const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
+                             const Scalar * const envL_ptr, std::array<long,3> envL_dims,
+                             const Scalar * const envR_ptr, std::array<long,3> envR_dims);
 
     template<typename Scalar>
     void matrix_vector_product(Scalar * res_ptr,
@@ -29,54 +29,54 @@ namespace tools::common::contraction {
                                const Scalar * const envR_ptr, std::array<long,3> envR_dims);
 
     template<typename Scalar>
-    void matrix_inverse_vector_product(Scalar * res_ptr,
-                               const Scalar * const mps_ptr, std::array<long,3> mps_dims,
-                               const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
-                               const Scalar * const envL_ptr, std::array<long,3> envL_dims,
-                               const Scalar * const envR_ptr, std::array<long,3> envR_dims);
+    void matrix_inverse_vector_product(      Scalar * res_ptr,
+                                       const Scalar * const mps_ptr, std::array<long,3> mps_dims,
+                                       const Scalar * const mpo_ptr, std::array<long,4> mpo_dims,
+                                       const Scalar * const envL_ptr, std::array<long,3> envL_dims,
+                                       const Scalar * const envR_ptr, std::array<long,3> envR_dims);
 
     template<typename mps_type, typename mpo_type, typename env_type>
-    double expectation_value(
-        const TensorRead<mps_type> & mps,
-        const TensorRead<mpo_type> & mpo,
-        const TensorRead<env_type> & envL,
-        const TensorRead<env_type> & envR){
+    double expectation_value(const TensorRead<mps_type> & mps,
+                             const TensorRead<mpo_type> & mpo,
+                             const TensorRead<env_type> & envL,
+                             const TensorRead<env_type> & envR){
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3 passed to calculation of expectation_value");
         static_assert(mpo_type::NumIndices == 4 and "Wrong mpo tensor rank != 4 passed to calculation of expectation_value");
         static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of expectation_value");
-        const auto & mps_ref  = static_cast<const mps_type&>(mps);
-        const auto & mpo_ref  = static_cast<const mpo_type&>(mpo);
-        const auto & envL_ref = static_cast<const env_type&>(envL);
-        const auto & envR_ref = static_cast<const env_type&>(envR);
+        auto  mps_eval = tenx::asEval(mps);
+        auto  mpo_eval = tenx::asEval(mpo);
+        auto  envL_eval = tenx::asEval(envL);
+        auto  envR_eval = tenx::asEval(envR);
+
+
         return expectation_value(
-            mps_ref.data(), mps_ref.dimensions(),
-            mpo_ref.data(), mpo_ref.dimensions(),
-            envL_ref.data(), envL_ref.dimensions(),
-            envR_ref.data(), envR_ref.dimensions());
+            mps_eval.data(), mps_eval.dimensions(),
+            mpo_eval.data(), mpo_eval.dimensions(),
+            envL_eval.data(), envL_eval.dimensions(),
+            envR_eval.data(), envR_eval.dimensions());
     }
 
     template<typename res_type, typename mps_type, typename mpo_type, typename env_type>
-    void matrix_vector_product(
-        TensorWrite<res_type> &res,
-        const TensorRead<mps_type> & mps,
-        const TensorRead<mpo_type> & mpo,
-        const TensorRead<env_type> & envL,
-        const TensorRead<env_type> & envR){
+    void matrix_vector_product(TensorWrite<res_type> &res,
+                               const TensorRead<mps_type> & mps,
+                               const TensorRead<mpo_type> & mpo,
+                               const TensorRead<env_type> & envL,
+                               const TensorRead<env_type> & envR){
         static_assert(res_type::NumIndices == 3 and "Wrong res tensor rank != 3 passed to calculation of matrix_vector_product");
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3 passed to calculation of matrix_vector_product");
         static_assert(mpo_type::NumIndices == 4 and "Wrong mpo tensor rank != 4 passed to calculation of matrix_vector_product");
         static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of matrix_vector_product");
         auto & res_ref = static_cast<res_type&>(res);
-        const auto & mps_ref  = static_cast<const mps_type&>(mps);
-        const auto & mpo_ref  = static_cast<const mpo_type&>(mpo);
-        const auto & envL_ref = static_cast<const env_type&>(envL);
-        const auto & envR_ref = static_cast<const env_type&>(envR);
+        auto  mps_eval = tenx::asEval(mps);
+        auto  mpo_eval = tenx::asEval(mpo);
+        auto  envL_eval = tenx::asEval(envL);
+        auto  envR_eval = tenx::asEval(envR);
         matrix_vector_product(
             res_ref.data(),
-            mps_ref.data(), mps_ref.dimensions(),
-            mpo_ref.data(), mpo_ref.dimensions(),
-            envL_ref.data(), envL_ref.dimensions(),
-            envR_ref.data(), envR_ref.dimensions());
+            mps_eval.data(), mps_eval.dimensions(),
+            mpo_eval.data(), mpo_eval.dimensions(),
+            envL_eval.data(), envL_eval.dimensions(),
+            envR_eval.data(), envR_eval.dimensions());
     }
 
     template<typename mps_type, typename mpo_type, typename env_type>
@@ -99,16 +99,16 @@ namespace tools::common::contraction {
         static_assert(mpo_type::NumIndices == 4 and "Wrong mpo tensor rank != 4 passed to calculation of matrix_vector_product");
         static_assert(env_type::NumIndices == 3 and "Wrong env tensor rank != 3 passed to calculation of matrix_vector_product");
         auto & res_ref = static_cast<res_type&>(res);
-        const auto & mps_ref  = static_cast<const mps_type&>(mps);
-        const auto & mpo_ref  = static_cast<const mpo_type&>(mpo);
-        const auto & envL_ref = static_cast<const env_type&>(envL);
-        const auto & envR_ref = static_cast<const env_type&>(envR);
+        auto  mps_eval = tenx::asEval(mps);
+        auto  mpo_eval = tenx::asEval(mpo);
+        auto  envL_eval = tenx::asEval(envL);
+        auto  envR_eval = tenx::asEval(envR);
         matrix_inverse_vector_product(
             res_ref.data(),
-            mps_ref.data(), mps_ref.dimensions(),
-            mpo_ref.data(), mpo_ref.dimensions(),
-            envL_ref.data(), envL_ref.dimensions(),
-            envR_ref.data(), envR_ref.dimensions());
+            mps_eval.data(), mps_eval.dimensions(),
+            mpo_eval.data(), mpo_eval.dimensions(),
+            envL_eval.data(), envL_eval.dimensions(),
+            envR_eval.data(), envR_eval.dimensions());
     }
 
     /* clang-format on */
@@ -145,8 +145,8 @@ namespace tools::common::contraction {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(bnd_type::NumIndices == 1 and "Wrong bnd tensor rank != 1");
         auto &res_ref  = static_cast<res_type &>(res);
-        auto  mps_eval = tenx::asEval(mps, tenx::threads::getDevice());
-        auto  bnd_eval = tenx::asEval(bnd, tenx::threads::getDevice());
+        auto  mps_eval = tenx::asEval(mps);
+        auto  bnd_eval = tenx::asEval(bnd);
 
         res_ref.resize(mps_eval.dimensions());
         contract_mps_bnd(res_ref.data(), res_ref.dimensions(), mps_eval.data(), mps_eval.dimensions(), bnd_eval.data(), bnd_eval.dimensions());
@@ -158,8 +158,8 @@ namespace tools::common::contraction {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(bnd_type::NumIndices == 1 and "Wrong bnd tensor rank != 1");
         auto &res_ref  = static_cast<res_type &>(res);
-        auto  mps_eval = tenx::asEval(mps, tenx::threads::getDevice());
-        auto  bnd_eval = tenx::asEval(bnd, tenx::threads::getDevice());
+        auto  mps_eval = tenx::asEval(mps);
+        auto  bnd_eval = tenx::asEval(bnd);
         res_ref.resize(mps_eval.dimensions());
         contract_bnd_mps(res_ref.data(), res_ref.dimensions(), bnd_eval.data(), bnd_eval.dimensions(), mps_eval.data(), mps_eval.dimensions());
     }
@@ -192,15 +192,15 @@ namespace tools::common::contraction {
     template<typename mps_type>
     void contract_mps_mps(TensorWrite<mps_type> &res, const TensorRead<mps_type> &mpsL, const TensorRead<mps_type> &mpsR) {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
-        auto               &res_ref  = static_cast<mps_type &>(res);
-        const auto         &mpsL_ref = static_cast<const mps_type &>(mpsL);
-        const auto         &mpsR_ref = static_cast<const mps_type &>(mpsR);
-        long                d0       = mpsL_ref.dimension(0) * mpsR_ref.dimension(0);
-        long                d1       = mpsL_ref.dimension(1);
-        long                d2       = mpsR_ref.dimension(2);
-        std::array<long, 3> res_dims = {d0, d1, d2};
+        auto               &res_ref   = static_cast<mps_type &>(res);
+        auto                mpsL_eval = tenx::asEval(mpsL);
+        auto                mpsR_eval = tenx::asEval(mpsR);
+        long                d0        = mpsL_eval.dimension(0) * mpsR_eval.dimension(0);
+        long                d1        = mpsL_eval.dimension(1);
+        long                d2        = mpsR_eval.dimension(2);
+        std::array<long, 3> res_dims  = {d0, d1, d2};
         res_ref.resize(res_dims);
-        contract_mps_mps(res_ref.data(), res_ref.dimensions(), mpsL_ref.data(), mpsL_ref.dimensions(), mpsR_ref.data(), mpsR_ref.dimensions());
+        contract_mps_mps(res_ref.data(), res_ref.dimensions(), mpsL_eval.data(), mpsL_eval.dimensions(), mpsR_eval.data(), mpsR_eval.dimensions());
     }
 
     template<typename mps_type>
@@ -217,43 +217,45 @@ namespace tools::common::contraction {
     }
 
     template<typename Scalar>
-    double contract_mps_mps_overlap(const Scalar *const mps1_ptr, std::array<long, 3> mps1_dims, const Scalar *const mps2_ptr, std::array<long, 3> mps2_dims);
+    Scalar contract_mps_mps_overlap(const Scalar *const mps1_ptr, std::array<long, 3> mps1_dims, const Scalar *const mps2_ptr, std::array<long, 3> mps2_dims);
 
     template<typename mps_type>
-    double contract_mps_norm(const TensorRead<mps_type> &mps1, const TensorRead<mps_type> &mps2) {
+    auto contract_mps_norm(const TensorRead<mps_type> &mps1, const TensorRead<mps_type> &mps2) {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
-        const auto &mps1_ref = static_cast<const mps_type &>(mps1);
-        const auto &mps2_ref = static_cast<const mps_type &>(mps2);
-        return contract_mps_overlap(mps1_ref.data(), mps1_ref.dimensions(), mps2_ref.data(), mps2_ref.dimensions());
+        auto mps1_eval = tenx::asEval(mps1);
+        auto mps2_eval = tenx::asEval(mps2);
+        return contract_mps_overlap(mps1_eval.data(), mps1_eval.dimensions(), mps2_eval.data(), mps2_eval.dimensions());
     }
 
     template<typename mps_type>
-    double contract_mps_norm(const TensorRead<mps_type> &mps) {
+    auto contract_mps_norm(const TensorRead<mps_type> &mps) {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
-        const auto &mps_ref = static_cast<const mps_type &>(mps);
-        return contract_mps_mps_overlap(mps_ref.data(), mps_ref.dimensions(), mps_ref.data(), mps_ref.dimensions());
+        auto mps_eval = tenx::asEval(mps);
+        return contract_mps_mps_overlap(mps_eval.data(), mps_eval.dimensions(), mps_eval.data(), mps_eval.dimensions());
     }
 
     template<typename Scalar>
-    void contract_mps_mps_partial(Scalar *res_ptr, std::array<long, 2> res_dims, const Scalar *const mps1_ptr, std::array<long, 3> mps1_dims,
-                                  const Scalar *const mps2_ptr, std::array<long, 3> mps2_dims, std::array<long, 2> idx);
+    void contract_mps_mps_partial(Scalar *res_ptr, std::array<long, 2> res_dims,               //
+                                  const Scalar *const mps1_ptr, std::array<long, 3> mps1_dims, //
+                                  const Scalar *const mps2_ptr, std::array<long, 3> mps2_dims, //
+                                  std::array<long, 2> idx);
 
-    template<std::array<long,2> idx, typename mps_type>
+    template<std::array<long, 2> idx, typename mps_type>
     [[nodiscard]] Eigen::Tensor<typename mps_type::Scalar, 2> contract_mps_mps_partial(const TensorRead<mps_type> &mps1, const TensorRead<mps_type> &mps2) {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(idx == std::array{0l, 1l} or idx == std::array{0l, 2l} or idx == std::array{1l, 2l});
-        const auto         &mps1_ref = static_cast<const mps_type &>(mps1);
-        const auto         &mps2_ref = static_cast<const mps_type &>(mps2);
-        std::array<long, 2> dims     = {};
+        auto                mps1_eval = tenx::asEval(mps1);
+        auto                mps2_eval = tenx::asEval(mps2);
+        std::array<long, 2> dims      = {};
         if constexpr(idx == std::array{0l, 1l})
-            dims = {mps1_ref.dimension(2), mps2_ref.dimension(2)};
+            dims = {mps1_eval.dimension(2), mps2_eval.dimension(2)};
         else if constexpr(idx == std::array{0l, 2l})
-            dims = {mps1_ref.dimension(1), mps2_ref.dimension(1)};
+            dims = {mps1_eval.dimension(1), mps2_eval.dimension(1)};
         else if constexpr(idx == std::array{1l, 2l})
-            dims = {mps1_ref.dimension(0), mps2_ref.dimension(0)};
+            dims = {mps1_eval.dimension(0), mps2_eval.dimension(0)};
 
         Eigen::Tensor<typename mps_type::Scalar, 2> res(dims);
-        contract_mps_mps_partial(res.data(), res.dimensions(), mps1_ref.data(), mps1_ref.dimensions(), mps2_ref.data(), mps2_ref.dimensions(), idx);
+        contract_mps_mps_partial(res.data(), res.dimensions(), mps1_eval.data(), mps1_eval.dimensions(), mps2_eval.data(), mps2_eval.dimensions(), idx);
         return res;
     }
 
@@ -261,16 +263,16 @@ namespace tools::common::contraction {
     [[nodiscard]] Eigen::Tensor<typename mps_type::Scalar, 2> contract_mps_partial(const TensorRead<mps_type> &mps) {
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         static_assert(idx == std::array{0l, 1l} or idx == std::array{0l, 2l} or idx == std::array{1l, 2l});
-        const auto         &mps_ref = static_cast<const mps_type &>(mps);
-        std::array<long, 2> dims    = {};
+        auto                mps_eval = tenx::asEval(mps);
+        std::array<long, 2> dims     = {};
         if constexpr(idx == std::array{0l, 1l})
-            dims = {mps_ref.dimension(2), mps_ref.dimension(2)};
+            dims = {mps_eval.dimension(2), mps_eval.dimension(2)};
         else if constexpr(idx == std::array{0l, 2l})
-            dims = {mps_ref.dimension(1), mps_ref.dimension(1)};
+            dims = {mps_eval.dimension(1), mps_eval.dimension(1)};
         else if constexpr(idx == std::array{1l, 2l})
-            dims = {mps_ref.dimension(0), mps_ref.dimension(0)};
+            dims = {mps_eval.dimension(0), mps_eval.dimension(0)};
         Eigen::Tensor<typename mps_type::Scalar, 2> res(dims);
-        contract_mps_mps_partial(res.data(), res.dimensions(), mps_ref.data(), mps_ref.dimensions(), mps_ref.data(), mps_ref.dimensions(), idx);
+        contract_mps_mps_partial(res.data(), res.dimensions(), mps_eval.data(), mps_eval.dimensions(), mps_eval.data(), mps_eval.dimensions(), idx);
         return res;
     }
 
@@ -281,24 +283,23 @@ namespace tools::common::contraction {
         static_assert((mpo_type::NumIndices == 2 or mpo_type::NumIndices == 4) and "Wrong mpo tensor rank != 2 or 4");
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         /* clang-format off */
-              auto &res_ref = static_cast<res_type &>(res);
-        const auto &env_ref = static_cast<const env_type &>(env);
-        const auto &mps_ref = static_cast<const mps_type &>(mps);
-        const auto &mpo_ref = static_cast<const mpo_type &>(mpo);
-
+        auto &res_ref = static_cast<res_type &>(res);
+        auto env_eval = tenx::asEval(env);
+        auto mps_eval = tenx::asEval(mps);
+        auto mpo_eval = tenx::asEval(mpo);
         if constexpr(env_type::NumIndices == 2){
-            res_ref.resize(mps_ref.dimension(2), mps_ref.dimension(2));
+            res_ref.resize(mps_eval.dimension(2), mps_eval.dimension(2));
             contract_env_mps_mpo(res_ref.data(), res_ref.dimensions(),
-                                 env_ref.data(), env_ref.dimensions(),
-                                 mps_ref.data(), mps_ref.dimensions(),
-                                 mpo_ref.data(), mpo_ref.dimensions());
+                                 env_eval.data(), env_eval.dimensions(),
+                                 mps_eval.data(), mps_eval.dimensions(),
+                                 mpo_eval.data(), mpo_eval.dimensions());
         }
         else {
-            res_ref.resize(mps_ref.dimension(2), mps_ref.dimension(2), mpo_ref.dimension(1));
+            res_ref.resize(mps_eval.dimension(2), mps_eval.dimension(2), mpo_eval.dimension(1));
             contract_env_mps_mpo(res_ref.data(), res_ref.dimensions(),
-                                 env_ref.data(), env_ref.dimensions(),
-                                 mps_ref.data(), mps_ref.dimensions(),
-                                 mpo_ref.data(), mpo_ref.dimensions());
+                                 env_eval.data(), env_eval.dimensions(),
+                                 mps_eval.data(), mps_eval.dimensions(),
+                                 mpo_eval.data(), mpo_eval.dimensions());
         }
         /* clang-format on */
     }
@@ -309,23 +310,25 @@ namespace tools::common::contraction {
         static_assert((mpo_type::NumIndices == 2 or mpo_type::NumIndices == 4) and "Wrong mpo tensor rank != 2 or 4");
         static_assert(mps_type::NumIndices == 3 and "Wrong mps tensor rank != 3");
         /* clang-format off */
-              auto &res_ref = static_cast<res_type &>(res);
-        const auto &env_ref = static_cast<const env_type &>(env);
-        const auto &mps_ref = static_cast<const mps_type &>(mps);
-        const auto &mpo_ref = static_cast<const mpo_type &>(mpo);
+        auto &res_ref = static_cast<res_type &>(res);
+        auto env_eval = tenx::asEval(env);
+        auto mps_eval = tenx::asEval(mps);
+        auto mpo_eval = tenx::asEval(mpo);
+
+
         if constexpr(env_type::NumIndices == 2){
-            res_ref.resize(mps_ref.dimension(1), mps_ref.dimension(1));
+            res_ref.resize(mps_eval.dimension(1), mps_eval.dimension(1));
             contract_mps_mpo_env(res_ref.data(), res_ref.dimensions(),
-                                 env_ref.data(), env_ref.dimensions(),
-                                 mps_ref.data(), mps_ref.dimensions(),
-                                 mpo_ref.data(), mpo_ref.dimensions());
+                                 env_eval.data(), env_eval.dimensions(),
+                                 mps_eval.data(), mps_eval.dimensions(),
+                                 mpo_eval.data(), mpo_eval.dimensions());
         }
         else {
-            res_ref.resize(mps_ref.dimension(1), mps_ref.dimension(1), mpo_ref.dimension(0));
+            res_ref.resize(mps_eval.dimension(1), mps_eval.dimension(1), mpo_eval.dimension(0));
             contract_mps_mpo_env(res_ref.data(), res_ref.dimensions(),
-                                 env_ref.data(), env_ref.dimensions(),
-                                 mps_ref.data(), mps_ref.dimensions(),
-                                 mpo_ref.data(), mpo_ref.dimensions());
+                                 env_eval.data(), env_eval.dimensions(),
+                                 mps_eval.data(), mps_eval.dimensions(),
+                                 mpo_eval.data(), mpo_eval.dimensions());
         }
         /* clang-format on */
     }

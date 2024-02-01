@@ -21,8 +21,8 @@
 #include "tid/tid.h"
 #include "tools/common/contraction.h"
 #include "tools/common/log.h"
-#include "tools/finite/ops.h"
 #include "tools/finite/mpo.h"
+#include "tools/finite/ops.h"
 #include <fmt/ranges.h>
 
 size_t tools::finite::measure::length(const TensorsFinite &tensors) { return tensors.get_length(); }
@@ -30,8 +30,8 @@ size_t tools::finite::measure::length(const StateFinite &state) { return state.g
 
 double tools::finite::measure::norm(const StateFinite &state, bool full) {
     if(state.measurements.norm) return state.measurements.norm.value();
-    double norm;
-    auto   t_norm = tid::tic_scope("norm", tid::level::highest);
+    cplx norm;
+    auto t_norm = tid::tic_scope("norm", tid::level::highest);
     if(not full) {
         // We know the all sites are normalized. We can check that the current position is normalized
         const auto  pos = std::clamp(state.get_position<long>(), 0l, state.get_length<long>());
@@ -42,7 +42,9 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         tools::log->trace("Measuring norm on full chain");
         Eigen::Tensor<cplx, 2> chain;
         Eigen::Tensor<cplx, 2> temp;
-        bool                   first = true;
+        bool                   first   = true;
+        auto                   & threads = tenx::threads::get();
+
         for(const auto &mps : state.mps_sites) {
             const auto &M = mps->get_M();
             if(first) {
@@ -51,14 +53,14 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
                 continue;
             }
             temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-            temp.device(tenx::threads::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+            temp.device(*threads.dev) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
 
             chain = temp;
         }
-        norm = std::abs(tenx::MatrixMap(chain).trace());
+        norm = tenx::MatrixMap(chain).trace();
     }
-    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("norm: far from unity: {:.16f}", norm);
-    state.measurements.norm = norm;
+    if(std::abs(norm - 1.0) > settings::precision::max_norm_error) tools::log->debug("norm: far from unity: {:.16f}{:+.16f}i", norm.real(), norm.imag());
+    state.measurements.norm = std::abs(norm);
     return state.measurements.norm.value();
 }
 
@@ -383,6 +385,7 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
     auto off1    = std::array<long, 1>{0};
     auto ext1    = std::array<long, 1>{1};
     auto ext2    = std::array<long, 2>{1, 1};
+    auto & threads = tenx::threads::get();
     statev.slice(off1, ext1).setConstant(1.0);
     // For each site that we contract, the state vector grows by mps->spin_dim()
     // If 4 spin1/2 have been contracted, the state vector could have size 16x7 if the last chi was 7.
@@ -398,10 +401,10 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         //        mps->get_M().dimensions(),
         //                         off1, ext1, ext2);
         if constexpr(std::is_same_v<Scalar, cplx>) {
-            statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
+            statev.slice(off1, ext1).device(*threads.dev) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
         } else {
-            Eigen::Tensor<real, 3> M                                    = mps->get_M().real();
-            statev.slice(off1, ext1).device(tenx::threads::getDevice()) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
+            Eigen::Tensor<real, 3> M                      = mps->get_M().real();
+            statev.slice(off1, ext1).device(*threads.dev) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
         }
     }
     // Finally, we view a slice of known size 2^L
@@ -689,6 +692,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
     if constexpr(settings::debug) {
         if(d0 != 1) tools::log->warn("expectation_value: chiL is not 1");
     }
+    auto & threads = tenx::threads::get();
     for(const auto &mps : state.mps_sites) {
         Eigen::Tensor<cplx, 3> M   = mps->get_M();
         const auto             pos = mps->get_position<long>();
@@ -696,14 +700,14 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
             // Reverse to apply operators right to left, if they are on the same position
             // i.e. ABC|psi> should apply C first and A last (if A and C are on the same site).
             if(op.used or op.pos != pos) continue;
-            auto temp                               = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
-            temp.device(tenx::threads::getDevice()) = op.op.contract(M, tenx::idx({1}, {0}));
-            M                                       = temp;
-            op.used                                 = true;
+            auto temp                 = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
+            temp.device(*threads.dev) = op.op.contract(M, tenx::idx({1}, {0}));
+            M                         = temp;
+            op.used                   = true;
         }
-        auto temp                               = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
-        temp.device(tenx::threads::getDevice()) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
-        chain                                   = temp;
+        auto temp                 = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
+        temp.device(*threads.dev) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
+        chain                     = temp;
     }
 
     Eigen::Tensor<cplx, 0> expval = chain.trace();
@@ -802,22 +806,23 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
     Eigen::Tensor<cplx, 4> result, tmp;
+    auto                   & threads = tenx::threads::get();
     for(size_t pos = 0; pos < L; ++pos) {
-        const auto &mps1 = state1.get_mps_site(pos).get_M();
-        const auto &mps2 = state2.get_mps_site(pos).get_M();
-        const auto &mpo  = mpos[pos];
+        Eigen::Tensor<cplx, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
+        const auto            &mps2 = state2.get_mps_site(pos).get_M();
+        const auto            &mpo  = mpos[pos];
         if(pos == 0) {
             auto dim4 = tenx::array4{mpo.dimension(0) * mps1.dimension(1) * mps2.dimension(1), mps1.dimension(2), mpo.dimension(1), mps2.dimension(2)};
             auto shf6 = tenx::array6{0, 2, 4, 1, 3, 5};
             result.resize(dim4);
-            result.device(tenx::threads::getDevice()) =
-                mps1.conjugate().contract(mpo, tenx::idx({0}, {2})).contract(mps2, tenx::idx({4}, {0})).shuffle(shf6).reshape(dim4);
+            result.device(*threads.dev) = mps1.contract(mpo, tenx::idx({0}, {2})).contract(mps2, tenx::idx({4}, {0})).shuffle(shf6).reshape(dim4);
             continue;
         }
         auto dim4 = tenx::array4{result.dimension(0), mps1.dimension(2), mpo.dimension(1), mps2.dimension(2)};
         tmp.resize(dim4);
-        tmp.device(tenx::threads::getDevice()) =
-            result.contract(mps1.conjugate(), tenx::idx({1}, {1})).contract(mpo, tenx::idx({1, 3}, {0, 2})).contract(mps2, tenx::idx({1, 4}, {1, 0}));
+        tmp.device(*threads.dev) =
+            //        tmp =
+            result.contract(mps1, tenx::idx({1}, {1})).contract(mpo, tenx::idx({1, 3}, {0, 2})).contract(mps2, tenx::idx({1, 4}, {1, 0}));
         result = tmp;
     }
     // In the end we should have a tensor of size 1 (if the state and mpo edges have dim 1).

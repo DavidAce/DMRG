@@ -124,7 +124,8 @@ Eigen::Tensor<Scalar, 2> contract_mpo_env(const Eigen::Tensor<Scalar, 4> &mpo, c
     std::array<long, 2>      dims    = {dim0_up * dim1_up * dim2_up, dim0_dn * dim1_dn * dim2_dn};
     auto                     t_con   = tid::tic_token("contract");
     Eigen::Tensor<Scalar, 2> ham(dims);
-    ham.device(tenx::threads::getDevice()) =
+    auto &threads = tenx::threads::get();
+    ham.device(*threads.dev) =
         envL.contract(mpo, tenx::idx({2}, {0})).contract(envR, tenx::idx({2}, {2})).shuffle(tenx::array6{3, 1, 5, 2, 0, 4}).reshape(dims);
     return ham;
 }

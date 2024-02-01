@@ -71,8 +71,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
         //        t_adj.toc();
         auto [U, S, VT] = do_svd_lapacke(A.data(), A.rows(), A.cols());
-        assert(U.rows() != A.rows());
-        assert(VT.cols() != A.cols());
+        assert(U.rows() == A.rows());
+        assert(VT.cols() == A.cols());
         return std::make_tuple(VT.adjoint(), S, U.adjoint());
     }
     //    auto t_lpk = tid::tic_scope("lapacke", tid::highest);

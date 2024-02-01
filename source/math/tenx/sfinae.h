@@ -1,23 +1,96 @@
 #pragma once
 #include "fwd_decl.h"
+#include <array>
 #include <complex>
+#include <utility>
 
 /*!
  * \brief A collection of type-detection and type-analysis utilities using SFINAE on Eigen types
  */
 namespace tenx::sfinae {
-    template<typename T, typename = std::void_t<>>
-    struct has_data : public std::false_type {};
+
+    template<typename T1, typename T2>
+    concept type_is = std::same_as<std::remove_cvref_t<T1>, T2>;
+
     template<typename T>
-    struct has_data<T, std::void_t<decltype(std::declval<T>().data())>> : public std::true_type {};
+    concept has_value_type_v = requires { typename T::value_type; };
+
     template<typename T>
-    inline constexpr bool has_data_v = has_data<T>::value;
+    concept has_vlen_type_v = requires { typename T::vlen_type; };
+
+    template<template<class...> class Template, class... Args>
+    void is_specialization_impl(const Template<Args...> &);
+    template<class T, template<class...> class Template>
+    concept is_specialization_v = requires(const T &t) { is_specialization_impl<Template>(t); };
+
+    template<template<typename InnerT, auto N> class Template, typename InnerT, auto N>
+    void is_specialization_with_one_parameter_impl(const Template<InnerT, N> &);
+    template<class T, template<typename InnerT, auto N> class Template>
+    concept is_specialization_with_one_parameter_v = requires(const T &t) { is_specialization_with_one_parameter_impl<Template>(t); };
+//    static_assert(is_specialization_with_one_parameter_v<std::array<long,3>, std::array>);
+
     template<typename T>
-    struct is_std_complex : public std::false_type {};
+    concept is_std_complex_v = is_specialization_v<T, std::complex>;
+
     template<typename T>
-    struct is_std_complex<std::complex<T>> : public std::true_type {};
+    concept is_std_array_v = type_is<T, std::array<typename std::remove_cvref_t<T>::value_type, std::tuple_size<T>::value>>;
+    static_assert(is_std_array_v<std::array<long, 3>>);
+
     template<typename T>
-    inline constexpr bool is_std_complex_v = is_std_complex<T>::value;
+    concept is_eigen_dsizes_v =
+        type_is<T, Eigen::DSizes<typename std::remove_cvref_t<T>::Base::value_type, std::tuple_size_v<typename std::remove_cvref_t<T>::Base>>>;
+    //    static_assert(is_eigen_dsizes_v<Eigen::DSizes<long,3>>);
+
+    template<typename T>
+    concept is_pointer_type = std::is_pointer_v<T>;
+    template<typename T>
+    concept has_data_v = requires(T m) {
+        { m.data() } -> is_pointer_type;
+    };
+    template<typename T>
+    concept has_expression_v = requires(T m) {
+        { m.expression() };
+    };
+    template<typename T>
+    concept has_dimensions_v = requires(T m) {
+        { m.dimensions() } -> is_eigen_dsizes_v;
+    };
+
+
+    template<typename T>
+    concept has_self_v = std::is_same_v<T, typename T::Self>;;
+
+    template<typename T>
+    concept is_eigen_tensor_v = std::is_base_of_v<Eigen::TensorBase<std::decay_t<T>, Eigen::ReadOnlyAccessors>, std::decay_t<T>>;
+//    static_assert(is_eigen_tensor_v<decltype(Eigen::Tensor<double, 3>().shuffle(std::array<long, 3>{0}))>);
+//    static_assert(is_eigen_tensor_v<Eigen::Tensor<double, 3>>);
+//    static_assert(is_eigen_tensor_v<Eigen::TensorMap<Eigen::Tensor<double, 3>>>);
+//    static_assert(!is_eigen_tensor_v<Eigen::TensorBase<Eigen::Tensor<double, 3>, Eigen::AccessorLevels::ReadOnlyAccessors>>);
+
+    template<typename T>
+    concept is_eigen_tensorbase_v = requires(T m){
+        requires is_specialization_with_one_parameter_v<T, Eigen::TensorBase>;
+    };
+//    static_assert(!is_eigen_tensorbase_v<Eigen::Tensor<double, 3>>);
+//    static_assert(is_eigen_tensorbase_v<Eigen::TensorBase<Eigen::Tensor<double, 3>, Eigen::AccessorLevels::ReadOnlyAccessors>>);
+
+    template<typename T>
+    concept is_plain_tensor_v = is_eigen_tensor_v<T> and has_data_v<T> and has_dimensions_v<T> and !has_expression_v<T>;
+//    static_assert(is_plain_tensor_v<Eigen::Tensor<double, 3>>);
+//    static_assert(is_plain_tensor_v<Eigen::TensorMap<Eigen::Tensor<double, 3>>>);
+//    static_assert(!is_plain_tensor_v<decltype(Eigen::Tensor<double, 3>().shuffle(std::array<long, 3>{0}))>);
+//    static_assert(!is_plain_tensor_v<Eigen::TensorBase<Eigen::Tensor<double, 3>, Eigen::AccessorLevels::WriteAccessors>>);
+
+
+    template<typename T>
+    concept is_eigen_tensormap_v = requires(T m) {
+        requires is_plain_tensor_v<T>;
+        requires is_pointer_type<typename T::PointerType>; // Only TensorMap seems to have this
+    };
+    //    static_assert(!is_eigen_tensormap_v<Eigen::Tensor<double, 3>>);
+    //    static_assert(!is_eigen_tensormap_v<decltype(Eigen::Tensor<double, 3>().shuffle(std::array<long, 3>{0}))>);
+    //    static_assert(is_eigen_tensormap_v<Eigen::TensorMap<Eigen::Tensor<double, 3>>>);
+
     template<typename T, typename = std::void_t<>>
     struct has_NumIndices : public std::false_type {};
     template<typename T>
@@ -32,10 +105,6 @@ namespace tenx::sfinae {
     using is_eigen_array = std::is_base_of<Eigen::ArrayBase<std::decay_t<T>>, std::decay_t<T>>;
     template<typename T>
     inline constexpr bool is_eigen_array_v = is_eigen_array<T>::value;
-    template<typename T>
-    using is_eigen_tensor = std::is_base_of<Eigen::TensorBase<std::decay_t<T>, Eigen::ReadOnlyAccessors>, std::decay_t<T>>;
-    template<typename T>
-    inline constexpr bool is_eigen_tensor_v = is_eigen_tensor<T>::value;
     template<typename T>
     using is_eigen_dense = std::is_base_of<Eigen::DenseBase<std::decay_t<T>>, std::decay_t<T>>;
     template<typename T>
@@ -62,13 +131,13 @@ namespace tenx::sfinae {
     inline constexpr bool is_eigen_core_v = is_eigen_core<T>::value;
     template<typename T>
     struct is_eigen_any {
-        static constexpr bool value = is_eigen_base<T>::value or is_eigen_tensor<T>::value;
+        static constexpr bool value = is_eigen_base<T>::value or is_eigen_tensor_v<T>;
     };
     template<typename T>
     inline constexpr bool is_eigen_any_v = is_eigen_any<T>::value;
     template<typename T>
     struct is_eigen_contiguous {
-        static constexpr bool value = is_eigen_any<T>::value and has_data<T>::value;
+        static constexpr bool value = is_eigen_any<T>::value and has_data_v<T>;
     };
     template<typename T>
     inline constexpr bool is_eigen_contiguous_v = is_eigen_contiguous<T>::value;
@@ -79,7 +148,7 @@ namespace tenx::sfinae {
         static constexpr auto test() {
             if constexpr(is_eigen_map<U>::value) return test<typename U::PlainObject>();
             if constexpr(is_eigen_dense<U>::value) return U::RowsAtCompileTime == 1 or U::ColsAtCompileTime == 1;
-            if constexpr(is_eigen_tensor<U>::value and has_NumIndices<U>::value)
+            if constexpr(is_eigen_tensor_v<U> and has_NumIndices<U>::value)
                 return U::NumIndices == 1;
             else
                 return false;
@@ -96,7 +165,7 @@ namespace tenx::sfinae {
         template<typename U>
         static constexpr bool test() {
             if constexpr(is_eigen_base<U>::value) return not U::IsRowMajor;
-            if constexpr(is_eigen_tensor<U>::value)
+            if constexpr(is_eigen_tensor_v<U>)
                 return Eigen::ColMajor == static_cast<Eigen::StorageOptions>(U::Layout);
             else
                 return false;
@@ -113,7 +182,7 @@ namespace tenx::sfinae {
         template<typename U>
         static constexpr bool test() {
             if constexpr(is_eigen_base<U>::value) return U::IsRowMajor;
-            if constexpr(is_eigen_tensor<U>::value)
+            if constexpr(is_eigen_tensor_v<U>)
                 return Eigen::RowMajor == static_cast<Eigen::StorageOptions>(U::Layout);
             else
                 return false;

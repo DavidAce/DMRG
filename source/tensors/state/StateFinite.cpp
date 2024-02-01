@@ -406,11 +406,11 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
         }
         if constexpr(settings::debug) {
             // Check the norm of the tensor on debug builds
-            auto   t_dbg = tid::tic_scope("debug");
-            double norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
+            auto t_dbg = tid::tic_scope("debug");
+            cplx norm  = tools::common::contraction::contract_mps_norm(multisite_mps);
             if constexpr(settings::debug_state) tools::log->trace("get_multisite_mps({}): norm ⟨ψ|ψ⟩ = {:.16f}", sites, norm);
-            if(std::abs(norm - 1) > settings::precision::max_norm_error) {
-                tools::log->warn("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1),
+            if(std::abs(norm - 1.0) > settings::precision::max_norm_error) {
+                tools::log->warn("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites, std::abs(norm - 1.0),
                                  settings::precision::max_norm_error);
                 //                throw except::runtime_error("get_multisite_mps<cplx>({}): norm error |1-⟨ψ|ψ⟩| = {:.2e} > max_norm_error {:.2e}", sites,
                 //                std::abs(norm - 1),

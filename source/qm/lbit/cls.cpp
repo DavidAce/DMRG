@@ -78,7 +78,8 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     cfg.svd_lib          = svd::lib::lapacke;
     cfg.svd_rtn          = svd::rtn::geauto;
-    auto svd             = svd::solver(cfg);
+    auto  svd            = svd::solver(cfg);
+    auto &threads        = tenx::threads::get();
 
     {
         // Initialize a dummy SV to start contracting from the left
@@ -98,7 +99,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
                 auto idx_contract2 = adj_dn ? tenx::idx({1, 4}, {0, 3}) : tenx::idx({1, 3}, {0, 3});
                 auto mpos_dn_idx_  = adj_dn ? Eigen::Tensor<cplx, 4>(mpos_dn[idx].conjugate()) : mpos_dn[idx];
                 mpo_du.resize(rsh_mpo4);
-                mpo_du.device(tenx::threads::getDevice()) =
+                mpo_du.device(*threads.dev) =
                     SV.reshape(rsh_svl3).contract(mpos_dn_idx_, idx_contract1).contract(mpos_up[idx], idx_contract2).shuffle(shf5).reshape(rsh_mpo4);
             }
             if(idx + 1 < mpos.size()) {
@@ -125,7 +126,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
             auto dmpo  = mpos[idx].dimensions();
             auto rshUS = std::array<long, 4>{dmpo[0], US.dimension(1), dmpo[2], dmpo[3]};
             mpoUS.resize(rshUS);
-            mpoUS.device(tenx::threads::getDevice()) = mpos[idx].contract(US, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+            mpoUS.device(*threads.dev) = mpos[idx].contract(US, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             if(idx > 0) {
                 std::tie(US, mpos[idx]) = svd.split_mpo_r2l(mpoUS, cfg);
             } else {
@@ -196,8 +197,8 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
     cfg.switchsize_gesdd = settings::solver::svd_switchsize_bdc;
     cfg.svd_lib          = svd::lib::lapacke;
     cfg.svd_rtn          = svd::rtn::geauto;
-    auto svd             = svd::solver(cfg);
-
+    auto  svd            = svd::solver(cfg);
+    auto &threads        = tenx::threads::get();
     {
         // Initialize a dummy SV to start contracting from the left
         auto mpo_dmu = Eigen::Tensor<cplx, 4>();
@@ -215,12 +216,12 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
                 auto           rsh_svl4 = std::array<long, 4>{SV.dimension(0), dd[0], dm[0], du[0]};                 // Dims of SV from the left side
                 auto           rsh_mpo4 = std::array<long, 4>{SV.dimension(0), dd[1] * dm[1] * du[1], du[2], dd[2]}; // Dims of the new mpo_dmu to split
                 mpo_dmu.resize(rsh_mpo4);
-                mpo_dmu.device(tenx::threads::getDevice()) = SV.reshape(rsh_svl4)
-                                                                 .contract(mpos_dn[idx].conjugate(), tenx::idx({1}, {0}))
-                                                                 .contract(mpos_md[idx], tenx::idx({1, 5}, {0, 3}))
-                                                                 .contract(mpos_up[idx], tenx::idx({1, 5}, {0, 3}))
-                                                                 .shuffle(shf6)
-                                                                 .reshape(rsh_mpo4);
+                mpo_dmu.device(*threads.dev) = SV.reshape(rsh_svl4)
+                                                   .contract(mpos_dn[idx].conjugate(), tenx::idx({1}, {0}))
+                                                   .contract(mpos_md[idx], tenx::idx({1, 5}, {0, 3}))
+                                                   .contract(mpos_up[idx], tenx::idx({1, 5}, {0, 3}))
+                                                   .shuffle(shf6)
+                                                   .reshape(rsh_mpo4);
             }
             if(idx + 1 < mpos.size()) {
                 auto t_split            = tid::tic_scope("split");
@@ -246,7 +247,7 @@ std::vector<Eigen::Tensor<cplx, 4>> qm::lbit::merge_unitary_mpo_layers(const std
             auto dmpo  = mpos[idx].dimensions();
             auto rshUS = std::array<long, 4>{dmpo[0], US.dimension(1), dmpo[2], dmpo[3]};
             mpoUS.resize(rshUS);
-            mpoUS.device(tenx::threads::getDevice()) = mpos[idx].contract(US, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
+            mpoUS.device(*threads.dev) = mpos[idx].contract(US, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2});
             if(idx > 0) {
                 std::tie(US, mpos[idx]) = svd.split_mpo_r2l(mpoUS, cfg);
             } else {
@@ -292,7 +293,7 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator5(const std::vector<s
     auto           temp2   = Eigen::Tensor<cplx, 2>();
     constexpr auto trc2    = std::array<long, 2>{2, 3};
     constexpr auto idx1    = tenx::idx({1}, {0});
-
+    auto          &threads = tenx::threads::get();
     // Apply szj to each position one by one
     for(auto &&[pos_res, result] : iter::enumerate(results)) {
         // If pos_szi is too far way from pos_szj, then the result should be zero exactly, no need to compute it.
@@ -310,9 +311,9 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator5(const std::vector<s
                               ? Eigen::Tensor<cplx, 4>(mpo_layer_md[pos_szj].contract(opj, tenx::idx({2}, {1})).shuffle(std::array<long, 4>{0, 1, 3, 2}))
                               : mpo_id;
             temp4.resize(result.dimension(0), mpo_op.dimension(1), mpo_op.dimension(2), mpo_op.dimension(3));
-            temp4.device(tenx::threads::getDevice()) = result.contract(mpo_op, idx1);
-            temp2                                    = temp4.trace(trc2);
-            result                                   = temp2 / temp2.constant(2.0);
+            temp4.device(*threads.dev) = result.contract(mpo_op, idx1);
+            temp2                      = temp4.trace(trc2);
+            result                     = temp2 / temp2.constant(2.0);
         }
     }
 
@@ -344,6 +345,7 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator6(const std::vector<s
     auto           temp2   = Eigen::Tensor<cplx, 2>();
     constexpr auto trc2    = std::array<long, 2>{2, 3};
     constexpr auto idx1    = tenx::idx({1}, {0});
+    auto          &threads = tenx::threads::get();
 
     // Apply szj to each position one by one
     for(auto &&[pos_szj, result] : iter::enumerate(results)) {
@@ -364,9 +366,9 @@ Eigen::Tensor<cplx, 1> qm::lbit::get_lbit_2point_correlator6(const std::vector<s
         for(size_t pos_res = 0; pos_res < mpo_layer_md.size(); ++pos_res) {
             const auto &mpo_op = mpo_layer_md[pos_res];
             temp4.resize(result.dimension(0), mpo_op.dimension(1), mpo_op.dimension(2), mpo_op.dimension(3));
-            temp4.device(tenx::threads::getDevice()) = result.contract(mpo_op, idx1);
-            temp2                                    = temp4.trace(trc2);
-            result                                   = temp2 / temp2.constant(2.0);
+            temp4.device(*threads.dev) = result.contract(mpo_op, idx1);
+            temp2                      = temp4.trace(trc2);
+            result                     = temp2 / temp2.constant(2.0);
         }
     }
 

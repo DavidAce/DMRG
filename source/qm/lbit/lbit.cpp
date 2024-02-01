@@ -480,8 +480,8 @@ Eigen::Tensor<cplx, 2> qm::lbit::get_unitary_circuit_as_tensor(const std::vector
         //        if constexpr(settings::debug_circuit) {
         double hwm = debug::mem_hwm_in_mb();
         double rss = debug::mem_rss_in_mb();
-        tools::log->info("contracted layer {} dims {} ... {:.3e} s | rss {:<.1f} (+{:<.1f}) hwm {:<.1f} mb (+{:<.1f})", lidx,
-                                            all_layers.dimensions(), t, rss, rss - rss_start, hwm, hwm - hwm_start);
+        tools::log->info("contracted layer {} dims {} ... {:.3e} s | rss {:<.1f} (+{:<.1f}) hwm {:<.1f} mb (+{:<.1f})", lidx, all_layers.dimensions(), t, rss,
+                                            rss - rss_start, hwm, hwm - hwm_start);
         //        }
     };
 
@@ -671,7 +671,6 @@ cplx qm::lbit::get_lbit_2point_correlator2(const std::vector<std::vector<qm::Gat
         // Connect σ^z_j at the top
         log.push_back(fmt::format("insert σzj{} ", szj_gate.pos));
         g = g.connect_below(szj_gate);
-        szj_gate.mark_as_used();
         std::string layer_str = empty_str;
         szj_gate.draw_pos(layer_str, "szj  :");
         net.push_back(layer_str);
@@ -1055,6 +1054,7 @@ cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<cplx,
     auto mpo_dn_opi = Eigen::Tensor<cplx, 4>();
     auto mpo_up_opj = Eigen::Tensor<cplx, 4>();
     result.setConstant(1.0);
+    auto & threads = tenx::threads::get();
     for(size_t idx = 0; idx < mpo_layer.size(); ++idx) {
         auto opi = idx == pos_szi ? si : id;
         auto opj = idx == pos_szj ? sj : id;
@@ -1063,18 +1063,18 @@ cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<cplx,
         {
             auto t_opj = tid::tic_token("opj");
             mpo_up_opj.resize(dim);
-            mpo_up_opj.device(tenx::threads::getDevice()) = mpo_layer[idx].contract(opj, tenx::idx({2}, {0}));
+            mpo_up_opj.device(*threads.dev) = mpo_layer[idx].contract(opj, tenx::idx({2}, {0}));
         }
         {
             auto t_opj = tid::tic_token("opi");
             mpo_dn_opi.resize(dim);
-            mpo_dn_opi.device(tenx::threads::getDevice()) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {0}));
+            mpo_dn_opi.device(*threads.dev) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {0}));
         }
         {
             auto t_updntr = tid::tic_token("updntr");
             temp2.resize(mpo_dn_opi.dimension(1), mpo_up_opj.dimension(1));
-            temp2.device(tenx::threads::getDevice()) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3, 2}, {0, 2, 3}));
-            result                                   = temp2 / temp2.constant(2.0); // Divide by two for each trace
+            temp2.device(*threads.dev) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3, 2}, {0, 2, 3}));
+            result                     = temp2 / temp2.constant(2.0); // Divide by two for each trace
         }
     }
     //    tools::log->info("result {:+.16f}{:+.16f}i | time tot {:.3e}", std::real(result.coeff(0)), std::imag(result.coeff(0)), t_olap.get_last_interval());
@@ -1342,7 +1342,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
         auto lbit_corrmat = Eigen::Tensor<cplx, 2>(ssites, ssites);
         lbit_corrmat.setZero();
         StateFinite state_ud = state;
-        tools::finite::mps::apply_circuit(state_ud, unitary_circuit, CircuitOp::ADJ, false, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
+        tools::finite::mps::apply_circuit(state_ud, unitary_circuit, CircuitOp::ADJ, false, GateMove::ON, svd_cfg); // Apply U† on state_ud
         bond_maxu = std::max<long>(bond_maxu, state_ud.find_largest_bond());
         t_r.toc();
 
@@ -1352,7 +1352,7 @@ Eigen::Tensor<real, 2> qm::lbit::get_lbit_correlation_matrix(const std::vector<s
             state_i.get_mps_site(i).apply_mpo(szi); // Apply σ^z_i on state_i
             t_i_u.tic();
 
-            tools::finite::mps::apply_circuit(state_i, unitary_circuit, CircuitOp::NONE, false, false, GateMove::ON, svd_cfg); // Apply U on state_i
+            tools::finite::mps::apply_circuit(state_i, unitary_circuit, CircuitOp::NONE, false, GateMove::ON, svd_cfg); // Apply U on state_i
             bond_maxi = std::max<long>(bond_maxi, state_i.find_largest_bond());
             t_i_u.toc();
             t_i.toc();
@@ -1594,7 +1594,6 @@ qm::lbit::lbitSupportAnalysis qm::lbit::get_lbit_support_analysis(const UnitaryG
         uprop.lambda = u_lambda;
         uprop.wkind = u_wkind;
         uprop.mkind = u_mkind;
-        for(const auto &ulayer : uprop.ulayers) for(auto &g : ulayer) g.unmark_as_used();
         bool use_mpo = uprop.depth >= settings::flbit::cls::mpo_circuit_switchdepth;
         tools::log->debug("Computing lbit supports | reps {} | rand h {} | mpo {} | {}", reps, rndh, use_mpo,uprop.string());
         auto lbit_corrmat_vec = get_lbit_correlation_matrices(uprop, reps, rndh, use_mpo);
@@ -1662,7 +1661,7 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
     state_real.clear_measurements();
     tools::log->debug("Transforming {} to {} using {} unitary layers: Ψ = U|Ψ'⟩", state_lbit.get_name(), state_real.get_name(),
                       unitary_gates_2site_layers.size());
-    tools::finite::mps::apply_circuit(state_real, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+    tools::finite::mps::apply_circuit(state_real, unitary_gates_2site_layers, CircuitOp::NONE, true, GateMove::ON, svd_cfg);
 
     tools::finite::mps::normalize_state(state_real, svd_cfg, NormPolicy::IFNEEDED);
     //    status.position  = tensors.get_position<long>();
@@ -1675,7 +1674,7 @@ StateFinite qm::lbit::transform_to_real_basis(const StateFinite &state_lbit, con
         // Double-check the transform operation
         // Check that the transform backwards is equal to the original state
         auto state_lbit_debug = state_real;
-        tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_circuit(state_lbit_debug, unitary_gates_2site_layers, CircuitOp::ADJ, true, GateMove::ON, svd_cfg);
         auto overlap = tools::finite::ops::overlap(state_lbit, state_lbit_debug);
         tools::log->info("Debug overlap after unitary circuit: {:.16f}", overlap);
         if(svd_cfg.truncation_limit.has_value())
@@ -1738,7 +1737,7 @@ StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, con
     state_lbit.clear_measurements();
     tools::log->info("Transforming {} to {} using {} unitary layers Ψ' = U†|Ψ⟩", state_real.get_name(), state_lbit.get_name(),
                      unitary_gates_2site_layers.size());
-    tools::finite::mps::apply_circuit(state_lbit, unitary_gates_2site_layers, CircuitOp::ADJ, false, true, GateMove::ON, svd_cfg);
+    tools::finite::mps::apply_circuit(state_lbit, unitary_gates_2site_layers, CircuitOp::ADJ, true, GateMove::ON, svd_cfg);
 
     //    auto svd_cfg = svd::config(status.bond_lim, status.trnc_lim);
     tools::finite::mps::normalize_state(state_lbit, std::nullopt, NormPolicy::IFNEEDED);
@@ -1750,7 +1749,7 @@ StateFinite qm::lbit::transform_to_lbit_basis(const StateFinite &state_real, con
 
         // Double-check the that transform operation backwards is equal to the original state
         auto state_real_debug = state_lbit;
-        tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::NONE, false, true, GateMove::ON, svd_cfg);
+        tools::finite::mps::apply_circuit(state_real_debug, unitary_gates_2site_layers, CircuitOp::NONE, true, GateMove::ON, svd_cfg);
         auto overlap = tools::finite::ops::overlap(state_real, state_real_debug);
         tools::log->info("Debug overlap: {:.16f}", overlap);
         if(svd_cfg.truncation_limit.has_value())

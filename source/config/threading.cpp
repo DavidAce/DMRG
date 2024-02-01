@@ -69,7 +69,7 @@ namespace settings {
                              "Failed to enable threading in Eigen::Tensor with stl_threads = {}",
                              settings::threading::num_threads);
 #endif
-        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::num_threads,
+        tools::log->info("Eigen3 | omp_threads {} | std_threads {} | max_threads {}{}", Eigen::nbThreads(), tenx::threads::getNumThreads(),
                          settings::threading::max_threads, eigen_msg);
 #if defined(OPENBLAS_AVAILABLE)
         auto envcoretype = get_env("OPENBLAS_CORETYPE");

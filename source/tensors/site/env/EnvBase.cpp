@@ -4,6 +4,7 @@
 #include "math/hash.h"
 #include "math/num.h"
 #include "math/tenx.h"
+#include "math/tenx/threads.h"
 #include "tensors/site/mpo/MpoSite.h"
 #include "tensors/site/mps/MpsSite.h"
 #include "tools/common/log.h"
@@ -72,7 +73,7 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
     unique_id_env = std::nullopt;
     unique_id_mps = std::nullopt;
     unique_id_mpo = std::nullopt;
-
+    auto & threads  = tenx::threads::get();
     if(not block) block = std::make_unique<Eigen::Tensor<cplx, 3>>();
     if(side == "L") {
         /*! # Left environment block contraction
@@ -102,10 +103,10 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
                                         mpo.dimension(0), 2, otherblock.dimension(2));
 
         block->resize(mps.dimension(2), mps.dimension(2), mpo.dimension(1));
-        block->device(tenx::threads::getDevice()) = otherblock.contract(mps, tenx::idx({0}, {1}))
-                                                        .contract(mpo, tenx::idx({1, 2}, {0, 2}))
-                                                        .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
-                                                        .shuffle(tenx::array3{0, 2, 1});
+        block->device(*threads.dev) = otherblock.contract(mps, tenx::idx({0}, {1}))
+                                          .contract(mpo, tenx::idx({1, 2}, {0, 2}))
+                                          .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
+                                          .shuffle(tenx::array3{0, 2, 1});
     } else if(side == "R") {
         /*! # Right environment contraction
          *   0--[       ]          1--[   GB   ]--2  0--[LB]--1  0--[       ]
@@ -133,10 +134,10 @@ void EnvBase::build_block(Eigen::Tensor<cplx, 3> &otherblock, const Eigen::Tenso
             throw except::runtime_error("env{} {} pos {} dimension mismatch: mpo dim[{}]:{} != right-block dim[{}]:{}", side, tag, position.value(), 1,
                                         mpo.dimension(1), 2, otherblock.dimension(2));
         block->resize(mps.dimension(1), mps.dimension(1), mpo.dimension(0));
-        block->device(tenx::threads::getDevice()) = otherblock.contract(mps, tenx::idx({0}, {2}))
-                                                        .contract(mpo, tenx::idx({1, 2}, {1, 2}))
-                                                        .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
-                                                        .shuffle(tenx::array3{0, 2, 1});
+        block->device(*threads.dev) = otherblock.contract(mps, tenx::idx({0}, {2}))
+                                          .contract(mpo, tenx::idx({1, 2}, {1, 2}))
+                                          .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
+                                          .shuffle(tenx::array3{0, 2, 1});
     }
 }
 
