@@ -618,24 +618,49 @@ def get_batch_setup(projectname):
             # Calculate SN(L) varying the new lambda parameter
             'projectname': 'lbit123-fleff',
             'batch': {
-                'L12': {
+                'L12|l0.1': {
                     'seed_extent': [10000],
                     'seed_offset': [12000000],
                     'time_steps': 200,
                 },
-                'L14': {
+                'L12|l1.0': {
                     'seed_extent': [10000],
-                    'seed_offset': [14000000],
+                    'seed_offset': [12100000],
                     'time_steps': 200,
                 },
-                'L16': {
+                'L12|l5.0': {
+                    'seed_extent': [10000],
+                    'seed_offset': [12500000],
+                    'time_steps': 200,
+                },
+                'L16|l0.1': {
                     'seed_extent': [10000],
                     'seed_offset': [16000000],
                     'time_steps': 200,
                 },
-                'L20': {
+                'L16|l1.0': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16100000],
+                    'time_steps': 200,
+                },
+                'L16|l5.0': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16500000],
+                    'time_steps': 200,
+                },
+                'L20|l0.1': {
                     'seed_extent': [10000],
                     'seed_offset': [20000000],
+                    'time_steps': 200,
+                },
+                'L20|l1.0': {
+                    'seed_extent': [10000],
+                    'seed_offset': [20100000],
+                    'time_steps': 200,
+                },
+                'L20|l5.0': {
+                    'seed_extent': [10000],
+                    'seed_offset': [20500000],
                     'time_steps': 200,
                 },
             }
