@@ -336,7 +336,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
     auto                   keep_log     = std::vector<size_t>();
     auto                   skip_log     = std::vector<size_t>();
     bool                   do_cache     = !with_edgeL and !with_edgeR and nbody.has_value() and nbody->back() > 1; // Caching doesn't make sense for nbody == 1
-    auto                  &threads      = tenx::threads::get();
+    auto                   &threads      = tenx::threads::get();
     Eigen::Tensor<cplx, 4> multisite_mpo, mpoL, mpoR;
     Eigen::Tensor<cplx, 2> mpoR_traced;
     // The hamiltonian is the lower left corner he full system mpo chain, which we can extract using edgeL and edgeR
@@ -445,10 +445,10 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo(const std::vector<size_t> 
                 mpoR_traced = mpoR.trace(tenx::array2{2, 3});
                 mpoR_traced *= mpoR_traced.constant(0.5); // divide by 2 (after tracing identity)
                 // Append it to the multisite mpo
-                multisite_mpo.device(*threads.dev) = mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
+                multisite_mpo.device(*threads->dev) = mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
             } else {
                 auto t_app                         = tid::tic_scope("appending", tid::level::highest);
-                multisite_mpo.device(*threads.dev) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+                multisite_mpo.device(*threads->dev) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
             }
             // This intermediate multisite_mpo_t could be the result we are looking for at a later time, so cache it!
             if(do_cache) cache.multisite_mpo_temps[new_cache_string] = multisite_mpo;
@@ -587,10 +587,10 @@ Eigen::Tensor<cplx_t, 4> ModelFinite::get_multisite_mpo_t(const std::vector<size
                 mpoR_traced = mpoR.trace(tenx::array2{2, 3});
                 mpoR_traced *= mpoR_traced.constant(0.5); // divide by 2 (after tracing identity)
                 // Append it to the multisite mpo
-                multisite_mpo_t.device(*threads.dev) = mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
+                multisite_mpo_t.device(*threads->dev) = mpoL.contract(mpoR_traced, tenx::idx({1}, {0})).shuffle(tenx::array4{0, 3, 1, 2}).reshape(new_dims);
             } else {
                 auto t_app                           = tid::tic_scope("appending", tid::level::highest);
-                multisite_mpo_t.device(*threads.dev) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+                multisite_mpo_t.device(*threads->dev) = mpoL.contract(mpoR, contract_idx).shuffle(shuffle_idx).reshape(new_dims);
             }
             // This intermediate multisite_mpo_t could be the result we are looking for at a later time, so cache it!
             if(do_cache) cache.multisite_mpo_t_temps[new_cache_string] = multisite_mpo_t;
@@ -659,7 +659,7 @@ Eigen::Tensor<cplx, 2> ModelFinite::get_multisite_ham(const std::vector<size_t> 
     //    }
 
     //            tools::log->info("get_multisite_ham: contracting", mpoL.dimensions(), mpoR.dimensions());
-    //        multisite_mpo.device(*threads.dev) = mpoL.contract(mpoR, tenx::idx({1}, {0})).reshape(dims);
+    //        multisite_mpo.device(*threads->dev) = mpoL.contract(mpoR, tenx::idx({1}, {0})).reshape(dims);
     //}
     //    assert(multisite_mpo.dimension(0) == 1);
     //    assert(multisite_mpo.dimension(1) == 1);
@@ -732,7 +732,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_shifted_view(double energy
         long                dim3     = multisite_mpo.dimension(3) * mpo.MPO().dimension(3);
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
-        temp.device(*threads.dev) = multisite_mpo.contract(mpo.MPO_energy_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+        temp.device(*threads->dev) = multisite_mpo.contract(mpo.MPO_energy_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         multisite_mpo             = std::move(temp);
     }
     return multisite_mpo;
@@ -747,7 +747,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_squared_shifted_view(doubl
     std::array<long, 4>    mpo_squared_dims      = {dim0, dim1, dim2, dim3};
     Eigen::Tensor<cplx, 4> multisite_mpo_squared_shifted(mpo_squared_dims);
     auto                  &threads = tenx::threads::get();
-    multisite_mpo_squared_shifted.device(*threads.dev) =
+    multisite_mpo_squared_shifted.device(*threads->dev) =
         multisite_mpo_shifted.contract(multisite_mpo_shifted, tenx::idx({3}, {2})).shuffle(tenx::array6{0, 3, 1, 4, 2, 5}).reshape(mpo_squared_dims);
     return multisite_mpo_squared_shifted;
 }
@@ -794,9 +794,9 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_squared(const std::vector<
         new_dims         = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
         if(nbody_local) // Avoids creating a temporary
-            temp.device(*threads.dev) = multisite_mpo_squared.contract(mpo.MPO2_nbody_view(nbody_local), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            temp.device(*threads->dev) = multisite_mpo_squared.contract(mpo.MPO2_nbody_view(nbody_local), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
         else
-            temp.device(*threads.dev) = multisite_mpo_squared.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
+            temp.device(*threads->dev) = multisite_mpo_squared.contract(mpo.MPO2(), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
 
         if(skip) {
             /*! We just got handed a multisite-mpo created as

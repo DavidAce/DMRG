@@ -46,7 +46,8 @@ namespace tenx {
     template<typename T, int AccessLevel>
     requires(!tenx::sfinae::is_plain_tensor_v<T>)
     auto asEval(const Eigen::TensorBase<T, AccessLevel> &expr) {
-        return selfCleaningEvaluator(expr, *threads::get().dev);
+        auto &threads = threads::get();
+        return selfCleaningEvaluator(expr, *threads->dev);
     }
     template<typename T, int AccessLevel>
     requires tenx::sfinae::is_plain_tensor_v<T>

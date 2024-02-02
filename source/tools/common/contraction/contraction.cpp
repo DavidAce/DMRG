@@ -56,7 +56,7 @@ double tools::common::contraction::expectation_value(
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     Eigen::Tensor<Scalar, 0> expval;
-    expval.device(*threads.dev) =
+    expval.device(*threads->dev) =
         envL
             .contract(mps,             tenx::idx({0}, {1}))
             .contract(mpo,             tenx::idx({2, 1}, {2, 0}))
@@ -126,13 +126,13 @@ void tools::common::contraction::matrix_vector_product(      Scalar * res_ptr,
     if(envR.dimension(2) != mpo.dimension(1)) throw except::runtime_error("Dimension mismatch envR {} and mpo {}", envR.dimensions(), mpo.dimensions());
 
     if (mps.dimension(1) >= mps.dimension(2)){
-        res.device(*threads.dev) = mps
+        res.device(*threads->dev) = mps
                                             .contract(envL, tenx::idx({1}, {0}))
                                             .contract(mpo,  tenx::idx({3, 0}, {0, 2}))
                                             .contract(envR, tenx::idx({0, 2}, {0, 2}))
                                             .shuffle(tenx::array3{1, 0, 2});
     }else{
-        res.device(*threads.dev) = mps
+        res.device(*threads->dev) = mps
                                             .contract(envR, tenx::idx({2}, {0}))
                                             .contract(mpo,  tenx::idx({3, 0}, {1, 2}))
                                             .contract(envL, tenx::idx({0, 2}, {0, 2}))
@@ -161,7 +161,7 @@ void  tools::common::contraction::contract_mps_bnd(      Scalar * res_ptr      ,
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
     if(mps.dimension(2) != bnd.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} (idx 2) and bnd {} (idx 0)", mps.dimensions(), bnd.dimensions());
     if(mps.dimensions() != res.dimensions()) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps.dimensions(), res.dimensions());
-    res.device(*threads.dev) = mps.contract(tenx::asDiagonal(bnd), tenx::idx({2}, {0}));
+    res.device(*threads->dev) = mps.contract(tenx::asDiagonal(bnd), tenx::idx({2}, {0}));
 }
 template void tools::common::contraction::contract_mps_bnd(      cplx *       res_ptr, std::array<long,3> res_dims,
                                                            const cplx * const mps_ptr, std::array<long,3> mps_dims,
@@ -183,7 +183,7 @@ void  tools::common::contraction::contract_bnd_mps(
     auto bnd = Eigen::TensorMap<const Eigen::Tensor<const Scalar,1>>(bnd_ptr,bnd_dims);
     if(mps.dimension(1) != bnd.dimension(0)) throw except::runtime_error("Dimension mismatch mps {} (idx 1) and bnd {} (idx 0)", mps.dimensions(), bnd.dimensions());
     if(mps.dimensions() != res.dimensions()) throw except::runtime_error("Dimension mismatch mps {} and res {}", mps.dimensions(), res.dimensions());
-    res.device(*threads.dev) = tenx::asDiagonal(bnd).contract(mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
+    res.device(*threads->dev) = tenx::asDiagonal(bnd).contract(mps, tenx::idx({1}, {1})).shuffle(tenx::array3{1, 0, 2});
 }
 
 template void tools::common::contraction::contract_bnd_mps(      cplx *       res_ptr, std::array<long,3> res_dims,
@@ -208,7 +208,7 @@ void tools::common::contraction::contract_mps_mps(      Scalar * res_ptr       ,
     auto check_dims = std::array<long,3>{mpsL.dimension(0) * mpsR.dimension(0), mpsL.dimension(1), mpsR.dimension(2)};
     if(res_dims != check_dims) throw except::runtime_error("res dimension mismatch: dims {} | expected dims {}", res_dims, check_dims);
     if(mpsL.dimension(2) != mpsR.dimension(1)) throw except::runtime_error("Dimension mismatch mpsL {} (idx 2) and mpsR {} (idx 1)", mpsL.dimensions(), mpsR.dimensions());
-    res.device(*threads.dev) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
+    res.device(*threads->dev) = mpsL.contract(mpsR, contract_idx).shuffle(shuffle_idx).reshape(res_dims);
 }
 
 
@@ -231,7 +231,7 @@ double tools::common::contraction::contract_mps_mps_overlap(const Scalar * const
     if(mps1.dimensions() != mps2.dimensions()) throw except::runtime_error("Dimension mismatch mps1 {} and mps2 {}", mps1.dimensions(), mps2.dimensions());
     Eigen::Tensor<Scalar,0> res;
     constexpr auto idxs = tenx::idx({0,1,2},{0,1,2});
-    res.device(*threads.dev) = mps1.contract(mps2.conjugate(), idxs);
+    res.device(*threads->dev) = mps1.contract(mps2.conjugate(), idxs);
     return std::abs(res.coeff(0));
 }
 
@@ -250,7 +250,7 @@ void tools::common::contraction::contract_mps_mps_partial(      Scalar *       r
     auto mps1 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps1_ptr, mps1_dims);
     auto mps2 = Eigen::TensorMap<const Eigen::Tensor<const Scalar,3>>(mps2_ptr, mps2_dims);
     auto idxs = tenx::idx(idx,idx);
-    res.device(*threads.dev) = mps1.conjugate().contract(mps2, idxs);
+    res.device(*threads->dev) = mps1.conjugate().contract(mps2, idxs);
 }
 
 template void tools::common::contraction::contract_mps_mps_partial(      cplx *       res_ptr , std::array<long,2> res_dims,
@@ -272,7 +272,7 @@ void tools::common::contraction::contract_env_mps_mpo(      Scalar *      res_pt
     auto env = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(env_ptr, env_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
     auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(mpo_ptr, mpo_dims);
-    res.device(*threads.dev) = env.contract(mps,         tenx::idx({0}, {1}))
+    res.device(*threads->dev) = env.contract(mps,         tenx::idx({0}, {1}))
                                             .contract(mpo,             tenx::idx({1}, {0}))
                                             .contract(mps.conjugate(), tenx::idx({0, 2}, {1, 0}));
 }
@@ -291,7 +291,7 @@ void tools::common::contraction::contract_env_mps_mpo(      Scalar *      res_pt
     auto env                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(env_ptr, env_dims);
     auto mps                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
     auto mpo                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 4>>(mpo_ptr, mpo_dims);
-    res.device(*threads.dev) = env.contract(mps,         tenx::idx({0}, {1}))
+    res.device(*threads->dev) = env.contract(mps,         tenx::idx({0}, {1}))
                                             .contract(mpo,             tenx::idx({1, 2}, {0, 2}))
                                             .contract(mps.conjugate(), tenx::idx({0, 3}, {1, 0}))
                                             .shuffle(                  tenx::array3{0, 2, 1});
@@ -311,7 +311,7 @@ void tools::common::contraction::contract_mps_mpo_env(      Scalar *      res_pt
     auto env = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(env_ptr, env_dims);
     auto mps = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
     auto mpo = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 2>>(mpo_ptr, mpo_dims);
-    res.device(*threads.dev) =
+    res.device(*threads->dev) =
         env.contract(mps,             tenx::idx({0}, {2}))
            .contract(mpo,             tenx::idx({1}, {0}))
            .contract(mps.conjugate(), tenx::idx({0, 2}, {2, 0}));
@@ -329,7 +329,7 @@ void tools::common::contraction::contract_mps_mpo_env(      Scalar *      res_pt
     auto env                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(env_ptr, env_dims);
     auto mps                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 3>>(mps_ptr, mps_dims);
     auto mpo                           = Eigen::TensorMap<const Eigen::Tensor<const Scalar, 4>>(mpo_ptr, mpo_dims);
-    res.device(*threads.dev) = env.contract(mps,         tenx::idx({0}, {2}))
+    res.device(*threads->dev) = env.contract(mps,         tenx::idx({0}, {2}))
                                             .contract(mpo,             tenx::idx({1, 2}, {1, 2}))
                                             .contract(mps.conjugate(), tenx::idx({0, 3}, {2, 0}))
                                             .shuffle(                  tenx::array3{0, 2, 1});

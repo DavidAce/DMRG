@@ -551,10 +551,10 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
 
     {
         auto        t_apply = tid::tic_token("apply", tid::level::highest);
-        auto       &threads = tenx::threads::get();
+        auto        &threads = tenx::threads::get();
         const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
         temp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        temp.device(*threads.dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
+        temp.device(*threads->dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
     }
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: applied pos {} | op {} | gm {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
@@ -729,8 +729,8 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     constexpr auto shf4              = tenx::array4{1, 0, 2, 3};
     auto           rsh3              = tenx::array3{dR * dL, chiL, chiR};
     auto           swapped_mps       = Eigen::Tensor<cplx, 3>(rsh3);
-    auto          &threads           = tenx::threads::get();
-    swapped_mps.device(*threads.dev) = state.get_multisite_mps({posL, posR})
+    auto           &threads          = tenx::threads::get();
+    swapped_mps.device(*threads->dev) = state.get_multisite_mps({posL, posR})
                                            .reshape(rsh4)
                                            .shuffle(shf4)  // swap
                                            .reshape(rsh3); // prepare for merge
@@ -807,9 +807,9 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     {
         auto        t_apply = tid::tic_token("apply", tid::level::higher);
         const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
-        auto       &threads = tenx::threads::get();
+        auto        &threads = tenx::threads::get();
         temp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        temp.device(*threads.dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
+        temp.device(*threads->dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
     }
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: applied pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,

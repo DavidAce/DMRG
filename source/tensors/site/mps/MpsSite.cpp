@@ -435,12 +435,12 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
     auto                  &threads = tenx::threads::get();
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     if(adjoint) {
-        M_bare_temp.device(*threads.dev) = get_M_bare()
+        M_bare_temp.device(*threads->dev) = get_M_bare()
                                                .contract(mpo.conjugate(), tenx::idx({0}, {2}))
                                                .shuffle(tenx::array5{4, 0, 2, 1, 3})
                                                .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     } else {
-        M_bare_temp.device(*threads.dev) = get_M_bare()
+        M_bare_temp.device(*threads->dev) = get_M_bare()
                                                .contract(mpo, tenx::idx({0}, {3}))
                                                .shuffle(tenx::array5{4, 0, 2, 1, 3})
                                                .reshape(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
@@ -466,9 +466,9 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint) {
     auto  M_bare_temp = Eigen::Tensor<cplx, 3>(dim0, get_chiL(), get_chiR());
     auto &threads     = tenx::threads::get();
     if(adjoint) {
-        M_bare_temp.device(*threads.dev) = mpo.conjugate().contract(get_M_bare(), tenx::idx({0}, {0}));
+        M_bare_temp.device(*threads->dev) = mpo.conjugate().contract(get_M_bare(), tenx::idx({0}, {0}));
     } else {
-        M_bare_temp.device(*threads.dev) = mpo.contract(get_M_bare(), tenx::idx({1}, {0}));
+        M_bare_temp.device(*threads->dev) = mpo.contract(get_M_bare(), tenx::idx({1}, {0}));
     }
     set_M(M_bare_temp);
 }

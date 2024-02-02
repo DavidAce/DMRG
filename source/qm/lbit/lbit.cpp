@@ -1054,7 +1054,7 @@ cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<cplx,
     auto mpo_dn_opi = Eigen::Tensor<cplx, 4>();
     auto mpo_up_opj = Eigen::Tensor<cplx, 4>();
     result.setConstant(1.0);
-    auto & threads = tenx::threads::get();
+    auto &threads = tenx::threads::get();
     for(size_t idx = 0; idx < mpo_layer.size(); ++idx) {
         auto opi = idx == pos_szi ? si : id;
         auto opj = idx == pos_szj ? sj : id;
@@ -1063,17 +1063,17 @@ cplx qm::lbit::get_lbit_2point_correlator4(const std::vector<Eigen::Tensor<cplx,
         {
             auto t_opj = tid::tic_token("opj");
             mpo_up_opj.resize(dim);
-            mpo_up_opj.device(*threads.dev) = mpo_layer[idx].contract(opj, tenx::idx({2}, {0}));
+            mpo_up_opj.device(*threads->dev) = mpo_layer[idx].contract(opj, tenx::idx({2}, {0}));
         }
         {
             auto t_opj = tid::tic_token("opi");
             mpo_dn_opi.resize(dim);
-            mpo_dn_opi.device(*threads.dev) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {0}));
+            mpo_dn_opi.device(*threads->dev) = mpo_layer[idx].conjugate().contract(opi, tenx::idx({3}, {0}));
         }
         {
             auto t_updntr = tid::tic_token("updntr");
             temp2.resize(mpo_dn_opi.dimension(1), mpo_up_opj.dimension(1));
-            temp2.device(*threads.dev) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3, 2}, {0, 2, 3}));
+            temp2.device(*threads->dev) = result.contract(mpo_dn_opi, tenx::idx({0}, {0})).contract(mpo_up_opj, tenx::idx({0, 3, 2}, {0, 2, 3}));
             result                     = temp2 / temp2.constant(2.0); // Divide by two for each trace
         }
     }

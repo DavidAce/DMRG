@@ -67,15 +67,15 @@ namespace qm {
             : pos(std::move(pos_)), dim(std::move(dim_)) {
             [[maybe_unused]] auto dim_prod = std::accumulate(std::begin(dim), std::end(dim), 1, std::multiplies<>());
             assert(pos.size() == dim.size());
-            auto & threads = tenx::threads::get();
+            auto &threads = tenx::threads::get();
             if constexpr(std::is_same_v<std::decay_t<typename T::Scalar>, cplx_t>){
                 op.resize(tenx::array2{dim_prod, dim_prod});
-                op.device(*threads.dev) = op_.eval().unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
+                op.device(*threads->dev) = op_.eval().unaryExpr([](auto z){return std::complex<real>(static_cast<real>(z.real()), static_cast<real>(z.imag()));});
                 op_t.resize(tenx::array2{dim_prod, dim_prod});
-                op_t.device(*threads.dev) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
+                op_t.device(*threads->dev) = op_.eval(); //eval().unaryExpr([](auto z){return std::complex<real_t>(z.real(), z.imag());}); // template .cast<cplx_t>();
             }else if (std::is_same_v<std::decay_t<typename T::Scalar>, cplx>){
                 op.resize(tenx::array2{dim_prod, dim_prod});
-                op.device(*threads.dev) = op_.eval();
+                op.device(*threads->dev) = op_.eval();
             }
         }
         template<typename T>

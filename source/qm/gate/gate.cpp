@@ -120,7 +120,7 @@ Eigen::Tensor<cplx, 2> contract_a(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const tenx::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
     auto  res     = Eigen::Tensor<cplx, 2>(dim2);
     auto &threads = tenx::threads::get();
-    res.device(*threads.dev) =
+    res.device(*threads->dev) =
         ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
     return res;
 }
@@ -129,7 +129,7 @@ Eigen::Tensor<cplx, 2> contract_b(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const std::array<long, 4> &shp_udn4, const tenx::idxlistpair<1> &idx1, const tenx::idxlistpair<2> &idx2) {
     auto &threads            = tenx::threads::get();
     auto  res                = Eigen::Tensor<cplx, 2>(shp_udn2);
-    res.device(*threads.dev) = ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m, idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
+    res.device(*threads->dev) = ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m, idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
     return res;
 }
 
@@ -138,7 +138,7 @@ Eigen::Tensor<cplx, 2> contract_c(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const std::array<long, 2> &dim2) {
     auto &threads            = tenx::threads::get();
     auto  res                = Eigen::Tensor<cplx, 2>(dim2);
-    res.device(*threads.dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
+    res.device(*threads->dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
     return res;
 }
 
@@ -147,7 +147,7 @@ Eigen::Tensor<cplx, 2> contract_d(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const std::array<long, 2> &dim2) {
     auto &threads            = tenx::threads::get();
     auto  res                = Eigen::Tensor<cplx, 2>(dim2);
-    res.device(*threads.dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
+    res.device(*threads->dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
     return res;
 }
 

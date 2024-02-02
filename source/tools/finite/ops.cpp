@@ -302,8 +302,8 @@ void tools::finite::ops::apply_mpos_general(StateFinite &state, const std::vecto
     long d0     = ASV.dimension(0) * ASV.dimension(1);
     long d1     = USB.dimension(0) * USB.dimension(2);
     auto ASVUSB = Eigen::Tensor<cplx, 2>(d0, d1);
-    auto & threads     = tenx::threads::get();
-    ASVUSB.device(*threads.dev) = ASV.contract(USB, tenx::idx({2}, {1})).reshape(tenx::array2{d0, d1});
+    auto &threads = tenx::threads::get();
+    ASVUSB.device(*threads->dev) = ASV.contract(USB, tenx::idx({2}, {1})).reshape(tenx::array2{d0, d1});
     auto [U, S, VT]                           = svd.decompose(ASVUSB, svd_cfg);
 
     auto &mpsL = state.get_mps_site(pos_center);
@@ -456,12 +456,12 @@ auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &s
     size_t pos   = 0;
     auto overlap = tools::common::contraction::contract_mps_mps_partial<std::array{0l, 1l}>(state1.get_mps_site(pos).get_M(), state2.get_mps_site(pos).get_M());
     Eigen::Tensor<cplx, 2> temp;
-    auto & threads     = tenx::threads::get();
+    auto &threads = tenx::threads::get();
     for(pos = 1; pos < state1.get_length(); pos++) {
         const auto &M1 = state1.get_mps_site(pos).get_M();
         const auto &M2 = state2.get_mps_site(pos).get_M();
         temp.resize(M1.dimension(2), M2.dimension(2));
-        temp.device(*threads.dev) = overlap.contract(M1.conjugate(), tenx::idx({0}, {1})).contract(M2, tenx::idx({0, 1}, {1, 0}));
+        temp.device(*threads->dev) = overlap.contract(M1.conjugate(), tenx::idx({0}, {1})).contract(M2, tenx::idx({0, 1}, {1, 0}));
         overlap                                 = std::move(temp);
     }
 

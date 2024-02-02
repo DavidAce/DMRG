@@ -43,7 +43,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
         Eigen::Tensor<cplx, 2> chain;
         Eigen::Tensor<cplx, 2> temp;
         bool                   first   = true;
-        auto                  &threads = tenx::threads::get();
+        auto &threads = tenx::threads::get();
 
         for(const auto &mps : state.mps_sites) {
             const auto &M = mps->get_M();
@@ -53,7 +53,7 @@ double tools::finite::measure::norm(const StateFinite &state, bool full) {
                 continue;
             }
             temp.resize(tenx::array2{M.dimension(2), M.dimension(2)});
-            temp.device(*threads.dev) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
+            temp.device(*threads->dev) = chain.contract(M, tenx::idx({0}, {1})).contract(M.conjugate(), tenx::idx({0, 1}, {1, 0}));
 
             chain = std::move(temp);
         }
@@ -401,10 +401,10 @@ Eigen::Tensor<cplx, 1> tools::finite::measure::mps2tensor(const std::vector<std:
         //        mps->get_M().dimensions(),
         //                         off1, ext1, ext2);
         if constexpr(std::is_same_v<Scalar, cplx>) {
-            statev.slice(off1, ext1).device(*threads.dev) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
+            statev.slice(off1, ext1).device(*threads->dev) = temp.contract(mps->get_M(), tenx::idx({1}, {1})).reshape(ext1);
         } else {
             Eigen::Tensor<real, 3> M                      = mps->get_M().real();
-            statev.slice(off1, ext1).device(*threads.dev) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
+            statev.slice(off1, ext1).device(*threads->dev) = temp.contract(M, tenx::idx({1}, {1})).reshape(ext1);
         }
     }
     // Finally, we view a slice of known size 2^L
@@ -701,12 +701,12 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state, const s
             // i.e. ABC|psi> should apply C first and A last (if A and C are on the same site).
             if(op.used or op.pos != pos) continue;
             auto temp                 = Eigen::Tensor<cplx, 3>(op.op.dimension(0), M.dimension(1), M.dimension(2));
-            temp.device(*threads.dev) = op.op.contract(M, tenx::idx({1}, {0}));
+            temp.device(*threads->dev) = op.op.contract(M, tenx::idx({1}, {0}));
             M                         = std::move(temp);
             op.used                   = true;
         }
         auto temp                 = Eigen::Tensor<cplx, 2>(M.dimension(2), M.dimension(2));
-        temp.device(*threads.dev) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
+        temp.device(*threads->dev) = chain.contract(M, tenx::idx({0}, {1})).contract(mps->get_M().conjugate(), tenx::idx({0, 1}, {1, 0}));
         chain                     = std::move(temp);
     }
 
@@ -806,7 +806,7 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
     if(mpos.back().dimension(1) != 1) throw except::logic_error("mpos right bond dimension != 1: got {}", mpos.back().dimension(1));
     Eigen::Tensor<cplx, 4> result, tmp;
-    auto                  &threads = tenx::threads::get();
+    auto &threads = tenx::threads::get();
     for(size_t pos = 0; pos < L; ++pos) {
         Eigen::Tensor<cplx, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate();
         const auto            &mps2 = state2.get_mps_site(pos).get_M();
@@ -815,12 +815,12 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
             auto dim4 = tenx::array4{mpo.dimension(0) * mps1.dimension(1) * mps2.dimension(1), mps1.dimension(2), mpo.dimension(1), mps2.dimension(2)};
             auto shf6 = tenx::array6{0, 2, 4, 1, 3, 5};
             result.resize(dim4);
-            result.device(*threads.dev) = mps1.contract(mpo, tenx::idx({0}, {2})).contract(mps2, tenx::idx({4}, {0})).shuffle(shf6).reshape(dim4);
+            result.device(*threads->dev) = mps1.contract(mpo, tenx::idx({0}, {2})).contract(mps2, tenx::idx({4}, {0})).shuffle(shf6).reshape(dim4);
             continue;
         }
         auto dim4 = tenx::array4{result.dimension(0), mps1.dimension(2), mpo.dimension(1), mps2.dimension(2)};
         tmp.resize(dim4);
-        tmp.device(*threads.dev) =
+        tmp.device(*threads->dev) =
             result.contract(mps1, tenx::idx({1}, {1})).contract(mpo, tenx::idx({1, 3}, {0, 2})).contract(mps2, tenx::idx({1, 4}, {1, 0}));
         result = std::move(tmp);
     }
