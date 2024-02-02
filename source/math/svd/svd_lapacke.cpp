@@ -143,7 +143,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
     try {
         // Sanity checks
-        if constexpr(!ndebug) {
+        if constexpr(!ndebug) { // We usually get a negative "info" value if there are nans anyway.
             if(A.isZero(1e-16)) svd::log->warn("Lapacke SVD: A is a zero matrix");
             if(not A.allFinite()) {
                 print_matrix(A.data(), A.rows(), A.cols(), "A");

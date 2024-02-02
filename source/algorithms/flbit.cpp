@@ -288,9 +288,9 @@ void flbit::run_algorithm() {
     status.algorithm_has_finished = true;
 }
 
-
 void flbit::run_algorithm2() {
     // Get the interacting Hamiltonian in the diagonal l-bit basis in matrix form
+    auto t_run = tid::tic_scope("run");
     auto t_eff = tid::tic_scope("eff");
     auto sites = num::range<size_t>(0, tensors.get_length(), 1);
     tensors.clear_cache();
@@ -341,7 +341,7 @@ void flbit::run_algorithm2() {
         Eigen::VectorXcd u_and_adj_psi_init_vector = tenx::VectorMap(u_and_adj_psi_init_tensor);
         tools::log->info("Starting time evolution");
 
-//#pragma omp parallel for ordered schedule(dynamic, 1)
+        // #pragma omp parallel for ordered schedule(dynamic, 1)
         auto t_evo = tid::tic_scope("evo");
         for(size_t tidx = 0; tidx < time_points.size(); ++tidx) {
             auto  time       = time_points[tidx];
@@ -378,8 +378,8 @@ void flbit::run_algorithm2() {
             if(tidx + 1 >= time_points.size()) status_eff.algo_stop = AlgorithmStop::SUCCESS;
 
             print_status(status_eff, tensor_eff);
-            tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges, status_eff, StorageEvent::ITERATION,
-                                                CopyPolicy::TRY);
+            tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges, status_eff, StorageEvent::ITERATION, CopyPolicy::TRY);
+            t_run->start_lap();
         }
     }
 }
@@ -990,8 +990,8 @@ void flbit::print_status(const AlgorithmStatus &st, const TensorsFinite &ts) {
     report += fmt::format("ε:{:<8.2e} ", ts.state->get_truncation_error_midchain());
     report += fmt::format("Sₑ(L/2):{:<18.16f} ", tools::finite::measure::entanglement_entropy_midchain(*ts.state));
     report += fmt::format("Sₙ(L/2):{:<18.16f} ", tools::finite::measure::number_entropy_midchain(*ts.state));
-//    if(ts.state->measurements.number_entropy_midchain) // This one is expensive
-//        report += fmt::format("Sₙ(L/2):{:<18.16f} ", ts.state->measurements.number_entropy_midchain.value());
+    //    if(ts.state->measurements.number_entropy_midchain) // This one is expensive
+    //        report += fmt::format("Sₙ(L/2):{:<18.16f} ", ts.state->measurements.number_entropy_midchain.value());
 
     //    if(state_lbit->measurements.number_entropy_midchain) // This one is expensive
     //        report += fmt::format("Sₙ(L/2):{:<10.8f} ", state_lbit->measurements.number_entropy_midchain.value());
