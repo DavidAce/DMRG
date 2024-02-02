@@ -165,6 +165,7 @@ def get_h5_status(filename, batch):
             '/fLBIT/state_real/measurements',
             '/fLBIT/state_real/status',
             '/fLBIT/state_real/number_probabilities',
+            '/fLBIT/state_eff/number_probabilities',
         ]
         optional_dset_paths = [
             '/fLBIT/state_real/initial_pattern'

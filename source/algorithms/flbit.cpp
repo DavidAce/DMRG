@@ -365,7 +365,7 @@ void flbit::run_algorithm2() {
             auto mps_eff = tenx::TensorMap(psi_eff, psi_eff.size(), 1, 1);
             // Merge these psi into the current state
             tools::finite::mps::merge_multisite_mps(state_eff, mps_eff, sites, 0, svd_cfg);
-            tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, false, GateMove::ON, svd_cfg);
+            tools::finite::mps::apply_circuit(state_eff, u_and, CircuitOp::NONE, true, GateMove::ON, svd_cfg);
 
             // Update stuff
             status_eff.phys_time = abs_t(time);
@@ -378,6 +378,7 @@ void flbit::run_algorithm2() {
             if(tidx + 1 >= time_points.size()) status_eff.algo_stop = AlgorithmStop::SUCCESS;
 
             print_status(status_eff, tensor_eff);
+            if(not state_eff.position_is_inward_edge()) throw std::runtime_error("state_eff is not at the edge! it will not be written to file!");
             tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges, status_eff, StorageEvent::ITERATION, CopyPolicy::TRY);
             t_run->start_lap();
         }
