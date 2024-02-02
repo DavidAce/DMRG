@@ -356,7 +356,7 @@ template<typename Scalar>
 Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t> &sites, bool use_cache) const {
     if(sites.empty()) throw except::runtime_error("No active sites on which to build a multisite mps tensor");
     if constexpr(std::is_same_v<Scalar, cplx>) {
-        if(sites == active_sites and cache.multisite_mps) return cache.multisite_mps.value();
+        if(sites == active_sites and cache.multisite_mps) { return cache.multisite_mps.value(); }
         auto                   t_mps  = tid::tic_scope("gen_mps", tid::level::highest);
         auto                   csites = std::vector<size_t>{}; // Keeps track of the contracted sites
         auto                   length = get_length<size_t>();
@@ -375,7 +375,6 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 bool        append_L  = mps.get_label() == "A" and site + 1 < length and site == sites.back();
                 if(prepend_L) {
                     // In this case all sites are "B" and we need to prepend the "L" from the site on the left to make a normalized multisite mps
-                    auto        t_prepend = tid::tic_scope("prepend", tid::level::higher);
                     const auto &mps_left  = get_mps_site(site - 1);
                     const auto &L         = mps_left.isCenter() ? mps_left.get_LC() : mps_left.get_L();
                     if(L.dimension(0) != M.dimension(1))
@@ -385,7 +384,6 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 }
                 if(append_L) {
                     // In this case all sites are "A" and we need to append the "L" from the site on the right to make a normalized multisite mps
-                    auto        t_append  = tid::tic_scope("append", tid::level::higher);
                     const auto &mps_right = get_mps_site(site + 1);
                     const auto &L         = mps_right.get_L();
                     if(L.dimension(0) != M.dimension(2))

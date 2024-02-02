@@ -318,7 +318,7 @@ void flbit::run_algorithm2() {
         for(auto b : num::range<size_t>(0, num_states)) { bitseqs.emplace_back(b); }
         auto mpos = tensors.model->get_compressed_mpos(CompressWithEdges::ON);
         hamiltonian_eff_diagonal.resize(static_cast<long>(bitseqs.size()));
-#pragma omp parallel for schedule(dynamic, 16) private(u_and, u_mbl)
+#pragma omp parallel for schedule(dynamic, 16) private(u_and, u_mbl) // For some reason private(u_and, u_mbl gives much better performance...
         for(size_t idx = 0; idx < bitseqs.size(); ++idx) {
             auto pattern =
                 fmt::format("b{}", tools::get_bitfield(sites.size(), bitseqs[idx], BitOrder::Reverse)); // Sort states with "1" appearing left to right

@@ -179,7 +179,7 @@ struct Amplitude {
                                           to_string(tgt_pos + 1));
                 }
 
-                auto  t_con   = tid::tic_scope("contract");
+                auto  t_con   = tid::tic_scope("contract", tid::level::highest);
                 auto &threads = tenx::threads::get();
 
                 Eigen::Tensor<cplx, 1> temp;
@@ -252,7 +252,7 @@ struct Amplitude {
                     }
                 }
 
-                auto                   t_con   = tid::tic_scope("contract");
+                auto                   t_con   = tid::tic_scope("contract", tid::level::highest);
                 auto                  &threads = tenx::threads::get();
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps

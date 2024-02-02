@@ -33,35 +33,16 @@ namespace tenx::threads {
     internal::ThreadPoolWrapper::ThreadPoolWrapper(int nt)
         : tp(std::make_unique<Eigen::ThreadPool>(nt)), dev(std::make_unique<Eigen::ThreadPoolDevice>(tp.get(), nt)) {}
 
-//    internal::ThreadPoolWrapper &get() noexcept {
-//        if(not internal::singleThreadWrapper) internal::singleThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(1);
-//    #if defined(_OPENMP)
-//        if(omp_in_parallel()) { // Avoid simultaneous parallelization
-//            return *internal::singleThreadWrapper;
-//        }
-//    #endif
-//        if(not internal::multiThreadWrapper or //
-//           (internal::multiThreadWrapper and static_cast<int>(internal::num_threads) != internal::multiThreadWrapper->dev->numThreads()))
-//            internal::multiThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(internal::num_threads);
-//
-//        return *internal::multiThreadWrapper;
-//    }
-
-
-
-
     const std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept {
         if(not internal::singleThreadWrapper) internal::singleThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(1);
     #if defined(_OPENMP)
         if(omp_in_parallel()) { // Avoid simultaneous parallelization
-//            return std::make_unique<internal::ThreadPoolWrapper>(1);
             return internal::singleThreadWrapper;
         }
     #endif
         if(not internal::multiThreadWrapper or //
            (internal::multiThreadWrapper and static_cast<int>(internal::num_threads) != internal::multiThreadWrapper->dev->numThreads()))
             internal::multiThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(internal::num_threads);
-//        return std::make_unique<internal::ThreadPoolWrapper>(static_cast<int>(internal::num_threads));
           return internal::multiThreadWrapper;
 
     }

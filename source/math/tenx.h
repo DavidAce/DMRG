@@ -382,13 +382,20 @@ namespace tenx {
     auto MatrixMap(const Eigen::Tensor<Scalar, rank> &tensor, const sizeType rows, const sizeType cols) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), rows, cols);
     }
-
+    template<typename Scalar, auto rank, typename sizeType>
+    auto MatrixMap(Eigen::Tensor<Scalar, rank> &tensor, const sizeType rows, const sizeType cols) {
+        return Eigen::Map<MatrixType<Scalar>>(tensor.data(), rows, cols);
+    }
     template<typename Scalar, auto rank, typename sizeType>
     auto MatrixMap(const Eigen::Tensor<Scalar, rank> &&tensor, const sizeType rows, const sizeType cols) = delete; // Prevent map from temporary
 
     template<typename Scalar>
     auto MatrixMap(const Eigen::Tensor<Scalar, 2> &tensor) {
         return Eigen::Map<const MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1));
+    }
+    template<typename Scalar>
+    auto MatrixMap(Eigen::Tensor<Scalar, 2> &tensor) {
+        return Eigen::Map<MatrixType<Scalar>>(tensor.data(), tensor.dimension(0), tensor.dimension(1));
     }
     template<typename Scalar>
     auto MatrixMap(const Eigen::Tensor<Scalar, 2> &&tensor) = delete; // Prevent map from temporary

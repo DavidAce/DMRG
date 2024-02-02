@@ -509,8 +509,7 @@ template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const St
 template std::vector<size_t> tools::finite::mps::generate_gate_sequence(const StateFinite &state, const std::vector<qm::SwapGate> &gates, CircuitOp cop,
                                                                         bool range_long_to_short);
 
-void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Eigen::Tensor<cplx, 3> &temp, GateOp gop, GateMove gm,
-                                    std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, GateOp gop, GateMove gm, std::optional<svd::config> svd_cfg) {
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
     if(gm == GateMove::AUTO) gm = GateMove::ON;
     auto old_posC = state.get_position<long>();
@@ -536,7 +535,7 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
     }
 
     // Generate the mps object on which to apply the gate
-    auto multisite_mps = state.get_multisite_mps(gate.pos);
+    auto mps = state.get_multisite_mps(gate.pos);
     /* Apply the gate
         1 --- [mps] --- 2
                 |
@@ -548,20 +547,31 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ei
                 0
 
      */
-
+    Eigen::Tensor<cplx, 3> tmp(mps.dimensions());
     {
-        auto        t_apply = tid::tic_token("apply", tid::level::highest);
-        auto        &threads = tenx::threads::get();
-        const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
-        temp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        temp.device(*threads->dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
+        auto t_apply = tid::tic_token("apply", tid::level::highest);
+        //        auto &threads = tenx::threads::get();
+        //        const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
+        //        tmp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+        //        tmp.device(*threads->dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
+        assert(gate.op.dimension(0) == gate.op.dimension(1)); // This assumption makes it ok to take the adjoint and transpose below without resizing tmp!
+        auto gatemap = tenx::MatrixMap(gate.op);
+        auto mps_map = tenx::MatrixMap(mps, mps.dimension(0), mps.dimension(1) * mps.dimension(2));
+        auto tmp_map = tenx::MatrixMap(tmp, tmp.dimension(0), tmp.dimension(1) * tmp.dimension(2));
+        switch(gop) { // These will call gemm (hopefully from blas
+            case GateOp::NONE: tmp_map = gatemap * mps_map; break;
+            case GateOp::CNJ:  tmp_map = gatemap.conjugate() * mps_map; break;
+            case GateOp::ADJ:  tmp_map = gatemap.adjoint() * mps_map; break;
+            case GateOp::TRN:  tmp_map = gatemap.transpose() * mps_map; break;
+            default: throw except::runtime_error("Unhandled switch case for GateOp: {}", enum2sv(gop));
+        }
     }
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: applied pos {} | op {} | gm {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(), state.get_truncation_error(gate.pos.front()));
 
     auto new_posC = gm == GateMove::ON ? safe_cast<long>(gate.pos.front()) : old_posC;
-    tools::finite::mps::merge_multisite_mps(state, temp, gate.pos, new_posC, svd_cfg, LogPolicy::QUIET);
+    tools::finite::mps::merge_multisite_mps(state, tmp, gate.pos, new_posC, svd_cfg, LogPolicy::QUIET);
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_gate: merged  pos {} | op {} | gm {} | center {} -> {} | svds {} | bond {} | trnc {:.3e}", gate.pos, enum2sv(gop), enum2sv(gm),
                           old_posC, new_posC, svd::solver::get_count(), state.get_mps_site(gate.pos.front()).get_chiR(),
@@ -592,14 +602,13 @@ void tools::finite::mps::apply_gates(StateFinite &state, const std::vector<qm::G
         tools::log->trace("apply_gates: current pos {} dir {} | gate_sequence {}", state.get_position<long>(), state.get_direction(), gate_sequence);
 
     state.clear_cache(LogPolicy::QUIET);
-    Eigen::Tensor<cplx, 3> gate_mps;
-    GateOp                 gop = GateOp::NONE;
+    GateOp gop = GateOp::NONE;
     switch(cop) {
         case CircuitOp::NONE: gop = GateOp::NONE; break;
         case CircuitOp::ADJ: gop = GateOp::ADJ; break;
         case CircuitOp::TRN: gop = GateOp::TRN; break;
     }
-    for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gate_mps, gop, gm, svd_cfg);
+    for(const auto &idx : gate_sequence) apply_gate(state, gates.at(idx), gop, gm, svd_cfg);
 
     if(moveback) move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
     svd_count = svd::solver::get_count() - svd_count;
@@ -709,7 +718,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
      *      Rwap: center_position = posL
      *
      */
-    auto t_swap = tid::tic_scope("swap");
+    auto t_swap = tid::tic_scope("swap", tid::level::highest);
     if(posR != posL + 1) throw except::logic_error("Expected posR == posL+1. Got posL {} and posR {}", posL, posR);
     if(posR != std::clamp(posR, 0ul, state.get_length<size_t>() - 1ul))
         throw except::logic_error("Expected posR in [0,{}]. Got {}", state.get_length() - 1, posR);
@@ -717,23 +726,23 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
         throw except::logic_error("Expected posL in [0,{}]. Got {}", state.get_length() - 1, posL);
 
     if(gm == GateMove::AUTO) gm = GateMove::ON;
-    auto           old_svd           = svd::solver::get_count();
-    auto           old_pos           = state.get_position<long>();
-    auto           dimL              = state.get_mps_site(posL).dimensions();
-    auto           dimR              = state.get_mps_site(posR).dimensions();
-    auto           dL                = dimL[0];
-    auto           dR                = dimR[0];
-    auto           chiL              = dimL[1];
-    auto           chiR              = dimR[2];
-    auto           rsh4              = tenx::array4{dL, dR, chiL, chiR};
-    constexpr auto shf4              = tenx::array4{1, 0, 2, 3};
-    auto           rsh3              = tenx::array3{dR * dL, chiL, chiR};
-    auto           swapped_mps       = Eigen::Tensor<cplx, 3>(rsh3);
-    auto           &threads          = tenx::threads::get();
+    auto           old_svd            = svd::solver::get_count();
+    auto           old_pos            = state.get_position<long>();
+    auto           dimL               = state.get_mps_site(posL).dimensions();
+    auto           dimR               = state.get_mps_site(posR).dimensions();
+    auto           dL                 = dimL[0];
+    auto           dR                 = dimR[0];
+    auto           chiL               = dimL[1];
+    auto           chiR               = dimR[2];
+    auto           rsh4               = tenx::array4{dL, dR, chiL, chiR};
+    constexpr auto shf4               = tenx::array4{1, 0, 2, 3};
+    auto           rsh3               = tenx::array3{dR * dL, chiL, chiR};
+    auto           swapped_mps        = Eigen::Tensor<cplx, 3>(rsh3);
+    auto          &threads            = tenx::threads::get();
     swapped_mps.device(*threads->dev) = state.get_multisite_mps({posL, posR})
-                                           .reshape(rsh4)
-                                           .shuffle(shf4)  // swap
-                                           .reshape(rsh3); // prepare for merge
+                                            .reshape(rsh4)
+                                            .shuffle(shf4)  // swap
+                                            .reshape(rsh3); // prepare for merge
     auto new_pos = old_pos;
     if(gm == GateMove::ON)
         new_pos = safe_cast<long>(posL); // The benefit of GateMove::ON is to prefer "AC-B" splits that require a single SVD as often as possible
@@ -752,8 +761,8 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
         for(const auto &mps : state.mps_sites) mps->assert_normalized();
 }
 
-void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, Eigen::Tensor<cplx, 3> &temp, GateOp gop, std::vector<size_t> &sites,
-                                         GateMove gm, std::optional<svd::config> svd_cfg) {
+void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, GateOp gop, std::vector<size_t> &sites, GateMove gm,
+                                         std::optional<svd::config> svd_cfg) {
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
     auto old_posC = state.get_position<long>();
     auto old_svds = svd::solver::get_count();
@@ -801,15 +810,28 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     }
 
     // Generate the mps object on which to apply the gate
-    auto multisite_mps = state.get_multisite_mps(pos_idxs);
+    auto mps = state.get_multisite_mps(pos_idxs);
 
     // Apply the gate
+    Eigen::Tensor<cplx, 3> tmp(mps.dimensions());
     {
-        auto        t_apply = tid::tic_token("apply", tid::level::higher);
-        const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
-        auto        &threads = tenx::threads::get();
-        temp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
-        temp.device(*threads->dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
+        auto t_apply = tid::tic_token("apply", tid::level::highest);
+        //        const auto &gateop  = gate.unaryOp(gop); // Apply any pending modifier like transpose, adjoint or conjugation
+        //        auto       &threads = tenx::threads::get();
+        //        temp.resize(std::array<long, 3>{gateop.dimension(1), multisite_mps.dimension(1), multisite_mps.dimension(2)});
+        //        temp.device(*threads->dev) = gateop.contract(multisite_mps, tenx::idx({1}, {0}));
+
+        assert(gate.op.dimension(0) == gate.op.dimension(1)); // This assumption makes it ok to take the adjoint and transpose below without resizing tmp!
+        auto gatemap = tenx::MatrixMap(gate.op);
+        auto mps_map = tenx::MatrixMap(mps, mps.dimension(0), mps.dimension(1) * mps.dimension(2));
+        auto tmp_map = tenx::MatrixMap(tmp, tmp.dimension(0), tmp.dimension(1) * tmp.dimension(2));
+        switch(gop) { // These will call gemm (hopefully from blas
+            case GateOp::NONE: tmp_map = gatemap * mps_map; break;
+            case GateOp::CNJ: tmp_map = gatemap.conjugate() * mps_map; break;
+            case GateOp::ADJ: tmp_map = gatemap.adjoint() * mps_map; break;
+            case GateOp::TRN: tmp_map = gatemap.transpose() * mps_map; break;
+            default: throw except::runtime_error("Unhandled switch case for GateOp: {}", enum2sv(gop));
+        }
     }
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: applied pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
@@ -818,7 +840,7 @@ void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate,
     // It's best to do an AC-B type of SVD split, so we put the center position on the left-most site when GateMove::ON
     long new_posC = gm == GateMove::ON ? safe_cast<long>(pos_idxs.front()) : old_posC;
 
-    tools::finite::mps::merge_multisite_mps(state, temp, pos_idxs, new_posC, svd_cfg, LogPolicy::QUIET);
+    tools::finite::mps::merge_multisite_mps(state, tmp, pos_idxs, new_posC, svd_cfg, LogPolicy::QUIET);
     if constexpr(settings::verbose_gates)
         tools::log->trace("apply_swap_gate: merged  pos {} | idx {} | gm {} | sites {} | svds {}", gate.pos, pos_idxs, enum2sv(gm), sites,
                           svd::solver::get_count());
@@ -856,8 +878,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
         }
     }
 
-    auto                    sites = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
-    Eigen::Tensor<cplx, 3>  temp;
+    auto                    sites      = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
     [[maybe_unused]] auto   svds_count = svd::solver::get_count();
     [[maybe_unused]] size_t skip_count = 0;
     [[maybe_unused]] size_t swap_count = 0;
@@ -876,7 +897,7 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
         if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
         swap_count += gate.swaps.size();
         rwap_count += gate.rwaps.size();
-        apply_swap_gate(state, gate, temp, gop, sites, gm, svd_cfg);
+        apply_swap_gate(state, gate, gop, sites, gm, svd_cfg);
     }
 
     move_center_point_to_pos_dir(state, 0, 1, svd_cfg);

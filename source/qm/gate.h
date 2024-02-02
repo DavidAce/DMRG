@@ -50,10 +50,10 @@ namespace qm {
         template<typename scalar_t, typename alpha_t>
         Eigen::Tensor<scalar_t, 2> exp_internal(const Eigen::Tensor<scalar_t,2> & op_, alpha_t alpha) const;
         enum class Side {L, R};
-        mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
-        mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
-        mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
-        mutable std::optional<Eigen::Tensor<cplx,2>> trn = std::nullopt;
+//        mutable std::optional<std::vector<Eigen::Tensor<cplx,2>>> op_split;
+//        mutable std::optional<Eigen::Tensor<cplx,2>> cnj = std::nullopt;
+//        mutable std::optional<Eigen::Tensor<cplx,2>> adj = std::nullopt;
+//        mutable std::optional<Eigen::Tensor<cplx,2>> trn = std::nullopt;
 
         public:
         Eigen::Tensor<cplx,2> op;
@@ -90,10 +90,10 @@ namespace qm {
         [[nodiscard]] Gate exp(cplx alpha) const;
         [[nodiscard]] Gate exp(cplx_t alpha) const;
         [[nodiscard]] bool isUnitary(double prec = 1e-12) const;
-        [[nodiscard]] const Eigen::Tensor<cplx,2>& conjugate() const;
-        [[nodiscard]] const Eigen::Tensor<cplx,2>& transpose() const;
-        [[nodiscard]] const Eigen::Tensor<cplx,2>& adjoint() const;
-        [[nodiscard]] const Eigen::Tensor<cplx,2>& unaryOp(GateOp unop) const;
+        [[nodiscard]] Eigen::Tensor<cplx,2> conjugate() const;
+        [[nodiscard]] Eigen::Tensor<cplx,2> transpose() const;
+        [[nodiscard]] Eigen::Tensor<cplx,2> adjoint() const;
+        [[nodiscard]] Eigen::Tensor<cplx,2> unaryOp(GateOp unop) const;
         [[nodiscard]] Gate insert(const Gate & other) const;
         [[nodiscard]] Gate connect_above(const Gate & other) const;
         [[nodiscard]] Gate connect_below(const Gate & other) const;

@@ -118,36 +118,44 @@ void erase(std::vector<T1> &vec, T2 val) {
 Eigen::Tensor<cplx, 2> contract_a(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
                                   const std::array<long, 4> &shp_udn4, const std::array<long, 6> &shf6, const tenx::idxlistpair<1> &idx1,
                                   const tenx::idxlistpair<2> &idx2, const std::array<long, 2> &dim2) {
-    auto  res     = Eigen::Tensor<cplx, 2>(dim2);
-    auto &threads = tenx::threads::get();
-    res.device(*threads->dev) =
-        ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
+    auto  res                 = Eigen::Tensor<cplx, 2>(dim2);
+    auto &threads             = tenx::threads::get();
+    res.device(*threads->dev) = ud.shuffle(tenx::array2{1, 0})
+                                    .conjugate()
+                                    .reshape(shp_udn4)
+                                    .contract(m.reshape(shp_mid4), idx1)
+                                    .contract(ud.reshape(shp_udn4), idx2)
+                                    .shuffle(shf6)
+                                    .reshape(dim2);
     return res;
 }
 
 Eigen::Tensor<cplx, 2> contract_b(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 2> &shp_udn2,
                                   const std::array<long, 4> &shp_udn4, const tenx::idxlistpair<1> &idx1, const tenx::idxlistpair<2> &idx2) {
-    auto &threads            = tenx::threads::get();
-    auto  res                = Eigen::Tensor<cplx, 2>(shp_udn2);
-    res.device(*threads->dev) = ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m, idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
+    auto &threads = tenx::threads::get();
+    auto  res     = Eigen::Tensor<cplx, 2>(shp_udn2);
+    res.device(*threads->dev) =
+        ud.shuffle(tenx::array2{1, 0}).conjugate().reshape(shp_udn4).contract(m, idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
     return res;
 }
 
 Eigen::Tensor<cplx, 2> contract_c(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 6> &shp_mid6,
                                   const tenx::idxlistpair<1> &idx_dn, const tenx::idxlistpair<1> &idx_up, const std::array<long, 6> &shf6,
                                   const std::array<long, 2> &dim2) {
-    auto &threads            = tenx::threads::get();
-    auto  res                = Eigen::Tensor<cplx, 2>(dim2);
-    res.device(*threads->dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
+    auto &threads = tenx::threads::get();
+    auto  res     = Eigen::Tensor<cplx, 2>(dim2);
+    res.device(*threads->dev) =
+        ud.shuffle(tenx::array2{1, 0}).conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
     return res;
 }
 
 Eigen::Tensor<cplx, 2> contract_d(const Eigen::Tensor<cplx, 2> &m, const Eigen::Tensor<cplx, 2> &ud, const std::array<long, 4> &shp_mid4,
                                   const tenx::idxlistpair<1> &idx_dn, const tenx::idxlistpair<1> &idx_up, const std::array<long, 4> &shf4,
                                   const std::array<long, 2> &dim2) {
-    auto &threads            = tenx::threads::get();
-    auto  res                = Eigen::Tensor<cplx, 2>(dim2);
-    res.device(*threads->dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
+    auto &threads = tenx::threads::get();
+    auto  res     = Eigen::Tensor<cplx, 2>(dim2);
+    res.device(*threads->dev) =
+        ud.shuffle(tenx::array2{1, 0}).conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
     return res;
 }
 
@@ -303,23 +311,26 @@ qm::Gate qm::Gate::exp(cplx_t alpha) const {
     else
         return Gate(op, pos, dim, alpha);
 }
-bool                          qm::Gate::isUnitary(double prec) const { return tenx::MatrixMap(op).isUnitary(prec); }
-const Eigen::Tensor<cplx, 2> &qm::Gate::adjoint() const {
-    if(adj) return adj.value();
-    adj = op.conjugate().shuffle(tenx::array2{1, 0});
-    return adj.value();
+bool                   qm::Gate::isUnitary(double prec) const { return tenx::MatrixMap(op).isUnitary(prec); }
+Eigen::Tensor<cplx, 2> qm::Gate::adjoint() const {
+    return op.conjugate().shuffle(tenx::array2{1, 0});
+    //    if(adj) return adj.value();
+    //    adj = op.conjugate().shuffle(tenx::array2{1, 0});
+    //    return adj.value();
 }
-const Eigen::Tensor<cplx, 2> &qm::Gate::conjugate() const {
-    if(cnj) return cnj.value();
-    cnj = op.conjugate();
-    return cnj.value();
+Eigen::Tensor<cplx, 2> qm::Gate::conjugate() const {
+    return op.conjugate();
+    //    if(cnj) return cnj.value();
+    //    cnj = op.conjugate();
+    //    return cnj.value();
 }
-const Eigen::Tensor<cplx, 2> &qm::Gate::transpose() const {
-    if(trn) return trn.value();
-    trn = op.shuffle(tenx::array2{1, 0});
-    return trn.value();
+Eigen::Tensor<cplx, 2> qm::Gate::transpose() const {
+    return op.shuffle(tenx::array2{1, 0});
+    //    if(trn) return trn.value();
+    //    trn = op.shuffle(tenx::array2{1, 0});
+    //    return trn.value();
 }
-const Eigen::Tensor<cplx, 2> &qm::Gate::unaryOp(GateOp unop) const {
+Eigen::Tensor<cplx, 2> qm::Gate::unaryOp(GateOp unop) const {
     switch(unop) {
         case GateOp::NONE: return op;
         case GateOp::CNJ: return conjugate();
