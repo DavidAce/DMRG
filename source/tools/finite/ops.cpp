@@ -462,7 +462,7 @@ auto tools::finite::ops::overlap(const StateFinite &state1, const StateFinite &s
         const auto &M2 = state2.get_mps_site(pos).get_M();
         temp.resize(M1.dimension(2), M2.dimension(2));
         temp.device(*threads.dev) = overlap.contract(M1.conjugate(), tenx::idx({0}, {1})).contract(M2, tenx::idx({0, 1}, {1, 0}));
-        overlap                                 = temp;
+        overlap                                 = std::move(temp);
     }
 
     Eigen::Tensor<cplx, 0> norm_chain = overlap.trace();

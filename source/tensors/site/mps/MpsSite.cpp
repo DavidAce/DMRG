@@ -257,8 +257,7 @@ requires is_valid_tensor3<T3>
 void MpsSite::set_M(const T3 &M_) {
     // M has to be a "bare" matrix, i.e. not an MC which would include LC.
     if(position) {
-        M         = Eigen::Tensor<cplx, 3>(); // Initialize std::optional
-        M.value() = M_.template cast<cplx>();
+        M = M_.template cast<cplx>();
         MC.reset();
         unique_id = std::nullopt;
     } else
@@ -279,8 +278,7 @@ void MpsSite::set_L(const T1 &L_, double error /* Negative is ignored */) {
 
     if(position) {
         set_truncation_error(error);
-        L         = Eigen::Tensor<cplx, 1>(); // Initialize std::optional
-        L.value() = L_.template cast<cplx>();
+        L         = L_.template cast<cplx>();
         unique_id = std::nullopt;
     } else
         throw std::runtime_error("Can't set L: Position hasn't been set yet");
@@ -308,8 +306,7 @@ void MpsSite::set_LC(const T1 &LC_, double error /* Negative is ignored */) {
     if(position) {
         set_label("AC");
         set_truncation_error_LC(error);
-        LC         = Eigen::Tensor<cplx, 1>();
-        LC.value() = LC_.template cast<cplx>();
+        LC = LC_.template cast<cplx>();
         MC.reset();
         unique_id = std::nullopt;
     } else
@@ -435,7 +432,7 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
         for(long i = 0; i < L_temp.size(); i++) std::printf("(%.16f, %.16f)\n", L_temp[i].real(), L_temp[i].imag());
         throw std::runtime_error("L_temp is wrong: This may be due to the broadcasting bug: https://gitlab.com/libeigen/eigen/-/issues/2351");
     }
-    auto                   & threads = tenx::threads::get();
+    auto                  &threads = tenx::threads::get();
     Eigen::Tensor<cplx, 3> M_bare_temp(tenx::array3{spin_dim(), get_chiL() * mpoDimL, get_chiR() * mpoDimR});
     if(adjoint) {
         M_bare_temp.device(*threads.dev) = get_M_bare()
@@ -464,10 +461,10 @@ void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 4> &mpo, bool adjoint) {
 }
 
 void MpsSite::apply_mpo(const Eigen::Tensor<cplx, 2> &mpo, bool adjoint) {
-    auto t_mpo       = tid::tic_token("apply_mpo", tid::level::higher);
-    auto dim0        = adjoint ? mpo.dimension(0) : mpo.dimension(1);
-    auto M_bare_temp = Eigen::Tensor<cplx, 3>(dim0, get_chiL(), get_chiR());
-    auto & threads     = tenx::threads::get();
+    auto  t_mpo       = tid::tic_token("apply_mpo", tid::level::higher);
+    auto  dim0        = adjoint ? mpo.dimension(0) : mpo.dimension(1);
+    auto  M_bare_temp = Eigen::Tensor<cplx, 3>(dim0, get_chiL(), get_chiR());
+    auto &threads     = tenx::threads::get();
     if(adjoint) {
         M_bare_temp.device(*threads.dev) = mpo.conjugate().contract(get_M_bare(), tenx::idx({0}, {0}));
     } else {

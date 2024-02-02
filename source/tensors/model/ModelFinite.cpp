@@ -733,7 +733,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_shifted_view(double energy
         std::array<long, 4> new_dims = {dim0, dim1, dim2, dim3};
         temp.resize(new_dims);
         temp.device(*threads.dev) = multisite_mpo.contract(mpo.MPO_energy_shifted_view(energy_per_site), contract_idx).shuffle(shuffle_idx).reshape(new_dims);
-        multisite_mpo             = temp;
+        multisite_mpo             = std::move(temp);
     }
     return multisite_mpo;
 }
@@ -821,7 +821,7 @@ Eigen::Tensor<cplx, 4> ModelFinite::get_multisite_mpo_squared(const std::vector<
             Eigen::Tensor<cplx, 4> temp2 = temp.reshape(tenx::array6{d0, d1, d2, d3, d4, d5}).trace(tenx::array2{3, 5});
             multisite_mpo_squared        = temp2 * temp2.constant(0.5);
         } else {
-            multisite_mpo_squared = temp;
+            multisite_mpo_squared = std::move(temp);
         }
     }
     return multisite_mpo_squared;

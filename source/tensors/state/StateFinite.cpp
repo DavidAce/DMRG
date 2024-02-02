@@ -395,7 +395,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 }
 
                 if(&site == &sites.front()) { // First site
-                    multisite_mps = M;
+                    multisite_mps = std::move(M);
                 } else { // Next sites
                     multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
                 }
@@ -457,7 +457,7 @@ Eigen::Tensor<Scalar, 3> StateFinite::get_multisite_mps(const std::vector<size_t
                 }
 
                 if(&site == &sites.front()) { // First site
-                    multisite_mps = M;
+                    multisite_mps = std::move(M);
                 } else { // Next sites
                     multisite_mps = tools::common::contraction::contract_mps_mps_temp(multisite_mps, M, temp);
                 }

@@ -448,7 +448,7 @@ std::vector<MpsSite> tools::common::split::internal::split_mps_into_As(const Eig
         mps_sites.emplace_back(U, S_prev, positions[idx], S_prev_error, "A"); // S_prev is empty in the first iteration.
 
         // Store the singular values for the next iteration
-        S_prev       = S;
+        S_prev       = std::move(S);
         S_prev_error = svd.get_truncation_error();
     }
 
@@ -568,7 +568,7 @@ std::deque<MpsSite> tools::common::split::internal::split_mps_into_Bs(const Eige
         mps_sites.emplace_front(V, S_prev, positions[idx], S_prev_error, "B"); // S_prev is empty the first iteration.
 
         // Store the singular values for the next iteration
-        S_prev       = S;
+        S_prev       = std::move(S);
         S_prev_error = svd.get_truncation_error();
     }
 

@@ -23,9 +23,9 @@ namespace tenx {
 
         template<typename T>
         requires std::is_integral_v<T>
-        extern void                 setNumThreads(T num);
-        extern int                  getNumThreads();
-        internal::ThreadPoolWrapper &get();
+        extern void                 setNumThreads(T num) noexcept;
+        extern int                  getNumThreads() noexcept;
+        internal::ThreadPoolWrapper &get() noexcept;
 #else
         extern std::unique_ptr<Eigen::DefaultDevice> dev;
         void                                         setNumThreads([[maybe_unused]] int num);

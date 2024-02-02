@@ -263,7 +263,7 @@ Eigen::Tensor<Scalar, 4> tools::common::views::get_transfer_matrix_AB(const Stat
         } else {
             temp2 = temp.contract(get_transfer_matrix_LCGB(state), tenx::idx({2, 3}, {0, 1}));
         }
-        temp = temp2;
+        temp = std::move(temp2);
     }
     return temp;
 }

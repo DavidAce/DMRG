@@ -127,8 +127,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         using namespace svd::internal;
         if constexpr(std::is_same<Scalar, double>::value) {
             //            auto t_svd = tid::tic_token(fmt::format("d{}{}", enum2sv(svd_rtn), t_suffix), tid::highest);
-            std::vector<int>                  iwork;
-            std::vector<double>               rwork;
+            std::vector<int>    iwork;
+            std::vector<double> rwork;
             if constexpr(!ndebug)
                 svd::log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
                                 switchsize_gesdd, sizeS);
@@ -159,7 +159,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                         LAPACKE_dgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, rwork.data(), lrwork);
                     if(info < 0) throw except::runtime_error("Lapacke SVD dgesvj error: parameter {} is invalid", info);
                     if(info > 0) throw except::runtime_error("Lapacke SVD dgesvj error: could not converge: info {}", info);
-                    U  = A;
+                    U  = std::move(A);
                     VT = V.adjoint();
                     break;
                 }
@@ -308,7 +308,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                     info = LAPACKE_zgesvj_work(LAPACK_COL_MAJOR, 'G', 'U', 'V', rowsA, colsA, A.data(), lda, S.data(), ldv, V.data(), ldv, cwork.data(), lcwork,
                                                rwork.data(), lrwork);
                     if(info != 0) break;
-                    U  = A;
+                    U  = std::move(A);
                     VT = V.adjoint();
                     V.resize(0, 0);
                     break;
@@ -431,22 +431,24 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         VT = VT.topRows(rank).eval();
 
         // Sanity checks
-        if(not U.allFinite()) {
-            print_matrix(U.data(), U.rows(), U.cols());
-            throw except::runtime_error("U has inf's or nan's");
-        }
+        if constexpr(!ndebug) {
+            if(not U.allFinite()) {
+                print_matrix(U.data(), U.rows(), U.cols());
+                throw except::runtime_error("U has inf's or nan's");
+            }
 
-        if(not VT.allFinite()) {
-            print_matrix(VT.data(), VT.rows(), VT.cols());
-            throw except::runtime_error("VT has inf's or nan's");
-        }
-        if(not S.allFinite()) {
-            print_vector(S.data(), rank, 16);
-            throw except::runtime_error("S has inf's or nan's");
-        }
-        if(not(S.array() >= 0).all()) {
-            print_vector(S.data(), rank, 16);
-            throw except::runtime_error("S is not positive");
+            if(not VT.allFinite()) {
+                print_matrix(VT.data(), VT.rows(), VT.cols());
+                throw except::runtime_error("VT has inf's or nan's");
+            }
+            if(not S.allFinite()) {
+                print_vector(S.data(), rank, 16);
+                throw except::runtime_error("S has inf's or nan's");
+            }
+            if(not(S.array() >= 0).all()) {
+                print_vector(S.data(), rank, 16);
+                throw except::runtime_error("S is not positive");
+            }
         }
     } catch(const except::runtime_error &ex) {
         // #if !defined(NDEBUG)

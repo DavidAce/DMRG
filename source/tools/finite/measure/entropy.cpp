@@ -179,8 +179,8 @@ struct Amplitude {
                                           to_string(tgt_pos + 1));
                 }
 
-                auto t_con   = tid::tic_scope("contract");
-                auto & threads = tenx::threads::get();
+                auto  t_con   = tid::tic_scope("contract");
+                auto &threads = tenx::threads::get();
 
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps up to, but not including, the last mps at mps_site
@@ -201,7 +201,7 @@ struct Amplitude {
 
                     temp.resize(size);
                     temp.device(*threads.dev) = ampl.contract(mps->get_M_bare().slice(off, ext), tenx::idx({0}, {1})).reshape(std::array<long, 1>{size});
-                    ampl                      = temp;    // Update the current amplitude
+                    ampl                      = std::move(temp);    // Update the current amplitude
                     pos                       = mps_pos; // Update the current site
 
                     // Add to cache
@@ -253,7 +253,7 @@ struct Amplitude {
                 }
 
                 auto                   t_con   = tid::tic_scope("contract");
-                auto                   & threads = tenx::threads::get();
+                auto                  &threads = tenx::threads::get();
                 Eigen::Tensor<cplx, 1> temp;
                 // Contract the missing mps
                 for(const auto &mps : iter::reverse(state.mps_sites)) {
@@ -275,7 +275,7 @@ struct Amplitude {
                                           to_string());
                     temp.resize(size);
                     temp.device(*threads.dev) = mps->get_M_bare().slice(off, ext).contract(ampl, tenx::idx({2}, {0})).reshape(std::array<long, 1>{size});
-                    ampl                      = temp;    // Update the current amplitude
+                    ampl                      = std::move(temp);    // Update the current amplitude
                     pos                       = mps_pos; // Update the current site
 
                     // Add to cache
@@ -730,10 +730,13 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
 
 double tools::finite::measure::number_entropy_current(const StateFinite &state) {
     if(state.measurements.number_entropy_current) return state.measurements.number_entropy_current.value();
-    if(state.measurements.number_entropies) return state.measurements.number_entropies->at(state.get_position<size_t>() + 1);
-    auto entropies = number_entropies(state);
-    if(not entropies.empty()) {
-        state.measurements.number_entropy_current = entropies.at(state.get_position<size_t>() + 1);
+    if(state.measurements.number_entropies) {
+        state.measurements.number_entropy_current = state.measurements.number_entropies->at(state.get_position<size_t>() + 1);
+        return state.measurements.number_entropy_current.value();
+    }
+    state.measurements.number_entropies = measure::number_entropies(state);
+    if(not state.measurements.number_entropies->empty()) {
+        state.measurements.number_entropy_current = state.measurements.number_entropies->at(state.get_position<size_t>() + 1);
         return state.measurements.number_entropy_current.value();
     } else
         return 0;
@@ -741,10 +744,13 @@ double tools::finite::measure::number_entropy_current(const StateFinite &state) 
 
 double tools::finite::measure::number_entropy_midchain(const StateFinite &state) {
     if(state.measurements.number_entropy_midchain) return state.measurements.number_entropy_midchain.value();
-    if(state.measurements.number_entropies) return state.measurements.number_entropies->at(state.get_length() / 2);
-    auto entropies = number_entropies(state);
-    if(not entropies.empty()) {
-        state.measurements.number_entropy_midchain = entropies.at(state.get_length() / 2);
+    if(state.measurements.number_entropies) {
+        state.measurements.number_entropy_midchain = state.measurements.number_entropies->at(state.get_length() / 2);
+        return state.measurements.number_entropy_midchain.value();
+    }
+    state.measurements.number_entropies = measure::number_entropies(state);
+    if(not state.measurements.number_entropies->empty()) {
+        state.measurements.number_entropy_midchain = state.measurements.number_entropies->at(state.get_length() / 2);
         return state.measurements.number_entropy_midchain.value();
     } else
         return 0;
