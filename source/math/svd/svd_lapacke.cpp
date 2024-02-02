@@ -51,6 +51,33 @@ namespace svd {
 //     }
 // }
 
+template<typename T>
+std::vector<long> get_valid_rows(const Eigen::MatrixBase<T> &m) {
+    std::vector<long> v;
+    v.reserve(static_cast<size_t>(m.rows()));
+    for(long col = 0; col < 1; ++col) { // Cheat by checking the first column only
+        for(long row = 0; row < m.rows(); ++row) {
+            auto val = m(row, col);
+            if constexpr(std::is_arithmetic_v<typename T::Scalar>) {
+                if(!std::isnan(val) && !std::isinf(val)) v.emplace_back(row);
+            } else {
+                if(!std::isnan(std::real(val)) && !std::isinf(std::real(val)) && !std::isnan(std::imag(val)) && !std::isinf(std::imag(val)))
+                    v.emplace_back(row);
+            }
+        }
+    }
+    return v;
+}
+template<typename T>
+std::vector<long> get_valid_cols(const Eigen::MatrixBase<T> &m) {
+    std::vector<long> v;
+    v.reserve(static_cast<size_t>(m.cols()));
+    for(long col = 0; col < m.cols(); ++col) {
+        if(m.col(col).allFinite()) { v.emplace_back(col); }
+    }
+    return v;
+}
+
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_lapacke(const Scalar *mat_ptr, long rows,
                                                                                                                   long cols) const {
@@ -119,7 +146,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         if constexpr(!ndebug) {
             if(A.isZero(1e-16)) svd::log->warn("Lapacke SVD: A is a zero matrix");
             if(not A.allFinite()) {
-                print_matrix(A.data(), A.rows(), A.cols());
+                print_matrix(A.data(), A.rows(), A.cols(), "A");
                 throw std::runtime_error("A has inf's or nan's");
             }
         }
@@ -426,29 +453,43 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         auto max_size                    = S.nonZeros();
         std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size));
         // Do the truncation
+
         U  = U.leftCols(rank).eval();
         S  = S.head(rank).eval(); // Not all calls to do_svd need normalized S, so we do not normalize here!
         VT = VT.topRows(rank).eval();
 
+        // We may need to prune further if there are nan row/cols. This is an easy way to recover from silent non-convergence that would
+        // inject nans otherwise.
+        // We do this because often the Eigen implementation will crash with segmentation fault on this type of error
+        auto valid_rows = get_valid_rows(VT); // It's usually sufficient to check just one column in VT, since the same cols of U would also be affected
+        if(static_cast<size_t>(rank) != valid_rows.size()) {
+            // We have a choice. If the problem size is huge, Jacobi is too expensive. It may just be better to salvage this result.
+            // If the problem size is small, we can let the Jacobi solvers try instead.
+            if(sizeS <= 1024){
+                throw except::runtime_error("Detected non-finite rows/cols in U, S or VT. The problem size is small ({}). Try another solver.", sizeS);
+            }
+            svd::log->warn("Pruning non-finite rows/cols from the results! rank {} -> {}", rank, valid_rows.size());
+            svd::log->debug("valid rows: {}", valid_rows);
+            U    = U(Eigen::all, valid_rows);
+            S    = S(valid_rows);
+            VT   = VT(valid_rows, Eigen::all);
+            rank = S.size();
+        }
+
         // Sanity checks
         if constexpr(!ndebug) {
-            if(not U.allFinite()) {
-                print_matrix(U.data(), U.rows(), U.cols());
-                throw except::runtime_error("U has inf's or nan's");
+            bool uerr = !U.allFinite();
+            bool serr = !S.allFinite() or (S.array() <= 0).any();
+            bool verr = !VT.allFinite();
+            if(uerr or serr or verr) { // Will only print if !ndebug
+                print_matrix(U.data(), U.rows(), U.cols(), "U");
+                print_matrix(VT.data(), VT.rows(), VT.cols(), "VT");
+                print_vector(S.data(), S.size(), "S", 16);
             }
-
-            if(not VT.allFinite()) {
-                print_matrix(VT.data(), VT.rows(), VT.cols());
-                throw except::runtime_error("VT has inf's or nan's");
-            }
-            if(not S.allFinite()) {
-                print_vector(S.data(), rank, 16);
-                throw except::runtime_error("S has inf's or nan's");
-            }
-            if(not(S.array() >= 0).all()) {
-                print_vector(S.data(), rank, 16);
-                throw except::runtime_error("S is not positive");
-            }
+            if(uerr) errmsg += "U has inf's or nan's";
+            if(serr) errmsg += "S has inf's or nan's or non-positive values";
+            if(verr) errmsg += "VT has inf's or nan's";
+            if(!errmsg.empty()) throw except::runtime_error(errmsg);
         }
     } catch(const except::runtime_error &ex) {
         // #if !defined(NDEBUG)

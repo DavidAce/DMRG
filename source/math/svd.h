@@ -72,9 +72,9 @@ namespace svd {
         [[nodiscard]] std::pair<long, double> get_rank_from_truncation_error(const VectorType<double> &S) const;
 
         template<typename Scalar>
-        void print_matrix(const Scalar *mat_ptr, long rows, long cols, long dec = 8) const;
+        void print_matrix(const Scalar *mat_ptr, long rows, long cols, std::string_view tag, long dec = 8) const;
         template<typename Scalar>
-        void print_vector(const Scalar *vec_ptr, long size, long dec = 8) const;
+        void print_vector(const Scalar *vec_ptr, long size, std::string_view tag, long dec = 8) const;
 
         public:
         solver();
@@ -197,7 +197,7 @@ namespace svd {
             if(dR == 1) { // probably a single-site right-moving split. No need for a shuffle on VT!
                 auto [U, S, VT] = do_svd_ptr(tensor.data(), dL * chiL, dR * chiR, svd_cfg);
                 return std::make_tuple(tenx::TensorMap(U, dL, chiL, S.size()), tenx::TensorMap(S.normalized().template cast<Scalar>(), S.size()),
-                                   tenx::TensorMap(VT, 1, S.size(), chiR));
+                                       tenx::TensorMap(VT, 1, S.size(), chiR));
 
             } else {
                 Eigen::Tensor<Scalar, 4> tensor_for_schmidt = tensor.reshape(tenx::array4{dL, dR, chiL, chiR}).shuffle(tenx::array4{0, 2, 1, 3});

@@ -267,9 +267,9 @@ void flbit::run_algorithm() {
     if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) update_time_step();
     tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
                      tensors.state->get_name());
-    auto t_run = tid::tic_scope("run", tid::level::normal);
     if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
     if(settings::flbit::run_effective_model) run_algorithm2();
+    auto t_run = tid::tic_scope("run", tid::level::normal);
     while(true) {
         update_state();
         check_convergence();

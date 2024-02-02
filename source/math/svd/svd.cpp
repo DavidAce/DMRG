@@ -89,7 +89,7 @@ long long svd::solver::get_count() { return count; }
 template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_ptr(const Scalar *mat_ptr, long rows, long cols,
                                                                                                               const svd::config &svd_cfg) {
-//    auto t_svd = tid::tic_scope("svd", tid::level::highest);
+    //    auto t_svd = tid::tic_scope("svd", tid::level::highest);
 
     copy_config(svd_cfg);
     auto sizeS    = std::min(rows, cols);
@@ -138,9 +138,27 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
                 else
                     return do_svd_lapacke(mat_ptr, rows, cols);
             } catch(const std::exception &ex) {
-                svd::log->warn("{} {} failed to perform SVD: {} | Trying Eigen", enum2sv(svd_lib), enum2sv(svd_rtn), std::string_view(ex.what()));
-                svd_rtn = std::cmp_greater_equal(sizeS, switchsize_gesdd) ? rtn::gesdd : rtn::gejsv;
-                return do_svd_eigen(mat_ptr, rows, cols);
+                try {
+                    svd::log->warn("{} {} failed to perform SVD: {} | Trying Lapacke gejsv", enum2sv(svd_lib), enum2sv(svd_rtn), std::string_view(ex.what()));
+                    auto svd_rtn_backup = svd_rtn; // Restore after
+                    auto svd_log_level  = svd::log->level();
+                    svd::log->set_level(spdlog::level::trace);
+                    svd_rtn             = rtn::gejsv;
+                    auto [U, S, VT]     = do_svd_lapacke(mat_ptr, rows, cols);
+                    svd_rtn             = svd_rtn_backup;
+                    svd::log->set_level(svd_log_level);
+                    return {U, S, VT};
+                } catch(const std::exception &ex) {
+                    svd::log->warn("{} {} failed to perform SVD: {} | Trying Eigen JacobiSVD", enum2sv(svd_lib), enum2sv(svd_rtn), std::string_view(ex.what()));
+                    auto svd_rtn_backup = svd_rtn; // Restore after
+                    auto svd_log_level  = svd::log->level();
+                    svd::log->set_level(spdlog::level::trace);
+                    svd_rtn             = rtn::gejsv;
+                    auto [U, S, VT]     = do_svd_eigen(mat_ptr, rows, cols);
+                    svd_rtn             = svd_rtn_backup;
+                    svd::log->set_level(svd_log_level);
+                    return {U, S, VT};
+                }
             }
             break;
         }
@@ -174,10 +192,10 @@ template std::tuple<svd::MatrixType<cplx>, svd::VectorType<cplx>, svd::MatrixTyp
 
 template<typename Scalar>
 void svd::solver::print_matrix([[maybe_unused]] const Scalar *mat_ptr, [[maybe_unused]] long rows, [[maybe_unused]] long cols,
-                               [[maybe_unused]] long dec) const {
+                               [[maybe_unused]] std::string_view tag, [[maybe_unused]] long dec) const {
 #if !defined(NDEBUG)
     auto A = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(mat_ptr, rows, cols);
-    svd::log->warn("Print matrix of dimensions {}x{}\n", rows, cols);
+    svd::log->warn("Matrix [{}] with dimensions {}x{}\n", tag, rows, cols);
     for(long r = 0; r < A.rows(); r++) {
         if constexpr(std::is_same_v<Scalar, std::complex<double>>)
             for(long c = 0; c < A.cols(); c++) fmt::print("({1:.{0}f},{2:+.{0}f}) ", dec, std::real(A(r, c)), std::imag(A(r, c)));
@@ -188,10 +206,11 @@ void svd::solver::print_matrix([[maybe_unused]] const Scalar *mat_ptr, [[maybe_u
 #endif
 }
 template<typename Scalar>
-void svd::solver::print_vector([[maybe_unused]] const Scalar *vec_ptr, [[maybe_unused]] long size, [[maybe_unused]] long dec) const {
+void svd::solver::print_vector([[maybe_unused]] const Scalar *vec_ptr, [[maybe_unused]] long size, [[maybe_unused]] std::string_view tag,
+                               [[maybe_unused]] long dec) const {
 #if !defined(NDEBUG)
     auto V = Eigen::Map<const Eigen::Matrix<Scalar, Eigen::Dynamic, 1>>(vec_ptr, size);
-    svd::log->warn("Print matrix of size {}\n", size);
+    svd::log->warn("Vector [{}] with size {}\n", tag, size);
     if constexpr(std::is_same_v<Scalar, std::complex<double>>)
         for(long i = 0; i < V.size(); i++) fmt::print("({1:.{0}f},{2:+.{0}f})\n", dec, std::real(V[i]), std::imag(V[i]));
     else
@@ -199,10 +218,10 @@ void svd::solver::print_vector([[maybe_unused]] const Scalar *vec_ptr, [[maybe_u
 #endif
 }
 
-template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, long dec) const;
-template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, long dec) const;
-template void svd::solver::print_vector<real>(const real *vec_ptr, long size, long dec) const;
-template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, long dec) const;
+template void svd::solver::print_matrix<real>(const real *vec_ptr, long rows, long cols, std::string_view tag, long dec) const;
+template void svd::solver::print_matrix<cplx>(const cplx *vec_ptr, long rows, long cols, std::string_view tag, long dec) const;
+template void svd::solver::print_vector<real>(const real *vec_ptr, long size, std::string_view tag, long dec) const;
+template void svd::solver::print_vector<cplx>(const cplx *vec_ptr, long size, std::string_view tag, long dec) const;
 
 template<typename Scalar>
 Eigen::Tensor<Scalar, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<Scalar, 2> &tensor) {
@@ -222,7 +241,7 @@ template Eigen::Tensor<cplx, 2> svd::solver::pseudo_inverse(const Eigen::Tensor<
 
 // template<typename Scalar>
 std::pair<long, double> svd::solver::get_rank_from_truncation_error(const VectorType<double> &S) const {
-//        assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
+    //        assert(std::abs(S.norm() - 1.0) < 1e-10); // make sure this is normalized
     VectorType<double> truncation_errors(S.size() + 1);
     for(long s = 0; s <= S.size(); s++) { truncation_errors[s] = S.bottomRows(S.size() - s).norm(); } // Last one should be zero, i.e. no truncation
     auto rank_    = (truncation_errors.array() >= truncation_lim).count();

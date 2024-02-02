@@ -48,7 +48,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
 
     Eigen::BDCSVD<MatrixType<Scalar>> SVD;
 
-    // Setup the SVD solver
+    // Set up the SVD solver
     if(switchsize_gesdd == -1ul) {
         SVD.setSwitchSize(safe_cast<int>(minRC));
     } else {
@@ -92,15 +92,15 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             save_svd();
         }
         if(not mat.allFinite()) {
-            print_matrix(mat.data(), mat.rows(), mat.cols());
+            print_matrix(mat.data(), mat.rows(), mat.cols(), "A");
             svd::log->critical("Eigen SVD error: matrix has inf's or nan's");
         }
         if(mat.isZero(1e-12)) {
-            print_matrix(mat.data(), mat.rows(), mat.cols(), 16);
+            print_matrix(mat.data(), mat.rows(), mat.cols(),"A", 16);
             svd::log->critical("Eigen SVD error: matrix is all zeros");
         }
         if(not S_positive) {
-            print_vector(SVD.singularValues().head(rank).data(), rank, 16);
+            print_vector(SVD.singularValues().head(rank).data(), rank, "S", 16);
             svd::log->critical("Eigen SVD error: S is not positive");
         }
         // #if !defined(NDEBUG)
