@@ -26,7 +26,7 @@ namespace tenx {
         extern void                 setNumThreads(T num) noexcept;
         extern int                  getNumThreads() noexcept;
 //        internal::ThreadPoolWrapper &get() noexcept;
-        std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept;
+        const std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept;
 #else
         extern std::unique_ptr<Eigen::DefaultDevice> dev;
         void                                         setNumThreads([[maybe_unused]] int num);

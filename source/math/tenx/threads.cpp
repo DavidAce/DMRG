@@ -50,7 +50,7 @@ namespace tenx::threads {
 
 
 
-    std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept {
+    const std::unique_ptr<internal::ThreadPoolWrapper> &get() noexcept {
         if(not internal::singleThreadWrapper) internal::singleThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(1);
     #if defined(_OPENMP)
         if(omp_in_parallel()) { // Avoid simultaneous parallelization
