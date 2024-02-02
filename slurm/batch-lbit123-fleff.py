@@ -35,7 +35,7 @@ config_ranges = {
     "model::lbit::J3_wdth": ['1.00'],
     "model::lbit::J2_span": ['-1'],
     "model::lbit::xi_Jcls": ['1.00'],
-    "model::lbit::u_depth": ['8'],
+    "model::lbit::u_depth": ['16'],
     "model::lbit::u_fmix": ['0.20'],
     "model::lbit::u_lambda": ['0.1', '1.0', '5.0'],
     "model::lbit::u_wkind": ['EXPDECAY'],
@@ -50,6 +50,7 @@ config_ranges = {
     "flbit::time_num_steps": [get_max_steps],
     "flbit::cls::num_rnd_circuits": ['1'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
+    "flbit::cls::mpo_circuit_switchdepth": ['5'],
     "flbit::opdm::num_rps": ['10'],
 }
 

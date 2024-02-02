@@ -47,13 +47,14 @@ namespace tid {
     }
     ur &get(std::string_view key, level l, bool unscoped) {
         std::string prefix_key;
-        if(internal::ur_prefix.empty()) { // No earlier prefix so just use key as prefix
-            prefix_key = key;
-        }
         if(unscoped) {
             prefix_key = key;
-        } else { // Append to get prefix.key
-            prefix_key = fmt::format("{}.{}", internal::ur_prefix, key);
+        } else {                              // Append to get prefix.key
+            if(internal::ur_prefix.empty()) { // No earlier prefix so just use key as prefix
+                prefix_key = key;
+            } else {
+                prefix_key = fmt::format("{}.{}", internal::ur_prefix, key);
+            }
         }
 
         // If the element does not exist we insert it here

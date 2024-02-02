@@ -121,7 +121,7 @@ Eigen::Tensor<cplx, 2> contract_a(const Eigen::Tensor<cplx, 2> &m, const Eigen::
     auto  res     = Eigen::Tensor<cplx, 2>(dim2);
     auto &threads = tenx::threads::get();
     res.device(*threads.dev) =
-        ud.conjugate().reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
+        ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m.reshape(shp_mid4), idx1).contract(ud.reshape(shp_udn4), idx2).shuffle(shf6).reshape(dim2);
     return res;
 }
 
@@ -129,7 +129,7 @@ Eigen::Tensor<cplx, 2> contract_b(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const std::array<long, 4> &shp_udn4, const tenx::idxlistpair<1> &idx1, const tenx::idxlistpair<2> &idx2) {
     auto &threads            = tenx::threads::get();
     auto  res                = Eigen::Tensor<cplx, 2>(shp_udn2);
-    res.device(*threads.dev) = m.contract(ud.conjugate().reshape(shp_udn4), idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
+    res.device(*threads.dev) = ud.shuffle(tenx::array2{1,0}).conjugate().reshape(shp_udn4).contract(m, idx1).contract(ud.reshape(shp_udn4), idx2).reshape(shp_udn2);
     return res;
 }
 
@@ -138,7 +138,7 @@ Eigen::Tensor<cplx, 2> contract_c(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const std::array<long, 2> &dim2) {
     auto &threads            = tenx::threads::get();
     auto  res                = Eigen::Tensor<cplx, 2>(dim2);
-    res.device(*threads.dev) = ud.conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
+    res.device(*threads.dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid6), idx_dn).contract(ud, idx_up).shuffle(shf6).reshape(dim2);
     return res;
 }
 
@@ -147,7 +147,7 @@ Eigen::Tensor<cplx, 2> contract_d(const Eigen::Tensor<cplx, 2> &m, const Eigen::
                                   const std::array<long, 2> &dim2) {
     auto &threads            = tenx::threads::get();
     auto  res                = Eigen::Tensor<cplx, 2>(dim2);
-    res.device(*threads.dev) = ud.conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
+    res.device(*threads.dev) = ud.shuffle(tenx::array2{1,0}).conjugate().contract(m.reshape(shp_mid4), idx_dn).contract(ud, idx_up).shuffle(shf4).reshape(dim2);
     return res;
 }
 
@@ -676,7 +676,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         if constexpr(settings::verbose_gates)
             tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {}", middle_gate.pos, updown_gate.pos, pos_isect,
                               pos_nsect, inc);
-        return qm::Gate{updown_gate.op.contract(middle_gate.op, tenx::idx({1}, {0})).contract(updown_gate.op.conjugate(), tenx::idx({1}, {1})), middle_gate.pos,
+        return qm::Gate{updown_gate.op.conjugate().contract(middle_gate.op, tenx::idx({1}, {0})).contract(updown_gate.op, tenx::idx({1}, {0})), middle_gate.pos,
                         middle_gate.dim};
     }
     if(pos_isect.size() == 1 and pos_nsect.size() == 1 and middle_gate.pos.size() == 1 and updown_gate.pos.size() == 2) {
@@ -686,17 +686,17 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
         // Decide if this connects on the left or right leg
         if(middle_gate.pos.front() == updown_gate.pos.front()) {
             /*  Left insert
-             *            2    3              1    2               2    3
+             *            2    3              2    3               2    3
              *            |    |              |    |               |    |
              *           [  up  ]            [  up  ]             [  up  ]
              *            |    |              |    |               |    |
-             *           (0)   1              |   <0>              |    |
-             *           (1)                  |                    |    |
+             *            0    1              0   <1>              |    |
+             *            1                   3                    |    |
              *            |                   |                    |    |
              *          [mid]       ===>    [mid]        ===>    [mid]  |
              *            |                   |                    |    |
-             *            0                  (3)                   |    |
-             *            2    3             (2)  <3>              |    |
+             *           (0)                  |    2               |    |
+             *           (2)   3              |    |               |    |
              *            |    |              |    |               |    |
              *           [  dn  ]            [  dn  ]             [  dn  ]
              *            |    |              |    |               |    |
@@ -704,29 +704,29 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *
              */
 
-            idx1 = tenx::idx({1}, {0});
-            idx2 = tenx::idx({0, 3}, {3, 2});
+            idx1 = tenx::idx({2}, {0});       // tenx::idx({0}, {0});
+            idx2 = tenx::idx({3, 2}, {0, 1}); // tenx::idx({3, 0}, {0, 1});
         } else {
             /*  Right insert
              *            2    3              1    2               2    3
              *            |    |              |    |               |    |
              *           [  up  ]            [  up  ]             [  up  ]
              *            |    |              |    |               |    |
-             *            0   (1)            <0>   |               |    |
-             *                (1)                  |               |    |
+             *            0    1             <0>  (1)              |    |
+             *                 1                  (3)              |    |
              *                 |                   |               |    |
              *               [mid]   ===>        [mid]     ===>    |  [mid]
              *                 |                   |               |    |
-             *                 0                  (3)              |    |
-             *            2    3             <2>  (3)              |    |
+             *                (0)                  |               |    |
+             *            2   (3)            <2>   |               |    |
              *            |    |              |    |               |    |
              *           [  dn  ]            [  dn  ]             [  dn  ]
              *            |    |              |    |               |    |
              *            0    1              0    1               0    1
              *
              */
-            idx1 = tenx::idx({1}, {1});
-            idx2 = tenx::idx({0, 3}, {2, 3});
+            idx1 = tenx::idx({3}, {0});       // tenx::idx({1}, {0});
+            idx2 = tenx::idx({2, 3}, {0, 1}); // tenx::idx({0, 3}, {0, 1});
         }
         if constexpr(settings::verbose_gates)
             tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_b", middle_gate.pos,
@@ -757,7 +757,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *         |     |                     |     |                  |    |     |                                       |   |   |              |
              *        [  mid  ]       ===>        [  mid  ]     ===>        |   [  mid  ]       shuffle({0,1,2,4,5,3})  =    [   gate    ]  =   [   gate    ]
              *         |     |                     |     |                  |    |     |                                       |   |   |              |
-             *        (0)     1                    |     3                  |    |     2                                       0   1   2              0
+             *        (0)    1                     |     3                  |    |     2                                       0   1   2              0
              *    2   (3)                    <2>   |                        |    |
              *    |    |                      |    |                        |    |
              *   [  dn  ]                    [  dn  ]                      [  dn  ]
@@ -765,26 +765,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *    0    1                      0    1                        0    1
              *
              */
-
-            //            if(pos_nsect.size() == 1) shp_mid4 = group(middle_gate.shape<2>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 3) shp_mid4 = group(middle_gate.shape<6>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 4) shp_mid4 = group(middle_gate.shape<8>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 5) shp_mid4 = group(middle_gate.shape<10>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 6) shp_mid4 = group(middle_gate.shape<12>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 7) shp_mid4 = group(middle_gate.shape<14>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 8) shp_mid4 = group(middle_gate.shape<16>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 9) shp_mid4 = group(middle_gate.shape<18>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 10) shp_mid4 = group(middle_gate.shape<20>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 11) shp_mid4 = group(middle_gate.shape<22>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 12) shp_mid4 = group(middle_gate.shape<24>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 13) shp_mid4 = group(middle_gate.shape<26>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 14) shp_mid4 = group(middle_gate.shape<28>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{1, merged, 1, merged});
-            //            if(pos_nsect.size() == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{1, merged, 1, merged});
             shp_mid4 = middle_gate.shape<4>(std::array<size_t, 2>{1, merged});
-            idx1     = tenx::idx({3}, {0});
-            idx2     = tenx::idx({2, 4}, {0, 1});
+            idx1     = tenx::idx({3}, {0});       // tenx::idx({1}, {0});
+            idx2     = tenx::idx({2, 4}, {0, 1}); // tenx::idx({0, 4}, {0, 1});
             shf6     = std::array<Eigen::Index, 6>{0, 1, 2, 4, 5, 3};
             pos      = concat(updown_gate.pos, subset(middle_gate.pos, 1, merged));
             dim      = concat(updown_gate.dim, subset(middle_gate.dim, 1, merged));
@@ -809,25 +792,9 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *           0    1                      0    1                        0    1
              *
              */
-            //            if(pos_nsect.size() == 1) shp_mid4 = group(middle_gate.shape<2>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 3) shp_mid4 = group(middle_gate.shape<6>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 4) shp_mid4 = group(middle_gate.shape<8>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 5) shp_mid4 = group(middle_gate.shape<10>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 6) shp_mid4 = group(middle_gate.shape<12>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 7) shp_mid4 = group(middle_gate.shape<14>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 8) shp_mid4 = group(middle_gate.shape<16>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 9) shp_mid4 = group(middle_gate.shape<18>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 10) shp_mid4 = group(middle_gate.shape<20>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 11) shp_mid4 = group(middle_gate.shape<22>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 12) shp_mid4 = group(middle_gate.shape<24>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 13) shp_mid4 = group(middle_gate.shape<26>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 14) shp_mid4 = group(middle_gate.shape<28>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{merged, 1, merged, 1});
-            //            if(pos_nsect.size() == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{merged, 1, merged, 1});
             shp_mid4 = middle_gate.shape<4>(std::array<size_t, 2>{merged, 1});
-            idx1     = tenx::idx({2}, {1});
-            idx2     = tenx::idx({5, 2}, {0, 1});
+            idx1     = tenx::idx({2}, {1});       // tenx::idx({0}, {1});
+            idx2     = tenx::idx({5, 2}, {0, 1}); // tenx::idx({5, 0}, {0, 1});
             shf6     = std::array<Eigen::Index, 6>{2, 0, 1, 3, 4, 5};
             pos      = concat(subset(middle_gate.pos, 0, merged), updown_gate.pos);
             dim      = concat(subset(middle_gate.dim, 0, merged), updown_gate.dim);
@@ -863,7 +830,7 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                  *            |                   |                 |
                  *           [up]                [up]              [up]
                  *            |                   |                 |
-                 *            1                  (1)                |
+                 *            0                  (0)                |
                  *            2   3              (2)  3             |   2
                  *            |   |               |   |             |   |
                  *          [  mid  ]   ===>    [  mid  ]         [  mid  ]     ===> shuffle({0,1,3,2})
@@ -876,31 +843,16 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                  *            0                   0                 0
                  *
                  */
-                //                if(msize == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 3) shp_mid4 = group(middle_gate.shape<6>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 4) shp_mid4 = group(middle_gate.shape<8>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 5) shp_mid4 = group(middle_gate.shape<10>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 6) shp_mid4 = group(middle_gate.shape<12>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 7) shp_mid4 = group(middle_gate.shape<14>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 8) shp_mid4 = group(middle_gate.shape<16>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 9) shp_mid4 = group(middle_gate.shape<18>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 10) shp_mid4 = group(middle_gate.shape<20>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 11) shp_mid4 = group(middle_gate.shape<22>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 12) shp_mid4 = group(middle_gate.shape<24>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 13) shp_mid4 = group(middle_gate.shape<26>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 14) shp_mid4 = group(middle_gate.shape<28>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{usize, merged, usize, merged});
-                //                if(msize == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{usize, merged, usize, merged});
                 shp_mid4 = middle_gate.shape<4>(std::array<size_t, 2>{usize, merged});
                 dim2     = middle_gate.shape<2>();
-                idx_dn   = tenx::idx({1}, {0});
-                idx_up   = tenx::idx({2}, {1}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
+                idx_dn   = tenx::idx({1}, {0}); // tenx::idx({0}, {0});
+                idx_up   = tenx::idx({2}, {0}); // tenx::idx({2}, {0});
 
                 shf4 = tenx::array4{0, 1, 3, 2};
                 if constexpr(settings::verbose_gates)
                     tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
                                       updown_gate.pos, pos_isect, pos_nsect, inc);
-                op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_up, idx_dn, shf4, dim2);
+                op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_dn, idx_up, shf4, dim2);
             } else if(offset == offmax) {
                 /*  Insert at offmax
                  *            1                   1                 3
@@ -921,34 +873,19 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
                  *
                  */
 
-                //                if(msize == 2) shp_mid4 = group(middle_gate.shape<4>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 3) shp_mid4 = group(middle_gate.shape<6>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 4) shp_mid4 = group(middle_gate.shape<8>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 5) shp_mid4 = group(middle_gate.shape<10>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 6) shp_mid4 = group(middle_gate.shape<12>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 7) shp_mid4 = group(middle_gate.shape<14>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 8) shp_mid4 = group(middle_gate.shape<16>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 9) shp_mid4 = group(middle_gate.shape<18>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 10) shp_mid4 = group(middle_gate.shape<20>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 11) shp_mid4 = group(middle_gate.shape<22>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 12) shp_mid4 = group(middle_gate.shape<24>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 13) shp_mid4 = group(middle_gate.shape<26>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 14) shp_mid4 = group(middle_gate.shape<28>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 15) shp_mid4 = group(middle_gate.shape<30>(), std::array<size_t, 4>{merged, usize, merged, usize});
-                //                if(msize == 16) shp_mid4 = group(middle_gate.shape<32>(), std::array<size_t, 4>{merged, usize, merged, usize});
                 shp_mid4 = middle_gate.shape<4>(std::array<size_t, 2>{merged, usize});
                 dim2     = middle_gate.shape<2>();
                 idx_dn   = tenx::idx({1}, {1});
-                idx_up   = tenx::idx({3}, {0}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
+                idx_up   = tenx::idx({3}, {0});
                 shf4     = tenx::array4{1, 0, 2, 3};
+                if constexpr(settings::verbose_gates)
+                    tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
+                                      updown_gate.pos, pos_isect, pos_nsect, inc);
+                op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_dn, idx_up, shf4, dim2);
             }
-            if constexpr(settings::verbose_gates)
-                tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_d", middle_gate.pos,
-                                  updown_gate.pos, pos_isect, pos_nsect, inc);
-            op = contract_d(middle_gate.op, updown_gate.op, shp_mid4, idx_dn, idx_up, shf4, dim2);
         } else {
             /*  Insert at offmax
-             *           1                     0                      5
+             *           1                     1                      5
              *           |                     |                      |
              *          [up]                  [up]                   [up]
              *           |                     |                      |
@@ -966,25 +903,11 @@ qm::Gate qm::insert(const qm::Gate &middle_gate, const qm::Gate &updown_gate) {
              *
              */
 
-            //            if(msize == 4) shp_mid6 = group(middle_gate.shape<8>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 5) shp_mid6 = group(middle_gate.shape<10>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 6) shp_mid6 = group(middle_gate.shape<12>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 7) shp_mid6 = group(middle_gate.shape<14>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 8) shp_mid6 = group(middle_gate.shape<16>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 9) shp_mid6 = group(middle_gate.shape<18>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 10) shp_mid6 = group(middle_gate.shape<20>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 11) shp_mid6 = group(middle_gate.shape<22>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 12) shp_mid6 = group(middle_gate.shape<24>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 13) shp_mid6 = group(middle_gate.shape<26>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 14) shp_mid6 = group(middle_gate.shape<28>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 15) shp_mid6 = group(middle_gate.shape<30>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
-            //            if(msize == 16) shp_mid6 = group(middle_gate.shape<32>(), repeat(std::array<size_t, 3>{offset, usize, msize - usize - offset}));
             shp_mid6 = middle_gate.shape<6>(std::array<size_t, 3>{offset, usize, msize - usize - offset});
-
-            dim2   = middle_gate.shape<2>();
-            idx_dn = tenx::idx({1}, {1});
-            idx_up = tenx::idx({4}, {0}); // Avoid a shuffle by contracting the other leg. Remember that dn = ud^dagger.
-            shf6   = tenx::array6{1, 0, 2, 3, 5, 4};
+            dim2     = middle_gate.shape<2>();
+            idx_dn   = tenx::idx({1}, {1});
+            idx_up   = tenx::idx({4}, {0});
+            shf6     = tenx::array6{1, 0, 2, 3, 5, 4};
             if constexpr(settings::verbose_gates)
                 tools::log->trace("Inserting gate pos {} between gates pos {} | pos_isect {} | pos_nsect {} | inc {} | contract_c", middle_gate.pos,
                                   updown_gate.pos, pos_isect, pos_nsect, inc);
@@ -1033,13 +956,6 @@ qm::Gate qm::connect(const qm::Gate &dn_gate, const qm::Gate &up_gate) {
              *           |    |
              *
              */
-            //            if(dn_size == 2) dn_shp4 = group(dn_gate.shape<4>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
-            //            if(dn_size == 3) dn_shp4 = group(dn_gate.shape<6>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
-            //            if(dn_size == 4) dn_shp4 = group(dn_gate.shape<8>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
-            //            if(dn_size == 5) dn_shp4 = group(dn_gate.shape<10>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
-            //            if(dn_size == 6) dn_shp4 = group(dn_gate.shape<12>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
-            //            if(dn_size == 7) dn_shp4 = group(dn_gate.shape<14>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
-            //            if(dn_size == 8) dn_shp4 = group(dn_gate.shape<16>(), repeat(std::array<size_t, 2>{dn_merge, up_merge}));
             dn_shp4   = dn_gate.shape<4>(std::array<size_t, 2>{dn_merge, up_merge});
             auto dim2 = dn_gate.shape<2>();
             return qm::Gate{dn_gate.op.reshape(dn_shp4).contract(up_gate.op, tenx::idx({3}, {0})).reshape(dim2), dn_gate.pos, dn_gate.dim};

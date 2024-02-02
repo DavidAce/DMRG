@@ -15,6 +15,7 @@ namespace tenx {
                 std::unique_ptr<Eigen::ThreadPoolDevice> dev;
 
                 ThreadPoolWrapper(int nt);
+                ~ThreadPoolWrapper() noexcept;
             };
             inline unsigned int num_threads = 1;
             extern std::unique_ptr<ThreadPoolWrapper> singleThreadWrapper;

@@ -9,7 +9,7 @@
 namespace tenx::threads {
     template<typename T>
     requires std::is_integral_v<T>
-    void setNumThreads([[maybe_unused]] T num) noexcept{
+    void setNumThreads([[maybe_unused]] T num) noexcept {
 #if defined(EIGEN_USE_THREADS)
         internal::num_threads = static_cast<unsigned int>(num);
 #endif
@@ -23,7 +23,7 @@ namespace tenx::threads {
     std::unique_ptr<internal::ThreadPoolWrapper> internal::singleThreadWrapper;
     std::unique_ptr<internal::ThreadPoolWrapper> internal::multiThreadWrapper;
 
-    int getNumThreads() noexcept{
+    int getNumThreads() noexcept {
     #if defined(_OPENMP)
         if(omp_in_parallel()) { return 1; } // Avoid simultaneous parallelization
     #endif
@@ -33,7 +33,7 @@ namespace tenx::threads {
     internal::ThreadPoolWrapper::ThreadPoolWrapper(int nt)
         : tp(std::make_unique<Eigen::ThreadPool>(nt)), dev(std::make_unique<Eigen::ThreadPoolDevice>(tp.get(), nt)) {}
 
-    internal::ThreadPoolWrapper &get() noexcept{
+    internal::ThreadPoolWrapper &get() noexcept {
         if(not internal::singleThreadWrapper) internal::singleThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(1);
     #if defined(_OPENMP)
         if(omp_in_parallel()) { return *internal::singleThreadWrapper; } // Avoid simultaneous parallelization
@@ -44,6 +44,10 @@ namespace tenx::threads {
             internal::multiThreadWrapper = std::make_unique<internal::ThreadPoolWrapper>(internal::num_threads);
 
         return *internal::multiThreadWrapper;
+    }
+    internal::ThreadPoolWrapper::~ThreadPoolWrapper() noexcept {
+        tp.release();
+        dev.release();
     }
 
 #else
