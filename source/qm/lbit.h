@@ -123,8 +123,8 @@ namespace qm::lbit {
     extern Eigen::Tensor<cplx, 2>               get_unitary_layer_as_tensor(const std::vector<qm::Gate> &unitary_layer);
     extern Eigen::Tensor<cplx, 2>               get_unitary_circuit_as_tensor(const std::vector<std::vector<qm::Gate>> &unitary_circuit);
     extern Eigen::Tensor<cplx, 2>               get_time_evolution_operator(cplx_t delta_t, const Eigen::Tensor<cplx, 2> &hamiltonian);
-    extern std::vector<qm::Gate>                get_time_evolution_gates(cplx_t delta_t, const std::vector<qm::Gate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
-    extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cplx_t delta_t, const std::vector<qm::SwapGate> &hams_nsite, double id_threshold = std::numeric_limits<double>::epsilon());
+    extern std::vector<qm::Gate>                get_time_evolution_gates(cplx_t delta_t, const std::vector<qm::Gate> &hams_nsite);
+    extern std::vector<qm::SwapGate>            get_time_evolution_swap_gates(cplx_t delta_t, const std::vector<qm::SwapGate> &hams_nsite);
 //    extern std::vector<qm::Gate>                get_unitary_2gate_layer(size_t sites, double fmix);
     extern qm::Gate                             get_unitary_2site_gate(const UnitaryGateParameters &u);
     extern std::vector<qm::Gate>                create_unitary_2site_gate_layer(const qm::lbit::UnitaryGateProperties &u);

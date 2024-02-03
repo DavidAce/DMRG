@@ -132,8 +132,7 @@ size_t assert_lbit_evolution(const flbit &f) {
 
     auto T_Lgate = has_time_swap_gates ? f.time_swap_gates_Lbody.front() : f.time_gates_Lbody.front();
     auto T_Lbody = tenx::MatrixMap(T_Lgate.op_t);
-    auto T_Hgate = qm::lbit::get_time_evolution_gates(f.status.delta_t.to_floating_point<cplx_t>(), {qm::Gate(H_exact, T_Lgate.pos, T_Lgate.dim)},
-                                                      settings::flbit::time_gate_id_threshold);
+    auto T_Hgate = qm::lbit::get_time_evolution_gates(f.status.delta_t.to_floating_point<cplx_t>(), {qm::Gate(H_exact, T_Lgate.pos, T_Lgate.dim)});
     auto T_exact = tenx::MatrixMap(T_Hgate.front().op_t);
 
     tools::log->info("T_Lbody: {}", linalg::matrix::to_string(T_Lbody.diagonal().transpose(), digits10_d));
@@ -340,7 +339,6 @@ int main(int argc, char *argv[]) {
     auto flbit_swap = flbit(nullptr); // Will evolve with swap gates on
     auto flbit_slow = flbit(nullptr); // Will evolve with swap gates off
 
-    settings::flbit::time_gate_id_threshold = 0; // Turn off time gate skips
     settings::flbit::use_swap_gates         = true;
     set_log("swap");
     flbit_swap.run_preprocessing();

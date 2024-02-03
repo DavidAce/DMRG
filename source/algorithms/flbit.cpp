@@ -669,21 +669,21 @@ void flbit::update_time_evolution_gates() {
         auto t_upd = tid::tic_scope("upd_time_evo_swap_gates");
         tools::log->debug("Updating time evolution swap gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)),
                           f128_t(std::imag(delta_t)));
-        time_swap_gates_1body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_1body, settings::flbit::time_gate_id_threshold);
-        time_swap_gates_2body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_2body, settings::flbit::time_gate_id_threshold);
-        time_swap_gates_3body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_3body, settings::flbit::time_gate_id_threshold);
+        time_swap_gates_1body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_1body);
+        time_swap_gates_2body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_2body);
+        time_swap_gates_3body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_3body);
         if(settings::model::model_size <= 6)
-            time_swap_gates_Lbody = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_Lbody, settings::flbit::time_gate_id_threshold);
+            time_swap_gates_Lbody = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_Lbody);
     }
     if(has_slow_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_gates");
         tools::log->debug("Updating time evolution gates to iter {} | Δt = ({:.2e}, {:.2e})", status.iter, f128_t(std::real(delta_t)),
                           f128_t(std::imag(delta_t)));
-        time_gates_1body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_1body, settings::flbit::time_gate_id_threshold);
-        time_gates_2body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_2body, settings::flbit::time_gate_id_threshold);
-        time_gates_3body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_3body, settings::flbit::time_gate_id_threshold);
+        time_gates_1body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_1body);
+        time_gates_2body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_2body);
+        time_gates_3body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_3body);
         if(settings::model::model_size <= 6)
-            time_gates_Lbody = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_Lbody, settings::flbit::time_gate_id_threshold);
+            time_gates_Lbody = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_Lbody);
     }
 }
 
@@ -954,7 +954,7 @@ void flbit::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
             auto rho_matrix = tenx::MatrixMap(rho);
             auto rho_trace  = rho_matrix.trace();
             tools::log->debug("rho trace: {:.16f}", rho_trace);
-            if(not rho_matrix.isApprox(rho_matrix.conjugate().transpose())) throw except::logic_error("rho is not hermitian");
+            if(not rho_matrix.isApprox(rho_matrix.adjoint())) throw except::logic_error("rho is not hermitian");
             eig_sol.eig<eig::Form::SYMM>(rho.data(), rho.dimension(0), eig::Vecs::OFF);
             auto eigvals = eig::view::get_eigvals<real>(eig_sol.result);
             tools::log->info("opdm eigv {:2} {}: {::.2e} | sum {:.15f}", nrps, pattern, eigvals, eigvals.sum());

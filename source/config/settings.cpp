@@ -224,7 +224,6 @@ void settings::load(Loader &dmrg_config) {
     dmrg_config.load_parameter("flbit::time_final_real"              , flbit::time_final_real);
     dmrg_config.load_parameter("flbit::time_final_imag"              , flbit::time_final_imag);
     dmrg_config.load_parameter("flbit::time_num_steps"               , flbit::time_num_steps);
-    dmrg_config.load_parameter("flbit::time_gate_id_threshold"       , flbit::time_gate_id_threshold);
     dmrg_config.load_parameter("flbit::print_freq"                   , flbit::print_freq);
     dmrg_config.load_parameter("flbit::store_wavefn"                 , flbit::store_wavefn);
     dmrg_config.load_parameter("flbit::cls::num_rnd_circuits"        , flbit::cls::num_rnd_circuits);

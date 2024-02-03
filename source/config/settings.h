@@ -357,7 +357,6 @@ namespace settings {
         inline double   time_final_real        = 1e6;                              /*!< Finishing time point (real) */
         inline double   time_final_imag        = 0;                                /*!< Finishing time point (imag) */
         inline size_t   time_num_steps         = 500;                              /*!< Number of steps from start to finish. Start and final times are included */
-        inline double   time_gate_id_threshold = 1e-8;                             /*!< Skip time evo. gates if exp(-iHt) is ~ 1 within this threshold */
         inline size_t   print_freq             = 1;                                /*!< Print frequency for console output. In units of iterations. (0 = off). */
         inline bool     store_wavefn           = false;                            /*!< Whether to store the wavefunction. Runs out of memory quick, recommended is false for max_length > 14 */
         /*! \namespace settings::flbit::cls Settings for calculating the characteristic length-scale of lbits */
