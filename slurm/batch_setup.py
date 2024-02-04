@@ -665,6 +665,27 @@ def get_batch_setup(projectname):
                 },
             }
         },
+        'lbit124-linspaced': {
+            # Time evolve to linearly spaced time points after saturation to calculate min/max SN(L)
+            'projectname': 'lbit124-linspaced',
+            'batch': {
+                'L12': {
+                    'seed_extent': [10000],
+                    'seed_offset': [12000000],
+                    'time_steps': 41,
+                },
+                'L16': {
+                    'seed_extent': [10000],
+                    'seed_offset': [16000000],
+                    'time_steps': 41,
+                },
+                'L20': {
+                    'seed_extent': [10000],
+                    'seed_offset': [20000000],
+                    'time_steps': 41,
+                },
+            }
+        },
         'fdmrg-isingmajorana1-init': {
             # Calculate subsystem entanglement entropies for  ground states
             'projectname': 'fdmrg-isingmajorana1-init',
