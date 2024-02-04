@@ -32,11 +32,75 @@ namespace tid {
                 if(second == strv.end()) break;
                 first = std::next(second);
             }
-            //            output.shrink_to_fit();
             return output;
         }
         template std::vector<std::string_view> split(std::string_view strv, std::string_view delims);
         template std::deque<std::string_view>  split(std::string_view strv, std::string_view delims);
+
+        const std::string &ur_prefix_get() {
+#if defined(_OPENMP)
+            size_t thread_number = static_cast<size_t>(omp_get_thread_num());
+#else
+            size_t thread_number = 1;
+#endif
+            return ur_prefix[thread_number];
+        }
+        void ur_prefix_set(std::string_view key) {
+#if defined(_OPENMP)
+            size_t thread_number = static_cast<size_t>(omp_get_thread_num());
+#else
+            size_t thread_number = 1;
+#endif
+            ur_prefix[thread_number] = key;
+#if defined(_OPENMP)
+            if(not omp_in_parallel()) {
+                // Keep all the other ur_prefixes up to date as well
+                for(auto &other_prefix : ur_prefix) other_prefix = key;
+            }
+#endif
+        }
+        void ur_prefix_push_back(std::string_view key) {
+            if(key.empty()) return;
+
+#if defined(_OPENMP)
+            size_t thread_number = static_cast<size_t>(omp_get_thread_num());
+#else
+            size_t thread_number = 1;
+#endif
+            auto &prefix    = ur_prefix[thread_number];
+            auto  key_nodot = key.substr(key.find_first_not_of('.'));
+            if(prefix.empty()) {
+                prefix = key_nodot;
+            } else {
+                prefix = fmt::format("{}.{}", prefix, key_nodot);
+            }
+#if defined(_OPENMP)
+            if(not omp_in_parallel()) {
+                // Keep all the other ur_prefixes up to date as well
+                for(auto &other_prefix : ur_prefix) other_prefix = prefix;
+            }
+#endif
+        }
+        void ur_prefix_pop_back(std::string_view key) {
+            if(key.empty()) return;
+#if defined(_OPENMP)
+            size_t thread_number = static_cast<size_t>(omp_get_thread_num());
+#else
+            size_t thread_number = 1;
+#endif
+            auto &prefix    = ur_prefix[thread_number];
+            auto  key_nodot = key.substr(key.find_first_not_of('.'));
+            auto  pos       = prefix.rfind(key_nodot);
+            if(pos != std::string::npos) { prefix.erase(pos, key_nodot.size()); }
+            while(not prefix.empty() and prefix.back() == '.') prefix.pop_back();
+#if defined(_OPENMP)
+            if(not omp_in_parallel()) {
+                // Keep all the other ur_prefixes up to date as well
+                for(auto &other_prefix : ur_prefix) other_prefix = prefix;
+            }
+#endif
+        }
+
     }
 
     ur &get(std::deque<std::string_view> &keys, level l, ur &u) {
@@ -47,24 +111,34 @@ namespace tid {
     }
     ur &get(std::string_view key, level l, bool unscoped) {
         std::string prefix_key;
+        const auto &current_prefix = internal::ur_prefix_get();
         if(unscoped) {
             prefix_key = key;
-        } else {                              // Append to get prefix.key
-            if(internal::ur_prefix.empty()) { // No earlier prefix so just use key as prefix
+        } else {                         // Append to get prefix.key
+            if(current_prefix.empty()) { // No earlier prefix so just use key as prefix
                 prefix_key = key;
             } else {
-                prefix_key = fmt::format("{}.{}", internal::ur_prefix, key);
+                prefix_key = fmt::format("{}.{}", current_prefix, key);
             }
         }
 
         // If the element does not exist we insert it here
+        // We insert missing elements recursively starting from the front of the prefix
+        // Example: prefix == this.is.a.tid.timer
+        //          Then we would try to find "this", "is", "a" ... in that order
+
         if(prefix_key.empty()) throw std::runtime_error(fmt::format("Invalid key: {}", prefix_key));
-        auto  sp       = tid::internal::split<std::deque<std::string_view>>(prefix_key, ".");
-        auto  result   = tid::internal::tid_db.insert(std::make_pair(sp[0], tid::ur(sp[0])));
-        auto &ur_found = result.first->second;
-        if(result.second and l != level::parent) ur_found.set_level(l);
+        auto sp = tid::internal::split<std::deque<std::string_view>>(prefix_key, ".");
+        // Finding and inserting the element must be done atomically in threaded contexts!
+        auto it       = tid::internal::tid_db.end();
+        bool emplaced = false;
+#pragma omp critical
+        {
+            std::tie(it, emplaced) = tid::internal::tid_db.try_emplace(std::string(sp[0]), tid::ur(sp[0]));
+            if(emplaced and l != level::parent) it->second.set_level(l);
+        };
         sp.pop_front();
-        return get(sp, l, ur_found);
+        return get(sp, l, it->second);
     }
 
     ur &get_unscoped(std::string_view key, level l) { return get(key, l, true); }
@@ -72,16 +146,35 @@ namespace tid {
     token tic_token(std::string_view key, level l) {
         if(internal::current_level < l) return internal::dummy.tic_token();
 #if defined(_OPENMP)
-        if(omp_in_parallel()) return internal::dummy.tic_token();
+        if(omp_in_parallel()) {
+            // We have to determine whether the threads have forked already
+            if(internal::ur_prefix_get().find('@') != std::string::npos) {
+                // We found a fork! No need to add @ again
+                return tid::get(key, l).tic_token();
+            }
+            // No thread fork found!
+            // Append the thread number to avoid data races on ur objects
+            auto thread_key = fmt::format("{}@{}", key, omp_get_thread_num());
+            return tid::get(thread_key, l).tic_token();
+        }
 #endif
-        if(internal::ur_prefix.size() >= 200) printf("ur prefix: %s\n", internal::ur_prefix.c_str());
         return tid::get(key, l).tic_token();
     }
 
     token tic_scope(std::string_view key, level l) {
         if(internal::current_level < l) return internal::dummy.tic_token();
 #if defined(_OPENMP)
-        if(omp_in_parallel()) return internal::dummy.tic_token();
+        if(omp_in_parallel()) {
+            // We have to determine whether the threads have forked already
+            if(internal::ur_prefix_get().find('@') != std::string::npos) {
+                // We found a fork! No need to add @ again
+                return tid::get(key, l).tic_token(key);
+            }
+            // No thread fork found!
+            // Append the thread number to avoid data races on ur objects
+            auto thread_key = fmt::format("{}@{}", key, omp_get_thread_num());
+            return tid::get(thread_key, l).tic_token(thread_key);
+        }
 #endif
         return tid::get(key, l).tic_token(key);
     }
@@ -105,7 +198,7 @@ namespace tid {
         }
     }
 
-    void set_prefix(std::string_view prefix) { internal::ur_prefix = std::string(prefix); }
+    //    void set_prefix(std::string_view prefix) { internal::ur_prefix = std::string(prefix); }
 
     std::vector<internal::ur_ref_t> get_tree(const tid::ur &u, std::string_view prefix, level l) {
         std::string key;
@@ -151,8 +244,10 @@ namespace tid {
     }
 
     std::vector<internal::ur_ref_t> get_tree(std::string_view prefix, level l) {
+//        merge_thread_enries();
         std::vector<internal::ur_ref_t> tree;
         for(const auto &[key, u] : tid::internal::tid_db) {
+            fmt::print("tid_db: {}\n", key);
             if(key == prefix or prefix.empty()) {
                 auto t = get_tree(u, "", l);
                 tree.insert(tree.end(), t.begin(), t.end());
@@ -167,6 +262,40 @@ namespace tid {
 
         return tree;
     }
+
+//    void merge_thread_entries() {
+//        // Merge threaded items containing "@"
+//        // We can essentially just add them all up in the last one and disable the rest
+//        for(auto &[key, u] : tid::internal::tid_db) {
+//            auto atpos = key.find('@');
+//            if(atpos != std::string::npos) {
+//                // We have found a threaded item such as "fLBIT.run.step@1.gen_swap_gates"
+//                auto ntpos          = key.substr(atpos).find_first_of('.');
+//                auto label          = fmt::format("{}@*{}", key.substr(0, atpos), key.substr(atpos + ntpos));
+//                auto [it, emplaced] = tid::internal::tid_db.try_emplace(label, tid::ur(label, u.get_level()));
+//                auto &ur_merge      = it->second;
+//                auto  add_count     = u.get_tic_count() / static_cast<size_t>(omp_get_max_threads());
+//                ur_merge.set_count(add_count);
+//                ur_merge += u.get_time() / omp_get_max_threads();
+//                u.set_level(level::disabled);
+//            }
+//        }
+
+        //        auto thread_tree = std::vector<internal::ur_ref_t>();
+        //        for(auto &t : tree) {
+        //            auto atpos = t.key.find('@');
+        //            if(atpos != std::string::npos) {
+        //                // We have found a threaded item such as "fLBIT.run.step@1.gen_swap_gates"
+        //                // We make a new leaf with the symbol @* instead of @<thread_number>
+        //                auto ntpos = t.key.substr(atpos).find_first_of('.');
+        //                auto tname = fmt::format("{}@*{}", t.key.substr(0, atpos), t.key.substr(atpos + ntpos));
+        //                if(std::find(thread_tree.begin(), thread_tree.end(), [](const internal::ur_ref_t &u) -> bool { return u.key == tname; }) ==
+        //                thread_tree.end()) {
+        //                    thread_tree.emplace_back(internal::ur_ref_t{.key=tname, });
+        //                }
+        //            }
+        //        }
+//    }
 
     std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match) {
         std::vector<internal::ur_ref_t> matches;

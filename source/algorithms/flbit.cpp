@@ -1,4 +1,6 @@
 #include "flbit.h"
+#include "flbit_impl.h"
+//
 #include "config/settings.h"
 #include "debug/exceptions.h"
 #include "debug/info.h"
@@ -157,7 +159,10 @@ void flbit::run_task_list(std::deque<flbit_task> &task_list) {
             }
             case flbit_task::TIME_EVOLVE:
                 tensors.state->set_name("state_real");
-                run_algorithm();
+                if(settings::flbit::run_iter_in_parallel)
+                    run_algorithm_parallel();
+                else
+                    run_algorithm();
                 break;
             case flbit_task::TRANSFORM_TO_LBIT: transform_to_lbit_basis(); break;
             case flbit_task::TRANSFORM_TO_REAL: transform_to_real_basis(); break;
@@ -285,6 +290,48 @@ void flbit::run_algorithm() {
         t_run->start_lap();
     }
     tools::log->info("Finished {} simulation of state [{}] -- stop reason: {}", status.algo_type_sv(), tensors.state->get_name(), status.algo_stop_sv());
+    status.algorithm_has_finished = true;
+}
+
+void flbit::run_algorithm_parallel() {
+    if(tensors.state->get_name().empty()) tensors.state->set_name("state_real");
+    if(not state_lbit) transform_to_lbit_basis();
+    if(not state_lbit_init) {
+        state_lbit_init = std::make_unique<StateFinite>(*state_lbit);
+        tools::finite::mps::normalize_state(*state_lbit_init, std::nullopt, NormPolicy::ALWAYS);
+    }
+    if(time_points.empty()) create_time_points();
+    if(cmp_t(status.delta_t.to_floating_point<cplx_t>(), 0.0)) update_time_step();
+    tools::log->info("Starting {} algorithm with model [{}] for state [{}]", status.algo_type_sv(), enum2sv(settings::model::model_type),
+                     tensors.state->get_name());
+    if(not tensors.position_is_inward_edge()) throw except::logic_error("Put the state on an edge!");
+    if(settings::flbit::run_effective_model) run_algorithm2();
+
+    auto ham_swap_gates = std::vector<std::vector<qm::SwapGate>>{ham_swap_gates_1body, ham_swap_gates_2body, ham_swap_gates_3body};
+    auto status_init    = status;
+    auto t_run          = tid::tic_scope("run", tid::level::normal);
+#pragma omp parallel for ordered schedule(dynamic, 1)
+    for(size_t tidx = 0; tidx < time_points.size(); ++tidx) {
+        auto t_step = tid::tic_scope("step");
+        auto gates_tevo = flbit_impl::get_time_evolution_gates(time_points[tidx], ham_swap_gates);
+        auto [state_tevo, status_tevo] =
+            flbit_impl::update_state(tidx, time_points[tidx], *state_lbit_init, gates_tevo, unitary_gates_2site_layers, status_init);
+        status_tevo.wall_time = tid::get_unscoped("t_tot").get_time();
+        status_tevo.algo_time = t_run->get_time();
+        if(not state_tevo.position_is_inward_edge()) throw std::runtime_error("state_tevo is not at the edge! it will not be written to file!");
+        flbit_impl::print_status(state_tevo, status_tevo);
+#pragma omp ordered
+        {
+            status_tevo.event = StorageEvent::ITERATION;
+            tools::finite::h5::save::simulation(*h5file, state_tevo, *tensors.model, *tensors.edges, status_tevo, CopyPolicy::OFF);
+            status_tevo.event = StorageEvent::NONE;
+        };
+        tools::log->trace("Finished step {}, iter {}, pos {}, dir {}", status_tevo.step, status_tevo.iter, status_tevo.position, status_tevo.direction);
+        if(tidx + 1 == time_points.size()) {
+            status         = status_tevo;
+            *tensors.state = state_tevo;
+        }
+    }
     status.algorithm_has_finished = true;
 }
 
@@ -674,8 +721,7 @@ void flbit::update_time_evolution_gates() {
         time_swap_gates_1body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_1body);
         time_swap_gates_2body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_2body);
         time_swap_gates_3body = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_3body);
-        if(settings::model::model_size <= 6)
-            time_swap_gates_Lbody = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_Lbody);
+        if(settings::model::model_size <= 6) time_swap_gates_Lbody = qm::lbit::get_time_evolution_swap_gates(delta_t, ham_swap_gates_Lbody);
     }
     if(has_slow_gates) {
         auto t_upd = tid::tic_scope("upd_time_evo_gates");
@@ -684,8 +730,7 @@ void flbit::update_time_evolution_gates() {
         time_gates_1body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_1body);
         time_gates_2body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_2body);
         time_gates_3body = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_3body);
-        if(settings::model::model_size <= 6)
-            time_gates_Lbody = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_Lbody);
+        if(settings::model::model_size <= 6) time_gates_Lbody = qm::lbit::get_time_evolution_gates(delta_t, ham_gates_Lbody);
     }
 }
 

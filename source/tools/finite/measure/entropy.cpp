@@ -376,7 +376,7 @@ size_t amplitude_next_idx_round_robin(size_t aidx, size_t &nbit, size_t nmax, st
                                       const AmplitudesT &amplitudes) {
     if(namp.size() != amplitudes.size()) throw except::logic_error("Size mistmatch: namp {} != amplitudes {}", namp.size(), amplitudes.size());
     if(nflg.size() != nmax + 1) throw except::logic_error("nflg.size() != nmax+1");
-    auto t_next = tid::tic_token("next");
+    auto t_next = tid::tic_token("next",tid::level::highest);
     // aidx is the current index in abit
     // nbit is the number of bits at this index, i.e. nbit = abit[aidx].
     if(nbit == namp[aidx]) {
@@ -446,13 +446,13 @@ template<Side side, typename AmplitudesT, typename CacheT>
 std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_pos, AmplitudesT &amplitudes, CacheT &cache) {
     // Here we compute the probability of finding
 
-    auto                t_prob    = tid::tic_scope("probability");
+    auto                t_prob    = tid::tic_scope("probability",tid::level::highest);
     auto                state_pos = state.get_position<long>();
     auto                state_len = state.get_length<long>();
     std::vector<double> probability(safe_cast<size_t>(state_len + 1), 0.0);
     double              probability_sum = 0.0;
     // Figure out which schmidt values to use
-    auto                     t_figout = tid::tic_scope("figout");
+    auto                     t_figout = tid::tic_scope("figout", tid::level::highest);
     Eigen::Tensor<double, 1> schmidt_values;
     if(tgt_pos < state_pos)
         schmidt_values = state.get_mps_site(tgt_pos + 1).get_L().abs(); // A-site
@@ -465,7 +465,7 @@ std::vector<double> compute_probability_rrp(const StateFinite &state, long tgt_p
     t_figout.toc();
 
     // Create optional slots for each schmidt value
-    auto   t_slots          = tid::tic_scope("slots");
+    auto   t_slots          = tid::tic_scope("slots", tid::level::highest);
     double amplitude_cutoff = 1e-4;
 
     Eigen::MatrixXd ampacc_sq_matrix = Eigen::MatrixXd::Zero(schmidt_values.size(), state_len + 1);
@@ -581,7 +581,7 @@ std::vector<Amplitude<from>> generate_amplitude_list_rrp(long state_len, long mp
     if(state_len < 0) throw except::logic_error("Expected a non-negative state_len. Got: {}", state_len);
     if(mps_pos < 0) throw except::logic_error("Expected a non-negative mps_pos. Got: {}", mps_pos);
     if(state_len <= mps_pos) throw except::logic_error("Expected a state_len <= mps_pos. Got: state_len={}, mps_pos={}", state_len, mps_pos);
-    auto t_amp    = tid::tic_scope("amplitude");
+    auto t_amp    = tid::tic_scope("amplitude", tid::level::highest);
     auto num_bits = -1ul;
     if constexpr(from == From::A) { num_bits = safe_cast<size_t>(mps_pos + 1l); }
     if constexpr(from == From::B) { num_bits = safe_cast<size_t>(state_len - mps_pos); }
@@ -647,7 +647,7 @@ std::vector<double> tools::finite::measure::number_entropies(const StateFinite &
         return std::vector<double>(state.get_length<size_t>(), 0.0);
     }
 
-    auto t_num      = tid::tic_scope("number_entropy", tid::level::highest);
+    auto t_num      = tid::tic_scope("number_entropy", tid::level::normal);
     auto state_copy = state; // Make a local copy, so we can move it to the middle without touching the original state
     tools::finite::mps::move_center_point_to_middle(state_copy);
     //    tools::finite::mps::move_center_point_to_pos(state_copy, state_copy.get_length<long>() - 1);

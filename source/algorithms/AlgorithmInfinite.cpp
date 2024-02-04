@@ -20,7 +20,7 @@ AlgorithmInfinite::AlgorithmInfinite(std::shared_ptr<h5pp::File> h5ppFile_, Algo
 
 void AlgorithmInfinite::run() {
     if(not settings::algorithm_is_on(status.algo_type)) return;
-    auto t_tot = tid::get_unscoped("t_tot").tic_token();
+    auto t_tot = tid::get_unscoped("t_tot", tid::level::normal).tic_token();
     run_preprocessing();
     run_algorithm();
     run_postprocessing();

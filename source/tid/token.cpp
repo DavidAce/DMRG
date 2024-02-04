@@ -6,12 +6,8 @@ namespace tid {
     }
     token::token(ur &t_, std::string_view prefix_) : t(t_) {
         if(t.lvl == level::disabled) return;
-        if(tid::internal::ur_prefix.empty()) {
-            temp_prefix = std::string(prefix_);
-        } else {
-            temp_prefix = "." + std::string(prefix_);
-        }
-        tid::internal::ur_prefix.append(temp_prefix);
+        temp_prefix = prefix_;
+        tid::internal::ur_prefix_push_back(temp_prefix);
         t.tic();
     }
 
@@ -19,10 +15,7 @@ namespace tid {
         if(t.lvl == level::disabled) return;
         try {
             if(t.is_measuring) t.toc();
-            if(not temp_prefix.empty()) {
-                auto pos = tid::internal::ur_prefix.rfind(temp_prefix);
-                if(pos != std::string::npos) { tid::internal::ur_prefix.erase(pos, temp_prefix.size()); }
-            }
+            tid::internal::ur_prefix_pop_back(temp_prefix);
         } catch(const std::exception &ex) { fprintf(stderr, "tid: error in token destructor for tid::ur [%s]: %s", t.get_label().c_str(), ex.what()); }
     }
 
@@ -33,10 +26,7 @@ namespace tid {
     void token::toc() noexcept {
         if(t.lvl == level::disabled) return;
         t.toc();
-        if(not temp_prefix.empty()) {
-            auto pos = tid::internal::ur_prefix.rfind(temp_prefix);
-            if(pos != std::string::npos) { tid::internal::ur_prefix.erase(pos, temp_prefix.size()); }
-        }
+        tid::internal::ur_prefix_pop_back(temp_prefix);
     }
     ur &token::ref() noexcept { return t; }
     ur *token::operator->() noexcept { return &t; }

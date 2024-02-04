@@ -35,10 +35,10 @@
         "THREADS_PREFER_PTHREAD_FLAG": "TRUE",
         "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always",
         "CMAKE_CXX_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-Og -g3 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always",
         "CMAKE_C_FLAGS_DEBUG": "-O0 -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -ggdb -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-Og -g3 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fno-omit-frame-pointer",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE",
         "CMAKE_EXE_LINKER_FLAGS": "-Wl,--enable-new-dtags",
         "CMAKE_SKIP_BUILD_RPATH": "FALSE",
@@ -130,8 +130,8 @@
       "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_CXX_FLAGS": "-g -ggdb -fdiagnostics-color=always -fno-omit-frame-pointer",
-        "CMAKE_C_FLAGS": "-g -ggdb -fdiagnostics-color=always -fno-omit-frame-pointer",
+        "CMAKE_CXX_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
+        "CMAKE_C_FLAGS": "-g -fdiagnostics-color=always -fno-omit-frame-pointer",
         "COMPILER_ENABLE_PCH": "TRUE",
         "COMPILER_ENABLE_CCACHE": "TRUE",
         "CMAKE_INTERPROCEDURAL_OPTIMIZATION": "TRUE"

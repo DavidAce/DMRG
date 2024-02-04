@@ -344,7 +344,8 @@ namespace settings {
     /*! \namespace settings::flbit Settings for the finite l-bit algorithm */
     namespace flbit {
         inline bool     on                     = false;                            /*!< Turns flbit simulation on/off. */
-        inline bool     run_effective_model    = true;                             /*!< Runs the effecive model before the actual simulation */
+        inline bool     run_iter_in_parallel   = false;                            /*!< Time evolve each time step in parallel (because these are independent!) */
+        inline bool     run_effective_model    = false;                            /*!< Runs the effecive model before the actual simulation */
         inline size_t   max_iters              = 10000;                            /*!< Max number of iterations. One iterations moves L steps. */
         inline size_t   min_iters              = 4;                                /*!< Min number of iterations. One iterations moves L steps. */
         inline bool     use_swap_gates         = true;                             /*!< Use gate swapping for pairwise long-range interactions rather then building a large multisite operator */

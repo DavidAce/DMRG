@@ -78,6 +78,7 @@ add_source_target(dmrg-algorithms-fdmrg
 add_source_target(dmrg-algorithms-flbit
         TARGET_SOURCES
         flbit.cpp
+        flbit_impl.cpp
         OBJECT_LINK_LIBRARIES
         dmrg-deps dmrg-flags
         INTERFACE_LINK_LIBRARIES

@@ -37,6 +37,7 @@ class flbit : public AlgorithmFinite {
     void run_default_task_list() final;
     void run_preprocessing() final;
     void run_algorithm() final;
+    void run_algorithm_parallel();
     void run_algorithm2();
     void run_fes_analysis() final;
     void update_state() final;

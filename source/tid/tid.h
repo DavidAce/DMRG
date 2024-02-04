@@ -8,6 +8,11 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+#if defined(_OPENMP)
+    #include <omp.h>
+#endif
+
 namespace tid {
 
 #if defined(TID_DISABLE)
@@ -20,6 +25,13 @@ namespace tid {
     using ur_umap_t = std::unordered_map<std::string, std::shared_ptr<tid::ur>>;
     namespace internal {
         class ur_node_t;
+
+        struct string_hash {
+            using is_transparent = void;
+            [[nodiscard]] size_t operator()(const char *txt) const { return std::hash<std::string_view>{}(txt); }
+            [[nodiscard]] size_t operator()(std::string_view txt) const { return std::hash<std::string_view>{}(txt); }
+            [[nodiscard]] size_t operator()(const std::string &txt) const { return std::hash<std::string>{}(txt); }
+        };
     }
 
     /*! \brief RAII-style token for tid::ur
@@ -97,7 +109,7 @@ namespace tid {
         friend class token;
         friend class internal::ur_node_t;
 
-        using ur_umap_t = std::unordered_map<std::string, std::shared_ptr<tid::ur>>;
+        using ur_umap_t = std::unordered_map<std::string, std::shared_ptr<tid::ur>, internal::string_hash, std::equal_to<>>;
         ur_umap_t ur_under;                                // For making a tree of ur-objects
         ur       &operator[](std::string_view label);      // For adding leafs to the tree
         ur       &insert(std::string_view label, level l); // For adding leafs to the tree
@@ -126,12 +138,21 @@ namespace tid {
             const ur                             *operator->() const;
         };
         inline tid::level current_level = tid::normal;
-        inline tid::ur dummy("disabled", level::disabled);
-        using tid_db_unordered_map_t = std::unordered_map<std::string, ur>;
+        inline tid::ur    dummy("disabled", level::disabled);
+
+        using tid_db_unordered_map_t = std::unordered_map<std::string, ur, string_hash, std::equal_to<>>;
         inline tid_db_unordered_map_t tid_db;
 
-        inline std::string ur_prefix;
-
+        //        inline std::string ur_prefix;
+#if defined(_OPENMP)
+        inline std::vector<std::string> ur_prefix(static_cast<unsigned long>(omp_get_max_threads())); // Each thread has its own prefix
+#else
+        inline std::vector<std::string> ur_prefix(1); // Only one thread
+#endif
+        extern const std::string &     ur_prefix_get();
+        extern void             ur_prefix_set(std::string_view key);
+        extern void             ur_prefix_push_back(std::string_view key);
+        extern void             ur_prefix_pop_back(std::string_view key);
         template<typename T = std::vector<std::string_view>>
         extern T split(std::string_view strv, std::string_view delims);
     }
@@ -140,6 +161,7 @@ namespace tid {
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match);
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(std::string_view match);
     void                                                 set_level(level l);
+//    void                                                 merge_thread_enries();
     void                                                 print_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
     void                                                 print_tree(std::string_view prefix = "", level l = level::normal);
 }

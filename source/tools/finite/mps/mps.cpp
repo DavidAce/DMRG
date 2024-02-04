@@ -560,9 +560,9 @@ void tools::finite::mps::apply_gate(StateFinite &state, const qm::Gate &gate, Ga
         auto tmp_map = tenx::MatrixMap(tmp, tmp.dimension(0), tmp.dimension(1) * tmp.dimension(2));
         switch(gop) { // These will call gemm (hopefully from blas
             case GateOp::NONE: tmp_map = gatemap * mps_map; break;
-            case GateOp::CNJ:  tmp_map = gatemap.conjugate() * mps_map; break;
-            case GateOp::ADJ:  tmp_map = gatemap.adjoint() * mps_map; break;
-            case GateOp::TRN:  tmp_map = gatemap.transpose() * mps_map; break;
+            case GateOp::CNJ: tmp_map = gatemap.conjugate() * mps_map; break;
+            case GateOp::ADJ: tmp_map = gatemap.adjoint() * mps_map; break;
+            case GateOp::TRN: tmp_map = gatemap.transpose() * mps_map; break;
             default: throw except::runtime_error("Unhandled switch case for GateOp: {}", enum2sv(gop));
         }
     }
@@ -761,7 +761,7 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
         for(const auto &mps : state.mps_sites) mps->assert_normalized();
 }
 
-void tools::finite::mps::apply_swap_gate(StateFinite &state, qm::SwapGate &gate, GateOp gop, std::vector<size_t> &sites, GateMove gm,
+void tools::finite::mps::apply_swap_gate(StateFinite &state, const qm::SwapGate &gate, GateOp gop, std::vector<size_t> &sites, GateMove gm,
                                          std::optional<svd::config> svd_cfg) {
     if(gate.pos.back() >= state.get_length()) throw except::logic_error("The last position of gate is out of bounds: {}", gate.pos);
     auto old_posC = state.get_position<long>();
@@ -895,6 +895,63 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
     for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
         auto &gate = gates.at(gate_idx);
         if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates[gate_sequence[i + 1]].swaps);
+        swap_count += gate.swaps.size();
+        rwap_count += gate.rwaps.size();
+        apply_swap_gate(state, gate, gop, sites, gm, svd_cfg);
+    }
+
+    move_center_point_to_pos_dir(state, 0, 1, svd_cfg);
+
+    if constexpr(settings::verbose_gates) {
+        svds_count = svd::solver::get_count() - svds_count;
+        tools::log->debug("apply_swap_gates: applied {} gates | swaps {} | rwaps {} | total {} | skips {} | svds {} | time {:.4f}", gates.size(), swap_count,
+                          rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
+    }
+}
+
+
+void tools::finite::mps::apply_swap_gates(StateFinite &state, const std::vector<qm::SwapGate> &gates, CircuitOp cop, GateMove gm,
+                                          std::optional<svd::config> svd_cfg) {
+    auto t_swapgate = tid::tic_scope("apply_swap_gates", tid::level::higher);
+    if(gates.empty()) return;
+    state.clear_cache(LogPolicy::QUIET); // So that multisite_mps does not use cache
+    // Sanity check
+    if constexpr(settings::debug_gates) {
+        for(const auto &mps : state.mps_sites) mps->assert_normalized();
+    }
+    if constexpr(settings::verbose_gates) tools::log->trace("before applying swap gates: labels {}", state.get_labels());
+
+    if(gm == GateMove::AUTO) {
+        // It only pays to move center point if we are actually using swaps
+        // If there are any swaps or rwaps to be made, then switch on moving of center sites.
+        gm = GateMove::OFF;
+        for(const auto &gate : gates) {
+            if(not gate.swaps.empty() or not gate.rwaps.empty()) {
+                gm = GateMove::ON;
+                break;
+            }
+        }
+    }
+
+    auto                    sites      = num::range<size_t>(0ul, state.get_length<size_t>(), 1ul);
+    [[maybe_unused]] auto   svds_count = svd::solver::get_count();
+    [[maybe_unused]] size_t skip_count = 0;
+    [[maybe_unused]] size_t swap_count = 0;
+    [[maybe_unused]] size_t rwap_count = 0;
+
+    auto   gate_sequence = generate_gate_sequence(state, gates, cop);
+    GateOp gop           = GateOp::NONE;
+    switch(cop) {
+        case CircuitOp::NONE: gop = GateOp::NONE; break;
+        case CircuitOp::ADJ: gop = GateOp::ADJ; break;
+        case CircuitOp::TRN: gop = GateOp::TRN; break;
+    }
+
+    auto gates_internal = gates; // Make a local copy because gates is const
+
+    for(const auto &[i, gate_idx] : iter::enumerate(gate_sequence)) {
+        auto &gate = gates_internal.at(gate_idx);
+        if(i + 1 < gate_sequence.size()) skip_count += gate.cancel_rwaps(gates_internal[gate_sequence[i + 1]].swaps);
         swap_count += gate.swaps.size();
         rwap_count += gate.rwaps.size();
         apply_swap_gate(state, gate, gop, sites, gm, svd_cfg);

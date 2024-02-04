@@ -1,6 +1,5 @@
 #include "tid.h"
 #include <stdexcept>
-
 namespace tid {
     ur::ur(std::string_view label_, level l) noexcept : label(label_), lvl(l) {}
     void ur::tic() noexcept {
@@ -168,18 +167,27 @@ namespace tid {
 
     ur &ur::operator[](std::string_view label_) {
         if(label_.find('.') != std::string_view::npos) { throw std::runtime_error("ur error [" + std::string(label_) + "]: label cannot have '.'"); }
-        auto  result = ur_under.insert(std::make_pair(label_, std::make_shared<tid::ur>(label_)));
-        auto &ur_sub = *result.first->second;
-        if(result.second) ur_sub.set_level(get_level());
-        return ur_sub;
+        auto it       = ur_under.end();
+        bool emplaced = false;
+#pragma omp critical
+        {
+            std::tie(it, emplaced) = ur_under.try_emplace(std::string(label_), std::make_shared<tid::ur>(label_));
+            if(emplaced) it->second->set_level(get_level());
+        };
+        if(it == ur_under.end()) throw std::logic_error("ur::insert: try_emplace failed");
+        return *it->second;
     }
 
     ur &ur::insert(std::string_view label_, level l) {
         if(label_.find('.') != std::string_view::npos) { throw std::runtime_error("ur error [" + std::string(label_) + "]: label cannot have '.'"); }
-        auto  result = ur_under.insert(std::make_pair(label_, std::make_shared<tid::ur>(label_)));
-        auto &ur_sub = *result.first->second;
-        if(result.second) ur_sub.set_level(l == level::parent ? get_level() : l);
-        return ur_sub;
+        auto it       = ur_under.end();
+        bool emplaced = false;
+#pragma omp critical
+        {
+            std::tie(it, emplaced) = ur_under.try_emplace(std::string(label_), std::make_shared<tid::ur>(label_));
+            if(emplaced) it->second->set_level(l == level::parent ? get_level() : l);
+        };
+        if(it == ur_under.end()) throw std::logic_error("ur::insert: try_emplace failed");
+        return *it->second;
     }
-
 }
