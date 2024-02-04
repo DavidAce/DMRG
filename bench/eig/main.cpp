@@ -103,7 +103,7 @@ int main() {
 #if defined(EIGEN_USE_THREADS)
     if(threading::stl_threads <= 0) { threading::stl_threads = (int) std::thread::hardware_concurrency(); }
     tenx::threads::setNumThreads(threading::stl_threads);
-    tools::log->info("Using Eigen Tensor with {} C++11 threads", tenx::threads::num_threads);
+    tools::log->info("Using Eigen Tensor with {} C++11 threads", tenx::threads::getNumThreads());
 #else
     if(threading::stl_threads > 1)
         tools::log->warn("EIGEN_USE_THREADS is not defined: "
