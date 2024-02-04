@@ -396,14 +396,14 @@ namespace tools::finite::h5 {
     template void save::data(h5pp::File &h5file, const StorageInfo &sinfo, const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view data_name,
                              CopyPolicy copy_policy);
 
-    void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, StorageEvent storage_event, CopyPolicy copy_policy) {
-        save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, storage_event, copy_policy);
+    void save::simulation(h5pp::File &h5file, const TensorsFinite &tensors, const AlgorithmStatus &status, CopyPolicy copy_policy) {
+        save::simulation(h5file, *tensors.state, *tensors.model, *tensors.edges, status, copy_policy);
     }
 
     void save::simulation(h5pp::File &h5file, const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, const AlgorithmStatus &status,
-                          StorageEvent event, CopyPolicy copy_policy) {
+                          CopyPolicy copy_policy) {
         if(not state.position_is_inward_edge()) return;
-        auto sinfo   = StorageInfo(status, state.get_name(), event);
+        auto sinfo   = StorageInfo(status, state.get_name());
         auto t_h5    = tid::tic_scope("h5");
         auto t_event = tid::tic_scope(enum2sv(status.event), tid::level::highest);
 

@@ -821,20 +821,26 @@ void AlgorithmFinite::clear_convergence_status() {
 
 void AlgorithmFinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
     if(not h5file) return;
-    tools::finite::h5::save::simulation(*h5file, tensors, status, storage_event, copy_policy);
+    status.event = storage_event;
+    tools::finite::h5::save::simulation(*h5file, tensors, status, copy_policy);
+    status.event = StorageEvent::NONE;
 }
 
 void AlgorithmFinite::write_to_file(const StateFinite &state, const ModelFinite &model, const EdgesFinite &edges, StorageEvent storage_event,
                                     CopyPolicy copy_policy) {
     if(not h5file) return;
-    tools::finite::h5::save::simulation(*h5file, state, model, edges, status, storage_event, copy_policy);
+    status.event = storage_event;
+    tools::finite::h5::save::simulation(*h5file, state, model, edges, status, copy_policy);
+    status.event = StorageEvent::NONE;
 }
 
 template<typename T>
 void AlgorithmFinite::write_to_file(const T &data, std::string_view name, StorageEvent storage_event, CopyPolicy copy_policy) {
     if(not h5file) return;
-    auto sinfo = StorageInfo(status, tensors.state->get_name(), storage_event);
+    status.event = storage_event;
+    auto sinfo   = StorageInfo(status, tensors.state->get_name());
     tools::finite::h5::save::data(*h5file, sinfo, data, name, copy_policy);
+    status.event = StorageEvent::NONE;
 }
 
 template void AlgorithmFinite::write_to_file(const Eigen::Tensor<std::complex<double>, 2> &data, std::string_view name, StorageEvent storage_event,

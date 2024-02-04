@@ -96,7 +96,7 @@ std::string StorageInfo::get_mps_prefix() const {
     }
 }
 
-StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_name, StorageEvent event)
+StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_name)
     : iter(status.iter),                                     //
       step(status.step), position(status.position),          //
       direction(status.direction),                           //
@@ -109,11 +109,9 @@ StorageInfo::StorageInfo(const AlgorithmStatus &status, std::string_view state_n
       state_name(state_name),                                //
       algorithm_has_finished(status.algorithm_has_finished), //
       algorithm_has_succeeded(status.algorithm_has_succeeded) {
-    if(storage_event == StorageEvent::NONE) storage_event = event;
     assert_well_defined();
 }
 
-StorageInfo::~StorageInfo() noexcept { storage_event = StorageEvent::NONE; }
 
 StorageAttrs::StorageAttrs(const StorageInfo &sinfo) {
     iter          = sinfo.iter;

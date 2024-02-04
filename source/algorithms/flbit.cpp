@@ -379,7 +379,9 @@ void flbit::run_algorithm2() {
 
             print_status(status_eff, tensor_eff);
             if(not state_eff.position_is_inward_edge()) throw std::runtime_error("state_eff is not at the edge! it will not be written to file!");
-            tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges, status_eff, StorageEvent::ITERATION, CopyPolicy::TRY);
+            status_eff.event = StorageEvent::ITERATION;
+            tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges, status_eff, CopyPolicy::TRY);
+            status_eff.event = StorageEvent::NONE;
             t_run->start_lap();
         }
     }

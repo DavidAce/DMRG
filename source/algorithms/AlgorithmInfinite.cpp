@@ -258,13 +258,17 @@ void AlgorithmInfinite::check_convergence_entg_entropy(std::optional<double> sen
 }
 
 void AlgorithmInfinite::write_to_file(StorageEvent storage_event, CopyPolicy copy_policy) {
-    auto sinfo = StorageInfo(status, tensors.state->get_name(), storage_event);
+    status.event = storage_event;
+    auto sinfo   = StorageInfo(status, tensors.state->get_name());
     tools::log->debug("Writing to file: Reason [{}] | state prefix [{}]", enum2sv(sinfo.storage_event), sinfo.get_state_prefix());
     // Start saving tensors and metadata
     tools::infinite::h5::save::bonds(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::state(*h5file, sinfo, *tensors.state);
     tools::infinite::h5::save::edges(*h5file, sinfo, *tensors.edges);
-    if(storage_event == StorageEvent::PROJECTION) return; // Some storage reasons should not go further. Like projection.
+    if(storage_event == StorageEvent::PROJECTION) {
+        status.event = StorageEvent::NONE;
+        return; // Some storage reasons should not go further. Like projection.
+    }
 
     // The main results have now been written. Next we append data to tables
     tools::infinite::h5::save::measurements(*h5file, sinfo, tensors, status);
@@ -273,6 +277,7 @@ void AlgorithmInfinite::write_to_file(StorageEvent storage_event, CopyPolicy cop
     tools::common::h5::save::memory(*h5file, sinfo);
     // Copy from temporary location to destination depending on given policy
     copy_from_tmp(storage_event, copy_policy);
+    status.event = StorageEvent::NONE;
 }
 
 void AlgorithmInfinite::print_status() {

@@ -76,14 +76,12 @@ namespace tools::finite::h5 {
         extern void simulation(h5pp::File &h5file,
                                const TensorsFinite & tensors,
                                const AlgorithmStatus &status,
-                               StorageEvent storage_event,
                                CopyPolicy copy_policy);
         extern void simulation(h5pp::File &h5file,
                                const StateFinite & state,
                                const ModelFinite & model,
                                const EdgesFinite & edges,
                                const AlgorithmStatus &status,
-                               StorageEvent event,
                                CopyPolicy copy_policy);
 
     }
