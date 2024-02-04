@@ -165,7 +165,6 @@ def get_h5_status(filename, batch):
             '/fLBIT/state_real/measurements',
             '/fLBIT/state_real/status',
             '/fLBIT/state_real/number_probabilities',
-            '/fLBIT/state_eff/number_probabilities',
         ]
         optional_dset_paths = [
             '/fLBIT/state_real/initial_pattern'
@@ -202,7 +201,7 @@ def get_h5_status(filename, batch):
                     evn_neel = np.resize([0,1], int(length))
                     odd_neel = np.resize([1,0], int(length))
                     has_neel_init_pattern = np.all(optional_dsets[0][()] == evn_neel) or np.all(optional_dsets[0][()] == odd_neel)
-                    should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename or 'lbit116-anderson' in filename
+                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123', 'lbit124']])
                     if should_be_neel and not has_neel_init_pattern:
                         return f"FAILED|initial state is not neel"
                     if not should_be_neel and has_neel_init_pattern:
@@ -211,8 +210,7 @@ def get_h5_status(filename, batch):
                     evn_neel = 'b'+''.join(np.resize(['0','1'], int(length)))
                     odd_neel = 'b'+''.join(np.resize(['1','0'], int(length)))
                     has_neel_init_pattern = np.all(optional_attrs[0] == evn_neel) or np.all(optional_attrs[0] == odd_neel)
-                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123']])
-                    # should_be_neel = 'neel' in filename or 'lbit93-precision' in filename or '-lin' in filename or 'lbit116' in filename or 'lbit117' in filename or 'lbit118' in filename or 'lbit119' in filename or 'lbit120' in filename or 'lbit121' in filename or 'lbit122' in filename
+                    should_be_neel = any([x in filename for x in ['neel', 'lbit116', 'lbit117', 'lbit118', 'lbit119', 'lbit120', 'lbit121','lbit122', 'lbit123', 'lbit124']])
                     if should_be_neel and not has_neel_init_pattern:
                         return f"FAILED|initial state pattern is not neel: {optional_attrs[0]}"
                     if not should_be_neel and has_neel_init_pattern:
