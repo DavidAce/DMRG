@@ -6,7 +6,7 @@ import platform
 
 config_paths = {
     'config_template'   : 'template_configs/flbit-v2.cfg',
-    'output_prfx'       : "/mnt/WDB-AN1500/mbl_transition",
+    'output_prfx'       : "/mnt/S990PRO/mbl_transition",
     'output_stem'       : 'mbl',
     'config_dir'        : "config-lbit121",
     'output_dir'        : "output-lbit121",

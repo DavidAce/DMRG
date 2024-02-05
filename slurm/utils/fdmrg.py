@@ -87,6 +87,7 @@ def write_batch_status(batch_filename):
     args = parser.parse_args()
     with open(batch_filename, 'r') as fp:
         batch = json.load(fp)
+        output_prfx = f'{batch["output_prfx"]}'
         config_file = f'{batch["config_file"]}'
         status_file = f'{batch["status_dir"]}/{Path(config_file).stem}.status'
         seed_status = copy(batch.get('seed_status'))  # Old one
@@ -96,8 +97,7 @@ def write_batch_status(batch_filename):
 
         if platform.node() == "neumann" and args.update_status:
             Path(status_file).parent.mkdir(parents=True, exist_ok=True)
-            output_base = '/mnt/WDB-AN1500/mbl_transition'
-            output_path = f'{output_base}/{batch["projectname"]}/{batch["output_path"]}'
+            output_path = f'{output_prfx}/{batch["projectname"]}/{batch["output_path"]}'
             print(f"Updating status: {status_file}")
             with open(status_file, 'w') as sf:
                 status_count = 0
