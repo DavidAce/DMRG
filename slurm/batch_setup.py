@@ -694,6 +694,11 @@ def get_batch_setup(projectname):
                     'seed_offset': [28000000],
                     'time_steps': 41,
                 },
+                'L32': {
+                    'seed_extent': [1000],
+                    'seed_offset': [32000000],
+                    'time_steps': 41,
+                },
             }
         },
         'fdmrg-isingmajorana1-init': {
