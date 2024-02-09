@@ -34,6 +34,8 @@
 #include <h5pp/h5pp.h>
 #include <unsupported/Eigen/CXX11/Tensor>
 #include <unsupported/Eigen/MatrixFunctions>
+#include <quadmath.h>
+
 
 flbit::flbit(std::shared_ptr<h5pp::File> h5file_) : AlgorithmFinite(std::move(h5file_), AlgorithmType::fLBIT) {
     tools::log->trace("Constructing class_flbit");
@@ -356,7 +358,6 @@ void flbit::run_algorithm_parallel() {
                                                                  ham_swap_gates_3body};
     auto status_init = status;
     auto t_run = tid::tic_scope("run", tid::level::normal);
-// #pragma omp parallel for schedule(dynamic, 1)
 #pragma omp parallel for ordered schedule(dynamic, 1)
     for (size_t tidx = 0; tidx < time_points.size(); ++tidx) {
         auto t_step = tid::tic_scope("step");
@@ -369,7 +370,6 @@ void flbit::run_algorithm_parallel() {
         if (not state_tevo.position_is_inward_edge())
             throw std::runtime_error("state_tevo is not at the edge! it will not be written to file!");
         flbit_impl::print_status(state_tevo, status_tevo);
-// #pragma omp critical(h5save)
 #pragma omp ordered
         {
             status_tevo.event = StorageEvent::ITERATION;
@@ -412,7 +412,8 @@ void flbit::run_algorithm2() {
     if (u_and.size() != 16) throw except::logic_error("u_and.size() != 16");
     Eigen::VectorXcd hamiltonian_eff_diagonal;
     {
-        const auto mpos = tensors.model->get_compressed_mpos(CompressWithEdges::ON);
+        const auto mpos = tensors.model->get_compressed_mpos(MposWithEdges::ON);
+//        const auto mpos = tensors.model->get_mpos(MposWithEdges::ON);
         auto t_ham = tid::tic_scope("ham");
         auto num_states = static_cast<Eigen::Index>(std::pow(2, sites.size()));
         auto bitseqs = std::vector<size_t>();
@@ -436,12 +437,13 @@ void flbit::run_algorithm2() {
             tools::finite::mps::apply_circuit(state_i, u_mbl, CircuitOp::ADJ, true, GateMove::AUTO, svd_cfg);
             hamiltonian_eff_diagonal[static_cast<long>(idx)] = tools::finite::measure::expectation_value(state_i,
                                                                                                          state_i, mpos);
-            if (num::mod<size_t>(idx, bitseqs.size() / 128) == 0)
+            if (num::mod<size_t>(idx, bitseqs.size() / 64) == 0)
                 tools::log->info(
-                        "{0:>6}/{1} {2} {3:.3e} s (thread {4:<2}/{5}): ⟨Ψ_i U_and† U_mbl H' U_mbl† U_and |Ψ_i⟩ = {6}",
+                        "{0:>6}/{1} {2} {3:.3e} s (thread {4:<2}/{5}): ⟨Ψ_i U_and† U_mbl H' U_mbl† U_and |Ψ_i⟩ = {6:.16f}{7:+.16f}",
                         idx, bitseqs.size(), pattern,
                         t_eff->get_time(), omp_get_thread_num(), omp_get_num_threads(),
-                        hamiltonian_eff_diagonal[static_cast<long>(idx)]);
+                        static_cast<double>(hamiltonian_eff_diagonal[static_cast<long>(idx)].real()),
+                        static_cast<double>(hamiltonian_eff_diagonal[static_cast<long>(idx)].imag()));
         }
         tools::log->info("Finished calculating hamiltonian_eff_diagonal: {:.3e} s", t_eff->get_last_interval());
     }
@@ -454,7 +456,7 @@ void flbit::run_algorithm2() {
         tools::log->info("Starting time evolution");
 
         auto t_evo = tid::tic_scope("evo");
-#pragma omp parallel for ordered schedule(dynamic, 1)
+//#pragma omp parallel for ordered schedule(dynamic, 1)
         for (size_t tidx = 0; tidx < time_points.size(); ++tidx) {
             auto time = time_points[tidx];
             auto tensor_eff = tensors;
@@ -466,9 +468,18 @@ void flbit::run_algorithm2() {
             status_eff.delta_t = time;
             using namespace std::complex_literals;
             auto t_f64 = std::complex<real>(static_cast<real>(time.real()), static_cast<real>(time.imag()));
+            if(t_f64.real() > 1e8 or t_f64.imag() > 1e8){
+                tools::log->warn("Precision is bad when time > 1e8 | current time == {:.2e}", t_f64);
+            }
             // Generate the time evolution operator in diagonal form
             tools::log->debug("Exponentiating the diagonal Hamiltonians");
-            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
+
+            auto tevo_op = [& time](const auto &h) -> cplx {
+                __float128 fmod_th_128 = fmodq(time.real() * real_t(h.real()), 2 * M_PIq);
+                return std::exp(-1.0i * static_cast<real>(fmod_th_128));
+            };
+//            Eigen::VectorXcd tevo_eff_diagonal = (-1.0i * t_f64 * hamiltonian_eff_diagonal).array().exp();
+            Eigen::VectorXcd tevo_eff_diagonal = hamiltonian_eff_diagonal.unaryExpr(tevo_op);
             // Time evolve
             tools::log->debug("Time-evolving: {}", t_f64);
             Eigen::VectorXcd psi_eff = tevo_eff_diagonal.asDiagonal() * u_and_adj_psi_init_vector;
@@ -492,7 +503,7 @@ void flbit::run_algorithm2() {
             print_status(status_eff, tensor_eff);
             if (not state_eff.position_is_inward_edge())
                 throw std::runtime_error("state_eff is not at the edge! it will not be written to file!");
-#pragma omp ordered
+//#pragma omp ordered
             {
                 status_eff.event = StorageEvent::ITERATION;
                 tools::finite::h5::save::simulation(*h5file, state_eff, *tensor_eff.model, *tensor_eff.edges,

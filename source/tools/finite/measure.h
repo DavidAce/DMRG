@@ -112,6 +112,8 @@ namespace tools::finite::measure {
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state, const std::vector<LocalObservableMpo> & mpos);
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state1, const StateFinite & state2,
                                                                           const std::vector<Eigen::Tensor<cplx,4>> & mpos);
+    [[nodiscard]] extern cplx_t                   expectation_value      (const StateFinite & state1, const StateFinite & state2,
+                                                                          const std::vector<Eigen::Tensor<cplx_t,4>> & mpos_t);
     [[nodiscard]] extern cplx                     expectation_value      (const StateFinite & state1, const StateFinite & state2,
                                                                           const std::vector<Eigen::Tensor<cplx,4>> & mpos,
                                                                           const Eigen::Tensor<cplx,1> & ledge,

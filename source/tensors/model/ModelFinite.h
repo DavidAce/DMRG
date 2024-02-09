@@ -12,7 +12,7 @@
 class MpoSite;
 class TensorsFinite;
 class ModelLocal;
-enum  class CompressWithEdges {OFF, ON};
+enum  class MposWithEdges {OFF, ON};
 
 class ModelFinite {
     private:
@@ -67,8 +67,10 @@ class ModelFinite {
     void           compress_mpo();
     void           compress_mpo_squared();
 
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(CompressWithEdges withEdges = CompressWithEdges::OFF);
-    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos_squared(CompressWithEdges withEdges = CompressWithEdges::OFF);
+    std::vector<Eigen::Tensor<cplx, 4>> get_mpos(MposWithEdges withEdges = MposWithEdges::OFF);
+    std::vector<Eigen::Tensor<cplx_t, 4>> get_mpos_t(MposWithEdges withEdges = MposWithEdges::OFF);
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos(MposWithEdges withEdges = MposWithEdges::OFF);
+    std::vector<Eigen::Tensor<cplx, 4>> get_compressed_mpos_squared(MposWithEdges withEdges = MposWithEdges::OFF);
 
     [[nodiscard]] bool                  is_shifted() const; // For shifted energy MPO's
     [[nodiscard]] bool                  is_compressed_mpo_squared() const;

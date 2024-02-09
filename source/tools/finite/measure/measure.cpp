@@ -830,6 +830,46 @@ cplx tools::finite::measure::expectation_value(const StateFinite &state1, const 
     return result.coeff(0);
 }
 
+cplx_t tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx_t, 4>> &mpos_t) {
+    /*!
+     * Calculates <state1 | mpos | state2>
+     */
+    auto t_expval = tid::tic_scope("expval_t", tid::level::highest);
+    if(!num::all_equal(state1.get_length(), state2.get_length(), mpos_t.size()))
+        throw except::logic_error("Sizes are not equal: state1:{} state2:{} mpos_t:{}", state1.get_length(), state2.get_length(), mpos_t.size());
+    auto L = mpos_t.size();
+    if(state1.get_mps_site(0).get_chiL() != 1) throw except::logic_error("state1 left bond dimension != 1: got {}", state1.get_mps_site(0).get_chiL());
+    if(state2.get_mps_site(0).get_chiL() != 1) throw except::logic_error("state2 left bond dimension != 1: got {}", state2.get_mps_site(0).get_chiL());
+    if(mpos_t.front().dimension(0) != 1) throw except::logic_error("mpos_t left bond dimension != 1: got {}", mpos_t.front().dimension(0));
+    if(state1.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state1 right bond dimension != 1: got {}", state1.get_mps_site(L - 1).get_chiR());
+    if(state2.get_mps_site(L - 1).get_chiR() != 1) throw except::logic_error("state2 right bond dimension != 1: got {}", state2.get_mps_site(L - 1).get_chiR());
+    if(mpos_t.back().dimension(1) != 1) throw except::logic_error("mpos_t right bond dimension != 1: got {}", mpos_t.back().dimension(1));
+    Eigen::Tensor<cplx_t, 4> result, tmp;
+    auto &threads = tenx::threads::get();
+    for(size_t pos = 0; pos < L; ++pos) {
+        const Eigen::Tensor<cplx_t, 3> mps1 = state1.get_mps_site(pos).get_M().conjugate().cast<cplx_t>();
+        const Eigen::Tensor<cplx_t, 3> mps2 = state2.get_mps_site(pos).get_M().cast<cplx_t>();
+        const auto            &mpo_t  = mpos_t[pos];
+        if(pos == 0) {
+            auto dim4 = tenx::array4{mpo_t.dimension(0) * mps1.dimension(1) * mps2.dimension(1), mps1.dimension(2), mpo_t.dimension(1), mps2.dimension(2)};
+            auto shf6 = tenx::array6{0, 2, 4, 1, 3, 5};
+            result.resize(dim4);
+            result.device(*threads->dev) = mps1.contract(mpo_t, tenx::idx({0}, {2})).contract(mps2, tenx::idx({4}, {0})).shuffle(shf6).reshape(dim4);
+            continue;
+        }
+        auto dim4 = tenx::array4{result.dimension(0), mps1.dimension(2), mpo_t.dimension(1), mps2.dimension(2)};
+        tmp.resize(dim4);
+        tmp.device(*threads->dev) =
+            result.contract(mps1, tenx::idx({1}, {1})).contract(mpo_t, tenx::idx({1, 3}, {0, 2})).contract(mps2, tenx::idx({1, 4}, {1, 0}));
+        result = std::move(tmp);
+    }
+    // In the end we should have a tensor of size 1 (if the state and mpo edges have dim 1).
+    // We can extract and return this value
+    if(result.size() != 1) tools::log->warn("expectation_value: result does not have size 1!");
+    return result.coeff(0);
+}
+
+
 cplx tools::finite::measure::expectation_value(const StateFinite &state1, const StateFinite &state2, const std::vector<Eigen::Tensor<cplx, 4>> &mpos,
                                                const Eigen::Tensor<cplx, 1> &ledge, const Eigen::Tensor<cplx, 1> &redge) {
     /*!
