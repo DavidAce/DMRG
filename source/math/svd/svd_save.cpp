@@ -35,7 +35,6 @@ void svd::solver::save_svd() {
     if(not smd.svd_is_running) return;
     auto directory = h5pp::fs::path(settings::storage::output_filepath).parent_path().string();
     auto filepath  = fmt::format("{}/svd-save-{}.h5", directory, settings::input::seed);
-    svd::log->info("Saving SVD to file: {}", filepath);
     auto file       = h5pp::File(filepath, h5pp::FilePermission::READWRITE);
     auto group_num  = 0;
     auto group_name = fmt::format("svd_{}", group_num);
@@ -116,7 +115,6 @@ void svd::solver::save_svd(const MatrixType<Scalar> &A, std::optional<svd::save>
     auto cols      = A.cols();
     auto directory = h5pp::fs::path(settings::storage::output_filepath).parent_path().string();
     auto filepath  = fmt::format("{}/svd-save-{}.h5", directory, settings::input::seed);
-    svd::log->debug("Saving A to file: {}", filepath);
     auto file       = h5pp::File(filepath, h5pp::FilePermission::READWRITE);
     auto group_num  = 0;
     auto group_name = fmt::format("svd_{}", group_num);

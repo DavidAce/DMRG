@@ -746,11 +746,52 @@ void tools::finite::mps::swap_sites(StateFinite &state, size_t posL, size_t posR
     auto new_pos = old_pos;
     if(gm == GateMove::ON)
         new_pos = safe_cast<long>(posL); // The benefit of GateMove::ON is to prefer "AC-B" splits that require a single SVD as often as possible
+//    double lastS_old = 0;
+//    long   bondd_old = 0;
+//    auto   label_old = state.get_mps_site(posL).get_label();
+//    if(label_old == "A") {
+//        auto &mpsR = state.get_mps_site(posR);
+//        bondd_old  = mpsR.get_L().size();
+//        lastS_old  = mpsR.get_L().coeff(bondd_old - 1).real();
+//    }
+//    if(label_old == "AC") {
+//        auto &mpsL = state.get_mps_site(posL);
+//        bondd_old  = mpsL.get_LC().size();
+//        lastS_old  = mpsL.get_LC().coeff(bondd_old - 1).real();
+//    }
+//    if(label_old == "B") {
+//        auto &mpsL = state.get_mps_site(posL);
+//        bondd_old  = mpsL.get_L().size();
+//        lastS_old  = mpsL.get_L().coeff(bondd_old - 1).real();
+//    }
 
     // This SVD shouldn't modify the current mps, so no truncation here (no svd config)
+    //    merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, svd_cfg, LogPolicy::QUIET);
     merge_multisite_mps(state, swapped_mps, {posL, posR}, new_pos, std::nullopt, LogPolicy::QUIET);
-    std::swap(sites[posL], sites[posR]);
 
+//    double lastS_new = 0;
+//    long   bondd_new = 0;
+//    auto   label_new = state.get_mps_site(posL).get_label();
+//    if(label_new == "A") {
+//        auto &mpsR = state.get_mps_site(posR);
+//        bondd_new  = mpsR.get_L().size();
+//        lastS_new  = mpsR.get_L().coeff(bondd_new - 1).real();
+//    }
+//    if(label_new == "AC") {
+//        auto &mpsL = state.get_mps_site(posL);
+//        bondd_new  = mpsL.get_LC().size();
+//        lastS_new  = mpsL.get_LC().coeff(bondd_new - 1).real();
+//    }
+//    if(label_new == "B") {
+//        auto &mpsL = state.get_mps_site(posL);
+//        bondd_new  = mpsL.get_L().size();
+//        lastS_new  = mpsL.get_L().coeff(bondd_new - 1).real();
+//    }
+//
+//    tools::log->info("swap pos [{}, {}] gm {} | center {} -> {} | bond dim {} -> {} | last singular value {:.3e} -> {:.3e}", posL, posR, enum2sv(gm), old_pos,
+//                     new_pos, bondd_old, bondd_new, lastS_old, lastS_new);
+
+    std::swap(sites[posL], sites[posR]);
     // Sanity check
     if constexpr(settings::verbose_gates) {
         tools::log->trace("swap_sites     : swapped pos [{}, {}] | idx {} | gm {} | center {} -> {} | svds {} -> {} | labels {} | sites {}", posL, posR,
@@ -908,7 +949,6 @@ void tools::finite::mps::apply_swap_gates(StateFinite &state, std::vector<qm::Sw
                           rwap_count, swap_count + rwap_count, skip_count, svds_count, t_swapgate->get_last_interval());
     }
 }
-
 
 void tools::finite::mps::apply_swap_gates(StateFinite &state, const std::vector<qm::SwapGate> &gates, CircuitOp cop, GateMove gm,
                                           std::optional<svd::config> svd_cfg) {

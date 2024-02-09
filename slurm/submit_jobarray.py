@@ -202,6 +202,8 @@ def generate_sbatch_commands(project_name, args):
         sbatch_arg.extend(['--qos={}'.format(args.qos)])
     if args.requeue:
         sbatch_arg.extend(['--requeue'])
+    if args.exclusive:
+        sbatch_arg.extend(['--exclusive'])
     if args.hint:
         sbatch_arg.extend(['--hint={}'.format(args.hint)])
     if args.time:

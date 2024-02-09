@@ -16,7 +16,6 @@ namespace svd {
     template<typename Scalar>
     using VectorType = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 
-    inline std::shared_ptr<spdlog::logger> log;
     namespace internal {
         // LAPACK uses internal workspace arrays which can be reused for the duration of the program.
         // Call clear() to recover this memory space
@@ -47,6 +46,7 @@ namespace svd {
 
     class solver {
         private:
+        std::shared_ptr<spdlog::logger> log = nullptr;
         mutable double                       truncation_error = 0; // Stores the last truncation error
         mutable long                         rank             = 0; // Stores the last rank
         inline static long long              count            = 0; // Count the number of svd invocations for this execution
@@ -99,7 +99,7 @@ namespace svd {
         void set_config(const svd::config &svd_cfg);
         void set_config(std::optional<svd::config> svd_cfg);
 
-        void                           setLogLevel(size_t logLevel);
+        void                           setLogLevel(int logLevel);
         [[nodiscard]] double           get_truncation_error() const;
         [[nodiscard]] long             get_rank() const;
         [[nodiscard]] static long long get_count();

@@ -143,16 +143,15 @@ namespace tid {
         using tid_db_unordered_map_t = std::unordered_map<std::string, ur, string_hash, std::equal_to<>>;
         inline tid_db_unordered_map_t tid_db;
 
-        //        inline std::string ur_prefix;
 #if defined(_OPENMP)
         inline std::vector<std::string> ur_prefix(static_cast<unsigned long>(omp_get_max_threads())); // Each thread has its own prefix
 #else
         inline std::vector<std::string> ur_prefix(1); // Only one thread
 #endif
-        extern const std::string &     ur_prefix_get();
-        extern void             ur_prefix_set(std::string_view key);
-        extern void             ur_prefix_push_back(std::string_view key);
-        extern void             ur_prefix_pop_back(std::string_view key);
+        extern const std::string &ur_prefix_get();
+        extern void               ur_prefix_set(std::string_view key);
+        extern void               ur_prefix_push_back(std::string_view key);
+        extern void               ur_prefix_pop_back(std::string_view key);
         template<typename T = std::vector<std::string_view>>
         extern T split(std::string_view strv, std::string_view delims);
     }
@@ -161,7 +160,7 @@ namespace tid {
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(const tid::ur &u, std::string_view match);
     [[nodiscard]] extern std::vector<internal::ur_ref_t> search(std::string_view match);
     void                                                 set_level(level l);
-//    void                                                 merge_thread_enries();
-    void                                                 print_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
-    void                                                 print_tree(std::string_view prefix = "", level l = level::normal);
+    //    void                                                 merge_thread_enries();
+    void print_tree(const tid::ur &u, std::string_view prefix = "", level l = level::normal);
+    void print_tree(std::string_view prefix = "", level l = level::normal);
 }

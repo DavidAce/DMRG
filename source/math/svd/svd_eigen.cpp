@@ -30,7 +30,7 @@ template<typename Scalar>
 std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Scalar>> svd::solver::do_svd_eigen(const Scalar *mat_ptr, long rows,
                                                                                                                 long cols) const {
 //    auto t_eigen = tid::tic_scope("eigen", tid::highest);
-    svd::log->trace("Starting SVD with Eigen");
+    log->trace("Starting SVD with Eigen");
     auto                                 minRC = std::min(rows, cols);
     Eigen::Map<const MatrixType<Scalar>> mat(mat_ptr, rows, cols);
 
@@ -41,7 +41,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         // These are more expensive debugging operations
         if(not mat.allFinite()) throw std::runtime_error("SVD error: matrix has inf's or nan's");
         if(mat.isZero(0)) throw std::runtime_error("SVD error: matrix is all zeros");
-        if(mat.isZero(1e-12)) svd::log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
+        if(mat.isZero(1e-12)) log->warn("Lapacke SVD Warning\n\t Given matrix elements are all close to zero (prec 1e-12)");
     }
     if(svd_save != svd::save::NONE) save_svd(MatrixType<Scalar>(mat));
     if(svd_save != svd::save::FAIL) saveMetaData.A = MatrixType<Scalar>(mat);
@@ -62,12 +62,12 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     bool use_jacobi = minRC < safe_cast<long>(switchsize_gesdd);
     if(use_jacobi or svd_rtn == rtn::gejsv or svd_rtn == svd::rtn::gesvj) {
         // We only use Jacobi for precision. So we use all the precision we can get.
-        svd::log->debug("Running Eigen::JacobiSVD {}", svd_info);
+        log->debug("Running Eigen::JacobiSVD {}", svd_info);
         // Run the svd
 //        auto t_jcb = tid::tic_token(fmt::format("jcb{}", t_suffix), tid::highest);
         SVD.compute(mat, Eigen::ComputeFullU | Eigen::ComputeFullV | Eigen::FullPivHouseholderQRPreconditioner);
     } else {
-        svd::log->debug("Running Eigen::BDCSVD {}", svd_info);
+        log->debug("Running Eigen::BDCSVD {}", svd_info);
         // Run the svd
 //        auto t_bdc = tid::tic_token(fmt::format("bdc{}", t_suffix), tid::highest);
         SVD.compute(mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
@@ -93,15 +93,15 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         }
         if(not mat.allFinite()) {
             print_matrix(mat.data(), mat.rows(), mat.cols(), "A");
-            svd::log->critical("Eigen SVD error: matrix has inf's or nan's");
+            log->critical("Eigen SVD error: matrix has inf's or nan's");
         }
         if(mat.isZero(1e-12)) {
             print_matrix(mat.data(), mat.rows(), mat.cols(),"A", 16);
-            svd::log->critical("Eigen SVD error: matrix is all zeros");
+            log->critical("Eigen SVD error: matrix is all zeros");
         }
         if(not S_positive) {
             print_vector(SVD.singularValues().head(rank).data(), rank, "S", 16);
-            svd::log->critical("Eigen SVD error: S is not positive");
+            log->critical("Eigen SVD error: S is not positive");
         }
         // #if !defined(NDEBUG)
         save_svd<Scalar>(SVD.matrixU(), SVD.singularValues(), SVD.matrixV().adjoint(), -1);
@@ -124,7 +124,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     if(svd_save == save::ALL or svd_save == save::LAST)
         save_svd<Scalar>(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint(), 0);
 
-    svd::log->trace("SVD with Eigen finished successfully");
+    log->trace("SVD with Eigen finished successfully");
     saveMetaData = svd::internal::SaveMetaData{}; // Clear
     // Not all calls to do_svd need normalized S, so we do not normalize here!
     return std::make_tuple(SVD.matrixU().leftCols(rank), SVD.singularValues().head(rank), SVD.matrixV().leftCols(rank).adjoint());

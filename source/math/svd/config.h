@@ -78,7 +78,7 @@ namespace svd {
         std::optional<size_t>        switchsize_gesvd = std::nullopt;
         std::optional<size_t>        switchsize_gesdd = std::nullopt;
         std::optional<svdx_select_t> svdx_select      = std::nullopt;
-        std::optional<size_t>        loglevel         = std::nullopt;
+        std::optional<int>           loglevel         = std::nullopt;
         std::optional<svd::lib>      svd_lib          = std::nullopt;
         std::optional<svd::rtn>      svd_rtn          = std::nullopt;
         std::optional<svd::save>     svd_save         = std::nullopt;

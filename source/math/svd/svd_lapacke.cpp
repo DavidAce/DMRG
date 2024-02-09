@@ -89,7 +89,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     if(rows < cols and (svd_rtn == rtn::gejsv or svd_rtn == rtn::gesvj)) {
         // The jacobi routines needs a tall matrix
         //        auto t_adj = tid::tic_token("adjoint", tid::highest);
-        svd::log->trace("Transposing {}x{} into a tall matrix {}x{}", rows, cols, cols, rows);
+        log->trace("Transposing {}x{} into a tall matrix {}x{}", rows, cols, cols, rows);
         MatrixType<Scalar> A = Eigen::Map<const MatrixType<Scalar>>(mat_ptr, rows, cols);
         A.adjointInPlace(); // Adjoint directly on a map seems to give a bug?
         // Sanity checks
@@ -122,7 +122,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     VectorType<double> S;
     MatrixType<Scalar> V;
     MatrixType<Scalar> VT;
-    svd::log->trace("Starting SVD with lapacke | rows {} | cols {}", rows, cols);
+    log->trace("Starting SVD with lapacke | rows {} | cols {}", rows, cols);
 
     int info   = 0;
     int rowsU  = rowsA;
@@ -144,7 +144,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
     try {
         // Sanity checks
         if constexpr(!ndebug) { // We usually get a negative "info" value if there are nans anyway.
-            if(A.isZero(1e-16)) svd::log->warn("Lapacke SVD: A is a zero matrix");
+            if(A.isZero(1e-16)) log->warn("Lapacke SVD: A is a zero matrix");
             if(not A.allFinite()) {
                 print_matrix(A.data(), A.rows(), A.cols(), "A");
                 throw std::runtime_error("A has inf's or nan's");
@@ -157,7 +157,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             std::vector<int>    iwork;
             std::vector<double> rwork;
             if constexpr(!ndebug)
-                svd::log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
+                log->debug("Running Lapacke d{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
                                 switchsize_gesdd, sizeS);
             switch(svd_rtn) {
                 case rtn::gesvd: {
@@ -295,7 +295,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             std::vector<std::complex<double>> cwork;
             std::vector<double>               rwork;
             if constexpr(!ndebug)
-                svd::log->debug("Running Lapacke z{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
+                log->debug("Running Lapacke z{} | truncation limit {:.4e} | switchsize bdc {} | size {}", enum2sv(svd_rtn), truncation_lim,
                                 switchsize_gesdd, sizeS);
             switch(svd_rtn) {
                 case rtn::gesvd: {
@@ -449,7 +449,7 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             if(info > 0) throw except::runtime_error("z{} error: could not converge: info {}", enum2sv(svd_rtn), info);
         }
 
-        svd::log->trace("Truncating singular values");
+        log->trace("Truncating singular values");
         auto max_size                    = S.nonZeros();
         std::tie(rank, truncation_error) = get_rank_from_truncation_error(S.head(max_size));
         // Do the truncation
@@ -468,8 +468,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
             if(sizeS <= 1024){
                 throw except::runtime_error("Detected non-finite rows/cols in U, S or VT. The problem size is small ({}). Try another solver.", sizeS);
             }
-            svd::log->warn("Pruning non-finite rows/cols from the results! rank {} -> {}", rank, valid_rows.size());
-            svd::log->debug("valid rows: {}", valid_rows);
+            log->warn("Pruning non-finite rows/cols from the results! rank {} -> {}", rank, valid_rows.size());
+            log->debug("valid rows: {}", valid_rows);
             U    = U(Eigen::all, valid_rows);
             S    = S(valid_rows);
             VT   = VT(valid_rows, Eigen::all);
@@ -517,8 +517,8 @@ std::tuple<svd::MatrixType<Scalar>, svd::VectorType<Scalar>, svd::MatrixType<Sca
         save_svd<Scalar>(U, S, VT, info);
         saveMetaData = svd::internal::SaveMetaData{}; // Clear
     }
-    if(svd::log->level() == spdlog::level::trace)
-        svd::log->trace(
+    if(log->level() == spdlog::level::trace)
+        log->trace(
             "SVD with Lapacke finished successfully | truncation limit {:<8.2e} | rank {:<4} | rank_max {:<4} | {:>4} x {:<4} | trunc {:8.2e}, time {:8.2e}",
             truncation_lim, rank, rank_max, rows, cols, truncation_error, 0.0
             //            t_lpk->get_last_interval()
