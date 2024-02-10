@@ -52,7 +52,7 @@ config_ranges = {
     "flbit::cls::num_rnd_circuits": ['1'],
     "flbit::cls::mpo_circuit_svd_bondlim": ['20'],
     "flbit::cls::mpo_circuit_switchdepth": ['5'],
-    "flbit::opdm::num_rps": ['10'],
+    "flbit::opdm::num_rps": ['100'],
 }
 
 configs = get_config_product(config_ranges, config_paths)
